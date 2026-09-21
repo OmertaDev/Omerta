@@ -1,0 +1,61 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"5afde755-b4b3-4ef7-890f-476ef569ceb9"}
+{"component":"player-command","phase":"authorization","correlationId":"5afde755-b4b3-4ef7-890f-476ef569ceb9","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"5afde755-b4b3-4ef7-890f-476ef569ceb9","statusCode":200,"elapsedMs":147}
+{"component":"player-command","phase":"request","correlationId":"5dffe4a0-2b2d-4326-b825-ce5ae972bcee"}
+{"component":"player-command","phase":"authorization","correlationId":"5dffe4a0-2b2d-4326-b825-ce5ae972bcee","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"5dffe4a0-2b2d-4326-b825-ce5ae972bcee","statusCode":200,"elapsedMs":42}
+{"component":"player-command","phase":"request","correlationId":"acd181fd-6747-4680-b42d-8b719a40ba7d"}
+{"component":"player-command","phase":"authorization","correlationId":"acd181fd-6747-4680-b42d-8b719a40ba7d","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"acd181fd-6747-4680-b42d-8b719a40ba7d","statusCode":200,"elapsedMs":45}
+{"component":"player-command","phase":"request","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244"}
+{"component":"player-command","phase":"authorization","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244"}
+{"component":"player-command","phase":"mutation","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244","replayed":false,"changes":2}
+{"component":"player-command","phase":"opportunity","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244","replayed":false,"changes":2}
+{"component":"player-command","phase":"response","correlationId":"6bc8eb1c-6ac1-4f0c-a345-e3dc94ea7244","statusCode":200,"elapsedMs":205}
+{"component":"player-command","phase":"request","correlationId":"bb6388e0-1afc-4519-8d83-6a9803f5be6f"}
+{"component":"player-command","phase":"authorization","correlationId":"bb6388e0-1afc-4519-8d83-6a9803f5be6f","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"bb6388e0-1afc-4519-8d83-6a9803f5be6f","statusCode":200,"elapsedMs":81}
+{"component":"player-command","phase":"request","correlationId":"292e3749-de9c-42cc-982a-c48c16853109"}
+{"component":"player-command","phase":"authorization","correlationId":"292e3749-de9c-42cc-982a-c48c16853109","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"292e3749-de9c-42cc-982a-c48c16853109","statusCode":200,"elapsedMs":52}
+{"component":"player-command","phase":"request","correlationId":"e60c8489-4e60-404f-94c9-1fb1abf7b077"}
+{"component":"player-command","phase":"authorization","correlationId":"e60c8489-4e60-404f-94c9-1fb1abf7b077","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"e60c8489-4e60-404f-94c9-1fb1abf7b077","statusCode":200,"elapsedMs":56}
+{"component":"player-command","phase":"request","correlationId":"3c2bea7f-54af-46f0-8b58-f01fc72c1f65"}
+{"component":"player-command","phase":"authorization","correlationId":"3c2bea7f-54af-46f0-8b58-f01fc72c1f65","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"3c2bea7f-54af-46f0-8b58-f01fc72c1f65","statusCode":200,"elapsedMs":53}
+{"component":"player-command","phase":"request","correlationId":"e78f470e-c323-49c4-99ab-ffc069c2e925"}
+{"component":"player-command","phase":"authorization","correlationId":"e78f470e-c323-49c4-99ab-ffc069c2e925","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"e78f470e-c323-49c4-99ab-ffc069c2e925","statusCode":200,"elapsedMs":57}
+{"component":"player-command","phase":"request","correlationId":"47455825-6bd5-4bfa-a20e-b52b3d68296e"}
+{"component":"player-command","phase":"authorization","correlationId":"47455825-6bd5-4bfa-a20e-b52b3d68296e","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"47455825-6bd5-4bfa-a20e-b52b3d68296e","statusCode":200,"elapsedMs":47}
+{"component":"player-command","phase":"request","correlationId":"45c8c114-614a-4bca-aefe-a8f3a7b29730"}
+{"component":"player-command","phase":"authorization","correlationId":"45c8c114-614a-4bca-aefe-a8f3a7b29730","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"45c8c114-614a-4bca-aefe-a8f3a7b29730","statusCode":200,"elapsedMs":45}
+{"component":"player-command","phase":"request","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524"}
+{"component":"player-command","phase":"authorization","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524"}
+{"component":"player-command","phase":"mutation","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524","replayed":false,"changes":2}
+{"component":"player-command","phase":"opportunity","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524","replayed":false,"changes":2}
+{"component":"player-command","phase":"response","correlationId":"5d688e4c-fc7f-4514-9bc4-fcb7299ae524","statusCode":200,"elapsedMs":117}
+{"component":"player-command","phase":"request","correlationId":"4fad3491-5554-4afa-8911-381401224499"}
+{"component":"player-command","phase":"authorization","correlationId":"4fad3491-5554-4afa-8911-381401224499","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"4fad3491-5554-4afa-8911-381401224499","statusCode":200,"elapsedMs":56}
+{"component":"player-command","phase":"request","correlationId":"1fff9693-f954-464f-968f-366a744bc54c"}
+{"component":"player-command","phase":"authorization","correlationId":"1fff9693-f954-464f-968f-366a744bc54c","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"1fff9693-f954-464f-968f-366a744bc54c","statusCode":200,"elapsedMs":57}
+{"component":"player-command","phase":"request","correlationId":"af851249-1359-44e7-bcad-c51cb5ac9730"}
+{"component":"player-command","phase":"authorization","correlationId":"af851249-1359-44e7-bcad-c51cb5ac9730","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"af851249-1359-44e7-bcad-c51cb5ac9730","statusCode":200,"elapsedMs":83}
+{"component":"player-command","phase":"request","correlationId":"6f54f6f9-488b-4b0d-8e5e-3d5dc344698e"}
+{"component":"player-command","phase":"authorization","correlationId":"6f54f6f9-488b-4b0d-8e5e-3d5dc344698e","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"6f54f6f9-488b-4b0d-8e5e-3d5dc344698e","statusCode":200,"elapsedMs":69}
+{"status":"PASS","results":[{"viewport":{"width":390,"height":844},"firstActionMs":5327,"firstCanonicalAction":"Investigate: The Missing Carbon Index","commandCompleted":true,"consequenceVisible":true,"reload":true,"javascriptErrors":[]},{"viewport":{"width":360,"height":800},"firstActionMs":4196,"firstCanonicalAction":"Investigate: The Missing Carbon Index","commandCompleted":true,"consequenceVisible":true,"reload":true,"javascriptErrors":[]}]}

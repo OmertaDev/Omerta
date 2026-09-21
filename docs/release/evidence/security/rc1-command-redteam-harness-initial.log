@@ -1,0 +1,33 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\node_modules\pg-pool\index.js:45
+    Error.captureStackTrace(err)
+          ^
+
+error: relation "resource_balances" does not exist
+    at C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async state (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-command-redteam.js:30:19)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-command-redteam.js:52:18 {
+  length: 116,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '15',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1469',
+  routine: 'parserOpenTable'
+}
+
+Node.js v24.19.0

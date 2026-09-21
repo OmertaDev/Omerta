@@ -1,0 +1,4661 @@
+{
+  "schemaVersion": 1,
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "seed": "rc1-entry-20260920",
+  "population": 100,
+  "rounds": 2,
+  "node": "v24.19.0",
+  "startedAt": "2026-09-20T22:58:29.620Z",
+  "engine": "real PostgreSQL; Fastify production handlers through app.inject",
+  "scope": "Fresh account/character entry, server-issued Player Commands and exact request replay",
+  "limitations": [
+    "Sequential requests do not prove concurrent latency or locking.",
+    "Seed fixes actor decisions and Math.random, not UUIDs, database time or scheduling.",
+    "No model of aggression, Families, churn, resource equilibrium, workers or a real-player cohort.",
+    "Only resources mutated by the recorded commands are exercised; static invariant passes do not prove every transition."
+  ],
+  "commands": {
+    "discovery.start": 100,
+    "discovery.act": 100
+  },
+  "requests": 800,
+  "transitions": 502,
+  "invariantAssertions": 27610,
+  "replays": 200,
+  "playersWithoutCommand": [],
+  "history": [
+    {
+      "player": 0,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "f2873d5e4d0b6489b54bedaf6a94ea35b38d57d49ecc3f8c100241cd23d84198.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 1,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "fbb0881c535bbb60319d0974ae10c9970c129f3a954b1aa52d18dbee4de9c2ea.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 2,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "dff5d4c48a158e9346987e400b6f39b4cbcd5d8b08020cdc2b20028274fdfb8d.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 3,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "330dd22364d69ec6aeed363306f5cdb7e3391227f6d98b7ac0c96cd057e61b98.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 4,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "b7f555ba9d309dac868b381c8dda671d03831ad73965d2cfc9113acd519d7a86.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 5,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "565d6ea1e6a2f503c450574e85e594b4fd8034aadf8c932e35d87c8757964d73.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 6,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "c7180eeb03e9b5af599c231bd4ffab3b54b3c14ace8e491477a1d8492b11e75c.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 7,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "58ce4b84bb945cb0d8f656dec349b8a8a67c623ceee912cae2fafd611e4c741e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 8,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "9f0bc56ebf00453d83c355c87d6b3b8866feceff80a10a010d43fb91756faf57.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 9,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "4ce17164a4a6d0929c73e4f8fd065f6ef4944f1a0d54882397c4915fc98cbce4.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 10,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "458075b598d236eee7bc5a46558523eea45f3798514c01023f74793a7c21b47d.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 11,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e0b2cbd095473958451ec4cdc8da54a34467afa46866f15b6eec701d16cbaf2b.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 12,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "1fa3ee9860fbec81aac28dff9ee3998d9a64a6b49a3a23d083bbc3109abe1347.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 13,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "4da2f51e7edd3c6e4fa5101e6c0a288f6156ae75382f78bbd055fbc47cc3e1f3.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 14,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "0c248c18415e98b35037a180d2cd1c01c4ade4224bded556841e2d9191688f2e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 15,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "39cea94fccf0618e363072a10bd18fb5759a28bd768a9517455086da246bcda0.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 16,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "d638fb6b8041fe6e8d7ac9ae784c75bdc60c856c865c7c72eb77c5defc3a5d48.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 17,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "85fc4339685a1b8a613701f78dffc0e9624afdb69c0efab951e0f5848905e5f2.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 18,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "4c271ff9362d10bd7d95cb13347b7c90c41847f6e6e6d7df9b3f734f99231430.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 19,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "62d87908d65a9b25c3b8c20e94ac2da110744f8f3d3ea2f3960d1c07740f3934.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 20,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "8ec9eef885f975338403e85013732a0fed18dddbb9843f0d726a6e13c5b928b5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 21,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "c0157435e46b6d3fc7b221c72a109aa64a357fd03894d00192b76b393389e167.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 22,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "92ac220ea1479dc85674e9cec80f00ef0b0ff320dcb593fdf7e10aaa5dc1afae.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 23,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "4c6beee962c7f5cb0b6442d1d2830df2e3414bd261af4a9a2db2a9a7fc60b151.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 24,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e41bb0b9ec134d06fb7f19419cbfa8797e4a864ab71c881dcc24b4d562c9a1de.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 25,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e5883bf70597003f8477116173dfdd4125ffd408ebd2a913afd0ddc1638259e1.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 26,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "81f6778147ab07e707536823295c64f56c5a3888146075ccf91d46b7bba467ca.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 27,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "6756f125f11cef2d5325ab09da2c315c8d97e8d9fd25140b486344852000c316.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 28,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "a79570bb20df34b91b5e358c2c8cdd519804bea72a040c7551af96dee05d8c0e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 29,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "312510fe025473322b660116d3d7c01571c8d0ad68df336f91be1c4cb25245ec.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 30,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "01a69d28ba6ba64bd250a61602ea98d7bb33f62a551871678160e5db41c2678c.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 31,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e5bb02950b092d768d1b37089bb1b20ed309ca87a5e8bfae36671124be947524.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 32,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "3c822d036c18b66c60d3adcc56789178c93c9008bdf8f2442f7d20316f7d207b.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 33,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "2a08e14a3222eb33b11e6e93a084bd0174c251145aeae5476c982df998062061.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 34,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "9bbf996cd02965ca2c13e5fec405846579a4c897c2b60fdc7491631acf89de66.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 35,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "a128e85d0a617b6d9bd9b301ae9674ae622f3dbfb83744f078a48b513c7dc20f.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 36,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "358390b4fa3180579dcaf34f2ea925d1cec936dfc11c07ea42d79ea0986899ad.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 37,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "358ff77d8b0eba8b027d23fef61a544eb53f4633ed13388f9167ab265795a471.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 38,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "c0a53485b4e9ac3b6c91263fa31d2ed18593367088162b5eab3258a1a9808ac5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 39,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "44571e19b3d8db98c4e31981d2472b833951e4139a16b22b213d63d238d8ea2e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 40,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "06bf0156ac0f829200a5635879e6b9a76e782634639334653d3a78ccc315d7e8.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 41,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "5d4519dad16ddfdd5d4dd3652366afc649cb231e041ea4d440faf82f02d4d081.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 42,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "a947d94c6da587195956fdc24afc5f0167c6066663e17d6b97806a458437eba3.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 43,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "36604f362919f7dcd0729bdabea5d98527fdac1fccae87fecc0975ae606cc3ad.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 44,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e2b7a5eb9aaccf73de2b5e370a533cc4c7817959a73ac971c61fdf3dc0a19b13.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 45,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "478299a294e2a82c2a91cb8b5ce0e32e7206730431024bcd5d027c8235f15c91.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 46,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "ecedc2383eebc1bfa022caed9a5fb3dfce7ddccf190b8d762c9d1fde965d1afb.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 47,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "1b8c655095364c63354894d65b1af15d6ced3ae96f6755cad7070e2e83b2cecf.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 48,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "bd9d1093ce6144ba79bb19aaee75246925671e79196159dbe543d93a05fc09b4.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 49,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "4d28748b0db98109697b1d0c10541d2d01c83fe0850d31d86b38960ce2b72a8c.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 50,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "00f7b10b85653572bca78d79b3a50934b2fb36fd20f8f01766bfc748e79537a0.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 51,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "7f6fa3352e072c5090ca6cafc3433e0f6f3cfd0a790546b651cf56c85cd74598.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 52,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "68b7bf53a20e10226ad18268f0b3efbadc5e46d795f0b7dfa8bbac63afa5ebef.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 53,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "3637252a9543e3fa5f82f40aba27d4d7860ff7e4460a677d7aa0c0a845317127.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 54,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "1ff9a4f309535818ccb0664bad2889caca837a1ea44eaed65776de93cb1699fa.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 55,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "c85d2730eb59852e9d755f11551c61738c99f2abb7a6ee9a7d5614025f369d89.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 56,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "9ee8cc83a98f08d764e1b9d4f55488c6fef804511275070a1f2b3e8411c04a5f.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 57,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "56bd07aa9ff3b7b218d26d8c8345498a3681cf70a8db1e4a8adb3fba7d2be1f8.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 58,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "f5a93aa8262e26a5535f95a601c6a4aca57967ca99265df16fe6d209e5f0607c.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 59,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "b289cd77fe777b7dcc0d37c8189c0666f9be862004b5c9360f001b7926786b93.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 60,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "50f80006df504ef024ceb9c582cf98a1c9731e7a9f7e9a7950c0cf5bb90fb109.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 61,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "68acd3772db7e8d2dd7d437a2b319718c08f249c6d49784b68a8a4afc705b62c.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 62,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "2806bef07d3ca9d219dc274c29de2bff75c38289c52e54c5dea7a2db852bb50e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 63,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "bd8ca8d3f734189e18e96a5ad8c0db4d50a2bb837219e7f7ea147884cf4a3ef5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 64,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "5f92355e73de6e8ee621486db6fffed8b1dd08feebc113838ca30e6cbcbc7fae.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 65,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "8b85e4b2c2c0c0c8fb643137e34899380900d26a233c442c56d21910579699aa.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 66,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "b9bc63b54a0b333401a718e19efea1e9826464726615164c862b289cec2e4730.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 67,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "26764c8970c922911fa848a205d965816fc30694bcfb92b7578c9c54817096c9.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 68,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "70a03ad8701617cab58ab6c5a5a2d89528f8a65489f53a2d1d96ec5bf24a5c02.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 69,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "2af2797eeab4753417df084e92e9e31af4fccbe2720da8d03b5fee2cc0bbffa1.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 70,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "91e2892f5fd5dd274c650b49342a86abd94f293bbcfb4b1a5dbd3d079ad4f920.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 71,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "fd463723cfbb9b5993c3bb7923c105dab80bd94d19217c41a31b228dce7efb51.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 72,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "e85672dbe3d2c4273e2a735dcd0b88cc7f3e447ab088db4054283da64f9e38a9.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 73,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "5e10d53c2ae6e2ddb42b056e8ccaa43a63d38c9d60ed1122de84930ea0a5df4a.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 74,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "5efb3d2d9cbd6881897ba721efc76448c2dfa9bfba67c793e2c26ed882774dfb.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 75,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "a5a705b568e82a14649fc7bb1e505690eaa75d1cdc3c2b0a8f6c9dafd04cf3a5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 76,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "29c2f9e7f55fa4f99e5474bf8ea17bd3c40dca16726351d9d56a9de34aff1aa9.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 77,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "de496d50ea2d7b3f5128497387f4a5972664a6edcbe56c5768bdf9ee7d50f251.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 78,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "8f1e53b344137002c94733dfee3c465d06ba042fea08dc00f5e8060e0489341f.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 79,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "077e7d840b3dcd2bc4e444122e318fae0a829e0935e7854e59d6835411e997ad.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 80,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "adb8c2809e629d91a2bb44f5e0ef3962af2f526d958cf042d917381ccc93bddc.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 81,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "6f96e109e6099ff748637d02586b683954a538f758f67daa5c723f9245831cd8.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 82,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "86565232c8523411b1c66de8af51edcb06b8115839a5dc1790cfe5a6e926a89a.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 83,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "86a8c84c3de12e2375d5293edb0862cf74f9d42715dc1c00582c84c13c491327.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 84,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "d6e8bd302a31cad85c8ab016ed6b0aa963b92c869e0dab584fb7cac74be0b963.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 85,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "df33455c51a9941b92f971e8762ad5369fda9983762525d63eebc1a2abd0e081.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 86,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "9abf5930fdd104ffd790e4004b3b4bcc02c70781b1d6f75433447a63fd701b5b.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 87,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "0c75d59db02272ece4c1121d286674ab20cd9d7cffb36a19a4725a74129ad8f5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 88,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "ca4b0c68e3e0d946e441ffcff064365beb2afe82a51726f059699b45adad114d.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 89,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "63f4d53beeffc1c29e3332700582efb6f4f3351de7e46979d51e24e59ac5aa46.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 90,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "29d12e1a12777278088908acd0f30c008ed84ff8d2d41ce0e2b59b22540d8179.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 91,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "b184c168b1a53e725360cb0e09f2f6057d7948b81d5d432c255e273917a851e5.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 92,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "06e5230e59dbaf44e0610d45c95ae23dd6929111c8586db870fa4bedd6c3e5cf.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 93,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "15e4bfd800edca2d73f267c34cceaabb076a44b1290200e7a28f14bc0cc3497b.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 94,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "0d33c0a5ab2123c5392723ea90a506d98b94b1e5cb44996dfdf95cdf22d3500e.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 95,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "6f30bab66157e97ebfc9f33f40861f05931a899a0ca95926d4970b3476bf4587.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 96,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "48d6b331c5027cff789cd644dcc3e8b40cc0395fd4fdea5c4c7f70e8bfc7264f.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 97,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "6f622d12a7a540e3c3b1ec3f893c52b1e83782894c11bc4df7c332db3ea3f1a6.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 98,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "803692c14efbda128994cbc4df690b869c9a3b160d646aa0c733d00be3117eee.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 99,
+      "round": 0,
+      "command": "discovery.start",
+      "parameters": {
+        "graphId": "omerta.coordination.furnace-archive",
+        "expectedContentHash": "a4f9258aff5d9b1c82ae3bb01dad146953f3a248b2de50d452d375f107ce558e"
+      },
+      "executionId": "abbfe963100deacbe70c28a57a12b0230cf49db8231ef983e35251f229ec6aa8.26caa6fc5f9710db9bafcfff00295d50a7d7770ce975f8b09a4a31b9722aef89",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 0,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "687db24b-7830-4737-94a6-177eab863116",
+        "actionId": "coord_5be5c68371c13d835283e498c585eca6128b5a2d8527c053cafa781ff6c8276d",
+        "expectedRevision": 0
+      },
+      "executionId": "92c21413abb210afe450b52f747551660186d611385d4a6574e05111349f4326.8ef14809336fc3217c9a6a88cd42fc0bd8f4cc29c6d5c7e639e53db974e10960",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 1,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e9e102e3-70b6-433e-b72f-f87732b98fbb",
+        "actionId": "coord_2fabc99d1e47e2de44a9271aed2ab9fe465d382015833d9abe5bc96b151877b7",
+        "expectedRevision": 0
+      },
+      "executionId": "552282b7b93ff38b79d3594dd7aa04388cb5670de7a94b946ef0c0ea44633a33.3a6e2a8bdbd9f5cd55f73a011d2baa24485ba6b56cbfe7d5156dce61d7d20b95",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 2,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "0695416d-8e7c-4552-9584-63db6c4b298a",
+        "actionId": "coord_8062cda0902aecc42902fd0f86374de0931c4433e34baa12ad27ceb65dfbac6a",
+        "expectedRevision": 0
+      },
+      "executionId": "6c4dc5b35c96c97127a3147415116bc06e697cf7c42fd0dc9a184394044a7256.ea8a9c48789f77963c59d07f2133c247193acdf72eed536f96d9ba44b77637bf",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 3,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "327481a1-f756-439f-8d17-907253c9ccb6",
+        "actionId": "coord_bfd97ad90b386cc903b43fd9291a27091b245cb0b4d3a8a58984c50d1caba47a",
+        "expectedRevision": 0
+      },
+      "executionId": "e50fd27e3415914f3da0c28d0c6144f7c9e71c0e8e36c3bef40c595ea031a0c6.fb98ae452f67e7f5ef356bc4ba6850780e89be99f7d0240bd35fe6d391512cd5",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 4,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "b9c24290-dad9-4d06-9a6f-bea5a7e234b1",
+        "actionId": "coord_ea2d99350f3c511920fa1e28b058a873ac2f4b2f3856c16733823a1eddc74c57",
+        "expectedRevision": 0
+      },
+      "executionId": "62c24fcf70b82c3de0c598c042800cfe3ebfa5485cb274ec394ec62b1036dd5c.3027f7c47efdcc0faf32ce193ab09385bcea592558e71e4f8e6f9ee2ec2af013",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 5,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "016235c8-d432-45ac-b553-24d668d7aede",
+        "actionId": "coord_4e15fee0cde29842dbaea2e05c1e2e29a7c5a804eaa1036e087f69e72435b469",
+        "expectedRevision": 0
+      },
+      "executionId": "c091d9b270e712be4327ff7d50393f7c86611fbd78d37df0b3839517d87ff152.3e670d9afaecef7246bbc97195f0b61fcf07058f4241a2951bbcd94607b1b2d3",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 6,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "668d71b8-af71-4681-8d73-0141f2788943",
+        "actionId": "coord_446cd6f2c975379c13a98b64832bc9bc002b1b9d88fd5c629f9606ed1f40bd17",
+        "expectedRevision": 0
+      },
+      "executionId": "06d76984506ffd76201d4dd05b50dbe1e7c78e306aa6cdf1c26c2de5b45d3c6f.b5548fa6889a64d4d44974d4896c6d56d9eed543e4718ad5d1fa481019ad5595",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 7,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "c36c22fd-9e81-434a-b1e4-012d08999482",
+        "actionId": "coord_bea53065cbd2c5690890ee116d9937f4c1e98a44d550012109868251d1d4a4ed",
+        "expectedRevision": 0
+      },
+      "executionId": "7e5af91f9cda4397ffe5277cda5097548352d55ee926d6fffdf5dbb9b0e4cbc4.cfdd723e2dcad7189bd13f25e9aeb823ab220e7b4d9c2ce707419930b103fef3",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 8,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "658f269b-f751-44d5-a8b8-6c1db47a3603",
+        "actionId": "coord_4e2dc2ff6b9b82b50b7f2e496c4420e485e4101a81d6dc4fa6e80fa113d1c1b1",
+        "expectedRevision": 0
+      },
+      "executionId": "e9b005c7e7eea5177a15bdd06d359604dae3bd4fe1d1f7f4fdf85dcb86b995d3.765f4362b4331463eeda3d6674eff04d2d201f28aefe808c458a5aefb69546d1",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 9,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "0ad4bc48-ebb6-488d-92ac-5807671be85e",
+        "actionId": "coord_f6916f046cd6e11d96c532c1d8ace48107dc7cb330295bcb940c657e044735aa",
+        "expectedRevision": 0
+      },
+      "executionId": "9091f4e2ffa114a1d57a3f3b8cee34495adc3e8fc9ac8bd2f39c2e319cc243aa.c791a2e6d3fb0b69dc8a73fe5feebc601a99d440ca5e07c5809a1d6d09bdc43d",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 10,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "ecc5f8fa-fb68-4e4a-b0ff-d0915fc416d2",
+        "actionId": "coord_95e7f6bf1b76fa8c677120aa8af8f2366833a755055933cb9b5c8229b33b5d66",
+        "expectedRevision": 0
+      },
+      "executionId": "e3719752b472bde7f5d36a929524907e8744782d84b4634d73e9a2fcb1f313ee.e951a43496e10490d4b5cf9db933a5f00fe24c8b90e0c530b79df73089f6561b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 11,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "889e80e0-8930-4a7d-ab92-40a8850fa5bf",
+        "actionId": "coord_5c32281f1a96b4fe5bbe0c85157fc534b9ca7bd797032210158b35f0ec97fce8",
+        "expectedRevision": 0
+      },
+      "executionId": "81d6e1872c1a9a15e016374f78469161026d0ba68c238029ff50c1ae37f55534.ac80a766aec24760d58d045cd6140c2c1ee29a15ef46a1d164c362c4dfdd0ede",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 12,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "cdf43887-791d-416a-8cc4-8238750a1481",
+        "actionId": "coord_99eed5c3c86c2240a596834f2ab1d2b57e0f1c7175c5d6ae6c3eca620cdfa0be",
+        "expectedRevision": 0
+      },
+      "executionId": "ab4c40e242998e60025e0a44d8a065d9437c33271855c33a27d17783d27e97ac.fa419cb6d93e7fad6a4d245ae197848aa3a187cefe7636a171c5f83176350136",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 13,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "481a2e10-5e47-464a-b27e-7a1400be1faf",
+        "actionId": "coord_469a605cb0270c4e06f19924ad1fc7824233842d23ce03d4e693b8b82d64f524",
+        "expectedRevision": 0
+      },
+      "executionId": "7c1aa2cb0fb788197b93e16d9a131250e2e3369d31a691c94c21ec3984fd848b.eb942b8044c5df1cd9968c380108c8c3fd879c158a79964e0dff75a6744010e3",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 14,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "31629cd7-ecd9-43c1-8581-6d496dcd0afd",
+        "actionId": "coord_6b4c3baa24bb165758230a71bde77588839fa774aadc4f17a0bec67d73d0dd9a",
+        "expectedRevision": 0
+      },
+      "executionId": "ca227f5e311f1fe2f5f486323d785238db0656bd6fd4f3ed6174582ab8ae4800.9d4821159112f955b54fe3aebd01b8d2cfc14c432bd5e4ec5f8726f53ff7c420",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 15,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "99dcfb81-dade-4770-84a7-bd1228304b86",
+        "actionId": "coord_cf1bf3c16927c8a659cb46743b2a1b4c36cb75247b76e20f0bb3549cffde4f44",
+        "expectedRevision": 0
+      },
+      "executionId": "dcf047e2050f7449297bdf168a6e4f9f2f8784706d7db78aeeeddcda59addab6.062b275035e58280c929ea179d0368f4bdbda0f3e935303783abf4de22b1d0f0",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 16,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "254cbcab-4cc8-4272-80bf-13c31299137a",
+        "actionId": "coord_e610b55a9f1eaec021278a3e685564eb6538c45c99032cbfeb816c698341fe38",
+        "expectedRevision": 0
+      },
+      "executionId": "f69b622012c4e9bba9c2d34799849984328449eb240be8b61c221075bec0f04f.7cd5c8b9a9e0862432ea3387b530d982ac7e7eea5ac50e3e91a03c50c12580b8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 17,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1097dd7d-af2a-4375-bbd2-5c3f61006a88",
+        "actionId": "coord_a992dc6f7dbc142b24679f85750ab233670e37af819e1b5736063a3811cae949",
+        "expectedRevision": 0
+      },
+      "executionId": "a491ed9f2bae9de7c90029d227bc71ee5241b575fdb099ca169055f3cbba786e.3d5af768a87f4172e71cb3b87518934a395c0d5eff55de021c34ad14771f4534",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 18,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "94342ef6-e9f8-4642-86fd-c3e557a344ce",
+        "actionId": "coord_8745970f71c35cfdbbf9fddb5b6016859f409df449c8d1f0ac1c9f05d9465a50",
+        "expectedRevision": 0
+      },
+      "executionId": "56000ff4e30833b7e660a364a459f3a72c25a5a87fbc0d4f1583b1a8f257199b.c738e8721a98079268cdb2243b931e1cf85f04f493bcb9b504d24874a4949407",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 19,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "5c5eae5a-598d-4b55-8bbb-51a4e0fb2636",
+        "actionId": "coord_bcfb3dc922e11deccfdc69851b54ecbdb4b0ac65aca1685e024b47560fbf82b0",
+        "expectedRevision": 0
+      },
+      "executionId": "c9b717fd6721aa4d5bc4a4defbf98a416efa63d5e628bdbd15cacfc74ced5619.d1b45952b838efc664382fdeb0148f6811b49728237af4492e9cbf8e1114c206",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 20,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e8e3240e-1e85-4037-9570-23a5799572b3",
+        "actionId": "coord_aa88352cb3b96e849a09c5b90bb83193eed790c612b0d07d691987b4e506f246",
+        "expectedRevision": 0
+      },
+      "executionId": "8906a0236ec29fd3b0c50366d0d4ecfd234bf1f82bb33a5574d083cd48ab86f6.bcc0ce33d965aca9b54863e1c73840e7fcbefdd395c70f170deb9fd944295a39",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 21,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "7c3645ff-8f40-4919-9ded-97373af3edd0",
+        "actionId": "coord_592674e7d9c033b42ed2bf80c610d3147d082807fa84f9fd553ff650b92573f2",
+        "expectedRevision": 0
+      },
+      "executionId": "b95691008b5b29186d20f292558c5995925fe1391f54825953377c6d2a024728.e9ca2b6d50f9f74494c1a5f0c8940dca70722e82491d142bcce4d96e4d2d5423",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 22,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "9ed61444-9687-4f49-adfe-8e261729231f",
+        "actionId": "coord_32b5413a46cee75018790642227b997e2e48094bcbd3e825935e436cb530c78c",
+        "expectedRevision": 0
+      },
+      "executionId": "949d4e33323a7e5c08dbcfbcd9f8f772d272789ebd4514d6edafe65830b64868.560e964cb6c4bc0feb6f66fdaf48bf89d3c04a1575e79c4aff05ae07ca818a3a",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 23,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "2ab9996e-9ca9-42a9-aa08-5152cdc28e52",
+        "actionId": "coord_b1f05b8ed77df6b7111b9c08ea25104dae5e4c43a8b66e91eb0ff6ce25352f61",
+        "expectedRevision": 0
+      },
+      "executionId": "2340bdd75c642a38256de4890398238701904a2d53bc6900c2a53d232e5b6eb2.df241d0e29c0f16752e54518ca5bb53aef10444a4739f688387407d879789ef8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 24,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "9ebfbdca-4dac-4fa9-ad8b-5679544c8133",
+        "actionId": "coord_b9d3bdf22545612528e8190073e0a1ef3395702442785f823d43e7304a35ab27",
+        "expectedRevision": 0
+      },
+      "executionId": "dc7435a9eaebccdae56d75d88cd38d675b211268ae7900af472797efc7ab4f3f.1cfba5c6fa60eae1f9fa822ae1bfc70bb48acbe7d35b37530aefb3a9fcf630e9",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 25,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "18390d3e-eb11-4045-884e-74883dbb8024",
+        "actionId": "coord_961c9e7530d1ee8208217cc90efeb474f3b5de42a5a722eafcc6e79d03944ec3",
+        "expectedRevision": 0
+      },
+      "executionId": "0c8ef0d729bb81ad3d01a256f2679a9ceb8a229281a14d0820d356222b40c397.5eabc0508f0dc4a93844ab3954676f05f0c94f6b835520e0d14929efb1d444fe",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 26,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "fb380536-87ca-4580-aa7b-8f7af8634629",
+        "actionId": "coord_77125f322fad185ee09ec3eecdee78d0bbfa13282c9994c399caa821c7719c28",
+        "expectedRevision": 0
+      },
+      "executionId": "0d6790962f6647843ebc08597ca797c03b373a7d17537360d845965aee7c3db2.e2de15b212944ddd63b996626efc376f01ec19196fa1af23106302ecc3b25365",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 27,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "77ecb8aa-af40-4fb2-9835-c96b302eeb8f",
+        "actionId": "coord_75c61bcc354d1dcddec48ecd317eafa241a1ec46631596d66ed4b1a5eff08a71",
+        "expectedRevision": 0
+      },
+      "executionId": "9c74eff5d535cfb8f21db8840c905eb1401e54b978ee85576ea3c4eca2249f4e.c2675c1a5ab167f812f8e1feccff31bb0e0cb14822a15742e678deb5e626292d",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 28,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d1cdce71-31ed-480c-9d55-a7a7f61fc898",
+        "actionId": "coord_401fe0d3518166f737912d41da8ea7d71b0c3afb6a75b69ee931f1519d3f2616",
+        "expectedRevision": 0
+      },
+      "executionId": "cdc6db96e5ac357e9c94afdec0d7c2e50a460a549bbd937cff9b671f2f5371d1.d33f789ac95ae73ccea6e2215354703190beaac3d5bb0b62c8f38e664e0a79d8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 29,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "cefb940b-9f9a-4f4e-8e60-d97f4facd7e1",
+        "actionId": "coord_8caec556c4960f5e62945ec537fbaec14876b4200ff966e76148da5fd1f10a8e",
+        "expectedRevision": 0
+      },
+      "executionId": "1f5f0f868b284b625f5fb4e16c146d6463bc8881fb16e0d2e1b6b4c2aa6bba91.e253d74f460627f6e9b12de2cd5c3ad1831f568d78ca2b961a68b240ecef817b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 30,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "c3ecd4d9-3966-47c4-b404-e38ca75ea9d9",
+        "actionId": "coord_302692f2bbc686261129a8e21ceba2b1175217d64cf750f5f234e8c31fcdfb2c",
+        "expectedRevision": 0
+      },
+      "executionId": "4f43fa17d44c1892aeb8356299350607bab8ef91d2b3333f9d1dc40b13e87d9f.d0e5c5277538755fc5da19657abc027eb04ef9198a24abad06336911cf0fa1f1",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 31,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d259fbb4-ad0a-4f92-aad7-94f2a3f60849",
+        "actionId": "coord_7dbb9acab781a9ced128f60c20786f81c4d8e92a78b176e2e6621cdc2914b531",
+        "expectedRevision": 0
+      },
+      "executionId": "b4932274ba3d8a2d3d8670c5380ef28c4161ff7b3ad3523aa4e7e81e85290d71.d3d54bf7e8ff3856cc1f1b2805c54764d3442bcc515716294e8f3571c0346991",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 32,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "00c493bc-2a00-4e52-82ad-0644422a3399",
+        "actionId": "coord_86c491e1b5d721e2e638f720d8d039a588f02910867c86db8991f076cd77e063",
+        "expectedRevision": 0
+      },
+      "executionId": "f341b7494660477ebd4d9690e0c6b0eaf5b35ef2acb0c307adb24f271d13d8d8.141087b80adc2b4f85c7101280e06b9e0d624084d8f18e20549ea965e1c5983d",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 33,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "7413fba7-643b-43c1-9904-b4d0ead9a996",
+        "actionId": "coord_39dd47d961ba5060930eec5251b7b44c8f0735e5838561a60c46e4b4ab89e491",
+        "expectedRevision": 0
+      },
+      "executionId": "3436cf54c8bd436c497108f94b6f3302caf792b5fee3b7117397b554414d0fd0.85027d4032035916731719ede660e2fc8ea7c0c1c1ba7c7b911a3637777fb0ca",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 34,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e5bbe429-da87-4900-a631-c91556587d24",
+        "actionId": "coord_db0ea74bd7e118990c9789ff02aef3aaf5e2e841ca95930208f3ae75f0ad0889",
+        "expectedRevision": 0
+      },
+      "executionId": "ef9d447a9bfad4b1dc1eb37e76a68a08b8f2b17cce0c52a93dbc81324bb58d87.f9fdfeb238adf5db0500ddb19285483219834b197a34e951c2eb559b02b9893e",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 35,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "a5658e10-54cd-4800-a44c-b5437e5d020b",
+        "actionId": "coord_06c5cb84ea7ff924a7ccde7d1b563e2bcc636ee6187384653aad471d7449cdf3",
+        "expectedRevision": 0
+      },
+      "executionId": "64144a8ab0eba739471336500d0c153f747d148676b2f59241416065bdecb951.209d9afaa33ebcddc1128f2ce67a0cceb2f6c50cf067d219c4e6ad8888a91fef",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 36,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "32bf7d65-ead0-42f8-8261-7bf8bf322e15",
+        "actionId": "coord_30bbd7496187130518720888cebe217ef343149d89c92bb60e75e1385a0d60d7",
+        "expectedRevision": 0
+      },
+      "executionId": "d42ccf7b319282e9994d25d7b37eb85fc07ab42080f430b76e75afae12661761.6bb706821eb94d313b1bc67cf9adfc8e3b9f79cac1d221cf8bc2961955c64177",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 37,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "f7f8a88b-d8c2-4097-820d-737ae9537fed",
+        "actionId": "coord_29ac2754201a0d1121e2c3a2cff296a44b4db1dc44b57e011185880623eb1d57",
+        "expectedRevision": 0
+      },
+      "executionId": "e3f7ad46d2c8aa2f210436bda5c61c88f051162088c5a8dbeae4dab725368594.765a5d6a110034cc0826e7f7414bc17bcf2622cb9e742c4851f959fabf5ca374",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 38,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "f146ba52-5959-4e5d-b65d-d957a5bdaa27",
+        "actionId": "coord_f00e69ecbc09a1139b4ff7989af843ba65c3c5ccd7c42029ff4ef6badffd294e",
+        "expectedRevision": 0
+      },
+      "executionId": "f6896cee2566e8e18e79484bf6ba72e4bd2a8fbbd8aa270730e3e01b72d5554e.41c021c15b2a0f1500e60f3ab28dfd2ab929486c9fe9754e242a75d029f770b6",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 39,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "104cf8b1-d147-4839-881b-6c7e0e40e30a",
+        "actionId": "coord_8e391a6dc0295a84ffc3041543ff7cb76fb95de2f2524173023b26a4f3a37ba6",
+        "expectedRevision": 0
+      },
+      "executionId": "0a45799561f3c0ff954bfde2412894ec71347f763aaf22630bc90866ffdd464b.17c666c41fa6c3f133fe16b6fb79f21b6d2006733c885834cea048e94827f1a7",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 40,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "86f6324a-dfbf-4996-9224-3fef1d8bbf54",
+        "actionId": "coord_9bd7e3ba376052cbd4d3bcff19b1b63832ada4be1a2c6c390f22d4cc4de9e682",
+        "expectedRevision": 0
+      },
+      "executionId": "331aa881078e7a47e6b364dc64b4e303758f68f9506fff62340957c4d8099b2c.6aeeaa58cf5720dd5b620407e88e611daea10e5bd0f8bbbccc89ab7f809fcfeb",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 41,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "09565422-13ed-4135-b59b-0e59d09ec608",
+        "actionId": "coord_8bdeda4be506c4005b218ff28c0678e70fe28e1a0ed52b4adab8e6bb6a78df8e",
+        "expectedRevision": 0
+      },
+      "executionId": "af074040eade149c6863b93a52f9c2865482914d16c0de88dd4c6c15bccade39.94021ac8ca0d1e77cb40c379de3133b4d64d66de6397660d5f9fccad63632675",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 42,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "790a3d28-041f-403a-bd26-a4229bf00ca5",
+        "actionId": "coord_090b7fdd9a88e682b1e6082c5a4506ccfb342b46b86bc79f48b6d6175e287a29",
+        "expectedRevision": 0
+      },
+      "executionId": "9bc3ee8117b3a617f36bb99da626ce027d86f597866f398ef6d3e4269ed5fefd.3b3d2f5493c71435a88d7a4f791921a8f76e8b674d4c1c5845cf7abea2c9762b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 43,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "917a0fef-af05-4b8d-b376-c965149fbae9",
+        "actionId": "coord_eca1e5e390e4a72d28742d5bf1c79a4d908a493ca2143c47558492a9e7edd462",
+        "expectedRevision": 0
+      },
+      "executionId": "7612de816e0cb6493069d873d8852dcd8c614a272e33df862ec85f93af72c374.bd3064a02c88961b977ca135e33f8d358f49108f4096588b40361b30ecfca3b7",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 44,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "b7318de2-d41e-42f8-8c2a-13dad16edaf6",
+        "actionId": "coord_cdf9531bb386bb35987d387d788c2f2bf291c5c0e216074eda0390278cad395b",
+        "expectedRevision": 0
+      },
+      "executionId": "186ec4af2bdbc263a1c7708d9df00d4015c4d890dae3f37572fa377cbcb5fae6.c4c5dd5b66003bc263e670124990802055ef6f2f517fd82c6d91e546f79e9281",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 45,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "0bf9e217-9d3f-4458-b7be-d7df513c3ecc",
+        "actionId": "coord_675df61eb7aa69ee92e0cec39ac71b240e9b6ff3de04bdbaeb1840dd0ebd0912",
+        "expectedRevision": 0
+      },
+      "executionId": "14c9f8142743f9330ba0e053fc17ce3b657148311ebd7e872ad4a2f01de43dc8.0e1a8790cd8588761f1409698117a2c58aed8b2b41c667b9c6d1f02159ccb640",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 46,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "09586d5a-49a1-4229-9080-5a6da224629d",
+        "actionId": "coord_040f44fc2baccd2602d12cc72a884f498e1f152923213ed5953e0299443bf8d2",
+        "expectedRevision": 0
+      },
+      "executionId": "9ab82a883a49080b41c3379ed535c613e5f57ae81b02b05f77e60bf7ec95cb2f.ed0c3901b4834ef28dff82654d76f0eb758cdb03119aa86b9f404bfc61a03bb1",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 47,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "f5cbe554-6e95-454e-a54e-a533faddadf3",
+        "actionId": "coord_609c01757eb56a23bf8f006705439e50a6b25d6a11ac81e88a29ecff4f86188b",
+        "expectedRevision": 0
+      },
+      "executionId": "cd0aac8ebf4074b3b17fe014125f0c6422111e30f0998597400f9ead483e552c.bda999a039ea6447aaaa393725214fc771b89327bd998966cf6e3282dadf2da1",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 48,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "25ae053e-f8ee-4c12-8a2e-c10de9cc9994",
+        "actionId": "coord_b435f05a2b56cc35fa33f5d256c0f0e8391060824a1cc4bfb9e2226c8946743d",
+        "expectedRevision": 0
+      },
+      "executionId": "67a122792fdde3cac54073cc82613edfc043560c539f606e5194e6345f90fd22.9e1f10377021c6c3d266e4bd553c6a0b016d7b21bb96dd500e628152d8d4d11f",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 49,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "2f233738-0196-4cdf-b479-bce93ccab27e",
+        "actionId": "coord_9f9b0819da1d844c3b32b15dc47394eeab4147a3d13152deb120018d3442b508",
+        "expectedRevision": 0
+      },
+      "executionId": "aab99634e05c83fa12a38825350336916f9131d005e7912f3c3290ef3da7f813.6897bf5b67177034cab79c030cf6551aab072374b2851c549fcd7370599ddd2b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 50,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "b216b4f2-2108-43c4-8509-47633051d69b",
+        "actionId": "coord_73e88bf13dc33d5eadae529d41613e570d354a42d7bcb821ddd86cdf12c09b8b",
+        "expectedRevision": 0
+      },
+      "executionId": "800930cf520b17eef7b5ed113d33701e700f4819231c73eb8a1423ba540487f2.cd5cf1998195456ec6ffbcc2db944caeb157bf2ab1a9dbfba9926ad75a474d23",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 51,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "89a7250d-2180-4da2-bf47-7713b2165f5e",
+        "actionId": "coord_91d6b4234837701b9edcf6e9c08c8a015ee5ab8fbc364ee7a5311697a305790a",
+        "expectedRevision": 0
+      },
+      "executionId": "8179468142c2d933dc6cbcdea4dce4282f3f6e04b0ae637054737d3210c2eb2e.a0d00fccba773bab909d4b4e3f21e52f4c470f51b26d362484c761d96e590780",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 52,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "94f047a6-2989-402a-90bb-1dc9d8a633ae",
+        "actionId": "coord_6814dea37e557bdc06eea6951fd56e6f8e45d72687fdd1c1628655aab7df5bea",
+        "expectedRevision": 0
+      },
+      "executionId": "f10835ea589072aedd559a0df079e32b5bf506b8f86c8aac4742d1bd36aac2d8.72becf96477ac5ca89d830746d3281eeaaa517edd410d00367f55d4457cbe5e8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 53,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "cb973724-ed65-44d9-9008-7241e39e67e6",
+        "actionId": "coord_b42c75b014b183f723beb85fd934196a16a997ed306cbed58ab3b0a5ce2724ce",
+        "expectedRevision": 0
+      },
+      "executionId": "60f79aeac21cc0661d1418d75947ca3ce2687d78ddb72556848e4f9e57824600.322b702ab0091ca008a70285eeab1caff40b74cfe98445a9e08b3c15a29403ee",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 54,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "8002a162-1376-4b3b-b527-2df23232ccb2",
+        "actionId": "coord_a2380c555784efad2dcd51d63e9115feacbc75430aeb763ab8b1bfbb3fdf109e",
+        "expectedRevision": 0
+      },
+      "executionId": "24887280f33c13ccb3cd197ce5980ec6b7d5780fc8ddaec3c0717c035c85deed.83fcaf37c9f39f50088347b65ff0b8f1e20b31cb192f4c645491ae96a45a0c26",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 55,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "a8d608e8-1f37-4b3f-968c-fcea03b43e30",
+        "actionId": "coord_dc5789582722f097ccac2dc3128e6eb9d407cf7922b807f81df032add7bc324b",
+        "expectedRevision": 0
+      },
+      "executionId": "cfbebb479e010ef89513b65598fbf3fb63168172a79abdfeb82e6e48bcadd03d.e10ca742e0ff1a9ed66e69a98911f6a434990128f5205d6437fa90ffa0cf72c4",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 56,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1c23df8c-fb6c-4ca3-8418-0aca7c3c4b73",
+        "actionId": "coord_aa8f511b7fe7d24459676cbd984454418b7d7b5a1b066a3cc5b854ee419b8f75",
+        "expectedRevision": 0
+      },
+      "executionId": "b5e15432d7a3f054b54ad6e8103c162abcf6dede4e5f15151c1d322320a27a7e.ce22bfe0e80399dd46e8076c4273ae6ac22238a44894788e59b89381a0a519c5",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 57,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "3b1e2b6e-17f9-49ad-9231-061b4ad359cc",
+        "actionId": "coord_c352f9563fa57a5504eed94c0bd635597f1a1c266589f3a71b009bafdc7c1e6a",
+        "expectedRevision": 0
+      },
+      "executionId": "c0b8f128f6643c060912e279daa42f90e4f84deadef454930d37069a293ff1bd.4954f887adda6ad1d33fd01c9945543c1e8d8e4488061a983c7951a3b1da6cc9",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 58,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "5e091945-ff43-4cc1-8dd7-6631b4d4ce54",
+        "actionId": "coord_0a5d49af2fb92bfac220a81697396e5214602d346278ece4aa7b0aca97292dbf",
+        "expectedRevision": 0
+      },
+      "executionId": "801029a8b8ac007eb57c3e6edb862bffd0c65f1a797f3295fb19ed8d4be5198b.5181270abc48e219fd9df667b6b6ca2c402550b7e938114e6e7025b6e5a2128f",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 59,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "0ff1298d-1d4d-4ea6-9776-aa384f7ca592",
+        "actionId": "coord_a680e364fab4ccdb896161c0ec323fa125739a44c2158aba9281b5fdd702d520",
+        "expectedRevision": 0
+      },
+      "executionId": "5dbeba8b87c3476812dadb263a0279798beffce6e86ecb4244d29e53a1d1dce5.ddcada1c40f1c309c6c0a7c9d9ba2c7155f6e01ff00c65b73c43a3fb6640e111",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 60,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "4fb457cd-12ad-4bba-bf6e-9e9851c93238",
+        "actionId": "coord_8c0f56680853518c1791f065e175211dea130e4fbab4ad092fb753e8f3d0df14",
+        "expectedRevision": 0
+      },
+      "executionId": "d2782705db255e1fa2233a66c527de47943138bc88b2dcbfd9cbba63f878b7bf.dc6de720f47cf0ee8fe020dae3a850881def156db0fd9351b41fc3300ec2bb56",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 61,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "eef6c6b0-6c6e-4343-a9e8-1ddbd0ba2431",
+        "actionId": "coord_1bad26d1b97ace4e8e8d8d7e065831b23f24911f6d59ccb834a15a54c7aae6d1",
+        "expectedRevision": 0
+      },
+      "executionId": "cc0962dd0d7d75dbff2f3ce804f09a0af93c1808c9e8eb3c870cfd5ffeeabd34.ee88de82d6f6e4a50769bb7273483b7229f31d573d5632271bb52f92454dc38b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 62,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "a08f4945-d5bb-4423-a48b-f6dec778b5b7",
+        "actionId": "coord_30013eeb0693a3ce2bd0f0146fd511c782a1c623e06c6f052e8e3d5a14968d90",
+        "expectedRevision": 0
+      },
+      "executionId": "a294566d7207b600d5a85817eb6b429e2eda8666dba4f79307b21305a4dd0703.2368eb910ea7cb4b9389ad6d89e509cf26d23c2bb36f4a873d623e9d6eb22f5d",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 63,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "694d2ab9-4b87-4a55-a415-bebd119ad5ea",
+        "actionId": "coord_a4552c499c00b911d13404930bc1324663bab7e15d4b20be0469a3bc0977a440",
+        "expectedRevision": 0
+      },
+      "executionId": "300dddccbc4619341346112dbc6e3a21e403f597263af5bda12f66421408bd9c.96d9ac13ff0bc08a631d969287f7fc9dac7d7f428a6b41ed70532b4dec273175",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 64,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "b8bfd9b8-6ba9-4dc4-8ef7-0506a8282f9b",
+        "actionId": "coord_025f217521386bc3a93ffbe24246cc3e140ca39b9a6a77dc92ba15dd228b9c26",
+        "expectedRevision": 0
+      },
+      "executionId": "70cbb56f7e4d635bb4b61cf7418db8d543817e37e31640580d14961ee8a291b0.25b4382bf5fc75716bfaa705c91ce2747dfd1f1dbab5218c271eadf91c4b3ada",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 65,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e947af26-a2f1-4f64-b0e8-e0ee91907beb",
+        "actionId": "coord_4403f62a47b8e3de2ab8b87b8ae39cf878c690ae7a9d94ea6b32fca56cc2e18a",
+        "expectedRevision": 0
+      },
+      "executionId": "da7d00a87a57e71071e8f33e0aa58edd2d34391bf9b87bb8cee13338b077dfc2.edb1aad442ac08ac47323e4bf7dc6ba8242d600b0727b2ee15f8da7f61f1d08a",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 66,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "9854c6ae-c0cd-46a5-8d33-92c839d0d763",
+        "actionId": "coord_3501d0b3e5b31a0f5c7ca836aaa398ed523c92205912dd421873a32750081887",
+        "expectedRevision": 0
+      },
+      "executionId": "b3f5c33760295ffa9dbeb0efd02752f0f01be81478aee42ef04d29fe42617839.2e0c1c619042af4b13172741ad03a9d29f8bc25be851c8924f189d1e707dd922",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 67,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d6639a34-7008-4b64-8e35-a7fe53ba7c89",
+        "actionId": "coord_12065aa986d10e8cc217709ec23ef93541f45b6fc6b6113eb875b5902d8f06a3",
+        "expectedRevision": 0
+      },
+      "executionId": "78b90577b9cc488d0d6389300711c94c59122ab592474c21237237c57ff9eb90.8a457234309a9a0c57865ecd8db6ed88e69dbaa2ab2a19474b6c785dafc49dca",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 68,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "354189f7-d8fa-4e6e-ac57-3a8494bff98d",
+        "actionId": "coord_9fa398b99d1337a45e7dfd60e8b6d37d038592376e0b0b31a0ba72432753ab49",
+        "expectedRevision": 0
+      },
+      "executionId": "24fc8cdb43755be0d93f6578025e75d876613c6cd783f2133de4a45d96ba469f.07a68e41b4fa9401e0ce05459925402b4eb7dc32276c5ad1b6e0498c926d0152",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 69,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "183503cd-83f8-44c6-a144-78d7599d856a",
+        "actionId": "coord_74118a39c78933d871751d8747a4a257b810ab2bf361015f227f5234ede8236b",
+        "expectedRevision": 0
+      },
+      "executionId": "86c3bf57ffc40e489c154f07daea97d2caf74462a22176216396993de7ac0095.8e1f90a4a98404a84e968729cac4469cb57257ae0d2ad06183ed84958d1bb900",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 70,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d215c7aa-9bfc-4500-86b0-9113dba63701",
+        "actionId": "coord_8111e4fdc3212e7c4c5f8a056860adbfd8eafd822fce78311c4becbba7eeb869",
+        "expectedRevision": 0
+      },
+      "executionId": "c41b75bac1e332c9ab78c4cb4970d2efcaee75a876c0798b835bac24e0d4daeb.93b35891b3ea9d9a2e990dc07102f842015a705996d108ac28aa3444b6405222",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 71,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "50f28903-e6ce-45c8-87ce-7afc9be19a64",
+        "actionId": "coord_e58c3b0007bdfb40f214f75293557af2625435cb47535e6efa59b863d81c8d44",
+        "expectedRevision": 0
+      },
+      "executionId": "8324fce3b9bfe7ebc81969751ad14291cac34749103d7f6f30deffbc030031c9.5073ce130e5300b61a4db354e68622d1bc4ec527c4ca2e487db6dd9f2565966e",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 72,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "b400499b-e0e5-4227-8d9e-500c70e9afa0",
+        "actionId": "coord_759857844f41a7a43a6f25af693c020f02f610533327e10e469dcf014c403b4f",
+        "expectedRevision": 0
+      },
+      "executionId": "070c5091550d7639e7ab7f8eb9e0eb8c1fd2fd185d16566237e0cda077da036f.9b44c0904e29705c09b46edd57fa68c640f0567714b48b2cedd837167b740b34",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 73,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "8f736399-ba24-4aed-8213-257c39640257",
+        "actionId": "coord_715afb6e1c30662bb7005cfa627626d24e3a96d30a50634c557892b6d50fc00e",
+        "expectedRevision": 0
+      },
+      "executionId": "58390c80c64bbf9b9541404fe6d26672f2c405d0b56e2f92379c64f00a161c4b.b98c78ad3df9309d4294e687ed80e1f827a8cdaac4acd9f487d334bb3ff9d7bc",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 74,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "dc99f635-5300-41c6-950e-475b78a3ebff",
+        "actionId": "coord_5abefdfcacda900e6d58eef720499cb67746e4f77fb7b6b1b3aef2c742ec63f7",
+        "expectedRevision": 0
+      },
+      "executionId": "d515e347df97931eb408e340189b4f779f60201093f27a52eda455815a030a48.80e9a59e0c1fb2ef0d231610e1ed6c21ea5447c7edec58192937e1d2aa68e4dc",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 75,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "928bc341-400f-4267-9fee-1de215be26b8",
+        "actionId": "coord_cb0d81ceb79e65778d9e4b25a5fa95f3f5339e02c9e17ae86c1629814c231924",
+        "expectedRevision": 0
+      },
+      "executionId": "340f560093fcccfebe447af4397db62e5a65dee0afc6d26627876096a64d31de.fa10546317a162558d93e4f8d4d9f5a379df571d3bca7c303a500c35335d67ff",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 76,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "a22caf87-66a2-4895-acc7-d2d4a4c8f4e4",
+        "actionId": "coord_2e5ab72b3584566ae288e1beb66d7aabb317822701627fecd87f5785d354bd04",
+        "expectedRevision": 0
+      },
+      "executionId": "7255542e5c5038dce0088a37c9b06dc9dce9cfda4dcb989e7305ac08c3bf8e53.f8de5b8e5d9896743a6c2ca7e8a48699e53a28234c736eb385f4f863c6068d05",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 77,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "0c0e3630-442a-4642-854f-acce95c90071",
+        "actionId": "coord_050a18480fb56f2549bf7f1277148cafae0181e88cda5514f978edf4d7fd4aa9",
+        "expectedRevision": 0
+      },
+      "executionId": "5b84b6ddc4b8804b5db7f4c0ae42479e6f80c40f28556a5d7b796d1ba4d0b901.ea91a775ee69937e443974554282afa76e16d2d212bae157344f97e15a8ff12d",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 78,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "cf6e0f1b-ce0c-4d37-ace8-7a0548df5b90",
+        "actionId": "coord_f13b85e3a000f081ebe657a391ce7233c000e4ee85d5c8b72fa28258ff7d2dce",
+        "expectedRevision": 0
+      },
+      "executionId": "e9b36486465ecf5e59dafc3c2e064ef978fcd35d9a16f7858a37e5417dd22f91.36899afc8bc9a69f8dfb2f574c67d9f7eafd8c14e32e82514e78678fa53bd24c",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 79,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "5f68b371-bf70-41e0-8fab-d0e984465f80",
+        "actionId": "coord_81a429e236ba561f2c9324aafbc6f8b363bb5a54848c40957373a917230cce80",
+        "expectedRevision": 0
+      },
+      "executionId": "343e180397b361960d718e80877d197ff7756af71446397cae2ca481b8b9b01d.16c63b8dbef9ea70ce78a5cc6b44d7c62f8feed5f1e0832a125991ccb7d8110b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 80,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e44bf5aa-3f40-43b2-b322-5f75f2f97ddb",
+        "actionId": "coord_568df28068db0dfe505ac200ab393480afcd4f2cefcedb98cae16415e5ba10dc",
+        "expectedRevision": 0
+      },
+      "executionId": "f2067b6a3cc4db7bcbf68adde727bac6633e88c056665dbd6f1b6951f8fdfeb0.b2e584bb2be77838bb134e71b3e2f3da6209f6b762439e97dfc5aedcedf5f789",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 81,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "44fc8d61-f2d2-4a8b-92c3-eda17453c3b4",
+        "actionId": "coord_6f5188b7f0597532e6361afcd2614647772f79640325a925508a4cb5606f1911",
+        "expectedRevision": 0
+      },
+      "executionId": "2bdb28b7f63ebb5b95efa821e74bd345adae72aa52165c7c1b05958bc2f33901.4d4db11833b5aed080a97dd2ecd3599ee711a3144ddc8b39149c063c1ccb1bd4",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 82,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "f23fd877-5db8-4016-adde-5df19bab2e48",
+        "actionId": "coord_68ab2837aede966bab9061ece62a6a379828c2ea84b853597addd51c895d4135",
+        "expectedRevision": 0
+      },
+      "executionId": "724c2834c1b9b92416ce1344b648253a3e9930730c1261d8f1182fe1f2dec1ba.bc784b18cd41391a0b05fd9e87225de8fd8fe80e0665bfe7549cc1b207f5ba69",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 83,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1af27867-071e-473d-9daf-4be84578adcb",
+        "actionId": "coord_4040e2d54e14cc00ddf141d9c391ab627407ddd67af9fc24c335fc78102824b8",
+        "expectedRevision": 0
+      },
+      "executionId": "a956622a9a184017ee8e3f3db98947c3aa42bde062e7e689008f2d2e4cd8d70e.25df6cc87d2749b689035ef4d877c0d6b24399344a2274203034adbe8f2931c8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 84,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1f7a12dd-0947-4eb3-96c5-d3e412d69541",
+        "actionId": "coord_bd381fc01055e046311181801c7c11212916642f4472fba25f05282f98b95f60",
+        "expectedRevision": 0
+      },
+      "executionId": "23aa8552791f920b9b79b333a8af4ea030c419ecb53e0f1f7b777d1b8c2e11a8.f22d455f5232a81164b1b59e6bb293a0bc95a0395565ba1a1f43308cae22d05a",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 85,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "44e845e6-2510-4160-a060-4f1239eaab62",
+        "actionId": "coord_4f66d8c8e75d7083b389660e1c32a4ffbe02e23a0003eacc81033166c1a55c91",
+        "expectedRevision": 0
+      },
+      "executionId": "4a3ee3e230c50c82609ec220595044f8328ec22e5d216b42bdca7e459141dfd7.85f03113499729770272fe014f58629bdcf29415ecc4f513feef33fcbf083209",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 86,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d83d60ba-f773-4da8-8854-be9bd5c6b55d",
+        "actionId": "coord_4a2026f2d9479080c9a65706ed39aa959b76366d0c91e846b7e4ae7595775c16",
+        "expectedRevision": 0
+      },
+      "executionId": "a4a6b1c58c765f47a6150b860a1e9db1fffc36c278a41599c7d9ca41c0dffcd6.414b99ea1e3f9ca544c47e0b60e58df45354485173cb9956a372391c174683b3",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 87,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1e2579dc-edaf-491a-b71e-069e01abda22",
+        "actionId": "coord_6ece0c011348be349e35a4ad299e24fe4c0d817a9c1382c329874b2c439fcbbb",
+        "expectedRevision": 0
+      },
+      "executionId": "848578c81615a25b4e7c34b5ea822e5f2ed47ee6a878b1b6654536a075e88974.6330eac72767a0a8f3b160ebfd9e3aab92b1836e9b77b5fd1ad86ef32be027ab",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 88,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "bdede228-9e0c-4287-9971-15362ec96be4",
+        "actionId": "coord_f011574d73e38de034b27ad4d9261553d2c9e9a69117d6766c0de7ee42ef9df3",
+        "expectedRevision": 0
+      },
+      "executionId": "8dd6e093d4e06792126b12b4c644e85a5c937993dce227fec40865f8909ab61f.fd7d3c4fae2eaeb7ba7a4f9369eb893ea099dd2de27b355b97e019e453768252",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 89,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "d682cc94-4742-4c5e-a954-aa6f5fe25f7d",
+        "actionId": "coord_6e60bc9b7e38fc62b7c24a5054873d7e21d80e4a7458b2b99c8c614236d638c6",
+        "expectedRevision": 0
+      },
+      "executionId": "388fbccc3ad046ee68b2805676e02f2aed916a2f114005fc3535968145c12955.c4f50fa754fe1609d944854b5d65e465765820a7018c609ce8c735b69d54fe68",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 90,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "21a16de3-1b57-423d-9ab6-4ca55101dd40",
+        "actionId": "coord_03c096b1094b7f4da0fcc7ddc6444b8565f439e45510b1649c5f304b82d7d634",
+        "expectedRevision": 0
+      },
+      "executionId": "629eba3c3613350f3152b9e670238f809d757be39a8e93029a0142c82e0ee988.193dc086d227dab42ec844d4939e2f6f9b50f7c82247ed3318aa940e2cd9abd6",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 91,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "716746df-ba6e-4e13-8b70-266c1d168a85",
+        "actionId": "coord_56b397369d6d003b68726ddb1cca1f8cb7abb024231e8a70b41090107aeb78d7",
+        "expectedRevision": 0
+      },
+      "executionId": "4be3b9fca19681b7131811a2fdf7f4ab875df008e7ed3f50745103dcac314451.cd330892013c521606e67e18ede14f51f3946095961283912e9758a63dec8588",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 92,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "a58c4053-4474-4d5d-9a2b-79f60172e232",
+        "actionId": "coord_360e644561139966a4735da8f6a46d3387c24a87f291036d50e6ae1789d1907b",
+        "expectedRevision": 0
+      },
+      "executionId": "77e885044b0b8bb6ecc3034ef8ed16fb7b15f27bbfd9e28ab478d89f4594c2e7.6fba198786d68b0044909bcf320e33f9db89c5ffc5e35bd821a07ba4ca4a08b4",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 93,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "255250f8-b2fb-4ba3-b3df-3c355564409c",
+        "actionId": "coord_1290d8a326268cfbab6e14f44d5e46133ad7dbe4bb51c75ab0422be1a58f25c4",
+        "expectedRevision": 0
+      },
+      "executionId": "6ea1051ee4074a49a51032c4d1e9e7c6f35695e2bdbad274295765bd67bb1dc1.e0bf271551b3c9aca9e4977fd51894b3e125d64e008865ec75dbae3348ad0632",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 94,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "23ec00b7-faf1-42c1-930e-266dad55eb08",
+        "actionId": "coord_8e309fba138b46e37035f7156fea865398591d273e6b459e3d098c049e42c53e",
+        "expectedRevision": 0
+      },
+      "executionId": "a357f1488d30b9594907a5037e5062b3582973c5ebea0fc7aa342af6c945e073.bbda6b0f32df65890ba383b5df061f74d2f064cfb4261267158e2c08171382d5",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 95,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "e51b5331-99a4-4bcd-8f0b-b081a60aa24b",
+        "actionId": "coord_6811f84fa32cc4cfc86954754ac488a5a2c3ee1c6faaf1c127fadd0e40dd665d",
+        "expectedRevision": 0
+      },
+      "executionId": "206d782946c74bbc176eb4f7c811fed88455d1be0a0bedf9041224835f483928.d823cbd4161e0d2e26b3f6306e0d2dd0184af31d32e1176a330c2999cc2f732b",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 96,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "85f4818f-df85-4ac8-9b78-8330e8e72fc3",
+        "actionId": "coord_84e99c1abb260a4a449321e5ccda410917a74ca5352163ad386185187fdb8e53",
+        "expectedRevision": 0
+      },
+      "executionId": "857d4b45c351a50e0beaa510988f1fa4acccae010c8993227063fa25df54c4c8.d9b8e425d6d323d90f471f0ba6fc8b62ccb31f14ee955804c6ad93d20e646b2f",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 97,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "f23ad49e-c86c-42d7-8362-831416a916c7",
+        "actionId": "coord_3493916898950ebd2e9c0eb68afa08530d29e3111d0a95b0eb456bbfcbffcab1",
+        "expectedRevision": 0
+      },
+      "executionId": "406fdb45e6372964ff37a8c492fb261914a8525f3c2cd8f37f76d4286a7e635d.6d601157aab2504b3de5258d921a2e581b40b09d817767439e629425a11ba067",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 98,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "bbc2bfd0-291b-496c-953c-b54ab38ec342",
+        "actionId": "coord_f03caf82192739e5eb15800fa0f22d90c36330a07952185e9ffbe6e07015fe30",
+        "expectedRevision": 0
+      },
+      "executionId": "25732bd29e87678e3df644d0f653f1072a2e185a70f3f9737afbdc001af383b3.b51bb42992a639a2c506a04725cceeb3d2819d3901540c7ff490b4d4cc2554e8",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 99,
+      "round": 1,
+      "command": "discovery.act",
+      "parameters": {
+        "instanceId": "1d347991-4dd4-4a5b-89df-45a501d83d1a",
+        "actionId": "coord_c62d3df94fb7ac44e6ba152544335793f8b2877ae2957ca25369c7f7b48534b0",
+        "expectedRevision": 0
+      },
+      "executionId": "f3aca02764cf66466ee7fe6965adcde8409c3a43a1821c272da734c3ae7d855c.ad3149ce6074f08f71f52a31ea5ae8520f9c8af642e89da150a8751fcc7b5ab8",
+      "result": "COMPLETED"
+    }
+  ],
+  "failures": [],
+  "databaseVersion": "18.4",
+  "initialChecks": [
+    {
+      "name": "character cash",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "lhs": 20000,
+      "rhs": 20000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeEmission": 0,
+      "since": "v3 step 1"
+    },
+    {
+      "name": "plex mint retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimePlex": 0,
+      "since": "the mint is ETH only; respawn + Store SKUs are payable in earned $OMR"
+    },
+    {
+      "name": "portfolio retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "since": "D11 2026-08-05"
+    },
+    {
+      "name": "desk inventory backed",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeIn": 0,
+      "lifetimeSold": 0,
+      "lifetimeBought": 0
+    },
+    {
+      "name": "desk inventory ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "recycled": 0
+    },
+    {
+      "name": "desk sales ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "sold": 0
+    },
+    {
+      "name": "auction escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "logicalSinks": 0,
+      "carIds": [],
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "salvageCarSinks": 0
+    },
+    {
+      "name": "cb conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "unknown": []
+    },
+    {
+      "name": "content_artifact_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "finalChecks": [
+    {
+      "name": "character cash",
+      "lhs": 50000,
+      "rhs": 50000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "lhs": 20000,
+      "rhs": 20000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeEmission": 0,
+      "since": "v3 step 1"
+    },
+    {
+      "name": "plex mint retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimePlex": 0,
+      "since": "the mint is ETH only; respawn + Store SKUs are payable in earned $OMR"
+    },
+    {
+      "name": "portfolio retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "since": "D11 2026-08-05"
+    },
+    {
+      "name": "desk inventory backed",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeIn": 0,
+      "lifetimeSold": 0,
+      "lifetimeBought": 0
+    },
+    {
+      "name": "desk inventory ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "recycled": 0
+    },
+    {
+      "name": "desk sales ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "sold": 0
+    },
+    {
+      "name": "auction escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "logicalSinks": 0,
+      "carIds": [],
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "salvageCarSinks": 0
+    },
+    {
+      "name": "cb conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "lhs": 2500,
+      "rhs": 2500,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "unknown": []
+    },
+    {
+      "name": "content_artifact_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "tableRows": [
+    {
+      "relname": "account_gear",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "account_persistent",
+      "n_live_tup": "100"
+    },
+    {
+      "relname": "accounts",
+      "n_live_tup": "100"
+    },
+    {
+      "relname": "activity_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "agent_acquisition_budgets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "agent_referral_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "amm_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "auction_consignments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "auction_wins",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "auctions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_city_pool",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_payouts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bans",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "batches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bespoke_pieces",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bespoke_serials",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "blackjack_hands",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bloodline",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boats",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_offerings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_quotes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_reserve",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "bonds",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounties",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounty_contributors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounty_gang_roster",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_bouts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_title",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "broker_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "broker_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "broker_weights",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "businesses",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "campaign_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "career_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "cars",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "chain_cursor",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "chain_reserve",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "character_assets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_cargo",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_disciplines",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_guns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_items",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_rackets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_skills",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_traits",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "characters",
+      "n_live_tup": "100"
+    },
+    {
+      "relname": "chat_messages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "clue_scrolls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coalition_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coalitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "collection_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_overrides",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_proposals",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_ticker_votes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_ticker_votes_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_vetoes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_votes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "community_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "consiglieri",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "contact_calls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "contacts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_activation_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_artifacts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_item_definitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_exchange_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_exchange_listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_effects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_facts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_nodes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_inventory_lots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_skill_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_source_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_source_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_story_flags",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_supply_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_tool_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_tool_states",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_work_order_runs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_ambushes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_cargo",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_hauls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_insurance",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "convoys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_archive_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_archive_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_acl_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_acl_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_grants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_links",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_commands",
+      "n_live_tup": "200"
+    },
+    {
+      "relname": "coordination_definitions",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "coordination_events",
+      "n_live_tup": "200"
+    },
+    {
+      "relname": "coordination_instances",
+      "n_live_tup": "100"
+    },
+    {
+      "relname": "coordination_knowledge_archives",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "corner_chains",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "corner_jobs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_heist_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_heists",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_invites",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_objective_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_objectives",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_requests",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_targets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crews",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "daily_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "deed_reimports",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "den_volume",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "desk_auctions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "desk_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "desk_inventory",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "desk_sales",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dev_fund",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "dex_swaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "digs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_action_intents",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_campaigns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_clock",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_definitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_selections",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_situations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "district_bids",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "districts",
+      "n_live_tup": "6"
+    },
+    {
+      "relname": "dm_blocks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dm_messages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "drop_allocations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "drop_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "duels",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_divorces",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_marriages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_tokens",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "email_confirm_sent",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "estate_staff",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "estates",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "eth_vault",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "event_results",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "exchange_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "fair_commitments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_aggro",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_buybacks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_yield_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "favors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fee_payments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "feud_peace_offers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fight_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fight_fixes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fighters",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "firsts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurities",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_runners",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "gala_guests",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_portfolios",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_relations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gangs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "hustles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "idempotency",
+      "n_live_tup": "200"
+    },
+    {
+      "relname": "informants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "invite_codes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_definition_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_definition_versions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_lots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_mutation_guards",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_mutation_inputs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_mutation_outputs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_stacks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "keeper_transactions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "kill_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "landmarks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "limited_runs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_flow_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_market_status",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_settlements",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_sync_cursors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "loan_house",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "loans",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "lp_depth",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "makings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "market_listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "masteries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mastery_legend",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "megaproject_contributions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "megaprojects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mentor_offers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mentorships",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mission_omr_claimed",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "missions_done",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mod_actions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mystery_choices",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mystery_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mystery_node_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "nft_reimports",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "notifications",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_aggression",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_drills",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_errands",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_favors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_gain",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_grudges",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_hits",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_leads",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_standing",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_wars",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "numbers_tickets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "oauth_states",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "operation_escrow",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_break_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_breaks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_contraband",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_talks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "player_command_boards",
+      "n_live_tup": "329"
+    },
+    {
+      "relname": "poker_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_ring_seats",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "poker_tables",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_tournaments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pol_fees",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pol_pairings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "population_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "port_intercepts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "portfolios",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "primetime_happy",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "primetime_rally",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "push_subscriptions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "racers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "referral_push",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "referrals",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rigs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rival_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rng_audit",
+      "n_live_tup": "100"
+    },
+    {
+      "relname": "route_notoriety",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_dividend_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_family_dividend_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_apply_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_batches_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_attestations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_recovery_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_safe_proposals_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_episode_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_episodes_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_evaluations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_finalized_clearances_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_asset_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_attempts_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_checkpoint_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_overlay_event_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_incidents_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_overlay_runtime_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_pages_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_private_provider_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_reviewer_actions_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_runtime_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_endorsements_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_reviewer_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_safe_proposals_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nominations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_activation_instances_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_asset_lifecycle_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_ballot_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_attempts_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_checkpoint_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_event_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_runtime_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_publisher_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_publisher_history_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_reviewer_idempotency_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "schema_meta",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "searches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "season_recaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "season_records",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "secrets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sell_tax_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "shipment_days",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "shipment_takes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "social_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "soldiers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sov_siege_cooldowns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sov_structures",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "speakeasies",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "speakeasy_patrons",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stake_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stakes_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stakes_races",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stakes_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stash",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_allocations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_asset_active_heads_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_asset_versions_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_getter_checkpoint_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_getter_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_sync_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stock_catalog_sync_runs_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_sync_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_deliveries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_token_catalog",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_token_catalog_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_cosmetics",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_grants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_payments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_deed_history",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_deeds",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_tax",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "telemetry",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "territory_rackets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_candidates_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_days_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_results",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "track_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "track_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "transactions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "v4_oracle_keeper_attempts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vendettas",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vig_buyback",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vig_prize_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "vig_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vouchers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vouches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wage_snapshots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wallet_challenges",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wallet_rolls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "weekly_bulletin",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wire_informants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wire_watches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wiretaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "worker_heartbeat",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "world_kernel_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_kernel_objects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_npcs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_capital",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_commitments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_contributions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_node_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_roles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_raid_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_raids",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_recipe_usage",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_uprisings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "x_checks",
+      "n_live_tup": "0"
+    }
+  ],
+  "databaseBytes": 28513983,
+  "ok": true,
+  "completedAt": "2026-09-20T23:00:18.010Z",
+  "commandLatency": {
+    "count": 400,
+    "p50": 63.01589999999851,
+    "p95": 94.57060000000092,
+    "max": 325.3471000000063
+  }
+}

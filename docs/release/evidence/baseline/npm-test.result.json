@@ -1,0 +1,7 @@
+{
+  "exitCode": 1,
+  "started": "2026-09-20T22:47:31.8848776Z",
+  "finished": "2026-09-20T23:51:36.5615648Z",
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "command": "npm test"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "knowledge-graph",
+  "command": [
+    "node",
+    "tools/knowledge.js",
+    "check"
+  ],
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "trackedSourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "started": "2026-09-20T22:48:51.478Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/knowledge-graph-2026-09-20T22-48-51-339Z.log",
+  "finished": "2026-09-20T22:50:01.544Z",
+  "exitCode": 1,
+  "signal": null
+}

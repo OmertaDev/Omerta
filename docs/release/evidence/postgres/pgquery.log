@@ -1,0 +1,11 @@
+{"gate":"pgquery","command":"npm run pgquery","script":"node tools/pgquery.js","dbName":"omerta_rc1_pgquery_muaeq5cg","started":"2026-09-20T22:47:56.991Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+pgquery — 4059 static statements prepared against real Postgres
+  168 interpolated (cannot be prepared — counted, never silently passed; PGQUERY_LIST=1 to list)
+  557 non-DML (DDL / transaction control — not preparable by design)
+  38 call sites whose argument is not a literal (a variable or a helper)
+
+✅ pgquery passed — every static SQL string in src/ parses and type-resolves on real Postgres.
+
+{"gate":"pgquery","command":"npm run pgquery","dbName":"omerta_rc1_pgquery_muaeq5cg","started":"2026-09-20T22:47:56.991Z","finished":"2026-09-20T22:48:01.480Z","status":0}

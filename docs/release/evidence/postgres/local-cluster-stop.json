@@ -1,0 +1,8 @@
+{
+  "dataRetained": true,
+  "stoppedAt": "2026-09-21T00:12:18.7014535Z",
+  "directory": "C:\\Users\\Jorge\\AppData\\Local\\Temp\\omerta-rc1-pg-626e61b9",
+  "scope": "Temporary isolated test cluster only; no production service touched",
+  "port": 55439,
+  "exitCode": 0
+}

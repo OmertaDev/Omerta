@@ -1,0 +1,9 @@
+PASS director-selection: barrier, SIGTERM, restart, replay and invariants
+PASS campaign-progression: barrier, SIGTERM, restart, replay and invariants
+PASS world-kernel-mutation: barrier, SIGTERM, restart, replay and invariants
+PASS operation-resolution: barrier, SIGTERM, restart, replay and invariants
+PASS item-consumption: barrier, SIGTERM, restart, replay and invariants
+PASS crafting: barrier, SIGTERM, restart, replay and invariants
+PASS player-command: barrier, SIGTERM, restart, replay and invariants
+PASS consequence-generation: barrier, SIGTERM, restart, replay and invariants
+PASS scheduled-worker-processing: barrier, SIGTERM, restart, replay and invariants

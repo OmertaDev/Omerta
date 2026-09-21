@@ -1,0 +1,24 @@
+{
+  "changedRuntimeFiles": [
+    "package.json",
+    "public/index.html",
+    "render.yaml",
+    "src/engagement.js",
+    "src/player-commands.js",
+    "src/projection-events.js",
+    "src/ratelimit.js",
+    "src/routes/commands.js",
+    "src/routes/modtools.js",
+    "src/server.js",
+    "src/world-consequences.js",
+    "src/world-telemetry.js"
+  ],
+  "message": "Merge pull request #183 from OmertaDev/codex/rc1-release-validation\n\nValidate RC1 and fix release presentation and observability failures",
+  "parents": [
+    "626e61b9ab2b14a9dc45566983b70cdc65692839",
+    "36156ace3f4e4600badc8394a205d0e10432d227"
+  ],
+  "returnedFiles": 300,
+  "sha": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+  "sourceOfCompleteRuntimeFileList": "git diff of exact fetched commit"
+}

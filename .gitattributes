@@ -1,1 +1,3 @@
 knowledge/generated/** text eol=lf
+# Preserve release evidence bytes so SHA256 inventories survive cross-platform checkouts.
+docs/release/** -text

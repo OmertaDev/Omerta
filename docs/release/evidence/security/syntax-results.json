@@ -1,0 +1,26 @@
+[
+  {
+    "command": "node --check src/auth.js",
+    "exit": 0
+  },
+  {
+    "command": "node --check src/routes/commands.js",
+    "exit": 0
+  },
+  {
+    "command": "node --check src/player-commands.js",
+    "exit": 0
+  },
+  {
+    "command": "node --check src/coordination/knowledge.js",
+    "exit": 0
+  },
+  {
+    "command": "node --check src/command-diagnostics.js",
+    "exit": 0
+  },
+  {
+    "command": "node --check test/rc1-command-redteam.js",
+    "exit": 0
+  }
+]

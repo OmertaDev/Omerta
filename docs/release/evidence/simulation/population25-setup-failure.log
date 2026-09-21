@@ -1,0 +1,5 @@
+Error: Refusing to boot — deploy preflight failed:
+  - MOD_KEY must be set for a real deployment — the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable.
+    at buildServer (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263:11)
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/tools/rc1-command-population.js:84:15
+{"ok":false,"population":25,"requests":0,"transitions":0,"invariantAssertions":0,"commands":{},"replays":0,"blockedPlayers":0,"output":"docs/release/evidence/simulation/population25.json"}

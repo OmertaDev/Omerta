@@ -1,0 +1,15 @@
+{"gate":"test:world-kernel:postgres","command":"npm run test:world-kernel:postgres","script":"node tools/world-kernel-postgres.js test/world-knowledge-crafting.js test/world-kernel-query.js test/world-kernel.js test/world-kernel-migration.js","dbName":"omerta_rc1_test_world_kernel_postgres_muaexmad","started":"2026-09-20T22:53:45.599Z"}
+world-knowledge-crafting: definition validation, authentic discovery, private projection, exact source and replay pass
+world-knowledge-crafting: sharing opt-in, revocation and live crew membership pass (postgres)
+world-knowledge-mysteries: authenticated prerequisites, private discovery, crafting, branching, revocation, replay and persistence pass (postgres)
+world-kernel-query: Family operation visibility matches current Family/opener/role/historical promise; legacy Crew policy retained
+world-kernel-query: authoritative refs, bounded graph, affiliation and knowledge visibility passed (PostgreSQL)
+world-kernel: real Crew/Family, salvage/discovery/crafting, provenance and authority gates pass
+world-kernel: observed PostgreSQL Family kick races serialize and reject stale affiliation
+world-kernel: observed PostgreSQL Crew departure races serialize and reject stale membership
+world-kernel: observed PostgreSQL claim-lock races serialize and reject revoked evidence
+world-kernel: Family dissolution clears control and preserves state and event provenance
+world-kernel: persistent public state, replay/race, both write rollbacks and post-commit hints pass (postgres)
+PASS PostgreSQL kernel migration from e56cf576065c5f1bbb9bb55115f5961267f7d654: preserved provenance, repeated boot, durable replay, constraints, dissolution, invariant corruption detection
+
+{"gate":"test:world-kernel:postgres","command":"npm run test:world-kernel:postgres","dbName":"omerta_rc1_test_world_kernel_postgres_muaexmad","started":"2026-09-20T22:53:45.599Z","finished":"2026-09-20T22:54:26.123Z","status":0}

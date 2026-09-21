@@ -1,0 +1,6 @@
+{
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "command": "node tools/knowledge.js check",
+  "exitCode": 0,
+  "workingDirectory": "clean detached worktree"
+}

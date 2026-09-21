@@ -1,0 +1,696 @@
+linux-sigterm	Set up job	﻿2026-09-20T23:08:08.2883448Z Current runner version: '2.337.0'
+linux-sigterm	Set up job	2026-09-20T23:08:08.2908394Z ##[group]Runner Image Provisioner
+linux-sigterm	Set up job	2026-09-20T23:08:08.2909679Z Hosted Compute Agent
+linux-sigterm	Set up job	2026-09-20T23:08:08.2910407Z Version: 20260828.587
+linux-sigterm	Set up job	2026-09-20T23:08:08.2911099Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+linux-sigterm	Set up job	2026-09-20T23:08:08.2911879Z Build Date: 2026-08-28T16:44:25Z
+linux-sigterm	Set up job	2026-09-20T23:08:08.2912600Z Worker ID: {1f9ec1a7-e0c7-4d83-85b3-7a88c4c003f1}
+linux-sigterm	Set up job	2026-09-20T23:08:08.2913375Z Azure Region: westus
+linux-sigterm	Set up job	2026-09-20T23:08:08.2914013Z ##[endgroup]
+linux-sigterm	Set up job	2026-09-20T23:08:08.2915595Z ##[group]Operating System
+linux-sigterm	Set up job	2026-09-20T23:08:08.2916318Z Ubuntu
+linux-sigterm	Set up job	2026-09-20T23:08:08.2916897Z 24.04.5
+linux-sigterm	Set up job	2026-09-20T23:08:08.2917408Z LTS
+linux-sigterm	Set up job	2026-09-20T23:08:08.2918175Z ##[endgroup]
+linux-sigterm	Set up job	2026-09-20T23:08:08.2918761Z ##[group]Runner Image
+linux-sigterm	Set up job	2026-09-20T23:08:08.2919381Z Image: ubuntu-24.04
+linux-sigterm	Set up job	2026-09-20T23:08:08.2920021Z Version: 20260907.300.1
+linux-sigterm	Set up job	2026-09-20T23:08:08.2921160Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+linux-sigterm	Set up job	2026-09-20T23:08:08.2922945Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+linux-sigterm	Set up job	2026-09-20T23:08:08.2923913Z ##[endgroup]
+linux-sigterm	Set up job	2026-09-20T23:08:08.2925144Z ##[group]GITHUB_TOKEN Permissions
+linux-sigterm	Set up job	2026-09-20T23:08:08.2927142Z Contents: read
+linux-sigterm	Set up job	2026-09-20T23:08:08.2927856Z Metadata: read
+linux-sigterm	Set up job	2026-09-20T23:08:08.2928706Z ##[endgroup]
+linux-sigterm	Set up job	2026-09-20T23:08:08.2930834Z Secret source: Actions
+linux-sigterm	Set up job	2026-09-20T23:08:08.2931826Z Cache mode: write
+linux-sigterm	Set up job	2026-09-20T23:08:08.2932598Z Prepare workflow directory
+linux-sigterm	Set up job	2026-09-20T23:08:08.3596807Z Prepare all required actions
+linux-sigterm	Set up job	2026-09-20T23:08:08.3646774Z Getting action download info
+linux-sigterm	Set up job	2026-09-20T23:08:08.7369679Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+linux-sigterm	Set up job	2026-09-20T23:08:08.8474254Z Download action repository 'actions/setup-node@v7' (SHA:820762786026740c76f36085b0efc47a31fe5020)
+linux-sigterm	Set up job	2026-09-20T23:08:08.9317003Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+linux-sigterm	Set up job	2026-09-20T23:08:09.1475801Z Complete job name: linux-sigterm
+linux-sigterm	Initialize containers	﻿2026-09-20T23:08:09.1948662Z ##[group]Checking docker version
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.1962099Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.2843103Z '1.48'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.2860363Z Docker daemon API version: '1.48'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.2861268Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3025654Z '1.48'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3040263Z Docker client API version: '1.48'
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3045660Z ##[endgroup]
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3048932Z ##[group]Clean up resources from previous jobs
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3055164Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=f1ffd3"
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3194742Z ##[command]/usr/bin/docker network prune --force --filter "label=f1ffd3"
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3319808Z ##[endgroup]
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3320359Z ##[group]Create local container network
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3330036Z ##[command]/usr/bin/docker network create --label f1ffd3 github_network_3a4a733a49224cf59478308735603b02
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3919043Z 6fce540df034320e30dde084df43ab54c8e4de15f51482cc5824614e580f52e8
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3951828Z ##[endgroup]
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3976463Z ##[group]Starting postgres service container
+linux-sigterm	Initialize containers	2026-09-20T23:08:09.3999740Z ##[command]/usr/bin/docker pull postgres:16
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.3185200Z 16: Pulling from library/postgres
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5744278Z 6b37362b3da7: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5745783Z b1fdda8975a0: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5746897Z 106e7e3cf19a: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5747891Z ba0e979d0818: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5749253Z ad29720ebbb9: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5750292Z 3a749597affc: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5751134Z 483fb6941c15: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5752060Z 359ae0fc975d: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5752577Z 56d4d190ef07: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5752899Z 74156cf9f063: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5753207Z f7c7d4dd80ba: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5753881Z 749acf6dc637: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5754244Z 4d848243a73e: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5754544Z 6ad4758748c1: Pulling fs layer
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5754861Z 359ae0fc975d: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5755131Z 56d4d190ef07: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5755387Z 74156cf9f063: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5755639Z f7c7d4dd80ba: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5755911Z 749acf6dc637: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5756159Z 4d848243a73e: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5756412Z 6ad4758748c1: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5756667Z ba0e979d0818: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5756921Z ad29720ebbb9: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5757180Z 3a749597affc: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.5757444Z 483fb6941c15: Waiting
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.8013570Z b1fdda8975a0: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.8014611Z b1fdda8975a0: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.8259626Z 106e7e3cf19a: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.8260359Z 106e7e3cf19a: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:10.8959243Z 6b37362b3da7: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.0287567Z 6b37362b3da7: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.0289172Z ba0e979d0818: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.0290036Z ba0e979d0818: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.0959072Z ad29720ebbb9: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.0959731Z ad29720ebbb9: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.1294220Z 3a749597affc: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.1294954Z 3a749597affc: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.2506952Z 483fb6941c15: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.2507627Z 483fb6941c15: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.3205254Z 359ae0fc975d: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.3228820Z 359ae0fc975d: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.4667882Z 74156cf9f063: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.5467796Z f7c7d4dd80ba: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.5469749Z f7c7d4dd80ba: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.6894935Z 749acf6dc637: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.6895775Z 749acf6dc637: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.7738803Z 4d848243a73e: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.7739975Z 4d848243a73e: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.9032247Z 56d4d190ef07: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.9033005Z 56d4d190ef07: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.9113120Z 6ad4758748c1: Verifying Checksum
+linux-sigterm	Initialize containers	2026-09-20T23:08:11.9113692Z 6ad4758748c1: Download complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:12.0593606Z 6b37362b3da7: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:14.4590144Z b1fdda8975a0: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:14.6430128Z 106e7e3cf19a: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:14.6843649Z ba0e979d0818: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:14.9958688Z ad29720ebbb9: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:15.0871565Z 3a749597affc: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:15.0959828Z 483fb6941c15: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:15.1094385Z 359ae0fc975d: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.1724758Z 56d4d190ef07: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.1882339Z 74156cf9f063: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.1991936Z f7c7d4dd80ba: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2097896Z 749acf6dc637: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2196266Z 4d848243a73e: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2285288Z 6ad4758748c1: Pull complete
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2332274Z Digest: sha256:a3b7f434b2dc57ce85a67e171163eb8ab1a1ebcb39d27484661f26b1dfbe30d6
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2351600Z Status: Downloaded newer image for postgres:16
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2360588Z docker.io/library/postgres:16
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2421486Z ##[command]/usr/bin/docker create --name 9f8ca4a5b8c0424196fe221113341ca1_postgres16_8b337e --label f1ffd3 --network github_network_3a4a733a49224cf59478308735603b02 --network-alias postgres -p 5432:5432 --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 12 -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_DB=rc1_recovery" -e GITHUB_ACTIONS=true -e CI=true postgres:16
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2730702Z bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.2753151Z ##[command]/usr/bin/docker start bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.4888407Z bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.4896069Z ##[command]/usr/bin/docker ps --all --filter id=bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5040528Z bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a Up Less than a second (health: starting)
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5066645Z ##[command]/usr/bin/docker port bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5219695Z 5432/tcp -> 0.0.0.0:5432
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5220348Z 5432/tcp -> [::]:5432
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5273242Z ##[endgroup]
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5282398Z ##[group]Waiting for all services to be ready
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5297622Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5436861Z starting
+linux-sigterm	Initialize containers	2026-09-20T23:08:18.5463599Z postgres service is starting, waiting 2 seconds before checking again.
+linux-sigterm	Initialize containers	2026-09-20T23:08:20.5470831Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:20.5597089Z starting
+linux-sigterm	Initialize containers	2026-09-20T23:08:20.5610882Z postgres service is starting, waiting 4 seconds before checking again.
+linux-sigterm	Initialize containers	2026-09-20T23:08:24.8953212Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Initialize containers	2026-09-20T23:08:24.9083569Z healthy
+linux-sigterm	Initialize containers	2026-09-20T23:08:24.9099109Z postgres service is healthy.
+linux-sigterm	Initialize containers	2026-09-20T23:08:24.9099809Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	﻿2026-09-20T23:08:24.9437763Z ##[group]Run actions/checkout@v7
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9438587Z with:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9438810Z   repository: OmertaDev/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9441128Z   token: ***
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9441346Z   ssh-strict: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9441551Z   ssh-user: git
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9441756Z   persist-credentials: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9441992Z   clean: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9442194Z   sparse-checkout-cone-mode: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9442436Z   fetch-depth: 1
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9442624Z   fetch-tags: false
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9442821Z   show-progress: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9443019Z   lfs: false
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9443197Z   submodules: false
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9443399Z   set-safe-directory: true
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9443637Z   allow-unsafe-pr-checkout: false
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9444057Z env:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9444513Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9445017Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9445425Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:24.9445852Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0401342Z Syncing repository: OmertaDev/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0403475Z ##[group]Getting Git version info
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0404065Z Working directory is '/home/runner/work/Omerta/Omerta'
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0404943Z [command]/usr/bin/git version
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0523601Z git version 2.55.0
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0547494Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0561907Z Temporarily overriding HOME='/home/runner/work/_temp/30f2de12-0530-4ab2-9250-cbe59cf7e73e' before making global git config changes
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0563238Z Adding repository directory to the temporary git global config as a safe directory
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0567836Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0636449Z Deleting the contents of '/home/runner/work/Omerta/Omerta'
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0640995Z ##[group]Determining repository object format
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0642369Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0643621Z ##[group]Initializing the repository
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0647220Z [command]/usr/bin/git init /home/runner/work/Omerta/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0801967Z hint: Using 'master' as the name for the initial branch. This default branch name
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0802935Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0803780Z hint: to use in all of your new repositories, which will suppress this warning,
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0804445Z hint: call:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0804763Z hint:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0805219Z hint: 	git config --global init.defaultBranch <name>
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0805737Z hint:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0806209Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0807039Z hint: 'development'. The just-created branch can be renamed via this command:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0807675Z hint:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0808189Z hint: 	git branch -m <name>
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0808600Z hint:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0809120Z hint: Disable this message with "git config set advice.defaultBranchName false"
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0814345Z Initialized empty Git repository in /home/runner/work/Omerta/Omerta/.git/
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0829958Z [command]/usr/bin/git remote add origin https://github.com/OmertaDev/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0879204Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0879838Z ##[group]Disabling automatic garbage collection
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0883854Z [command]/usr/bin/git config --local gc.auto 0
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0919560Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0920162Z ##[group]Setting up auth
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0920629Z Removing SSH command configuration
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0928196Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.0977815Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1359900Z Removing HTTP extra header
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1365646Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1401421Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1626785Z Removing includeIf entries pointing to credentials config files
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1632635Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1669210Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1906195Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1947830Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git.path /home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.1985186Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.2023141Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.2057331Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.2087468Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.2088226Z ##[group]Fetching the repository
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:25.2094215Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +29a49c6b7673b22c2e803dd2473dc5c7fa03f46a:refs/remotes/origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3038290Z From https://github.com/OmertaDev/Omerta
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3042081Z  * [new ref]         29a49c6b7673b22c2e803dd2473dc5c7fa03f46a -> origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3059083Z [command]/usr/bin/git branch --list --remote origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3085491Z   origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3094690Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3121397Z 29a49c6b7673b22c2e803dd2473dc5c7fa03f46a
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3125367Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3126034Z ##[group]Determining the checkout info
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3126765Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3132475Z [command]/usr/bin/git sparse-checkout disable
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3194032Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3229335Z ##[group]Checking out the ref
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:54.3234104Z [command]/usr/bin/git checkout --progress --force -B codex/rc1-closure-proof refs/remotes/origin/codex/rc1-closure-proof
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.4462571Z Updating files:  34% (1124/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.5725598Z Updating files:  35% (1154/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6223955Z Updating files:  36% (1187/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6405282Z Updating files:  37% (1220/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6631620Z Updating files:  38% (1253/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6644778Z Updating files:  39% (1286/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6658694Z Updating files:  40% (1319/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6688599Z Updating files:  41% (1352/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6730536Z Updating files:  42% (1385/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6755042Z Updating files:  43% (1418/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6777312Z Updating files:  44% (1451/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6802687Z Updating files:  45% (1484/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6826060Z Updating files:  46% (1517/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.6883426Z Updating files:  47% (1550/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7118202Z Updating files:  48% (1583/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7165383Z Updating files:  49% (1616/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7273050Z Updating files:  50% (1649/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7308114Z Updating files:  51% (1682/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7334975Z Updating files:  52% (1715/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7380765Z Updating files:  53% (1748/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7412530Z Updating files:  54% (1781/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7459909Z Updating files:  55% (1814/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7492297Z Updating files:  56% (1847/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7510456Z Updating files:  57% (1880/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7640974Z Updating files:  58% (1913/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7673002Z Updating files:  59% (1946/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7708117Z Updating files:  60% (1979/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7772026Z Updating files:  61% (2012/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.7896419Z Updating files:  62% (2045/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.8037004Z Updating files:  63% (2078/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.8160914Z Updating files:  64% (2111/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.8258120Z Updating files:  65% (2144/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.8576000Z Updating files:  66% (2177/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.8899495Z Updating files:  67% (2209/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.9071544Z Updating files:  68% (2242/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:55.9519454Z Updating files:  69% (2275/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.2225411Z Updating files:  70% (2308/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.2417610Z Updating files:  71% (2341/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.2569968Z Updating files:  72% (2374/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.2752678Z Updating files:  73% (2407/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.2920386Z Updating files:  74% (2440/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.3195095Z Updating files:  75% (2473/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.3304766Z Updating files:  76% (2506/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.3478211Z Updating files:  76% (2520/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.3593739Z Updating files:  77% (2539/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4004672Z Updating files:  78% (2572/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4124383Z Updating files:  79% (2605/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4241973Z Updating files:  80% (2638/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4282529Z Updating files:  81% (2671/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4321233Z Updating files:  82% (2704/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4367390Z Updating files:  83% (2737/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4408185Z Updating files:  84% (2770/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4451020Z Updating files:  85% (2803/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4495341Z Updating files:  86% (2836/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4551023Z Updating files:  87% (2869/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4598059Z Updating files:  88% (2902/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4663789Z Updating files:  89% (2935/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4695304Z Updating files:  90% (2968/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4750809Z Updating files:  91% (3001/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4803670Z Updating files:  92% (3034/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4843311Z Updating files:  93% (3067/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4889062Z Updating files:  94% (3100/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4935551Z Updating files:  95% (3133/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.4974544Z Updating files:  96% (3166/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5012327Z Updating files:  97% (3199/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5048472Z Updating files:  98% (3232/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5087159Z Updating files:  99% (3265/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5087872Z Updating files: 100% (3297/3297)
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5088515Z Updating files: 100% (3297/3297), done.
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5132527Z Switched to a new branch 'codex/rc1-closure-proof'
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5140069Z branch 'codex/rc1-closure-proof' set up to track 'origin/codex/rc1-closure-proof'.
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5285885Z ##[endgroup]
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5339531Z [command]/usr/bin/git log -1 --format=%H
+linux-sigterm	Run actions/checkout@v7	2026-09-20T23:08:56.5370151Z 29a49c6b7673b22c2e803dd2473dc5c7fa03f46a
+linux-sigterm	Run actions/setup-node@v7	﻿2026-09-20T23:08:56.5625573Z ##[group]Run actions/setup-node@v7
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5625873Z with:
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5626067Z   node-version: 22
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5626268Z   cache: npm
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5626463Z   check-latest: false
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5629167Z   token: ***
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5629407Z   package-manager-cache: true
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5629654Z env:
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5630097Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5630618Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5631022Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.5631410Z ##[endgroup]
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.6904470Z Found in cache @ /opt/hostedtoolcache/node/22.23.2/x64
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:56.6906396Z ##[group]Environment details
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.1241681Z node: v22.23.2
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.1242154Z npm: 10.9.8
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.1242468Z yarn: 1.22.22
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.1243500Z ##[endgroup]
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.1262173Z [command]/opt/hostedtoolcache/node/22.23.2/x64/bin/npm config get cache
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.2960337Z /home/runner/.npm
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:57.5582301Z Cache hit for: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:58.8567092Z Received 0 of 23793481 (0.0%), 0.0 MBs/sec
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:59.1692998Z Received 23793481 of 23793481 (100.0%), 17.3 MBs/sec
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:59.1693725Z Cache Size: ~23 MB (23793481 B)
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:59.1724330Z [command]/usr/bin/tar -xf /home/runner/work/_temp/93835c90-10f8-4473-a703-c22d25a7a33c/cache.tzst -P -C /home/runner/work/Omerta/Omerta --use-compress-program unzstd
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:59.2573530Z Cache restored successfully
+linux-sigterm	Run actions/setup-node@v7	2026-09-20T23:08:59.2591061Z Cache restored from key: node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77
+linux-sigterm	Run npm ci	﻿2026-09-20T23:08:59.2755039Z ##[group]Run npm ci
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2755347Z ^[[36;1mnpm ci^[[0m
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2804964Z shell: /usr/bin/bash -e {0}
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2805248Z env:
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2805778Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2806307Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2806739Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Run npm ci	2026-09-20T23:08:59.2807149Z ##[endgroup]
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1568313Z 
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1576260Z added 248 packages, and audited 249 packages in 8s
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1577224Z 
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1577533Z 70 packages are looking for funding
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1578336Z   run `npm fund` for details
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1578771Z 
+linux-sigterm	Run npm ci	2026-09-20T23:09:07.1579147Z found 0 vulnerabilities
+linux-sigterm	Record exact candidate and runtime	﻿2026-09-20T23:09:07.2214797Z ##[group]Run mkdir -p "$RC1_SHUTDOWN_EVIDENCE"
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2215242Z ^[[36;1mmkdir -p "$RC1_SHUTDOWN_EVIDENCE"^[[0m
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2215896Z ^[[36;1mgit rev-parse HEAD | tee "$RC1_SHUTDOWN_EVIDENCE/source-sha.txt"^[[0m
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2216408Z ^[[36;1mnode --version | tee "$RC1_SHUTDOWN_EVIDENCE/node-version.txt"^[[0m
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2216983Z ^[[36;1mpsql "$DATABASE_URL" -Atc 'SELECT version()' | tee "$RC1_SHUTDOWN_EVIDENCE/postgres-version.txt"^[[0m
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2255008Z shell: /usr/bin/bash -e {0}
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2255265Z env:
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2255786Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2256274Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2256719Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2257125Z ##[endgroup]
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2351599Z 29a49c6b7673b22c2e803dd2473dc5c7fa03f46a
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.2388828Z v22.23.2
+linux-sigterm	Record exact candidate and runtime	2026-09-20T23:09:07.3229449Z PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+linux-sigterm	PostgreSQL16 partial migration failure and retry	﻿2026-09-20T23:09:07.3279527Z ##[group]Run set -o pipefail
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3279871Z ^[[36;1mset -o pipefail^[[0m
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3280320Z ^[[36;1mnpm run test:db-migration:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/migration-failure.log"^[[0m
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3317823Z shell: /usr/bin/bash -e {0}
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3318357Z env:
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3318869Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3319425Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3319862Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.3320289Z ##[endgroup]
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.4537895Z 
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.4539084Z > omerta-backend@1.2.0 test:db-migration:postgres
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.4539931Z > node test/rc1-postgres-migration-failure.js
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:07.4540244Z 
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:14.0164941Z [migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:16.4581968Z {"faultObserved":true,"stamp":{"app_version":"0.0.0","schema_sha":"rc1-before-fault"}}
+linux-sigterm	PostgreSQL16 partial migration failure and retry	2026-09-20T23:09:18.8829646Z RC1: real DDL interruption refuses startup/stamp; retry and restart migration succeed
+linux-sigterm	Native backup, private file permissions and restore on Linux	﻿2026-09-20T23:09:19.2121814Z ##[group]Run set -o pipefail
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2122164Z ^[[36;1mset -o pipefail^[[0m
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2122571Z ^[[36;1mnpm run backup:selftest 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/backup-selftest.log"^[[0m
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2160129Z shell: /usr/bin/bash -e {0}
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2160395Z env:
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2160925Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2161455Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2161886Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.2162305Z ##[endgroup]
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.3215524Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.3216431Z > omerta-backend@1.2.0 backup:selftest
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.3217257Z > bash tools/backup-selftest.sh
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:19.3217622Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5223337Z client: pg_dump 16.15, pg_restore 16.15, psql 16.15
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5620976Z server: 16.15(Debian16.15-1.pgdg13+2)   fixture: 2/2/1/2/4/4/1/2/1/1/1/4/1/1 linked Phase 1 rows
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5622592Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5623277Z 0. THE REQUIRED-TABLE CHECK DOES NOT PIPE INTO grep -q
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5641061Z   ✓ backup.sh matches TOC entries without a grep -q pipeline
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5641722Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:23.5642054Z 1. A GOOD BACKUP IS KEPT
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0359401Z   ✓ a populated database backs up cleanly
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0364519Z   ✓ the dump lands under its real name
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0388595Z   ✓ no .part left behind
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0412116Z   ✓ the dump is owner-only (0600)
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0412406Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.0412799Z 2. THE SCHEMA-ONLY TRAP — the hole that passed before
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.4643396Z   ✓ a schema-only database is REFUSED, not silently kept
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.4649741Z   ✓ …and says why (zero rows, not 'looks fine')
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.4672854Z   ✓ the refused dump is not kept
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.4696565Z   ✓ no .part survives the refusal
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.8580041Z   ✓ BACKUP_MIN_ROWS=0 allows a genuinely cold database through
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.8580576Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:24.8580767Z 3. A TRUNCATED DUMP IS CAUGHT
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.2097868Z   ✓ a truncated dump is REFUSED
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.2122455Z   ✓ the truncated dump is not kept
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.2146795Z   ✓ no .part survives a truncated dump
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.2147223Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.2147652Z 4. THE WRONG DATABASE IS CAUGHT
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3457748Z   ✓ a stale DATABASE_URL pointing elsewhere is REFUSED
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3463025Z   ✓ …and names the reason (wrong database / no schema)
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3463369Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3463806Z 5. AN UNREACHABLE DATABASE FAILS LOUDLY
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3831988Z   ✓ an unreachable database is a failure, not an empty success
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3855789Z   ✓ nothing is kept when the dump never ran
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3856068Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.3856266Z 6. THE SIZE FLOOR STILL BITES
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.8374174Z   ✓ a dump under the size floor is REFUSED
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.8374622Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:25.8374855Z 7. RETENTION HOLDS FIRE AFTER A BAD NIGHT
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.2579532Z   ✓ the bad run fails
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.2584117Z   ✓ a 60-day-old GOOD backup survives the failed run
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.7295436Z   ✓ a good run succeeds in the same directory
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.7300339Z   ✓ …and only then is the expired dump pruned
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.7300636Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:26.7300862Z 8. THE DUMP CAN ACTUALLY BE RESTORED
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.5254480Z   ✓ the dump restores into an empty database with its rows
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.5700929Z   ✓ the restore preserves the complete 14-table Phase 1 fixture census
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.6161488Z   ✓ every restored Phase 1 fixture row keeps its exact ID, custody, provenance and graph state
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.6612229Z   ✓ restored Phase 1 graph has no orphan or duplicate custody
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.9136642Z 
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.9137318Z 26 passed, 0 failed
+linux-sigterm	Native backup, private file permissions and restore on Linux	2026-09-20T23:09:28.9141841Z ✅ backup-selftest passed — every verification in backup.sh refuses what it should, keeps what it should, and the dump restores.
+linux-sigterm	Nine production-process termination barriers	﻿2026-09-20T23:09:29.1736617Z ##[group]Run set -o pipefail
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1736950Z ^[[36;1mset -o pipefail^[[0m
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1737341Z ^[[36;1mnode tools/rc1-shutdown.js 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/shutdown.log"^[[0m
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1775824Z shell: /usr/bin/bash -e {0}
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1776107Z env:
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1776818Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1777340Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1777782Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:09:29.1778517Z ##[endgroup]
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:10:03.0384515Z PASS director-selection: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:10:36.6445702Z PASS campaign-progression: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:10:46.3065979Z PASS world-kernel-mutation: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:10:55.9169252Z PASS operation-resolution: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:11:05.4315155Z PASS item-consumption: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:11:14.4232628Z PASS crafting: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:11:23.9446066Z PASS player-command: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:11:33.5151671Z PASS consequence-generation: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Nine production-process termination barriers	2026-09-20T23:11:51.2807778Z PASS scheduled-worker-processing: barrier, SIGTERM, restart, replay and invariants
+linux-sigterm	Retain exact-revision process logs and verdict	﻿2026-09-20T23:11:51.6311431Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6312804Z ##[group]Run actions/upload-artifact@v4
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6313093Z with:
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6313396Z   name: rc1-linux-recovery-29a49c6b7673b22c2e803dd2473dc5c7fa03f46a
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6313799Z   path: tmp/rc1-linux-recovery/
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6314056Z   if-no-files-found: error
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6314285Z   retention-days: 30
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6314503Z   compression-level: 6
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6314744Z   overwrite: false
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6314967Z   include-hidden-files: false
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6315201Z env:
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6315681Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6316167Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6316626Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.6317032Z ##[endgroup]
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.7951075Z (node:4493) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.7952685Z (Use `node --trace-deprecation ...` to show where the warning was created)
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.8077405Z With the provided path, there will be 28 files uploaded
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.8082568Z Artifact name is valid!
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:51.8083393Z Root directory input is valid!
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.1941828Z Beginning upload of artifact content to blob storage
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.2439013Z (node:4493) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.5649173Z Uploaded bytes 20785
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.6359516Z Finished uploading artifact content to blob storage!
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.6361115Z SHA256 digest of uploaded artifact zip is 0dc1b51c4ef2d9c784dc1c62be14724ace3fc3f0b28fe2151064bafc2f28025d
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.6362141Z Finalizing artifact upload
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.8980339Z Artifact rc1-linux-recovery-29a49c6b7673b22c2e803dd2473dc5c7fa03f46a.zip successfully finalized. Artifact ID 10616360021
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.8982439Z Artifact rc1-linux-recovery-29a49c6b7673b22c2e803dd2473dc5c7fa03f46a has been successfully uploaded! Final size is 20785 bytes. Artifact ID is 10616360021
+linux-sigterm	Retain exact-revision process logs and verdict	2026-09-20T23:11:52.8988227Z Artifact download URL: https://github.com/OmertaDev/Omerta/actions/runs/35543734703/artifacts/10616360021
+linux-sigterm	Post Run actions/setup-node@v7	﻿2026-09-20T23:11:52.9184048Z Post job cleanup.
+linux-sigterm	Post Run actions/setup-node@v7	2026-09-20T23:11:53.0291813Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-08335a2c38c1e792b2f470fe8262ee4aed19102649a638186cb6f1a346595d77, not saving cache.
+linux-sigterm	Post Run actions/checkout@v7	﻿2026-09-20T23:11:53.0416037Z Post job cleanup.
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1304764Z [command]/usr/bin/git version
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1369602Z git version 2.55.0
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1425978Z Temporarily overriding HOME='/home/runner/work/_temp/03e61df0-dbe8-4243-808a-263155d9844f' before making global git config changes
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1427737Z Adding repository directory to the temporary git global config as a safe directory
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1432265Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Omerta/Omerta
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1473451Z Removing SSH command configuration
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1482017Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1526479Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1855780Z Removing HTTP extra header
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1873414Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.1933904Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2245660Z Removing includeIf entries pointing to credentials config files
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2256826Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2296992Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2298350Z includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2309395Z includeif.gitdir:/github/workspace/.git.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2310409Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2312776Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2348987Z /home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2366757Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-fc8eceaa\-cbae\-44c5\-aa21\-1f09535ff601\.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2430079Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2463589Z /home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2475885Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Omerta/Omerta/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-fc8eceaa\-cbae\-44c5\-aa21\-1f09535ff601\.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2552705Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2585036Z /github/runner_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2594570Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-fc8eceaa\-cbae\-44c5\-aa21\-1f09535ff601\.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2636157Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2666384Z /github/runner_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2676256Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-fc8eceaa\-cbae\-44c5\-aa21\-1f09535ff601\.config
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2720645Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+linux-sigterm	Post Run actions/checkout@v7	2026-09-20T23:11:53.2973593Z Removing credentials config '/home/runner/work/_temp/git-credentials-fc8eceaa-cbae-44c5-aa21-1f09535ff601.config'
+linux-sigterm	Stop containers	﻿2026-09-20T23:11:53.3088265Z Print service container logs: 9f8ca4a5b8c0424196fe221113341ca1_postgres16_8b337e
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3093238Z ##[command]/usr/bin/docker logs --details bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3235149Z  initdb: warning: enabling "trust" authentication for local connections
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3248654Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3250282Z  The files belonging to this database system will be owned by user "postgres".
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3251740Z  2026-09-20 23:08:19.419 UTC [1] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3252947Z  2026-09-20 23:08:19.420 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3253489Z  2026-09-20 23:08:19.420 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3254098Z  2026-09-20 23:08:19.421 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3254683Z  2026-09-20 23:08:19.423 UTC [64] LOG:  database system was shut down at 2026-09-20 23:08:19 UTC
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3255216Z  2026-09-20 23:08:19.427 UTC [1] LOG:  database system is ready to accept connections
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3255673Z  2026-09-20 23:08:23.546 UTC [75] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3256099Z  2026-09-20 23:08:28.608 UTC [83] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3256494Z  2026-09-20 23:08:33.669 UTC [91] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3256888Z  2026-09-20 23:08:38.729 UTC [99] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3257290Z  2026-09-20 23:08:43.802 UTC [107] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3257699Z  2026-09-20 23:08:48.877 UTC [115] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3258399Z  2026-09-20 23:08:53.938 UTC [124] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3258817Z  2026-09-20 23:08:59.000 UTC [132] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3259220Z  2026-09-20 23:09:04.082 UTC [140] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3259630Z  2026-09-20 23:09:09.182 UTC [152] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3260041Z  2026-09-20 23:09:14.015 UTC [143] ERROR:  RC1 injected DDL interruption
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3260536Z  2026-09-20 23:09:14.015 UTC [143] CONTEXT:  PL/pgSQL function reject_column() line 4 at RAISE
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3261269Z  2026-09-20 23:09:14.015 UTC [143] STATEMENT:  ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3261915Z  2026-09-20 23:09:14.269 UTC [160] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3262330Z  2026-09-20 23:09:19.336 UTC [169] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3262720Z  2026-09-20 23:09:24.402 UTC [208] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3263163Z  2026-09-20 23:09:28.700 UTC [62] LOG:  checkpoint starting: immediate force wait
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3264305Z  2026-09-20 23:09:28.861 UTC [62] LOG:  checkpoint complete: wrote 5542 buffers (33.8%); 0 WAL file(s) added, 0 removed, 4 recycled; write=0.066 s, sync=0.066 s, total=0.162 s; sync files=6315, longest=0.023 s, average=0.001 s; distance=61935 kB, estimate=61935 kB; lsn=0/559ADB0, redo lsn=0/559AD78
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3265456Z  2026-09-20 23:09:28.952 UTC [62] LOG:  checkpoint starting: immediate force wait
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3266521Z  2026-09-20 23:09:28.955 UTC [62] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.004 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=55741 kB; lsn=0/559B500, redo lsn=0/559B4C8
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3267591Z  2026-09-20 23:09:29.044 UTC [62] LOG:  checkpoint starting: immediate force wait
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3268862Z  2026-09-20 23:09:29.048 UTC [62] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.004 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=50167 kB; lsn=0/559BC50, redo lsn=0/559BC18
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3270203Z  2026-09-20 23:09:29.143 UTC [62] LOG:  checkpoint starting: immediate force wait
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3271376Z  2026-09-20 23:09:29.146 UTC [62] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.004 s; sync files=2, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=45151 kB; lsn=0/559C3B8, redo lsn=0/559C380
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3272441Z  2026-09-20 23:09:29.481 UTC [233] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3272999Z  2026-09-20 23:09:34.569 UTC [245] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3273399Z  2026-09-20 23:09:39.630 UTC [255] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3273849Z  2026-09-20 23:09:42.631 UTC [247] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3274387Z  2026-09-20 23:09:42.631 UTC [247] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3274913Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3275440Z  2026-09-20 23:09:42.631 UTC [247] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3276004Z  2026-09-20 23:09:42.673 UTC [237] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3276540Z  2026-09-20 23:09:42.673 UTC [237] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 1)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3277051Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3277701Z  2026-09-20 23:09:42.673 UTC [237] STATEMENT:  INSERT INTO director_selections(id,mode,evaluated_at,facts_json,candidates_json,selected_json)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3278553Z  	          VALUES($1,$2,$3,$4,$5,$6)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3278890Z  2026-09-20 23:09:44.698 UTC [264] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3279293Z  2026-09-20 23:09:49.761 UTC [275] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3279733Z  2026-09-20 23:09:52.814 UTC [266] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3280267Z  2026-09-20 23:09:52.814 UTC [266] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3280774Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3281290Z  2026-09-20 23:09:52.814 UTC [266] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3281802Z  2026-09-20 23:09:54.847 UTC [284] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3282204Z  2026-09-20 23:09:59.908 UTC [294] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3282643Z  2026-09-20 23:10:02.997 UTC [286] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3283171Z  2026-09-20 23:10:02.997 UTC [286] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901000, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3283685Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3284190Z  2026-09-20 23:10:02.997 UTC [286] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3284729Z  2026-09-20 23:10:04.987 UTC [306] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3285131Z  2026-09-20 23:10:10.048 UTC [318] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3285550Z  2026-09-20 23:10:15.110 UTC [326] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3285990Z  2026-09-20 23:10:16.179 UTC [309] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3286524Z  2026-09-20 23:10:16.179 UTC [309] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3287034Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3287546Z  2026-09-20 23:10:16.179 UTC [309] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3288530Z  2026-09-20 23:10:16.206 UTC [307] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3289104Z  2026-09-20 23:10:16.206 UTC [307] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 1)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3289621Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3290241Z  2026-09-20 23:10:16.206 UTC [307] STATEMENT:  UPDATE director_campaigns SET node_id=$2,status=$3,revision=$4,updated_at=$5 WHERE id=$1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3290891Z  2026-09-20 23:10:20.171 UTC [337] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3291310Z  2026-09-20 23:10:25.232 UTC [345] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3291754Z  2026-09-20 23:10:26.411 UTC [329] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3292428Z  2026-09-20 23:10:26.411 UTC [329] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3292952Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3293473Z  2026-09-20 23:10:26.411 UTC [329] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3293994Z  2026-09-20 23:10:30.294 UTC [357] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3294391Z  2026-09-20 23:10:35.356 UTC [365] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3294832Z  2026-09-20 23:10:36.582 UTC [348] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3295363Z  2026-09-20 23:10:36.582 UTC [348] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901001, 2)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3295880Z  	PL/pgSQL function rc1_heartbeat_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3296384Z  2026-09-20 23:10:36.582 UTC [348] STATEMENT:  UPDATE worker_heartbeat SET beat_at = now() WHERE id = 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3296905Z  2026-09-20 23:10:40.439 UTC [378] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3297302Z  2026-09-20 23:10:45.515 UTC [389] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3297839Z  2026-09-20 23:10:46.101 UTC [381] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3299344Z  2026-09-20 23:10:46.101 UTC [381] DETAIL:  Key (account_id, key)=(rc1_shutdown_2-aBoss, a352ce4e75c9a7e7e1b42685100efd5293c3586f4eafdf0248b86b742681370a.b137a9ce487665e4fe89dace07570908b85500c717d968723bb589120a7f5622) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3300596Z  2026-09-20 23:10:46.101 UTC [381] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3301234Z  2026-09-20 23:10:50.595 UTC [403] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3301639Z  2026-09-20 23:10:55.667 UTC [413] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3302168Z  2026-09-20 23:10:55.715 UTC [406] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3303326Z  2026-09-20 23:10:55.715 UTC [406] DETAIL:  Key (account_id, key)=(rc1_shutdown_3-aBoss, d1ad9687ae65d7dd28f35aa32c72589ff6b9350a1d1bfabae8b290cd176c4de0.2a200edec95afb8034f48f9c329085482624fd63c10cb0f1afeebeeefd898935) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3304569Z  2026-09-20 23:10:55.715 UTC [406] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3305205Z  2026-09-20 23:11:00.749 UTC [426] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3305731Z  2026-09-20 23:11:05.224 UTC [429] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3306886Z  2026-09-20 23:11:05.224 UTC [429] DETAIL:  Key (account_id, key)=(rc1_shutdown_4-aBoss, 6121f989feaf045b637092a1a48fb2deab9ca677e02bc7ae7ac20db9aed970ca.003052b0eacedad2ca97992b909236ebad7c78fe000a4bc2847fcbe7d972d7be) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3308384Z  2026-09-20 23:11:05.224 UTC [429] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3309215Z  2026-09-20 23:11:05.848 UTC [439] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3309629Z  2026-09-20 23:11:10.921 UTC [453] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3310160Z  2026-09-20 23:11:14.246 UTC [454] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3311313Z  2026-09-20 23:11:14.246 UTC [454] DETAIL:  Key (account_id, key)=(rc1_shutdown_5-aRunner, 2399e7059ba3c26bde793f2cb713a9bf823c90fbbdae0e77ca611d87e3e08331.511e674b41efe2112a2544c4760e915a3f11acbb26dab797a72a0406db2d4ec9) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3312555Z  2026-09-20 23:11:14.246 UTC [454] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3313315Z  2026-09-20 23:11:16.003 UTC [466] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3313721Z  2026-09-20 23:11:21.077 UTC [477] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3314254Z  2026-09-20 23:11:23.740 UTC [478] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3315382Z  2026-09-20 23:11:23.740 UTC [478] DETAIL:  Key (account_id, key)=(rc1_shutdown_6-aBoss, 53662d10595c76a52681de08017742efc2cfb4e31c3a86a2985379f9ae6594b4.2ebda83be7371b63bfa683711044ed5e3374ca7c136549d39f6149ee003cbe22) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3316597Z  2026-09-20 23:11:23.740 UTC [478] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3317224Z  2026-09-20 23:11:26.165 UTC [490] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3317628Z  2026-09-20 23:11:31.237 UTC [503] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3318370Z  2026-09-20 23:11:33.310 UTC [495] ERROR:  duplicate key value violates unique constraint "idempotency_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3319528Z  2026-09-20 23:11:33.310 UTC [495] DETAIL:  Key (account_id, key)=(rc1_shutdown_7-aBoss, d9a95ebf4b159d5accda51f7200126d3f3c8ae38819b83768e57b513ad73b0dd.6e2a3c386b767316e1a6e085ac043ae8b927e0b496047ee3e959b25ced94e681) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3320753Z  2026-09-20 23:11:33.310 UTC [495] STATEMENT:  INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3321382Z  2026-09-20 23:11:36.309 UTC [515] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3321780Z  2026-09-20 23:11:41.370 UTC [526] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3322178Z  2026-09-20 23:11:46.431 UTC [534] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3322615Z  2026-09-20 23:11:46.498 UTC [518] ERROR:  canceling statement due to lock timeout
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3323156Z  2026-09-20 23:11:46.498 UTC [518] CONTEXT:  SQL statement "SELECT pg_advisory_xact_lock(1901008, 1)"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3323674Z  	PL/pgSQL function rc1_target_barrier() line 2 at PERFORM
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3324242Z  2026-09-20 23:11:46.498 UTC [518] STATEMENT:  UPDATE npc_wars SET resolved=true WHERE attacker_gang=$1 AND npc_gang=$2
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3324963Z  2026-09-20 23:11:48.730 UTC [537] ERROR:  duplicate key value violates unique constraint "world_uprisings_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3325546Z  2026-09-20 23:11:48.730 UTC [537] DETAIL:  Key (day)=(20716) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3326135Z  2026-09-20 23:11:48.730 UTC [537] STATEMENT:  INSERT INTO world_uprisings (day, npc_id, status) VALUES ($1,$2,'active')
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3326846Z  2026-09-20 23:11:51.013 UTC [541] ERROR:  duplicate key value violates unique constraint "world_uprisings_pkey"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3327411Z  2026-09-20 23:11:51.013 UTC [541] DETAIL:  Key (day)=(20716) already exists.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3328218Z  2026-09-20 23:11:51.013 UTC [541] STATEMENT:  INSERT INTO world_uprisings (day, npc_id, status) VALUES ($1,$2,'active')
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3328821Z  2026-09-20 23:11:51.515 UTC [549] FATAL:  role "root" does not exist
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3329201Z  This user must also own the server process.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3329489Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3329914Z  The database cluster will be initialized with locale "en_US.utf8".
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3330385Z  The default database encoding has accordingly been set to "UTF8".
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3330818Z  The default text search configuration will be set to "english".
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3331162Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3331361Z  Data page checksums are disabled.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3331617Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3331910Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3332313Z  creating subdirectories ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3332639Z  selecting dynamic shared memory implementation ... posix
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3332994Z  selecting default max_connections ... 100
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3333302Z  selecting default shared_buffers ... 128MB
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3333726Z  selecting default time zone ... Etc/UTC
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3334018Z  creating configuration files ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3334295Z  running bootstrap script ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3334599Z  performing post-bootstrap initialization ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3334918Z  syncing data to disk ... ok
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3335146Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3335324Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3335553Z  Success. You can now start the database server using:
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3335859Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3336103Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3336410Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3337061Z  waiting for server to start....2026-09-20 23:08:19.112 UTC [48] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3338210Z  2026-09-20 23:08:19.112 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3338840Z  2026-09-20 23:08:19.115 UTC [51] LOG:  database system was shut down at 2026-09-20 23:08:19 UTC
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3339377Z  2026-09-20 23:08:19.118 UTC [48] LOG:  database system is ready to accept connections
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3339764Z   done
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3339954Z  server started
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3340157Z  CREATE DATABASE
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3340347Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3340519Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3340847Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3341255Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3341512Z  2026-09-20 23:08:19.298 UTC [48] LOG:  received fast shutdown request
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3342056Z  waiting for server to shut down....2026-09-20 23:08:19.298 UTC [48] LOG:  aborting any active transactions
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3342785Z  2026-09-20 23:08:19.301 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3343348Z  2026-09-20 23:08:19.302 UTC [49] LOG:  shutting down
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3343751Z  2026-09-20 23:08:19.302 UTC [49] LOG:  checkpoint starting: shutdown immediate
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3344865Z  2026-09-20 23:08:19.318 UTC [49] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.012 s, sync=0.003 s, total=0.017 s; sync files=301, longest=0.002 s, average=0.001 s; distance=4273 kB, estimate=4273 kB; lsn=0/191F0F0, redo lsn=0/191F0F0
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3345964Z  2026-09-20 23:08:19.324 UTC [48] LOG:  database system is shut down
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3346304Z   done
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3346484Z  server stopped
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3346683Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3346925Z  PostgreSQL init process complete; ready for start up.
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3347235Z  
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3353848Z Stop and remove container: 9f8ca4a5b8c0424196fe221113341ca1_postgres16_8b337e
+linux-sigterm	Stop containers	2026-09-20T23:11:53.3359312Z ##[command]/usr/bin/docker rm --force bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Stop containers	2026-09-20T23:11:53.4759784Z bed52ea1218796f640064336c4bbb8f9d40673ffc38d1f51eb3af01a126e4c5a
+linux-sigterm	Stop containers	2026-09-20T23:11:53.4787397Z Remove container network: github_network_3a4a733a49224cf59478308735603b02
+linux-sigterm	Stop containers	2026-09-20T23:11:53.4792122Z ##[command]/usr/bin/docker network rm github_network_3a4a733a49224cf59478308735603b02
+linux-sigterm	Stop containers	2026-09-20T23:11:53.5792776Z github_network_3a4a733a49224cf59478308735603b02
+linux-sigterm	Complete job	﻿2026-09-20T23:11:53.5865783Z Cleaning up orphan processes
+linux-sigterm	Complete job	2026-09-20T23:11:53.6341844Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

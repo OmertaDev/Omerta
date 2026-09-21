@@ -1,0 +1,4 @@
+{"gate":"test:rwaregistrylifecycle:postgres","command":"npm run test:rwaregistrylifecycle:postgres","script":"node test/rwaregistrylifecycle.postgres.js","dbName":"omerta_rc1_test_rwaregistrylifecycle_postgres_muafbc1r","started":"2026-09-20T23:04:25.499Z"}
+PASS RWA Registry lifecycle real PostgreSQL harness: schema constraints and explicit lock/CAS concurrency fixtures completed
+
+{"gate":"test:rwaregistrylifecycle:postgres","command":"npm run test:rwaregistrylifecycle:postgres","dbName":"omerta_rc1_test_rwaregistrylifecycle_postgres_muafbc1r","started":"2026-09-20T23:04:25.499Z","finished":"2026-09-20T23:04:33.746Z","status":0}

@@ -1,0 +1,114 @@
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	﻿2026-09-20T23:28:00.6677425Z ##[group]Run npm run test:rc1:mobile:postgres
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6678102Z ^[[36;1mnpm run test:rc1:mobile:postgres^[[0m
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6715704Z shell: /usr/bin/bash -e {0}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6715970Z env:
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6716504Z   COORDINATION_TEST_DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6717006Z   DATABASE_URL: ***127.0.0.1:5432/rc1_recovery
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6717465Z   RC1_SHUTDOWN_EVIDENCE: /home/runner/work/Omerta/Omerta/tmp/rc1-linux-recovery
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6718027Z   RC1_TEST_DATABASE_URL: ***127.0.0.1:5432/postgres
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.6718328Z ##[endgroup]
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.7769240Z 
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.7770025Z > omerta-backend@1.2.0 test:rc1:mobile:postgres
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.7770601Z > node test/rc1-mobile-postgres.js
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:00.7770891Z 
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:01.7630184Z ⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:01.7635555Z ⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:01.7638974Z ⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:04.7704330Z [db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:08.0418569Z {"component":"player-command","phase":"request","correlationId":"4986fadb-2da2-402f-a14a-266db92a4335"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:08.0458441Z {"component":"player-command","phase":"authorization","correlationId":"4986fadb-2da2-402f-a14a-266db92a4335","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:08.1145630Z {"component":"player-command","phase":"response","correlationId":"4986fadb-2da2-402f-a14a-266db92a4335","statusCode":200,"elapsedMs":75}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:09.3810212Z {"component":"player-command","phase":"request","correlationId":"ca4d6685-e0c1-46ed-95dc-68cd13b2452f"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:09.3826560Z {"component":"player-command","phase":"authorization","correlationId":"ca4d6685-e0c1-46ed-95dc-68cd13b2452f","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:09.4414393Z {"component":"player-command","phase":"response","correlationId":"ca4d6685-e0c1-46ed-95dc-68cd13b2452f","statusCode":200,"elapsedMs":61}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:13.4314665Z {"component":"player-command","phase":"request","correlationId":"8c56f789-431a-4bfc-808c-1cfcf8e426b4"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:13.4328431Z {"component":"player-command","phase":"authorization","correlationId":"8c56f789-431a-4bfc-808c-1cfcf8e426b4","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:13.4871831Z {"component":"player-command","phase":"response","correlationId":"8c56f789-431a-4bfc-808c-1cfcf8e426b4","statusCode":200,"elapsedMs":55}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.5632098Z {"component":"player-command","phase":"request","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.5680743Z {"component":"player-command","phase":"authorization","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.5682562Z {"component":"player-command","phase":"command","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.6448184Z {"component":"player-command","phase":"mutation","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3","outcome":"completed","replayed":false}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7010341Z {"component":"player-command","phase":"consequence","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3","replayed":false,"changes":2}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7013037Z {"component":"player-command","phase":"opportunity","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3","replayed":false,"changes":2}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7066460Z {"component":"player-command","phase":"response","correlationId":"8a3fa949-2413-4494-ad30-7177fef318d3","statusCode":200,"elapsedMs":142}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7106513Z {"component":"player-command","phase":"request","correlationId":"bb17876c-38f7-48d3-a122-361575bd3b6b"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7122659Z {"component":"player-command","phase":"authorization","correlationId":"bb17876c-38f7-48d3-a122-361575bd3b6b","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.7869990Z {"component":"player-command","phase":"response","correlationId":"bb17876c-38f7-48d3-a122-361575bd3b6b","statusCode":200,"elapsedMs":76}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.8895562Z {"component":"player-command","phase":"request","correlationId":"1ab23bde-ccca-48db-b76e-7739ecc7ce7a"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.8913679Z {"component":"player-command","phase":"authorization","correlationId":"1ab23bde-ccca-48db-b76e-7739ecc7ce7a","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:15.9578974Z {"component":"player-command","phase":"response","correlationId":"1ab23bde-ccca-48db-b76e-7739ecc7ce7a","statusCode":200,"elapsedMs":68}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:16.2781843Z {"component":"player-command","phase":"request","correlationId":"3b440bb7-e513-42cd-82e1-ae6e16ea9737"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:16.2783789Z {"component":"player-command","phase":"authorization","correlationId":"3b440bb7-e513-42cd-82e1-ae6e16ea9737","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:16.3433217Z {"component":"player-command","phase":"response","correlationId":"3b440bb7-e513-42cd-82e1-ae6e16ea9737","statusCode":200,"elapsedMs":68}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:17.4789851Z {"component":"player-command","phase":"request","correlationId":"02bf74cb-9199-45fa-8694-ec3f66a21267"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:17.4801798Z {"component":"player-command","phase":"authorization","correlationId":"02bf74cb-9199-45fa-8694-ec3f66a21267","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:17.5395504Z {"component":"player-command","phase":"response","correlationId":"02bf74cb-9199-45fa-8694-ec3f66a21267","statusCode":200,"elapsedMs":60}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:19.6370815Z {"component":"player-command","phase":"request","correlationId":"afa94647-9f0f-4e3c-9825-a11ffd43f425"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:19.6404875Z {"component":"player-command","phase":"authorization","correlationId":"afa94647-9f0f-4e3c-9825-a11ffd43f425","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:19.7095407Z {"component":"player-command","phase":"response","correlationId":"afa94647-9f0f-4e3c-9825-a11ffd43f425","statusCode":200,"elapsedMs":73}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:21.5582525Z {"component":"player-command","phase":"request","correlationId":"b71bcbfc-3f2a-40ba-812e-829e293334dc"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:21.5594204Z {"component":"player-command","phase":"authorization","correlationId":"b71bcbfc-3f2a-40ba-812e-829e293334dc","outcome":"allowed"}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:21.6145040Z {"component":"player-command","phase":"response","correlationId":"b71bcbfc-3f2a-40ba-812e-829e293334dc","statusCode":200,"elapsedMs":56}
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5667895Z node:internal/modules/run_main:123
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5668652Z     triggerUncaughtException(
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5669249Z     ^
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5669568Z 
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5674076Z locator.click: Timeout 30000ms exceeded.
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5674720Z Call log:
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5675274Z   - waiting for locator('#bnav [data-go="family"]')
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5676354Z     - locator resolved to <button type="button" data-go="family">…</button>
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5677048Z   - attempting click action
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5677726Z     2 × waiting for element to be visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5678361Z       - element is visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5678886Z       - scrolling into view if needed
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5679318Z       - done scrolling
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5680098Z       - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5680803Z     - retrying click action
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5681192Z     - waiting 20ms
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5681768Z     2 × waiting for element to be visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5682370Z       - element is visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5684122Z       - scrolling into view if needed
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5684564Z       - done scrolling
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5685352Z       - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5686021Z     - retrying click action
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5686397Z       - waiting 100ms
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5686994Z     53 × waiting for element to be visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5687666Z        - element is visible, enabled and stable
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5688206Z        - scrolling into view if needed
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5688622Z        - done scrolling
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5689372Z        - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5690041Z      - retrying click action
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5690417Z        - waiting 500ms
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5690649Z 
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5691045Z     at /home/runner/work/Omerta/Omerta/test/rc1-mobile-postgres.js:49:52 {
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5691655Z   log: [
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5692136Z     `  - waiting for locator('#bnav [data-go="family"]')`,
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5693338Z     '    - locator resolved to <button type="button" data-go="family">…</button>',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5694003Z     '  - attempting click action',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5694756Z     '    2 × waiting for element to be visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5695398Z     '      - element is visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5695929Z     '      - scrolling into view if needed',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5696364Z     '      - done scrolling',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5697204Z     '      - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5697851Z     '    - retrying click action',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5698143Z     '    - waiting 20ms',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5698562Z     '    2 × waiting for element to be visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5698981Z     '      - element is visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5699334Z     '      - scrolling into view if needed',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5699617Z     '      - done scrolling',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5700124Z     '      - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5700580Z     '    - retrying click action',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5700839Z     '      - waiting 100ms',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5701235Z     '    53 × waiting for element to be visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5701651Z     '       - element is visible, enabled and stable',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5701990Z     '       - scrolling into view if needed',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5702296Z     '       - done scrolling',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5723761Z     '       - <div class="modal-bg" data-managed-dialog="">…</div> intercepts pointer events',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5724597Z     '     - retrying click action',
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5724889Z     '       - waiting 500ms'
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5725133Z   ],
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5725334Z   name: 'TimeoutError'
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5725567Z }
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5725669Z 
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5725756Z Node.js v22.23.2
+linux-sigterm	RC1 newcomer and returning phone journey on PostgreSQL	2026-09-20T23:28:54.5959702Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,2 @@
+knowledge base drift: graph.json, graph-summary.md, inventory.md, github-history.md
+run: npm run knowledge

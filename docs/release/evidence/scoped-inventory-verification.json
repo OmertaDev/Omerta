@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-09-21T00:02:22.561Z",
+  "results": [
+    {
+      "scope": "security-source",
+      "files": 19,
+      "mismatches": []
+    },
+    {
+      "scope": "security-evidence",
+      "files": 50,
+      "mismatches": []
+    },
+    {
+      "scope": "simulation",
+      "files": 53,
+      "mismatches": []
+    }
+  ]
+}

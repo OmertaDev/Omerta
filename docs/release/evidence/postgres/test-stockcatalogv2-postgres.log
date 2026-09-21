@@ -1,0 +1,4 @@
+{"gate":"test:stockcatalogv2:postgres","command":"npm run test:stockcatalogv2:postgres","script":"node test/stockcatalogv2.postgres.js","dbName":"omerta_rc1_test_stockcatalogv2_postgres_muafasym","started":"2026-09-20T23:04:00.974Z"}
+✅ stock catalog v2 real PostgreSQL: FO order, MVCC, rollback, replay, BigInt, readiness
+
+{"gate":"test:stockcatalogv2:postgres","command":"npm run test:stockcatalogv2:postgres","dbName":"omerta_rc1_test_stockcatalogv2_postgres_muafasym","started":"2026-09-20T23:04:00.974Z","finished":"2026-09-20T23:04:08.845Z","status":0}

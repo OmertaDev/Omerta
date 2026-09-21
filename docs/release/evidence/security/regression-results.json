@@ -1,0 +1,80 @@
+[
+  {
+    "command": "node test/auth.js",
+    "start": "2026-09-20T22:48:04.8412282Z",
+    "exit": 0,
+    "log": "auth.log"
+  },
+  {
+    "command": "node test/security.js",
+    "start": "2026-09-20T22:48:12.6465701Z",
+    "exit": 0,
+    "log": "security.log"
+  },
+  {
+    "command": "node test/player-commands.js",
+    "start": "2026-09-20T22:48:28.5478364Z",
+    "exit": 0,
+    "log": "player-commands.log"
+  },
+  {
+    "command": "node test/player-command-api.js",
+    "start": "2026-09-20T22:48:32.3516877Z",
+    "exit": 0,
+    "log": "player-command-api.log"
+  },
+  {
+    "command": "node test/director-security.js",
+    "start": "2026-09-20T22:48:38.2151085Z",
+    "exit": 0,
+    "log": "director-security.log"
+  },
+  {
+    "command": "node test/coordination-knowledge.js",
+    "start": "2026-09-20T22:48:42.6004642Z",
+    "exit": 0,
+    "log": "coordination-knowledge.log"
+  },
+  {
+    "command": "node test/coordination-knowledge-runtime.js",
+    "start": "2026-09-20T22:48:49.4203309Z",
+    "exit": 0,
+    "log": "coordination-knowledge-runtime.log"
+  },
+  {
+    "command": "node test/coordination-knowledge-api.js",
+    "start": "2026-09-20T22:48:53.3140621Z",
+    "exit": 0,
+    "log": "coordination-knowledge-api.log"
+  },
+  {
+    "command": "node test/world-kernel-input.js",
+    "start": "2026-09-20T22:49:00.7921510Z",
+    "exit": 0,
+    "log": "world-kernel-input.log"
+  },
+  {
+    "command": "node test/world-kernel-api.js",
+    "start": "2026-09-20T22:49:04.2707766Z",
+    "exit": 0,
+    "log": "world-kernel-api.log"
+  },
+  {
+    "command": "node test/world-projection-api.js",
+    "start": "2026-09-20T22:49:13.3923580Z",
+    "exit": 0,
+    "log": "world-projection-api.log"
+  },
+  {
+    "command": "node test/world-projection-mysteries-api.js",
+    "start": "2026-09-20T22:49:22.1601868Z",
+    "exit": 0,
+    "log": "world-projection-mysteries-api.log"
+  },
+  {
+    "command": "node test/family-operations-api.js",
+    "start": "2026-09-20T22:49:30.5153433Z",
+    "exit": 0,
+    "log": "family-operations-api.log"
+  }
+]

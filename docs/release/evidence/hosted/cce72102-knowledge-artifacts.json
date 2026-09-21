@@ -1,0 +1,6 @@
+{
+  "finishedAt": "2026-09-20T23:58:48.7724108Z",
+  "exitCode": 0,
+  "command": "node tools/knowledge-test.js",
+  "source": "cce721029c86de7c6f0d875fef7cb8de29504dda"
+}

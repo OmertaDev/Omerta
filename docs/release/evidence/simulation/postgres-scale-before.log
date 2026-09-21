@@ -1,0 +1,15 @@
+
+> omerta-backend@1.2.0 scale
+> node tools/scale.js
+
+file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263
+    throw new Error(`Refusing to boot — deploy preflight failed:\n  - ${preflightErrors.join('\n  - ')}`);
+          ^
+
+Error: Refusing to boot — deploy preflight failed:
+  - Test-only roll/timer overrides must not be set in production (they pin money rolls to always-win and collapse the pacing timers): SEASON_MOD, SEASON_PHASE
+    at buildServer (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263:11)
+    at runTown (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/tools/scale.js:72:19)
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/tools/scale.js:661:9
+
+Node.js v24.19.0

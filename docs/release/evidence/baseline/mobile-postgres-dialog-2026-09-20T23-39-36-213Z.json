@@ -1,0 +1,16 @@
+{
+  "id": "mobile-postgres-dialog",
+  "command": [
+    "node",
+    "test/rc1-mobile-postgres.js"
+  ],
+  "source": "a61a27d40d09caa8de0319ceea1cca7a14fdc96f",
+  "trackedSourceDiffSha256": "cd1e6c91f97d51ba7746e033cd0d7f170e2242c381c554298f348b9a553eae38",
+  "started": "2026-09-20T23:39:36.328Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/mobile-postgres-dialog-2026-09-20T23-39-36-213Z.log",
+  "finished": "2026-09-20T23:40:10.931Z",
+  "exitCode": 0,
+  "signal": null
+}

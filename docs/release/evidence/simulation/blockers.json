@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "testedCandidate": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "generatedAt": "2026-09-20T23:39:25.767Z",
+  "classificationNote": "Required release proof is absent; neither item is presented as a demonstrated production exploit or a proven whole-game deadlock.",
+  "blockers": [
+    {
+      "id": "RC1-SIM-MATRIX-01",
+      "classification": "A. RC BLOCKER",
+      "kind": "MISSING_REQUIRED_PROOF",
+      "requirement": "Canonical PostgreSQL stress worlds for five populations by fifteen requested world archetypes, sufficiently long to measure equilibrium and whole-world interaction reachability.",
+      "observed": {
+        "requiredCells": 75,
+        "fullyProvenEquilibriumCells": 0,
+        "deterministicModelRuns": 130,
+        "modelSnapshots": 520,
+        "nativeRuns": 6,
+        "nativeRounds": 2,
+        "nativeMaximumPopulation": 1000
+      },
+      "evidence": [
+        "matrix-coverage.json",
+        "director-population-matrix.json",
+        "native1000/1000-rc1-alpha-0.json",
+        "../../RC1-SIMULATION-REPORT.md"
+      ],
+      "reproduction": [
+        {
+          "command": "node tools/rc1-director-matrix.js",
+          "expected": "Output explicitly identifies a bounded model with no PostgreSQL gameplay execution."
+        },
+        {
+          "command": "$env:COORDINATION_TEST_DATABASE_URL='postgres://postgres@127.0.0.1:55439/omerta_rc1_sim'; node tools/rc1-sim.js --postgres --populations=1000 --seeds=rc1-alpha --replicates=1 --rounds=2 --output=docs/release/evidence/simulation/reproduction1000",
+          "expected": "PASS_SCOPED may occur; rounds is 2 and notMeasured includes long-term starvation, independent Crew/Family campaign dynamics and irreversible dead ends across every branch."
+        },
+        {
+          "command": "Get-Content docs/release/evidence/simulation/matrix-coverage.json",
+          "expected": "All 75 canonical equilibrium cells have REQUIRED_PROOF_MISSING, with model analogues labeled separately."
+        }
+      ],
+      "provenGameDeadlock": false
+    },
+    {
+      "id": "RC1-SIM-CONSERVATION-02",
+      "classification": "A. RC BLOCKER",
+      "kind": "MISSING_REQUIRED_PROOF",
+      "requirement": "Every valuable-resource transition reconciles BEFORE + CREATED - DESTROYED + TRANSFERRED_IN - TRANSFERRED_OUT = AFTER throughout full canonical simulations.",
+      "observed": {
+        "nativePerCommandSweeps": true,
+        "scalePerApiAndWorkerSweeps": 1465,
+        "entryAbsoluteInvariantAssertions": 516175,
+        "allResourceTransitionInventoryComplete": false,
+        "nonzeroNativeOmrTransactions": 0,
+        "requiredResourceCategoriesMapped": 13,
+        "recordedInvariantNamesMapped": 55,
+        "concreteCoverageGaps": 9
+      },
+      "gaps": [
+        "C02-OMR: nonzero player/desk OMR transfer or sink recycling; OMR-backed loan pledge/refund/seizure; OMR mint/burn and backing reconciliation",
+        "C02-CAMPAIGN-CASH: legacy street campaign claim creates campaign:reward cash; retry of the same reward claim produces no second credit",
+        "C02-OPERATION-CAPITAL: coordination:capital:deposit; coordination:capital:refund; coordination:capital:spend; coordination:capital:forfeit after original owner death/replacement",
+        "C02-HARDENING: hardened-steel craft debits exactly 300 cash once while consuming inputs and creating output; hardening replay reconciles the same guard with no second sink",
+        "C02-COMPOUND-JOURNAL: individual car boost then salvage grant/destruction boundaries inside supplies; per-owner item/stack transfers into custody and return/consumption amounts for each terminal disposition",
+        "C02-ESCROW-DISPOSITIONS: market refund, death/loot release versus sale/take; loan refund, death/loot release versus take; poker, racing and stake escrow win/refund/rake/death branches",
+        "C02-FAMILY-TREASURY: cash/OMR tribute into treasury/reserve; war spoils transfer between Family treasuries; turf contest stake, refund and burn; Family dissolution of treasury/reserve/ammo",
+        "C02-NFT-CHAIN: rarity upgrade pays OMR and updates the same eligible item; NFT extraction sets minted_onchain and removes usable game custody; expired extraction restores custody; on-chain return/import restores exactly one usable game item; deployed contract backing reconciles soft OMR and real token balances",
+        "C02-SHIPMENT-MATERIAL: daily capped shipment take creates characters.shipment material; commissionPiece consumes shipment units and cash, creates one bespoke serial"
+      ],
+      "evidence": [
+        "run-summary.json",
+        "postgres-scale-invite-off.log",
+        "population1000-transitions.ndjson",
+        "native1000/1000-rc1-alpha-0.json",
+        "resource-transition-coverage.json",
+        "coverage-inspections.json"
+      ],
+      "reproduction": [
+        {
+          "command": "Get-Content docs/release/evidence/simulation/resource-transition-coverage.json -Raw | ConvertFrom-Json | Select-Object -ExpandProperty gaps",
+          "expected": "Nine concrete coverage gaps, each with a pinned-source or retained-artifact inspection command; absence of a monetary operation reward is not classified as a defect."
+        }
+      ],
+      "provenValueDuplication": false,
+      "transitionCoverage": "resource-transition-coverage.json",
+      "concreteGaps": [
+        {
+          "id": "C02-OMR",
+          "status": "UNEXERCISED_IN_NATIVE_AND_ENTRY",
+          "transitionClasses": [
+            "nonzero player/desk OMR transfer or sink recycling",
+            "OMR-backed loan pledge/refund/seizure",
+            "OMR mint/burn and backing reconciliation"
+          ],
+          "inspectionCommand": "$p=Get-Content docs/release/evidence/simulation/native1000/1000-rc1-alpha-0.json -Raw | ConvertFrom-Json; $p.authoritative | Select-Object omrTransactions; $p.notMeasured | Select-String \"OMR\"",
+          "expected": "omrTransactions = 0; nonzero OMR movement is explicitly unmeasured."
+        },
+        {
+          "id": "C02-CAMPAIGN-CASH",
+          "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+          "transitionClasses": [
+            "legacy street campaign claim creates campaign:reward cash",
+            "retry of the same reward claim produces no second credit"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/campaigns.js | Select-String -Pattern 'claimCampaign|campaign:reward' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:tools/rc1-sim.js | Select-String -Pattern 'attempts.push|reward-bearing' -Context 2,3",
+          "expected": "Existing legacy cash reward implementation is visible; native report scope excludes reward-bearing paths. Campaign Network completion alone does not prove this separate payout."
+        },
+        {
+          "id": "C02-OPERATION-CAPITAL",
+          "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+          "transitionClasses": [
+            "coordination:capital:deposit",
+            "coordination:capital:refund",
+            "coordination:capital:spend",
+            "coordination:capital:forfeit after original owner death/replacement"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/content/campaign-network.js | Select-String -Pattern 'kind: ''capital''|kind: ''resource''|kind: ''item''' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/coordination/capital.js | Select-String -Pattern 'depositCapital|refundCapital|settleCapital|forfeited' -Context 2,3",
+          "expected": "The executed content shows item/resource requirements, while the existing capital authority exposes distinct deposit/refund/spend/forfeit paths not selected by those definitions."
+        },
+        {
+          "id": "C02-HARDENING",
+          "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+          "transitionClasses": [
+            "hardened-steel craft debits exactly 300 cash once while consuming inputs and creating output",
+            "hardening replay reconciles the same guard with no second sink"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/invariants.js | Select-String -Pattern 'hardeningSink|hardeningGuards|PHASE1_HARDENING_CASH_COST' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:test/lib/campaign-network-support.js | Select-String -Pattern 'recipeId: id.recipe' -Context 2,3",
+          "expected": "Hardening checks tie cash to completed hardening guards; the native helper chooses its cargo-seal recipe instead."
+        },
+        {
+          "id": "C02-COMPOUND-JOURNAL",
+          "status": "INTERNAL_BOUNDARY_AND_JOURNAL_PROOF_MISSING",
+          "transitionClasses": [
+            "individual car boost then salvage grant/destruction boundaries inside supplies",
+            "per-owner item/stack transfers into custody and return/consumption amounts for each terminal disposition"
+          ],
+          "inspectionCommand": "$p=Get-Content docs/release/evidence/simulation/native1000/1000-rc1-alpha-0.json -Raw | ConvertFrom-Json; $p.authoritative | Select-Object itemsCreated,itemsConsumed,stackUnitsCreated,stackUnitsConsumed,operationStatuses; $p.notMeasured | Select-String \"internal-transition\"",
+          "expected": "Actual creation/consumption counts and completed/expired status are present, with internal-transition accounting explicitly outside scope. No raw item_events array appears."
+        },
+        {
+          "id": "C02-ESCROW-DISPOSITIONS",
+          "status": "TERMINAL_BRANCH_COVERAGE_NOT_RETAINED",
+          "transitionClasses": [
+            "market refund, death/loot release versus sale/take",
+            "loan refund, death/loot release versus take",
+            "poker, racing and stake escrow win/refund/rake/death branches"
+          ],
+          "inspectionCommand": "Get-Content docs/release/evidence/simulation/postgres-scale-invite-off.log | Select-String -Pattern 'POSTED|closed|1465' -Context 0,2; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/invariants.js | Select-String -Pattern 'market escrow|loan escrow|poker tourney escrow' -Context 2,3",
+          "expected": "Aggregate posts/takes and passed boundary sweeps are visible; the invariant equations include terminal branches for which no individual movement journal was emitted."
+        },
+        {
+          "id": "C02-FAMILY-TREASURY",
+          "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+          "transitionClasses": [
+            "cash/OMR tribute into treasury/reserve",
+            "war spoils transfer between Family treasuries",
+            "turf contest stake, refund and burn",
+            "Family dissolution of treasury/reserve/ammo"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:tools/rc1-sim.js | Select-String -Pattern 'createGang|joinGang|tribute|declareWar|dissolve' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/social/gangs.js | Select-String -Pattern 'gang:tribute|gang:dissolved|turf:claim:refund|WAR_SPOILS' -Context 2,3",
+          "expected": "Native simulation only shows creation/join calls; existing tribute, spoils, dissolution and contest settlement branches remain distinct required resource transitions."
+        },
+        {
+          "id": "C02-NFT-CHAIN",
+          "status": "OUTSIDE_LOCAL_SIMULATION_PROOF",
+          "transitionClasses": [
+            "rarity upgrade pays OMR and updates the same eligible item",
+            "NFT extraction sets minted_onchain and removes usable game custody",
+            "expired extraction restores custody",
+            "on-chain return/import restores exactly one usable game item",
+            "deployed contract backing reconciles soft OMR and real token balances"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/nft.js | Select-String -Pattern 'upgradeRarity|rarity:upgrade' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/chain.js | Select-String -Pattern 'export async function requestItemWithdraw|export async function requestGearWithdraw|inverse of requestItemWithdraw' -Context 2,3",
+          "expected": "Paid rarity and extract/import authorities are separate from the local simulation operations; their deployed receipt/balance proofs are absent from these artifacts."
+        },
+        {
+          "id": "C02-SHIPMENT-MATERIAL",
+          "status": "UNEXERCISED_SCRIPTED_TRANSITION_AND_NO_NAMED_MATERIAL_CHECK",
+          "transitionClasses": [
+            "daily capped shipment take creates characters.shipment material",
+            "commissionPiece consumes shipment units and cash, creates one bespoke serial"
+          ],
+          "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/shipment.js | Select-String -Pattern 'takeShipment|commissionPiece|ch.shipment|INSERT INTO bespoke_pieces' -Context 2,3; (Get-Content docs/release/evidence/simulation/population1000.json -Raw | ConvertFrom-Json).initialChecks.name | Select-String 'shipment|bespoke'",
+          "expected": "The existing scarce material creation/consumption and bespoke output are visible, with no matching recorded material invariant name."
+        }
+      ]
+    }
+  ],
+  "deadWorldFindings": {
+    "provenNativeDeadWorld": false,
+    "smallestNativePopulation": 25,
+    "smallestNativeHistories": [
+      {
+        "file": "native/25-rc1-alpha-0.json",
+        "status": "PASS_SCOPED",
+        "worldActions": [
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 1,
+            "action": "register_shipment"
+          },
+          {
+            "object": "territory:dock_supply_route",
+            "revision": 1,
+            "action": "establish_route"
+          }
+        ],
+        "visitsWithoutAvailableOpportunity": 0,
+        "failedDeadWorldAssertion": false
+      },
+      {
+        "file": "native/25-rc1-beta-0.json",
+        "status": "PASS_SCOPED",
+        "worldActions": [
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 1,
+            "action": "register_shipment"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 2,
+            "action": "intercept_shipment"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 3,
+            "action": "establish_market"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 4,
+            "action": "expose_market"
+          },
+          {
+            "object": "territory:dock_supply_route",
+            "revision": 1,
+            "action": "establish_route"
+          }
+        ],
+        "visitsWithoutAvailableOpportunity": 0,
+        "failedDeadWorldAssertion": false
+      }
+    ],
+    "nativeVisitsWithoutAvailableOpportunity": 0,
+    "modelObservation": {
+      "classification": "MODEL_FIXTURE_UNFUNDED_NOT_GAME_DEADLOCK",
+      "smallestEnumerated": {
+        "seed": "rc1-director-a",
+        "population": 25,
+        "days": 1,
+        "scenario": "economic_shortage",
+        "unfundedResponseScopes": 3,
+        "resourceEffects": {
+          "initialFixtureWire": 12,
+          "remainingWire": 5,
+          "wireConsumed": 7,
+          "wireTransferred": 3,
+          "initialFixtureSeals": 36,
+          "remainingSeals": 32,
+          "sealsConsumed": 4,
+          "directorMinted": 0,
+          "omrDelta": 0,
+          "wireBalanceError": 0,
+          "duplicateReceipts": 0,
+          "unexplainedWire": 0,
+          "unexplainedSeals": 0,
+          "provenanceHash": "b190215549f6360385aa6a0de19fc8f28a85f4d7b054bf6075981fcf03b2034b"
+        }
+      },
+      "unfundedSnapshots": 70,
+      "warning": "This is the smallest enumerated modeled fixture, not an automatically minimized canonical game seed or native event history."
+    },
+    "conclusion": "No native event history demonstrates a dead world. Lack of an observed dead world in these bounded runs does not prove it cannot occur."
+  }
+}

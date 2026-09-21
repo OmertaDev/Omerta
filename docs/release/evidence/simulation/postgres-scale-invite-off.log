@@ -1,0 +1,101 @@
+
+> omerta-backend@1.2.0 scale
+> node tools/scale.js
+
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: MOD_KEY is short — it is the only credential on the mod perimeter (ban, mod-kill, confiscate, comp grants). Use a long random secret.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+════ POPULATION-SCALE CENSUS — 18 players + 8 residents, 2 days ════
+
+LIQUIDITY — is anyone on the other side?
+  black market — car auctions           1 live  ~ thin
+  black market — goods lots             0 live  ✗ EMPTY
+  black market — buy orders             7 live  ✓
+  the shylock — open loan offers        8 live  ✓
+  the shylock — active debts            9 live  ✓
+  the contract board — live pots        0 live  ✗ EMPTY
+  bodyguards for hire                   9 live  ✓
+  the dueling ladder — listed           6 live  ✓
+  back-room dice — faders               8 live  ✓
+  speakeasies open                      1 live  ~ thin
+
+THE STREET TAKE — what funds the Exchange window (tokenomics v2)
+  pool after 2 days      $2,106
+  per player per day        $59  ← the rate that scales
+
+AVAILABILITY — when a player went looking, was anyone there?
+  goods lots       looked   54   found a counterparty   19 (35%)   of those, closed   18 (95%)
+  loan offers      looked   54   found a counterparty   43 (80%)   of those, closed    9 (21%)
+  bodyguards       looked   54   found a counterparty   54 (100%)   of those, closed    9 (17%)
+  duel listings    looked   54   found a counterparty   54 (100%)   of those, closed    8 (15%)
+  buy orders       looked   54   found a counterparty   23 (43%)   of those, closed    2 (9%)
+  contracts        looked   54   found a counterparty   23 (43%)   of those, closed   10 (43%)
+  duels            looked   54   found a counterparty   54 (100%)   of those, closed    0 (0%)
+
+POSTED (supply side — what the town put on the boards)
+  listing 18 · order 6 · loan 16 · contract 10 · guard 18 · duel 18 · fade 18 · car 1 · club 1
+  NOTE: posted-vs-taken is NOT a liquidity measure. Takes are bounded by per-player caps
+  (one debt, one bodyguard, a duel cooldown), so the ratio is ~3/rounds whatever the
+  population. Read AVAILABILITY above for density, not this.
+
+WEALTH
+  total player cash            $66,468,188
+  top 10% hold                 6%
+  richest / median             $3,953,180 / $3,712,440
+
+SKIPPED (a branch that could not attempt — a silent zero here would be a harness bug)
+     31 × no goods on hand at the order's dock to fill with
+
+REFUSALS (gates doing their job — high counts show what a real town runs into)
+     59 × cooldown
+     45 × guarded
+     40 × family
+     30 × maxed
+     27 × hosp
+     21 × qty
+     13 × jailed
+     12 × taken
+     12 × max_listings
+      6 × unavailable
+
+⚠ 2 driven market(s) ended EMPTY:
+  black market — goods lots          CLEARED — everything posted was taken, which is the healthy reading
+  the contract board — live pots     CLEARED — everything posted was taken, which is the healthy reading
+  (emptiness is a FINDING for balance/design, not a failure — a market can be reachable and still unattractive)
+
+════ THE COACH, ACROSS THE TOWN — 5 distinct lines over 108 player-rounds ════
+
+    37%   16 players  Learn the trade winds
+    31%   10 players  Under the Doc's care
+    27%   12 players  Settle your first score
+     3%    1 players  A night at the Den
+     3%    2 players  You're in lockup
+
+  crew scores: 4 planned · 1 crewed · 1 pulled
+  the rungs a SOLO harness cannot test:
+    Nobody survives alone  never reached — masked by a rung above it, so this run says nothing about it
+    Pull a crew score      never reached — masked by a rung above it, so this run says nothing about it
+    Find a crew            never reached — masked by a rung above it, so this run says nothing about it
+    Blood on the ledger    never reached — masked by a rung above it, so this run says nothing about it
+    Work the wires         never reached — masked by a rung above it, so this run says nothing about it
+  (a REPORT, not a bound. What this run MEASURED, walking the town down the ladder one
+   milestone at a time — earner, skill points, gun, front — is that each one cleared and
+   the NEXT unfinished milestone immediately took its place at the top. That is the
+   ladder working exactly as designed: it is a strict priority chain of one-time
+   milestones, and the social rungs sit BELOW all of them (banded, then demoted to the
+   tail). So a level-51 player who skipped the mid-game walks a dozen rungs before the
+   coach ever mentions their family, their crew or the wire — worth a founder's eye,
+   because that is precisely the returning veteran. The rungs still masked here need
+   $OMR or a specific district, which this diet does not do; the solo harness is where
+   a plausible player walks the whole road.)
+  engine: real Postgres — the town banks and owns earners, so it walks the milestone chain and the
+  lines above are about the LADDER.
+
+
+✓ §10.4 held: all 55 checks moved by exactly nothing across 2 simulated days
+✓ conservation also checked after each of 1465 API/worker transitions
+✓ every driven market is reachable — all 9 took real posts
+✓ the census reconciles with the flow — nothing posted has vanished from the count
+✅ scale complete — the multiplayer economy was driven at population scale, every market censused for a live counterparty, and §10.4 moved by exactly nothing.

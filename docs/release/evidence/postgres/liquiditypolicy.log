@@ -1,0 +1,15 @@
+{"command":"node test/liquiditypolicy.js","database":"omerta_liquidity_policy_test","started":"2026-09-20T22:54:24.666Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS absent, expired and deployment-mismatched observations close authority
+PASS bond pause leaves general market health available but prevents daily authority
+PASS read-only planning does not publish a heartbeat or open issuance
+PASS daily offering requires explicit policy and clips to the contract cap
+PASS a manual emergency stop survives automatic retries even while unhealthy
+PASS the next day clips to exact remaining lifetime capacity and never refills it
+PASS Genesis warmup, failed migration and unhealthy foundation do not open markets
+PASS concurrent workers publish only one offering under the lifetime reserve lock
+PASS explicit unlimited heartbeat requires zero cap and creates no daily offering row
+PASS unlimited readiness still fails for positive cap, bond pause and unhealthy foundation
+PASS unlimited mode rejects legacy daily controls instead of reporting an ineffective pause
+11 liquidity policy checks passed
+{"command":"node test/liquiditypolicy.js","database":"omerta_liquidity_policy_test","started":"2026-09-20T22:54:24.666Z","finished":"2026-09-20T22:54:32.124Z","status":0}

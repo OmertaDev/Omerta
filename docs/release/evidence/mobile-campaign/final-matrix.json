@@ -1,0 +1,195 @@
+{
+  "generatedAt": "2026-09-20T23:29:14.2877072Z",
+  "status": "PASS",
+  "scope": "Latest successful unique scenario cells; not a single immutable-revision run, fresh social onboarding, or a human cohort.",
+  "provenance": "Initial 4d35 run included the passive-screen telemetry HTML repair recorded in source-file-hashes.json. Affected rerun reports 12236868 plus the final uncommitted harness/helper later committed at a61a27d4. It began before f18065af diagnostic context repair.",
+  "scenarioCells": 10,
+  "renderedCommands": 514,
+  "recoveryObserved": false,
+  "results": [
+    {
+      "width": 320,
+      "height": 568,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commandCount": 24,
+      "stateHistory": [
+        "redistributed"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commandCount": 17,
+      "stateHistory": [
+        "destroyed"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scenario": "black-market-supply",
+      "status": "PASS",
+      "commandCount": 59,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "market_supplied"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commandCount": 59,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "market_seized"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": 0,
+      "source": "mobile-campaign-recovery/results.json",
+      "reportedRevision": "12236868fd847299a6ae59ac9ec193bf049d6a17",
+      "harnessSha256": "1dd68e8b84e7152c44ec6decbc1c825939b8f217f69a3a4fc00e985aa7d06a6b"
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scenario": "informant-public-disclosure",
+      "status": "PASS",
+      "commandCount": 98,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "exposed",
+        "public_trace"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": 0,
+      "source": "mobile-campaign-recovery/results.json",
+      "reportedRevision": "12236868fd847299a6ae59ac9ec193bf049d6a17",
+      "harnessSha256": "1dd68e8b84e7152c44ec6decbc1c825939b8f217f69a3a4fc00e985aa7d06a6b"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scenario": "shipment-redistribution",
+      "status": "PASS",
+      "commandCount": 24,
+      "stateHistory": [
+        "redistributed"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scenario": "shipment-destruction",
+      "status": "PASS",
+      "commandCount": 17,
+      "stateHistory": [
+        "destroyed"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scenario": "black-market-supply",
+      "status": "PASS",
+      "commandCount": 59,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "market_supplied"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": null,
+      "source": "mobile-campaign/results.json",
+      "reportedRevision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "harnessSha256": "7b1e874a63e1f4e70267f4b66d948b39e6c1eb54b30c414253465195ba3f193a"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scenario": "black-market-seizure",
+      "status": "PASS",
+      "commandCount": 59,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "market_seized"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": 0,
+      "source": "mobile-campaign-recovery/results.json",
+      "reportedRevision": "12236868fd847299a6ae59ac9ec193bf049d6a17",
+      "harnessSha256": "1dd68e8b84e7152c44ec6decbc1c825939b8f217f69a3a4fc00e985aa7d06a6b"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scenario": "informant-public-disclosure",
+      "status": "PASS",
+      "commandCount": 98,
+      "stateHistory": [
+        "diverted",
+        "market_open",
+        "exposed",
+        "public_trace"
+      ],
+      "javaScriptErrors": 0,
+      "worldInvariantPass": true,
+      "operationInvariantPass": true,
+      "recoveryCount": 0,
+      "source": "mobile-campaign-recovery/results.json",
+      "reportedRevision": "12236868fd847299a6ae59ac9ec193bf049d6a17",
+      "harnessSha256": "1dd68e8b84e7152c44ec6decbc1c825939b8f217f69a3a4fc00e985aa7d06a6b"
+    }
+  ]
+}

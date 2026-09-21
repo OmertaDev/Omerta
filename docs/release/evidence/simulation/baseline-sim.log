@@ -1,0 +1,586 @@
+
+> omerta-backend@1.2.0 sim
+> node tools/sim.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+
+━━ P1 grinder — the honest crime curve ━━
+  stereo (lvl 1): $140.58/attempt   (32/40 wins, 8 jailed)
+  poker (lvl 11): $754.85/attempt   (20/40 wins, 20 jailed)
+  payroll (lvl 30): $2,943.7/attempt   (11/40 wins, 29 jailed)
+  counting (lvl 58): $8,176.08/attempt   (8/40 wins, 32 jailed)
+  depository (lvl 110): $31,202.4/attempt   (3/40 wins, 37 jailed)
+  top-tier grind ceiling: $6,240,480/day   (~200 attempts/day at depository)
+
+━━ P2 passive income — racket vs business payback (honest money only) ━━
+  grinder bankroll: $1,729,204   (0 extra crimes to fund the buys)
+  laundro racket: $4,752/day   (payback 63.13h — the sim-audited baseline curve)
+  laundromat t1 business: $288,000/day   (payback 20.83h)
+  business:racket dominance (gross): 3.03×   (daily-return-per-dollar ratio — >1 means businesses strictly dominate)
+  laundromat upkeep (the pad): $38,400/day   (13.33% of gross (owed $115,200 over 3d) — the recurring sink)
+  laundromat NET of the pad: $249,600/day   (payback 24.04h net)
+  business:racket dominance (NET of pad): 2.63×   (after upkeep — >1 still means businesses win, but by less)
+
+━━ P3 kitchen — cook/deal margin ━━
+  vim cook+deal net: $569/cycle   (3 cycles (entry-tier; scales with lab/rank))
+
+━━ P4 kill economics — what a whack actually costs and pays ━━
+  ammo price: $40/round   (gun: argument ($18,000))
+  kill completed: true   (btk 1430, 1849 rounds over 1 attempt(s), heat +20/shot)
+  loot on kill: $10,044 cash + 0 $OMR   (mark pocket was $40,179 → 25% looted)
+  kill EV (careless mark): $-63,916   (loot − ammo $73,960 (search/energy/heat free-ish))
+  kill EV (rational mark): −$73,960   (a banked victim loots $0 pocket — pure ammo loss + heat)
+  contract break-even (mid mark): pot ≥ $63,916   (ammo $73,960 − loot; WANTED house bounty $25,000 + open pots + war points close the gap — whale-hunting stays +EV standalone (break-even liquid ≈ $295,840))
+  kill EV (mark mid-deposit): $-63,851   (looted $10,109 incl. the IN-TRANSIT deposit ($40,438 banked) − ammo $73,960 — the timed-hit surface works)
+  safehouse quote (grinder, rich): $25,000   (1% of liquid wealth per 4h stay)
+  safehouse quote (fresh heir, poor): $25,000   (the $25k floor holds for street players)
+
+━━ P5 extraction — washes, slippage, scrutiny, raids (honest money) ━━
+  AMM depth at start: $10,000,000 / 20,000 $OMR   (price $500/)
+  private wash (3 days @ t1 cap): $0 → 0 $OMR   (heat now 0 (business heat 8/wash vs street 15))
+  forced Bureau raid: fine $25,000 + seized $60,000   (10% tier cost + all pending — ledgered business:raid)
+  AMM price drift from sim washes: $500 → $500 per $OMR
+
+━━ P6 staking — pool-backed yield under real sim activity ━━
+
+━━ P7 family — tribute, turf, territory racket ━━
+  territory racket (Numbers, 24h): $96,000 → treasury   (seizable capital works under honest money)
+
+━━ P8 shakedown collusion — alt-to-alt transfer rate ━━
+  one shakedown transfer: $86,400   (30% of 24h pending; per-venue 8h cooldown → ~3×/day/venue; vs jump steal cap $25,000)
+
+━━ P9 vig — fees → buyback → reserve, the ETH-only mint ━━
+  vig buyback: 60 hard $OMR bought (0.06 ETH)
+  vig invariants (extraction ≤ inflow): true
+  the PLEX mint rail refuses: true   (fees are ETH only — one rail for the Sybil bound)
+  the ETH mint opens the extraction gate: true   (one rail, in real money, at the published wave)
+
+━━ P9.5 den — realized craps edge over a 150-roll session (honest money) ━━
+  craps session: 150 rolls, staked $150,000, net $-2,000   (realized edge 1.33% (theoretical 1.41%); street cut +$1,250)
+  extraction risk (analytic): full-cap washing goes raid-eligible in ~2.9 days; P(raid)/day at max scrutiny ≈ 51.33%   (net scrutiny +21/day at cap; fine 10% of tier cost reaches pocket+bank)
+
+━━ P9.7 crew heists — payroll EV over 30 runs (honest money) ━━
+  payroll co-op (2-crew, lvl 25): 30 runs, 21 scores, 9 shared jails   (pot−stake EV +$92,616.53/run CREW-WIDE (split 1.2:1); stakes $300,000 vs takes $3,078,496)
+
+━━ P9.8 world raids — apex emission ceilings (co-op unlocks; regen-bounded) ━━
+  The Kryl Syndicate (lvl 20): ≤ $960,000/day base-wide ceiling   (regen-bounded; per-raid grab $75,000; one min-lvl solo @0.1-floor ≈ $90,000/day)
+  The Moreau Cartel (lvl 40): ≤ $2,160,000/day base-wide ceiling   (regen-bounded; per-raid grab $250,000; one min-lvl solo @0.1-floor ≈ $300,000/day)
+  The Volkov Bratva (lvl 55): ≤ $4,320,000/day base-wide ceiling   (regen-bounded; per-raid grab $250,000; one min-lvl solo @0.1-floor ≈ $300,000/day)
+  co-op = ACCESS not ceiling: crew splits ONE grab (leader 1.2×)   (total emission stays ≤ regen; co-op just makes a heavy apex def beatable — B1 solo-floor is the dial)
+  per-family ceiling (3 NPC families): ≤ $96,000/day/family → ≤ $288,000/day base-wide   (regen-bounded (POOL_MAX $120,000 < the weakest World outfit $150k); a raider caps at 6/day × $6,000 = $36,000/day per family before regen bites; the DEFENCE (COUNTER_P 0.35) hospitalizes ~35% of landed raids — a real risk, not a fixed-price standing buy. §10.4: a bounded family:raid faucet, NO season_wars (the severance))
+  conquest tribute (held vassal): $1,920/day/family → ≤ $5,760/day base-wide   (a routed NPC family held as a vassal pays 2% of its regen rate to the treasury (the World-frontier twin, capped 24h) — a small ADDITIVE faucet on top of loot; the value is the conquest/turf goal, not the income. §10.4: family:tribute reconciles the gang-treasuries check)
+
+━━ P9.9 boxing — exhibition purse EV by fighter form (the new faucet) ━━
+  exhibition EV — fresh signee (form 30): +$2,982.35/bout best   (best tier Club Fighter @P66% · +$11,929.41/day/fighter · ×3 stable +$35,788.24/day)
+  exhibition EV — maxed fighter (form 75): +$26,236.99/bout best   (best tier The Gatekeeper @P91% · +$104,947.98/day/fighter · ×3 stable +$314,843.93/day)
+
+━━ P9.10 territory — net income by racket TYPE (income mult vs crackdown) ━━
+  Numbers Game (District t3): $1,440,000/day   (×1 · never heats up (0/hr < decay 4) — SAFE at any cadence)
+  Protection Racket (District t3): $1,656,000/day gross (×1.15)   (hot in 10h — collect within it to stay cool; LAZY 24h cadence P(raid) 72% → ~$376,127/day (fine $130,000))
+  Loansharking Book (District t3): $1,728,000/day gross (×1.2)   (hot in 8.57h — collect within it to stay cool; LAZY 24h cadence P(raid) 75% → ~$332,961/day (fine $130,000))
+  Chop Shop (District t3): $1,800,000/day gross (×1.25)   (hot in 7.5h — collect within it to stay cool; LAZY 24h cadence P(raid) 77% → ~$306,662/day (fine $130,000))
+  Smuggling Ring (District t3): $1,944,000/day gross (×1.35)   (hot in 6h — collect within it to stay cool; LAZY 24h cadence P(raid) 80% → ~$279,943/day (fine $130,000))
+  Counterfeiting Plant (District t3): $2,088,000/day gross (×1.45)   (hot in 4.29h — collect within it to stay cool; LAZY 24h cadence P(raid) 83% → ~$245,682/day (fine $130,000))
+  the TYPE tradeoff: active vs lazy   (numbers is cadence-proof; a hot type should be higher-VARIANCE not higher-EV — watch protection (30h-to-hot dodges a daily collect) + smuggling lazy-net (BALANCE B-terr))
+
+━━ P9.11 sign-off faucets — frontier tribute / speakeasy bar take / pen work / liberation on-ramp ━━
+  frontier tribute (all 5 outfits held): ≤ $156,960/day base-wide   (2% of regen, 24h-capped, requires routing to hold — a small treasury faucet vs territory ops)
+  bar take — The Cathedral (top tier): $3,120,000/day/club   (5 decor tiers ($192,000→$3,120,000/day), one club per district, 24h cap — a territory-scale front (safehouse-gated collect))
+  back-room table rake: 3% of stake → owner   (a TRANSFER carved from the stake (never minted; the casino discipline), $1,000–$100,000 bets, edge burns)
+  yard work faucet: ~$400/work (15 energy)   (only WHILE JAILED (inherently bounded) + shaves 60s/work off the sentence — a trickle vs any street loop, self-limiting)
+  liberation on-ramp — docks (The Dock Rats): $45,000 at full strength   (→ floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount))
+  liberation on-ramp — brick (The Zappa Crew): $120,000 at full strength   (→ floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount))
+  liberation on-ramp — canal (The Kryl Syndicate): $450,000 at full strength   (→ floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount))
+  liberation on-ramp — foundry (The Moreau Cartel): $1,500,000 at full strength   (→ floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount))
+  liberation on-ramp — neon (The Volkov Bratva): $3,600,000 at full strength   (→ floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount))
+
+━━ P9.12 speakeasy — bar-take NET EV + build payback by tier (the flagged faucet) ━━
+  The Backroom (t0) bar take: $192,000/day gross → $153,600 NET   (−20% upkeep off the top (speakeasy:upkeep sink); build-to-here $750,000 → payback ~4.9d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2))
+  The Lounge (t1) bar take: $384,000/day gross → $307,200 NET   (−20% upkeep off the top (speakeasy:upkeep sink); build-to-here $1,350,000 → payback ~4.4d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2))
+  The Blue Room (t2) bar take: $816,000/day gross → $652,800 NET   (−20% upkeep off the top (speakeasy:upkeep sink); build-to-here $3,150,000 → payback ~4.8d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2))
+  The Copa (t3) bar take: $1,632,000/day gross → $1,305,600 NET   (−20% upkeep off the top (speakeasy:upkeep sink); build-to-here $7,650,000 → payback ~5.9d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2))
+  The Cathedral (t4) bar take: $3,120,000/day gross → $2,496,000 NET   (−20% upkeep off the top (speakeasy:upkeep sink); build-to-here $18,650,000 → payback ~7.5d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2))
+  net-EV verdict: still a strong front, now taxed   (top tier ~$2,496,000/day NET after the 20% upkeep — no longer a risk-free faucet; incomePerHr curve is the remaining founder dial (BALANCE speakeasy))
+
+━━ P9.13 street races — PvE circuit purse EV by car power (the new faucet) ━━
+  PvE EV — a tuned contender (power 200): +$5,000/race best   (best tier Midnight Run @P100% · +$60,000/day at 12/day cadence — bounded faucet, a lost race also dings the car (repair cost); sign-off vs boxing exhibition)
+  PvE EV — a premium monster (power 450): +$18,000/race best   (best tier The Ghost Circuit @P100% · +$216,000/day at 12/day cadence — bounded faucet, a lost race also dings the car (repair cost); sign-off vs boxing exhibition)
+  NITROUS — best EV of one charge, an underdog (field − 20): +$33,928/charge   (+60 power for $8,000: best on The Ghost Circuit, P(win) 13%→100% — a viable comeback play (still a sink on average — gone win/lose))
+  NITROUS — best EV of one charge, a heavy favorite (field + 60): $-8,000/charge   (+60 power for $8,000: best on Back-Alley Sprint, P(win) 100%→100% — not worth it here; a favorite wastes it (ΔP≈0))
+
+━━ P9.14 the Port — smuggling margin EV per route (cap-bounded faucet) ━━
+  Coastal Hop — Cigarette Boat: ~$240,667/day at the cap   (P(caught) 3% · margin ×1.67 · net 60% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat))
+  Open Water — Cigarette Boat: ~$303,486/day at the cap   (P(caught) 3% · margin ×1.83 · net 76% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat))
+  The Deep Run — Cigarette Boat: ~$380,000/day at the cap   (P(caught) 30% · margin ×3.00 · net 95% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat))
+  daily faucet (best route, maxed): ~$380,000/day   (bounded by SUPPLY_CAP_DAY $400,000 × the best net margin — sign-off vs boxing exhibition / territory (~$300-400k))
+
+━━ P9.15 what trading funds — the sell tax by destination, and the Vig's missing trading leg ━━
+  sell tax @ 10 ETH/day sold: 0.900 ETH/day taxed   (founder 0.200 · treasury 0.400 · LP depth 0.300 — and 0.000 to the Vig)
+  sell tax @ 100 ETH/day sold: 9.000 ETH/day taxed   (founder 2.000 · treasury 4.000 · LP depth 3.000 — and 0.000 to the Vig)
+  sell tax @ 1,000 ETH/day sold: 90.000 ETH/day taxed   (founder 20.000 · treasury 40.000 · LP depth 30.000 — and 0.000 to the Vig)
+  the Vig's trading leg: ZERO after the retirement   (withdrawal backing now comes only from gameplay fees (60%), the Store (40%) and bonds (22.5%). A fourth vig slice on the hook is the dial if trading should underwrite withdrawals again — a reallocation OUT of dev/treasury/LP, which is a founder call, not a default (BALANCE § D1))
+
+━━ P9.16 grand prix — house edge + net sink (a redistribution, not a faucet) ━━
+  Grand Prix — 3-driver pool $75,000: house edge 5.0% · burns $1,875   (winners split $71,250 (60%/30%/10%); the field funds the winners — ZERO new emission, net cash SINK $1,875/race (the burned half-rake). Skill+gear decides, alt-stuffing is −rake/N per head (−EV))
+  Grand Prix — 8-driver pool $200,000: house edge 5.0% · burns $5,000   (winners split $190,000 (60%/30%/10%); the field funds the winners — ZERO new emission, net cash SINK $5,000/race (the burned half-rake). Skill+gear decides, alt-stuffing is −rake/N per head (−EV))
+
+━━ P9.17 NPC trucking — the hijack goods faucet (bounded, base-wide) ━━
+  NPC trucking faucet — ~50% hijacked (realistic): ~$232,738/day base-wide ceiling   (2 trucks on the road × 48 turnovers/day = 96 trucks · avg manifest ~$4,849 (11 units × ~$441) · hijack 50%)
+  NPC trucking faucet — 100% hijacked (ceiling): ~$465,476/day base-wide ceiling   (2 trucks on the road × 48 turnovers/day = 96 trucks · avg manifest ~$4,849 (11 units × ~$441) · hijack 100%)
+  NPC trucking — the real per-player bound: ~25 ambushes/day at ~500 energy   (energy 20/ambush + ammo 10/ambush throttle a solo grinder well under the base-wide ceiling; MAX_AMBUSHES 3 raiders split one manifest, so contention dilutes — sign-off vs boxing/territory (~$300-400k/day))
+
+━━ P9.18 the Stable — PvE circuit purse EV by racer form + kind (the new faucet) ━━
+  circuit EV — Greyhound fresh (form 27): +$1,760/race best   (best meet Maiden Sprint @P63% · +$7,041/day/racer · ×3 stable +$21,124/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition)
+  circuit EV — Greyhound trained (form 75): +$26,238/race best   (best meet The City Derby @P95% · +$104,952/day/racer · ×3 stable +$314,856/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition)
+  circuit EV — Racehorse fresh (form 33): +$5,509/race best   (best meet Maiden Special @P70% · +$22,035/day/racer · ×3 stable +$66,106/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition)
+  circuit EV — Racehorse trained (form 75): +$23,099/race best   (best meet The Gold Cup @P77% · +$92,398/day/racer · ×3 stable +$277,193/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition)
+
+━━ P9.19 clue scrolls — the casket faucet (bounded) ━━
+  casket faucet ceiling: $22,500/day/char hard max   (3/day cadence cap × $7,500 mean take (band $3,000–$12,000); realized far lower (2% drop on jobs, travel per step) — petty vs the signed loops; KEEP unless dust telemetry says otherwise)
+
+━━ P9.20 the passive stack — parallel energy-free income vs the active grind (the balance gap) ━━
+  personal front stack (5 kinds, top tier, NET of pad): $21,600,000/day   (gross $36,000,000/day − 40% progressive pad (L1b: 20% base + 4×5% per extra front); 24h collect cap; build-to-here $109,550,000 → payback ~5.1d; ENERGY-FREE (5 collect clicks/day))
+  speakeasy (per club, top tier, NET): $2,496,000/day/club   (one club per district, additive to the fronts; safehouse-gated collect (D2))
+  territory rackets (family, per district, top tier × best type): ~$20,880,000/day/district   (×1.45 type mult; up to 6 core districts if the family holds them — a separate, treasury-side passive stack)
+  PERSONAL passive : ACTIVE grind: 3.5×   (the 5-front stack ($21,600,000/day, energy-free) vs the top-tier crime grind ($6,240,480/day, ~200 energy-bounded attempts) — before speakeasy/territory/frontier/sov add more)
+  APPLIED (founder-directed L1a+L1b balance package): front curve flattened + progressive pad   (L1a halved the apex hotel/casino incomePerHr; L1b makes a 5-front stack pay 40% pad vs a 1-front's 20% — the personal stack dropped ~$48.96M→$21,600,000/day (ratio ~6×→3.5×), still passive-favoured but no longer dwarfing the active loop; §10.4 stays drift-0 (every front a ledgered faucet). Remaining dial: the full front incomePerHr curve (BALANCE.md))
+
+━━ P9.20b the asset ladder — payback, and whether the entry price is really the gate ━━
+  income assets measured: 36   (18 rackets (level-gated) + 13 Legit Fronts assets (PRICE-gated only) + 5 business fronts (level-gated, net of the 20% pad); all accrue with ZERO energy)
+  payback range: 1.09d — 12.00d   (the healthy band is 3-14d (longer than a sitting, shorter than a street's life))
+  INSIDE the healthy band: 27 of 36   (racket parlor, racket wire, racket chop, racket route, racket speak, racket loans, racket fightgym, racket floor, racket wharf, racket union77, racket laundrybank, racket shipline, racket municipal, racket commission, racket portauth, racket invisible, asset dealer, asset barber, asset funeral, asset club, asset taxi, asset radio, asset import, asset pictures, asset tower, asset bank, asset airline)
+  pay for themselves in under a day: 0 of 36   (no rung pays for itself in a sitting, so every purchase is a bet on staying alive long enough to collect on it — which is what makes it a decision)
+  the first rung anyone can reach: racket laundro — $12,500 → $6,480/day   (payback 1.93d. The harness has a session-1 player at ~$32k, so this is roughly a session away)
+  income assets with NO level gate: 13   (buyAsset checks cash and nothing else, so the Legit Fronts ladder is bounded only by price — the biggest, asset airline, is $60,000,000 → $4,999,680/day at ANY level. In practice cash tracks level closely enough that this is a soft gate rather than an open door, but it is a gate nobody chose)
+  the rest of the passive stack (P9.20 counts fronts only): rackets $24,953,760/day + assets $10,854,000/day   (both buy-once and permanent; against the top-tier crime grind at $6,240,480/day this is the shape of the passive-vs-active gap, and it is bigger than the front stack alone. Note this is the WHOLE ladder — see the seat bound below for what one player may actually run)
+  the seat bound: 2 seats at level 1 → 12 at level 40   (31 metered holdings (18 rackets + 13 Legit Fronts) compete for 12 seats — you run ~39% of the catalog, ever)
+  metered passive income, capped vs uncapped: $33,178,320/day (best 12) vs $35,807,760/day (all 31)   (the cap is a 1.08x cut to the metered half of the passive stack — but it is NOT primarily a nerf: an optimal player still takes the 12 richest, so what the cap really removes is the 19 marginal rungs nobody was choosing between. Business fronts are unmetered (capped at 5 by UNIQUE(character,kind) already))
+  the early seats: lvl 1: $7,238,160/day · lvl 20: $10,247,760/day · lvl 40: $11,489,040/day   (best-affordable-at-that-level, 2/7/12 seats. The seat curve, not the price, is now the early bound — a level-1 player with unlimited cash cannot buy past 2 operations, which is the "affordability was never the gate" finding turned into a gate. NOTE the Legit Fronts assets have NO level gate (buyAsset checks cash only), so they sit in every one of these pools)
+  VERDICT: 27 of 36 in the healthy band, bounded by seats   (nothing here is out of reach; the ladder's ROI now TAPERS (1.09d at the on-ramp → 12.00d at the apex) instead of paying back inside a sitting at every rung, so a big rung is a commitment rather than a click. The best 12 seats run 5.3x the top-tier grind — passive still beats active, as capital should, without dwarfing it. The remaining outliers are the 9 under the band's floor (racket laundro, racket pawn, asset grocery, asset diner, front laundromat, front restaurant, front nightclub, front hotel, front casino — the deliberately generous first rungs, plus the business fronts, whose curve the L1a/L1b package already signed separately). The levers are the per-rung income (prototype tables, machine-owned), the 12h RACKET_DAILY_CAP_MS meter, and OPERATIONS.SLOTS_* (BALANCE.md))
+
+━━ P9.20d the family ledger — what a family earns against what its decisions cost ━━
+  the racket climb (one district): Neighborhood 3.3d · District 3.3d · Citywide 3.5d · The Syndicate 3.9d   (each tier funded out of the tier below at the safe Numbers Game type — ~14d of daily collecting to take ONE district from Corner to The Syndicate. This half is sound: the ladder is a wait, not a purchase)
+  treasury income at the top: 1 district $12,006,960/day · 3 $34,356,960/day · 6 $64,506,960/day   (The Syndicate operations net of the 20% pad, plus 6-tier strongholds net of overextension (which turns NEGATIVE past a few districts — that mechanic works), plus $156,960/day of frontier tribute. Member cash tribute and war spoils are on top and player-driven)
+  the strategic menu, priced in days of a maxed family's income: declare war (on a rich rival) 0.02d · siege a Bastion+ stronghold 0.02d · invade a frontier outpost (floor) <0.01d · take an unheld district (floor) <0.01d · fortify one operation to 5 0.12d · climb one operation to The Syndicate 0.31d · build one The Iron Capital 0.96d   (against $64,506,960/day. The one-time build-out (every operation maxed + fortified + a stronghold on every district) totals $538,800,000 — about 8 days of income, after which the recurring menu is what is left)
+  RECURRING decisions costing under 1% of a day: 2 of 4   (invade a frontier outpost (floor) ($50,000), take an unheld district (floor) ($30,000) — the remaining flat ones are the two the founder deliberately left on the garrison ratchet (invade + take-unheld already scale with the incumbent's garrison, the value at stake). War ($1,290,139) and siege ($1,200,000) were INDEXED this pass — war to 2% of the target's treasury, siege to 3% of the stronghold's build cost — so declaring on a rich family is no longer free)
+  the contest ratchet (the one cost that scales): $30,000 → $45,000 → $67,500 → $101,250 → $151,875 → $227,813   (each contest's floor is max($30,000, garrison × 1.5) and the winner's whole stake BECOMES the garrison, so contested turf gets dearer every time it changes hands — after 6 fights it is 8× the opening price. THE WATCH multiplies it again (×1.5 off-window) and THE ROSTER's enforcer adds a flat premium on top)
+  VERDICT: war + siege now bite the endgame; the two floors stay on the garrison ratchet   (the ladder to the top is a genuine ~14-day wait per district and the sov overextension pad is a real recurring drain. The P9.20d flat-cost finding (declaring war / sieging cost pocket change for a maxed family) is now RESOLVED for the two fully-flat costs: war indexes to the target's treasury ($1,290,139 against a rich rival) and siege to the stronghold's build cost ($1,200,000 for a Bastion+). Both are founder sign-off levers (M3.WAR_COST_BPS 2% / SOV.SIEGE_COST_BPS 3%, floored at the old constants so the on-ramp is unchanged). The two remaining flat entries (invade + take-unheld) are FLOORS the founder deliberately kept on the garrison ratchet — the incumbent's garrison IS the value at stake there, and a fresh/unheld target being cheap is the turf on-ramp)
+
+━━ P9.20c the nut — crew wages against crew earnings, by cadence ━━
+  the nut: $1,200/hr per hand   (flat, on the wall clock, whether the stash moves or not — the recurring sink)
+  what one hand moves while stocked: $4,320/hr on VIM (the cheapest line)   (3.6:1 against the wage, rising to 360:1 on NOCTURNE — a STOCKED crew is never the problem)
+  1 hand, every 8h (three check-ins): +$24,960/cycle   (banks 8h of sales ($34,560) against 8h of wages ($9,600) = 3.60:1 on the cheapest line)
+  1 hand, daily: +$5,760/cycle   (banks 8h of sales ($34,560) against 24h of wages ($28,800) = 1.20:1 on the cheapest line)
+  1 hand, every 3 days (the cold line): $-51,840/cycle   (banks 8h of sales ($34,560) against 72h of wages ($86,400) = 0.40:1 on the cheapest line)
+  the asymmetry: sales cap 8h — the nut runs to 48h   (6x, sharper than the business pad's 7x. It is the same deliberate fiction (the corner holds a shift's take, the envelope runs a week) and the same defect it had: the game never SAID so. It does now — the rate, the countdown and the door out all ride with the price)
+  VERDICT: attendance, not a trap — once the terms are visible   (a stocked, thrice-daily crew runs 3.6:1 even on VIM; a daily one is 1.20:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the week the nut runs to) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md)
+
+━━ P9.21 the population — the npc:seed faucet ceiling ━━
+  residents standing: 48   (headcount the worker holds)
+  seed per resident (E): $20,798   (weighted across the four bands)
+  cash standing in the city: $998,304   (the whole faucet exposure at any instant)
+  LOOTABLE per resident (E): $20,560   (bands under LOOT_MIN_LVL 10 carry nothing a killer can take)
+  a killer nets per resident kill: $5,140   (25% of pocket — the same loot surface as a player kill, and the SAME ammo cost applies)
+  faucet posture: petty vs the signed loops   (compare to the boxing exhibition / territory bands (~$300-400k/day); a resident is scenery with a wallet, not a payday)
+  standing pool: ~$998,304   (what is on the street at any instant — step two made ~100% of it realizable (was ~25%: only a kill burns the remainder))
+  RECURRING ceiling: 24 replacements/day ≈ $499,152/day   (step three: the city renews itself, so npc:seed is a rate. Bounded by headcount in population_state — the same band as a territory racket (~$300-400k/day) or the boxing purse, and ~2.3% of the passive stack)
+  drained threshold: 15% of arrival stake   (measured against what a resident ARRIVED with (npc_seed), never a flat cash floor — a flat floor would recycle the cheap bands on spawn, forever)
+
+━━ P9.22 the severance — what the Exchange window can absorb (no faucet above it) ━━
+  street take (measured floor): $35/player/day   (driven population, tools/scale.js; population-invariant across 12 and 36 players. A FLOOR — scripted players trade less than real ones)
+  reaches the Exchange window: $35.00/player/day   (EXCHANGE.FUND_BPS 100% of the take)
+  absorbable at RATE: 0.0700 $OMR/player/day   (at $500 cash per $OMR — this is the ONLY cash exit once cash→$OMR is severed)
+  EMISSION vs ABSORPTION: no emission to absorb (v3 step 1)   (the wage is retired, so the pressure this probe was built to measure no longer exists. What can reach the window is bounded by what was bought, and that is bounded by the desk)
+  per-account daily cap: 1500 $OMR = $750,000/day   (~21,429× what one player's own activity funds — so the POOL binds first and the cap is decorative at any realistic base. Players meet 'dry', never the cap)
+  RECURRING $OMR sinks per heavy player: ~82.3 $OMR/day   (Street Wire 10.3/day (base tier) + a full estate staff 72.0/day — before auctions, megaproject, respec or vanity, which are unbounded)
+  one-off personal $OMR sinks: 59,460 $OMR   (the estate ladder alone; family seals 13800 and the foundation 29640 sit on top, per family)
+  THE STANDING FINDING (restated for v3): the window is a relief valve, not the exit   ($OMR's real exit is the SINK CATALOG and, for real value, the reserve-backed CHAIN withdrawal. With the faucet retired the window no longer has to keep up with a printer — it only has to serve holders who want out in CASH, and every $OMR it ever sees was bought. Levers: FUND_BPS (how much take reaches it) and RATE (a LOWER rate serves more $OMR per pool dollar). Founder calls — nothing is retuned here)
+
+━━ P9.23 the re-sim — cash as a closed loop (tokenomics v2 step 5) ━━
+  the extraction link: SEVERED — cash cannot become $OMR   (omrMints is {mission:%, prize:omr, emission:%} and NONE takes cash as an input. So every cash faucet flagged for EXTRACTION risk is MOOT on that axis; what survives is the INTERNAL question (pacing, concentration), which is now the only one)
+  character-side cash, net: $4,940,687 over the run   (into players: heist:crew $3,078,477 · crime:depository $1,248,096 · business:income $864,000 · crime:counting $327,043 · crime:payroll $274,288 — out: heist:crew:stake $300,000 · business:buy $250,000 · casino:bet:dice $150,000 · ammo:buy $148,000 · gang:tribute $120,000)
+  gang-bound rows, net: $-250 over the run   (character_id-NULL rows ONLY — in: territory:income $96,000 — out: territory:establish $50,000 · turf:seize:docks $45,000 · casino:take $1,250. NOT the treasury delta: a mirrored transfer (gang:tribute, convoy:toll, port:toll) writes only the character's negative row and the treasury credit is derived, so it is counted on the character side above and nowhere here)
+  what this measures: SHAPE, not steady state   (a scripted run does what the script does, so this ranks which loops MOVE the most cash; it does NOT predict a real economy's inflation. The per-faucet $/day CEILINGS in P9.8-P9.22 are the numbers to tune against, and P10 below is what proves conservation)
+  what a cash faucet can no longer do: move the token price   (pre-v2 the honest worry about any big cash faucet was that it became sell pressure through the swap. It cannot: the sell side is retired and the only cash exit is the Exchange window, which runs the OTHER way ($OMR in, cash out) and is bounded by a till that cash sinks fill. A bigger cash faucet now costs game balance, never token holders)
+  what still needs founder sign-off: the internal-balance flags, unchanged   (the passive stack (P9.20), the apex world/boxing/racing purses, the port sale curve and the npc:seed recycle (P9.21) are all still live questions about PACING and CONCENTRATION. The severance lowered their stakes; it did not answer them)
+  the $OMR side, now fully separable: 0/day emitted — bonds are the only mint   (see the severance block above: with cash out of the picture AND the wage retired (v3 step 1), $OMR supply is decided ONLY by bonds (four walls, ETH in the same transaction) and the sink catalog. Nothing a player can DO in game creates a token, so in-game $OMR can never exceed what was deposited — the whole token model, with neither a cash-shaped back door nor a printer)
+
+━━ P9.24 the Bureau returns — income-sourced scrutiny equilibrium (founder option b) ━━
+  laundromat t3 (daily collector): a raid ~every 10.1d ≈ $169,650/day (10.9% of gross)   (heat +30/operating day vs −24/day decay; a raid seizes the pending day ($1,560,000) + fines 10% of tier cost ($150,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT))
+  restaurant t3 (daily collector): a raid ~every 10.1d ≈ $327,395/day (10.9% of gross)   (heat +30/operating day vs −24/day decay; a raid seizes the pending day ($3,000,000) + fines 10% of tier cost ($300,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT))
+  nightclub t3 (daily collector): a raid ~every 10.1d ≈ $683,561/day (11.0% of gross)   (heat +30/operating day vs −24/day decay; a raid seizes the pending day ($6,240,000) + fines 10% of tier cost ($650,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT))
+  hotel t3 (daily collector): a raid ~every 10.1d ≈ $873,054/day (12.1% of gross)   (heat +30/operating day vs −24/day decay; a raid seizes the pending day ($7,200,000) + fines 10% of tier cost ($1,600,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT))
+  casino t3 (daily collector): a raid ~every 10.1d ≈ $2,182,634/day (12.1% of gross)   (heat +30/operating day vs −24/day decay; a raid seizes the pending day ($18,000,000) + fines 10% of tier cost ($4,000,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT))
+  the 5-front stack, raid tax total: ~$4,236,294/day (11.8% of gross)   (uniform-in-probability, size-scaled-in-cost by construction — on top of the L1b progressive pad; the passive stack (P9.20) is no longer risk-free. Dial: BUSINESS_SCRUTINY_PER_INCOME_DAY (0 restores the dormant state))
+
+━━ P9.25 residents-as-marks — the step-two faucet ceilings ━━
+  resident FRONTS (rob/shakedown ceiling): ~$341,729/day base-wide across ~16.1 sleepy joints   (each front runs at FRONT_INCOME_BPS (5%) of the catalog curve and only ever REALIZES through the shared-window rob/shakedown/inside redirect — residents never collect. Dials: FRONT_INCOME_BPS, FRONT_P, the band FRONTS map)
+  resident CARS (steal→melt ceiling): ~11.0 beaters/day replenished (mean value ~$4,390; melt realizes well under half)   (bounded by the turnover cap × band P × the victim shield (one vehicle/day per resident) — petty by design; conservation holds via rng_audit npc:car grant/retire rows)
+  resident BOATS (steal→resale ceiling): ~2.8 dinghies/day × $24,000 resale ≈ $67,968/day   (always the cheapest hull; bounded by turnover + the SHARED vehicle shield. Dial: BOAT_P)
+  resident FREIGHT: recycle-only (goods:buy from their own seed cash)   (the robbery realizes what the resident already paid — rides the P9.21 npc:seed measurement, no new emission)
+
+━━ P9.26 street life — the corner ceiling + the call ━━
+  THE CORNER (per-street daily ceiling): $2,000/day + 75 respect/day   (MAX_DAY (5) × CASH ($400) — petty by design (the social-tasks posture: the POINTER + the respect drip are the product); every claim needs REAL counted work after accepting. Dials: MAX_DAY, CASH, RESPECT)
+  THE CHAIN (per-street daily ceiling, on top): ~$2,500/day + ~67 respect/day   (a chain completes every CHAIN_STEPS (3) days a street shows up at that district, and advances at most once per district per day gated by a real claim — so at most min(districts 6, MAX_DAY 5) = 5 advances/day ≈ 1.67 completions/day × $1,500. The bonus rides the completing claim's OWN corner:job row (the First-Week capstone fold), so the claim cap still bounds it. Dials: CHAIN_BONUS, CHAIN_RESPECT, CHAIN_STEPS)
+  THE CALL: recycle-only (paid from the contact's own pocket)   (freight pays base × 1.15 of goods the player really hauls; visit tips $750 — both legs contact:* transfers netting zero, bounded by the P9.21 npc:seed stock)
+
+━━ P9.27 street war step three — the take (crime re-sourced off the marks) ━━
+  THE TAKE — what one mark can fund: $5,199 per job at the mean resident   (min(take, POCKET_BPS 25% of pocket), floor $50. A rich mark funds a whole job; a picked-clean one funds nothing and the faucet pays — so crime NEVER pays less, it just stops being a mint when there is somebody to take it from)
+  THE TAKE — emission effect: a REDUCTION, bounded by the resident seed stock   (every funded dollar is a TRANSFER (both legs ledgered crime:take, netting zero) that would otherwise have been a crime:<id> FAUCET row. Total funded is bounded by the same metered seed pool P9.21 sizes (~$499,152/day of replacement), so the take can only ever SHRINK crime's contribution to supply — never widen it)
+  REVENGE, with teeth: atk ×1.1, a revenge ROB takes 22.5%   (rob-only (a boosted shakedown would breach its signed 30% ceiling) and on the SAME shared per-venue window, so the signed per-venue extraction bound is untouched; the venue clock advances by the same boosted rate, so the redirect stays emission-neutral. Self-limiting: landing the strike records it, settling the debt)
+
+━━ P9.28 jailbirds × bust:reward — the reachable §7.8 faucet ━━
+  best sentence to camp: 400s → $6,500 at 10%   (EV $650/attempt. The reward is LINEAR in the sentence while the chance FLOORS at 10%, so the longest spawn is always the most profitable — the two terms do not offset. Dials: the reward line (500 + r×15) or JAILBIRDS.MAX_S)
+  city-wide ceiling: ~$84,552/day   (TARGET 2 birds × 24 hourly ticks × $1,761 expected each (3 attempts before it walks at 10% ⇒ 27% land). SHARED city-wide and first-come, so it is one player's income only in a thin alpha — which is exactly when it is live. That is an order of magnitude above the "a few $k/hour" the drop estimated, because the estimate did not carry the reward's linear term in MAX_S)
+  cost side: no energy, no nerve, no ammo — only the fail-jail   (a failed bust costs 180s of lockup and nothing else, so the loop is time-metered rather than resource-metered; unlike every other faucet at this scale it spends no signed resource. Founder call — flagged, NOT retuned (ground rule #1))
+
+━━ P9.29 the farm — RETIRED (the wage it measured no longer exists) ━━
+  the Street Wage: retired (economy v3 step 1)   (the probe that measured it is retired with it — see BALANCE.md § THE FARM for the numbers, and omerta-economy-v3-design.md §2 wall 1 for what replaced it: no faucet at all, so in-game $OMR can never exceed what was deposited)
+
+━━ P9.30 the float — the tiered loot rate + what the Made Man and the stake lock up ━━
+  loot rate — IDLE (loose + unbonding): 50%   (a 200 $OMR loose balance pays a killer 100 $OMR. Hoarding is the punished behaviour — and this is also what a bond's fresh, unvested $OMR is worth to a hunter)
+  loot rate — COMMITTED (staked): 20%   (the same 200 $OMR STAKED pays 40 — 2.5x less. Staking is no longer a SAFE HARBOUR, it is a cheaper one; §4.1 admits no fourth way for $OMR to move)
+  the commit tradeoff: 60 $OMR saved per death   (on a 200 float. BOTH answers help the economy: committing drives velocity (the one KPI), staying liquid feeds the hunters — which is why the rate is tiered rather than flat)
+  a new street holding nothing: 0 $OMR   (exposure is proportional to IDLENESS, not to wealth, so a fresh character is worth nothing to hunt — automatic new-player protection with no rule, and whales become the rational prey)
+  THE MADE MAN — recurring demand: 120 $OMR / 30d   (≈ 1,460 $OMR per subscriber per year, CONTINUOUS rather than one-off — and every dues payment recycles to the desk (step 2) to be sold again, so it is turnover, not destruction)
+  THE ACCESS STAKE — locked, visible, lootable: 300 $OMR per high-stakes seat   (held, not spent, so it earns the house nothing — its whole job is a permanent float attached to exactly the players worth hunting. A killer takes 60 of it)
+  what this probe cannot measure: whether whales actually commit   (the rate is self-balancing BY DESIGN (as whales learn to commit, typical scores fall and hunters must hunt more) but the equilibrium depends on real player behaviour — watch realised $OMR loot per kill in the alpha, not this arithmetic)
+
+━━ P9.31 the hired guns — apex raids made solo-realizable (founder SIGN-OFF, a new emission surface) ━━
+  The Kryl Syndicate (lvl 20): net $0/landed solo raid (min crew)   (grab $75,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $960,000/day (regen), so only WHO taps it changed)
+  The Moreau Cartel (lvl 40): net $175,000/landed solo raid (min crew)   (grab $250,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $2,160,000/day (regen), so only WHO taps it changed)
+  The Volkov Bratva (lvl 55): net $175,000/landed solo raid (min crew)   (grab $250,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $4,320,000/day (regen), so only WHO taps it changed)
+  the fee is the dial: $75,000–$150,000 to field a bought crew   (HIRE_FEE/HIRE_MAX are founder sign-off levers — a real cash sink pricing solo access to a coop-only reservoir; extra guns above the min buy only ODDS (their firepower counts). A hired gun forfeits its cut so the co-op faucet only SHRINKS per real head, §10.4-neutral vs a real crew)
+
+━━ P9.32 the resident economy — the consolidated base-wide ceiling ━━
+  (A) NEW EMISSION — cash faucets: ~$840,881/day   (npc:seed turnover $499,152/day (P9.21) + marks fronts $341,729/day (P9.25) — the two unambiguous cash faucets the NPC population mints)
+  (A) NEW EMISSION — vehicle addendum: ~$87,352/day   (stolen resident cars (11.0/day × ~$4,390 book × 0.4 realize = $19,384) + boats (resale $67,968); CAR_REALIZE 0.4 is a labelled melt/fence discount, not a lever)
+  (A) HEADLINE — total new emission: ~$928,234/day base-wide   (4.3% of the $21,600,000/day passive stack (P9.20). The entire NPC population mints roughly ONE small territory racket's worth of new cash a day — a rounding error against the passive economy, bounded by POPULATION.TURNOVER.PER_DAY × band seed and the marks front redirect)
+  (B) regen-bounded (NOT summed): jailbirds ~$84,552/day · blood war ≤ $288,000/day · hired-gun apex ≤ $7,440,000/day   (each rides another pillar's shared reservoir (§7.8 bust pool, family war_pool, world outfit regen) — the ceiling is that reservoir's REGEN with or without residents, so residents change WHO taps it, not the metered quantity. Excluded from the headline to avoid double-counting the World/Pen/blood-war ceilings)
+  (C) transfers (net-zero): THE TAKE (P9.27) · the call · THE FAVOR · freight robbery   (each moves value that already exists (a mark funds a crime, a contact pays from their own seed, a robbery realizes goods the resident already bought) — both legs ledger, netting zero. THE TAKE strictly SHRINKS crime emission by re-sourcing it off the marks. No new supply)
+  extraction ≤ inflow: unaffected   (every faucet here is in-game cash/goods, none touches the $OMR withdrawal rail; the full-reserve queue bound is orthogonal and untouched)
+
+━━ P9.33 D14 the crime-stat faucet — base-wide lift, signed as-is (re-measured every run) ━━
+  fresh 5/5 (lvl 3): -4.9%   ($/nerve new $59.25 vs old $62.33)
+  mid 12/12 (lvl 25): +0.0%   ($/nerve new $170.85 vs old $170.85)
+  maxed 25/25 (lvl 50): +22.3%   ($/nerve new $642.00 vs old $525.00)
+  base-wide (cash-weighted, 20/60/20 pop): +10.4%   (SIGNED as-is 2026-08-06 — the maxed tail earning more on hard jobs, bounded by NERVE, small vs the passive stack. §10.4 untouched (success-rate only). Re-anchoring CRIME_STAT.OFFSET (0.072) higher trades this for a fresh/mid hit — no free lunch. Reverting to {CUN:0.004,SPD:0.002,OFFSET:0} restores the pre-D14 curve)
+
+━━ P9.34 THE ACTIVATION MODEL — the treasury rate card (design-stage; re-measured every run) ━━
+  treasury slice per source (live levers): fee 10% · store 20% · sell-tax 4% of gross · bond 25%   (the stock budget is fed ONLY by these four — the activation burn recycles to the DESK (founder/POL), so demand cannot inflate its own payout (the anti-Ponzi shape))
+  thin alpha (20 mints + Ξ0.2 store + Ξ1 sells + Ξ0.5 bonds /day): treasury buy Ξ0.225/day → equilibrium sink ≈ 450 $OMR/day   (below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.00225/$OMR · Ξ0.00022/$OMR · Ξ0.00002/$OMR)
+  live base (200 mints + Ξ2 store + Ξ10 sells + Ξ5 bonds /day): treasury buy Ξ2.250/day → equilibrium sink ≈ 4,500 $OMR/day   (below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.02250/$OMR · Ξ0.00225/$OMR · Ξ0.00022/$OMR)
+  busy base (2000 mints + Ξ20 store + Ξ100 sells + Ξ50 bonds /day): treasury buy Ξ22.500/day → equilibrium sink ≈ 45,000 $OMR/day   (below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.22500/$OMR · Ξ0.02250/$OMR · Ξ0.00225/$OMR)
+  the sizing answer: the recurring sink ≈ the treasury inflow, in $OMR at the oracle   (activation converts every ETH of declared treasury revenue into that much daily $OMR demand — the demand engine the Dynasty design promised. Every ACTIVATION.* number stays a proposed default until the burn is built (post-A1))
+
+━━ P9.35 THE PLEX REACH — how long the earn surface takes to reach the cheapest rail purchase ━━
+  the whole earn surface: 1,320 $OMR lifetime (missions) + 3/day (daily:all)   (the ladder pays ONCE per account; the daily is a transfer out of the event fund, so it is bounded by the fund, not printed)
+  the cheapest thing the rail sells (decor_deco): 4,118 $OMR   (3.1× the ENTIRE mission ladder — so doing every $OMR mission in the game buys nothing on the rail, and the daily takes 933 more days to close the gap)
+  a respawn token: 20,588 $OMR   (6,423 days of perfect daily play after the full ladder)
+  the verdict: PLEX is reachable by PREDATION or PURCHASE, not by grinding   (that is on-theme and it is NOT the EVE fantasy the restore invoked: in EVE, PLEX is reachable by grinding ISK. Here $OMR has had no faucet since v3 step 1, so the rail is funded by taking it off somebody (whack:loot moves 20-50% of a victim's liquid + staked) or buying it at the desk. SIGNED: the predator framing is accepted, and the premium has already been taken to 1.0 (17% off every rail price — comfort, not a fix, since it cannot close a multiple this size). The dials left are the ladder's $OMR (machine-owned — a re-extract) and M4.DAILY_ALL_OMR, and both are faucet changes rather than pricing ones)
+
+━━ P9.36 THE VELOCITY–HOLDING EQUILIBRIUM — capped holding vs recurring spend ━━
+  rational hold is CAPPED, not proportional: 900 $OMR to top the ladder   (the rungs are absolute thresholds (60 / 180 / 450 / 900), so a $OMR above the top one earns nothing from the ladder — a whale has no ladder reason to lock more than a mid player. The high-stakes seat wants 300 held, which the ladder stake already covers)
+  and dues buy a rung, so being made LOWERS the lock: 450 $OMR (made) vs 900 (unmade)   (450 $OMR of float released per made man, in exchange for 120 $OMR every 30 days FOREVER — the subscription converts a one-time lock into recurring spend, which is the revenue model's own direction)
+  recurring spend per engaged player: 5214 $OMR/year   (dues 1460 + a Street Wire seat 3754. SUBSCRIPTIONS ONLY — every one-time sink (estate tiers, seals, vanity, respec, the peek) is spend this floor ignores)
+  the implied equilibrium velocity: 11.6 turns/year   (5214 $OMR of recurring spend against a 450 $OMR capped hold. THE CONTRADICTION DOES NOT BITE: holding is bounded per player and spending is not, so a made man's float turns over ~12x a year on subscriptions alone. Watch it live on GET /v1/mod/tokenhealth ('return velocity'), whose act band is under 2)
+  what binds the desk lot: returns below 1% of float   (the lot is min(yesterday's returns, 1% of float, the shelf) with a 6000 $OMR bootstrap floor. One engaged player returns ~14.3 $OMR/day, so RETURNS bind (the healthy case — the desk sells what came home) until float per player exceeds ~1429 $OMR. The starvation case is not "holding won", it is "nobody is playing")
+  what this does NOT prove: the base-wide figure is this x the engaged share   (an unmade, unsubscribed holder spends nothing recurring and can still lock up to 900 $OMR — velocity 0. The mechanisms do not fight, which is what the probe establishes; whether players engage is a retention question the dashboard measures live and no model can settle)
+  the dial if holding ever does win: M3.OMR_LOOT_COMMITTED, then the rung heights   (raise the committed loot rate (20% today vs 50% idle) and a staked hoard stops being the cheaper shelter; raise the rung minimums and the cap moves. Both are signed levers — this probe re-measures on either)
+
+━━ P9.37 street deeds — the corner take (the one Phase-2 faucet, bounded) ━━
+  corner take per deed: $48,000/day   (CORNER_PER_HR 2000 × 24h — the cap; a controller who never collects banks ≤ this, and collecting more often banks less per collect (the clock resets))
+  base-wide ceiling @ 100 deed-holders: ≤ $4,800,000/day   (ONE deed per account, so this is a linear function of the playerbase — every dollar is a ledgered deed:corner faucet, character_id'd (the per-character §10.4 check reconciles it))
+  base-wide ceiling @ 1000 deed-holders: ≤ $48,000,000/day   (ONE deed per account, so this is a linear function of the playerbase — every dollar is a ledgered deed:corner faucet, character_id'd (the per-character §10.4 check reconciles it))
+  faucet posture: petty per deed vs the signed loops   (a single corner is ~a territory-racket rung; the shakedown only moves WHO collects (control), never mints — so the faucet cannot be widened by contesting it. Sign-off levers: DEEDS.CORNER_PER_HR / CORNER_CAP_MS)
+
+━━ P9.38 street deeds 2C — the controller's perks (neon ceiling + the op seat) ━━
+  neon corner ceiling (one operator): ≤ +$4,976,748/day   (15% of a maxed 12-seat metered racket day ($33,178,320); applies to at most ONE extra operator per controlled neon corner, and to NOBODY new when a family holds neon (set-union OR). PERK_TURF: 0 disables)
+  op seat max marginal: +$1,161,360/day @ lvl 1   (the (seats+1)-th best level-gated rung's metered day; EXACTLY $0/day at level ≥ 40 (SLOTS_MAX binds — the parity cap, test-pinned). PERK_OP_SLOTS: 0 disables)
+
+━━ P9.39 scarcity — the firsts, the runs, the shipment ━━
+  the firsts: 25 permanent uniques   (pure status — no currency, no ledger row, unbuyable by construction. Each is claimed ONCE in the server's life. The catalog derives from the live catalogs, so new content brings its own FIRST)
+  limited runs: 49 numbered cars, ever (4 runs)   (mechanically identical to their catalog models (dearest base $400,000), so ZERO balance surface; drop-only at LIMITED_RUN_P 0.004. The counter never decrements — melting one takes it out of the world)
+  the shipment cap scales: 3p→40 10p→48 25p→56 50p→80 100p→120 250p→240 500p→400 1000p→400   (units/day = max(40, +8/10 players, ceiling 400). Full shares as a share of the city: 3p 333%, 10p 120%, 25p 56%, 50p 40%, 100p 30%, 250p 24%, 500p 20%, 1000p 10% — the FLOOR carries a thin city (nobody to contend with), the STEP carries a full one. PER_PLAYER stays 4 on purpose, so one whale's share shrinks relative to the city as it grows)
+  the shipment ceiling: binds at ~500 players   (CITY_MAX 400 is the one number that puts the fixed-cap problem back at very high population (10% at 1000p) — the founder lever to revisit if the city ever gets there)
+  the shipment sink: $120,000 → $4,000,000 per piece   (EMISSION-NEGATIVE: the material pays nothing and gates a cash SINK. The dearest piece takes 16 units = 4 perfect days of showing up, so the pacing is the MATERIAL, not the money)
+
+━━ P9.40 den variance — the edge against its own noise ━━
+  rolls to N*: 5,030 rolls   (where the pass line's expected loss (0.0141·s·N) first equals its own noise (s·√N); below it a realized month is a coin, not an edge)
+  one arena month (354 rolls): z = 0.27   (so a ±1σ month reads anywhere from a -3.9% house LOSS to a 6.7% house win — the arena's 6.9% (run 3) sits inside it and its 15.7% (step one) is a ~2σ draw: a bad month for the gamblers, not an edge. Unequal stakes widen σ further (σ = √Σs²), so both are conservative)
+  a 30-roll session at $250,000: 1σ = $1,369,306   (against an expected loss of $105,750 — a 13× wider swing than the edge, which is what a session FEELS like at the main table)
+  a 30-roll session at $2,000,000: 1σ = $10,954,451   (against an expected loss of $846,000 — a 13× wider swing than the edge, which is what a session FEELS like at the high-stakes table)
+
+━━ P10 §10.4 ledger invariants over the ENTIRE sim (nothing was seeded) ━━
+  ✅ character cash: drift 0
+  ✅ gang treasuries: drift 0
+  ✅ commission escrow: drift 0
+  ✅ bounty escrow: drift 0
+  ✅ $OMR conservation: drift 0
+  ✅ emission faucet retired: drift 0
+  ✅ plex mint retired: drift 0
+  ✅ portfolio retired: drift 0
+  ✅ desk inventory backed: drift 0
+  ✅ desk inventory ledgered: drift 0
+  ✅ desk sales ledgered: drift 0
+  ✅ auction escrow: drift 0
+  ✅ world graph salvage car audit: drift 0
+  ✅ car conservation: drift 0
+  ✅ cb conservation: drift 0
+  ✅ ammo conservation: drift 0
+  ✅ convoy insurance pool: drift 0
+  ✅ market escrow: drift 0
+  ✅ loan escrow: drift 0
+  ✅ loan omr pledge escrow: drift 0
+  ✅ drop claims ledgered: drift 0
+  ✅ favor escrow: drift 0
+  ✅ turf contest escrow: drift 0
+  ✅ loan house pool: drift 0
+  ✅ boxing bet escrow: drift 0
+  ✅ den profit: drift 0
+  ✅ den distributions: drift 0
+  ✅ poker tourney escrow: drift 0
+  ✅ ring poker escrow: drift 0
+  ✅ grand prix escrow: drift 0
+  ✅ stakes escrow: drift 0
+  ✅ futurity escrow: drift 0
+  ✅ agent acquisition budget accounting: drift 0
+  ✅ agent referral claim ledger: drift 0
+  ✅ world graph stack conservation: drift 0
+  ✅ world graph unique custody and provenance: drift 0
+  ✅ world graph object transitions: drift 0
+  ✅ family operation history: drift 0
+  ✅ family operation custody: drift 0
+  ✅ family operation capital: drift 0
+  ✅ world graph hardening cash sink: drift 0
+  ✅ world graph currency boundary: drift 0
+  ✅ reason vocabulary: drift 0
+  ✅ content_artifact_integrity: drift 0
+  ✅ item_definition_integrity: drift 0
+  ✅ content_membership_integrity: drift 0
+  ✅ content_activation_chain_integrity: drift 0
+  ✅ content_selection_integrity: drift 0
+  ✅ content_activation_history_policy: drift 0
+  ✅ content_activation_policy_drift: drift 0
+  ✅ item lot definition integrity: drift 0
+  ✅ item lot quantity integrity: drift 0
+  ✅ item lot custody integrity: drift 0
+  ✅ item lot lineage parity: drift 0
+  ✅ item lot conservation: drift 0
+
+══════════ SIM METRICS SUMMARY ══════════
+| crime-curve | stereo (lvl 1) | $140.58/attempt | 32/40 wins, 8 jailed |
+| crime-curve | poker (lvl 11) | $754.85/attempt | 20/40 wins, 20 jailed |
+| crime-curve | payroll (lvl 30) | $2,943.7/attempt | 11/40 wins, 29 jailed |
+| crime-curve | counting (lvl 58) | $8,176.08/attempt | 8/40 wins, 32 jailed |
+| crime-curve | depository (lvl 110) | $31,202.4/attempt | 3/40 wins, 37 jailed |
+| crime-curve | top-tier grind ceiling | $6,240,480/day | ~200 attempts/day at depository |
+| passive | grinder bankroll | $1,729,204 | 0 extra crimes to fund the buys |
+| passive | laundro racket | $4,752/day | payback 63.13h — the sim-audited baseline curve |
+| passive | laundromat t1 business | $288,000/day | payback 20.83h |
+| passive | business:racket dominance (gross) | 3.03× | daily-return-per-dollar ratio — >1 means businesses strictly dominate |
+| passive | laundromat upkeep (the pad) | $38,400/day | 13.33% of gross (owed $115,200 over 3d) — the recurring sink |
+| passive | laundromat NET of the pad | $249,600/day | payback 24.04h net |
+| passive | business:racket dominance (NET of pad) | 2.63× | after upkeep — >1 still means businesses win, but by less |
+| kitchen | vim cook+deal net | $569/cycle | 3 cycles (entry-tier; scales with lab/rank) |
+| kill | ammo price | $40/round | gun: argument ($18,000) |
+| kill | kill completed | true | btk 1430, 1849 rounds over 1 attempt(s), heat +20/shot |
+| kill | loot on kill | $10,044 cash + 0 $OMR | mark pocket was $40,179 → 25% looted |
+| kill | kill EV (careless mark) | $-63,916 | loot − ammo $73,960 (search/energy/heat free-ish) |
+| kill | kill EV (rational mark) | −$73,960 | a banked victim loots $0 pocket — pure ammo loss + heat |
+| kill | contract break-even (mid mark) | pot ≥ $63,916 | ammo $73,960 − loot; WANTED house bounty $25,000 + open pots + war points close the gap — whale-hunting stays +EV standalone (break-even liquid ≈ $295,840) |
+| kill | kill EV (mark mid-deposit) | $-63,851 | looted $10,109 incl. the IN-TRANSIT deposit ($40,438 banked) − ammo $73,960 — the timed-hit surface works |
+| defense | safehouse quote (grinder, rich) | $25,000 | 1% of liquid wealth per 4h stay |
+| defense | safehouse quote (fresh heir, poor) | $25,000 | the $25k floor holds for street players |
+| extraction | AMM depth at start | $10,000,000 / 20,000 $OMR | price $500/ |
+| extraction | private wash (3 days @ t1 cap) | $0 → 0 $OMR | heat now 0 (business heat 8/wash vs street 15) |
+| extraction | forced Bureau raid | fine $25,000 + seized $60,000 | 10% tier cost + all pending — ledgered business:raid |
+| extraction | AMM price drift from sim washes | $500 → $500 per $OMR |  |
+| family | territory racket (Numbers, 24h) | $96,000 → treasury | seizable capital works under honest money |
+| collusion | one shakedown transfer | $86,400 | 30% of 24h pending; per-venue 8h cooldown → ~3×/day/venue; vs jump steal cap $25,000 |
+| vig | vig buyback | 60 hard $OMR bought (0.06 ETH) |  |
+| vig | vig invariants (extraction ≤ inflow) | true |  |
+| vig | the PLEX mint rail refuses | true | fees are ETH only — one rail for the Sybil bound |
+| vig | the ETH mint opens the extraction gate | true | one rail, in real money, at the published wave |
+| den | craps session | 150 rolls, staked $150,000, net $-2,000 | realized edge 1.33% (theoretical 1.41%); street cut +$1,250 |
+| den | extraction risk (analytic) | full-cap washing goes raid-eligible in ~2.9 days; P(raid)/day at max scrutiny ≈ 51.33% | net scrutiny +21/day at cap; fine 10% of tier cost reaches pocket+bank |
+| heists | payroll co-op (2-crew, lvl 25) | 30 runs, 21 scores, 9 shared jails | pot−stake EV +$92,616.53/run CREW-WIDE (split 1.2:1); stakes $300,000 vs takes $3,078,496 |
+| world | The Kryl Syndicate (lvl 20) | ≤ $960,000/day base-wide ceiling | regen-bounded; per-raid grab $75,000; one min-lvl solo @0.1-floor ≈ $90,000/day |
+| world | The Moreau Cartel (lvl 40) | ≤ $2,160,000/day base-wide ceiling | regen-bounded; per-raid grab $250,000; one min-lvl solo @0.1-floor ≈ $300,000/day |
+| world | The Volkov Bratva (lvl 55) | ≤ $4,320,000/day base-wide ceiling | regen-bounded; per-raid grab $250,000; one min-lvl solo @0.1-floor ≈ $300,000/day |
+| world | co-op = ACCESS not ceiling | crew splits ONE grab (leader 1.2×) | total emission stays ≤ regen; co-op just makes a heavy apex def beatable — B1 solo-floor is the dial |
+| blood war | per-family ceiling (3 NPC families) | ≤ $96,000/day/family → ≤ $288,000/day base-wide | regen-bounded (POOL_MAX $120,000 < the weakest World outfit $150k); a raider caps at 6/day × $6,000 = $36,000/day per family before regen bites; the DEFENCE (COUNTER_P 0.35) hospitalizes ~35% of landed raids — a real risk, not a fixed-price standing buy. §10.4: a bounded family:raid faucet, NO season_wars (the severance) |
+| blood war | conquest tribute (held vassal) | $1,920/day/family → ≤ $5,760/day base-wide | a routed NPC family held as a vassal pays 2% of its regen rate to the treasury (the World-frontier twin, capped 24h) — a small ADDITIVE faucet on top of loot; the value is the conquest/turf goal, not the income. §10.4: family:tribute reconciles the gang-treasuries check |
+| boxing | exhibition EV — fresh signee (form 30) | +$2,982.35/bout best | best tier Club Fighter @P66% · +$11,929.41/day/fighter · ×3 stable +$35,788.24/day |
+| boxing | exhibition EV — maxed fighter (form 75) | +$26,236.99/bout best | best tier The Gatekeeper @P91% · +$104,947.98/day/fighter · ×3 stable +$314,843.93/day |
+| territory | Numbers Game (District t3) | $1,440,000/day | ×1 · never heats up (0/hr < decay 4) — SAFE at any cadence |
+| territory | Protection Racket (District t3) | $1,656,000/day gross (×1.15) | hot in 10h — collect within it to stay cool; LAZY 24h cadence P(raid) 72% → ~$376,127/day (fine $130,000) |
+| territory | Loansharking Book (District t3) | $1,728,000/day gross (×1.2) | hot in 8.57h — collect within it to stay cool; LAZY 24h cadence P(raid) 75% → ~$332,961/day (fine $130,000) |
+| territory | Chop Shop (District t3) | $1,800,000/day gross (×1.25) | hot in 7.5h — collect within it to stay cool; LAZY 24h cadence P(raid) 77% → ~$306,662/day (fine $130,000) |
+| territory | Smuggling Ring (District t3) | $1,944,000/day gross (×1.35) | hot in 6h — collect within it to stay cool; LAZY 24h cadence P(raid) 80% → ~$279,943/day (fine $130,000) |
+| territory | Counterfeiting Plant (District t3) | $2,088,000/day gross (×1.45) | hot in 4.29h — collect within it to stay cool; LAZY 24h cadence P(raid) 83% → ~$245,682/day (fine $130,000) |
+| territory | the TYPE tradeoff | active vs lazy | numbers is cadence-proof; a hot type should be higher-VARIANCE not higher-EV — watch protection (30h-to-hot dodges a daily collect) + smuggling lazy-net (BALANCE B-terr) |
+| world | frontier tribute (all 5 outfits held) | ≤ $156,960/day base-wide | 2% of regen, 24h-capped, requires routing to hold — a small treasury faucet vs territory ops |
+| speakeasy | bar take — The Cathedral (top tier) | $3,120,000/day/club | 5 decor tiers ($192,000→$3,120,000/day), one club per district, 24h cap — a territory-scale front (safehouse-gated collect) |
+| speakeasy | back-room table rake | 3% of stake → owner | a TRANSFER carved from the stake (never minted; the casino discipline), $1,000–$100,000 bets, edge burns |
+| pen | yard work faucet | ~$400/work (15 energy) | only WHILE JAILED (inherently bounded) + shaves 60s/work off the sentence — a trickle vs any street loop, self-limiting |
+| world | liberation on-ramp — docks (The Dock Rats) | $45,000 at full strength | → floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount) |
+| world | liberation on-ramp — brick (The Zappa Crew) | $120,000 at full strength | → floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount) |
+| world | liberation on-ramp — canal (The Kryl Syndicate) | $450,000 at full strength | → floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount) |
+| world | liberation on-ramp — foundry (The Moreau Cartel) | $1,500,000 at full strength | → floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount) |
+| world | liberation on-ramp — neon (The Volkov Bratva) | $3,600,000 at full strength | → floors to $30,000 once the outfit is routed to the reservoir floor (the World-loop discount) |
+| speakeasy | The Backroom (t0) bar take | $192,000/day gross → $153,600 NET | −20% upkeep off the top (speakeasy:upkeep sink); build-to-here $750,000 → payback ~4.9d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2) |
+| speakeasy | The Lounge (t1) bar take | $384,000/day gross → $307,200 NET | −20% upkeep off the top (speakeasy:upkeep sink); build-to-here $1,350,000 → payback ~4.4d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2) |
+| speakeasy | The Blue Room (t2) bar take | $816,000/day gross → $652,800 NET | −20% upkeep off the top (speakeasy:upkeep sink); build-to-here $3,150,000 → payback ~4.8d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2) |
+| speakeasy | The Copa (t3) bar take | $1,632,000/day gross → $1,305,600 NET | −20% upkeep off the top (speakeasy:upkeep sink); build-to-here $7,650,000 → payback ~5.9d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2) |
+| speakeasy | The Cathedral (t4) bar take | $3,120,000/day gross → $2,496,000 NET | −20% upkeep off the top (speakeasy:upkeep sink); build-to-here $18,650,000 → payback ~7.5d; passive collect draws ~0 notoriety → the table/rounds carry the raid risk; safehouse-gated collect (D2) |
+| speakeasy | net-EV verdict | still a strong front, now taxed | top tier ~$2,496,000/day NET after the 20% upkeep — no longer a risk-free faucet; incomePerHr curve is the remaining founder dial (BALANCE speakeasy) |
+| races | PvE EV — a tuned contender (power 200) | +$5,000/race best | best tier Midnight Run @P100% · +$60,000/day at 12/day cadence — bounded faucet, a lost race also dings the car (repair cost); sign-off vs boxing exhibition |
+| races | PvE EV — a premium monster (power 450) | +$18,000/race best | best tier The Ghost Circuit @P100% · +$216,000/day at 12/day cadence — bounded faucet, a lost race also dings the car (repair cost); sign-off vs boxing exhibition |
+| races | NITROUS — best EV of one charge, an underdog (field − 20) | +$33,928/charge | +60 power for $8,000: best on The Ghost Circuit, P(win) 13%→100% — a viable comeback play (still a sink on average — gone win/lose) |
+| races | NITROUS — best EV of one charge, a heavy favorite (field + 60) | $-8,000/charge | +60 power for $8,000: best on Back-Alley Sprint, P(win) 100%→100% — not worth it here; a favorite wastes it (ΔP≈0) |
+| port | Coastal Hop — Cigarette Boat | ~$240,667/day at the cap | P(caught) 3% · margin ×1.67 · net 60% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat) |
+| port | Open Water — Cigarette Boat | ~$303,486/day at the cap | P(caught) 3% · margin ×1.83 · net 76% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat) |
+| port | The Deep Run — Cigarette Boat | ~$380,000/day at the cap | P(caught) 30% · margin ×3.00 · net 95% per $ sourced (fine 50% of cargo on a bust; a bust can also sink the boat) |
+| port | daily faucet (best route, maxed) | ~$380,000/day | bounded by SUPPLY_CAP_DAY $400,000 × the best net margin — sign-off vs boxing exhibition / territory (~$300-400k) |
+| vig | sell tax @ 10 ETH/day sold | 0.900 ETH/day taxed | founder 0.200 · treasury 0.400 · LP depth 0.300 — and 0.000 to the Vig |
+| vig | sell tax @ 100 ETH/day sold | 9.000 ETH/day taxed | founder 2.000 · treasury 4.000 · LP depth 3.000 — and 0.000 to the Vig |
+| vig | sell tax @ 1,000 ETH/day sold | 90.000 ETH/day taxed | founder 20.000 · treasury 40.000 · LP depth 30.000 — and 0.000 to the Vig |
+| vig | the Vig's trading leg | ZERO after the retirement | withdrawal backing now comes only from gameplay fees (60%), the Store (40%) and bonds (22.5%). A fourth vig slice on the hook is the dial if trading should underwrite withdrawals again — a reallocation OUT of dev/treasury/LP, which is a founder call, not a default (BALANCE § D1) |
+| races | Grand Prix — 3-driver pool $75,000 | house edge 5.0% · burns $1,875 | winners split $71,250 (60%/30%/10%); the field funds the winners — ZERO new emission, net cash SINK $1,875/race (the burned half-rake). Skill+gear decides, alt-stuffing is −rake/N per head (−EV) |
+| races | Grand Prix — 8-driver pool $200,000 | house edge 5.0% · burns $5,000 | winners split $190,000 (60%/30%/10%); the field funds the winners — ZERO new emission, net cash SINK $5,000/race (the burned half-rake). Skill+gear decides, alt-stuffing is −rake/N per head (−EV) |
+| convoy | NPC trucking faucet — ~50% hijacked (realistic) | ~$232,738/day base-wide ceiling | 2 trucks on the road × 48 turnovers/day = 96 trucks · avg manifest ~$4,849 (11 units × ~$441) · hijack 50% |
+| convoy | NPC trucking faucet — 100% hijacked (ceiling) | ~$465,476/day base-wide ceiling | 2 trucks on the road × 48 turnovers/day = 96 trucks · avg manifest ~$4,849 (11 units × ~$441) · hijack 100% |
+| convoy | NPC trucking — the real per-player bound | ~25 ambushes/day at ~500 energy | energy 20/ambush + ammo 10/ambush throttle a solo grinder well under the base-wide ceiling; MAX_AMBUSHES 3 raiders split one manifest, so contention dilutes — sign-off vs boxing/territory (~$300-400k/day) |
+| stable | circuit EV — Greyhound fresh (form 27) | +$1,760/race best | best meet Maiden Sprint @P63% · +$7,041/day/racer · ×3 stable +$21,124/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition |
+| stable | circuit EV — Greyhound trained (form 75) | +$26,238/race best | best meet The City Derby @P95% · +$104,952/day/racer · ×3 stable +$314,856/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition |
+| stable | circuit EV — Racehorse fresh (form 33) | +$5,509/race best | best meet Maiden Special @P70% · +$22,035/day/racer · ×3 stable +$66,106/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition |
+| stable | circuit EV — Racehorse trained (form 75) | +$23,099/race best | best meet The Gold Cup @P77% · +$92,398/day/racer · ×3 stable +$277,193/day — bounded faucet (fee burns win/lose, cooldown + injury-on-loss); sign-off vs boxing exhibition |
+| clues | casket faucet ceiling | $22,500/day/char hard max | 3/day cadence cap × $7,500 mean take (band $3,000–$12,000); realized far lower (2% drop on jobs, travel per step) — petty vs the signed loops; KEEP unless dust telemetry says otherwise |
+| stack | personal front stack (5 kinds, top tier, NET of pad) | $21,600,000/day | gross $36,000,000/day − 40% progressive pad (L1b: 20% base + 4×5% per extra front); 24h collect cap; build-to-here $109,550,000 → payback ~5.1d; ENERGY-FREE (5 collect clicks/day) |
+| stack | speakeasy (per club, top tier, NET) | $2,496,000/day/club | one club per district, additive to the fronts; safehouse-gated collect (D2) |
+| stack | territory rackets (family, per district, top tier × best type) | ~$20,880,000/day/district | ×1.45 type mult; up to 6 core districts if the family holds them — a separate, treasury-side passive stack |
+| stack | PERSONAL passive : ACTIVE grind | 3.5× | the 5-front stack ($21,600,000/day, energy-free) vs the top-tier crime grind ($6,240,480/day, ~200 energy-bounded attempts) — before speakeasy/territory/frontier/sov add more |
+| stack | APPLIED (founder-directed L1a+L1b balance package) | front curve flattened + progressive pad | L1a halved the apex hotel/casino incomePerHr; L1b makes a 5-front stack pay 40% pad vs a 1-front's 20% — the personal stack dropped ~$48.96M→$21,600,000/day (ratio ~6×→3.5×), still passive-favoured but no longer dwarfing the active loop; §10.4 stays drift-0 (every front a ledgered faucet). Remaining dial: the full front incomePerHr curve (BALANCE.md) |
+| assets | income assets measured | 36 | 18 rackets (level-gated) + 13 Legit Fronts assets (PRICE-gated only) + 5 business fronts (level-gated, net of the 20% pad); all accrue with ZERO energy |
+| assets | payback range | 1.09d — 12.00d | the healthy band is 3-14d (longer than a sitting, shorter than a street's life) |
+| assets | INSIDE the healthy band | 27 of 36 | racket parlor, racket wire, racket chop, racket route, racket speak, racket loans, racket fightgym, racket floor, racket wharf, racket union77, racket laundrybank, racket shipline, racket municipal, racket commission, racket portauth, racket invisible, asset dealer, asset barber, asset funeral, asset club, asset taxi, asset radio, asset import, asset pictures, asset tower, asset bank, asset airline |
+| assets | pay for themselves in under a day | 0 of 36 | no rung pays for itself in a sitting, so every purchase is a bet on staying alive long enough to collect on it — which is what makes it a decision |
+| assets | the first rung anyone can reach | racket laundro — $12,500 → $6,480/day | payback 1.93d. The harness has a session-1 player at ~$32k, so this is roughly a session away |
+| assets | income assets with NO level gate | 13 | buyAsset checks cash and nothing else, so the Legit Fronts ladder is bounded only by price — the biggest, asset airline, is $60,000,000 → $4,999,680/day at ANY level. In practice cash tracks level closely enough that this is a soft gate rather than an open door, but it is a gate nobody chose |
+| assets | the rest of the passive stack (P9.20 counts fronts only) | rackets $24,953,760/day + assets $10,854,000/day | both buy-once and permanent; against the top-tier crime grind at $6,240,480/day this is the shape of the passive-vs-active gap, and it is bigger than the front stack alone. Note this is the WHOLE ladder — see the seat bound below for what one player may actually run |
+| assets | the seat bound | 2 seats at level 1 → 12 at level 40 | 31 metered holdings (18 rackets + 13 Legit Fronts) compete for 12 seats — you run ~39% of the catalog, ever |
+| assets | metered passive income, capped vs uncapped | $33,178,320/day (best 12) vs $35,807,760/day (all 31) | the cap is a 1.08x cut to the metered half of the passive stack — but it is NOT primarily a nerf: an optimal player still takes the 12 richest, so what the cap really removes is the 19 marginal rungs nobody was choosing between. Business fronts are unmetered (capped at 5 by UNIQUE(character,kind) already) |
+| assets | the early seats | lvl 1: $7,238,160/day · lvl 20: $10,247,760/day · lvl 40: $11,489,040/day | best-affordable-at-that-level, 2/7/12 seats. The seat curve, not the price, is now the early bound — a level-1 player with unlimited cash cannot buy past 2 operations, which is the "affordability was never the gate" finding turned into a gate. NOTE the Legit Fronts assets have NO level gate (buyAsset checks cash only), so they sit in every one of these pools |
+| assets | VERDICT | 27 of 36 in the healthy band, bounded by seats | nothing here is out of reach; the ladder's ROI now TAPERS (1.09d at the on-ramp → 12.00d at the apex) instead of paying back inside a sitting at every rung, so a big rung is a commitment rather than a click. The best 12 seats run 5.3x the top-tier grind — passive still beats active, as capital should, without dwarfing it. The remaining outliers are the 9 under the band's floor (racket laundro, racket pawn, asset grocery, asset diner, front laundromat, front restaurant, front nightclub, front hotel, front casino — the deliberately generous first rungs, plus the business fronts, whose curve the L1a/L1b package already signed separately). The levers are the per-rung income (prototype tables, machine-owned), the 12h RACKET_DAILY_CAP_MS meter, and OPERATIONS.SLOTS_* (BALANCE.md) |
+| family | the racket climb (one district) | Neighborhood 3.3d · District 3.3d · Citywide 3.5d · The Syndicate 3.9d | each tier funded out of the tier below at the safe Numbers Game type — ~14d of daily collecting to take ONE district from Corner to The Syndicate. This half is sound: the ladder is a wait, not a purchase |
+| family | treasury income at the top | 1 district $12,006,960/day · 3 $34,356,960/day · 6 $64,506,960/day | The Syndicate operations net of the 20% pad, plus 6-tier strongholds net of overextension (which turns NEGATIVE past a few districts — that mechanic works), plus $156,960/day of frontier tribute. Member cash tribute and war spoils are on top and player-driven |
+| family | the strategic menu, priced in days of a maxed family's income | declare war (on a rich rival) 0.02d · siege a Bastion+ stronghold 0.02d · invade a frontier outpost (floor) <0.01d · take an unheld district (floor) <0.01d · fortify one operation to 5 0.12d · climb one operation to The Syndicate 0.31d · build one The Iron Capital 0.96d | against $64,506,960/day. The one-time build-out (every operation maxed + fortified + a stronghold on every district) totals $538,800,000 — about 8 days of income, after which the recurring menu is what is left |
+| family | RECURRING decisions costing under 1% of a day | 2 of 4 | invade a frontier outpost (floor) ($50,000), take an unheld district (floor) ($30,000) — the remaining flat ones are the two the founder deliberately left on the garrison ratchet (invade + take-unheld already scale with the incumbent's garrison, the value at stake). War ($1,290,139) and siege ($1,200,000) were INDEXED this pass — war to 2% of the target's treasury, siege to 3% of the stronghold's build cost — so declaring on a rich family is no longer free |
+| family | the contest ratchet (the one cost that scales) | $30,000 → $45,000 → $67,500 → $101,250 → $151,875 → $227,813 | each contest's floor is max($30,000, garrison × 1.5) and the winner's whole stake BECOMES the garrison, so contested turf gets dearer every time it changes hands — after 6 fights it is 8× the opening price. THE WATCH multiplies it again (×1.5 off-window) and THE ROSTER's enforcer adds a flat premium on top |
+| family | VERDICT | war + siege now bite the endgame; the two floors stay on the garrison ratchet | the ladder to the top is a genuine ~14-day wait per district and the sov overextension pad is a real recurring drain. The P9.20d flat-cost finding (declaring war / sieging cost pocket change for a maxed family) is now RESOLVED for the two fully-flat costs: war indexes to the target's treasury ($1,290,139 against a rich rival) and siege to the stronghold's build cost ($1,200,000 for a Bastion+). Both are founder sign-off levers (M3.WAR_COST_BPS 2% / SOV.SIEGE_COST_BPS 3%, floored at the old constants so the on-ramp is unchanged). The two remaining flat entries (invade + take-unheld) are FLOORS the founder deliberately kept on the garrison ratchet — the incumbent's garrison IS the value at stake there, and a fresh/unheld target being cheap is the turf on-ramp |
+| crew | the nut | $1,200/hr per hand | flat, on the wall clock, whether the stash moves or not — the recurring sink |
+| crew | what one hand moves while stocked | $4,320/hr on VIM (the cheapest line) | 3.6:1 against the wage, rising to 360:1 on NOCTURNE — a STOCKED crew is never the problem |
+| crew | 1 hand, every 8h (three check-ins) | +$24,960/cycle | banks 8h of sales ($34,560) against 8h of wages ($9,600) = 3.60:1 on the cheapest line |
+| crew | 1 hand, daily | +$5,760/cycle | banks 8h of sales ($34,560) against 24h of wages ($28,800) = 1.20:1 on the cheapest line |
+| crew | 1 hand, every 3 days (the cold line) | $-51,840/cycle | banks 8h of sales ($34,560) against 72h of wages ($86,400) = 0.40:1 on the cheapest line |
+| crew | the asymmetry | sales cap 8h — the nut runs to 48h | 6x, sharper than the business pad's 7x. It is the same deliberate fiction (the corner holds a shift's take, the envelope runs a week) and the same defect it had: the game never SAID so. It does now — the rate, the countdown and the door out all ride with the price |
+| crew | VERDICT | attendance, not a trap — once the terms are visible | a stocked, thrice-daily crew runs 3.6:1 even on VIM; a daily one is 1.20:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the week the nut runs to) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md |
+| population | residents standing | 48 | headcount the worker holds |
+| population | seed per resident (E) | $20,798 | weighted across the four bands |
+| population | cash standing in the city | $998,304 | the whole faucet exposure at any instant |
+| population | LOOTABLE per resident (E) | $20,560 | bands under LOOT_MIN_LVL 10 carry nothing a killer can take |
+| population | a killer nets per resident kill | $5,140 | 25% of pocket — the same loot surface as a player kill, and the SAME ammo cost applies |
+| population | faucet posture | petty vs the signed loops | compare to the boxing exhibition / territory bands (~$300-400k/day); a resident is scenery with a wallet, not a payday |
+| population | standing pool | ~$998,304 | what is on the street at any instant — step two made ~100% of it realizable (was ~25%: only a kill burns the remainder) |
+| population | RECURRING ceiling | 24 replacements/day ≈ $499,152/day | step three: the city renews itself, so npc:seed is a rate. Bounded by headcount in population_state — the same band as a territory racket (~$300-400k/day) or the boxing purse, and ~2.3% of the passive stack |
+| population | drained threshold | 15% of arrival stake | measured against what a resident ARRIVED with (npc_seed), never a flat cash floor — a flat floor would recycle the cheap bands on spawn, forever |
+| severance | street take (measured floor) | $35/player/day | driven population, tools/scale.js; population-invariant across 12 and 36 players. A FLOOR — scripted players trade less than real ones |
+| severance | reaches the Exchange window | $35.00/player/day | EXCHANGE.FUND_BPS 100% of the take |
+| severance | absorbable at RATE | 0.0700 $OMR/player/day | at $500 cash per $OMR — this is the ONLY cash exit once cash→$OMR is severed |
+| severance | EMISSION vs ABSORPTION | no emission to absorb (v3 step 1) | the wage is retired, so the pressure this probe was built to measure no longer exists. What can reach the window is bounded by what was bought, and that is bounded by the desk |
+| severance | per-account daily cap | 1500 $OMR = $750,000/day | ~21,429× what one player's own activity funds — so the POOL binds first and the cap is decorative at any realistic base. Players meet 'dry', never the cap |
+| severance | RECURRING $OMR sinks per heavy player | ~82.3 $OMR/day | Street Wire 10.3/day (base tier) + a full estate staff 72.0/day — before auctions, megaproject, respec or vanity, which are unbounded |
+| severance | one-off personal $OMR sinks | 59,460 $OMR | the estate ladder alone; family seals 13800 and the foundation 29640 sit on top, per family |
+| severance | THE STANDING FINDING (restated for v3) | the window is a relief valve, not the exit | $OMR's real exit is the SINK CATALOG and, for real value, the reserve-backed CHAIN withdrawal. With the faucet retired the window no longer has to keep up with a printer — it only has to serve holders who want out in CASH, and every $OMR it ever sees was bought. Levers: FUND_BPS (how much take reaches it) and RATE (a LOWER rate serves more $OMR per pool dollar). Founder calls — nothing is retuned here |
+| re-sim | the extraction link | SEVERED — cash cannot become $OMR | omrMints is {mission:%, prize:omr, emission:%} and NONE takes cash as an input. So every cash faucet flagged for EXTRACTION risk is MOOT on that axis; what survives is the INTERNAL question (pacing, concentration), which is now the only one |
+| re-sim | character-side cash, net | $4,940,687 over the run | into players: heist:crew $3,078,477 · crime:depository $1,248,096 · business:income $864,000 · crime:counting $327,043 · crime:payroll $274,288 — out: heist:crew:stake $300,000 · business:buy $250,000 · casino:bet:dice $150,000 · ammo:buy $148,000 · gang:tribute $120,000 |
+| re-sim | gang-bound rows, net | $-250 over the run | character_id-NULL rows ONLY — in: territory:income $96,000 — out: territory:establish $50,000 · turf:seize:docks $45,000 · casino:take $1,250. NOT the treasury delta: a mirrored transfer (gang:tribute, convoy:toll, port:toll) writes only the character's negative row and the treasury credit is derived, so it is counted on the character side above and nowhere here |
+| re-sim | what this measures | SHAPE, not steady state | a scripted run does what the script does, so this ranks which loops MOVE the most cash; it does NOT predict a real economy's inflation. The per-faucet $/day CEILINGS in P9.8-P9.22 are the numbers to tune against, and P10 below is what proves conservation |
+| re-sim | what a cash faucet can no longer do | move the token price | pre-v2 the honest worry about any big cash faucet was that it became sell pressure through the swap. It cannot: the sell side is retired and the only cash exit is the Exchange window, which runs the OTHER way ($OMR in, cash out) and is bounded by a till that cash sinks fill. A bigger cash faucet now costs game balance, never token holders |
+| re-sim | what still needs founder sign-off | the internal-balance flags, unchanged | the passive stack (P9.20), the apex world/boxing/racing purses, the port sale curve and the npc:seed recycle (P9.21) are all still live questions about PACING and CONCENTRATION. The severance lowered their stakes; it did not answer them |
+| re-sim | the $OMR side, now fully separable | 0/day emitted — bonds are the only mint | see the severance block above: with cash out of the picture AND the wage retired (v3 step 1), $OMR supply is decided ONLY by bonds (four walls, ETH in the same transaction) and the sink catalog. Nothing a player can DO in game creates a token, so in-game $OMR can never exceed what was deposited — the whole token model, with neither a cash-shaped back door nor a printer |
+| bureau | laundromat t3 (daily collector) | a raid ~every 10.1d ≈ $169,650/day (10.9% of gross) | heat +30/operating day vs −24/day decay; a raid seizes the pending day ($1,560,000) + fines 10% of tier cost ($150,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT) |
+| bureau | restaurant t3 (daily collector) | a raid ~every 10.1d ≈ $327,395/day (10.9% of gross) | heat +30/operating day vs −24/day decay; a raid seizes the pending day ($3,000,000) + fines 10% of tier cost ($300,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT) |
+| bureau | nightclub t3 (daily collector) | a raid ~every 10.1d ≈ $683,561/day (11.0% of gross) | heat +30/operating day vs −24/day decay; a raid seizes the pending day ($6,240,000) + fines 10% of tier cost ($650,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT) |
+| bureau | hotel t3 (daily collector) | a raid ~every 10.1d ≈ $873,054/day (12.1% of gross) | heat +30/operating day vs −24/day decay; a raid seizes the pending day ($7,200,000) + fines 10% of tier cost ($1,600,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT) |
+| bureau | casino t3 (daily collector) | a raid ~every 10.1d ≈ $2,182,634/day (12.1% of gross) | heat +30/operating day vs −24/day decay; a raid seizes the pending day ($18,000,000) + fines 10% of tier cost ($4,000,000); collect more often and the seized pending shrinks (the heat total is income-normalized, so cadence can't game IT) |
+| bureau | the 5-front stack, raid tax total | ~$4,236,294/day (11.8% of gross) | uniform-in-probability, size-scaled-in-cost by construction — on top of the L1b progressive pad; the passive stack (P9.20) is no longer risk-free. Dial: BUSINESS_SCRUTINY_PER_INCOME_DAY (0 restores the dormant state) |
+| marks | resident FRONTS (rob/shakedown ceiling) | ~$341,729/day base-wide across ~16.1 sleepy joints | each front runs at FRONT_INCOME_BPS (5%) of the catalog curve and only ever REALIZES through the shared-window rob/shakedown/inside redirect — residents never collect. Dials: FRONT_INCOME_BPS, FRONT_P, the band FRONTS map |
+| marks | resident CARS (steal→melt ceiling) | ~11.0 beaters/day replenished (mean value ~$4,390; melt realizes well under half) | bounded by the turnover cap × band P × the victim shield (one vehicle/day per resident) — petty by design; conservation holds via rng_audit npc:car grant/retire rows |
+| marks | resident BOATS (steal→resale ceiling) | ~2.8 dinghies/day × $24,000 resale ≈ $67,968/day | always the cheapest hull; bounded by turnover + the SHARED vehicle shield. Dial: BOAT_P |
+| marks | resident FREIGHT | recycle-only (goods:buy from their own seed cash) | the robbery realizes what the resident already paid — rides the P9.21 npc:seed measurement, no new emission |
+| street life | THE CORNER (per-street daily ceiling) | $2,000/day + 75 respect/day | MAX_DAY (5) × CASH ($400) — petty by design (the social-tasks posture: the POINTER + the respect drip are the product); every claim needs REAL counted work after accepting. Dials: MAX_DAY, CASH, RESPECT |
+| street life | THE CHAIN (per-street daily ceiling, on top) | ~$2,500/day + ~67 respect/day | a chain completes every CHAIN_STEPS (3) days a street shows up at that district, and advances at most once per district per day gated by a real claim — so at most min(districts 6, MAX_DAY 5) = 5 advances/day ≈ 1.67 completions/day × $1,500. The bonus rides the completing claim's OWN corner:job row (the First-Week capstone fold), so the claim cap still bounds it. Dials: CHAIN_BONUS, CHAIN_RESPECT, CHAIN_STEPS |
+| street life | THE CALL | recycle-only (paid from the contact's own pocket) | freight pays base × 1.15 of goods the player really hauls; visit tips $750 — both legs contact:* transfers netting zero, bounded by the P9.21 npc:seed stock |
+| street war | THE TAKE — what one mark can fund | $5,199 per job at the mean resident | min(take, POCKET_BPS 25% of pocket), floor $50. A rich mark funds a whole job; a picked-clean one funds nothing and the faucet pays — so crime NEVER pays less, it just stops being a mint when there is somebody to take it from |
+| street war | THE TAKE — emission effect | a REDUCTION, bounded by the resident seed stock | every funded dollar is a TRANSFER (both legs ledgered crime:take, netting zero) that would otherwise have been a crime:<id> FAUCET row. Total funded is bounded by the same metered seed pool P9.21 sizes (~$499,152/day of replacement), so the take can only ever SHRINK crime's contribution to supply — never widen it |
+| street war | REVENGE, with teeth | atk ×1.1, a revenge ROB takes 22.5% | rob-only (a boosted shakedown would breach its signed 30% ceiling) and on the SAME shared per-venue window, so the signed per-venue extraction bound is untouched; the venue clock advances by the same boosted rate, so the redirect stays emission-neutral. Self-limiting: landing the strike records it, settling the debt |
+| jailbirds | best sentence to camp | 400s → $6,500 at 10% | EV $650/attempt. The reward is LINEAR in the sentence while the chance FLOORS at 10%, so the longest spawn is always the most profitable — the two terms do not offset. Dials: the reward line (500 + r×15) or JAILBIRDS.MAX_S |
+| jailbirds | city-wide ceiling | ~$84,552/day | TARGET 2 birds × 24 hourly ticks × $1,761 expected each (3 attempts before it walks at 10% ⇒ 27% land). SHARED city-wide and first-come, so it is one player's income only in a thin alpha — which is exactly when it is live. That is an order of magnitude above the "a few $k/hour" the drop estimated, because the estimate did not carry the reward's linear term in MAX_S |
+| jailbirds | cost side | no energy, no nerve, no ammo — only the fail-jail | a failed bust costs 180s of lockup and nothing else, so the loop is time-metered rather than resource-metered; unlike every other faucet at this scale it spends no signed resource. Founder call — flagged, NOT retuned (ground rule #1) |
+| the farm | the Street Wage | retired (economy v3 step 1) | the probe that measured it is retired with it — see BALANCE.md § THE FARM for the numbers, and omerta-economy-v3-design.md §2 wall 1 for what replaced it: no faucet at all, so in-game $OMR can never exceed what was deposited |
+| float | loot rate — IDLE (loose + unbonding) | 50% | a 200 $OMR loose balance pays a killer 100 $OMR. Hoarding is the punished behaviour — and this is also what a bond's fresh, unvested $OMR is worth to a hunter |
+| float | loot rate — COMMITTED (staked) | 20% | the same 200 $OMR STAKED pays 40 — 2.5x less. Staking is no longer a SAFE HARBOUR, it is a cheaper one; §4.1 admits no fourth way for $OMR to move |
+| float | the commit tradeoff | 60 $OMR saved per death | on a 200 float. BOTH answers help the economy: committing drives velocity (the one KPI), staying liquid feeds the hunters — which is why the rate is tiered rather than flat |
+| float | a new street holding nothing | 0 $OMR | exposure is proportional to IDLENESS, not to wealth, so a fresh character is worth nothing to hunt — automatic new-player protection with no rule, and whales become the rational prey |
+| float | THE MADE MAN — recurring demand | 120 $OMR / 30d | ≈ 1,460 $OMR per subscriber per year, CONTINUOUS rather than one-off — and every dues payment recycles to the desk (step 2) to be sold again, so it is turnover, not destruction |
+| float | THE ACCESS STAKE — locked, visible, lootable | 300 $OMR per high-stakes seat | held, not spent, so it earns the house nothing — its whole job is a permanent float attached to exactly the players worth hunting. A killer takes 60 of it |
+| float | what this probe cannot measure | whether whales actually commit | the rate is self-balancing BY DESIGN (as whales learn to commit, typical scores fall and hunters must hunt more) but the equilibrium depends on real player behaviour — watch realised $OMR loot per kill in the alpha, not this arithmetic |
+| hired-guns | The Kryl Syndicate (lvl 20) | net $0/landed solo raid (min crew) | grab $75,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $960,000/day (regen), so only WHO taps it changed |
+| hired-guns | The Moreau Cartel (lvl 40) | net $175,000/landed solo raid (min crew) | grab $250,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $2,160,000/day (regen), so only WHO taps it changed |
+| hired-guns | The Volkov Bratva (lvl 55) | net $175,000/landed solo raid (min crew) | grab $250,000 − $75,000 (1×$75,000, the cheapest crew); the entry apex's grab is under the fee, so a solo needs a real teammate — apex reservoirs go +EV. Base-wide ceiling still ≤ $4,320,000/day (regen), so only WHO taps it changed |
+| hired-guns | the fee is the dial | $75,000–$150,000 to field a bought crew | HIRE_FEE/HIRE_MAX are founder sign-off levers — a real cash sink pricing solo access to a coop-only reservoir; extra guns above the min buy only ODDS (their firepower counts). A hired gun forfeits its cut so the co-op faucet only SHRINKS per real head, §10.4-neutral vs a real crew |
+| resident economy | (A) NEW EMISSION — cash faucets | ~$840,881/day | npc:seed turnover $499,152/day (P9.21) + marks fronts $341,729/day (P9.25) — the two unambiguous cash faucets the NPC population mints |
+| resident economy | (A) NEW EMISSION — vehicle addendum | ~$87,352/day | stolen resident cars (11.0/day × ~$4,390 book × 0.4 realize = $19,384) + boats (resale $67,968); CAR_REALIZE 0.4 is a labelled melt/fence discount, not a lever |
+| resident economy | (A) HEADLINE — total new emission | ~$928,234/day base-wide | 4.3% of the $21,600,000/day passive stack (P9.20). The entire NPC population mints roughly ONE small territory racket's worth of new cash a day — a rounding error against the passive economy, bounded by POPULATION.TURNOVER.PER_DAY × band seed and the marks front redirect |
+| resident economy | (B) regen-bounded (NOT summed) | jailbirds ~$84,552/day · blood war ≤ $288,000/day · hired-gun apex ≤ $7,440,000/day | each rides another pillar's shared reservoir (§7.8 bust pool, family war_pool, world outfit regen) — the ceiling is that reservoir's REGEN with or without residents, so residents change WHO taps it, not the metered quantity. Excluded from the headline to avoid double-counting the World/Pen/blood-war ceilings |
+| resident economy | (C) transfers (net-zero) | THE TAKE (P9.27) · the call · THE FAVOR · freight robbery | each moves value that already exists (a mark funds a crime, a contact pays from their own seed, a robbery realizes goods the resident already bought) — both legs ledger, netting zero. THE TAKE strictly SHRINKS crime emission by re-sourcing it off the marks. No new supply |
+| resident economy | extraction ≤ inflow | unaffected | every faucet here is in-game cash/goods, none touches the $OMR withdrawal rail; the full-reserve queue bound is orthogonal and untouched |
+| D14 crime-stat | fresh 5/5 (lvl 3) | -4.9% | $/nerve new $59.25 vs old $62.33 |
+| D14 crime-stat | mid 12/12 (lvl 25) | +0.0% | $/nerve new $170.85 vs old $170.85 |
+| D14 crime-stat | maxed 25/25 (lvl 50) | +22.3% | $/nerve new $642.00 vs old $525.00 |
+| D14 crime-stat | base-wide (cash-weighted, 20/60/20 pop) | +10.4% | SIGNED as-is 2026-08-06 — the maxed tail earning more on hard jobs, bounded by NERVE, small vs the passive stack. §10.4 untouched (success-rate only). Re-anchoring CRIME_STAT.OFFSET (0.072) higher trades this for a fresh/mid hit — no free lunch. Reverting to {CUN:0.004,SPD:0.002,OFFSET:0} restores the pre-D14 curve |
+| activation | treasury slice per source (live levers) | fee 10% · store 20% · sell-tax 4% of gross · bond 25% | the stock budget is fed ONLY by these four — the activation burn recycles to the DESK (founder/POL), so demand cannot inflate its own payout (the anti-Ponzi shape) |
+| activation | thin alpha (20 mints + Ξ0.2 store + Ξ1 sells + Ξ0.5 bonds /day) | treasury buy Ξ0.225/day → equilibrium sink ≈ 450 $OMR/day | below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.00225/$OMR · Ξ0.00022/$OMR · Ξ0.00002/$OMR |
+| activation | live base (200 mints + Ξ2 store + Ξ10 sells + Ξ5 bonds /day) | treasury buy Ξ2.250/day → equilibrium sink ≈ 4,500 $OMR/day | below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.02250/$OMR · Ξ0.00225/$OMR · Ξ0.00022/$OMR |
+| activation | busy base (2000 mints + Ξ20 store + Ξ100 sells + Ξ50 bonds /day) | treasury buy Ξ22.500/day → equilibrium sink ≈ 45,000 $OMR/day | below A* early activators are over-rewarded (the bootstrap incentive); above it holding dominates — both self-correcting. At 100/1k/10k $OMR activated: Ξ0.22500/$OMR · Ξ0.02250/$OMR · Ξ0.00225/$OMR |
+| activation | the sizing answer | the recurring sink ≈ the treasury inflow, in $OMR at the oracle | activation converts every ETH of declared treasury revenue into that much daily $OMR demand — the demand engine the Dynasty design promised. Every ACTIVATION.* number stays a proposed default until the burn is built (post-A1) |
+| plex reach | the whole earn surface | 1,320 $OMR lifetime (missions) + 3/day (daily:all) | the ladder pays ONCE per account; the daily is a transfer out of the event fund, so it is bounded by the fund, not printed |
+| plex reach | the cheapest thing the rail sells (decor_deco) | 4,118 $OMR | 3.1× the ENTIRE mission ladder — so doing every $OMR mission in the game buys nothing on the rail, and the daily takes 933 more days to close the gap |
+| plex reach | a respawn token | 20,588 $OMR | 6,423 days of perfect daily play after the full ladder |
+| plex reach | the verdict | PLEX is reachable by PREDATION or PURCHASE, not by grinding | that is on-theme and it is NOT the EVE fantasy the restore invoked: in EVE, PLEX is reachable by grinding ISK. Here $OMR has had no faucet since v3 step 1, so the rail is funded by taking it off somebody (whack:loot moves 20-50% of a victim's liquid + staked) or buying it at the desk. SIGNED: the predator framing is accepted, and the premium has already been taken to 1.0 (17% off every rail price — comfort, not a fix, since it cannot close a multiple this size). The dials left are the ladder's $OMR (machine-owned — a re-extract) and M4.DAILY_ALL_OMR, and both are faucet changes rather than pricing ones |
+| equilibrium | rational hold is CAPPED, not proportional | 900 $OMR to top the ladder | the rungs are absolute thresholds (60 / 180 / 450 / 900), so a $OMR above the top one earns nothing from the ladder — a whale has no ladder reason to lock more than a mid player. The high-stakes seat wants 300 held, which the ladder stake already covers |
+| equilibrium | and dues buy a rung, so being made LOWERS the lock | 450 $OMR (made) vs 900 (unmade) | 450 $OMR of float released per made man, in exchange for 120 $OMR every 30 days FOREVER — the subscription converts a one-time lock into recurring spend, which is the revenue model's own direction |
+| equilibrium | recurring spend per engaged player | 5214 $OMR/year | dues 1460 + a Street Wire seat 3754. SUBSCRIPTIONS ONLY — every one-time sink (estate tiers, seals, vanity, respec, the peek) is spend this floor ignores |
+| equilibrium | the implied equilibrium velocity | 11.6 turns/year | 5214 $OMR of recurring spend against a 450 $OMR capped hold. THE CONTRADICTION DOES NOT BITE: holding is bounded per player and spending is not, so a made man's float turns over ~12x a year on subscriptions alone. Watch it live on GET /v1/mod/tokenhealth ('return velocity'), whose act band is under 2 |
+| equilibrium | what binds the desk lot | returns below 1% of float | the lot is min(yesterday's returns, 1% of float, the shelf) with a 6000 $OMR bootstrap floor. One engaged player returns ~14.3 $OMR/day, so RETURNS bind (the healthy case — the desk sells what came home) until float per player exceeds ~1429 $OMR. The starvation case is not "holding won", it is "nobody is playing" |
+| equilibrium | what this does NOT prove | the base-wide figure is this x the engaged share | an unmade, unsubscribed holder spends nothing recurring and can still lock up to 900 $OMR — velocity 0. The mechanisms do not fight, which is what the probe establishes; whether players engage is a retention question the dashboard measures live and no model can settle |
+| equilibrium | the dial if holding ever does win | M3.OMR_LOOT_COMMITTED, then the rung heights | raise the committed loot rate (20% today vs 50% idle) and a staked hoard stops being the cheaper shelter; raise the rung minimums and the cap moves. Both are signed levers — this probe re-measures on either |
+| deeds | corner take per deed | $48,000/day | CORNER_PER_HR 2000 × 24h — the cap; a controller who never collects banks ≤ this, and collecting more often banks less per collect (the clock resets) |
+| deeds | base-wide ceiling @ 100 deed-holders | ≤ $4,800,000/day | ONE deed per account, so this is a linear function of the playerbase — every dollar is a ledgered deed:corner faucet, character_id'd (the per-character §10.4 check reconciles it) |
+| deeds | base-wide ceiling @ 1000 deed-holders | ≤ $48,000,000/day | ONE deed per account, so this is a linear function of the playerbase — every dollar is a ledgered deed:corner faucet, character_id'd (the per-character §10.4 check reconciles it) |
+| deeds | faucet posture | petty per deed vs the signed loops | a single corner is ~a territory-racket rung; the shakedown only moves WHO collects (control), never mints — so the faucet cannot be widened by contesting it. Sign-off levers: DEEDS.CORNER_PER_HR / CORNER_CAP_MS |
+| deeds 2C | neon corner ceiling (one operator) | ≤ +$4,976,748/day | 15% of a maxed 12-seat metered racket day ($33,178,320); applies to at most ONE extra operator per controlled neon corner, and to NOBODY new when a family holds neon (set-union OR). PERK_TURF: 0 disables |
+| deeds 2C | op seat max marginal | +$1,161,360/day @ lvl 1 | the (seats+1)-th best level-gated rung's metered day; EXACTLY $0/day at level ≥ 40 (SLOTS_MAX binds — the parity cap, test-pinned). PERK_OP_SLOTS: 0 disables |
+| scarcity | the firsts | 25 permanent uniques | pure status — no currency, no ledger row, unbuyable by construction. Each is claimed ONCE in the server's life. The catalog derives from the live catalogs, so new content brings its own FIRST |
+| scarcity | limited runs | 49 numbered cars, ever (4 runs) | mechanically identical to their catalog models (dearest base $400,000), so ZERO balance surface; drop-only at LIMITED_RUN_P 0.004. The counter never decrements — melting one takes it out of the world |
+| scarcity | the shipment cap scales | 3p→40 10p→48 25p→56 50p→80 100p→120 250p→240 500p→400 1000p→400 | units/day = max(40, +8/10 players, ceiling 400). Full shares as a share of the city: 3p 333%, 10p 120%, 25p 56%, 50p 40%, 100p 30%, 250p 24%, 500p 20%, 1000p 10% — the FLOOR carries a thin city (nobody to contend with), the STEP carries a full one. PER_PLAYER stays 4 on purpose, so one whale's share shrinks relative to the city as it grows |
+| scarcity | the shipment ceiling | binds at ~500 players | CITY_MAX 400 is the one number that puts the fixed-cap problem back at very high population (10% at 1000p) — the founder lever to revisit if the city ever gets there |
+| scarcity | the shipment sink | $120,000 → $4,000,000 per piece | EMISSION-NEGATIVE: the material pays nothing and gates a cash SINK. The dearest piece takes 16 units = 4 perfect days of showing up, so the pacing is the MATERIAL, not the money |
+| den variance | rolls to N* | 5,030 rolls | where the pass line's expected loss (0.0141·s·N) first equals its own noise (s·√N); below it a realized month is a coin, not an edge |
+| den variance | one arena month (354 rolls) | z = 0.27 | so a ±1σ month reads anywhere from a -3.9% house LOSS to a 6.7% house win — the arena's 6.9% (run 3) sits inside it and its 15.7% (step one) is a ~2σ draw: a bad month for the gamblers, not an edge. Unequal stakes widen σ further (σ = √Σs²), so both are conservative |
+| den variance | a 30-roll session at $250,000 | 1σ = $1,369,306 | against an expected loss of $105,750 — a 13× wider swing than the edge, which is what a session FEELS like at the main table |
+| den variance | a 30-roll session at $2,000,000 | 1σ = $10,954,451 | against an expected loss of $846,000 — a 13× wider swing than the edge, which is what a session FEELS like at the high-stakes table |
+
+✅ sim complete — §10.4 holds exactly over an entirely earned economy

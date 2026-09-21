@@ -1,0 +1,16 @@
+{
+  "id": "docs-census-retest",
+  "command": [
+    "node",
+    "test/docs.js"
+  ],
+  "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "trackedSourceDiffSha256": "a616d9ce10581fc2891340d1950de8dedac0588793a47708ce0b955cce64a9b4",
+  "started": "2026-09-20T23:16:36.124Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/docs-census-retest-2026-09-20T23-16-35-906Z.log",
+  "finished": "2026-09-20T23:16:37.507Z",
+  "exitCode": 1,
+  "signal": null
+}

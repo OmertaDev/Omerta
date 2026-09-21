@@ -1,0 +1,53 @@
+
+> omerta-backend@1.2.0 backup:selftest
+> bash tools/backup-selftest.sh
+
+client: pg_dump 16.15, pg_restore 16.15, psql 16.15
+server: 16.15(Debian16.15-1.pgdg13+2)   fixture: 2/2/1/2/4/4/1/2/1/1/1/4/1/1 linked Phase 1 rows
+
+0. THE REQUIRED-TABLE CHECK DOES NOT PIPE INTO grep -q
+  ✓ backup.sh matches TOC entries without a grep -q pipeline
+
+1. A GOOD BACKUP IS KEPT
+  ✓ a populated database backs up cleanly
+  ✓ the dump lands under its real name
+  ✓ no .part left behind
+  ✓ the dump is owner-only (0600)
+
+2. THE SCHEMA-ONLY TRAP — the hole that passed before
+  ✓ a schema-only database is REFUSED, not silently kept
+  ✓ …and says why (zero rows, not 'looks fine')
+  ✓ the refused dump is not kept
+  ✓ no .part survives the refusal
+  ✓ BACKUP_MIN_ROWS=0 allows a genuinely cold database through
+
+3. A TRUNCATED DUMP IS CAUGHT
+  ✓ a truncated dump is REFUSED
+  ✓ the truncated dump is not kept
+  ✓ no .part survives a truncated dump
+
+4. THE WRONG DATABASE IS CAUGHT
+  ✓ a stale DATABASE_URL pointing elsewhere is REFUSED
+  ✓ …and names the reason (wrong database / no schema)
+
+5. AN UNREACHABLE DATABASE FAILS LOUDLY
+  ✓ an unreachable database is a failure, not an empty success
+  ✓ nothing is kept when the dump never ran
+
+6. THE SIZE FLOOR STILL BITES
+  ✓ a dump under the size floor is REFUSED
+
+7. RETENTION HOLDS FIRE AFTER A BAD NIGHT
+  ✓ the bad run fails
+  ✓ a 60-day-old GOOD backup survives the failed run
+  ✓ a good run succeeds in the same directory
+  ✓ …and only then is the expired dump pruned
+
+8. THE DUMP CAN ACTUALLY BE RESTORED
+  ✓ the dump restores into an empty database with its rows
+  ✓ the restore preserves the complete 14-table Phase 1 fixture census
+  ✓ every restored Phase 1 fixture row keeps its exact ID, custody, provenance and graph state
+  ✓ restored Phase 1 graph has no orphan or duplicate custody
+
+26 passed, 0 failed
+✅ backup-selftest passed — every verification in backup.sh refuses what it should, keeps what it should, and the dump restores.

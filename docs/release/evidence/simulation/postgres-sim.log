@@ -1,0 +1,17 @@
+
+> omerta-backend@1.2.0 sim
+> node tools/sim.js
+
+file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263
+    throw new Error(`Refusing to boot — deploy preflight failed:\n  - ${preflightErrors.join('\n  - ')}`);
+          ^
+
+Error: Refusing to boot — deploy preflight failed:
+  - JWT_SECRET must be set for a real deployment — signs player tokens — the dev fallback is public, so anyone could forge a session.
+  - MARKET_SEED must be set for a real deployment — the §7.11 secret behind every seeded draw (Numbers 600:1, the Track, the Fight, goods prices).
+  - Test-only roll/timer overrides must not be set in production (they pin money rolls to always-win and collapse the pacing timers): SEASON_MOD, SEASON_PHASE, SEARCH_MS, SHOOT_CD_MS, ALLOW_MOD_REAL_REVENUE
+  - SOCIAL_VERIFY_MODE must be set explicitly in production — defaults to 'off', where Spread-the-Word registers posts and pays nobody. Production wants 'live' (real X verification); 'off' is a legitimate choice, but it has to be a choice. Valid: off | trust | live.
+    at buildServer (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263:11)
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/tools/sim.js:37:19
+
+Node.js v24.19.0

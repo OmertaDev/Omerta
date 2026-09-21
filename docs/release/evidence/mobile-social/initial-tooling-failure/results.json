@@ -1,0 +1,1676 @@
+{
+  "revision": "a61a27d40d09caa8de0319ceea1cca7a14fdc96f",
+  "harnessSha256": "ebf7a53bcdf99c209322f1f45616cc801b486dfb744d9d1ef1cde62d68a6fd18",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "startedAt": "2026-09-20T23:32:47.851Z",
+  "scope": "Seeded accounts, social structures and initial world. Travel, vehicle acquisition/salvage and disclosure sharing use existing domain services. Discovery, mystery, crafting and operation commands use rendered mobile controls against real PostgreSQL. Not fresh-account onboarding or a human comprehension study.",
+  "results": [
+    {
+      "width": 320,
+      "scenario": "shipment-redistribution",
+      "status": "FAIL",
+      "commands": [],
+      "outcomes": [],
+      "recoveries": [],
+      "errors": [],
+      "membership": {
+        "newcomer": "rc1m_320_0-outsider",
+        "initialCrewRows": 0,
+        "initialFamilyRows": 0,
+        "steps": [
+          {
+            "label": "Leader opens recruiting",
+            "method": "POST",
+            "route": "/v1/crew/recruiting",
+            "status": 200,
+            "body": {
+              "character": {
+                "id": "rc1m_320_0-aBoss-character",
+                "name": "rc1m_320_0 aBoss",
+                "generation": 1,
+                "level": 32,
+                "respect": 10000,
+                "energy": 42,
+                "nerve": 11,
+                "health": 100,
+                "cash": 74500,
+                "bank": 0,
+                "omr": 0,
+                "staked": 0,
+                "rewards": 0,
+                "unbonding": 0,
+                "made": false,
+                "madeSeconds": 0,
+                "unbondSeconds": 0,
+                "bankInTransit": 0,
+                "bankClearSeconds": 0,
+                "safehouseCost": 25000,
+                "stats": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 51
+                },
+                "eff": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 51
+                },
+                "rerollCredits": 0,
+                "statTotal": 151,
+                "forged": null,
+                "forgedName": null,
+                "ammo": 25,
+                "cb": 0,
+                "heat": 0,
+                "welsher": false,
+                "wanted": false,
+                "wantedSeconds": 0,
+                "law": {
+                  "stage": "clean",
+                  "exposure": 0,
+                  "indicted": false,
+                  "retainerSeconds": 0,
+                  "witproSeconds": 0,
+                  "rat": false
+                },
+                "hunt": null,
+                "tradeRep": 0,
+                "busts": 0,
+                "gun": null,
+                "vest": null,
+                "guns": [],
+                "jailSeconds": 0,
+                "hospSeconds": 0,
+                "shootCdSeconds": 0,
+                "gtaSeconds": 291,
+                "safeSeconds": 0,
+                "safeCapSeconds": 43200,
+                "bustAttemptsLeft": 5,
+                "bustRefillSeconds": 0,
+                "guardPrice": null,
+                "fadeLimit": null,
+                "pokerLimit": null,
+                "duelElo": 1000,
+                "duelLimit": null,
+                "vendettas": [],
+                "guardedBy": null,
+                "guardSeconds": 0,
+                "loc": "docks",
+                "path": null,
+                "title": null,
+                "bio": null,
+                "streak": 0,
+                "healCost": null,
+                "checkin": {
+                  "done": false,
+                  "streak": 1,
+                  "pay": 11200,
+                  "next": 14400
+                },
+                "maxEnergy": 114,
+                "maxNerve": 42,
+                "ladder": {
+                  "rung": 0,
+                  "of": 4,
+                  "name": null,
+                  "staked": 0,
+                  "effective": 0,
+                  "madeRungs": 1,
+                  "lock": null,
+                  "lockTiers": [
+                    {
+                      "id": "week",
+                      "days": 7,
+                      "mult": 1.25,
+                      "name": "The Handshake"
+                    },
+                    {
+                      "id": "month",
+                      "days": 30,
+                      "mult": 1.5,
+                      "name": "The Word"
+                    },
+                    {
+                      "id": "quarter",
+                      "days": 90,
+                      "mult": 2,
+                      "name": "The Oath"
+                    }
+                  ],
+                  "fx": null,
+                  "next": {
+                    "name": "Earner",
+                    "min": 60,
+                    "need": 60
+                  }
+                },
+                "disciplines": {
+                  "stamina": 1,
+                  "composure": 1,
+                  "conditioning": 1,
+                  "marksmanship": 1,
+                  "presence": 1,
+                  "handling": 1,
+                  "poise": 1,
+                  "vigilance": 1
+                },
+                "crewBonusPct": 0,
+                "cargoCap": 10,
+                "skills": [],
+                "honor": {
+                  "value": 0,
+                  "tier": "Unproven",
+                  "peak": 0,
+                  "peakTier": "Unproven",
+                  "low": 0,
+                  "lowTier": "Unproven"
+                },
+                "skillPoints": {
+                  "total": 8,
+                  "spent": 0,
+                  "available": 8
+                },
+                "rackets": [],
+                "assets": [],
+                "businesses": [],
+                "speakeasy": null,
+                "fighters": [],
+                "cargo": {},
+                "items": {},
+                "gear": [],
+                "racketLevels": {},
+                "racketIncomePerHr": {},
+                "tycoon": {
+                  "earned": 0,
+                  "rank": "Hustler"
+                },
+                "empireTitles": [],
+                "ops": {
+                  "used": 0,
+                  "slots": 10,
+                  "free": 10,
+                  "nextAt": 36,
+                  "max": 12,
+                  "incomeAssets": [],
+                  "meteredCat": "Legit Fronts"
+                },
+                "launderer": {
+                  "washed": 0,
+                  "rank": "Bagman"
+                },
+                "frontTitles": [],
+                "statesman": {
+                  "statecraft": 0,
+                  "rank": "Ward Heeler"
+                },
+                "cars": [],
+                "shipment": 0,
+                "bespoke": [],
+                "nftCars": [],
+                "gang": {
+                  "id": "76f9a59e-f045-4ae9-8725-8f381ef8e6fb",
+                  "name": "Dock a Family",
+                  "tag": "ADCK",
+                  "role": "boss",
+                  "color": null,
+                  "seal": null,
+                  "foundation": null,
+                  "foundationTier": 0,
+                  "treasury": 0,
+                  "ammoBank": 0,
+                  "held": []
+                },
+                "lab": null,
+                "crew": 0,
+                "labModules": {
+                  "purity": 0,
+                  "yield": 0,
+                  "stealth": 0
+                },
+                "labModuleNext": {
+                  "purity": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "yield": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "stealth": {
+                    "cash": 60000,
+                    "omr": 0
+                  }
+                },
+                "kingpin": {
+                  "moved": 0,
+                  "rank": "Nobody"
+                },
+                "crewWageOwed": 0,
+                "crewWagePerHr": 0,
+                "crewCold": false,
+                "crewWagePerHead": 1200,
+                "crewMax": 5,
+                "crewCostStep": 50000,
+                "crewNextCost": 50000,
+                "crewColdSeconds": null,
+                "makings": {},
+                "stash": [],
+                "batch": null,
+                "tradeRank": 0,
+                "trades": [
+                  {
+                    "id": "larceny",
+                    "name": "Larceny",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jail stints on a busted job",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wetwork",
+                    "name": "Wet Work",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your search clock on a mark",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "chemistry",
+                    "name": "The Cook",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "cook time on a batch",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wheels",
+                    "name": "Wheels",
+                    "xp": 5,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 33,
+                    "perkWhat": "tuning prices at the garage",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "seamanship",
+                    "name": "Seamanship",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "hull & engine work at the boatyard",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "gambling",
+                    "name": "The Gambler",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your PvE table limit at the den",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "muscle",
+                    "name": "Protection",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jump & shakedown muscle",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "commerce",
+                    "name": "Commerce",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "Black Market listing fees",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "scores",
+                    "name": "Big Scores",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "the Score lines up sooner",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "fists",
+                    "name": "Fisticuffs",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your fighters heal faster",
+                    "perkNextAt": 10
+                  }
+                ],
+                "heistSeconds": 0,
+                "trainSeconds": 0,
+                "missionSeconds": 0,
+                "prestige": 0,
+                "recruits": 0,
+                "estate": null,
+                "wallet": null,
+                "minted": false,
+                "respawnTokens": 0,
+                "mintCredits": 0,
+                "hitmanRep": 0,
+                "kills": 0,
+                "seasonKills": 0,
+                "hitmanTitle": "Associate",
+                "onboard": {},
+                "coach": {
+                  "label": "Pull your first job",
+                  "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                  "tab": "streets"
+                },
+                "coachPlan": [
+                  {
+                    "label": "Pull your first job",
+                    "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "You've made rank",
+                    "hint": "Declare a Path — six careers are on the board, from The Gun to The Ring. It shapes how you earn.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "Finish your First Week (0/4)",
+                    "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+                    "tab": "start"
+                  },
+                  {
+                    "label": "Money while you sleep",
+                    "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+                    "tab": "empire"
+                  },
+                  {
+                    "label": "You've earned skill points",
+                    "hint": "You have 8 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+                    "tab": "life"
+                  }
+                ],
+                "netWorth": 74500,
+                "cityEvent": "sweep",
+                "city": {
+                  "event": "sweep",
+                  "name": "BUREAU SWEEP",
+                  "lawEvent": "blackout",
+                  "hour": 23,
+                  "phase": "night",
+                  "patrol": false
+                }
+              },
+              "ok": true,
+              "crew": "recruiting"
+            }
+          },
+          {
+            "label": "Ordinary player requests Crew membership",
+            "method": "POST",
+            "route": "/v1/crew/request/21d4a850-99e0-4601-b0a1-049f0e79ff79",
+            "status": 200,
+            "body": {
+              "character": {
+                "id": "rc1m_320_0-outsider-character",
+                "name": "rc1m_320_0 outsider",
+                "generation": 1,
+                "level": 32,
+                "respect": 10000,
+                "energy": 53,
+                "nerve": 11,
+                "health": 100,
+                "cash": 100000,
+                "bank": 0,
+                "omr": 0,
+                "staked": 0,
+                "rewards": 0,
+                "unbonding": 0,
+                "made": false,
+                "madeSeconds": 0,
+                "unbondSeconds": 0,
+                "bankInTransit": 0,
+                "bankClearSeconds": 0,
+                "safehouseCost": 25000,
+                "stats": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 50
+                },
+                "eff": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 50
+                },
+                "rerollCredits": 0,
+                "statTotal": 150,
+                "forged": null,
+                "forgedName": null,
+                "ammo": 25,
+                "cb": 0,
+                "heat": 0,
+                "welsher": false,
+                "wanted": false,
+                "wantedSeconds": 0,
+                "law": {
+                  "stage": "clean",
+                  "exposure": 0,
+                  "indicted": false,
+                  "retainerSeconds": 0,
+                  "witproSeconds": 0,
+                  "rat": false
+                },
+                "hunt": null,
+                "tradeRep": 0,
+                "busts": 0,
+                "gun": null,
+                "vest": null,
+                "guns": [],
+                "jailSeconds": 0,
+                "hospSeconds": 0,
+                "shootCdSeconds": 0,
+                "gtaSeconds": 0,
+                "safeSeconds": 0,
+                "safeCapSeconds": 43200,
+                "bustAttemptsLeft": 5,
+                "bustRefillSeconds": 0,
+                "guardPrice": null,
+                "fadeLimit": null,
+                "pokerLimit": null,
+                "duelElo": 1000,
+                "duelLimit": null,
+                "vendettas": [],
+                "guardedBy": null,
+                "guardSeconds": 0,
+                "loc": "docks",
+                "path": null,
+                "title": null,
+                "bio": null,
+                "streak": 0,
+                "healCost": null,
+                "checkin": {
+                  "done": false,
+                  "streak": 1,
+                  "pay": 11200,
+                  "next": 14400
+                },
+                "maxEnergy": 114,
+                "maxNerve": 42,
+                "ladder": {
+                  "rung": 0,
+                  "of": 4,
+                  "name": null,
+                  "staked": 0,
+                  "effective": 0,
+                  "madeRungs": 1,
+                  "lock": null,
+                  "lockTiers": [
+                    {
+                      "id": "week",
+                      "days": 7,
+                      "mult": 1.25,
+                      "name": "The Handshake"
+                    },
+                    {
+                      "id": "month",
+                      "days": 30,
+                      "mult": 1.5,
+                      "name": "The Word"
+                    },
+                    {
+                      "id": "quarter",
+                      "days": 90,
+                      "mult": 2,
+                      "name": "The Oath"
+                    }
+                  ],
+                  "fx": null,
+                  "next": {
+                    "name": "Earner",
+                    "min": 60,
+                    "need": 60
+                  }
+                },
+                "disciplines": {
+                  "stamina": 1,
+                  "composure": 1,
+                  "conditioning": 1,
+                  "marksmanship": 1,
+                  "presence": 1,
+                  "handling": 1,
+                  "poise": 1,
+                  "vigilance": 1
+                },
+                "crewBonusPct": 0,
+                "cargoCap": 10,
+                "skills": [],
+                "honor": {
+                  "value": 0,
+                  "tier": "Unproven",
+                  "peak": 0,
+                  "peakTier": "Unproven",
+                  "low": 0,
+                  "lowTier": "Unproven"
+                },
+                "skillPoints": {
+                  "total": 8,
+                  "spent": 0,
+                  "available": 8
+                },
+                "rackets": [],
+                "assets": [],
+                "businesses": [],
+                "speakeasy": null,
+                "fighters": [],
+                "cargo": {},
+                "items": {},
+                "gear": [],
+                "racketLevels": {},
+                "racketIncomePerHr": {},
+                "tycoon": {
+                  "earned": 0,
+                  "rank": "Hustler"
+                },
+                "empireTitles": [],
+                "ops": {
+                  "used": 0,
+                  "slots": 10,
+                  "free": 10,
+                  "nextAt": 36,
+                  "max": 12,
+                  "incomeAssets": [],
+                  "meteredCat": "Legit Fronts"
+                },
+                "launderer": {
+                  "washed": 0,
+                  "rank": "Bagman"
+                },
+                "frontTitles": [],
+                "statesman": {
+                  "statecraft": 0,
+                  "rank": "Ward Heeler"
+                },
+                "cars": [],
+                "shipment": 0,
+                "bespoke": [],
+                "nftCars": [],
+                "gang": null,
+                "lab": null,
+                "crew": 0,
+                "labModules": {
+                  "purity": 0,
+                  "yield": 0,
+                  "stealth": 0
+                },
+                "labModuleNext": {
+                  "purity": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "yield": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "stealth": {
+                    "cash": 60000,
+                    "omr": 0
+                  }
+                },
+                "kingpin": {
+                  "moved": 0,
+                  "rank": "Nobody"
+                },
+                "crewWageOwed": 0,
+                "crewWagePerHr": 0,
+                "crewCold": false,
+                "crewWagePerHead": 1200,
+                "crewMax": 5,
+                "crewCostStep": 50000,
+                "crewNextCost": 50000,
+                "crewColdSeconds": null,
+                "makings": {},
+                "stash": [],
+                "batch": null,
+                "tradeRank": 0,
+                "trades": [
+                  {
+                    "id": "larceny",
+                    "name": "Larceny",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jail stints on a busted job",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wetwork",
+                    "name": "Wet Work",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your search clock on a mark",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "chemistry",
+                    "name": "The Cook",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "cook time on a batch",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wheels",
+                    "name": "Wheels",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "tuning prices at the garage",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "seamanship",
+                    "name": "Seamanship",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "hull & engine work at the boatyard",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "gambling",
+                    "name": "The Gambler",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your PvE table limit at the den",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "muscle",
+                    "name": "Protection",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jump & shakedown muscle",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "commerce",
+                    "name": "Commerce",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "Black Market listing fees",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "scores",
+                    "name": "Big Scores",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "the Score lines up sooner",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "fists",
+                    "name": "Fisticuffs",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your fighters heal faster",
+                    "perkNextAt": 10
+                  }
+                ],
+                "heistSeconds": 0,
+                "trainSeconds": 0,
+                "missionSeconds": 0,
+                "prestige": 0,
+                "recruits": 0,
+                "estate": null,
+                "wallet": null,
+                "minted": false,
+                "respawnTokens": 0,
+                "mintCredits": 0,
+                "hitmanRep": 0,
+                "kills": 0,
+                "seasonKills": 0,
+                "hitmanTitle": "Associate",
+                "onboard": {},
+                "coach": {
+                  "label": "Pull your first job",
+                  "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                  "tab": "streets"
+                },
+                "coachPlan": [
+                  {
+                    "label": "Pull your first job",
+                    "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "You've made rank",
+                    "hint": "Declare a Path — six careers are on the board, from The Gun to The Ring. It shapes how you earn.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "Finish your First Week (0/4)",
+                    "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+                    "tab": "start"
+                  },
+                  {
+                    "label": "Money while you sleep",
+                    "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+                    "tab": "empire"
+                  },
+                  {
+                    "label": "You've earned skill points",
+                    "hint": "You have 8 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+                    "tab": "life"
+                  }
+                ],
+                "netWorth": 100000,
+                "cityEvent": "sweep",
+                "city": {
+                  "event": "sweep",
+                  "name": "BUREAU SWEEP",
+                  "lawEvent": "blackout",
+                  "hour": 23,
+                  "phase": "night",
+                  "patrol": false
+                }
+              },
+              "ok": true,
+              "crew": "requested",
+              "to": "Dock a Crew"
+            }
+          }
+        ],
+        "discoveryText": "Looking for a crew?\nPut the word out and let someone find YOU. I'm looking for a crew\nFind someone below, then start a crew to bring them in.\nYour Reputation — Unknown\n0 players vouch for you · you've vouched 0/12 (12 slots left)\nStake your name on someone you rate — it gives them a reputation and costs you a slot. If they vouch back, it's a mutual bond.\nthe most-trusted leaderboard →\nThe Mentor — a veteran takes a newcomer under their wing\nYou can take up to 3 newcomers under your wing — look for \"wants a mentor\" below and offer.\nthe mentors leaderboard →\nFilter\nany district\nThe Docks\nThe Neon Mile\nOld Foundry\nBrick Yards\nCanal Row\nCathedral Hill\n  no family  online now\nCrews recruiting — near you open crews looking for members\nDock a Crew 2/4 lvl 32\nask to join\nPlayers near your level ± 10 levels\nrc1m_320_0 aBoss lvl 32 online in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_320_0 aRunner lvl 32 in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_320_0 bBoss lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_320_0 bRunner lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nFresh blood the newest faces in the city\nrc1m_320_0 bRunner lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_320_0 bBoss lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_320_0 aRunner lvl 32 in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_320_0 aBoss lvl 32 online in a crew\nThe Docks · [ADCK]\nvouch for them"
+      },
+      "error": "locator.click: Error: strict mode violation: locator('[data-group=\"start\"]') resolved to 2 elements:\n    1) <body data-mood=\"\" data-tod=\"night\" data-group=\"start\">…</body> aka locator('body')\n    2) <button class=\"on\" type=\"button\" data-group=\"start\" aria-pressed=\"true\">Start Here</button> aka getByLabel('City districts').getByRole('button', { name: 'Start Here' })\n\nCall log:\n\u001b[2m  - waiting for locator('[data-group=\"start\"]')\u001b[22m\n\n    at navigate (C:\\Users\\Jorge\\.codex\\worktrees\\omerta-rc1-closure\\Omerta\\docs\\release\\evidence\\mobile-social\\social-membership.mjs:94:62)\n    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-social/social-membership.mjs:121:60"
+    },
+    {
+      "width": 390,
+      "scenario": "shipment-redistribution",
+      "status": "FAIL",
+      "commands": [],
+      "outcomes": [],
+      "recoveries": [],
+      "errors": [],
+      "membership": {
+        "newcomer": "rc1m_390_0-outsider",
+        "initialCrewRows": 0,
+        "initialFamilyRows": 0,
+        "steps": [
+          {
+            "label": "Leader opens recruiting",
+            "method": "POST",
+            "route": "/v1/crew/recruiting",
+            "status": 200,
+            "body": {
+              "character": {
+                "id": "rc1m_390_0-aBoss-character",
+                "name": "rc1m_390_0 aBoss",
+                "generation": 1,
+                "level": 32,
+                "respect": 10000,
+                "energy": 42,
+                "nerve": 10,
+                "health": 100,
+                "cash": 74500,
+                "bank": 0,
+                "omr": 0,
+                "staked": 0,
+                "rewards": 0,
+                "unbonding": 0,
+                "made": false,
+                "madeSeconds": 0,
+                "unbondSeconds": 0,
+                "bankInTransit": 0,
+                "bankClearSeconds": 0,
+                "safehouseCost": 25000,
+                "stats": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 51
+                },
+                "eff": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 51
+                },
+                "rerollCredits": 0,
+                "statTotal": 151,
+                "forged": null,
+                "forgedName": null,
+                "ammo": 25,
+                "cb": 0,
+                "heat": 0,
+                "welsher": false,
+                "wanted": false,
+                "wantedSeconds": 0,
+                "law": {
+                  "stage": "clean",
+                  "exposure": 0,
+                  "indicted": false,
+                  "retainerSeconds": 0,
+                  "witproSeconds": 0,
+                  "rat": false
+                },
+                "hunt": null,
+                "tradeRep": 0,
+                "busts": 0,
+                "gun": null,
+                "vest": null,
+                "guns": [],
+                "jailSeconds": 0,
+                "hospSeconds": 0,
+                "shootCdSeconds": 0,
+                "gtaSeconds": 291,
+                "safeSeconds": 0,
+                "safeCapSeconds": 43200,
+                "bustAttemptsLeft": 5,
+                "bustRefillSeconds": 0,
+                "guardPrice": null,
+                "fadeLimit": null,
+                "pokerLimit": null,
+                "duelElo": 1000,
+                "duelLimit": null,
+                "vendettas": [],
+                "guardedBy": null,
+                "guardSeconds": 0,
+                "loc": "docks",
+                "path": null,
+                "title": null,
+                "bio": null,
+                "streak": 0,
+                "healCost": null,
+                "checkin": {
+                  "done": false,
+                  "streak": 1,
+                  "pay": 11200,
+                  "next": 14400
+                },
+                "maxEnergy": 114,
+                "maxNerve": 42,
+                "ladder": {
+                  "rung": 0,
+                  "of": 4,
+                  "name": null,
+                  "staked": 0,
+                  "effective": 0,
+                  "madeRungs": 1,
+                  "lock": null,
+                  "lockTiers": [
+                    {
+                      "id": "week",
+                      "days": 7,
+                      "mult": 1.25,
+                      "name": "The Handshake"
+                    },
+                    {
+                      "id": "month",
+                      "days": 30,
+                      "mult": 1.5,
+                      "name": "The Word"
+                    },
+                    {
+                      "id": "quarter",
+                      "days": 90,
+                      "mult": 2,
+                      "name": "The Oath"
+                    }
+                  ],
+                  "fx": null,
+                  "next": {
+                    "name": "Earner",
+                    "min": 60,
+                    "need": 60
+                  }
+                },
+                "disciplines": {
+                  "stamina": 1,
+                  "composure": 1,
+                  "conditioning": 1,
+                  "marksmanship": 1,
+                  "presence": 1,
+                  "handling": 1,
+                  "poise": 1,
+                  "vigilance": 1
+                },
+                "crewBonusPct": 0,
+                "cargoCap": 10,
+                "skills": [],
+                "honor": {
+                  "value": 0,
+                  "tier": "Unproven",
+                  "peak": 0,
+                  "peakTier": "Unproven",
+                  "low": 0,
+                  "lowTier": "Unproven"
+                },
+                "skillPoints": {
+                  "total": 8,
+                  "spent": 0,
+                  "available": 8
+                },
+                "rackets": [],
+                "assets": [],
+                "businesses": [],
+                "speakeasy": null,
+                "fighters": [],
+                "cargo": {},
+                "items": {},
+                "gear": [],
+                "racketLevels": {},
+                "racketIncomePerHr": {},
+                "tycoon": {
+                  "earned": 0,
+                  "rank": "Hustler"
+                },
+                "empireTitles": [],
+                "ops": {
+                  "used": 0,
+                  "slots": 10,
+                  "free": 10,
+                  "nextAt": 36,
+                  "max": 12,
+                  "incomeAssets": [],
+                  "meteredCat": "Legit Fronts"
+                },
+                "launderer": {
+                  "washed": 0,
+                  "rank": "Bagman"
+                },
+                "frontTitles": [],
+                "statesman": {
+                  "statecraft": 0,
+                  "rank": "Ward Heeler"
+                },
+                "cars": [],
+                "shipment": 0,
+                "bespoke": [],
+                "nftCars": [],
+                "gang": {
+                  "id": "7c24c765-3f85-4a60-988f-d7f3ef0658fb",
+                  "name": "Dock a Family",
+                  "tag": "ADCK",
+                  "role": "boss",
+                  "color": null,
+                  "seal": null,
+                  "foundation": null,
+                  "foundationTier": 0,
+                  "treasury": 0,
+                  "ammoBank": 0,
+                  "held": []
+                },
+                "lab": null,
+                "crew": 0,
+                "labModules": {
+                  "purity": 0,
+                  "yield": 0,
+                  "stealth": 0
+                },
+                "labModuleNext": {
+                  "purity": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "yield": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "stealth": {
+                    "cash": 60000,
+                    "omr": 0
+                  }
+                },
+                "kingpin": {
+                  "moved": 0,
+                  "rank": "Nobody"
+                },
+                "crewWageOwed": 0,
+                "crewWagePerHr": 0,
+                "crewCold": false,
+                "crewWagePerHead": 1200,
+                "crewMax": 5,
+                "crewCostStep": 50000,
+                "crewNextCost": 50000,
+                "crewColdSeconds": null,
+                "makings": {},
+                "stash": [],
+                "batch": null,
+                "tradeRank": 0,
+                "trades": [
+                  {
+                    "id": "larceny",
+                    "name": "Larceny",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jail stints on a busted job",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wetwork",
+                    "name": "Wet Work",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your search clock on a mark",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "chemistry",
+                    "name": "The Cook",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "cook time on a batch",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wheels",
+                    "name": "Wheels",
+                    "xp": 5,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 33,
+                    "perkWhat": "tuning prices at the garage",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "seamanship",
+                    "name": "Seamanship",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "hull & engine work at the boatyard",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "gambling",
+                    "name": "The Gambler",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your PvE table limit at the den",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "muscle",
+                    "name": "Protection",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jump & shakedown muscle",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "commerce",
+                    "name": "Commerce",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "Black Market listing fees",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "scores",
+                    "name": "Big Scores",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "the Score lines up sooner",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "fists",
+                    "name": "Fisticuffs",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your fighters heal faster",
+                    "perkNextAt": 10
+                  }
+                ],
+                "heistSeconds": 0,
+                "trainSeconds": 0,
+                "missionSeconds": 0,
+                "prestige": 0,
+                "recruits": 0,
+                "estate": null,
+                "wallet": null,
+                "minted": false,
+                "respawnTokens": 0,
+                "mintCredits": 0,
+                "hitmanRep": 0,
+                "kills": 0,
+                "seasonKills": 0,
+                "hitmanTitle": "Associate",
+                "onboard": {},
+                "coach": {
+                  "label": "Pull your first job",
+                  "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                  "tab": "streets"
+                },
+                "coachPlan": [
+                  {
+                    "label": "Pull your first job",
+                    "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "You've made rank",
+                    "hint": "Declare a Path — six careers are on the board, from The Gun to The Ring. It shapes how you earn.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "Finish your First Week (0/4)",
+                    "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+                    "tab": "start"
+                  },
+                  {
+                    "label": "Money while you sleep",
+                    "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+                    "tab": "empire"
+                  },
+                  {
+                    "label": "You've earned skill points",
+                    "hint": "You have 8 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+                    "tab": "life"
+                  }
+                ],
+                "netWorth": 74500,
+                "cityEvent": "sweep",
+                "city": {
+                  "event": "sweep",
+                  "name": "BUREAU SWEEP",
+                  "lawEvent": "blackout",
+                  "hour": 23,
+                  "phase": "night",
+                  "patrol": false
+                }
+              },
+              "ok": true,
+              "crew": "recruiting"
+            }
+          },
+          {
+            "label": "Ordinary player requests Crew membership",
+            "method": "POST",
+            "route": "/v1/crew/request/85900f68-cab7-4cf7-a792-202724d5352a",
+            "status": 200,
+            "body": {
+              "character": {
+                "id": "rc1m_390_0-outsider-character",
+                "name": "rc1m_390_0 outsider",
+                "generation": 1,
+                "level": 32,
+                "respect": 10000,
+                "energy": 52,
+                "nerve": 11,
+                "health": 100,
+                "cash": 100000,
+                "bank": 0,
+                "omr": 0,
+                "staked": 0,
+                "rewards": 0,
+                "unbonding": 0,
+                "made": false,
+                "madeSeconds": 0,
+                "unbondSeconds": 0,
+                "bankInTransit": 0,
+                "bankClearSeconds": 0,
+                "safehouseCost": 25000,
+                "stats": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 50
+                },
+                "eff": {
+                  "muscle": 50,
+                  "cunning": 50,
+                  "speed": 50
+                },
+                "rerollCredits": 0,
+                "statTotal": 150,
+                "forged": null,
+                "forgedName": null,
+                "ammo": 25,
+                "cb": 0,
+                "heat": 0,
+                "welsher": false,
+                "wanted": false,
+                "wantedSeconds": 0,
+                "law": {
+                  "stage": "clean",
+                  "exposure": 0,
+                  "indicted": false,
+                  "retainerSeconds": 0,
+                  "witproSeconds": 0,
+                  "rat": false
+                },
+                "hunt": null,
+                "tradeRep": 0,
+                "busts": 0,
+                "gun": null,
+                "vest": null,
+                "guns": [],
+                "jailSeconds": 0,
+                "hospSeconds": 0,
+                "shootCdSeconds": 0,
+                "gtaSeconds": 0,
+                "safeSeconds": 0,
+                "safeCapSeconds": 43200,
+                "bustAttemptsLeft": 5,
+                "bustRefillSeconds": 0,
+                "guardPrice": null,
+                "fadeLimit": null,
+                "pokerLimit": null,
+                "duelElo": 1000,
+                "duelLimit": null,
+                "vendettas": [],
+                "guardedBy": null,
+                "guardSeconds": 0,
+                "loc": "docks",
+                "path": null,
+                "title": null,
+                "bio": null,
+                "streak": 0,
+                "healCost": null,
+                "checkin": {
+                  "done": false,
+                  "streak": 1,
+                  "pay": 11200,
+                  "next": 14400
+                },
+                "maxEnergy": 114,
+                "maxNerve": 42,
+                "ladder": {
+                  "rung": 0,
+                  "of": 4,
+                  "name": null,
+                  "staked": 0,
+                  "effective": 0,
+                  "madeRungs": 1,
+                  "lock": null,
+                  "lockTiers": [
+                    {
+                      "id": "week",
+                      "days": 7,
+                      "mult": 1.25,
+                      "name": "The Handshake"
+                    },
+                    {
+                      "id": "month",
+                      "days": 30,
+                      "mult": 1.5,
+                      "name": "The Word"
+                    },
+                    {
+                      "id": "quarter",
+                      "days": 90,
+                      "mult": 2,
+                      "name": "The Oath"
+                    }
+                  ],
+                  "fx": null,
+                  "next": {
+                    "name": "Earner",
+                    "min": 60,
+                    "need": 60
+                  }
+                },
+                "disciplines": {
+                  "stamina": 1,
+                  "composure": 1,
+                  "conditioning": 1,
+                  "marksmanship": 1,
+                  "presence": 1,
+                  "handling": 1,
+                  "poise": 1,
+                  "vigilance": 1
+                },
+                "crewBonusPct": 0,
+                "cargoCap": 10,
+                "skills": [],
+                "honor": {
+                  "value": 0,
+                  "tier": "Unproven",
+                  "peak": 0,
+                  "peakTier": "Unproven",
+                  "low": 0,
+                  "lowTier": "Unproven"
+                },
+                "skillPoints": {
+                  "total": 8,
+                  "spent": 0,
+                  "available": 8
+                },
+                "rackets": [],
+                "assets": [],
+                "businesses": [],
+                "speakeasy": null,
+                "fighters": [],
+                "cargo": {},
+                "items": {},
+                "gear": [],
+                "racketLevels": {},
+                "racketIncomePerHr": {},
+                "tycoon": {
+                  "earned": 0,
+                  "rank": "Hustler"
+                },
+                "empireTitles": [],
+                "ops": {
+                  "used": 0,
+                  "slots": 10,
+                  "free": 10,
+                  "nextAt": 36,
+                  "max": 12,
+                  "incomeAssets": [],
+                  "meteredCat": "Legit Fronts"
+                },
+                "launderer": {
+                  "washed": 0,
+                  "rank": "Bagman"
+                },
+                "frontTitles": [],
+                "statesman": {
+                  "statecraft": 0,
+                  "rank": "Ward Heeler"
+                },
+                "cars": [],
+                "shipment": 0,
+                "bespoke": [],
+                "nftCars": [],
+                "gang": null,
+                "lab": null,
+                "crew": 0,
+                "labModules": {
+                  "purity": 0,
+                  "yield": 0,
+                  "stealth": 0
+                },
+                "labModuleNext": {
+                  "purity": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "yield": {
+                    "cash": 60000,
+                    "omr": 0
+                  },
+                  "stealth": {
+                    "cash": 60000,
+                    "omr": 0
+                  }
+                },
+                "kingpin": {
+                  "moved": 0,
+                  "rank": "Nobody"
+                },
+                "crewWageOwed": 0,
+                "crewWagePerHr": 0,
+                "crewCold": false,
+                "crewWagePerHead": 1200,
+                "crewMax": 5,
+                "crewCostStep": 50000,
+                "crewNextCost": 50000,
+                "crewColdSeconds": null,
+                "makings": {},
+                "stash": [],
+                "batch": null,
+                "tradeRank": 0,
+                "trades": [
+                  {
+                    "id": "larceny",
+                    "name": "Larceny",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jail stints on a busted job",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wetwork",
+                    "name": "Wet Work",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your search clock on a mark",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "chemistry",
+                    "name": "The Cook",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "cook time on a batch",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "wheels",
+                    "name": "Wheels",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "tuning prices at the garage",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "seamanship",
+                    "name": "Seamanship",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "hull & engine work at the boatyard",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "gambling",
+                    "name": "The Gambler",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your PvE table limit at the den",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "muscle",
+                    "name": "Protection",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "jump & shakedown muscle",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "commerce",
+                    "name": "Commerce",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "Black Market listing fees",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "scores",
+                    "name": "Big Scores",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "the Score lines up sooner",
+                    "perkNextAt": 10
+                  },
+                  {
+                    "id": "fists",
+                    "name": "Fisticuffs",
+                    "xp": 0,
+                    "lvl": 1,
+                    "rank": "Green",
+                    "nextAt": 15,
+                    "pct": 0,
+                    "perkWhat": "your fighters heal faster",
+                    "perkNextAt": 10
+                  }
+                ],
+                "heistSeconds": 0,
+                "trainSeconds": 0,
+                "missionSeconds": 0,
+                "prestige": 0,
+                "recruits": 0,
+                "estate": null,
+                "wallet": null,
+                "minted": false,
+                "respawnTokens": 0,
+                "mintCredits": 0,
+                "hitmanRep": 0,
+                "kills": 0,
+                "seasonKills": 0,
+                "hitmanTitle": "Associate",
+                "onboard": {},
+                "coach": {
+                  "label": "Pull your first job",
+                  "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                  "tab": "streets"
+                },
+                "coachPlan": [
+                  {
+                    "label": "Pull your first job",
+                    "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "You've made rank",
+                    "hint": "Declare a Path — six careers are on the board, from The Gun to The Ring. It shapes how you earn.",
+                    "tab": "streets"
+                  },
+                  {
+                    "label": "Finish your First Week (0/4)",
+                    "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+                    "tab": "start"
+                  },
+                  {
+                    "label": "Money while you sleep",
+                    "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+                    "tab": "empire"
+                  },
+                  {
+                    "label": "You've earned skill points",
+                    "hint": "You have 8 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+                    "tab": "life"
+                  }
+                ],
+                "netWorth": 100000,
+                "cityEvent": "sweep",
+                "city": {
+                  "event": "sweep",
+                  "name": "BUREAU SWEEP",
+                  "lawEvent": "blackout",
+                  "hour": 23,
+                  "phase": "night",
+                  "patrol": false
+                }
+              },
+              "ok": true,
+              "crew": "requested",
+              "to": "Dock a Crew"
+            }
+          }
+        ],
+        "discoveryText": "Looking for a crew?\nPut the word out and let someone find YOU. I'm looking for a crew\nFind someone below, then start a crew to bring them in.\nYour Reputation — Unknown\n0 players vouch for you · you've vouched 0/12 (12 slots left)\nStake your name on someone you rate — it gives them a reputation and costs you a slot. If they vouch back, it's a mutual bond.\nthe most-trusted leaderboard →\nThe Mentor — a veteran takes a newcomer under their wing\nYou can take up to 3 newcomers under your wing — look for \"wants a mentor\" below and offer.\nthe mentors leaderboard →\nFilter\nany district\nThe Docks\nThe Neon Mile\nOld Foundry\nBrick Yards\nCanal Row\nCathedral Hill\n  no family  online now\nCrews recruiting — near you open crews looking for members\nDock a Crew 2/4 lvl 32\nask to join\nPlayers near your level ± 10 levels\nrc1m_390_0 aBoss lvl 32 online in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_390_0 aRunner lvl 32 in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_390_0 bBoss lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_390_0 bRunner lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nFresh blood the newest faces in the city\nrc1m_390_0 bRunner lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_390_0 bBoss lvl 32 in a crew\nThe Docks · [BDCK]\nvouch for them\nrc1m_390_0 aRunner lvl 32 in a crew\nThe Docks · [ADCK]\nvouch for them\nrc1m_390_0 aBoss lvl 32 online in a crew\nThe Docks · [ADCK]\nvouch for them"
+      },
+      "error": "locator.click: Error: strict mode violation: locator('[data-group=\"start\"]') resolved to 2 elements:\n    1) <body data-mood=\"\" data-tod=\"night\" data-group=\"start\">…</body> aka locator('body')\n    2) <button class=\"on\" type=\"button\" data-group=\"start\" aria-pressed=\"true\">Start Here</button> aka getByLabel('City districts').getByRole('button', { name: 'Start Here' })\n\nCall log:\n\u001b[2m  - waiting for locator('[data-group=\"start\"]')\u001b[22m\n\n    at navigate (C:\\Users\\Jorge\\.codex\\worktrees\\omerta-rc1-closure\\Omerta\\docs\\release\\evidence\\mobile-social\\social-membership.mjs:94:62)\n    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-social/social-membership.mjs:121:60"
+    }
+  ]
+}

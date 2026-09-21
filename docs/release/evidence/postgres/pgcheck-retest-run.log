@@ -1,0 +1,2 @@
+{"server":"PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit","node":"v24.19.0","platform":"win32"}
+{"gate":"pgcheck","command":"npm run pgcheck","dbName":"omerta_rc1_pgcheck_muaesqtk","started":"2026-09-20T22:49:58.123Z","finished":"2026-09-20T22:51:18.875Z","status":0}

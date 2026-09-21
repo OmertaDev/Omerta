@@ -1,0 +1,430 @@
+
+> omerta-backend@1.2.0 invariants
+> node -e "import('./src/db.js').then(async ({makeDb}) => { const {runLedgerInvariants} = await import('./src/invariants.js'); console.log(JSON.stringify(await runLedgerInvariants(await makeDb()), null, 2)); })"
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "character cash",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "lhs": 20000,
+      "rhs": 20000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeEmission": 0,
+      "since": "v3 step 1"
+    },
+    {
+      "name": "plex mint retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimePlex": 0,
+      "since": "the mint is ETH only; respawn + Store SKUs are payable in earned $OMR"
+    },
+    {
+      "name": "portfolio retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "since": "D11 2026-08-05"
+    },
+    {
+      "name": "desk inventory backed",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeIn": 0,
+      "lifetimeSold": 0,
+      "lifetimeBought": 0
+    },
+    {
+      "name": "desk inventory ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "recycled": 0
+    },
+    {
+      "name": "desk sales ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "sold": 0
+    },
+    {
+      "name": "auction escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "logicalSinks": 0,
+      "carIds": [],
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "salvageCarSinks": 0
+    },
+    {
+      "name": "cb conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "unknown": []
+    },
+    {
+      "name": "content_artifact_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ]
+}

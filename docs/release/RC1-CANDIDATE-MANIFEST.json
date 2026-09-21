@@ -1,0 +1,254 @@
+{
+  "name": "OMERTA RC1 assessed candidate",
+  "frozenMain": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "candidate": "cce721029c86de7c6f0d875fef7cb8de29504dda",
+  "tree": "e0600d071a9239e4df814487629b5bedc842f590",
+  "fullCiApplicationSource": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+  "releaseTagCreated": false,
+  "productionDeploymentPerformed": false,
+  "sourceFreeze": "RC1-RELEASE-MANIFEST.json",
+  "report": "RC1-RELEASE-REPORT.md",
+  "scope": "Release-gate repairs and proof tools only; no new major gameplay system.",
+  "repairs": [
+    {
+      "gate": "PG-01",
+      "classification": "A",
+      "commit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "change": "Refuse incomplete migration before schema stamping."
+    },
+    {
+      "gate": "RC1-OBS",
+      "classification": "A",
+      "commit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "change": "Privacy-preserving command correlation and phase diagnostics."
+    },
+    {
+      "gate": "PG-02",
+      "classification": "D",
+      "commit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "change": "Deterministic pgcheck deadlock victim fixture; assertions retained."
+    },
+    {
+      "gate": "RC1-SIM-TOOL-01",
+      "classification": "D",
+      "commit": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "change": "Keep synthetic season overrides out of real PostgreSQL mode."
+    },
+    {
+      "gate": "RC1-MOBILE-CONFIRM",
+      "classification": "A",
+      "commit": "1f0767e95db8a487a19e7c966a03577f0928fde1",
+      "change": "Passive screen telemetry cannot cancel a pending World confirmation."
+    },
+    {
+      "gate": "RC1-CI-INVENTORY",
+      "classification": "C/D",
+      "commit": "cb927fd4693ac5d78c4a48fcdd92b73a06541b48",
+      "change": "Request-owned diagnostic context and full registration of added gates; no guard weakened."
+    },
+    {
+      "gate": "CAMPAIGN-BROWSER-HARNESS",
+      "classification": "D",
+      "commit": "5f735c573ff17fa3b8f4c9d7ad3c45181ae13d7d",
+      "change": "Visible control scrolling and one explicitly classified stale-command reissue in the browser adapter."
+    },
+    {
+      "gate": "PHONE-ONBOARDING-HARNESS",
+      "classification": "D",
+      "commit": "b6b94599d8fba950807e7f647142f1a164b29236",
+      "change": "Wait for completed client action and acknowledge actual first-lockup tutorial; retain browser failure artifacts."
+    }
+  ],
+  "changedFiles": [
+    {
+      "file": ".github/workflows/ci.yml",
+      "blob": "13ede95e9482d2b555e9ea983a2f280188be0ec5",
+      "sha256": "cb8e753649bfb39d914ffdb03442abe0ce54f03b3013023604abd5040e1289fb"
+    },
+    {
+      "file": ".github/workflows/rc1-recovery.yml",
+      "blob": "fe483a4ab473858d087f9b3d7cb7da17a5ec3593",
+      "sha256": "d7d545ed3c634f5929691ee9cdeef6ce0c14b3528902690130ffffd38f717afb"
+    },
+    {
+      "file": "SPEC.md",
+      "blob": "f718b9f9389fbdac9efcd729335b52934299ead0",
+      "sha256": "bccea94ef3d00384f99d41673980e4cf1ee994611b8220279d532f290f4a87b1"
+    },
+    {
+      "file": "docs/release/RC1-RELEASE-MANIFEST.json",
+      "blob": "28a0408abf54725b737c045caec6808eafc6ec98",
+      "sha256": "770eb977569f4d2b806133aba6fdfda3880a982e3ee66fb6f488bb57f953485f"
+    },
+    {
+      "file": "knowledge/generated/documents.md",
+      "blob": "7ad51fa4e07717cd8d494f28a6a80516119722d5",
+      "sha256": "12fa8f71f21e5a92b8f14b941fa033e4834ac1add72ed68aab2f81fbf4836384"
+    },
+    {
+      "file": "knowledge/generated/github-history.md",
+      "blob": "866bf4dbc5f0692ea345aa6b4fc92d81af30e3a5",
+      "sha256": "c906b8a938d049036f54d3135dbe8dac97e2dec55cf4fabbc4c84432d43302b6"
+    },
+    {
+      "file": "knowledge/generated/graph-summary.md",
+      "blob": "4935708c495779c2969e331846248528dcdc879c",
+      "sha256": "8b199a8b75e5583cdd546ed7e4bebbe70bc262bf2d477626ce18642ae373e301"
+    },
+    {
+      "file": "knowledge/generated/graph.json",
+      "blob": "c8a8b26f9fd1c3f6b96a0a2511b168d74056a7e5",
+      "sha256": "88bab9b9631081b99533188428b6e58374d37ec0020c11fec1b52b8c9256eebc"
+    },
+    {
+      "file": "knowledge/generated/graph.mmd",
+      "blob": "7c86329632dcdadb44896a412d565f48324f7b5b",
+      "sha256": "bcc5712cbd6f58d5e1ca58c9eeaabcece29acf1ac25302754ac22206fc337377"
+    },
+    {
+      "file": "knowledge/generated/inventory.md",
+      "blob": "a43fabb28c63f93797f05260c4b338dada5b6762",
+      "sha256": "1d72d151082a91b5d4eeed772dbea7c4c4458c73cd8b548cd64bfd3da779498a"
+    },
+    {
+      "file": "knowledge/generated/modules.md",
+      "blob": "ac79dd4d25996bf0aa67a89365e1c626f354d4ef",
+      "sha256": "48c9753cc3d71183dacf8a3200a65f1a1e31330ed134cc9b1977f1f7857bc071"
+    },
+    {
+      "file": "knowledge/generated/routes.md",
+      "blob": "9450f07996e52ff0cceb9784b1fe6569f932cdfa",
+      "sha256": "9d700a642d00e2cad7633dbf100244da490b0d77c57879bab8add8d85131b580"
+    },
+    {
+      "file": "knowledge/generated/schema.md",
+      "blob": "41bb15884a344d46b4562530cf4ed029673c1ecb",
+      "sha256": "d862c9cf36a1cc379e25e6679fc47ab073fe5485444f6bc49b7adbeb4c27721f"
+    },
+    {
+      "file": "package.json",
+      "blob": "17130e24d6725782d8176cb211180a1399223c7f",
+      "sha256": "164ab331f9987331699835a882aa684b4622a557ee61aed47e6ab5ef10299714"
+    },
+    {
+      "file": "public/index.html",
+      "blob": "688eab7f95a2dd3c93aacbf1bd6e4d628988d340",
+      "sha256": "8d74e34e3eed249b8550a304b5f3170fd8965738836239e937ff20b545ec34f7"
+    },
+    {
+      "file": "src/command-diagnostics.js",
+      "blob": "1c5e18f9788096fdbdfb3ac6f79c386aca538f7b",
+      "sha256": "f7be24eb60c6a3976ad8e0bbbacf6a935ff08b6508dedd4f570032f59b28cb5c"
+    },
+    {
+      "file": "src/db.js",
+      "blob": "0b189379918c52b5973cfa994d6bf30b896cb049",
+      "sha256": "7164840ef1ecf662604bbf89ba3b5bc7db800aaf96b34950df03e9559fd2e4e6"
+    },
+    {
+      "file": "src/player-commands.js",
+      "blob": "dec9d47c610aa203d19a0397a46869503be01210",
+      "sha256": "6b23c0dc475360f2d334aa7f8364c46c08cb138c551e2bc8c8e4dbdadba321b6"
+    },
+    {
+      "file": "src/projection-events.js",
+      "blob": "ca25d8189be9934e5bb8ad0dd321e5b848646d2c",
+      "sha256": "7aae369b421986c1e1c170477c0006445f5dcb1790c0e3cff207b7480a79807f"
+    },
+    {
+      "file": "src/routes/commands.js",
+      "blob": "f6cc4a0e22e24b256647eefc0738cc779e08250d",
+      "sha256": "d3a1c2553043799a21485850421990ff01228b515a95ed70168418756c5fa591"
+    },
+    {
+      "file": "test/gates.js",
+      "blob": "de37cdac24c8413f59a98c280819845a546539be",
+      "sha256": "4104cdd0f37f3cf9de5d55bf9e56e7a93f42d1a364270b46039d2665f0985bfb"
+    },
+    {
+      "file": "test/lib/player-command-support.js",
+      "blob": "ab7544305dc3617246057a344fefd4d005571c97",
+      "sha256": "fd214f8c03b9bc0c3caf5f0e01f35e52da1fa282433cfdeafe49def117166e2a"
+    },
+    {
+      "file": "test/rc1-command-redteam.js",
+      "blob": "766a7f49ccbe7b97f2dafd1a21c3abbe60caee52",
+      "sha256": "368c7ceb59b8fc7253dd42c883c5f356819cc14f9f5b620b2356c5d6b29b5dae"
+    },
+    {
+      "file": "test/rc1-mobile-postgres.js",
+      "blob": "f9989047701d1c5de9063c007032bcd1438308e7",
+      "sha256": "b72a6345ce0ee7271f3d5abc5213fc70d2222acd610d30ca43123e4fb6f4f55e"
+    },
+    {
+      "file": "test/rc1-observability.js",
+      "blob": "b63d92757bdeaafd84c87e07c6f0d812a4b9d3c8",
+      "sha256": "bb85881822270e1416c3df7317af54369323589598a6ab122948e93062b1fe8b"
+    },
+    {
+      "file": "test/rc1-passive-projection.js",
+      "blob": "3a3f2c9f66a6660d5381eb458d82f16286165560",
+      "sha256": "d313f3195b1006483c332af034078fcbd3e43cc75758366a24cfb7fb52df95b5"
+    },
+    {
+      "file": "test/rc1-postgres-migration-failure.js",
+      "blob": "d543184fae1a535235820fb957033476195b5c50",
+      "sha256": "ec582b71a04a80305d2bdf451f5463af8298482f9b6b82b0f2c83d0c85b8edab"
+    },
+    {
+      "file": "test/rc1-simulation.js",
+      "blob": "9be45a5f6829b777a6f6c9a549ddfff65c2aa74b",
+      "sha256": "446f4c071a4625c8dcbb063996c7ded9c697e5fa71a19baf108e8432c58a8fca"
+    },
+    {
+      "file": "tools/director-sim.js",
+      "blob": "a93fa5c0909d572c6e6dbaf156dde2937c1322e7",
+      "sha256": "9d70ae5542003351124d40bb791c23c1734978fbfdec4bd1b4c50c47012d3f7e"
+    },
+    {
+      "file": "tools/pgcheck.js",
+      "blob": "2cb9f42ffb312fe6c90b97aedc997b41f8e7c994",
+      "sha256": "76589dd2ec9ed05d5d31bec625f6cefb55481c6d9202f472ae19ca96d78cfdce"
+    },
+    {
+      "file": "tools/rc1-campaign-mobile.js",
+      "blob": "8314fddb64246f07a267efcaeadbcc2dd58ac639",
+      "sha256": "fe95c1aa2c3d8bdcb9effceea31d2e54d855c92ff046b500b96bff68929a4b31"
+    },
+    {
+      "file": "tools/rc1-command-population.js",
+      "blob": "a8cdd35ce65954f88db89f9f01bb9fab75e120c6",
+      "sha256": "0a211ca7253fb12597bcc567d40b9bd516f19b8956d6c1d871e6409156687ede"
+    },
+    {
+      "file": "tools/rc1-director-matrix.js",
+      "blob": "38d6c02ee55bc673145ef3b8e8d68228e92c3b28",
+      "sha256": "1e33c44a47f378f1c33be60f990b5546fd3cd6a665035f27ce5336553cb92309"
+    },
+    {
+      "file": "tools/rc1-freeze.mjs",
+      "blob": "550ca9e1752f946cc75ac92a6a414d4d894d2a94",
+      "sha256": "edbd6ff0b9f78ff6202100e878458681f84266e03965a81b0abfac2ce88e20e6"
+    },
+    {
+      "file": "tools/rc1-gate.mjs",
+      "blob": "49df583ca0e249516bca5ab6dee3e31d5df3a96d",
+      "sha256": "d515d69a8bc0d9737db8ffdfc8e6bb51b2f913c0741d8db33235218bf2ae2e3c"
+    },
+    {
+      "file": "tools/rc1-shutdown.js",
+      "blob": "3cccaae82a31c403fb5494e65eb8bd0443310016",
+      "sha256": "921cee6343e023e43e45005a12b3912949aad0d56c1566658d77899a28f7031b"
+    },
+    {
+      "file": "tools/rc1-sim.js",
+      "blob": "d451debb691d285220bff2de44a1fadcac9576bd",
+      "sha256": "e5fd13b0bd413b6cbcb7cb63f4aabf686d5e437e7f0741fe7d3fc4176b64b165"
+    },
+    {
+      "file": "tools/scale.js",
+      "blob": "67e20e69179e845719d40f492a1b5ae66d04fbc4",
+      "sha256": "1541a0482c2bd37018bf6bd1c4f74a69f0fc277b28f55fae258995c16f8a02a6"
+    }
+  ]
+}

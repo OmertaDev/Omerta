@@ -1,0 +1,337 @@
+{
+  "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "harnessSha256": "69c093d2ebddeec697d95ef1fe11fd83145c8d4634c1f1d25e41152f4beab18b",
+  "generatedAt": "2026-09-20T23:04:17.430Z",
+  "invocation": [
+    "--postgres",
+    "--populations=25",
+    "--seeds=rc1-alpha,rc1-beta",
+    "--replicates=1",
+    "--rounds=2",
+    "--output=docs/release/evidence/simulation/native"
+  ],
+  "populations": [
+    25
+  ],
+  "seeds": [
+    "rc1-alpha",
+    "rc1-beta"
+  ],
+  "replicates": 1,
+  "rounds": 2,
+  "status": "PASS_SCOPED",
+  "phase4ReleaseGate": "INCOMPLETE",
+  "results": [
+    {
+      "population": 25,
+      "seed": "rc1-alpha",
+      "replicate": 0,
+      "rounds": 2,
+      "database": "postgresql",
+      "status": "PASS_SCOPED",
+      "durationMs": 30833,
+      "archetypes": {
+        "aggressive": 2,
+        "cooperative": 2,
+        "crew_focused": 1,
+        "disappearing": 2,
+        "economic": 2,
+        "family_focused": 2,
+        "high_activity": 1,
+        "hoarder": 1,
+        "information_focused": 2,
+        "low_activity": 1,
+        "opportunistic": 2,
+        "repeated_failure": 1,
+        "solo": 1
+      },
+      "fixturePlayers": 5,
+      "actorsExecutingCommands": 19,
+      "metrics": {
+        "snapshots": 177,
+        "commandsIssuedAvailable": 3582,
+        "commandsExecuted": 109,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 2,
+          "contention": 1
+        },
+        "opportunityCardsShown": 5740,
+        "opportunityCardsUniquePerActor": 557,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 2,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 1,
+        "completedOpportunityCommandLinks": 34,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 127,
+        "conservationAssertions": 6985
+      },
+      "actions": [
+        "recover_shipment"
+      ],
+      "authoritative": {
+        "situationsGenerated": 2,
+        "situationStates": {
+          "mobilizing": 1,
+          "open": 1
+        },
+        "situationsWithCanonicalResolution": 0,
+        "campaignsStarted": 2,
+        "campaignStatuses": {
+          "active": 2
+        },
+        "distinctCampaignDefinitions": 2,
+        "operationsCreated": 3,
+        "operationStatuses": {
+          "completed": 1,
+          "expired": 1,
+          "failed": 1
+        },
+        "uniqueOperationParticipants": 2,
+        "knowledgeClaims": 10,
+        "knowledgeGrants": 4,
+        "crews": 5,
+        "families": 5,
+        "operationReceipts": [
+          {
+            "id": "1eee5a3a-44b2-4797-b17b-ffbd83b3d8d2",
+            "graph_id": "operation:canal_register_shipment",
+            "status": "completed",
+            "resolution_seed": "5e27b717b0da323067e93d04a9825e318c44f2f4713b81a9a7c2e60539fe0566"
+          },
+          {
+            "id": "dbb238fc-1b75-4fb0-b9e9-326eda7de294",
+            "graph_id": "operation:canal_recover_shipment",
+            "status": "expired",
+            "resolution_seed": "79937e1d6092493ba8a9f527ffc4713ee2c4d4925f2b03457d140c2d97283592"
+          },
+          {
+            "id": "6392d89f-aa9d-4f67-b3e7-4c7a99c7db0d",
+            "graph_id": "operation:canal_recover_shipment",
+            "status": "failed",
+            "resolution_seed": "88ab768010d1290c0133aab430e9d63287af1127b3fbcaa8b69e44f219d81687"
+          }
+        ],
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 65,
+        "stackUnitsConsumed": 21,
+        "worldChanges": 2,
+        "worldActions": [
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 1,
+            "action": "register_shipment"
+          },
+          {
+            "object": "territory:dock_supply_route",
+            "revision": 1,
+            "action": "establish_route"
+          }
+        ],
+        "duplicateCanonicalConsequences": 0,
+        "omrTransactions": 0,
+        "negativeInventoryRows": 0
+      },
+      "notMeasured": [
+        "distinct commands contending for the same world object",
+        "sustained concurrent population load",
+        "long-term starvation",
+        "retention",
+        "real-player opportunity abandonment",
+        "independent Crew/Family campaign dynamics",
+        "engine-caused irreversible dead ends across every branch",
+        "reward-bearing operations",
+        "nonzero OMR movement",
+        "Knowledge revocation races",
+        "per-internal-transition accounting inside compound fixture helpers (command boundaries are checked)"
+      ],
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "harnessSha256": "69c093d2ebddeec697d95ef1fe11fd83145c8d4634c1f1d25e41152f4beab18b"
+    },
+    {
+      "population": 25,
+      "seed": "rc1-beta",
+      "replicate": 0,
+      "rounds": 2,
+      "database": "postgresql",
+      "status": "PASS_SCOPED",
+      "durationMs": 37607,
+      "archetypes": {
+        "aggressive": 2,
+        "cooperative": 2,
+        "crew_focused": 1,
+        "disappearing": 2,
+        "economic": 1,
+        "family_focused": 1,
+        "high_activity": 1,
+        "hoarder": 2,
+        "information_focused": 1,
+        "low_activity": 1,
+        "opportunistic": 2,
+        "repeated_failure": 2,
+        "solo": 2
+      },
+      "fixturePlayers": 5,
+      "actorsExecutingCommands": 20,
+      "metrics": {
+        "snapshots": 206,
+        "commandsIssuedAvailable": 4446,
+        "commandsExecuted": 136,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 4,
+          "command_stale": 4,
+          "contention": 1
+        },
+        "opportunityCardsShown": 7463,
+        "opportunityCardsUniquePerActor": 690,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 4,
+        "staleCommandProbes": 4,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 6,
+        "directorSelections": 4,
+        "directorTransitions": 4,
+        "completedOpportunityCommandLinks": 31,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 160,
+        "conservationAssertions": 8800
+      },
+      "actions": [
+        "intercept_shipment",
+        "establish_market",
+        "expose_market"
+      ],
+      "authoritative": {
+        "situationsGenerated": 4,
+        "situationStates": {
+          "diverted": 1,
+          "exposed": 1,
+          "market_open": 1,
+          "mobilizing": 1
+        },
+        "situationsWithCanonicalResolution": 3,
+        "campaignsStarted": 3,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 2
+        },
+        "distinctCampaignDefinitions": 3,
+        "operationsCreated": 5,
+        "operationStatuses": {
+          "completed": 4,
+          "expired": 1
+        },
+        "uniqueOperationParticipants": 4,
+        "knowledgeClaims": 11,
+        "knowledgeGrants": 4,
+        "crews": 4,
+        "families": 4,
+        "operationReceipts": [
+          {
+            "id": "cf65600e-e726-428d-a3e5-8f66e573afd7",
+            "graph_id": "operation:canal_register_shipment",
+            "status": "completed",
+            "resolution_seed": "76aabf6ff6ea18cd30011e784bda1162017cc24ddd42dd6685cd32551b5b5786"
+          },
+          {
+            "id": "6ea8849c-aab6-47d7-b9e0-f0ff7d1a61cc",
+            "graph_id": "operation:canal_recover_shipment",
+            "status": "expired",
+            "resolution_seed": "9fbbe09995c537eec1335dbafa144a7c9daac25cc1dba6fc8bb692d3bf2081da"
+          },
+          {
+            "id": "2f6e4513-9e5f-4718-9e6c-2dabf82fb10c",
+            "graph_id": "operation:canal_intercept_shipment",
+            "status": "completed",
+            "resolution_seed": "88db5061d7bf8f93b58e59466d0e274b23059b4c6876c292697ac5b05b44f9d6"
+          },
+          {
+            "id": "c3212d51-5dec-4fb8-92bf-6bfaaedd5977",
+            "graph_id": "operation:canal_establish_market",
+            "status": "completed",
+            "resolution_seed": "fa513dd7bfbce5f4fb0b69a42faa8d4a41eeaf363bdbd8bd6adfbe0606cb0b29"
+          },
+          {
+            "id": "657a5458-bd86-418b-ad62-52f7d971769a",
+            "graph_id": "operation:canal_expose_market",
+            "status": "completed",
+            "resolution_seed": "f26c8f2767673f0d995b1a13c4a8afc83c4542552573da21d2cc2af7a961063e"
+          }
+        ],
+        "itemsCreated": 6,
+        "itemsConsumed": 5,
+        "stackUnitsCreated": 88,
+        "stackUnitsConsumed": 33,
+        "worldChanges": 5,
+        "worldActions": [
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 1,
+            "action": "register_shipment"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 2,
+            "action": "intercept_shipment"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 3,
+            "action": "establish_market"
+          },
+          {
+            "object": "infrastructure:canal_supply_depot",
+            "revision": 4,
+            "action": "expose_market"
+          },
+          {
+            "object": "territory:dock_supply_route",
+            "revision": 1,
+            "action": "establish_route"
+          }
+        ],
+        "duplicateCanonicalConsequences": 0,
+        "omrTransactions": 0,
+        "negativeInventoryRows": 0
+      },
+      "notMeasured": [
+        "distinct commands contending for the same world object",
+        "sustained concurrent population load",
+        "long-term starvation",
+        "retention",
+        "real-player opportunity abandonment",
+        "independent Crew/Family campaign dynamics",
+        "engine-caused irreversible dead ends across every branch",
+        "reward-bearing operations",
+        "nonzero OMR movement",
+        "Knowledge revocation races",
+        "per-internal-transition accounting inside compound fixture helpers (command boundaries are checked)"
+      ],
+      "revision": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "harnessSha256": "69c093d2ebddeec697d95ef1fe11fd83145c8d4634c1f1d25e41152f4beab18b"
+    }
+  ]
+}

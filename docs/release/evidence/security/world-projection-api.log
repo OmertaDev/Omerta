@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-api: mounted auth/default-off/cohort/no-store, strict queries, private=missing, player compatibility and HTTP discovery/sharing/revocation passed

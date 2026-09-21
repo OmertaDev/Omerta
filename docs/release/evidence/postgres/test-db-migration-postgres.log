@@ -1,0 +1,6 @@
+{"gate":"test:db-migration:postgres","command":"npm run test:db-migration:postgres","script":"node test/rc1-postgres-migration-failure.js","dbName":"omerta_rc1_test_db_migration_postgres_muaf3sr1","started":"2026-09-20T22:58:33.967Z"}
+[migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption
+{"faultObserved":true,"stamp":{"app_version":"0.0.0","schema_sha":"rc1-before-fault"}}
+RC1: real DDL interruption refuses startup/stamp; retry and restart migration succeed
+
+{"gate":"test:db-migration:postgres","command":"npm run test:db-migration:postgres","dbName":"omerta_rc1_test_db_migration_postgres_muaf3sr1","started":"2026-09-20T22:58:33.967Z","finished":"2026-09-20T22:58:47.661Z","status":0}

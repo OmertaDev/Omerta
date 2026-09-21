@@ -1,0 +1,18 @@
+{
+  "fullCiSource": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+  "finalCandidate": "cce721029c86de7c6f0d875fef7cb8de29504dda",
+  "applicationContractSchemaPackagesContentAndFullCiWorkflowIdentical": true,
+  "changedFiles": [
+    ".github/workflows/rc1-recovery.yml",
+    "knowledge/generated/github-history.md",
+    "knowledge/generated/graph-summary.md",
+    "knowledge/generated/graph.json",
+    "knowledge/generated/inventory.md",
+    "test/rc1-mobile-postgres.js"
+  ],
+  "affectedVerification": [
+    "final candidate local Knowledge, gates and docs checks",
+    "Linux recovery workflow35545394093 including corrected phone harness"
+  ],
+  "note": "Earlier executions keep their actual SHA; this records source equivalence, not a new full lifecycle execution."
+}

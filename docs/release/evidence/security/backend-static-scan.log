@@ -1,0 +1,10 @@
+src/player-commands.js:186:const fingerprint = (board) => hash(JSON.parse(JSON.stringify(board, (key, value) => key === 'asOf' ? undefined : value)));
+src/player-commands.js:292:    const command = JSON.parse(issued.commands_json).find((entry) => entry.commandId === commandId);
+src/player-commands.js:295:    const options = JSON.parse(issued.options_json), actionKey = domainKey(input.executionId);
+src/player-commands.js:312:    const outcome = typeof raw === 'string' ? JSON.parse(raw) : raw;
+src/coordination/knowledge.js:12:const parse = (value) => typeof value === 'string' ? JSON.parse(value) : value;
+src/coordination/knowledge.js:93:  await client.query(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${keys.map((_, i) => `$${i + 1}`).join(',')})`, Object.values(row));
+src/coordination/knowledge.js:95:  registerPhase2Undo(client, () => client.query(`DELETE FROM ${table} WHERE ${key}=$1`, [row[key]]));
+src/coordination/knowledge.js:141:      const value = JSON.parse(Buffer.concat([decipher.update(bytes.subarray(12, -16)), decipher.final()]).toString('utf8'));
+src/coordination/knowledge.js:346:        const rows = (await client.query(`SELECT c.id FROM coordination_claims c WHERE ${filter}
+src/coordination/knowledge.js:526:      const candidates = (await client.query(`SELECT c.id FROM coordination_claims c WHERE c.id>$1 AND ${filter}

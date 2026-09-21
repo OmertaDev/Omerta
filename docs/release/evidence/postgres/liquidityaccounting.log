@@ -1,0 +1,11 @@
+{"command":"node test/liquidityaccounting.js","database":"omerta_liquidity_test","started":"2026-09-20T22:54:00.973Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS all four confirmed swap streams settle actual custody exactly once
+PASS direct OMR fees credit only delivered amounts and never invent an ETH price
+PASS odd wei and sub-micro dust cannot increase signable capacity
+PASS missing, forged and wrong-destination transfer receipts are rejected
+PASS a receipt from a changed executor sequence cannot replay a settlement
+PASS inflow-index lag holds accounting without partial pool or reserve writes
+PASS reserve, desk and community invariants include direct tokens as explicit backing
+{"suite":"liquidity accounting","passed":7,"postgres":true}
+{"command":"node test/liquidityaccounting.js","database":"omerta_liquidity_test","started":"2026-09-20T22:54:00.973Z","finished":"2026-09-20T22:54:07.012Z","status":0}

@@ -1,0 +1,35 @@
+{
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "ok": true,
+  "runs": 130,
+  "snapshots": 520,
+  "failures": [],
+  "maximumPopulation": 1000,
+  "longestDays": 180,
+  "zeroActionRows": 150,
+  "unfundedRows": 70,
+  "firstUnfundedObserved": {
+    "seed": "rc1-director-a",
+    "population": 25,
+    "days": 1,
+    "scenario": "economic_shortage",
+    "unfundedResponseScopes": 3,
+    "resourceEffects": {
+      "initialFixtureWire": 12,
+      "remainingWire": 5,
+      "wireConsumed": 7,
+      "wireTransferred": 3,
+      "initialFixtureSeals": 36,
+      "remainingSeals": 32,
+      "sealsConsumed": 4,
+      "directorMinted": 0,
+      "omrDelta": 0,
+      "wireBalanceError": 0,
+      "duplicateReceipts": 0,
+      "unexplainedWire": 0,
+      "unexplainedSeals": 0,
+      "provenanceHash": "b190215549f6360385aa6a0de19fc8f28a85f4d7b054bf6075981fcf03b2034b"
+    }
+  },
+  "note": "Smallest within the enumerated runs, not a minimized whole-game deadlock. Model fixtures cannot establish global gameplay reachability."
+}

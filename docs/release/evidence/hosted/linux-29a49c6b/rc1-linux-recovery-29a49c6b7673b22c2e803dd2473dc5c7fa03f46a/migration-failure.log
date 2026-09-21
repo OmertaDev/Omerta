@@ -1,0 +1,7 @@
+
+> omerta-backend@1.2.0 test:db-migration:postgres
+> node test/rc1-postgres-migration-failure.js
+
+[migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption
+{"faultObserved":true,"stamp":{"app_version":"0.0.0","schema_sha":"rc1-before-fault"}}
+RC1: real DDL interruption refuses startup/stamp; retry and restart migration succeed

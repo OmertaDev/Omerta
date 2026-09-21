@@ -1,0 +1,26 @@
+{"gate":"test:audit:deed-reimport:postgres","command":"npm run test:audit:deed-reimport:postgres","script":"node test/audit/deed-reimport-order.js","dbName":"omerta_rc1_test_audit_deed_reimport_postgres_muafbjsi","started":"2026-09-20T23:04:35.490Z"}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: fixture requires its dedicated scratch database
++ actual - expected
+
++ '/omerta_rc1_test_audit_deed_reimport_postgres_muafbjsi'
+- '/omerta_audit_deed_recovery'
+
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/audit/deed-reimport-order.js:13:10
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '/omerta_rc1_test_audit_deed_reimport_postgres_muafbjsi',
+  expected: '/omerta_audit_deed_recovery',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
+
+{"gate":"test:audit:deed-reimport:postgres","command":"npm run test:audit:deed-reimport:postgres","dbName":"omerta_rc1_test_audit_deed_reimport_postgres_muafbjsi","started":"2026-09-20T23:04:35.490Z","finished":"2026-09-20T23:04:36.403Z","status":1}

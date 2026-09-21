@@ -1,0 +1,18 @@
+[
+  {
+    "gate": "pgcheck",
+    "command": "npm run pgcheck",
+    "dbName": "omerta_rc1_pgcheck_muaf1trw",
+    "started": "2026-09-20T22:57:02.033Z",
+    "finished": "2026-09-20T22:58:33.420Z",
+    "status": 0
+  },
+  {
+    "gate": "test:db-migration:postgres",
+    "command": "npm run test:db-migration:postgres",
+    "dbName": "omerta_rc1_test_db_migration_postgres_muaf3sr1",
+    "started": "2026-09-20T22:58:33.967Z",
+    "finished": "2026-09-20T22:58:47.661Z",
+    "status": 0
+  }
+]

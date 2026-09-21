@@ -1,0 +1,18 @@
+[migrate] skipped: ALTER TABLE characters ADD COLUMN IF NOT EXISTS bank_credit_ms BIGINT NOT NULL DEFAULT 28800000 — RC1 injected DDL interruption
+{"faultObserved":false,"result":{"migration":{"total":2956,"failed":1},"stamp":{"appVer":"1.2.0","sha":"da89a90b235b0b46","rolledBack":false}},"stamp":{"app_version":"1.2.0","schema_sha":"da89a90b235b0b46"}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: A partial column migration must refuse startup instead of stamping success
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-postgres-migration-failure.js:30:3
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

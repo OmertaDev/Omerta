@@ -1,0 +1,16 @@
+{
+  "id": "mobile-postgres-navigation",
+  "command": [
+    "node",
+    "test/rc1-mobile-postgres.js"
+  ],
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "trackedSourceDiffSha256": "471c5267d4f9136b37e0445909d94869a2e2d16b1095555679c8c1780b9c3f3e",
+  "started": "2026-09-20T22:59:02.211Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/mobile-postgres-navigation-2026-09-20T22-59-02-054Z.log",
+  "finished": "2026-09-20T23:00:28.452Z",
+  "exitCode": 1,
+  "signal": null
+}

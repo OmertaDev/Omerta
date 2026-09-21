@@ -1,0 +1,47 @@
+{"gate":"loadtest","command":"npm run loadtest","script":"node tools/loadtest.js","dbName":"omerta_rc1_loadtest_muafbslt","started":"2026-09-20T23:04:46.965Z"}
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+THE CONCURRENCY HARNESS — 8 players, 20s storm, real Postgres
+
+  seating 8 players… done
+  storm running (20s)… [slow] POST /v1/casino/dice 200 1058ms
+[slow] POST /v1/streets/a87fa239-298a-4402-a778-f6ef60bfa350/jump 200 1051ms
+[slow] POST /v1/streets/f23c747d-12ca-41b4-9654-903669c2ad23/jump 400 1681ms
+[slow] POST /v1/streets/a87fa239-298a-4402-a778-f6ef60bfa350/jump 400 1185ms
+done — 3599 operations in 20.0s
+
+THROUGHPUT
+  180 requests/sec sustained across 8 concurrent players
+
+LATENCY (ms) — what a player feels
+  (absolute values depend on the machine — server, database and 8 clients all share this
+   box. The RATIOS between classes are the signal, and so is the shape as PLAYERS rises.)
+  class               n     p50     p95     p99     max
+  read             1271      19      35     112     803
+  read:board        510       8      14      23      35
+  write:bank        376      37      98     262     765
+  write:casino      381      55     112     172    1072
+  write:crime       176      49      98     179     194
+  write:pvp         885      68     149     314    1691
+
+OUTCOMES
+  200×3058  400×541
+
+  error taxonomy (top 12):
+       347 × hosp_self
+       194 × hosp
+
+CONTENTION, measured at the database
+  real deadlocks (pg_stat_database):        0
+  transaction rollbacks:                    1810  (vs 541 refused actions — a refusal rolls back by design, so these should track each other)
+  players who SAW a 'contention' retry:     0
+  pool/connection failures:                 0
+
+§10.4 UNDER CONCURRENCY — the delta must be zero
+  ✓ all 55 checks unmoved by 3599 concurrent operations
+
+✅ loadtest passed — 8 concurrent players, 3599 operations, 180 req/s: no 5xx, no pool exhaustion, and §10.4 conservation unmoved (0 real deadlock(s) absorbed by the retry mapping).
+
+{"gate":"loadtest","command":"npm run loadtest","dbName":"omerta_rc1_loadtest_muafbslt","started":"2026-09-20T23:04:46.965Z","finished":"2026-09-20T23:05:47.021Z","status":0}

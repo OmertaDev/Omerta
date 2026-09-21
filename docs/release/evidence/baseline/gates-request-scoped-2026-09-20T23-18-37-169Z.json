@@ -1,0 +1,16 @@
+{
+  "id": "gates-request-scoped",
+  "command": [
+    "node",
+    "test/gates.js"
+  ],
+  "source": "12236868fd847299a6ae59ac9ec193bf049d6a17",
+  "trackedSourceDiffSha256": "2624f5515a80500c2debd0727b05826d35fcae7def5edf29155ddad8332f915a",
+  "started": "2026-09-20T23:18:37.302Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/gates-request-scoped-2026-09-20T23-18-37-169Z.log",
+  "finished": "2026-09-20T23:18:50.111Z",
+  "exitCode": 0,
+  "signal": null
+}

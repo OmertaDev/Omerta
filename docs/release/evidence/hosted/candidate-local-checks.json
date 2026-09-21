@@ -1,0 +1,29 @@
+{
+  "source": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+  "sourceParent": "5f735c57",
+  "recordedAt": "2026-09-20T23:27:16.1599459Z",
+  "workingDirectory": "clean codex/rc1-closure-proof worktree",
+  "platform": "Windows",
+  "node": "24.19.0",
+  "results": [
+    {
+      "command": "node tools/knowledge.js check",
+      "nodes": 7555,
+      "exitCode": 0,
+      "edges": 33524
+    },
+    {
+      "command": "node test/gates.js",
+      "testSuites": 259,
+      "exitCode": 0,
+      "registeredOrDeclared": 259
+    },
+    {
+      "command": "node test/docs.js",
+      "backendModules": 273,
+      "exitCode": 0,
+      "markdownFiles": 605,
+      "testFiles": 267
+    }
+  ]
+}

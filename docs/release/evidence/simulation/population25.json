@@ -1,0 +1,2860 @@
+{
+  "schemaVersion": 1,
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "seed": "rc1-entry-20260920",
+  "population": 25,
+  "rounds": 2,
+  "node": "v24.19.0",
+  "startedAt": "2026-09-20T22:51:39.976Z",
+  "engine": "real PostgreSQL; Fastify production handlers through app.inject",
+  "scope": "Fresh account/character entry, server-issued Player Commands and exact request replay",
+  "limitations": [
+    "Sequential requests do not prove concurrent latency or locking.",
+    "Seed fixes actor decisions and Math.random, not UUIDs, database time or scheduling.",
+    "No model of aggression, Families, churn, resource equilibrium, workers or a real-player cohort.",
+    "Only resources mutated by the recorded commands are exercised; static invariant passes do not prove every transition."
+  ],
+  "commands": {
+    "mystery.start": 50
+  },
+  "requests": 200,
+  "transitions": 127,
+  "invariantAssertions": 6985,
+  "replays": 50,
+  "playersWithoutCommand": [],
+  "history": [
+    {
+      "player": 0,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "dc496b7b74b0db3adf4f0635a7b0c3ade5208cf451370903a2a7b09bb2f750bb.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 1,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "8107167b21f1a1b70d5b4ad0e90f7de277dc405c7cbaeb9b3c6573009f848629.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 2,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "7f393b996cb07f2f25de167ff26ed31a5fb33441d8283c93d0f47829665ad823.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 3,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "5ba1de16ba0cb5e163daf7bc574ca9e85bc3433e8c161ce68a09a1888bf3401c.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 4,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "0028e534993ecc1037d2d93d81f108f27cda2e55fc30f6eaa839a67cae21fa7f.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 5,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "9b3caaaa8c7ddbbf2809b5366022ad243986bd4912a0f62adb1c64ddc65110c8.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 6,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "1bd6379d1944adf4f7e9899b473faed6b4f07f7a4c25bf7102b935c40e7b3185.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 7,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "bdcf5e8ca0a177d28042e71ede01ef5c79e32e71db28541fb540d3d2d2e3ffc1.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 8,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "ddae251b63fcccef001cb6ea1a5cf75e4be267ac3316951025b9439c7a649590.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 9,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "0d3c2dd28b10e49f61d5e73440d8a562ab4309e4ec4bfce90b764e6efde2f7d9.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 10,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "e7f68a23b95c601caf10b9c8c67774e200e88f780a8b9970b168c5559ff1bbc2.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 11,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "37a62032e3b4a99fe4dac513d2580fd77a6c73a996e9abafdfd58b3027d1532d.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 12,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "c4bdd48b8b55d38845be00578075e44e0bd2e834ce2312366ce531bd0d9073e7.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 13,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "f694ddc38851f9388007e4553b4f71784c5a799bf7cf19efdbf00d6bbdfd21dd.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 14,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "7ee2f6e4a69a2abe83a1fde117473d4a72be3a6394877d5918a522c53dce07a8.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 15,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "1042caf381d0ed30969158074e7da2da89edd9097b43e2494c5419c131c252ae.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 16,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "0010b6822e4a516aea92a99d173578b71ff696feb1f7e121b2a9bf246b867d5b.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 17,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "24f972962b59e8df5ab740f51e029a7b0712246ef349fea5d9c1903fbb065b6e.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 18,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "cc3cc77f87d7246405917de5afa97677b8334cb795311d5230d575eda71c9692.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 19,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "3f0f26bdfe3e8840c1392c559ef58c17fca9c8f41090d9771bb3843654f64dfe.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 20,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "760c6f6284367bc16a02ce291e4e5d4702783c5b2b98d5d77f68104148cd0547.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 21,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "ec5623edae74bb800ff9652927f5df1296406a7eed49136006656d952e293f9b.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 22,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "84ad73b46e877aa8f2fa9c48630516dace94e50f7a5d68ec6d6e23fc8de567cc.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 23,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "db2f401fe7611d64e18c1c202aef12db7a09a1bd05ba5646a67041b4fb3f3253.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 24,
+      "round": 0,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-aftermath"
+      },
+      "executionId": "a9ac90ae84e1dca1825cba0612b04f7e2a42e01c15e73b4e21e661ee8ff9a4e8.c50c7c04ebae92d64a2dcc2b6ed74e9ce5ba65c04567f7df79ba513a596e1011",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 0,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "034bf0da0f9d5033700f4300b00674eb29632361bfa47b82633b25dc91f9d002.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 1,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "a377a9a39ac3a00cb6e3fcdcc3a9cbc9f3df8cd139f6f298dfb4599cc46f84e3.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 2,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "a5fea3af2146d082fed86f4c451fdc4e89090c06c95f9203a1a26e31e30e9145.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 3,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "880faef244368a6978859a6381f06af3c0134b2bf6babd2f98bb901846455b61.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 4,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "e09185353a0ba57444a8d9a62bbe913c5a5165579b42faceab788ea5d964ee3a.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 5,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "99dc93b1540afcd9c1a06571a246263bdf365424106b91a11c6083352b9447a3.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 6,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "3068545dd6ae8a7f6e880c1074219d21ccbca67cf95abadf492103f6fa51ef99.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 7,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "43dd8f520b99c1aa82a3a03ad84b932ab57ac690ffaf9134bb712a57fb6c6593.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 8,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "69ac0686b96700789ba4785093a77c6a2c73f7c7da82f373d9722392b3d2d5f9.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 9,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "c5b726bc7eb65ea367cd7623c53781c4e675b0ccf41f7624b55c8be4e8ad0230.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 10,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "b8a4deff8783fc7d0646be1c2a8bf51673ca5d356874b367b9a5f38528cbff82.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 11,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "f59bf98b3f8dc92217d486e0f81c76ba2f375b00f460eb230b9c78661f0a1eab.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 12,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "a820576d35cc5ac1f874b85544d25510fd87ac0283cb9ba19c21021aaf5225e1.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 13,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "3089a0c0f9983a9022fdeeae491f56ba78b1f5826623eefe804c6cd0a527d1bb.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 14,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "74c2658d12c2a80f5942b78f133413210d21ca8ae709ab6392438358019e6031.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 15,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "4b6f5e054f4a2cbd97dbbbdee5862aa49b5a11152e398fab33971b3303ef82c1.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 16,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "2295e3384cf1e7620b8c426e843cd350e12346134974cb7fc8f884766cde6432.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 17,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "7cb5bae20fd1789252ad3f071e419b2ee07853bc8901f1d14b1d2ca98d828555.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 18,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "1e0d68757785c21b818a36db95cd6b53352ab4299752bdf0fe18e19c64006569.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 19,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "76dd5dc3de6cadb09b12a7e57267777f872e9b0a3df67980d3f6a40ab7ee6fba.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 20,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "2b8f776e0aef66c4281dd3d8e9497898f0490d1ff14507965c6eaa507df77215.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 21,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "8158cb745e6d120325689795bc05a94b99f255c5b1cad7cfd1e10326dc6f97a8.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 22,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "b6a6f1f437909db5b839dea3ac56df0f086e5b4064dd02bef1a8c5591f26ebd1.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 23,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "3b1e9a312b20f56623df01558029443297942533108f6128a2d38b8a6660d53f.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    },
+    {
+      "player": 24,
+      "round": 1,
+      "command": "mystery.start",
+      "parameters": {
+        "graphId": "furnace-archive-deduction"
+      },
+      "executionId": "a1b279aa5ac77ce77b53bbcabc59b89784c0bee96fd647254fd01fe490b61af9.dca6ca790a26c68ed10dbccf2f3c7b5615ccc33edc8d14e8f0ab451501f75592",
+      "result": "COMPLETED"
+    }
+  ],
+  "failures": [],
+  "databaseVersion": "18.4",
+  "initialChecks": [
+    {
+      "name": "character cash",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "lhs": 20000,
+      "rhs": 20000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeEmission": 0,
+      "since": "v3 step 1"
+    },
+    {
+      "name": "plex mint retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimePlex": 0,
+      "since": "the mint is ETH only; respawn + Store SKUs are payable in earned $OMR"
+    },
+    {
+      "name": "portfolio retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "since": "D11 2026-08-05"
+    },
+    {
+      "name": "desk inventory backed",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeIn": 0,
+      "lifetimeSold": 0,
+      "lifetimeBought": 0
+    },
+    {
+      "name": "desk inventory ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "recycled": 0
+    },
+    {
+      "name": "desk sales ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "sold": 0
+    },
+    {
+      "name": "auction escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "logicalSinks": 0,
+      "carIds": [],
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "salvageCarSinks": 0
+    },
+    {
+      "name": "cb conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "unknown": []
+    },
+    {
+      "name": "content_artifact_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "finalChecks": [
+    {
+      "name": "character cash",
+      "lhs": 12500,
+      "rhs": 12500,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "gang treasuries",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "commission escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "bounty escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "$OMR conservation",
+      "lhs": 20000,
+      "rhs": 20000,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "emission faucet retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeEmission": 0,
+      "since": "v3 step 1"
+    },
+    {
+      "name": "plex mint retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimePlex": 0,
+      "since": "the mint is ETH only; respawn + Store SKUs are payable in earned $OMR"
+    },
+    {
+      "name": "portfolio retired",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "since": "D11 2026-08-05"
+    },
+    {
+      "name": "desk inventory backed",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "lifetimeIn": 0,
+      "lifetimeSold": 0,
+      "lifetimeBought": 0
+    },
+    {
+      "name": "desk inventory ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "recycled": 0
+    },
+    {
+      "name": "desk sales ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "sold": 0
+    },
+    {
+      "name": "auction escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "logicalSinks": 0,
+      "carIds": [],
+      "issues": []
+    },
+    {
+      "name": "car conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "salvageCarSinks": 0
+    },
+    {
+      "name": "cb conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ammo conservation",
+      "lhs": 625,
+      "rhs": 625,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "market escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "favor escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "turf contest escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "loan house pool",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den profit",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "den distributions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "ring poker escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "grand prix escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "stakes escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "futurity escrow",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "agent referral claim ledger",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph object transitions",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation history",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation custody",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "family operation capital",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "reason vocabulary",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "unknown": []
+    },
+    {
+      "name": "content_artifact_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item_definition_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_membership_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_selection_integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_history_policy",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot definition integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot quantity integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot custody integrity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot lineage parity",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "name": "item lot conservation",
+      "lhs": 0,
+      "rhs": 0,
+      "drift": 0,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "tableRows": [
+    {
+      "relname": "account_gear",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "account_persistent",
+      "n_live_tup": "25"
+    },
+    {
+      "relname": "accounts",
+      "n_live_tup": "25"
+    },
+    {
+      "relname": "activity_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "agent_acquisition_budgets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "agent_referral_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "amm_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "auction_consignments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "auction_wins",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "auctions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_city_pool",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_payouts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bank_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bans",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "batches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bespoke_pieces",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bespoke_serials",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "blackjack_hands",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bloodline",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boats",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_offerings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_quotes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bond_reserve",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "bonds",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounties",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounty_contributors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "bounty_gang_roster",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_bouts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "boxing_title",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "broker_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "broker_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "broker_weights",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "businesses",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "campaign_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "career_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "cars",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "chain_cursor",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "chain_reserve",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "character_assets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_cargo",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_disciplines",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_guns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_items",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_rackets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_skills",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "character_traits",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "characters",
+      "n_live_tup": "25"
+    },
+    {
+      "relname": "chat_messages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "clue_scrolls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coalition_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coalitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "collection_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_overrides",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_proposals",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_ticker_votes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_ticker_votes_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_vetoes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "commission_votes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "community_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "consiglieri",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "contact_calls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "contacts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_activation_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_artifacts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundle_item_definitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_bundles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_exchange_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_exchange_listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_effects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_facts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instance_nodes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_inventory_lots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_skill_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_source_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_source_epochs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_story_flags",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_supply_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_tool_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_tool_states",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "content_work_order_runs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_ambushes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_cargo",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_hauls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "convoy_insurance",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "convoys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_archive_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_archive_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_acl_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_acl_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_grants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claim_links",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_commands",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_definitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "coordination_knowledge_archives",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "corner_chains",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "corner_jobs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_heist_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_heists",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_invites",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_objective_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_objectives",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_requests",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crew_targets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "crews",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "daily_progress",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "deed_reimports",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "den_volume",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "desk_auctions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "desk_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "desk_inventory",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "desk_sales",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dev_fund",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "dex_swaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "digs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_action_intents",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_campaigns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_clock",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_definitions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_selections",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "director_situations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "district_bids",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "districts",
+      "n_live_tup": "6"
+    },
+    {
+      "relname": "dm_blocks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dm_messages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "drop_allocations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "drop_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "duels",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_divorces",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_marriages",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "dynasty_tokens",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "email_confirm_sent",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "estate_staff",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "estates",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "eth_vault",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "event_results",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "exchange_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "fair_commitments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_aggro",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_buybacks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "family_yield_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "favors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fee_payments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "feud_peace_offers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fight_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fight_fixes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "fighters",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "firsts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurities",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_runners",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "futurity_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "gala_guests",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_portfolios",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gang_relations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "gangs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "grand_prix_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "hustles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "idempotency",
+      "n_live_tup": "49"
+    },
+    {
+      "relname": "informants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "invite_codes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_definition_activations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_definition_versions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_instances",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_lots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_mutation_guards",
+      "n_live_tup": "50"
+    },
+    {
+      "relname": "item_mutation_inputs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_mutation_outputs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "item_stacks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "keeper_transactions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "kill_log",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "landmarks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "limited_runs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_flow_receipts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_market_status",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_settlements",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "liquidity_sync_cursors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "loan_house",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "loans",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "lp_depth",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "makings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "market_listings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "masteries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mastery_legend",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "megaproject_contributions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "megaprojects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mentor_offers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mentorships",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mission_omr_claimed",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "missions_done",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mod_actions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mystery_choices",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "mystery_instances",
+      "n_live_tup": "50"
+    },
+    {
+      "relname": "mystery_node_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "nft_reimports",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "notifications",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_aggression",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_drills",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_errands",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_favors",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_gain",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_grudges",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_hits",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_leads",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_standing",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "npc_wars",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "numbers_tickets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "oauth_states",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "operation_escrow",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_break_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_breaks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_contraband",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pen_talks",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "player_command_boards",
+      "n_live_tup": "74"
+    },
+    {
+      "relname": "poker_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_ring_seats",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "poker_tables",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "poker_tournaments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pol_fees",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "pol_pairings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "population_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "port_intercepts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "portfolios",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "primetime_happy",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "primetime_rally",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "push_subscriptions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "racers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "referral_push",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "referrals",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rigs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rival_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rng_audit",
+      "n_live_tup": "25"
+    },
+    {
+      "relname": "route_notoriety",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_dividend_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_family_dividend_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_apply_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_batches_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_attestations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_recovery_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_clearance_safe_proposals_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_episode_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_episodes_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_evaluations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_finalized_clearances_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_asset_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_attempts_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_checkpoint_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_overlay_event_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_incidents_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_overlay_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_overlay_runtime_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_health_pages_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_private_provider_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_reviewer_actions_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_health_runtime_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_endorsements_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_reviewer_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nomination_safe_proposals_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_nominations_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_activation_instances_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_asset_lifecycle_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_ballot_events_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_attempts_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_checkpoint_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_event_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_lifecycle_runtime_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "rwa_registry_publisher_current_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_registry_publisher_history_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "rwa_reviewer_idempotency_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "schema_meta",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "searches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "season_recaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "season_records",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "secrets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sell_tax_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "shipment_days",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "shipment_takes",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "social_claims",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "soldiers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sov_siege_cooldowns",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "sov_structures",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "speakeasies",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "speakeasy_patrons",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stake_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stakes_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stakes_races",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stakes_state",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stash",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_allocations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_asset_active_heads_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_asset_versions_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_buys",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_evidence_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_getter_checkpoint_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_getter_inbox_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_sync_lock_v2",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "stock_catalog_sync_runs_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_catalog_sync_state_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_deliveries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_token_catalog",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "stock_token_catalog_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_cosmetics",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_grants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "store_payments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_deed_history",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_deeds",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "street_tax",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "telemetry",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "territory_rackets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_candidates_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_days_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_results",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "ticker_ballot_results_v2",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "track_bets",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "track_entries",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "transactions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "v4_oracle_keeper_attempts",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vendettas",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vig_buyback",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vig_prize_pool",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "vig_revenue",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vouchers",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "vouches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wage_snapshots",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wallet_challenges",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wallet_rolls",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "weekly_bulletin",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wire_informants",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wire_watches",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "wiretaps",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "worker_heartbeat",
+      "n_live_tup": "1"
+    },
+    {
+      "relname": "world_kernel_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_kernel_objects",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_npcs",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_capital",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_commitments",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_contributions",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_events",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_node_state",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operation_roles",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_operations",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_raid_members",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_raids",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_recipe_usage",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "world_uprisings",
+      "n_live_tup": "0"
+    },
+    {
+      "relname": "x_checks",
+      "n_live_tup": "0"
+    }
+  ],
+  "databaseBytes": 26064575,
+  "ok": true,
+  "completedAt": "2026-09-20T22:52:13.682Z",
+  "commandLatency": {
+    "count": 100,
+    "p50": 60.77690000000075,
+    "p95": 150.73950000000332,
+    "max": 212.33990000000085
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "command": "C:/Users/Jorge/.foundry/bin/forge.exe test --root omerta-contracts -vvv",
+  "cwd": "C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta",
+  "frozenCommit": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "releaseCandidateCommit": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+  "started": "2026-09-20T22:49:49.0148356Z",
+  "finished": "2026-09-20T23:36:54.6598935Z",
+  "exit": 0,
+  "suites": 82,
+  "passed": 1247,
+  "failed": 0,
+  "skipped": 0,
+  "testExecutionSeconds": 1924.0,
+  "fuzzRuns": 512,
+  "fuzzSeed": null,
+  "invariantRuns": 512,
+  "invariantDepth": 500,
+  "stockRegistryInvariantCalls": 256000,
+  "stockRegistryInvariantReverts": 0,
+  "log": "foundry-provisioned.log"
+}

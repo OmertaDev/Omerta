@@ -1,0 +1,6 @@
+phase2-definition-invariants: legacy, register-only, selected policy and historical/current separation pass
+phase2-definition-invariants: 30 operational/unexpected verifier read refusals preserve safe owner errors, no alerts, state and gate usability
+phase2-definition-invariants: 34 independently restored corruption cases pass
+phase2-definition-invariants: whole-callback cross-alias reads and commit/compensation interleavings pass
+phase2-definition-invariants: populated legacy R2 refusal, pinned R1, Bellini lots/jobs/skill/tool/exchange, Phase 1 custody/replay and ledger equal after every Phase 2 boundary
+phase2-definition-invariants: alert delivery occurs after gate release

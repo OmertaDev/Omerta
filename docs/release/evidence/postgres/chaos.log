@@ -1,0 +1,286 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+THE CHAOS HARNESS — interrupting things on purpose
+
+1. THE WORKER IS KILLED MID-SWEEP, THEN RUNS AGAIN
+  ✓ set up 3 live auction lot(s) with real bids to settle
+  … worker SIGKILLed mid-tick at 120ms, 400ms, 900ms
+  ✓ §10.4 unmoved by three interrupted sweeps plus a full one
+  ✓ each bid lot settled EXACTLY once: 3 payout(s), 3 settled, 3 bid on
+  ✓ no lot left in a half-settled state
+
+2. BACKENDS TERMINATED MID-TRANSACTION, UNDER LOAD
+idempotency: store UPDATE failed — key left in-progress, value may have committed terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+idempotency: store UPDATE failed — key left in-progress, value may have committed terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] unreachable: Client has encountered a connection error and is not queryable
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+  ✓ §10.4 unmoved while 80 backend(s) were killed mid-transaction
+     outcomes: 200×319  503:db_down×78
+  ✓ the server is still serving after the reaper
+
+3. THE DATABASE IS STOPPED AND RESTARTED UNDER LOAD
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] idle client error (pool recovers on next checkout): Connection terminated unexpectedly
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+[db] unreachable: connect ECONNREFUSED 127.0.0.1:55440
+     during outage: 503:db_down×6
+     after restart: 200:ok×6
+  ✓ THE API PROCESS SURVIVED the database going away
+  ✓ /health answers 503 during the outage (a monitor can alert on the code alone)
+  ✓ players get 503 db_down, never a 500 that reads like a bug
+  ✓ RECOVERED BY ITSELF after Postgres returned — no redeploy, no restart
+  ✓ §10.4 unmoved across the whole outage
+
+4. (RETIRED) THE WAGE EPOCH
+   ⏭  skipped — the Street Wage is retired (economy v3 step 1); nothing mints $OMR in game.
+
+5. TWO-PARTY TRANSFERS, INTERRUPTED
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+first blood (post-commit, non-fatal) Error: Connection terminated unexpectedly
+    at C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\node_modules\pg\lib\client.js:652:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async startFirstBlood (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/firstblood.js:65:17)
+    at async Module.withTwoCharacters (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/game.js:1438:18)
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+[db] unreachable: terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): Connection terminated unexpectedly
+[db] unreachable: Connection terminated unexpectedly
+     outcomes: 200×44  503:db_down×24
+  ✓ 44 two-party transfer(s) completed while 31 backend(s) were being killed
+  ✓ §10.4 unmoved: no transfer was left half-applied
+  ✓ the payer's books match their ledger exactly after the killings ($6006502)
+
+6. SIGTERM MID-REQUEST — the deploy drain
+  ✓ the child server booted and answers /health (5s)
+  ✓ the drain fixture created its own character
+  ✓ the drain fixture holds exactly its character row
+  ✓ the request is provably parked on the row lock when the signal lands
+  ✗ the request in flight when SIGTERM landed still got its answer (HTTP undefined) — the blocked request died instead of finishing: {"err":"ECONNRESET"}
+  ✓ a connection attempted after SIGTERM is refused (ECONNRESET)
+  ✗ the child exited 0 inside the drain window — a clean deploy, not a kill — killed by SIGTERM — Node's default handler, no drain ran
+  ✗ and announced the drain in its log — reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ backend (M1–M5) listening on :28438
+
+
+❌ chaos FAILED
+   - the request in flight when SIGTERM landed still got its answer (HTTP undefined) — the blocked request died instead of finishing: {"err":"ECONNRESET"}
+   - the child exited 0 inside the drain window — a clean deploy, not a kill — killed by SIGTERM — Node's default handler, no drain ran
+   - and announced the drain in its log — reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ backend (M1–M5) listening on :28438
+
+EXIT_CODE=1

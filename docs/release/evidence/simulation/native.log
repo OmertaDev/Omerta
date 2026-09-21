@@ -1,0 +1,4 @@
+{"event":"start","identity":"25-rc1-alpha-0"}
+{"event":"complete","identity":"25-rc1-alpha-0","status":"PASS_SCOPED","durationMs":30833}
+{"event":"start","identity":"25-rc1-beta-0"}
+{"event":"complete","identity":"25-rc1-beta-0","status":"PASS_SCOPED","durationMs":37607}

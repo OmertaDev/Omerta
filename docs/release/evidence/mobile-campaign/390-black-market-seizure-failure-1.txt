@@ -1,0 +1,811 @@
+OMERTÀ
+rc1m_390_3 bRunner · gen 1 · lvl 32 · docks ⇄ · BDCK
+$OMR
+CODEX
+?
+sign out
+Pull your first job
+OPEN STREETS →
+$99,000
+100hp
+44nrg
+15nrv
+0heat
+THE SHEET
+$99,000
+bank
+$0
+$OMR
+0 liquid · 0 staked
+respect
+LVL 32 10,000
+240 to lvl 33
+the full sheet ▾
+heal check in refresh
+check in — day 1 pays $11,200, and tomorrow it's $14,400
+LAST WORD
+—
+START HERE
+STREETS
+EARNERS
+VICE
+BLOOD
+FAMILY
+LEGIT
+DESK
+THE CONSOLE
+The Family
+Command Center
+The Map
+Street Deeds
+The Crew
+Find People
+My Profile
+YOUR STREET · YOUR PEOPLE · YOUR NEXT MOVE
+COMMAND CENTER
+
+The city's business, as it reaches your desk. Follow the evidence. Put your people to work.
+
+Refresh world
+rc1m_390_3 bRunner · docks
+Crew: Dock b Crew
+Family: Dock b Family
+Updated 9/20/2026, 7:19:12 PM
+What changed?
+
+The Canal Supply Depot: market open.
+
+Your evidence lets you understand this change. · 9/20/2026, 7:19:00 PM
+This change still shapes the street.
+Related business
+Seize market
+Supply market
+Restore supply
+Expose market
+
+The Canal Supply Depot: diverted.
+
+Your evidence lets you understand this change. · 9/20/2026, 7:18:46 PM
+Related business
+Seize market
+Supply market
+Restore supply
+Expose market
+
+The Canal Supply Depot: stranded.
+
+Your evidence lets you understand this change. · 9/20/2026, 7:18:05 PM
+Related business
+Seize market
+Supply market
+Restore supply
+Expose market
+What is happening around us?
+A dock worker wants a quiet word
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+Your stake: A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+What you know: A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+Who can help: Your Crew · Your Family
+
+Until 9/22/2026, 8:18:04 PM
+tide ledger
+AVAILABLE
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+Until 9/20/2026, 7:20:00 PM
+tide ledger
+investigate
+AVAILABLE
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+Until 9/20/2026, 7:20:00 PM
+investigate
+What needs my attention?
+FAMILY
+Share Depot route with Dock b Family
+This work appears in the Family business available to you.
+
+Your next move is ready.
+
+Ready for your next move.
+Share Depot route with Dock b Family
+Organize: Recover the Missing Shipment
+This work appears in the Family business available to you.
+
+This concerns your Family.
+
+Still needed: This requires current Family leadership and an eligible Crew.
+Route Organizer
+Cargo Runner
+
+Other people are needed for this work.
+
+Preparation is still needed.
+Organize: Recover the Missing Shipment
+16 more pieces of business
+CREW
+Share Depot route with Dock b Crew
+This is part of your current Crew business.
+
+Your next move is ready.
+
+Ready for your next move.
+Share Depot route with Dock b Crew
+Your Crew has unfinished business
+
+Review your current Crew objective.
+
+You belong to this Crew.
+
+Your people are working toward a shared objective.
+
+Other people are needed for this work.
+
+Who can help: rc1m 390 3 bBoss · rc1m 390 3 bRunner
+
+Your Crew objective · 0 / 80
+PERSONAL
+Craft: Stamp a Canal Cargo Seal
+Your equipment and workshop records make this work visible.
+
+This work is waiting for your attention.
+
+Still needed: Travel to the required district.
+2 scrap steel
+1 salvage parts
+Preparation is still needed.
+Craft: Stamp a Canal Cargo Seal
+Craft: Cut an Archive Turn Key
+Your equipment and workshop records make this work visible.
+
+This work is waiting for your attention.
+
+Keep investigating. Further requirements are not yet known.
+Preparation is still needed.
+Craft: Cut an Archive Turn Key
+INTELLIGENCE
+Investigate: The Missing Carbon Index
+This lead comes from the evidence and investigations available to you.
+
+Your next move is ready.
+
+Ready for your next move.
+Investigate: The Missing Carbon Index
+Investigate: The Split Ledger
+This lead comes from the evidence and investigations available to you.
+
+Your next move is ready.
+
+Ready for your next move.
+Investigate: The Split Ledger
+12 more pieces of business
+WORLD
+tide ledger
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+You can see this part of the city.
+
+Your next move is ready.
+
+Who can help: Your Crew · Your Family
+
+Ready for your next move.
+3 days remain.
+tide ledger
+investigate
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+You can see this part of the city.
+
+Your next move is ready.
+
+Who can help: Your Crew · Your Family
+
+Ready for your next move.
+3 days remain.
+investigate
+4 more pieces of business
+What can I do?
+tide ledger
+AVAILABLE
+
+A dock worker is asking for careful readers of the shipping register. Your Crew can investigate the record and compare the tide ledger.
+
+Until 9/20/2026, 7:20:00 PM tide ledger
+Share Depot route with Dock b Family
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Share Depot route with Dock b Family
+Investigate: The Missing Carbon Index
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Investigate: The Missing Carbon Index
+Open case: Review a Recovery Plan
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Open case: Review a Recovery Plan
+Open case: The Dock Noticeboard
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Open case: The Dock Noticeboard
+Investigate: The Split Ledger
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Investigate: The Split Ledger
+12 more moves
+What am I waiting for?
+Organize: Recover the Missing Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM Organize: Recover the Missing Shipment
+Organize: Stabilize the Seized Dock Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM Organize: Stabilize the Seized Dock Route
+Organize: Intercept the Dock Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM Organize: Intercept the Dock Shipment
+Seize market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM Seize market
+19 more moves
+Closed business
+What is my Crew doing?
+Dock b Crew
+
+rc1m_390_3 bBoss · rc1m_390_3 bRunner
+
+crimes · 0 / 80
+
+Share Depot route with Dock b Crew
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Share Depot route with Dock b Crew
+What is my Family doing?
+
+Dock b Family · soldier
+
+Share Depot route with Dock b Family
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM Share Depot route with Dock b Family
+
+No visible Family relations.
+
+Recover the Foundry Archive
+
+Organizer · Locksmith · Supplier · Researcher
+
+Organize: Recover the Foundry Archive
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Recover the Foundry Archive
+Protect the Dock Shipment
+
+Route Organizer · Shipment Runner
+
+Organize: Protect the Dock Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Protect the Dock Shipment
+Intercept the Dock Shipment
+
+Route Organizer · Shipment Runner
+
+Organize: Intercept the Dock Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Intercept the Dock Shipment
+Restore the Protected Dock Route
+
+Route Organizer · Shipment Runner
+
+Organize: Restore the Protected Dock Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Restore the Protected Dock Route
+Stabilize the Seized Dock Route
+
+Route Organizer · Shipment Runner
+
+Organize: Stabilize the Seized Dock Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Stabilize the Seized Dock Route
+Maintain the Crew Canal Crossing
+
+Route Organizer · Crew Canal Runner
+
+Organize: Maintain the Crew Canal Crossing
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Maintain the Crew Canal Crossing
+Register a Load on the Disrupted Route
+
+Route Organizer · Cargo Runner
+
+Organize: Register a Load on the Disrupted Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Register a Load on the Disrupted Route
+Recover the Missing Shipment
+
+Route Organizer · Cargo Runner
+
+Organize: Recover the Missing Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Recover the Missing Shipment
+Intercept the Missing Shipment
+
+Route Organizer · Cargo Runner
+
+Organize: Intercept the Missing Shipment
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Intercept the Missing Shipment
+Destroy the Stranded Depot
+
+Route Organizer · Cargo Runner
+
+Organize: Destroy the Stranded Depot
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Destroy the Stranded Depot
+Establish the Canal Black Market
+
+Route Organizer · Cargo Runner
+
+Organize: Establish the Canal Black Market
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Establish the Canal Black Market
+Supply the Canal Black Market
+
+Route Organizer · Cargo Runner
+
+Organize: Supply the Canal Black Market
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Supply the Canal Black Market
+Expose the Canal Black Market
+
+Route Organizer · Cargo Runner
+
+Organize: Expose the Canal Black Market
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Expose the Canal Black Market
+Restore the Registered Supply Route
+
+Route Organizer · Cargo Runner
+
+Organize: Restore the Registered Supply Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Restore the Registered Supply Route
+Seize the Canal Market Route
+
+Route Organizer · Cargo Runner
+
+Organize: Seize the Canal Market Route
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Seize the Canal Market Route
+Secure the Shipping Records
+
+Route Organizer · Cargo Runner
+
+Organize: Secure the Shipping Records
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Secure the Shipping Records
+Publish an Uncorroborated Allegation
+
+Route Organizer · Cargo Runner
+
+Organize: Publish an Uncorroborated Allegation
+BLOCKED
+
+This requires current Family leadership and an eligible Crew.
+
+Until 9/20/2026, 7:20:00 PM
+Organize: Publish an Uncorroborated Allegation
+Establish the Canal Black Market · completedIntercept the Missing Shipment · completed
+Establish the Canal Black Market
+
+completed · expires 9/21/2026, 7:18:49 PM
+
+Route Organizer · filled
+
+1 participation · spent
+
+1 prerequisite · spent
+
+Cargo Runner · your role
+
+1 canal cargo seal · spent
+
+1 wire · spent
+
+Leave
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Leave
+Contribute: Mat wire
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Contribute: Mat wire
+Withdraw: Item canal cargo seal
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Withdraw: Item canal cargo seal
+Expire
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Expire
+Join as Route Organizer
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Join as Route Organizer
+Commit: Item canal cargo seal
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Commit: Item canal cargo seal
+Commit: Mat wire
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Commit: Mat wire
+Withdraw: Mat wire
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Withdraw: Mat wire
+Execute
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Execute
+Join as Cargo Runner
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Join as Cargo Runner
+Approve
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Approve
+Publish
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Publish
+Contribute: Item canal cargo seal
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Contribute: Item canal cargo seal
+Cancel
+COMPLETED
+
+Review the operation roles and readiness.
+
+Until 9/20/2026, 7:20:00 PM
+Cancel
+Operation history
+What have I discovered?
+The Canal Shipping Register
+
+completed
+
+Read the Canal Register · The register names the depot and its cargo seals. Every load still needs a working route and supplies from someone's stores.
+
+Keep the Shipping Instructions
+
+Copy the Depot Instructions
+
+depot.route
+
+infrastructure:canal_supply_depot
+
+omerta.knowledge.canal-network · Your discovery · 9/20/2026, 7:18:27 PM
+Share Depot route with Dock b Family
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Share Depot route with Dock b Family
+Share Depot route with Dock b Crew
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Share Depot route with Dock b Crew
+Cases
+A Carbon Copy Survives
+
+Not started
+
+Open case: A Carbon Copy Survives
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: A Carbon Copy Survives
+Furnace Archive Deduction
+
+Not started
+
+Open case: Furnace Archive Deduction
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: Furnace Archive Deduction
+Furnace Archive Aftermath
+
+Not started
+
+Open case: Furnace Archive Aftermath
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: Furnace Archive Aftermath
+The Tide Ledger
+
+Not started
+
+Open case: The Tide Ledger
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: The Tide Ledger
+Dock War Aftermath
+
+Not started
+
+Open case: Dock War Aftermath
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: Dock War Aftermath
+The Dispatch Register
+
+Not started
+
+Open case: The Dispatch Register
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: The Dispatch Register
+The Dock Noticeboard
+
+Not started
+
+Open case: The Dock Noticeboard
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: The Dock Noticeboard
+Review a Recovery Plan
+
+Not started
+
+Open case: Review a Recovery Plan
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: Review a Recovery Plan
+Your Shipping Records
+
+Not started
+
+Open case: Your Shipping Records
+AVAILABLE
+Until 9/20/2026, 7:20:00 PM
+Open case: Your Shipping Records
+
+Choose a case to review its notes.
+
+Places you can change
+The Canal Supply Depot
+
+docks · market open
+
+Seize market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Seize market
+Supply market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Supply market
+Restore supply
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Restore supply
+Expose market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Expose market
+docks
+Seize market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Seize market
+Supply market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Supply market
+Restore supply
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Restore supply
+Expose market
+LOCKED
+
+Keep investigating. No further details are known.
+
+Until 9/20/2026, 7:20:00 PM
+Expose market
+Workshop
+Cut an Archive Turn Key
+
+2 scrap steel + 1 wire → 1 archive turn key
+
+Craft: Cut an Archive Turn Key
+LOCKED
+
+Keep investigating. No further details are known.
+
+Cost: 2 scrap steel + 1 wire
+
+Until 9/20/2026, 7:20:00 PM
+Craft: Cut an Archive Turn Key
+Stamp a Canal Cargo Seal
+
+2 scrap steel + 1 salvage parts → 1 canal cargo seal
+
+Craft: Stamp a Canal Cargo Seal
+BLOCKED
+
+Travel to the required district.
+
+Cost: 2 scrap steel + 1 salvage parts
+
+Until 9/20/2026, 7:20:00 PM
+Craft: Stamp a Canal Cargo Seal
+Equipment & materials
+
+2 salvage parts standard
+
+8 scrap steel standard
+
+1 wire standard
+
+No unique equipment held.
+
+THE STREET
+●
+● 2 in the city
+LIVE FEED
+CITY CHAT
+FAMILY
+ combat
+ law
+ money
+ family
+ world
+● the work is paying off — +1 speed (52) from your Wheels trade
+● the work is paying off — +1 speed (51) from your Wheels trade
+● 🌐 word is goods run ~4% cheaper in cathedral than foundry today
+● crew invite
+— you are on the wire —
+START HERE
+STREETS
+EARNERS
+FAMILY
+•••
+MORE
+✓
+👣 rc1m_390_3 aRunner just showed up in The Docks

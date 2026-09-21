@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Scripts\slither.exe\__main__.py", line 6, in <module>
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 815, in main
+    main_impl(all_detector_classes=detectors, all_printer_classes=printers)
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 936, in main_impl
+    ) = process_all(filename, args, detector_classes, printer_classes)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 100, in process_all
+    compilations = compile_all(target, **vars(args))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\crytic_compile.py", line 870, in compile_all
+    compilations.append(CryticCompile(target, **kwargs))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\crytic_compile.py", line 231, in __init__
+    platform_config = platform_wd.config(str(config_root))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\platform\foundry.py", line 225, in config
+    subprocess.run(
+  File "subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+'forge config --json' running

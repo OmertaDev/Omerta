@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS: private console and boards, direct signup gate, safe recovery, import replay, view-only cookies, revocation and bans
+PASS: 5000 unique codes, per-account lifetime quota, no-crew gate, repeat-safe issuance, no cross-account disclosure, auth throttle

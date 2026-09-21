@@ -1,0 +1,84 @@
+{"gate":"test:director:postgres","command":"npm run test:director:postgres","script":"node test/director-runtime.js --postgres && node test/director-recovery.js --postgres && node test/director-dock-world.js --postgres && node test/director-commands.js --postgres && node test/director-api.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres && node test/director-migration.js --postgres && node test/director-network.js --postgres && node test/campaign-network-journey.js --postgres && node test/director-network-recovery.js --postgres","dbName":"omerta_rc1_test_director_postgres_muaf3yif","started":"2026-09-20T22:58:41.573Z"}
+PASS Director runtime: real pressure, disabled/simulation/shadow, durable creation/restart/replay, escalation, expiry and recovery
+Director recovery: expired aftermath resumes once after cooldown with durable recovery lineage
+Director recovery: season change records explicit recovery while preserving world consequences
+Director recovery: multiple physical outcomes between evaluations catch up to canonical campaign completion
+Director recovery: complete canonical chain committed before deadline survives a late worker restart
+Director recovery: terminal follow-up committed before deadline survives a late worker restart
+Director recovery: canonical outcomes committed after deadline remain late without erasing world consequences
+Director recovery: timely protection observed after campaign expiry preserves and resumes its unresolved aftermath
+Dock War protected: real domain branch, retry, custody and canonical history passed
+Dock War intercepted: real domain branch, retry, custody and canonical history passed
+Dock War alternate_route: real domain branch, retry, custody and canonical history passed
+Dock War opposition: concurrent Family operations, single canonical outcome and losing-side recovery passed
+director-commands: shared knowledge snapshot, authorized cards, opaque issuance, delegated discovery, stale/forged/expired denial, durable replay and succession PASS
+{"component":"player-command","phase":"request","correlationId":"8db8a13e-51f5-44ca-b71c-1db1f728ee3d"}
+{"component":"player-command","phase":"authorization","correlationId":"8db8a13e-51f5-44ca-b71c-1db1f728ee3d","outcome":"denied"}
+{"component":"player-command","phase":"response","correlationId":"8db8a13e-51f5-44ca-b71c-1db1f728ee3d","statusCode":401,"elapsedMs":4}
+{"component":"player-command","phase":"request","correlationId":"c48752bc-e749-4500-974b-ecd889c4b99e"}
+{"component":"player-command","phase":"authorization","correlationId":"c48752bc-e749-4500-974b-ecd889c4b99e","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"c48752bc-e749-4500-974b-ecd889c4b99e","statusCode":200,"elapsedMs":61}
+{"component":"player-command","phase":"request","correlationId":"eb4dff98-b18b-4251-942f-9c9a93d58897"}
+{"component":"player-command","phase":"authorization","correlationId":"eb4dff98-b18b-4251-942f-9c9a93d58897","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"eb4dff98-b18b-4251-942f-9c9a93d58897","statusCode":200,"elapsedMs":66}
+{"component":"player-command","phase":"request","correlationId":"ace67824-242a-4c7c-b588-34aa36d77546"}
+{"component":"player-command","phase":"authorization","correlationId":"ace67824-242a-4c7c-b588-34aa36d77546","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"ace67824-242a-4c7c-b588-34aa36d77546","statusCode":200,"elapsedMs":40}
+{"component":"player-command","phase":"request","correlationId":"a029b586-23d7-4feb-88b1-7f28f389ea27"}
+{"component":"player-command","phase":"failure","correlationId":"a029b586-23d7-4feb-88b1-7f28f389ea27","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"a029b586-23d7-4feb-88b1-7f28f389ea27","statusCode":400,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"ad22c1c7-cba4-402a-90cb-47733e80fa94"}
+{"component":"player-command","phase":"failure","correlationId":"ad22c1c7-cba4-402a-90cb-47733e80fa94","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"ad22c1c7-cba4-402a-90cb-47733e80fa94","statusCode":400,"elapsedMs":0}
+{"component":"player-command","phase":"request","correlationId":"5f2cc37e-67ec-470a-82f0-36cd0c138572"}
+{"component":"player-command","phase":"failure","correlationId":"5f2cc37e-67ec-470a-82f0-36cd0c138572","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"5f2cc37e-67ec-470a-82f0-36cd0c138572","statusCode":400,"elapsedMs":0}
+{"component":"player-command","phase":"request","correlationId":"6cdf459f-49cf-4875-848c-2be68d60b9d5"}
+{"component":"player-command","phase":"authorization","correlationId":"6cdf459f-49cf-4875-848c-2be68d60b9d5","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"6cdf459f-49cf-4875-848c-2be68d60b9d5"}
+{"component":"player-command","phase":"failure","correlationId":"6cdf459f-49cf-4875-848c-2be68d60b9d5","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"6cdf459f-49cf-4875-848c-2be68d60b9d5","statusCode":409,"elapsedMs":4}
+{"component":"player-command","phase":"request","correlationId":"6e3a1a31-1b53-415d-8b88-82b378bd5d87"}
+{"component":"player-command","phase":"failure","correlationId":"6e3a1a31-1b53-415d-8b88-82b378bd5d87","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"6e3a1a31-1b53-415d-8b88-82b378bd5d87","statusCode":400,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"afd8916f-aafc-4478-8254-8620e062e653"}
+{"component":"player-command","phase":"authorization","correlationId":"afd8916f-aafc-4478-8254-8620e062e653","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"afd8916f-aafc-4478-8254-8620e062e653"}
+{"component":"player-command","phase":"mutation","correlationId":"afd8916f-aafc-4478-8254-8620e062e653","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"afd8916f-aafc-4478-8254-8620e062e653","replayed":false,"changes":2}
+{"component":"player-command","phase":"opportunity","correlationId":"afd8916f-aafc-4478-8254-8620e062e653","replayed":false,"changes":2}
+{"component":"player-command","phase":"response","correlationId":"afd8916f-aafc-4478-8254-8620e062e653","statusCode":200,"elapsedMs":215}
+{"component":"player-command","phase":"request","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531"}
+{"component":"player-command","phase":"authorization","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531"}
+{"component":"player-command","phase":"mutation","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531","outcome":"completed","replayed":true}
+{"component":"player-command","phase":"consequence","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531","replayed":true,"changes":0}
+{"component":"player-command","phase":"opportunity","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531","replayed":true,"changes":0}
+{"component":"player-command","phase":"response","correlationId":"5cfd4bb6-b90a-4b92-8c1c-e4f7144e2531","statusCode":200,"elapsedMs":63}
+{"component":"player-command","phase":"request","correlationId":"1bbc5b9c-323b-4153-b3c7-e77304eca6ac"}
+{"component":"player-command","phase":"authorization","correlationId":"1bbc5b9c-323b-4153-b3c7-e77304eca6ac","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"1bbc5b9c-323b-4153-b3c7-e77304eca6ac"}
+{"component":"player-command","phase":"failure","correlationId":"1bbc5b9c-323b-4153-b3c7-e77304eca6ac","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"1bbc5b9c-323b-4153-b3c7-e77304eca6ac","statusCode":409,"elapsedMs":2}
+director-api: authenticated composed content, per-audience DTO, no enumeration/definition leak, strict opaque dispatch, real discovery, retry and account revocation PASS
+director-journey protected: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey intercepted: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+director-journey alternate_route: commands, shared situation, knowledge, coordination, canonical consequences, second generation, restart and completion PASS
+Director security: enumeration, ACL revocation, membership, forged/stale actions, duplicate workers, restart, expiry and definition tamper passed
+Director security: native canonical fact/event race preserves the campaign outcome branch
+director-migration: populated 44f48a743e549591bd125a1f678099b8382dd78f, two production migrations, canonical/Director receipt preservation and exact 17-constraint catalog PASS (PostgreSQL 180004)
+PASS network compiler, audience contracts, bounded pressure memory, saturation and quiet-world selection
+PASS immutable running version, future version admission, historical pins, restart and replay
+PASS recent resolved-operation pressure survives creation-window boundary without altering canonical timestamps or resources
+campaign-network-journey: Dock v1 preserved; issued-command shipment → market → corroborated non-traitor Informant; private evidence, conserved custody, restart and replay PASS
+campaign-network-journey supply_market: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey restore_supply: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey seize_market: materially distinct canonical state and actual inventory custody PASS
+campaign-network-journey redistribution: solo investigation, crafted evidence and same-Crew operation restore a distinct route PASS
+campaign-network-journey failed plan: actual failed-operation evidence, restricted participants, non-traitor correction and preserved losses PASS
+Campaign network: native concurrent contested operations, conserved provenance, refund replay and late restart PASS
+Campaign network: membership departure revalidation and domain custody recovery PASS
+Campaign network: issued Crew, item and deadline changes reject without partial effects PASS
+Campaign network: native transactional interruption, original issued retry and simultaneous duplicate commands PASS
+
+{"gate":"test:director:postgres","command":"npm run test:director:postgres","dbName":"omerta_rc1_test_director_postgres_muaf3yif","started":"2026-09-20T22:58:41.573Z","finished":"2026-09-20T23:04:00.283Z","status":0}

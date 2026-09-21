@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "log": "C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/hosted/cce72102-knowledge.log",
+      "exitCode": 0,
+      "command": "node tools/knowledge.js check"
+    },
+    {
+      "log": "C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/hosted/cce72102-gates.log",
+      "exitCode": 0,
+      "command": "node test/gates.js"
+    },
+    {
+      "log": "C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/hosted/cce72102-docs.log",
+      "exitCode": 0,
+      "command": "node test/docs.js"
+    }
+  ],
+  "recordedAt": "2026-09-20T23:44:48.3627372Z",
+  "source": "cce721029c86de7c6f0d875fef7cb8de29504dda"
+}

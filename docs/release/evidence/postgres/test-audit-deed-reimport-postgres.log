@@ -1,0 +1,7 @@
+{"gate":"test:audit:deed-reimport:postgres","command":"npm run test:audit:deed-reimport:postgres","script":"node test/audit/deed-reimport-order.js","dbName":"omerta_audit_deed_recovery","started":"2026-09-20T23:05:18.677Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+burn before Extracted: status=pending
+real Postgres: concurrent recovery sweeps applied exactly once
+PASS deed reimport event ordering (PostgreSQL): signed extraction, durable pending burn, exact recipient, once-only recovery and replay
+
+{"gate":"test:audit:deed-reimport:postgres","command":"npm run test:audit:deed-reimport:postgres","dbName":"omerta_audit_deed_recovery","started":"2026-09-20T23:05:18.677Z","finished":"2026-09-20T23:05:25.090Z","status":0}

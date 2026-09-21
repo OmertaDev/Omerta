@@ -1,0 +1,649 @@
+{
+  "frozenSource": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "candidate": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "generatedAt": "2026-09-20T23:39:25.767Z",
+  "executionStatus": "COMPLETE",
+  "pending": [],
+  "engine": "PostgreSQL 18.4 on disposable loopback cluster",
+  "baseline": {
+    "sim": "PASS_PGMEM",
+    "scale18x2": "PASS_PGMEM",
+    "invariants55": "PASS_PGMEM",
+    "director": "PASS_MODEL"
+  },
+  "postgresScale": {
+    "status": "PASS",
+    "players": 18,
+    "days": 2,
+    "checksPerSweep": 55,
+    "perTransitionSweeps": 1465,
+    "evidence": "postgres-scale-invite-off.log"
+  },
+  "directorModel": {
+    "status": "PASS_MODEL",
+    "populations": [
+      25,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "seeds": 2,
+    "scenarios": 13,
+    "runs": 130,
+    "snapshots": 520,
+    "maximumDays": 180
+  },
+  "requiredCanonicalStressMatrix": {
+    "cells": 75,
+    "fullEquilibriumCellsProven": 0,
+    "evidence": "matrix-coverage.json"
+  },
+  "fileByteSha256": {
+    "tools/rc1-sim.js": "76977a9e693a33e651342a9872839b9d48632dc292487f755af627db91bcf85b",
+    "test/rc1-simulation.js": "4dd1dde6fc4e2d9a610c855b0775710c591a664a5bd50ef737ee734434c28d1e",
+    "tools/rc1-command-population.js": "0a211ca7253fb12597bcc567d40b9bd516f19b8956d6c1d871e6409156687ede",
+    "tools/rc1-director-matrix.js": "1e33c44a47f378f1c33be60f990b5546fd3cd6a665035f27ce5336553cb92309",
+    "tools/director-sim.js": "67b97b1e51706b83aecde091cb7358cc44fc20371c7397cec916ff274b564dcf",
+    "tools/scale.js": "114e0f654600bc82a06ddf298e3debb095497520c9957de636a3d65a535be854",
+    "src/server.js": "9f8966d3fd0375fbe8ebd06ec48c7fbc089aeee5e5d14d16a3cb944f9cab819d",
+    "src/player-commands.js": "827250cc74d7df175bbe559216f704775c77662ad754af0abab06a8b1b537058",
+    "src/invariants.js": "4c3f34e320162201317a977990be824245374bbd303a2041b6e4de045686768e",
+    "src/db.js": "f899f577e76cb54f8b129932e87fb18070f6c00e06c50b4d7681f1934ded6450",
+    "schema.sql": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4",
+    "test/lib/campaign-network-support.js": "20ce2fafb8f04b99a4440f0aed2e0af3233c1a22617d0f09c1fe4a704b23c188",
+    "test/lib/player-command-support.js": "ea9b7c78cf72e140c9df2d038b257b2cc0baa1cfec04abd3750f25ecd91a16c7"
+  },
+  "reports": [
+    {
+      "name": "entry25.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 25,
+      "commands": {
+        "discovery.start": 25,
+        "discovery.act": 25
+      },
+      "replays": 50,
+      "assertions": 6985,
+      "commandLatency": {
+        "count": 100,
+        "p50": 61.05610000000161,
+        "p95": 123.89170000000013,
+        "max": 216.57130000000143
+      },
+      "metrics": null,
+      "authoritative": null
+    },
+    {
+      "name": "entry100.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 100,
+      "commands": {
+        "discovery.start": 100,
+        "discovery.act": 100
+      },
+      "replays": 200,
+      "assertions": 27610,
+      "commandLatency": {
+        "count": 400,
+        "p50": 63.01589999999851,
+        "p95": 94.57060000000092,
+        "max": 325.3471000000063
+      },
+      "metrics": null,
+      "authoritative": null
+    },
+    {
+      "name": "entry250.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 250,
+      "commands": {
+        "discovery.start": 250,
+        "discovery.act": 250
+      },
+      "replays": 500,
+      "assertions": 68860,
+      "commandLatency": {
+        "count": 1000,
+        "p50": 59.23009999998612,
+        "p95": 92.43840000001364,
+        "max": 342.83460000000196
+      },
+      "metrics": null,
+      "authoritative": null
+    },
+    {
+      "name": "native/25-rc1-alpha-0.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 25,
+      "commands": 109,
+      "replays": 4,
+      "assertions": 6985,
+      "commandLatency": null,
+      "metrics": {
+        "snapshots": 177,
+        "commandsIssuedAvailable": 3582,
+        "commandsExecuted": 109,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 2,
+          "contention": 1
+        },
+        "opportunityCardsShown": 5740,
+        "opportunityCardsUniquePerActor": 557,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 2,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 1,
+        "completedOpportunityCommandLinks": 34,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 127,
+        "conservationAssertions": 6985
+      },
+      "authoritative": {
+        "worldChanges": 2,
+        "campaignStatuses": {
+          "active": 2
+        },
+        "operationStatuses": {
+          "completed": 1,
+          "expired": 1,
+          "failed": 1
+        },
+        "knowledgeClaims": 10
+      }
+    },
+    {
+      "name": "native/25-rc1-beta-0.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 25,
+      "commands": 136,
+      "replays": 4,
+      "assertions": 8800,
+      "commandLatency": null,
+      "metrics": {
+        "snapshots": 206,
+        "commandsIssuedAvailable": 4446,
+        "commandsExecuted": 136,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 4,
+          "command_stale": 4,
+          "contention": 1
+        },
+        "opportunityCardsShown": 7463,
+        "opportunityCardsUniquePerActor": 690,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 4,
+        "staleCommandProbes": 4,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 6,
+        "directorSelections": 4,
+        "directorTransitions": 4,
+        "completedOpportunityCommandLinks": 31,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 160,
+        "conservationAssertions": 8800
+      },
+      "authoritative": {
+        "worldChanges": 5,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 2
+        },
+        "operationStatuses": {
+          "completed": 4,
+          "expired": 1
+        },
+        "knowledgeClaims": 11
+      }
+    },
+    {
+      "name": "population1000.json",
+      "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+      "status": "PASS_SCOPED",
+      "population": 1000,
+      "commands": {
+        "discovery.start": 1000,
+        "discovery.act": 1000
+      },
+      "replays": 2000,
+      "assertions": 275110,
+      "commandLatency": {
+        "count": 4000,
+        "p50": 60.21250000002328,
+        "p95": 96.12369999999646,
+        "max": 365.4543999999878
+      }
+    },
+    {
+      "name": "entry500.json",
+      "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "status": "PASS_SCOPED",
+      "population": 500,
+      "commands": {
+        "discovery.start": 500,
+        "discovery.act": 500
+      },
+      "replays": 1000,
+      "assertions": 137610,
+      "commandLatency": {
+        "count": 2000,
+        "p50": 70.41619999997783,
+        "p95": 94.6416999999783,
+        "max": 277.66010000000097
+      },
+      "metrics": null,
+      "authoritative": null
+    },
+    {
+      "name": "native-mid/100-rc1-alpha-0.json",
+      "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "status": "PASS_SCOPED",
+      "population": 100,
+      "commands": 375,
+      "replays": 15,
+      "assertions": 24640,
+      "commandLatency": null,
+      "metrics": {
+        "snapshots": 656,
+        "commandsIssuedAvailable": 11385,
+        "commandsExecuted": 375,
+        "commandReplays": 15,
+        "rejectedCommands": {
+          "command_unavailable": 15,
+          "command_stale": 14,
+          "contention": 1
+        },
+        "opportunityCardsShown": 18356,
+        "opportunityCardsUniquePerActor": 2005,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 117,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 15,
+        "staleCommandProbes": 14,
+        "replayStateChecks": 15,
+        "disappearedBeforeCommand": 7,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 162,
+        "knowledgeShares": 22,
+        "authorizedKnowledgeReads": 22,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 448,
+        "conservationAssertions": 24640
+      },
+      "authoritative": {
+        "worldChanges": 3,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 1
+        },
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        },
+        "knowledgeClaims": 33
+      }
+    },
+    {
+      "name": "native-mid/250-rc1-alpha-0.json",
+      "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "status": "PASS_SCOPED",
+      "population": 250,
+      "commands": 898,
+      "replays": 39,
+      "assertions": 59510,
+      "metrics": {
+        "snapshots": 1598,
+        "commandsIssuedAvailable": 27122,
+        "commandsExecuted": 898,
+        "commandReplays": 39,
+        "rejectedCommands": {
+          "command_unavailable": 38,
+          "command_stale": 38,
+          "contention": 1
+        },
+        "opportunityCardsShown": 43323,
+        "opportunityCardsUniquePerActor": 4882,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 301,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 38,
+        "staleCommandProbes": 38,
+        "replayStateChecks": 39,
+        "disappearedBeforeCommand": 19,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 415,
+        "knowledgeShares": 56,
+        "authorizedKnowledgeReads": 56,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 1082,
+        "conservationAssertions": 59510
+      },
+      "authoritative": {
+        "worldChanges": 3,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 1
+        },
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        },
+        "knowledgeClaims": 78
+      }
+    },
+    {
+      "name": "native1000/1000-rc1-alpha-0.json",
+      "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "status": "PASS_SCOPED",
+      "population": 1000,
+      "commands": 3559,
+      "replays": 154,
+      "assertions": 235895,
+      "metrics": {
+        "snapshots": 6402,
+        "commandsIssuedAvailable": 107577,
+        "commandsExecuted": 3559,
+        "commandReplays": 154,
+        "rejectedCommands": {
+          "command_unavailable": 153,
+          "command_stale": 152,
+          "contention": 1
+        },
+        "opportunityCardsShown": 171032,
+        "opportunityCardsUniquePerActor": 19491,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 1225,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 153,
+        "staleCommandProbes": 152,
+        "replayStateChecks": 154,
+        "disappearedBeforeCommand": 77,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 1684,
+        "knowledgeShares": 230,
+        "authorizedKnowledgeReads": 230,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 4289,
+        "conservationAssertions": 235895
+      },
+      "authoritative": {
+        "worldChanges": 3,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 1
+        },
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        },
+        "knowledgeClaims": 311
+      }
+    },
+    {
+      "name": "native-mid/500-rc1-alpha-0.json",
+      "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "status": "PASS_SCOPED",
+      "population": 500,
+      "commands": 1789,
+      "replays": 77,
+      "assertions": 118525,
+      "metrics": {
+        "snapshots": 3208,
+        "commandsIssuedAvailable": 54374,
+        "commandsExecuted": 1789,
+        "commandReplays": 77,
+        "rejectedCommands": {
+          "command_unavailable": 76,
+          "command_stale": 76,
+          "contention": 1
+        },
+        "opportunityCardsShown": 86388,
+        "opportunityCardsUniquePerActor": 9791,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 609,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 76,
+        "staleCommandProbes": 76,
+        "replayStateChecks": 77,
+        "disappearedBeforeCommand": 38,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 838,
+        "knowledgeShares": 114,
+        "authorizedKnowledgeReads": 114,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1,
+        "conservationSweeps": 2155,
+        "conservationAssertions": 118525
+      },
+      "authoritative": {
+        "worldChanges": 3,
+        "campaignStatuses": {
+          "active": 1,
+          "completed": 1
+        },
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        },
+        "knowledgeClaims": 157
+      }
+    }
+  ],
+  "notes": [
+    "Earlier results identify frozen commit plus their documented working-tree repairs. The native1000 report identifies the committed candidate.",
+    "Native report harnessSha256 is SHA256(JSON.stringify(sourceText)); fileByteSha256 above is standard SHA256 over exact file bytes.",
+    "PASS_SCOPED does not clear absent full-world stress/equilibrium or real-player cohort gates."
+  ],
+  "verificationCommands": [
+    {
+      "command": "npm run sim",
+      "exitCode": 0,
+      "evidence": "baseline-sim.log",
+      "engine": "pg-mem"
+    },
+    {
+      "command": "SCALE_PLAYERS=18 SCALE_DAYS=2 npm run scale",
+      "exitCode": 0,
+      "evidence": "baseline-scale.log",
+      "engine": "pg-mem"
+    },
+    {
+      "command": "npm run invariants",
+      "exitCode": 0,
+      "evidence": "baseline-invariants.log",
+      "engine": "pg-mem"
+    },
+    {
+      "command": "node test/director-simulation.js",
+      "exitCode": 0,
+      "evidence": "baseline-director-test.log",
+      "engine": "model"
+    },
+    {
+      "command": "npm run director:sim -- --output docs/release/evidence/simulation/baseline-director.json",
+      "exitCode": 0,
+      "evidence": "baseline-director.log",
+      "engine": "model"
+    },
+    {
+      "command": "node test/director-simulation.js",
+      "exitCode": 0,
+      "evidence": "director-retest.log",
+      "engine": "model, after harness edits"
+    },
+    {
+      "command": "node tools/rc1-director-matrix.js",
+      "exitCode": 0,
+      "evidence": "director-population-matrix.log",
+      "engine": "model"
+    },
+    {
+      "command": "DATABASE_URL=postgres://postgres@127.0.0.1:55439/omerta_rc1_scale JWT_SECRET=<generated transient value> INVITE_MODE=off SCALE_PLAYERS=18 SCALE_DAYS=2 SCALE_ASSERT_EACH_TRANSITION=on npm run scale",
+      "exitCode": 0,
+      "evidence": "postgres-scale-invite-off.log",
+      "engine": "PostgreSQL 18.4 on disposable loopback cluster"
+    },
+    {
+      "command": "node test/rc1-simulation.js",
+      "exitCode": 0,
+      "evidence": "native-harness-test.log",
+      "engine": "test harness regression"
+    },
+    {
+      "command": "COORDINATION_TEST_DATABASE_URL=postgres://postgres@127.0.0.1:55439/omerta_rc1_sim node tools/rc1-sim.js --postgres --populations=25 --seeds=rc1-alpha,rc1-beta --replicates=1 --rounds=2 --output=docs/release/evidence/simulation/native",
+      "exitCode": 0,
+      "evidence": "native.log",
+      "engine": "PostgreSQL 18.4 on disposable loopback cluster"
+    },
+    {
+      "command": "COORDINATION_TEST_DATABASE_URL=postgres://postgres@127.0.0.1:55439/omerta_rc1_sim node tools/rc1-sim.js --postgres --populations=1000 --seeds=rc1-alpha --replicates=1 --rounds=2 --output=docs/release/evidence/simulation/native1000",
+      "exitCode": 0,
+      "evidence": "native1000.log",
+      "engine": "PostgreSQL 18.4 on disposable loopback cluster"
+    },
+    {
+      "command": "COORDINATION_TEST_DATABASE_URL=postgres://postgres@127.0.0.1:55439/omerta_rc1_sim node tools/rc1-sim.js --postgres --populations=100,250,500 --seeds=rc1-alpha --replicates=1 --rounds=2 --output=docs/release/evidence/simulation/native-mid",
+      "exitCode": 0,
+      "evidence": "native-mid.log",
+      "engine": "PostgreSQL 18.4 on disposable loopback cluster"
+    }
+  ],
+  "classifiedFailures": [
+    {
+      "id": "RC1-SIM-TOOL-01",
+      "classification": "D. TOOLING DEFECT",
+      "status": "REPAIRED_RETEST_PASSED",
+      "evidence": "postgres-scale-before.log",
+      "failure": "Scale harness set production-prohibited season overrides"
+    },
+    {
+      "id": "RC1-SIM-TOOL-02",
+      "classification": "D. TOOLING DEFECT",
+      "status": "PGMEM_ONLY_SCOPE_RETAINED",
+      "evidence": "postgres-sim.log",
+      "failure": "Legacy pg-mem sim cannot boot on production PostgreSQL with its hardcoded test overrides"
+    },
+    {
+      "id": "RC1-SIM-ENV-01",
+      "classification": "E. ENVIRONMENT DEFECT",
+      "status": "CORRECTED_RETEST_PASSED",
+      "evidence": "postgres-scale-after.log",
+      "failure": "Closed admission prevented throwaway scale actor creation"
+    },
+    {
+      "id": "RC1-SIM-ENV-02",
+      "classification": "E. ENVIRONMENT DEFECT",
+      "status": "CORRECTED_RETEST_PASSED",
+      "evidence": "population25-setup-failure.json",
+      "failure": "New harness first boot omitted required local mod key"
+    },
+    {
+      "id": "RC1-SIM-MATRIX-01",
+      "classification": "A. RC BLOCKER",
+      "status": "REQUIRED_PROOF_MISSING",
+      "evidence": "matrix-coverage.json",
+      "failure": "Full canonical PostgreSQL 75-cell stress/equilibrium matrix and whole-world dead-world detection remain unproven"
+    },
+    {
+      "id": "RC1-SIM-CONSERVATION-02",
+      "classification": "A. RC BLOCKER",
+      "status": "REQUIRED_PROOF_MISSING",
+      "evidence": "blockers.json",
+      "failure": "Nine concrete resource/transition coverage gaps are mapped to the 55 actual invariant names and retained native/entry artifacts: OMR, legacy campaign cash claims, operation capital, hardening, compound/custody journals, escrow terminal branches, Family treasury paths, NFT/chain boundaries, daily shipment material/bespoke output. Pure-status season and nonmonetary Campaign Network outcomes are not missing reward implementations."
+    }
+  ],
+  "entryAggregate": {
+    "populations": [
+      25,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "players": 1875,
+    "requests": 15000,
+    "commands": 3750,
+    "exactReplays": 3750,
+    "conservationSweeps": 9385,
+    "invariantAssertions": 516175,
+    "playersWithoutAvailableCommand": 0,
+    "status": "PASS_SCOPED"
+  },
+  "nativeAggregate": {
+    "runs": 6,
+    "populations": [
+      25,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "players": 1900,
+    "commands": 6866,
+    "exactReplays": 293,
+    "invariantAssertions": 454355,
+    "privacyProbes": 2300,
+    "unauthorizedKnowledgeDisclosures": 0,
+    "status": "PASS_SCOPED"
+  },
+  "sourcePostRunAudit": {
+    "testedCandidate": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+    "currentHead": "a61a27d40d09caa8de0319ceea1cca7a14fdc96f",
+    "changedReviewedFiles": [
+      "test/lib/player-command-support.js"
+    ],
+    "change": "Browser-only optional retryIssuedCommand hook; native engines define no hook. Native processes imported the tested helper before its 2026-09-20T23:20:28Z modification.",
+    "testedHelperFileByteSha256": "ea9b7c78cf72e140c9df2d038b257b2cc0baa1cfec04abd3750f25ecd91a16c7",
+    "currentHelperFileByteSha256": "e3533b7d376a56e5b6e462b0f9722386682a75b9ae3c6fe0d0ce074f0e52433e",
+    "unaffected": "Production simulation dependencies and all simulation tools have no diff from tested candidate."
+  },
+  "blockerReproduction": "blockers.json",
+  "resourceTransitionCoverage": "resource-transition-coverage.json",
+  "resourceTransitionInspectionEvidence": "coverage-inspections.json"
+}

@@ -1,0 +1,24 @@
+{"gate":"test:player-commands:postgres","command":"npm run test:player-commands:postgres","script":"node test/player-commands.js --postgres && node test/player-command-journey.js --postgres && node test/world-consequences.js --postgres","dbName":"omerta_rc1_test_player_commands_postgres_muaf1puc","started":"2026-09-20T22:56:56.805Z"}
+PASS stable versioned command contract and server-derived opportunities
+PASS hidden prerequisite privacy, account-bound issuance, opaque identity and request substitution denials
+PASS bounded identity mutation fuzzing cannot manufacture authorization
+PASS stable issuance, duplicate, double click and durable replay
+PASS stale location, revoked account authority and dead-character revalidation
+PASS expired unexecuted opportunity cannot mutate the world
+PASS confirmation, consumed asset removal and timeout retry without economic duplication
+PASS item consumed after projection denies execution without partial economy effects
+PASS eight PostgreSQL concurrent submissions, contention retry and one economic effect
+PASS native domain partial failure rolls back and the original command safely retries
+PASS post-commit projection failure reports committed success and reconciles without duplicate effects
+PASS succession across composed snapshot reads refuses before any board is issued
+PASS character replacement after final admission is denied by the locked native authority
+PASS new database connection and engine restart preserve replay identity
+PASS independent server process authenticates an HTTP replay against persisted PostgreSQL without new economic effects
+PASS populated PostgreSQL schema applies twice while preserving command and economic receipts
+PASS indexed entity window, command/opportunity caps and deterministic relevance ranking
+player-commands: 17 groups passed (PostgreSQL)
+player-command-journey preserve: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+player-command-journey expose: personalized lead, discovery, hidden prerequisites, salvage, craft, knowledge revocation, Crew changes, roles, commitments, persistent branch, feedback, differential views and restart PASS
+world-consequences PostgreSQL: canonical history, private-state/actor redaction, delayed aftermath, bounds and restart PASS
+
+{"gate":"test:player-commands:postgres","command":"npm run test:player-commands:postgres","dbName":"omerta_rc1_test_player_commands_postgres_muaf1puc","started":"2026-09-20T22:56:56.805Z","finished":"2026-09-20T22:58:40.886Z","status":0}

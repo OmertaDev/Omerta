@@ -1,0 +1,274 @@
+{"gate":"pgcheck","command":"npm run pgcheck","script":"node tools/pgcheck.js","dbName":"omerta_rc1_pgcheck_muaf1trw","started":"2026-09-20T22:57:02.033Z"}
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+
+1. THE SAFETY VALVES actually reach the server
+  ✓ statement_timeout is set
+  ✓ lock_timeout is set
+  ✓ idle_in_transaction_session_timeout is set
+  ✓ the pool's own lock_timeout aborts a blocked lock
+  ✓ it gives up on schedule
+  ✓ lock_timeout maps to a retryable error
+
+2. THE PROCESS SURVIVES ITS CONNECTIONS BEING KILLED
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] idle client error (pool recovers on next checkout): terminating connection due to administrator command
+  ✓ the pool recovers after its connections are killed
+  ✓ the server still serves after a connection kill
+
+3. THE CORE LOOP, on real Postgres
+  ✓ character creation
+  ✓ every crime, every approach, no 500
+  ✓ every board read, no 500
+  ✓ write actions, no 500
+
+4. THE ROW LOCK ACTUALLY SERIALIZES (no lost update)
+  ✓ earned enough cash to test concurrent deposits
+  ✓ all 8 concurrent deposits landed
+  ✓ 8 concurrent deposits summed exactly (no lost update)
+  ✓ concurrency produced no 500s
+
+5. A REFUSED ACTION COMMITS THE CLOCK AND NOTHING ELSE (two-phase commit)
+  ✓ a jailed crime is refused
+  ✓ the refused action still COMMITTED the clock's racket income (phase one)
+  ✓ and the accrual clock is FRESH — the window was settled, not deferred
+  ✓ the cash rose by exactly the ledgered accrual
+  ✓ the refusal wrote no rows of its own (phase two rolled back)
+
+6. §10.4 HOLDS on real Postgres
+  ✓ all 55 ledger identities hold
+
+6b. loadOwned's UNION returns what the fourteen queries did
+  ✓ the union PARSES and runs on real Postgres with every branch populated
+  ✓ every branch returns the same rows the original query did
+  ✓ every populated branch demultiplexes from the right slot
+  ✓ a fractional numeric keeps its precision through numeric→Number
+  ✓ gangJoinedAt is a Date, not a string
+  ✓ the text field riding a second generic column survives
+  ✓ the estate row is handed over already coerced
+
+6c. SHARED COLLECTIBLE SERIALS ACTUALLY SERIALIZE
+  ✓ both cross-account commissions land under a forced overlap
+  ✓ the overlapped commissions receive consecutive unique serials
+
+7. THE SCHEMA IS RE-APPLIABLE (in-place upgrade)
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+  ✓ schema + column migration re-apply cleanly to an existing database
+
+7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY
+  ✓ all 12 Phase 1 item, mystery, and operation authority tables exist on real PostgreSQL
+  ✓ item event quality is a non-null, standard-backfilled production column
+  ✓ PostgreSQL installed both item-event quality constraints
+  ✓ PostgreSQL keys mystery lifecycle authority by owner, graph, and immutable version
+  ✓ PostgreSQL rejects a completed mystery without its terminal timestamp tuple
+  ✓ PostgreSQL allows successor mystery versions but rejects a same-version owner race
+  ✓ PostgreSQL enforces one account per world-operation role assignment
+  ✓ PostgreSQL rejects a closed operation without its matching terminal timestamp tuple
+  ✓ PostgreSQL rejects a negative stack without changing its conserved value
+  ✓ PostgreSQL rejects a consumed item without its permanent consumption timestamp
+  ✓ operation escrow must match the item authoritative operation owner and escrowed state
+  ✓ a checked-out PostgreSQL client without BEGIN cannot mutate inventory
+  ✓ competing decrements serialize and cannot drive a stack negative
+  ✓ concurrent same-key grants apply once and return the same replay result
+  ✓ the same key cannot silently replay for another owner
+  ✓ a nonstandard stack mutation records its exact quality band
+  ✓ PostgreSQL rejects a noncanonical empty event quality
+  ✓ competing transfers leave one authoritative owner and one provenance transition
+  ✓ the winning concurrent transfer writes exactly one correct provenance event
+  ✓ PostgreSQL rejects nonstandard quality on every unique-item provenance event
+
+7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS
+  ✓ native rollback restores cash, input, capped output, and exact ledger state after late failure
+  ✓ competing same-key cash craft applies one debit, one ledger row, and one output
+  ✓ competing same-key salvage deletes the locked car once and replays the exact result
+  ✓ competing different-key salvage serializes on authority and cannot double-consume the car
+  ✓ native car conservation moves two deleted cars with two distinct successful logical guards
+  ✓ native successful salvage, same-key replay, and competing failure write no currency rows
+  ✓ native salvage rollback restores the car and every preceding output with no stranded guard
+  ✓ native failed salvage rollback creates no sink and leaves car conservation unchanged
+  ✓ native salvage rollback remains currency-ledger neutral
+
+7a3. WORLD-GRAPH MYSTERIES HOLD UNDER REAL ROW LOCKS
+  ✓ mystery choice race reaches two distinct PostgreSQL backends
+  ✓ competing mystery choices commit exactly one immutable option
+  ✓ mystery race leaves one choice, one completed node, and one completed mutation guard
+  ✓ mystery choice race creates no cash or OMR ledger authority
+
+7a4. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS
+  ✓ terminal mystery action reaches the actor lock before its instance lock
+  ✓ concurrent operation open waits behind terminal mystery actor lock without inversion
+  ✓ terminal mystery completion and blind operation open serialize to valid committed outcomes
+  ✓ world operation same-role claims serialize across two real PostgreSQL clients
+  ✓ one account cannot win two roles through separate real PostgreSQL clients
+  ✓ one unique item cannot enter two operations through separate real PostgreSQL clients
+  ✓ final contribution versus completion resolves without a partial terminal state
+  ✓ the final-contribution race converges to one complete four-branch state
+  ✓ completion versus completion awards once and releases two owners under native locks
+  ✓ cancel versus complete chooses one terminal state and returns multi-owner escrow
+  ✓ native rollback restores multi-owner escrow and removes all pre-terminal awards
+  ✓ production Crew leave waits behind operation opening at the Crew boundary
+  ✓ open then leave converge without a deadlock or split authority
+  ✓ leave ordered before open rejects without inserting an operation
+  ✓ objective completion finishes while operation opening holds the Crew row
+  ✓ objective completion and later open converge without Crew/character inversion
+  ✓ Agent Turn Crew recruiting waits behind opening at the Crew-first boundary
+  ✓ Agent Turn recruiting and operation opening converge without Crew/character inversion
+  ✓ existing open waits on operation before acquiring participant character authority
+  ✓ existing open and role admission converge without deadlock
+  ✓ role admission versus character death waits behind the participant authority boundary
+  ✓ role admission versus character death invalidation commits only after the valid operation action
+  ✓ role admission versus Crew membership deletion waits behind the participant authority boundary
+  ✓ role admission versus Crew membership deletion invalidation commits only after the valid operation action
+  ✓ contribution versus character death waits behind the participant authority boundary
+  ✓ contribution versus character death invalidation commits only after the valid operation action
+  ✓ contribution versus Crew membership movement waits behind the participant authority boundary
+  ✓ contribution versus Crew membership movement invalidation commits only after the valid operation action
+  ✓ completion versus death and Crew movement waits behind the participant authority boundary
+  ✓ completion versus death and Crew movement invalidation commits only after the valid operation action
+  ✓ completion commits atomically before waiting participant invalidations
+  ✓ death committed before completion abandons with full recovery and no awards
+  ✓ Crew change committed before completion abandons with full recovery and no awards
+  ✓ death committed before admission abandons before another account is inserted
+  ✓ Crew change committed before admission abandons before another account is inserted
+  ✓ craft versus mystery action contends at the global item guard before any character row
+  ✓ craft versus mystery action converges without deadlock and admits one logical authority
+  ✓ craft versus mystery action persists exactly one completed global item guard
+  ✓ craft-versus-mystery collision executes no losing mystery state
+  ✓ craft versus current-character assignment contends at the global item guard before any character row
+  ✓ craft versus current-character assignment converges without deadlock and admits one logical authority
+  ✓ craft versus current-character assignment persists exactly one completed global item guard
+  ✓ craft-versus-assignment collision cannot partially transfer the losing item
+  ✓ assignment snapshots the current street without locking it
+  ✓ death/replacement committed after snapshot cannot land an item on the dead or stale street
+
+7a5. BELLADONNA VERTICAL SLICE HOLDS ON REAL POSTGRESQL
+  ✓ Belladonna same-key salvage consumes one real car into exact graph quantities
+  ✓ Belladonna salvage, replay, and failed fresh action move held car and one guard sink together
+  ✓ Belladonna salvage, replay, and failure create no currency row
+  ✓ Belladonna production consumes the exact inputs into one permanent precision tool
+  ✓ Belladonna production has one $300 cash sink, one ledger row, and zero OMR movement
+  ✓ Belladonna mystery escrows the exact crafted tool under its pinned instance
+  ✓ Belladonna terminal closes the character/account/version-pinned Task 5 bridge
+  ✓ Belladonna assigns four distinct accounts under database authority
+  ✓ Belladonna delivers two distinct role-private evidence branches
+  ✓ Belladonna converges four ordered branches with the mechanic tool in custody
+  ✓ native PostgreSQL terminal rollback removes awards, status, release, and guard
+  ✓ Belladonna completion race uses two distinct PostgreSQL backends
+  ✓ Belladonna concurrent convergence awards one inert artifact/status and returns custody once
+  ✓ Belladonna mystery and operation add zero cash, OMR, or currency-ledger movement
+  ✓ Belladonna retains one exact unique-item provenance chain end to end
+  ✓ Belladonna PostgreSQL fixture cleanup leaves no run-owned rows
+
+7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+  ✓ the current build boots against the ORIGINAL schema (3126 columns present after migration)
+
+7c. THE ACCOUNT-ID UNIFICATION SURVIVES A DATABASE THAT STILL DECLARES UUID
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+  ✓ every account column is TEXT after booting on a UUID-declaring database (1d64f3648f)
+  ✓ the seeded uuid values came through the conversion intact
+  ✓ a TEXT parameter compares cast-free against every converted column (the outage statement shape)
+  ✓ the primary keys over converted columns were rebuilt, not dropped
+
+8. A READ DOES NOT WAIT FOR THE WRITE LOCK (D1)
+  ✓ a read answers while another session holds the row lock
+  ✓ and answers promptly — it never queued on the lock
+  ✓ /v1/skills answers without the lock
+  ✓ /v1/law answers without the lock
+  ✓ /v1/wire answers without the lock
+  ✓ /v1/estate answers without the lock
+  ✓ /v1/world answers without the lock
+[slow] POST /v1/crimes/pick 400 8029ms
+  ✓ a write against the same locked row is refused, not served
+  ✓ and it waited on the lock before giving up
+
+9. THE VAULT SERIALIZES ON ITS ADVISORY LOCK
+[slow] POST /v1/vault/claim 400 8108ms
+  ✓ a claim is NOT served while another holds the vault lock
+  ✓ and it waited on the lock rather than failing instantly
+  ✓ and the claim goes through once the lock is released
+  ✓ allocated <= held (ETH) — the vault never owes what it does not hold
+
+9b. A REQUEST IN FLIGHT WHEN THE STREET ENDS IS SERVED THE HEIR
+  ✓ the heir really is standing there
+  ✓ a request that blocked on the dying row is NOT told to create a character
+  ✓ and it is served the HEIR, not a corpse
+
+9c. THE REQUEST WRAPPER DOES NOT SCAN
+  ✓ the table is big enough that a scan would be the WRONG plan
+  ✓ the per-request character lookup uses an index, not a full scan
+
+9d. THE RETENTION SWEEPS DO NOT SCAN
+  ✓ telemetry is big enough that a scan would be the WRONG plan
+  ✓ the telemetry retention sweep uses an index on at, not a full scan
+  ✓ chat_messages is big enough that a scan would be the WRONG plan
+  ✓ the chat_messages retention sweep uses an index on at, not a full scan
+  ✓ dm_messages is big enough that a scan would be the WRONG plan
+  ✓ the dm_messages retention sweep uses an index on at, not a full scan
+  ✓ duels is big enough that a scan would be the WRONG plan
+  ✓ the duels retention sweep uses an index on at, not a full scan
+  ✓ idempotency is big enough that a scan would be the WRONG plan
+  ✓ the idempotency retention sweep uses an index on created_at, not a full scan
+  ✓ event_results is big enough that a scan would be the WRONG plan
+  ✓ the event_results retention sweep uses an index on resolved_at, not a full scan
+
+9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500
+  ✓ a pot with a third-party funder is on the board
+[slow] POST /v1/streets/8b4c508c-acbd-4ce9-890c-f23d1c45c63e/bounty 400 1105ms
+  ✓ the bounty fixture holder was NOT the deadlock victim
+  ✓ the player is NOT told the server broke
+  ✓ a deadlocked contract post comes back as a retryable contention
+  ✓ and it was the CYCLE, not the lock_timeout valve
+  ✓ the pot survived the deadlock intact
+  ✓ and the funder was not part-refunded
+  ✓ the next sweep tick settles the pot the deadlock left
+  ✓ and the funder is made whole exactly once
+  ✓ the pot resolved ONCE — it cannot both refund and burn
+  ✓ the bounty escrow identity is where it started
+
+9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500
+  ✓ a lot with a third-party bid under an unmet reserve is on the block
+[slow] POST /v1/market/728f78d7-d647-428f-b04f-8e5338f83eaf/cancel 400 1058ms
+  ✓ the market fixture holder was NOT the deadlock victim
+  ✓ the seller is NOT told the server broke
+  ✓ a deadlocked cancel comes back as a retryable contention
+  ✓ and it was the CYCLE, not the lock_timeout valve
+  ✓ the lot survived the deadlock intact
+  ✓ and the bidder was not part-refunded
+  ✓ and the iron is still on the block
+  ✓ the retry the contention asked for goes through
+  ✓ and the bidder is made whole exactly once
+  ✓ the market escrow identity is where it started
+
+9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500
+  ✓ a booked main event carries a third-party bet
+  ✓ the estate genuinely blocked on the held bettor row
+[slow] POST /v1/mod/kill 400 1242ms
+  ✓ the mod-kill is NOT told the server broke
+  ✓ a deadlocked estate comes back as a retryable contention
+  ✓ and it was the CYCLE, not the lock_timeout valve
+  ✓ the card survived the deadlock intact
+  ✓ and the bettor was not part-refunded
+  ✓ and both fighters are still booked
+  ✓ the retry the contention asked for goes through
+  ✓ and the bettor is made whole exactly once
+  ✓ the card is cancelled ONCE, and the escrow went home
+  ✓ the boxing bet escrow identity is where it started
+
+9z. LAUNCH INVITATIONS — real transaction rollback and simultaneous requests
+  ✓ one invite admits exactly one account under eight simultaneous signups
+  ✓ every losing signup receives invite refusal
+  ✓ account failure rolls back both invitation use and account creation on real Postgres
+  ✓ invited account can create its character
+  ✓ invited character can found a Crew
+  ✓ eight simultaneous Crew issuance requests mint exactly three codes
+  ✓ durable allowance agrees with concurrent issuance
+
+10. NO node-pg DEPRECATIONS
+  ✓ no deprecated driver usage
+
+203 passed, 0 failed
+✅ pgcheck passed — the loop, the locks, the safety valves, the ledger, the migration and the lock-free read path all hold on real Postgres.
+
+{"gate":"pgcheck","command":"npm run pgcheck","dbName":"omerta_rc1_pgcheck_muaf1trw","started":"2026-09-20T22:57:02.033Z","finished":"2026-09-20T22:58:33.420Z","status":0}

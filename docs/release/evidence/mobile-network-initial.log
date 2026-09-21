@@ -1,0 +1,48 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"222551a4-87b8-4574-b31c-8dd33bbae578"}
+{"component":"player-command","phase":"authorization","correlationId":"222551a4-87b8-4574-b31c-8dd33bbae578","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"222551a4-87b8-4574-b31c-8dd33bbae578","statusCode":200,"elapsedMs":105}
+{"component":"player-command","phase":"request","correlationId":"03fa47b8-04ae-4d5f-9e0d-61cda071facd"}
+{"component":"player-command","phase":"authorization","correlationId":"03fa47b8-04ae-4d5f-9e0d-61cda071facd","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"03fa47b8-04ae-4d5f-9e0d-61cda071facd","statusCode":200,"elapsedMs":29}
+{"component":"player-command","phase":"request","correlationId":"7a501100-d707-4e4f-adc9-97afae81849f"}
+{"component":"player-command","phase":"authorization","correlationId":"7a501100-d707-4e4f-adc9-97afae81849f","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"7a501100-d707-4e4f-adc9-97afae81849f","statusCode":200,"elapsedMs":40}
+{"component":"player-command","phase":"request","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70"}
+{"component":"player-command","phase":"authorization","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70"}
+{"component":"player-command","phase":"mutation","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70","replayed":false,"changes":2}
+{"component":"player-command","phase":"opportunity","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70","replayed":false,"changes":2}
+{"component":"player-command","phase":"response","correlationId":"103bc2a0-ae6c-477d-8969-f0d25546be70","statusCode":200,"elapsedMs":188}
+{"component":"player-command","phase":"request","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe"}
+{"component":"player-command","phase":"authorization","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe"}
+{"component":"player-command","phase":"mutation","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe","outcome":"completed","replayed":true}
+{"component":"player-command","phase":"consequence","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe","replayed":true,"changes":0}
+{"component":"player-command","phase":"opportunity","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe","replayed":true,"changes":0}
+{"component":"player-command","phase":"response","correlationId":"7654a93e-ec54-4d58-8f5e-9bfa2695dffe","statusCode":200,"elapsedMs":76}
+{"component":"player-command","phase":"request","correlationId":"f32e756c-90d2-4fc9-a4b8-1a4d97f3bbf0"}
+{"component":"player-command","phase":"authorization","correlationId":"f32e756c-90d2-4fc9-a4b8-1a4d97f3bbf0","outcome":"allowed"}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: one canonical mystery per newcomer despite lost response and retry
+
+0 !== 1
+
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-network-proof.mjs:89:12
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "firstActionMs": 4928,
+      "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+      "commandCompleted": true,
+      "consequenceVisible": true,
+      "reload": true,
+      "javascriptErrors": []
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "firstActionMs": 4126,
+      "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+      "commandCompleted": true,
+      "consequenceVisible": true,
+      "reload": true,
+      "javascriptErrors": []
+    }
+  ],
+  "findings": [],
+  "scope": "Chromium phone emulation; local real PostgreSQL; no human cohort or native wallet proof"
+}

@@ -1,0 +1,5 @@
+{"gate":"test:audit:mint-dev:postgres","command":"npm run test:audit:mint-dev:postgres","script":"node test/audit/mint-dev-allocation.js","dbName":"omerta_audit_mint_dev","started":"2026-09-20T23:05:06.649Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"ok":true,"database":"postgres","mintGrossEth":0.02,"mintDevEth":0.02,"historicalAndNonMintGrossEth":0.03,"mintCredits":4,"historicalRowsPreserved":true,"allocationInvariantDetectsPhantomRevenue":true}
+
+{"gate":"test:audit:mint-dev:postgres","command":"npm run test:audit:mint-dev:postgres","dbName":"omerta_audit_mint_dev","started":"2026-09-20T23:05:06.649Z","finished":"2026-09-20T23:05:17.884Z","status":0}

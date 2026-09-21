@@ -1,0 +1,16 @@
+{
+  "id": "mobile-postgres-final",
+  "command": [
+    "node",
+    "test/rc1-mobile-postgres.js"
+  ],
+  "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "trackedSourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "started": "2026-09-20T23:07:16.351Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/mobile-postgres-final-2026-09-20T23-07-16-032Z.log",
+  "finished": "2026-09-20T23:08:37.863Z",
+  "exitCode": 0,
+  "signal": null
+}

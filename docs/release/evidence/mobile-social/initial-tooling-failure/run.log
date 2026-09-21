@@ -1,0 +1,78 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"ef4beb82-0c49-4204-8519-c90176e795d9"}
+{"component":"player-command","phase":"authorization","correlationId":"ef4beb82-0c49-4204-8519-c90176e795d9","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"ef4beb82-0c49-4204-8519-c90176e795d9","statusCode":200,"elapsedMs":188}
+{"component":"player-command","phase":"request","correlationId":"a172feb0-a594-41dd-ac36-7eff531f9d20"}
+{"component":"player-command","phase":"authorization","correlationId":"a172feb0-a594-41dd-ac36-7eff531f9d20","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"a172feb0-a594-41dd-ac36-7eff531f9d20","statusCode":200,"elapsedMs":74}
+{"component":"player-command","phase":"request","correlationId":"89d7e00d-aefb-4dea-91e0-a7c9efe9bc29"}
+{"component":"player-command","phase":"authorization","correlationId":"89d7e00d-aefb-4dea-91e0-a7c9efe9bc29","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"89d7e00d-aefb-4dea-91e0-a7c9efe9bc29","statusCode":200,"elapsedMs":105}
+{"component":"player-command","phase":"request","correlationId":"eeaf3d1d-c22b-45c9-ba89-c12a97b9f30c"}
+{"component":"player-command","phase":"authorization","correlationId":"eeaf3d1d-c22b-45c9-ba89-c12a97b9f30c","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"eeaf3d1d-c22b-45c9-ba89-c12a97b9f30c","statusCode":200,"elapsedMs":33}
+{"component":"player-command","phase":"request","correlationId":"3d7504e1-e9ac-4067-9858-9c8472839260"}
+{"component":"player-command","phase":"authorization","correlationId":"3d7504e1-e9ac-4067-9858-9c8472839260","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"3d7504e1-e9ac-4067-9858-9c8472839260","statusCode":200,"elapsedMs":108}
+{"component":"player-command","phase":"request","correlationId":"4624cbe6-1ff7-4260-8797-bdb2837e453e"}
+{"component":"player-command","phase":"authorization","correlationId":"4624cbe6-1ff7-4260-8797-bdb2837e453e","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"4624cbe6-1ff7-4260-8797-bdb2837e453e","statusCode":200,"elapsedMs":93}
+{"component":"player-command","phase":"request","correlationId":"3478b092-1198-448a-b499-9d5f6014d96a"}
+{"component":"player-command","phase":"authorization","correlationId":"3478b092-1198-448a-b499-9d5f6014d96a","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"3478b092-1198-448a-b499-9d5f6014d96a","statusCode":200,"elapsedMs":34}
+{"component":"player-command","phase":"request","correlationId":"40b5e0e0-cd4e-4d8d-9aa1-ce0e2aae14b7"}
+{"component":"player-command","phase":"authorization","correlationId":"40b5e0e0-cd4e-4d8d-9aa1-ce0e2aae14b7","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"40b5e0e0-cd4e-4d8d-9aa1-ce0e2aae14b7","statusCode":200,"elapsedMs":49}
+{"component":"player-command","phase":"request","correlationId":"e1b2235d-befd-4c53-b066-f861b6aaa6f9"}
+{"component":"player-command","phase":"authorization","correlationId":"e1b2235d-befd-4c53-b066-f861b6aaa6f9","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"e1b2235d-befd-4c53-b066-f861b6aaa6f9","statusCode":200,"elapsedMs":146}
+locator.click: Error: strict mode violation: locator('[data-group="start"]') resolved to 2 elements:
+    1) <body data-mood="" data-tod="night" data-group="start">…</body> aka locator('body')
+    2) <button class="on" type="button" data-group="start" aria-pressed="true">Start Here</button> aka getByLabel('City districts').getByRole('button', { name: 'Start Here' })
+
+Call log:
+  - waiting for locator('[data-group="start"]')
+
+    at navigate (C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\docs\release\evidence\mobile-social\social-membership.mjs:94:62)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-social/social-membership.mjs:121:60
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"273568bd-da27-4ae6-9326-8f0e0987bf6c"}
+{"component":"player-command","phase":"authorization","correlationId":"273568bd-da27-4ae6-9326-8f0e0987bf6c","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"273568bd-da27-4ae6-9326-8f0e0987bf6c","statusCode":200,"elapsedMs":145}
+{"component":"player-command","phase":"request","correlationId":"da9b8d41-7f96-4119-9f13-7d5ee1e7034f"}
+{"component":"player-command","phase":"authorization","correlationId":"da9b8d41-7f96-4119-9f13-7d5ee1e7034f","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"da9b8d41-7f96-4119-9f13-7d5ee1e7034f","statusCode":200,"elapsedMs":61}
+{"component":"player-command","phase":"request","correlationId":"751454a5-a005-4c52-b353-571134849648"}
+{"component":"player-command","phase":"authorization","correlationId":"751454a5-a005-4c52-b353-571134849648","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"751454a5-a005-4c52-b353-571134849648","statusCode":200,"elapsedMs":84}
+{"component":"player-command","phase":"request","correlationId":"5e264a7f-aeab-4d58-bd80-08bd6fb22787"}
+{"component":"player-command","phase":"authorization","correlationId":"5e264a7f-aeab-4d58-bd80-08bd6fb22787","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"5e264a7f-aeab-4d58-bd80-08bd6fb22787","statusCode":200,"elapsedMs":35}
+{"component":"player-command","phase":"request","correlationId":"b333282a-6e8b-4b89-838b-26a89bf2428a"}
+{"component":"player-command","phase":"authorization","correlationId":"b333282a-6e8b-4b89-838b-26a89bf2428a","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"b333282a-6e8b-4b89-838b-26a89bf2428a","statusCode":200,"elapsedMs":105}
+{"component":"player-command","phase":"request","correlationId":"afd3a46e-0852-4e65-b068-855bd9ee81ce"}
+{"component":"player-command","phase":"authorization","correlationId":"afd3a46e-0852-4e65-b068-855bd9ee81ce","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"afd3a46e-0852-4e65-b068-855bd9ee81ce","statusCode":200,"elapsedMs":75}
+{"component":"player-command","phase":"request","correlationId":"a744ccf5-7671-44b9-97d3-5983b60a325b"}
+{"component":"player-command","phase":"authorization","correlationId":"a744ccf5-7671-44b9-97d3-5983b60a325b","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"a744ccf5-7671-44b9-97d3-5983b60a325b","statusCode":200,"elapsedMs":32}
+{"component":"player-command","phase":"request","correlationId":"3472efd6-96a9-478e-b994-e9ed92bb7f15"}
+{"component":"player-command","phase":"authorization","correlationId":"3472efd6-96a9-478e-b994-e9ed92bb7f15","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"3472efd6-96a9-478e-b994-e9ed92bb7f15","statusCode":200,"elapsedMs":31}
+{"component":"player-command","phase":"request","correlationId":"9121f681-36f7-4981-84cd-3dbe923f262f"}
+{"component":"player-command","phase":"authorization","correlationId":"9121f681-36f7-4981-84cd-3dbe923f262f","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"9121f681-36f7-4981-84cd-3dbe923f262f","statusCode":200,"elapsedMs":69}
+locator.click: Error: strict mode violation: locator('[data-group="start"]') resolved to 2 elements:
+    1) <body data-mood="" data-tod="night" data-group="start">…</body> aka locator('body')
+    2) <button class="on" type="button" data-group="start" aria-pressed="true">Start Here</button> aka getByLabel('City districts').getByRole('button', { name: 'Start Here' })
+
+Call log:
+  - waiting for locator('[data-group="start"]')
+
+    at navigate (C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\docs\release\evidence\mobile-social\social-membership.mjs:94:62)
+    at async file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-social/social-membership.mjs:121:60

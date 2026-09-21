@@ -1,0 +1,17 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: server-generated correlation ID is required
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-observability.js:30:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '',
+  expected: /^[a-f0-9-]{36}$/,
+  operator: 'match',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

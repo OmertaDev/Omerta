@@ -1,0 +1,29 @@
+{
+  "candidate": "cce721029c86de7c6f0d875fef7cb8de29504dda",
+  "status": "NOT_RUN",
+  "environmentSelected": false,
+  "deploymentPerformed": false,
+  "publicTrafficAdmitted": false,
+  "realParticipantsObserved": 0,
+  "realSessionsObserved": 0,
+  "unresolvedP0Count": null,
+  "unresolvedP1Count": null,
+  "metrics": {
+    "sessionCompletion": null,
+    "timeToFirstMeaningfulAction": null,
+    "firstSessionAbandonment": null,
+    "commandFailure": null,
+    "opportunityEngagement": null,
+    "campaignParticipation": null,
+    "coordinationParticipation": null,
+    "returnRate": null,
+    "errors": null,
+    "latency": null,
+    "mobileFailure": null,
+    "confusingDeadEnds": null
+  },
+  "nullMeaning": "Not measured; never interpreted as zero failures or launch clearance.",
+  "excluded": ["automated browser sessions", "simulation actors", "seeded test fixtures", "reloads treated as retention"],
+  "blockingEvidence": "No controlled deployment/tester target was supplied. Render list_services returned no workspace selected; the connector requires explicit workspace selection and no selection response was received. No live migration, runtime configuration, contract or alert-delivery attestation was established.",
+  "nextRequiredEvidence": "Select the controlled environment and real cohort, verify deployed candidate/configuration, observe actual sessions with the requested metrics, and resolve all repeated P0/P1 findings before public admission."
+}

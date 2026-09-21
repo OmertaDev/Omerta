@@ -1,0 +1,16 @@
+{
+  "id": "gates-added-migration",
+  "command": [
+    "node",
+    "test/gates.js"
+  ],
+  "source": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "trackedSourceDiffSha256": "d16ec375c4d2ca46255bcfab6428f4a44fad27a42545030e80491feb511dfa28",
+  "started": "2026-09-20T23:17:19.599Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/gates-added-migration-2026-09-20T23-17-19-405Z.log",
+  "finished": "2026-09-20T23:17:29.092Z",
+  "exitCode": 1,
+  "signal": null
+}

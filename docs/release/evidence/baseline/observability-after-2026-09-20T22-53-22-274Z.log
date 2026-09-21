@@ -1,0 +1,45 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"response","correlationId":"7c7b4d19-cc2b-45d8-a824-7d7bf63e0f39","statusCode":200,"elapsedMs":170}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    'request',
+    'authorization',
+    'command',
+    'mutation',
+    'consequence',
+    'opportunity',
+-   'response'
+  ]
+
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-observability.js:33:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'request',
+    'authorization',
+    'command',
+    'mutation',
+    'consequence',
+    'opportunity'
+  ],
+  expected: [
+    'request',
+    'authorization',
+    'command',
+    'mutation',
+    'consequence',
+    'opportunity',
+    'response'
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

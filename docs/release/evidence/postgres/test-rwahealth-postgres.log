@@ -1,0 +1,4 @@
+{"gate":"test:rwahealth:postgres","command":"npm run test:rwahealth:postgres","script":"node test/rwahealth.postgres.js","dbName":"omerta_rc1_test_rwahealth_postgres_muafazke","started":"2026-09-20T23:04:09.342Z"}
+PASS rwa health real PostgreSQL: locks, constraints, input isolation, 2,048 budget
+
+{"gate":"test:rwahealth:postgres","command":"npm run test:rwahealth:postgres","dbName":"omerta_rc1_test_rwahealth_postgres_muafazke","started":"2026-09-20T23:04:09.342Z","finished":"2026-09-20T23:04:25.022Z","status":0}

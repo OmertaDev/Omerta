@@ -1,0 +1,12 @@
+{"event":"start","identity":"100-rc1-alpha-0"}
+{"event":"complete","identity":"100-rc1-alpha-0","status":"PASS_SCOPED","durationMs":95404}
+{"event":"start","identity":"250-rc1-alpha-0"}
+{"event":"progress","population":250,"seed":"rc1-alpha","replicate":0,"playersVisited":100}
+{"event":"progress","population":250,"seed":"rc1-alpha","replicate":0,"playersVisited":200}
+{"event":"complete","identity":"250-rc1-alpha-0","status":"PASS_SCOPED","durationMs":214972}
+{"event":"start","identity":"500-rc1-alpha-0"}
+{"event":"progress","population":500,"seed":"rc1-alpha","replicate":0,"playersVisited":100}
+{"event":"progress","population":500,"seed":"rc1-alpha","replicate":0,"playersVisited":200}
+{"event":"progress","population":500,"seed":"rc1-alpha","replicate":0,"playersVisited":300}
+{"event":"progress","population":500,"seed":"rc1-alpha","replicate":0,"playersVisited":400}
+{"event":"complete","identity":"500-rc1-alpha-0","status":"PASS_SCOPED","durationMs":342704}

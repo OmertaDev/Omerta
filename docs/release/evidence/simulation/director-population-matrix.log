@@ -1,0 +1,10 @@
+{"seed":"rc1-director-a","population":25,"completedScenarios":13,"failures":0}
+{"seed":"rc1-director-a","population":100,"completedScenarios":26,"failures":0}
+{"seed":"rc1-director-a","population":250,"completedScenarios":39,"failures":0}
+{"seed":"rc1-director-a","population":500,"completedScenarios":52,"failures":0}
+{"seed":"rc1-director-a","population":1000,"completedScenarios":65,"failures":0}
+{"seed":"rc1-director-b","population":25,"completedScenarios":78,"failures":0}
+{"seed":"rc1-director-b","population":100,"completedScenarios":91,"failures":0}
+{"seed":"rc1-director-b","population":250,"completedScenarios":104,"failures":0}
+{"seed":"rc1-director-b","population":500,"completedScenarios":117,"failures":0}
+{"seed":"rc1-director-b","population":1000,"completedScenarios":130,"failures":0}

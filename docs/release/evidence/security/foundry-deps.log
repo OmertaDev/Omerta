@@ -1,0 +1,59 @@
+Cloning into 'omerta-contracts/lib/forge-std'...
+Note: switching to '3b20d60d14b343ee4f908cb8079495c07f5e8981'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Cloning into 'omerta-contracts/lib/openzeppelin-contracts'...
+Note: switching to '5fd1781b1454fd1ef8e722282f86f9293cacf256'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Updating files:  79% (671/840)
+Updating files:  80% (672/840)
+Updating files:  81% (681/840)
+Updating files:  82% (689/840)
+Updating files:  83% (698/840)
+Updating files:  84% (706/840)
+Updating files:  85% (714/840)
+Updating files:  86% (723/840)
+Updating files:  87% (731/840)
+Updating files:  88% (740/840)
+Updating files:  89% (748/840)
+Updating files:  90% (756/840)
+Updating files:  91% (765/840)
+Updating files:  92% (773/840)
+Updating files:  93% (782/840)
+Updating files:  94% (790/840)
+Updating files:  95% (798/840)
+Updating files:  96% (807/840)
+Updating files:  97% (815/840)
+Updating files:  98% (824/840)
+Updating files:  99% (832/840)
+Updating files: 100% (840/840)
+Updating files: 100% (840/840), done.

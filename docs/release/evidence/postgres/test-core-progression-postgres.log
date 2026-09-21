@@ -1,0 +1,12 @@
+{"gate":"test:core-progression:postgres","command":"npm run test:core-progression:postgres","script":"node tools/core-progression-postgres.js test/world-prerequisites.js test/recipe-policy.js test/furnace-ledger.js test/core-progression-migration.js","dbName":"omerta_rc1_test_core_progression_postgres_muaf0otf","started":"2026-09-20T22:56:09.022Z"}
+world-prerequisites PostgreSQL: PASS
+recipe-policy: baseline V1 craft and salvage receipts replay across upgrade; explicit policy changes still conflict
+recipe-policy: authentic discovery, redacted partial cards, hidden learned outputs, read parity and revoked replay pass
+recipe-policy: live Crew/Family membership, real mystery completion, retained crafted provenance and world facility state pass
+recipe-policy: authoritative account/global/territory caps, period rollover and native concurrent duplicate debit pass
+recipe-policy: quota insert/update and late inventory failure compensation, retry and restart durability pass
+furnace-ledger preserve: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+furnace-ledger expose: acquisition, hidden craft/clue, distinct original sources, Crew sharing, different-Crew Family roles, irreversible choice, collective consequence, replay/restart and outsider boundaries PASS
+core-progression-migration: populated a18c63cc0c1eb15c7a89df99d7a1428616eb3b58 upgrade, repeated migration, quota constraints and legacy replay pass
+
+{"gate":"test:core-progression:postgres","command":"npm run test:core-progression:postgres","dbName":"omerta_rc1_test_core_progression_postgres_muaf0otf","started":"2026-09-20T22:56:09.022Z","finished":"2026-09-20T22:56:56.339Z","status":0}

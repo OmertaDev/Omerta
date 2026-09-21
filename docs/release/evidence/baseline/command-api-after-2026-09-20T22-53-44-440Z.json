@@ -1,0 +1,16 @@
+{
+  "id": "command-api-after",
+  "command": [
+    "node",
+    "test/player-command-api.js"
+  ],
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "trackedSourceDiffSha256": "d3d63ec8cc7e1136a5281aa30d2ccdf992f2defae01afe66e52dffa1274bab0d",
+  "started": "2026-09-20T22:53:44.599Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/command-api-after-2026-09-20T22-53-44-440Z.log",
+  "finished": "2026-09-20T22:53:51.538Z",
+  "exitCode": 0,
+  "signal": null
+}

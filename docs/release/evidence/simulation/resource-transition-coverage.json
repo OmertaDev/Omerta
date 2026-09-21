@@ -1,0 +1,1334 @@
+{
+  "schemaVersion": 1,
+  "testedCandidate": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+  "generatedAt": "2026-09-20T23:39:25.764Z",
+  "scope": "Read-only reclassification of existing retained simulation evidence; no simulation rerun, new production/test source or assertion change.",
+  "overall": "REQUIRED_TRANSITION_PROOF_MISSING",
+  "interpretation": [
+    "A passing zero issue-count invariant is not zero resource movement and is not positive coverage of any branch.",
+    "Entry .changed rows with before=null are bootstrap observations and excluded from movement totals. Native reports preserve final/baseline drift and aggregate events, not per-event ledger journals.",
+    "UNEXERCISED_SCRIPTED_TRANSITION is scoped to the retained simulation policies. Other test suites may exercise it; this file neither credits nor invalidates those separate proofs.",
+    "NOT_RETAINED/NOT_ESTABLISHED gaps do not claim a transition was unused or unsafe. No demonstrated duplication exploit or dead world is asserted.",
+    "Retired emission/plex/portfolio paths must remain at zero and must not be reactivated to achieve coverage.",
+    "Current Campaign Network world consequences and pure-status season reckoning must not be given new monetary rewards to close a proof gap."
+  ],
+  "evidence": {
+    "entryJournals": [
+      {
+        "file": "entry25-transitions.ndjson",
+        "population": 25,
+        "rows": 127,
+        "nonBootstrapChangedBalances": {
+          "character cash": {
+            "transitions": 25,
+            "totalActualChange": 12500,
+            "totalAccountedChange": 12500,
+            "failedChecks": 0
+          },
+          "ammo conservation": {
+            "transitions": 25,
+            "totalActualChange": 625,
+            "totalAccountedChange": 625,
+            "failedChecks": 0
+          }
+        }
+      },
+      {
+        "file": "entry100-transitions.ndjson",
+        "population": 100,
+        "rows": 502,
+        "nonBootstrapChangedBalances": {
+          "character cash": {
+            "transitions": 100,
+            "totalActualChange": 50000,
+            "totalAccountedChange": 50000,
+            "failedChecks": 0
+          },
+          "ammo conservation": {
+            "transitions": 100,
+            "totalActualChange": 2500,
+            "totalAccountedChange": 2500,
+            "failedChecks": 0
+          }
+        }
+      },
+      {
+        "file": "entry250-transitions.ndjson",
+        "population": 250,
+        "rows": 1252,
+        "nonBootstrapChangedBalances": {
+          "character cash": {
+            "transitions": 250,
+            "totalActualChange": 125000,
+            "totalAccountedChange": 125000,
+            "failedChecks": 0
+          },
+          "ammo conservation": {
+            "transitions": 250,
+            "totalActualChange": 6250,
+            "totalAccountedChange": 6250,
+            "failedChecks": 0
+          }
+        }
+      },
+      {
+        "file": "entry500-transitions.ndjson",
+        "population": 500,
+        "rows": 2502,
+        "nonBootstrapChangedBalances": {
+          "character cash": {
+            "transitions": 500,
+            "totalActualChange": 250000,
+            "totalAccountedChange": 250000,
+            "failedChecks": 0
+          },
+          "ammo conservation": {
+            "transitions": 500,
+            "totalActualChange": 12500,
+            "totalAccountedChange": 12500,
+            "failedChecks": 0
+          }
+        }
+      },
+      {
+        "file": "population1000-transitions.ndjson",
+        "population": 1000,
+        "rows": 5002,
+        "nonBootstrapChangedBalances": {
+          "character cash": {
+            "transitions": 1000,
+            "totalActualChange": 500000,
+            "totalAccountedChange": 500000,
+            "failedChecks": 0
+          },
+          "ammo conservation": {
+            "transitions": 1000,
+            "totalActualChange": 25000,
+            "totalAccountedChange": 25000,
+            "failedChecks": 0
+          }
+        }
+      }
+    ],
+    "entryMovementTotals": {
+      "character cash": {
+        "transitions": 1875,
+        "totalActualChange": 937500,
+        "totalAccountedChange": 937500,
+        "failedChecks": 0
+      },
+      "ammo conservation": {
+        "transitions": 1875,
+        "totalActualChange": 46875,
+        "totalAccountedChange": 46875,
+        "failedChecks": 0
+      }
+    },
+    "nativeRuns": [
+      {
+        "file": "native/25-rc1-alpha-0.json",
+        "population": 25,
+        "assertions": 6985,
+        "omrTransactions": 0,
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 65,
+        "stackUnitsConsumed": 21,
+        "operationStatuses": {
+          "completed": 1,
+          "expired": 1,
+          "failed": 1
+        }
+      },
+      {
+        "file": "native/25-rc1-beta-0.json",
+        "population": 25,
+        "assertions": 8800,
+        "omrTransactions": 0,
+        "itemsCreated": 6,
+        "itemsConsumed": 5,
+        "stackUnitsCreated": 88,
+        "stackUnitsConsumed": 33,
+        "operationStatuses": {
+          "completed": 4,
+          "expired": 1
+        }
+      },
+      {
+        "file": "native-mid/100-rc1-alpha-0.json",
+        "population": 100,
+        "assertions": 24640,
+        "omrTransactions": 0,
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 185,
+        "stackUnitsConsumed": 21,
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        }
+      },
+      {
+        "file": "native-mid/250-rc1-alpha-0.json",
+        "population": 250,
+        "assertions": 59510,
+        "omrTransactions": 0,
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 415,
+        "stackUnitsConsumed": 21,
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        }
+      },
+      {
+        "file": "native-mid/500-rc1-alpha-0.json",
+        "population": 500,
+        "assertions": 118525,
+        "omrTransactions": 0,
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 795,
+        "stackUnitsConsumed": 21,
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        }
+      },
+      {
+        "file": "native1000/1000-rc1-alpha-0.json",
+        "population": 1000,
+        "assertions": 235895,
+        "omrTransactions": 0,
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 1565,
+        "stackUnitsConsumed": 21,
+        "operationStatuses": {
+          "completed": 2,
+          "expired": 1
+        }
+      }
+    ],
+    "scale": "postgres-scale-invite-off.log"
+  },
+  "invariantCatalog": [
+    {
+      "name": "character cash",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 1875,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "gang treasuries",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "commission escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "bounty escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "$OMR conservation",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 20000,
+      "entryInitialRhs": 20000,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "emission faucet retired",
+      "measurement": "retired_path_zero_guard",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "plex mint retired",
+      "measurement": "retired_path_zero_guard",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "portfolio retired",
+      "measurement": "retired_path_zero_guard",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "desk inventory backed",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "desk inventory ledgered",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "desk sales ledgered",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "auction escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph salvage car audit",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "car conservation",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "cb conservation",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "ammo conservation",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 1875,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "convoy insurance pool",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "market escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "loan escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "loan omr pledge escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "drop claims ledgered",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "favor escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "turf contest escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "loan house pool",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "boxing bet escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "den profit",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "den distributions",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "poker tourney escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "ring poker escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "grand prix escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "stakes escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "futurity escrow",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "agent acquisition budget accounting",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "agent referral claim ledger",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph stack conservation",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph unique custody and provenance",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph object transitions",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "family operation history",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "family operation custody",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "family operation capital",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph hardening cash sink",
+      "measurement": "balance_or_event_quantity",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "world graph currency boundary",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "reason vocabulary",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_artifact_integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item_definition_integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_membership_integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_activation_chain_integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_selection_integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_activation_history_policy",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "content_activation_policy_drift",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item lot definition integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item lot quantity integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item lot custody integrity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item lot lineage parity",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    },
+    {
+      "name": "item lot conservation",
+      "measurement": "issue_count",
+      "entryNonBootstrapChanges": 0,
+      "entryInitialLhs": 0,
+      "entryInitialRhs": 0,
+      "allNativeFinalChecksPassed": true
+    }
+  ],
+  "resources": [
+    {
+      "resource": "OMR",
+      "transitionClass": "bootstrap stock; nonzero creation/destruction and bucket transfers",
+      "status": "BOOTSTRAP_ONLY_IN_ENTRY_NATIVE_NONZERO_UNEXERCISED",
+      "invariants": [
+        "$OMR conservation",
+        "desk inventory backed",
+        "desk inventory ledgered",
+        "desk sales ledgered",
+        "loan omr pledge escrow",
+        "drop claims ledgered"
+      ],
+      "observed": {
+        "entryInitialGlobalStock": 20000,
+        "nativeOmrTransactions": 0
+      },
+      "gapIds": [
+        "C02-OMR",
+        "C02-NFT-CHAIN"
+      ]
+    },
+    {
+      "resource": "cash",
+      "transitionClass": "new-character grant",
+      "status": "OBSERVED_EXACT_ENTRY_MOVEMENT",
+      "invariants": [
+        "character cash"
+      ],
+      "observed": {
+        "transitions": 1875,
+        "totalActualChange": 937500,
+        "totalAccountedChange": 937500,
+        "failedChecks": 0
+      },
+      "equation": "0 + 500 created = 500 per new character; 1875 separately checked creations total 937500",
+      "gapIds": []
+    },
+    {
+      "resource": "inventory",
+      "transitionClass": "new-character ammo grant",
+      "status": "OBSERVED_EXACT_ENTRY_MOVEMENT",
+      "invariants": [
+        "ammo conservation"
+      ],
+      "observed": {
+        "transitions": 1875,
+        "totalActualChange": 46875,
+        "totalAccountedChange": 46875,
+        "failedChecks": 0
+      },
+      "equation": "0 + 25 created = 25 per new character; 1875 separately checked creations total 46875",
+      "gapIds": []
+    },
+    {
+      "resource": "cash",
+      "transitionClass": "fees, business and market actions; hardening and reward paths",
+      "status": "PARTIAL_NATIVE_AND_SCALE_SCOPE",
+      "invariants": [
+        "character cash",
+        "gang treasuries",
+        "world graph hardening cash sink",
+        "reason vocabulary"
+      ],
+      "observed": {
+        "nativeBaseline": "100000 fixture cash per character; expected baseline drift retained rather than treated as minted gameplay value",
+        "scaleBoundarySweeps": 1465
+      },
+      "gapIds": [
+        "C02-CAMPAIGN-CASH",
+        "C02-HARDENING",
+        "C02-FAMILY-TREASURY"
+      ]
+    },
+    {
+      "resource": "inventory",
+      "transitionClass": "car acquisition/salvage; unique item and stack creation/custody",
+      "status": "OBSERVED_NATIVE_AGGREGATES_AND_COMMAND_CHECKS",
+      "invariants": [
+        "car conservation",
+        "world graph salvage car audit",
+        "world graph stack conservation",
+        "world graph unique custody and provenance",
+        "item lot conservation"
+      ],
+      "observed": {
+        "run": "native1000/1000-rc1-alpha-0.json",
+        "itemsCreated": 4,
+        "itemsConsumed": 3,
+        "stackUnitsCreated": 1565,
+        "stackUnitsConsumed": 21
+      },
+      "gapIds": [
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ]
+    },
+    {
+      "resource": "crafted items",
+      "transitionClass": "cargo-seal recipe output and operation consumption; hardening recipe",
+      "status": "PARTIAL_NATIVE_RECIPE_SCOPE",
+      "invariants": [
+        "world graph unique custody and provenance",
+        "world graph stack conservation",
+        "world graph hardening cash sink"
+      ],
+      "source": [
+        "test/lib/campaign-network-support.js:60",
+        "src/invariants.js:974"
+      ],
+      "gapIds": [
+        "C02-HARDENING",
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ]
+    },
+    {
+      "resource": "consumed materials",
+      "transitionClass": "salvage supplies, wire and recipe inputs; daily shipment consumption",
+      "status": "PARTIAL_NATIVE_MATERIAL_SCOPE",
+      "invariants": [
+        "world graph stack conservation",
+        "item lot conservation"
+      ],
+      "source": [
+        "test/lib/campaign-network-support.js:43",
+        "src/shipment.js:136"
+      ],
+      "gapIds": [
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ]
+    },
+    {
+      "resource": "rewards",
+      "transitionClass": "cash campaign reward; chain-related reward funding",
+      "status": "POSITIVE_REQUIRED_PAYOUT_PROOF_MISSING",
+      "invariants": [
+        "character cash",
+        "$OMR conservation",
+        "drop claims ledgered",
+        "reason vocabulary"
+      ],
+      "gapIds": [
+        "C02-CAMPAIGN-CASH",
+        "C02-OMR"
+      ]
+    },
+    {
+      "resource": "escrow",
+      "transitionClass": "market/loan posts and counterparties; all terminal dispositions",
+      "status": "OBSERVED_SCALE_AGGREGATE_NOT_FULL_DISPOSITION_COVERAGE",
+      "invariants": [
+        "commission escrow",
+        "bounty escrow",
+        "auction escrow",
+        "market escrow",
+        "loan escrow",
+        "loan omr pledge escrow",
+        "favor escrow",
+        "turf contest escrow",
+        "boxing bet escrow",
+        "poker tourney escrow",
+        "ring poker escrow",
+        "grand prix escrow",
+        "stakes escrow",
+        "futurity escrow"
+      ],
+      "observed": {
+        "scaleMarketPosts": {
+          "goods": 18,
+          "orders": 6,
+          "loans": 16,
+          "contracts": 10,
+          "guards": 18,
+          "duels": 18,
+          "fades": 18,
+          "cars": 1,
+          "clubs": 1
+        },
+        "scaleBoundarySweeps": 1465
+      },
+      "gapIds": [
+        "C02-ESCROW-DISPOSITIONS",
+        "C02-OMR",
+        "C02-OPERATION-CAPITAL"
+      ]
+    },
+    {
+      "resource": "operation custody",
+      "transitionClass": "item/resource contribution; completed, expired and failed operations",
+      "status": "OBSERVED_NATIVE_SCOPED_TERMINALS",
+      "invariants": [
+        "family operation history",
+        "family operation custody",
+        "world graph unique custody and provenance",
+        "world graph stack conservation"
+      ],
+      "observed": [
+        {
+          "file": "native/25-rc1-alpha-0.json",
+          "states": {
+            "completed": 1,
+            "expired": 1,
+            "failed": 1
+          }
+        },
+        {
+          "file": "native/25-rc1-beta-0.json",
+          "states": {
+            "completed": 4,
+            "expired": 1
+          }
+        },
+        {
+          "file": "native-mid/100-rc1-alpha-0.json",
+          "states": {
+            "completed": 2,
+            "expired": 1
+          }
+        },
+        {
+          "file": "native-mid/250-rc1-alpha-0.json",
+          "states": {
+            "completed": 2,
+            "expired": 1
+          }
+        },
+        {
+          "file": "native-mid/500-rc1-alpha-0.json",
+          "states": {
+            "completed": 2,
+            "expired": 1
+          }
+        },
+        {
+          "file": "native1000/1000-rc1-alpha-0.json",
+          "states": {
+            "completed": 2,
+            "expired": 1
+          }
+        }
+      ],
+      "gapIds": [
+        "C02-COMPOUND-JOURNAL",
+        "C02-OPERATION-CAPITAL"
+      ]
+    },
+    {
+      "resource": "Family resources",
+      "transitionClass": "treasury/reserve tribute, war/turf settlement, dissolution, operation capital",
+      "status": "FAMILY_EXISTENCE_OBSERVED_REQUIRED_BALANCE_PATHS_UNEXERCISED",
+      "invariants": [
+        "gang treasuries",
+        "$OMR conservation",
+        "ammo conservation",
+        "turf contest escrow",
+        "family operation capital"
+      ],
+      "observed": {
+        "native1000Families": 117
+      },
+      "gapIds": [
+        "C02-FAMILY-TREASURY",
+        "C02-OPERATION-CAPITAL"
+      ]
+    },
+    {
+      "resource": "campaign rewards",
+      "transitionClass": "Director Campaign Network world consequence",
+      "status": "OBSERVED_WORLD_STATE_NO_CURRENCY_REWARD_BY_CURRENT_ARCHITECTURE",
+      "invariants": [
+        "world graph object transitions",
+        "world graph currency boundary",
+        "family operation history"
+      ],
+      "observed": {
+        "native1000WorldChanges": 3,
+        "native1000CompletedCampaigns": 1
+      },
+      "note": "Do not introduce monetary operation rewards to close this gate. Existing operation/mystery vocabulary is forbidden from minting currency; the distinct legacy street-campaign payout below is the real missing positive cash path.",
+      "source": [
+        "src/invariants.js:970"
+      ],
+      "gapIds": []
+    },
+    {
+      "resource": "campaign rewards",
+      "transitionClass": "legacy street campaign cash claim",
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+      "invariants": [
+        "character cash",
+        "reason vocabulary"
+      ],
+      "gapIds": [
+        "C02-CAMPAIGN-CASH"
+      ]
+    },
+    {
+      "resource": "seasonal resources",
+      "transitionClass": "season reckoning record/crown",
+      "status": "NO_CURRENCY_RESET_OR_REWARD_IN_THIS_STATUS_TRANSITION",
+      "invariants": [],
+      "source": [
+        "src/season.js:9",
+        "src/season.js:16"
+      ],
+      "note": "The current reckoning is explicitly status only: no reset, seizure, extra faucet or seasonal currency. This is not a claim of full season-conditioned gameplay coverage. Season-dependent turf price/escrow paths map to Family resource gaps; content lots retain their existing quantity checks.",
+      "gapIds": [
+        "C02-FAMILY-TREASURY"
+      ]
+    },
+    {
+      "resource": "NFT eligible items",
+      "transitionClass": "rarity payment and extract/expiry/import custody",
+      "status": "OUTSIDE_LOCAL_SIMULATION_PROOF",
+      "invariants": [
+        "$OMR conservation",
+        "car conservation"
+      ],
+      "gapIds": [
+        "C02-NFT-CHAIN"
+      ]
+    },
+    {
+      "resource": "contract related balances",
+      "transitionClass": "deployed token backing and bridge/indexer reconciliation",
+      "status": "OUTSIDE_LOCAL_SIMULATION_PROOF",
+      "invariants": [
+        "$OMR conservation",
+        "desk inventory backed",
+        "desk inventory ledgered",
+        "desk sales ledgered"
+      ],
+      "note": "Local SQL balance equations are not deployed-chain backing proof; separate runDeskInvariants/runFamilyBuybackInvariants are named in src/invariants.js comments.",
+      "gapIds": [
+        "C02-NFT-CHAIN"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "id": "C02-OMR",
+      "resources": [
+        "OMR",
+        "contract related balances"
+      ],
+      "status": "UNEXERCISED_IN_NATIVE_AND_ENTRY",
+      "transitionClasses": [
+        "nonzero player/desk OMR transfer or sink recycling",
+        "OMR-backed loan pledge/refund/seizure",
+        "OMR mint/burn and backing reconciliation"
+      ],
+      "invariants": [
+        "$OMR conservation",
+        "desk inventory backed",
+        "desk inventory ledgered",
+        "desk sales ledgered",
+        "loan omr pledge escrow",
+        "drop claims ledgered"
+      ],
+      "evidence": "All six native authoritative.omrTransactions values are 0. Entry journals contain no non-bootstrap OMR movement. Scale has no scripted OMR-funded action; its aggregate log is not a transaction journal.",
+      "inspectionCommand": "$p=Get-Content docs/release/evidence/simulation/native1000/1000-rc1-alpha-0.json -Raw | ConvertFrom-Json; $p.authoritative | Select-Object omrTransactions; $p.notMeasured | Select-String \"OMR\"",
+      "expected": "omrTransactions = 0; nonzero OMR movement is explicitly unmeasured."
+    },
+    {
+      "id": "C02-CAMPAIGN-CASH",
+      "resources": [
+        "cash",
+        "rewards",
+        "campaign rewards"
+      ],
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+      "transitionClasses": [
+        "legacy street campaign claim creates campaign:reward cash",
+        "retry of the same reward claim produces no second credit"
+      ],
+      "invariants": [
+        "character cash",
+        "reason vocabulary"
+      ],
+      "evidence": "Native campaign reports are Director Campaign Network world-state transitions. Entry workload executes only discovery.start/discovery.act. Neither native nor scale scripts invokes legacy claimCampaign; no campaign:reward event journal is retained.",
+      "source": [
+        "src/campaigns.js:55",
+        "src/campaigns.js:73"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/campaigns.js | Select-String -Pattern 'claimCampaign|campaign:reward' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:tools/rc1-sim.js | Select-String -Pattern 'attempts.push|reward-bearing' -Context 2,3",
+      "expected": "Existing legacy cash reward implementation is visible; native report scope excludes reward-bearing paths. Campaign Network completion alone does not prove this separate payout."
+    },
+    {
+      "id": "C02-OPERATION-CAPITAL",
+      "resources": [
+        "cash",
+        "escrow",
+        "operation custody",
+        "Family resources"
+      ],
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+      "transitionClasses": [
+        "coordination:capital:deposit",
+        "coordination:capital:refund",
+        "coordination:capital:spend",
+        "coordination:capital:forfeit after original owner death/replacement"
+      ],
+      "invariants": [
+        "character cash",
+        "family operation capital"
+      ],
+      "evidence": "Native operations are canal/dock definitions requiring participation, prerequisites, information, items and wire, with no capital requirement. A zero capitalIssues count therefore does not demonstrate any capital lifecycle.",
+      "source": [
+        "src/content/campaign-network.js:137",
+        "src/content/dock-war.js:112",
+        "src/coordination/capital.js:68",
+        "src/coordination/capital.js:100"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/content/campaign-network.js | Select-String -Pattern 'kind: ''capital''|kind: ''resource''|kind: ''item''' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/coordination/capital.js | Select-String -Pattern 'depositCapital|refundCapital|settleCapital|forfeited' -Context 2,3",
+      "expected": "The executed content shows item/resource requirements, while the existing capital authority exposes distinct deposit/refund/spend/forfeit paths not selected by those definitions."
+    },
+    {
+      "id": "C02-HARDENING",
+      "resources": [
+        "cash",
+        "crafted items",
+        "consumed materials"
+      ],
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+      "transitionClasses": [
+        "hardened-steel craft debits exactly 300 cash once while consuming inputs and creating output",
+        "hardening replay reconciles the same guard with no second sink"
+      ],
+      "invariants": [
+        "world graph hardening cash sink",
+        "world graph stack conservation",
+        "world graph currency boundary"
+      ],
+      "evidence": "Native fixture crafts its canal cargo-seal recipe. It does not call the hardening recipe. Entry policy only discovers; scale has no crafting action. Passing the sink invariant at zero is not positive hardening evidence.",
+      "source": [
+        "src/invariants.js:970",
+        "test/lib/campaign-network-support.js:60"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/invariants.js | Select-String -Pattern 'hardeningSink|hardeningGuards|PHASE1_HARDENING_CASH_COST' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:test/lib/campaign-network-support.js | Select-String -Pattern 'recipeId: id.recipe' -Context 2,3",
+      "expected": "Hardening checks tie cash to completed hardening guards; the native helper chooses its cargo-seal recipe instead."
+    },
+    {
+      "id": "C02-COMPOUND-JOURNAL",
+      "resources": [
+        "inventory",
+        "crafted items",
+        "consumed materials",
+        "operation custody"
+      ],
+      "status": "INTERNAL_BOUNDARY_AND_JOURNAL_PROOF_MISSING",
+      "transitionClasses": [
+        "individual car boost then salvage grant/destruction boundaries inside supplies",
+        "per-owner item/stack transfers into custody and return/consumption amounts for each terminal disposition"
+      ],
+      "invariants": [
+        "car conservation",
+        "world graph salvage car audit",
+        "world graph stack conservation",
+        "world graph unique custody and provenance",
+        "family operation custody",
+        "item lot conservation"
+      ],
+      "evidence": "Native reports retain aggregate create/consume totals and operation statuses; they do not retain the fetched item_events rows or per-owner before/after amounts. Commands are swept, but compound acquisition/social helper internals are not swept individually. Actual executed custody paths passed their checks; the missing journal cannot establish all listed dispositions.",
+      "source": [
+        "test/lib/campaign-network-support.js:43",
+        "tools/rc1-sim.js:236",
+        "tools/rc1-sim.js:265"
+      ],
+      "inspectionCommand": "$p=Get-Content docs/release/evidence/simulation/native1000/1000-rc1-alpha-0.json -Raw | ConvertFrom-Json; $p.authoritative | Select-Object itemsCreated,itemsConsumed,stackUnitsCreated,stackUnitsConsumed,operationStatuses; $p.notMeasured | Select-String \"internal-transition\"",
+      "expected": "Actual creation/consumption counts and completed/expired status are present, with internal-transition accounting explicitly outside scope. No raw item_events array appears."
+    },
+    {
+      "id": "C02-ESCROW-DISPOSITIONS",
+      "resources": [
+        "escrow",
+        "cash"
+      ],
+      "status": "TERMINAL_BRANCH_COVERAGE_NOT_RETAINED",
+      "transitionClasses": [
+        "market refund, death/loot release versus sale/take",
+        "loan refund, death/loot release versus take",
+        "poker, racing and stake escrow win/refund/rake/death branches"
+      ],
+      "invariants": [
+        "market escrow",
+        "loan escrow",
+        "boxing bet escrow",
+        "poker tourney escrow",
+        "ring poker escrow",
+        "grand prix escrow",
+        "stakes escrow",
+        "futurity escrow"
+      ],
+      "evidence": "Scale exercised market goods, orders, loans, contracts and other posts/takes and checked 1465 boundaries, but exports aggregate market counters rather than ledger reasons or per-resource movement journals. Absence of per-reason coverage is not a claim these paths failed or all remained unused.",
+      "source": [
+        "src/invariants.js:539",
+        "src/invariants.js:554",
+        "src/invariants.js:630",
+        "src/invariants.js:659"
+      ],
+      "inspectionCommand": "Get-Content docs/release/evidence/simulation/postgres-scale-invite-off.log | Select-String -Pattern 'POSTED|closed|1465' -Context 0,2; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/invariants.js | Select-String -Pattern 'market escrow|loan escrow|poker tourney escrow' -Context 2,3",
+      "expected": "Aggregate posts/takes and passed boundary sweeps are visible; the invariant equations include terminal branches for which no individual movement journal was emitted."
+    },
+    {
+      "id": "C02-FAMILY-TREASURY",
+      "resources": [
+        "Family resources",
+        "cash",
+        "OMR",
+        "escrow"
+      ],
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION",
+      "transitionClasses": [
+        "cash/OMR tribute into treasury/reserve",
+        "war spoils transfer between Family treasuries",
+        "turf contest stake, refund and burn",
+        "Family dissolution of treasury/reserve/ammo"
+      ],
+      "invariants": [
+        "gang treasuries",
+        "$OMR conservation",
+        "ammo conservation",
+        "turf contest escrow"
+      ],
+      "evidence": "Native script creates/joins Families and shares Knowledge, but has no tribute, legacy war, turf bid or dissolution action. Scale also creates/joins Families without scripting these actions. Native Family counts and world conflict success do not imply treasury movement coverage.",
+      "source": [
+        "src/social/gangs.js:87",
+        "src/social/gangs.js:277",
+        "src/social/gangs.js:323",
+        "src/social/gangs.js:655"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:tools/rc1-sim.js | Select-String -Pattern 'createGang|joinGang|tribute|declareWar|dissolve' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/social/gangs.js | Select-String -Pattern 'gang:tribute|gang:dissolved|turf:claim:refund|WAR_SPOILS' -Context 2,3",
+      "expected": "Native simulation only shows creation/join calls; existing tribute, spoils, dissolution and contest settlement branches remain distinct required resource transitions."
+    },
+    {
+      "id": "C02-NFT-CHAIN",
+      "resources": [
+        "NFT eligible items",
+        "OMR",
+        "contract related balances"
+      ],
+      "status": "OUTSIDE_LOCAL_SIMULATION_PROOF",
+      "transitionClasses": [
+        "rarity upgrade pays OMR and updates the same eligible item",
+        "NFT extraction sets minted_onchain and removes usable game custody",
+        "expired extraction restores custody",
+        "on-chain return/import restores exactly one usable game item",
+        "deployed contract backing reconciles soft OMR and real token balances"
+      ],
+      "invariants": [
+        "$OMR conservation",
+        "car conservation",
+        "world graph unique custody and provenance"
+      ],
+      "evidence": "Native OMR transaction count is zero; no simulation targets a chain, deployed contract, extraction/import worker receipt, or deployed backing balance. Other release evidence may cover this independently; this table does not assess those packages.",
+      "source": [
+        "src/nft.js:99",
+        "src/nft.js:112",
+        "src/chain.js:339",
+        "src/chain.js:394",
+        "src/chain.js:524",
+        "src/chain.js:605",
+        "src/invariants.js:314"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/nft.js | Select-String -Pattern 'upgradeRarity|rarity:upgrade' -Context 2,3; git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/chain.js | Select-String -Pattern 'export async function requestItemWithdraw|export async function requestGearWithdraw|inverse of requestItemWithdraw' -Context 2,3",
+      "expected": "Paid rarity and extract/import authorities are separate from the local simulation operations; their deployed receipt/balance proofs are absent from these artifacts."
+    },
+    {
+      "id": "C02-SHIPMENT-MATERIAL",
+      "resources": [
+        "inventory",
+        "consumed materials",
+        "crafted items"
+      ],
+      "status": "UNEXERCISED_SCRIPTED_TRANSITION_AND_NO_NAMED_MATERIAL_CHECK",
+      "transitionClasses": [
+        "daily capped shipment take creates characters.shipment material",
+        "commissionPiece consumes shipment units and cash, creates one bespoke serial"
+      ],
+      "invariants": [
+        "character cash",
+        "reason vocabulary"
+      ],
+      "evidence": "The 55 recorded invariant names have no shipment-material quantity or bespoke-piece conservation identity. Cash checks cover the commission price, not the independent shipment quantity. Native/entry/scale scripts do not call takeShipment or commissionPiece. This is daily material, not an invented seasonal currency.",
+      "source": [
+        "src/shipment.js:95",
+        "src/shipment.js:127",
+        "src/shipment.js:136",
+        "src/shipment.js:145"
+      ],
+      "inspectionCommand": "git show 4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1:src/shipment.js | Select-String -Pattern 'takeShipment|commissionPiece|ch.shipment|INSERT INTO bespoke_pieces' -Context 2,3; (Get-Content docs/release/evidence/simulation/population1000.json -Raw | ConvertFrom-Json).initialChecks.name | Select-String 'shipment|bespoke'",
+      "expected": "The existing scarce material creation/consumption and bespoke output are visible, with no matching recorded material invariant name."
+    }
+  ],
+  "sources": [
+    {
+      "path": "src/invariants.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "ffbaae96e4ff8f9a62a0d8329020c13853a50ccc69a197f5c0b4c6a04bc7e9c4"
+    },
+    {
+      "path": "src/campaigns.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "58eb85e1d26a7506c75004e3e6adc802b3075ee224d58970893c53951b98e5e9"
+    },
+    {
+      "path": "src/coordination/capital.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "4f1e03add9f8a60e156735a31e334b9192573576ebb3457b41be8c32638e5066"
+    },
+    {
+      "path": "src/coordination/operation-invariants.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "b0d8116a2e67db0909e8231d599db409c3f5e05c0dc1ecfd01cf29ee36b3f3b6"
+    },
+    {
+      "path": "src/content/campaign-network.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "9df353f3d4fefde32b44a410fd367cbd474fd2c23e3fbd2b4a9409789c00e1aa"
+    },
+    {
+      "path": "src/content/dock-war.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "a86140fb9bae13b7f4a92a49f22c4a530a45589180284c4fde05b5e28d7ba73f"
+    },
+    {
+      "path": "src/season.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "0969a00c2d84f869406e0a67ec3d162d403f92eb0fea4b29dd82eadb83dfd705"
+    },
+    {
+      "path": "src/shipment.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "9a82cc90d88e10465e7777b0a3982eed2c023bc444a17fc7f5844ff35a229339"
+    },
+    {
+      "path": "src/social/gangs.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7"
+    },
+    {
+      "path": "src/nft.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "6907312c88cc19bccafdfaf77c76f1be12ebfa3e67a498330181db8b05f95840"
+    },
+    {
+      "path": "src/chain.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "ce26f5bdc6b9ac0a6f448b973bd47ad58b94675f58a3ba5576d7cf25a7532381"
+    },
+    {
+      "path": "tools/rc1-sim.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "e5fd13b0bd413b6cbcb7cb63f4aabf686d5e437e7f0741fe7d3fc4176b64b165"
+    },
+    {
+      "path": "tools/scale.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "1541a0482c2bd37018bf6bd1c4f74a69f0fc277b28f55fae258995c16f8a02a6"
+    },
+    {
+      "path": "tools/rc1-command-population.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "0a211ca7253fb12597bcc567d40b9bd516f19b8956d6c1d871e6409156687ede"
+    },
+    {
+      "path": "test/lib/campaign-network-support.js",
+      "revision": "4d35c8e8b3a1db696f1bf5b5e8b7b0dc327cecb1",
+      "sha256": "aeb77f96eae6d55a2011ed63f14724e6659738892c533ea00365007f3224844a"
+    }
+  ],
+  "provenValueDuplication": false,
+  "provenNativeDeadWorld": false,
+  "inspectionEvidence": "coverage-inspections.json"
+}

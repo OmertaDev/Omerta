@@ -1,0 +1,16 @@
+{"command":"node test/liquidityqueue.js","database":"omerta_liquidity_indexer_test","started":"2026-09-20T22:54:20.085Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS missing existing signer or extraction domain remains dormant without RPC or queue writes
+PASS backlog and unresolved keeper receipts cannot cause signing
+PASS funded existing queue drains FIFO with exact EIP-712 signer and domain
+PASS already claimed obligations continue to consume lifetime funding
+PASS physical claim balance bounds unclaimed signatures and new queue completion together
+PASS claimed history is excluded from physical obligations but cannot restore lifetime capacity
+PASS configured chain and claim must exactly match the approved manifest
+PASS wrong RPC chain, runtime, signer, token and owner preserve all queued requests
+PASS claim pause and stale or reorganized reads never sign
+PASS a signing configuration change during verification cannot change the approved domain
+PASS large adjacent micro amounts cannot make an underfunded voucher signable
+PASS concurrent queue completions serialize on the existing reserve lock
+{"suite":"confirmed liquidity queue completion","passed":12,"postgres":true,"signer":"public synthetic fixture only"}
+{"command":"node test/liquidityqueue.js","database":"omerta_liquidity_indexer_test","started":"2026-09-20T22:54:20.085Z","finished":"2026-09-20T22:54:24.076Z","status":0}

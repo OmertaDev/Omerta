@@ -1,0 +1,61 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"55e1d7e4-8d78-4bcd-bb81-8dc5394ae5c9"}
+{"component":"player-command","phase":"authorization","correlationId":"55e1d7e4-8d78-4bcd-bb81-8dc5394ae5c9","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"55e1d7e4-8d78-4bcd-bb81-8dc5394ae5c9","statusCode":200,"elapsedMs":120}
+{"component":"player-command","phase":"request","correlationId":"9a2608ee-1fa7-4173-b746-e24a36e4ad8d"}
+{"component":"player-command","phase":"authorization","correlationId":"9a2608ee-1fa7-4173-b746-e24a36e4ad8d","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"9a2608ee-1fa7-4173-b746-e24a36e4ad8d","statusCode":200,"elapsedMs":52}
+{"component":"player-command","phase":"request","correlationId":"2858bc9c-0252-4b33-a525-041a2a657f4e"}
+{"component":"player-command","phase":"authorization","correlationId":"2858bc9c-0252-4b33-a525-041a2a657f4e","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"2858bc9c-0252-4b33-a525-041a2a657f4e","statusCode":200,"elapsedMs":86}
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] idle client error (pool recovers on next checkout): terminating connection due to administrator command
+[db] in-flight client error (this request fails; the process survives): terminating connection due to administrator command
+[db] idle client error (pool recovers on next checkout): terminating connection due to administrator command
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('#grouprail [data-group="family"]')[22m
+[2m    - locator resolved to <button type="button" data-group="family" aria-pressed="false">Family</button>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    55 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is not visible[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+    at C:\Users\Jorge\.codex\worktrees\omerta-rc1-closure\Omerta\test\rc1-mobile-postgres.js:46:60 {
+  log: [
+    `  - waiting for locator('#grouprail [data-group="family"]')`,
+    '    - locator resolved to <button type="button" data-group="family" aria-pressed="false">Family</button>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    55 × waiting for element to be visible, enabled and stable',
+    '       - element is not visible',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

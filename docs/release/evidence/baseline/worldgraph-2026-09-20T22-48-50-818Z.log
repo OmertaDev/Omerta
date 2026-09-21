@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "contentHash": "96dddeba8d52768298b4b57fe5c0dec303afd7eab604b852a834ccfc4b500ea7",
+  "packageIds": [
+    "core-materials",
+    "automotive-salvage",
+    "belladonna-demo"
+  ],
+  "packages": 3,
+  "nodes": 21,
+  "recipes": 3,
+  "omrRewards": 0,
+  "materials": {
+    "required": 3,
+    "sourced": 3,
+    "reachable": 4,
+    "sinkless": 1,
+    "sinklessMaterials": [
+      "mat:wire"
+    ],
+    "orphanedSources": []
+  },
+  "socialOperations": [
+    {
+      "nodeId": "operation:belladonna-lockbox",
+      "packageId": "belladonna-demo",
+      "minimumDistinctAccounts": 4,
+      "maximumDistinctAccounts": 4,
+      "requiredRoles": [
+        "investigator",
+        "driver",
+        "mechanic",
+        "enforcer"
+      ],
+      "rolesMayShareAccounts": false
+    }
+  ],
+  "executableDefinitions": {
+    "crafting": true,
+    "mysteries": true,
+    "operations": true
+  },
+  "economyPolicy": {
+    "omrAuthorityPaths": 0,
+    "cashRewardSourcePaths": 0,
+    "cashCosts": [
+      {
+        "recipeId": "recipe:hardened_steel",
+        "amount": 300
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "sinkless_material",
+      "nodeId": "mat:wire",
+      "message": "Material mat:wire has no declared sink or durable use"
+    }
+  ]
+}
+✅ Phase 1 world-graph executable definitions and economy policy compliant — mysteries and operations validated, zero OMR authority, zero cash rewards/sources, and the sole cash cost is recipe:hardened_steel at exactly $300; 3 packages, 21 nodes, 3 recipes; sha256 96dddeba8d52768298b4b57fe5c0dec303afd7eab604b852a834ccfc4b500ea7

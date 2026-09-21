@@ -1,0 +1,22 @@
+{"command":"node test/keepertransactions.js","database":"omerta_keeper_transport_test","started":"2026-09-20T22:53:50.190Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+PASS native Hook settlement requires historical proof; rotation/RPC refusal holds revenue and wallet until verified without rebroadcast
+PASS canonical receipt is rechecked after historical RPC proof before opening bookkeeping transaction
+PASS real signed request persists before send; replay settles once; payload rebinding and raw status leakage refused
+PASS timeout before broadcast retries identical signed bytes and blocks sibling jobs
+PASS lost response after broadcast reconciles exact receipt without a second action
+PASS consumed nonce without our receipt halts the wallet and never signs a replacement
+PASS pending transaction restart retries the same nonce/hash/bytes
+PASS confirmation depth precedes settlement; changed finalized block halts future sends
+PASS pre-finality reorg does not book or rebroadcast under uncertain authority
+PASS finalized revert never books and releases asset reservation while retaining gas budget
+PASS confirmed spend and pending reservations share a bounded budget before signing
+PASS failed database booking retains confirmed transaction and blocks all new wallet jobs until settled
+PASS required typed settlement acknowledgement and unjournaled consumed nonces fail closed
+PASS wrong chain, changed runtime, tampered signed payload and external pending nonce refuse before send
+PASS concurrent same-process jobs serialize across the entire wallet nonce domain
+PASS exact planning keys retain long-cadence action authority beyond the 100-row status window
+PASS PostgreSQL rollback atomically undoes bookkeeping before retry and final journal settlement
+PASS PostgreSQL advisory lock serializes independent worker module instances
+PASS keeper transport: 18 cases (PostgreSQL); no live transactions
+{"command":"node test/keepertransactions.js","database":"omerta_keeper_transport_test","started":"2026-09-20T22:53:50.190Z","finished":"2026-09-20T22:53:58.576Z","status":0}

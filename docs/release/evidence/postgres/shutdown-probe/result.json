@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "platform": "win32",
+  "node": "v24.19.0",
+  "startedAt": "2026-09-20T23:03:32.633Z",
+  "scenarios": [
+    {
+      "name": "player-command",
+      "barrier": {
+        "table": "item_mutation_guards",
+        "event": "UPDATE"
+      },
+      "status": "PROBE_ONLY",
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "beforeHash": "746c5869949cac71977d326488f374f2465a396485f6df206831a20dda3518f8",
+      "blockedBackendPid": 2484,
+      "note": "SQL barrier reached; no Linux signal or recovery claim"
+    }
+  ],
+  "status": "BLOCKED",
+  "reason": "Probe validates setup only. Linux SIGTERM evidence remains required.",
+  "finishedAt": "2026-09-20T23:03:50.222Z"
+}

@@ -1,0 +1,8 @@
+{
+  "workingDirectory": "clean detached pristine worktree",
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "exitCode": 0,
+  "finished": "2026-09-21T00:00:09.8134253Z",
+  "started": "2026-09-20T22:59:43.3839317Z",
+  "command": "npm test"
+}

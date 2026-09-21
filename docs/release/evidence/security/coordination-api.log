@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed injected lost HTTP receipt-store acknowledgement
+coordination API: strict inputs, auth, safe projections, OpenAPI, cohort, replay, privacy, and stopped-rollout recovery passed

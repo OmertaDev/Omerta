@@ -1,0 +1,21 @@
+{"gate":"test:audit:mint-dev:postgres","command":"npm run test:audit:mint-dev:postgres","script":"node test/audit/mint-dev-allocation.js","dbName":"omerta_rc1_test_audit_mint_dev_postgres_muafbis3","started":"2026-09-20T23:04:34.231Z"}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: requires a dedicated scratch database
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/audit/mint-dev-allocation.js:12:10
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
+
+{"gate":"test:audit:mint-dev:postgres","command":"npm run test:audit:mint-dev:postgres","dbName":"omerta_rc1_test_audit_mint_dev_postgres_muafbis3","started":"2026-09-20T23:04:34.231Z","finished":"2026-09-20T23:04:35.057Z","status":1}

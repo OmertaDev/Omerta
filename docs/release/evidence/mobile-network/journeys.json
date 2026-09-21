@@ -1,0 +1,63 @@
+{
+  "results": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "firstActionMs": 23748,
+      "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+      "commandCompleted": true,
+      "consequenceVisible": true,
+      "reload": true,
+      "javascriptErrors": [],
+      "lostCommittedResponse": true,
+      "exactIdentityReplay": true,
+      "committedCensus": {
+        "coordination_instances": 1,
+        "coordination_commands": 1,
+        "content_instances": 0,
+        "content_instance_nodes": 0,
+        "content_instance_effects": 0,
+        "mystery_instances": 0,
+        "item_events": 0,
+        "world_kernel_events": 0,
+        "world_operation_events": 0
+      },
+      "latencyMs": 750,
+      "nameLength": 24,
+      "reducedViewportInput": true
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "firstActionMs": 22560,
+      "firstCanonicalAction": "Investigate: The Missing Carbon Index",
+      "commandCompleted": true,
+      "consequenceVisible": true,
+      "reload": true,
+      "javascriptErrors": [],
+      "lostCommittedResponse": true,
+      "exactIdentityReplay": true,
+      "committedCensus": {
+        "coordination_instances": 2,
+        "coordination_commands": 2,
+        "content_instances": 0,
+        "content_instance_nodes": 0,
+        "content_instance_effects": 0,
+        "mystery_instances": 0,
+        "item_events": 0,
+        "world_kernel_events": 0,
+        "world_operation_events": 0
+      },
+      "latencyMs": 750,
+      "nameLength": 24,
+      "reducedViewportInput": true
+    }
+  ],
+  "findings": [],
+  "source": "21d0589a8b1f15cbb712e574becd507b813e4b0c",
+  "scope": "Real PostgreSQL; Chromium network throttling and lost committed response. Reduced viewport is a keyboard geometry proxy, not native virtual keyboard proof."
+}

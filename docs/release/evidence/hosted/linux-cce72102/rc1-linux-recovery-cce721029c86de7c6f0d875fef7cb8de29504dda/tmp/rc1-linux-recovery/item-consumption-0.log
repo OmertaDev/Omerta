@@ -1,0 +1,16 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ backend (M1–M5) listening on :18874
+{"component":"player-command","phase":"request","correlationId":"c13068cb-756e-47e9-8822-83e5c706ebc2"}
+{"component":"player-command","phase":"authorization","correlationId":"c13068cb-756e-47e9-8822-83e5c706ebc2","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"c13068cb-756e-47e9-8822-83e5c706ebc2","statusCode":200,"elapsedMs":209}
+{"component":"player-command","phase":"request","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866"}
+{"component":"player-command","phase":"authorization","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866"}
+[SIGTERM] draining — listener closed, in-flight requests get 10000ms to finish
+{"component":"player-command","phase":"mutation","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866","replayed":false,"changes":25}
+{"component":"player-command","phase":"opportunity","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866","replayed":false,"changes":23}
+{"component":"player-command","phase":"response","correlationId":"87b35337-fdfd-45f1-a9b7-176287371866","statusCode":200,"elapsedMs":236}

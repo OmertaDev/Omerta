@@ -1,0 +1,5 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+idempotency: store UPDATE failed — key left in-progress, value may have committed kernel API proof: lost HTTP receipt acknowledgement
+world-kernel-api: mounted auth/cohort, strict input, HTTP discovery/craft/action, hidden state and receipt recovery passed

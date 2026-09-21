@@ -1,0 +1,25 @@
+{
+  "classification": "D. TOOLING DEFECT",
+  "finalStatus": "PASS",
+  "finalEvidence": "mobile-network/journeys.json",
+  "attempts": [
+    {
+      "log": "mobile-network-initial.log",
+      "failure": "The evidence script expected a legacy mystery row, but discovery.start uses the Coordination service.",
+      "disposition": "Corrected the census to include actual coordination instance and receipt tables; retained exact replay and unchanged-domain assertions."
+    },
+    {
+      "log": "mobile-network-dialog.log",
+      "screenshot": "mobile-network-dialog.png",
+      "failure": "The first-lockup tutorial uses got it, not the generic close button.",
+      "disposition": "Wait for real action completion and acknowledge the actual visible tutorial control."
+    },
+    {
+      "log": "mobile-network-instance-table.log",
+      "failure": "The evidence script next expected a legacy content instance; canonical dispatch uses Coordination.",
+      "disposition": "Assert exactly one coordination instance and receipt per newcomer, plus an unchanged nine-table census across replay.",
+      "retainedFailureRecord": "mobile-network/journey-failure.json"
+    }
+  ],
+  "scope": "Lost response after a real PostgreSQL commit, actual mobile saved-move retry, same execution identity. No production mutation/replay code changed by this evidence-local harness."
+}

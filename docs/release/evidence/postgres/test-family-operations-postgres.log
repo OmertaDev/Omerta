@@ -1,0 +1,16 @@
+{"gate":"test:family-operations:postgres","command":"npm run test:family-operations:postgres","script":"node tools/family-operations-postgres.js test/coordination-capital.js test/coordination-materials.js test/coordination-knowledge-proof.js test/world-kernel-transaction.js test/family-operations.js test/family-operation-migration.js test/family-operation-concurrency.js","dbName":"omerta_rc1_test_family_operations_postgres_muaeyhxo","started":"2026-09-20T22:54:26.719Z"}
+coordination-capital: root authority, cash bounds, duplicate commands, refund and role replacement pass
+coordination-capital: cash/escrow/ledger rollback, caught-error poisoning and overflow refusal pass
+coordination-capital: deterministic settlement, death forfeiture and signed cash reconciliation pass (postgres)
+coordination-materials: conserved mixed-owner deposit/refund, exact identity, root-owner double-grant refusal, atomic rollback and concurrent replay pass (postgres)
+coordination-knowledge-proof: global claim order, bounded authenticated actor predicates, transaction isolation and live ACLs passed (PostgreSQL)
+world-kernel-transaction: caller-owned atomicity, multi-owner escrow, proof/operation authority, replay and postcommit hints passed (PostgreSQL)
+family-operations: pinned participant outcome unlocks persistent mystery ending; outsider, uncommitted and disabled sources fail closed
+family-operations: real four-player journey, private views, live revalidation, concurrent replay and restart pass
+family-operations: competing execution, withdrawal/rejoin, cancellation, expiry and deterministic failure pass
+family-operations: after-write rollback/retry, original-character death forfeiture and no OMR movement pass (postgres)
+family-operation-migration: populated Phase1 upgrade, repeated boot, legacy escrow/identity, Family runs/replay, constraints and corruption detection passed
+Family operation native concurrency: historical capital union vs real Crew invite both orders; sibling world contention/rollback/refund passed
+Family operation indexed invariants: history, contribution custody and exact held-capital corruption detected; rollback restored healthy audit
+
+{"gate":"test:family-operations:postgres","command":"npm run test:family-operations:postgres","dbName":"omerta_rc1_test_family_operations_postgres_muaeyhxo","started":"2026-09-20T22:54:26.719Z","finished":"2026-09-20T22:55:31.189Z","status":0}

@@ -1,0 +1,5 @@
+
+> omerta-backend@1.2.0 director:sim
+> node tools/director-sim.js --output docs/release/evidence/simulation/baseline-director.json
+
+{"runs":52,"scenarioCount":13,"periods":[1,7,30,180],"maximumActive":10,"maximumStartsPerTick":4,"maximumRepetitionWithinWindow":2,"directorMinted":0,"wireBalanceErrors":0,"deadEnds":0}

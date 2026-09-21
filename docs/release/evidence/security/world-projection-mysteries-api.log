@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+world-projection-mysteries-api: auth, rollout, cohort, strict selection, public prose and current-character isolation PASS

@@ -1,0 +1,14 @@
+{"command":"node test/liquiditykeeper.js","database":"omerta_keeper_transport_test","started":"2026-09-20T22:53:58.578Z"}
+PASS manifest rejects arbitrary calls, wrong chain, unpinned targets, custody drift, duplicate lanes, gas dust and excessive slippage
+PASS typed calldata pins recipients, oracle floor, fixed POL position and zero keeper value with bounded asset budgets
+PASS RPC domain/code/reorg failures reject observations and owner/recipient binding failures cannot authorize jobs
+PASS unhealthy foundation, emergency latch, pause and executor cooldown stop dependent asset spending
+PASS stale observations, unseeded keeper gas, uneconomic sweeps, over-cap refills and stale token valuation fail closed
+PASS Desk requires explicit database band strategy and preserves its approved anchor in receipt metadata
+PASS Bank service jobs use predeclared borrower/market/asset bindings, positive debt service and accrued-fee floors without a fictional asset price
+PASS Bank buffer funding uses the prefunded fixed-market vault with no caller amount, full action-cap reservation and zero residual allowance
+PASS Bond daily issuance requires exact manifest/cap parity; unlimited preserves owner/token/minter/health/oracle/price/pause/runtime guards and existing manifest hashes
+PASS read-only default needs no signer, manifest byte digest and dedicated signer are enforced, disabled mode is inert
+PASS read-only PostgreSQL planning context computes policy without writing a heartbeat or running schema migrations
+PASS liquidity keeper: 11 cases; no live transactions
+{"command":"node test/liquiditykeeper.js","database":"omerta_keeper_transport_test","started":"2026-09-20T22:53:58.578Z","finished":"2026-09-20T22:54:00.402Z","status":0}

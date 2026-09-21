@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+projection-events-ws: actual Crew leave/rejoin, stale Family feed suppression and coarse socket hints pass

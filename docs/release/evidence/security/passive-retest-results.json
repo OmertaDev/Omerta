@@ -1,0 +1,44 @@
+[
+  {
+    "command": "node test/rc1-passive-projection.js",
+    "start": "2026-09-20T23:13:04.7655176Z",
+    "exit": 0,
+    "log": "passive-retest-rc1-passive-projection.log"
+  },
+  {
+    "command": "node test/projection-events.js",
+    "start": "2026-09-20T23:13:05.4517052Z",
+    "exit": 0,
+    "log": "passive-retest-projection-events.log"
+  },
+  {
+    "command": "node test/projection-events-ws.js",
+    "start": "2026-09-20T23:13:06.9437262Z",
+    "exit": 0,
+    "log": "passive-retest-projection-events-ws.log"
+  },
+  {
+    "command": "node test/world-projection-client.js",
+    "start": "2026-09-20T23:13:15.6147278Z",
+    "exit": 0,
+    "log": "passive-retest-world-projection-client.log"
+  },
+  {
+    "command": "node test/player-command-client.js",
+    "start": "2026-09-20T23:13:16.0355287Z",
+    "exit": 0,
+    "log": "passive-retest-player-command-client.log"
+  },
+  {
+    "command": "node test/routes.js",
+    "start": "2026-09-20T23:13:16.5377283Z",
+    "exit": 0,
+    "log": "passive-retest-routes.log"
+  },
+  {
+    "command": "node test/rc1-observability.js",
+    "start": "2026-09-20T23:13:28.4047795Z",
+    "exit": 0,
+    "log": "passive-retest-rc1-observability.log"
+  }
+]

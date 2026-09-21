@@ -1,0 +1,16 @@
+{
+  "id": "knowledge-artifacts",
+  "command": [
+    "node",
+    "tools/knowledge-test.js"
+  ],
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "trackedSourceDiffSha256": "4ad4d43651925875e25201b0cfd584589794906e8ed93fdc9e5ea92c2fa3b16c",
+  "started": "2026-09-20T22:50:01.822Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "log": "docs/release/evidence/baseline/knowledge-artifacts-2026-09-20T22-50-01-662Z.log",
+  "finished": "2026-09-20T22:51:10.579Z",
+  "exitCode": 1,
+  "signal": null
+}

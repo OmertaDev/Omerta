@@ -1,0 +1,8 @@
+
+> omerta-backend@1.2.0 test:rc1:observability
+> node test/rc1-observability.js && node test/rc1-passive-projection.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+PASS RC1-OBS: request/auth/command/mutation/consequence/opportunity/response correlation, replay, denial and log privacy
+{"passiveClientClears":[],"passiveServerHints":[]}
+PASS RC1-MOBILE-CONFIRM: passive screen beacons preserve confirmations; gameplay invalidation remains enabled

@@ -1,0 +1,20 @@
+{"gate":"test:coordination:postgres","command":"npm run test:coordination:postgres","script":"node test/coordination.js --postgres && node test/coordination-knowledge-runtime.js --postgres && node test/coordination-knowledge-postgres.js","dbName":"omerta_rc1_test_coordination_postgres_muaex2nn","started":"2026-09-20T22:53:20.727Z"}
+coordination: PostgreSQL journey, visibility, replay, races, pins, historical recovery, zero-value and 10 rollback boundaries pass
+coordination-knowledge-runtime: two-account journey, private projections and live gate revocation pass
+coordination-knowledge-runtime: own-root and same-account heir non-independence, historical recovery pass
+coordination-knowledge-runtime: exact-hash isolation and retired-definition resolution pass
+coordination-knowledge-runtime: incompatible readable source blocks qualification until revoked pass
+coordination-knowledge-runtime: engine/cohort/knowledge/private-only sharing flags pass
+coordination-knowledge-runtime: PostgreSQL complete journeys, lifecycle/flags, races, discovery rollback and ambiguous commit recovery pass
+PostgreSQL 18.4; isolated schema coordination_knowledge_test_0c9860e1ae67b079
+PASS live ACL: disclosure/revoke serial order; board and archive omit revoked evidence
+PASS reverse ACL order: read waits for pending revoke and then refuses
+PASS crew: real kick waits for read; committed removal immediately removes access
+PASS family: real kick waits for read; committed removal immediately removes access
+PASS evidence: same-account copies refuse; independent sources unlock; stale action loses revoked authority
+PASS gate race: pending evidence revoke wins without a partial instance transition
+PASS reciprocal links: stable claim order and receipts without evidence identifiers
+PASS death/heir: real family removal, current-character relookup, historical private evidence without action inheritance
+PASS value boundary: sharing/archive/revocation created no discovery copy or economic event
+
+{"gate":"test:coordination:postgres","command":"npm run test:coordination:postgres","dbName":"omerta_rc1_test_coordination_postgres_muaex2nn","started":"2026-09-20T22:53:20.727Z","finished":"2026-09-20T22:53:45.109Z","status":0}

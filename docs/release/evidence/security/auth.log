@@ -1,0 +1,11 @@
+✅ verifyPrivy: scalar+array aud accepted, wrong-aud/alg/sig/iss/exp/malformed all fail-closed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ accountForIdentity: create/adopt, ban gate, and the atomic invite consume
+✅ consumeInvite: off passes, on consumes one use, exhaustion refuses without going negative
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ guest→provider upgrade keeps the same account+character and its cash; re-upgrade and identity-clash refused
+✅ X OAuth2/PKCE: dormant without config, state persists on start, an unknown state fails clean
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ BLUE-TEAM M3 token revocation (tv claim, logout-all, grandfather, mod revoke, the OAuth-start bypass) + M2 mod audit log passed
+✅ auth surface suite passed

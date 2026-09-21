@@ -1,0 +1,6 @@
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+OMERTÀ worker up — hourly: buyback + season check; daily: §10.4 invariant sweep.
+🔨 no auction today (no_price)
+the desk is dormant (no $OMR price print yet — expected pre-mainnet)
+[worker] broker epoch: 20709–20715, 0 eligible holder(s)
+[director] {"activeSituations":1,"activeCampaigns":1,"generated":1,"resolved":0,"expired":0,"recovered":0,"errors":0,"selections":1,"selectionLatencyMs":4.982286999999815,"evaluationLatencyMs":78.9609230000001,"eventBacklog":0,"generationRatePerHour":45124.84295457866,"resolutionRatePerHour":0,"expiryRatePerHour":0,"recoveryRatePerHour":0}

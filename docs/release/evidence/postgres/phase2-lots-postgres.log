@@ -1,0 +1,59 @@
+{"gate":"phase2:lots:postgres","command":"npm run phase2:lots:postgres","script":"node test/phase2-postgres.js --lots","dbName":"omerta_rc1_phase2_lots_postgres_muaesfn3","started":"2026-09-20T22:49:43.594Z"}
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+phase2-lot-boundary: closed optional transitions, exact-use assertions and empty-versus-absent replay pass
+phase2-lot-boundary: v1 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v1 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 callback same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 after-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: v2 before-insert same-transaction retry recovery, fresh retry once and pre-existing receipt preservation pass
+phase2-lot-boundary: raw/registry/nested authority, null-ID v2 SQL refusal and distinct-client pinned definition participation pass
+phase2-lot-boundary: legacy exact digest/result, raw-key conflicts, replay before authority and unchanged guards/events pass
+phase2-lot-boundary: v2 private snapshot, every authority conflict, permanent detached result and account/action independence pass
+phase2-lot-boundary: before/after guard/event faults and swallowed leaf/root poison restore exact snapshots
+phase2-lot-boundary: S2 reserved own-data keys reject recursively before callback or guard insertion
+phase2-lot-boundary: S4 exact hashes reject arrays and other inert non-string values without state changes
+phase2-lot-boundary: actual craft audit after-INSERT failure restores exact cash/ledger/item snapshot; same-key retry spends once
+phase2-lot-boundary: permanent v1 dead/replaced actor, deleted car, participant drift and retired cancellation receipt fixtures pass
+phase2-lot-boundary: S1 Crew admission/locks precede owner/aggregate locks and separate item admission; late or repeated sets reject
+phase2-lot-boundary: PostgreSQL lost COMMIT discards/reconciles on fresh connection, native rollback and zero compensation pass
+phase2-lot-boundary: PASS
+phase2-postgres: exact item boundary on PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+invariant correction: 34 persisted SQL-valid corruptions rejected, exact fixture restoration and clean rechecks PASS
+invariant correction: observed active/escrowed/released/transferred/consumed histories and exact transitions PASS
+invariant correction: C custody index visits plus U exact-unique lookups at two scales PASS
+fifo-correction drift: quantity, identity, earlier prefix, changed shortfall, irrelevant tail, native same-millisecond timestamp, zero-write abort and same-key retry/replay PASS
+fifo-correction filtering: ten exact economic dimensions, null/non-null SQL selection and scalar binds PASS
+fifo-correction native precision: .000001/.000002 consumption, C-collation timestamp ties and independent lock order PASS
+fifo-correction overlap: sufficient prefix, repeated/partial/explicit/exact ordering, unchanged shortage and replay PASS
+external-correction native microseconds: three one-row pages preserve .000001/.000002/.001001 and terminate PASS
+external-correction crafting: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction mysteries: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction operations: exact-only refusal, exact-first collision selects legacy, exact history and replay PASS
+external-correction native late-page plan: {"Node Type":"Limit","Parallel Aware":false,"Async Capable":false,"Startup Cost":0.41,"Total Cost":6.19,"Plan Rows":1,"Plan Width":793,"Disabled":false,"Plans":[{"Node Type":"Index Scan","Parent Relationship":"Outer","Parallel Aware":false,"Async Capable":false,"Scan Direction":"Forward","Index Name":"item_lot_owner_idx","Relation Name":"item_lots","Alias":"item_lots","Startup Cost":0.41,"Total Cost":6.19,"Plan Rows":1,"Plan Width":793,"Disabled":false,"Index Cond":"((owner_scope = 'account'::text) AND (owner_id = '8c50bd1b-ac45-42a9-ae18-aa03fea2d3f9'::text) AND (ROW(created_at, lot_id) > ROW('2025-12-31 19:00:00-05'::timestamp with time zone, 'f882d40a-c655-4b67-b4ae-2aef20a3b98b'::text)))","Filter":"(remaining_quantity > 0)"}]}
+external-correction paging: 4097 complete grants, FIFO 1/100 pages, page-local groups, hidden details, exhausted anchor, closed cursor PASS
+fifo-correction bounds: 4097 real compatible holdings, unrelated/explicit selection, shared overflow/shortage, 4096 mixed-key success and replay PASS (17 bounded queries, max 4097 returned rows; no row-visit/index-performance claim)
+external-correction ids: 200/201/258 exact lot/unique grants, events, transition/replay and legacy bounds PASS
+external-correction error observation: {"mode":"registry","actualCode":"content_registry_corrupt","expected":"content_registry_corrupt"}
+external-correction error observation: {"mode":"missing","actualCode":"definition_not_found","expected":"definition_not_found"}
+external-correction error observation: {"mode":"integrity","actualCode":"item_integrity_error","expected":"item_integrity_error"}
+external-correction error observation: {"mode":"operational","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"operational-aborted","actualCode":"42P01","expected":"42P01"}
+external-correction error observation: {"mode":"malformed","actualCode":"bad_item_request","expected":"bad_item_request"}
+external-correction error observation: {"mode":"candidate","actualCode":"contention","expected":"contention"}
+external-correction errors: revalidation classification, poisoned-root rollback and same-key retry PASS
+external-correction legacy-board: exact unique stays stored and invisible to legacy inventory PASS
+external-correction assignment: corrupted legacy-shaped alias on exact row refused at precheck PASS
+phase2-lots: exact lots/uniques, complete mixed candidates, custody/owner transitions, historical lineage, SQL constraints, recovery and replay PASS
+phase2-postgres: 20 native root lot fixture blocks completed in fresh schemas
+phase2-postgres: five lot leaves reject another simultaneously active native client token with unchanged snapshots PASS
+phase2-postgres: lot same-key grant/replay and competing exact consumption: actual SQL lock wait, one winner, contention then materials, zero compensation PASS
+phase2-postgres: exact lots on PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit
+phase2-lot-boundary: upgrade precondition — populated old guard DDL has no envelope/UUID columns
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+phase2-postgres: PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit
+phase2-postgres: populated pre-4.1 guards survive two real boots with exact raw v1/null-ID replay; null-ID v2 SQL refused
+
+{"gate":"phase2:lots:postgres","command":"npm run phase2:lots:postgres","dbName":"omerta_rc1_phase2_lots_postgres_muaesfn3","started":"2026-09-20T22:49:43.594Z","finished":"2026-09-20T22:53:19.666Z","status":0}

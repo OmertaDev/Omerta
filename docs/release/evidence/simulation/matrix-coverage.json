@@ -1,0 +1,609 @@
+{
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "generatedAt": "2026-09-20T22:59:58.383Z",
+  "requiredCells": 75,
+  "canonicalEquilibriumCellsProven": 0,
+  "note": "Model analogues are synthetic scopes and do not count as canonical PostgreSQL stress-world proof. Entry and market probes are narrower actual-game evidence.",
+  "cells": [
+    {
+      "population": 25,
+      "archetype": "quiet world",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "quiet_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "high aggression",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "Family monopoly",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "family_dominated",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "fragmented Families",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "fragmented_crew",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "resource scarcity",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "economic_shortage",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "resource abundance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "resource_abundance",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "high player churn",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "mostly new players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "new_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "mostly veteran players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "coordinated alliance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "multi-Family war",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "high mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_mystery_activity",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "low mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "market stress",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 25,
+      "archetype": "Law pressure",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_law_pressure",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "quiet world",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "quiet_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "high aggression",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "Family monopoly",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "family_dominated",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "fragmented Families",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "fragmented_crew",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "resource scarcity",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "economic_shortage",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "resource abundance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "resource_abundance",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "high player churn",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "mostly new players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "new_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "mostly veteran players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "coordinated alliance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "multi-Family war",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "high mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_mystery_activity",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "low mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "market stress",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 100,
+      "archetype": "Law pressure",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_law_pressure",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "quiet world",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "quiet_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "high aggression",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "Family monopoly",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "family_dominated",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "fragmented Families",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "fragmented_crew",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "resource scarcity",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "economic_shortage",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "resource abundance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "resource_abundance",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "high player churn",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "mostly new players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "new_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "mostly veteran players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "coordinated alliance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "multi-Family war",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "high mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_mystery_activity",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "low mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "market stress",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 250,
+      "archetype": "Law pressure",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_law_pressure",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "quiet world",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "quiet_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "high aggression",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "Family monopoly",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "family_dominated",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "fragmented Families",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "fragmented_crew",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "resource scarcity",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "economic_shortage",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "resource abundance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "resource_abundance",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "high player churn",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "mostly new players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "new_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "mostly veteran players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "coordinated alliance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "multi-Family war",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "high mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_mystery_activity",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "low mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "market stress",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 500,
+      "archetype": "Law pressure",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_law_pressure",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "quiet world",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "quiet_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "high aggression",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "Family monopoly",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "family_dominated",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "fragmented Families",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "fragmented_crew",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "resource scarcity",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "economic_shortage",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "resource abundance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "resource_abundance",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "high player churn",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "mostly new players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "new_world",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "mostly veteran players",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "coordinated alliance",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "multi-Family war",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "territory_war",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "high mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_mystery_activity",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "low mystery participation",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "market stress",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": null,
+      "modelEvidence": null,
+      "canonicalEquilibriumEvidence": null
+    },
+    {
+      "population": 1000,
+      "archetype": "Law pressure",
+      "status": "REQUIRED_PROOF_MISSING",
+      "modelAnalogue": "high_law_pressure",
+      "modelEvidence": "director-population-matrix.json",
+      "canonicalEquilibriumEvidence": null
+    }
+  ]
+}

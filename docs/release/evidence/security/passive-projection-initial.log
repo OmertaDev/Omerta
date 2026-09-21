@@ -1,0 +1,23 @@
+{"passiveClientClears":["world"],"passiveServerHints":[{"channel":"projection","changed":true}]}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: screen telemetry must not cancel a pending command confirmation
++ actual - expected
+
++ [
++   'world'
++ ]
+- []
+
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/test/rc1-passive-projection.js:37:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [ 'world' ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

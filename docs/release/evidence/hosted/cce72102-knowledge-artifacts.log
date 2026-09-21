@@ -1,0 +1,2 @@
+✓ checkout stability: all 4952 graph timestamps are canonical UTC (4451 read from git), so regenerating under a different git version cannot drift them
+✓ repository knowledge plane: 7557 nodes, 33536 edges; provenance, endpoints, links and generated artifacts valid

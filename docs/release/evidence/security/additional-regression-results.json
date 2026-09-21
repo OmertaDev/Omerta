@@ -1,0 +1,32 @@
+[
+  {
+    "command": "node test/hardening.js",
+    "start": "2026-09-20T23:01:02.7296444Z",
+    "exit": 0,
+    "log": "hardening.log"
+  },
+  {
+    "command": "node test/chain.js",
+    "start": "2026-09-20T23:01:25.2232909Z",
+    "exit": 0,
+    "log": "chain.log"
+  },
+  {
+    "command": "node test/coordination-http-receipts.js",
+    "start": "2026-09-20T23:01:35.1059205Z",
+    "exit": 0,
+    "log": "coordination-http-receipts.log"
+  },
+  {
+    "command": "node test/coordination-api.js",
+    "start": "2026-09-20T23:01:40.9980063Z",
+    "exit": 0,
+    "log": "coordination-api.log"
+  },
+  {
+    "command": "node test/director-api.js",
+    "start": "2026-09-20T23:01:47.3989907Z",
+    "exit": 0,
+    "log": "director-api.log"
+  }
+]

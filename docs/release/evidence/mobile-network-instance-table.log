@@ -1,0 +1,43 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+⚠️  preflight: TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+{"component":"player-command","phase":"request","correlationId":"b6941f72-47a8-4da9-938f-6de32f78b6fe"}
+{"component":"player-command","phase":"authorization","correlationId":"b6941f72-47a8-4da9-938f-6de32f78b6fe","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"b6941f72-47a8-4da9-938f-6de32f78b6fe","statusCode":200,"elapsedMs":111}
+{"component":"player-command","phase":"request","correlationId":"7ec44c14-3399-4c63-9f40-fb8fe1761fc0"}
+{"component":"player-command","phase":"authorization","correlationId":"7ec44c14-3399-4c63-9f40-fb8fe1761fc0","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"7ec44c14-3399-4c63-9f40-fb8fe1761fc0","statusCode":200,"elapsedMs":28}
+{"component":"player-command","phase":"request","correlationId":"5077545f-895f-41d0-bbae-471d6595ebe4"}
+{"component":"player-command","phase":"authorization","correlationId":"5077545f-895f-41d0-bbae-471d6595ebe4","outcome":"allowed"}
+{"component":"player-command","phase":"response","correlationId":"5077545f-895f-41d0-bbae-471d6595ebe4","statusCode":200,"elapsedMs":34}
+{"component":"player-command","phase":"request","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6"}
+{"component":"player-command","phase":"authorization","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6"}
+{"component":"player-command","phase":"mutation","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6","outcome":"completed","replayed":false}
+{"component":"player-command","phase":"consequence","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6","replayed":false,"changes":2}
+{"component":"player-command","phase":"opportunity","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6","replayed":false,"changes":2}
+{"component":"player-command","phase":"response","correlationId":"5851f725-5615-484f-829d-d9af5fb7bab6","statusCode":200,"elapsedMs":162}
+{"component":"player-command","phase":"request","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa"}
+{"component":"player-command","phase":"authorization","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa","outcome":"allowed"}
+{"component":"player-command","phase":"command","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa"}
+{"component":"player-command","phase":"mutation","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa","outcome":"completed","replayed":true}
+{"component":"player-command","phase":"consequence","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa","replayed":true,"changes":0}
+{"component":"player-command","phase":"opportunity","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa","replayed":true,"changes":0}
+{"component":"player-command","phase":"response","correlationId":"5e491f68-bd31-49b5-b4c3-507b36827afa","statusCode":200,"elapsedMs":74}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: the first discovery command creates a canonical content instance
+    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/docs/release/evidence/mobile-network-proof.mjs:106:5
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

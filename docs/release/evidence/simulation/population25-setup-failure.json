@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "source": "626e61b9ab2b14a9dc45566983b70cdc65692839",
+  "seed": "rc1-entry-20260920",
+  "population": 25,
+  "rounds": 2,
+  "node": "v24.19.0",
+  "startedAt": "2026-09-20T22:51:24.725Z",
+  "engine": "real PostgreSQL; Fastify production handlers through app.inject",
+  "scope": "Fresh account/character entry, server-issued Player Commands and exact request replay",
+  "limitations": [
+    "Sequential requests do not prove concurrent latency or locking.",
+    "Seed fixes actor decisions and Math.random, not UUIDs, database time or scheduling.",
+    "No model of aggression, Families, churn, resource equilibrium, workers or a real-player cohort.",
+    "Only resources mutated by the recorded commands are exercised; static invariant passes do not prove every transition."
+  ],
+  "commands": {},
+  "requests": 0,
+  "transitions": 0,
+  "invariantAssertions": 0,
+  "replays": 0,
+  "playersWithoutCommand": [],
+  "history": [],
+  "failures": [
+    {
+      "message": "Refusing to boot — deploy preflight failed:\n  - MOD_KEY must be set for a real deployment — the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable.",
+      "stack": "Error: Refusing to boot — deploy preflight failed:\n  - MOD_KEY must be set for a real deployment — the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable.\n    at buildServer (file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/src/server.js:263:11)\n    at file:///C:/Users/Jorge/.codex/worktrees/omerta-rc1-closure/Omerta/tools/rc1-command-population.js:84:15"
+    }
+  ],
+  "ok": false,
+  "completedAt": "2026-09-20T22:51:24.740Z",
+  "commandLatency": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "max": null
+  }
+}
