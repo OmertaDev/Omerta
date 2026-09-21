@@ -189,6 +189,7 @@ export async function createProofRecorder({ directory, source, configuration, ru
   };
   return {
     record,
+    artifact: put,
     async invoke(kind, identity, work) {
       const id = ++invocation;
       await record({ kind: 'invocation', invocation: id, authority: kind, identity });
