@@ -96,6 +96,12 @@ history validator: GET identities included absent `body`/`key` fields as JavaScr
 provisional gameplay result; the recorded validator rejection invalidates that
 entire proof. The harness now omits absent identity fields, tests their actual
 canonical serialization, and parses the history before assigning a passing result.
+The `6302816f` run passed the gameplay and history checks but failed owned-database
+cleanup: closing Fastify did not close its PostgreSQL pool. The harness now closes
+that exact owned pool explicitly before requesting the guarded database drop.
+The failed run is retained; its post-process cleanup separately verifies ownership
+and zero active sessions. The central evidence guard from `a0f37c74` is also applied
+for subsequent runs so invalid JSON values fail before invoking an action.
 
 Death, heirs, replacement, all other conflict authorities, full resource journals,
 complete worker intervals, 90-day lifecycles, all 225 runs, whole-policy accounting

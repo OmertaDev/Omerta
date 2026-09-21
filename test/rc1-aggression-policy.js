@@ -223,7 +223,10 @@ async function nativeExercise() {
     await proof.record({ kind: 'first-failure', ...result });
     if (app) await proof.snapshot(app.pool, 'failure');
   } finally {
-    if (app) await app.close();
+    if (app) {
+      try { await app.close(); }
+      finally { await app.pool.end(); }
+    }
     try { await proof.record({ kind: 'database-cleanup', ...await db.close() }); }
     catch (error) { result.status = 'FAIL'; result.cleanupError = error.message; process.exitCode = 1; }
     await proof.artifact('random-tape.json', { draws: runtime.tape, clocks: 'Application follows real wall clock; PostgreSQL native clock unchanged. No deterministic world-replay claim.' });
