@@ -110,9 +110,9 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
   return api;
 }
 
-export function installWorkerInstrumentation(controller, { namespace, queryOrder = null, root = new URL('../', import.meta.url) } = {}) {
+export function installWorkerInstrumentation(controller, { namespace, queryOrder = null, commitObserver = null, root = new URL('../', import.meta.url) } = {}) {
   assert(!globalThis.__rc1Worker); assert(/^[a-z_][a-z_0-9]*$/.test(namespace));
-  const clock = serialDatabaseOptions();
+  const clock = serialDatabaseOptions({ commitObserver });
   controller.Pool = class {
     constructor(configuration) {
       let pool = clock.poolFactory({ ...configuration, options: `${configuration.options || ''} -c search_path=${namespace}` }, namespace);
