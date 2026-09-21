@@ -381,7 +381,7 @@
 | [docs/release/RC1-REPRODUCE.md](../../docs/release/RC1-REPRODUCE.md) | documentation | 104 | 2026-09-20 |
 | [docs/release/RC1-SECURITY-OPERATIONS.md](../../docs/release/RC1-SECURITY-OPERATIONS.md) | documentation | 166 | 2026-09-20 |
 | [docs/release/RC1-SIMULATION-REPORT.md](../../docs/release/RC1-SIMULATION-REPORT.md) | documentation | 91 | 2026-09-20 |
-| [docs/release/readiness-work/aggression-player-policy.md](../../docs/release/readiness-work/aggression-player-policy.md) | documentation | 120 | 2026-09-21 |
+| [docs/release/readiness-work/aggression-player-policy.md](../../docs/release/readiness-work/aggression-player-policy.md) | documentation | 193 | 2026-09-21 |
 | [docs/release/readiness-work/authority-command-matrix.md](../../docs/release/readiness-work/authority-command-matrix.md) | documentation | 106 | 2026-09-21 |
 | [docs/release/readiness-work/authority-inventory.md](../../docs/release/readiness-work/authority-inventory.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/authority-legacy-review.md](../../docs/release/readiness-work/authority-legacy-review.md) | documentation | 116 | 2026-09-21 |
@@ -396,12 +396,14 @@
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
 | [docs/release/readiness-work/README.md](../../docs/release/readiness-work/README.md) | documentation | 92 | 2026-09-21 |
+| [docs/release/readiness-work/resource-capital-lifecycles.md](../../docs/release/readiness-work/resource-capital-lifecycles.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/resource-capital-proof.md](../../docs/release/readiness-work/resource-capital-proof.md) | documentation | 67 | 2026-09-21 |
 | [docs/release/readiness-work/resource-escrow-proof.md](../../docs/release/readiness-work/resource-escrow-proof.md) | documentation | 96 | 2026-09-21 |
 | [docs/release/readiness-work/resource-family-proof.md](../../docs/release/readiness-work/resource-family-proof.md) | documentation | 83 | 2026-09-21 |
 | [docs/release/readiness-work/resource-loan-lifecycles.md](../../docs/release/readiness-work/resource-loan-lifecycles.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/resource-proof.md](../../docs/release/readiness-work/resource-proof.md) | documentation | 93 | 2026-09-21 |
 | [docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md](../../docs/release/readiness-work/resource-runs/resource-capital-e64804ef575f-ce79e1f7e3/reproduction.md) | documentation | 37 | 2026-09-21 |
+| [docs/release/readiness-work/season-recovery-finding.md](../../docs/release/readiness-work/season-recovery-finding.md) | documentation | 50 | 2026-09-21 |
 | [docs/release/readiness-work/source-reconciliation.md](../../docs/release/readiness-work/source-reconciliation.md) | documentation | 137 | 2026-09-21 |
 | [docs/release/readiness-work/world-observers.md](../../docs/release/readiness-work/world-observers.md) | documentation | 54 | 2026-09-21 |
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
