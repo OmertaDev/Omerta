@@ -8,7 +8,7 @@ import { browserControls } from './lib/rc1-browser-controls.js';
 let releaseToast, requested, browser;
 const entered = new Promise(resolve => { requested = resolve; });
 const server = http.createServer((req, res) => {
-  if (req.url === '/toast-release') { releaseToast = () => { res.writeHead(200); res.end('done'); }; requested(); return; }
+  if (req.url === '/toast-release') { releaseToast = () => { if (!res.writableEnded) { res.writeHead(200); res.end('done'); } }; requested(); return; }
   res.writeHead(200, { 'content-type': 'text/html' }); res.end('<!doctype html>');
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
