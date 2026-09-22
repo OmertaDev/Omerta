@@ -9,13 +9,14 @@ import { reconcileNpcFamilyFormation } from './rc1-npc-family-journal.js';
 import { reconcileStoredSeasonCrowns } from './rc1-season-crown-journal.js';
 import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
 import { reconcileWorkerTransitions } from './rc1-world-worker-transitions.js';
+import { reconcileNpcCargo } from './rc1-npc-cargo-journal.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
   'rwa_dividend_pool', 'rwa_family_dividend_pool', 'family_yield_pool', 'exchange_pool', 'desk_inventory', 'loans', 'auctions', 'auction_consignments',
   'item_stacks', 'item_instances', 'item_lots', 'item_events', 'item_mutation_inputs', 'item_mutation_outputs', 'item_mutation_guards',
   'operation_escrow', 'world_operation_capital', 'world_operation_events', 'world_operation_commitments',
-  'cars', 'boats', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
+  'cars', 'boats', 'character_cargo', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
   'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries',
   'stakes_races', 'stakes_entries', 'districts', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials',
   'campaign_progress', 'drop_allocations', 'chain_reserve', 'vouchers', 'rng_audit', 'telemetry', 'season_records', 'season_recaps', 'notifications',
@@ -618,7 +619,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null, duelSelection = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -647,7 +648,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
   const workerTransitions = reconcileWorkerTransitions(before, after, { identity, receipts });
   checks.push(...workerTransitions.checks);
-  for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const npcCargo = reconcileNpcCargo(before, after, { identity, receipts });
+  checks.push(...npcCargo.checks);
+  for (const receipt of receipts) if (!npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -770,12 +773,15 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
   const cars = reconcileCarResources(before, after, { carMeltProvenance, carAcquisitionProvenance });
   checks.push(...cars.checks); unsupported.push(...cars.unsupported);
-  const seasonConversions = reconcileSeasonConversions(before, after);
+  const seasonConversions = reconcileSeasonConversions(before, after, { identity, duelSelection });
   checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
   const seasonCrowns = reconcileStoredSeasonCrowns(before, after, { seasonElectionProvenance, identity });
   checks.push(...seasonCrowns.checks); unsupported.push(...seasonCrowns.unsupported);
   const boats = reconcileNpcBoats(before, after, { identity, npcBoatProvenance });
   checks.push(...boats.checks); unsupported.push(...boats.unsupported);
+  const remainingCargo = state => rows(state, 'character_cargo').filter(row => !npcCargo.cargoKeys.has(tuple(row.character_id, row.good_id)));
+  if (json(remainingCargo(before)) !== json(remainingCargo(after)))
+    unsupported.push({ kind: 'observed-table-change', table: 'character_cargo', detail: 'Cargo movement outside exact resident purchase remains unclassified' });
   const observedOnly = ['account_gear', 'market_listings', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
@@ -806,7 +812,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements },
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements },
     boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },
     seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,

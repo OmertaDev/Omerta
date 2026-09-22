@@ -19,6 +19,7 @@ import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatAcquisitionCommitObserver, NPC_BOAT_SOURCE_PINS } from '../tools/rc1-npc-boat-journal.js';
 import { createNpcFamilyCommitObserver, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
+import { captureDuelSelection } from '../tools/rc1-duel-selection-provenance.js';
 import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
@@ -203,6 +204,7 @@ const electionProbe = observeResources ? createSeasonElectionProbe({ snapshot: (
 const electionSeam = electionProbe?.install();
 let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
 let priorResources, firstResourceError, workPhase = 'initialization';
+let duelSelection = null, duelSelectionArtifact = null;
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
   exactMeltTransitions: 0, unclassifiedCandidateBoundaries: 0 };
@@ -224,6 +226,12 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
         assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
       seasonElectionProvenance = await electionProbe?.boundary(event) ?? null;
+      const selection = captureDuelSelection(event, before, after);
+      if (selection) {
+        duelSelection = selection;
+        duelSelectionArtifact = `restricted-duel-selection-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(duelSelectionArtifact, { event, before, after, duelSelection });
+      }
       if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
       // Keep unknown/overflow scopes explicit. Only original executed SQL can
       // select a candidate; a request label or actor-supplied claim cannot.
@@ -236,7 +244,9 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
       const boatWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+boats\b/i.test(query.sql))
         ? carMeltProvenance : null;
       const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
-        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance, npcBoatProvenance: boatWitness });
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance, npcBoatProvenance: boatWitness, duelSelection });
+      if (journal.seasonConversions.movements.some(row => row.kind === 'season-duel-title'))
+        journal.duelSelection = { artifact: duelSelectionArtifact, sha256: sha256(canonicalJson(duelSelection)) };
       if (retainedWitness) {
         const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
         await proof.artifact(artifact, { event, before, after, carMeltProvenance: retainedWitness });

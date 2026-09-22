@@ -6,6 +6,8 @@ import { reconcileSeasonConversions } from '../tools/rc1-season-conversion-journ
 import { WORLD_RESOURCE_TABLES, reconcileWorldResources } from '../tools/rc1-world-resource-observer.js';
 import { verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { readVerifiedHistoryLines } from '../tools/rc1-native-history-reader.js';
+import { captureDuelSelection, DUEL_SELECTION_SQL } from '../tools/rc1-duel-selection-provenance.js';
+import { sha256 } from '../tools/rc1-native-proof.js';
 
 const worker = await fs.readFile(new URL('../src/worker.js', import.meta.url), 'utf8');
 for (const source of ['const seasonLevel = levelOf(Number(ch.respect));', 'const legacy = Math.floor(seasonLevel / 2);',
@@ -72,6 +74,31 @@ reject('old-recap-rewrite', f => { f.before = structuredClone(f.after); f.after.
 reject('old-recap-delete', f => { f.before = structuredClone(f.after); f.after.tables.season_recaps = []; });
 reject('old-receipt-edit', f => { f.before = structuredClone(f.after); f.after.tables.telemetry[0].props = '{}'; });
 unsupported('duel-title-compound', f => { f.after.tables.account_persistent[0].duel_titles++; });
+const title = fixture(), champion = '00000000-0000-4000-8000-000000000001';
+const titleAt = Date.parse('2026-09-24T00:00:00.000Z');
+for (const snapshot of [title.before, title.after]) Object.assign(snapshot.tables.characters[0], { id: champion, duel_limit: 100 });
+title.after.tables.account_persistent[0].duel_titles++;
+title.after.tables.notifications.push({ id: 'duel-notice', character_id: champion, type: 'duel_champion',
+  payload: JSON.stringify({ season: 740, elo: 1200 }), delivered: false, pushed: false, created_at: new Date(titleAt).toISOString() });
+const selectionIdentity = { sequence: 10, context: { authority: 'original-worker', logicalAt: titleAt },
+  command: 'SELECT', outcome: 'AUTOCOMMITTED', sqlSha256: sha256(DUEL_SELECTION_SQL) };
+const duelSelection = captureDuelSelection(selectionIdentity, title.before, title.before);
+const awardIdentity = { ...selectionIdentity, sequence: 20, command: 'COMMIT', outcome: 'COMMITTED' };
+const titleProof = reconcileSeasonConversions(title.before, title.after, { identity: awardIdentity, duelSelection });
+assert.equal(titleProof.unsupported.length, 0);
+assert(titleProof.movements.some(row => row.kind === 'season-duel-title'));
+for (const mutate of [
+  f => { f.after.tables.account_persistent[0].duel_titles++; },
+  f => { f.after.tables.notifications[0].character_id = 'another-owner'; },
+  f => { f.after.tables.notifications[0].payload = JSON.stringify({ season: 740, elo: 1201 }); },
+  f => { f.after.tables.notifications = []; },
+]) { const f = structuredClone(title); mutate(f); assert.throws(() => reconcileSeasonConversions(f.before, f.after, { identity: awardIdentity, duelSelection })); }
+for (const mutate of [
+  w => { w.selected = 'another-winner'; },
+  w => { w.boundary.sequence = 21; },
+  w => { w.boundary.context.logicalAt--; },
+  w => { w.candidates[0].duel_elo++; },
+]) { const w = structuredClone(duelSelection); mutate(w); assert.throws(() => reconcileSeasonConversions(title.before, title.after, { identity: awardIdentity, duelSelection: w })); }
 unsupported('other-character-field', f => { f.after.tables.characters[0].health = '100'; });
 unsupported('other-account-field', f => { f.after.tables.account_persistent[0].omr = '10'; });
 unsupported('other-authority-table', f => { f.after.tables.transactions.push({ id: 'compound' }); });

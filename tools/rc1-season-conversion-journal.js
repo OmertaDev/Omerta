@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { DUELS, levelOf, recapTitleOf } from '../src/rules.js';
 import { exactSum } from './rc1-resource-journal.js';
+import { verifyDuelAward } from './rc1-duel-selection-provenance.js';
 
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing season evidence table ${table}`); return state.tables[table]; };
 const recapKey = row => JSON.stringify([row.account_id, row.season]);
@@ -15,7 +16,7 @@ const changed = (a, b) => JSON.stringify(a) !== JSON.stringify(b);
 const zeroOf = value => typeof value === 'string' ? '0' : 0;
 const timestamp = value => { const at = Date.parse(value); assert(Number.isFinite(at), 'Invalid season receipt timestamp'); return at; };
 
-export function reconcileSeasonConversions(before, after) {
+export function reconcileSeasonConversions(before, after, { identity = null, duelSelection = null } = {}) {
   const checks = [], movements = [], unsupported = [];
   const result = { checks, movements, unsupported };
   const oldRecaps = index(rows(before, 'season_recaps'), recapKey, 'recap identity');
@@ -74,9 +75,13 @@ export function reconcileSeasonConversions(before, after) {
   assert.equal(nextAccount.season_sunk, zeroOf(account.season_sunk), 'Season prestige-spend counter was not reset');
   // These additional account/character effects are real but not attributable by
   // this receipt. Keep their boundary unclassified rather than dropping fields.
-  if (!Object.is(account.duel_titles, nextAccount.duel_titles)) return incomplete('Duel-title award needs its separate champion/notification authority');
+  let duelNotice = null;
+  if (!Object.is(account.duel_titles, nextAccount.duel_titles)) {
+    if (!duelSelection) return incomplete('Duel-title award needs its separate champion/notification authority');
+    duelNotice = verifyDuelAward(before, after, prior, nextAccount, account, current, identity, duelSelection);
+  }
   if (changed(final, { ...prior, respect: zeroOf(prior.respect), season_kills: 0, duel_elo: DUELS.ELO_START, season: current })
-      || changed(nextAccount, { ...account, prestige: account.prestige + legacy, season_sunk: zeroOf(account.season_sunk) }))
+      || changed(nextAccount, { ...account, prestige: account.prestige + legacy, season_sunk: zeroOf(account.season_sunk), ...(duelNotice ? { duel_titles: account.duel_titles + 1 } : {}) }))
     return incomplete('Additional same-owner character/account fields changed outside the exact conversion projection');
   for (const [a, b, owner] of [[priorPeople, finalPeople, prior.id], [priorAccounts, finalAccounts, prior.account_id]]) {
     if (a.size !== b.size || [...a].some(([id, row]) => id !== owner && changed(row, b.get(id))))
@@ -87,13 +92,15 @@ export function reconcileSeasonConversions(before, after) {
   // All other observed tables must be unchanged: no balancing an unrelated
   // currency movement or a second authority against this conversion receipt.
   for (const table of new Set([...Object.keys(before.tables), ...Object.keys(after.tables)])) {
-    if (['characters', 'account_persistent', 'telemetry', 'season_recaps'].includes(table)) continue;
+    if (['characters', 'account_persistent', 'telemetry', 'season_recaps', ...(duelNotice ? ['notifications'] : [])].includes(table)) continue;
     if (changed(before.tables[table], after.tables[table])) return incomplete(`Other observed table changed: ${table}`);
   }
   const authority = [{ table: 'telemetry', id: receipt.id }, { table: 'season_recaps', accountId: recap.account_id, season: recap.season },
     { rule: 'src/worker.js runSeasonRollover; levelOf, floor(level/2), recapTitleOf, DUELS.ELO_START' }];
   if (legacy > 0) checks.push({ kind: 'season-exact-prestige-source', resource: 'prestige', owner: `account:${prior.account_id}`,
     before: String(account.prestige), after: String(nextAccount.prestige), expectedDelta: String(legacy), drift: '0', authority });
+  if (duelNotice) movements.push({ kind: 'season-duel-title', accountId: prior.account_id, characterId: prior.id, notificationId: duelNotice,
+    selectionSequence: duelSelection.boundary.sequence, sourceSha256: duelSelection.sourceSha256, economicGrant: false });
   movements.push({ kind: legacy > 0 ? 'season-prestige-conversion' : 'season-status-only', characterId: prior.id, accountId: prior.account_id,
     priorSeason: prior.season, currentSeason: current, closedSeason: recap.season, priorRespect: prior.respect, level, priorKills: prior.season_kills,
     prestigeGained: legacy, title: recap.title, priorSeasonSunk: account.season_sunk, economicGrant: legacy > 0, authority });
