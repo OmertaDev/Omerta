@@ -166,7 +166,7 @@ const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_C
   expectedDormant, queryOrder: QUERY_ORDER_SCOPE, deploymentAttested: false,
   excludedIntegrations: ['Unconfigured chain watcher', 'Disabled liquidity automation', 'Unavailable external RWA registry'],
   coverageMissing: ['All 15 archetypes and 225 runs', 'All 13 resource journals at every worker transition',
-    'Complete opportunity acceptance/ignored linkage', 'Actor-policy replay across all archetypes and seeds',
+    'Actor-policy replay across all archetypes and seeds',
     'Dead-world reachability proof and failure minimization',
     'Two executions of every longest lifecycle', 'Production-equivalent 12-hour soak', 'HTTP/provider authentication', 'Deployed environment and real cohort'] };
 if (allianceEnabled) Object.assign(configuration, {
@@ -557,8 +557,8 @@ try {
     for (let action = 0; action < configuration.policy.maximumCommandsPerSession; action++) {
       const view = await invoke('player.snapshot', { accountId, options: actorOptions.get(accountId) },
         () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
-      metrics.playerSnapshots++; opportunities.observe(accountId, view.opportunities, at);
-      metrics.observedAuthorizedOpportunities = opportunities.summarize(at).distinctAuthorizedActorOpportunities;
+      metrics.playerSnapshots++;
+      metrics.observedAuthorizedOpportunities = opportunities.observe(accountId, view.opportunities, at);
       const mysteryPolicy = mysteryPolicies.get(accountId);
       let command;
       if (mysteryPolicy) {
@@ -581,6 +581,7 @@ try {
       const response = await invoke('player.execute', { accountId, executionId },
         () => engine.execute(accountId, { executionId, confirmed: true }, executionId), 'command');
       assert.equal(response.status, 'COMPLETED');
+      opportunities.accept(accountId, command, response, at);
       if (mysteryPolicy) {
         mysteryPolicy.settle(response);
         await actors.observe('mystery-policy-settled', { accountId, logicalAt: at }, mysteryPolicy.checkpoint());
@@ -645,7 +646,7 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary('alliance-day-' + day);
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
-      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at) };
+      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
     await proof.artifact('world-diagnostics-day-' + day + '.json', await collectWorldDiagnostics(diagnosticPool,
@@ -694,7 +695,7 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary(`quiet-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
-      opportunityObservation: opportunities.summarize(at) };
+      opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     const daily = await proof.snapshot(pool, `day-${day}`);
     await knowledgeBoundary(`day-${day}`, daily);
@@ -761,7 +762,7 @@ try {
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
-    opportunities: opportunities.summarize(at), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
+    opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
       + (allianceEnabled ? ' plus fresh completed alliance HTTP operations' : '') + '; excludes reads/replays/denials' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
@@ -772,7 +773,7 @@ try {
     jobOutcomesSha256: sha256(canonicalJson(trace.jobs)), deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
     actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
     mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
-    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at) })),
+    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
     resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
