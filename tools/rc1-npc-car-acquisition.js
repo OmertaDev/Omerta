@@ -7,7 +7,7 @@ import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS } from './rc1-car-mel
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 
 export const NPC_CAR_SOURCE_PINS = Object.freeze({
-  'src/population.js': '7a54934015fa68f99d008aca4699b168efc6b8e1c73dbccd8e3c9802396c151c',
+  'src/population.js': '32cc38aee581ba1b31d53a5655cab5f8fc5469a8f16f2b27d421768430ae7db0',
   'src/rules.js': CAR_MELT_SOURCE_PINS['src/rules.js'],
   'src/rules.tail.js': CAR_MELT_SOURCE_PINS['src/rules.tail.js'],
   'src/rules.generated.js': CAR_MELT_SOURCE_PINS['src/rules.generated.js'],

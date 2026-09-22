@@ -832,6 +832,20 @@ jobs:
         run: |
           umask 077
           npm run test:rc1:npc-family-lineage:postgres
+      - name: Existing NPC boat recovery provenance
+        if: '!cancelled()'
+        env:
+          RC1_NPC_BOAT_OUTPUT: ${{ runner.temp }}/rc1-npc-boat-lineage
+        run: |
+          umask 077
+          node test/rc1-native-npc-boat-lineage.js --postgres
+      - name: Existing NPC market rollback and same-owner retry
+        if: '!cancelled()'
+        env:
+          RC1_NPC_MARKET_OUTPUT: ${{ runner.temp }}/rc1-npc-market-controls
+        run: |
+          umask 077
+          node test/rc1-native-npc-market-controls.js --postgres
       - name: Encrypt restricted execution evidence
         if: always()
         env:

@@ -3325,6 +3325,14 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/rc1-resident-restart.js':
+      'Requires the retained private alliance hour-24 dump, policy and RNG tape selected with --retained. '
+      + 'A newly seeded CI database cannot reproduce the recorded interruption. The bounded native '
+      + 'proof retains its exact source and full state; population behavior and deterministic runtime controls run in CI.',
+    'test/rc1-worker-restart-equivalence.js':
+      'Requires both the original restricted alliance checkpoint and the source-bound resident proof checkpoint. '
+      + 'Those inputs contain private actors and are not distributed to generic hosted CI. It replays the exact '
+      + 'saved request and all original startup callbacks; its retained output is the existing restart gate evidence.',
     'test/rc1-family-cash-ammo-retained.js':
       'Reclassifies three specific historical native runs from the private RC1_RETAINED_ROOT; '
       + 'it requires their original restricted actor snapshots, requests and artifact hashes, '
