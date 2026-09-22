@@ -205,6 +205,10 @@ const guardBoundary = async label => { if (guardrails) await proof.record({ kind
 const runtime = installSerialRuntime(seed, configuration.start); let at = start;
 runtime.bindClock(() => at);
 if (resume) runtime.restoreTape(parentTape);
+// A fresh application rebuilds process-local sealing keys and Fastify's random
+// registration IDs. Retain those draws without shifting the restored gameplay
+// stream, just as for the repeated original worker startup below.
+const initializeApplication = work => resume && allianceEnabled ? runtime.withRestartStartup(work) : work();
 const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant });
 const namespace = resume ? parentCheckpoint.schema : `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
 const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: replay, artifact: proof.artifact });
@@ -412,7 +416,10 @@ try {
     await seam.clock.initialize(bootstrap);
   }
     if (allianceEnabled) {
-      const { buildServer } = await import('../src/server.js'); app = await buildServer(); pool = app.pool;
+      await initializeApplication(async () => {
+        const { buildServer } = await import('../src/server.js'); app = await buildServer();
+      });
+      pool = app.pool;
       // inject can resolve at response delivery before original onResponse
       // hooks finish their native queries. Retain all original hooks and
       // wait for their completion before the next serial observed query.
@@ -422,6 +429,9 @@ try {
         responseCompletions.delete(key); complete();
       });
       if (resume) {
+        // Complete deferred plugin registration before the first player request;
+        // otherwise its final diagnostic random draw escapes the startup scope.
+        await initializeApplication(() => app.ready());
         const after = await proof.snapshot(pool, 'after-application-bootstrap');
         applicationBootstrap = assertAllianceApplicationBootstrap(restoredState, after, at);
         await proof.artifact('alliance-application-bootstrap.json', applicationBootstrap);
@@ -460,12 +470,15 @@ try {
     import('../src/game.js'), import('../src/rules.js'), import('../src/invariants.js')]);
   // Match the public /v1/rules projection; private rule fields are not policy input.
   const publicCrimes = CRIMES.map(({ id, name, lvl, nerve, cash, base: chance, jail }) => ({ id, name, lvl, nerve, cash, base: chance, jail }));
-  const content = coreProgressionContent(), director = createConfiguredDirector(pool, content);
-  const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
-    knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
-  const { createCoordinationService } = await import('../src/coordination/runtime.js');
-  const knowledgeService = createCoordinationService({ pool, registry: content.coordinationRegistry,
-    prerequisitesEnabled: content.progression === true, enabled: true, knowledgeEnabled: true, sharingEnabled: true, accountIds: [] });
+  const { engine, knowledgeService } = await initializeApplication(async () => {
+    const content = coreProgressionContent(), director = createConfiguredDirector(pool, content);
+    const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
+      knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
+    const { createCoordinationService } = await import('../src/coordination/runtime.js');
+    const knowledgeService = createCoordinationService({ pool, registry: content.coordinationRegistry,
+      prerequisitesEnabled: content.progression === true, enabled: true, knowledgeEnabled: true, sharingEnabled: true, accountIds: [] });
+    return { engine, knowledgeService };
+  });
   async function knowledgeBoundary(label, before) {
     const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
       readPage: (accountId, options) => proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
