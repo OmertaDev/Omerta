@@ -8,6 +8,7 @@ import { reconcileSeasonConversions } from './rc1-season-conversion-journal.js';
 import { reconcileNpcFamilyFormation } from './rc1-npc-family-journal.js';
 import { reconcileStoredSeasonCrowns } from './rc1-season-crown-journal.js';
 import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
+import { reconcileWorkerTransitions } from './rc1-world-worker-transitions.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -644,6 +645,8 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported, npcFamilyProvenance, identity);
   const familyDissolution = reconcileFamilyDissolution(before, after, receipts, checks, unsupported);
   const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
+  const workerTransitions = reconcileWorkerTransitions(before, after, { identity, receipts });
+  checks.push(...workerTransitions.checks);
   for (const receipt of receipts) if (!ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
@@ -777,7 +780,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',
     'drop_allocations', 'chain_reserve', 'vouchers', 'operation_escrow'];
-  for (const table of observedOnly) if (json(rows(before, table)) !== json(rows(after, table)))
+  for (const table of observedOnly) if (!(table === 'exchange_pool' && workerTransitions.exchange) && json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
   const unknownBids = state => rows(state, 'district_bids').filter(row => !turfTerminal.settledDistricts.has(row.district_id));
@@ -792,7 +795,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     if (familyDissolution.dissolved.has(id)) return false;
     if (familyEntry.founded.has(id)) return Object.keys(newFamilies.get(id)).some(field => !familyEntry.familyFields.get(id)?.has(field));
     const a = oldFamilies.get(id), b = newFamilies.get(id); if (!a || !b) return true;
-    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !familyEntry.familyFields.get(id)?.has(field)
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !workerTransitions.familyFields.get(id)?.has(field) && !familyEntry.familyFields.get(id)?.has(field)
       && !(field === 'treasury' && turfTerminal.treasuryOwners.has(id)) && json(a[field]) !== json(b[field]));
   });
   if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,
@@ -803,7 +806,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars,
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements },
     boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },
     seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,
