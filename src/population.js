@@ -459,7 +459,7 @@ async function runPopulationInner(pool) {
     const pickable = (await pool.query(
       `SELECT id FROM characters WHERE alive AND is_npc
          AND (jail_until IS NULL OR jail_until < now())
-         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24`)).rows;
+         AND (hosp_until IS NULL OR hosp_until < now()) ORDER BY id LIMIT 24`)).rows;
     if (!pickable.length) break;
     const pick = pickable[Math.floor(Math.random() * pickable.length)];
     const sentenceS = jb.MIN_S + Math.floor(Math.random() * (jb.MAX_S - jb.MIN_S + 1));

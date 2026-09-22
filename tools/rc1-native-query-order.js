@@ -9,7 +9,7 @@ const plain = (value) => JSON.parse(JSON.stringify(value));
 const normalizedSql = (sql) => sql.replace(/\s+/g, ' ').trim();
 const originalSql = `SELECT id FROM characters WHERE alive AND is_npc
          AND (jail_until IS NULL OR jail_until < now())
-         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24`;
+         AND (hosp_until IS NULL OR hosp_until < now()) ORDER BY id LIMIT 24`;
 const eligibleSql = originalSql.replace(/^SELECT id /, 'SELECT * ').replace(/ LIMIT 24$/, '');
 // Both subqueries use the same statement snapshot, including an empty universe.
 // Eligible rows remain JSON strings, preserving exact PostgreSQL numeric text.
@@ -19,10 +19,10 @@ const transformedSql = `SELECT
 const populationScope = Object.freeze({
   id: 'population-jailbirds', kind: 'limited-projection', file: 'src/population.js', site: originalSql,
   source: 'src/population.js/runPopulationInner/JAILBIRDS',
-  sourceSha256: '32cc38aee581ba1b31d53a5655cab5f8fc5469a8f16f2b27d421768430ae7db0',
+  sourceSha256: '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
   sql: normalizedSql(originalSql), originalSql, eligibleSql, transformedSql,
   originalSqlSha256: sha256(originalSql), transformedSqlSha256: sha256(transformedSql), limit: 24,
-  reason: 'Native SQL leaves LIMIT membership and order unspecified before canonical Math.random indexing. Version 1 full replay failed at occurrence 269 because three candidate IDs changed.',
+  reason: 'Native restart changed the unordered LIMIT membership before the same Math.random index, jailing another resident. Production now orders by id; retain the exact selection and complete eligibility to verify that contract.',
   permitted: 'Record the actual native limited result and complete eligible character rows in one PostgreSQL statement snapshot. Replay the observed subset/order only after exact eligible multiset equality including all values and duplicate multiplicities.',
   failClosed: 'Changed eligible membership, values, multiplicities, source, SQL, parameters, query count or selected cardinality fails. This records nondeterministic selection; it is not seed-only equivalence.' });
 const standingColumns = ['kills', 'hitman_rep', 'boxing_wins', 'duel_wins', 'cartel_damage', 'soldiers_led',
@@ -40,7 +40,7 @@ const marketEligibleSql = marketSql.replace('SELECT id, kind, seller_character, 
 const marketTransformedSql = `SELECT
   COALESCE((SELECT json_agg(rc1_selected) FROM (${marketSql}) rc1_selected), '[]'::json) AS limited_rows,
   COALESCE((SELECT json_agg(row_to_json(rc1_eligible)::text) FROM (${marketEligibleSql}) rc1_eligible), '[]'::json) AS eligible_rows`;
-export const QUERY_ORDER_SCOPE = Object.freeze({ version: 4, storageFormat: 3,
+export const QUERY_ORDER_SCOPE = Object.freeze({ version: 5, storageFormat: 3,
   reason: 'Retained 90-day replay changed a tied seasonal champion and exchanged generated market refund/notification IDs. Record only the three exact demonstrated queries; no gameplay tiebreak or ID normalization.',
   queries: [populationScope, {
     id: 'standing-population', kind: 'complete-typed-rows', file: 'src/standing.js', site: standingSite,

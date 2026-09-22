@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
 export const NPC_FAMILY_SOURCE_PINS = Object.freeze({
-  'src/population.js': '32cc38aee581ba1b31d53a5655cab5f8fc5469a8f16f2b27d421768430ae7db0',
+  'src/population.js': '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
   'src/rules.js': 'c22a72398a46a4f0076a64692dd31ddb2555ed94e9afa0da538f3f3a773f7c24',
