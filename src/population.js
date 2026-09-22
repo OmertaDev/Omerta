@@ -832,15 +832,15 @@ export async function runResidentBehaviour(pool) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      // Population retirement takes the character lock before population_state too.
+      const live = (await client.query(
+        'SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE',
+        [id])).rows[0];
       const current = (await client.query('SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE')).rows[0].behaviour_turn;
       if (current.hour !== turn.hour || !current.pending.includes(id)) {
         await client.query('COMMIT');
         continue;
       }
-      // re-read under the row lock — a player may have jumped/robbed them since the pick
-      const live = (await client.query(
-        'SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE',
-        [id])).rows[0];
       const did = live ? await residentAct(client, live) : null;
       await client.query('UPDATE population_state SET behaviour_turn=$1 WHERE id=1',
         [JSON.stringify({ hour: current.hour, pending: current.pending.filter(candidate => candidate !== id) })]);

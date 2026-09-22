@@ -652,7 +652,7 @@ try {
     assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
     priorResources = after; commitObserver.arm();
   } });
-  if (resume) await runtime.withRestartStartup(workerStartup);
+  if (resume && allianceEnabled) await runtime.withRestartStartup(workerStartup);
   else await workerStartup();
   let startupLineage = null;
   if (allianceEnabled) {
