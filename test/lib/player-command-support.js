@@ -64,16 +64,22 @@ export const executeIssued = (engine, accountId, command, confirmed = true) => e
   { executionId: command.executionIdentity.executionId, confirmed }, command.executionIdentity.executionId);
 
 export async function issueAndExecute(engine, accountId, type, parameters = {}, options = {}) {
-  for (let attempt = 0; ; attempt++) {
+  let refreshRetries = 0, rejectionRetries = 0;
+  for (;;) {
     const view = await engine.snapshot(accountId, options);
     const command = findCommand(view, type, parameters);
     let response;
     try { response = await executeIssued(engine, accountId, command); }
     catch (error) {
       // Browser journey adapters may exercise the visible refresh/reissue path.
-      // Every attempt still verifies its own exact server-issued identity; native
-      // engines have no hook and retain the original fail-on-error behavior.
-      if (attempt === 0 && await engine.retryIssuedCommand?.(accountId, command, error)) continue;
+      // A zero-submission refresh must not spend the single rejected-command
+      // retry: the reissued board can then cross its expiry bucket boundary.
+      // Both paths stay bounded; native engines without the hook still fail.
+      const refreshed = error.observedBrowserRefresh === true && error.body?.error === 'browser_board_refresh';
+      if ((refreshed ? refreshRetries : rejectionRetries) === 0 && await engine.retryIssuedCommand?.(accountId, command, error)) {
+        if (refreshed) refreshRetries++; else rejectionRetries++;
+        continue;
+      }
       throw error;
     }
     assert.equal(response.status, 'COMPLETED');
