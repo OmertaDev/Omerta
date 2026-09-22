@@ -848,6 +848,20 @@ export async function runResidentBehaviour(pool) {
       if (did) { out.acted++; out.actions[did] = (out.actions[did] || 0) + 1; }
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
+      // A caught failed turn still costs only this resident its action, as before. Retaining a
+      // poison row as pending forever would prevent every later hourly selection. A process
+      // interruption before this acknowledgement leaves the ID pending for crash recovery.
+      try {
+        await client.query('BEGIN');
+        const current = (await client.query('SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE')).rows[0].behaviour_turn;
+        if (current.hour === turn.hour && current.pending.includes(id))
+          await client.query('UPDATE population_state SET behaviour_turn=$1 WHERE id=1',
+            [JSON.stringify({ hour: current.hour, pending: current.pending.filter(candidate => candidate !== id) })]);
+        await client.query('COMMIT');
+      } catch (acknowledgementError) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw acknowledgementError;
+      }
       console.error('[population] resident action failed', id, e.message);
     } finally { client.release(); }
   }

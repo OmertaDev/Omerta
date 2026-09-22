@@ -19,6 +19,16 @@ if (!mode) {
 } else {
   const source = await sourceIdentity(), directory = path.join(output, mode);
   const read = async (base, file) => JSON.parse(await fs.readFile(path.join(base, file), 'utf8'));
+  const reference = arg('reference') || path.join(output,'uninterrupted');
+  let reusedReference = null;
+  if(mode === 'restarted') {
+    const bytes = await fs.readFile(path.join(reference,'run.json')), run = JSON.parse(bytes);
+    await verifyArtifactIndex(reference,run); assert.equal(run.status,'PASS_SCOPED');
+    // Only startup entropy changed since this successful uninterrupted execution.
+    execFileSync('git',['diff','--exit-code',run.source.revision,source.revision,'--','src','schema.sql'],{stdio:'pipe'});
+    reusedReference = { directory:reference,source:run.source,runSha256:sha256(bytes),
+      validity:'Production src and schema bytes unchanged; uninterrupted execution invokes no restart entropy scope.' };
+  }
   const checkpoint = await read(checkpointDirectory, 'resident-checkpoint-checkpoint.json');
   const saved = await read(checkpointDirectory, 'resident-cursor.json');
   const policy = await read(retained, 'alliance-hour24-policy.json');
@@ -28,7 +38,7 @@ if (!mode) {
     runId: `worker-restart-${mode}`, sourceRevision: source.revision });
   const proof = await createProofRecorder({ directory, source, runId: `worker-restart-${mode}`, seed,
     scenarioId: 'retained-worker-restart-equivalence', population: 25,
-    configuration: { checkpoint, mode, scope: 'Exact retained selected command plus all original startup callbacks and two hourly resident turns; no full world or matrix.' } });
+    configuration: { checkpoint, mode, reusedReference, scope: 'Exact retained selected command plus all original startup callbacks and two hourly resident turns; no full world or matrix.' } });
   const runtime = installSerialRuntime(seed, new Date(start).toISOString());
   let at = start; runtime.bindClock(() => at); runtime.restoreTape(saved.draws);
   const controller = createWorkerSchedule({ start, setClock: value => { at = value; },
@@ -51,7 +61,8 @@ if (!mode) {
     const after = await proof.snapshot(pool,'after-startup');
     const startup = compareAllianceStates(before,after);
     await proof.artifact('startup-difference.json', startup);
-    await proof.artifact('startup-random-draws.json', { draws:runtime.tape.slice(draws) });
+    const startupDraws = runtime.tape.slice(draws);
+    await proof.artifact('startup-random-draws.json', { draws:startupDraws });
     // Preserve the exact metadata row. A new backup diagnostic is the only allowed startup effect.
     for (const table of startup.changed) {
       assert.equal(table.table,'telemetry'); assert.equal(table.removed.length,0);
@@ -73,7 +84,6 @@ if (!mode) {
     await proof.artifact('random-tape.json',{draws:runtime.tape});
     let comparison=null;
     if (mode==='restarted') {
-      const reference=arg('reference') || path.join(output,'uninterrupted');
       comparison=compareAllianceStates(await read(reference,'final.json'),final);
       await proof.artifact('continuation-difference.json',comparison);
       // No gameplay fields, identities, resource journals or timestamps are normalized.
@@ -88,7 +98,7 @@ if (!mode) {
       assert.deepEqual(gameplay(runtime.tape),gameplay((await read(reference,'random-tape.json')).draws));
     }
     result={status:'PASS_SCOPED',mode,comparedTables:Object.keys(final.tables).length,turns,
-      startupTables:startup.changed.map(t=>t.table),startupRandomDraws:runtime.tape.slice(draws,draws+(mode==='restarted'?1:0)),
+      startupTables:startup.changed.map(t=>t.table),startupRandomDraws:startupDraws.length,
       authoritativeEqual:mode==='restarted',classifiedNonAuthoritativeDifferences:comparison?.changed.map(t=>t.table)||[]};
   } catch(error) { result={status:'FAIL',mode,error:error.message,stack:error.stack};await proof.artifact('failure.json',result);process.exitCode=1; }
   finally {
