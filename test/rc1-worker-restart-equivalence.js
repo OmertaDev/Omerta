@@ -88,12 +88,11 @@ if (!mode) {
     result={status:'PASS_SCOPED',mode,comparedTables:Object.keys(final.tables).length,turns,
       startupTables:startup.changed.map(t=>t.table),startupRandomDraws:runtime.tape.slice(draws,draws+(mode==='restarted'?1:0)),
       authoritativeEqual:mode==='restarted',classifiedNonAuthoritativeDifferences:comparison?.changed.map(t=>t.table)||[]};
-  } catch(error) { result={status:'FAIL',mode,error:error.message,stack:error.stack};process.exitCode=1; }
+  } catch(error) { result={status:'FAIL',mode,error:error.message,stack:error.stack};await proof.artifact('failure.json',result);process.exitCode=1; }
   finally {
     if(app) await app.close();
     if(pool) await pool.end();
-    // Fastify owns its pool; the worker owns every other pool recorded by the loader.
-    for(const managed of controller.pools) if(managed!==app?.pool) await managed.end();
+    for(const managed of controller.pools) await managed.end();
     await proof.record({kind:'database-cleanup',...await database.close()});
     for(const level of Object.keys(consoles)) console[level]=consoles[level];
     seam.restore();runtime.restore();
