@@ -52,16 +52,27 @@ export function reconcileWorkerTransitions(before, after, { identity = {}, recei
       const wk = weekOf(dayOf(logicalAt)), task = familyTaskOf(wk);
       if (task.key !== 'crime' || next.weekly_done !== false) continue;
       const members = rows(before, 'gang_members').filter(row => row.gang_id === prior.id);
-      const crimes = receipts.filter(row => row.currency === 'cash' && row.reason.startsWith('crime:') && members.some(member => member.character_id === row.character_id));
-      assert.equal(crimes.length, 1, 'Family crime progress lacks exactly one member receipt');
-      assert(BigInt(exactSum([crimes[0].amount])) > 0n, 'Family crime progress lacks successful crime');
+      assert(context.accountId && context.crimeId, 'Family crime progress lacks original invocation identity');
+      const owners = rows(before, 'characters').filter(row => row.account_id === context.accountId && row.alive);
+      assert.equal(owners.length, 1, 'Family crime progress lacks one living invocation owner');
+      const owner = owners[0], finalOwner = rows(after, 'characters').find(row => row.id === owner.id);
+      assert(members.some(member => member.character_id === owner.id), 'Crime owner is not a member of this Family');
+      assert(finalOwner && finalOwner.account_id === owner.account_id);
+      assert.equal(exactSum([finalOwner.lc_crime, negate(owner.lc_crime)]), '1', 'Family progress is not one successful crime');
+      const crimes = receipts.filter(row => row.currency === 'cash' && row.reason.startsWith('crime:') && row.character_id === owner.id);
+      assert(crimes.length >= 1 && crimes.length <= 2, 'Family crime needs its optional funded/remainder receipts');
+      assert.equal(new Set(crimes.map(row => row.reason)).size, crimes.length, 'Duplicate crime payout receipt');
+      for (const receipt of crimes) {
+        assert(['crime:take', `crime:${context.crimeId}`].includes(receipt.reason), 'Crime receipt belongs to another action');
+        assert(BigInt(exactSum([receipt.amount])) > 0n, 'Family crime progress lacks successful crime');
+      }
       assert.equal(next.weekly_week, wk, 'Family weekly marker differs from crime time');
       assert(prior.weekly_week !== wk || !prior.weekly_done, 'Completed Family task progressed again');
       const expected = exactSum([prior.weekly_week === wk ? prior.weekly_progress : '0', 1]);
       assert.equal(exactSum([next.weekly_progress]), expected, 'Family crime progress differs from one successful crime');
       assert(BigInt(expected) < BigInt(task.goal * Math.max(1, Math.ceil(members.length / 4))), 'Family completion cannot be classified as progress only');
       result.familyFields.set(next.id, new Set(weeklyFields));
-      result.movements.push({ kind: 'family-crime-progress', familyId: next.id, receiptId: crimes[0].id, economicGrant: false });
+      result.movements.push({ kind: 'family-crime-progress', familyId: next.id, receiptIds: crimes.map(row => row.id), economicGrant: false });
     }
   }
   return result;

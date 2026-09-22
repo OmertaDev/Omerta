@@ -34,11 +34,14 @@ assert(!reconcileWorldResources(familyBefore, familyAfter, { identity }).unsuppo
 const diverted = structuredClone(familyAfter); diverted.tables.gangs[0].treasury = '76';
 assert(!reconcileWorkerTransitions(familyBefore, diverted, { identity }).familyFields.has('family'));
 familyBefore.tables.gang_members = [{ gang_id: 'family', character_id: 'member' }];
+familyBefore.tables.characters = [{ id: 'member', account_id: 'member-account', alive: true, lc_crime: 0 }];
 const weeklyAfter = structuredClone(familyBefore);
+weeklyAfter.tables.characters[0].lc_crime = 1;
 Object.assign(weeklyAfter.tables.gangs[0], { weekly_progress: '1', weekly_week: 2959 });
 const crime = { id: 'crime-receipt', character_id: 'member', currency: 'cash', amount: '1775', reason: 'crime:test' };
-const crimeIdentity = { ...identity, context: { authority: 'canonical-crime', logicalAt: Date.parse('2026-09-23T23:00:00.000Z') } };
+const crimeIdentity = { ...identity, context: { authority: 'canonical-crime', accountId: 'member-account', crimeId: 'test', logicalAt: Date.parse('2026-09-23T23:00:00.000Z') } };
 assert(reconcileWorkerTransitions(familyBefore, weeklyAfter, { identity: crimeIdentity, receipts: [crime] }).familyFields.has('family'));
+assert(reconcileWorkerTransitions(familyBefore, weeklyAfter, { identity: crimeIdentity, receipts: [crime, { ...crime, id: 'funded', reason: 'crime:take' }] }).familyFields.has('family'));
 assert.throws(() => reconcileWorkerTransitions(familyBefore, weeklyAfter, { identity: crimeIdentity, receipts: [{ ...crime, character_id: 'outsider' }] }));
 const twice = structuredClone(weeklyAfter); twice.tables.gangs[0].weekly_progress = '2';
 assert.throws(() => reconcileWorkerTransitions(familyBefore, twice, { identity: crimeIdentity, receipts: [crime] }));
