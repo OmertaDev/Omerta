@@ -14,7 +14,7 @@ const runner = fs.readFileSync(new URL('./rc1-native-world-workload.js', import.
 const start = '// BEGIN source-bound car witness integration control.\n', end = '// END source-bound car witness integration control.';
 assert.equal(runner.split(start).length, 2); assert.equal(runner.split(end).length, 2);
 const block = runner.split(start)[1].split(end)[0];
-assert.equal(sha256(block), '436bcd993e481fb710246ed950f07662a52d65d740884d00b45f8ef8b6e2d2f1', 'Runner witness block changed; review and rebind control');
+assert.equal(sha256(block), '9735a68dd1d49b1ea8b0f98debcdcc1b47811c158ef039f952197ab30e7e01f3', 'Runner witness block changed; review and rebind control');
 assert.match(runner, /const seam = installWorkerInstrumentation\(controller, \{ namespace, queryOrder, commitObserver \}\);/);
 assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, replayRun\.result\.carMeltWitnessObservation/);
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
