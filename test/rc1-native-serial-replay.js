@@ -23,6 +23,28 @@ for (let run = 0; run < 2; run++) {
 assert.deepEqual(samples[0], samples[1]);
 console.log('PASS: seeded UUID/bytes/random and application clock reproduce; globals restored');
 
+const draw = () => [crypto.randomUUID(), crypto.randomBytes(8).toString('hex'), Math.random()];
+let runtime = installSerialRuntime('restart-entropy'), ordinary, scoped, checkpointTape;
+try {
+  ordinary = [draw(), draw()];
+} finally { runtime.restore(); }
+runtime = installSerialRuntime('restart-entropy');
+try {
+  assert.deepEqual(draw(), ordinary[0]);
+  scoped = await runtime.withRestartStartup(async () => { await Promise.resolve(); return draw(); });
+  assert.notDeepEqual(scoped, ordinary[0]);
+  checkpointTape = structuredClone(runtime.tape);
+  assert.equal(checkpointTape.filter(row => row.stream.startsWith('scope:worker-restart-startup:')).length, 3);
+  assert.deepEqual(draw(), ordinary[1], 'Startup draws must not shift gameplay identities or outcomes');
+} finally { runtime.restore(); }
+runtime = installSerialRuntime('restart-entropy');
+try {
+  runtime.restoreTape(checkpointTape);
+  assert.deepEqual(draw(), ordinary[1]);
+  assert.notDeepEqual(await runtime.withRestartStartup(draw), scoped, 'Retained operational identities must not repeat');
+} finally { runtime.restore(); }
+console.log('PASS: all startup entropy retained, gameplay streams unchanged, scoped checkpoint restoration exact');
+
 if (process.argv.includes('--postgres')) {
   const directory = process.argv.find((arg) => arg.startsWith('--output='))?.slice('--output='.length) || process.env.RC1_SERIAL_OUTPUT;
   assert(directory, 'Provide an exclusive restricted output directory outside the source checkout');

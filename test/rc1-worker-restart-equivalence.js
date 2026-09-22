@@ -47,7 +47,7 @@ if (!mode) {
     for (const level of Object.keys(consoles)) console[level] = (...args) => controller.log(level,args);
     const { buildServer } = await import('../src/server.js'); app = await buildServer();
     const before = await proof.snapshot(pool,'before-startup'), draws = runtime.tape.length;
-    if (mode === 'restarted') await bootOriginalWorker(controller);
+    if (mode === 'restarted') await runtime.withRestartStartup(() => bootOriginalWorker(controller));
     const after = await proof.snapshot(pool,'after-startup');
     const startup = compareAllianceStates(before,after);
     await proof.artifact('startup-difference.json', startup);
@@ -73,7 +73,7 @@ if (!mode) {
     await proof.artifact('random-tape.json',{draws:runtime.tape});
     let comparison=null;
     if (mode==='restarted') {
-      const reference=path.join(output,'uninterrupted');
+      const reference=arg('reference') || path.join(output,'uninterrupted');
       comparison=compareAllianceStates(await read(reference,'final.json'),final);
       await proof.artifact('continuation-difference.json',comparison);
       // No gameplay fields, identities, resource journals or timestamps are normalized.
@@ -84,6 +84,8 @@ if (!mode) {
       }
       assert.equal(comparison.sequences,null);
       assert.deepEqual((await read(reference,'selected-command.json')),await read(directory,'selected-command.json'));
+      const gameplay = tape => tape.filter(draw => !draw.stream.startsWith('scope:worker-restart-startup:'));
+      assert.deepEqual(gameplay(runtime.tape),gameplay((await read(reference,'random-tape.json')).draws));
     }
     result={status:'PASS_SCOPED',mode,comparedTables:Object.keys(final.tables).length,turns,
       startupTables:startup.changed.map(t=>t.table),startupRandomDraws:runtime.tape.slice(draws,draws+(mode==='restarted'?1:0)),

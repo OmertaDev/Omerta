@@ -644,7 +644,7 @@ try {
   }
   const startupBefore = allianceEnabled ? await proof.snapshot(pool, 'before-original-worker-startup') : null;
   workPhase = 'worker-startup';
-  await bootOriginalWorker(controller, { beforeCallbacks: async () => {
+  const workerStartup = () => bootOriginalWorker(controller, { beforeCallbacks: async () => {
     if (!commitObserver) return;
     const after = await snapshotWorldResources(diagnosticPool);
     await proof.artifact('resource-worker-bootstrap.json', { classification: 'Aggregate initialization comparison; not per-commit coverage',
@@ -652,6 +652,8 @@ try {
     assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
     priorResources = after; commitObserver.arm();
   } });
+  if (resume) await runtime.withRestartStartup(workerStartup);
+  else await workerStartup();
   let startupLineage = null;
   if (allianceEnabled) {
     const startupAfter = await proof.snapshot(pool, 'after-original-worker-startup');

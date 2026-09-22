@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { syncBuiltinESMExports } from 'node:module';
 import pg from 'pg';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 const NativeDate = globalThis.Date;
 let installed = false;
@@ -20,9 +21,10 @@ export function installSerialRuntime(seed, epoch = SERIAL_EPOCH) {
   assert(typeof seed === 'string' && seed.length > 0);
   const start = NativeDate.parse(epoch); assert(Number.isFinite(start));
   const original = { Date: globalThis.Date, random: Math.random, randomBytes: crypto.randomBytes, randomUUID: crypto.randomUUID };
-  const counters = new Map(), tape = [];
+  const counters = new Map(), tape = [], randomScope = new AsyncLocalStorage();
   let clock = () => start;
   const bytes = (size, stream) => {
+    if (randomScope.getStore()) stream = `scope:${randomScope.getStore()}:${stream}`;
     assert(Number.isSafeInteger(size) && size >= 0);
     const counter = (counters.get(stream) || 0) + 1; counters.set(stream, counter);
     const chunks = [];
@@ -51,14 +53,19 @@ export function installSerialRuntime(seed, epoch = SERIAL_EPOCH) {
   return {
     epoch, seed, tape,
     bindClock(read) { assert.equal(typeof read, 'function'); clock = read; },
+    // Repeated startup includes unused seed/selection draws and operational telemetry. Keep all
+    // of them on the tape without advancing the continuation's gameplay entropy. Callers still
+    // compare every authoritative startup effect; this never makes a duplicate effect acceptable.
+    withRestartStartup(work) { return randomScope.run('worker-restart-startup', work); },
     restoreTape(prior) {
       assert.equal(tape.length, 0, 'Random state restoration must precede all new draws');
       assert(Array.isArray(prior), 'Missing retained random tape');
       for (const entry of prior) {
-        assert(['crypto.randomUUID', 'crypto.randomBytes', 'Math.random'].includes(entry.stream), 'Unknown random stream');
+        const baseStream = entry.stream.replace(/^scope:worker-restart-startup:/, '');
+        assert(['crypto.randomUUID', 'crypto.randomBytes', 'Math.random'].includes(baseStream), 'Unknown random stream');
         assert(typeof entry.hex === 'string' && /^(?:[a-f0-9]{2})*$/.test(entry.hex), 'Malformed random tape bytes');
-        if (entry.stream === 'crypto.randomUUID') assert.equal(entry.hex.length, 32, 'Invalid UUID random draw size');
-        if (entry.stream === 'Math.random') assert.equal(entry.hex.length, 12, 'Invalid Math.random draw size');
+        if (baseStream === 'crypto.randomUUID') assert.equal(entry.hex.length, 32, 'Invalid UUID random draw size');
+        if (baseStream === 'Math.random') assert.equal(entry.hex.length, 12, 'Invalid Math.random draw size');
         bytes(entry.hex.length / 2, entry.stream);
         assert.deepEqual(tape.at(-1), entry, 'Retained random tape differs from seed/counter');
       }
