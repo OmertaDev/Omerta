@@ -19,7 +19,7 @@ const transformedSql = `SELECT
 const populationScope = Object.freeze({
   id: 'population-jailbirds', kind: 'limited-projection', file: 'src/population.js', site: originalSql,
   source: 'src/population.js/runPopulationInner/JAILBIRDS',
-  sourceSha256: '7a54934015fa68f99d008aca4699b168efc6b8e1c73dbccd8e3c9802396c151c',
+  sourceSha256: '32cc38aee581ba1b31d53a5655cab5f8fc5469a8f16f2b27d421768430ae7db0',
   sql: normalizedSql(originalSql), originalSql, eligibleSql, transformedSql,
   originalSqlSha256: sha256(originalSql), transformedSqlSha256: sha256(transformedSql), limit: 24,
   reason: 'Native SQL leaves LIMIT membership and order unspecified before canonical Math.random indexing. Version 1 full replay failed at occurrence 269 because three candidate IDs changed.',
