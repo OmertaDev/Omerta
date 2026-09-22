@@ -9,6 +9,8 @@ import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from './rc
 
 export const NPC_MARKET_SOURCE_PINS = NPC_CAR_SOURCE_PINS;
 export const NPC_MARKET_SQL = Object.freeze({
+  turnLocked: 'SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE',
+  turnCompleted: 'UPDATE population_state SET behaviour_turn=$1 WHERE id=1',
   locked: 'SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE',
   cash: 'UPDATE characters SET cash = cash - $2 WHERE id=$1',
   receipt: 'INSERT INTO transactions (id, character_id, currency, amount, reason) VALUES ($1,$2,$3,$4,$5)',
@@ -31,7 +33,9 @@ export function assertNpcMarketSources() {
   const line = needle => { assert.equal(text.split(needle).length, 2); return text.slice(0, text.indexOf(needle)).split('\n').length; };
   sites = { start: line('export async function residentAct('), end: line('export async function runResidentBehaviour(') - 1,
     call: line('const did = live ? await residentAct(client, live) : null;'),
-    lock: line("const live = (await client.query(\n        '" + NPC_MARKET_SQL.locked + "',\n        [r.id])).rows[0];"),
+    lock: line("const live = (await client.query(\n        '" + NPC_MARKET_SQL.locked + "',\n        [id])).rows[0];"),
+    turnLock: line("const current = (await client.query('" + NPC_MARKET_SQL.turnLocked + "')).rows[0].behaviour_turn;\n      if (current.hour !== turn.hour"),
+    turnCompleted: line("await client.query('" + NPC_MARKET_SQL.turnCompleted + "',\n        [JSON.stringify({ hour: current.hour, pending: current.pending.filter(candidate => candidate !== id) })]);\n      await client.query('COMMIT');"),
     listing: line("await client.query(\n        '" + NPC_MARKET_SQL.listing + "',\n        [uid(), r.id, 'order', good.id, qty, r.loc, unit,\n         new Date(Date.now() + BLACK_MARKET.MAX_TTL_H * 3600 * 1000)]);") };
 }
 const populationUrl = new URL('../src/population.js', import.meta.url).href;
@@ -74,10 +78,11 @@ export function reconcileNpcMarketOrder(before, after, receipts, provenance, ide
   assert.equal(placements.length, 1, 'Compound NPC order placement');
   const only = sql => { const matches = q.filter(row => row.sql === sql); assert.equal(matches.length, 1, 'Missing/duplicate market authority query: ' + sql); return matches[0]; };
   const listingQuery = placements[0], locked = only(NPC_MARKET_SQL.locked), cashQuery = only(NPC_MARKET_SQL.cash),
-    orderQuery = only(NPC_MARKET_SQL.orders), loanQuery = only(NPC_MARKET_SQL.loans);
+    orderQuery = only(NPC_MARKET_SQL.orders), loanQuery = only(NPC_MARKET_SQL.loans),
+    turnLocked = only(NPC_MARKET_SQL.turnLocked), turnCompleted = only(NPC_MARKET_SQL.turnCompleted);
   // Valid maintenance or unstamped-heir writes are not this isolated subset.
   if (q.some(row => ['INSERT','UPDATE','DELETE'].includes(row.command)
-    && ![NPC_MARKET_SQL.cash,NPC_MARKET_SQL.receipt,NPC_MARKET_SQL.listing].includes(row.sql)
+    && ![NPC_MARKET_SQL.cash,NPC_MARKET_SQL.receipt,NPC_MARKET_SQL.listing,NPC_MARKET_SQL.turnCompleted].includes(row.sql)
     && !([NPC_MARKET_SQL.fighters,NPC_MARKET_SQL.racers].includes(row.sql) && row.rowCount === 0))) return result;
   const ledgers = q.filter(row => row.sql === NPC_MARKET_SQL.receipt);
   assert.equal(ledgers.length, 2, 'Order needs exactly two new receipts'); assert.equal(receipts.length, 2);
@@ -97,6 +102,30 @@ export function reconcileNpcMarketOrder(before, after, receipts, provenance, ide
   assert(person?.alive && person.is_npc && next); assert.equal(table(before, 'account_persistent').find(row => row.account_id === person.account_id)?.npc_flag, true);
   assert.deepEqual(locked.parameters, [owner]); assert.equal(locked.command, 'SELECT'); assert.equal(locked.rowCount, 1);
   assert.deepEqual(locked.rows, [Object.fromEntries(['id','cash','loc','npc_seed','guard_price','fade_limit','duel_limit'].map(field => [field, person[field]]))]);
+  // The same transaction must acknowledge exactly this saved resident turn.
+  // Selection and caught-error acknowledgements have different original call sites.
+  for (const [row, site] of [[turnLocked, sites.turnLock], [turnCompleted, sites.turnCompleted]]) {
+    assert.equal(row.origin?.kind, 'native-npc-market-source-v1');
+    assert(row.origin.frames.some(frame => frame.file === 'src/population.js' && frame.caller === 'runResidentBehaviour' && frame.line === site),
+      'Turn bookkeeping lacks the original successful action caller');
+  }
+  assert.equal(turnLocked.command, 'SELECT'); assert.equal(turnLocked.rowCount, 1); assert.deepEqual(turnLocked.parameters, []);
+  assert.equal(turnLocked.rows.length, 1); assert.deepEqual(Object.keys(turnLocked.rows[0]), ['behaviour_turn']);
+  const turn = turnLocked.rows[0].behaviour_turn;
+  assert(turn && typeof turn === 'object'); assert.deepEqual(Object.keys(turn).sort(), ['hour', 'pending']);
+  assert(Number.isSafeInteger(turn.hour) && turn.hour >= 0 && turn.hour <= Math.floor(at / 3600000), 'Saved turn hour is invalid or in the future');
+  assert(Array.isArray(turn.pending) && turn.pending.length > 0 && turn.pending.length <= POPULATION.BEHAVIOUR.ACT_PER_TICK);
+  assert(turn.pending.every(id => typeof id === 'string' && id.length > 0));
+  assert.equal(new Set(turn.pending).size, turn.pending.length, 'Saved resident turn contains duplicate identities');
+  assert(turn.pending.includes(owner), 'Order owner is not pending in the locked turn');
+  const completedTurn = { hour: turn.hour, pending: turn.pending.filter(id => id !== owner) };
+  assert.equal(turnCompleted.command, 'UPDATE'); assert.equal(turnCompleted.rowCount, 1); assert.deepEqual(turnCompleted.rows, []);
+  assert.deepEqual(turnCompleted.parameters, [JSON.stringify(completedTurn)], 'Turn completion must remove only the order owner and preserve hour/order');
+  if (Object.hasOwn(before.tables, 'population_state') || Object.hasOwn(after.tables, 'population_state')) {
+    const priorState = table(before, 'population_state'), nextState = table(after, 'population_state');
+    assert.equal(priorState.length, 1); assert.equal(priorState[0].id, 1); assert.deepEqual(priorState[0].behaviour_turn, turn);
+    assert.deepEqual(nextState, [{ ...priorState[0], behaviour_turn: completedTurn }], 'Other persisted population state changed');
+  }
   for (const field of ['jail_until','hosp_until','safe_until']) assert(person[field] === null || Date.parse(person[field]) < at, 'NPC is not eligible: ' + field);
   assert(Number(person.npc_seed) > 0, 'Unstamped heir is outside this isolated placement subset');
   const B = POPULATION.BEHAVIOUR, cash = Number(person.cash), good = GOODS.find(row => row.id === goodId);
@@ -129,13 +158,13 @@ export function reconcileNpcMarketOrder(before, after, receipts, provenance, ide
   assert.deepEqual(actual[0],{id,seller_character:owner,kind:'order',car_id:null,good_id:goodId,qty,filled_qty:0,district,price:String(unit),buy_now:null,reserve:null,
     bid:null,bidder:null,status:'live',expires_at:new Date(deadline).toISOString(),created_at:new Date(at).toISOString()});
   assert.deepEqual(sorted(table(before,'market_listings')),sorted(table(after,'market_listings').filter(row=>row.id!==id)),'Other listing ownership/disposition changed');
-  const order=[locked,loanQuery,orderQuery,cashQuery,...ledgers,listingQuery].map(row=>q.indexOf(row));assert(order.every((n,i)=>!i||n>order[i-1]));
+  const order=[locked,turnLocked,loanQuery,orderQuery,cashQuery,...ledgers,listingQuery,turnCompleted].map(row=>q.indexOf(row));assert(order.every((n,i)=>!i||n>order[i-1]));
   for(const row of q.filter(row=>!['SELECT','BEGIN','COMMIT'].includes(row.command))){
-    if([cashQuery,...ledgers,listingQuery].includes(row))continue;
+    if([cashQuery,...ledgers,listingQuery,turnCompleted].includes(row))continue;
     assert([NPC_MARKET_SQL.fighters,NPC_MARKET_SQL.racers].includes(row.sql)&&row.command==='UPDATE'&&row.rowCount===0,'Unclassified compound NPC write');
   }
   for(const name of Object.keys(before.tables)){
-    if(['transactions','market_listings'].includes(name))continue;
+    if(['transactions','market_listings','population_state'].includes(name))continue;
     const a=table(before,name),b=table(after,name);
     assert.deepEqual(sorted(name==='characters'?a.filter(row=>row.id!==owner):a),sorted(name==='characters'?b.filter(row=>row.id!==owner):b),'Other resource state changed: '+name);
   }

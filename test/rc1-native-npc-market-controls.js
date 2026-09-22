@@ -85,6 +85,11 @@ try{
   ['wrong receipt owner',p=>{p.receipts[0].character_id='foreign';}],
   ['changed deadline',p=>{p.after.tables.market_listings.find(r=>!p.before.tables.market_listings.some(old=>old.id===r.id)).expires_at=new Date(at).toISOString();}],
   ['foreign native boundary',p=>{p.event={...p.event,transactionId:p.event.transactionId+1};}],
+  ['repeated pending owner',p=>{const read=p.provenance.queries.find(row=>row.sql===NPC_MARKET_SQL.turnLocked),write=p.provenance.queries.find(row=>row.sql===NPC_MARKET_SQL.turnCompleted);
+   write.parameters=[JSON.stringify(read.rows[0].behaviour_turn)];}],
+  ['changed pending hour',p=>{const write=p.provenance.queries.find(row=>row.sql===NPC_MARKET_SQL.turnCompleted),turn=JSON.parse(write.parameters[0]);turn.hour++;write.parameters=[JSON.stringify(turn)];}],
+  ['foreign turn completion caller',p=>{p.provenance.queries.find(row=>row.sql===NPC_MARKET_SQL.turnCompleted).origin.frames.find(frame=>frame.caller==='runResidentBehaviour').line++;}],
+  ['duplicated pending acknowledgement',p=>{const write=p.provenance.queries.find(row=>row.sql===NPC_MARKET_SQL.turnCompleted);p.provenance.queries.splice(-1,0,structuredClone(write));}],
  ]){const corrupt=structuredClone(input);mutate(corrupt);assert.throws(()=>reconcileNpcMarketOrder(corrupt.before,corrupt.after,corrupt.receipts,corrupt.provenance,corrupt.event));controls.push({name,candidate:candidates.indexOf(input)+1});}
  observer.assertComplete();assert.equal(firstError,undefined);observer.disarm();await proof.snapshot(pool,'final');
  await proof.artifact('worker-schedule.json',controller.diagnostic());await proof.artifact('observer-final.json',observer.diagnostic());await proof.artifact('random-tape.json',{draws:runtime.tape});await proof.artifact('faults-controls.json',{attempts,logs,controls});
