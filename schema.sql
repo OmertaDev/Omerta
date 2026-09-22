@@ -1864,6 +1864,8 @@ CREATE TABLE IF NOT EXISTS population_state (
   retired INT NOT NULL DEFAULT 0    -- residents replaced so far that day
 );
 INSERT INTO population_state (id) VALUES (1) ON CONFLICT DO NOTHING;
+-- An hourly resident selection survives a worker restart; effects and pending removal commit together.
+ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB;
 
 CREATE TABLE IF NOT EXISTS street_tax (
   id INT PRIMARY KEY,
