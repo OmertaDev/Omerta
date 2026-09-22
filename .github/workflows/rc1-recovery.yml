@@ -9,6 +9,16 @@ on:
         description: 'Optional exact source SHA for diagnostic PostgreSQL18.4 alliance replay only'
         required: false
         type: string
+      phone_only:
+        description: 'Run only the retained phone expiry reproduction and affected 430px journey'
+        required: false
+        type: boolean
+        default: false
+      phone_postgres:
+        description: 'PostgreSQL version for the focused phone recovery proof'
+        type: choice
+        default: '16'
+        options: ['16', '18.4']
 
 env:
   RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
@@ -28,9 +38,69 @@ jobs:
           node-version: '22'
       - run: node test/rc1-ci-envelope.js
 
+  focused-phone:
+    needs: retention-controls
+    if: ${{ inputs.phone_only && !inputs.replay_source }}
+    name: Focused phone recovery (PostgreSQL ${{ inputs.phone_postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:${{ inputs.phone_postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_phone
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_phone
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Deterministic refresh followed by command expiry
+        env:
+          RC1_PHONE_EXPIRY_OUTPUT: ${{ runner.temp }}/rc1-phone-expiry
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-phone-command-expiry-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-phone-expiry.log"
+      - name: Retained failing phone journey at 430px
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-golden-browser
+          RC1_GOLDEN_BROWSER_WIDTH: '430'
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-golden-browser-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-golden-browser.log"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ inputs.phone_postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-phone-pg${{ inputs.phone_postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
   linux-sigterm:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Linux recovery (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -177,7 +247,7 @@ jobs:
 
   isolated-world-smoke:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Isolated two-hour world smoke (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -286,7 +356,7 @@ jobs:
 
   legacy-authority:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Legacy authority (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # Separate native matrix preserves the pre-existing recovery job budget.
@@ -385,7 +455,7 @@ jobs:
 
   policy-and-loan-lifecycles:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Policy and loan lifecycles (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -531,7 +601,7 @@ jobs:
 
   original-escrow-timers:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # This new lane includes original one-hour timers. Existing budgets stay intact.
@@ -586,7 +656,7 @@ jobs:
 
   original-resource-timers:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     # A new lane with an original 30-minute war lifecycle; existing job budgets stay intact.
@@ -648,7 +718,7 @@ jobs:
 
   bounded-custody-and-mobile:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Bounded custody and mobile (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -778,7 +848,7 @@ jobs:
 
   bounded-resource-pressure:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Bounded resource pressure and response barriers (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -901,7 +971,7 @@ jobs:
 
   alliance-world-replay:
     needs: retention-controls
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     name: Scoped48-hour alliance world replay (PostgreSQL ${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -1040,7 +1110,7 @@ jobs:
   alliance-checkpoint-continuation:
     needs: retention-controls
     name: Checkpoint continuation and exact replay (PostgreSQL18.4)
-    if: ${{ !inputs.replay_source }}
+    if: ${{ !inputs.replay_source && !inputs.phone_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     services:
