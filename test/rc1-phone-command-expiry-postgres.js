@@ -80,8 +80,8 @@ try {
   assert.equal((await f.pool.query('SELECT status FROM world_operations WHERE id=$1', [operationId])).rows[0].status, 'recruiting');
   const history = async () => (await f.pool.query('SELECT * FROM world_operation_events WHERE operation_id=$1 ORDER BY revision,ordinal', [operationId])).rows;
   const historyBefore = await history();
-  const replay = await app.inject({ method: 'POST', url: '/v1/commands/execute', headers: { authorization: `Bearer ${app.jwt.sign({ sub: f.actors.aBoss, tv: 0 })}`, 'idempotency-key': published.command.executionIdentity.executionId }, payload: { executionId: published.command.executionIdentity.executionId, confirmed: true } });
-  assert.equal(replay.statusCode, 200); assert.equal(replay.json().replayed, true);
+  const replay = await app.inject({ method: 'POST', url: '/v1/commands/execute', headers: { authorization: `Bearer ${app.jwt.sign({ sub: f.actors.aBoss, tv: 0 })}`, 'idempotency-key': published.command.executionIdentity.executionId }, payload: { executionId: published.command.executionIdentity.executionId, confirmed: published.command.confirmation.required } });
+  assert.equal(replay.statusCode, 200); assert.deepEqual(replay.json(), published.response);
   assert.deepEqual(await history(), historyBefore, 'Duplicate identity has no second effect');
   assert.deepEqual(result.errors, []); result.status = 'PASS_SCOPED';
   console.log(JSON.stringify({ status: result.status, source: result.source, postgres: result.postgres, attempts: result.attempts, checks: ['zero-submission-refresh', 'expired-publish-no-effect', 'visible-reissue', 'duplicate-receipt-no-second-effect', 'no-browser-errors'] }));
