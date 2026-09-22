@@ -11,6 +11,7 @@ import { reconcileNpcMarketOrder } from './rc1-npc-market-order-journal.js';
 import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
 import { reconcileWorkerTransitions } from './rc1-world-worker-transitions.js';
 import { reconcileNpcCargo } from './rc1-npc-cargo-journal.js';
+import { reconcileNpcFamilyRecruitment } from './rc1-npc-family-recruitment.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -653,6 +654,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   checks.push(...workerTransitions.checks);
   const npcCargo = reconcileNpcCargo(before, after, { identity, receipts });
   checks.push(...npcCargo.checks);
+  const npcRecruitment = reconcileNpcFamilyRecruitment(before, after, { identity });
   for (const receipt of receipts) if (!npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
@@ -812,19 +814,19 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   });
   if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,
     detail: 'Remaining Family rows/fields retained; war, turf, dissolution, weekly/seasonal and other lineage remain unsupported' });
-  const unmatchedMembers = state => rows(state, 'gang_members').filter(row => !familyEntry.founderMembers.has(row.character_id) && !familyDissolution.dissolved.has(row.gang_id));
+  const unmatchedMembers = state => rows(state, 'gang_members').filter(row => !npcRecruitment.memberIds.has(row.character_id) && !familyEntry.founderMembers.has(row.character_id) && !familyDissolution.dissolved.has(row.gang_id));
   if (json(unmatchedMembers(before)) !== json(unmatchedMembers(after))) unsupported.push({ kind: 'observed-table-change', table: 'gang_members',
     detail: 'Membership/role change outside exact formation remains unclassified' });
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
-    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements },
+    itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements }, npcRecruitment: { movements: npcRecruitment.movements },
     npcMarketOrder: { movements: npcMarketOrder.movements,
       scope: 'One original residentAct placement in its committed worker transaction: exact personal cash fee sink, owned live order escrow, identity/default custody and deadline. No fill/refund/cancel/death or general market qualification.' },
     boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },
     seasonCrowns: { movements: seasonCrowns.movements, elections: seasonCrowns.elections, notificationMetadata: seasonCrowns.notificationMetadata,
       scope: 'One stored winner, one-way claim, exact account +1 and fresh living-owner notice. Initial winner selection, empty/ambiguous owner and compound awards remain unsupported. Other notifications are metadata, never reward authority.' }, seasonConversions: { movements: seasonConversions.movements,
-      scope: 'One fresh recap bound to its unique season_convert receipt and living character/account, exact canonical resets and positive prestige only. Zero-gain recaps are status-only. Crown, duel-title, existing-recap and compound transitions remain unsupported.' }, turfTerminal: { movements: turfTerminal.movements,
+      scope: 'One fresh recap bound to its unique season_convert receipt and living character/account, exact canonical resets and positive prestige only. Zero-gain recaps are status-only. Duel titles require the retained original selection boundary and exact owner notification. Other compound transitions remain unsupported.' }, turfTerminal: { movements: turfTerminal.movements,
       scope: 'One unchartered contest with live bidders: exact consumed escrow, winner full burn, loser floored refund/remainder burn, treasury and garrison. Original worker authority is separately verified in native evidence. Stakes, charter/dissolved/multiple-contest and territory side effects remain unqualified.' }, familyDissolution: { movements: familyDissolution.movements,
       scope: 'One voluntary living-member Family terminal: cash/ammo destroyed, exact OMR reserve recycled to desk plus lifetime input. Request authorization is independently bound in native proof. Estate/death, territorial/war/governance cleanup, multiple-Family and other compound terminals remain unqualified.' }, familyEntry: { movements: familyEntry.movements,
       scope: 'Ordinary formation cash sink and exact cash/OMR member tribute with original membership and per-Family custody. Ammo banks remain unchanged; no personal ammo-tribute route exists. HTTP body authorization is separately verified in the focused native proof.' }, pressureCash: { movements: pressureCash.movements,
