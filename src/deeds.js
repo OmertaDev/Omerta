@@ -13,6 +13,7 @@
 // so the Sybil/extraction machinery is untouched (design §8).
 import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances } from './stockdeliver.js';
+import { paintedDeedSvg } from './nft-art.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf,
   effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
@@ -477,9 +478,11 @@ export async function deedByToken(pool, tokenId) {
 const esc = (s) => String(s == null ? '' : s).replace(/[<>&"']/g, (c) =>
   ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
 
-// THE BLOCK PLATE — the deed NFT's image. A DRAWN noir street sign, deterministic from the name (no
-// Math.random → stable forever), the text escaped. Reads like the map plaque a Monopoly deed carries.
+// THE BLOCK PLATE — a painted district and an individual name-derived cipher. The original drawn
+// street sign remains available when local artwork is absent; no image read contacts an AI service.
 export function deedPlateSvg({ name, district, districtName: dn, rank } = {}) {
+  const painted = paintedDeedSvg({ name, district, districtName: dn, rank });
+  if (painted) return painted;
   const nm = esc(String(name || 'A Street of the City'));
   const dist = esc(String(dn || district || ''));
   const rk = esc(String(rank || ''));
@@ -539,10 +542,11 @@ export function deedPage(deed, { gameUrl } = {}) {
   }
   const rows = (deed.history || []).slice(0, 20).map((e) =>
     `<li><b style="color:hsl(280,20%,70%)">${esc(e.kind)}</b> &mdash; ${esc(e.detail || '')}</li>`).join('');
-  return `<!doctype html><meta charset="utf-8"><title>${esc(deed.name)} — OMERTÀ</title>
+  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(deed.name)} — OMERTÀ</title>
 <meta property="og:title" content="${esc(deed.name)} — a Street of OMERTÀ">
 <meta property="og:description" content="${esc(deed.districtName || deed.district)} · ${esc(deed.rank)}. Property with a history.">
 <body style="background:#0c0b0d;color:#c9c3d0;font-family:Georgia,serif;max-width:720px;margin:0 auto;padding:48px 20px">
+<div class="deed-art" style="max-width:620px;margin:0 auto 32px;line-height:0"><style>.deed-art svg{display:block;width:100%;height:auto}</style>${deedPlateSvg(deed)}</div>
 <div style="text-align:center;border-bottom:1px solid #2a2530;padding-bottom:24px">
   <h1 style="color:#f4f1ea;letter-spacing:2px;text-transform:uppercase;margin:0">${esc(deed.name)}</h1>
   <p style="color:#8a8290;letter-spacing:4px;text-transform:uppercase;margin:8px 0">${esc(deed.districtName || deed.district)}</p>

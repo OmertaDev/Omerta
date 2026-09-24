@@ -1,0 +1,15 @@
+
+> omerta-backend@1.2.0 test:nft-art
+> node test/nft-art.js && node test/portrait-access.js && node test/portrait.js && node test/deeds.js && node test/reimport.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+NFT art: 18 provenance-checked plates; stable visual identity, privacy, safe SVG, marketplace routes and fallbacks pass.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Portrait access: confirmed fee receipts, sealed responses, free-credit isolation, token/snapshot ownership and late-link reconciliation pass.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ THE MADE MAN (identity phase 1) — the bloodline portrait composites six slots live from PUBLIC state only: the bright line is structural (its one data source may expose no field publicDossier does not, so the district/build/rat leaks the design's slot table would have shipped fail by name), the plate escapes every untrusted string and clamps rather than overflowing, the engraved generation is never a lie, ids are seed-unique so a grid cannot self-clip, the frame is re-sourced off the RETIRED dynastyTierOf to generation, wealth is absent in any form, and the whole surface moves no value.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+deeds: PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reimport: undecodable token 99999 gearIdOfToken: no gear class for token 99999
+reimport.js OK

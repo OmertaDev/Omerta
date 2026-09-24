@@ -1,19 +1,14 @@
 // src/portrait.js — THE MADE MAN, phase 1: the bloodline portrait, entirely off-chain.
 //
-// `omerta-identity-nft-design.md` §5 sequences this deliberately: the portrait ships FIRST, with no
-// gates, because it is most of the value and it needs no token, no wallet and no chain — and because
-// it generates the thing the token would later point at, so the ordering is not a compromise. The
-// contract half (step 6's other leg) waits on an open launch-checklist row and on the third-party
-// audit BATCH, which the dynasty design says to batch rather than dribble.
+// Public routes reveal this composition only after a confirmed character-creation fee receipt
+// (portrait-access.js). Free mint entitlements alone do not reveal it. This pure compositor also
+// supports the operator's fictional review sheets, which do not load player identities.
 //
 // ── ARCHITECTURE: layered composition (design §2, approach 2) ──
-// Six slots composited back-to-front, assembled live from game state, ~0 cost per read. The design
-// assumed the parts would be pre-generated plates; they are DRAWN instead, for two reasons that are
-// constraints rather than preferences: the art budget stands at $11.12 of a $12 cap (38 plates would
-// need ~$1.90) and there is no FAL_KEY in this environment, so generated parts were not on the table.
-// Procedural is also the proven shape here — `src/avatar.js` ships deterministic noir SVG already.
-// The compositor does not care where a part came from: any slot's variant can be swapped for a
-// generated plate later without touching the assembly, which is the whole point of slotting it.
+// Local fal-generated paintings carry the image when installed; the six-slot procedural compositor
+// remains the offline fallback. Public rank, generation and reputation still evolve around the
+// painting. A SHA-256 identity seal, crop and lighting distinguish compositions drawn from the finite
+// starter library. Individually commissioned paintings take precedence without changing the routes.
 //
 // ── THE BRIGHT LINE, and it is narrower than the design's own slot table ──
 // The design's §4 states the constraint exactly right — *"a free, permanently-public, indexed-by-
@@ -38,7 +33,7 @@
 //     is thematically the better answer anyway: the frame is the bloodline's age, pawn-shop wood
 //     deepening to gilt as the generations stack.
 //
-// What still moves with play, so the thing visibly rewards playing: ATTIRE climbs the ten `RANKS`,
+// What still moves with play: the painted card's insignia (or fallback ATTIRE) climbs the ten RANKS,
 // EFFECTS light on hitman rank and on going wanted or welshing, and FRAME + PLATE deepen every time
 // the bloodline buries someone.
 //
@@ -54,6 +49,7 @@ import { hashId } from './assets.js';
 import { RANKS, rankIdxOf, levelOf, hitmanRankOf, PROVENANCE } from './rules.js';
 // the ONE escape, shared with the profile page rather than copied (see cards.js)
 import { esc } from './cards.js';
+import { paintedPortraitSvg, portraitArtwork } from './nft-art.js';
 
 // ── palettes ──────────────────────────────────────────────────────────────────────────────────
 // Muted deliberately. The avatar's brighter skins read fine at 64px; at portrait scale a flat lit
@@ -149,6 +145,8 @@ const attireOf = (i) => ({
 export function portraitSvg(state, size = 300) {
   const s = state && state.backdrop ? state : portraitStateOf(state || {});
   const px = Math.max(60, Math.min(1200, Number(size) || 300));
+  const painted = paintedPortraitSvg(s, px);
+  if (painted) return painted;
   const uid = (hashId('uid:' + s.seed) >>> 0).toString(36).slice(0, 6);
   const at = attireOf(s.rankIdx);
   const W = 300, H = 400, X = 22, Y = 22, IW = 256, IH = 286; // frame window
@@ -258,12 +256,18 @@ export function portraitSvg(state, size = 300) {
 // and so is anything a hunter could price a kill from.
 export function portraitTraits(state) {
   const s = state && state.backdrop ? state : portraitStateOf(state || {});
+  const art = portraitArtwork(s.seed);
   const out = [
     { trait_type: 'Generation', value: s.generation },
     { trait_type: 'Rank', value: s.rank },
     { trait_type: 'Frame', value: s.frame.name },
-    { trait_type: 'Corner', value: s.backdrop.name },
-    { trait_type: 'Bearing', value: s.figure.name },
+    ...(art ? [
+      { trait_type: 'Art Plate', value: art.label },
+      { trait_type: 'Identity Seal', value: art.digest },
+    ] : [
+      { trait_type: 'Corner', value: s.backdrop.name },
+      { trait_type: 'Bearing', value: s.figure.name },
+    ]),
   ];
   if (s.hitman) out.push({ trait_type: 'Assassin', value: s.hitman });
   if (s.dynasty) out.push({ trait_type: 'Dynasty', value: s.dynasty });

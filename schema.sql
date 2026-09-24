@@ -759,6 +759,8 @@ CREATE TABLE IF NOT EXISTS fee_payments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_fee_payments_payer ON fee_payments (payer_address) WHERE NOT credited;
+CREATE INDEX IF NOT EXISTS ix_fee_payments_portrait ON fee_payments (account_id)
+  WHERE kind='mint' AND credited=true AND tx_hash IS NOT NULL;
 -- THE STORE (ETH revenue packages) — the fee_payments twin for arbitrary Store SKUs. A player pays
 -- an ETH price to the OmertaFees tollbooth (dormant on-chain), the watcher observes a StorePaid event
 -- and calls recordStorePurchase. Idempotent on nonce (a re-delivered event is a no-op). If the payer's

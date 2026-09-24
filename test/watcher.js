@@ -34,7 +34,7 @@ const claimedLog = []; // { block, nonce }
 const source = {
   head: async () => head,
   feeLogs: async (from, to) => feeLog.filter((l) => l.block >= from && l.block <= to)
-    .map((l) => ({ kind: l.kind, nonce: l.nonce, payer: l.payer, amount: l.amount, txHash: '0xtx' + l.nonce })),
+    .map((l) => ({ kind: l.kind, nonce: l.nonce, payer: l.payer, amount: l.amount, txHash: '0x' + l.nonce.toString(16).padStart(64, '0') })),
   claimedLogs: async (from, to) => claimedLog.filter((l) => l.block >= from && l.block <= to).map((l) => ({ nonce: l.nonce })),
 };
 const wei = (eth) => (BigInt(Math.round(eth * 1000)) * (10n ** 15n)).toString();

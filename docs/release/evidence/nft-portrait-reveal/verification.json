@@ -1,0 +1,44 @@
+{
+  "node": "v24.19.0",
+  "dirty": true,
+  "checks": [
+    {
+      "exit": 0,
+      "command": "npm ci"
+    },
+    {
+      "exit": 0,
+      "log": "targeted-tests.log",
+      "command": "npm run test:nft-art"
+    },
+    {
+      "exit": 0,
+      "log": "watcher.log",
+      "command": "node test/watcher.js"
+    },
+    {
+      "exit": 0,
+      "log": "preflight.log",
+      "command": "node test/preflight.js"
+    }
+  ],
+  "sourceSha256": {
+    "tools/nft-art.js": "7dfe14502c8bab620532273b286dbeb6278796ed047504d9128c620a5bafcde7",
+    "test/nft-art.js": "f66fe430acbb7dab0f3b6c98fe521ae0e86569db723efc3afc3f14b151bbf554",
+    "test/portrait-access.js": "c217f3a23e2552e7e682b1e76ff49d6bc4526a1b55260feb9f6df07c7d9b1eb4",
+    "src/nft-art.js": "8d062c3c1e06300762a8999fee090597277899d4b958e61c184ad010b7318ca0",
+    "src/deeds.js": "6204b42897703860399e60dc843a5738f65ce5fddd6ad516edaa4cac24caec9d",
+    "test/watcher.js": "3b87d50d0a9eef9bf43d0a98a5af365dfd64aee70322d486ae04460d62b32dcd",
+    "src/portrait-access.js": "fb8132b4521dd286a1087afc9325699c132bb68dba88a3fd6c8ebe3f59b3eb47",
+    "test/portrait.js": "d94c61279802e5981b58419f8dd7457ccce7c2e9619c95e8d240a8bb526159a1",
+    "tools/nft-art-prompts.js": "0aa5f06bc84306b1431967476510ceedc04d26f17bbb7bf78f761c3a29f2ecaa",
+    "src/server.js": "eb804fc4e3a00218889105db88c7d3586932977f898391046477669140ebc9d2",
+    "package.json": "68ca86992c6bbe4245866fe9289f2313a1b1271960efe2ca2a8d0384d2ebe440",
+    "schema.sql": "ee661eff10712fe2e4dcad6286680c04fc77de9144eefab74a3fde5545ce578b",
+    "public/index.html": "c6151060e617fd2ee988fa12155ff7671167e69d5b6c25052f024926fd0c7189",
+    "src/portrait.js": "b1454ff37d7cfed8cdab1d92e055255a9af6803bdee58792eff7060c23e57253"
+  },
+  "review": "Independent read-only gate review: no blocking findings. Manual static triage: no unsafe input/path/URL enters the sealed image. No external SAST or Solidity audit claimed.",
+  "phase": "pre-merge working tree; CI and production verification pending",
+  "base": "32859cf7d198d2a003160b2bb1ef005991697d73"
+}

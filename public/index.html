@@ -9211,6 +9211,8 @@
     const t = $('#tab-profile');
     const p = (await api('GET', '/v1/profile')).body;
     if (!p?.name) { t.innerHTML = `<div class="card"><span class="t">MY PROFILE</span><div class="d">couldn't pull your file — try again in a moment.</div></div>`; return; }
+    const portrait = me?.id ? (await api('GET', `/v1/identity/${encodeURIComponent(me.id)}`)).body : null;
+    const portraitRevealed = portrait?.status === 'revealed';
     // THE DISPATCH — the opt-in "while you were gone" email digest (GETBIND; the card shows only when the
     // server has an email provider configured).
     const dg = (await api('GET', '/v1/digest')).body || {};
@@ -9246,9 +9248,10 @@
         </div>
         <div class="msp-h">The Portrait</div>
         <div class="msp-box" style="text-align:center">
-          ${me?.id ? `<img src="/v1/identity/${encodeURIComponent(me.id)}/portrait.svg" alt="Your bloodline portrait" style="width:100%;max-width:220px;border-radius:2px">` : ''}
-          <div class="t" style="margin-top:6px;line-height:1.5">The coat climbs with your rank. The frame
-          deepens every time your bloodline buries someone. It is yours by playing — nothing to buy.</div>
+          ${me?.id ? `<img src="/v1/identity/${encodeURIComponent(me.id)}/portrait.svg" alt="${portraitRevealed ? 'Your bloodline portrait' : 'Sealed bloodline artwork'}" style="width:100%;max-width:220px;border-radius:2px">` : ''}
+          <div class="t" style="margin-top:6px;line-height:1.5">${portraitRevealed
+            ? 'Your portrait is revealed. The insignia climbs with your rank, and the frame deepens with every generation.'
+            : 'Your artwork stays sealed until your character-creation fee is confirmed. Free mint credits do not reveal it.'}</div>
           <div class="d" style="margin-top:8px;line-height:1.5">Made men can take the portrait on-chain as a
           tradeable trophy — one per bloodline, ever. It carries <b>no power</b>: your standing stays with the
           account and never travels with the token.</div>

@@ -1,0 +1,517 @@
+{
+  "version": 1,
+  "collection": "OMERTA / The City Keeps Its Own",
+  "estimatedSpendUsd": 0.75,
+  "jobs": {
+    "portrait-00": {
+      "id": "portrait-00",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A sharp-featured olive-skinned man in his early forties, dark wavy slicked-back hair with a silver streak, strong aquiline nose, faint cheek scar, watchful expression. Charcoal three-piece wool suit, loosened burgundy tie, amber light from left and misty teal from right. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbc98/h598Q9rVC3sU0NydgMfx-_SJ75fZ16.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:35:06.740Z",
+      "sha256": "01403d08affd94f92dd9176534267742d5f603c1cc4d9884a2d5d5fc675d2467",
+      "bytes": 214483,
+      "sourceSha256": "1e131f160f59b46ff8676c4c563adf837718b5b760ef956089764cb14daa9ecc",
+      "sourceBytes": 553556,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-01": {
+      "id": "portrait-01",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A commanding Black man in his early fifties, broad cheekbones, close cropped salt-and-pepper hair, neatly trimmed moustache, steady intelligent gaze. Midnight blue double-breasted wool coat, cream shirt, aged brass collar bar, amber light. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbca0/crXT_QO2HmvWacZr7n3_n_jDu1K2YB.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:35:07.591Z",
+      "sha256": "6e2d9923810399a56e577dd7bb3a0c6bc38d48b9ebf3eb0e5cbcf22f76a34458",
+      "bytes": 193896,
+      "sourceSha256": "b9aa93e41420848ff8104930c829b442c8d9e0a993fc21beb3b884b1ed927d6c",
+      "sourceBytes": 502792,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-02": {
+      "id": "portrait-02",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A self-possessed East Asian woman in her late thirties, sharp cheekbones, short waved black bob haircut, strong arched eyebrows, quiet watchful expression. Structured oxblood wool blazer with broad 1940s lapels and ivory blouse, brass stud earrings. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbca9/YlTP4mFBzQcfzBQivFtig_1RA96jho.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:35:08.140Z",
+      "sha256": "cab254aa1a3af3ce2adbef79781135d458f93d7de0155d4e4b09eab940444eed",
+      "bytes": 180568,
+      "sourceSha256": "a0a4d5034e271612da2f38ab611cd8c980cee6bfeaa6a7f4fc8623e0b05d67be",
+      "sourceBytes": 469537,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-03": {
+      "id": "portrait-03",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A weathered pale man in his late sixties, deep forehead lines, neatly combed white hair, lean angular face, one raised eyebrow, thin silver moustache. Dark bottle-green herringbone overcoat, cream scarf, softly glowing amber rim light. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcb2/MvCdgUVspEYPNdOASGJH1_A2ITyk6K.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:35:08.513Z",
+      "sha256": "99b35075d34e0a042a42daa569bb341b52cc7a342e83d10ec1039be094db08cd",
+      "bytes": 223277,
+      "sourceSha256": "ab2d16e3fc40968a9b7cb59d33bff24baf87fe2f53023392479d2334a7f9206e",
+      "sourceBytes": 556628,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-04": {
+      "id": "portrait-04",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A Black woman in her early forties with deep brown skin, sculptural 1940s victory-roll hair, direct confident gaze, broad cheekbones. Black tailored jacket with golden silk blouse, small burgundy brooch. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcb7/fRNpOsWRiRBgOogQf1qEN_pSr4NWzY.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:41:40.436Z",
+      "sha256": "6d5e21094a1d54d7ebe1be50db753c04bfaeb4a6aca60d0766e6f4a394d5234a",
+      "bytes": 211694,
+      "sourceSha256": "91b2670512ea30df5adbf1506fbe03bbdbd31e88af9ac93f70095ae9d541830d",
+      "sourceBytes": 530196,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-05": {
+      "id": "portrait-05",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A Mediterranean man in his thirties, strong heavy jaw, shaved head, short dark beard, broken-looking crooked nose and wide shoulders. Brown leather overcoat over black wool and cream open collar, pale gold rim light. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcbd/PtsXTfFefvUQZOPt_1BfC_fW4Caf1n.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:41:41.707Z",
+      "sha256": "dcb0faf09e985a3270d13e8db6261d3d9ae44981d80274aca70650b7bc59eaab",
+      "bytes": 218826,
+      "sourceSha256": "3c4d5d42d656eb5e92885d1371034e3e895c2bfaddc96b81be7a15c4ed0ce756",
+      "sourceBytes": 553365,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-06": {
+      "id": "portrait-06",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A woman in her fifties with warm olive skin, striking silver streak through dark swept-up hair, long aquiline nose, knowing half-smile. Teal silk scarf and severe charcoal tailored coat, vintage round tortoiseshell eyeglasses. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcc3/CnpMqDk5hNEroEWQD5EkL_L0r3Nezb.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:41:42.496Z",
+      "sha256": "1c1b87cc85356ed5a809e6e3699dcca34972b7f2790ea48ca953369fc0df6715",
+      "bytes": 196159,
+      "sourceSha256": "16d24bee895da0a1ac1f0b2eda6b3b1025119231f36fffd2bfee13a2da2dc2b6",
+      "sourceBytes": 498178,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-07": {
+      "id": "portrait-07",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. An East Asian man in his mid-forties, narrow long face, swept side-parted black hair, thin moustache, small round gold wire eyeglasses, measured thoughtful expression. Deep charcoal pinstriped suit and muted burgundy tie. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcc8/3jkBXwdm_QNG7-WlPYh4L_fT3QBzkE.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:41:42.915Z",
+      "sha256": "e86490e8cfce21b9afe17e4025ffa52778a6aeda9b63c3edb21d9d6ad07f3f72",
+      "bytes": 181389,
+      "sourceSha256": "8565e6256f32b170c4f55fdc3f8be59c5aeed0aee3d394e08f855f7c91f1de98",
+      "sourceBytes": 479092,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-08": {
+      "id": "portrait-08",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A pale freckled woman in her thirties with copper-red shoulder-length waves, strong angular jaw, cool green eyes, reserved determined expression. Dark navy overcoat with high collar and ivory silk scarf. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 2048,
+        "height": 1536
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcdf/XY-NEDPa29xfqcQMJMpdR_rb2XBNK1.jpg",
+      "estimatedUsd": 0.06,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:46:00.103Z",
+      "sha256": "c608a1e738a8a803f9d37294290ecaf54497f7227e8f46c07bcc606922ad0cd6",
+      "bytes": 178477,
+      "sourceSha256": "b599d27dda69285e25bbf2a3a2ee34ca768bd61bfd5731a6876b68583f4375cd",
+      "sourceBytes": 1961847,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-09": {
+      "id": "portrait-09",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A broad-shouldered South Asian man in his fifties, warm brown skin, thick salt-and-pepper wavy hair, prominent brow and well-groomed moustache. Charcoal shawl collar overcoat, deep emerald waistcoat, ivory shirt. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcf6/QCX3cjOIcLGygDS8qMUEQ_I975oMBg.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:46:01.012Z",
+      "sha256": "80e62d5d90d78933b623e7b8470ac09dbf327c6fdc3a4107159d9e985a7562ed",
+      "bytes": 207547,
+      "sourceSha256": "9887b071b27f4f54710c1bcb55279c97321f88747d370d3f691a8c7181bf4dd9",
+      "sourceBytes": 529188,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-10": {
+      "id": "portrait-10",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A lean olive-skinned man in his late twenties, dark curly hair, dark eyes, clean shaven narrow face, subtle asymmetric smile. Worn charcoal flat cap, rolled ivory shirt collar under a tailored ink-black jacket. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbcfc/ZtraXzekiZy43Z-jv2VQP_ISQqexdS.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:48:59.381Z",
+      "sha256": "5e5d9104f0e5959b4d9a40f54b162122e44a94a90bdfd1a3378f0b81c386e973",
+      "bytes": 214841,
+      "sourceSha256": "40f82802a2d5f681973e61d6ee583e6adc18e7453b498e505037245f2261dd13",
+      "sourceBytes": 549835,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "portrait-11": {
+      "id": "portrait-11",
+      "prompt": "Square image. Waist-up portrait, head and shoulders centered, head entirely visible with generous space above it, expressive face around upper-middle, shoulders fill lower half. Dark abstract architectural background. One fictional adult, not a celebrity. A woman in her sixties with light brown skin, short sculpted silver hair, deep smile lines, piercing dark eyes and a strong chin. Burgundy velvet jacket over cream blouse, a single antique amber pendant. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 1024
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd01/1O25LyOmazk-G4yFzzOqK_9ylOUaWd.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:49:00.060Z",
+      "sha256": "b8440890fad933759abf7133e8650d0236aeffe122a7f7935e4d67cbc669f13c",
+      "bytes": 222863,
+      "sourceSha256": "374df9d85a67fb00996b55f9e5a7eb9722aa9b8ead031acf07d2c11b25d1ef67",
+      "sourceBytes": 551190,
+      "rendition": {
+        "width": 1024,
+        "height": 1024,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-docks": {
+      "id": "deed-docks",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of a magnificent 1940s waterfront city block at dusk. Brick customs warehouses, a long moored black cargo steamer, delicate dock cranes, wet stone quay, amber warehouse windows reflected in dark teal water. Monumental architecture, harbor mist, a few tiny distant figures for scale. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd10/HJjMSRJLSQdEQcKTX_R1O_9oANyDbs.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:50:27.783Z",
+      "sha256": "272edf7499e5aa300405da2e13930cb20b1f52a5d51ec3d42665c1ba7857c95a",
+      "bytes": 184788,
+      "sourceSha256": "d7cd90d7a6367df0e6cb05356ef48dc4acf51086f0b6eda4ec079aa82731e4a5",
+      "sourceBytes": 439489,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-neon": {
+      "id": "deed-neon",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of a glamorous 1940s art deco theater city block at blue hour. A grand corner theater with a stepped tower, glowing blank cream marquee, burgundy awnings, elegant jazz club facades, curved glass, wet black pavement reflecting muted amber and teal. Tiny period automobiles for scale. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd16/eUEtw39Vw_NgeUSgWE6e3_6mL4SqW9.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:52:08.463Z",
+      "sha256": "8413d21afd5b2d71b24981ec3d4fa51b3fac0e05b81eae8e087ba3e60914c055",
+      "bytes": 215181,
+      "sourceSha256": "f6a49d03508ecef3c2e06018e0777ac0ec255442d248ef5a973733f837f6a226",
+      "sourceBytes": 509623,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-foundry": {
+      "id": "deed-foundry",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of a monumental 1940s industrial city block. Red brick foundry halls with tall arched amber-lit windows, riveted steel gantries, copper smokestacks, a short rail spur, steam drifting across a petrol-teal evening sky. Dignified working architecture, controlled furnace glow, no flames. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd19/OVQmdwZ-IhzHqHvihxIbp_OHsiIElW.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:52:09.091Z",
+      "sha256": "832c7f4ab17c9ae4527afc79972ba587d94b529925d0e89734c534bbe5ce3f64",
+      "bytes": 207892,
+      "sourceSha256": "717ce67a633d76c20d208285e5e5ac819306befab6a883ec3701d2aee97af0b2",
+      "sourceBytes": 491439,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-brick": {
+      "id": "deed-brick",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of a dense 1940s brick residential city block at evening. Beautiful russet brownstone row houses, cast iron fire escapes, narrow cobbled lanes, rooftop water towers, one warm corner cafe without signs, laundry lines and glowing windows. Intimate lived-in architecture, tiny figures for scale. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd1e/cD1h9YDU8eK0LiQWfK9pa_WcQFi1Ta.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:53:53.494Z",
+      "sha256": "90de9fea9068467efbd1b98749ff4a0551009c0da7de607682b131aa508997ab",
+      "bytes": 213127,
+      "sourceSha256": "e3e8d658043c8cee79f2aa84ac3f6a008b491701ef4d9952f304f39f6c15c36e",
+      "sourceBytes": 508852,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-cathedral": {
+      "id": "deed-cathedral",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of a grand 1940s hilltop city block in evening mist. A magnificent stone cathedral with a rose window and twin towers, elegant art deco apartment buildings, broad stepped plaza, old cypress trees, brass streetlamps and softly glowing amber windows. Monumental dignified city architecture. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd24/_YPxgZfuqP3nbrfiRSJ_V_LreghYMB.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:53:54.851Z",
+      "sha256": "54414fe26b8cbc7c637c795c2c26e1627be89b4c966b01d2fe63c081ed538710",
+      "bytes": 207883,
+      "sourceSha256": "91af8b56d484ac5bd04e73471e753425aea4dcc5d657259ef68ddd41c0cc29ea",
+      "sourceBytes": 491982,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    },
+    "deed-canal": {
+      "id": "deed-canal",
+      "prompt": "Wide 4:3 composition. The entire city block centered with breathing room around its rooftops. An elevated three-quarter view of an atmospheric 1940s canal-side city block at dawn. Narrow stone canal bordered by tall faded teal and ochre warehouses, an elegant arched iron footbridge, a low wooden barge, amber lamps, reflections in still black water and pale mist. Beautiful masonry and intricate rooflines. Original collectible illustration for OMERTA, a fictional 1940s crime city. Hand-painted gouache and oil on rough ivory paper, angular editorial brushwork, sophisticated vintage noir book jacket, deep ink-black shadows, aged brass gold highlights, desaturated petroleum teal, small oxblood accents, tactile drybrush edges, dramatic chiaroscuro. Rich readable midtones, restrained palette, masterful composition. Single full-bleed artwork, no text, letters, labels, logos, signatures, borders, cards, panels or watermark.",
+      "model": "fal-ai/flux-2-pro",
+      "source": "fal.ai playground",
+      "image_size": {
+        "width": 1024,
+        "height": 768
+      },
+      "seed": null,
+      "url": "https://v3b.fal.media/files/b/0aabbd2f/m5AkUV0YOjowZUm4D040r_nf9vhSxv.jpg",
+      "estimatedUsd": 0.03,
+      "status": "downloaded",
+      "recordedAt": "2026-09-24T17:55:49.072Z",
+      "sha256": "9807ea3011c43c307665673078298d0965ac192f9965370755e4dcf2e65e023a",
+      "bytes": 197366,
+      "sourceSha256": "ec7adea877a809e7328be67fb50c664a935f977643697b85ec0493880b80a1c0",
+      "sourceBytes": 457148,
+      "rendition": {
+        "width": 1024,
+        "height": 768,
+        "format": "jpeg",
+        "quality": 85,
+        "encoder": "Pillow"
+      }
+    }
+  },
+  "failedRequests": [
+    {
+      "id": "portrait-08",
+      "requestId": "01a0d47f-2060-7892-8031-dd60e790a19a",
+      "reservedUsd": 0.03,
+      "status": "failed",
+      "reason": "Downstream service unavailable",
+      "billing": "Unconfirmed; conservatively reserved against the budget"
+    },
+    {
+      "id": "portrait-09",
+      "requestId": "01a0d482-716b-7751-a1a4-9e7cc1c16b91",
+      "reservedUsd": 0.06,
+      "status": "failed",
+      "reason": "Downstream service unavailable",
+      "billing": "Unconfirmed; conservatively reserved against the budget"
+    },
+    {
+      "id": "deed-docks",
+      "requestId": "01a0d486-0f4a-73c3-9a4a-193f90bae993",
+      "reservedUsd": 0.03,
+      "status": "failed",
+      "reason": "Downstream service unavailable",
+      "billing": "Unconfirmed; conservatively reserved against the budget"
+    },
+    {
+      "id": "deed-neon",
+      "requestId": "01a0d488-3fa0-7431-911b-b3187a6a3264",
+      "reservedUsd": 0.03,
+      "status": "failed",
+      "reason": "Downstream service unavailable",
+      "billing": "Unconfirmed; conservatively reserved against the budget"
+    },
+    {
+      "id": "deed-canal",
+      "requestId": "01a0d48b-488d-78a2-b995-a85b8fc09f12",
+      "reservedUsd": 0.03,
+      "status": "failed",
+      "reason": "Downstream service unavailable",
+      "billing": "Unconfirmed; conservatively reserved against the budget"
+    }
+  ]
+}
