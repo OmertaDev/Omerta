@@ -1,4 +1,5 @@
 name: ci
+run-name: ${{ inputs.tail_only && 'Candidate19 affected CI remainder' || 'ci' }}
 
 # The three gates the codebase already treats as required, run automatically instead of by hand.
 # Until now they only ran when someone typed the command — which is how, on 2026-07-25, a change
@@ -33,7 +34,7 @@ concurrency:                        # a new push supersedes an in-flight run of 
 
 jobs:
   suites:
-    name: ${{ inputs.tail_only && 'Affected CI remainder (pg-mem)' || 'suites + sim (pg-mem)' }}
+    name: suites + sim (pg-mem)
     runs-on: ubuntu-latest
     # A HANG bound, never a performance budget. The corrected full local npm lifecycle
     # (pretest + test) completed in 2294.9825838s (38m14.983s) on Windows/Node 24.19.0,
