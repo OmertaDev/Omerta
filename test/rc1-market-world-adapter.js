@@ -33,7 +33,7 @@ function world(roster) {
     if (path === '/v1/rules') return { goods: [{ id: 'gin', base: 120 }, { id: 'coffee', base: 180 }] };
     if (path === '/v1/notifications') { const result = clone(notifications.get(accountId)); notifications.set(accountId, []); return { notifications: result }; }
     assert.equal(path, '/v1/market');
-    return { levers: { minPrice: 50, listFeeBps: 100 }, listings: [...listings.values()].filter(row => row.status === 'live' && row.expiresAt > at).slice(0, 100)
+    return { levers: { minPrice: 50, listFeeBps: 100, maxTtlH: 48 }, listings: [...listings.values()].filter(row => row.status === 'live' && row.expiresAt > at).slice(0, 100)
       .map(({ id, kind, sellerId, good, qty, wanted, unitPrice, district, expiresAt }) => ({ id, kind, sellerId, good, qty, wanted, unitPrice, district, expiresSeconds: Math.ceil((expiresAt - at) / 1000) })) };
   };
   const execute = async (accountId, request) => {
@@ -50,13 +50,13 @@ function world(roster) {
       body = { ok: true, good: request.body.goodId, qty: 1, unit: 120, spent: 124 };
     } else if (['/v1/market', '/v1/market/order'].includes(request.path)) {
       const order = request.path.endsWith('/order'), { goodId, price, qty, hours } = request.body;
-      assert.equal(qty, 1); assert.equal(hours, 1); assert.equal(price, 50);
+      assert.equal(qty, 1); assert([1, 24].includes(hours)); assert.equal(price, 50);
       if (!order) { assert(ch.cargo[goodId] >= 1); ch.cargo[goodId]--; }
       ch.cash -= order ? 60 : 10;
       const id = 'listing-' + ++serial, kind = order ? 'order' : 'good';
       listings.set(id, { id, kind, sellerId: ch.id, good: goodId, qty: order ? 0 : 1, wanted: order ? 1 : 0, filled: 0,
-        unitPrice: price, district: ch.loc, status: 'live', expiresAt: at + 3600000 });
-      body = { ok: true, id, kind, good: goodId, price, expiresSeconds: 3600, ...(order ? { wanted: 1, escrow: 50 } : { qty: 1 }) };
+        unitPrice: price, district: ch.loc, status: 'live', expiresAt: at + hours * 3600000 });
+      body = { ok: true, id, kind, good: goodId, price, expiresSeconds: hours * 3600, ...(order ? { wanted: 1, escrow: 50 } : { qty: 1 }) };
     } else {
       const match = /^\/v1\/market\/([^/]+)\/(buy|fill|claim|cancel)$/.exec(request.path); assert(match);
       const listing = listings.get(match[1]), action = match[2];
@@ -99,7 +99,12 @@ for (const population of populations) {
   for (const type of ['market.post-good', 'market.buy', 'market.post-order', 'market.fill', 'market.claim', 'market.cancel']) assert(result.byType[type] > 0, type);
   assert(result.concurrentGroups > 0); assert.equal(result.serialCompetitionGroups, 0); assert.equal(result.participants, population);
   assert.equal(new Set(backend.commands.map(command => command.accountId)).size, population);
-  for (const group of backend.groups) { assert(group.requests.length >= 3); assert.deepEqual(group.requests[0], group.requests.at(-1)); assert.equal(group.context.boundary, 'quiescent-aggregate'); }
+  for (const group of backend.groups) { assert(group.requests.length >= 3); assert.deepEqual(group.requests[group.context.duplicateOf], group.requests.at(-1)); assert.equal(group.context.boundary, 'quiescent-aggregate'); }
+  const mixed = backend.groups.filter(group => group.context.kind === 'market-mixed-lifecycle'); assert.equal(mixed.length, 1); assert.equal(result.mixedGroups, 1);
+  assert.deepEqual([...new Set(mixed[0].context.phases.map(item => item.phase))], ['sale', 'compete', 'refund-cancel', 'fill']);
+  for (const { accountId, request } of mixed[0].requests) assert(backend.receipts.has(request.idempotencyKey), accountId);
+  const lifecycleReceipts = mixed[0].context.phases.filter(item => item.phase !== 'compete').map(item => backend.receipts.get(mixed[0].requests[item.requestIndex].request.idempotencyKey).response);
+  assert(lifecycleReceipts.every(receipt => receipt.status === 200 && !receipt.replayed));
   assert.equal(adapter.summary().expiryCandidates.length, 1); backend.advance(3600000);
   const expiry = await adapter.runTimerWindow(0, backend.hooks()); assert.equal(expiry.observed, 1); assert.equal(expiry.unresolvedCandidates, 0);
   const cash = [...backend.people.values()].reduce((sum, ch) => sum + ch.cash, 0); backend.advance(7200000);
@@ -118,6 +123,7 @@ for (const population of populations) {
   const restored = createMarketWorldAdapter({ seed: 'rc1-beta', roster }).restore(JSON.parse(JSON.stringify(sort(checkpoint))));
   await restored.runDay(0, backend.hooks({ executeGroup: undefined })); assert.deepEqual(backend.commands[0].request, expected);
   assert.equal(restored.summary().daily[0].concurrentGroups, 0); assert(restored.summary().daily[0].serialCompetitionGroups > 0);
+  assert.equal(restored.summary().daily[0].serialMixedGroups, 1);
   assert(backend.checkpoints.some(row => row.kind === 'market-incremental-step')); controls++;
   const bad = clone(checkpoint); bad.payload.state.workflow.tasks.reverse(); bad.sha256 = actorValueHash(bad.payload);
   assert.throws(() => createMarketWorldAdapter({ seed: 'rc1-beta', roster }).restore(bad)); controls++;
@@ -182,6 +188,48 @@ for (const population of populations) {
 }
 
 // Sustained daily activity, advancing ordinary logical deadlines between days.
+{
+  const roster = rosterOf(25), backend = world(roster), adapter = createMarketWorldAdapter({ seed: 'rc1-alpha', roster });
+  assert.equal((await adapter.runDay(0, backend.hooks({ pauseBeforeDispatch: 'mixed' }))).phase, 'mixed');
+  const checkpoint = adapter.checkpoint(), pending = checkpoint.payload.state.pending;
+  assert.deepEqual([...new Set(pending.items.map(item => item.task.phase))], ['sale', 'compete', 'refund-cancel', 'fill']);
+  assert(pending.items.every(item => !backend.receipts.has(item.decision.request.idempotencyKey)));
+  const restored = createMarketWorldAdapter({ seed: 'rc1-alpha', roster }).restore(checkpoint);
+  assert.equal((await restored.runDay(0, backend.hooks({ stopAfterMixed: true }))).phase, 'after-mixed');
+  assert.equal(restored.summary().completedDays.length, 0); assert.equal(restored.summary().pending, false);
+  const result = await restored.runDay(0, backend.hooks()); assert.equal(result.mixedGroups, 1);
+  const count = backend.commands.length;
+  assert.deepEqual(await restored.runDay(0, backend.hooks({ execute: () => { throw Error('duplicate day'); } })), result);
+  assert.equal(backend.commands.length, count); controls++;
+}
+
+{
+  const roster = rosterOf(25), backend = world(roster), adapter = createMarketWorldAdapter({ seed: 'rc1-alpha', roster });
+  let stopped = false;
+  await assert.rejects(adapter.runDay(0, backend.hooks({ checkpoint: async (phase, value) => {
+    if (!stopped && phase === 'receipt-settled' && value.pending?.items.some(item => item.task.phase === 'refund-cancel') && value.pending.settledCount === 2) {
+      stopped = true; throw Error('partial mixed settlement');
+    }
+  } })), /partial mixed settlement/);
+  const checkpoint = adapter.checkpoint(), keys = checkpoint.payload.state.pending.items.map(item => item.decision.request.idempotencyKey);
+  const calls = keys.map(key => backend.commands.filter(command => command.request.idempotencyKey === key).length);
+  const restored = createMarketWorldAdapter({ seed: 'rc1-alpha', roster }).restore(checkpoint); await restored.runDay(0, backend.hooks());
+  assert.deepEqual(keys.map(key => backend.commands.filter(command => command.request.idempotencyKey === key).length), calls);
+  assert.equal(restored.summary().daily[0].mixedGroups, 1); controls++;
+}
+
+{
+  const roster = rosterOf(25), backend = world(roster), adapter = createMarketWorldAdapter({ seed: 'rc1-alpha', roster, expiryHours: 24 });
+  await adapter.runDay(0, backend.hooks());
+  const candidate = adapter.summary().expiryCandidates[0]; assert.equal(candidate.returnedExpirySeconds, 86400);
+  backend.advance(3600000); assert.equal(backend.listings.get(candidate.listingId).status, 'live');
+  await assert.rejects(adapter.runTimerWindow(0, backend.hooks()), /original due expiry/);
+  const restored = createMarketWorldAdapter({ seed: 'rc1-alpha', roster, expiryHours: 24 }).restore(adapter.checkpoint());
+  assert.throws(() => createMarketWorldAdapter({ seed: 'rc1-alpha', roster }).restore(adapter.checkpoint()));
+  backend.advance(DAY); assert.equal((await restored.runTimerWindow(0, backend.hooks())).observed, 1);
+  await restored.runDay(1, backend.hooks()); assert.equal(restored.summary().daily[1].mixedGroups, 1); controls++;
+}
+
 {
   const roster = rosterOf(25), backend = world(roster), adapter = createMarketWorldAdapter({ seed: 'rc1-gamma', roster });
   for (let day = 0; day < 90; day++) {
