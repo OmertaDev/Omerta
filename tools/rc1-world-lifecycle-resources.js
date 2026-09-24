@@ -2,8 +2,10 @@
 // remain the responsibility of the canonical command/native proofs.
 import assert from 'node:assert/strict';
 import { isDeepStrictEqual as equal } from 'node:util';
+import { readFileSync } from 'node:fs';
 import { LAW, M3 } from '../src/rules.js';
-import { exactSum, negate } from './rc1-resource-journal.js';
+import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { actorValueHash } from './rc1-native-actor-replay.js';
 
 const rows = (state, table) => state.tables[table];
 const value = amount => exactSum([amount]);
@@ -144,8 +146,139 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
   return result;
 }
 
-export function reconcileOrderExpiry(before, after, { identity = null, receipts = [] } = {}) {
+export const MARKET_EXPIRY_SOURCE_PINS = Object.freeze({
+  'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
+  'src/market.js': 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
+  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+});
+const EXPIRY_SQL = Object.freeze({
+  due: "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+  lock: 'SELECT 1 FROM characters WHERE id=$1 FOR UPDATE',
+  order: "SELECT * FROM market_listings WHERE id=$1 AND status='live' AND expires_at <= now() FOR UPDATE",
+  alive: 'SELECT 1 FROM characters WHERE id=$1 AND alive',
+  credit: 'UPDATE characters SET cash = cash + $2 WHERE id=$1',
+  ledger: 'INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+  expire: "UPDATE market_listings SET qty=0, status='expired' WHERE id=$1",
+  notify: 'INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)',
+});
+const stateHash = ({ boundary, ...state }) => sha256(state);
+let expirySourceChecked = false;
+function companionQueries(before, after, identity, evidence) {
+  if (!expirySourceChecked) {
+    for (const [file, expected] of Object.entries(MARKET_EXPIRY_SOURCE_PINS))
+      assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Expiry source changed: ' + file);
+    expirySourceChecked = true;
+  }
+  assert.equal(identity.kind, 'resource-quiescent-aggregate'); assert.equal(identity.outcome, 'QUIESCENT_AGGREGATE');
+  assert(!Object.hasOwn(identity, 'sequence'), 'Aggregate cannot claim native commit sequence');
+  assert.equal(actorValueHash(identity), actorValueHash(evidence.identity), 'Expiry aggregate identity differs');
+  const root = identity.traceRoot, { sha256: rootHash, ...descriptor } = root;
+  assert.equal(root.format, 2); assert.equal(root.kind, 'quiescent-resource-trace-root'); assert.equal(root.groupId, identity.groupId);
+  assert.equal(rootHash, actorValueHash(descriptor));
+  for (const [state, recorded, hash] of [[before, evidence.before, root.beforeHash], [after, evidence.after, root.afterHash]]) {
+    assert.equal(stateHash(state), hash); assert.equal(stateHash(recorded), hash);
+  }
+  assert.equal(root.requestsSha256, actorValueHash(evidence.requests)); assert.equal(root.requestsSha256, identity.requestsSha256);
+  assert.equal(root.outcomesSha256, actorValueHash(evidence.outcomes));
+  assert.equal(root.traceSha256, actorValueHash(evidence.trace)); assert.equal(root.traceSha256, evidence.traceSha256);
+  assert.equal(root.companionsSha256, actorValueHash(evidence.companions)); assert.equal(root.companionsSha256, identity.companionsSha256);
+  assert.equal(root.companionOutcomesSha256, actorValueHash(evidence.companionOutcomes));
+  assert.equal(identity.companionCount, 1); assert.equal(evidence.companions.length, 1);
+  assert.equal(evidence.companionOutcomes.length, 1); assert.equal(evidence.companionOutcomes[0].status, 'fulfilled');
+  assert.equal(actorValueHash(identity.context.companions), actorValueHash(evidence.companions));
+  const [worker] = evidence.companions, at = identity.context.logicalAt;
+  assert(Number.isSafeInteger(at)); assert.equal(worker.logicalAt, at); assert.equal(worker.companionIndex, 0);
+  assert.equal(worker.kind, 'original-worker-job'); assert.equal(worker.label, 'market sweep');
+  assert.equal(worker.sourceFile, 'src/worker.js'); assert.equal(worker.sourceSha256, MARKET_EXPIRY_SOURCE_PINS[worker.sourceFile]);
+  assert.equal(worker.handlerSourceFile, 'src/market.js'); assert.equal(worker.handlerSourceSha256, MARKET_EXPIRY_SOURCE_PINS[worker.handlerSourceFile]);
+  const dispatches = new Map(), queries = [];
+  for (const [offset, event] of evidence.trace.entries()) {
+    assert.equal(event.sequence, offset + 1); assert.equal(event.logicalAt, at);
+    if (event.authority !== 'original-worker-job') continue;
+    assert.equal(event.companionIndex, 0);
+    if (event.phase.startsWith('COMPANION_')) continue;
+    assert.equal(event.requestIndex, null);
+    if (event.phase === 'DISPATCH') {
+      assert(!dispatches.has(event.queryId)); assert(event.original);
+      const sql = typeof event.original.sql === 'string' ? event.original.sql : event.original.sql.text;
+      assert.equal(event.sqlSha256, sha256(sql)); dispatches.set(event.queryId, event);
+    } else if (event.phase === 'ACKNOWLEDGED') {
+      const start = dispatches.get(event.queryId); assert(start, 'Worker acknowledgment lacks original dispatch'); dispatches.delete(event.queryId);
+      assert.equal(start.clientId, event.clientId); assert(start.sequence < event.sequence);
+      assert.equal(event.sqlSha256, start.sqlSha256); assert.equal(event.nativeResultSha256, actorValueHash(event.nativeResult));
+      assert.equal(event.command, event.nativeResult.command); assert.equal(event.rowCount, event.nativeResult.rowCount);
+      const sql = typeof start.original.sql === 'string' ? start.original.sql : start.original.sql.text;
+      queries.push({ sql, params: start.original.parameters, result: event.nativeResult, transactionId: event.transactionId,
+        clientId: event.clientId, dispatchSequence: start.sequence, acknowledgedSequence: event.sequence });
+    } else assert.fail('Unsupported worker query outcome in expiry companion: ' + event.phase);
+  }
+  assert.equal(dispatches.size, 0);
+  assert.equal(evidence.trace.filter(row => row.phase === 'COMPANION_DISPATCH').length, 1);
+  assert.equal(evidence.trace.filter(row => row.phase === 'COMPANION_RETURNED').length, 1);
+  return { queries, at, rootHash, outcome: evidence.companionOutcomes[0].value };
+}
+
+function reconcileCompanionExpiry(before, after, { identity, receipts, quiescentGroupEvidence }, result) {
+  const old = new Map(rows(before, 'market_listings').map(row => [row.id, row]));
+  const expired = rows(after, 'market_listings').filter(row => old.get(row.id)?.kind === 'order' && old.get(row.id).status === 'live' && row.status === 'expired');
+  if (!expired.length || !quiescentGroupEvidence) return result;
+  const { queries, at, rootHash, outcome } = companionQueries(before, after, identity, quiescentGroupEvidence);
+  const scans = queries.filter(query => query.sql === EXPIRY_SQL.due); assert.equal(scans.length, 1); assert.equal(scans[0].transactionId, null);
+  const usedTransactions = new Set();
+  for (const final of expired) {
+    const prior = old.get(final.id), held = integer(prior.qty) * integer(prior.price);
+    // Only this existing living-owner refund subset is claimed. Other expiry
+    // branches remain visible to the enclosing resource observer.
+    if (!held) continue;
+    assert(held <= BigInt(Number.MAX_SAFE_INTEGER), 'Expiry source amount exceeds exact JavaScript integer scope');
+    assert.equal(prior.bidder, null); assert(Date.parse(prior.expires_at) <= at); assert.equal(final.qty, 0);
+    assert(equal(omit(prior, ['qty', 'status']), omit(final, ['qty', 'status'])), 'Aggregate expiry rewrote order metadata or warehouse cargo');
+    assert(scans[0].result.rows.some(row => row.id === prior.id && row.kind === 'order' && row.seller_character === prior.seller_character && row.bidder === null));
+    const locked = queries.filter(query => query.sql === EXPIRY_SQL.order && equal(query.params, [prior.id]) && query.result.rows.length === 1);
+    assert.equal(locked.length, 1, 'Expiry needs one actual locked order read'); const transaction = locked[0].transactionId;
+    assert(Number.isSafeInteger(transaction) && transaction > 0 && !usedTransactions.has(transaction)); usedTransactions.add(transaction);
+    assert.equal(actorValueHash(locked[0].result.rows[0]), actorValueHash(prior), 'Locked order differs from aggregate input');
+    const steps = queries.filter(query => query.transactionId === transaction);
+    assert.deepEqual(steps.map(step => step.sql), ['BEGIN', EXPIRY_SQL.lock, EXPIRY_SQL.order, EXPIRY_SQL.alive,
+      EXPIRY_SQL.credit, EXPIRY_SQL.ledger, EXPIRY_SQL.expire, EXPIRY_SQL.notify, 'COMMIT'], 'Unrecognized canonical expiry transaction');
+    assert(steps.every(step => step.clientId === locked[0].clientId));
+    for (let index = 1; index < steps.length; index++) assert(steps[index - 1].acknowledgedSequence < steps[index].dispatchSequence, 'Worker transaction query order differs');
+    assert.deepEqual(steps.map(step => step.result.command), ['BEGIN', 'SELECT', 'SELECT', 'SELECT', 'UPDATE', 'INSERT', 'UPDATE', 'INSERT', 'COMMIT']);
+    for (const step of steps.slice(1, -1)) assert.equal(step.result.rowCount, 1);
+    assert.deepEqual(steps[1].params, [prior.seller_character]); assert.deepEqual(steps[3].params, [prior.seller_character]);
+    assert.deepEqual(steps[4].params, [prior.seller_character, Number(held)]); assert.deepEqual(steps[6].params, [prior.id]);
+    assert.equal(steps[3].result.rows.length, 1, 'Expiry owner was not alive at the executed credit');
+    const ledger = steps[5].params;
+    assert.equal(ledger.length, 7); assert.deepEqual(ledger.slice(1), [prior.seller_character, null, 'cash', Number(held), 'market:refund', null]);
+    const matches = receipts.filter(receipt => receipt.id === ledger[0]); assert.equal(matches.length, 1);
+    const [receipt] = matches; assert(!result.usedReceipts.has(receipt.id));
+    assert.equal(receipt.character_id, prior.seller_character); assert.equal(receipt.account_id, null); assert.equal(receipt.counterparty, null);
+    assert.equal(receipt.currency, 'cash'); assert.equal(receipt.reason, 'market:refund'); assert.equal(value(receipt.amount), String(held)); assert.equal(Date.parse(receipt.at), at);
+    const notification = steps[7].params; assert.equal(notification.length, 4);
+    assert.equal(notification[1], prior.seller_character); assert.equal(notification[2], 'order_expired');
+    assert.deepEqual(JSON.parse(notification[3]), { listing: prior.id, refunded: Number(held), awaiting: Number(prior.filled_qty) });
+    assert(!rows(before, 'notifications').some(row => row.id === notification[0]));
+    const notices = rows(after, 'notifications').filter(row => row.id === notification[0]); assert.equal(notices.length, 1);
+    assert.equal(notices[0].character_id, notification[1]); assert.equal(notices[0].type, notification[2]);
+    assert.deepEqual(typeof notices[0].payload === 'string' ? JSON.parse(notices[0].payload) : notices[0].payload, JSON.parse(notification[3]));
+    const person = rows(before, 'characters').find(row => row.id === prior.seller_character), next = rows(after, 'characters').find(row => row.id === prior.seller_character);
+    assert(person?.alive && next?.alive && person.account_id === next.account_id);
+    for (const field of ['bank', 'bank_intransit']) assert.equal(value(person[field] || 0), value(next[field] || 0));
+    const ownerDelta = delta(person.cash, next.cash), ownerReceipts = receipts.filter(row => row.character_id === person.id && row.currency === 'cash');
+    assert.equal(ownerDelta, exactSum(ownerReceipts.map(row => row.amount)), 'Aggregate owner pocket differs from exact receipt net');
+    result.listingIds.add(prior.id); result.usedReceipts.add(receipt.id);
+    result.movements.push({ kind: 'market-order-expiry-refund', listingId: prior.id, owner: person.id, amount: String(held), receiptId: receipt.id,
+      retainedFilledQuantity: final.filled_qty, provenance: 'original-market-sweep-quiescent-companion', traceRootSha256: rootHash });
+    result.checks.push({ kind: 'market-order-expiry-refund', resource: 'cash', owner: person.id, escrowBefore: String(held), escrowAfter: '0',
+      expiryCredit: String(held), aggregateOwnerDelta: ownerDelta, drift: '0', authority: [{ table: 'market_listings', id: prior.id }, { table: 'transactions', id: receipt.id }, { traceRootSha256: rootHash }] });
+  }
+  assert(Number.isSafeInteger(outcome?.lapsed) && outcome.lapsed >= result.movements.length, 'Worker return contradicts observed expiry count');
+  return result;
+}
+
+export function reconcileOrderExpiry(before, after, { identity = null, receipts = [], quiescentGroupEvidence = null } = {}) {
   const result = { listingIds: new Set(), usedReceipts: new Set(), checks: [], movements: [] };
+  if (identity?.outcome === 'QUIESCENT_AGGREGATE') return reconcileCompanionExpiry(before, after, { identity, receipts, quiescentGroupEvidence }, result);
   const context = contextOf(identity);
   if (context.authority !== 'original-worker' || !Number.isSafeInteger(context.logicalAt)) return result;
   const old = new Map(rows(before, 'market_listings').map(row => [row.id, row]));

@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { WORLD_RESOURCE_TABLES, reconcileWorldResources } from '../tools/rc1-world-resource-observer.js';
-import { reconcileMembershipResources, reconcileLifecycleCash, reconcileOrderExpiry } from '../tools/rc1-world-lifecycle-resources.js';
+import { reconcileMembershipResources, reconcileLifecycleCash, reconcileOrderExpiry, MARKET_EXPIRY_SOURCE_PINS } from '../tools/rc1-world-lifecycle-resources.js';
 import { reconcileWorkerTransitions } from '../tools/rc1-world-worker-transitions.js';
+import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
+import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescent-group.js';
+import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
+import { sha256 } from '../tools/rc1-resource-journal.js';
 
 const at = '2026-09-20T12:00:00.000Z', logicalAt = Date.parse(at);
 const initial = () => {
@@ -136,6 +140,90 @@ corrupt(expiry, 'expiry-owner-rewrite', (_, b) => { b.tables.market_listings[0].
 corrupt(expiry, 'expiry-rollback', (_, __, o) => { o.identity.outcome = 'ROLLED_BACK'; });
 assert.equal(reconcileOrderExpiry(orderBefore, orderAfter, { identity: identity('/v1/market/order'), receipts: orderAfter.tables.transactions }).listingIds.size, 0);
 controls.push('expiry-missing-worker-boundary-remains-unsupported');
+
+// Use the actual aggregate producer with controlled query results. Two same-
+// owner orders refund alongside a separate listing fee; no intermediate state
+// or commit ordering is fabricated to isolate these resource contributions.
+const aggregateBefore = structuredClone(orderBefore);
+aggregateBefore.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'order-2' });
+aggregateBefore.tables.character_cargo.push({ character_id: 'one', good_id: 'gin', qty: 1 });
+const aggregateAfter = structuredClone(aggregateBefore);
+aggregateAfter.tables.market_listings.forEach(row => { row.qty = 0; row.status = 'expired'; });
+aggregateAfter.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'fresh-good', kind: 'good', qty: 1, price: '50', filled_qty: 0, expires_at: '2026-09-20T13:00:00.000Z' });
+aggregateAfter.tables.character_cargo = [];
+aggregateAfter.tables.characters[1].cash = '1790';
+aggregateAfter.tables.transactions = [receipt('refund-1', 'one', '400', 'market:refund'), receipt('refund-2', 'one', '400', 'market:refund'), receipt('mixed-fee', 'one', '-10', 'market:list')];
+aggregateAfter.tables.notifications = ['order', 'order-2'].map((listing, i) => ({ id: 'notice-' + (i + 1), character_id: 'one', type: 'order_expired',
+  created_at: at, delivered: false, pushed: false, payload: JSON.stringify({ listing, refunded: 400, awaiting: 3 }) }));
+let aggregateEvidence, snapshots = 0;
+const serialObserver = createNativeCommitObserver({ context: () => ({}), onBoundary: async () => {} }); serialObserver.arm();
+const producer = createNativeQuiescentGroupObserver({ serialObserver, clock: () => logicalAt,
+  snapshot: async () => structuredClone(snapshots++ ? aggregateAfter : aggregateBefore), onGroup: async evidence => { aggregateEvidence = evidence; } });
+const query = producer.wrapQuery({}, async (sql, params) => {
+  const command = sql.split(' ')[0]; let found = [];
+  if (sql.startsWith('SELECT id, kind')) found = aggregateBefore.tables.market_listings.map(({ id, kind, seller_character, bidder }) => ({ id, kind, seller_character, bidder }));
+  else if (sql.startsWith('SELECT * FROM market_listings')) found = [structuredClone(aggregateBefore.tables.market_listings.find(row => row.id === params[0]))];
+  else if (sql.startsWith('SELECT 1')) found = [{ '?column?': 1 }];
+  return { command, rowCount: command === 'SELECT' ? found.length : ['BEGIN', 'COMMIT'].includes(command) ? null : 1, rows: found, fields: [] };
+});
+await producer.runGroup([{ accountId: 'account-one', request: { method: 'POST', path: '/v1/market', body: { goodId: 'gin', qty: 1, price: 50, hours: 1 }, idempotencyKey: 'mixed-post' } }], {
+  logicalAt, execute: async () => ({ status: 200, replayed: false, body: { ok: true, id: 'fresh-good' } }), drain: async () => {},
+  companion: { identity: { kind: 'original-worker-job', label: 'market sweep', logicalAt,
+    sourceFile: 'src/worker.js', sourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/worker.js'], handlerSourceFile: 'src/market.js', handlerSourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/market.js'] },
+  execute: async () => {
+    await query("SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()");
+    for (const [i, order] of aggregateBefore.tables.market_listings.entries()) {
+      await query('BEGIN'); await query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [order.seller_character]);
+      await query("SELECT * FROM market_listings WHERE id=$1 AND status='live' AND expires_at <= now() FOR UPDATE", [order.id]);
+      await query('SELECT 1 FROM characters WHERE id=$1 AND alive', [order.seller_character]);
+      await query('UPDATE characters SET cash = cash + $2 WHERE id=$1', [order.seller_character, 400]);
+      await query('INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)', ['refund-' + (i + 1), order.seller_character, null, 'cash', 400, 'market:refund', null]);
+      await query("UPDATE market_listings SET qty=0, status='expired' WHERE id=$1", [order.id]);
+      await query('INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)', ['notice-' + (i + 1), order.seller_character, 'order_expired', JSON.stringify({ listing: order.id, refunded: 400, awaiting: 3 })]);
+      await query('COMMIT');
+    }
+    return { settled: 0, lapsed: 2 };
+  } },
+});
+const aggregateOptions = { identity: aggregateEvidence.identity, quiescentGroupEvidence: aggregateEvidence };
+const aggregateJournal = reconcileWorldResources(aggregateBefore, aggregateAfter, aggregateOptions);
+assert.equal(aggregateJournal.orderExpiry.movements.length, 2);
+assert(aggregateJournal.orderExpiry.movements.every(row => row.provenance === 'original-market-sweep-quiescent-companion'));
+assert(aggregateJournal.unsupported.some(row => row.table === 'market_listings'), 'Unclassified concurrent posting remains explicit');
+assert.equal(aggregateJournal.identity.outcome, 'QUIESCENT_AGGREGATE'); assert(!Object.hasOwn(aggregateJournal.identity, 'sequence'));
+assert.equal(reconcileOrderExpiry(aggregateBefore, aggregateAfter, { identity: aggregateEvidence.identity, receipts: aggregateAfter.tables.transactions }).movements.length, 0);
+cases.push({ name: 'aggregate-two-order-expiry-with-concurrent-owner-fee' });
+controls.push('aggregate-without-worker-trace-remains-unsupported');
+function aggregateCorruption(name, edit) {
+  const a = structuredClone(aggregateBefore), b = structuredClone(aggregateAfter), evidence = structuredClone(aggregateEvidence);
+  edit(a, b, evidence);
+  evidence.before = a; evidence.after = b;
+  evidence.trace.forEach((event, i) => { event.sequence = i + 1;
+    if (event.original) event.sqlSha256 = sha256(typeof event.original.sql === 'string' ? event.original.sql : event.original.sql.text);
+    if (event.nativeResult) event.nativeResultSha256 = actorValueHash(event.nativeResult);
+  });
+  evidence.identity.context.companions = evidence.companions;
+  evidence.identity.companionsSha256 = actorValueHash(evidence.companions);
+  const { sha256: _, ...root } = evidence.identity.traceRoot;
+  Object.assign(root, { beforeHash: sha256(a), afterHash: sha256(b), traceSha256: actorValueHash(evidence.trace), companionsSha256: evidence.identity.companionsSha256,
+    companionOutcomesSha256: actorValueHash(evidence.companionOutcomes) });
+  evidence.traceSha256 = root.traceSha256; evidence.identity.traceRoot = { ...root, sha256: actorValueHash(root) };
+  assert.throws(() => reconcileOrderExpiry(a, b, { identity: evidence.identity, quiescentGroupEvidence: evidence, receipts: b.tables.transactions }), undefined, name);
+  controls.push(name);
+}
+aggregateCorruption('aggregate-expiry-wrong-handler-pin', (_, __, e) => { e.companions[0].handlerSourceSha256 = '0'.repeat(64); });
+aggregateCorruption('aggregate-expiry-wrong-refund-receipt', (_, b) => { b.tables.transactions[0].amount = '399'; b.tables.characters[1].cash = '1789'; });
+aggregateCorruption('aggregate-expiry-warehouse-loss', (_, b) => { b.tables.market_listings[0].filled_qty = 0; });
+aggregateCorruption('aggregate-expiry-bank-diversion', (_, b) => { b.tables.characters[1].cash = '1789'; b.tables.characters[1].bank = '501'; });
+aggregateCorruption('aggregate-expiry-notification-mismatch', (_, b) => { b.tables.notifications[0].payload = JSON.stringify({ listing: 'order', refunded: 399, awaiting: 3 }); });
+aggregateCorruption('aggregate-expiry-locked-row-does-not-match-input', (_, __, e) => { e.trace.find(row => row.nativeResult?.rows[0]?.id === 'order' && row.nativeResult.rows[0].qty === 2).nativeResult.rows[0].qty = 3; });
+aggregateCorruption('aggregate-expiry-native-credit-differs', (_, __, e) => { e.trace.find(row => row.original?.sql.startsWith('UPDATE characters')).original.parameters[1] = 399; });
+aggregateCorruption('aggregate-expiry-native-row-not-updated', (_, __, e) => { const row = e.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.command === 'UPDATE'); row.rowCount = row.nativeResult.rowCount = 0; });
+aggregateCorruption('aggregate-expiry-rollback-not-commit', (_, __, e) => {
+  const start = e.trace.find(row => row.original?.sql === 'COMMIT'), end = e.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.queryId === start.queryId);
+  start.original.sql = 'ROLLBACK'; end.command = end.nativeResult.command = 'ROLLBACK'; end.sqlSha256 = sha256('ROLLBACK');
+});
+aggregateCorruption('aggregate-expiry-worker-return-contradicts-count', (_, __, e) => { e.companionOutcomes[0].value.lapsed = 1; });
 const crimeBefore = initial(); Object.assign(crimeBefore.tables.gangs[0], { weekly_progress: '0', weekly_week: null, weekly_done: false });
 crimeBefore.tables.characters[0].lc_crime = 0;
 const crimeAfter = structuredClone(crimeBefore); Object.assign(crimeAfter.tables.gangs[0], { weekly_progress: '1', weekly_week: 2959 });

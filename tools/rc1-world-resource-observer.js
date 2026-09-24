@@ -623,7 +623,7 @@ function reconcileTurfTerminal(before, after, receipts, checks, unsupported) {
   districtFields.set(districtId, fields); settledDistricts.add(districtId); return result;
 }
 
-export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null, duelSelection = null, npcMarketOrderProvenance = null } = {}) {
+export function reconcileWorldResources(before, after, { identity = null, includeRestrictedChanges = false, carMeltProvenance = null, carAcquisitionProvenance = null, npcFamilyProvenance = null, seasonElectionProvenance = null, npcBoatProvenance = null, duelSelection = null, npcMarketOrderProvenance = null, quiescentGroupEvidence = null } = {}) {
   assert.equal(before.format, 1); assert.equal(after.format, 1);
   const checks = [], unsupported = [];
   const receipts = appendOnly(before, after, 'transactions');
@@ -660,7 +660,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   checks.push(...npcCargo.checks);
   const npcRecruitment = reconcileNpcFamilyRecruitment(before, after, { identity });
   const membership = reconcileMembershipResources(before, after, { identity, receipts });
-  const orderExpiry = reconcileOrderExpiry(before, after, { identity, receipts });
+  const orderExpiry = reconcileOrderExpiry(before, after, { identity, receipts, quiescentGroupEvidence });
   checks.push(...orderExpiry.checks);
   const orderResources = reconcileOrderResources(before, after, { identity, receipts });
   const turfFunding = reconcileTurfFunding(before, after, { receipts });
@@ -833,7 +833,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements }, npcRecruitment: { movements: npcRecruitment.movements },
     membership: { movements: membership.movements, scope: 'Exact join/role/departure/succession rows with surviving Family and unchanged personal custody; route authorization remains independently verified by native authority proofs.' },
     lifecycleCash: { movements: lifecycleCash.movements, scope: 'Reciprocal jump pocket transfers and exact law plea personal-to-tax-pool transfer; command authorization and combat probability remain outside this custody classifier.' },
-    orderExpiry: { movements: orderExpiry.movements, scope: 'One original worker committed live-order expiry: exact remaining escrow to its living owner, immutable order metadata/filled cargo, and exact refund receipt. Other order terminals remain unsupported.' },
+    orderExpiry: { movements: orderExpiry.movements, scope: 'Original serial-worker expiry or explicit source-bound quiescent market-sweep companion: exact remaining escrow to living owners, immutable order metadata/filled cargo and exact refund receipts. Aggregate traces do not claim internal commit order. Other order terminals remain unsupported.' },
     orderResources: { movements: orderResources.movements, scope: 'Exact player buy-order principal/fee disposition and one unfilled-order plus zero-bank pocket fire-death disposition. Skills/decree quote authorization remains native command-proof scope; no fill, bid, warehouse or generic market classification.' },
     turfFunding: { movements: turfFunding.movements, scope: 'Unchartered surviving Family treasury to exact single-district bid escrow, or unoccupied turf cash sink with canonical base garrison. Territory/season quote authority is not reconstructed; other turf changes remain unsupported.' },
     npcMarketOrder: { movements: npcMarketOrder.movements,
