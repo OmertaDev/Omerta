@@ -546,6 +546,7 @@ try {
   // The observer imports canonical check-in rules through game.js -> db.js.
   // Install the source-pinned DB seam before loading that production module.
   ({ snapshotWorldResources, reconcileWorldResources, worldResourceHash } = await import('../tools/rc1-world-resource-observer.js'));
+  const { flushWorldTelemetry } = await import('../src/world-telemetry.js');
   if (priorFailure) await proof.artifact('prior-failed-run.json', priorFailure);
   await guardBoundary('before-initialization');
   await proof.record({ kind: 'database-created', ...await database.create() });
@@ -911,6 +912,10 @@ try {
           ...(request.idempotencyKey ? { 'idempotency-key': request.idempotencyKey } : {}) },
         ...(request.body === undefined ? {} : { payload: request.body }) });
       await completed;
+      // The canonical command routes intentionally enqueue best-effort telemetry
+      // beyond their HTTP response. Drain that existing queue before the next
+      // serial snapshot; do not drop it or turn this into a latency/load proof.
+      await flushWorldTelemetry(pool);
       } finally { clearTimeout(timer); }
       const body = r.json(); return { status: r.statusCode,
         replayed: r.headers['x-idempotent-replay'] === 'true' || body.replayed === true, body };
