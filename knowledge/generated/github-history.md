@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `468516d8d6f3`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bcd03318c241`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1490 |
+| Commits in clone | 1492 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-20 — Merge pull request #183 from OmertaDev/codex/rc1-release-validation |
+| Latest commit | 2026-09-24 — Add painted NFT artwork and require paid character creation for portrait reveal |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 615 |
+| OmertaDev | 616 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 30 |
+| github-actions[bot] | 31 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -31,18 +31,18 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
-| [public/index.html](../../public/index.html) | 417 | yes |
-| [src/server.js](../../src/server.js) | 364 | yes |
+| [public/index.html](../../public/index.html) | 418 | yes |
+| [src/server.js](../../src/server.js) | 365 | yes |
 | [SPEC.md](../../SPEC.md) | 323 | yes |
-| [schema.sql](../../schema.sql) | 296 | yes |
+| [schema.sql](../../schema.sql) | 297 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 218 | historical |
-| knowledge/generated/graph-summary.md | 218 | historical |
-| knowledge/generated/graph.json | 218 | historical |
-| knowledge/generated/inventory.md | 218 | historical |
+| knowledge/generated/github-history.md | 219 | historical |
+| knowledge/generated/graph-summary.md | 219 | historical |
+| knowledge/generated/graph.json | 219 | historical |
+| knowledge/generated/inventory.md | 219 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
-| [package.json](../../package.json) | 171 | yes |
+| [package.json](../../package.json) | 172 | yes |
 | [src/worker.js](../../src/worker.js) | 125 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |

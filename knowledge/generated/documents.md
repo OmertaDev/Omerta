@@ -373,6 +373,7 @@
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
+| [docs/release/nft-portrait-reveal.md](../../docs/release/nft-portrait-reveal.md) | documentation | 38 | 2026-09-24 |
 | [docs/release/RC1-MANIFEST.md](../../docs/release/RC1-MANIFEST.md) | documentation | 58 | 2026-09-19 |
 | [docs/release/RC1-OPPORTUNITY-QUALITY.md](../../docs/release/RC1-OPPORTUNITY-QUALITY.md) | documentation | 54 | 2026-09-19 |
 | [docs/release/RC1-PLAYER-VALIDATION.md](../../docs/release/RC1-PLAYER-VALIDATION.md) | documentation | 128 | 2026-09-20 |
