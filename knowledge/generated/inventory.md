@@ -1,33 +1,33 @@
 # Generated repository inventory
 
-> Source: worktree at `cc98b7c443ad`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `b91743311fdb`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,597 |
-| Text lines | 1,211,851 |
-| Repository bytes inventoried | 909,011,924 |
+| Current artifacts | 3,691 |
+| Text lines | 1,234,085 |
+| Repository bytes inventoried | 911,416,868 |
 | Backend/route modules | 274 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,789 |
+| Git commits | 1,923 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 8,758 / 37,448 |
+| Graph nodes / edges | 9,043 / 38,552 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,202 |
-| artifact | 635 |
-| documentation | 401 |
-| test-suite | 379 |
+| artifact | 642 |
+| test-suite | 424 |
+| documentation | 410 |
 | backend-module | 246 |
-| engineering-harness | 156 |
+| engineering-harness | 189 |
 | contract-project | 153 |
 | audit | 98 |
 | contract-test | 98 |
@@ -71,7 +71,7 @@
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
-| [schema.sql](../../schema.sql) | 7,376 | data-schema | 2026-09-18 |
+| [schema.sql](../../schema.sql) | 7,378 | data-schema | 2026-09-22 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
 | [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |

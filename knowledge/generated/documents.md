@@ -318,6 +318,7 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2029 | 2026-09-10 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 18679 | 2026-09-06 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
+| [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-09 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
@@ -377,6 +378,7 @@
 | [docs/rc1-ci-envelope.md](../../docs/rc1-ci-envelope.md) | documentation | 145 | 2026-09-21 |
 | [docs/rc1-coordinated-alliance.md](../../docs/rc1-coordinated-alliance.md) | documentation | 30 | 2026-09-21 |
 | [docs/rc1-family-cash-ammo-journal.md](../../docs/rc1-family-cash-ammo-journal.md) | documentation | 28 | 2026-09-21 |
+| [docs/rc1-knowledge-choice-authority.md](../../docs/rc1-knowledge-choice-authority.md) | documentation | 113 | 2026-09-21 |
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
@@ -395,6 +397,7 @@
 | [docs/release/readiness-work/authority-command-matrix.md](../../docs/release/readiness-work/authority-command-matrix.md) | documentation | 106 | 2026-09-21 |
 | [docs/release/readiness-work/authority-crew-review.md](../../docs/release/readiness-work/authority-crew-review.md) | documentation | 79 | 2026-09-21 |
 | [docs/release/readiness-work/authority-family-review.md](../../docs/release/readiness-work/authority-family-review.md) | documentation | 14 | 2026-09-21 |
+| [docs/release/readiness-work/authority-final-review.md](../../docs/release/readiness-work/authority-final-review.md) | documentation | 104 | 2026-09-24 |
 | [docs/release/readiness-work/authority-inventory.md](../../docs/release/readiness-work/authority-inventory.md) | documentation | 29 | 2026-09-21 |
 | [docs/release/readiness-work/authority-legacy-review.md](../../docs/release/readiness-work/authority-legacy-review.md) | documentation | 116 | 2026-09-21 |
 | [docs/release/readiness-work/authority-pending-replay-finding.md](../../docs/release/readiness-work/authority-pending-replay-finding.md) | documentation | 14 | 2026-09-21 |
@@ -405,6 +408,7 @@
 | [docs/release/readiness-work/crew-input-focus.md](../../docs/release/readiness-work/crew-input-focus.md) | documentation | 60 | 2026-09-21 |
 | [docs/release/readiness-work/family-omr-journal.md](../../docs/release/readiness-work/family-omr-journal.md) | documentation | 141 | 2026-09-21 |
 | [docs/release/readiness-work/family-player-policy.md](../../docs/release/readiness-work/family-player-policy.md) | documentation | 29 | 2026-09-21 |
+| [docs/release/readiness-work/final-contract-review-reuse.md](../../docs/release/readiness-work/final-contract-review-reuse.md) | documentation | 39 | 2026-09-24 |
 | [docs/release/readiness-work/golden-browser-regressions.md](../../docs/release/readiness-work/golden-browser-regressions.md) | documentation | 25 | 2026-09-21 |
 | [docs/release/readiness-work/harness-actor-replay.md](../../docs/release/readiness-work/harness-actor-replay.md) | documentation | 75 | 2026-09-21 |
 | [docs/release/readiness-work/harness-board-detachment.md](../../docs/release/readiness-work/harness-board-detachment.md) | documentation | 51 | 2026-09-21 |
@@ -415,12 +419,13 @@
 | [docs/release/readiness-work/harness-evidence-storage-proposal.md](../../docs/release/readiness-work/harness-evidence-storage-proposal.md) | documentation | 129 | 2026-09-21 |
 | [docs/release/readiness-work/harness-failure-reducer.md](../../docs/release/readiness-work/harness-failure-reducer.md) | documentation | 31 | 2026-09-21 |
 | [docs/release/readiness-work/harness-gzip-capture.md](../../docs/release/readiness-work/harness-gzip-capture.md) | documentation | 68 | 2026-09-21 |
-| [docs/release/readiness-work/harness-history-error-preservation.md](../../docs/release/readiness-work/harness-history-error-preservation.md) | documentation | 62 | 2026-09-21 |
+| [docs/release/readiness-work/harness-history-error-preservation.md](../../docs/release/readiness-work/harness-history-error-preservation.md) | documentation | 69 | 2026-09-21 |
 | [docs/release/readiness-work/harness-observer-serialization.md](../../docs/release/readiness-work/harness-observer-serialization.md) | documentation | 45 | 2026-09-21 |
 | [docs/release/readiness-work/harness-recorded-query-order.md](../../docs/release/readiness-work/harness-recorded-query-order.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/harness-resource-pressure.md](../../docs/release/readiness-work/harness-resource-pressure.md) | documentation | 34 | 2026-09-21 |
 | [docs/release/readiness-work/harness-season-conversion-observer.md](../../docs/release/readiness-work/harness-season-conversion-observer.md) | documentation | 31 | 2026-09-21 |
 | [docs/release/readiness-work/harness-season-crown-observer.md](../../docs/release/readiness-work/harness-season-crown-observer.md) | documentation | 99 | 2026-09-21 |
+| [docs/release/readiness-work/harness-season-election-provenance.md](../../docs/release/readiness-work/harness-season-election-provenance.md) | documentation | 167 | 2026-09-21 |
 | [docs/release/readiness-work/harness-worker-schedule.md](../../docs/release/readiness-work/harness-worker-schedule.md) | documentation | 164 | 2026-09-21 |
 | [docs/release/readiness-work/harness-world-gzip-integration.md](../../docs/release/readiness-work/harness-world-gzip-integration.md) | documentation | 62 | 2026-09-21 |
 | [docs/release/readiness-work/harness.md](../../docs/release/readiness-work/harness.md) | documentation | 142 | 2026-09-21 |
@@ -428,6 +433,8 @@
 | [docs/release/readiness-work/law-player-policy.md](../../docs/release/readiness-work/law-player-policy.md) | documentation | 16 | 2026-09-21 |
 | [docs/release/readiness-work/market-player-policy.md](../../docs/release/readiness-work/market-player-policy.md) | documentation | 20 | 2026-09-21 |
 | [docs/release/readiness-work/mystery-player-policies.md](../../docs/release/readiness-work/mystery-player-policies.md) | documentation | 91 | 2026-09-21 |
+| [docs/release/readiness-work/npc-boat-fault-retry.md](../../docs/release/readiness-work/npc-boat-fault-retry.md) | documentation | 14 | 2026-09-21 |
+| [docs/release/readiness-work/npc-boat-lineage.md](../../docs/release/readiness-work/npc-boat-lineage.md) | documentation | 124 | 2026-09-21 |
 | [docs/release/readiness-work/omr-custody-journal.md](../../docs/release/readiness-work/omr-custody-journal.md) | documentation | 120 | 2026-09-21 |
 | [docs/release/readiness-work/omr-loan-terminal-journal.md](../../docs/release/readiness-work/omr-loan-terminal-journal.md) | documentation | 95 | 2026-09-21 |
 | [docs/release/readiness-work/quiet-world-workload.md](../../docs/release/readiness-work/quiet-world-workload.md) | documentation | 42 | 2026-09-21 |
@@ -503,6 +510,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2782 | 2026-09-14 |
+| [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 204 | 2026-09-24 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 185 | 2026-09-14 |
@@ -523,6 +531,7 @@
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-19 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
+| [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 41 | 2026-09-24 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
 | [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-26 |
 | [omerta-broadcast-design.md](../../omerta-broadcast-design.md) | design | 126 | 2026-08-13 |
