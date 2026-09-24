@@ -36,6 +36,8 @@ The user resumed work on 2026-09-24 after the usage-limit interruption. All five
 
 The user's instruction to use **gpt-5.6-sol** for the final merge and production push remains pending. No production action is authorized by these partial results.
 
+Soak preparation is complete: the private controller has21 passing simulated controls and its nine-file manifest is verified. Actual production API/worker runtime observations establish Node22.23.2, Debian12 and the declared0.5CPU/512MiB limits. The temporary isolated Render setup and account-wide API credential await the specific cost/access confirmation requested2026-09-24 (up to$10). No paid resources or key have been created, and no soak pass is claimed.
+
 ## Release state
 
 **NOT TECHNICALLY QUALIFIED**
