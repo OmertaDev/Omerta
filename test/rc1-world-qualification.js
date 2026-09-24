@@ -135,4 +135,8 @@ for (const change of [
   value.workerCoverage.throughLogicalAt = value.endAt; value.stabilizationReview = null;
   const result = evaluateWorldDuration(value); assert(result.minimumDaysMet && !result.cyclesMet && !result.complete);
 }
+{
+  const value = durationFixture(); value.windows[0].backlogSamples = [];
+  assert.throws(() => evaluateWorldDuration(value), /opening and closing/);
+}
 console.log('PASS rc1-world-qualification: source pins, exact checkpoint subjects, canonical cash/ammo/Family guards, unknown preservation, lifecycle executions, distinct season boundaries and reviewed window joins; no native-world qualification');

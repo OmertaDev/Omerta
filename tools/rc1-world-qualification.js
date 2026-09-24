@@ -191,6 +191,27 @@ export const WORLD_DURATION_CANDIDATES = Object.freeze([
 // This is a join onto retained execution evidence, not proof that an elapsed timer
 // executed. Full source/config applicability inventory and reviewed stabilization
 // series stay explicit inputs; the frozen manifest supplies all numerical gates.
+export function compareWorldBacklogMeasurements(before, after) {
+  if (before.backlogSamples || after.backlogSamples) {
+    if (!before.backlogSamples || !after.backlogSamples
+      || !sameOffsets(before.backlogSamples, after.backlogSamples)) return 'UNKNOWN';
+    const comparisons = after.backlogSamples.map((sample, index) => compareWorldBacklogMeasurements(before.backlogSamples[index], sample));
+    return comparisons.includes('FAILED') ? 'FAILED' : comparisons.includes('UNKNOWN') ? 'UNKNOWN' : 'SATISFIED';
+  }
+  if (before.liveStateOrphans == null || after.liveStateOrphans == null) return 'UNKNOWN';
+  if (after.liveStateOrphans > before.liveStateOrphans) return 'FAILED';
+  if (!before.backlogClasses && !after.backlogClasses) return after.unresolvedBacklog <= before.unresolvedBacklog ? 'SATISFIED' : 'FAILED';
+  if (!before.backlogClasses || !after.backlogClasses || before.backlogClasses.length !== after.backlogClasses.length) return 'UNKNOWN';
+  const classes = after.backlogClasses.map(row => {
+    const prior = before.backlogClasses.find(entry => entry.id === row.id);
+    if (!prior || row.status === 'UNKNOWN' || prior.status === 'UNKNOWN') return 'UNKNOWN';
+    if (row.status === 'NON_MUTATING_MODE' || prior.status === 'NON_MUTATING_MODE') return row.status === prior.status && row.reason === prior.reason ? 'SATISFIED' : 'UNKNOWN';
+    return row.count <= prior.count ? 'SATISFIED' : 'FAILED';
+  });
+  return classes.includes('FAILED') ? 'FAILED' : classes.includes('UNKNOWN') ? 'UNKNOWN' : 'SATISFIED';
+}
+const sameOffsets = (a, b) => a.length === b.length && a.every((sample, index) => sample.offsetMs === b[index].offsetMs);
+
 export function evaluateWorldDuration({ manifest, source, configurationSha256, startAt, endAt,
   lifecycleReview, executions = [], seasonalRollovers = [], workerCoverage, windows = [], stabilizationReview = null }) {
   assert.equal(source.reviewSha256, hash(WORLD_RECOVERY_REVIEW)); assert(digest(configurationSha256));
@@ -236,14 +257,44 @@ export function evaluateWorldDuration({ manifest, source, configurationSha256, s
     assert(digest(window.checkpoint.stateSha256));
     assert(window.fromLogicalAt >= startAt && window.fromLogicalAt < window.throughLogicalAt && window.throughLogicalAt <= endAt);
     assert.equal(window.checkpoint.logicalAt, window.throughLogicalAt); assert.equal(window.checkpoint.configurationSha256, configurationSha256);
-    reference(window.evidence); assert(Number.isSafeInteger(window.unresolvedBacklog) && window.unresolvedBacklog >= 0);
-    assert(Number.isSafeInteger(window.liveStateOrphans) && window.liveStateOrphans >= 0);
+    reference(window.evidence);
+    if (window.backlogClasses) {
+      unique(window.backlogClasses.map(row => row.id), 'backlog class');
+      for (const row of window.backlogClasses) {
+        assert(['OBSERVED', 'NOT_APPLICABLE', 'NON_MUTATING_MODE', 'UNKNOWN'].includes(row.status));
+        if (['OBSERVED', 'NOT_APPLICABLE'].includes(row.status)) assert(Number.isSafeInteger(row.count) && row.count >= 0);
+        else assert.equal(row.count, null, 'Do not invent a count for unmeasured/non-mutating work');
+        if (row.status !== 'OBSERVED') assert(typeof row.reason === 'string' && row.reason);
+      }
+    } else assert(Number.isSafeInteger(window.unresolvedBacklog) && window.unresolvedBacklog >= 0);
+    if (window.backlogSamples) {
+      assert(window.backlogSamples.length >= 2, 'A window profile needs actual opening and closing observations');
+      unique(window.backlogSamples.map(row => row.offsetMs), 'backlog sample offset');
+      assert.equal(window.backlogSamples[0].offsetMs, 0);
+      assert.equal(window.backlogSamples.at(-1).offsetMs, window.throughLogicalAt - window.fromLogicalAt);
+      assert.deepEqual(window.backlogSamples.at(-1).backlogClasses, window.backlogClasses);
+      assert.equal(window.backlogSamples.at(-1).liveStateOrphans, window.liveStateOrphans);
+      for (const [sampleIndex, sample] of window.backlogSamples.entries()) {
+        assert(Number.isSafeInteger(sample.offsetMs) && sample.offsetMs >= 0 && sample.offsetMs <= window.throughLogicalAt - window.fromLogicalAt);
+        if (sampleIndex) assert(sample.offsetMs > window.backlogSamples[sampleIndex - 1].offsetMs);
+        assert(Array.isArray(sample.backlogClasses)); unique(sample.backlogClasses.map(row => row.id), 'sample backlog class');
+        for (const row of sample.backlogClasses) {
+          assert(['OBSERVED', 'NOT_APPLICABLE', 'NON_MUTATING_MODE', 'UNKNOWN'].includes(row.status));
+          if (['OBSERVED', 'NOT_APPLICABLE'].includes(row.status)) assert(Number.isSafeInteger(row.count) && row.count >= 0);
+          else assert.equal(row.count, null);
+          if (row.status !== 'OBSERVED') assert(typeof row.reason === 'string' && row.reason);
+        }
+        assert(sample.liveStateOrphans === null && window.complete !== true || Number.isSafeInteger(sample.liveStateOrphans) && sample.liveStateOrphans >= 0);
+      }
+    }
+    assert(window.liveStateOrphans === null && window.complete !== true
+      || Number.isSafeInteger(window.liveStateOrphans) && window.liveStateOrphans >= 0);
     if (index) assert.equal(window.fromLogicalAt, windows[index - 1].throughLogicalAt, 'Nonconsecutive lifecycle windows');
   }
   if (windowLifecycle && windows.length >= 2 && windows.every(window => window.complete
-    && window.throughLogicalAt - window.fromLogicalAt >= windowLifecycle.durationMs)) {
-    backlogStatus = windows.slice(1).every((window, index) => window.unresolvedBacklog <= windows[index].unresolvedBacklog
-      && window.liveStateOrphans <= windows[index].liveStateOrphans) ? 'SATISFIED' : 'FAILED';
+    && window.throughLogicalAt - window.fromLogicalAt >= longestMs)) {
+    const comparisons = windows.slice(1).map((window, index) => compareWorldBacklogMeasurements(windows[index], window));
+    backlogStatus = comparisons.includes('FAILED') ? 'FAILED' : comparisons.includes('UNKNOWN') ? 'UNKNOWN' : 'SATISFIED';
   }
   let stable = false;
   if (stabilizationReview) {
