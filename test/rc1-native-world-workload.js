@@ -31,6 +31,8 @@ import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-fa
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
 import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
+import { createPressureWorldAdapter, PRESSURE_WORLD_CONTRACT } from '../tools/rc1-pressure-world-adapter.js';
+import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1-aggression-policy.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -51,7 +53,7 @@ const guardLimits = guardArguments[0] === undefined ? null : {
 };
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
-assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure'].includes(actorPolicy));
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure', 'resource_scarcity', 'resource_abundance', 'high_aggression'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const continuousAlliance = allianceEnabled && (population !== 25 || ![24, 48].includes(hours) || process.argv.includes('--continuous-alliance'));
 const legacyAlliance = allianceEnabled && !continuousAlliance;
@@ -60,12 +62,15 @@ const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'm
 const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
 const churnEnabled = actorPolicy === 'high_player_churn';
 const lawEnabled = actorPolicy === 'law_pressure';
-const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled || churnEnabled || lawEnabled;
+const pressureEnabled = actorPolicy === 'resource_scarcity' || actorPolicy === 'resource_abundance';
+const aggressionEnabled = actorPolicy === 'high_aggression';
+const dailyFullRoster = cohortEnabled || familyEnabled || churnEnabled || lawEnabled || pressureEnabled || aggressionEnabled;
+const httpEnabled = allianceEnabled || dailyFullRoster;
 if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
   assert(!argument('resume'), 'Fault workload does not support continuation');
 }
-const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : dailyFullRoster ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
 if (legacyAlliance) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
@@ -251,6 +256,18 @@ if (lawEnabled) Object.assign(configuration, {
   entry: 'Ordinary guest/character HTTP; no progression or resource fixtures.',
   authority: 'Authenticated Law HTTP, original PlayerCommands and canonical crimes; no external provider qualification.',
 });
+if (pressureEnabled || aggressionEnabled) Object.assign(configuration, {
+  scenario: actorPolicy,
+  ...(pressureEnabled ? { pressureContract: PRESSURE_WORLD_CONTRACT } : { aggressionContract: AGGRESSION_POLICY_CONTRACT }),
+  policyScope: pressureEnabled ? PRESSURE_WORLD_CONTRACT.daily : AGGRESSION_POLICY_CONTRACT.quota,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: aggressionEnabled ? 10 : 4, maximumCrimesPerSession: 1,
+    information: pressureEnabled ? PRESSURE_WORLD_CONTRACT.authority : AGGRESSION_POLICY_CONTRACT.inputs,
+    observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: pressureEnabled ? actorPolicy === 'resource_abundance' ? PRESSURE_WORLD_CONTRACT.abundance : PRESSURE_WORLD_CONTRACT.scarcity
+    : 'Ordinary guest/character HTTP; sustained check-in and paid ammo choices share the nonconflict denominator. No fixtures.',
+  authority: 'Ordinary authenticated public handlers and original worker callbacks; no external provider qualification.',
+});
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
   assert.deepEqual(replayRun.configuration.npcBoatFault, configuration.npcBoatFault);
@@ -432,6 +449,8 @@ const allianceActors = [];
 const familyActors = []; let familyAdapter = null;
 const churnActors = [], churnWeeklyActive = new Set(); let churnPolicy = null;
 const lawActors = []; let lawAdapter = null;
+const pressureActors = []; let pressureAdapter = null;
+const aggressionActors = [], aggressionPolicies = new Map();
 const cohortActors = [], cohortPolicies = new Map();
 let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
 let allianceAdapter = null, app = null;
@@ -466,6 +485,17 @@ if (resume) {
     lawAdapter = createLawWorldAdapter(parentPolicy.law.payload.state.configuration).restore(parentPolicy.law);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
   }
+  if (pressureEnabled) {
+    pressureActors.push(...structuredClone(parentPolicy.pressureActors)); roster.push(...parentPolicy.roster);
+    pressureAdapter = createPressureWorldAdapter(parentPolicy.pressure.payload.state.configuration).restore(parentPolicy.pressure);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (aggressionEnabled) {
+    aggressionActors.push(...structuredClone(parentPolicy.aggressionActors)); roster.push(...parentPolicy.roster);
+    for (const accountId of roster) aggressionPolicies.set(accountId,
+      createAggressionPolicy({ accountId, seed, sustained: true }).restore(parentPolicy.aggressionPolicies[accountId]));
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
   assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
   for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
@@ -481,6 +511,11 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  ...(pressureEnabled ? { pressureActors, pressure: pressureAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(aggressionEnabled ? { aggressionActors,
+    aggressionPolicies: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.checkpoint()])),
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(lawEnabled ? { lawActors, law: lawAdapter?.checkpoint() || null,
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(churnEnabled ? { churnActors, churn: churnPolicy?.checkpoint() || null, churnWeeklyActive: [...churnWeeklyActive].sort(),
@@ -652,6 +687,35 @@ try {
       .slice(0, Math.max(3, Math.ceil(population / 10)));
     lawAdapter = createLawWorldAdapter({ seed, epoch, roster: lawActors, activeAccountIds });
     await proof.artifact('law-initialization.json', { actors: lawActors, activeAccountIds, directFixtures: 0 });
+  }
+  if ((pressureEnabled || aggressionEnabled) && !resume) {
+    const target = pressureEnabled ? pressureActors : aggressionActors, grants = [];
+    const { PACING } = await import('../src/rules.js');
+    for (let index = 0; index < population; index++) {
+      const name = (pressureEnabled ? 'World Pressure ' : 'World Aggression ') + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact(actorPolicy + '-entry-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      await proof.artifact(actorPolicy + '-entry-session-' + index + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: actorPolicy + '-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      target.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      const before = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+      if (actorPolicy === 'resource_abundance') {
+        const respect = PACING.LEVEL_DIVISOR * (75 - 1) ** 2;
+        await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, respect]);
+        const after = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        assert.deepEqual({ ...after, respect: before.respect }, before, 'Only declared abundance respect may change');
+        grants.push({ accountId: actor.accountId, before, after });
+      } else grants.push({ accountId: actor.accountId, ordinaryEntry: before, directFixtures: 0 });
+      if (aggressionEnabled) aggressionPolicies.set(actor.accountId, createAggressionPolicy({ accountId: actor.accountId, seed, sustained: true }));
+    }
+    await proof.artifact(actorPolicy + '-initialization.json', { grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
+    if (pressureEnabled) {
+      pressureAdapter = createPressureWorldAdapter({ scenario: actorPolicy, seed, epoch, roster: pressureActors });
+      await pressureDay(null);
+    }
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -850,6 +914,10 @@ try {
     metrics.sessions++;
     let actions = 0;
     for (let action = 0; action < configuration.policy.maximumCommandsPerSession; action++) {
+      if (aggressionEnabled) {
+        actions += await aggressionChoice(accountId, day, action);
+        continue;
+      }
       const view = await invoke('player.snapshot', { accountId, options: actorOptions.get(accountId) },
         () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
       metrics.playerSnapshots++;
@@ -1000,6 +1068,60 @@ try {
     await invariantBoundary('churn-week-' + day / 7);
     await proof.artifact('churn-week-' + day / 7 + '.json', { summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
   }
+  async function aggressionChoice(accountId, day, action) {
+    const actor = aggressionActors.find(entry => entry.accountId === accountId), policy = aggressionPolicies.get(accountId);
+    const read = async path => { const response = await http(actor, { method: 'GET', path });
+      assert.equal(response.status, 200, JSON.stringify(response)); return response.body; };
+    const commands = await read('/v1/commands?' + new URLSearchParams(actorOptions.get(accountId)));
+    const view = { commands, me: await read('/v1/me'), streets: await read('/v1/streets'), rivals: await read('/v1/rivals') };
+    metrics.playerSnapshots++;
+    metrics.observedAuthorizedOpportunities = opportunities.observe(accountId, commands.opportunities, at);
+    const chosen = policy.choose(view, { logicalAt: at });
+    const decision = await actors.decide('aggression-policy', { accountId, day, action, logicalAt: at }, view, () => chosen);
+    assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded aggression choice differs from restored policy');
+    await actors.observe('aggression-policy-pending', { accountId, logicalAt: at }, policy.checkpoint());
+    if (decision.kind === 'wait') return 0;
+    const response = await http(actor, decision.request);
+    assert(response.status < 500, 'Aggression request did not resolve canonically');
+    const body = { ...response.body }; delete body.replayed;
+    policy.settle({ idempotencyKey: decision.request.idempotencyKey, status: response.status === 200 ? 'COMPLETED' : 'DENIED',
+      replayed: response.replayed, response: body });
+    await actors.observe('aggression-policy-settled', { accountId, logicalAt: at }, policy.checkpoint());
+    assert.equal(policy.summary().unresolvedReplays, 0);
+    if (response.status === 200 && !response.replayed) {
+      metrics.commandTypes[decision.type] = (metrics.commandTypes[decision.type] || 0) + 1;
+      if (decision.request.authority === 'player-command') {
+        const command = commands.commands.find(entry => entry.executionIdentity?.executionId === decision.request.idempotencyKey);
+        assert(command); opportunities.accept(accountId, command, response.body, at); metrics.freshPlayerCommands++;
+        if (command.commandType === 'mystery.start') actorOptions.get(accountId).mysteryGraphId = command.parameters.graphId;
+      }
+    } else if (response.replayed) metrics.exactReplays++;
+    else metrics.denials[response.body?.error || response.status] = (metrics.denials[response.body?.error || response.status] || 0) + 1;
+    await invariantBoundary('aggression:' + decision.request.idempotencyKey);
+    return Number(response.status === 200 && !response.replayed);
+  }
+  async function pressureDay(day) {
+    let outcome;
+    const hooks = { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(pressureActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(pressureActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('pressure:' + request.idempotencyKey);
+        if (day !== null && response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      record: event => actors.observe(event.kind, { logicalAt: at, accountId: event.accountId || null }, event),
+    };
+    do {
+      outcome = day === null ? await pressureAdapter.prepare(hooks) : await pressureAdapter.runDay(day, hooks);
+      assert(!outcome.blocked && !outcome.paused, 'Pressure phase lacks a resolved canonical outcome');
+    } while (!outcome.complete);
+    await proof.artifact(day === null ? 'pressure-prepared.json' : 'pressure-day-' + day + '.json',
+      { summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
+  }
   async function lawWindow(logicalAt) {
     let window;
     do {
@@ -1057,10 +1179,11 @@ try {
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     if (churnEnabled) await churnWeek(day);
     lastDay = day;
-    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : 'quiet-roster', { day, logicalAt }, roster,
-      () => churnEnabled ? churnPolicy.roster().current : cohortEnabled || familyEnabled || lawEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
-    assert.equal(selected.length, cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : pressureEnabled || aggressionEnabled ? actorPolicy + '-roster' : 'quiet-roster', { day, logicalAt }, roster,
+      () => churnEnabled ? churnPolicy.roster().current : dailyFullRoster ? [...roster] : activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, dailyFullRoster ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
     assert(selected.every((account) => roster.includes(account)));
+    if (pressureEnabled) await pressureDay(day);
     if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
       read: async (accountId, path) => {
         const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
@@ -1079,7 +1202,7 @@ try {
       checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
     });
     for (const account of selected) await session(account, day);
-    await invariantBoundary(`${cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? actorPolicy : 'quiet'}-day:${day}`);
+    await invariantBoundary(`${dailyFullRoster ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
@@ -1092,7 +1215,7 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   };
-  if ((cohortEnabled || familyEnabled || churnEnabled || lawEnabled) && !resume) await afterBoundary(at, 'guardedTick');
+  if (dailyFullRoster && !resume) await afterBoundary(at, 'guardedTick');
   if (legacyAlliance && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
@@ -1180,11 +1303,22 @@ try {
     assert.equal(lawAdapter.cursor().nextWindowAt, finish + LAW_WORLD_CONTRACT.windowMilliseconds);
     await proof.artifact('law-final.json', { contract: LAW_WORLD_CONTRACT, summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
   }
+  if (pressureEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(pressureAdapter.summary().unresolvedResponses, 0);
+    assert.equal(pressureAdapter.summary().completedDays, Math.ceil((finish - epoch) / 86400000));
+    await proof.artifact('pressure-final.json', { contract: PRESSURE_WORLD_CONTRACT, summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
+  }
+  if (aggressionEnabled) {
+    assert.equal(responseCompletions.size, 0);
+    assert([...aggressionPolicies.values()].every(policy => policy.summary().unresolvedReplays === 0));
+    await proof.artifact('aggression-final.json', { contract: AGGRESSION_POLICY_CONTRACT,
+      summaries: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.summary()])) });
+  }
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
-      + (allianceEnabled || familyEnabled || lawEnabled ? ' plus fresh completed social/Law HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
+      + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
@@ -1192,6 +1326,8 @@ try {
     ...(familyEnabled ? { family: familyAdapter.summary() } : {}),
     ...(churnEnabled ? { churn: churnPolicy.summary() } : {}),
     ...(lawEnabled ? { law: lawAdapter.summary() } : {}),
+    ...(pressureEnabled ? { pressure: pressureAdapter.summary() } : {}),
+    ...(aggressionEnabled ? { aggression: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.summary()])) } : {}),
     ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
       warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
     timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,

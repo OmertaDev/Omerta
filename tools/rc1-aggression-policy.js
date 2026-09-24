@@ -17,6 +17,7 @@ export const AGGRESSION_POLICY_CONTRACT = Object.freeze({ version: 2, scenarioId
   nonviolentTypes,
   unknownCommands: 'Generic situation, world and operation commands are unclassified and excluded; their role in conflict cannot be inferred from a generic type.',
   recovery: 'When choosing the other class, an affordable publicly quoted heal takes priority. This preserves the class quota. Original hospital expiry remains authoritative.',
+  sustained: 'Optional sustained mode includes public quoted check-in and paid ammo replenishment below25 rounds in the same other-choice denominator. Heal, check-in and replenishment take priority in that class; no resources are granted by the harness.',
   replay: 'Persist pending request before HTTP dispatch and state after settlement. Never replace a pending idempotency key after a lost response. A replay without a recorded fresh settlement is unresolved and blocks further choices.',
   lifecycle: 'Current authorized own hunt and shootCdSeconds govern eligibility. Fire uses min(owned whole rounds,2000), minimum50. A same-account newer-generation character replaces the cursor, never resets quotas, and blocks an older pending request until its outcome is reconciled.',
   qualification: 'No all-conflict, whole-game, all replacement branches, 90-day, resource, matrix or production qualification.' });
@@ -54,7 +55,8 @@ function validate(state, configuration) {
 }
 
 export function createAggressionPolicy(configuration) {
-  assert.deepEqual(Object.keys(configuration).sort(), ['accountId', 'seed']);
+  assert.deepEqual(Object.keys(configuration).filter(key => key !== 'sustained').sort(), ['accountId', 'seed']);
+  assert(configuration.sustained === undefined || typeof configuration.sustained === 'boolean');
   assert(typeof configuration.accountId === 'string' && configuration.accountId.length > 0);
   assert(typeof configuration.seed === 'string' && configuration.seed.length > 0);
   configuration = copy(configuration);
@@ -102,6 +104,12 @@ export function createAggressionPolicy(configuration) {
       if (Number.isFinite(own.healCost) && own.healCost > 0 && own.cash >= own.healCost && own.health < 100)
         candidates.push({ category: 'other', type: 'legacy.heal', stableId: 'heal',
           request: { authority: 'legacy-http', method: 'POST', path: '/v1/heal', body: {} } });
+      if (configuration.sustained && own.checkin?.done === false && Number.isSafeInteger(own.checkin.pay) && own.checkin.pay > 0)
+        candidates.push({ category: 'other', type: 'legacy.checkin', stableId: 'checkin', parameters: { expectedPay: own.checkin.pay },
+          request: { authority: 'legacy-http', method: 'POST', path: '/v1/checkin', body: {} } });
+      if (configuration.sustained && own.ammo < 25 && own.cash >= 2000)
+        candidates.push({ category: 'other', type: 'legacy.ammo', stableId: 'ammo',
+          request: { authority: 'legacy-http', method: 'POST', path: '/v1/armory/ammo', body: {} } });
       const streetReady = own.jailSeconds === 0 && own.hospSeconds === 0 && own.safeSeconds === 0 && own.law?.witproSeconds === 0;
       const ready = own.health >= 20 && own.energy >= 25 && own.ammo >= 5 && streetReady;
       const rivalIds = new Set(view.rivals.rivals.map((rival) => rival.street?.id).filter(Boolean));
@@ -132,6 +140,8 @@ export function createAggressionPolicy(configuration) {
         : conflict.length ? 'conflict' : 'other';
       const eligible = category === 'conflict' ? conflict : other;
       eligible.sort((a, b) => Number(b.type === 'legacy.heal') - Number(a.type === 'legacy.heal')
+        || Number(b.type === 'legacy.checkin') - Number(a.type === 'legacy.checkin')
+        || Number(b.type === 'legacy.ammo') - Number(a.type === 'legacy.ammo')
         || Number(!!b.retaliation) - Number(!!a.retaliation)
         || Number(b.type === 'legacy.fire') - Number(a.type === 'legacy.fire')
         || Number(b.type === 'legacy.search') - Number(a.type === 'legacy.search')
@@ -166,6 +176,8 @@ export function createAggressionPolicy(configuration) {
           }
         }
         else if (choice.type === 'legacy.heal') assert(response?.ok === true && response.healed > 0 && response.health === 100);
+        else if (choice.type === 'legacy.checkin') { assert.equal(response?.ok, true); assert.equal(response.pay, choice.parameters.expectedPay); }
+        else if (choice.type === 'legacy.ammo') { assert.equal(response?.ok, true); assert.equal(response.rolled, 50); assert.equal(response.cost, 2000); }
         else assert.equal(response?.status, 'COMPLETED');
         if (response?.character) assert.equal(response.character.id, choice.actor.characterId, 'Response applied to a different character');
       }

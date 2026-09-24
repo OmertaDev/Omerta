@@ -29,6 +29,32 @@ const settle = (policy, choice, win = true) => policy.settle({ idempotencyKey: c
     : choice.type === 'legacy.heal' ? { ok: true, health: 100, healed: 20 } : { status: 'COMPLETED' } });
 
 const quota = createAggressionPolicy(configuration);
+const sustainedView = makeView('sustained');
+sustainedView.me.character.checkin = { done: false, pay: 350 };
+sustainedView.me.character.cash = 2500; sustainedView.me.character.ammo = 0;
+const sustained = createAggressionPolicy({ ...configuration, sustained: true });
+const dailyIncome = choose(sustained, sustainedView); assert.equal(dailyIncome.type, 'legacy.checkin');
+const pendingIncome = createAggressionPolicy({ ...configuration, sustained: true }).restore(sustained.checkpoint());
+assert.deepEqual(choose(pendingIncome, sustainedView), dailyIncome);
+assert.throws(() => pendingIncome.settle({ idempotencyKey: dailyIncome.request.idempotencyKey,
+  status: 'COMPLETED', replayed: false, response: { ok: true, pay: 351 } }));
+sustained.settle({ idempotencyKey: dailyIncome.request.idempotencyKey, status: 'COMPLETED', replayed: false,
+  response: { ok: true, pay: 350 } });
+sustainedView.me.character.checkin.done = true;
+const refill = choose(sustained, sustainedView); assert.equal(refill.type, 'legacy.ammo');
+sustained.settle({ idempotencyKey: refill.request.idempotencyKey, status: 'COMPLETED', replayed: false,
+  response: { ok: true, rolled: 50, cost: 2000 } });
+assert.equal(sustained.summary().forcedOther, 2); assert.equal(sustained.summary().freshConflict, 0);
+sustainedView.me.character.ammo = 25;
+for (let sequence = 0; sequence < 20; sequence++) {
+  const view = makeView('sustained-quota-' + sequence); view.me.character.checkin = { done: false, pay: 350 };
+  const choice = choose(sustained, view);
+  if (choice.type === 'legacy.checkin') sustained.settle({ idempotencyKey: choice.request.idempotencyKey,
+    status: 'COMPLETED', replayed: false, response: { ok: true, pay: 350 } });
+  else settle(sustained, choice);
+}
+assert.equal(sustained.summary().mixedConflict, 14); assert.equal(sustained.summary().mixedFresh, 20);
+assert.equal(choose(createAggressionPolicy(configuration), sustainedView).type, 'discovery.act', 'Legacy mode unchanged');
 for (let sequence = 0; sequence < 1000; sequence++) {
   const decision = choose(quota, makeView(sequence)); settle(quota, decision, sequence % 2 === 0);
   assert.equal(quota.summary().mixedConflict, Math.floor((sequence + 1) * 7 / 10));
