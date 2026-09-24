@@ -5,20 +5,20 @@ import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
-  'src/game.js': '7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4',
-  'src/economy.js': 'b8c97f458c20b42e768f56445d3bae4a77fd0221b8939db313b381de5e6ae931',
-  'src/accrual.js': 'e91bedfd0d4c4701d029b7f6af73e073266558fa29670de5d85991f42263767e',
-  'src/social/gangs.js': 'd768b69b1d6473d650594277637c9625824eb8d43f9ea0ee937ec91fcd918644',
-  'src/rules.js': 'fff8a956f608fcdfa834d86767699aa87026abe58ff1fcb5c18d92c9b467d0bb',
-  'src/rules.generated.js': '4c86682b7890b557040270613aa4abed4464257936867d2b499b3051b814d11f',
-  'src/rules.tail.js': 'ab10af0a70ea476c5f38d16d677daade49840f6a672cde922d841068a7d8b8d5',
-  'src/server.js': 'f9789ddc1a8d95c294111a0e76545e903a30f6e6b46c1adc1e292894cdde44f4',
-  'src/worker.js': '2937b63311191ca14955b194008894eae08aedfdbeb37f394745948fc1430fba',
-  'src/coordination/operations.js': '0e422fa588b74797cd424c83e0829d64f9eb3b759a31ff18250642e05cc00095',
-  'src/operations.js': '198f96a02588fb1ed91d8f95664345657b166094f87ae9a69e05b53dcc95d245',
-  'src/coordination/knowledge.js': '46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3',
-  'src/director/runtime.js': 'e6afb1e070646df207087b1d64af9264f857d053123fd720c43b21307e3edad4',
-  'src/content/runtime.js': 'be50a85e1fa68b07a3fb253d0a51d1410f0abea096bebce7fe2f456f736161dc',
+  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+  'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
+  'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
+  'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
+  'src/rules.js': 'c22a72398a46a4f0076a64692dd31ddb2555ed94e9afa0da538f3f3a773f7c24',
+  'src/rules.generated.js': 'ddce8118bd79f56af022a6a4e33da09d41f89829bd3b59a2e906c6e19af73ec9',
+  'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+  'src/server.js': 'd76c0830e06c796e9d29382f8a75202641e0a0038b36d1ef3827cbf8b80685ce',
+  'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
+  'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
+  'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
+  'src/coordination/knowledge.js': 'f04c46c49545cb6e19e058bb4b7f96298dc9ce6e01fae8a1255f4717242e89e5',
+  'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
+  'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
 export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 1, reviewedRevision: '92f09bb436d9e7cacb874adb60f7238c0b1d709d', sourceFiles,
   durationThresholds: { minimumLogicalDays: 90, minimumApplicableSeasonalRollovers: 2, minimumLongestLifecycleExecutions: 2 },
@@ -43,7 +43,7 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 1, reviewedRevisio
 
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
-  for (const [file, expected] of Object.entries(sourceFiles)) assert.equal(sha256(await readFile(file)), expected, 'Recovery rule source changed: ' + file);
+  for (const [file, expected] of Object.entries(sourceFiles)) assert.equal(sha256(String(await readFile(file)).replace(/\r\n/g, '\n')), expected, 'Recovery rule source changed: ' + file);
   return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles } };
 }
 function binding(source, checkpoint) {

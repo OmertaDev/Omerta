@@ -8,20 +8,20 @@ import { CONSTANTS, levelOf } from '../src/rules.js';
 
 const hash = value => sha256(canonicalJson(value));
 const EXTENSION_PINS = Object.freeze({
-  'src/mysteries.js': '9906386dff887b4ab528c6472418b00ae3d8b65ba971379e74065833bf2ea66b',
-  'src/crafting.js': '68bc2f9f430b8b5d274a89ac1a6e4c330febcdccc58825c84058276dfaf035e8',
-  'src/items.js': 'f086d9a45ab5cb7bbd063bf84e91886ebc754efc7acc1a39dc6858e2634ae5e8',
-  'src/recipe-scarcity.js': '27e2132897c05909c3c594df92abcef32985404e2429c14317a648ab30c32d74',
-  'src/coordination/graph.js': 'f2c0841a1fe995826f5c79843a0aee00bce41c70ce8fb20629c3276852b5ae5d',
-  'src/coordination/runtime.js': '972abc70cb75b232929e1f1907e556ed00eea22e42567da9e68ad83ef1082d99',
-  'src/routes/coordination.js': 'ae2ec43e4428d27f0c4e4b2d4bbd5e73a08c9a100860f45f7ad7e81ecc474165',
-  'src/routes/worldgraph.js': '79f36c58583b3d4ce498227d28f27cee93a68091fb72fd144bc1ded14822a158',
-  'src/world-prerequisites.js': 'b10249c0a66af084db8437e426d1f7659c5212390b3113a49e9583503820c2c9',
-  'src/world-knowledge.js': 'b5bb787e2a6a5af60a04f28f98061232e936176f114d8ee4e929777cac52e816',
-  'src/crew.js': '55c80abdc0043d2bb1a3cd1b0aac58b1a97c0637d547f2d5b7f5806543fb7d28',
-  'src/content/automotive-salvage.js': 'b09eee77ec92a55131a1768b6ade37f3485654ff79a126c22256ff55e0f46266',
-  'src/content/core-progression.js': '06a5e38a2dc3e1c1df1f1180734f5bc27f662487ee2b42788ae3078cf72691f7',
-  'src/made.js': '87eaeda135d22ec07857a230124a8d569301deb53e198aa66b06575596ab51ab',
+  'src/mysteries.js': 'c520c727c15bd5829c1b2467511260c61e01b73038bce42ba9a48a8a55c6d070',
+  'src/crafting.js': '2eeaa2eb1378fdc2c237727226d132a85b8b009d0890485e18fa7b6290251012',
+  'src/items.js': '0172726d784cc9faa430280e91374b5f2296cb5294adfac19ae91f307c9f107a',
+  'src/recipe-scarcity.js': '5fc404a872d946360dc9d523c34dadc5d96dff19d807be83bfe3d19855c7a7a9',
+  'src/coordination/graph.js': '4d5de1c54159048710b1b4695617710965074fd886f2b3b7fb87a08a0e8b545f',
+  'src/coordination/runtime.js': 'a965a4ec667f3faec243e19f90bd501d13981dd6abcf421f39b15b9c38a0eb0e',
+  'src/routes/coordination.js': '7902665fad7db1dedee8a92c8d6d4ac6c8f7076658da1da81cc8880264a59198',
+  'src/routes/worldgraph.js': '5a96afa156930a5cb6cd6656fe1fb92fc716eeddd5243d954a46cf5a619b96c7',
+  'src/world-prerequisites.js': 'c6548363a93bb481b44e4528ea78e6b77c1f694546d6a6229784b40b1ea8587d',
+  'src/world-knowledge.js': '73a5f37738dcd73e2299643f5e23422b1770ee04a890142fafbca49f864daeda',
+  'src/crew.js': 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed',
+  'src/content/automotive-salvage.js': 'bcaea48b77cdab85cb8cab3724ebfd2bc777c9f61e5df50de1086bf2c6b9a3ad',
+  'src/content/core-progression.js': '7516f9b5cc0c9a249ac8b89d117b5397de4aa57175cfcd99c9409890a03a252e',
+  'src/made.js': 'f871cf72aa3f4f65488c77ad16b257100569d40e3cf9b96dd4877e6c22be0e02',
 });
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   format: 1, sourcePins: EXTENSION_PINS,
@@ -33,7 +33,7 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
 });
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
-  for (const [file, expected] of Object.entries(EXTENSION_PINS)) assert.equal(sha256(await input.readFile(file)), expected, 'Checkpoint review source changed: ' + file);
+  for (const [file, expected] of Object.entries(EXTENSION_PINS)) assert.equal(sha256(String(await input.readFile(file)).replace(/\r\n/g, '\n')), expected, 'Checkpoint review source changed: ' + file);
   return { ...base, checkpointReviewSha256: hash(CHECKPOINT_RECOVERY_REVIEW), extensionPins: { ...EXTENSION_PINS } };
 }
 export function recoveryCatalog(content) {

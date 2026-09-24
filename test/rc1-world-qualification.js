@@ -6,6 +6,8 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: '92f09bb4'.padEnd(40, '0') });
+for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+  readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => file === 'src/game.js' ? Buffer.from('changed source') : fs.readFile(file) }), /source changed/);
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
