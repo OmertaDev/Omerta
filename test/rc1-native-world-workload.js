@@ -6,7 +6,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
-import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, alignOriginalHourlyBaseline, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
 import { createSeasonElectionProbe, snapshotElectionCandidates, ELECTION_SOURCE_PINS } from '../tools/rc1-season-election-provenance.js';
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
@@ -36,6 +36,7 @@ import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
 import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
 import { createPressureWorldAdapter, PRESSURE_WORLD_CONTRACT } from '../tools/rc1-pressure-world-adapter.js';
+import { createScarcityInitialization, SCARCITY_INITIALIZATION_CONTRACT } from '../tools/rc1-scarcity-initialization.js';
 import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1-aggression-policy.js';
 import { createWorldEconomyMetrics, WORLD_ECONOMY_METRICS_CONTRACT } from '../tools/rc1-world-economy-metrics.js';
 import { createWarWorldAdapter, planWarWorld, WAR_WORLD_CONTRACT } from '../tools/rc1-war-world-adapter.js';
@@ -143,7 +144,7 @@ if (httpEnabled) Object.assign(declared, { RATE_LIMIT: 'off', INVITE_MODE: 'off'
 const previousEnv = Object.fromEntries(Object.keys(declared).map((key) => [key, process.env[key]]));
 Object.assign(process.env, declared);
 const seasonMs = 28 * 86400000;
-const epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
+let epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
 const start = resume ? parentPolicy.logicalAt : epoch;
 let measuredStart = start, finish = start + hours * 3600000;
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
@@ -904,6 +905,57 @@ try {
     }
     await proof.artifact(actorPolicy.replaceAll('_', '-') + '-initialization.json', { grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
     if (pressureEnabled) {
+      if (actorPolicy === 'resource_scarcity') {
+        const preparation = createScarcityInitialization({ seed, epoch, roster: pressureActors, maximumLogicalMs: 14 * 86400000 });
+        const before = await proof.snapshot(pool, 'scarcity-before-depletion');
+        const wallStart = performance.now();
+        const preparationBoundary = async (logicalAt, label) => {
+          assert(performance.now() - wallStart <= 7200000, 'Scarcity initialization exceeded two-hour wall limit');
+          guardrails?.time('scarcity-initialization:' + label);
+          if (label === 'guardedTick') {
+            await invariantBoundary('scarcity-initialization:' + logicalAt);
+            await guardBoundary('scarcity-initialization:' + logicalAt);
+          }
+        };
+        const hooks = () => ({ logicalAt: at,
+          read: async (accountId, path) => {
+            const response = await http(pressureActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+            assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+          },
+          execute: async (accountId, request) => {
+            const response = await http(pressureActors.find(actor => actor.accountId === accountId), request);
+            await invariantBoundary('scarcity-initialization:' + request.idempotencyKey); return response;
+          },
+          record: event => actors.observe(event.kind, { logicalAt: at, accountId: event.accountId || null }, event),
+          advanceOriginalWorkers: async target => { await controller.advanceTo(target, preparationBoundary); return at; },
+        });
+        // Verify every ordinary birth before any original worker can affect it.
+        let outcome = await preparation.run(hooks(), { maximumSteps: population });
+        assert(!outcome.blocked && preparation.summary().entryVerified === population, 'Scarcity ordinary entry was not established');
+        workPhase = 'scarcity-canonical-initialization';
+        await bootOriginalWorker(controller); workerBooted = true;
+        do {
+          outcome = await preparation.run(hooks());
+          assert(!outcome.blocked && !outcome.paused, 'Scarcity initialization lacks a resolved canonical outcome: ' + JSON.stringify(outcome.summary));
+        } while (!outcome.complete);
+        await alignOriginalHourlyBaseline(controller, { logicalAt: at, afterBoundary: preparationBoundary });
+        const after = await proof.snapshot(pool, 'scarcity-after-depletion');
+        const characters = after.tables.characters.map(JSON.parse);
+        for (const actor of pressureActors) {
+          const own = characters.find(row => row.id === actor.characterId);
+          assert(own?.alive && own.account_id === actor.accountId && own.generation === 1, 'Scarcity initial character changed');
+          for (const field of ['cash', 'bank', 'ammo']) assert.equal(Number(own[field]), 0, 'Scarcity exact native floor differs: ' + field);
+        }
+        await invariantBoundary('scarcity-depleted-baseline');
+        await proof.artifact('scarcity-prepared.json', { contract: SCARCITY_INITIALIZATION_CONTRACT,
+          beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256,
+          preparation: preparation.checkpoint(), summary: preparation.summary(), baselineAt: at,
+          originalWorkerAlignment: true, exactNativeFloorVerified: true, measured: false, fixtureWrites: 0 });
+        epoch = measuredStart = at; finish = at + hours * 3600000;
+        configuration.start = new Date(at).toISOString(); configuration.finish = new Date(finish).toISOString();
+        configuration.scarcityInitialization = { logicalHours: (at - start) / 3600000, baselineAt: at,
+          exactNativeFloorVerified: true, artifact: 'scarcity-prepared.json', measured: false };
+      }
       pressureAdapter = createPressureWorldAdapter({ scenario: actorPolicy, seed, epoch, roster: pressureActors });
       await pressureDay(null);
     }
@@ -1016,6 +1068,10 @@ try {
       for (const actor of veterans) provenance.set(actor.accountId, { kind: 'canonical-progression', evidenceRef: 'cohort-canonical-progression.json' });
       for (const actor of cohortActors.filter(a => !veteranIds.has(a.accountId))) await enter(actor);
     }
+    if (workerBooted) await alignOriginalHourlyBaseline(controller, { logicalAt: at, afterBoundary: async (logicalAt, label) => {
+      guardrails?.time('cohort-baseline-alignment:' + label);
+      if (label === 'guardedTick') await invariantBoundary('cohort-baseline-alignment:' + logicalAt);
+    } });
     const observations = [];
     for (const actor of cohortActors) {
       const own = await invoke('cohort-baseline.character.read', { accountId: actor.accountId },
@@ -1026,13 +1082,14 @@ try {
     await proof.artifact('cohort-baseline.json', { plan: cohortPlan, observations, assessment: cohortBaseline,
       nativeHistory: 'Ordinary entry receipts, canonical warmup calls/results and worker schedule retained in this run. Only declared respect fixture writes above.' });
     assert(cohortBaseline.ready, 'Required public cohort starting progression was not established');
-    measuredStart = at; finish = at + hours * 3600000;
+    epoch = measuredStart = at; finish = at + hours * 3600000;
     configuration.start = new Date(at).toISOString(); configuration.finish = new Date(finish).toISOString();
     configuration.initialization.realizedCounts = cohortPlan.counts;
     configuration.initialization.realizedFractions = cohortPlan.realized;
     latencies.read.length = 0; latencies.command.length = 0;
   }
   await npcBoatFault.installBeforeBaseline(pool);
+  configuration.actorEpoch = epoch;
   const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
     logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
