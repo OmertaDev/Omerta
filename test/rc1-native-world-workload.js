@@ -16,6 +16,7 @@ import { createRecordedActors, compareActorReplay, actorValueHash } from '../too
 import { createNativeQuiescentGroupObserver, QUIESCENT_GROUP_CONTRACT } from '../tools/rc1-native-quiescent-group.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
+import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatFault, NPC_BOAT_FAULT_CONTRACT } from '../tools/rc1-npc-boat-fault.js';
@@ -1509,6 +1510,10 @@ try {
       Math.floor(finish / seasonMs) - Math.floor(actorStart / seasonMs));
   }
   await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', await queryOrder.finish());
+  const durationMeasurements = measureWorldWorkerDuration({ sourceRevision: source.revision, configurationSha256,
+    startAt: measuredStart, endAt: finish, trace, expectedDormant,
+    evidence: artifactReference('worker-schedule.json', trace) });
+  await proof.artifact('world-duration-measurements.json', durationMeasurements);
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
@@ -1592,6 +1597,7 @@ try {
     actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
     mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
     recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
+    durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
