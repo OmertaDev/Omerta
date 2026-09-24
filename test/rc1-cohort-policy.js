@@ -78,7 +78,7 @@ const crimeView = { accountId: actor, character: { level: 1, nerve: 3, jailSecon
 assert.equal(crimePolicy.chooseCrime(crimeView, { day: 0 }).id, 'pick');
 assert.equal(crimePolicy.chooseCrime({ ...crimeView, character: { ...crimeView.character, nerve: 1 } }, { day: 0 }), null);
 assert.equal(crimePolicy.chooseCrime({ ...crimeView, character: { ...crimeView.character, jailSeconds: 10 } }, { day: 0 }), null);
-assert.equal(crimePolicy.chooseCrime({ ...crimeView, character: { ...crimeView.character, hospSeconds: 10 } }, { day: 0 }), null);
+assert.equal(crimePolicy.chooseCrime({ ...crimeView, character: { ...crimeView.character, hospSeconds: 10 } }, { day: 0 }).id, 'pick', 'Canonical crimes remain available in hospital');
 assert.throws(() => crimePolicy.chooseCrime({ ...crimeView, accountId: 'foreign' }, { day: 0 }));
 assert.throws(() => policy.chooseCrime(crimeView, { day: 0 }), /pending/);
 assert.throws(() => replay.chooseCrime(crimeView, { day: 0 }), /Reconcile/);

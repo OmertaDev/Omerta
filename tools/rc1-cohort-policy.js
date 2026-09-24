@@ -142,7 +142,6 @@ export function createCohortPolicy({ plan, accountId }) {
       assert(!state.pending, 'Settle pending command before choosing a crime');
       assert(!state.settled.some(r => r.status === 'COMPLETED' && r.replayed), 'Reconcile unknown completed replay before choosing again');
       assert(character && Number.isFinite(character.level) && Number.isFinite(character.nerve)); assert(Array.isArray(publicCrimes));
-      if (character.hospSeconds > 0) return null;
       return copy(choosePublicCrime(character, publicCrimes, { seed: configuration.seed, accountId, day }));
     },
     settle(outcome) {
