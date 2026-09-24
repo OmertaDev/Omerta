@@ -160,6 +160,7 @@ const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_C
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Native committed-boundary parity for serial work; explicitly traced quiescent aggregate boundaries for command telemetry and concurrent market requests' : 'Disabled',
+  stopOnResourceGap: observeResources && hours > 48,
   quiescentGroupObservation: observeResources ? QUIESCENT_GROUP_CONTRACT : null,
   economyObservation: observeResources ? WORLD_ECONOMY_METRICS_CONTRACT : null,
   carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
@@ -753,6 +754,8 @@ try {
       economy: economy ? artifactReference(`economy-metrics-${label}.json`, economy) : null,
       economyNativeHash: economy?.nativeHash ?? null, economyBoundaryChain: economy?.boundaryChain ?? null,
       observation: 'Existing quiescent actor/worker boundary; full snapshot, canonical diagnostics and economy resource state captured without intervening writes.' });
+    if (configuration.stopOnResourceGap && economy)
+      assert.equal(economy.missingCoverage.length, 0, 'Stop long workload at the first measured economy classification gap');
   }
   async function knowledgeBoundary(label, before) {
     const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
@@ -1463,6 +1466,10 @@ try {
   if (lawEnabled && !resume) await lawWindow(at);
   if (allianceEnabled) { if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1); }
   const afterBoundary = async (logicalAt, label) => {
+    if (configuration.stopOnResourceGap) {
+      if (firstResourceError) throw firstResourceError;
+      assert.equal(resourceSummary.unsupportedEntries, 0, 'Stop long workload at the first resource classification gap');
+    }
     guardrails?.time(`after:${label}:${logicalAt}`);
     if (lawEnabled && label === 'health-boundary') await lawWindow(logicalAt);
     if (label !== 'guardedTick') return;
