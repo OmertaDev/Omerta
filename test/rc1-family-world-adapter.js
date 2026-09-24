@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createFamilyWorldAdapter } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
+import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 
 for (const population of [25, 100, 250, 500, 1000]) for (const scenario of ['family_monopoly', 'fragmented_families']) {
   const plan = planFamilyFixture(scenario, population);
@@ -45,8 +46,13 @@ for (const scenario of ['family_monopoly', 'fragmented_families']) {
       return { status: 200, replayed: false, body };
     },
     decision: async () => { decisions++; },
-    checkpoint: async (_phase, checkpoint) => { checkpoints++; lastCheckpoint = checkpoint;
-      assert.deepEqual(createFamilyWorldAdapter(configuration).restore(checkpoint).checkpoint(), checkpoint); },
+    checkpoint: async (phase, checkpoint) => { checkpoints++;
+      assert.equal(actorValueHash(checkpoint.payload), checkpoint.sha256);
+      if (phase === 'day-complete') { lastCheckpoint = checkpoint;
+        assert.deepEqual(createFamilyWorldAdapter(configuration).restore(checkpoint).checkpoint(), checkpoint); }
+      else { assert.equal(checkpoint.payload.kind, 'family-world-transition');
+        assert.equal(!!checkpoint.payload.pending, phase === 'pending'); }
+    },
   };
   const adapter = createFamilyWorldAdapter(configuration); await adapter.runDay(0, hooks);
   assert.equal(adapter.summary().nextDay, 1); assert.equal(families.size, plan.groups.length);
@@ -71,7 +77,10 @@ const adapter = createFamilyWorldAdapter(configuration);
 await assert.rejects(() => adapter.runDay(0, { logicalAt: 0,
   read: async (_id, path) => path === '/v1/session' ? { character: { id: 'c0' } }
     : path === '/v1/me' ? { character: { checkin: { done: false } } } : {},
-  decision: async () => {}, checkpoint: async (_phase, value) => { pending = value; },
+  decision: async () => {}, checkpoint: async (_phase, value) => {
+    assert(value.payload.pending.selected.request); pending = adapter.checkpoint();
+    assert.deepEqual(value.payload.pending, pending.payload.state.pending);
+  },
   execute: async () => { throw Error('lost response'); },
 }), /lost response/);
 const resumed = createFamilyWorldAdapter(configuration).restore(pending);

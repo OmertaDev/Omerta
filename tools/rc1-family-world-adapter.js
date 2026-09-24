@@ -40,6 +40,17 @@ export function createFamilyWorldAdapter({ scenario, seed, roster }) {
     }
     if (state.pending) assert(state.workflow && state.pending.cursor === state.workflow.cursor);
   };
+  const transition = accountId => {
+    // Full state is retained at day/final checkpoints. A step retains its exact
+    // request, cursor, current actor policy and receipt without copying every
+    // other actor's ever-growing receipt history into each history event.
+    const payload = { version: 1, kind: 'family-world-transition', configurationSha256: actorValueHash(configuration),
+      accountId, nextDay: state.nextDay, workflow: state.workflow, families: state.families, pending: state.pending,
+      fresh: state.fresh, denials: state.denials, waits: state.waits, completedByType: state.completedByType,
+      receiptCount: state.receipts.length, lastReceipt: state.receipts.at(-1) || null,
+      unresolved: state.unresolved, policy: policies.get(accountId).checkpoint() };
+    return { payload: structuredClone(payload), sha256: actorValueHash(payload) };
+  };
   const api = {
     roster(day) { assert(Number.isSafeInteger(day) && day >= 0); return roster.map(actor => actor.accountId); },
     checkpoint() {
@@ -79,7 +90,7 @@ export function createFamilyWorldAdapter({ scenario, seed, roster }) {
             targetFamilyId: task.founder === undefined ? null : state.families[task.founder] });
           await decision({ day, cursor, logicalAt, accountId: actor.accountId, phase: task.phase }, view, selected);
           if (selected.kind === 'wait') { state.waits++; state.workflow.cursor++; continue; }
-          state.pending = { cursor, selected }; await checkpoint('pending', api.checkpoint());
+          state.pending = { cursor, selected }; await checkpoint('pending', transition(actor.accountId));
         }
         const response = await execute(actor.accountId, selected.request);
         assert([200, 400].includes(response.status), JSON.stringify(response));
@@ -92,7 +103,7 @@ export function createFamilyWorldAdapter({ scenario, seed, roster }) {
           if (task.phase === 'found') { assert.equal(typeof response.body.gangId, 'string'); state.families[task.index] = response.body.gangId; }
         } else state.denials++;
         state.receipts.push({ key: selected.request.idempotencyKey, status, responseSha256: actorValueHash(response) });
-        state.pending = null; state.workflow.cursor++; await checkpoint('settled', api.checkpoint());
+        state.pending = null; state.workflow.cursor++; await checkpoint('settled', transition(actor.accountId));
         assert.equal(state.unresolved.length, 0, 'Unknown completed Family world replay');
         if (day === 0 && ['checkin', 'found'].includes(task.phase)) assert.equal(response.status, 200, 'Required canonical Family formation failed');
       }
