@@ -18,6 +18,22 @@ function boundary(before, { sequence = 1, at = DAY, receipts = [], sections = {}
     receipts, itemEvents: [], unsupported: [], ...sections };
   return { before, after, event, journal };
 }
+function aggregate(before, { groupId = 1, boundaryIndex = 1, ...options } = {}) {
+  const value = boundary(before, options);
+  const requests = [{ accountId: 'a', request: { method: 'POST', path: '/v1/crime', idempotencyKey: 'aggregate-control', body: { crime: 'pick' } } }];
+  const traceRoot = { format: 1, kind: 'quiescent-resource-trace-root', groupId,
+    beforeHash: value.journal.beforeHash, afterHash: value.journal.afterHash, requestsSha256: economyDigest(requests),
+    outcomesSha256: economyDigest([{ status: 'fulfilled', value: { status: 200 } }]), traceSha256: economyDigest([]) };
+  value.event = { kind: 'resource-quiescent-aggregate', outcome: 'QUIESCENT_AGGREGATE', groupId,
+    scope: 'All committed resource changes between quiescent before/after snapshots',
+    context: { authority: 'ordinary-http-quiescent-group', logicalAt: value.event.context.logicalAt,
+      requests: requests.map(({ accountId, request }, requestIndex) => ({ requestIndex, accountId,
+        method: request.method, path: request.path, idempotencyKey: request.idempotencyKey })) },
+    requestCount: requests.length, requestsSha256: traceRoot.requestsSha256, caller: { control: true },
+    traceRoot: { ...traceRoot, sha256: economyDigest(traceRoot) } };
+  value.journal.identity = value.event; value.boundaryIndex = boundaryIndex;
+  return value;
+}
 const engine = state => createWorldEconomyMetrics({ initial: state, roster, logicalAt: 0, streamId: 'first' });
 const resource = (metrics, name) => metrics.summary().resources.find(row => row.resource === name);
 const ratio = value => Number(value.numerator) / Number(value.denominator);
@@ -130,6 +146,90 @@ test('time-weighted stock, full checkpoint continuation and tamper controls', ()
   assert.throws(() => engine(state).restore(corrupt, first.after), /digest/);
   corrupt.state.config.roster.push('intruder'); corrupt.sha256 = economyDigest(corrupt.state);
   assert.throws(() => engine(state).restore(corrupt, first.after), /roster/);
+});
+
+test('explicit ordering mixes native SQL IDs and quiescent groups without renumbering or recounting', () => {
+  const state = initial(), metrics = engine(state);
+  const first = { ...boundary(state, { sequence: 10, at: 0 }), boundaryIndex: 1 };
+  metrics.observe(first);
+  const second = aggregate(first.after, { boundaryIndex: 2, receipts: [receipt('group-award', 'a', '100', 'crime:pick')],
+    change: tables => { tables.characters[0].cash = '1100'; } });
+  assert(!Object.hasOwn(second.event, 'sequence'));
+  assert.notEqual(second.event.requestsSha256, economyDigest(second.event.context.requests));
+  metrics.observe(second); const checkpoint = metrics.checkpoint();
+  assert.equal(metrics.observe(second).duplicate, true); assert.deepEqual(metrics.checkpoint(), checkpoint);
+  const third = { ...boundary(second.after, { sequence: 25, at: DAY, outcome: 'AUTOCOMMITTED' }), boundaryIndex: 3 };
+  metrics.observe(third);
+  assert.equal(first.event.sequence, 10); assert.equal(third.event.sequence, 25);
+  assert.deepEqual(first.journal.identity, first.event); assert.deepEqual(second.journal.identity, second.event);
+  assert.equal(resource(metrics, 'cash').flows.created, '100'); assert.equal(metrics.summary().boundaries, 3);
+  assert.equal(metrics.summary().aggregateObservation.groups, 1);
+  assert.deepEqual(metrics.summary().observationOrdering, { kind: 'explicit-boundary-index', lastBoundaryIndex: 3 });
+  assert.equal(metrics.checkpoint().state.lastNativeSequence, 25);
+  const resumed = engine(state).restore(checkpoint, second.after); resumed.observe(third);
+  assert.deepEqual(resumed.summary(), metrics.summary());
+  const reset = engine(state).restore(checkpoint, second.after, { streamId: 'after-native-restore' });
+  reset.observe({ ...boundary(second.after, { sequence: 1 }), boundaryIndex: 1 });
+  assert.equal(reset.summary().aggregateObservation.groups, 1); assert.equal(resource(reset, 'cash').flows.created, '100');
+  const nativeOnly = engine(state); nativeOnly.observe(boundary(state, { sequence: 10 }));
+  nativeOnly.observe(boundary(state, { sequence: 25 }));
+  assert(!Object.hasOwn(nativeOnly.summary(), 'observationOrdering'));
+  assert(!Object.hasOwn(nativeOnly.checkpoint().state, 'lastNativeSequence'));
+});
+
+test('mixed streams reject gaps, reordering, identity changes and reused native sequence', () => {
+  const state = initial(), metrics = engine(state), first = { ...boundary(state, { sequence: 10, at: 0 }), boundaryIndex: 1 };
+  metrics.observe(first);
+  const second = aggregate(first.after, { boundaryIndex: 2 }); metrics.observe(second);
+  const checkpoint = metrics.checkpoint();
+  const changed = structuredClone(second); changed.journal.unsupported.push({ kind: 'changed' });
+  const native = { ...boundary(second.after, { sequence: 11 }), boundaryIndex: 3 };
+  for (const value of [changed, { ...native, boundaryIndex: 4 }, first, { ...native, boundaryIndex: undefined },
+    { ...boundary(second.after, { sequence: 10 }), boundaryIndex: 3 }, { ...boundary(second.after, { sequence: 9 }), boundaryIndex: 3 }]) {
+    assert.throws(() => metrics.observe(value), assert.AssertionError); assert.deepEqual(metrics.checkpoint(), checkpoint);
+  }
+  const incorrectIdentity = structuredClone(native); incorrectIdentity.journal.identity.sequence = 99;
+  incorrectIdentity.event = native.event;
+  assert.throws(() => metrics.observe(incorrectIdentity), /Journal belongs/);
+  const badHash = structuredClone(native); badHash.journal.afterHash = '0'.repeat(64);
+  assert.throws(() => metrics.observe(badHash), assert.AssertionError);
+  assert.deepEqual(metrics.checkpoint(), checkpoint);
+  const legacy = engine(state); legacy.observe(boundary(state, { sequence: 1 }));
+  assert.throws(() => legacy.observe(aggregate(state, { boundaryIndex: 2 })), /ordering mode/);
+  const missingIndex = aggregate(state); delete missingIndex.boundaryIndex;
+  assert.throws(() => engine(state).observe(missingIndex), /explicit boundaryIndex/);
+  assert.throws(() => engine(state).observe({ ...native, boundaryIndex: 2 }), /Missing\/reordered/);
+});
+
+test('quiescent aggregate requires its exact discriminator, snapshot-bound trace root and original identity', () => {
+  const state = initial(), base = aggregate(state);
+  const rehash = event => { const { sha256, ...body } = event.traceRoot; event.traceRoot.sha256 = economyDigest(body); };
+  for (const edit of [
+    value => { value.event.kind = 'COMMITTED'; }, value => { value.event.context.authority = 'test-control'; },
+    value => { value.event.scope = 'per-commit resources'; }, value => { value.event.sequence = 1; },
+    value => { value.event.groupId = 0; }, value => { value.event.requestCount = 2; },
+    value => { value.event.context.requests[0].accountId = null; },
+    value => { value.event.context.requests.push(value.event.context.requests[0]); value.event.requestCount++; },
+    value => { delete value.event.traceRoot; }, value => { value.event.traceRoot.traceSha256 = 'invalid'; },
+    value => { value.event.traceRoot.traceSha256 = '0'.repeat(64); },
+    value => { value.event.traceRoot.groupId++; rehash(value.event); },
+    value => { value.event.traceRoot.beforeHash = '0'.repeat(64); rehash(value.event); },
+    value => { value.event.traceRoot.afterHash = '0'.repeat(64); rehash(value.event); },
+    value => { value.event.traceRoot.requestsSha256 = '0'.repeat(64); rehash(value.event); },
+    value => { value.event.requestsSha256 = '0'.repeat(64); },
+    value => { value.after.tables.characters[0].cash = '900'; },
+  ]) {
+    const value = structuredClone(base); edit(value); value.journal.identity = value.event;
+    const metrics = engine(state), checkpoint = metrics.checkpoint();
+    assert.throws(() => metrics.observe(value), assert.AssertionError); assert.deepEqual(metrics.checkpoint(), checkpoint);
+  }
+  const identity = structuredClone(base); identity.journal.identity = { ...identity.event, caller: { different: true } };
+  assert.throws(() => engine(state).observe(identity), /Journal belongs/);
+  const unsupported = aggregate(state, { sections: { unsupported: [{ kind: 'unknown-aggregate-movement' }] } });
+  const metrics = engine(state); metrics.observe(unsupported);
+  assert.equal(metrics.summary().missingCoverage[0].aggregateGroupId, 1);
+  assert.equal(metrics.summary().missingCoverage[0].boundaryIndex, 1);
+  assert.equal(resource(metrics, 'cash').flows.created, '0');
 });
 
 test('unknown receipts and ambiguous item pairs report local missing coverage', () => {

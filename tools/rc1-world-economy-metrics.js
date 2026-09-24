@@ -30,6 +30,33 @@ const ratio = (numerator, denominator) => {
 export const economySnapshotHash = ({ boundary, ...state }) => sha256(state);
 const resourceId = (kind, ...parts) => `${kind}:${JSON.stringify(parts)}`;
 
+function assertQuiescentAggregate(event, beforeHash, afterHash) {
+  assert.equal(event.kind, 'resource-quiescent-aggregate');
+  assert.equal(event.context?.authority, 'ordinary-http-quiescent-group');
+  assert.equal(event.scope, 'All committed resource changes between quiescent before/after snapshots');
+  assert(!Object.hasOwn(event, 'sequence'), 'Quiescent aggregate must not invent a native SQL sequence');
+  assert(Number.isSafeInteger(event.groupId) && event.groupId > 0);
+  assert(Number.isSafeInteger(event.requestCount) && event.requestCount > 0);
+  assert(Array.isArray(event.context.requests) && event.context.requests.length === event.requestCount);
+  const indices = new Set();
+  for (const request of event.context.requests) {
+    assert(Number.isSafeInteger(request.requestIndex) && request.requestIndex >= 0 && !indices.has(request.requestIndex));
+    indices.add(request.requestIndex);
+    for (const field of ['accountId', 'method', 'path']) assert(typeof request[field] === 'string' && request[field].length > 0);
+  }
+  const root = event.traceRoot; assert(root && typeof root === 'object', 'Aggregate requires a bound native trace root');
+  assert.equal(root.format, 1); assert.equal(root.kind, 'quiescent-resource-trace-root');
+  assert.equal(root.groupId, event.groupId); assert.equal(root.beforeHash, beforeHash); assert.equal(root.afterHash, afterHash);
+  assert.equal(root.requestsSha256, event.requestsSha256);
+  for (const field of ['beforeHash', 'afterHash', 'requestsSha256', 'outcomesSha256', 'traceSha256', 'sha256'])
+    assert(/^[a-f0-9]{64}$/.test(root[field]), 'Invalid aggregate root digest: ' + field);
+  const { sha256: expected, ...body } = root;
+  assert.equal(economyDigest(body), expected, 'Aggregate trace root digest mismatch');
+  // The producer retains and verifies complete requests, outcomes and trace.
+  // This consumer binds their root to these snapshots; it does not reconstruct
+  // individual commits, internal ordering, or concurrent execution from a group.
+}
+
 export const WORLD_ECONOMY_METRICS_CONTRACT = Object.freeze({
   format: 1,
   inputs: 'Existing isolated native boundary event, resource journal, and full before/after world snapshots. No SQL or telemetry added.',
@@ -309,6 +336,9 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
       distributionScope: 'Lifetime distribution across append-only canonically enrolled synthetic accounts, including retired accounts and zero-reward replacements',
       initialRoster: [...config.roster], enrolledRoster: [...state.enrolledRoster],
       boundaries: state.boundaries, freshReceipts: state.freshReceipts, freshItemEvents: state.freshItemEvents,
+      ...(state.boundaryIndexMode ? { observationOrdering: { kind: 'explicit-boundary-index', lastBoundaryIndex: state.lastSequence } } : {}),
+      ...(state.quiescentAggregateBoundaries ? { aggregateObservation: { groups: state.quiescentAggregateBoundaries,
+        scope: 'Net quiescent snapshot groups with retained native trace roots; no individual commit-order or concurrency claim. Full request/outcome/trace verification belongs to the evidence producer.' } } : {}),
       resources: resources.map(resource => {
         const flows = { created: '0', destroyed: '0', transferred: '0', custody: '0', ...state.flows[resource] };
         return { resource, stockScope: state.stocks.scopes[resource] || 'No observed reference holdings for this resource',
@@ -334,14 +364,23 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
       }
       return { added: [...added], enrolledAccounts: state.enrolledRoster.length };
     },
-    observe({ event, journal, before, after }) {
-      assert(Number.isSafeInteger(event.sequence) && event.sequence > 0);
-      assert(['COMMITTED', 'AUTOCOMMITTED', 'ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome));
+    observe({ event, journal, before, after, boundaryIndex }) {
+      const aggregate = event.outcome === 'QUIESCENT_AGGREGATE', explicit = boundaryIndex !== undefined;
+      if (aggregate) assert(explicit, 'Aggregate observation requires an explicit boundaryIndex');
+      else assert(Number.isSafeInteger(event.sequence) && event.sequence > 0);
+      assert(['COMMITTED', 'AUTOCOMMITTED', 'ROLLED_BACK', 'STATEMENT_ABORTED', 'QUIESCENT_AGGREGATE'].includes(event.outcome));
+      const index = explicit ? boundaryIndex : event.sequence;
+      assert(Number.isSafeInteger(index) && index > 0);
+      const mode = explicit ? 'boundary-index' : 'native-sequence';
+      if (state.lastSequence > 0) assert.equal(mode, state.boundaryIndexMode || 'native-sequence', 'Observation ordering mode changed within stream');
       assert.deepEqual(journal.identity, event, 'Journal belongs to another boundary');
       assert.equal(journal.beforeHash, economySnapshotHash(before)); assert.equal(journal.afterHash, economySnapshotHash(after));
-      const boundary = economyDigest({ streamId: state.streamId, event, journal });
-      if (event.sequence === state.lastSequence && boundary === state.lastBoundary) return { duplicate: true, flows: [], missingCoverage: [] };
-      assert(event.sequence > state.lastSequence, 'Stale/reordered native boundary');
+      if (aggregate) assertQuiescentAggregate(event, journal.beforeHash, journal.afterHash);
+      const boundary = economyDigest({ streamId: state.streamId, event, journal, ...(explicit ? { boundaryIndex } : {}) });
+      if (index === state.lastSequence && boundary === state.lastBoundary) return { duplicate: true, flows: [], missingCoverage: [] };
+      if (explicit) assert.equal(index, state.lastSequence + 1, 'Missing/reordered explicit boundaryIndex');
+      else assert(index > state.lastSequence, 'Stale/reordered native boundary');
+      if (explicit && !aggregate) assert(event.sequence > (state.lastNativeSequence || 0), 'Native SQL boundary sequence regressed or reused');
       assert.equal(journal.beforeHash, state.nativeHash, 'Native state continuity lost');
       const at = event.context?.logicalAt; assert(Number.isSafeInteger(at) && at >= state.logicalAt, 'Boundary logical time regressed/missing');
       if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome)) assert.equal(journal.beforeHash, journal.afterHash, 'Aborted boundary changed committed resource state');
@@ -370,13 +409,16 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
       for (const missing of measured.missingCoverage) {
         const key = JSON.stringify([missing.kind, missing.resource, missing.reason, missing.group, missing.movementKind, missing.eventKind,
           missing.observation?.kind, missing.observation?.table]);
-        state.missing[key] ||= { key: JSON.parse(key), count: 0, firstBoundary: event.sequence, firstStreamId: state.streamId, example: missing };
+        state.missing[key] ||= { key: JSON.parse(key), count: 0, firstBoundary: index, firstStreamId: state.streamId, example: missing,
+          ...(explicit ? { boundaryIndex: index, ...(aggregate ? { aggregateGroupId: event.groupId } : { nativeSequence: event.sequence }) } : {}) };
         state.missing[key].count++;
       }
       // Preserve stock definitions for resources that have reached zero.
       stocks.scopes = { ...state.stocks.scopes, ...stocks.scopes };
       for (const resource of Object.keys(state.stocks.values)) stocks.values[resource] ??= '0';
-      state.stocks = stocks; state.nativeHash = journal.afterHash; state.lastSequence = event.sequence; state.lastBoundary = boundary;
+      state.stocks = stocks; state.nativeHash = journal.afterHash; state.lastSequence = index; state.lastBoundary = boundary;
+      if (explicit) { state.boundaryIndexMode = mode; if (!aggregate) state.lastNativeSequence = event.sequence; }
+      if (aggregate) state.quiescentAggregateBoundaries = (state.quiescentAggregateBoundaries || 0) + 1;
       state.boundaries++; state.freshReceipts += measured.freshReceipts; state.freshItemEvents += measured.freshItemEvents;
       state.chain = economyDigest({ prior: state.chain, boundary, measured });
       return { duplicate: false, ...measured, boundaryChain: state.chain };
@@ -404,6 +446,7 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
       if (options.streamId != null && options.streamId !== restored.streamId) {
         assert(typeof options.streamId === 'string' && options.streamId); restored.streamId = options.streamId;
         restored.lastSequence = 0; restored.lastBoundary = null;
+        delete restored.boundaryIndexMode; delete restored.lastNativeSequence;
       }
       state = restored; return this;
     },
