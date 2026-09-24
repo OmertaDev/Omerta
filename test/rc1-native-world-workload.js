@@ -691,15 +691,44 @@ try {
     import('../src/game.js'), import('../src/rules.js'), import('../src/invariants.js')]);
   // Match the public /v1/rules projection; private rule fields are not policy input.
   const publicCrimes = CRIMES.map(({ id, name, lvl, nerve, cash, base: chance, jail }) => ({ id, name, lvl, nerve, cash, base: chance, jail }));
-  const { engine, knowledgeService } = await initializeApplication(async () => {
+  const { engine, knowledgeService, content } = await initializeApplication(async () => {
     const content = coreProgressionContent(), director = createConfiguredDirector(pool, content);
     const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
       knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
     const { createCoordinationService } = await import('../src/coordination/runtime.js');
     const knowledgeService = createCoordinationService({ pool, registry: content.coordinationRegistry,
       prerequisitesEnabled: content.progression === true, enabled: true, knowledgeEnabled: true, sharingEnabled: true, accountIds: [] });
-    return { engine, knowledgeService };
+    return { engine, knowledgeService, content };
   });
+  const { verifyCheckpointRecoverySources, recoveryCatalog, reviewCanonicalCheckpoint, CHECKPOINT_RECOVERY_REVIEW } =
+    await import('../tools/rc1-checkpoint-recovery-review.js');
+  const recoverySource = await verifyCheckpointRecoverySources({ sourceRevision: source.revision,
+    readFile: async file => (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n') });
+  const frozenScenarios = JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8'));
+  const configurationSha256 = sha256(canonicalJson(configuration));
+  const recoveryConfiguration = { binding: { sourceRevision: source.revision, configurationSha256 },
+    coreProgression: content.progression === true, coordination: declared.COORDINATION_ENGINE === 'on',
+    knowledge: declared.COORDINATION_KNOWLEDGE === 'on', sharing: declared.COORDINATION_KNOWLEDGE_SHARING === 'on',
+    unrestrictedCohort: declared.COORDINATION_ACCOUNT_IDS === '' };
+  const artifactReference = (name, value) => ({ path: name, sha256: sha256(`${JSON.stringify(value, null, 2)}\n`) });
+  const recoveryAuthority = { source: recoverySource, review: CHECKPOINT_RECOVERY_REVIEW,
+    catalog: recoveryCatalog(content), configuration: recoveryConfiguration };
+  await proof.artifact('checkpoint-recovery-authority.json', recoveryAuthority);
+  const recoveryBoundaries = [];
+  async function recoveryBoundary(label, snapshot, diagnostic) {
+    const checkpoint = { stateSha256: snapshot.stateSha256, configurationSha256, logicalAt: at };
+    const result = reviewCanonicalCheckpoint({ manifest: frozenScenarios, source: recoverySource, checkpoint, snapshot,
+      diagnostics: diagnostic.semantic, diagnosticEvidence: {
+        ...artifactReference(`world-diagnostics-${label}.json`, diagnostic),
+        binding: { sourceRevision: source.revision, ...checkpoint }, contentSha256: sha256(canonicalJson(diagnostic.semantic)) },
+      roster: churnEnabled ? churnPolicy.roster().current : roster, catalog: recoveryAuthority.catalog,
+      configurationEvidence: recoveryConfiguration, inventoryEvidence: artifactReference(`${label}.json`, snapshot),
+      reviewEvidence: artifactReference('checkpoint-recovery-authority.json', recoveryAuthority) });
+    await proof.artifact(`checkpoint-recovery-${label}.json`, result);
+    recoveryBoundaries.push({ label, checkpoint, artifact: artifactReference(`checkpoint-recovery-${label}.json`, result),
+      assertions: result.joined.assertions, scopes: Object.fromEntries(Object.entries(result.joined.scopes).map(([scope, value]) =>
+        [scope, { status: value.status, obligations: value.results?.length ?? 0, unknown: value.results?.filter(row => row.status === 'UNKNOWN').length ?? null }])) });
+  }
   async function knowledgeBoundary(label, before) {
     const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
       readPage: (accountId, options) => proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
@@ -1130,8 +1159,10 @@ try {
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     if (economyMetrics) await proof.artifact('economy-metrics-day-' + day + '.json', economyMetrics.sample(at, 'day-' + day));
     const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
-    await proof.artifact('world-diagnostics-day-' + day + '.json', await collectWorldDiagnostics(diagnosticPool,
-      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
+    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
+      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+    await proof.artifact('world-diagnostics-day-' + day + '.json', diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics);
     await proof.artifact('alliance-day-' + day + '-checkpoint.json', allianceAdapter.checkpoint());
     await guardBoundary('alliance-day:' + day);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, allianceFresh: allianceAdapter.summary().fresh,
@@ -1414,8 +1445,10 @@ try {
     if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
     const daily = await proof.snapshot(pool, `day-${day}`);
     await knowledgeBoundary(`day-${day}`, daily);
-    await proof.artifact(`world-diagnostics-day-${day}.json`, await collectWorldDiagnostics(diagnosticPool,
-      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
+    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
+      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+    await proof.artifact(`world-diagnostics-day-${day}.json`, diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics);
     await guardBoundary(`day:${day}`);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
@@ -1447,6 +1480,8 @@ try {
   const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
     { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
+  await recoveryBoundary('final', final, finalDiagnostics);
+  await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
   if (economyMetrics) {
     economyMetrics.sample(at, 'final');
     await proof.artifact('economy-metrics-final.json', economyMetrics.summary());
@@ -1556,6 +1591,7 @@ try {
     jobOutcomesSha256: sha256(canonicalJson(trace.jobs)), deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
     actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
     mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
+    recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
