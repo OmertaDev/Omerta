@@ -4,11 +4,42 @@ import { createFamilyPolicy, planFamilyFixture } from './rc1-family-policy.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
 
 export const FAMILY_WORLD_CONTRACT = Object.freeze({ version: 1,
-  initialization: 'Ordinary entry; only planned founders receive pre-baseline level75 respect. Check-in, formation, membership and treasury funding use canonical HTTP after baseline.',
-  schedule: 'Day0 planned legal Family formation, membership and concentration. Every later day all actors consider own daily check-in, public membership and treasury tribute. Ordinary PlayerCommands and crime sessions continue independently.',
+  initialization: 'Ordinary entry; only planned founders receive pre-baseline level75 respect. Before measurement, original day0 canonical check-in, formation, membership and treasury funding establish the declared Family configuration. Public rosters verify actual legal concentration.',
+  schedule: 'Day0 setup is retained before the measured baseline and is not repeated. Every later day all actors consider own daily check-in, public membership and treasury tribute. Ordinary day0 and subsequent PlayerCommands and crime sessions remain measured.',
   information: 'Own session/character, public rules and Family directory/roster only; no diagnostic state or privileged actions.',
   replay: 'Task cursor and exact selected request persist before dispatch. Unknown completed replay remains unresolved; no new choice proceeds.',
   scope: 'Actor workload support; no claim that duration, resources, reachability or matrix qualification passed.' });
+
+export function assessFamilyInitialState(plan, roster, views) {
+  assert.equal(roster.length, plan.population);
+  const declared = new Set(roster.map(actor => actor.characterId));
+  assert.equal(declared.size, roster.length);
+  assert.equal(views.length, plan.groups.length);
+  assert.equal(new Set(views.map(view => view.gang.id)).size, views.length);
+  const members = new Set(), families = views.map((view, index) => {
+    const group = plan.groups[index], family = view.gang;
+    assert(Array.isArray(family.members) && family.members.length <= plan.canonicalMaximumMembers);
+    assert.equal(new Set(family.members.map(member => member.id)).size, family.members.length);
+    for (const member of family.members) { assert(!members.has(member.id), 'Character belongs to multiple initial Families'); members.add(member.id); }
+    for (const actorIndex of group.members)
+      assert(family.members.some(member => member.id === roster[actorIndex].characterId), 'Planned member did not enter its initial Family');
+    assert(family.members.some(member => member.id === roster[group.founder].characterId && member.role === 'boss'), 'Initial founder is not boss');
+    return { id: family.id, declaredMembers: family.members.filter(member => declared.has(member.id)).length,
+      totalMembers: family.members.length, treasury: family.treasury };
+  });
+  const largest = Math.max(...families.map(family => family.declaredMembers));
+  if (plan.scenario === 'family_monopoly') {
+    assert.equal(families[0].declaredMembers, plan.canonicalMaximumMembers, 'Initial monopoly did not saturate the original legal cap');
+    for (const index of plan.outsiders)
+      assert(!views[0].gang.members.some(member => member.id === roster[index].characterId), 'Outsider entered the full initial monopoly');
+  } else {
+    assert.equal(plan.scenario, 'fragmented_families');
+    assert(families.length >= 10 && largest <= Math.floor(roster.length * 0.2), 'Initial fragmentation differs from the frozen legal extreme');
+  }
+  return { verified: true, families, largestDeclaredFamily: largest,
+    largestDeclaredFamilyFraction: { numerator: largest, denominator: roster.length }, legalConstraint: plan.legalConstraint || null,
+    scope: 'Actual ordinary public rosters at initialization; legal capacity saturation is not an 80-percent claim for populations above25.' };
+}
 
 export function createFamilyWorldAdapter({ scenario, seed, roster }) {
   const plan = planFamilyFixture(scenario, roster.length);

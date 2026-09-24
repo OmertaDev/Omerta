@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createFamilyWorldAdapter } from '../tools/rc1-family-world-adapter.js';
+import { createFamilyWorldAdapter, assessFamilyInitialState } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 
@@ -9,6 +9,14 @@ for (const population of [25, 100, 250, 500, 1000]) for (const scenario of ['fam
   assert(plan.groups.every(group => group.members.length <= 20));
   if (scenario === 'fragmented_families') { assert(plan.groups.length >= 10); assert(plan.realizedLargestFamilyFraction <= .2); }
   else { assert.equal(plan.groups[0].members.length, 20); assert.equal(!!plan.legalConstraint, population > 25); }
+  const roster = Array.from({ length: population }, (_, index) => ({ accountId: 'a-' + index, characterId: 'c-' + index }));
+  const views = plan.groups.map((group, index) => ({ gang: { id: 'g-' + index, treasury: '1750',
+    members: group.members.map(member => ({ id: roster[member].characterId, role: member === group.founder ? 'boss' : 'soldier' })) } }));
+  assert.equal(assessFamilyInitialState(plan, roster, views).verified, true);
+  const missing = structuredClone(views); missing[0].gang.members.pop();
+  assert.throws(() => assessFamilyInitialState(plan, roster, missing), /Planned member/);
+  const wrongBoss = structuredClone(views); wrongBoss[0].gang.members[0].role = 'soldier';
+  assert.throws(() => assessFamilyInitialState(plan, roster, wrongBoss), /founder/);
 }
 
 for (const scenario of ['family_monopoly', 'fragmented_families']) {

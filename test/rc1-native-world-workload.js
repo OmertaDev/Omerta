@@ -31,7 +31,7 @@ import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-myste
 import { planCohort, createCohortPolicy, assessCohortBaseline, COHORT_POLICY_CONTRACT } from '../tools/rc1-cohort-policy.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT, ALLIANCE_CONTINUOUS_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
-import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
+import { createFamilyWorldAdapter, assessFamilyInitialState, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
 import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
@@ -827,6 +827,22 @@ try {
     }
     await proof.artifact('family-initialization.json', { plan, grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
     familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors });
+    await familyDay(0);
+    const views = [];
+    for (const group of plan.groups) {
+      const founder = familyActors[group.founder], familyId = familyAdapter.summary().families[group.founder];
+      const view = await http(founder, { method: 'GET', path: '/v1/gangs/' + familyId });
+      assert.equal(view.status, 200); views.push(view.body);
+      for (const member of group.members) {
+        const own = await http(familyActors[member], { method: 'GET', path: '/v1/me' });
+        assert.equal(own.status, 200); assert.equal(Number(own.body.character.cash), 0, 'Initial Family cash was not concentrated');
+      }
+    }
+    const assessment = assessFamilyInitialState(plan, familyActors, views);
+    configuration.familyInitialization = { assessment, fresh: familyAdapter.summary().fresh,
+      measured: false, fixtureWritesAfterBaseline: false };
+    await proof.artifact('family-prepared.json', { plan, assessment, views, summary: familyAdapter.summary(),
+      checkpoint: familyAdapter.checkpoint(), authority: 'Original ordinary HTTP day0 preparation before the measured snapshot' });
   }
   if (churnEnabled && !resume) {
     for (let index = 0; index < population; index++) {
@@ -1437,6 +1453,25 @@ try {
     if (mode !== 'observeSettlements') await proof.artifact(mode === 'prepare' ? 'war-prepared.json' : 'war-day-' + day + '.json',
       { summary: warAdapter.summary(), checkpoint: warAdapter.checkpoint() });
   }
+  async function familyDay(day) {
+    return familyAdapter.runDay(day, { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('family:' + request.idempotencyKey);
+        if (trackMeasuredCalls && response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('family-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt: at }, checkpoint),
+    });
+  }
   async function lawWindow(logicalAt) {
     let window;
     do {
@@ -1515,23 +1550,10 @@ try {
     if (pressureEnabled) await pressureDay(day);
     if (warEnabled) await warStep('day', day);
     if (marketEnabled) await marketStep(day);
-    if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
-      read: async (accountId, path) => {
-        const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
-        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
-      },
-      execute: async (accountId, request) => {
-        const response = await http(familyActors.find(actor => actor.accountId === accountId), request);
-        await invariantBoundary('family:' + request.idempotencyKey);
-        if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
-        return response;
-      },
-      decision: async (identity, view, chosen) => {
-        const recorded = await actors.decide('family-policy', identity, view, () => chosen);
-        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
-      },
-      checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
-    });
+    if (familyEnabled) {
+      if (day === 0) assert.equal(familyAdapter.summary().nextDay, 1, 'Initial Family preparation was not completed');
+      else await familyDay(day);
+    }
     for (const account of selected) await session(account, day);
     queueDailyObservation(day, selected);
   };
