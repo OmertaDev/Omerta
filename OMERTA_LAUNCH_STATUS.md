@@ -1,19 +1,19 @@
 # OMERTÀ LAUNCH STATUS
 
-Current harness integration: `3cbd62ac`; native admissions retain their individually tested revisions.
+Current harness integration: `5a1ee861`; native admissions retain their individually tested revisions.
 Final candidate: **Candidate 19**, `b761eb06fa240b461cfc93f6eafbf699b9c5f257`, recorded in FINAL_LAUNCH_SHA. Final qualification is pending.
 Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspection (2026-09-24): `468516d8d6f3729514711ad5a0b83e440c5c46f9`; the existing source-pair pin remains current.
 
 | Required result | Status |
 | --- | --- |
 | Technical qualification | FAIL |
-| Registered command gates | 113 / 114 |
+| Registered command gates | 114 / 114 |
 | Acceptance matrix | 0 / 225 |
 | Contracts | PASS — reused: 1,247 passed, 0 failed, 0 skipped |
 | PostgreSQL 16 | PASS_NEW — final frozen CI database lane passed |
 | PostgreSQL 18.4 | PASS_NEW — final frozen CI database lane passed |
 | Resource accounting | PASS — original P0 workload: zero unexplained entries |
-| Replay | FAIL — complete final serial/concurrent qualification absent |
+| Replay | PASS — final serial/concurrent fault schedules and integrated world replay joined |
 | Restart recovery | PASS — authoritative state, identities, RNG and ordered resource effects agree |
 | Market recovery | PASS — retained scoped proof |
 | Boat recovery | PASS — retained scoped proof |
@@ -29,7 +29,7 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 
 ## Remaining blockers
 
-Final CI subsequently exposed an unrouted-test inventory failure, so `rc1-static-gates` is withdrawn pending repair and coverage is113/114. The application test prefix passed before that guard. Final golden browser and Linux shutdown commands passed on both PostgreSQL versions. The market observer timestamp repair passed its focused native PostgreSQL18.4 regression; affected hosted retests remain pending. The source-pair comparison repair passes57 focused controls and its native PostgreSQL18.4 upgrade/rollback/replay proof. Affected hosted16/18.4 retests remain pending. The first low-mystery cell continues; later cells remain held during repair integration. Escrow completed at f90cce38 with 98 passing scenarios, 3,907 zero-drift equations and independently verified artifacts. Focused retirement resource/metric closure and generated-knowledge verification now pass. Both final CI PostgreSQL lanes pass. All 225 qualifying cells, remaining replay/recovery qualification, the required soak, and final upgrade/rollback remain. Final mobile automation meets the nine areas in Section11 on both database versions. Production configuration, deployment and external validation follow the existing gates.
+The three Candidate19 integration failures have focused repairs, and all114 registered command gates again have admitted evidence. Full static safeguards pass after exact test routing was repaired; the original application test prefix is retained. Final hosted continuation remains pending. Final golden browser and Linux shutdown commands passed on both PostgreSQL versions. The market observer timestamp repair passed its focused native PostgreSQL18.4 regression; affected hosted retests remain pending. The source-pair comparison repair passes57 focused controls and its native PostgreSQL18.4 upgrade/rollback/replay proof. Affected hosted16/18.4 retests remain pending. The first low-mystery cell continues; later cells remain held during repair integration. Escrow completed at f90cce38 with 98 passing scenarios, 3,907 zero-drift equations and independently verified artifacts. Focused retirement resource/metric closure and generated-knowledge verification now pass. Both final CI PostgreSQL lanes pass. All225 qualifying cells, final affected hosted regressions, the required soak and final upgrade/rollback retests remain. Final serial/concurrent replay and checkpoint/restart evidence now pass. Final mobile automation meets the nine areas in Section11 on both database versions. Production configuration, deployment and external validation follow the existing gates.
 
 The user resumed work on 2026-09-24 after the usage-limit interruption. All five original P0 blockers remain closed. [FINAL_LAUNCH_LEDGER.md](FINAL_LAUNCH_LEDGER.md) contains current admissions and hashes. [CREDIT_CHECKPOINT.md](CREDIT_CHECKPOINT.md) retains the earlier stop and evidence history. Source 92e50fb9 adds tested opportunity receipt/expiry measurements to the harness; application source is unchanged. Source-phase authority closure is complete at357ff20a. Both cohort native integration smokes passed at85ed40b5. The retained refund entries now have source-bound classification evidence. All 104 subsequently inventoried shared resource entries have class coverage, including GTA and Family melting; original evidence is unchanged. The 169-hour churn check and focused Law check passed at 1ec074ff; abundance passed at 92f09bb4 with 6,853 boundaries and zero unexplained entries. These are scoped admissions, not matrix qualification. All 15 workload interfaces are connected. Actual daily market worker overlap, Family/scarcity baselines and cohort phase alignment now have focused evidence. The cohort's five retirement entries and two incomplete metrics are closed by exact retained-evidence supplements; all 14 metrics are covered for the focused run. Final integrated replay, long-duration/lifecycle/stability evidence and qualification remain unfinished.
 
