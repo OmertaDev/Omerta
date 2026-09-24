@@ -15,8 +15,8 @@ const runner = fs.readFileSync(new URL('./rc1-native-world-workload.js', import.
 const start = '// BEGIN source-bound car witness integration control.\n', end = '// END source-bound car witness integration control.';
 assert.equal(runner.split(start).length, 2); assert.equal(runner.split(end).length, 2);
 const block = runner.split(start)[1].split(end)[0];
-assert.equal(sha256(block), 'a4bd85cabaaa481a5025f333009bca7a97705f2ce96a347547a0c054a2d5fee1', 'Runner witness block changed; review and rebind control');
-assert.match(runner, /const seam = installWorkerInstrumentation\(controller, \{ namespace, queryOrder, commitObserver \}\);/);
+assert.equal(sha256(block), '0cdce857c8155a1c64e4208fe84a97c4387556889e82705434b51747a5677c55', 'Runner witness block changed; review and rebind control');
+assert.match(runner, /const seam = installWorkerInstrumentation\(controller, \{ namespace, queryOrder, commitObserver: aggregateObserver \|\| commitObserver \}\);/);
 assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, replayRun\.result\.carMeltWitnessObservation/);
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
 assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });') < worker.indexOf('if (queryOrder) pool = queryOrder.wrapPool(pool);'));
@@ -24,7 +24,7 @@ assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });'
 const instantiate = new Function('env', `const {captureDuelSelection,npcBoatFault,observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,createPlayerCarCommitObserver,economyMetrics,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
  snapshotWorldResources,diagnosticPool,reconcileWorldResources,worldResourceHash,proof,resourceSummary,resourceCost,
  resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,npcBoatWitnessSummary,npcMarketOrderWitnessSummary,canonicalJson,sha256,assert}=env;
- let priorResources=env.initial,firstResourceError=null,duelSelection=null,duelSelectionArtifact=null;
+ let economyBoundaryIndex=0,priorResources=env.initial,firstResourceError=null,duelSelection=null,duelSelectionArtifact=null;
  ${block}
  return {commitObserver,getError:()=>firstResourceError};`);
 function verifyWitnessBoundary(data) {

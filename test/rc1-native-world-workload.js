@@ -13,6 +13,7 @@ import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalDatabaseSnapshot, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
+import { createNativeQuiescentGroupObserver, QUIESCENT_GROUP_CONTRACT } from '../tools/rc1-native-quiescent-group.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
@@ -156,7 +157,8 @@ const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_C
   knowledgeObservation: 'Complete canonical Knowledge pages at daily/final serial checkpoints; full canonical state equality before/after each observation; never policy feedback',
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
-  resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
+  resourceObservation: observeResources ? 'Native committed-boundary parity for serial work; explicitly traced quiescent aggregate boundaries for command telemetry and concurrent market requests' : 'Disabled',
+  quiescentGroupObservation: observeResources ? QUIESCENT_GROUP_CONTRACT : null,
   economyObservation: observeResources ? WORLD_ECONOMY_METRICS_CONTRACT : null,
   carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
     scope: 'Native COMMIT provenance for exact solo and Family human melt. Retain full car-deletion/melt-candidate and bounded-overflow witnesses privately; all other commits keep ordinary resource evidence. No added actor actions or grants.' } : null,
@@ -329,7 +331,7 @@ const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
 const electionProbe = observeResources ? createSeasonElectionProbe({ snapshot: () => snapshotElectionCandidates(diagnosticPool) }) : null;
 const electionSeam = electionProbe?.install();
 let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
-let priorResources, firstResourceError, economyMetrics = null, workPhase = 'initialization';
+let priorResources, firstResourceError, economyMetrics = null, economyBoundaryIndex = 0, workPhase = 'initialization';
 let duelSelection = null, duelSelectionArtifact = null;
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
@@ -441,7 +443,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
       }
       await npcBoatFault.classified(event, journal);
       if (economyMetrics) await proof.record({ kind: 'economy-commit-boundary', boundarySequence: event.sequence,
-        ...economyMetrics.observe({ event, journal, before, after }) });
+        ...economyMetrics.observe({ event, journal, before, after, boundaryIndex: ++economyBoundaryIndex }) });
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
       const serializedJournal = canonicalJson({ event, journal });
       resourceStream.update(`${serializedJournal}\n`);
@@ -462,7 +464,37 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
   },
 }) : null;
 // END source-bound car witness integration control.
-const seam = installWorkerInstrumentation(controller, { namespace, queryOrder, commitObserver });
+const aggregateObserver = commitObserver ? createNativeQuiescentGroupObserver({ serialObserver: commitObserver,
+  clock: () => at, snapshot: () => snapshotWorldResources(diagnosticPool), record: proof.record,
+  onGroup: async evidence => {
+    const started = performance.now(), { identity: event, before, after } = evidence;
+    if (firstResourceError) throw firstResourceError;
+    try {
+      assert.equal(worldResourceHash(before), worldResourceHash(priorResources), 'Aggregate starts outside the prior resource boundary');
+      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
+        { identity: event, includeRestrictedChanges: true });
+      const artifact = 'restricted-resource-group-' + String(event.groupId).padStart(7, '0') + '.json';
+      await proof.artifact(artifact, { ...evidence, restrictedChanges });
+      journal.quiescentGroupArtifact = artifact;
+      if (economyMetrics) await proof.record({ kind: 'economy-quiescent-boundary', groupId: event.groupId,
+        ...economyMetrics.observe({ event, journal, before, after, boundaryIndex: ++economyBoundaryIndex }) });
+      await proof.record({ kind: 'resource-quiescent-boundary', event, journal });
+      const serialized = canonicalJson({ event, journal }); resourceStream.update(`${serialized}\n`);
+      resourceCost.serializedJournalBytes += Buffer.byteLength(serialized);
+      resourceCost.serializedRestrictedChangeBytes += Buffer.byteLength(JSON.stringify({ ...evidence, restrictedChanges }));
+      resourceSummary.boundaries++;
+      for (const unsupported of journal.unsupported) {
+        resourceSummary.unsupportedEntries++;
+        resourceSummary.unsupportedKinds[unsupported.kind] = (resourceSummary.unsupportedKinds[unsupported.kind] || 0) + 1;
+      }
+      priorResources = after;
+      const elapsed = performance.now() - started;
+      resourceCost.observedBoundaryWallMs += elapsed;
+      resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
+    } catch (error) { firstResourceError = error; throw error; }
+  },
+}) : null;
+const seam = installWorkerInstrumentation(controller, { namespace, queryOrder, commitObserver: aggregateObserver || commitObserver });
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 const roster = httpEnabled ? [] : Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
 const actorOptions = new Map(roster.map((account) => [account, {}]));
@@ -910,25 +942,26 @@ try {
   }
   await proof.artifact('actor-policy-initial.json', policyState());
   async function invoke(authority, identity, work, latencyClass) {
-    currentInvocation = { authority, ...identity, logicalAt: at };
+    const invocation = { authority, ...identity, logicalAt: at };
+    currentInvocation = invocation;
     const started = performance.now();
     try {
-      const value = await proof.invoke(authority, currentInvocation, work);
+      const value = await proof.invoke(authority, invocation, work);
       if (injectActorMismatch && !injectedActorMismatch && authority === 'player.snapshot') {
         injectedActorMismatch = true;
-        await actors.observe('native-outcome', currentInvocation, { ...value, deliberateSemanticMutation: true });
+        await actors.observe('native-outcome', invocation, { ...value, deliberateSemanticMutation: true });
         throw Error('Actor replay incorrectly accepted the deliberate semantic mutation');
       }
-      await actors.observe('native-outcome', currentInvocation, value); return value;
+      await actors.observe('native-outcome', invocation, value); return value;
     }
     catch (error) {
-      failureInvocation = currentInvocation;
+      failureInvocation = invocation;
       metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1;
       throw error;
     }
-    finally { currentInvocation = null; latencies[latencyClass].push(performance.now() - started); }
+    finally { if (currentInvocation === invocation) currentInvocation = null; latencies[latencyClass].push(performance.now() - started); }
   }
-  async function http(actor, request) {
+  async function http(actor, request, insideGroup = false) {
     if (actor && request.path !== '/v1/auth/agent-key') {
       const identity = app.jwt.verify(actor.token); assert.equal(identity.sub, actor.accountId);
       assert(Number.isFinite(identity.exp), 'Ordinary session lacks an expiry');
@@ -943,6 +976,10 @@ try {
             canonicalEffects: ['agent_flag=true', 'agent referral exclusion'], fixture: false });
       }
     }
+    if (aggregateObserver && !insideGroup && /^\/v1\/commands(?:[/?]|$)/.test(request.path))
+      return (await aggregateObserver.runGroup([{ accountId: actor.accountId, request }], { logicalAt: at,
+        execute: () => http(actor, request, true), drain: () => flushWorldTelemetry(pool),
+        identity: { purpose: 'canonical-command-with-queued-telemetry' } }))[0];
     return invoke('ordinary-http', { accountId: actor?.accountId || null, ...request }, async () => {
       const completionKey = String(++responseSequence);
       let timer;
@@ -1201,6 +1238,20 @@ try {
         if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
         return response;
       },
+      executeGroup: async (requests, identity) => {
+        const execute = (accountId, request) => http(marketActors.find(actor => actor.accountId === accountId), request, true);
+        const responses = aggregateObserver ? await aggregateObserver.runGroup(requests,
+          { logicalAt: at, execute, drain: () => flushWorldTelemetry(pool), identity })
+          : await Promise.all(requests.map(item => execute(item.accountId, item.request)));
+        await flushWorldTelemetry(pool);
+        await invariantBoundary('market-group:' + day + ':' + identity.group);
+        responses.forEach((response, index) => {
+          if (response.status === 200 && !response.replayed) {
+            const accountId = requests[index].accountId; actorActions.set(accountId, actorActions.get(accountId) + 1);
+          }
+        });
+        return responses;
+      },
       decision: async (identity, view, chosen) => {
         const recorded = await actors.decide('market-policy', identity, view, () => chosen);
         assert.equal(actorValueHash(recorded), actorValueHash(chosen));
@@ -1261,9 +1312,9 @@ try {
     await proof.artifact('resource-worker-bootstrap.json', { classification: 'Aggregate initialization comparison; not per-commit coverage',
       before: priorResources, after, beforeHash: worldResourceHash(priorResources), afterHash: worldResourceHash(after) });
     assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
-    priorResources = after; commitObserver.arm();
+    priorResources = after; (aggregateObserver || commitObserver).arm();
   } });
-  if (workerBooted) { if (commitObserver) commitObserver.arm(); }
+  if (workerBooted) { if (commitObserver) (aggregateObserver || commitObserver).arm(); }
   else if (resume && httpEnabled) await runtime.withRestartStartup(workerStartup);
   else await workerStartup();
   let startupLineage = null;
@@ -1367,7 +1418,7 @@ try {
     await proof.artifact('economy-metrics-final.json', economyMetrics.summary());
   }
   if (commitObserver) {
-    commitObserver.assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
+    (aggregateObserver || commitObserver).assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
     await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
     await proof.artifact('car-acquisition-witness-summary.json', { ...carAcquisitionWitnessSummary, scope: configuration.npcCarAcquisitionWitness });
     await proof.artifact('npc-family-witness-summary.json', { ...npcFamilyWitnessSummary, scope: configuration.npcFamilyWitness });
@@ -1521,7 +1572,7 @@ try {
   result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
   await retainWorldFailure(() => proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack }), { historyStorage, result });
   if (historyStorage && result.captureErrors?.length && commitObserver)
-    await retainWorldFailure(async () => commitObserver.disarm(), { historyStorage, result });
+    await retainWorldFailure(async () => (aggregateObserver || commitObserver).disarm(), { historyStorage, result });
   if (faultNpcBoatGrant) await proof.artifact('failure-npc-boat-fault.json', npcBoatFault.diagnostic());
   await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
   await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
@@ -1529,7 +1580,7 @@ try {
   await proof.artifact('failure-actor-policy.json', policyState());
   if (guardrails) await proof.artifact('failure-operational-guardrails.json', guardrails.diagnostic());
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
-  if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: commitObserver.diagnostic() });
+  if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
   if (pool) {
     try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
     catch (captureError) { await retainWorldFailure(() => proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }), { historyStorage, result }); }
@@ -1539,11 +1590,11 @@ try {
   for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];
   for (const close of [async () => {
     if (!commitObserver) return;
-    try { commitObserver.disarm(); }
+    try { (aggregateObserver || commitObserver).disarm(); }
     finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary,
       resourceJournalSha256: resourceStream.copy().digest('hex'),
       cost: { ...resourceCost, logicalHours: (at - start) / 3600000,
-        note: 'Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained.' }, diagnostic: commitObserver.diagnostic() }); }
+        note: 'Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained.' }, diagnostic: (aggregateObserver || commitObserver).diagnostic() }); }
   }, async () => { if (app) await app.close(); }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),
     async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
     try { await close(); }
