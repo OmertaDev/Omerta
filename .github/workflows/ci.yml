@@ -19,7 +19,13 @@ on:
     paths-ignore:
       - 'omerta-contracts/**'
       - '**/*.md'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tail_only:
+        description: 'Run the repaired candidate19 safeguard and unexecuted CI remainder; preserve prior prefix evidence'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:                        # a new push supersedes an in-flight run of the same branch
   group: ci-${{ github.ref }}
@@ -27,7 +33,7 @@ concurrency:                        # a new push supersedes an in-flight run of 
 
 jobs:
   suites:
-    name: suites + sim (pg-mem)
+    name: ${{ inputs.tail_only && 'Affected CI remainder (pg-mem)' || 'suites + sim (pg-mem)' }}
     runs-on: ubuntu-latest
     # A HANG bound, never a performance budget. The corrected full local npm lifecycle
     # (pretest + test) completed in 2294.9825838s (38m14.983s) on Windows/Node 24.19.0,
@@ -85,7 +91,20 @@ jobs:
           fi
 
       - name: npm test (the full suite, on pg-mem)
+        if: ${{ !inputs.tail_only }}
         run: npm test
+
+      # Candidate19's retained npm test passed the prefix and failed at the suite
+      # inventory safeguard. Resume there without repeating that expensive prefix.
+      # Default push/PR runs still execute the complete npm lifecycle above.
+      - name: Repaired safeguard and remaining npm test commands
+        if: ${{ inputs.tail_only }}
+        run: |
+          node test/gates.js
+          node test/chainparams.js
+          node test/docs.js
+          node test/playthrough-truth.js
+          node tools/knowledge-test.js
 
       - name: Invite-only launch admission and Crew allowance
         run: npm run test:invites
@@ -139,6 +158,7 @@ jobs:
         run: npm run mobile
 
   pgcheck:
+    if: ${{ !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
