@@ -26,6 +26,13 @@ CI must also pass the full suites/sim and real PostgreSQL jobs before merge/depl
 No new lock or transaction behavior is introduced; pg-mem alone is not evidence about
 the existing fee-ingestion concurrency. No Solidity changes require compilation here.
 
+CI run `36060987297` at `d57884a1` passed PostgreSQL and reached the final safety
+gates, which found the new artwork cache missing from the mutable-state register.
+The register now classifies the bounded local-byte memo as a cache with no payment
+authority. `node test/gates.js` passes after this correction; runtime code is unchanged.
+The remaining documentation gate also required refreshing the file census for the new
+NFT modules, tests and documentation; the guard remains unchanged.
+
 New commissioned portraits use Klein 4B; Deeds use Pro. Existing Pro assets and their
 provenance remain unchanged. This release does not activate automatic signup generation
 or configure fal credentials. Receipt reads never call a paid API.
