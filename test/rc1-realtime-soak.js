@@ -158,9 +158,12 @@ process.stdout.write(`${JSON.stringify({ status: 'PASS_SCOPED', controls: passed
 
 if (process.argv.includes('--postgres')) {
   assert(process.env.RC1_SOAK_CONTROL_URL && process.env.RC1_SOAK_OUTPUT, 'Explicit disposable control URL and fresh private output directory required');
+  const kinds = ['shared-object contention', 'reconnect storm', 'worker interruption', 'database reconnect', 'server restart'];
+  const selection = process.argv.find(value => value.startsWith('--faults='))?.slice('--faults='.length).split(',') || kinds;
+  assert(selection.length && new Set(selection).size === selection.length && selection.every(kind => kinds.includes(kind)));
   const source = await sourceIdentity(), directory = path.resolve(process.env.RC1_SOAK_OUTPUT), runId = path.basename(directory);
   const proof = await createProofRecorder({ directory, source, runId, seed: 'local-soak-control', scenarioId: 'realtime-soak-controls', population: 3,
-    configuration: { originalEntrypoints: true, population: 3, rateLimits: 'on', acceleratedClock: false, scope: 'Bounded local fault controls, not twelve-hour qualification' } });
+    configuration: { originalEntrypoints: true, population: 3, rateLimits: 'on', acceleratedClock: false, selectedFaults: selection, scope: 'Bounded local fault controls, not twelve-hour qualification' } });
   let environment, client, finished = false, cleanupAttempted = false;
   try {
     environment = await createLocalSoakEnvironment({ source, recorder: proof, runId, controlUrl: process.env.RC1_SOAK_CONTROL_URL, population: 3 });
@@ -180,20 +183,22 @@ if (process.argv.includes('--postgres')) {
     const current = (await environment.pool.query('SELECT muscle::text AS muscle FROM characters WHERE id=$1', [roster[2].characterId])).rows[0];
     assert(Number(current.muscle) > Number(consistency.value.first.muscle));
     await proof.artifact('local-shared-snapshot-control.json', { consistency, current });
-    const kinds = ['shared-object contention', 'reconnect storm', 'worker interruption', 'database reconnect', 'server restart'];
     const plan = localSoakFaultPlan(environment, { schedule: Object.fromEntries(kinds.map(kind => [kind, 0])), reconnectActors: 2, pauseMs: 100 });
     const results = [];
-    for (const fault of plan) results.push(await proof.invoke('local-original-fault-control', { kind: fault.kind }, () => fault.run({ actors: roster, client, recorder: proof })));
-    assert.equal(results[0].intervention.freshSales, 1); assert.equal(results[1].intervention.successful, 2);
-    assert.notEqual(results[2].intervention.stopped.pid, results[2].intervention.restarted.pid);
-    assert(results[3].intervention.results.some(row => row.result.some(value => value.terminated === true)));
-    assert.notEqual(results[4].intervention.stopped.pid, results[4].intervention.restarted.pid);
-    await proof.artifact('local-fault-controls.json', { results, scope: 'Actual original local processes, ordinary HTTP actors and five injected fault controls. Due-work completeness and production equivalence remain open.' });
+    for (const fault of plan.filter(fault => selection.includes(fault.kind))) results.push(await proof.invoke('local-original-fault-control', { kind: fault.kind }, () => fault.run({ actors: roster, client, recorder: proof })));
+    for (const result of results) {
+      const value = result.intervention;
+      if (result.kind === 'shared-object contention') assert.equal(value.freshSales, 1);
+      if (result.kind === 'reconnect storm') assert.equal(value.successful, 2);
+      if (['worker interruption', 'server restart'].includes(result.kind)) assert.notEqual(value.stopped.pid, value.restarted.pid);
+      if (result.kind === 'database reconnect') assert(value.results.some(row => row.result.some(value => value.terminated === true)));
+    }
+    await proof.artifact('local-fault-controls.json', { results, scope: 'Actual original local processes, ordinary HTTP actors and explicitly selected injected fault controls. Due-work completeness and production equivalence remain open.' });
     client.close(); cleanupAttempted = true; await environment.close(); finished = true;
-    const record = await proof.finish({ status: 'PASS_SCOPED', controls: 5, sharedNativeSnapshotControl: true, faultCasesComplete: false, backlogRecoveryPassed: false, productionEquivalent: false });
+    const record = await proof.finish({ status: 'PASS_SCOPED', controls: results.length, selectedFaults: selection, sharedNativeSnapshotControl: true, faultCasesComplete: false, backlogRecoveryPassed: false, productionEquivalent: false });
     const verified = await verifyArtifactIndex(directory, record);
     await fs.writeFile(path.join(directory, 'verification.json'), JSON.stringify({ source: source.revision, verified }) + '\n', { flag: 'wx', mode: 0o600 });
-    process.stdout.write(JSON.stringify({ status: record.status, nativeFaultControls: 5, source: source.revision, originalProcesses: true, productionEquivalent: false }) + '\n');
+    process.stdout.write(JSON.stringify({ status: record.status, nativeFaultControls: results.length, source: source.revision, originalProcesses: true, productionEquivalent: false }) + '\n');
   } catch (error) {
     client?.close(); if (environment && !cleanupAttempted) try { cleanupAttempted = true; await environment.close(); } catch { /* cleanup artifact retains details */ }
     if (!finished) { await proof.record({ kind: 'local-soak-control-failure', error: { message: error.message, code: error.code || null } });

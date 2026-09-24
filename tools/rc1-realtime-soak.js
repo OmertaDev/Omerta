@@ -315,17 +315,21 @@ export async function runRealtimeSoak({ configuration, admissions = [], pool, fa
         faultSchedule: faults.map(({ kind, atMs }) => ({ kind, atMs })), sourceRevision: source.revision });
     }
     client = createSoakHttpClient({ baseUrl: environment?.baseUrl || baseUrl, maxInflight, timeoutMs });
+    const observeBackend = async label => {
+      if (environment) await environment.checkpoint(label);
+      return captureSoakBackend({ pool, recorder, label });
+    };
     if (envelopeEvidence) await recorder.artifact('soak-envelope-input.json', envelopeEvidence);
-    await captureSoakBackend({ pool, recorder, label: 'before-entry' });
+    await observeBackend('before-entry');
     const actors = await enterSoakActors({ admissions, client, recorder, spacingMs: entrySpacingMs });
     const rules = await client.request({ path: '/v1/rules' });
     await recorder.record({ kind: 'soak-public-rules', response: rules });
     assert.equal(rules.status, 200); assert(Array.isArray(rules.body?.crimes));
-    await captureSoakBackend({ pool, recorder, label: 'before-traffic' });
+    await observeBackend('before-traffic');
     const result = await runSoakTraffic({ actors, publicCrimes: rules.body.crimes, client, recorder,
       durationMs, arrivalsPerSecond, maxInflight, maxQueued, burstSize, seed, faults, requiredFaults: criteria.soak.requiredFaults,
-      observationEveryMs, observe: index => captureSoakBackend({ pool, recorder, label: `during-${index}` }) });
-    await captureSoakBackend({ pool, recorder, label: 'after-traffic' });
+      observationEveryMs, observe: index => observeBackend(`during-${index}`) });
+    await observeBackend('after-traffic');
     const status = result.failure || result.unresolvedCommands.length || result.faults.some(fault => fault.status === 'FAILED') ? 'FAIL' : 'PASS_SCOPED';
     await recorder.artifact('soak-observations.json', result);
     if (environment) { cleanupAttempted = true; await environment.close(); }

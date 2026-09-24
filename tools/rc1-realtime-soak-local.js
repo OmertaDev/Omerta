@@ -154,7 +154,9 @@ export async function createLocalSoakEnvironment({ source, recorder, runId, cont
       assert(row && Number(row.oid) === Number(owned.oid)); assert.equal(row.owner, owned.ownerMarker); return row;
     } finally { await q.end(); }
   };
-  const sessions = async () => (await pool.query('SELECT pid,application_name,state,backend_start,query_start,wait_event_type,wait_event,query FROM pg_stat_activity WHERE datname=$1 ORDER BY pid', [owned.name])).rows;
+  // Preserve PostgreSQL microseconds for the exact identity predicate used by
+  // disconnect. A JavaScript Date would truncate backend_start and match zero.
+  const sessions = async () => (await pool.query('SELECT pid,application_name,state,backend_start::text AS backend_start,query_start,wait_event_type,wait_event,query FROM pg_stat_activity WHERE datname=$1 ORDER BY pid', [owned.name])).rows;
   const heartbeat = async () => (await pool.query('SELECT id,beat_at FROM worker_heartbeat ORDER BY id')).rows;
   const alive = role => { const row = children.get(role); return !!row && row.child.exitCode === null && row.child.signalCode === null; };
   const health = async () => {
@@ -248,6 +250,7 @@ export async function createLocalSoakEnvironment({ source, recorder, runId, cont
           results.push({ before: row, result: result.rows });
         }
         await note({ kind: 'soak-owned-database-reconnect', database: owned.name, results, sharedPostgresServiceStopped: false });
+        assert(results.some(row => row.result.some(value => value.terminated === true)), 'No exact owned backend was disconnected');
         const disconnectedPids = new Set(selected.map(row => row.pid));
         const recovered = await until(async () => {
           const probe = await health(), current = await sessions();
