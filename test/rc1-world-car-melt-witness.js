@@ -8,19 +8,20 @@ import { createNpcCarAcquisitionCommitObserver } from '../tools/rc1-npc-car-acqu
 import { createNpcBoatAcquisitionCommitObserver } from '../tools/rc1-npc-boat-journal.js';
 import { createNpcMarketOrderCommitObserver, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
 import { createNpcFamilyCommitObserver, NPC_FORMATION_SQL } from '../tools/rc1-npc-family-provenance.js';
+import { createPlayerCarCommitObserver } from '../tools/rc1-player-car-provenance.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 
 const runner = fs.readFileSync(new URL('./rc1-native-world-workload.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
 const start = '// BEGIN source-bound car witness integration control.\n', end = '// END source-bound car witness integration control.';
 assert.equal(runner.split(start).length, 2); assert.equal(runner.split(end).length, 2);
 const block = runner.split(start)[1].split(end)[0];
-assert.equal(sha256(block), 'ea462892b6d7ea086871806902bcd60cd21bbe99dbf95cd3c84a366ff232f8d1', 'Runner witness block changed; review and rebind control');
+assert.equal(sha256(block), 'a4bd85cabaaa481a5025f333009bca7a97705f2ce96a347547a0c054a2d5fee1', 'Runner witness block changed; review and rebind control');
 assert.match(runner, /const seam = installWorkerInstrumentation\(controller, \{ namespace, queryOrder, commitObserver \}\);/);
 assert.match(runner, /assert\.deepEqual\(result\.carMeltWitnessObservation, replayRun\.result\.carMeltWitnessObservation/);
 const worker = fs.readFileSync(new URL('../tools/rc1-native-worker.js', import.meta.url), 'utf8');
 assert(worker.indexOf('const clock = serialDatabaseOptions({ commitObserver });') < worker.indexOf('if (queryOrder) pool = queryOrder.wrapPool(pool);'));
 
-const instantiate = new Function('env', `const {captureDuelSelection,npcBoatFault,observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
+const instantiate = new Function('env', `const {captureDuelSelection,npcBoatFault,observeResources,createNpcFamilyCommitObserver,createNpcCarAcquisitionCommitObserver,createNpcBoatAcquisitionCommitObserver,createNpcMarketOrderCommitObserver,createPlayerCarCommitObserver,economyMetrics,NPC_MARKET_SQL,seed,runtime,currentInvocation,at,allianceEnabled,
  snapshotWorldResources,diagnosticPool,reconcileWorldResources,worldResourceHash,proof,resourceSummary,resourceCost,
  resourceStream,carMeltWitnessSummary,carAcquisitionWitnessSummary,npcFamilyWitnessSummary,electionProbe,npcBoatWitnessSummary,npcMarketOrderWitnessSummary,canonicalJson,sha256,assert}=env;
  let priorResources=env.initial,firstResourceError=null,duelSelection=null,duelSelectionArtifact=null;
@@ -44,7 +45,8 @@ async function exercise({ enabled = true, carId = 'native-car', scope = 'car', f
       createNpcFamilyCommitObserver: options => { outerFactoryCalls++; return createNpcFamilyCommitObserver(options); },
       createNpcCarAcquisitionCommitObserver: options => { factoryCalls++; return createNpcCarAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
       createNpcBoatAcquisitionCommitObserver: options => { factoryCalls++; return createNpcBoatAcquisitionCommitObserver({ ...options, ...(overflow ? { maxQueries: 1 } : {}) }); },
-      createNpcMarketOrderCommitObserver, NPC_MARKET_SQL, npcMarketOrderWitnessSummary: { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 },
+      createNpcMarketOrderCommitObserver, createPlayerCarCommitObserver, economyMetrics: null,
+      NPC_MARKET_SQL, npcMarketOrderWitnessSummary: { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 },
       seed: 'synthetic-boat-control', runtime: { tape: [] }, npcBoatWitnessSummary: { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 },
       currentInvocation: { id: 'ordinary-call' }, at: 1000, allianceEnabled: false,
       electionProbe: { async boundary(event) { electionCalls++; return election ? { synthetic: true, selectionId: carId,
