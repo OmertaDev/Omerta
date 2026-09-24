@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { BACKLOG_REVIEW_TABLES, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
+import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
-import { LOAN, dayOf } from '../src/rules.js';
+import { LOAN, LAW, CASINO, dayOf } from '../src/rules.js';
 
 const DAY = 86400000, at = 1790208000000, sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 const configuration = { LIVING_WORLD_DIRECTOR: 'LIVE' }, digest = value => sha256(canonicalJson(value));
 const iso = value => new Date(value).toISOString();
 const empty = () => Object.fromEntries(BACKLOG_REVIEW_TABLES.map(table => [table, []]));
-const character = (id, extra = {}) => ({ id, alive: true, welsher: false, season: Math.floor(dayOf(at) / 28), ...extra });
+const character = (id, extra = {}) => ({ id, account_id: id, alive: true, welsher: false, indicted_at: null,
+  seeking_mentor: false, seeking_mentor_at: null, wire_until: null, season: Math.floor(dayOf(at) / 28), ...extra });
 const loan = (id, extra = {}) => ({ id, status: 'open', offered_at: iso(at), due_at: null, lender_character: 'lender',
   borrower_character: 'borrower', collateral_car: null, collateral_omr: '0', ...extra });
 function snapshot(rows, logicalAt = at) {
@@ -23,7 +24,7 @@ let cases = 0;
 function test(name, fn) { fn(); cases++; }
 
 test('complete empty lifecycle tables prove zero rows while missing evidence stays unknown', () => {
-  const result = review(); assert(result.inventory.every(row => row.count === 0)); assert.equal(result.inventory.length, 21);
+  const result = review(); assert(result.inventory.every(row => row.count === 0)); assert.equal(result.inventory.length, BACKLOG_CLASS_COUNT);
   assert.equal(result.liveState.orphanedOperations, null);
   assert(result.unknown.some(row => row.kind === 'canonical-invariant-evidence-missing'));
   const rows = empty(); delete rows.market_listings;
@@ -105,5 +106,70 @@ test('full snapshot hash and fixed logical clock cannot be substituted', () => {
   assert.throws(() => review(rows), /Invalid native timestamp/);
 });
 
-console.log(JSON.stringify({ status: 'PASS_SCOPED', controls: cases, classes: 21,
+test('Law grace is inclusive while ring action and idle deadlines are strict', () => {
+  const rows = empty(); rows.characters = [character('due', { indicted_at: iso(at - LAW.INDICT_GRACE_MS) }),
+    character('future', { indicted_at: iso(at - LAW.INDICT_GRACE_MS + 1) }), character('dead', { alive: false, indicted_at: iso(0) })];
+  rows.poker_tables = [{ id: 'action', street: 'flop', act_deadline: iso(at - 1), last_action_at: iso(at) },
+    { id: 'edge', street: 'flop', act_deadline: iso(at), last_action_at: iso(at) },
+    { id: 'idle', street: null, act_deadline: null, last_action_at: iso(at - CASINO.RING.IDLE_MS - 1) },
+    { id: 'idle-edge', street: null, act_deadline: null, last_action_at: iso(at - CASINO.RING.IDLE_MS) }];
+  const result = review(rows); assert.equal(count(result, 'law-indictment'), 1);
+  assert.equal(count(result, 'ring-action-deadline'), 1); assert.equal(count(result, 'ring-idle-close'), 1);
+});
+
+test('all booked event types settle while expired offensive and future strike remain disjoint', () => {
+  const rows = empty();
+  for (const table of ['boxing_bouts', 'poker_tournaments', 'futurities', 'grand_prix', 'stakes_races'])
+    rows[table] = [{ id: 'due', status: table === 'boxing_bouts' ? 'booked' : 'open', resolves_at: iso(at) },
+      { id: 'done', status: 'resolved', resolves_at: iso(at - 1) }];
+  rows.npc_aggression = [{ npc_gang: 'expired', ends_at: iso(at), next_strike_at: iso(at - 1) },
+    { npc_gang: 'strike', ends_at: iso(at + 1), next_strike_at: iso(at) }, { npc_gang: 'future', ends_at: iso(at + 10), next_strike_at: iso(at + 1) }];
+  rows.family_aggro = [{ gang_id: 'g', scheduled_at: iso(at), target_character: 'missing' }];
+  const result = review(rows);
+  for (const id of ['boxing-card', 'poker-tournament', 'track-futurity', 'grand-prix', 'stakes-race', 'npc-offensive-expiry', 'npc-offensive-strike', 'family-retaliation'])
+    assert.equal(count(result, id), 1, id);
+});
+
+test('backed stipends use canonical rounding and linked payment joins do not consume an unlinked payment', () => {
+  const rows = empty(); rows.account_persistent = [{ account_id: 'a', wallet_address: '0xAbC', pass_owed: '1', ref_paid: false, ref_l2_paid: false, agent_flag: false, referred_by: null }];
+  rows.vig_prize_pool = [{ id: 1, balance: '0.0000001' }];
+  rows.fee_payments = [{ nonce: 1, payer_address: '0xabc', credited: false }, { nonce: 2, payer_address: '0xdef', credited: false }];
+  rows.store_payments = [{ nonce: 1, payer_address: '0xABC', granted: false }, { nonce: 2, payer_address: '0xabc', granted: true }];
+  assert.equal(count(review(rows), 'funded-pass-stipend'), 0); rows.vig_prize_pool[0].balance = '0.000001';
+  const result = review(rows); assert.equal(count(result, 'funded-pass-stipend'), 1);
+  assert.equal(count(result, 'linked-fee-credit'), 1); assert.equal(count(result, 'linked-store-grant'), 1);
+});
+
+test('the complete qualified referral inventory exceeds the original batch limit without including ineligible grandparents', () => {
+  const rows = empty(), acct = (account_id, extra = {}) => ({ account_id, wallet_address: null, pass_owed: '0',
+    ref_paid: true, ref_l2_paid: false, agent_flag: false, referred_by: null, ...extra });
+  rows.account_persistent = [acct('grand'), acct('parent', { referred_by: 'grand' }),
+    ...Array.from({ length: 1002 }, (_, i) => acct('child-' + i, { referred_by: 'parent' }))];
+  rows.characters = [character('grand')];
+  assert.equal(count(review(rows), 'grand-referral-credit'), 1002);
+  rows.characters[0].alive = false; assert.equal(count(review(rows), 'grand-referral-credit'), 0);
+});
+
+test('conditional queues are inapplicable only when empty and keep present unsupported authority unknown', () => {
+  const first = review(); assert.equal(first.inventory.find(row => row.id === 'nft-reimport-pending').status, 'NOT_APPLICABLE');
+  const rows = empty(); rows.nft_reimports = [{ id: 'pending', status: 'pending' }];
+  rows.primetime_rally = [{ day: dayOf(at) - 20, character_id: 'old', settled: false }];
+  rows.vouchers = [{ id: 'signed', status: 'signed', claimed_onchain: false, deadline: at / 1000 - 4000, kind: 'omr' }];
+  const result = review(rows);
+  for (const id of ['nft-reimport-pending', 'prime-time-unsettled', 'voucher-chain-reclaim']) {
+    const entry = result.inventory.find(row => row.id === id); assert.equal(entry.status, 'UNKNOWN'); assert.equal(entry.count, null);
+    assert.equal(entry.candidateIds.length, 1); assert(result.unknown.some(row => row.id === id));
+  }
+  assert.equal(compareWorldBacklogWindows([first, review(empty(), { logicalAt: at + DAY })]).comparisons[0].rows.find(row => row.id === 'nft-reimport-pending').status, 'NO_COUNT_GROWTH');
+  assert.throws(() => review(rows, { configuration: { ...configuration, VOUCHER_RECLAIM_GRACE_SEC: 'NaN' } }), /Invalid declared voucher/);
+});
+
+test('every original worker safe job has an explicit source-bound queue or separate disposition', () => {
+  const result = review(); assert.deepEqual(result.jobCoverage.unmapped, []);
+  assert(result.jobCoverage.originalSafeJobLabels > 100); assert(result.jobCoverage.inventoriedJobLabels.includes('law sweep'));
+  assert.equal(result.jobCoverage.dispositions.find(row => row.workerLabel === 'fee sync').category, 'external-delivery-or-provider-keeper');
+  assert(result.jobCoverage.dispositions.every(row => row.status === 'NOT_APPLICABLE_TO_ROW_DRAINER_INVENTORY'));
+});
+
+console.log(JSON.stringify({ status: 'PASS_SCOPED', controls: cases, classes: BACKLOG_CLASS_COUNT,
   scope: 'Source-bound due-row inventory, canonical skip guards, retained snapshot/clock bindings, UNKNOWN handling and exact successive-window comparisons; no new native run or matrix qualification' }));
