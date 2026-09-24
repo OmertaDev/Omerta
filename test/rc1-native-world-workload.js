@@ -415,7 +415,7 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         journal.restrictedChangesArtifact = artifact;
       }
       await npcBoatFault.classified(event, journal);
-      if (economyMetrics) await proof.record({ kind: 'economy-commit-boundary', sequence: event.sequence,
+      if (economyMetrics) await proof.record({ kind: 'economy-commit-boundary', boundarySequence: event.sequence,
         ...economyMetrics.observe({ event, journal, before, after }) });
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
       const serializedJournal = canonicalJson({ event, journal });
