@@ -1,7 +1,7 @@
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
-import { levelOf, M3, MADE, STAKE_LOCKS } from '../src/rules.js';
+import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
@@ -32,7 +32,7 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 1, reviewedRevisio
   rules: {
     checkin: 'src/game.js checkinQuoteOf/checkin, withCharacter; src/server.js POST /v1/checkin: living own character; one claim per UTC day; no jail, nerve, item or Family gate. First/lapsed streak>=1 and level>=1 imply pay>=350 even across season resets. Accrual and original workers remain canonical; no guaranteed survival under another actor attack is asserted.',
     ammunition: 'src/economy.js buyAmmo:2000 cash for50 ammo; no additional level, jail or inventory gate. An immediately funded purchase or one sufficient canonical check-in is proved here. Multi-day accumulation must additionally dispose unavoidable intervening losses; a faucet alone does not prove every resource threshold, and OMR is not unlimited.',
-    family: 'src/social/gangs.js joinGang/createGang/leaveGang: current membership has a release-only exit; otherwise an existing non-NPC Family below20 is joinable without level or cash. Formation requires level5,25000 cash and an unused valid name/tag. Cash alone does not prove future level5 after a season reset.',
+    family: 'src/social/gangs.js joinGang/createGang/leaveGang: current membership has a release-only exit; otherwise an existing Family below20 is joinable without level or cash, including NPC Families as the public server roster explicitly documents. Formation requires level5,25000 cash and an unused valid name/tag. Cash alone does not prove future level5 after a season reset.',
     operations: 'Crew opener may cancel forming/active operations despite participant death/exit. Family cancel/expire recovery skips changed-definition requirements; expiry is a COMMAND, not an expiry worker. Active account, enabled/cohort gate, canRead, bounded role/depositor union and revision<2147483647 still apply. Do not infer these from an expiry timestamp alone.',
     knowledge: 'Current authorized paginated claims establish distribution only. Every applicable acquisition/propagation requirement must join its canonical requirement/claim proof and current principals; grant rows, tokens, public availability and empty searches do not prove future reachability.',
   },
@@ -95,7 +95,7 @@ export function canonicalRecoveryWitnesses({ source, checkpoint, snapshot, roste
     const progress = ch && cashPath({ ...ch, cash: 0 }, 1);
     emit('actor:' + accountId, 'actors', 'meaningful-action-or-legal-wait', progress || { status: 'UNKNOWN', reason: 'No active living original character/check-in guards; entry/heir path needs its own canonical proof' });
     const own = ch && memberships.find(row => row.character_id === ch.id), family = own && families.find(row => row.id === own.gang_id);
-    const vacancy = families.find(row => !row.npc_flag && memberships.filter(member => member.gang_id === row.id).length < M3.GANG_MAX_MEMBERS);
+    const vacancy = families.find(row => memberships.filter(member => member.gang_id === row.id).length < M3.GANG_MAX_MEMBERS);
     let access = { status: 'UNKNOWN', reason: 'No current membership or public vacancy; formation/progression requires a specific canonical path' };
     if (ch && family) access = { status: 'REACHABLE', familyId: family.id, canonicalActions: [{ path: '/v1/gangs/leave' }], reason: 'Current Family access and legal release-only exit' };
     else if (ch && !own && vacancy) access = { status: 'REACHABLE', familyId: vacancy.id, canonicalActions: [{ path: '/v1/gangs/' + vacancy.id + '/join' }] };
@@ -183,6 +183,7 @@ export function joinWorldCheckpointAssertions({ manifest, source, checkpoint, di
 export const WORLD_DURATION_CANDIDATES = Object.freeze([
   { id: 'season', durationMs: 28 * DAY, source: 'src/worker.js runSeasonRollover / rules seasonIdxOf', applicability: 'Local world population; count distinct world seasons, never one rollover per actor' },
   { id: 'made-membership', durationMs: MADE.MS, source: 'src/rules.tail.js MADE/isMade', applicability: 'Review configured paid/status rail and workload; an empty balance alone is not a disabled-rail attestation' },
+  { id: 'broker-activation', durationMs: BROKERS.ACTIVATION_MS, source: 'src/rules.tail.js BROKERS/brokerActive', applicability: 'Review original paid activation writer and workload command closure; an uninvoked local route is not a disabled route' },
   ...STAKE_LOCKS.TIERS.map(tier => ({ id: 'stake-lock-' + tier.id, durationMs: tier.days * DAY,
     source: 'src/rules.tail.js STAKE_LOCKS/stakeLockActive', applicability: 'Review configured stake rail and workload; expiry predicate is not an automatic unbond or withdrawal' })),
 ]);

@@ -29,15 +29,16 @@ assert.equal(byId('family:a').status, 'UNKNOWN'); assert.equal(byId('omr-prerequ
 assert.equal(first.matrixQualifying, false);
 const altered = clone(input); altered.snapshot.tables.characters[0] += ' '; assert.throws(() => canonicalRecoveryWitnesses(altered));
 
-for (const kind of ['vacancy', 'member', 'formation', 'characterless']) {
+for (const kind of ['vacancy', 'npc-vacancy', 'member', 'formation', 'characterless']) {
   const rows = clone(data);
-  if (kind === 'vacancy' || kind === 'member') rows.gangs.push({ id: 'g', npc_flag: false, name: 'Existing', tag: 'EX' });
+  if (['vacancy', 'npc-vacancy', 'member'].includes(kind)) rows.gangs.push({ id: 'g', npc_flag: kind === 'npc-vacancy', name: 'Existing', tag: 'EX' });
   if (kind === 'member') rows.gang_members.push({ character_id: 'c', gang_id: 'g' });
   if (kind === 'formation') { rows.characters[0].cash = 25000; rows.characters[0].respect = 160; }
   if (kind === 'characterless') rows.characters[0].alive = false;
   const witnesses = canonicalRecoveryWitnesses(fixture(rows)).witnesses, family = witnesses.find(row => row.scope === 'family');
   assert.equal(family.status, kind === 'characterless' ? 'UNKNOWN' : 'REACHABLE');
   if (kind === 'member') assert.equal(family.canonicalActions[0].path, '/v1/gangs/leave');
+  if (kind === 'npc-vacancy') assert.equal(family.canonicalActions[0].path, '/v1/gangs/g/join');
   if (kind === 'formation') assert.equal(family.canonicalActions[0].path, '/v1/gangs');
   if (kind === 'formation') assert.equal(witnesses.find(row => row.id === 'ammo-prerequisite').canonicalActions.at(-1).path, '/v1/armory/ammo');
 }
