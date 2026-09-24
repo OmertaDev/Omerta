@@ -86,6 +86,73 @@ test('new supply and conversion are not automatically player rewards', () => {
   assert.equal(resource(metrics, 'cash').reward.allObservedRecipientsTotal, '0');
 });
 
+function npcEntryFixture(seedDelta) {
+  const state = initial(), cash = exactSum(['500', seedDelta]);
+  const receipts = seedDelta === '0' ? [] : [receipt('new-seed', 'new-npc', seedDelta, 'npc:seed')];
+  const value = boundary(state, { receipts, change: tables => {
+    tables.characters.push({ id: 'c-new-npc', account_id: 'new-npc', is_npc: true, alive: true, cash, npc_seed: cash, bank: '0', ammo: '25', cb: '0' });
+    tables.account_persistent.push({ account_id: 'new-npc', npc_flag: true, omr: '0', staked: '0', unbonding: '0', prestige: '0', season_crowns: '0' });
+  }, sections: { checks: [['cash', cash], ['ammo', '25'], ['cb', '0']].map(([currency, after]) => ({
+    kind: 'receipt-parity', resource: currency, owner: 'character:c-new-npc', before: '0', after, expectedDelta: after, drift: '0',
+    authority: [...(currency === 'cash' ? receipts.map(row => ({ table: 'transactions', id: row.id })) : []),
+      { rule: 'Canonical character defaults: cash500/ammo25/cb0' }],
+  })) } });
+  value.event.context.authority = 'original-worker'; return value;
+}
+
+test('native NPC defaults and signed seed adjustments are disjoint authored supply components', () => {
+  for (const delta of ['9009', '-39', '0']) {
+    const request = npcEntryFixture(delta), metrics = engine(request.before);
+    request.journal.checks.push({ kind: 'personal-and-owned-ammo-escrow', owner: 'character-and-ammo-escrow:c-new-npc', resource: 'ammo', before: '0', after: '25' });
+    const result = metrics.observe(request); assert.equal(result.missingCoverage.length, 0);
+    assert.equal(resource(metrics, 'cash').flows.created, delta === '9009' ? '9509' : '500');
+    assert.equal(resource(metrics, 'cash').flows.destroyed, delta === '-39' ? '39' : '0');
+    assert.equal(resource(metrics, 'ammo').flows.created, '25'); assert.equal(resource(metrics, 'cb').flows.created, '0');
+    assert.equal(resource(metrics, 'cash').reward.total, '0'); assert(result.flows.every(row => !row.reward));
+    assert.equal(result.flows.filter(row => row.category === 'npc-character-defaults').length, 2);
+    assert.equal(metrics.observe(request).duplicate, true); assert.equal(resource(metrics, 'ammo').flows.created, '25');
+  }
+  for (const edit of [
+    value => { value.journal.checks[0].drift = '1'; }, value => { value.journal.checks[0].authority[0].id = 'other'; },
+    value => { value.journal.checks.push(value.journal.checks[1]); },
+    value => { value.after.tables.characters.at(-1).npc_seed = '500'; },
+    value => { value.after.tables.account_persistent.at(-1).npc_flag = false; },
+  ]) {
+    const value = npcEntryFixture('-39'); edit(value);
+    assert.throws(() => classifyEconomyBoundary(value), assert.AssertionError);
+  }
+  for (const edit of [value => { value.journal.checks = []; }, value => { value.event.context.authority = 'unproven'; },
+    value => { value.after.tables.characters.at(-1).is_npc = false; }]) {
+    const value = npcEntryFixture('-39'); edit(value); const result = classifyEconomyBoundary(value);
+    assert.equal(result.flows.length, 0); assert.equal(result.missingCoverage.length, 2);
+  }
+});
+
+test('new loan principal is exact same-owner custody with a unique new escrow endpoint', () => {
+  const state = initial(); state.tables.characters[0].cash = '10000'; state.tables.loans = [];
+  const loan = { id: 'offer', lender_character: 'c-a', borrower_character: null, principal: '5000', status: 'open' };
+  const request = boundary(state, { receipts: [receipt('offer-cash', 'a', '-5000', 'loan:offer')],
+    change: tables => { tables.characters[0].cash = '5000'; tables.loans.push(loan); },
+    sections: { checks: [{ kind: 'receipt-parity', resource: 'cash', owner: 'open-loan-escrow', before: '0', after: '5000', expectedDelta: '5000', drift: '0',
+      authority: [{ table: 'transactions', id: 'offer-cash' }] }] } });
+  const metrics = engine(state), result = metrics.observe(request); assert.equal(result.missingCoverage.length, 0);
+  assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '0', transferred: '0', custody: '5000' });
+  assert.equal(resource(metrics, 'cash').reward.total, '0'); assert.equal(result.flows.length, 1);
+  assert.deepEqual(result.flows[0].custody, { from: 'character:c-a:cash', to: 'loan:offer:principal' });
+  assert.deepEqual(result.flows[0].receiptIds, ['offer-cash']); assert.equal(metrics.observe(request).duplicate, true);
+  for (const edit of [value => { value.journal.checks[0].drift = '1'; }, value => { value.journal.checks[0].after = '5001'; },
+    value => { value.journal.checks[0].authority = []; }, value => { value.after.tables.characters[0].account_id = 'b'; }]) {
+    const value = structuredClone(request); edit(value); assert.throws(() => classifyEconomyBoundary(value), assert.AssertionError);
+  }
+  for (const edit of [value => { value.after.tables.loans[0].lender_character = 'c-b'; },
+    value => { value.after.tables.loans[0].principal = '4999'; }, value => { value.before.tables.loans.push(value.after.tables.loans[0]); },
+    value => { value.after.tables.loans.push({ ...value.after.tables.loans[0], id: 'ambiguous' }); },
+    value => { value.after.tables.loans[0].status = 'active'; }, value => { value.journal.checks = []; }]) {
+    const value = structuredClone(request); edit(value); const result = classifyEconomyBoundary(value);
+    assert.equal(result.flows.length, 0); assert.equal(result.missingCoverage.length, 1);
+  }
+});
+
 test('family progress references do not consume or duplicate a crime reward', () => {
   const state = initial(), metrics = engine(state), request = boundary(state, { receipts: [receipt('crime', 'a', '100', 'crime:pick')],
     sections: { workerTransitions: { movements: [{ kind: 'family-crime-progress', familyId: 'g', economicGrant: false, receiptIds: ['crime'] }] } } });

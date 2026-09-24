@@ -142,6 +142,30 @@ export function classifyEconomyBoundary({ journal, before, after }) {
   assert.deepEqual(sorted(journal.itemEvents || []), sorted(events), 'Journal must contain exactly fresh committed item events');
   const receipts = new Map(fresh.map(row => [String(row.id), row])), used = new Set(), usedCars = new Set(), flows = [], missing = [];
   const people = new Map([...rows(before, 'characters'), ...rows(after, 'characters')].map(row => [row.id, row]));
+  const priorPeople = new Map(rows(before, 'characters').map(row => [row.id, row])), entryDefaults = new Set();
+  const entryRule = 'Canonical character defaults: cash500/ammo25/cb0';
+  for (const character of rows(after, 'characters')) {
+    if (priorPeople.has(character.id) || character.is_npc !== true || character.alive !== true
+      || journal.identity?.context?.authority !== 'original-worker' || journal.identity.outcome !== 'COMMITTED') continue;
+    const defaults = (journal.checks || []).filter(check => check.kind === 'receipt-parity' && check.owner === `character:${character.id}`
+      && check.authority?.some(entry => entry.rule === entryRule));
+    if (!defaults.length) continue;
+    const personal = fresh.filter(receipt => receipt.character_id === character.id);
+    if (personal.length > 1 || personal.some(receipt => receipt.reason !== 'npc:seed' || receipt.currency !== 'cash'
+      || receipt.account_id !== null || receipt.counterparty !== null)) continue;
+    assert(!rows(before, 'account_persistent').some(row => row.account_id === character.account_id), 'NPC default owner already existed');
+    assert(rows(after, 'account_persistent').some(row => row.account_id === character.account_id && row.npc_flag === true), 'NPC default account flag missing');
+    const seeded = exactSum(['500', ...personal.map(receipt => receipt.amount)]);
+    assert.equal(quantity(character.cash), seeded); assert.equal(quantity(character.npc_seed), seeded);
+    assert.equal(quantity(character.bank), '0'); assert.equal(quantity(character.ammo), '25'); assert.equal(quantity(character.cb), '0');
+    for (const [currency, final, base] of [['cash', seeded, '500'], ['ammo', '25', '25'], ['cb', '0', '0']]) {
+      const checks = defaults.filter(check => check.resource === currency); assert.equal(checks.length, 1, 'NPC defaults need one authoritative parity check per resource');
+      const check = checks[0], matched = personal.filter(receipt => receipt.currency === currency);
+      assert.deepEqual([quantity(check.before), quantity(check.after), quantity(check.expectedDelta), quantity(check.drift)], ['0', final, exactSum([base, ...matched.map(receipt => receipt.amount)]), '0']);
+      assert.deepEqual(check.authority.filter(entry => entry.table === 'transactions').map(entry => String(entry.id)).sort(), matched.map(receipt => String(receipt.id)).sort());
+    }
+    entryDefaults.add(character.id);
+  }
   const person = id => { assert(people.has(id), `Unknown movement character ${id}`); return `account:${people.get(id).account_id}`; };
   const family = id => `family:${id}`;
   const referenceIds = movement => [...new Set([...(movement.receiptIds || []), ...(movement.receiptId != null ? [movement.receiptId] : []),
@@ -154,7 +178,8 @@ export function classifyEconomyBoundary({ journal, before, after }) {
     if (amount === '0') return;
     assert(['created', 'destroyed', 'transferred', 'custody'].includes(type));
     if (type === 'transferred' && from === to) type = 'custody';
-    flows.push({ resource, type, amount, from, to, category, receiptIds: ids, ...(reward ? { reward } : {}) });
+    const measured = { resource, type, amount, from, to, category, receiptIds: ids, ...(reward ? { reward } : {}) };
+    flows.push(measured); return measured;
   }
   function movement(group, m) {
     const ids = referenceIds(m), kind = m.kind || (group === 'seasonCrowns' ? 'season-crown' : null), pending = [];
@@ -298,8 +323,28 @@ export function classifyEconomyBoundary({ journal, before, after }) {
       assert.equal(candidates.length, 1, 'Campaign award must match one fresh canonical claim/quote'); category = 'campaign';
     }
     if (category && positive(amount) && owner) { claim([id]); flow(currency, 'created', amount, null, owner, reason, [id], earned(category)); continue; }
-    if (reason === 'npc:seed' && currency === 'cash' && positive(amount) && people.get(receipt.character_id)?.is_npc) {
-      claim([id]); flow(currency, 'created', amount, null, owner, reason, [id]); continue;
+    if (reason === 'npc:seed' && currency === 'cash' && people.get(receipt.character_id)?.is_npc) {
+      if (positive(amount)) { claim([id]); flow(currency, 'created', amount, null, owner, reason, [id]); continue; }
+      if (entryDefaults.has(receipt.character_id) && positive(negate(amount))) {
+        claim([id]); flow(currency, 'destroyed', negate(amount), owner, null, reason, [id]); continue;
+      }
+    }
+    if (reason === 'loan:offer' && currency === 'cash' && positive(negate(amount)) && owner
+      && receipt.account_id === null && receipt.counterparty === null && Array.isArray(before.tables.loans) && Array.isArray(after.tables.loans)) {
+      const oldLoans = new Set(before.tables.loans.map(row => row.id));
+      const candidates = after.tables.loans.filter(row => !oldLoans.has(row.id) && row.status === 'open' && row.borrower_character === null
+        && row.lender_character === receipt.character_id && quantity(row.principal) === negate(amount));
+      const offers = fresh.filter(row => row.reason === reason && row.currency === currency && row.character_id === receipt.character_id && quantity(row.amount) === amount);
+      const checks = (journal.checks || []).filter(check => check.kind === 'receipt-parity' && check.resource === 'cash' && check.owner === 'open-loan-escrow');
+      if (candidates.length === 1 && offers.length === 1 && checks.length === 1) {
+        const check = checks[0], held = state => exactSum(state.tables.loans.filter(row => row.status === 'open').map(row => row.principal));
+        assert.equal(quantity(check.before), held(before)); assert.equal(quantity(check.after), held(after));
+        assert.equal(quantity(check.expectedDelta), exactSum([held(after), negate(held(before))])); assert.equal(quantity(check.drift), '0');
+        assert(check.authority.some(entry => entry.table === 'transactions' && String(entry.id) === id), 'Loan escrow check lost its offer receipt');
+        const lender = priorPeople.get(receipt.character_id); assert(lender?.alive && people.get(receipt.character_id).alive && lender.account_id === people.get(receipt.character_id).account_id, 'Loan lender ownership changed');
+        claim([id]); const measured = flow(currency, 'custody', negate(amount), owner, owner, reason, [id]);
+        measured.custody = { from: `character:${receipt.character_id}:cash`, to: `loan:${candidates[0].id}:principal` }; continue;
+      }
     }
     // Exact authored consumptions, never rewards. Other reasons remain visible.
     if ((currency === 'ammo' && ['fire', 'jump'].includes(reason) || currency === 'cash' && ['death:estate', 'travel'].includes(reason))
@@ -312,9 +357,15 @@ export function classifyEconomyBoundary({ journal, before, after }) {
   for (const event of events) missing.push({ kind: 'item-mutation-flow', eventId: event.id, eventKind: event.event_kind,
     resource: event.item_id ? resourceId('item', event.template_id) : resourceId('stack', event.template_id, event.quality),
     hook: 'Observer must bind mutation input/output and event IDs to one created/destroyed/transfer/custody movement; paired stack events alone are ambiguous.' });
-  const priorCharacters = new Set(rows(before, 'characters').map(row => row.id));
-  for (const character of rows(after, 'characters')) if (!priorCharacters.has(character.id)) missing.push({ kind: 'character-entry-stock',
-    characterId: character.id, hook: 'Bind unledgered starting cash/ammo to canonical entry separately from any NPC seed receipt.' });
+  for (const character of rows(after, 'characters')) if (!priorPeople.has(character.id)) {
+    if (entryDefaults.has(character.id)) {
+      // The ledger records only the adjustment to the authored base. Count each
+      // base once, independently of redundant personal/escrow parity equations.
+      flow('cash', 'created', '500', null, person(character.id), 'npc-character-defaults', []);
+      flow('ammo', 'created', '25', null, person(character.id), 'npc-character-defaults', []);
+    } else missing.push({ kind: 'character-entry-stock', characterId: character.id,
+      hook: 'Bind unledgered starting cash/ammo to canonical entry separately from any NPC seed receipt.' });
+  }
   if (journal.omrBuckets?.movements?.length && !flows.some(flow => flow.resource === 'omr')) missing.push({ kind: 'omr-bucket-flow', resource: 'omr',
     bucketChanges: journal.omrBuckets.movements.length,
     hook: 'Supply exact source/destination bucket movement and receipt/provenance IDs. Signed net bucket changes cannot recover gross transfers or rewards.' });
