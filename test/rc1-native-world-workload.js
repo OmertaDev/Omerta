@@ -30,6 +30,7 @@ import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT, ALLIANCE_CONTINUOU
 import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
+import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -50,7 +51,7 @@ const guardLimits = guardArguments[0] === undefined ? null : {
 };
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
-assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn'].includes(actorPolicy));
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const continuousAlliance = allianceEnabled && (population !== 25 || ![24, 48].includes(hours) || process.argv.includes('--continuous-alliance'));
 const legacyAlliance = allianceEnabled && !continuousAlliance;
@@ -58,12 +59,13 @@ const allianceMode = continuousAlliance ? 'continuous' : 'legacy';
 const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'mostly_veteran_players';
 const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
 const churnEnabled = actorPolicy === 'high_player_churn';
-const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled || churnEnabled;
+const lawEnabled = actorPolicy === 'law_pressure';
+const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled || churnEnabled || lawEnabled;
 if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
   assert(!argument('resume'), 'Fault workload does not support continuation');
 }
-const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
 if (legacyAlliance) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
@@ -239,6 +241,15 @@ if (churnEnabled) Object.assign(configuration, {
     information: 'Authorized PlayerCommands, own character, public crimes and recorded actual activity', observerFeedback: 'No diagnostic rows feed policy choices' },
   entry: 'Every initial/replacement actor uses ordinary guest and character HTTP; no progression or resource fixtures.',
   authority: 'Original guest/session entry, PlayerCommand dispatcher and canonical crimes; no external authentication-provider qualification.',
+});
+if (lawEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, lawContract: LAW_WORLD_CONTRACT,
+  policyScope: 'A seeded10% pressure cohort (rounded up, at least3) follows consecutive original five-minute Law windows. All declared actors retain daily ordinary sessions. Heat, indictment, loss and recovery use public canonical choices only.',
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: LAW_WORLD_CONTRACT.inputs, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: 'Ordinary guest/character HTTP; no progression or resource fixtures.',
+  authority: 'Authenticated Law HTTP, original PlayerCommands and canonical crimes; no external provider qualification.',
 });
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
@@ -420,6 +431,7 @@ const knowledgeBoundaries = [];
 const allianceActors = [];
 const familyActors = []; let familyAdapter = null;
 const churnActors = [], churnWeeklyActive = new Set(); let churnPolicy = null;
+const lawActors = []; let lawAdapter = null;
 const cohortActors = [], cohortPolicies = new Map();
 let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
 let allianceAdapter = null, app = null;
@@ -449,6 +461,11 @@ if (resume) {
     for (const accountId of parentPolicy.churnWeeklyActive) churnWeeklyActive.add(accountId);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
   }
+  if (lawEnabled) {
+    lawActors.push(...structuredClone(parentPolicy.lawActors)); roster.push(...parentPolicy.roster);
+    lawAdapter = createLawWorldAdapter(parentPolicy.law.payload.state.configuration).restore(parentPolicy.law);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
   assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
   for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
@@ -464,6 +481,8 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  ...(lawEnabled ? { lawActors, law: lawAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(churnEnabled ? { churnActors, churn: churnPolicy?.checkpoint() || null, churnWeeklyActive: [...churnWeeklyActive].sort(),
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(familyEnabled ? { familyActors, familyAdapter: familyAdapter?.checkpoint() || null,
@@ -616,6 +635,23 @@ try {
     churnPolicy = createChurnPolicy({ seed, epochAt: epoch,
       initialRoster: churnActors.map(({ accountId, characterId, sessionRef }) => ({ accountId, characterId, sessionRef })) });
     await proof.artifact('churn-initialization.json', { actors: churnActors, policy: churnPolicy.checkpoint(), directFixtures: 0 });
+  }
+  if (lawEnabled && !resume) {
+    for (let index = 0; index < population; index++) {
+      const name = 'World Law Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact('law-entry-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      await proof.artifact('law-entry-session-' + index + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'law-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      lawActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+    }
+    const activeAccountIds = [...roster].sort((a, b) => actorValueHash([seed, a]).localeCompare(actorValueHash([seed, b])))
+      .slice(0, Math.max(3, Math.ceil(population / 10)));
+    lawAdapter = createLawWorldAdapter({ seed, epoch, roster: lawActors, activeAccountIds });
+    await proof.artifact('law-initialization.json', { actors: lawActors, activeAccountIds, directFixtures: 0 });
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -964,6 +1000,25 @@ try {
     await invariantBoundary('churn-week-' + day / 7);
     await proof.artifact('churn-week-' + day / 7 + '.json', { summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
   }
+  async function lawWindow(logicalAt) {
+    let window;
+    do {
+      window = await lawAdapter.runWindow(logicalAt, {
+        read: async (accountId, path) => {
+          const response = await http(lawActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+          assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+        },
+        execute: async (accountId, request) => {
+          const response = await http(lawActors.find(actor => actor.accountId === accountId), request);
+          await invariantBoundary('law:' + request.idempotencyKey);
+          if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+          return response;
+        },
+        record: event => actors.observe(event.kind, { logicalAt, accountId: event.accountId || null }, event),
+      });
+      assert(!window.blocked && !window.paused, 'Law window lacks a resolved canonical outcome');
+    } while (!window.complete);
+  }
   const startupBefore = allianceEnabled ? await proof.snapshot(pool, 'before-original-worker-startup') : null;
   workPhase = 'worker-startup';
   const workerStartup = () => bootOriginalWorker(controller, { beforeCallbacks: async () => {
@@ -987,9 +1042,11 @@ try {
     await proof.artifact('alliance-startup-lineage.json', startupLineage);
   }
   workPhase = 'measured';
+  if (lawEnabled && !resume) await lawWindow(at);
   if (allianceEnabled) { if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1); }
   const afterBoundary = async (logicalAt, label) => {
     guardrails?.time(`after:${label}:${logicalAt}`);
+    if (lawEnabled && label === 'health-boundary') await lawWindow(logicalAt);
     if (label !== 'guardedTick') return;
     await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     const day = Math.floor((logicalAt - epoch) / 86400000);
@@ -1000,9 +1057,9 @@ try {
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     if (churnEnabled) await churnWeek(day);
     lastDay = day;
-    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : 'quiet-roster', { day, logicalAt }, roster,
-      () => churnEnabled ? churnPolicy.roster().current : cohortEnabled || familyEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
-    assert.equal(selected.length, cohortEnabled || familyEnabled || churnEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : 'quiet-roster', { day, logicalAt }, roster,
+      () => churnEnabled ? churnPolicy.roster().current : cohortEnabled || familyEnabled || lawEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
     assert(selected.every((account) => roster.includes(account)));
     if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
       read: async (accountId, path) => {
@@ -1022,10 +1079,11 @@ try {
       checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
     });
     for (const account of selected) await session(account, day);
-    await invariantBoundary(`${cohortEnabled || familyEnabled || churnEnabled ? actorPolicy : 'quiet'}-day:${day}`);
+    await invariantBoundary(`${cohortEnabled || familyEnabled || churnEnabled || lawEnabled ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
+    if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
     const daily = await proof.snapshot(pool, `day-${day}`);
     await knowledgeBoundary(`day-${day}`, daily);
     await proof.artifact(`world-diagnostics-day-${day}.json`, await collectWorldDiagnostics(diagnosticPool,
@@ -1034,7 +1092,7 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   };
-  if ((cohortEnabled || familyEnabled || churnEnabled) && !resume) await afterBoundary(at, 'guardedTick');
+  if ((cohortEnabled || familyEnabled || churnEnabled || lawEnabled) && !resume) await afterBoundary(at, 'guardedTick');
   if (legacyAlliance && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
@@ -1117,17 +1175,23 @@ try {
     assert.equal(responseCompletions.size, 0); assert.equal(churnPolicy.summary().pendingEnrollments, 0);
     await proof.artifact('churn-final.json', { contract: CHURN_POLICY_CONTRACT, summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
   }
+  if (lawEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(lawAdapter.summary().unresolvedResponses, 0);
+    assert.equal(lawAdapter.cursor().nextWindowAt, finish + LAW_WORLD_CONTRACT.windowMilliseconds);
+    await proof.artifact('law-final.json', { contract: LAW_WORLD_CONTRACT, summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
+  }
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
-      + (allianceEnabled || familyEnabled ? ' plus fresh completed social HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
+      + (allianceEnabled || familyEnabled || lawEnabled ? ' plus fresh completed social/Law HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
     ...(allianceEnabled ? { alliance: allianceAdapter.summary() } : {}),
     ...(familyEnabled ? { family: familyAdapter.summary() } : {}),
     ...(churnEnabled ? { churn: churnPolicy.summary() } : {}),
+    ...(lawEnabled ? { law: lawAdapter.summary() } : {}),
     ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
       warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
     timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
