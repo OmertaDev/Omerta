@@ -73,6 +73,31 @@ corrupt(jump, 'jump-duplicate-reciprocal', (_, b) => { b.tables.transactions.pus
 corrupt(jump, 'jump-bank-diversion', (_, b) => { b.tables.characters[0].cash = '1000'; b.tables.characters[0].bank = '600'; });
 corrupt(jump, 'jump-correct-ledger-wrong-pocket', (_, b) => { b.tables.characters[0].cash = '1101'; });
 
+const cbBefore = initial(); cbBefore.tables.characters[1].cb = 7;
+const cbAfter = structuredClone(cbBefore); cbAfter.tables.characters[0].cb = 3; cbAfter.tables.characters[1].cb = 4;
+cbAfter.tables.transactions = [receipt('cb-credit', 'boss', '3', 'jump:steal', 'one'), receipt('cb-debit', 'one', '-3', 'jump:stolen', 'boss')]
+  .map(row => ({ ...row, currency: 'cb' }));
+const cbJump = run('jump-contraband-transfer', cbBefore, cbAfter, '/v1/streets/one/jump', 1, 'lifecycleCash');
+corrupt(cbJump, 'cb-jump-missing-credit', (_, b) => { b.tables.transactions.shift(); });
+corrupt(cbJump, 'cb-jump-wrong-counterparty', (_, b) => { b.tables.transactions[1].counterparty = 'two'; });
+corrupt(cbJump, 'cb-jump-wrong-pocket', (_, b) => { b.tables.characters[0].cb = 2; });
+corrupt(cbJump, 'cb-jump-over-three', (_, b) => { b.tables.characters[0].cb = 4; b.tables.characters[1].cb = 3; b.tables.transactions[0].amount = '4'; b.tables.transactions[1].amount = '-4'; });
+const mixedJump = structuredClone(cbAfter); mixedJump.tables.characters[0].cash = '1100'; mixedJump.tables.characters[1].cash = '900';
+mixedJump.tables.transactions.push(...stolenAfter.tables.transactions);
+run('jump-cash-and-contraband', cbBefore, mixedJump, '/v1/streets/one/jump', 2, 'lifecycleCash');
+
+const hurt = initial(); hurt.tables.characters[0].health = 80;
+const healed = structuredClone(hurt); Object.assign(healed.tables.characters[0], { health: 100, cash: '700' });
+healed.tables.transactions = [receipt('heal', 'boss', '-300', 'heal')];
+const heal = run('heal-executed-cash-sink', hurt, healed, '/v1/heal', 1, 'lifecycleCash');
+corrupt(heal, 'heal-wrong-cash', (_, b) => { b.tables.characters[0].cash = '701'; });
+corrupt(heal, 'heal-wrong-health', (_, b) => { b.tables.characters[0].health = 99; });
+corrupt(heal, 'heal-bank-diversion', (_, b) => { b.tables.characters[0].bank = '501'; });
+corrupt(heal, 'heal-counterparty', (_, b) => { b.tables.transactions[0].counterparty = 'one'; });
+corrupt(heal, 'heal-mixed-account', (_, b) => { b.tables.characters[0].account_id = 'foreign'; });
+assert(reconcileWorldResources(hurt, healed, { identity: identity('/v1/unknown') }).unsupported.some(row => row.reason === 'heal'));
+controls.push('heal-unknown-route-remains-unsupported');
+
 const indicted = initial(); indicted.tables.characters[0].indicted_at = at;
 const pleaded = structuredClone(indicted); Object.assign(pleaded.tables.characters[0], { cash: '775', indicted_at: null, heat_exposure: '0', jail_until: '2026-09-20T12:04:00.000Z' });
 pleaded.tables.street_tax[0].pool = '225'; pleaded.tables.transactions = [receipt('plea', 'boss', '-225', 'law:plea')];

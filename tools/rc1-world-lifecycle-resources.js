@@ -83,25 +83,42 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
   const person = (state, id) => { const matches = rows(state, 'characters').filter(row => row.id === id); assert.equal(matches.length, 1); return matches[0]; };
   const context = contextOf(identity);
   const claim = row => { assert(!result.usedReceipts.has(row.id), 'Receipt reused'); result.usedReceipts.add(row.id); };
-  for (const incoming of receipts.filter(row => row.currency === 'cash' && row.reason === 'jump:steal')) {
+  for (const incoming of receipts.filter(row => ['cash', 'cb'].includes(row.currency) && row.reason === 'jump:steal')) {
+    const currency = incoming.currency;
     assert(incoming.character_id && incoming.counterparty && incoming.character_id !== incoming.counterparty && incoming.account_id === null);
-    const amount = integer(incoming.amount); assert(amount > 0n && amount <= BigInt(M3.JUMP_STEAL_CAP));
-    const matching = receipts.filter(row => row.currency === 'cash' && row.reason === 'jump:stolen'
+    const amount = integer(incoming.amount); assert(amount > 0n && amount <= BigInt(currency === 'cash' ? M3.JUMP_STEAL_CAP : 3));
+    const matching = receipts.filter(row => row.currency === currency && row.reason === 'jump:stolen'
       && row.character_id === incoming.counterparty && row.counterparty === incoming.character_id && row.account_id === null
       && value(row.amount) === String(-amount) && row.at === incoming.at);
     assert.equal(matching.length, 1, 'Jump transfer lacks one exact reciprocal receipt');
     for (const id of [incoming.character_id, incoming.counterparty]) {
       const old = person(before, id), next = person(after, id); assert(old.alive && next.alive && old.account_id === next.account_id);
       assert.equal(value(old.bank), value(next.bank), 'Jump diverted bank custody');
-      const owned = receipts.filter(row => row.currency === 'cash' && row.character_id === id);
-      assert.equal(owned.length, 1, 'Compound jump cash boundary');
-      assert.equal(delta(old.cash, next.cash), value(owned[0].amount), 'Jump pocket endpoint differs');
+      const owned = receipts.filter(row => row.currency === currency && row.character_id === id);
+      assert.equal(owned.length, 1, 'Compound jump resource boundary');
+      assert.equal(delta(old[currency], next[currency]), value(owned[0].amount), 'Jump pocket endpoint differs');
     }
     claim(incoming); claim(matching[0]);
-    result.movements.push({ kind: 'jump-cash-transfer', source: incoming.counterparty, destination: incoming.character_id, amount: String(amount), receiptIds: [incoming.id, matching[0].id] });
+    result.movements.push({ kind: `jump-${currency}-transfer`, source: incoming.counterparty, destination: incoming.character_id, amount: String(amount), receiptIds: [incoming.id, matching[0].id] });
   }
-  if (receipts.some(row => row.currency === 'cash' && row.reason === 'jump:steal'))
-    for (const row of receipts.filter(row => row.currency === 'cash' && row.reason === 'jump:stolen')) assert(result.usedReceipts.has(row.id), 'Orphan jump debit');
+  for (const row of receipts.filter(row => ['cash', 'cb'].includes(row.currency) && row.reason === 'jump:stolen'))
+    assert(result.usedReceipts.has(row.id), 'Orphan jump debit');
+  const heals = receipts.filter(row => row.currency === 'cash' && row.reason === 'heal');
+  if (heals.length && context.method === 'POST' && (context.path || context.url) === '/v1/heal') {
+    assert.equal(heals.length, 1, 'Compound heal boundary');
+    const receipt = heals[0], old = person(before, receipt.character_id), next = person(after, receipt.character_id);
+    const amount = integer(negate(receipt.amount)); assert(amount > 0n);
+    assert(old.alive && next.alive && old.account_id === next.account_id);
+    if (context.accountId) assert.equal(context.accountId, old.account_id);
+    assert.equal(receipt.account_id, null); assert.equal(receipt.counterparty, null);
+    assert(Number(old.health) >= 0 && Number(old.health) < 100); assert.equal(Number(next.health), 100);
+    assert.equal(receipts.filter(row => row.character_id === old.id && row.currency === 'cash').length, 1);
+    assert.equal(delta(old.cash, next.cash), String(-amount), 'Heal pocket debit differs');
+    for (const field of ['bank', 'bank_intransit', 'ammo', 'cb']) assert.equal(value(old[field] || 0), value(next[field] || 0), 'Heal diverted another resource');
+    // Price modifiers remain canonical-command authority. This observer proves
+    // the executed debit is destroyed, with no recipient or other custody leg.
+    claim(receipt); result.movements.push({ kind: 'heal-cash-sink', characterId: old.id, amount: String(amount), receiptIds: [receipt.id] });
+  }
   const pleas = receipts.filter(row => row.currency === 'cash' && row.reason === 'law:plea');
   if (pleas.length) {
     assert.equal(pleas.length, 1, 'Compound plea receipts'); assert.equal(receipts.length, 1, 'Compound plea boundary');
@@ -123,7 +140,7 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
     claim(receipt); result.bankOwners.add(old.id);
     result.movements.push({ kind: 'law-plea-transfer', source: old.id, destination: 'street_tax.pool', amount: String(total), receiptIds: [receipt.id] });
   }
-  for (const movement of result.movements) result.checks.push({ kind: movement.kind, resource: 'cash', drift: '0', authority: movement.receiptIds.map(id => ({ table: 'transactions', id })) });
+  for (const movement of result.movements) result.checks.push({ kind: movement.kind, resource: movement.kind === 'jump-cb-transfer' ? 'cb' : 'cash', drift: '0', authority: movement.receiptIds.map(id => ({ table: 'transactions', id })) });
   return result;
 }
 
