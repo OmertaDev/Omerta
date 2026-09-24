@@ -244,7 +244,7 @@ export function summarizeWorldDiagnostics(rows, { logicalAt, roster, actorAction
       note: 'Representations are separate; lot backing and its item claim are never summed together.' },
     ledgerActivity: { byActorCurrencyReason: rows.ledger,
       note: 'Signed net and gross ledger-row amounts are exact. Gross counts transfer legs; it is not deduplicated resource velocity or reward attribution.' },
-    unresolved: ['Permanent deadlocks and unreachable objectives require checkpoint-bound canonical path/goal evidence for the complete obligation inventory',
+    unresolved: ['Permanent deadlocks and unreachable objectives require applicable canonical prerequisite/recovery evidence for the complete obligation inventory',
       ...(lifecycle.orphanedOperations === null ? ['Open or unobserved operation lifecycle recovery requires canonical path/goal evidence'] : []),
       'Complete Knowledge reachability and per-player authorized distribution',
       'Resource velocity and reward concentration need complete receipt disposition classification'] };

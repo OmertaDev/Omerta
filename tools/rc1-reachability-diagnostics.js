@@ -26,6 +26,9 @@ const unique = (rows, key, label) => {
  * caller against the run's artifact/history index before passing this input.
  * This evaluator checks the joins and finite positive paths; it is not another
  * native recorder, permission oracle, or proof of exhaustive search.
+ * It is one evidence adapter, not an additional release gate: source-pinned
+ * canonical guard/recovery reasoning with applicable retained native proofs can
+ * also satisfy the frozen assertions through the release review outside it.
  */
 export function evaluateCanonicalReachability({ sourceRevision, configurationSha256, checkpoint,
   obligations, scopes, nodes, transitions, goals, evidence }) {
