@@ -9,7 +9,8 @@ const config = (scenario = 'resource_scarcity', n = 25) => ({ scenario, seed: 'r
 function model(configuration) {
   const level = configuration.scenario === 'resource_abundance' ? 75 : 1;
   const players = new Map(configuration.roster.map(({ accountId, characterId }) => [accountId,
-    { id: characterId, name: accountId, cash: 500, bank: 0, ammo: 25, cb: 0, omr: 0, respect: level === 1 ? 0 : 74000,
+    { id: characterId, name: accountId, generation: 1,
+      cash: level === 1 ? 0 : 500, bank: 0, ammo: level === 1 ? 0 : 25, cb: 0, omr: 0, respect: level === 1 ? 0 : 74000,
       level, nerve: 10, jailSeconds: 0, checkin: { done: false, pay: 350 * level } }]));
   const listings = new Map(), events = [], requests = []; let lot = 0, at = epoch;
   const hooks = { get logicalAt() { return at; }, read: async (accountId, path) => {
@@ -70,8 +71,8 @@ for (const scenario of ['resource_scarcity', 'resource_abundance']) for (const n
   assert.equal(prepared.totals.preparation.fresh, scenario === 'resource_abundance' ? 4 * n : 0);
   assert.equal(prepared.totals.measured.fresh, 0, 'Preparation cannot count as measured pressure');
   for (const own of world.players.values()) {
-    assert.equal(own.cash, scenario === 'resource_abundance' ? 20750 : 500);
-    assert.equal(own.ammo, scenario === 'resource_abundance' ? 175 : 25);
+    assert.equal(own.cash, scenario === 'resource_abundance' ? 20750 : 0);
+    assert.equal(own.ammo, scenario === 'resource_abundance' ? 175 : 0);
   }
   adapter = createPressureWorldAdapter(configuration).restore(adapter.checkpoint());
   const first = await adapter.runDay(0, world.hooks, { maximumDecisions: 1 }); assert(!first.complete);
@@ -136,6 +137,20 @@ assert.equal(adapter.summary().prepared, false); assert.equal(adapter.summary().
 await assert.rejects(createPressureWorldAdapter(abundant).restore(adapter.checkpoint()).prepare(deniedWorld.hooks), /Failed preparation/);
 const wrongSupply = model(configuration); wrongSupply.players.get('pressure-0').cash = 501;
 await assert.rejects(createPressureWorldAdapter(configuration).prepare(wrongSupply.hooks), /entry cash/);
+for (const [field, value] of [['cash', 500], ['bank', 1], ['ammo', 25], ['generation', 2]]) {
+  const wrongFloor = model(configuration); wrongFloor.players.get('pressure-0')[field] = value;
+  await assert.rejects(createPressureWorldAdapter(configuration).prepare(wrongFloor.hooks), new RegExp('entry ' + field));
+}
+const earnedPreparation = model(configuration);
+for (const own of earnedPreparation.players.values()) {
+  own.respect = 15; own.level = 2; own.health = 65; own.energy = 12; own.checkin = { done: true, pay: 700 };
+}
+const earnedAdapter = createPressureWorldAdapter(configuration); await prepare(earnedAdapter, earnedPreparation.hooks);
+assert.equal(earnedAdapter.summary().preparedVerified, 25, 'Actual canonical progression and used check-in must remain valid');
+assert.equal(earnedPreparation.requests.length, 0, 'Scarcity verification cannot repeat depletion or top-up');
+const legacyPrepared = earnedAdapter.checkpoint(); legacyPrepared.payload.state.version = 1;
+legacyPrepared.sha256 = actorValueHash(legacyPrepared.payload);
+assert.throws(() => createPressureWorldAdapter(configuration).restore(legacyPrepared), /earlier initial-supply contract/);
 const wrongLevel = model(abundant); wrongLevel.players.get('pressure-0').level = 74;
 await assert.rejects(createPressureWorldAdapter(abundant).prepare(wrongLevel.hooks), /progression level/);
 console.log('PASS_SCOPED: both pressure scenarios/all five populations, pre-baseline canonical preparation protocol, daily public roles, bounded records, shortages, pending/replay restore and invalid preparation');

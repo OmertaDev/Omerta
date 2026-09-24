@@ -10,10 +10,10 @@ const DAILY = [ ['checkin', null], ['progress', null], ['replenish-ammo', null],
   ['list', 'seller'], ['take', 'taker'], ['hoard', 'hoarder'], ['cancel', 'seller'] ];
 const identifier = (value) => typeof value === 'string' && /^[a-zA-Z0-9_-]+$/.test(value);
 const receiptBody = ({ replayed: _flag, ...body }) => body;
-export const PRESSURE_WORLD_CONTRACT = Object.freeze({ version: 1, populations: [25, 100, 250, 500, 1000],
-  scarcity: 'Lowest valid ordinary-entry position: cash500/ammo25; all other state at original schema/ordinary-entry defaults. This is a declared legal entry extreme, not an absolute minimum over all reachable game states.',
+export const PRESSURE_WORLD_CONTRACT = Object.freeze({ version: 2, populations: [25, 100, 250, 500, 1000],
+  scarcity: 'After ordinary entry, the caller completes canonical prebaseline depletion: five admitted standard jumps consume birth25 ammo, public megaproject donations consume whole cash, and a public check-in tops up a below-minimum remainder when needed. Every recovery advances all due original workers. Prepare verifies generation1 and public cash0/bank0/ammo0; caller separately verifies exact native zero balances, retained custody and original invariants. Earned progression, health/energy changes and used check-ins remain real preparation effects. This is the exercised player cash/ammo floor, not a thirteen-resource or global/NPC minimum.',
   abundance: 'Same ordinary resources with only the declared initialization level75 respect fixture; before the measured baseline each actor takes the public first check-in26250 and three canonical2000-for50 ammo purchases. Prepared cash20750/ammo175, with no direct cash/ammo grants.',
-  sources: ['schema.sql:characters ordinary-entry defaults', 'src/game.js:checkinQuoteOf/checkin', 'src/economy.js:buyAmmo', 'src/social/exchange.js:listExchange/buyExchange', 'tools/rc1-resource-pressure-policy.js'],
+  sources: ['schema.sql:characters ordinary-entry defaults', 'src/game.js:checkinQuoteOf/checkin', 'src/economy.js:buyAmmo', 'src/social/exchange.js:listExchange/buyExchange', 'tools/rc1-resource-pressure-policy.js', 'tools/rc1-scarcity-initialization.js'],
   daily: 'All actors attempt public daily check-in, one quiet progression action and an affordable paid ammo purchase. Seller/taker/hoarder roles rotate by (roster index + day) modulo3. Sellers list25 rounds at20, takers choose the cheapest affordable public lot, hoarders bank pocket cash, sellers cancel any remaining receipt-linked lot. Actual shortages/denials remain evidence.',
   authority: 'Ordinary own session/me plus public rules/exchange only. Preparation and actor reads may accrue. Hidden resource/concentration observers never feed selection; capture them separately at existing boundaries.',
   evidence: 'Finish prepare and retain its canonical receipts before capturing the measured baseline. Pin initialization-only respect fixture/defaults in the runner. Await compact exact pending records before dispatch; full checkpoints at serial/fault boundaries and event replay between them.',
@@ -31,7 +31,8 @@ export function createPressureWorldAdapter(input) {
   const configuration = { scenario, seed, epoch, roster }, byAccount = new Map(roster.map((actor) => [actor.accountId, actor]));
   let policies = new Map(roster.map(({ accountId }) => [accountId, createResourcePressurePolicy({ accountId, scenario, seed })]));
   const totals = () => ({ fresh: 0, waits: 0, denied: 0 });
-  let state = { version: 1, configuration: clone(configuration), prepared: false, preparationFailure: null,
+  const stateVersion = scenario === 'resource_scarcity' ? 2 : 1;
+  let state = { version: stateVersion, configuration: clone(configuration), prepared: false, preparationFailure: null,
     preparation: { index: 0, stage: 0 }, completedDays: 0, day: null, pending: null, unresolved: [], exactReplays: 0,
     entryVerified: 0, preparedVerified: 0, totals: { preparation: totals(), measured: totals() },
     lastReceipts: {} };
@@ -57,7 +58,7 @@ export function createPressureWorldAdapter(input) {
     } while (DAILY[state.day.stage][1] && role(state.day.index, state.day.day) !== DAILY[state.day.stage][1]);
   }
   function validate(value, components = policies) {
-    assert.equal(value.version, 1); assert.deepEqual(value.configuration, configuration);
+    assert.equal(value.version, stateVersion, 'Preparation checkpoint uses an earlier initial-supply contract'); assert.deepEqual(value.configuration, configuration);
     assert(Number.isSafeInteger(value.completedDays) && value.completedDays >= 0);
     for (const count of [value.entryVerified, value.preparedVerified]) assert(Number.isSafeInteger(count) && count >= 0 && count <= roster.length);
     if (value.prepared) { assert.equal(value.preparation, null); assert.equal(value.entryVerified, roster.length);
@@ -114,16 +115,21 @@ export function createPressureWorldAdapter(input) {
         const view = await readView(actor.accountId, read), own = view.me.character;
         if (scope === 'preparation' && ['entry', 'prepared'].includes(step.phase)) {
           const entry = step.phase === 'entry';
-          const expected = { cash: entry ? 500 : 20750, ammo: entry ? 25 : 175, bank: 0, cb: 0, omr: 0 };
+          const scarcity = scenario === 'resource_scarcity';
+          const expected = scarcity ? { cash: 0, bank: 0, ammo: 0, generation: 1 }
+            : { cash: entry ? 500 : 20750, ammo: entry ? 25 : 175, bank: 0, cb: 0, omr: 0 };
           for (const [field, value] of Object.entries(expected)) assert.equal(own[field], value, `Preparation ${step.phase} ${field}`);
-          assert.equal(own.level, scenario === 'resource_abundance' ? 75 : 1, 'Declared initial progression level');
-          if (scenario === 'resource_scarcity') assert.equal(own.respect, 0, 'Ordinary entry respect');
-          if (entry) { assert.equal(own.checkin?.done, false); assert.equal(own.checkin?.pay, plan.canonicalFirstCheckin); }
-          else assert.equal(own.checkin?.done, true, 'Prepared first check-in must be canonical');
+          if (!scarcity) {
+            assert.equal(own.level, 75, 'Declared initial progression level');
+            if (entry) { assert.equal(own.checkin?.done, false); assert.equal(own.checkin?.pay, plan.canonicalFirstCheckin); }
+            else assert.equal(own.checkin?.done, true, 'Prepared first check-in must be canonical');
+          }
           await record({ kind: 'pressure-initial-supply', accountId: actor.accountId, logicalAt, phase: step.phase,
             expected, observed: Object.fromEntries(Object.keys(expected).map((key) => [key, own[key]])), level: own.level,
             publicCheckin: clone(own.checkin), authorizedViewSha256: actorValueHash(view),
-            remainingDefaults: 'Original schema/entry defaults are attested by the runner baseline, never inferred from omitted public fields' });
+            remainingDefaults: scarcity
+              ? 'Canonical preparation progression/health/check-in effects and exact native balances/custody are retained by the runner; public rounded zeros alone do not attest the exact baseline'
+              : 'Original schema/entry defaults are attested by the runner baseline, never inferred from omitted public fields' });
           if (entry) state.entryVerified++;
           if (!entry || scenario === 'resource_scarcity') state.preparedVerified++;
           advance(); continue;
