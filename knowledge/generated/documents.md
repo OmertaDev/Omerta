@@ -510,7 +510,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2782 | 2026-09-14 |
-| [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 230 | 2026-09-24 |
+| [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 236 | 2026-09-24 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 185 | 2026-09-14 |
@@ -531,7 +531,7 @@
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-19 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
-| [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 41 | 2026-09-24 |
+| [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 44 | 2026-09-24 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
 | [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-26 |
 | [omerta-broadcast-design.md](../../omerta-broadcast-design.md) | design | 126 | 2026-08-13 |
