@@ -33,6 +33,7 @@ import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-pol
 import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
 import { createPressureWorldAdapter, PRESSURE_WORLD_CONTRACT } from '../tools/rc1-pressure-world-adapter.js';
 import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1-aggression-policy.js';
+import { createWorldEconomyMetrics, WORLD_ECONOMY_METRICS_CONTRACT } from '../tools/rc1-world-economy-metrics.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -151,6 +152,7 @@ const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_C
   failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
   databaseIsolation: database.descriptor,
   resourceObservation: observeResources ? 'Experimental exact committed-boundary parity with explicit unsupported lineage; serial native queries only' : 'Disabled',
+  economyObservation: observeResources ? WORLD_ECONOMY_METRICS_CONTRACT : null,
   carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
     scope: 'Native COMMIT provenance for neutral solo human melt only. Retain full car-deletion/melt-candidate and bounded-overflow witnesses privately; all other commits keep ordinary resource evidence. No added actor actions or grants.' } : null,
   npcCarAcquisitionWitness: observeResources ? { format: 1, sourcePins: NPC_CAR_SOURCE_PINS,
@@ -272,6 +274,7 @@ if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
   assert.deepEqual(replayRun.configuration.npcBoatFault, configuration.npcBoatFault);
   assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
+  assert.deepEqual(replayRun.configuration.economyObservation, configuration.economyObservation);
   assert.deepEqual(replayRun.configuration.carMeltWitness, configuration.carMeltWitness);
   assert.deepEqual(replayRun.configuration.npcCarAcquisitionWitness, configuration.npcCarAcquisitionWitness);
   assert.deepEqual(replayRun.configuration.npcFamilyWitness, configuration.npcFamilyWitness);
@@ -302,7 +305,7 @@ const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
 const electionProbe = observeResources ? createSeasonElectionProbe({ snapshot: () => snapshotElectionCandidates(diagnosticPool) }) : null;
 const electionSeam = electionProbe?.install();
 let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
-let priorResources, firstResourceError, workPhase = 'initialization';
+let priorResources, firstResourceError, economyMetrics = null, workPhase = 'initialization';
 let duelSelection = null, duelSelectionArtifact = null;
 const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
 const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
@@ -412,6 +415,8 @@ const commitObserver = observeResources ? createNpcFamilyCommitObserver({
         journal.restrictedChangesArtifact = artifact;
       }
       await npcBoatFault.classified(event, journal);
+      if (economyMetrics) await proof.record({ kind: 'economy-commit-boundary', sequence: event.sequence,
+        ...economyMetrics.observe({ event, journal, before, after }) });
       await proof.record({ kind: 'resource-commit-boundary', event, journal });
       const serializedJournal = canonicalJson({ event, journal });
       resourceStream.update(`${serializedJournal}\n`);
@@ -511,6 +516,7 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  economy: economyMetrics?.checkpoint() || null,
   ...(pressureEnabled ? { pressureActors, pressure: pressureAdapter?.checkpoint() || null,
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(aggressionEnabled ? { aggressionActors,
@@ -693,11 +699,11 @@ try {
     const { PACING } = await import('../src/rules.js');
     for (let index = 0; index < population; index++) {
       const name = (pressureEnabled ? 'World Pressure ' : 'World Aggression ') + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
-      await proof.artifact(actorPolicy + '-entry-secret-' + index + '.json', { bootstrapSecret });
+      await proof.artifact(actorPolicy.replaceAll('_', '-') + '-entry-secret-' + index + '.json', { bootstrapSecret });
       const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
       assert.equal(guest.status, 200, JSON.stringify(guest));
       const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
-      await proof.artifact(actorPolicy + '-entry-session-' + index + '.json', actor);
+      await proof.artifact(actorPolicy.replaceAll('_', '-') + '-entry-session-' + index + '.json', actor);
       const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: actorPolicy + '-entry-' + index });
       assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
       target.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
@@ -711,7 +717,7 @@ try {
       } else grants.push({ accountId: actor.accountId, ordinaryEntry: before, directFixtures: 0 });
       if (aggressionEnabled) aggressionPolicies.set(actor.accountId, createAggressionPolicy({ accountId: actor.accountId, seed, sustained: true }));
     }
-    await proof.artifact(actorPolicy + '-initialization.json', { grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
+    await proof.artifact(actorPolicy.replaceAll('_', '-') + '-initialization.json', { grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
     if (pressureEnabled) {
       pressureAdapter = createPressureWorldAdapter({ scenario: actorPolicy, seed, epoch, roster: pressureActors });
       await pressureDay(null);
@@ -843,13 +849,18 @@ try {
   const initial = await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
   if (resume) assert.equal(initial.stateSha256, httpEnabled ? applicationBootstrap.afterStateSha256 : parentCheckpoint.stateSha256,
     'Measured state differs from the recorded restore/bootstrap boundary');
-  await proof.artifact('actor-policy-initial.json', policyState());
   const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
   if (commitObserver) {
     priorResources = await snapshotWorldResources(diagnosticPool);
     if (parentContinuation) assert.equal(worldResourceHash(priorResources), parentContinuation.resourceStateSha256,
       'Restored resource state differs from recorded checkpoint');
+    const streamId = `world-economy:${seed}:${actorPolicy}:${start}`;
+    economyMetrics = createWorldEconomyMetrics({ roster: parentPolicy?.economy?.state.config.roster || roster,
+      initial: priorResources, logicalAt: at, streamId });
+    if (resume && parentPolicy.economy) economyMetrics.restore(parentPolicy.economy, priorResources, { streamId });
+    economyMetrics.sample(at, resume ? 'resumed' : 'initial');
   }
+  await proof.artifact('actor-policy-initial.json', policyState());
   async function invoke(authority, identity, work, latencyClass) {
     currentInvocation = { authority, ...identity, logicalAt: at };
     const started = performance.now();
@@ -1026,6 +1037,7 @@ try {
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
       alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
+    if (economyMetrics) await proof.artifact('economy-metrics-day-' + day + '.json', economyMetrics.sample(at, 'day-' + day));
     const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
     await proof.artifact('world-diagnostics-day-' + day + '.json', await collectWorldDiagnostics(diagnosticPool,
       { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) }));
@@ -1061,6 +1073,7 @@ try {
         churnPolicy.settleEnrollment({ requestId: enrollment.requestId, phase: 'character', status: 'COMPLETED',
           accountId: actor.accountId, characterId: actor.characterId, idempotencyKey: enrollment.request.idempotencyKey });
         roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+        economyMetrics?.registerAccounts([actor.accountId]);
       }
       await actors.observe('churn-enrollment-settled', { day, logicalAt: at }, { enrollment, policy: churnPolicy.checkpoint() });
     }
@@ -1206,6 +1219,7 @@ try {
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
+    if (economyMetrics) await proof.artifact('economy-metrics-day-' + day + '.json', economyMetrics.sample(at, 'day-' + day));
     if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
     const daily = await proof.snapshot(pool, `day-${day}`);
     await knowledgeBoundary(`day-${day}`, daily);
@@ -1242,6 +1256,10 @@ try {
   const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
     { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
+  if (economyMetrics) {
+    economyMetrics.sample(at, 'final');
+    await proof.artifact('economy-metrics-final.json', economyMetrics.summary());
+  }
   if (commitObserver) {
     commitObserver.assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: commitObserver.diagnostic() });
     await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
@@ -1339,6 +1357,7 @@ try {
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
     resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
+    economyMetricsSha256: economyMetrics ? sha256(canonicalJson(economyMetrics.summary())) : null,
     resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
     resourceObservation: observeResources ? resourceSummary : null,
     carMeltWitnessObservation: observeResources ? carMeltWitnessSummary : null,
@@ -1365,6 +1384,7 @@ try {
   }
   if (replay) {
     result.replayComparison = compareActorReplay(result, replayRun.result);
+    assert.equal(result.economyMetricsSha256, replayRun.result.economyMetricsSha256, 'Economy measurement replay differs');
     assert.deepEqual(result.carMeltWitnessObservation, replayRun.result.carMeltWitnessObservation, 'Car COMMIT witness replay differs');
     assert.deepEqual(result.carAcquisitionWitnessObservation, replayRun.result.carAcquisitionWitnessObservation, 'Car acquisition witness replay differs');
     result.carMeltWitnessReplayEqual = true;
