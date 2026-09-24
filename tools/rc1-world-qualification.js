@@ -5,7 +5,7 @@ import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
-  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
   'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',

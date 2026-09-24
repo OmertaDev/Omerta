@@ -39,7 +39,7 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/fees.js': '134e6c5862199bf90952f94043288621e13eeb7249ba871ebd290dbe716e413a',
   'src/store.js': '514ad59c728d126e101cc1c495d7073fcea288c6d70754ba07bff73b520f0bc0',
   'src/pass.js': '299a9465d324019a500b40f03d09a686d6b57b11498e5ff4a40543d75bde9997',
-  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/primetime.js': '48c4def2e7a270ee79a00504b9a1f8fd1098989b2ba775534dc19f28feaeb41f',
   'src/chain.js': 'ce26f5bdc6b9ac0a6f448b973bd47ad58b94675f58a3ba5576d7cf25a7532381',
   'src/exchange.js': 'ab28cdc4d722fce1699a486b66314b720bca93601b1b83e4fb88f2d542f4c956',

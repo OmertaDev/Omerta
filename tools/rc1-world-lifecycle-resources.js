@@ -150,7 +150,7 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
 export const MARKET_EXPIRY_SOURCE_PINS = Object.freeze({
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/market.js': 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
-  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
 });
 const EXPIRY_SQL = Object.freeze({
   due: "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",

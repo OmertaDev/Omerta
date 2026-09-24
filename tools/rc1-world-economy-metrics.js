@@ -34,7 +34,7 @@ const resourceId = (kind, ...parts) => `${kind}:${JSON.stringify(parts)}`;
 export const LOAN_REFUND_METRIC_SOURCE_PINS = Object.freeze({
   'src/loans.js': '663f71b15332367689b5b4db5cf7fc8d94e49249d8697cc6b98bb986607cb14e',
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
-  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
 });
 let refundSourceChecked = false;
 // Existing native receipt-parity endpoints bind one serial refund's two legs.
