@@ -1,5 +1,6 @@
 // Test-only, read-only provenance around the original exported election.
-// Cold zero-standing elections only; no replacement ranking or cache policy.
+// Cold zero-standing elections, optionally with one sole core-holding Family;
+// no replacement ranking or cache policy.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { registerHooks } from 'node:module';
@@ -22,10 +23,11 @@ const standingQuery = QUERY_ORDER_SCOPE.queries.find(row => row.id === 'standing
 const columns = [...standingQuery.matchAll(/COALESCE\(a\.([a-z_]+),0\) AS \1/g)].map(match => match[1]);
 const lookupQuery = 'SELECT account_id FROM characters WHERE name=$1 AND alive LIMIT 1';
 const districtQuery = 'SELECT id, holder_gang FROM districts WHERE holder_gang IS NOT NULL';
+const familyQuery = 'SELECT id, name, tag, season_tribute, season_wars FROM gangs';
 const insertQuery = `INSERT INTO season_records (season, mod_id, champion_account, champion_name, champion_standing,
                                  family_gang, family_name, family_tag, family_districts)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (season) DO NOTHING`;
-export const ELECTION_SQL = Object.freeze({ standing: standingQuery, lookup: lookupQuery, districts: districtQuery, insert: insertQuery });
+export const ELECTION_SQL = Object.freeze({ standing: standingQuery, lookup: lookupQuery, districts: districtQuery, family: familyQuery, insert: insertQuery });
 
 export function assertElectionSources(root = new URL('../', import.meta.url)) {
   for (const [file, expected] of Object.entries(ELECTION_SOURCE_PINS))
@@ -153,7 +155,8 @@ export function verifyColdSeasonElection(before, after, witness) {
   const { input, output } = witness.scores[0], tables = witness.before.tables;
   assert.equal(witness.tops.length, 1, 'Missing/duplicate original cityStanding result');
   const q = witness.queries;
-  if (q.length !== 4 || q.some((entry, index) => entry.sql !== [standingQuery, lookupQuery, districtQuery, insertQuery][index]))
+  const familyBranch = q.length === 5 && q.every((entry, index) => entry.sql === [standingQuery, lookupQuery, districtQuery, familyQuery, insertQuery][index]);
+  if (!familyBranch && (q.length !== 4 || q.some((entry, index) => entry.sql !== [standingQuery, lookupQuery, districtQuery, insertQuery][index])))
     return { unsupported: 'Unclassified empty, Family, repeated or compound election query trace' };
   assert(q.slice(0, -1).every(entry => entry.status === 'RETURNED' && entry.command === 'SELECT'));
   assert.equal(q.at(-1).status, 'RUNNING'); assert.deepEqual(q[0].parameters, []); assert.deepEqual(q[2].parameters, []);
@@ -193,9 +196,28 @@ export function verifyColdSeasonElection(before, after, witness) {
   assert.equal(livingNames[0].account_id, output[0].accountId, 'Name lookup selected another account');
   const held = tables.districts.filter(row => row.holder_gang !== null).map(row => ({ id: row.id, holder_gang: row.holder_gang }));
   assert.deepEqual(order(q[2].rows), order(held), 'Held district query omitted/altered native rows');
-  if (held.some(row => DISTRICTS.some(core => core.id === row.id))) return { unsupported: 'Core Family election remains outside this cold individual subset' };
-  const parameters = [witness.season, seasonModOf(witness.season).id, output[0].accountId, top.name, null, null, null, null, null];
-  assert.deepEqual(q[3].parameters, parameters, 'Saved selection parameters differ from actual original reads');
+  const coreHeld = held.filter(row => DISTRICTS.some(core => core.id === row.id));
+  let family = null;
+  if (familyBranch) {
+    assert(coreHeld.length > 0, 'Family query lacks the original core-held branch condition');
+    const familyFields = ['id', 'name', 'tag', 'season_tribute', 'season_wars'];
+    for (const field of familyFields) assert(witness.before.fields.gangs.some(entry => entry.name === field), 'Missing Family candidate field: ' + field);
+    assert.deepEqual(q[3].parameters, []);
+    assert.deepEqual(q[3].fields.map(entry => entry.name), familyFields, 'Family result columns differ');
+    for (const field of q[3].fields)
+      assert.equal(field.type, witness.before.fields.gangs.find(entry => entry.name === field.name)?.type, 'Family result type differs from native source column');
+    assert.equal(new Set(tables.gangs.map(row => row.id)).size, tables.gangs.length, 'Duplicate Family candidate');
+    assert.deepEqual(order(q[3].rows), order(tables.gangs.map(row => Object.fromEntries(familyFields.map(field => [field, row[field]])))),
+      'Actual Family input membership/values differ from complete native population');
+    const owners = new Set(coreHeld.map(row => row.holder_gang));
+    if (owners.size !== 1) return { unsupported: 'Multiple core-holding Families require a separate ranking verifier' };
+    const winner = q[3].rows.find(row => owners.has(row.id));
+    if (!winner) return { unsupported: 'Core holder absent from Family population requires a separate empty-winner branch' };
+    family = { ...winner, districts: coreHeld.length };
+  } else if (coreHeld.length) return { unsupported: 'Core Family election lacks its original Family query' };
+  const parameters = [witness.season, seasonModOf(witness.season).id, output[0].accountId, top.name, null,
+    family?.id || null, family?.name || null, family?.tag || null, family?.districts || null];
+  assert.deepEqual(q.at(-1).parameters, parameters, 'Saved selection parameters differ from actual original reads');
   const prior = new Map(before.tables.season_records.map(row => [row.season, row]));
   const added = after.tables.season_records.filter(row => !prior.has(row.season));
   assert.equal(added.length, 1, 'Election witness must bind one new stored record'); const record = added[0];
@@ -207,6 +229,8 @@ export function verifyColdSeasonElection(before, after, witness) {
     assert.deepEqual(before.tables[table], after.tables[table], 'Initial election overlapped another resource change');
   return { season: witness.season, accountId: output[0].accountId, characterId: livingNames[0].id,
     tiedCandidates: input.length, standing: 0, crownDelta: 0, currencyGrant: false, provenanceId: witness.id,
+    ...(family ? { family: { id: family.id, districts: family.districts, districtIds: coreHeld.map(row => row.id).sort(),
+      selection: 'sole-core-holding-family', currencyGrant: false } } : {}),
     sourcePins: ELECTION_SOURCE_PINS, candidateStateSha256: sha256(canonicalJson(witness.before)),
     returnedOrderSha256: sha256(canonicalJson(input)), selectedResultSha256: sha256(canonicalJson(witness.tops[0])) };
 }
