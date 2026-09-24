@@ -14,13 +14,19 @@ export const FAMILY_POLICY_CONTRACT = Object.freeze({ version: 1,
   resourceScope: 'Initial concentration is relative to a finite declared cohort. Only exercised cash/treasury distribution is qualified; no claim to a finite global maximum or all13 resource extremes.',
   exclusions: 'Alliances, war, operations, roster posts, officer kicks, paid reserves/gear/territory, full25-active long-term work,90day/225-run matrix.' });
 export function planFamilyFixture(scenario, population = 25) {
-  assert(scenarios.includes(scenario)); assert.equal(population, 25, 'This bounded fixture declaration owns only25 actors');
-  const sizes = scenario === 'family_monopoly' ? [20] : [3, 3, 3, 2, 2, 2, 2, 2, 2, 2];
+  assert(scenarios.includes(scenario)); assert([25, 100, 250, 500, 1000].includes(population));
+  const members = population === 25 ? 23 : Math.floor(population * .9);
+  const familyCount = Math.max(10, Math.ceil(members / 20));
+  const sizes = scenario === 'family_monopoly' ? [Math.min(20, Math.floor(population * .8))]
+    : Array.from({ length: familyCount }, (_, index) => Math.floor(members / familyCount) + Number(index < members % familyCount));
   let cursor = 0;
   const groups = sizes.map((size) => { const members = Array.from({ length: size }, () => cursor++); return { founder: members[0], members }; });
   return { scenario, population, groups, outsiders: Array.from({ length: population - cursor }, () => cursor++),
     founderLevel: 75, formationLevelMinimum: 5, canonicalMaximumMembers: 20,
-    initialization: 'Ordinary25 guest/character entries. Only listed founder respect is initialized to level75 before baseline; an actual ordinary check-in funds each actual25000 formation. All memberships and cash concentration use canonical routes.' };
+    realizedLargestFamilyFraction: Math.max(...sizes) / population,
+    legalConstraint: scenario === 'family_monopoly' && population > 25
+      ? 'Canonical joinGang caps one Family at20 members;80% of this larger cohort cannot join one Family. Use that maximum legal position and retain all outsiders.' : null,
+    initialization: 'Ordinary guest/character entries. Only listed founder respect is initialized to level75 before baseline; an actual ordinary check-in funds each actual25000 formation. All memberships and cash concentration use canonical routes.' };
 }
 const blank = () => ({ observations: 0, choices: 0, waits: 0, fresh: 0, denials: 0, knownReplays: 0, unresolvedReplays: 0, crimeWins: 0 });
 function validate(s, c) {
@@ -38,7 +44,7 @@ function validate(s, c) {
 export function createFamilyPolicy(configuration) {
   assert.deepEqual(Object.keys(configuration).sort(), ['accountId', 'population', 'scenario', 'seed']);
   assert(id(configuration.accountId)); assert(typeof configuration.seed === 'string' && configuration.seed.length > 0);
-  assert(scenarios.includes(configuration.scenario)); assert.equal(configuration.population, 25);
+  assert(scenarios.includes(configuration.scenario)); assert([25, 100, 250, 500, 1000].includes(configuration.population));
   configuration = clone(configuration);
   let state = { version: 1, configuration, characterId: null, counters: blank(), pending: null,
     settled: [], receipts: [], unresolved: [], blockedFull: {}, completedByType: {} };

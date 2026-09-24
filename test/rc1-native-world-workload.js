@@ -27,6 +27,8 @@ import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-myste
 import { planCohort, createCohortPolicy, assessCohortBaseline, COHORT_POLICY_CONTRACT } from '../tools/rc1-cohort-policy.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
+import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
+import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -47,15 +49,16 @@ const guardLimits = guardArguments[0] === undefined ? null : {
 };
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
-assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players'].includes(actorPolicy));
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'mostly_veteran_players';
-const httpEnabled = allianceEnabled || cohortEnabled;
+const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
+const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled;
 if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
   assert(!argument('resume'), 'Fault workload does not support continuation');
 }
-const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
 if (allianceEnabled) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
@@ -201,6 +204,16 @@ if (cohortEnabled) Object.assign(configuration, {
     measurement: 'Warmup is retained before the measured initial checkpoint and excluded from measured player/resource totals. No postbaseline fixtures.' },
   resourceBootstrap: 'Resource observation starts at the measured baseline. Mostly-new initial worker boot and all canonical warmup precede it; no worker callback is omitted or repeated.',
   workerOrder: 'Initial cohort sessions follow original startup and measured baseline; subsequent sessions follow the first hourly callback of each rolling day.',
+  httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. No production admission or capacity qualification.',
+});
+if (familyEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, familyContract: FAMILY_WORLD_CONTRACT, familyPlan: planFamilyFixture(actorPolicy, population),
+  policyScope: FAMILY_WORLD_CONTRACT.schedule,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: FAMILY_WORLD_CONTRACT.information, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: FAMILY_WORLD_CONTRACT.initialization,
+  authority: 'Ordinary authenticated Family HTTP actions; original PlayerCommand dispatcher and canonical crimes.',
   httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. No production admission or capacity qualification.',
 });
 if (replay) {
@@ -381,6 +394,7 @@ const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands:
 const days = [], latencies = { read: [], command: [] };
 const knowledgeBoundaries = [];
 const allianceActors = [];
+const familyActors = []; let familyAdapter = null;
 const cohortActors = [], cohortPolicies = new Map();
 let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
 let allianceAdapter = null, app = null;
@@ -399,6 +413,11 @@ if (resume) {
     for (const accountId of roster) cohortPolicies.set(accountId,
       createCohortPolicy({ plan: cohortPlan, accountId }).restore(parentPolicy.cohortPolicies[accountId]));
   }
+  if (familyEnabled) {
+    familyActors.push(...structuredClone(parentPolicy.familyActors)); roster.push(...parentPolicy.roster);
+    familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors }).restore(parentPolicy.familyAdapter);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
   assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
   for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
@@ -414,6 +433,8 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  ...(familyEnabled ? { familyActors, familyAdapter: familyAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(cohortEnabled ? { cohortActors, cohortPlan, cohortBaseline, cohortWarmup, measuredStart,
     cohortPolicies: Object.fromEntries([...cohortPolicies].map(([accountId, policy]) => [accountId, policy.checkpoint()])),
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
@@ -521,6 +542,30 @@ try {
     const comparison = { label, logicalAt: at, beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256,
       diagnosticSha256: sha256(canonicalJson(diagnostic)) };
     knowledgeBoundaries.push(comparison); await proof.record({ kind: 'knowledge-observer-boundary', ...comparison });
+  }
+  if (familyEnabled && !resume) {
+    const { PACING } = await import('../src/rules.js'), plan = configuration.familyPlan, grants = [];
+    const founders = new Set(plan.groups.map(group => group.founder));
+    for (let index = 0; index < population; index++) {
+      const name = 'World Family Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'family-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      familyActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      await proof.artifact('family-entry-' + index + '.json', { bootstrapSecret, ...actor });
+      if (founders.has(index)) {
+        const before = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        const respect = PACING.LEVEL_DIVISOR * (plan.founderLevel - 1) ** 2;
+        await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, respect]);
+        const after = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        assert.deepEqual({ ...after, respect: before.respect }, before, 'Only declared founder respect may change');
+        grants.push({ accountId: actor.accountId, before, after });
+      }
+    }
+    await proof.artifact('family-initialization.json', { plan, grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
+    familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors });
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -854,12 +899,29 @@ try {
     }
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     lastDay = day;
-    const selected = await actors.decide(cohortEnabled ? 'cohort-roster' : 'quiet-roster', { day, logicalAt }, roster,
-      () => cohortEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
-    assert.equal(selected.length, cohortEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    const selected = await actors.decide(familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : 'quiet-roster', { day, logicalAt }, roster,
+      () => cohortEnabled || familyEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, cohortEnabled || familyEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
     assert(selected.every((account) => roster.includes(account)));
+    if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
+      read: async (accountId, path) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('family:' + request.idempotencyKey);
+        if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('family-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
+    });
     for (const account of selected) await session(account, day);
-    await invariantBoundary(`${cohortEnabled ? actorPolicy : 'quiet'}-day:${day}`);
+    await invariantBoundary(`${cohortEnabled || familyEnabled ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
@@ -871,7 +933,7 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   };
-  if (cohortEnabled && !resume) await afterBoundary(at, 'guardedTick');
+  if ((cohortEnabled || familyEnabled) && !resume) await afterBoundary(at, 'guardedTick');
   if (allianceEnabled && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
@@ -935,6 +997,11 @@ try {
       summaries: Object.fromEntries([...cohortPolicies].map(([accountId, policy]) => [accountId, policy.summary()])),
       measuredStart, measuredFinish: finish, fixtureWritesAfterBaseline: false, matrixQualifying: false });
   }
+  if (familyEnabled) {
+    assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
+    assert.equal(familyAdapter.summary().unresolvedResponses, 0);
+    await proof.artifact('family-final.json', { contract: FAMILY_WORLD_CONTRACT, summary: familyAdapter.summary(), checkpoint: familyAdapter.checkpoint() });
+  }
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
@@ -944,6 +1011,7 @@ try {
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
     ...(allianceEnabled ? { alliance: allianceAdapter.summary() } : {}),
+    ...(familyEnabled ? { family: familyAdapter.summary() } : {}),
     ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
       warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
     timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
