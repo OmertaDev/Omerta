@@ -717,9 +717,9 @@ try {
   const artifactReference = (name, value) => ({ path: name, sha256: sha256(`${JSON.stringify(value, null, 2)}\n`) });
   const recoveryAuthority = { source: recoverySource, review: CHECKPOINT_RECOVERY_REVIEW,
     catalog: recoveryCatalog(content), configuration: recoveryConfiguration };
-  const recoveryBoundaries = [], backlogBoundaries = [];
+  const recoveryBoundaries = [], backlogBoundaries = [], checkpointSeriesPoints = [];
   let latestInvariants = null;
-  async function recoveryBoundary(label, snapshot, diagnostic) {
+  async function recoveryBoundary(label, snapshot, diagnostic, economy = null) {
     const checkpoint = { stateSha256: snapshot.stateSha256, configurationSha256, logicalAt: at };
     const result = reviewCanonicalCheckpoint({ manifest: frozenScenarios, source: recoverySource, checkpoint, snapshot,
       diagnostics: diagnostic.semantic, diagnosticEvidence: {
@@ -741,6 +741,18 @@ try {
     await proof.artifact(`world-backlog-${label}.json`, backlogEvidence);
     backlogBoundaries.push({ label, checkpoint, artifact: artifactReference(`world-backlog-${label}.json`, backlogEvidence),
       reviewSha256: backlog.sha256, unknown: backlog.unknown });
+    if (economy) {
+      assert.equal(economy.logicalAt, at);
+      assert.equal(economy.nativeHash, worldResourceHash(priorResources), 'Economy sample differs from the quiescent resource boundary');
+    }
+    checkpointSeriesPoints.push({ binding: { sourceRevision: source.revision, ...checkpoint },
+      snapshot: artifactReference(`${label}.json`, snapshot),
+      recovery: artifactReference(`checkpoint-recovery-${label}.json`, result),
+      backlog: artifactReference(`world-backlog-${label}.json`, backlogEvidence),
+      diagnostics: artifactReference(`world-diagnostics-${label}.json`, diagnostic),
+      economy: economy ? artifactReference(`economy-metrics-${label}.json`, economy) : null,
+      economyNativeHash: economy?.nativeHash ?? null, economyBoundaryChain: economy?.boundaryChain ?? null,
+      observation: 'Existing quiescent actor/worker boundary; full snapshot, canonical diagnostics and economy resource state captured without intervening writes.' });
   }
   async function knowledgeBoundary(label, before) {
     const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
@@ -1206,12 +1218,13 @@ try {
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
       alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
-    if (economyMetrics) await proof.artifact('economy-metrics-day-' + day + '.json', economyMetrics.sample(at, 'day-' + day));
+    const economy = economyMetrics?.sample(at, 'day-' + day);
+    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
     const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
     const diagnostics = await collectWorldDiagnostics(diagnosticPool,
       { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
     await proof.artifact('world-diagnostics-day-' + day + '.json', diagnostics);
-    await recoveryBoundary('day-' + day, daily, diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
     await proof.artifact('alliance-day-' + day + '-checkpoint.json', allianceAdapter.checkpoint());
     await guardBoundary('alliance-day:' + day);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, allianceFresh: allianceAdapter.summary().fresh,
@@ -1490,14 +1503,15 @@ try {
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
-    if (economyMetrics) await proof.artifact('economy-metrics-day-' + day + '.json', economyMetrics.sample(at, 'day-' + day));
+    const economy = economyMetrics?.sample(at, 'day-' + day);
+    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
     if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
     const daily = await proof.snapshot(pool, `day-${day}`);
     await knowledgeBoundary(`day-${day}`, daily);
     const diagnostics = await collectWorldDiagnostics(diagnosticPool,
       { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
     await proof.artifact(`world-diagnostics-day-${day}.json`, diagnostics);
-    await recoveryBoundary('day-' + day, daily, diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
     await guardBoundary(`day:${day}`);
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
@@ -1529,13 +1543,17 @@ try {
   const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
     { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
-  await recoveryBoundary('final', final, finalDiagnostics);
-  await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
-  await proof.artifact('world-backlog-summary.json', { boundaries: backlogBoundaries, matrixQualifying: false });
+  let finalEconomy = null;
   if (economyMetrics) {
     economyMetrics.sample(at, 'final');
-    await proof.artifact('economy-metrics-final.json', economyMetrics.summary());
+    finalEconomy = economyMetrics.summary();
+    await proof.artifact('economy-metrics-final.json', finalEconomy);
   }
+  await recoveryBoundary('final', final, finalDiagnostics, finalEconomy);
+  await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
+  await proof.artifact('world-backlog-summary.json', { boundaries: backlogBoundaries, matrixQualifying: false });
+  await proof.artifact('checkpoint-series-points.json', { binding: { sourceRevision: source.revision, configurationSha256 },
+    startAt: measuredStart, endAt: finish, sampling: { periodMs: 86400000, phaseAt: measuredStart }, points: checkpointSeriesPoints });
   if (commitObserver) {
     (aggregateObserver || commitObserver).assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
     await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
