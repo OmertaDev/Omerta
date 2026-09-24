@@ -3622,6 +3622,7 @@ scopedSocialContext = async function(db) {
     'aggregate.js:validated': 'cache: a WeakSet of board maps already validated — a second box re-validates, same answer',
     'stockdeliver.js:decCache': 'cache: ERC-20 decimals are immutable on-chain, so every box reads the same value',
     'cardpng.js:CACHE': 'cache: content-hash-keyed PNG renders of a deterministic SVG; a second box re-renders',
+    'nft-art.js:assetCache': 'cache: bounded memo of immutable local artwork bytes by fixed filename; another process reads the same deployed plates, and missing files are retried after 30 seconds; no payment or reveal authority is cached',
     'rwahealth.js:observationMemo': 'cache: per-observation-object memo of two pure hashes; a different body is a different object',
     'rwahealthread.js:FRESH_HEALTH_RECEIPTS': 'cache: per-receipt-object freshness memo, keyed on the object itself',
     'rwaregistrylifecycle.js:HEAD_RECEIPT_CLIENTS': 'cache: per-client head-receipt memo, keyed on the client object',

@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+watcher: skipping poison harvest log (amount) amount must be > 0
+✅ watcher test passed — confirmation-depth gating (reorg-safe), downtime backfill, cursor advance and idempotent reprocessing for the fee + Claimed + reserve-bond + PackagePaid + Dynasty streams; the retired-sku payment holds its cursor for a human while a MALFORMED log is skipped so it can never wedge a stream; and a sold Dynasty portrait is a PHOTOGRAPH (frozen at first transfer, one-way)

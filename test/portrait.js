@@ -1,4 +1,4 @@
-// THE MADE MAN — the bloodline portrait (identity-NFT design §5 phase 1, off-chain, ungated).
+// THE MADE MAN — the bloodline portrait, revealed after its confirmed creation fee.
 //
 // The centre of this suite is NOT "does it draw" — it is the BRIGHT LINE. The design's own §4 states
 // the constraint ("a free, permanently-public, indexed-by-every-marketplace blob must be at most as
@@ -33,7 +33,9 @@ assert.ok(looks.size > 180, `portraits vary across characters (got ${looks.size}
 // ════════════ well-formed, and never emits a broken value ════════════
 const one = portraitSvg(st({ id: 'x1', name: 'Sal Moretti', level: 44, generation: 3 }));
 assert.ok(one.startsWith('<svg') && one.trimEnd().endsWith('</svg>'), 'a well-formed <svg>');
-assert.ok(!/undefined|NaN/.test(one), 'no undefined/NaN leaked into the markup');
+// Embedded JPEG bytes can legitimately contain the base64 substring "NaN".
+const markup = one.replace(/data:image\/jpeg;base64,[A-Za-z0-9+/=]+/g, '[embedded art]');
+assert.ok(!/undefined|NaN/.test(markup), 'no undefined/NaN leaked into the markup');
 // a missing/blank state must still render — a stale share link stays an image, never a broken one
 assert.ok(portraitSvg(st({})).startsWith('<svg'), 'an empty state still renders the house plate');
 
@@ -121,6 +123,9 @@ assert.equal(row.welsher, true, 'a public flag reaches the portrait');
 assert.ok(row.hitmanRank, 'the assassin rank resolves to a title');
 
 // ════════════ the routes ════════════
+await pool.query(`INSERT INTO fee_payments (nonce,kind,payer_address,amount_wei,tx_hash,account_id,credited)
+  VALUES (500001,'mint',$1,'10000000000000000',$2,$3,true)`,
+  ['0x' + '1'.repeat(40), '0x' + 'a'.repeat(64), acct]);
 const svg = await call('GET', `/v1/identity/${charId}/portrait.svg`);
 assert.equal(svg.code, 200, 'the portrait serves 200 with no auth (public + keyless, like the avatar)');
 assert.match(svg.headers['content-type'], /image\/svg\+xml/, 'served as SVG');

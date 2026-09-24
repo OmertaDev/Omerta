@@ -133,6 +133,7 @@ import * as Ops from './ops.js';
 import { itemArt } from './assets.js';
 import { avatarSvg } from './avatar.js';
 import { portraitSvg, portraitStateOf, portraitTraits, portraitRow, identityRowFor } from './portrait.js';
+import { canRevealPortrait, unrevealedPortraitSvg } from './portrait-access.js';
 import * as Deeds from './deeds.js';
 import * as Cards from './cards.js';
 import { renderPng } from './cardpng.js';
@@ -636,8 +637,8 @@ export async function buildServer() {
     reply.type('image/svg+xml; charset=utf-8').header('cache-control', 'public, max-age=604800, immutable');
     return reply.send(avatarSvg(String(req.params.seed || '').slice(0, 128)));
   });
-  // ── THE MADE MAN — the bloodline portrait (identity-NFT design §5, phase 1: entirely off-chain,
-  // no gates). A framed noir portrait composited live from PUBLIC game state, so it visibly deepens
+  // ── THE MADE MAN — the bloodline portrait. The confirmed character-creation fee gates reveal;
+  // free mint credits do not unlock artwork. A portrait composites PUBLIC game state and deepens
   // as the street ranks up and as the bloodline buries generations. PUBLIC + keyless like the avatar,
   // and it discloses nothing beyond `publicDossier` by construction (`portrait.js` reads that shape
   // and nothing else). Cached briefly rather than immutably — unlike an avatar this one CHANGES.
@@ -647,27 +648,41 @@ export async function buildServer() {
   // applies THE FREEZE (a frozen token serves its snapshot — a sold portrait is a photograph, never a
   // window onto the seller's later play). A frozen plate caches longer: its facts cannot change.
   app.get('/v1/identity/:characterId/portrait.svg', async (req, reply) => {
-    const { row, frozen } = await identityRowFor(pool, req.params.characterId);
+    const identity = await identityRowFor(pool, req.params.characterId);
+    const { row, frozen } = identity;
+    if (!await canRevealPortrait(pool, identity)) {
+      return reply.type('image/svg+xml; charset=utf-8').header('cache-control', 'no-store')
+        .send(unrevealedPortraitSvg());
+    }
     reply.type('image/svg+xml; charset=utf-8')
       .header('cache-control', frozen ? 'public, max-age=86400' : 'public, max-age=300');
-    // an unknown id gets the house's blank plate rather than a 404 — a stale share link stays an image
-    return reply.send(portraitSvg(portraitStateOf(row || { id: 'unknown', name: 'UNKNOWN' })));
+    return reply.send(portraitSvg(portraitStateOf(row)));
   });
   // Phase 2's reviewable JSON, in ERC-721 metadata shape. Keyed by characterId (phase 1) or the
   // DynastyNFT tokenId. WEALTH IS ABSENT IN ANY FORM (design §4's hard rule).
   app.get('/v1/identity/:characterId', async (req, reply) => {
     const id = String(req.params.characterId || '').slice(0, 64);
-    const { row, frozen } = await identityRowFor(pool, id);
+    const identity = await identityRowFor(pool, id);
+    const { row, frozen } = identity;
     if (!row) return reply.code(404).send({ error: 'not_found' });
+    if (!await canRevealPortrait(pool, identity)) {
+      reply.header('cache-control', 'no-store');
+      return {
+        name: 'Unrevealed OMERTA identity', status: 'locked',
+        description: 'Artwork is sealed until the character-creation fee is confirmed. Free mint credits do not reveal artwork.',
+        image: `${baseUrl}/v1/identity/${encodeURIComponent(id)}/portrait.svg`, attributes: [],
+      };
+    }
     const st = portraitStateOf(row);
     reply.header('cache-control', frozen ? 'public, max-age=86400' : 'public, max-age=300');
     return {
       name: `${row.name} — Generation ${row.generation}`,
+      status: 'revealed',
       description: frozen
         ? 'A portrait of a bloodline in OMERTÀ, frozen when its first transfer was confirmed and indexed. '
           + 'It preserves the bloodline observed at that time. The entitlement never travels with the token.'
         : 'A portrait of a bloodline in OMERTÀ. The frame deepens with every generation '
-          + 'buried; the coat climbs with the street\'s rank. Held by the account, not by the token.',
+          + 'buried; the insignia climbs with the street\'s rank. Held by the account, not by the token.',
       image: `${baseUrl}/v1/identity/${encodeURIComponent(id)}/portrait.svg`,
       attributes: portraitTraits(st),
     };

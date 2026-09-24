@@ -1,36 +1,36 @@
 # Generated repository inventory
 
-> Source: worktree at `468516d8d6f3`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `61134d60e69b`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,235 |
-| Text lines | 1,040,104 |
-| Repository bytes inventoried | 900,782,690 |
-| Backend/route modules | 273 |
+| Current artifacts | 3,268 |
+| Text lines | 1,041,442 |
+| Repository bytes inventoried | 904,550,972 |
+| Backend/route modules | 275 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,490 |
+| Git commits | 1,494 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,839 / 34,193 |
+| Graph nodes / edges | 7,884 / 34,369 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 1,202 |
-| artifact | 520 |
-| documentation | 330 |
-| test-suite | 264 |
-| backend-module | 245 |
+| media-asset | 1,222 |
+| artifact | 524 |
+| documentation | 331 |
+| test-suite | 266 |
+| backend-module | 247 |
 | contract-project | 153 |
+| engineering-harness | 100 |
 | audit | 98 |
 | contract-test | 98 |
-| engineering-harness | 96 |
 | design | 91 |
 | contract-source | 59 |
 | route-module | 28 |
@@ -54,7 +54,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
 | [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
-| [public/index.html](../../public/index.html) | 13,412 | web-surface | 2026-09-19 |
+| [public/index.html](../../public/index.html) | 13,415 | web-surface | 2026-09-24 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
@@ -68,7 +68,7 @@
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
-| [schema.sql](../../schema.sql) | 7,376 | data-schema | 2026-09-18 |
+| [schema.sql](../../schema.sql) | 7,378 | data-schema | 2026-09-24 |
 | [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
 | [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
@@ -83,16 +83,16 @@
 |---|---:|---:|
 | .mp4 | 216 | 383,811,008 |
 | .png | 248 | 298,076,530 |
-| .jpg | 308 | 59,623,997 |
+| .jpg | 326 | 63,294,254 |
 | .mp3 | 33 | 9,082,974 |
 | .zip | 1 | 8,866,982 |
 | .svg | 153 | 7,030,764 |
 | .m4a | 10 | 6,069,278 |
 | .webp | 57 | 2,969,620 |
-| .json | 30 | 715,220 |
+| .json | 31 | 749,086 |
 | .mjs | 27 | 300,881 |
 | .html | 26 | 251,449 |
-| .md | 28 | 239,703 |
+| .md | 29 | 243,175 |
 | .tsx | 23 | 112,587 |
 | .csv | 3 | 105,809 |
 | .woff2 | 4 | 50,960 |
