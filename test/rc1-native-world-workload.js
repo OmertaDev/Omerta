@@ -314,6 +314,8 @@ if (replay) {
 }
 const proof = await createProofRecorder({ directory: output, source, configuration,
   runId: path.basename(output), seed, scenarioId, population, ...(historyStorage ? { historyStorage } : {}) });
+const workloadCallUnion = new Map();
+let trackMeasuredCalls = false, measuredInvocationCount = 0;
 const guardrails = guardLimits ? createRunGuardrails({ directory: output, ...guardLimits }) : null;
 const guardBoundary = async label => { if (guardrails) await proof.record({ kind: 'operational-guard-check', ...await guardrails.check(label) }); };
 const runtime = installSerialRuntime(seed, configuration.start); let at = start;
@@ -706,7 +708,7 @@ try {
   const recoverySource = await verifyCheckpointRecoverySources({ sourceRevision: source.revision,
     readFile: async file => (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n') });
   const frozenScenarios = JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8'));
-  const configurationSha256 = sha256(canonicalJson(configuration));
+  let configurationSha256;
   const recoveryConfiguration = { binding: { sourceRevision: source.revision, configurationSha256 },
     coreProgression: content.progression === true, coordination: declared.COORDINATION_ENGINE === 'on',
     knowledge: declared.COORDINATION_KNOWLEDGE === 'on', sharing: declared.COORDINATION_KNOWLEDGE_SHARING === 'on',
@@ -714,7 +716,6 @@ try {
   const artifactReference = (name, value) => ({ path: name, sha256: sha256(`${JSON.stringify(value, null, 2)}\n`) });
   const recoveryAuthority = { source: recoverySource, review: CHECKPOINT_RECOVERY_REVIEW,
     catalog: recoveryCatalog(content), configuration: recoveryConfiguration };
-  await proof.artifact('checkpoint-recovery-authority.json', recoveryAuthority);
   const recoveryBoundaries = [];
   async function recoveryBoundary(label, snapshot, diagnostic) {
     const checkpoint = { stateSha256: snapshot.stateSha256, configurationSha256, logicalAt: at };
@@ -959,6 +960,21 @@ try {
   await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
     logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
   const initial = await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
+  // Cohort preparation may move the measured start/finish. Bind observer reviews
+  // only after that declared configuration has reached its final form.
+  configurationSha256 = sha256(canonicalJson(configuration));
+  recoveryConfiguration.binding.configurationSha256 = configurationSha256;
+  await proof.artifact('checkpoint-recovery-authority.json', recoveryAuthority);
+  const { verifyLifecycleSources, reviewWorkloadLifecycleApplicability, LIFECYCLE_APPLICABILITY_REVIEW } =
+    await import('../tools/rc1-lifecycle-applicability.js');
+  const lifecycleSource = await verifyLifecycleSources({ sourceRevision: source.revision,
+    readFile: file => fs.readFile(file) });
+  const lifecycleAuthority = { source: lifecycleSource, review: LIFECYCLE_APPLICABILITY_REVIEW,
+    configuration: { binding: { sourceRevision: source.revision, configurationSha256 },
+      external: { chainWatcher: 'DORMANT_UNCONFIGURED', liquidityAutomation: 'DISABLED_LOCAL_CONFIG', rwaRegistry: 'UNAVAILABLE_LOCAL_CONFIG' },
+      basis: { declared, expectedDormant, chainRpcAbsent: !process.env.CHAIN_RPC_URL } } };
+  await proof.artifact('world-lifecycle-authority.json', lifecycleAuthority);
+  trackMeasuredCalls = true;
   if (resume) assert.equal(initial.stateSha256, httpEnabled ? applicationBootstrap.afterStateSha256 : parentCheckpoint.stateSha256,
     'Measured state differs from the recorded restore/bootstrap boundary');
   const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
@@ -975,6 +991,19 @@ try {
   await proof.artifact('actor-policy-initial.json', policyState());
   async function invoke(authority, identity, work, latencyClass) {
     const invocation = { authority, ...identity, logicalAt: at };
+    if (trackMeasuredCalls) {
+      const call = authority === 'ordinary-http' ? { kind: 'http', method: identity.method, path: identity.path,
+        ...(identity.body === undefined ? {} : { body: identity.body }) }
+        : authority === 'player.execute' ? { kind: 'player-command', commandType: identity.commandType }
+        : authority === 'canonical-crime' ? { kind: 'canonical-crime', handler: 'game.doCrime' }
+        : ['character.read', 'player.snapshot'].includes(authority) ? { kind: 'canonical-read',
+          handler: authority === 'character.read' ? 'game.readCharacter' : 'player.snapshot' }
+        : { kind: 'unknown-dispatch', authority };
+      const key = canonicalJson(call), prior = workloadCallUnion.get(key);
+      workloadCallUnion.set(key, prior ? { ...prior, count: prior.count + 1, lastLogicalAt: at }
+        : { call, count: 1, firstLogicalAt: at, lastLogicalAt: at });
+      measuredInvocationCount++;
+    }
     currentInvocation = invocation;
     const started = performance.now();
     try {
@@ -1082,7 +1111,7 @@ try {
       const executionId = command.executionIdentity.executionId;
       await proof.record({ kind: 'authorized-policy-choice', accountId, day, action,
         commandType: command.commandType, commandId: command.commandId, executionId });
-      const response = await invoke('player.execute', { accountId, executionId },
+      const response = await invoke('player.execute', { accountId, executionId, commandType: command.commandType },
         () => engine.execute(accountId, { executionId, confirmed: true }, executionId), 'command');
       assert.equal(response.status, 'COMPLETED');
       opportunities.accept(accountId, command, response, at);
@@ -1514,6 +1543,19 @@ try {
     startAt: measuredStart, endAt: finish, trace, expectedDormant,
     evidence: artifactReference('worker-schedule.json', trace) });
   await proof.artifact('world-duration-measurements.json', durationMeasurements);
+  const workloadInventory = { binding: { sourceRevision: source.revision, configurationSha256,
+    initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
+    fromLogicalAt: measuredStart, throughLogicalAt: finish }, complete: true, canonicalDispatchOnly: true,
+    originalWorkersOnly: true, calls: [...workloadCallUnion.values()].map(row => row.call),
+    observedInvocations: measuredInvocationCount, union: [...workloadCallUnion.values()],
+    coverage: 'Every measured actor invoke wrapper call, including retries, reads and preparation; original worker coverage is separately verified. Complete identities and outcomes remain in the sealed native history.' };
+  await proof.artifact('world-invocation-inventory.json', workloadInventory);
+  const lifecycleApplicability = reviewWorkloadLifecycleApplicability({ source: lifecycleSource, configurationSha256,
+    startAt: measuredStart, endAt: finish, initialSnapshot: initial, finalSnapshot: final,
+    workload: { ...workloadInventory, evidence: artifactReference('world-invocation-inventory.json', workloadInventory) },
+    configurationEvidence: { ...lifecycleAuthority.configuration, evidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) },
+    reviewEvidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) });
+  await proof.artifact('world-lifecycle-applicability.json', lifecycleApplicability);
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
@@ -1598,6 +1640,7 @@ try {
     mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
     recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
     durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
+    lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
