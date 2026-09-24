@@ -27,7 +27,7 @@ const EXTENSION_PINS = Object.freeze({
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   format: 1, sourcePins: EXTENSION_PINS,
   catalogSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
-  scope: 'Current eligible roster, stored unresolved subjects, their authored item/Knowledge prerequisites and canonical retirement. No claim that every optional outcome can coexist or that these hypothetical paths were executed.',
+  scope: 'Current eligible roster and one compatible meaningful/recovery/authorized-propagation path per required subject. Verified empty-escrow mystery and discovery cancellation has no item/Knowledge prerequisite. Optional authored completion branches retain a separate supplemental inventory; simultaneous completion of every optional branch is not a frozen gate. No hypothetical path is claimed executed.',
   materialPath: 'Original boostCar has a positive success/junker branch, consumes10 energy, and creates an owned unlisted/unpledged/unminted/unraced car. One250-cash journey to foundry plus original car_salvage_basic produces6 scrap,2 wire,2 salvage parts. This is existential reachability, not a guaranteed finite number of random attempts. No OMR faucet or fixture item is transferred into the proof.',
   baseKnowledge: 'Docks manifest/ledger/register claims use original discover/complete actions; furnace manifest and dock tide admissions use the original free own mystery node. Countermark/chart additionally need the exact crafted key/seal. Fresh account-target tokens use an eligible coactor public character name; current claim owner and ACL revision authorize sharing, without Crew/Family membership.',
   composedPaths: 'Original quiet pickpocket has positive success probability, no heat and no failure jail; nerve regenerates6/min and each success gives at least2 respect and35 cash before any optional soldier cut. The sufficient ordinary-state proof excludes assigned soldiers, personal loans, heat and existing upkeep. It supplies Crew level3 and, for two eligible solo coactors, Family level5/25000 fee. A fresh uniform two-person Crew/Family can establish dock shortage, then register/intercept/establish/expose the canal through four original1000-permille operations. Exact seals/wire, original cooldowns, fresh revisions and returned item IDs are retained; acquisition happens before any remaining objective retirement. This is a possible canonical path, not an observed or guaranteed random schedule.',
@@ -382,18 +382,33 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
           : 'Current location, declaration, original claim state, material, rollout or actor-visible evidence capacity needs a more specific source/native path.',
       { originals: collaborations.get(need.id) || [], ...(corroborationRoots[root] ? { crew: crewProof(need.accountId) } : {}) });
   }
-  const canalGraph = catalog.graphs.find(row => row.id === 'omerta.coordination.canal-register');
-  const canalClaim = { ...canalGraph.nodes.find(node => node.claim).claim, contentHash: canalGraph.contentHash };
+  const propagationSources = ['docks.canal-register', 'docks.shipping-register', 'docks.manifest', 'docks.carbon-manifest', 'docks.tide-ledger'];
   for (const [index, accountId] of roster.entries()) {
     const recipient = actors.get(roster[(index + 1) % roster.length]);
+    // These source nodes require only their free briefing/own free mystery node.
+    // Issuance has the2048 owned bound; a false optional independent-evidence gate
+    // elsewhere in the projection does not disable these source actions.
+    const claim = actors.get(accountId)?.loc === 'docks' && claimRows.filter(row => row.owner_account_id === accountId).length < 2048
+      ? propagationSources.map(routeRequirement).find(requirement => freshSource(accountId, requirement) && admissionPath(accountId, requirement)) : null;
     const ok = enabled && active(accountId) && recipient && recipient.account_id !== accountId && active(recipient.account_id)
-      && actors.get(accountId).loc === 'docks' && capacity(accountId, canalClaim) && capacity(recipient.account_id, canalClaim) && freshSource(accountId, canalClaim);
+      && !!claim;
     emit('knowledge', { id: 'propagation:' + accountId, goal: 'authorized-claim-acquisition-and-propagation', accountId }, ok ? 'REACHABLE' : 'UNKNOWN', ok
-      ? 'Own fresh free canal-register claim, fresh server target token for the named active coactor, original current ACL revision, original share, then authorized recipient read. New claims have zero grants; the bound uses this account and its visible evidence, not global claim count.'
-      : 'Needs an exact currently authorized coactor/claim/ACL capacity path; no hidden row is treated as player-visible Knowledge.', { recipientName: recipient?.name || null });
+      ? 'One own fresh original free source claim, fresh server target token for the named active coactor, original current ACL revision, original share, then authorized recipient paginated read. New claims have zero grants. Receiving/reading this fresh grant does not run a256-candidate independent-evidence query.'
+      : 'Needs an exact currently authorized coactor/claim/ACL capacity path; no hidden row is treated as player-visible Knowledge.',
+    { recipientName: recipient?.name || null, selectedRequirement: claim || null });
   }
+  const supplemental = { scope: 'Optional completion branches, not additional simultaneous gate obligations',
+    inventories: { resources: inventories.resources.obligations, knowledge: inventories.knowledge.obligations.filter(row => !row.id.startsWith('propagation:')) } };
+  const optionalIds = new Set([...supplemental.inventories.resources, ...supplemental.inventories.knowledge].map(row => row.id));
+  supplemental.results = witnesses.filter(row => optionalIds.has(row.id)).map(row => ({ scope: row.scope, id: row.id, status: row.status }));
+  inventories.resources.obligations = [];
+  inventories.knowledge.obligations = inventories.knowledge.obligations.filter(row => row.id.startsWith('propagation:'));
+  const recoveryComplete = diagnostics.objectiveInventory.tablesComplete && witnesses.filter(row => row.scope === 'objectives').every(row => row.status === 'REACHABLE');
+  inventories.resources.complete &&= recoveryComplete;
+  inventories.resources.derivation = 'Chosen original cancellation/retirement paths for all stored subjects require no consumable prerequisite. Optional completion recipes are retained separately, not required to coexist.';
+  if (!recoveryComplete) inventories.knowledge.complete = false;
   if (!enabled) { inventories.resources.complete = false; inventories.knowledge.complete = false; }
   const joined = joinWorldCheckpointAssertions({ manifest, source, checkpoint, diagnostics, diagnosticEvidence, roster, inventories, witnesses, lifecycleWindows });
-  return { binding: bound, sourceReviewSha256: source.checkpointReviewSha256, catalogApplicable: enabled, inventories, witnesses, details, joined,
+  return { binding: bound, sourceReviewSha256: source.checkpointReviewSha256, catalogApplicable: enabled, inventories, witnesses, details, supplemental, joined,
     limits: CHECKPOINT_RECOVERY_REVIEW.limits, matrixQualifying: false };
 }

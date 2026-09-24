@@ -66,7 +66,8 @@ for (const mutate of [
 }
 {
   const changed = clone(data); changed.world_recipe_usage.push({ recipe_id: 'recipe:furnace_archive_key', scope: 'global', period_kind: 'lifetime', used: 64 });
-  const result = reviewCanonicalCheckpoint(fixture(changed)); assert.equal(result.joined.scopes.resources.status, 'UNKNOWN');
+  const result = reviewCanonicalCheckpoint(fixture(changed)); assert.equal(result.joined.scopes.resources.status, 'SATISFIED');
+  assert(result.supplemental.results.some(row => row.scope === 'resources' && row.status === 'UNKNOWN'));
   assert.equal(result.joined.scopes.objectives.status, 'SATISFIED', 'Optional exhausted completion must retain legal retirement');
 }
 {
@@ -89,13 +90,13 @@ for (const population of [25, 50, 100, 250, 1000]) {
   for (let index = 0; index < 257; index++) changed.coordination_claims.push({ id: 'visible-' + index, owner_account_id: 'a1', content_hash: graph.contentHash,
     domain: graph.nodes.find(node => node.claim).claim.domain, proposition: graph.nodes.find(node => node.claim).claim.proposition,
     source_root: graph.nodes.find(node => node.claim).claim.sourceRoot });
-  assert.equal(reviewCanonicalCheckpoint(fixture(changed)).joined.scopes.knowledge.status, 'UNKNOWN', 'Actual actor-visible batch bound must remain enforced');
+  assert(reviewCanonicalCheckpoint(fixture(changed)).supplemental.results.some(row => row.scope === 'knowledge' && row.status === 'UNKNOWN'), 'Actual actor-visible batch bound must remain enforced for the applicable optional branch');
   changed.coordination_claims.forEach(row => { row.domain = 'unrelated-query'; });
   assert.equal(reviewCanonicalCheckpoint(fixture(changed)).joined.scopes.knowledge.status, 'SATISFIED', 'Same-graph unrelated queries do not consume the evidence union');
 }
 {
   const changed = clone(data); changed.characters.forEach(row => row.heat = 95);
-  assert.equal(reviewCanonicalCheckpoint(fixture(changed)).joined.scopes.knowledge.status, 'UNKNOWN', 'Law liabilities need their own recovery path');
+  assert(reviewCanonicalCheckpoint(fixture(changed)).supplemental.results.some(row => row.scope === 'knowledge' && row.status === 'UNKNOWN'), 'Optional quiet-progression paths need current Law disposition');
   const closure = fixture(data); closure.catalog = clone(catalog); closure.catalog.nodes[0].version++;
   assert.equal(reviewCanonicalCheckpoint(closure).catalogApplicable, false);
 }
@@ -113,5 +114,16 @@ for (const population of [25, 50, 100, 250, 1000]) {
   const result = reviewCanonicalCheckpoint(fixture(changed)), path = result.details.find(row => row.id === 'shared-canal-path');
   assert(path.ok); assert.equal(path.path.filter(row => row.startsWith('Family operation ')).length, 1);
   assert(path.path.some(row => row.includes('Family operation expose_market')));
+}
+{
+  const changed = rows(100);
+  changed.mystery_instances = changed.accounts.map((account, index) => ({ ...data.mystery_instances[0], id: 'm' + index,
+    owner_id: 'c' + index, authority_account_id: account.id }));
+  const result = reviewCanonicalCheckpoint(fixture(changed));
+  assert.equal(result.joined.scopes.resources.status, 'SATISFIED', 'Legal retirement does not demand100 optional fresh keys against the global64 cap');
+  assert.equal(result.joined.scopes.knowledge.status, 'SATISFIED');
+  assert(result.supplemental.results.some(row => row.scope === 'resources' && row.status === 'UNKNOWN'), 'Optional scarce paths remain visibly unproved');
+  const full = rows(); full.coordination_claims = Array.from({ length: 2048 }, (_, i) => ({ id: 'owned-' + i, owner_account_id: 'a0' }));
+  assert.equal(reviewCanonicalCheckpoint(fixture(full)).joined.scopes.knowledge.status, 'UNKNOWN', 'Actual owned issuance bound is not waived');
 }
 console.log('PASS rc1-checkpoint-recovery-review: exact native checkpoint/configuration/source joins; owner/definition/revision/custody recovery; original material/Knowledge prerequisites; unknown preservation; all5 populations; no native world run');
