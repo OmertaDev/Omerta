@@ -3338,6 +3338,16 @@ scopedSocialContext = async function(db) {
       + 'it requires their original restricted actor snapshots, requests and artifact hashes, '
       + 'which are not distributed to hosted CI. The current-source Family custody native '
       + 'suite and pure journal controls are independently invoked by rc1-recovery.yml.',
+    'test/rc1-world-resource-retained-classes.js':
+      'Requires the private RC1_RETAINED_COMPONENTS and RC1_RETAINED_EXPIRY historical roots, '
+      + 'including a hash-pinned command-admission record and its original restricted changed-row artifacts. '
+      + 'A newly seeded database cannot reproduce those recorded bytes. Current-source resource '
+      + 'native suites run in rc1-recovery.yml; pure journal controls run in test:rc1:harness.',
+    'test/rc1-world-resource-retained-family.js':
+      'Requires RC1_RETAINED_FAMILY to select one of two hash-pinned historical native manifests '
+      + 'with private actor entry records and restricted membership/cooldown deltas. Generic hosted '
+      + 'CI lacks those immutable inputs. Current-source Family native suites run in rc1-recovery.yml; '
+      + 'pure worker transition controls run in test:rc1:harness.',
     'test/rc1-native-proof-gzip-benchmark.js':
       'Requires an explicit immutable restricted historical history file and a fresh private output directory. '
       + 'It measures and verifies every original byte without rerunning gameplay; generic CI lacks that input. '
