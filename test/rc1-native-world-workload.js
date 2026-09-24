@@ -26,7 +26,7 @@ import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.
 import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
 import { planCohort, createCohortPolicy, assessCohortBaseline, COHORT_POLICY_CONTRACT } from '../tools/rc1-cohort-policy.js';
 import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
-import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
+import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT, ALLIANCE_CONTINUOUS_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
 import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
 import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
@@ -52,6 +52,9 @@ const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', '
 const actorPolicy = argument('policy') || 'quiet_world';
 assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
+const continuousAlliance = allianceEnabled && (population !== 25 || ![24, 48].includes(hours) || process.argv.includes('--continuous-alliance'));
+const legacyAlliance = allianceEnabled && !continuousAlliance;
+const allianceMode = continuousAlliance ? 'continuous' : 'legacy';
 const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'mostly_veteran_players';
 const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
 const churnEnabled = actorPolicy === 'high_player_churn';
@@ -60,8 +63,8 @@ if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
   assert(!argument('resume'), 'Fault workload does not support continuation');
 }
-const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
-if (allianceEnabled) {
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+if (legacyAlliance) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
 }
@@ -76,7 +79,7 @@ if (priorFailureDirectory) {
 }
 const replay = argument('replay'), resume = argument('resume');
 const comparisonDirectory = argument('compare-uninterrupted');
-assert(!comparisonDirectory || (allianceEnabled && resume), 'Uninterrupted comparison requires alliance continuation');
+assert(!comparisonDirectory || (legacyAlliance && resume), 'Uninterrupted comparison requires legacy alliance continuation');
 const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
 assert(!injectActorMismatch || replay, 'Actor mismatch control requires recorded replay');
 async function readPrior(directory) {
@@ -94,18 +97,18 @@ const comparisonRun = comparisonDirectory ? await readPrior(comparisonDirectory)
 const readArtifact = async (directory, name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'));
 const retainedActors = replay ? await readArtifact(replay, 'actor-tape.json') : null;
 const retainedOrder = replay ? await readArtifact(replay, 'query-order.json') : null;
-const checkpointLabel = allianceEnabled ? 'alliance-hour24' : 'final';
-const parentContinuation = resume && allianceEnabled ? await readArtifact(resume, 'alliance-hour24-continuation.json') : null;
+const checkpointLabel = legacyAlliance ? 'alliance-hour24' : 'final';
+const parentContinuation = resume && legacyAlliance ? await readArtifact(resume, 'alliance-hour24-continuation.json') : null;
 const parentCheckpoint = resume ? await readArtifact(resume, checkpointLabel + '-checkpoint.json') : null;
-const parentTape = resume ? (await readArtifact(resume, allianceEnabled ? 'alliance-hour24-random-tape.json' : 'random-tape.json')).draws : null;
-const parentPolicy = resume ? await readArtifact(resume, allianceEnabled ? 'alliance-hour24-policy.json' : 'actor-policy-final.json') : null;
+const parentTape = resume ? (await readArtifact(resume, legacyAlliance ? 'alliance-hour24-random-tape.json' : 'random-tape.json')).draws : null;
+const parentPolicy = resume ? await readArtifact(resume, legacyAlliance ? 'alliance-hour24-policy.json' : 'actor-policy-final.json') : null;
 if (resume) {
   const parentBoundary = parentContinuation || parentRun.result;
   assert.equal(parentCheckpoint.stateSha256, parentBoundary.finalStateSha256);
   assert.equal(sha256(canonicalJson(parentTape)), parentBoundary.deterministicRandomTapeSha256);
   assert.equal(sha256(canonicalJson(parentPolicy)), parentBoundary.policyStateSha256);
   assert(/^rc1_worker_world_[a-z_0-9]+$/.test(parentCheckpoint.schema));
-  if (allianceEnabled) assertAllianceContinuation({ source, parentRun, parentPolicy, parentCheckpoint, seed, population,
+  if (legacyAlliance) assertAllianceContinuation({ source, parentRun, parentPolicy, parentCheckpoint, seed, population,
     parentContinuation, observeResources, hours, guardLimits });
 }
 assert(controlUrl, 'Explicit disposable local PostgreSQL control database required');
@@ -194,6 +197,15 @@ if (allianceEnabled) Object.assign(configuration, {
     originalStartupJobs: 'Always executed in each fresh process; no scheduler state transplant or omitted callbacks',
     comparisonRunSha256: comparisonRun ? sha256(await fs.readFile(path.join(comparisonDirectory, 'run.json'))) : null },
 });
+if (continuousAlliance) {
+  Object.assign(configuration, { allianceContract: ALLIANCE_CONTINUOUS_WORLD_CONTRACT,
+    policyScope: ALLIANCE_CONTINUOUS_WORLD_CONTRACT.schedule,
+    policy: { ...configuration.policy, dailyActiveActors: population },
+    entry: population + ' ordinary HTTP entrants; only first three receive prebaseline founder respect. Every rolling day executes canonical alliance cooperation and all declared actor crime sessions.',
+    workerOrder: 'All due original callbacks execute; daily alliance work follows the first hourly callback of each rolling day, with day0 immediately after startup.',
+  });
+  delete configuration.continuation;
+}
 if (cohortEnabled) Object.assign(configuration, {
   scenario: actorPolicy, cohortContract: COHORT_POLICY_CONTRACT,
   policyScope: 'All assigned actors use current issued PlayerCommands and their own public crime eligibility. Starting cohort labels never grant continuing eligibility.',
@@ -417,7 +429,7 @@ if (resume) {
   if (allianceEnabled) {
     allianceActors.push(...structuredClone(parentPolicy.allianceActors)); roster.push(...parentPolicy.roster);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
-    allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors }).restore(parentPolicy.allianceAdapter);
+    allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors, mode: allianceMode }).restore(parentPolicy.allianceAdapter);
   }
   if (cohortEnabled) {
     cohortActors.push(...structuredClone(parentPolicy.cohortActors)); roster.push(...parentPolicy.roster);
@@ -527,8 +539,8 @@ try {
         }
       }
       await proof.artifact('alliance-initialization.json', { actors: allianceActors.map(({ token: _token, ...actor }) => actor),
-        grants, ordinaryUnmodifiedOutsiders: 22, directOtherFixtures: 0, fixtureWritesAfterBaseline: false });
-      allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors });
+        grants, ordinaryUnmodifiedOutsiders: population - 3, directOtherFixtures: 0, fixtureWritesAfterBaseline: false });
+      allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors, mode: allianceMode });
       }
     } else if (!resume) pool = await makeWorkerDatabase(controller);
     for (const account of httpEnabled || resume ? [] : roster) {
@@ -975,13 +987,14 @@ try {
     await proof.artifact('alliance-startup-lineage.json', startupLineage);
   }
   workPhase = 'measured';
-  if (allianceEnabled) { if (resume) await allianceDay(1); else await allianceDay(0); }
+  if (allianceEnabled) { if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1); }
   const afterBoundary = async (logicalAt, label) => {
     guardrails?.time(`after:${label}:${logicalAt}`);
     if (label !== 'guardedTick') return;
     await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     const day = Math.floor((logicalAt - epoch) / 86400000);
     if (allianceEnabled) {
+      if (continuousAlliance && day !== lastDay && day < Math.ceil((finish - epoch) / 86400000)) await allianceDay(day);
       return;
     }
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
@@ -1022,7 +1035,7 @@ try {
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   };
   if ((cohortEnabled || familyEnabled || churnEnabled) && !resume) await afterBoundary(at, 'guardedTick');
-  if (allianceEnabled && !resume) {
+  if (legacyAlliance && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
     const checkpointState = await proof.snapshot(pool, 'alliance-hour24');
@@ -1075,12 +1088,18 @@ try {
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
     assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
-    const paused = !resume && hours === 24;
-    assert.deepEqual(allianceAdapter.summary().completedStages, paused ? [0] : [0, 1]);
-    assert.equal(allianceAdapter.summary().completions.length, paused ? 0 : 3);
-    assert.equal(!!finalPolicy.allianceAdapter.payload.state.pending, paused);
-    assert.equal([...actorActions.values()].filter(Boolean).length, 25);
-    await proof.artifact('alliance-final.json', { contract: ALLIANCE_WORLD_CONTRACT, summary: allianceAdapter.summary(), checkpoint: allianceAdapter.checkpoint() });
+    if (legacyAlliance) {
+      const paused = !resume && hours === 24;
+      assert.deepEqual(allianceAdapter.summary().completedStages, paused ? [0] : [0, 1]);
+      assert.equal(allianceAdapter.summary().completions.length, paused ? 0 : 3);
+      assert.equal(!!finalPolicy.allianceAdapter.payload.state.pending, paused);
+    } else {
+      assert.deepEqual(allianceAdapter.summary().completedStages, Array.from({ length: Math.ceil((finish - epoch) / 86400000) }, (_, day) => day));
+      assert.equal(allianceAdapter.summary().unknownResponses, 0);
+      assert(allianceAdapter.summary().dailyCooperation.every(day => day.cooperationSatisfied));
+    }
+    assert.equal([...actorActions.values()].filter(Boolean).length, population);
+    await proof.artifact('alliance-final.json', { contract: configuration.allianceContract, summary: allianceAdapter.summary(), checkpoint: allianceAdapter.checkpoint() });
   }
   if (cohortEnabled) {
     assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
@@ -1102,7 +1121,7 @@ try {
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
-      + (allianceEnabled ? ' plus fresh completed alliance HTTP operations' : '') + '; excludes reads/replays/denials' });
+      + (allianceEnabled || familyEnabled ? ' plus fresh completed social HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
