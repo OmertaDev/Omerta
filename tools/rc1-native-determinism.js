@@ -89,7 +89,12 @@ export function serialDatabaseOptions({ commitObserver = null } = {}) {
         options: configuration.options.replace(`search_path=${namespace}`, `search_path=${namespace},pg_catalog`) });
       const rawConnect = raw.connect.bind(raw);
       const connect = async () => {
+        // A quarantined observer cannot lend a client to a canonical handler
+        // whose BEGIN occurs before its try/finally. Reject before acquisition.
+        commitObserver?.assertUsable?.();
         const client = await rawConnect();
+        try { commitObserver?.assertUsable?.(); }
+        catch (error) { client.release(); throw error; }
         let transactionTime = null, failed = false;
         const query = async (sql, values) => {
             const text = typeof sql === 'string' ? sql : sql.text;

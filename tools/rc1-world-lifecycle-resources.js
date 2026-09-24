@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { LAW, M3 } from '../src/rules.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
+import { QUERY_ORDER_SCOPE } from './rc1-native-query-order.js';
 
 const rows = (state, table) => state.tables[table];
 const value = amount => exactSum([amount]);
@@ -223,7 +224,26 @@ function reconcileCompanionExpiry(before, after, { identity, receipts, quiescent
   const expired = rows(after, 'market_listings').filter(row => old.get(row.id)?.kind === 'order' && old.get(row.id).status === 'live' && row.status === 'expired');
   if (!expired.length || !quiescentGroupEvidence) return result;
   const { queries, at, rootHash, outcome } = companionQueries(before, after, identity, quiescentGroupEvidence);
-  const scans = queries.filter(query => query.sql === EXPIRY_SQL.due); assert.equal(scans.length, 1); assert.equal(scans[0].transactionId, null);
+  const orderedScan = QUERY_ORDER_SCOPE.queries.find(query => query.id === 'market-due');
+  assert.equal(orderedScan.originalSql, EXPIRY_SQL.due);
+  assert.equal(orderedScan.sourceSha256, MARKET_EXPIRY_SOURCE_PINS['src/market.js']);
+  const scans = queries.filter(query => query.sql === EXPIRY_SQL.due || query.sql === orderedScan.transformedSql)
+    .map(query => {
+      if (query.sql === EXPIRY_SQL.due) return query;
+      // The existing query-order wrapper retains both projections in one native
+      // statement snapshot. Do not mistake that SQL transport for a missing scan.
+      assert.equal(query.result.command, 'SELECT'); assert.equal(query.result.rowCount, 1);
+      assert.equal(query.result.rows.length, 1);
+      const { limited_rows: selected, eligible_rows: encoded } = query.result.rows[0];
+      assert(Array.isArray(selected) && Array.isArray(encoded));
+      const eligible = encoded.map(text => { assert.equal(typeof text, 'string'); return JSON.parse(text); });
+      assert(eligible.every(row => row.status === 'live' && Date.parse(row.expires_at) <= at));
+      const projection = row => Object.fromEntries(orderedScan.projection.map(field => [field, row[field]]));
+      assert.deepEqual(selected.map(actorValueHash).sort(), eligible.map(row => actorValueHash(projection(row))).sort(),
+        'Original full due projection differs from same-statement eligible rows');
+      return { ...query, result: { ...query.result, rowCount: selected.length, rows: selected } };
+    });
+  assert.equal(scans.length, 1); assert.equal(scans[0].transactionId, null);
   const usedTransactions = new Set();
   for (const final of expired) {
     const prior = old.get(final.id), held = integer(prior.qty) * integer(prior.price);

@@ -31,6 +31,7 @@ export function createNativeQuiescentGroupObserver({ serialObserver, snapshot, o
   function event(group, value) { group.trace.push({ sequence: ++group.sequence, logicalAt: clock(), ...value }); }
   function requireFixedTime(group) { assert.equal(clock(), group.logicalAt, 'Logical clock changed during a quiescent group'); }
   const api = {
+    assertUsable: ensureUsable,
     arm() { ensureUsable(); assert(!active, 'Cannot arm serial observation inside a group'); serialObserver.arm(); },
     disarm() { assert(!active, 'Cannot disarm an active aggregate'); serialObserver.disarm(); },
     assertComplete() { ensureUsable(); assert(!active, 'Unfinished quiescent group'); serialObserver.assertComplete(); },

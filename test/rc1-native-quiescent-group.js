@@ -3,6 +3,8 @@ import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.
 import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescent-group.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';
+import pg from 'pg';
+import { installSerialRuntime, serialDatabaseOptions } from '../tools/rc1-native-determinism.js';
 
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const request = (index, path = '/v1/market/listing/buy') => ({ accountId: 'a-' + index,
@@ -108,6 +110,25 @@ let controls = 0;
   const diagnostic = env.router.diagnostic().quiescentGroups;
   assert.equal(diagnostic.failure.evidence.after.value, 1); assert(diagnostic.failure.evidence.trace.length > 0);
   assert.throws(() => env.router.arm(), /quarantined/); controls++;
+  const runtime = installSerialRuntime('quarantined-pool-acquisition');
+  const nativeConnect = pg.Pool.prototype.connect; let acquisitions = 0;
+  pg.Pool.prototype.connect = async function () { acquisitions++; throw Error('Unexpected native acquisition'); };
+  const pool = serialDatabaseOptions({ commitObserver: env.router }).poolFactory({ options: '-c search_path=rc1_guard' }, 'rc1_guard');
+  try {
+    await assert.rejects(pool.connect(), /quarantined/);
+    await assert.rejects(pool.query('BEGIN'), /quarantined/);
+    assert.equal(acquisitions, 0, 'Quarantine must reject before a handler can leak a borrowed client'); controls++;
+  } finally { pg.Pool.prototype.connect = nativeConnect; await pool.end(); runtime.restore(); }
+}
+
+{
+  const runtime = installSerialRuntime('quarantine-during-pool-acquisition');
+  const nativeConnect = pg.Pool.prototype.connect; let quarantined = false, released = 0;
+  pg.Pool.prototype.connect = async function () { quarantined = true; return { release() { released++; } }; };
+  const observer = { assertUsable() { assert(!quarantined, 'quarantined during acquisition'); } };
+  const pool = serialDatabaseOptions({ commitObserver: observer }).poolFactory({ options: '-c search_path=rc1_guard' }, 'rc1_guard');
+  try { await assert.rejects(pool.connect(), /quarantined during acquisition/); assert.equal(released, 1); controls++; }
+  finally { pg.Pool.prototype.connect = nativeConnect; await pool.end(); runtime.restore(); }
 }
 
 {

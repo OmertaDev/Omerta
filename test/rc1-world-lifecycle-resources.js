@@ -6,6 +6,7 @@ import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.
 import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescent-group.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';
+import { QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 
 const at = '2026-09-20T12:00:00.000Z', logicalAt = Date.parse(at);
 const initial = () => {
@@ -195,9 +196,7 @@ assert.equal(aggregateJournal.identity.outcome, 'QUIESCENT_AGGREGATE'); assert(!
 assert.equal(reconcileOrderExpiry(aggregateBefore, aggregateAfter, { identity: aggregateEvidence.identity, receipts: aggregateAfter.tables.transactions }).movements.length, 0);
 cases.push({ name: 'aggregate-two-order-expiry-with-concurrent-owner-fee' });
 controls.push('aggregate-without-worker-trace-remains-unsupported');
-function aggregateCorruption(name, edit) {
-  const a = structuredClone(aggregateBefore), b = structuredClone(aggregateAfter), evidence = structuredClone(aggregateEvidence);
-  edit(a, b, evidence);
+function resealAggregate(a, b, evidence) {
   evidence.before = a; evidence.after = b;
   evidence.trace.forEach((event, i) => { event.sequence = i + 1;
     if (event.original) event.sqlSha256 = sha256(typeof event.original.sql === 'string' ? event.original.sql : event.original.sql.text);
@@ -209,6 +208,11 @@ function aggregateCorruption(name, edit) {
   Object.assign(root, { beforeHash: sha256(a), afterHash: sha256(b), traceSha256: actorValueHash(evidence.trace), companionsSha256: evidence.identity.companionsSha256,
     companionOutcomesSha256: actorValueHash(evidence.companionOutcomes) });
   evidence.traceSha256 = root.traceSha256; evidence.identity.traceRoot = { ...root, sha256: actorValueHash(root) };
+  return evidence;
+}
+function aggregateCorruption(name, edit, originalEvidence = aggregateEvidence) {
+  const a = structuredClone(aggregateBefore), b = structuredClone(aggregateAfter), evidence = structuredClone(originalEvidence);
+  edit(a, b, evidence); resealAggregate(a, b, evidence);
   assert.throws(() => reconcileOrderExpiry(a, b, { identity: evidence.identity, quiescentGroupEvidence: evidence, receipts: b.tables.transactions }), undefined, name);
   controls.push(name);
 }
@@ -225,6 +229,29 @@ aggregateCorruption('aggregate-expiry-rollback-not-commit', (_, __, e) => {
   start.original.sql = 'ROLLBACK'; end.command = end.nativeResult.command = 'ROLLBACK'; end.sqlSha256 = sha256('ROLLBACK');
 });
 aggregateCorruption('aggregate-expiry-worker-return-contradicts-count', (_, __, e) => { e.companionOutcomes[0].value.lapsed = 1; });
+{
+  const evidence = structuredClone(aggregateEvidence), scope = QUERY_ORDER_SCOPE.queries.find(row => row.id === 'market-due');
+  const dispatch = evidence.trace.find(row => row.original?.sql === scope.originalSql);
+  const response = evidence.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.queryId === dispatch.queryId);
+  dispatch.original.sql = scope.transformedSql;
+  response.nativeResult.rows = [{ limited_rows: response.nativeResult.rows,
+    eligible_rows: aggregateBefore.tables.market_listings.map(row => JSON.stringify(row)) }];
+  response.rowCount = response.nativeResult.rowCount = 1;
+  response.sqlSha256 = sha256(scope.transformedSql);
+  resealAggregate(aggregateBefore, aggregateAfter, evidence);
+  const options = { identity: evidence.identity, quiescentGroupEvidence: evidence };
+  assert.equal(reconcileWorldResources(aggregateBefore, aggregateAfter, options).unsupported.length, 0);
+  cases.push({ name: 'aggregate-expiry-original-query-order-transport' });
+  const scan = e => e.trace.find(row => row.nativeResult?.rows?.[0]?.limited_rows)?.nativeResult.rows[0];
+  aggregateCorruption('ordered-expiry-missing-projected-row', (_, __, e) => { scan(e).limited_rows.pop(); }, evidence);
+  aggregateCorruption('ordered-expiry-changed-projected-owner', (_, __, e) => { scan(e).limited_rows[0].seller_character = 'wrong'; }, evidence);
+  aggregateCorruption('ordered-expiry-ineligible-full-row', (_, __, e) => {
+    const row = JSON.parse(scan(e).eligible_rows[0]); row.status = 'cancelled'; scan(e).eligible_rows[0] = JSON.stringify(row);
+  }, evidence);
+  aggregateCorruption('ordered-expiry-unreviewed-query', (_, __, e) => {
+    e.trace.find(row => row.original?.sql === scope.transformedSql).original.sql += ' LIMIT 1';
+  }, evidence);
+}
 const crimeBefore = initial(); Object.assign(crimeBefore.tables.gangs[0], { weekly_progress: '0', weekly_week: null, weekly_done: false });
 crimeBefore.tables.characters[0].lc_crime = 0;
 const crimeAfter = structuredClone(crimeBefore); Object.assign(crimeAfter.tables.gangs[0], { weekly_progress: '1', weekly_week: 2959 });
