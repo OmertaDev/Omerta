@@ -1,6 +1,7 @@
 // Test-only measurements. Consume isolated committed world snapshots; never
 // import game/db or feed this observer's information back to actor policies.
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { CRIMES, CAMPAIGNS } from '../src/rules.js';
 import { exactDecimal, exactSum, negate, sha256 } from './rc1-resource-journal.js';
 
@@ -29,6 +30,41 @@ const ratio = (numerator, denominator) => {
 };
 export const economySnapshotHash = ({ boundary, ...state }) => sha256(state);
 const resourceId = (kind, ...parts) => `${kind}:${JSON.stringify(parts)}`;
+
+export const LOAN_REFUND_METRIC_SOURCE_PINS = Object.freeze({
+  'src/loans.js': '663f71b15332367689b5b4db5cf7fc8d94e49249d8697cc6b98bb986607cb14e',
+  'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
+  'src/game.js': '7d6c61102dd14b8b54780fe2c32eb1f794ed2677263b8611edd37e7df1fa9645',
+});
+let refundSourceChecked = false;
+// Existing native receipt-parity endpoints bind one serial refund's two legs.
+// This never guesses a loan ID from an aggregate escrow balance.
+export function loanRefundCustodyFromJournal(journal) {
+  if (journal.identity?.outcome !== 'COMMITTED' || journal.identity.context?.authority !== 'original-worker'
+    || journal.receipts?.length !== 1 || journal.unsupported?.length) return null;
+  const [receipt] = journal.receipts;
+  if (receipt.reason !== 'loan:refund' || receipt.currency !== 'cash' || !receipt.character_id
+    || receipt.account_id !== null || receipt.counterparty !== null || !positive(receipt.amount)) return null;
+  const checks = ['character:' + receipt.character_id, 'open-loan-escrow'].map(owner => (journal.checks || [])
+    .filter(check => check.kind === 'receipt-parity' && check.resource === 'cash' && check.owner === owner));
+  if (checks.some(matches => matches.length !== 1)) return null;
+  if (!refundSourceChecked) {
+    for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS))
+      assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Loan refund source changed: ' + file);
+    refundSourceChecked = true;
+  }
+  for (const [i, [check]] of checks.entries()) {
+    const delta = i ? negate(receipt.amount) : quantity(receipt.amount);
+    assert.deepEqual(check.authority, [{ table: 'transactions', id: receipt.id }], 'Loan refund endpoint authority differs');
+    assert.equal(quantity(check.expectedDelta), delta); assert.equal(quantity(check.drift), '0');
+    assert.equal(quantity(check.after), exactSum([check.before, delta]), 'Loan refund endpoint amount differs');
+    assert.equal(quantity(check.expected), quantity(check.after));
+    assert(exactDecimal(check.before).coefficient >= 0n && exactDecimal(check.after).coefficient >= 0n);
+  }
+  assert.equal(Date.parse(receipt.at), journal.identity.context.logicalAt, 'Loan refund clock differs');
+  return { kind: 'loan-refund-custody', owner: receipt.character_id, amount: quantity(receipt.amount), receiptIds: [receipt.id],
+    custody: { from: 'open-loan-escrow', to: `character:${receipt.character_id}:cash` }, sourcePins: LOAN_REFUND_METRIC_SOURCE_PINS };
+}
 
 function assertQuiescentAggregate(event, beforeHash, afterHash) {
   assert.equal(event.kind, 'resource-quiescent-aggregate');
@@ -248,6 +284,21 @@ export function classifyEconomyBoundary({ journal, before, after }) {
       case 'market-order-claim': case 'market-good-return':
         emit(resourceId('cargo', m.goodId), 'custody', m.quantity, own(), own(), kind, ids); break;
       case 'market-order-refund': emit('cash', 'custody', m.amount, own(), own(), kind, ids); break;
+      case 'npc-retirement-escrow-return': case 'npc-retirement-cash-sink': {
+        assert.equal(ids.length, 1); const receipt = receipts.get(ids[0]), destroyed = kind === 'npc-retirement-cash-sink';
+        const reason = destroyed ? 'npc:retire' : m.escrow === 'loan' ? 'loan:refund' : m.escrow === 'market-order' ? 'market:refund' : null;
+        assert(reason && priorPeople.get(m.owner)?.is_npc && people.get(m.owner)?.alive === false);
+        assert.deepEqual([receipt.currency, receipt.character_id, receipt.account_id, receipt.counterparty, receipt.reason, quantity(receipt.amount)],
+          ['cash', m.owner, null, null, reason, destroyed ? negate(m.amount) : quantity(m.amount)], 'Retirement metric receipt differs');
+        emit('cash', destroyed ? 'destroyed' : 'custody', m.amount, own(), destroyed ? null : own(), kind, ids); break;
+      }
+      case 'npc-retirement-cargo-sink': {
+        const cargo = rows(before, 'character_cargo').filter(row => row.character_id === m.owner && row.good_id === m.goodId);
+        assert.equal(cargo.length, 1); assert.equal(quantity(cargo[0].qty), quantity(m.quantity));
+        assert(!rows(after, 'character_cargo').some(row => row.character_id === m.owner && row.good_id === m.goodId));
+        assert(priorPeople.get(m.owner)?.is_npc && people.get(m.owner)?.alive === false);
+        emit(resourceId('cargo', m.goodId), 'destroyed', m.quantity, own(), null, kind, ids); break;
+      }
       case 'player-order-funding':
         emit('cash', 'custody', m.held, own(), own(), kind, ids);
         emit('cash', 'destroyed', m.feeBurned, own(), null, kind, ids); break;
@@ -269,16 +320,23 @@ export function classifyEconomyBoundary({ journal, before, after }) {
       case 'season-status-only':
         for (const id of ids) assert.equal(quantity(receipts.get(id)?.amount), '0', 'Status-only receipt cannot grant a resource'); break;
       case 'season-crown': emit('season-crowns', 'created', m.crownDelta, null, own(), kind, ids, reward('season-standing')); break;
-      case 'exact-player-gta-car-source': case 'exact-family-melt-sink':
+      case 'exact-player-gta-car-source': case 'exact-family-melt-sink': case 'exact-npc-retirement-car-sink':
       case 'exact-npc-spawn-car-source': case 'exact-salvage-sink': case 'exact-solo-melt-sink': {
         const car = [...rows(before, 'cars'), ...rows(after, 'cars')].find(row => row.id === m.carId); assert(car, 'Missing car identity');
         assert(!usedCars.has(m.carId), 'Duplicate economic car claim'); usedCars.add(m.carId);
         const created = ['exact-npc-spawn-car-source', 'exact-player-gta-car-source'].includes(kind);
         if (kind === 'exact-player-gta-car-source') assert.equal(ids.length, 0, 'GTA car grant cannot consume currency receipts');
-        if (['exact-player-gta-car-source', 'exact-family-melt-sink'].includes(kind)) {
+        if (['exact-player-gta-car-source', 'exact-family-melt-sink', 'exact-npc-retirement-car-sink'].includes(kind)) {
           assert.equal(car.character_id, m.owner, 'Car movement owner mismatch');
           assert.equal(rows(before, 'cars').filter(row => row.id === m.carId).length, created ? 0 : 1);
           assert.equal(rows(after, 'cars').filter(row => row.id === m.carId).length, created ? 1 : 0);
+        }
+        if (kind === 'exact-npc-retirement-car-sink') {
+          assert(priorPeople.get(m.owner)?.is_npc && people.get(m.owner)?.alive === false);
+          assert.equal(ids.length, 0);
+          assert(!rows(before, 'rng_audit').some(row => row.id === m.auditId));
+          const audits = rows(after, 'rng_audit').filter(row => row.id === m.auditId); assert.equal(audits.length, 1);
+          assert.deepEqual([audits[0].character_id, audits[0].action, audits[0].outcome, Number(audits[0].roll)], [m.owner, 'npc:car', 'retire', 0]);
         }
         emit(resourceId('car', car.model_id, car.rarity), created ? 'created' : 'destroyed', '1', created ? null : own(), created ? own() : null, kind, ids);
         if (kind === 'exact-family-melt-sink') {
@@ -318,10 +376,16 @@ export function classifyEconomyBoundary({ journal, before, after }) {
     claim(ids); for (const args of pending) flow(...args);
   }
   for (const group of ['pressureCash', 'ammoEscrow', 'familyEntry', 'familyDissolution', 'turfTerminal', 'workerTransitions',
-    'npcMarketOrder', 'orderExpiry', 'orderResources', 'marketResources', 'lifecycleCash', 'turfFunding', 'seasonConversions', 'seasonCrowns', 'boats', 'membership', 'npcRecruitment', 'npcCargo']) {
+    'npcMarketOrder', 'orderExpiry', 'orderResources', 'marketResources', 'lifecycleCash', 'turfFunding', 'seasonConversions', 'seasonCrowns', 'boats', 'membership', 'npcRecruitment', 'npcCargo', 'npcRetirement']) {
     for (const m of journal[group]?.movements || []) movement(group, m);
   }
   for (const m of journal.cars?.lineage || []) movement('cars', m);
+  const refund = loanRefundCustodyFromJournal(journal);
+  if (refund && !used.has(refund.receiptIds[0])) {
+    claim(refund.receiptIds);
+    const measured = flow('cash', 'custody', refund.amount, person(refund.owner), person(refund.owner), refund.kind, refund.receiptIds);
+    measured.custody = refund.custody;
+  }
   const crimeSources = new Set(CRIMES.map(crime => `crime:${crime.id}`));
   for (const receipt of fresh) {
     const id = String(receipt.id); if (used.has(id)) continue;
