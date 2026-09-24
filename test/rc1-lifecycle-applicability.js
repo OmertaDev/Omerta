@@ -25,7 +25,8 @@ function fixture() {
       fromLogicalAt: startAt, throughLogicalAt: endAt }, complete: true, canonicalDispatchOnly: true, originalWorkersOnly: true,
       evidence: reference('sealed-invocation-union.json'), calls: [{ kind: 'http', method: 'GET', path: '/v1/me' },
         { kind: 'http', method: 'POST', path: '/v1/commands' }, { kind: 'player-command', commandType: 'knowledge.share' },
-        { kind: 'canonical-crime', handler: 'game.doCrime' }] } };
+        { kind: 'canonical-crime', handler: 'game.doCrime' },
+        { kind: 'canonical-read', handler: 'game.readCharacter' }, { kind: 'canonical-read', handler: 'player.snapshot' }] } };
 }
 const input = fixture(), before = JSON.stringify(input), result = reviewWorkloadLifecycleApplicability(input);
 assert.equal(JSON.stringify(input), before); assert.equal(result.complete, true); assert.equal(result.matrixQualifying, false);

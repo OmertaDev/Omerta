@@ -45,7 +45,9 @@ export function reviewWorkloadLifecycleApplicability({ source, configurationSha2
   assert(Array.isArray(workload.calls));
   const opened = new Set(), unknownCalls = [];
   for (const call of workload.calls) {
-    if (call.kind === 'player-command' && commands.has(call.commandType) || call.kind === 'canonical-crime' && call.handler === 'game.doCrime') continue;
+    if (call.kind === 'player-command' && commands.has(call.commandType)
+      || call.kind === 'canonical-crime' && call.handler === 'game.doCrime'
+      || call.kind === 'canonical-read' && ['game.readCharacter', 'player.snapshot'].includes(call.handler)) continue;
     if (call.kind !== 'http' || !['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].includes(call.method)
       || typeof call.path !== 'string' || !/^\/v1\/[A-Za-z0-9_:/?.=&-]+$/.test(call.path)) { unknownCalls.push(call); continue; }
     const pathname = call.path.split('?')[0].replace(/\/$/, '');
