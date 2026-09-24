@@ -2,6 +2,8 @@
 
 Release state: **NOT TECHNICALLY QUALIFIED**. Final freeze and Candidate 19 have not been created. Do not deploy.
 
+**2026-09-24 resume:** The user explicitly resumed qualification. Ordinary usage is available again; the earlier stop decision below is historical. Escrow completed at f90cce38 and independent verification admitted it: 111/114 registered gates. See FINAL_LAUNCH_LEDGER.md for current evidence. Do not repeat the completed escrow run. Root source 92e50fb9 adds tested opportunity measurement only; authority residual proofs and cohort native integration are continuing in their existing isolated worktrees.
+
 ## Source and budget
 
 Tested integration source: `b06e7a922c2a4eb969f6095e16bff4681bd50f9e`, branch `codex/final-resource-classes`, worktree `C:\Users\Jorge\.codex\worktrees\omerta-final-launch-closure\Omerta`. Code is identical to the complete P0 resource/restart proof at `545c16d65cc482ffbc5364ba2aaa0a56916d7b79`; b06 changes only the ledger. The final checkpoint commit changes reporting files only. The worktree must be clean at handoff; the user's separate main checkout contains unrelated work and must be preserved.

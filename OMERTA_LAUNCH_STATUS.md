@@ -7,7 +7,7 @@ Production deployment SHA: **NOT DEPLOYED** by this task; the current production
 | Required result | Status |
 | --- | --- |
 | Technical qualification | FAIL |
-| Registered command gates | 110 / 114 |
+| Registered command gates | 111 / 114 |
 | Acceptance matrix | 0 / 225 |
 | Contracts | PASS — reused: 1,247 passed, 0 failed, 0 skipped |
 | PostgreSQL 16 | FAIL — final qualification absent; focused phone recovery passed |
@@ -29,9 +29,9 @@ Production deployment SHA: **NOT DEPLOYED** by this task; the current production
 
 ## Remaining blockers
 
-The four remaining registered gates are `rc1-escrow` (interrupted before final checks), `linux-sigterm`, `rc1-golden`, and `rc1-source-pair`; the last three are reserved for the final hosted run. Full authority closure, the missing matrix harness support and 225 qualifying cells, final PostgreSQL/mobile/replay qualification, the required soak, and final upgrade/rollback remain. Production configuration, deployment and external validation follow the existing gates.
+The three remaining registered gates are `linux-sigterm`, `rc1-golden`, and `rc1-source-pair`, reserved for the final hosted run. Escrow completed at f90cce38 with 98 passing scenarios, 3,907 zero-drift equations and independently verified artifacts. Full authority closure, the missing matrix harness support and 225 qualifying cells, final PostgreSQL/mobile/replay qualification, the required soak, and final upgrade/rollback remain. Production configuration, deployment and external validation follow the existing gates.
 
-Work stopped under the credit rule before the larger full authority gate. All five original P0 blockers are closed. [CREDIT_CHECKPOINT.md](CREDIT_CHECKPOINT.md) records exact evidence, current source, remaining work and continuation commands. [FINAL_LAUNCH_LEDGER.md](FINAL_LAUNCH_LEDGER.md) contains gate-level admissions and hashes. The checkpoint commit contains reporting changes only; the tested application source is unchanged.
+The user resumed work on 2026-09-24 after the usage-limit interruption. All five original P0 blockers remain closed. [FINAL_LAUNCH_LEDGER.md](FINAL_LAUNCH_LEDGER.md) contains current admissions and hashes. [CREDIT_CHECKPOINT.md](CREDIT_CHECKPOINT.md) retains the earlier stop and evidence history. Source 92e50fb9 adds tested opportunity receipt/expiry measurements to the harness; application source is unchanged. Authority closure and cohort native integration are in progress.
 
 The user's instruction to use **gpt-5.6-sol** for the final merge and production push remains pending. No production action is authorized by these partial results.
 
