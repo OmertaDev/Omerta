@@ -36,6 +36,7 @@ import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1
 import { createWorldEconomyMetrics, WORLD_ECONOMY_METRICS_CONTRACT } from '../tools/rc1-world-economy-metrics.js';
 import { createWarWorldAdapter, planWarWorld, WAR_WORLD_CONTRACT } from '../tools/rc1-war-world-adapter.js';
 import { createPlayerCarCommitObserver, PLAYER_CAR_SOURCE_PINS, PLAYER_CAR_COLLECTION_PIN } from '../tools/rc1-player-car-provenance.js';
+import { createMarketWorldAdapter, MARKET_WORLD_CONTRACT } from '../tools/rc1-market-world-adapter.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -56,7 +57,7 @@ const guardLimits = guardArguments[0] === undefined ? null : {
 };
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
-assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure', 'resource_scarcity', 'resource_abundance', 'high_aggression', 'multi_family_war'].includes(actorPolicy));
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure', 'resource_scarcity', 'resource_abundance', 'high_aggression', 'multi_family_war', 'market_stress'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const continuousAlliance = allianceEnabled && (population !== 25 || ![24, 48].includes(hours) || process.argv.includes('--continuous-alliance'));
 const legacyAlliance = allianceEnabled && !continuousAlliance;
@@ -68,7 +69,8 @@ const lawEnabled = actorPolicy === 'law_pressure';
 const pressureEnabled = actorPolicy === 'resource_scarcity' || actorPolicy === 'resource_abundance';
 const aggressionEnabled = actorPolicy === 'high_aggression';
 const warEnabled = actorPolicy === 'multi_family_war';
-const dailyFullRoster = cohortEnabled || familyEnabled || churnEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled;
+const marketEnabled = actorPolicy === 'market_stress';
+const dailyFullRoster = cohortEnabled || familyEnabled || churnEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled;
 const httpEnabled = allianceEnabled || dailyFullRoster;
 if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
@@ -261,6 +263,15 @@ if (lawEnabled) Object.assign(configuration, {
     information: LAW_WORLD_CONTRACT.inputs, observerFeedback: 'No diagnostic rows feed policy choices' },
   entry: 'Ordinary guest/character HTTP; no progression or resource fixtures.',
   authority: 'Authenticated Law HTTP, original PlayerCommands and canonical crimes; no external provider qualification.',
+});
+if (marketEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, marketContract: MARKET_WORLD_CONTRACT,
+  policyScope: MARKET_WORLD_CONTRACT.cadence,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: MARKET_WORLD_CONTRACT.inputs, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: MARKET_WORLD_CONTRACT.entry,
+  authority: 'Original authenticated market HTTP and original worker expiry. This integration uses serial competition; concurrent-native proof is retained separately.',
 });
 if (warEnabled) Object.assign(configuration, {
   scenario: actorPolicy, warContract: WAR_WORLD_CONTRACT, warPlan: planWarWorld(population),
@@ -471,6 +482,7 @@ const lawActors = []; let lawAdapter = null;
 const pressureActors = []; let pressureAdapter = null;
 const aggressionActors = [], aggressionPolicies = new Map();
 const warActors = []; let warAdapter = null;
+const marketActors = []; let marketAdapter = null;
 const cohortActors = [], cohortPolicies = new Map();
 let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
 let allianceAdapter = null, app = null;
@@ -505,6 +517,11 @@ if (resume) {
     lawAdapter = createLawWorldAdapter(parentPolicy.law.payload.state.configuration).restore(parentPolicy.law);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
   }
+  if (marketEnabled) {
+    marketActors.push(...structuredClone(parentPolicy.marketActors)); roster.push(...parentPolicy.roster);
+    marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors }).restore(parentPolicy.market);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
   if (warEnabled) {
     warActors.push(...structuredClone(parentPolicy.warActors)); roster.push(...parentPolicy.roster);
     warAdapter = createWarWorldAdapter({ seed, epoch, roster: warActors }).restore(parentPolicy.war);
@@ -537,6 +554,8 @@ if (resume) {
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
   economy: economyMetrics?.checkpoint() || null,
+  ...(marketEnabled ? { marketActors, market: marketAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(warEnabled ? { warActors, war: warAdapter?.checkpoint() || null,
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(pressureEnabled ? { pressureActors, pressure: pressureAdapter?.checkpoint() || null,
@@ -717,12 +736,12 @@ try {
     lawAdapter = createLawWorldAdapter({ seed, epoch, roster: lawActors, activeAccountIds });
     await proof.artifact('law-initialization.json', { actors: lawActors, activeAccountIds, directFixtures: 0 });
   }
-  if ((pressureEnabled || aggressionEnabled || warEnabled) && !resume) {
-    const target = warEnabled ? warActors : pressureEnabled ? pressureActors : aggressionActors, grants = [];
+  if ((pressureEnabled || aggressionEnabled || warEnabled || marketEnabled) && !resume) {
+    const target = marketEnabled ? marketActors : warEnabled ? warActors : pressureEnabled ? pressureActors : aggressionActors, grants = [];
     const { PACING } = await import('../src/rules.js');
     const founders = new Set(configuration.warPlan?.groups.map(group => group.founder) || []);
     for (let index = 0; index < population; index++) {
-      const name = (warEnabled ? 'World War ' : pressureEnabled ? 'World Pressure ' : 'World Aggression ') + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      const name = (marketEnabled ? 'World Market ' : warEnabled ? 'World War ' : pressureEnabled ? 'World Pressure ' : 'World Aggression ') + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
       await proof.artifact(actorPolicy.replaceAll('_', '-') + '-entry-secret-' + index + '.json', { bootstrapSecret });
       const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
       assert.equal(guest.status, 200, JSON.stringify(guest));
@@ -750,6 +769,7 @@ try {
       warAdapter = createWarWorldAdapter({ seed, epoch, roster: warActors });
       await warStep('prepare');
     }
+    if (marketEnabled) marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors });
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -1124,14 +1144,16 @@ try {
     const chosen = policy.choose(view, { logicalAt: at });
     const decision = await actors.decide('aggression-policy', { accountId, day, action, logicalAt: at }, view, () => chosen);
     assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded aggression choice differs from restored policy');
-    await actors.observe('aggression-policy-pending', { accountId, logicalAt: at }, policy.checkpoint());
+    await actors.observe('aggression-policy-pending', { accountId, logicalAt: at },
+      { kind: 'aggression-incremental-step', decision, summary: policy.summary(), restore: 'Use full native policy checkpoint and intervening recorded choices/responses.' });
     if (decision.kind === 'wait') return 0;
     const response = await http(actor, decision.request);
     assert(response.status < 500, 'Aggression request did not resolve canonically');
     const body = { ...response.body }; delete body.replayed;
     policy.settle({ idempotencyKey: decision.request.idempotencyKey, status: response.status === 200 ? 'COMPLETED' : 'DENIED',
       replayed: response.replayed, response: body });
-    await actors.observe('aggression-policy-settled', { accountId, logicalAt: at }, policy.checkpoint());
+    await actors.observe('aggression-policy-settled', { accountId, logicalAt: at },
+      { kind: 'aggression-incremental-step', request: decision.request, response, summary: policy.summary() });
     assert.equal(policy.summary().unresolvedReplays, 0);
     if (response.status === 200 && !response.replayed) {
       metrics.commandTypes[decision.type] = (metrics.commandTypes[decision.type] || 0) + 1;
@@ -1166,6 +1188,28 @@ try {
     } while (!outcome.complete);
     await proof.artifact(day === null ? 'pressure-prepared.json' : 'pressure-day-' + day + '.json',
       { summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
+  }
+  async function marketStep(day, timer = false) {
+    const hooks = { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(marketActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(marketActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('market:' + request.idempotencyKey);
+        if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('market-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('market-policy-' + phase, { day, logicalAt: at }, checkpoint),
+    };
+    const outcome = timer ? await marketAdapter.runTimerWindow(day, hooks) : await marketAdapter.runDay(day, hooks);
+    assert(!outcome.paused && !marketAdapter.summary().pending, 'Market phase lacks a resolved canonical outcome');
+    if (!timer) await proof.artifact('market-day-' + day + '.json', { summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
   }
   async function warStep(mode, day = null) {
     const hooks = { logicalAt: at,
@@ -1240,6 +1284,10 @@ try {
     if (label !== 'guardedTick') return;
     await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     if (warEnabled) await warStep('observeSettlements');
+    if (marketEnabled && marketAdapter.summary().expiryCandidates.some(candidate => !candidate.resolved)) {
+      const marketDay = marketAdapter.summary().completedDays.at(-1);
+      if (marketDay !== undefined && at >= epoch + marketDay * 86400000 + 3600000) await marketStep(marketDay, true);
+    }
     const day = Math.floor((logicalAt - epoch) / 86400000);
     if (allianceEnabled) {
       if (continuousAlliance && day !== lastDay && day < Math.ceil((finish - epoch) / 86400000)) await allianceDay(day);
@@ -1248,12 +1296,13 @@ try {
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
     if (churnEnabled) await churnWeek(day);
     lastDay = day;
-    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : pressureEnabled || aggressionEnabled || warEnabled ? actorPolicy + '-roster' : 'quiet-roster', { day, logicalAt }, roster,
+    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? actorPolicy + '-roster' : 'quiet-roster', { day, logicalAt }, roster,
       () => churnEnabled ? churnPolicy.roster().current : dailyFullRoster ? [...roster] : activeQuietRoster(roster, seed, day));
     assert.equal(selected.length, dailyFullRoster ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
     assert(selected.every((account) => roster.includes(account)));
     if (pressureEnabled) await pressureDay(day);
     if (warEnabled) await warStep('day', day);
+    if (marketEnabled) await marketStep(day);
     if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
       read: async (accountId, path) => {
         const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
@@ -1378,6 +1427,11 @@ try {
     assert.equal(lawAdapter.cursor().nextWindowAt, finish + LAW_WORLD_CONTRACT.windowMilliseconds);
     await proof.artifact('law-final.json', { contract: LAW_WORLD_CONTRACT, summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
   }
+  if (marketEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(marketAdapter.summary().unresolvedResponses, 0);
+    assert.equal(marketAdapter.summary().completedDays.length, Math.ceil((finish - epoch) / 86400000));
+    await proof.artifact('market-final.json', { contract: MARKET_WORLD_CONTRACT, summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
+  }
   if (warEnabled) {
     assert.equal(responseCompletions.size, 0); assert.equal(warAdapter.summary().unresolvedResponses, 0);
     assert.equal(warAdapter.summary().nextDay, Math.ceil((finish - epoch) / 86400000));
@@ -1398,7 +1452,7 @@ try {
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
-      + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
+      + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
     actualActiveActors: [...actorActions.values()].filter(Boolean).length,
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
@@ -1408,6 +1462,7 @@ try {
     ...(lawEnabled ? { law: lawAdapter.summary() } : {}),
     ...(pressureEnabled ? { pressure: pressureAdapter.summary() } : {}),
     ...(warEnabled ? { war: warAdapter.summary() } : {}),
+    ...(marketEnabled ? { market: marketAdapter.summary() } : {}),
     ...(aggressionEnabled ? { aggression: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.summary()])) } : {}),
     ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
       warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
