@@ -98,7 +98,7 @@ export function classifyEconomyBoundary({ journal, before, after }) {
   const sorted = values => values.map(canonical).sort();
   assert.deepEqual(sorted(journal.receipts || []), sorted(fresh), 'Journal must contain exactly fresh committed receipts');
   assert.deepEqual(sorted(journal.itemEvents || []), sorted(events), 'Journal must contain exactly fresh committed item events');
-  const receipts = new Map(fresh.map(row => [String(row.id), row])), used = new Set(), flows = [], missing = [];
+  const receipts = new Map(fresh.map(row => [String(row.id), row])), used = new Set(), usedCars = new Set(), flows = [], missing = [];
   const people = new Map([...rows(before, 'characters'), ...rows(after, 'characters')].map(row => [row.id, row]));
   const person = id => { assert(people.has(id), `Unknown movement character ${id}`); return `account:${people.get(id).account_id}`; };
   const family = id => `family:${id}`;
@@ -172,10 +172,39 @@ export function classifyEconomyBoundary({ journal, before, after }) {
       case 'season-status-only':
         for (const id of ids) assert.equal(quantity(receipts.get(id)?.amount), '0', 'Status-only receipt cannot grant a resource'); break;
       case 'season-crown': emit('season-crowns', 'created', m.crownDelta, null, own(), kind, ids, reward('season-standing')); break;
+      case 'exact-player-gta-car-source': case 'exact-family-melt-sink':
       case 'exact-npc-spawn-car-source': case 'exact-salvage-sink': case 'exact-solo-melt-sink': {
         const car = [...rows(before, 'cars'), ...rows(after, 'cars')].find(row => row.id === m.carId); assert(car, 'Missing car identity');
-        const created = kind === 'exact-npc-spawn-car-source';
+        assert(!usedCars.has(m.carId), 'Duplicate economic car claim'); usedCars.add(m.carId);
+        const created = ['exact-npc-spawn-car-source', 'exact-player-gta-car-source'].includes(kind);
+        if (kind === 'exact-player-gta-car-source') assert.equal(ids.length, 0, 'GTA car grant cannot consume currency receipts');
+        if (['exact-player-gta-car-source', 'exact-family-melt-sink'].includes(kind)) {
+          assert.equal(car.character_id, m.owner, 'Car movement owner mismatch');
+          assert.equal(rows(before, 'cars').filter(row => row.id === m.carId).length, created ? 0 : 1);
+          assert.equal(rows(after, 'cars').filter(row => row.id === m.carId).length, created ? 1 : 0);
+        }
         emit(resourceId('car', car.model_id, car.rarity), created ? 'created' : 'destroyed', '1', created ? null : own(), created ? own() : null, kind, ids);
+        if (kind === 'exact-family-melt-sink') {
+          assert(Array.isArray(m.titheReceiptIds) && m.titheReceiptIds.length === 2, 'Family melt needs its two tithe receipts');
+          const exactIds = [m.receiptId, ...m.titheReceiptIds].map(String);
+          assert.equal(new Set(exactIds).size, 3, 'Family melt receipt identity reused');
+          assert.deepEqual([...ids].sort(), [...exactIds].sort(), 'Family melt authority must claim exactly its three receipts');
+          assert.equal(quantity(m.totalRounds), exactSum([m.rounds, m.titheRounds]), 'Family melt ammo outputs must partition total yield');
+          for (const [id, currency, amount, characterId, counterparty, reason] of [
+            [exactIds[0], 'ammo', m.rounds, m.owner, null, 'melt'],
+            [exactIds[1], 'ammo', m.titheRounds, null, m.familyId, 'melt:tithe'],
+            [exactIds[2], 'cash', m.titheCash, null, m.familyId, 'melt:tithe'],
+          ]) {
+            const receipt = receipts.get(id); assert(receipt, 'Family melt receipt is not fresh');
+            assert.deepEqual([receipt.currency, quantity(receipt.amount), receipt.character_id, receipt.account_id, receipt.counterparty, receipt.reason],
+              [currency, quantity(amount), characterId, null, counterparty, reason], 'Family melt output/receipt mismatch');
+          }
+          // Different output resources are created by this conversion. The
+          // total yield is a check, never another flow or a same-resource transfer.
+          emit('ammo', 'created', m.rounds, null, own(), kind, [exactIds[0]]);
+          emit('ammo', 'created', m.titheRounds, null, family(m.familyId), kind, [exactIds[1]]);
+          emit('cash', 'created', m.titheCash, null, family(m.familyId), kind, [exactIds[2]]);
+        }
         if (kind === 'exact-solo-melt-sink') emit('ammo', 'created', m.rounds, null, own(), kind, ids); break;
       }
       case 'exact-npc-spawn-boat-source': {
