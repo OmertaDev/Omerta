@@ -12,7 +12,9 @@ export const ALLIANCE_WORLD_CONTRACT = Object.freeze({ version: 2,
   scope: '48-hour/25-actor/one-seed component only; full resources, 90 days and matrix remain unqualified.' });
 
 const clone = structuredClone;
-export function createAllianceWorldAdapter({ seed, roster }) {
+export function createAllianceWorldAdapter({ seed, roster, mode = 'legacy' }) {
+  assert(['legacy', 'continuous'].includes(mode), 'Unknown alliance adapter mode');
+  if (mode === 'continuous') return createContinuousAllianceWorldAdapter({ seed, roster });
   assert.equal(roster.length, 25); assert.equal(new Set(roster.map(a => a.accountId)).size, 25);
   assert(roster.every(a => typeof a.accountId === 'string' && typeof a.characterId === 'string' && typeof a.name === 'string'));
   const configuration = { seed, roster: roster.map(({ accountId, characterId, name }) => ({ accountId, characterId, name })) };
@@ -207,6 +209,251 @@ export function createAllianceWorldAdapter({ seed, roster }) {
         state.workflow = null;
       }
       state.completedStages.push(day); await recordCheckpoint('stage-complete', api.checkpoint());
+    },
+  };
+  return api;
+}
+
+export const ALLIANCE_CONTINUOUS_WORLD_CONTRACT = Object.freeze({ version: 3,
+  legacy: ALLIANCE_WORLD_CONTRACT,
+  populations: [25, 100, 250, 500, 1000], seeds: ['rc1-alpha', 'rc1-beta', 'rc1-gamma'],
+  schedule: 'All roster identities receive the runner\'s daily canonical activity. Days zero and one retain the original three-founder workflow. Every later day checks all three Families, renews publicly expired pacts, checks in, revokes prior delegate grants, and explicitly shares current owned evidence with three rotating ordinary delegates.',
+  delegates: 'Delegates verify their actual grant, travel to the complementary public source when eligible, and progress only their own currently issued Split Ledger actions. Each character has one canonical case; completed cases are never represented as newly completed on later days.',
+  cooperation: 'A later day succeeds only with three fresh explicit account grants, three successful recipient reads, three distinct current founder Families, and no unresolved response. Revocation controls must refuse former readers. Daily crimes remain the runner\'s separate canonical activity.',
+  continuation: 'Explicit version-three full checkpoints embed the unchanged version-two initial workflow, active delegate policy cursors, and daily task cursor. Daily completion and checkpoint() retain full restore state. Intermediate evidence retains exact pending request/cursor, affected actor policy and newly settled receipt; it is explicitly not a restore checkpoint. Unknown completed replays stop progress.',
+  fixtures: 'Only the existing three initialization respect fixtures. No postbaseline grants, ACL writes, progression writes, or repeated instance fabrication.',
+  scope: 'Continuous actor component; no native duration, lifecycle, resource, population capacity or matrix qualification is inferred.' });
+
+function createContinuousAllianceWorldAdapter({ seed, roster }) {
+  assert(ALLIANCE_CONTINUOUS_WORLD_CONTRACT.populations.includes(roster.length));
+  assert(ALLIANCE_CONTINUOUS_WORLD_CONTRACT.seeds.includes(seed));
+  assert.equal(new Set(roster.map(a => a.accountId)).size, roster.length);
+  assert(roster.every(a => typeof a.accountId === 'string' && typeof a.characterId === 'string' && typeof a.name === 'string'));
+  const configuration = { seed, roster: roster.map(({ accountId, characterId, name }) => ({ accountId, characterId, name })) };
+  const configurationSha256 = actorValueHash(configuration);
+  const founders = configuration.roster.slice(0, 3), outsiders = configuration.roster.slice(3);
+  let legacy = createAllianceWorldAdapter({ seed, roster: configuration.roster.slice(0, 25) }), delegates = new Map();
+  let state = { version: 3, configuration: clone(configuration), completedStages: [], previousDelegates: [], workflow: null,
+    pending: null, receipts: [], daily: [], completions: [], controls: [], waits: 0, initialWaits: 0 };
+  const actorFor = accountId => { const actor = configuration.roster.find(a => a.accountId === accountId); assert(actor); return actor; };
+  const founderIndex = accountId => founders.findIndex(a => a.accountId === accountId);
+  const delegatePolicy = accountId => {
+    assert(outsiders.some(a => a.accountId === accountId));
+    if (!delegates.has(accountId)) delegates.set(accountId, createAlliancePolicy({ accountId, seed }));
+    return delegates.get(accountId);
+  };
+  const unresolved = () => legacy.summary().unknownResponses + [...delegates.values()].reduce((n, p) => n + p.summary().unresolvedReplays, 0);
+  function validate(value) {
+    assert.equal(value.version, 3, 'Continuous mode requires a version-three checkpoint');
+    assert.deepEqual(value.configuration, configuration);
+    assert.deepEqual(value.completedStages, Array.from({ length: value.completedStages.length }, (_, day) => day));
+    assert(value.previousDelegates.length === 0 || value.previousDelegates.length === 3);
+    assert(value.previousDelegates.every(accountId => outsiders.some(a => a.accountId === accountId)));
+    for (const field of ['waits', 'initialWaits']) assert(Number.isSafeInteger(value[field]) && value[field] >= 0);
+    assert.equal(new Set(value.receipts.map(r => r.request.idempotencyKey)).size, value.receipts.length);
+    assert.equal(new Set(value.completions.map(r => r.accountId)).size, value.completions.length, 'A delegate case cannot complete twice');
+    assert.deepEqual(value.daily.map(d => d.day), value.completedStages.filter(day => day >= 2));
+    if (value.workflow) {
+      assert.equal(value.workflow.day, value.completedStages.length); assert(value.workflow.day >= 2);
+      assert(Number.isSafeInteger(value.workflow.logicalAt));
+      assert(Number.isSafeInteger(value.workflow.index) && value.workflow.index >= 0 && value.workflow.index <= value.workflow.tasks.length);
+      assert.equal(value.workflow.delegates.length, 3); assert.equal(new Set(value.workflow.delegates).size, 3);
+    }
+    if (value.pending) {
+      assert(value.workflow && value.pending.taskIndex === value.workflow.index);
+      assert.equal(value.workflow.tasks[value.workflow.index].accountId, value.pending.accountId);
+      assert(['SELECTED', 'DISPATCHING'].includes(value.pending.dispatchState));
+      actorFor(value.pending.accountId);
+    }
+  }
+  function tasksFor(day, selected, previous = state.previousDelegates, initialization = legacy.summary()) {
+    const claims = initialization.claims, tasks = [];
+    for (const actor of founders) tasks.push({ kind: 'family', accountId: actor.accountId });
+    for (const actor of founders) tasks.push({ kind: 'command', accountId: actor.accountId, phase: 'checkin', options: {} });
+    for (const [from, to] of [[0, 1], [1, 2], [2, 0]]) for (const [a, b] of [[from, to], [to, from]])
+      tasks.push({ kind: 'command', accountId: founders[a].accountId, phase: 'pact', options: { targetFamilyId: initialization.families[founders[b].accountId] } });
+    for (let i = 0; i < previous.length; i++) {
+      const accountId = previous[i], claimId = claims[founders[i].accountId];
+      tasks.push({ kind: 'command', accountId: founders[i].accountId, phase: 'revoke', options: { targetLabel: actorFor(accountId).name, claimId } });
+      tasks.push({ kind: 'refuse', accountId, claimId, label: 'former-delegate-after-revoke' });
+    }
+    for (let i = 0; i < 3; i++) {
+      const accountId = selected[i], claimId = claims[founders[i].accountId];
+      tasks.push({ kind: 'command', accountId: founders[i].accountId, phase: 'share', options: { targetLabel: actorFor(accountId).name, claimId } });
+      tasks.push({ kind: 'grant', accountId, claimId });
+      tasks.push({ kind: 'command', accountId, phase: 'travel', options: { districtId: i === 1 ? 'docks' : 'foundry' }, caseWork: true });
+      tasks.push({ kind: 'command', accountId, phase: 'create', options: {}, caseWork: true });
+      for (let action = 0; action < 8; action++) tasks.push({ kind: 'command', accountId, phase: 'act', options: {}, caseWork: true });
+      tasks.push({ kind: 'case', accountId });
+    }
+    const outsider = outsiders.find(a => !selected.includes(a.accountId));
+    tasks.push({ kind: 'refuse', accountId: outsider.accountId, claimId: claims[founders[0].accountId], label: 'unselected-delegate' });
+    return tasks;
+  }
+  const api = {
+    roster(day) { assert(Number.isSafeInteger(day) && day >= 0); return configuration.roster.map(a => a.accountId); },
+    checkpoint() {
+      validate(state);
+      const payload = { state: clone(state), legacy: legacy.checkpoint(),
+        delegates: Object.fromEntries([...delegates].map(([accountId, policy]) => [accountId, policy.checkpoint()])) };
+      return { payload, sha256: actorValueHash(payload) };
+    },
+    restore(checkpoint) {
+      assert.equal(checkpoint.sha256, actorValueHash(checkpoint.payload), 'Continuous checkpoint checksum differs');
+      validate(checkpoint.payload.state);
+      const restoredLegacy = createAllianceWorldAdapter({ seed, roster: configuration.roster.slice(0, 25) }).restore(checkpoint.payload.legacy);
+      assert.deepEqual(restoredLegacy.summary().completedStages, checkpoint.payload.state.completedStages.filter(d => d < 2));
+      if (checkpoint.payload.state.workflow) {
+        const workflow = checkpoint.payload.state.workflow;
+        const selected = [0, 1, 2].map(i => outsiders[((workflow.day - 2) * 3 + i) % outsiders.length].accountId);
+        assert.deepEqual(workflow.delegates, selected, 'Continuous delegate schedule differs');
+        assert.deepEqual(workflow.tasks, tasksFor(workflow.day, selected, checkpoint.payload.state.previousDelegates, restoredLegacy.summary()),
+          'Continuous task schedule differs');
+      }
+      const restoredDelegates = new Map();
+      for (const [accountId, saved] of Object.entries(checkpoint.payload.delegates)) {
+        assert(outsiders.some(a => a.accountId === accountId));
+        restoredDelegates.set(accountId, createAlliancePolicy({ accountId, seed }).restore(saved));
+      }
+      const pending = checkpoint.payload.state.pending;
+      const componentPending = [
+        ...(checkpoint.payload.state.completedStages.length >= 2 ? [[checkpoint.payload.legacy.payload.state.pending?.accountId,
+          checkpoint.payload.legacy.payload.state.pending?.decision]] : []),
+        ...[...restoredDelegates].map(([id, p]) => [id, p.checkpoint().payload.pending]),
+      ].filter(([, decision]) => decision);
+      assert.equal(componentPending.length, Number(!!pending), 'Continuous component pending count differs');
+      if (pending) assert(componentPending.some(([id, decision]) => id === pending.accountId
+        && actorValueHash(decision) === actorValueHash(pending.decision)), 'Continuous component pending identity differs');
+      state = clone(checkpoint.payload.state); legacy = restoredLegacy; delegates = restoredDelegates; return api;
+    },
+    summary() {
+      const original = legacy.summary();
+      return { ...original, version: 3, completedStages: clone(state.completedStages),
+        fresh: original.fresh + [...delegates.values()].reduce((n, p) => n + p.summary().fresh, 0),
+        waits: state.initialWaits + state.waits,
+        unknownResponses: unresolved(), dailyCooperation: clone(state.daily),
+        delegateCompletions: clone(state.completions), continuationPending: !!state.pending || !!legacy.checkpoint().payload.state.pending,
+        controls: [...original.controls, ...clone(state.controls)], matrixQualifying: false };
+    },
+    async runStage(day, hooks) {
+      assert(Number.isSafeInteger(day) && day === state.completedStages.length, 'Run exactly the next continuous day');
+      assert.equal(unresolved(), 0, 'Unresolved continuous response');
+      if (day < 2) {
+        const result = await legacy.runStage(day, { ...hooks, checkpoint: async phase => {
+          state.completedStages = legacy.summary().completedStages;
+          state.initialWaits = legacy.summary().waits;
+          await hooks.checkpoint(phase, api.checkpoint());
+        } });
+        state.completedStages = legacy.summary().completedStages; return result;
+      }
+      const { logicalAt, read, execute, decision: recordDecision, checkpoint: recordCheckpoint, pauseBeforeDispatch = false } = hooks;
+      assert(Number.isSafeInteger(logicalAt));
+      if (!state.workflow) {
+        const previousAt = state.daily.at(-1)?.logicalAt ?? Math.max(...legacy.summary().completions.map(c => c.logicalAt));
+        assert(Number.isFinite(previousAt) && logicalAt >= previousAt + 86400000, 'Continuous days require a full logical day between stages');
+        const selected = [0, 1, 2].map(i => outsiders[((day - 2) * 3 + i) % outsiders.length].accountId);
+        state.workflow = { day, logicalAt, delegates: selected, tasks: tasksFor(day, selected), index: 0,
+          result: { day, logicalAt, delegates: selected, currentFamilies: [], freshGrants: 0, revocations: 0,
+            verifiedGrants: 0, freshOperations: 0, delegateActions: 0, newCaseCompletions: 0 } };
+      }
+      assert.equal(state.workflow.day, day); assert(logicalAt >= state.workflow.logicalAt, 'Continuous clock moved backwards');
+      async function view(accountId, targetLabel = null, setup = false) {
+        const actor = actorFor(accountId), get = path => read(accountId, path);
+        const projection = { accountId, session: await get('/v1/session'), me: await get('/v1/me'), rules: await get('/v1/rules') };
+        assert.equal(projection.session?.authed, true); assert.equal(projection.session.character?.id, actor.characterId);
+        assert.equal(projection.me.character?.id, actor.characterId, 'Character replacement requires explicit new actor provenance');
+        if (setup) return projection;
+        projection.directory = await get('/v1/gangs'); projection.diplomacy = await get('/v1/diplomacy');
+        projection.catalog = await get('/v1/coordination'); projection.knowledge = await get('/v1/coordination/knowledge');
+        projection.targets = await get('/v1/coordination/knowledge/targets' + (targetLabel ? '?characterName=' + encodeURIComponent(targetLabel) : ''));
+        const index = founderIndex(accountId), instanceId = index >= 0
+          ? legacy.summary().policies[accountId].instanceId : delegatePolicy(accountId).summary().instanceId;
+        projection.instance = instanceId ? await get('/v1/coordination/instances/' + instanceId) : null;
+        return projection;
+      }
+      async function recordStep(phase, task, receipt = null) {
+        const index = founderIndex(task.accountId), original = index >= 0 ? legacy.checkpoint() : null;
+        await recordCheckpoint(phase, { version: 3, kind: 'alliance-incremental-step', configurationSha256,
+          day, logicalAt, nextTaskIndex: state.workflow.index, task: clone(task),
+          result: clone(state.workflow.result), pending: clone(state.pending), receipt: clone(receipt),
+          actorPolicy: task.kind !== 'command' ? null : index >= 0 ? original.payload.policies[task.accountId]
+            : delegates.get(task.accountId)?.checkpoint() || null,
+          founderPending: original?.payload.state.pending || null,
+          restore: 'Use the full daily/native checkpoint; this record is incremental evidence only.' });
+      }
+      while (state.workflow.index < state.workflow.tasks.length) {
+        const cursor = state.workflow, task = cursor.tasks[cursor.index], actor = actorFor(task.accountId);
+        let settledReceipt = null;
+        if (task.kind === 'command') {
+          if (task.caseWork && state.completions.some(c => c.accountId === task.accountId)) { cursor.index++; continue; }
+          const index = founderIndex(task.accountId);
+          if (!state.pending) {
+            const projection = await view(task.accountId, task.options.targetLabel, task.phase === 'checkin');
+            let selected;
+            if (task.phase === 'checkin' && projection.me.character.jailSeconds > 0)
+              selected = { kind: 'wait', phase: task.phase, reason: 'current-public-jail' };
+            else if (task.phase === 'act' && !projection.instance)
+              selected = { kind: 'wait', phase: task.phase, reason: 'no-current-instance' };
+            else selected = index >= 0 ? legacy.choose(index, task.phase, projection, { logicalAt, ...task.options })
+              : delegatePolicy(task.accountId).choose(projection, { logicalAt, phase: task.phase, ...task.options });
+            await recordDecision({ day, accountId: task.accountId, phase: task.phase, logicalAt }, projection, selected);
+            if (selected.kind === 'wait') { state.waits++; cursor.index++; await recordStep('wait', task); continue; }
+            const claim = ['share', 'revoke'].includes(task.phase) ? projection.knowledge.claims.find(c => c.id === task.options.claimId) : null;
+            state.pending = { accountId: task.accountId, taskIndex: cursor.index, decision: clone(selected), dispatchState: 'SELECTED',
+              authorizedViewSha256: actorValueHash(projection), beforeAclRevision: claim?.aclRevision ?? null };
+            await recordStep('pending', task);
+            if (pauseBeforeDispatch) return { paused: true };
+          }
+          assert.equal(state.pending.dispatchState, 'SELECTED', 'Unfinished dispatch requires receipt reconciliation');
+          assert.equal(state.pending.accountId, actor.accountId);
+          const pending = state.pending, selected = pending.decision;
+          state.pending.dispatchState = 'DISPATCHING';
+          const response = await execute(actor.accountId, selected.request);
+          if (index >= 0) legacy.settle(index, selected, response);
+          else delegatePolicy(actor.accountId).settle({ idempotencyKey: selected.request.idempotencyKey,
+            status: response.status === 200 ? 'COMPLETED' : 'DENIED', replayed: response.replayed, response: response.body });
+          state.pending = null;
+          settledReceipt = { day, accountId: actor.accountId, request: clone(selected.request), status: response.status, bodySha256: actorValueHash(response.body) };
+          state.receipts.push(settledReceipt);
+          assert.equal(unresolved(), 0, 'Unknown completed replay cannot count as fresh cooperation');
+          assert.equal(response.status, 200, JSON.stringify(response)); assert.equal(response.replayed, false);
+          cursor.result.freshOperations++;
+          if (task.phase === 'share' || task.phase === 'revoke') {
+            assert.equal(response.body.claim.aclRevision, pending.beforeAclRevision + 1, 'Fresh grant mutation must advance its current ACL revision');
+            cursor.result[task.phase === 'share' ? 'freshGrants' : 'revocations']++;
+          }
+          if (index < 0) cursor.result.delegateActions++;
+        } else if (task.kind === 'family') {
+          const current = await view(actor.accountId, null, true), family = current.me.character.gang;
+          assert.equal(family?.id, legacy.summary().families[actor.accountId], 'Original alliance Family is no longer current');
+          assert(['boss', 'underboss'].includes(family.role), 'Founder no longer has public officer authority');
+          cursor.result.currentFamilies.push(family.id);
+        } else if (task.kind === 'grant') {
+          await view(actor.accountId, null, true);
+          const detail = await read(actor.accountId, '/v1/coordination/knowledge/' + task.claimId);
+          assert.equal(detail.claim?.id, task.claimId); assert.equal(detail.claim.owned, false);
+          cursor.result.verifiedGrants++;
+        } else if (task.kind === 'refuse') {
+          const pathname = '/v1/coordination/knowledge/' + task.claimId;
+          const response = await read(actor.accountId, pathname, 404); assert.equal(response.error, 'coordination_unavailable');
+          state.controls.push({ day, accountId: actor.accountId, path: pathname, label: task.label, status: 404 });
+        } else {
+          assert.equal(task.kind, 'case');
+          const current = await view(actor.accountId), instance = current.instance;
+          if (instance?.status === 'completed' && !state.completions.some(c => c.accountId === actor.accountId)) {
+            assert(instance.nodes.some(n => n.id === 'conclusion' && n.status === 'completed'));
+            state.completions.push({ accountId: actor.accountId, instanceId: instance.id, day, logicalAt, reward: 0 });
+            cursor.result.newCaseCompletions++;
+          }
+        }
+        cursor.index++; await recordStep('step-complete', task, settledReceipt);
+      }
+      const result = state.workflow.result;
+      assert.equal(new Set(result.currentFamilies).size, 3); assert.equal(result.freshGrants, 3); assert.equal(result.verifiedGrants, 3);
+      assert.equal(result.revocations, state.previousDelegates.length); assert.equal(unresolved(), 0);
+      result.cooperationSatisfied = true; state.previousDelegates = [...state.workflow.delegates];
+      state.daily.push(clone(result)); state.completedStages.push(day); state.workflow = null;
+      await recordCheckpoint('stage-complete', api.checkpoint()); return clone(result);
     },
   };
   return api;
