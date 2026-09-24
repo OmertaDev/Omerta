@@ -49,6 +49,7 @@ const seam = installWorkerInstrumentation(controller, { namespace, commitObserve
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 let app, result, measured = false, faultInstalled = false, invariantBoundaries = 0, resourceSequence = 0;
 const journals = [], resourceSummaries = [], unsupported = [];
+const responseCompletions = new Map(); let requestSequence = 0;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
   await proof.record({ kind: 'database-created', ...await database.create() });
@@ -57,6 +58,13 @@ try {
   const [{ buildServer }, { runLedgerInvariants }, observer, { PACING }] = await Promise.all([
     import('../src/server.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'), import('../src/rules.js')]);
   app = await buildServer(); const pool = app.pool;
+  // app.inject can resolve before original response hooks finish their SQL.
+  // Observe their actual completion before disarming or taking a snapshot.
+  app.addHook('onResponse', async req => {
+    const key = req.headers['x-rc1-response-completion'];
+    const complete = responseCompletions.get(key); assert(complete, 'Untracked custody response');
+    responseCompletions.delete(key); complete();
+  });
   async function invariants(label) {
     const report = await runLedgerInvariants(pool, { alert: false }); assert(report.ok, JSON.stringify(report)); invariantBoundaries++;
     await proof.record({ kind: 'canonical-invariants', label, logicalAt: at, checks: report.checks }); return report.checks.length;
@@ -90,8 +98,17 @@ try {
     activeIdentity = { authority: 'ordinary-http', ...identity }; carWitnesses = []; commitObserver.arm();
     let response;
     try { response = await proof.invoke('ordinary-http', identity, async () => {
-      const r = await app.inject({ method, url: path, headers: { ...(actor?.token ? { authorization: 'Bearer ' + actor.token } : {}),
+      const completion = String(++requestSequence); let timer;
+      const completed = new Promise((resolve, reject) => {
+        responseCompletions.set(completion, resolve);
+        timer = setTimeout(() => reject(Error('Original custody response hooks did not complete')), 10000);
+      });
+      completed.catch(() => {});
+      let r;
+      try { r = await app.inject({ method, url: path, headers: { 'x-rc1-response-completion': completion, ...(actor?.token ? { authorization: 'Bearer ' + actor.token } : {}),
         ...(key ? { 'idempotency-key': key } : {}) }, ...(body === undefined ? {} : { payload: body }) });
+        await completed;
+      } finally { clearTimeout(timer); }
       return { status: r.statusCode, replayed: r.headers['x-idempotent-replay'] === 'true', body: r.json() };
     }); } finally { commitObserver.assertComplete(); commitObserver.disarm(); activeIdentity = null; }
     assert(carWitnesses.length <= 1, 'Compound canonical car transaction outside custody proof');
