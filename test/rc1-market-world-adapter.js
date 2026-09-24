@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createMarketWorldAdapter, planMarketWorld } from '../tools/rc1-market-world-adapter.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 
 const DAY = 86400000, rosterOf = n => Array.from({ length: n }, (_, i) => ({ accountId: 'a-' + i, characterId: 'c-' + i }));
+const populations = JSON.parse(readFileSync(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url))).populations;
+assert.deepEqual(populations, [25, 100, 250, 500, 1000]);
+assert.throws(() => planMarketWorld({ seed: 'rc1-alpha', roster: rosterOf(50), day: 0 }));
 const clone = structuredClone;
 function world(roster) {
   let at = 0, serial = 0;
@@ -84,12 +88,12 @@ function world(roster) {
 }
 
 let controls = 0;
-for (const population of [25, 50, 100, 500, 1000]) for (const seed of ['rc1-alpha', 'rc1-beta', 'rc1-gamma']) {
+for (const population of populations) for (const seed of ['rc1-alpha', 'rc1-beta', 'rc1-gamma']) {
   const roster = rosterOf(population), a = planMarketWorld({ seed, roster, day: 0 }), b = planMarketWorld({ seed, roster, day: 89 });
   for (const plan of [a, b]) { assert.equal(plan.groups.flat().length, population); assert.equal(new Set(plan.groups.flat()).size, population); assert(plan.groups.every(group => group.length >= 3 && group.length <= 5)); }
   assert.deepEqual(a, planMarketWorld({ seed, roster, day: 0 })); controls++;
 }
-for (const population of [25, 50, 100, 500, 1000]) {
+for (const population of populations) {
   const roster = rosterOf(population), backend = world(roster), adapter = createMarketWorldAdapter({ seed: 'rc1-alpha', roster });
   const result = await adapter.runDay(0, backend.hooks());
   for (const type of ['market.post-good', 'market.buy', 'market.post-order', 'market.fill', 'market.claim', 'market.cancel']) assert(result.byType[type] > 0, type);
@@ -187,5 +191,5 @@ for (const population of [25, 50, 100, 500, 1000]) {
   assert.equal(adapter.summary().completedDays.length, 90); assert.equal(adapter.summary().expiryNotices.length, 90);
   assert.equal(adapter.summary().unresolvedResponses, 0); assert.equal(adapter.summary().matrixQualifying, false); controls++;
 }
-console.log(JSON.stringify({ status: 'PASS_SCOPED', controls, populations: [25, 50, 100, 500, 1000], seeds: 3,
+console.log(JSON.stringify({ status: 'PASS_SCOPED', controls, populations, seeds: 3,
   continuedDays: 90, nativeConcurrencyClaim: false, scope: 'Actor scheduler and replay controls; mock handlers do not replace retained native market/resource evidence' }));

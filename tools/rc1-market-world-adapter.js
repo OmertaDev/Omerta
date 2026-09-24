@@ -5,7 +5,7 @@ import { createMarketPolicy, MARKET_POLICY_CONTRACT } from './rc1-market-policy.
 import { actorValueHash } from './rc1-native-actor-replay.js';
 
 const clone = structuredClone, DAY = 86400000;
-const populations = [25, 50, 100, 500, 1000];
+const populations = [25, 100, 250, 500, 1000];
 export const MARKET_WORLD_CONTRACT = Object.freeze({ version: 1, scenarioId: 'market_stress', policy: MARKET_POLICY_CONTRACT,
   entry: 'Ordinary guest/character entry. No respect, balance, cargo, listing, expiry or membership fixture. Daily current public check-in and one-unit goods purchase fund the workload canonically.',
   cadence: 'Every declared actor participates in rotating groups of three (last group can contain four/five). Repeat the retained sale/competing-takers/order-fill/warehouse-claim/goods-cancel/cash-refund cycle daily. Leave one one-hour order each day for original-worker expiry.',
