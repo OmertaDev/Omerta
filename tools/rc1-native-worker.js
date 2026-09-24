@@ -14,7 +14,7 @@ const fingerprint = (value) => sha256(canonicalJson(plain(value)));
 const NativeDate = Date;
 const timeout = globalThis.setTimeout, clearTimeoutNative = globalThis.clearTimeout;
 
-export function createWorkerSchedule({ start, setClock, expectedDormant = [], deadlineMs = 60000 } = {}) {
+export function createWorkerSchedule({ start, setClock, expectedDormant = [], deadlineMs = 60000, beforeCallback = async () => {} } = {}) {
   let now = start, identity = 0;
   const timers = new Map(), boots = [], events = [], jobs = [], actors = [], failures = [], logs = [], pools = [], transformations = [];
   const initial = performance.now();
@@ -29,6 +29,9 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
   };
   const cancel = (handle) => { if (timers.delete(handle?.id)) record('timer.clear', { id: handle.id }); };
   async function invoke(label, fn) {
+    // Prepare caller-owned canonical requests at this original due time. Their
+    // observation cost is separate from the original worker callback deadline.
+    await beforeCallback({ logicalAt: now, label });
     record('callback.start', { label });
     const started = performance.now(); let deadline;
     try {

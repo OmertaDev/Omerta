@@ -17,6 +17,15 @@ unit.timers.setInterval(async () => { await Promise.resolve(); fires++; }, 10);
 const chained = () => unit.timers.setTimeout(async () => { fires++; chained(); }, 7);
 chained(); await unit.advanceTo(30);
 assert.equal(fake, 30); assert.equal(fires, 7);
+const prepared = [], ordering = [];
+const withPreparation = createWorkerSchedule({ start: 0, setClock: value => ordering.push(['clock', value]),
+  beforeCallback: async identity => { prepared.push(identity); ordering.push(['prepare', identity.logicalAt]); } });
+withPreparation.timers.setInterval(async function originalTick() { ordering.push(['original', prepared.at(-1).logicalAt]); }, 10);
+await withPreparation.advanceTo(20);
+assert.deepEqual(prepared, [{ logicalAt: 10, label: 'originalTick' }, { logicalAt: 20, label: 'originalTick' }]);
+assert.deepEqual(ordering, [['clock', 10], ['prepare', 10], ['original', 10], ['clock', 20], ['prepare', 20], ['original', 20], ['clock', 20]]);
+assert.equal(withPreparation.diagnostic().events.filter(row => row.kind === 'timer.fire').length, 2);
+await withPreparation.close();
 const bad = createWorkerSchedule({ start: 0, setClock() {} });
 bad.timers.setTimeout(async () => { try { await bad.job('deliberate', async () => { throw Error('retained sentinel'); }); } catch {} }, 1);
 await assert.rejects(bad.advanceTo(1), /Unexpected production worker failure/);

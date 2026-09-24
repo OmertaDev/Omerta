@@ -322,7 +322,9 @@ if (resume) runtime.restoreTape(parentTape);
 // registration IDs. Retain those draws without shifting the restored gameplay
 // stream, just as for the repeated original worker startup below.
 const initializeApplication = work => resume && httpEnabled ? runtime.withRestartStartup(work) : work();
-const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant });
+let prepareMarketBoundary = async () => {};
+const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant,
+  beforeCallback: identity => prepareMarketBoundary(identity) });
 const namespace = resume ? parentCheckpoint.schema : `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
 const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: replay, artifact: proof.artifact });
 const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
@@ -472,7 +474,7 @@ const aggregateObserver = commitObserver ? createNativeQuiescentGroupObserver({ 
     try {
       assert.equal(worldResourceHash(before), worldResourceHash(priorResources), 'Aggregate starts outside the prior resource boundary');
       const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
-        { identity: event, includeRestrictedChanges: true });
+        { identity: event, includeRestrictedChanges: true, quiescentGroupEvidence: evidence });
       const artifact = 'restricted-resource-group-' + String(event.groupId).padStart(7, '0') + '.json';
       await proof.artifact(artifact, { ...evidence, restrictedChanges });
       journal.quiescentGroupArtifact = artifact;
@@ -551,7 +553,7 @@ if (resume) {
   }
   if (marketEnabled) {
     marketActors.push(...structuredClone(parentPolicy.marketActors)); roster.push(...parentPolicy.roster);
-    marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors }).restore(parentPolicy.market);
+    marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors, expiryHours: 24 }).restore(parentPolicy.market);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
   }
   if (warEnabled) {
@@ -801,7 +803,7 @@ try {
       warAdapter = createWarWorldAdapter({ seed, epoch, roster: warActors });
       await warStep('prepare');
     }
-    if (marketEnabled) marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors });
+    if (marketEnabled) marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors, expiryHours: 24 });
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -1226,8 +1228,9 @@ try {
     await proof.artifact(day === null ? 'pressure-prepared.json' : 'pressure-day-' + day + '.json',
       { summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
   }
-  async function marketStep(day, timer = false) {
-    const hooks = { logicalAt: at,
+  async function marketStep(day, timer = false, options = {}) {
+    const alreadyComplete = marketAdapter.summary().completedDays.includes(day);
+    const hooks = { logicalAt: at, pauseBeforeDispatch: options.pauseBeforeDispatch, stopAfterMixed: options.stopAfterMixed,
       read: async (accountId, path) => {
         const response = await http(marketActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
         assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
@@ -1240,9 +1243,11 @@ try {
       },
       executeGroup: async (requests, identity) => {
         const execute = (accountId, request) => http(marketActors.find(actor => actor.accountId === accountId), request, true);
+        const companion = identity.kind === 'market-mixed-lifecycle' ? options.companion : null;
         const responses = aggregateObserver ? await aggregateObserver.runGroup(requests,
-          { logicalAt: at, execute, drain: () => flushWorldTelemetry(pool), identity })
-          : await Promise.all(requests.map(item => execute(item.accountId, item.request)));
+          { logicalAt: at, execute, drain: () => flushWorldTelemetry(pool), identity, companion })
+          : (await Promise.all([...requests.map(item => execute(item.accountId, item.request)),
+            ...(companion ? [companion.execute()] : [])])).slice(0, requests.length);
         await flushWorldTelemetry(pool);
         await invariantBoundary('market-group:' + day + ':' + identity.group);
         responses.forEach((response, index) => {
@@ -1259,8 +1264,35 @@ try {
       checkpoint: (phase, checkpoint) => actors.observe('market-policy-' + phase, { day, logicalAt: at }, checkpoint),
     };
     const outcome = timer ? await marketAdapter.runTimerWindow(day, hooks) : await marketAdapter.runDay(day, hooks);
-    assert(!outcome.paused && !marketAdapter.summary().pending, 'Market phase lacks a resolved canonical outcome');
-    if (!timer) await proof.artifact('market-day-' + day + '.json', { summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
+    if (!options.pauseBeforeDispatch && !options.stopAfterMixed)
+      assert(!outcome.paused && !marketAdapter.summary().pending, 'Market phase lacks a resolved canonical outcome');
+    if (!timer && !alreadyComplete && !outcome.paused)
+      await proof.artifact('market-day-' + day + '.json', { summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
+    return outcome;
+  }
+  if (marketEnabled) {
+    let preparedDay = null;
+    const originalJob = controller.job.bind(controller);
+    prepareMarketBoundary = async ({ logicalAt, label }) => {
+      const day = Math.floor((logicalAt - epoch) / 86400000);
+      if (label !== 'guardedTick' || day === 0 || day >= Math.ceil((finish - epoch) / 86400000)
+        || marketAdapter.summary().completedDays.includes(day)) return;
+      assert.equal(preparedDay, null, 'Prepared market requests crossed an original worker deadline');
+      const outcome = await marketStep(day, false, { pauseBeforeDispatch: 'mixed' });
+      if (outcome.paused) { assert.equal(outcome.phase, 'mixed'); preparedDay = day; }
+    };
+    controller.job = async (label, fn) => {
+      if (label !== 'market sweep' || preparedDay === null) return originalJob(label, fn);
+      let invoked = false, result;
+      const companion = { identity: { kind: 'original-worker-job', label, logicalAt: at,
+        sourceFile: 'src/worker.js', sourceSha256: WORKER_SOURCE_PINS['src/worker.js'],
+        handlerSourceFile: 'src/market.js', handlerSourceSha256: QUERY_ORDER_SCOPE.queries.find(row => row.id === 'market-due').sourceSha256 },
+        execute: async () => { assert(!invoked, 'Original market sweep invoked twice'); invoked = true;
+          result = await originalJob(label, fn); return result; } };
+      const outcome = await marketStep(preparedDay, false, { stopAfterMixed: true, companion });
+      assert(invoked && outcome.phase === 'after-mixed', 'Prepared market batch did not execute with its original sweep');
+      preparedDay = null; return result;
+    };
   }
   async function warStep(mode, day = null) {
     const hooks = { logicalAt: at,
@@ -1335,11 +1367,13 @@ try {
     if (label !== 'guardedTick') return;
     await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
     if (warEnabled) await warStep('observeSettlements');
-    if (marketEnabled && marketAdapter.summary().expiryCandidates.some(candidate => !candidate.resolved)) {
-      const marketDay = marketAdapter.summary().completedDays.at(-1);
-      if (marketDay !== undefined && at >= epoch + marketDay * 86400000 + 3600000) await marketStep(marketDay, true);
-    }
     const day = Math.floor((logicalAt - epoch) / 86400000);
+    if (marketEnabled && day > 0 && day < Math.ceil((finish - epoch) / 86400000)
+      && !marketAdapter.summary().completedDays.includes(day)) await marketStep(day);
+    if (marketEnabled && marketAdapter.summary().expiryCandidates.some(candidate => !candidate.resolved)) {
+      const marketDay = marketAdapter.summary().completedDays.filter(value => at >= epoch + (value + 1) * 86400000).at(-1);
+      if (marketDay !== undefined) await marketStep(marketDay, true);
+    }
     if (allianceEnabled) {
       if (continuousAlliance && day !== lastDay && day < Math.ceil((finish - epoch) / 86400000)) await allianceDay(day);
       return;
@@ -1582,7 +1616,7 @@ try {
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
   if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
   if (pool) {
-    try { await proof.snapshot(pool, 'first-failure'); await proof.checkpoint(pool, 'first-failure', url); }
+    try { await proof.snapshot(diagnosticPool, 'first-failure'); await proof.checkpoint(diagnosticPool, 'first-failure', url); }
     catch (captureError) { await retainWorldFailure(() => proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }), { historyStorage, result }); }
   }
   process.exitCode = 1;
