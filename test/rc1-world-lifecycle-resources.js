@@ -145,11 +145,12 @@ controls.push('expiry-missing-worker-boundary-remains-unsupported');
 // owner orders refund alongside a separate listing fee; no intermediate state
 // or commit ordering is fabricated to isolate these resource contributions.
 const aggregateBefore = structuredClone(orderBefore);
+aggregateBefore.tables.characters[1].loc = 'docks';
 aggregateBefore.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'order-2' });
 aggregateBefore.tables.character_cargo.push({ character_id: 'one', good_id: 'gin', qty: 1 });
 const aggregateAfter = structuredClone(aggregateBefore);
 aggregateAfter.tables.market_listings.forEach(row => { row.qty = 0; row.status = 'expired'; });
-aggregateAfter.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'fresh-good', kind: 'good', qty: 1, price: '50', filled_qty: 0, expires_at: '2026-09-20T13:00:00.000Z' });
+aggregateAfter.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'fresh-good', kind: 'good', qty: 1, price: '50', filled_qty: 0, created_at: at, expires_at: '2026-09-20T13:00:00.000Z', car_id: null, buy_now: null, reserve: null });
 aggregateAfter.tables.character_cargo = [];
 aggregateAfter.tables.characters[1].cash = '1790';
 aggregateAfter.tables.transactions = [receipt('refund-1', 'one', '400', 'market:refund'), receipt('refund-2', 'one', '400', 'market:refund'), receipt('mixed-fee', 'one', '-10', 'market:list')];
@@ -189,7 +190,7 @@ const aggregateOptions = { identity: aggregateEvidence.identity, quiescentGroupE
 const aggregateJournal = reconcileWorldResources(aggregateBefore, aggregateAfter, aggregateOptions);
 assert.equal(aggregateJournal.orderExpiry.movements.length, 2);
 assert(aggregateJournal.orderExpiry.movements.every(row => row.provenance === 'original-market-sweep-quiescent-companion'));
-assert(aggregateJournal.unsupported.some(row => row.table === 'market_listings'), 'Unclassified concurrent posting remains explicit');
+assert.equal(aggregateJournal.unsupported.length, 0); assert.equal(aggregateJournal.marketResources.movements[0].kind, 'market-good-post');
 assert.equal(aggregateJournal.identity.outcome, 'QUIESCENT_AGGREGATE'); assert(!Object.hasOwn(aggregateJournal.identity, 'sequence'));
 assert.equal(reconcileOrderExpiry(aggregateBefore, aggregateAfter, { identity: aggregateEvidence.identity, receipts: aggregateAfter.tables.transactions }).movements.length, 0);
 cases.push({ name: 'aggregate-two-order-expiry-with-concurrent-owner-fee' });
