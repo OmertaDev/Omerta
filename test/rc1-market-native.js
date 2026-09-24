@@ -108,7 +108,7 @@ try {
   }
   async function invoke(accountId, method, path, body, key, label = path) {
     const before = await resources(), response = await raw(accountId, method, path, body, key, label);
-    await reconcile(before, await resources(), { label, accountId, method, path });
+    await reconcile(before, await resources(), { label, accountId, method, path, logicalAt: at });
     assert.equal(response.status, 200, JSON.stringify(response)); if (method !== 'GET') await invariants(label); return response;
   }
   for (let i = 0; i < 3; i++) {
