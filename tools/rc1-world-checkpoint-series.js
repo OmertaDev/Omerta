@@ -69,7 +69,8 @@ export async function reviewWorldCheckpointSeries({ manifest, source, pointIndex
   assert.equal(manifest.thresholds.durationRule, WORLD_CHECKPOINT_SERIES_CONTRACT.durationRule);
   for (const metric of WORLD_CHECKPOINT_SERIES_CONTRACT.measurements) assert(manifest.metrics.includes(metric));
   assert.equal(typeof readArtifact, 'function'); assert.equal(typeof retain, 'function');
-  const read = async ref => { reference(ref); const bytes = await readArtifact(ref); assert.equal(sha256(bytes), ref.sha256, 'Retained artifact bytes changed: ' + ref.path); return JSON.parse(String(bytes)); };
+  const bytesOf = async ref => { reference(ref); const bytes = await readArtifact(ref); assert.equal(sha256(bytes), ref.sha256, 'Retained artifact bytes changed: ' + ref.path); return bytes; };
+  const read = async ref => JSON.parse(String(await bytesOf(ref)));
   const put = async (name, value) => { const ref = await retain(name, value); reference(ref); assert.equal(ref.sha256, sha256(nativeBytes(value))); return ref; };
   const index = await read(pointIndex), worker = await read(workerDuration), applicability = await read(lifecycleReview);
   const { configurationSha256 } = index.binding, { startAt, endAt, sampling } = index;
@@ -170,7 +171,7 @@ export async function reviewWorldCheckpointSeries({ manifest, source, pointIndex
     for (const axis of reviewed.axes) {
       assert(['STABLE', 'NOT_STABLE', 'UNKNOWN'].includes(axis.conclusion));
       assert(typeof axis.criterion === 'string' && axis.criterion && typeof axis.rationale === 'string' && axis.rationale);
-      assert(Array.isArray(axis.evidence) && axis.evidence.length); for (const ref of axis.evidence) await read(ref);
+      assert(Array.isArray(axis.evidence) && axis.evidence.length); for (const ref of axis.evidence) await bytesOf(ref);
       if (covered[axis.axis] && conclusions[axis.axis] !== 'NOT_STABLE') conclusions[axis.axis] = axis.conclusion;
     }
     criterion = reviewed.axes.map(row => row.axis + ': ' + row.criterion + ' — ' + row.rationale).join('\n');

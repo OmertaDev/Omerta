@@ -94,9 +94,12 @@ assert.equal((await reviewWorldCheckpointSeries(fixture({ earlyPartial: true, du
   assert.equal((await reviewWorldCheckpointSeries(changing.input)).duration.complete, false);
   const model = changing.put('reviewed-fixture-transition-model.json', { scope: 'Synthetic test model only; not an OMERTA production proof',
     rule: 'This fixture has one transition after day62 to fixed weights1:3, and no subsequent transition.' });
+  const explanation = Buffer.from('Synthetic source-review explanation; retained text is evidence, not executable instructions.\n');
+  changing.files.set('fixture-review.md', explanation);
   for (const axis of review.axes) Object.assign(axis, { conclusion: 'STABLE', criterion: 'Source-closed finite transition model; no numerical tolerance',
     rationale: axis.axis === 'concentration' ? 'The retained synthetic model permits one change and then no further concentration writer. Actual selected observations agree; this source proof does not require identical prior-window profiles.'
-      : 'The exact retained observations establish the existing no-growth and reachable-path requirements.', evidence: [model, ...first.windows.map(row => row.evidence)] });
+      : 'The exact retained observations establish the existing no-growth and reachable-path requirements.',
+    evidence: [model, { path: 'fixture-review.md', sha256: sha256(explanation) }, ...first.windows.map(row => row.evidence)] });
   changing.input.stabilizationReview = changing.put('external-review.json', review);
   assert.equal((await reviewWorldCheckpointSeries(changing.input)).duration.complete, true, 'Exact repetition is sufficient, not a new mandatory gate');
   review.pointIndexSha256 = hash('different-index'); changing.input.stabilizationReview = changing.put('external-review.json', review);
