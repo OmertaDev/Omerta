@@ -7,7 +7,7 @@ import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { createWorkerSchedule, installWorkerInstrumentation, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
-import { createPlayerCarCommitObserver, PLAYER_CAR_SOURCE_PINS } from '../tools/rc1-player-car-provenance.js';
+import { createPlayerCarCommitObserver, PLAYER_CAR_SOURCE_PINS, PLAYER_CAR_COLLECTION_PIN } from '../tools/rc1-player-car-provenance.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 
 assert(process.argv.includes('--postgres'), 'Explicit native PostgreSQL required');
@@ -20,7 +20,7 @@ for (const key of ['LAW_BUST_P', 'SEASON_MOD', 'SEASON_PHASE', 'CHAIN_RPC_URL', 
 const epoch = Date.parse('2026-09-20T12:00:00.000Z');
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'scoped-exact-family-cash-ammo-custody', contract: FAMILY_CASH_AMMO_CONTRACT,
-  sourcePins: WORKER_SOURCE_PINS, carWitnessSourcePins: { carMelt: CAR_MELT_SOURCE_PINS, playerCar: PLAYER_CAR_SOURCE_PINS },
+  sourcePins: WORKER_SOURCE_PINS, carWitnessSourcePins: { carMelt: CAR_MELT_SOURCE_PINS, playerCar: PLAYER_CAR_SOURCE_PINS, collection: PLAYER_CAR_COLLECTION_PIN },
   database: database.descriptor, epoch: new Date(epoch).toISOString(), expectedDormant,
   entry: 'Two ordinary guest/character entries. Before baseline only the founder receives level75 respect eligibility; actual daily check-in funds formation. No SQL cash, ammo, item or membership grants.',
   measured: 'Canonical formation, join, nonzero cash tribute and exact replay; natural GTA car acquisition (maximum20 attempts) and melt; promotion, boss departure/succession, late dissolution ammo-ledger fault, same-key retry and successful replay.',
@@ -49,6 +49,7 @@ const seam = installWorkerInstrumentation(controller, { namespace, commitObserve
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 let app, result, measured = false, faultInstalled = false, invariantBoundaries = 0, resourceSequence = 0;
 const journals = [], resourceSummaries = [], unsupported = [];
+const carWitnessSummary = { retainedCandidates: 0, exactPlayerAcquisitions: 0, exactFamilyMelts: 0 };
 const responseCompletions = new Map(); let requestSequence = 0;
 try {
   for (const level of ['log', 'warn', 'error']) console[level] = (...args) => controller.log(level, args);
@@ -82,6 +83,9 @@ try {
       if (witness) await proof.artifact(label + '-car-witness.json', { identity, before: before.global, after: after.global, provenance: witness });
       global = observer.reconcileWorldResources(before.global, after.global, { identity, includeRestrictedChanges: true,
         carMeltProvenance: witness, carAcquisitionProvenance: witness });
+      if (witness) carWitnessSummary.retainedCandidates++;
+      carWitnessSummary.exactPlayerAcquisitions += global.cars.lineage.filter(row => row.kind === 'exact-player-gta-car-source').length;
+      carWitnessSummary.exactFamilyMelts += global.cars.lineage.filter(row => row.kind === 'exact-family-melt-sink').length;
     } catch (error) {
       await proof.artifact(label + '-failure.json', { identity, before, after, operation, message: error.message }); throw error;
     }
@@ -204,11 +208,13 @@ try {
   await proof.artifact('worker-schedule.json', trace); await proof.artifact('random-tape.json', { draws: runtime.tape });
   await proof.artifact('custody-summary.json', { journals, contract: FAMILY_CASH_AMMO_CONTRACT });
   await proof.artifact('resource-summary.json', { resourceSummaries, unsupported, qualifyingFullResourcePass: false });
+  assert.deepEqual(carWitnessSummary, { retainedCandidates: 2, exactPlayerAcquisitions: 1, exactFamilyMelts: 1 });
+  assert.equal(unsupported.length, 0, 'Scoped custody requires all observed resource classes to be supported');
   result = { status: 'PASS_SCOPED', ordinaryEntrants: 2, initialRespectFixtures: 1, otherDirectGameplayFixtureWrites: 0,
     boostAttempts, actualTribute: 200, personalMeltAmmo: melt.body.rounds, familyMeltAmmo: melt.body.tithe, familyMeltCash: melt.body.tithe * 30,
     dissolvedCash: 200 + melt.body.tithe * 30, dissolvedAmmo: melt.body.tithe, preservedSuccession: true, scopedFaults: 1,
     sameKeyRetriesAfterRollback: 1, exactSuccessfulReplays: 2, faultCleanupVerified: true,
-    custodyBoundaries: journals.length, invariantChecks, invariantBoundaries, resourceBoundaries: resourceSummaries.length,
+    custodyBoundaries: journals.length, invariantChecks, invariantBoundaries, resourceBoundaries: resourceSummaries.length, carWitnessSummary,
     unsupportedResourceClassifications: unsupported.length, observedLogicalSeconds: (at - epoch) / 1000, timerCounts,
     finalStateSha256: final.stateSha256, qualifyingFullResourcePass: false, matrixQualifying: false, exclusions: configuration.exclusions };
 } catch (error) {

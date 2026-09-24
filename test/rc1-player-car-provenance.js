@@ -27,6 +27,8 @@ const gtaTrace = trace([...structuredClone(locked),
   { ...query(PLAYER_CAR_SQL.car, [car.id, ch.id, car.model_id, car.trim_id, car.dmg, car.rarity, null, null], 'INSERT', 1), origin: frame(sites.car) },
   ...[[rarity, sites.rarity], [grant, sites.grant]].map(([a, site]) => ({ ...query(PLAYER_CAR_SQL.audit, Object.values(a), 'INSERT', 1), origin: frame(site) })),
   ...structuredClone(persist)]);
+gtaTrace.queries.splice(7, 0, query('SAVEPOINT collect_log', [], 'SAVEPOINT'),
+  query(PLAYER_CAR_SQL.collection, [ch.account_id, 'cars', car.model_id], 'INSERT', 1), query('RELEASE SAVEPOINT collect_log', [], 'RELEASE'));
 const total = Math.floor(carMelt(car.model_id, car.trim_id, car.dmg)), tithe = Math.floor(total * CONSTANTS.MELT_TITHE), keep = total - tithe;
 const family = { id: 'family', treasury: '200', ammo_bank: '0', weekly_progress: 0 }, member = { gang_id: family.id, character_id: ch.id, role: 'boss' };
 const receipt = (id, character, currency, amount, reason, counterparty) => ({ id, character_id: character, account_id: null, currency, amount, reason, counterparty });
@@ -43,6 +45,10 @@ const meltTrace = trace([...structuredClone(locked), query('DELETE FROM cars WHE
 meltTrace.queries[3].rows = [{ src: 'gm', k: family.id, k2: 'boss' }]; meltTrace.queries[3].rowCount = 1;
 meltTrace.queries[4].rows = [car]; meltTrace.queries[4].rowCount = 1;
 assert.equal(verifyPlayerCarAcquisition(gtaBefore, gtaAfter, gtaTrace).carId, car.id);
+const moduleTrace = structuredClone(gtaTrace);
+for (const entry of moduleTrace.queries) if (entry.origin) entry.origin.frames[0].caller = 'Module.boostCar';
+moduleTrace.queries.splice(7, 0, query('SAVEPOINT collect_probe', [], 'SAVEPOINT'), query('RELEASE SAVEPOINT collect_probe', [], 'RELEASE'));
+assert.equal(verifyPlayerCarAcquisition(gtaBefore, gtaAfter, moduleTrace).carId, car.id);
 assert.equal(verifyFamilyCarMelt(meltBefore, meltAfter, meltTrace).titheCash, receipts[2].amount);
 let controls = 0;
 function rejects(kind, edit) {
@@ -73,6 +79,10 @@ for (const edit of [
   x => x.trace.queries[5].parameters[4] = 61,
   x => x.trace.queries[5].parameters[6] = 'limited',
   x => x.trace.queries[6].parameters[3] = 1,
+  x => x.trace.queries[7].sql = 'SAVEPOINT arbitrary',
+  x => x.trace.queries[8].parameters[0] = 'other',
+  x => x.trace.queries[9].command = 'ROLLBACK',
+  x => x.trace.queries.splice(9, 1),
   x => x.after.tables.cars[0].dmg++,
   x => x.after.tables.cars[0].listed = true,
   x => x.after.tables.rng_audit[1].character_id = 'other',
@@ -96,4 +106,4 @@ for (const edit of [
   x => x.after.tables.cars.push(car),
   x => x.trace.queries.splice(-1, 0, query('UPDATE gangs SET weekly_progress=1', [], 'UPDATE', 1)),
 ]) rejects('melt', edit);
-console.log(JSON.stringify({ status: 'PASS', positiveCases: 2, rejectOrUnsupportedControls: controls, nativeProof: false }));
+console.log(JSON.stringify({ status: 'PASS', positiveCases: 3, rejectOrUnsupportedControls: controls, nativeProof: false }));

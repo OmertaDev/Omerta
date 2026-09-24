@@ -10,13 +10,16 @@ import { canonicalJson, sha256 } from './rc1-native-proof.js';
 export const PLAYER_CAR_SQL = Object.freeze({
   car: 'INSERT INTO cars (id, character_id, model_id, trim_id, dmg, rarity, run_id, serial) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
   audit: 'INSERT INTO rng_audit (id, character_id, action, roll, outcome) VALUES ($1,$2,$3,$4,$5)',
+  collection: 'INSERT INTO collection_log (account_id, category, item_id) VALUES ($1,$2,$3)\n       ON CONFLICT (account_id, category, item_id) DO NOTHING',
 });
 export const PLAYER_CAR_SOURCE_PINS = Object.freeze({ 'src/economy.js': CAR_MELT_SOURCE_PINS['src/economy.js'] });
+export const PLAYER_CAR_COLLECTION_PIN = '6251b95099c557b73d9c1d893e50ff14c0b6b7af575d605c005325c99164e054';
 let sites;
 export function assertPlayerCarSources() {
   carMeltQueryShapes();
   const source = fs.readFileSync(new URL('../src/economy.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
   assert.equal(sha256(source), PLAYER_CAR_SOURCE_PINS['src/economy.js']);
+  assert.equal(sha256(fs.readFileSync(new URL('../src/collection.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n')), PLAYER_CAR_COLLECTION_PIN);
   const line = needle => { assert.equal(source.split(needle).length, 2); return source.slice(0, source.indexOf(needle)).split('\n').length; };
   sites = { car: line(PLAYER_CAR_SQL.car), rarity: line("await h.rngLog(client, ch.id, 'rarity:car', rrRoll, rarity);"),
     grant: line("await h.rngLog(client, ch.id, 'gta', roll, 'success');") };
@@ -53,7 +56,7 @@ export function verifyPlayerCarAcquisition(before, after, provenance) {
   assert(Number.isSafeInteger(provenance.boundary.transactionId) && provenance.boundary.transactionId > 0);
   const q = provenance.queries; assert(Array.isArray(q) && q.length >= 2 && q.length <= 1024);
   assert.equal(q[0].command, 'BEGIN'); assert.equal(q.at(-1).command, 'COMMIT');
-  if (q.slice(1, -1).some(e => !['SELECT', 'INSERT', 'UPDATE', 'DELETE'].includes(e.command))) return null;
+  if (q.slice(1, -1).some(e => !['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'SAVEPOINT', 'RELEASE'].includes(e.command))) return null;
   const writes = q.filter(e => /^(?:INSERT INTO|UPDATE|DELETE FROM) cars\b/.test(e.sql.trim()));
   if (writes.length !== 1 || writes[0].sql !== PLAYER_CAR_SQL.car) return null;
   const carWrite = writes[0];
@@ -76,10 +79,24 @@ export function verifyPlayerCarAcquisition(before, after, provenance) {
   for (const [entry, site] of [[carWrite, sites.car], [rarity, sites.rarity], [grant, sites.grant]]) {
     assert.equal(entry.command, 'INSERT'); assert.equal(entry.rowCount, 1);
     assert.equal(entry.origin?.kind, 'native-player-car-source-v1');
-    assert(entry.origin.frames.some(f => f.file === 'src/economy.js' && f.caller === 'boostCar' && f.line === site), 'Wrong pinned GTA source site');
+    assert(entry.origin.frames.some(f => f.file === 'src/economy.js' && ['boostCar', 'Module.boostCar'].includes(f.caller) && f.line === site), 'Wrong pinned GTA source site');
   }
   const order = [characterRead, owned, garage, carWrite, rarity, grant].map(e => q.indexOf(e));
   assert(order.every((n, i) => !i || n > order[i - 1]));
+  // The original collection status log uses named savepoints on PostgreSQL.
+  // Accept only its exact successful bracket; rollback and arbitrary nested
+  // transaction shapes cannot inherit a car INSERT that may have been undone.
+  const controls = q.filter(e => ['SAVEPOINT', 'RELEASE'].includes(e.command));
+  const expectedControls = ['SAVEPOINT collect_log', 'RELEASE SAVEPOINT collect_log'];
+  if (controls.length === 4) expectedControls.unshift('SAVEPOINT collect_probe', 'RELEASE SAVEPOINT collect_probe');
+  assert.deepEqual(controls.map(e => e.sql), expectedControls, 'Unsupported GTA savepoint sequence');
+  for (const entry of controls) assert.deepEqual(entry.parameters, []);
+  if (controls.length === 4) assert.equal(q.indexOf(controls[1]), q.indexOf(controls[0]) + 1);
+  const logStart = controls.at(-2), logEnd = controls.at(-1), log = only(PLAYER_CAR_SQL.collection);
+  assert.equal(q.indexOf(logStart) + 1, q.indexOf(log)); assert.equal(q.indexOf(log) + 1, q.indexOf(logEnd));
+  assert(q.indexOf(logStart) > q.indexOf(rarity) && q.indexOf(logEnd) < q.indexOf(grant));
+  assert.deepEqual(log.parameters, [accountId, 'cars', modelId]); assert.equal(log.command, 'INSERT');
+  assert([0, 1].includes(log.rowCount));
   assert.equal(carOf(modelId)?.id, modelId); assert.equal(trimOf(trimId)?.id, trimId); assert(Number.isInteger(damage) && damage >= 0 && damage <= 60);
   for (const [entry, action, outcome] of [[rarity, 'rarity:car', rarityName], [grant, 'gta', 'success']]) {
     assert.equal(entry.parameters.length, 5); assert.equal(entry.parameters[1], owner);
