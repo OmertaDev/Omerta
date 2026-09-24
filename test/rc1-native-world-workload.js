@@ -17,6 +17,7 @@ import { createNativeQuiescentGroupObserver, QUIESCENT_GROUP_CONTRACT } from '..
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
 import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
+import { reviewWorldBacklog } from '../tools/rc1-world-backlog-review.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatFault, NPC_BOAT_FAULT_CONTRACT } from '../tools/rc1-npc-boat-fault.js';
@@ -716,7 +717,8 @@ try {
   const artifactReference = (name, value) => ({ path: name, sha256: sha256(`${JSON.stringify(value, null, 2)}\n`) });
   const recoveryAuthority = { source: recoverySource, review: CHECKPOINT_RECOVERY_REVIEW,
     catalog: recoveryCatalog(content), configuration: recoveryConfiguration };
-  const recoveryBoundaries = [];
+  const recoveryBoundaries = [], backlogBoundaries = [];
+  let latestInvariants = null;
   async function recoveryBoundary(label, snapshot, diagnostic) {
     const checkpoint = { stateSha256: snapshot.stateSha256, configurationSha256, logicalAt: at };
     const result = reviewCanonicalCheckpoint({ manifest: frozenScenarios, source: recoverySource, checkpoint, snapshot,
@@ -730,11 +732,23 @@ try {
     recoveryBoundaries.push({ label, checkpoint, artifact: artifactReference(`checkpoint-recovery-${label}.json`, result),
       assertions: result.joined.assertions, scopes: Object.fromEntries(Object.entries(result.joined.scopes).map(([scope, value]) =>
         [scope, { status: value.status, obligations: value.results?.length ?? 0, unknown: value.results?.filter(row => row.status === 'UNKNOWN').length ?? null }])) });
+    assert.equal(latestInvariants?.logicalAt, at, 'Backlog checkpoint needs current canonical invariant evidence');
+    const backlog = reviewWorldBacklog(snapshot, { logicalAt: at, sourceRevision: source.revision,
+      configuration: declared, lifecycleDiagnostics: diagnostic.semantic, invariants: latestInvariants });
+    const backlogEvidence = { binding: { sourceRevision: source.revision, ...checkpoint },
+      snapshot: artifactReference(`${label}.json`, snapshot),
+      diagnostics: artifactReference(`world-diagnostics-${label}.json`, diagnostic), invariants: latestInvariants, review: backlog };
+    await proof.artifact(`world-backlog-${label}.json`, backlogEvidence);
+    backlogBoundaries.push({ label, checkpoint, artifact: artifactReference(`world-backlog-${label}.json`, backlogEvidence),
+      reviewSha256: backlog.sha256, unknown: backlog.unknown });
   }
   async function knowledgeBoundary(label, before) {
     const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
-      readPage: (accountId, options) => proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
-        () => knowledgeService.knowledgeBoard(accountId, options)) });
+      readPage: (accountId, options) => {
+        recordWorkloadCall({ kind: 'canonical-read', handler: 'knowledge.board' });
+        return proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
+          () => knowledgeService.knowledgeBoard(accountId, options));
+      } });
     const after = await canonicalDatabaseSnapshot(pool);
     if (before.stateSha256 !== after.stateSha256) await proof.artifact(`knowledge-${label}-changed-state.json`, after);
     assert.equal(after.stateSha256, before.stateSha256, 'Knowledge observer changed canonical state');
@@ -989,6 +1003,13 @@ try {
     economyMetrics.sample(at, resume ? 'resumed' : 'initial');
   }
   await proof.artifact('actor-policy-initial.json', policyState());
+  function recordWorkloadCall(call) {
+    if (!trackMeasuredCalls) return;
+    const key = canonicalJson(call), prior = workloadCallUnion.get(key);
+    workloadCallUnion.set(key, prior ? { ...prior, count: prior.count + 1, lastLogicalAt: at }
+      : { call, count: 1, firstLogicalAt: at, lastLogicalAt: at });
+    measuredInvocationCount++;
+  }
   async function invoke(authority, identity, work, latencyClass) {
     const invocation = { authority, ...identity, logicalAt: at };
     if (trackMeasuredCalls) {
@@ -999,10 +1020,7 @@ try {
         : ['character.read', 'player.snapshot'].includes(authority) ? { kind: 'canonical-read',
           handler: authority === 'character.read' ? 'game.readCharacter' : 'player.snapshot' }
         : { kind: 'unknown-dispatch', authority };
-      const key = canonicalJson(call), prior = workloadCallUnion.get(key);
-      workloadCallUnion.set(key, prior ? { ...prior, count: prior.count + 1, lastLogicalAt: at }
-        : { call, count: 1, firstLogicalAt: at, lastLogicalAt: at });
-      measuredInvocationCount++;
+      recordWorkloadCall(call);
     }
     currentInvocation = invocation;
     const started = performance.now();
@@ -1070,6 +1088,7 @@ try {
     const value = await runLedgerInvariants(pool, { alert: false });
     await proof.record({ kind: 'canonical-invariants', label, logicalAt: at, checks: value.checks });
     assert(value.ok, `Invariant failed after ${label}`);
+    latestInvariants = { logicalAt: at, label, ...value };
   }
   async function session(accountId, day) {
     metrics.sessions++;
@@ -1512,6 +1531,7 @@ try {
   await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
   await recoveryBoundary('final', final, finalDiagnostics);
   await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
+  await proof.artifact('world-backlog-summary.json', { boundaries: backlogBoundaries, matrixQualifying: false });
   if (economyMetrics) {
     economyMetrics.sample(at, 'final');
     await proof.artifact('economy-metrics-final.json', economyMetrics.summary());
@@ -1548,7 +1568,7 @@ try {
     fromLogicalAt: measuredStart, throughLogicalAt: finish }, complete: true, canonicalDispatchOnly: true,
     originalWorkersOnly: true, calls: [...workloadCallUnion.values()].map(row => row.call),
     observedInvocations: measuredInvocationCount, union: [...workloadCallUnion.values()],
-    coverage: 'Every measured actor invoke wrapper call, including retries, reads and preparation; original worker coverage is separately verified. Complete identities and outcomes remain in the sealed native history.' };
+    coverage: 'Every measured actor invoke wrapper and Knowledge observer call, including retries, reads and preparation; original worker coverage is separately verified. Complete identities and outcomes remain in the sealed native history.' };
   await proof.artifact('world-invocation-inventory.json', workloadInventory);
   const lifecycleApplicability = reviewWorkloadLifecycleApplicability({ source: lifecycleSource, configurationSha256,
     startAt: measuredStart, endAt: finish, initialSnapshot: initial, finalSnapshot: final,
@@ -1639,6 +1659,7 @@ try {
     actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
     mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
     recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
+    backlogDiagnosticsSha256: sha256(canonicalJson(backlogBoundaries)),
     durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
     lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
