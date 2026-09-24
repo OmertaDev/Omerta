@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { exactConcentration, actionDistribution, summarizeWorldDiagnostics, collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
+import { exactConcentration, actionDistribution, summarizeWorldDiagnostics, collectWorldDiagnostics,
+  operationLifecycleDiagnostics, worldObjectiveInventory } from '../tools/rc1-world-diagnostics.js';
 
 assert.equal(exactConcentration([]).largestShare, null);
 assert.equal(exactConcentration([{ quantity: '0' }]).gini, null);
@@ -27,6 +28,67 @@ assert.deepEqual(summary.director.overdueActiveCampaignIds, ['expired']);
 assert.equal(summary.inventory.stacks[0].concentration.total, '7');
 assert.equal(summary.families.perFamily[0].livingDeclaredMembers, 1);
 assert.equal(summary.unresolved.length, 4);
+assert.equal(summary.coordination.lifecycle.complete, false);
+assert.equal(summary.coordination.lifecycle.orphanedOperations, null, 'Absent observer tables cannot mean zero');
+
+const lifecycleRows = { ...structuredClone(rows), accounts: [{ id: 'active', status: 'active' }], operations: [], participants: [],
+  operationContributions: [], operationCommitments: [], operationCapital: [], operationEscrow: [], operationItems: [], operationLots: [], inventory: [],
+  mysteries: [], discoveries: [], crewObjectives: [] };
+assert.equal(operationLifecycleDiagnostics(lifecycleRows, 20).orphanedOperations, 0);
+lifecycleRows.mysteries.push({ id: 'mystery-custody', status: 'active', owner_scope: 'character', owner_id: 'c' });
+lifecycleRows.operationEscrow.push({ operation_id: 'mystery-custody', item_id: 'mystery-item', depositor_scope: 'character', depositor_id: 'c' });
+lifecycleRows.operationItems.push({ id: 'mystery-item', owner_id: 'mystery-custody', state: 'escrowed' });
+assert.equal(operationLifecycleDiagnostics(lifecycleRows, 20).structuralOrphanOperations, 0,
+  'A canonical Mystery instance is a valid parent in the shared operation custody namespace');
+lifecycleRows.mysteries = []; lifecycleRows.operationEscrow = []; lifecycleRows.operationItems = [];
+for (const status of ['draft', 'recruiting', 'committed', 'ready', 'executing', 'resolving']) lifecycleRows.operations.push({
+  id: status, status, coordination_mode: 'family', opened_by_account_id: 'active', expires_at: new Date(10) });
+let lifecycle = operationLifecycleDiagnostics(lifecycleRows, 20);
+assert.equal(lifecycle.overdueOpenOperationIds.length, 6, 'All Family open statuses count');
+assert.equal(lifecycle.orphanedOperations, null, 'Overdue is not proof of unrecoverability');
+assert.equal(lifecycle.structuralOrphanOperations, 0);
+assert.equal(worldObjectiveInventory(lifecycleRows).subjects.filter((row) => row.type === 'operation').length, 6);
+lifecycleRows.operations = [{ id: 'finished', coordination_mode: 'family', status: 'completed', opened_by_account_id: 'active' }];
+lifecycleRows.operationItems.push({ id: 'consumed', owner_id: 'finished', state: 'consumed' });
+lifecycleRows.characters[0].alive = false;
+lifecycleRows.participants.push({ operation_id: 'finished', role_id: 'old-seat', account_id: 'active', character_id: 'c' });
+assert.equal(operationLifecycleDiagnostics(lifecycleRows, 20).orphanedOperations, 0,
+  'Dead historical participants and consumed item provenance are not orphaned custody');
+lifecycleRows.operationEscrow.push({ operation_id: 'finished', item_id: 'held', depositor_scope: 'account', depositor_id: 'active' });
+lifecycleRows.operationItems.push({ id: 'held', owner_id: 'finished', state: 'escrowed' });
+lifecycle = operationLifecycleDiagnostics(lifecycleRows, 20);
+assert.equal(lifecycle.orphanedOperations, 1, 'Count affected operations, not issue rows');
+assert(lifecycle.issues.some((row) => row.kind === 'terminal-held-custody-or-promise'));
+assert(lifecycle.issues.some((row) => row.kind === 'item:unbound-deposit'));
+lifecycleRows.operationEscrow.push({ operation_id: 'missing', item_id: 'lost', depositor_scope: 'character', depositor_id: 'missing-character' });
+lifecycleRows.operationCapital.push({ operation_id: 'missing', account_id: 'active', character_id: 'wrong-generation', role_id: 'r', requirement_id: 'capital', state: 'held', amount: '9' });
+lifecycleRows.inventory.push({ owner_scope: 'operation', owner_id: 'missing', template_id: 'material', quality: 'standard', quantity: '9' });
+lifecycle = operationLifecycleDiagnostics(lifecycleRows, 20);
+assert.equal(lifecycle.structuralOrphanOperations, 2);
+for (const kind of ['escrow:missing-operation', 'escrow:missing-return-owner', 'escrow:missing-or-mismatched-item',
+  'capital:missing-operation', 'capital:missing-or-mismatched-principal', 'resource:missing-operation'])
+  assert(lifecycle.issues.some((row) => row.kind === kind), kind);
+const heldRows = { ...lifecycleRows, operations: [{ id: 'op', coordination_mode: 'family', status: 'ready', opened_by_account_id: 'active' }],
+  participants: [{ operation_id: 'op', role_id: 'r', account_id: 'active', character_id: 'c' }], operationContributions: [],
+  operationEscrow: [], operationItems: [], operationCapital: [], operationCommitments: [], inventory: [] };
+for (const [kind, requirement_id, quantity, template_id] of [['capital', 'cash', 9, null], ['resource', 'material', 7, 'parts']])
+  heldRows.operationCommitments.push({ operation_id: 'op', role_id: 'r', requirement_id, kind, quantity, template_id,
+    account_id: 'active', character_id: 'c', state: 'fulfilled' });
+lifecycle = operationLifecycleDiagnostics(heldRows, 20);
+assert(lifecycle.issues.some((row) => row.kind === 'capital:missing-deposit'));
+assert(lifecycle.issues.some((row) => row.kind === 'resource:missing-deposit'));
+heldRows.operationCapital.push({ ...heldRows.operationCommitments[0], amount: '9', state: 'held' });
+heldRows.inventory.push({ owner_scope: 'operation', owner_id: 'op', template_id: 'parts', quality: 'standard', quantity: '7' });
+assert.equal(operationLifecycleDiagnostics(heldRows, 20).structuralOrphanOperations, 0);
+heldRows.operationCapital[0].amount = '8'; heldRows.inventory[0].quality = 'wrong';
+lifecycle = operationLifecycleDiagnostics(heldRows, 20);
+assert(lifecycle.issues.some((row) => row.kind === 'capital:unbound-deposit'));
+assert(lifecycle.issues.some((row) => row.kind === 'resource:unbound-deposit'));
+lifecycleRows.mysteries.push({ id: 'old-mystery', status: 'active' });
+lifecycleRows.discoveries.push({ id: 'lead', status: 'active' });
+lifecycleRows.crewObjectives.push({ crew_id: 'old-crew', week: 1, done: false });
+assert.equal(worldObjectiveInventory(lifecycleRows).subjects.filter((row) => ['mystery', 'discovery', 'crew_objective'].includes(row.type)).length, 3,
+  'Historical unresolved objectives need an explicit canonical disposition');
 console.log('PASS: exact large-decimal concentration, absent actors, separated inventory, and bounded diagnostic semantics');
 
 if (process.argv.includes('--postgres')) {
@@ -44,6 +106,9 @@ if (process.argv.includes('--postgres')) {
     assert.equal(report.semantic.ledgerActivity.byActorCurrencyReason[0].gross, '9007199254740993.01');
     assert.equal(report.semantic.population.livingDeclaredCharacters, 1);
     assert.equal(report.semantic.actions.inactivePlayers, 1);
+    assert.equal(report.semantic.coordination.lifecycle.complete, true);
+    assert.equal(report.semantic.coordination.lifecycle.orphanedOperations, 0);
+    assert.equal(report.semantic.objectiveInventory.tablesComplete, true);
     assert(report.semantic.worldRows.length > 300);
     assert(report.physicalDiagnostics.relationBytes.every((row) => /^\d+$/.test(row.bytes)));
     assert.equal((await canonicalDatabaseSnapshot(database.pool)).stateSha256, before.stateSha256,
