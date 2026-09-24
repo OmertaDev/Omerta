@@ -29,6 +29,7 @@ import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
 import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
 import { createFamilyWorldAdapter, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
 import { planFamilyFixture } from '../tools/rc1-family-policy.js';
+import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
 import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
 import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
 
@@ -49,16 +50,17 @@ const guardLimits = guardArguments[0] === undefined ? null : {
 };
 const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
 const actorPolicy = argument('policy') || 'quiet_world';
-assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families'].includes(actorPolicy));
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn'].includes(actorPolicy));
 const allianceEnabled = actorPolicy === 'coordinated_alliance';
 const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'mostly_veteran_players';
 const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
-const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled;
+const churnEnabled = actorPolicy === 'high_player_churn';
+const httpEnabled = allianceEnabled || cohortEnabled || familyEnabled || churnEnabled;
 if (faultNpcBoatGrant) {
   assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
   assert(!argument('resume'), 'Fault workload does not support continuation');
 }
-const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : allianceEnabled ? 'scoped-coordinated-alliance-world' : cohortEnabled || familyEnabled || churnEnabled ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
 if (allianceEnabled) {
   assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
   assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
@@ -171,6 +173,7 @@ const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_C
   clocks: 'One controller advances application and isolated SQL clocks and executes every due original local worker callback',
   workerOrder: 'Serial accepted callback order; actor session follows the scheduled hourly callback once per rolling day',
   expectedDormant, queryOrder: QUERY_ORDER_SCOPE, deploymentAttested: false,
+  syntheticSessionRenewal: 'Before an ordinary HTTP bearer is within two logical days of expiry, the same authenticated actor calls /v1/auth/agent-key. This canonical registration sets agent_flag and referral exclusion, issues its real90-day agent token and retains the credential privately. No direct JWT signing or postbaseline fixture.',
   excludedIntegrations: ['Unconfigured chain watcher', 'Disabled liquidity automation', 'Unavailable external RWA registry'],
   coverageMissing: ['All 15 archetypes and 225 runs', 'All 13 resource journals at every worker transition',
     'Actor-policy replay across all archetypes and seeds',
@@ -215,6 +218,15 @@ if (familyEnabled) Object.assign(configuration, {
   entry: FAMILY_WORLD_CONTRACT.initialization,
   authority: 'Ordinary authenticated Family HTTP actions; original PlayerCommand dispatcher and canonical crimes.',
   httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. No production admission or capacity qualification.',
+});
+if (churnEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, churnContract: CHURN_POLICY_CONTRACT,
+  policyScope: 'All current actors receive daily ordinary sessions; replace30% of actual weekly active actors with carried integer remainder at each original seven-day boundary. Retired accounts and custody remain untouched and observed.',
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: 'Authorized PlayerCommands, own character, public crimes and recorded actual activity', observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: 'Every initial/replacement actor uses ordinary guest and character HTTP; no progression or resource fixtures.',
+  authority: 'Original guest/session entry, PlayerCommand dispatcher and canonical crimes; no external authentication-provider qualification.',
 });
 if (replay) {
   assert.equal(replayRun.configuration.hours, hours);
@@ -395,6 +407,7 @@ const days = [], latencies = { read: [], command: [] };
 const knowledgeBoundaries = [];
 const allianceActors = [];
 const familyActors = []; let familyAdapter = null;
+const churnActors = [], churnWeeklyActive = new Set(); let churnPolicy = null;
 const cohortActors = [], cohortPolicies = new Map();
 let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
 let allianceAdapter = null, app = null;
@@ -418,6 +431,12 @@ if (resume) {
     familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors }).restore(parentPolicy.familyAdapter);
     responseSequence = parentPolicy.nativeBoundary.responseSequence;
   }
+  if (churnEnabled) {
+    churnActors.push(...structuredClone(parentPolicy.churnActors)); roster.push(...parentPolicy.roster);
+    churnPolicy = createChurnPolicy(parentPolicy.churn.configuration).restore(parentPolicy.churn);
+    for (const accountId of parentPolicy.churnWeeklyActive) churnWeeklyActive.add(accountId);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
   assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
   assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
   for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
@@ -433,6 +452,8 @@ if (resume) {
 }
 const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
 const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  ...(churnEnabled ? { churnActors, churn: churnPolicy?.checkpoint() || null, churnWeeklyActive: [...churnWeeklyActive].sort(),
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(familyEnabled ? { familyActors, familyAdapter: familyAdapter?.checkpoint() || null,
     nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
   ...(cohortEnabled ? { cohortActors, cohortPlan, cohortBaseline, cohortWarmup, measuredStart,
@@ -566,6 +587,23 @@ try {
     }
     await proof.artifact('family-initialization.json', { plan, grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
     familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors });
+  }
+  if (churnEnabled && !resume) {
+    for (let index = 0; index < population; index++) {
+      const name = 'World Churn Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact('churn-initial-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token,
+        sessionRef: 'churn-initial-session-' + index, joinedAt: at };
+      await proof.artifact(actor.sessionRef + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'churn-initial-character-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      churnActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+    }
+    churnPolicy = createChurnPolicy({ seed, epochAt: epoch,
+      initialRoster: churnActors.map(({ accountId, characterId, sessionRef }) => ({ accountId, characterId, sessionRef })) });
+    await proof.artifact('churn-initialization.json', { actors: churnActors, policy: churnPolicy.checkpoint(), directFixtures: 0 });
   }
   if (cohortEnabled && !resume) {
     const provenance = new Map(), grants = [];
@@ -720,6 +758,20 @@ try {
     finally { currentInvocation = null; latencies[latencyClass].push(performance.now() - started); }
   }
   async function http(actor, request) {
+    if (actor && request.path !== '/v1/auth/agent-key') {
+      const identity = app.jwt.verify(actor.token); assert.equal(identity.sub, actor.accountId);
+      assert(Number.isFinite(identity.exp), 'Ordinary session lacks an expiry');
+      if (identity.exp * 1000 <= at + 2 * 86400000) {
+        const renewal = await http(actor, { method: 'POST', path: '/v1/auth/agent-key', body: {} });
+        assert.equal(renewal.status, 200, JSON.stringify(renewal)); assert.equal(renewal.body.agent, true);
+        const renewed = app.jwt.verify(renewal.body.token);
+        assert.equal(renewed.sub, actor.accountId); assert.equal(renewed.agent, true); assert(renewed.exp > identity.exp);
+        actor.token = renewal.body.token; actor.authRenewals = (actor.authRenewals || 0) + 1;
+        await proof.artifact('agent-session-' + actor.accountId + '-' + actor.authRenewals + '.json',
+          { accountId: actor.accountId, logicalAt: at, token: actor.token, expiresAt: renewed.exp * 1000,
+            canonicalEffects: ['agent_flag=true', 'agent referral exclusion'], fixture: false });
+      }
+    }
     return invoke('ordinary-http', { accountId: actor?.accountId || null, ...request }, async () => {
       const completionKey = String(++responseSequence);
       let timer;
@@ -816,6 +868,7 @@ try {
     }
     if (!actions) metrics.sessionWaits++;
     actorActions.set(accountId, actorActions.get(accountId) + actions);
+    if (churnEnabled && actions > 0) { assert(churnPolicy.isCurrent(accountId)); churnWeeklyActive.add(accountId); }
     await proof.record({ kind: 'actor-session-complete', accountId, day, actions,
       wait: !actions ? { jailSeconds: own.character.jailSeconds, nerve: own.character.nerve,
         classification: 'Observed wait only; no inference that world reachability is proved or disproved' } : null });
@@ -865,6 +918,40 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, allianceFresh: allianceAdapter.summary().fresh,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   }
+  async function churnWeek(day) {
+    if (!day || day % 7) return;
+    const input = { week: day / 7, logicalAt: at, activeAccountIds: [...churnWeeklyActive].sort() };
+    const preview = churnPolicy.previewWeek(input);
+    const selected = await actors.decide('churn-week', input, churnPolicy.roster(), () => preview);
+    assert.deepEqual(selected, preview); churnPolicy.beginWeek(input);
+    await actors.observe('churn-retired', { day, logicalAt: at }, churnPolicy.checkpoint());
+    let enrollment;
+    while ((enrollment = churnPolicy.nextEnrollment())) {
+      await actors.observe('churn-enrollment-pending', { day, logicalAt: at }, enrollment);
+      if (enrollment.phase === 'guest') {
+        const bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+        await proof.artifact(enrollment.credentialRef + '.json', { bootstrapSecret });
+        const response = await http(null, { method: 'POST', path: enrollment.request.path, body: { bootstrapSecret } });
+        assert.equal(response.status, 200, JSON.stringify(response));
+        const actor = { accountId: app.jwt.verify(response.body.token).sub, token: response.body.token,
+          sessionRef: 'churn-session-' + enrollment.requestId, joinedAt: at };
+        await proof.artifact(actor.sessionRef + '.json', actor); churnActors.push(actor);
+        churnPolicy.settleEnrollment({ requestId: enrollment.requestId, phase: 'guest', status: 'COMPLETED',
+          accountId: actor.accountId, sessionRef: actor.sessionRef });
+      } else {
+        const actor = churnActors.find(actor => actor.accountId === enrollment.accountId); assert(actor);
+        const response = await http(actor, enrollment.request); assert.equal(response.status, 200, JSON.stringify(response));
+        actor.characterId = response.body.id; actor.name = enrollment.request.body.name;
+        churnPolicy.settleEnrollment({ requestId: enrollment.requestId, phase: 'character', status: 'COMPLETED',
+          accountId: actor.accountId, characterId: actor.characterId, idempotencyKey: enrollment.request.idempotencyKey });
+        roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      }
+      await actors.observe('churn-enrollment-settled', { day, logicalAt: at }, { enrollment, policy: churnPolicy.checkpoint() });
+    }
+    assert.equal(churnPolicy.roster().current.length, population); churnWeeklyActive.clear();
+    await invariantBoundary('churn-week-' + day / 7);
+    await proof.artifact('churn-week-' + day / 7 + '.json', { summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
+  }
   const startupBefore = allianceEnabled ? await proof.snapshot(pool, 'before-original-worker-startup') : null;
   workPhase = 'worker-startup';
   const workerStartup = () => bootOriginalWorker(controller, { beforeCallbacks: async () => {
@@ -898,10 +985,11 @@ try {
       return;
     }
     if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
+    if (churnEnabled) await churnWeek(day);
     lastDay = day;
-    const selected = await actors.decide(familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : 'quiet-roster', { day, logicalAt }, roster,
-      () => cohortEnabled || familyEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
-    assert.equal(selected.length, cohortEnabled || familyEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : 'quiet-roster', { day, logicalAt }, roster,
+      () => churnEnabled ? churnPolicy.roster().current : cohortEnabled || familyEnabled ? [...roster] : activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, cohortEnabled || familyEnabled || churnEnabled ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
     assert(selected.every((account) => roster.includes(account)));
     if (familyEnabled) await familyAdapter.runDay(day, { logicalAt,
       read: async (accountId, path) => {
@@ -921,7 +1009,7 @@ try {
       checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
     });
     for (const account of selected) await session(account, day);
-    await invariantBoundary(`${cohortEnabled || familyEnabled ? actorPolicy : 'quiet'}-day:${day}`);
+    await invariantBoundary(`${cohortEnabled || familyEnabled || churnEnabled ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
       opportunityObservation: opportunities.summarize(at, roster) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
@@ -933,7 +1021,7 @@ try {
     originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
       crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
   };
-  if ((cohortEnabled || familyEnabled) && !resume) await afterBoundary(at, 'guardedTick');
+  if ((cohortEnabled || familyEnabled || churnEnabled) && !resume) await afterBoundary(at, 'guardedTick');
   if (allianceEnabled && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
@@ -977,7 +1065,11 @@ try {
     guardedSeasonTick: Math.floor(elapsed / 3600000), 'health-boundary': Math.floor(elapsed / 300000) });
   const recaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
   const expectedRollovers = Math.floor(finish / seasonMs) - Math.floor(measuredStart / seasonMs);
-  for (const actor of roster) assert.equal(recaps.filter((row) => row.account_id === actor).length - initialRecaps.filter((row) => row.account_id === actor).length, expectedRollovers);
+  for (const actor of roster) {
+    const actorStart = churnEnabled ? Math.max(measuredStart, churnActors.find(entry => entry.accountId === actor).joinedAt) : measuredStart;
+    assert.equal(recaps.filter(row => row.account_id === actor).length - initialRecaps.filter(row => row.account_id === actor).length,
+      Math.floor(finish / seasonMs) - Math.floor(actorStart / seasonMs));
+  }
   await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', await queryOrder.finish());
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
@@ -1002,6 +1094,10 @@ try {
     assert.equal(familyAdapter.summary().unresolvedResponses, 0);
     await proof.artifact('family-final.json', { contract: FAMILY_WORLD_CONTRACT, summary: familyAdapter.summary(), checkpoint: familyAdapter.checkpoint() });
   }
+  if (churnEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(churnPolicy.summary().pendingEnrollments, 0);
+    await proof.artifact('churn-final.json', { contract: CHURN_POLICY_CONTRACT, summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
+  }
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
@@ -1012,6 +1108,7 @@ try {
     dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
     ...(allianceEnabled ? { alliance: allianceAdapter.summary() } : {}),
     ...(familyEnabled ? { family: familyAdapter.summary() } : {}),
+    ...(churnEnabled ? { churn: churnPolicy.summary() } : {}),
     ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
       warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
     timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
