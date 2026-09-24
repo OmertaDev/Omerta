@@ -12,6 +12,7 @@ import { reconcileNpcBoats } from './rc1-npc-boat-journal.js';
 import { reconcileWorkerTransitions } from './rc1-world-worker-transitions.js';
 import { reconcileNpcCargo } from './rc1-npc-cargo-journal.js';
 import { reconcileNpcFamilyRecruitment } from './rc1-npc-family-recruitment.js';
+import { reconcileMembershipResources, reconcileLifecycleCash, reconcileOrderExpiry } from './rc1-world-lifecycle-resources.js';
 
 export const WORLD_RESOURCE_TABLES = Object.freeze([
   'characters', 'account_persistent', 'transactions', 'gangs', 'gang_members', 'amm_pool', 'street_tax', 'stake_pool', 'dev_fund',
@@ -261,7 +262,7 @@ function reconcileAmmoEscrow(before, after, receipts, checks, unsupported) {
 // Three bounded ordinary routes. A recognized word alone never authorizes a
 // value: check-in needs its original quote/latches, ammo needs the reciprocal
 // cash/rounds pair, and banking needs exact pocket/vault/transit disposition.
-function reconcilePressureCash(before, after, receipts, checks, unsupported) {
+function reconcilePressureCash(before, after, receipts, checks, unsupported, classifiedBanks = new Set()) {
   const priorPeople = indexed(rows(before, 'characters'), row => row.id, 'characters');
   const people = indexed(rows(after, 'characters'), row => row.id, 'characters');
   const accounts = indexed(rows(before, 'account_persistent'), row => row.account_id, 'accounts');
@@ -323,7 +324,7 @@ function reconcilePressureCash(before, after, receipts, checks, unsupported) {
       expectedDelta: exactSum([deposits.get(id) || '0', ...interest.map(row => row.amount)]), authority: reference('transactions', ownCash) });
   }
   for (const [id, person] of people) {
-    const prior = priorPeople.get(id); if (!prior || exactSum([person.bank, negate(prior.bank)]) === '0' || touched.has(id)) continue;
+    const prior = priorPeople.get(id); if (!prior || exactSum([person.bank, negate(prior.bank)]) === '0' || touched.has(id) || classifiedBanks.has(id)) continue;
     const freshCash = receipts.filter(row => row.character_id === id && row.currency === 'cash');
     assert(freshCash.length, 'Pocket/vault movement lacks a fresh owner receipt; old zero-valued deposit cannot be reused');
     unsupported.push({ kind: 'bank-vault-lineage', characterId: id, detail: 'Bank changed outside the bounded deposit classifier; total personal cash parity alone does not prove its disposition' });
@@ -644,7 +645,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     }
   }
   const ammoEscrow = reconcileAmmoEscrow(before, after, receipts, checks, unsupported);
-  const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported);
+  const lifecycleCash = reconcileLifecycleCash(before, after, { identity, receipts });
+  checks.push(...lifecycleCash.checks);
+  const pressureCash = reconcilePressureCash(before, after, receipts, checks, unsupported, lifecycleCash.bankOwners);
   const familyEntry = reconcileFamilyEntry(before, after, receipts, checks, unsupported, npcFamilyProvenance, identity);
   const familyDissolution = reconcileFamilyDissolution(before, after, receipts, checks, unsupported);
   const turfTerminal = reconcileTurfTerminal(before, after, receipts, checks, unsupported);
@@ -655,7 +658,10 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const npcCargo = reconcileNpcCargo(before, after, { identity, receipts });
   checks.push(...npcCargo.checks);
   const npcRecruitment = reconcileNpcFamilyRecruitment(before, after, { identity });
-  for (const receipt of receipts) if (!npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const membership = reconcileMembershipResources(before, after, { identity, receipts });
+  const orderExpiry = reconcileOrderExpiry(before, after, { identity, receipts });
+  checks.push(...orderExpiry.checks);
+  for (const receipt of receipts) if (!orderExpiry.usedReceipts.has(receipt.id) && !lifecycleCash.usedReceipts.has(receipt.id) && !npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -793,7 +799,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     'drop_allocations', 'chain_reserve', 'vouchers', 'operation_escrow'];
   for (const table of observedOnly) if (!(table === 'exchange_pool' && workerTransitions.exchange) && json(rows(before, table)) !== json(rows(after, table)))
     unsupported.push({ kind: 'observed-table-change', table, detail: 'Change observed; complete resource disposition classifier is not implemented' });
-  const otherMarket = state => rows(state, 'market_listings').filter(row => !npcMarketOrder.listingIds.has(row.id));
+  const otherMarket = state => rows(state, 'market_listings').filter(row => !orderExpiry.listingIds.has(row.id) && !npcMarketOrder.listingIds.has(row.id));
   if (json(otherMarket(before)) !== json(otherMarket(after))) unsupported.push({ kind: 'observed-table-change', table: 'market_listings',
     detail: 'Only source-proven isolated NPC buy-order placement is classified; fills, refund, cancellation, death and other custody remain unsupported' });
   if (ammoEscrow.otherListingChanges) unsupported.push({ kind: 'observed-table-change', table: 'listings', detail: 'Non-ammo escrow lineage remains unsupported' });
@@ -809,18 +815,21 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     if (familyDissolution.dissolved.has(id)) return false;
     if (familyEntry.founded.has(id)) return Object.keys(newFamilies.get(id)).some(field => !familyEntry.familyFields.get(id)?.has(field));
     const a = oldFamilies.get(id), b = newFamilies.get(id); if (!a || !b) return true;
-    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !workerTransitions.familyFields.get(id)?.has(field) && !familyEntry.familyFields.get(id)?.has(field)
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !membership.familyFields.get(id)?.has(field) && !workerTransitions.familyFields.get(id)?.has(field) && !familyEntry.familyFields.get(id)?.has(field)
       && !(field === 'treasury' && turfTerminal.treasuryOwners.has(id)) && json(a[field]) !== json(b[field]));
   });
   if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,
     detail: 'Remaining Family rows/fields retained; war, turf, dissolution, weekly/seasonal and other lineage remain unsupported' });
-  const unmatchedMembers = state => rows(state, 'gang_members').filter(row => !npcRecruitment.memberIds.has(row.character_id) && !familyEntry.founderMembers.has(row.character_id) && !familyDissolution.dissolved.has(row.gang_id));
+  const unmatchedMembers = state => rows(state, 'gang_members').filter(row => !membership.memberIds.has(row.character_id) && !npcRecruitment.memberIds.has(row.character_id) && !familyEntry.founderMembers.has(row.character_id) && !familyDissolution.dissolved.has(row.gang_id));
   if (json(unmatchedMembers(before)) !== json(unmatchedMembers(after))) unsupported.push({ kind: 'observed-table-change', table: 'gang_members',
     detail: 'Membership/role change outside exact formation remains unclassified' });
   const restrictedChanges = unsupported.length ? resourceTableChanges(before, after) : null;
   if (restrictedChanges) verifyResourceTableChanges(before, after, restrictedChanges);
   return { format: 1, identity, beforeHash: worldResourceHash(before), afterHash: worldResourceHash(after), receipts,
     itemEvents: events, mutationInputs: inputs, mutationOutputs: outputs, checks, cars, workerTransitions: { movements: workerTransitions.movements }, npcCargo: { movements: npcCargo.movements }, npcRecruitment: { movements: npcRecruitment.movements },
+    membership: { movements: membership.movements, scope: 'Exact join/role/departure/succession rows with surviving Family and unchanged personal custody; route authorization remains independently verified by native authority proofs.' },
+    lifecycleCash: { movements: lifecycleCash.movements, scope: 'Reciprocal jump pocket transfers and exact law plea personal-to-tax-pool transfer; command authorization and combat probability remain outside this custody classifier.' },
+    orderExpiry: { movements: orderExpiry.movements, scope: 'One original worker committed live-order expiry: exact remaining escrow to its living owner, immutable order metadata/filled cargo, and exact refund receipt. Other order terminals remain unsupported.' },
     npcMarketOrder: { movements: npcMarketOrder.movements,
       scope: 'One original residentAct placement in its committed worker transaction: exact personal cash fee sink, owned live order escrow, identity/default custody and deadline. No fill/refund/cancel/death or general market qualification.' },
     boats: { movements: boats.movements, scope: 'One source-pinned default original worker NPC dinghy grant with exact owner/asset and recorded random inputs. No authored boat grant receipt exists. Retirement, sale, estate, NFT and compound dispositions remain unsupported.' },

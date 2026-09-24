@@ -11,7 +11,7 @@ const delta = (a, b) => exactSum([b, negate(a)]);
 
 export function reconcileWorkerTransitions(before, after, { identity = {}, receipts = [] } = {}) {
   const result = { exchange: false, familyFields: new Map(), checks: [], movements: [] };
-  const context = identity?.context || {}, logicalAt = context.logicalAt;
+  const context = identity?.context || identity || {}, logicalAt = context.logicalAt;
   if (!Number.isSafeInteger(logicalAt)) return result;
   const worker = context.authority === 'original-worker';
   const oldPool = rows(before, 'exchange_pool'), newPool = rows(after, 'exchange_pool');
@@ -48,12 +48,15 @@ export function reconcileWorkerTransitions(before, after, { identity = {}, recei
       result.movements.push({ kind: 'family-season-counters', familyId: next.id, from: prior.season, to: current, economicGrant: false });
     }
     const weeklyFields = ['weekly_progress', 'weekly_week', 'weekly_done'];
-    if (context.authority === 'canonical-crime' && equal(omit(prior, weeklyFields), omit(next, weeklyFields))) {
+    const crimeRoute = context.method === 'POST' && (context.path || context.url)?.match(/^\/v1\/crimes\/([^/]+)$/);
+    if ((context.authority === 'canonical-crime' || crimeRoute) && equal(omit(prior, weeklyFields), omit(next, weeklyFields))) {
       const wk = weekOf(dayOf(logicalAt)), task = familyTaskOf(wk);
       if (task.key !== 'crime' || next.weekly_done !== false) continue;
       const members = rows(before, 'gang_members').filter(row => row.gang_id === prior.id);
-      assert(context.accountId && context.crimeId, 'Family crime progress lacks original invocation identity');
-      const owners = rows(before, 'characters').filter(row => row.account_id === context.accountId && row.alive);
+      const crimeId = context.crimeId || crimeRoute?.[1];
+      const receiptOwners = new Set(receipts.filter(row => row.currency === 'cash' && ['crime:take', `crime:${crimeId}`].includes(row.reason)).map(row => row.character_id));
+      assert(crimeId && (context.accountId || receiptOwners.size === 1), 'Family crime progress lacks original invocation identity');
+      const owners = rows(before, 'characters').filter(row => row.alive && (context.accountId ? row.account_id === context.accountId : receiptOwners.has(row.id)));
       assert.equal(owners.length, 1, 'Family crime progress lacks one living invocation owner');
       const owner = owners[0], finalOwner = rows(after, 'characters').find(row => row.id === owner.id);
       assert(members.some(member => member.character_id === owner.id), 'Crime owner is not a member of this Family');
@@ -63,7 +66,7 @@ export function reconcileWorkerTransitions(before, after, { identity = {}, recei
       assert(crimes.length >= 1 && crimes.length <= 2, 'Family crime needs its optional funded/remainder receipts');
       assert.equal(new Set(crimes.map(row => row.reason)).size, crimes.length, 'Duplicate crime payout receipt');
       for (const receipt of crimes) {
-        assert(['crime:take', `crime:${context.crimeId}`].includes(receipt.reason), 'Crime receipt belongs to another action');
+        assert(['crime:take', `crime:${crimeId}`].includes(receipt.reason), 'Crime receipt belongs to another action');
         assert(BigInt(exactSum([receipt.amount])) > 0n, 'Family crime progress lacks successful crime');
       }
       assert.equal(next.weekly_week, wk, 'Family weekly marker differs from crime time');
