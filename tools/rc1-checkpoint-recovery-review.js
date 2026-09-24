@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { canonicalRecoveryWitnesses, joinWorldCheckpointAssertions, verifyWorldRecoverySources } from './rc1-world-qualification.js';
 import { compileCoordinationGraph } from '../src/coordination/graph.js';
-import { CONSTANTS, levelOf } from '../src/rules.js';
+import { CONSTANTS, levelOf, PACING, M3, CRIMES, CITY_EVENTS } from '../src/rules.js';
 
 const hash = value => sha256(canonicalJson(value));
 const EXTENSION_PINS = Object.freeze({
@@ -22,6 +22,7 @@ const EXTENSION_PINS = Object.freeze({
   'src/content/automotive-salvage.js': 'bcaea48b77cdab85cb8cab3724ebfd2bc777c9f61e5df50de1086bf2c6b9a3ad',
   'src/content/core-progression.js': '7516f9b5cc0c9a249ac8b89d117b5397de4aa57175cfcd99c9409890a03a252e',
   'src/made.js': 'f871cf72aa3f4f65488c77ad16b257100569d40e3cf9b96dd4877e6c22be0e02',
+  'src/world-kernel.js': '141f71783dd1f9126b74c78123d1fccfd403dc4a87c2eb8b6536f9ad8190c810',
 });
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   format: 1, sourcePins: EXTENSION_PINS,
@@ -29,7 +30,8 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   scope: 'Current eligible roster, stored unresolved subjects, their authored item/Knowledge prerequisites and canonical retirement. No claim that every optional outcome can coexist or that these hypothetical paths were executed.',
   materialPath: 'Original boostCar has a positive success/junker branch, consumes10 energy, and creates an owned unlisted/unpledged/unminted/unraced car. One250-cash journey to foundry plus original car_salvage_basic produces6 scrap,2 wire,2 salvage parts. This is existential reachability, not a guaranteed finite number of random attempts. No OMR faucet or fixture item is transferred into the proof.',
   baseKnowledge: 'Docks manifest/ledger/register claims use original discover/complete actions; furnace manifest and dock tide admissions use the original free own mystery node. Countermark/chart additionally need the exact crafted key/seal. Fresh account-target tokens use an eligible coactor public character name; current claim owner and ACL revision authorize sharing, without Crew/Family membership.',
-  limits: 'Corroborated Crew admissions and the informant exposed-world chain remain UNKNOWN until an applicable composed proof is supplied. Existing operation/campaign/crew-objective recovery has its own proof adapters; this review does not silently replace them. Nonordinary material guards and unfamiliar content remain UNKNOWN. These are evaluator coverage limits, not additional launch requirements.',
+  composedPaths: 'Original quiet pickpocket has positive success probability, no heat and no failure jail; nerve regenerates6/min and each success gives at least2 respect and35 cash before any optional soldier cut. The sufficient ordinary-state proof excludes assigned soldiers, personal loans, heat and existing upkeep. It supplies Crew level3 and, for two eligible solo coactors, Family level5/25000 fee. A fresh uniform two-person Crew/Family can establish dock shortage, then register/intercept/establish/expose the canal through four original1000-permille operations. Exact seals/wire, original cooldowns, fresh revisions and returned item IDs are retained; acquisition happens before any remaining objective retirement. This is a possible canonical path, not an observed or guaranteed random schedule.',
+  limits: 'Existing operation/campaign/crew-objective recovery has its own proof adapters; this review does not silently replace them. Nonordinary material/progression guards, incompatible physical world states and unfamiliar content remain UNKNOWN. These are evaluator coverage limits, not additional launch requirements. Paid-route availability and all future adversarial states are outside these sufficient paths.',
 });
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
@@ -44,6 +46,9 @@ const parse = value => typeof value === 'string' ? JSON.parse(value) : value;
 const knownRoots = new Set(['docks.manifest', 'foundry.impression', 'docks.canal-register', 'docks.shipping-register',
   'docks.tide-ledger', 'docks.carbon-manifest', 'foundry.reversed-countermark', 'foundry.survey-plate']);
 const craftedRoot = { 'foundry.reversed-countermark': 'item:furnace_archive_key', 'foundry.survey-plate': 'item:dock_route_seal' };
+const corroborationRoots = { 'corroborated.carbon-index': ['docks.carbon-manifest', 'foundry.reversed-countermark'],
+  'corroborated.dock-canal': ['docks.tide-ledger', 'foundry.survey-plate'],
+  'corroborated.public-disclosure': ['docks.posted-notice', 'foundry.printer-copy'] };
 const supportedCrafts = new Set(['item:furnace_archive_key', 'item:dock_route_seal', 'item:canal_cargo_seal']);
 const ownItem = condition => condition.adapter === 'item_ownership' ? condition.requirement?.templateId || condition.templateId : null;
 
@@ -83,6 +88,7 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
     const id = 'knowledge:' + accountId + ':' + hash(requirement), prior = knowledgeNeeds.get(id);
     knowledgeNeeds.set(id, { id, accountId, requirement, causes: [...(prior?.causes || []), cause] });
     if (craftedRoot[requirement.sourceRoot]) needItem(accountId, craftedRoot[requirement.sourceRoot], 1, cause);
+    if (requirement.sourceRoot === 'foundry.printer-copy') needItem(accountId, 'item:canal_cargo_seal', 1, cause);
   };
   const inspectConditions = (accountId, conditions, cause) => {
     for (const condition of conditions || []) {
@@ -139,6 +145,17 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       inventories.resources.complete = false; inventories.knowledge.complete = false;
     }
   }
+  const collaborations = new Map();
+  for (const need of knowledgeNeeds.values()) {
+    const roots = corroborationRoots[need.requirement.sourceRoot]; if (!roots) continue;
+    const origin = roster.indexOf(need.accountId), peer = [...roster.slice(origin + 1), ...roster.slice(0, origin)].find(id => active(id));
+    const graph = catalog.graphs.find(row => row.contentHash === need.requirement.contentHash);
+    if (!peer || !graph) continue;
+    const originals = roots.map((root, index) => ({ accountId: index ? peer : need.accountId,
+      requirement: { ...graph.nodes.find(node => node.claim?.sourceRoot === root).claim, contentHash: graph.contentHash } }));
+    for (const original of originals) needKnowledge(original.accountId, original.requirement, need.id + ':independent-original');
+    collaborations.set(need.id, originals);
+  }
   // Expand finite authored item prerequisites to their input recipes and exact
   // Knowledge requirements. This does not demand unrelated recipes or all branches.
   for (const need of resourceNeeds.values()) {
@@ -183,29 +200,196 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       { recipeId: recipe?.id || null, quantity: need.quantity, currentPath: material });
   }
   const resourceStatus = id => witnesses.find(row => row.scope === 'resources' && row.id === id)?.status;
-  const claimRows = table('coordination_claims');
-  for (const need of knowledgeNeeds.values()) {
+  const claimRows = table('coordination_claims'), grants = table('coordination_claim_grants');
+  const crewOf = accountId => table('crew_members').find(row => row.account_id === accountId)?.crew_id;
+  const familyOf = accountId => table('gang_members').find(row => row.character_id === actors.get(accountId)?.id)?.gang_id;
+  const visible = (accountId, claim) => claim.owner_account_id === accountId || grants.some(grant => grant.claim_id === claim.id && grant.active
+    && (grant.recipient_kind === 'account' && grant.recipient_id === accountId || grant.recipient_kind === 'crew' && grant.recipient_id === crewOf(accountId)
+      || grant.recipient_kind === 'family' && grant.recipient_id === familyOf(accountId)));
+  const planned = accountId => [...knowledgeNeeds.values()].filter(row => row.accountId === accountId).length + 1;
+  const capacity = (accountId, requirement) => {
+    const owned = claimRows.filter(claim => claim.owner_account_id === accountId).length;
+    // Production bounds owned issuance at2048 and the visible candidate UNION
+    // for the exact graph rule/requirement queries at256, not all visible claims.
+    const queries = [], graph = catalog.graphs.find(row => row.contentHash === requirement.contentHash);
+    const visit = rule => { if (rule?.kind === 'independent_evidence') queries.push(rule);
+      for (const child of rule?.rules || []) visit(child); };
+    for (const node of graph?.nodes || []) { visit(node.discover); visit(node.requires); }
+    queries.push(requirement); // the separately checked exact cross-domain requirement
+    const candidates = claimRows.filter(claim => visible(accountId, claim) && claim.content_hash === requirement.contentHash
+      && queries.some(query => claim.domain === query.domain && claim.proposition === query.proposition
+        && (!query.sourceRoot || claim.source_root === query.sourceRoot)));
+    return owned + planned(accountId) <= 2048 && candidates.length + planned(accountId) + 2 <= 256;
+  };
+  const freshSource = (accountId, requirement) => {
+    const graph = catalog.graphs.find(row => row.contentHash === requirement.contentHash);
+    const node = graph?.nodes.find(row => row.claim?.sourceRoot === requirement.sourceRoot && row.claim.proposition === requirement.proposition);
+    if (!node) return false;
+    const instance = table('coordination_instances').find(row => row.owner_character_id === actors.get(accountId)?.id && row.graph_id === graph.id);
+    if (!instance) return true;
+    // A cancelled/completed original graph cannot simply be created anew for
+    // this character. Existing claim reuse needs its original source/ACL proof.
+    let state;
+    try { state = parse(instance.state_json); } catch { return false; }
+    return instance.status === 'active' && instance.owner_account_id === accountId && Number(instance.graph_version) === graph.version
+      && instance.content_hash === graph.contentHash && Number.isSafeInteger(Number(instance.revision)) && Number(instance.revision) >= 0
+      && Number(instance.revision) < 2147483647 && Array.isArray(state?.discovered) && !state.discovered.includes(node.id);
+  };
+  const admissionPath = (accountId, requirement) => {
+    const graph = catalog.graphs.find(row => row.contentHash === requirement.contentHash);
+    const node = graph?.nodes.find(row => row.claim?.sourceRoot === requirement.sourceRoot && row.claim.proposition === requirement.proposition);
+    return (node?.admission || []).every(predicate => {
+      if (predicate.adapter === 'social') return predicate.requirement.relation === 'crew_member'; // separately proved by crewProof
+      if (predicate.adapter !== 'mystery_state') return false;
+      const q = predicate.requirement, instance = table('mystery_instances').find(row => row.owner_scope === 'character'
+        && row.owner_id === actors.get(accountId)?.id && row.graph_id === q.graphId);
+      if (!instance) return true; // original start; the exact reviewed source-node guards follow
+      if (instance.authority_account_id !== accountId || Number(instance.graph_version) !== q.graphVersion
+        || instance.definition_hash !== q.definitionHash) return false;
+      return instance.status === 'active' || table('mystery_node_state').some(row => row.instance_id === instance.id && row.node_id === q.nodeId && row.state === 'completed');
+    });
+  };
+  const quietProgression = (accountId, targetLevel = 3, reserveCash = 500) => {
+    const ch = actors.get(accountId), pick = CRIMES.find(row => row.id === 'pick'), quiet = M3.CRIME_APPROACHES.quiet;
+    const ordinary = ch && active(accountId) && Number(ch.heat || 0) === 0 && Number(ch.crew || 0) === 0
+      && new Date(ch.jail_until).getTime() <= checkpoint.logicalAt
+      && [ch.respect, ch.cash, ch.speed, ch.cunning].every(value => Number.isFinite(Number(value)) && Number(value) >= 0)
+      && !table('soldiers').some(row => JSON.stringify(row).includes(ch.id))
+      && !table('loans').some(row => [ch.id, accountId].some(id => JSON.stringify(row).includes(id)));
+    if (!ordinary) return { ok: false, reason: 'Progression requires current Law/upkeep/soldier/loan disposition' };
+    const pay = base.witnesses.find(row => row.id === 'actor:' + accountId)?.canonicalActions?.[0]?.quotedCash || 0;
+    const minimumCash = Math.floor(pick.cash[0] * quiet.payMult * Math.min(...CITY_EVENTS.map(event => event.jobPay || 1)));
+    const minimumRep = Math.round(pick.respect * quiet.repMult * Math.min(...CITY_EVENTS.map(event => event.crimeRep || 1)));
+    assert(minimumCash > 0 && minimumRep > 0 && pick.jail === 0 && quiet.heat === 0 && pick.base > M3.CRIME_STAT.OFFSET);
+    const successes = Math.max(0, Math.ceil((PACING.LEVEL_DIVISOR * (targetLevel - 1) ** 2 - Number(ch.respect)) / minimumRep),
+      Math.ceil((reserveCash - Number(ch.cash) - pay) / minimumCash));
+    const possibleWaitMs = Math.ceil(successes * pick.nerve / PACING.NERVE_REGEN_PER_MIN * 60000);
+    const seasonEnd = (Math.floor(checkpoint.logicalAt / (28 * 86400000)) + 1) * 28 * 86400000;
+    return { ok: checkpoint.logicalAt + possibleWaitMs + 3600000 < seasonEnd, accountId, successes, targetLevel, reserveCash,
+      minimumCashPerSuccess: minimumCash, minimumRespectPerSuccess: minimumRep, possibleWaitMs,
+      reason: 'Positive-success quiet pick path with original nerve accrual, no heat/failure jail, no loan/upkeep/soldier cut, and enough time before next season. It is not a bound on stochastic attempts.' };
+  };
+  const crewProof = accountId => {
+    const crewId = crewOf(accountId);
+    if (crewId && table('crews').some(row => row.id === crewId)) return { ok: true, crewId, reason: 'Existing current Crew membership' };
+    if (canalPath.ok && [canalPath.boss, canalPath.runner].includes(accountId)) return { ok: true, reason: 'Shared canal path creates the two-person uniform Crew before investigation' };
+    const progress = quietProgression(accountId);
+    let name = null;
+    for (let i = roster.indexOf(accountId); i <= table('crews').length * roster.length + roster.length; i += roster.length)
+      if (!table('crews').some(row => row.name === 'Recovery Crew ' + i)) { name = 'Recovery Crew ' + i; break; }
+    return { ...progress, ok: progress.ok && !!name, name,
+      reason: progress.reason + '; original createCrew costs no currency and needs level3 and this unused valid name.' };
+  };
+  const worldRows = table('world_kernel_objects');
+  const canal = worldRows.find(row => row.id === 'infrastructure:canal_supply_depot');
+  const dock = worldRows.find(row => row.id === 'territory:dock_supply_route');
+  const worldHashes = new Map(catalog.nodes.flatMap(node => (node.conditions || []).filter(condition => condition.adapter === 'world_state')
+    .map(condition => [condition.requirement.objectId, condition.requirement.definitionHash])));
+  const state = (row, id) => row ? row.definition_hash === worldHashes.get(id) ? row.state : 'UNKNOWN' : 'idle';
+  const canalState = state(canal, 'infrastructure:canal_supply_depot'), dockState = state(dock, 'territory:dock_supply_route');
+  const solo = roster.filter(accountId => active(accountId) && !crewOf(accountId) && !familyOf(accountId)
+    && actors.get(accountId).loc === 'docks' && materialProof(accountId).ok).sort((a, b) => Number(actors.get(b).cash) - Number(actors.get(a).cash));
+  const boss = solo[0], runner = solo[1], bossProgress = boss && quietProgression(boss, 5, 27000), runnerProgress = runner && quietProgression(runner, 3, 3000);
+  let familyName = null;
+  for (let i = 0; i <= table('gangs').length && i < 36 ** 4; i++) {
+    const tag = i.toString(36).toUpperCase().padStart(4, '0'), name = 'Recovery Family ' + tag;
+    if (!table('gangs').some(row => row.tag === tag || row.name === name)) { familyName = { name, tag }; break; }
+  }
+  const states = ['idle', 'stranded', 'diverted', 'market_open'];
+  const chain = ['register_shipment', 'intercept_shipment', 'establish_market', 'expose_market'].slice(Math.max(0, states.indexOf(canalState)));
+  const operationWire = [2, 2, 1, 1].slice(Math.max(0, states.indexOf(canalState))).reduce((sum, value) => sum + value, 0);
+  const routeRequirement = root => {
+    const graph = catalog.graphs.find(row => row.nodes.some(node => node.claim?.sourceRoot === root));
+    return { ...graph.nodes.find(node => node.claim?.sourceRoot === root).claim, contentHash: graph.contentHash };
+  };
+  const routesAvailable = !!boss && !!runner && [boss, runner].every(accountId => ['docks.shipping-register', 'docks.canal-register'].every(root => {
+    const requirement = routeRequirement(root); return freshSource(accountId, requirement) && capacity(accountId, requirement);
+  }));
+  const canalPath = { ok: !!(enabled && (canalState === 'exposed' || states.includes(canalState)
+    && ['idle', 'shortage'].includes(dockState) && !!familyName && routesAvailable && bossProgress?.ok && runnerProgress?.ok)),
+    canalState, dockState, boss: boss || null, runner: runner || null, familyName,
+    bossProgress: bossProgress || null, runnerProgress: runnerProgress || null,
+    path: canalState === 'exposed' ? [] : ['original quiet progression and check-in', 'create Family; runner joins; create Crew; invite/accept runner',
+      'original dock/canal free route claims', 'original fresh salvage/craft allocation in compatible-material-schedule',
+      'return both to docks; direct establish_route if idle', ...chain.map(action => 'Family operation ' + action + ': create/publish/join/commit/contribute/approve/execute')],
+    custody: 'One boss salvage yields6 scrap/2 wire/2 parts; dock seal consumes2 scrap/1 part and route establishment1 wire. Three runner salvages yield18 scrap/6 wire/6 parts; four seals consume8 scrap/4 parts, and operations consume2+2+1+1 wire. Fresh returned item IDs and fresh revisions are used. Extra boosts wait the original5 minutes; all four operations have24h lifetimes and1000-permille success. Progression reserves500+ cash for each round trip.',
+    semantics: 'One compatible shared-world path; all Knowledge/mystery acquisitions precede remaining cancellation. Completed graphs already meet the completion-or-retirement goal; still-active graphs cancel using their refreshed revision. No hidden state drives an actor.' };
+  details.push({ scope: 'knowledge', id: 'shared-canal-path', ...canalPath });
+  const materialSchedule = [];
+  for (const accountId of new Set([...resourceNeeds.values()].map(row => row.accountId).concat(canalPath.ok && canalState !== 'exposed' ? [boss, runner] : []))) {
+    const craftCounts = new Map([...resourceNeeds.values()].filter(row => row.accountId === accountId && supportedCrafts.has(row.templateId)).map(row => [row.templateId, row.quantity]));
+    const stock = { 'mat:scrap_steel': 0, 'mat:wire': 0, 'mat:salvage_parts': 0 };
+    if (canalPath.ok && canalState !== 'exposed') {
+      if (accountId === boss && dockState === 'idle') { craftCounts.set('item:dock_route_seal', Math.max(1, craftCounts.get('item:dock_route_seal') || 0)); stock['mat:wire'] += 1; }
+      if (accountId === runner) { craftCounts.set('item:canal_cargo_seal', (craftCounts.get('item:canal_cargo_seal') || 0) + chain.length); stock['mat:wire'] += operationWire; }
+    }
+    for (const [templateId, count] of craftCounts) {
+      const recipe = catalog.nodes.find(node => node.type === 'recipe' && node.produces?.some(output => output.templateId === templateId));
+      for (const input of recipe.consumes) stock[input.templateId] += input.quantity * count;
+    }
+    const junkers = Math.max(1, Math.ceil(stock['mat:scrap_steel'] / 6), Math.ceil(stock['mat:wire'] / 2), Math.ceil(stock['mat:salvage_parts'] / 2));
+    materialSchedule.push({ accountId, craftCounts: Object.fromEntries(craftCounts), consumedMaterials: stock, junkers,
+      originalCooldownBetweenBoostsMs: CONSTANTS.GTA_CD_MS, possibleWaitMs: Math.max(0, junkers - 1) * CONSTANTS.GTA_CD_MS,
+      roundTripFunding: quietProgression(accountId, 1, 500),
+      semantics: 'One joint supply allocation, including operation consumptions and retained investigation items. Salvage each fresh car before the next boost. No consumed seal or material is reused; inspect the boss dock seal before route establishment consumes it.' });
+  }
+  details.push({ scope: 'resources', id: 'compatible-material-schedule', schedules: materialSchedule });
+  const knowledgePath = need => {
     const ch = actors.get(need.accountId), root = need.requirement.sourceRoot;
-    const exactDeclaration = catalog.graphs.some(graph => graph.contentHash === need.requirement.contentHash && graph.nodes.some(node => node.claim
-      && ['domain', 'proposition', 'sourceRoot'].every(key => node.claim[key] === need.requirement[key]) && hash(node.claim.value) === hash(need.requirement.value)));
+    const graph = catalog.graphs.find(row => row.contentHash === need.requirement.contentHash);
+    const exactDeclaration = graph?.nodes.some(node => node.claim && ['domain', 'proposition', 'sourceRoot'].every(key => node.claim[key] === need.requirement[key])
+      && hash(node.claim.value) === hash(need.requirement.value));
+    if (!enabled || !active(need.accountId) || !exactDeclaration || !capacity(need.accountId, need.requirement)
+      || !freshSource(need.accountId, need.requirement) || !admissionPath(need.accountId, need.requirement)) return false;
+    if (corroborationRoots[root]) {
+      const originals = collaborations.get(need.id);
+      return originals?.length === 2 && originals[0].accountId !== originals[1].accountId && crewProof(need.accountId).ok
+        && originals.every(original => knowledgePath({ ...original, id: 'knowledge:' + original.accountId + ':' + hash(original.requirement) }));
+    }
+    if (['docks.posted-notice', 'foundry.printer-copy'].includes(root)) return canalPath.ok && ch.loc === 'docks'
+      && (root === 'docks.posted-notice' || resourceStatus('resource:' + need.accountId + ':item:canal_cargo_seal') === 'REACHABLE'
+        && quietProgression(need.accountId, 1, 500).ok);
     const item = craftedRoot[root], material = item ? resourceStatus('resource:' + need.accountId + ':' + item) === 'REACHABLE' : true;
     const located = ch && (ch.loc === 'docks' || root === 'foundry.impression' && ch.loc === 'foundry');
-    const simpleTravel = root !== 'foundry.impression' || materialProof(need.accountId).ok;
-    const headroom = claimRows.length < 256; // sufficient conservative bound; larger worlds can join exact per-requirement proofs
-    const ok = enabled && active(need.accountId) && exactDeclaration && knownRoots.has(root) && material && located && simpleTravel && headroom;
+    return knownRoots.has(root) && material && located && (!item || quietProgression(need.accountId, 1, 500).ok)
+      && (root !== 'foundry.impression' || materialProof(need.accountId).ok && quietProgression(need.accountId, 1, 500).ok);
+  };
+  // A crafted resource cannot be certified separately from its exact Knowledge
+  // prerequisite. Propagate UNKNOWN through this finite reviewed recipe DAG.
+  for (let pass = 0; pass < resourceNeeds.size; pass++) {
+    let changed = false;
+    for (const need of resourceNeeds.values()) {
+      const witness = witnesses.find(row => row.scope === 'resources' && row.id === need.id);
+      if (witness.status !== 'REACHABLE') continue;
+      const recipe = catalog.nodes.find(node => node.type === 'recipe' && node.produces?.some(output => output.templateId === need.templateId));
+      if ((recipe?.conditions || []).some(condition => condition.adapter === 'knowledge'
+        && !knowledgePath({ accountId: need.accountId, requirement: condition.requirement }))) {
+        witness.status = 'UNKNOWN'; changed = true;
+        const detail = details.find(row => row.scope === 'resources' && row.id === need.id && row.status);
+        detail.status = 'UNKNOWN'; detail.reason = 'Exact authored recipe Knowledge prerequisite needs an additional authorized acquisition/reuse proof.';
+      }
+    }
+    if (!changed) break;
+  }
+  for (const need of knowledgeNeeds.values()) {
+    const root = need.requirement.sourceRoot, ok = knowledgePath(need);
     const obligation = { id: need.id, goal: 'authorized-acquisition:' + hash(need.requirement), accountId: need.accountId, requirement: need.requirement, causes: need.causes };
     emit('knowledge', obligation, ok ? 'REACHABLE' : 'UNKNOWN', ok
-      ? 'Exact authored original claim path: free own briefing/source nodes, any named free mystery admission, and the retained exact material path where required. No claim/grant is fabricated.'
+      ? corroborationRoots[root] ? 'Original Crew admission plus two distinct discoverers, exact independent roots and authorized fresh account grants; the shared world/material paths are composed before remaining objective retirement.'
+        : 'Exact authored original claim path: free own briefing/source nodes, named own mystery admission, original material path and, where required, the single compatible canal-exposure path. No claim/grant is fabricated.'
       : root?.startsWith('corroborated.') ? 'Needs a composed current Crew admission + independent original discoverers/roots proof; a copied claim is not independent evidence.'
         : /posted-notice|printer-copy/.test(root || '') ? 'Needs canonical canal-world transition to exposed and own notice/copy admissions; idle/missing world rows are not proof that this chain ran.'
-          : 'Current location, declaration, material, rollout or bounded evidence-headroom guards need a more specific source/native path.');
+          : 'Current location, declaration, original claim state, material, rollout or actor-visible evidence capacity needs a more specific source/native path.',
+      { originals: collaborations.get(need.id) || [], ...(corroborationRoots[root] ? { crew: crewProof(need.accountId) } : {}) });
   }
+  const canalGraph = catalog.graphs.find(row => row.id === 'omerta.coordination.canal-register');
+  const canalClaim = { ...canalGraph.nodes.find(node => node.claim).claim, contentHash: canalGraph.contentHash };
   for (const [index, accountId] of roster.entries()) {
     const recipient = actors.get(roster[(index + 1) % roster.length]);
     const ok = enabled && active(accountId) && recipient && recipient.account_id !== accountId && active(recipient.account_id)
-      && actors.get(accountId).loc === 'docks' && claimRows.length < 256 && table('coordination_claim_grants').length === 0;
+      && actors.get(accountId).loc === 'docks' && capacity(accountId, canalClaim) && capacity(recipient.account_id, canalClaim) && freshSource(accountId, canalClaim);
     emit('knowledge', { id: 'propagation:' + accountId, goal: 'authorized-claim-acquisition-and-propagation', accountId }, ok ? 'REACHABLE' : 'UNKNOWN', ok
-      ? 'Own free canal-register claim, fresh server target token for the named active coactor, current ACL revision, original share, then authorized recipient read. Zero existing grants and bounded claims leave original limits available.'
+      ? 'Own fresh free canal-register claim, fresh server target token for the named active coactor, original current ACL revision, original share, then authorized recipient read. New claims have zero grants; the bound uses this account and its visible evidence, not global claim count.'
       : 'Needs an exact currently authorized coactor/claim/ACL capacity path; no hidden row is treated as player-visible Knowledge.', { recipientName: recipient?.name || null });
   }
   if (!enabled) { inventories.resources.complete = false; inventories.knowledge.complete = false; }
