@@ -18,6 +18,7 @@ import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observed
 import { collectWorldDiagnostics, latencyDistribution } from '../tools/rc1-world-diagnostics.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { reviewWorldBacklog } from '../tools/rc1-world-backlog-review.js';
+import { reviewWorldCheckpointSeries } from '../tools/rc1-world-checkpoint-series.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
 import { createNpcBoatFault, NPC_BOAT_FAULT_CONTRACT } from '../tools/rc1-npc-boat-fault.js';
@@ -1569,8 +1570,9 @@ try {
   await recoveryBoundary('final', final, finalDiagnostics, finalEconomy);
   await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
   await proof.artifact('world-backlog-summary.json', { boundaries: backlogBoundaries, matrixQualifying: false });
-  await proof.artifact('checkpoint-series-points.json', { binding: { sourceRevision: source.revision, configurationSha256 },
-    startAt: measuredStart, endAt: finish, sampling: { periodMs: 86400000, phaseAt: measuredStart }, points: checkpointSeriesPoints });
+  const checkpointSeriesIndex = { binding: { sourceRevision: source.revision, configurationSha256 },
+    startAt: measuredStart, endAt: finish, sampling: { periodMs: 86400000, phaseAt: measuredStart }, points: checkpointSeriesPoints };
+  await proof.artifact('checkpoint-series-points.json', checkpointSeriesIndex);
   if (commitObserver) {
     (aggregateObserver || commitObserver).assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
     await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
@@ -1611,6 +1613,13 @@ try {
     configurationEvidence: { ...lifecycleAuthority.configuration, evidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) },
     reviewEvidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) });
   await proof.artifact('world-lifecycle-applicability.json', lifecycleApplicability);
+  const durationReview = await reviewWorldCheckpointSeries({ manifest: frozenScenarios, source: recoverySource,
+    pointIndex: artifactReference('checkpoint-series-points.json', checkpointSeriesIndex),
+    workerDuration: artifactReference('world-duration-measurements.json', durationMeasurements),
+    lifecycleReview: artifactReference('world-lifecycle-applicability.json', lifecycleApplicability),
+    readArtifact: reference => fs.readFile(path.join(output, reference.path)),
+    retain: async (name, value) => { await proof.artifact(name, value); return artifactReference(name, value); } });
+  await proof.artifact('world-duration-review.json', durationReview);
   await proof.artifact('random-tape.json', { draws: runtime.tape });
   const actorTape = actors.finish(), finalPolicy = policyState();
   if (allianceEnabled) {
@@ -1699,6 +1708,7 @@ try {
     recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
     backlogDiagnosticsSha256: sha256(canonicalJson(backlogBoundaries)),
     durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
+    durationReviewSha256: sha256(canonicalJson(durationReview)),
     lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
     semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
