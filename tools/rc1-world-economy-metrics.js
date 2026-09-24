@@ -45,11 +45,26 @@ function assertQuiescentAggregate(event, beforeHash, afterHash) {
     for (const field of ['accountId', 'method', 'path']) assert(typeof request[field] === 'string' && request[field].length > 0);
   }
   const root = event.traceRoot; assert(root && typeof root === 'object', 'Aggregate requires a bound native trace root');
-  assert.equal(root.format, 1); assert.equal(root.kind, 'quiescent-resource-trace-root');
+  const companion = event.companionCount !== undefined || event.context.companions !== undefined || event.companionsSha256 !== undefined;
+  assert.equal(root.format, companion ? 2 : 1); assert.equal(root.kind, 'quiescent-resource-trace-root');
   assert.equal(root.groupId, event.groupId); assert.equal(root.beforeHash, beforeHash); assert.equal(root.afterHash, afterHash);
   assert.equal(root.requestsSha256, event.requestsSha256);
   for (const field of ['beforeHash', 'afterHash', 'requestsSha256', 'outcomesSha256', 'traceSha256', 'sha256'])
     assert(/^[a-f0-9]{64}$/.test(root[field]), 'Invalid aggregate root digest: ' + field);
+  if (companion) {
+    assert.equal(event.companionCount, 1, 'Only the explicit original market-sweep companion is supported');
+    assert(Array.isArray(event.context.companions) && event.context.companions.length === event.companionCount);
+    const job = event.context.companions[0];
+    assert.equal(job.companionIndex, 0); assert.equal(job.kind, 'original-worker-job');
+    assert.equal(job.label, 'market sweep'); assert.equal(job.logicalAt, event.context.logicalAt);
+    assert.equal(job.sourceFile, 'src/worker.js'); assert.equal(job.handlerSourceFile, 'src/market.js');
+    for (const field of ['sourceSha256', 'handlerSourceSha256']) assert(/^[a-f0-9]{64}$/.test(job[field]), 'Invalid companion source digest');
+    assert.equal(event.companionsSha256, economyDigest(event.context.companions), 'Companion metadata digest mismatch');
+    assert.equal(root.companionsSha256, event.companionsSha256);
+    assert(/^[a-f0-9]{64}$/.test(root.companionOutcomesSha256), 'Invalid companion outcome digest');
+  } else {
+    assert(!Object.hasOwn(root, 'companionsSha256') && !Object.hasOwn(root, 'companionOutcomesSha256'), 'Companion roots require explicit metadata');
+  }
   const { sha256: expected, ...body } = root;
   assert.equal(economyDigest(body), expected, 'Aggregate trace root digest mismatch');
   // The producer retains and verifies complete requests, outcomes and trace.
@@ -188,6 +203,10 @@ export function classifyEconomyBoundary({ journal, before, after }) {
       case 'jump-cash-transfer':
         emit('cash', 'transferred', m.amount, person(m.source), person(m.destination), kind, ids,
           reward('competitive-loot', people.get(m.destination).account_id)); break;
+      case 'jump-cb-transfer':
+        emit('cb', 'transferred', m.amount, person(m.source), person(m.destination), kind, ids,
+          reward('competitive-loot', people.get(m.destination).account_id)); break;
+      case 'heal-cash-sink': emit('cash', 'destroyed', m.amount, own(), null, kind, ids); break;
       case 'law-plea-transfer': emit('cash', 'transferred', m.amount, person(m.source), `house:${m.destination}`, kind, ids); break;
       case 'player-death-order-and-pocket':
         emit('cash', 'transferred', exactSum([m.escrowLoot, m.pocketLoot]), person(m.source), person(m.destination), kind, ids,

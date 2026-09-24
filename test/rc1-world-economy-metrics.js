@@ -232,6 +232,42 @@ test('quiescent aggregate requires its exact discriminator, snapshot-bound trace
   assert.equal(resource(metrics, 'cash').flows.created, '0');
 });
 
+test('format-2 groups bind one original worker companion without inventing native commit order', () => {
+  const state = initial(), base = aggregate(state);
+  base.event.context.companions = [{ companionIndex: 0, kind: 'original-worker-job', label: 'market sweep', logicalAt: DAY,
+    sourceFile: 'src/worker.js', sourceSha256: economyDigest('original worker'),
+    handlerSourceFile: 'src/market.js', handlerSourceSha256: economyDigest('original market') }];
+  base.event.companionCount = 1; base.event.companionsSha256 = economyDigest(base.event.context.companions);
+  const { sha256, ...firstRoot } = base.event.traceRoot;
+  const root = { ...firstRoot, format: 2, companionsSha256: base.event.companionsSha256,
+    companionOutcomesSha256: economyDigest([{ status: 'fulfilled', value: null }]) };
+  base.event.traceRoot = { ...root, sha256: economyDigest(root) };
+  const metrics = engine(state); metrics.observe(base); assert.equal(metrics.summary().aggregateObservation.groups, 1);
+  assert(!Object.hasOwn(base.event, 'sequence')); assert.equal(base.event.outcome, 'QUIESCENT_AGGREGATE');
+  assert.equal(metrics.observe(base).duplicate, true);
+  for (const edit of [
+    value => { value.event.companionCount = 2; }, value => { value.event.context.companions[0].companionIndex = 1; },
+    value => { value.event.context.companions[0].kind = 'http-request'; },
+    value => { value.event.context.companions[0].label = 'synthetic refund'; },
+    value => { value.event.context.companions[0].logicalAt++; },
+    value => { value.event.context.companions[0].sourceFile = 'test/generated-worker.js'; },
+    value => { value.event.context.companions[0].handlerSourceFile = 'test/generated-market.js'; },
+    value => { value.event.context.companions[0].sourceSha256 = 'bad'; },
+    value => { value.event.context.companions[0].handlerSourceSha256 = 'bad'; },
+    value => { value.event.companionsSha256 = '0'.repeat(64); },
+    value => { value.event.traceRoot.companionsSha256 = '0'.repeat(64); },
+    value => { value.event.traceRoot.companionOutcomesSha256 = 'bad'; },
+    value => { value.event.traceRoot.companionOutcomesSha256 = '0'.repeat(64); },
+    value => { value.event.traceRoot.format = 1; },
+    value => { delete value.event.context.companions; delete value.event.companionCount; delete value.event.companionsSha256; },
+  ]) {
+    const value = structuredClone(base); edit(value);
+    assert.throws(() => engine(state).observe(value), assert.AssertionError);
+  }
+  const hiddenCompanion = aggregate(state); hiddenCompanion.event.traceRoot.companionsSha256 = root.companionsSha256;
+  assert.throws(() => engine(state).observe(hiddenCompanion), /Companion roots require/);
+});
+
 test('unknown receipts and ambiguous item pairs report local missing coverage', () => {
   const state = initial(), metrics = engine(state);
   const request = boundary(state, { receipts: [receipt('unknown', 'a', '10', 'unclassified:windfall')],
@@ -278,6 +314,32 @@ test('new lifecycle transfer/refund/turf classifiers partition flows without rew
     turfFunding: { movements: [{ kind: 'turf-stake-funding', familyId: 'g', amount: '20', receiptId: 'turf' }] },
   } });
   metrics.observe(request); assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '5', transferred: '0', custody: '170' });
+});
+
+test('healing destroys cash once and cash/CB jump pairs count distinct competitive transfers', () => {
+  const state = initial(), metrics = engine(state), request = boundary(state, { receipts: [
+    receipt('heal', 'a', '-60', 'heal'),
+    receipt('cash-from', 'b', '-15', 'jump:stolen', { counterparty: 'c-a' }),
+    receipt('cash-to', 'a', '15', 'jump:steal', { counterparty: 'c-b' }),
+    receipt('cb-from', 'b', '-3', 'jump:stolen', { currency: 'cb', counterparty: 'c-a' }),
+    receipt('cb-to', 'a', '3', 'jump:steal', { currency: 'cb', counterparty: 'c-b' }),
+  ], sections: { lifecycleCash: { movements: [
+    { kind: 'heal-cash-sink', characterId: 'c-a', amount: '60', receiptIds: ['heal'] },
+    { kind: 'jump-cash-transfer', source: 'c-b', destination: 'c-a', amount: '15', receiptIds: ['cash-from', 'cash-to'] },
+    { kind: 'jump-cb-transfer', source: 'c-b', destination: 'c-a', amount: '3', receiptIds: ['cb-from', 'cb-to'] },
+  ] } } });
+  const result = metrics.observe(request); assert.equal(result.flows.length, 3); assert.equal(result.missingCoverage.length, 0);
+  assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '60', transferred: '15', custody: '0' });
+  assert.deepEqual(resource(metrics, 'cb').flows, { created: '0', destroyed: '0', transferred: '3', custody: '0' });
+  assert.equal(resource(metrics, 'cash').reward.total, '15'); assert.equal(resource(metrics, 'cb').reward.total, '3');
+  assert.equal(result.flows.find(row => row.category === 'jump-cb-transfer').reward.category, 'competitive-loot');
+  assert.equal(metrics.observe(request).duplicate, true); assert.equal(resource(metrics, 'cb').flows.transferred, '3');
+  const duplicate = structuredClone(request); duplicate.journal.lifecycleCash.movements.push(duplicate.journal.lifecycleCash.movements[2]);
+  assert.throws(() => engine(state).observe(duplicate), /Duplicate economic receipt/);
+  const unknown = structuredClone(request); unknown.journal.lifecycleCash.movements[2].kind = 'unproven-cb-change';
+  const unclassified = engine(state); unclassified.observe(unknown);
+  assert.equal(resource(unclassified, 'cb').flows.transferred, '0'); assert.equal(resource(unclassified, 'cb').reward.total, '0');
+  assert.equal(unclassified.summary().missingCoverage.reduce((sum, row) => sum + row.count, 0), 3);
 });
 
 test('GTA and Family melt have one car disposition and disjoint personal/Family creation', () => {
