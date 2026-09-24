@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "61134d60e69b038895c8ee7286272f57097ce9ae",
+  "sourceRevision": "35a4295ac387a9bea1e8257e0c828a1329ca3247",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7884,
-    "edges": 34369,
+    "nodes": 7886,
+    "edges": 34376,
     "byNodeType": {
       "Artifact": 3268,
       "Command": 105,
-      "Commit": 1494,
+      "Commit": 1496,
       "Contract": 79,
       "Document": 604,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2524,
-      "CHANGED": 13024,
+      "CHANGED": 13029,
       "CONTAINS": 3289,
       "DECLARES": 105,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 437,
       "HANDLED_BY": 706,
-      "HAS_COMMIT": 1494,
+      "HAS_COMMIT": 1496,
       "IMPLEMENTS": 124,
       "IMPORTS": 2873,
       "INHERITS": 17,
@@ -81664,6 +81664,22 @@
       ]
     },
     {
+      "key": "Commit:35a4295ac387a9bea1e8257e0c828a1329ca3247",
+      "type": "Commit",
+      "id": "35a4295ac387a9bea1e8257e0c828a1329ca3247",
+      "label": "Merge pull request #184 from OmertaDev/codex/nft-paid-portrait-release",
+      "title": "Merge pull request #184 from OmertaDev/codex/nft-paid-portrait-release",
+      "date": "2026-09-24T22:49:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/35a4295ac387a9bea1e8257e0c828a1329ca3247",
+      "provenance": [
+        {
+          "commit": "35a4295ac387a9bea1e8257e0c828a1329ca3247",
+          "url": "https://github.com/OmertaDev/Omerta/commit/35a4295ac387a9bea1e8257e0c828a1329ca3247"
+        }
+      ]
+    },
+    {
       "key": "Commit:35a57ddb09f24ffafcab3ae19ea674dafbd65e27",
       "type": "Commit",
       "id": "35a57ddb09f24ffafcab3ae19ea674dafbd65e27",
@@ -96476,6 +96492,22 @@
         {
           "commit": "d0d1fa3feaff5d549b281bf383bbb4ed89c5d79a",
           "url": "https://github.com/OmertaDev/Omerta/commit/d0d1fa3feaff5d549b281bf383bbb4ed89c5d79a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "type": "Commit",
+      "id": "d0ed35322702ccad510296cca0b9a78347e68f47",
+      "label": "chore(knowledge): refresh NFT release gate correction",
+      "title": "chore(knowledge): refresh NFT release gate correction",
+      "date": "2026-09-24T22:07:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d0ed35322702ccad510296cca0b9a78347e68f47",
+      "provenance": [
+        {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d0ed35322702ccad510296cca0b9a78347e68f47"
         }
       ]
     },
@@ -117272,6 +117304,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+        },
+        {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
@@ -117897,6 +117932,9 @@
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
         },
         {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
@@ -118568,6 +118606,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+        },
+        {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
@@ -119235,6 +119276,9 @@
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
         },
         {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
@@ -120066,6 +120110,9 @@
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
+          "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
         },
         {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
@@ -128036,8 +128083,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "61134d60e69b038895c8ee7286272f57097ce9ae",
-      "currentBranch": "codex/nft-paid-portrait-release",
+      "revision": "35a4295ac387a9bea1e8257e0c828a1329ca3247",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -269153,6 +269200,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d0f266c02959bbff96c931671a049901b4a7c59c",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "provenance": {
@@ -342129,6 +342216,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:35a4295ac387a9bea1e8257e0c828a1329ca3247",
+      "provenance": {
+        "commit": "35a4295ac387a9bea1e8257e0c828a1329ca3247"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:35a57ddb09f24ffafcab3ae19ea674dafbd65e27",
       "provenance": {
         "commit": "35a57ddb09f24ffafcab3ae19ea674dafbd65e27"
@@ -349532,6 +349627,14 @@
       "to": "Commit:d0d1fa3feaff5d549b281bf383bbb4ed89c5d79a",
       "provenance": {
         "commit": "d0d1fa3feaff5d549b281bf383bbb4ed89c5d79a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d0ed35322702ccad510296cca0b9a78347e68f47",
+      "provenance": {
+        "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
       }
     },
     {

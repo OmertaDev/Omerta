@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `61134d60e69b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `35a4295ac387`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1494 |
+| Commits in clone | 1496 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-24 — Register NFT artwork cache and refresh checked file counts |
+| Latest commit | 2026-09-24 — Merge pull request #184 from OmertaDev/codex/nft-paid-portrait-release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 618 |
+| OmertaDev | 620 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 31 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 324 | yes |
 | [schema.sql](../../schema.sql) | 297 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 220 | historical |
-| knowledge/generated/graph-summary.md | 220 | historical |
-| knowledge/generated/graph.json | 220 | historical |
-| knowledge/generated/inventory.md | 220 | historical |
+| knowledge/generated/github-history.md | 221 | historical |
+| knowledge/generated/graph-summary.md | 221 | historical |
+| knowledge/generated/graph.json | 221 | historical |
+| knowledge/generated/inventory.md | 221 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 172 | yes |
@@ -48,7 +48,7 @@
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 117 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/documents.md | 98 | historical |
+| knowledge/generated/documents.md | 99 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
