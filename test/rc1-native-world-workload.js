@@ -15,7 +15,7 @@ import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckp
 import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { createNativeQuiescentGroupObserver, QUIESCENT_GROUP_CONTRACT } from '../tools/rc1-native-quiescent-group.js';
 import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
-import { collectWorldDiagnostics } from '../tools/rc1-world-diagnostics.js';
+import { collectWorldDiagnostics, latencyDistribution } from '../tools/rc1-world-diagnostics.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { reviewWorldBacklog } from '../tools/rc1-world-backlog-review.js';
 import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
@@ -511,7 +511,7 @@ const opportunities = observedOpportunityTracker();
 const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands: 0, legacyCrimeAttempts: 0,
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
-const days = [], latencies = { read: [], command: [] };
+const days = [], latencies = { read: [], command: [] }, latencyActors = { read: [], command: [] };
 const knowledgeBoundaries = [];
 const allianceActors = [];
 const familyActors = []; let familyAdapter = null;
@@ -1050,7 +1050,13 @@ try {
       metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1;
       throw error;
     }
-    finally { if (currentInvocation === invocation) currentInvocation = null; latencies[latencyClass].push(performance.now() - started); }
+    finally {
+      if (currentInvocation === invocation) currentInvocation = null;
+      if (trackMeasuredCalls) {
+        latencies[latencyClass].push(performance.now() - started);
+        latencyActors[latencyClass].push(identity.accountId ?? null);
+      }
+    }
   }
   async function http(actor, request, insideGroup = false) {
     if (actor && request.path !== '/v1/auth/agent-key') {
@@ -1216,7 +1222,8 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary('alliance-day-' + day);
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
-      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
+      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster),
+      latencyObservation: latencyDistribution(roster, latencies, latencyActors) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     const economy = economyMetrics?.sample(at, 'day-' + day);
     if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
@@ -1501,7 +1508,8 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary(`${dailyFullRoster ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
-      opportunityObservation: opportunities.summarize(at, roster) };
+      opportunityObservation: opportunities.summarize(at, roster),
+      latencyObservation: latencyDistribution(roster, latencies, latencyActors) };
     days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
     const economy = economyMetrics?.sample(at, 'day-' + day);
     if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
@@ -1656,6 +1664,7 @@ try {
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
   await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
+    latencyDistribution: latencyDistribution(roster, latencies, latencyActors),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
       + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
   result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
@@ -1680,7 +1689,8 @@ try {
     backlogDiagnosticsSha256: sha256(canonicalJson(backlogBoundaries)),
     durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
     lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
-    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
+    semanticMetricsSha256: sha256(canonicalJson({ days: days.map(({ latencyObservation, ...semantic }) => semantic),
+      metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
     resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,

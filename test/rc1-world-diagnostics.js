@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { exactConcentration, actionDistribution, summarizeWorldDiagnostics, collectWorldDiagnostics,
+import { exactConcentration, actionDistribution, latencyDistribution, summarizeWorldDiagnostics, collectWorldDiagnostics,
   operationLifecycleDiagnostics, worldObjectiveInventory } from '../tools/rc1-world-diagnostics.js';
 
 assert.equal(exactConcentration([]).largestShare, null);
@@ -12,6 +12,15 @@ assert.throws(() => exactConcentration([{ quantity: '-1' }]), /nonnegative/);
 const activity = actionDistribution(['active', 'absent'], { active: 4 });
 assert.equal(activity.inactivePlayers, 1); assert.equal(activity.perPlayer[1].actions, 0);
 assert.throws(() => actionDistribution(['active'], { outsider: 1 }), /undeclared/);
+const latency = latencyDistribution(['active', 'absent'], { read: [1, 2, 1000], command: [0] },
+  { read: ['active', 'active', null], command: ['active'] });
+assert.equal(latency.totals.read.p95Ms, 1000);
+assert.equal(latency.perPlayer[0].read.p95Ms, 2);
+assert.equal(latency.perPlayer[1].command.p99Ms, null);
+assert.equal(latency.unattributed.read.count, 1);
+assert.equal(latency.perPlayer[0].command.p50Ms, 0);
+assert.throws(() => latencyDistribution(['active'], { read: [1], command: [] }, { read: [], command: [] }), /attribution/);
+assert.throws(() => latencyDistribution(['active'], { read: [1], command: [] }, { read: ['foreign'], command: [] }), /Undeclared/);
 const rows = Object.fromEntries(['characters', 'familyMembers', 'families', 'campaigns', 'situations',
   'operations', 'participants', 'claims', 'grants', 'inventory', 'uniqueItems', 'lots', 'ledger'].map((name) => [name, []]));
 rows.characters.push({ id: 'c', account_id: 'active', alive: true, is_npc: false });

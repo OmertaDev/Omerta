@@ -17,6 +17,27 @@ export function exactConcentration(entries) {
       denominator: (n * total).toString() } : null };
 }
 
+export function latencyDistribution(roster, latencies, actors) {
+  const summarize = values => {
+    assert(values.every(value => Number.isFinite(value) && value >= 0), 'Invalid measured latency');
+    const ordered = [...values].sort((a, b) => a - b);
+    const percentile = fraction => ordered.length ? ordered[Math.ceil(ordered.length * fraction) - 1] : null;
+    return { count: ordered.length, p50Ms: percentile(0.5), p95Ms: percentile(0.95), p99Ms: percentile(0.99),
+      maximumMs: ordered.at(-1) ?? null };
+  };
+  const scopes = Object.keys(latencies);
+  assert.deepEqual(scopes.sort(), ['command', 'read']);
+  for (const scope of scopes) {
+    assert.equal(latencies[scope].length, actors[scope].length, 'Missing latency actor attribution');
+    assert(actors[scope].every(accountId => accountId === null || roster.includes(accountId)), 'Undeclared latency actor');
+  }
+  const select = accountId => Object.fromEntries(scopes.map(scope => [scope,
+    summarize(latencies[scope].filter((_, index) => actors[scope][index] === accountId))]));
+  return { totals: Object.fromEntries(scopes.map(scope => [scope, summarize(latencies[scope])])),
+    perPlayer: roster.map(accountId => ({ accountId, ...select(accountId) })), unattributed: select(null),
+    scope: 'Measured actor wrapper wall time including required proof observers. Read/command classes include denials and retries; ordinary unauthenticated entry is unattributed. This is not real-time HTTP capacity evidence.' };
+}
+
 export function actionDistribution(roster, actions) {
   assert.equal(new Set(roster).size, roster.length);
   for (const [accountId, count] of Object.entries(actions)) {
