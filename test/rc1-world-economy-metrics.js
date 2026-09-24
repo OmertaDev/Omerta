@@ -462,6 +462,67 @@ test('assets retain distinct units and season titles remain non-economic', () =>
   assert.equal(exactSum(resource(metrics, 'cash').reward.perPlayer.map(row => row.quantity)), '0');
 });
 
+test('market purchases create goods and exact fees while posting changes custody once', () => {
+  const state = initial(), metrics = engine(state);
+  const request = boundary(state, { receipts: [receipt('purchase', 'a', '-102', 'goods:buy:gin'), receipt('post', 'a', '-1', 'market:list')],
+    sections: { marketResources: { movements: [
+      { kind: 'goods-purchase', owner: 'c-a', goodId: 'gin', quantity: '10', spent: '102', cashDestroyed: '101', cashToStreetTax: '1', receiptIds: ['purchase'] },
+      { kind: 'market-good-post', listingId: 'sale', owner: 'c-a', goodId: 'gin', quantity: '7', feeBurned: '1', receiptIds: ['post'] },
+    ] } }, change: tables => { tables.characters[0].cash = '897'; tables.character_cargo.push({ character_id: 'c-a', good_id: 'gin', qty: '3' }); } });
+  const result = metrics.observe(request);
+  assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '102', transferred: '1', custody: '0' });
+  assert.deepEqual(resource(metrics, 'cargo:["gin"]').flows, { created: '10', destroyed: '0', transferred: '0', custody: '7' });
+  assert.equal(resource(metrics, 'cargo:["gin"]').reward.total, '0'); assert.equal(result.missingCoverage.length, 0);
+  assert(result.flows.every(row => !row.reward)); assert(metrics.observe(request).duplicate);
+  assert.equal(resource(metrics, 'cargo:["gin"]').flows.created, '10');
+  const bad = structuredClone(request); bad.journal.marketResources.movements[0].spent = '103';
+  assert.throws(() => classifyEconomyBoundary(bad), /partition spent/);
+});
+
+test('market taking and order filling reverse actor roles but transfer each resource only once', () => {
+  for (const kind of ['market-good-take', 'market-order-fill']) {
+    const state = initial(), metrics = engine(state), buyer = kind === 'market-good-take' ? 'a' : 'b', seller = buyer === 'a' ? 'b' : 'a';
+    const receipts = kind === 'market-good-take' ? [receipt('buyer', buyer, '-100', 'market:take'), receipt('seller', seller, '95', 'market:sale')]
+      : [receipt('seller', seller, '95', 'market:fill'), receipt('take', null, '-5', 'market:take', { character_id: null })];
+    const request = aggregate(state, { receipts, sections: { marketResources: { movements: [
+      { kind, listingId: 'sold', owner: 'c-a', counterparty: 'c-b', goodId: 'gin', quantity: '4', gross: '100',
+        netToSeller: '95', cashToStreetTax: '2', cashDestroyed: '3', receiptIds: receipts.map(row => row.id) },
+    ] }, checks: Array(6).fill({ kind: 'parity', resource: 'cash', expectedDelta: '100' }) } });
+    const result = metrics.observe(request);
+    assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '3', transferred: '97', custody: '0' });
+    assert.deepEqual(resource(metrics, 'cargo:["gin"]').flows, { created: '0', destroyed: '0', transferred: '4', custody: '0' });
+    assert.deepEqual(result.flows.filter(row => row.type === 'transferred').map(row => [row.resource, row.amount, row.from, row.to]), [
+      ['cash', '95', `account:${buyer}`, `account:${seller}`], ['cash', '2', `account:${buyer}`, 'house:street_tax.pool'],
+      ['cargo:["gin"]', '4', `account:${seller}`, `account:${buyer}`],
+    ]);
+    assert.equal(resource(metrics, 'cash').reward.total, '0'); assert.equal(result.missingCoverage.length, 0);
+    assert(metrics.observe(request).duplicate); assert.equal(resource(metrics, 'cash').flows.transferred, '97');
+    const bad = structuredClone(request); bad.journal.marketResources.movements[0].gross = '101';
+    assert.throws(() => classifyEconomyBoundary(bad), /partition gross/);
+  }
+});
+
+test('market claims, returns and refunds preserve their owner and reject repeated receipt-free transitions', () => {
+  const state = initial(), metrics = engine(state);
+  const request = boundary(state, { receipts: [receipt('refund', 'b', '50', 'market:refund')], sections: { marketResources: { movements: [
+    { kind: 'market-order-claim', listingId: 'claim', owner: 'c-a', goodId: 'gin', quantity: '3', receiptIds: [] },
+    { kind: 'market-good-return', listingId: 'return', owner: 'c-b', goodId: 'gin', quantity: '2', receiptIds: [] },
+    { kind: 'market-order-refund', listingId: 'refund', owner: 'c-b', amount: '50', receiptIds: ['refund'] },
+    { kind: 'market-order-refund', listingId: 'zero-refund', owner: 'c-b', amount: '0', receiptIds: [] },
+  ] } } });
+  const result = metrics.observe(request);
+  assert.deepEqual(resource(metrics, 'cargo:["gin"]').flows, { created: '0', destroyed: '0', transferred: '0', custody: '5' });
+  assert.deepEqual(resource(metrics, 'cash').flows, { created: '0', destroyed: '0', transferred: '0', custody: '50' });
+  assert.equal(result.flows.length, 3); assert(result.flows.every(row => row.from === row.to && !row.reward));
+  assert.equal(result.missingCoverage.length, 0);
+  for (const index of [0, 1, 2, 3]) {
+    const bad = structuredClone(request); bad.journal.marketResources.movements.push(bad.journal.marketResources.movements[index]);
+    assert.throws(() => classifyEconomyBoundary(bad), /Duplicate economic market listing/);
+  }
+  const unknown = structuredClone(request); unknown.journal.marketResources.movements[0].kind = 'unproven-claim';
+  assert(classifyEconomyBoundary(unknown).missingCoverage.some(row => row.kind === 'unclassified-movement'));
+});
+
 let nativeEvidence = null;
 if (process.env.RC1_ECONOMY_CAR_NATIVE) {
   const { default: fs } = await import('node:fs/promises'), { default: path } = await import('node:path');

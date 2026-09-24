@@ -181,8 +181,12 @@ export function classifyEconomyBoundary({ journal, before, after }) {
     const measured = { resource, type, amount, from, to, category, receiptIds: ids, ...(reward ? { reward } : {}) };
     flows.push(measured); return measured;
   }
+  const usedMarketListings = new Set();
   function movement(group, m) {
     const ids = referenceIds(m), kind = m.kind || (group === 'seasonCrowns' ? 'season-crown' : null), pending = [];
+    if (group === 'marketResources' && m.listingId) {
+      assert(!usedMarketListings.has(m.listingId), 'Duplicate economic market listing transition'); usedMarketListings.add(m.listingId);
+    }
     const emit = (...args) => pending.push(args);
     const own = () => person(m.characterId ?? m.owner);
     const reward = (category, account = m.accountId || people.get(m.characterId)?.account_id) => ({ accountId: account, category });
@@ -222,6 +226,28 @@ export function classifyEconomyBoundary({ journal, before, after }) {
         emit(resourceId('cargo', m.goodId), 'created', m.qty, null, own(), kind, ids); break;
       }
       case 'market-order-expiry-refund': emit('cash', 'custody', m.amount, own(), own(), kind, ids); break;
+      case 'goods-purchase':
+        assert.equal(exactSum([m.cashDestroyed, m.cashToStreetTax]), quantity(m.spent), 'Goods purchase cash components must partition spent');
+        emit('cash', 'destroyed', m.cashDestroyed, own(), null, kind, ids);
+        emit('cash', 'transferred', m.cashToStreetTax, own(), 'house:street_tax.pool', kind, ids);
+        emit(resourceId('cargo', m.goodId), 'created', m.quantity, null, own(), kind, ids); break;
+      case 'market-good-post':
+        emit('cash', 'destroyed', m.feeBurned, own(), null, kind, ids);
+        emit(resourceId('cargo', m.goodId), 'custody', m.quantity, own(), own(), kind, ids); break;
+      case 'market-good-take': case 'market-order-fill': {
+        assert.equal(exactSum([m.netToSeller, m.cashToStreetTax, m.cashDestroyed]), quantity(m.gross), 'Market sale cash components must partition gross');
+        // A filled order's buyer already funded the escrow. Cargo ownership
+        // changes at delivery into that buyer's warehouse, not at later claim.
+        const buyer = kind === 'market-good-take' ? own() : person(m.counterparty);
+        const seller = kind === 'market-good-take' ? person(m.counterparty) : own();
+        emit('cash', 'transferred', m.netToSeller, buyer, seller, kind, ids);
+        emit('cash', 'transferred', m.cashToStreetTax, buyer, 'house:street_tax.pool', kind, ids);
+        emit('cash', 'destroyed', m.cashDestroyed, buyer, null, kind, ids);
+        emit(resourceId('cargo', m.goodId), 'transferred', m.quantity, seller, buyer, kind, ids); break;
+      }
+      case 'market-order-claim': case 'market-good-return':
+        emit(resourceId('cargo', m.goodId), 'custody', m.quantity, own(), own(), kind, ids); break;
+      case 'market-order-refund': emit('cash', 'custody', m.amount, own(), own(), kind, ids); break;
       case 'player-order-funding':
         emit('cash', 'custody', m.held, own(), own(), kind, ids);
         emit('cash', 'destroyed', m.feeBurned, own(), null, kind, ids); break;
@@ -292,7 +318,7 @@ export function classifyEconomyBoundary({ journal, before, after }) {
     claim(ids); for (const args of pending) flow(...args);
   }
   for (const group of ['pressureCash', 'ammoEscrow', 'familyEntry', 'familyDissolution', 'turfTerminal', 'workerTransitions',
-    'npcMarketOrder', 'orderExpiry', 'orderResources', 'lifecycleCash', 'turfFunding', 'seasonConversions', 'seasonCrowns', 'boats', 'membership', 'npcRecruitment', 'npcCargo']) {
+    'npcMarketOrder', 'orderExpiry', 'orderResources', 'marketResources', 'lifecycleCash', 'turfFunding', 'seasonConversions', 'seasonCrowns', 'boats', 'membership', 'npcRecruitment', 'npcCargo']) {
     for (const m of journal[group]?.movements || []) movement(group, m);
   }
   for (const m of journal.cars?.lineage || []) movement('cars', m);
