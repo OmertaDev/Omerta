@@ -40,6 +40,28 @@ export async function sourcePairIdentity(root) {
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
 }
 
+// Only source-declared bootstrap differences are normalized. In particular a
+// populated resident turn remains authority state and must compare exactly.
+export function normalizeSourcePairBootstrap(snapshot, { schema, appVersion, predecessorSchema, candidateSchema }) {
+  assert([predecessorSchema, candidateSchema].includes(schema), 'Snapshot schema is not one of the pinned source pair');
+  const statement = 'ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB;';
+  const declaresTurn = text => text.replaceAll('\r\n', '\n').split('\n').includes(statement);
+  const additiveTurn = !/\bbehaviour_turn\b/.test(predecessorSchema) && declaresTurn(candidateSchema);
+  assert.equal(snapshot.tables.schema_meta.length, 1, 'Expected one source schema stamp');
+  const stamp = JSON.parse(snapshot.tables.schema_meta[0]);
+  assert.equal(stamp.id, 1); assert.equal(stamp.app_version, appVersion, 'Schema app version differs from booted source');
+  assert.equal(stamp.schema_sha, sha256(schema).slice(0, 16), 'Schema stamp differs from booted source bytes');
+  assert(typeof stamp.applied_at === 'string' && Number.isFinite(Date.parse(stamp.applied_at)), 'Invalid schema observation timestamp');
+  stamp.schema_sha = '<validated-source-schema>'; stamp.applied_at = '<bootstrap-observation>';
+  const population = snapshot.tables.population_state.map(raw => {
+    const row = JSON.parse(raw);
+    if (declaresTurn(schema)) assert(Object.hasOwn(row, 'behaviour_turn'), 'Declared resident turn column is missing');
+    if (additiveTurn && Object.hasOwn(row, 'behaviour_turn') && row.behaviour_turn === null) delete row.behaviour_turn;
+    return canonicalJson(row);
+  });
+  return { tables: { ...snapshot.tables, schema_meta: [canonicalJson(stamp)], population_state: population }, sequences: snapshot.sequences };
+}
+
 export async function createPrivateOutput(directory, roots) {
   const parent = await fs.realpath(path.dirname(path.resolve(directory)));
   const resolved = path.join(parent, path.basename(directory));
@@ -163,8 +185,10 @@ export async function runSourcePair() {
     arguments: { candidateDirectory: cwd, predecessorDirectory: previous, predecessor: expectedPrevious, output,
       supplied: { predecessorDirectory: previousInput, output: outputInput } },
     normalization: { excludedFields: ['schema_meta.applied_at'],
+      validatedFields: ['schema_meta.schema_sha must equal the booted source schema bytes; app_version must equal its package version'],
+      additiveFields: ['Only behaviour_turn:null may match an absent predecessor column, when the pinned predecessor has no declaration and the candidate has the exact nullable JSONB ADD COLUMN statement. Non-null turns remain compared.'],
       excludedRows: 'Only world_command/completed/replayed:true telemetry observations matching an actual recorded replay, with empty consequences. Raw rows remain retained; non-replay telemetry remains compared.',
-      reason: 'stampSchema updates this migration-observation timestamp on every bootstrap; schema hash and version remain compared.',
+      reason: 'stampSchema updates timestamp and source schema hash on bootstrap. Validate the source stamp before comparing data; retain both raw snapshots and source descriptors.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
     receiptComparison: 'Validate completed command schema and database instance/owner/graph/mutation receipt, then compare durable result, identity and immediate feedback. Fresh projection/asOf and differential feedback are retained but not byte-compared.',
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
@@ -177,6 +201,8 @@ export async function runSourcePair() {
   const receipts = [], replays = [], children = [];
   update('receipts.json', receipts); update('replays.json', replays);
   let candidate, predecessor, admin, pool, env, running, count = 0, requests = 0, hardStopTimer;
+  const schemas = new Map();
+  let predecessorSchema, candidateSchema;
   const abort = new AbortController();
   const interrupted = (promise) => {
     return new Promise((resolve, reject) => {
@@ -213,7 +239,7 @@ export async function runSourcePair() {
     const logPath = path.join(output, `${label}.log`);
     syncFs.writeFileSync(logPath, '', { flag: 'wx', mode: 0o600 });
     const child = fork(fileURLToPath(import.meta.url), ['--child', ...(fixture ? ['--fixture'] : [])], { cwd: root, env, silent: true });
-    const state = { child, label }; children.push(state); running = state;
+    const state = { child, label, sourceRoot: root }; children.push(state); running = state;
     event({ kind: 'child-start', label, pid: child.pid, root, fixture });
     for (const stream of [child.stdout, child.stderr]) stream.on('data', (chunk) => syncFs.appendFileSync(logPath, chunk));
     state.exit = new Promise((resolve) => child.once('close', (code, signal) => {
@@ -287,14 +313,17 @@ export async function runSourcePair() {
     }
     report.assertions.push({ id: label, receipts: receipts.length, status: 'PASS' }); update('result.json', report);
   }
-  const normalized = (snapshot) => ({ tables: { ...snapshot.tables, schema_meta: snapshot.tables.schema_meta.map((row) =>
-    row.replace(/("applied_at"\s*:\s*)"[^"]*"/, '$1"<bootstrap-observation>"')),
-    telemetry: snapshot.tables.telemetry.filter((raw) => {
+  const normalized = (snapshot) => {
+    assert(running && schemas.has(running.sourceRoot), 'Missing active source schema binding');
+    const value = normalizeSourcePairBootstrap(snapshot, { ...schemas.get(running.sourceRoot), predecessorSchema, candidateSchema });
+    value.tables.telemetry = snapshot.tables.telemetry.filter((raw) => {
       const row = JSON.parse(raw), props = JSON.parse(row.props);
       if (row.event !== 'world_command' || props.phase !== 'completed' || props.replayed !== true) return true;
       assert(replays.some((replay) => replay.account === row.account_id && sha256(replay.result.executionId) === props.execution), 'Unexplained replay observation');
       assert.deepEqual(props.consequences, [], 'Replay telemetry must not count a new consequence'); return false;
-    }) }, sequences: snapshot.sequences });
+    });
+    return value;
+  };
   async function snapshot(label) {
     phase(label);
     if (running) await interrupted(new Promise((resolve, reject) => {
@@ -345,6 +374,16 @@ export async function runSourcePair() {
       secrets: 'Fresh test-only random JWT_SECRET/MARKET_SEED/MOD_KEY shared across the four processes; values omitted',
       fixture: { accounts, helper: 'predecessor test/lib/player-command-support.js:addPlayer', measuredTransitions: 'Canonical HTTP Player Commands after initial fixtures' } });
     report.postgres = (await interrupted(pool.query('SELECT version() AS version'))).rows[0].version;
+    for (const [root, identity] of [[previous, predecessor], [cwd, candidate]]) {
+      const schema = await fs.readFile(path.join(root, 'schema.sql'), 'utf8');
+      const packageBytes = await fs.readFile(path.join(root, 'package.json'));
+      assert.equal(sha256(schema), identity.inventory.find(([file]) => file === 'schema.sql')?.[1], 'Schema source bytes changed');
+      assert.equal(sha256(packageBytes), identity.inventory.find(([file]) => file === 'package.json')?.[1], 'Package source bytes changed');
+      schemas.set(root, { schema, appVersion: JSON.parse(packageBytes).version || '0.0.0' });
+    }
+    predecessorSchema = schemas.get(previous).schema; candidateSchema = schemas.get(cwd).schema;
+    put('schema-comparison.json', { predecessor: { source: predecessor.source, schemaSha256: sha256(predecessorSchema), appVersion: schemas.get(previous).appVersion },
+      candidate: { source: candidate.source, schemaSha256: sha256(candidateSchema), appVersion: schemas.get(cwd).appVersion }, normalization: report.normalization });
     await start(previous, true); await snapshot('fixture'); await execute(accounts[0]);
     const oldCommitted = await snapshot('predecessor-committed'); await stop();
     await start(cwd); equal(oldCommitted, await snapshot('upgraded'), 'upgrade preserves acknowledged state');

@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync, fork } from 'node:child_process';
 import { sourcePairIdentity, createPrivateOutput, validateMysteryResult, assertFreshMysteryStart, assertDurableMystery,
-  stopSourcePairChild } from '../tools/rc1-source-pair.js';
+  stopSourcePairChild, normalizeSourcePairBootstrap } from '../tools/rc1-source-pair.js';
 
 const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'omerta-pair-controls-'));
 const repo = path.join(temporary, 'candidate'), previous = path.join(temporary, 'predecessor');
@@ -38,6 +38,48 @@ try {
   const allowed = await createPrivateOutput(path.join(temporary, 'private-evidence'), [repo, previous]);
   assert.equal(allowed, await fs.realpath(path.join(temporary, 'private-evidence'))); pass();
   await assert.rejects(createPrivateOutput(allowed, [repo, previous]), /EEXIST/); pass();
+
+  const predecessorSchema = 'CREATE TABLE population_state (id INT, day INT, retired INT);\n';
+  const candidateSchema = predecessorSchema + 'ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB;\n';
+  const schemaHash = schema => crypto.createHash('sha256').update(schema).digest('hex').slice(0, 16);
+  const bootstrap = (schema, population, extra = {}) => ({ tables: {
+    schema_meta: [JSON.stringify({ id: 1, app_version: '1.2.0', schema_sha: schemaHash(schema), applied_at: '2026-01-01T00:00:00Z', ...extra })],
+    population_state: [JSON.stringify(population)], characters: ['{"id":"actor","cash":"500"}'],
+  }, sequences: { characters: 2 } });
+  const normalize = (snapshot, schema, pair = {}) => normalizeSourcePairBootstrap(snapshot,
+    { schema, appVersion: '1.2.0', predecessorSchema, candidateSchema, ...pair });
+  const oldPopulation = { id: 1, day: 0, retired: 0 };
+  const oldBoot = bootstrap(predecessorSchema, oldPopulation);
+  const newBoot = bootstrap(candidateSchema, { ...oldPopulation, behaviour_turn: null }, { applied_at: '2026-01-02T00:00:00Z' });
+  assert.deepEqual(normalize(oldBoot, predecessorSchema), normalize(newBoot, candidateSchema)); pass();
+  assert.deepEqual(JSON.parse(newBoot.tables.population_state[0]), { ...oldPopulation, behaviour_turn: null }); pass();
+  for (const extra of [{ schema_sha: schemaHash(predecessorSchema) }, { schema_sha: 'forged' },
+    { app_version: '9.0.0' }, { id: 2 }, { applied_at: 'invalid' }]) {
+    assert.throws(() => normalize(bootstrap(candidateSchema, { ...oldPopulation, behaviour_turn: null }, extra), candidateSchema)); pass();
+  }
+  assert.throws(() => normalize(bootstrap(candidateSchema, oldPopulation), candidateSchema), /column is missing/); pass();
+  assert.throws(() => normalize(newBoot, 'foreign schema'), /pinned source pair/); pass();
+  const duplicateStamp = structuredClone(newBoot); duplicateStamp.tables.schema_meta.push(duplicateStamp.tables.schema_meta[0]);
+  assert.throws(() => normalize(duplicateStamp, candidateSchema), /one source schema stamp/); pass();
+  for (const population of [{ ...oldPopulation, day: 1, behaviour_turn: null },
+    { ...oldPopulation, retired: 1, behaviour_turn: null }, { ...oldPopulation, unrelated: null, behaviour_turn: null },
+    { ...oldPopulation, behaviour_turn: { hour: 123, pending: [] } },
+    { ...oldPopulation, behaviour_turn: { hour: 123, pending: ['npc'] } }]) {
+    assert.notDeepEqual(normalize(oldBoot, predecessorSchema), normalize(bootstrap(candidateSchema, population), candidateSchema)); pass();
+  }
+  const turn = { ...oldPopulation, behaviour_turn: { hour: 123, pending: ['npc'] } };
+  assert.deepEqual(normalize(bootstrap(candidateSchema, turn), candidateSchema), normalize(bootstrap(predecessorSchema, turn), predecessorSchema)); pass();
+  assert.notDeepEqual(normalize(bootstrap(candidateSchema, turn), candidateSchema),
+    normalize(bootstrap(predecessorSchema, { ...turn, behaviour_turn: { hour: 123, pending: [] } }), predecessorSchema)); pass();
+  const undeclared = predecessorSchema + 'ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB DEFAULT NULL;\n';
+  assert.notDeepEqual(normalize(oldBoot, predecessorSchema, { candidateSchema: undeclared }),
+    normalize(bootstrap(undeclared, { ...oldPopulation, behaviour_turn: null }), undeclared, { candidateSchema: undeclared })); pass();
+  for (const change of [snapshot => { snapshot.tables.characters = ['{"id":"actor","cash":"501"}']; },
+    snapshot => { snapshot.sequences.characters = 3; },
+    snapshot => { snapshot.tables.schema_meta = [JSON.stringify({ ...JSON.parse(snapshot.tables.schema_meta[0]), unexpected: true })]; }]) {
+    const changed = structuredClone(newBoot); change(changed);
+    assert.notDeepEqual(normalize(newBoot, candidateSchema), normalize(changed, candidateSchema)); pass();
+  }
 
   const key = `${'a'.repeat(64)}.${'b'.repeat(64)}`, instanceId = crypto.randomUUID();
   const result = { schemaVersion: 1, executionId: key, status: 'COMPLETED', replayed: false,
@@ -125,7 +167,7 @@ finally { clearInterval(timer); for(const socket of sockets) socket.destroy(); a
   assert.equal(interruptedReport.interruptedBy, 'SIGTERM'); assert.equal(interruptedReport.status, 'FAIL');
   assert(interruptedReport.endedAt); assert.match(await fs.readFile(path.join(interruptedOutput, 'history.jsonl'), 'utf8'), /"signal":"SIGTERM"/); pass();
   console.log(JSON.stringify({ test: 'source-pair evidence negative controls', checks, status: 'PASS',
-    scope: 'Git identity, output containment, receipt schema/authority, forced child shutdown, signal handler and early failure retention; no native upgrade claim' }));
+    scope: 'Git identity, output containment, source-bound bootstrap compatibility, receipt schema/authority, forced child shutdown, signal handler and early failure retention; no native upgrade claim' }));
 } finally {
   // This is our freshly created, absolute temporary fixture directory only.
   assert(path.dirname(temporary) === path.resolve(os.tmpdir()) && path.basename(temporary).startsWith('omerta-pair-controls-'));
