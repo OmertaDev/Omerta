@@ -7,6 +7,8 @@ import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
 import { createWorkerSchedule, installWorkerInstrumentation, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createPlayerCarCommitObserver, PLAYER_CAR_SOURCE_PINS } from '../tools/rc1-player-car-provenance.js';
+import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
 
 assert(process.argv.includes('--postgres'), 'Explicit native PostgreSQL required');
 const output = process.env.RC1_FAMILY_CUSTODY_OUTPUT, controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
@@ -18,12 +20,13 @@ for (const key of ['LAW_BUST_P', 'SEASON_MOD', 'SEASON_PHASE', 'CHAIN_RPC_URL', 
 const epoch = Date.parse('2026-09-20T12:00:00.000Z');
 const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
 const configuration = { scenario: 'scoped-exact-family-cash-ammo-custody', contract: FAMILY_CASH_AMMO_CONTRACT,
-  sourcePins: WORKER_SOURCE_PINS, database: database.descriptor, epoch: new Date(epoch).toISOString(), expectedDormant,
+  sourcePins: WORKER_SOURCE_PINS, carWitnessSourcePins: { carMelt: CAR_MELT_SOURCE_PINS, playerCar: PLAYER_CAR_SOURCE_PINS },
+  database: database.descriptor, epoch: new Date(epoch).toISOString(), expectedDormant,
   entry: 'Two ordinary guest/character entries. Before baseline only the founder receives level75 respect eligibility; actual daily check-in funds formation. No SQL cash, ammo, item or membership grants.',
   measured: 'Canonical formation, join, nonzero cash tribute and exact replay; natural GTA car acquisition (maximum20 attempts) and melt; promotion, boss departure/succession, late dissolution ammo-ledger fault, same-key retry and successful replay.',
   clocks: 'Shared application/SQL logical clock; public own-character cooldown/jail waits; every due original worker callback. No duration/probability overrides or wall-time equivalence.',
   fault: 'A local transactions trigger rejects only gang:dissolved ammo after the cash receipt attempt. The whole canonical transaction must roll back; trigger and function removed and absence verified before exact-key retry.',
-  evidence: 'Complete custody snapshots and exact canonical operation outcomes at every measured mutation and original worker callback; all canonical invariants and unchanged shared resource observer with unknown classifications retained.',
+  evidence: 'Complete custody snapshots and exact canonical operation outcomes at every measured mutation and original worker callback; bounded read-only original car query witnesses, all canonical invariants and shared resource observer with unknown classifications retained.',
   exclusions: ['OMR/reserve lineage', 'war/turf/contracts/territory branches', 'generic cash/ammo withdrawal (no authored endpoint)',
     'full resource taxonomy', 'same-seed fresh-world replay', '100-inflight soak', '90-day/225-run matrix', 'production and real participants'] };
 Object.assign(process.env, { DATABASE_URL: database.url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
@@ -38,7 +41,11 @@ runtime.bindClock(() => at);
 const controller = createWorkerSchedule({ start: epoch, setClock: (value) => { at = value; }, expectedDormant });
 const namespace = 'rc1_worker_family_' + process.pid + '_' + Math.floor(performance.now());
 const base = new pg.Pool({ connectionString: database.url });
-const seam = installWorkerInstrumentation(controller, { namespace });
+let activeIdentity = null, carWitnesses = [];
+const commitObserver = createPlayerCarCommitObserver({ context: () => activeIdentity, async onBoundary(event, witness) {
+  if (witness?.queries.some(q => /^(?:INSERT INTO|DELETE FROM) cars\b/.test(q.sql.trim()))) carWitnesses.push(witness);
+} });
+const seam = installWorkerInstrumentation(controller, { namespace, commitObserver });
 const originalConsole = { log: console.log, warn: console.warn, error: console.error };
 let app, result, measured = false, faultInstalled = false, invariantBoundaries = 0, resourceSequence = 0;
 const journals = [], resourceSummaries = [], unsupported = [];
@@ -54,7 +61,7 @@ try {
     const report = await runLedgerInvariants(pool, { alert: false }); assert(report.ok, JSON.stringify(report)); invariantBoundaries++;
     await proof.record({ kind: 'canonical-invariants', label, logicalAt: at, checks: report.checks }); return report.checks.length;
   }
-  async function boundary(before, after, identity, operation = null) {
+  async function boundary(before, after, identity, operation = null, witness = null) {
     const n = resourceSequence++, label = 'boundary-' + n;
     let custody = null, global;
     try {
@@ -64,7 +71,9 @@ try {
         await proof.artifact(label + '-custody.json', { identity, before: before.custody, after: after.custody, operations: operation ? [operation] : [], journal: custody });
         journals.push({ label, flows: custody.flows, familyChecks: custody.checks.length, personalChecks: custody.personalChecks.length });
       }
-      global = observer.reconcileWorldResources(before.global, after.global, { identity, includeRestrictedChanges: true });
+      if (witness) await proof.artifact(label + '-car-witness.json', { identity, before: before.global, after: after.global, provenance: witness });
+      global = observer.reconcileWorldResources(before.global, after.global, { identity, includeRestrictedChanges: true,
+        carMeltProvenance: witness, carAcquisitionProvenance: witness });
     } catch (error) {
       await proof.artifact(label + '-failure.json', { identity, before, after, operation, message: error.message }); throw error;
     }
@@ -78,14 +87,17 @@ try {
     const before = await snapshots();
     const identity = { accountId: actor?.accountId || null, method, path, label, logicalAt: at,
       ...(body === undefined ? {} : { body }), ...(key === undefined ? {} : { key }) };
-    const response = await proof.invoke('ordinary-http', identity, async () => {
+    activeIdentity = { authority: 'ordinary-http', ...identity }; carWitnesses = []; commitObserver.arm();
+    let response;
+    try { response = await proof.invoke('ordinary-http', identity, async () => {
       const r = await app.inject({ method, url: path, headers: { ...(actor?.token ? { authorization: 'Bearer ' + actor.token } : {}),
         ...(key ? { 'idempotency-key': key } : {}) }, ...(body === undefined ? {} : { payload: body }) });
       return { status: r.statusCode, replayed: r.headers['x-idempotent-replay'] === 'true', body: r.json() };
-    });
+    }); } finally { commitObserver.assertComplete(); commitObserver.disarm(); activeIdentity = null; }
+    assert(carWitnesses.length <= 1, 'Compound canonical car transaction outside custody proof');
     const operation = measured && method === 'POST' ? { accountId: actor.accountId, characterId: actor.characterId, method, path,
       ...(body === undefined ? {} : { body }), idempotencyKey: key, result: response } : null;
-    await boundary(before, await snapshots(), { label, method, path, logicalAt: at }, operation);
+    await boundary(before, await snapshots(), { label, method, path, logicalAt: at }, operation, carWitnesses[0] ?? null);
     if (expected !== null) assert.equal(response.status, expected, JSON.stringify(response));
     if (method !== 'GET') await invariants(label); return response;
   }

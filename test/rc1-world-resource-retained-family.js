@@ -9,8 +9,12 @@ const root = process.env.RC1_RETAINED_FAMILY, output = process.env.RC1_RETAINED_
 assert(root && output, 'Explicit original native input and new restricted output required');
 const source = await sourceIdentity(); await fs.mkdir(output);
 const bytes = await fs.readFile(path.join(root, 'run.json'));
-assert.equal(sha256(bytes), '4a13792c4dcea02c829fba5efcb107219e7d32bd7d4f12de48a837010bce09c0');
-const manifest = JSON.parse(bytes); assert.equal(manifest.status, 'PASS_SCOPED'); assert(manifest.source.revision.startsWith('91b1e9ba'));
+const manifest = JSON.parse(bytes); assert.equal(manifest.status, 'PASS_SCOPED');
+const expected = {
+  '4a13792c4dcea02c829fba5efcb107219e7d32bd7d4f12de48a837010bce09c0': { revision: '91b1e9ba', joins: 19, cooldowns: 1 },
+  '34b7fb2fb1fc1eefcb2ac6d61d8ad5a7954124d5b75c381c4ea40fc789529697': { revision: 'a0177910c11c4502fb101c4ac506788a53d7ef88', joins: 0, cooldowns: 2 },
+}[sha256(bytes)];
+assert(expected, 'Native Family input manifest is not pinned'); assert(manifest.source.revision.startsWith(expected.revision));
 await verifyArtifactIndex(root, manifest);
 const entrants = new Map();
 for (let index = 0; index < 25; index++) {
@@ -51,11 +55,11 @@ for (const artifact of manifest.artifacts.filter(row => /^restricted-resource-ch
       shortenedCooldownRejected: true, fullObserverReplayed: false, evidenceKind: 'historical-exact-changed-rows' });
   }
 }
-assert.equal(cases.filter(row => row.kind === 'family-join-delta-applicability').length, 19);
-assert.equal(cases.filter(row => row.kind === 'family-hostility-metadata-reclassification').length, 1);
+assert.equal(cases.filter(row => row.kind === 'family-join-delta-applicability').length, expected.joins);
+assert.equal(cases.filter(row => row.kind === 'family-hostility-metadata-reclassification').length, expected.cooldowns);
 await assertSourceUnchanged(source);
 const report = { status: 'PASS_HISTORICAL_FAMILY_CLASS_APPLICABILITY', observerSource: source, nativeSource: manifest.source,
   inputManifest: { path: path.join(root, 'run.json'), sha256: sha256(bytes) }, verifiedArtifactCount: manifest.artifacts.length, cases,
   noDatabaseMutations: true, inputEvidenceUnmodified: true, currentSourceNativePass: false, qualifyingFullResourcePass: false };
 await fs.writeFile(path.join(output, 'family-class-applicability.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
-console.log(JSON.stringify({ status: report.status, verifiedNativeArtifacts: manifest.artifacts.length, joinDeltaCases: 19, hostilityMetadataCases: 1 }));
+console.log(JSON.stringify({ status: report.status, verifiedNativeArtifacts: manifest.artifacts.length, joinDeltaCases: expected.joins, hostilityMetadataCases: expected.cooldowns }));

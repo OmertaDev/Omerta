@@ -665,7 +665,9 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const orderResources = reconcileOrderResources(before, after, { identity, receipts });
   const turfFunding = reconcileTurfFunding(before, after, { receipts });
   checks.push(...orderResources.checks, ...turfFunding.checks);
-  for (const receipt of receipts) if (!orderResources.usedReceipts.has(receipt.id) && !turfFunding.usedReceipts.has(receipt.id) && !orderExpiry.usedReceipts.has(receipt.id) && !lifecycleCash.usedReceipts.has(receipt.id) && !npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
+  const { usedReceipts: carReceipts, familyFields: carFamilies, ...cars } = reconcileCarResources(before, after, { carMeltProvenance, carAcquisitionProvenance });
+  checks.push(...cars.checks); unsupported.push(...cars.unsupported);
+  for (const receipt of receipts) if (!carReceipts.has(receipt.id) && !orderResources.usedReceipts.has(receipt.id) && !turfFunding.usedReceipts.has(receipt.id) && !orderExpiry.usedReceipts.has(receipt.id) && !lifecycleCash.usedReceipts.has(receipt.id) && !npcMarketOrder.usedReceipts.has(receipt.id) && !npcCargo.usedReceipts.has(receipt.id) && !ammoEscrow.usedReceipts.has(receipt.id) && !pressureCash.usedReceipts.has(receipt.id) && !familyEntry.usedReceipts.has(receipt.id) && !familyDissolution.usedReceipts.has(receipt.id) && !turfTerminal.usedReceipts.has(receipt.id) && !reasonClasses.some(([currency, pattern]) => currency === receipt.currency && pattern.test(receipt.reason)))
     unsupported.push({ kind: 'receipt-reason', currency: receipt.currency, reason: receipt.reason, receiptId: receipt.id });
 
   const priorPeople = indexed(rows(before, 'characters'), r => r.id, 'characters'), finalPeople = indexed(rows(after, 'characters'), r => r.id, 'characters');
@@ -786,8 +788,6 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     expectedDelta: exactSum([negate(net(receipts, r => r.currency === 'cash' && ['loan:offer', 'loan:take', 'loan:refund'].includes(r.reason))),
       net(receipts, r => r.currency === 'cash' && ['loan:death', 'loan:loot'].includes(r.reason))]),
     authority: reference('transactions', receipts.filter(r => r.reason.startsWith('loan:'))) });
-  const cars = reconcileCarResources(before, after, { carMeltProvenance, carAcquisitionProvenance });
-  checks.push(...cars.checks); unsupported.push(...cars.unsupported);
   const seasonConversions = reconcileSeasonConversions(before, after, { identity, duelSelection });
   checks.push(...seasonConversions.checks); unsupported.push(...seasonConversions.unsupported);
   const seasonCrowns = reconcileStoredSeasonCrowns(before, after, { seasonElectionProvenance, identity });
@@ -819,7 +819,7 @@ export function reconcileWorldResources(before, after, { identity = null, includ
     if (familyDissolution.dissolved.has(id)) return false;
     if (familyEntry.founded.has(id)) return Object.keys(newFamilies.get(id)).some(field => !familyEntry.familyFields.get(id)?.has(field));
     const a = oldFamilies.get(id), b = newFamilies.get(id); if (!a || !b) return true;
-    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !turfFunding.familyFields.get(id)?.has(field) && !membership.familyFields.get(id)?.has(field) && !workerTransitions.familyFields.get(id)?.has(field) && !familyEntry.familyFields.get(id)?.has(field)
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].some(field => !carFamilies.get(id)?.has(field) && !turfFunding.familyFields.get(id)?.has(field) && !membership.familyFields.get(id)?.has(field) && !workerTransitions.familyFields.get(id)?.has(field) && !familyEntry.familyFields.get(id)?.has(field)
       && !(field === 'treasury' && turfTerminal.treasuryOwners.has(id)) && json(a[field]) !== json(b[field]));
   });
   if (remainingFamilyChanges.length) unsupported.push({ kind: 'family-lineage', familyIds: remainingFamilyChanges,

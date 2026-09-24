@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { rollRarity } from '../src/rules.js';
 import { exactSum } from './rc1-resource-journal.js';
-import { verifySoloCarMelt } from './rc1-car-melt-provenance.js';
+import { verifySoloCarMelt, verifyFamilyCarMelt } from './rc1-car-melt-provenance.js';
+import { verifyPlayerCarAcquisition } from './rc1-player-car-provenance.js';
 import { verifyNpcCarAcquisition } from './rc1-npc-car-acquisition.js';
 
 const rows = (state, table) => { assert(Array.isArray(state.tables[table]), `Missing car evidence table ${table}`); return state.tables[table]; };
@@ -51,7 +52,7 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null,
   const added = [...final.values()].filter(row => !prior.has(row.id));
   const removed = [...prior.values()].filter(row => !final.has(row.id));
   const changes = [...prior.values()].filter(row => final.has(row.id) && changedFields(row, final.get(row.id)).length);
-  const checks = [], lineage = [], unsupported = [], claimed = new Set(), used = new Set();
+  const checks = [], lineage = [], unsupported = [], claimed = new Set(), used = new Set(), usedReceipts = new Set(), familyFields = new Map();
   const use = (table, values) => { for (const row of values) {
     const id = `${table}:${row.id ?? row.idempotency_key}`;
     assert(!used.has(id), `Car receipt reused: ${id}`); used.add(id);
@@ -125,13 +126,14 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null,
     lineage.push({ kind: locked ? 'market-lock' : 'market-cancel-release', carId: a.id, owner: a.character_id, authority });
   }
 
-  const acquisition = verifyNpcCarAcquisition(before, after, carAcquisitionProvenance);
+  const acquisition = verifyNpcCarAcquisition(before, after, carAcquisitionProvenance)
+    ?? verifyPlayerCarAcquisition(before, after, carAcquisitionProvenance);
   if (acquisition) {
     const car = final.get(acquisition.carId), grant = audits.find(r => r.id === acquisition.grantId), rarity = audits.find(r => r.id === acquisition.rarityId);
-    assert(car && grant && rarity, 'Exact NPC acquisition lacks its fresh car/receipts');
+    assert(car && grant && rarity, 'Exact car acquisition lacks its fresh car/receipts');
     claim(car); use('rng_audit', [grant, rarity]);
     const authority = reference('rng_audit', [grant, rarity]);
-    parity('car-exact-npc-spawn-source', acquisition.owner, 0, 1, 1, authority);
+    parity(acquisition.kind === 'exact-player-gta-car-source' ? 'car-exact-player-gta-source' : 'car-exact-npc-spawn-source', acquisition.owner, 0, 1, 1, authority);
     lineage.push({ ...acquisition, authority });
   }
   const sourceAudits = audits.filter(row => !used.has('rng_audit:' + row.id)
@@ -155,13 +157,16 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null,
     incomplete('car-acquisition-identity-provenance', owner, cars.map(row => row.id), authority,
       'Receipt binds owner/count/rarity, not car ID, selected model/trim/damage or limited-run allocation; full acquisition lineage remains unsupported');
   }
-  const melt = verifySoloCarMelt(before, after, carMeltProvenance);
+  const melt = verifySoloCarMelt(before, after, carMeltProvenance) ?? verifyFamilyCarMelt(before, after, carMeltProvenance);
   if (melt) {
     const car = prior.get(melt.carId), receipt = receipts.find(row => row.id === melt.receiptId);
     assert(car && receipt, 'Exact melt lacks fresh car/receipt');
-    claim(car); use('transactions', [receipt]);
-    const authority = reference('transactions', [receipt]);
-    parity('car-exact-solo-melt-sink', melt.owner, 1, 0, -1, authority);
+    const exactReceipts = [receipt, ...(melt.titheReceiptIds || []).map(id => receipts.find(row => row.id === id))];
+    assert(exactReceipts.every(Boolean)); claim(car); use('transactions', exactReceipts);
+    exactReceipts.forEach(row => usedReceipts.add(row.id));
+    if (melt.familyId) familyFields.set(melt.familyId, new Set(['ammo_bank', 'treasury']));
+    const authority = reference('transactions', exactReceipts);
+    parity(melt.familyId ? 'car-exact-family-melt-sink' : 'car-exact-solo-melt-sink', melt.owner, 1, 0, -1, authority);
     lineage.push({ ...melt, authority });
   }
   const sinks = [...audits.filter(row => row.action === 'npc:car' && row.outcome === 'retire').map(row => ({ table: 'rng_audit', row })),
@@ -182,6 +187,6 @@ export function reconcileCarResources(before, after, { carMeltProvenance = null,
   for (const car of [...added, ...removed, ...changes]) if (!claimed.has(car.id))
     incomplete('car-disposition-unclassified', car.character_id, [car.id], [],
       `No supported identity-bound authority for ${!prior.has(car.id) ? 'creation' : !final.has(car.id) ? 'destruction' : changedFields(car, final.get(car.id)).join(',')}`);
-  return { format: 1, checks, lineage, unsupported, fullyClassifiedChanges: lineage.filter(row => !row.kind.endsWith('count-only')).length,
-    scope: 'Serial isolated boundary only. Exact basic salvage, market list/cancel custody, source-pinned neutral solo melt and default worker NPC-spawn car; other audit parity is explicitly partial.' };
+  return { format: 1, checks, lineage, unsupported, usedReceipts, familyFields, fullyClassifiedChanges: lineage.filter(row => !row.kind.endsWith('count-only')).length,
+    scope: 'Serial isolated boundary only. Exact basic salvage, market list/cancel custody, source-pinned neutral solo/Family melt, default worker NPC-spawn and non-limited player GTA; other audit parity is explicitly partial.' };
 }

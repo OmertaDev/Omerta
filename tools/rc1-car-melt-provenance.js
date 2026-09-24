@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
-import { carMelt, ladderFenceMult } from '../src/rules.js';
+import { carMelt, ladderFenceMult, CONSTANTS } from '../src/rules.js';
+import { exactSum } from './rc1-resource-journal.js';
 
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const json = value => JSON.parse(JSON.stringify(value));
@@ -19,6 +20,7 @@ export const CAR_MELT_SOURCE_PINS = Object.freeze({
   'src/rules.generated.js': 'ddce8118bd79f56af022a6a4e33da09d41f89829bd3b59a2e906c6e19af73ec9',
 });
 let shapes;
+export function carMeltQueryShapes() { assertCarMeltSources(); return { ...shapes }; }
 export function assertCarMeltSources() {
   const sources = {};
   for (const [file, pin] of Object.entries(CAR_MELT_SOURCE_PINS)) {
@@ -93,6 +95,12 @@ export function createCarMeltCommitObserver({ onBoundary, onAttempt, context, ma
 // a player. A caller must retain the collector/source/boundary custody chain.
 // No provenance => no upgrade. Unsupported trace => ordinary unknown lineage.
 export function verifySoloCarMelt(before, after, provenance) {
+  return verifyCarMelt(before, after, provenance, false);
+}
+export function verifyFamilyCarMelt(before, after, provenance) {
+  return verifyCarMelt(before, after, provenance, true);
+}
+function verifyCarMelt(before, after, provenance, family) {
   if (!provenance) return null;
   assertCarMeltSources();
   assert.equal(provenance.format, 1);
@@ -110,14 +118,17 @@ export function verifySoloCarMelt(before, after, provenance) {
   const ledgers = select('INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)');
   // No car destruction / melt at this boundary is not a candidate.
   if (!deletes.length || !ledgers.some(e => e.parameters[5] === 'melt')) return null;
-  if (deletes.length !== 1 || ledgers.length !== 1) return null;
-  const deletion = only('DELETE FROM cars WHERE id=$1'), receipt = ledgers[0];
+  if (deletes.length !== 1 || ledgers.length !== (family ? 3 : 1)) return null;
+  const deletion = only('DELETE FROM cars WHERE id=$1'), personal = ledgers.filter(e => e.parameters[5] === 'melt');
+  assert.equal(personal.length, 1, 'Ambiguous personal melt receipt');
+  const receipt = personal[0];
   const characterRead = only('SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE');
   const accountRead = only('SELECT * FROM account_persistent WHERE account_id = $1 FOR UPDATE');
   const owned = only(shapes.bulk), garage = only('SELECT * FROM cars WHERE character_id=$1 ORDER BY created_at');
   assert.equal(characterRead.rows.length, 1); assert.equal(accountRead.rows.length, 1);
   const ch = characterRead.rows[0], acct = accountRead.rows[0], owner = ch.id, accountId = ch.account_id;
-  if (ch.is_npc || !ch.alive || owned.rows.some(r => r.src === 'gm')
+  const memberships = owned.rows.filter(r => r.src === 'gm');
+  if (ch.is_npc || !ch.alive || memberships.length !== (family ? 1 : 0)
     || owned.rows.some(r => r.src === 'sk' && ['kingpin', 'fence_network'].includes(r.k))
     || Number(acct.staked || 0) !== 0 || acct.made_until || acct.stake_lock_until) return null;
   assert.deepEqual(characterRead.parameters, [accountId]); assert.deepEqual(accountRead.parameters, [accountId]);
@@ -133,7 +144,9 @@ export function verifySoloCarMelt(before, after, provenance) {
   assert.equal(ladderFenceMult(acct, at), 1, 'Melt account is not a neutral ladder');
   // Refuse compound mutation shapes. The only data writes in the pinned solo
   // operation are the car, one ledger row, daily counter, and wrapper persistence.
-  const allowed = e => e === deletion || e === receipt
+  const familyId = family ? memberships[0].k : null;
+  const titheWrite = family ? only('UPDATE gangs SET ammo_bank = ammo_bank + $2, treasury = treasury + $3 WHERE id=$1') : null;
+  const allowed = e => e === deletion || ledgers.includes(e) || e === titheWrite
     || e.sql === shapes.character && e.parameters[0] === owner
     || e.sql === shapes.account && e.parameters[0] === accountId
     || ['DELETE FROM stash WHERE character_id=$1', 'DELETE FROM makings WHERE character_id=$1'].includes(e.sql) && e.parameters[0] === owner && e.rowCount === 0
@@ -145,6 +158,11 @@ export function verifySoloCarMelt(before, after, provenance) {
   }
   const order = [characterRead, accountRead, owned, garage, deletion, receipt].map(e => q.indexOf(e));
   assert(order.every((n, i) => !i || n > order[i - 1]), 'Melt provenance query order differs from original execution');
+  if (family) {
+    const tail = [receipt, titheWrite, ...ledgers.filter(e => e !== receipt)].map(e => q.indexOf(e));
+    assert(tail.every((n, i) => !i || n > tail[i - 1]), 'Family tithe query order differs from original execution');
+    assert(q.indexOf(only(shapes.character)) > tail.at(-1), 'Family tithe follows wrapper persistence');
+  }
   const table = (s, name) => { assert(Array.isArray(s.tables[name]), 'Missing melt evidence: ' + name); return s.tables[name]; };
   const row = (s, name, field, id) => { const matches = table(s, name).filter(r => r[field] === id); assert.equal(matches.length, 1, 'Missing or duplicate melt ' + name); return matches[0]; };
   const priorCar = row(before, 'cars', 'id', carId);
@@ -156,12 +174,17 @@ export function verifySoloCarMelt(before, after, provenance) {
   for (const field of ['id', 'account_id', 'is_npc', 'alive', 'ammo']) assert.equal(String(priorCh[field]), String(ch[field]), 'Locked owner differs: ' + field);
   assert.equal(nextCh.account_id, accountId); assert.equal(nextCh.alive, true); assert.equal(nextCh.is_npc, false);
   for (const state of [before, after]) {
-    assert(!table(state, 'gang_members').some(r => r.character_id === owner), 'Solo melt boundary contains Family membership');
+    const members = table(state, 'gang_members').filter(r => r.character_id === owner);
+    if (family) {
+      assert.equal(members.length, 1); assert.equal(members[0].gang_id, familyId);
+      assert.equal(members[0].role, memberships[0].k2);
+    } else assert.equal(members.length, 0, 'Solo melt boundary contains Family membership');
     const account = row(state, 'account_persistent', 'account_id', accountId);
     for (const field of ['staked', 'made_until', 'stake_lock_until', 'stake_lock_mult'])
       assert.equal(String(account[field]), String(acct[field]), 'Melt ladder input changed: ' + field);
   }
-  const rounds = Math.floor(carMelt(car.model_id, car.trim_id, car.dmg));
+  const yieldRounds = Math.floor(carMelt(car.model_id, car.trim_id, car.dmg));
+  const tithe = family ? Math.floor(yieldRounds * CONSTANTS.MELT_TITHE) : 0, rounds = yieldRounds - tithe;
   assert(Number.isSafeInteger(rounds) && rounds > 0);
   const [receiptId, characterId, ledgerAccount, currency, amount, reason, counterparty] = receipt.parameters;
   assert.deepEqual([characterId, ledgerAccount, currency, Number(amount), reason, counterparty], [owner, null, 'ammo', rounds, 'melt', null], 'Original melt ledger yield/owner mismatch');
@@ -171,7 +194,30 @@ export function verifySoloCarMelt(before, after, provenance) {
   for (const [field, expected] of Object.entries({ character_id: owner, account_id: null, currency: 'ammo', amount: rounds, reason: 'melt', counterparty: null }))
     assert.equal(String(actualReceipt[field]), String(expected), 'Committed melt receipt mismatch: ' + field);
   assert.equal(Number(nextCh.ammo) - Number(priorCh.ammo), rounds, 'Exact personal melt ammo delta mismatch');
-  return { kind: 'exact-solo-melt-sink', carId, owner, accountId, rounds, receiptId,
+  const titheReceiptIds = [];
+  if (family) {
+    assert(tithe > 0); const cash = tithe * CONSTANTS.TITHE_ROUND_VALUE;
+    assert.deepEqual(titheWrite.parameters, [familyId, tithe, cash]); assert.equal(titheWrite.rowCount, 1);
+    assert.deepEqual(table(before, 'gang_members'), table(after, 'gang_members'), 'Melt changed Family membership');
+    const oldFamily = row(before, 'gangs', 'id', familyId), newFamily = row(after, 'gangs', 'id', familyId);
+    for (const field of new Set([...Object.keys(oldFamily), ...Object.keys(newFamily)]))
+      if (!['ammo_bank', 'treasury'].includes(field)) assert.deepEqual(newFamily[field], oldFamily[field], 'Compound Family melt field: ' + field);
+    assert.equal(exactSum([oldFamily.ammo_bank, tithe]), exactSum([newFamily.ammo_bank]), 'Wrong Family melt ammo endpoint');
+    assert.equal(exactSum([oldFamily.treasury, cash]), exactSum([newFamily.treasury]), 'Wrong Family melt cash endpoint');
+    assert.deepEqual(table(before, 'gangs').filter(g => g.id !== familyId), table(after, 'gangs').filter(g => g.id !== familyId), 'Melt changed another Family');
+    for (const [index, currency, amount] of [[1, 'ammo', tithe], [2, 'cash', cash]]) {
+      const entry = ledgers[index]; assert.equal(entry.rowCount, 1);
+      assert.deepEqual(entry.parameters.slice(1), [null, null, currency, amount, 'melt:tithe', familyId]);
+      const id = entry.parameters[0]; assert(!table(before, 'transactions').some(r => r.id === id));
+      assert(![receiptId, ...titheReceiptIds].includes(id), 'Melt receipt reused');
+      const committed = row(after, 'transactions', 'id', id);
+      for (const [field, expected] of Object.entries({ character_id: null, account_id: null, currency, amount, reason: 'melt:tithe', counterparty: familyId }))
+        assert.equal(String(committed[field]), String(expected), 'Committed Family tithe mismatch: ' + field);
+      titheReceiptIds.push(id);
+    }
+  }
+  return { kind: family ? 'exact-family-melt-sink' : 'exact-solo-melt-sink', carId, owner, accountId, rounds, receiptId,
+    ...(family ? { familyId, totalRounds: yieldRounds, titheRounds: tithe, titheCash: tithe * CONSTANTS.TITHE_ROUND_VALUE, titheReceiptIds } : {}),
     provenanceSha256: hash(canonical(provenance)), boundary: provenance.boundary,
-    inputs: { model: car.model_id, trim: car.trim_id, damage: car.dmg, fenceMultiplier: 1, kingpinMultiplier: 1, ladderMultiplier: 1, tithe: 0 } };
+    inputs: { model: car.model_id, trim: car.trim_id, damage: car.dmg, fenceMultiplier: 1, kingpinMultiplier: 1, ladderMultiplier: 1, tithe } };
 }
