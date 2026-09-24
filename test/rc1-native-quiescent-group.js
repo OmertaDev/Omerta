@@ -8,6 +8,8 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
 const request = (index, path = '/v1/market/listing/buy') => ({ accountId: 'a-' + index,
   request: { method: 'POST', path, body: { qty: 1 }, idempotencyKey: 'key-' + index } });
 const response = value => ({ status: 200, replayed: false, body: { ok: true, value } });
+const companionIdentity = () => ({ kind: 'original-worker-job', label: 'market sweep', logicalAt: 1000,
+  sourceFile: 'src/worker.js', sourceSha256: 'a'.repeat(64), handlerSourceFile: 'src/market.js', handlerSourceSha256: 'b'.repeat(64) });
 function setup(options = {}) {
   let logicalAt = 1000, state = 0;
   const native = [], serialBoundaries = [], groups = [], records = [];
@@ -134,5 +136,65 @@ let controls = 0;
   await q('ROLLBACK'); assert.equal(env.serial.diagnostic().armed, true); controls++;
 }
 
-console.log(JSON.stringify({ status: 'PASS_SCOPED', controls, scope: 'Observer router, native-call overlap, original SQL forwarding, drain, aggregate evidence, serial continuity and quarantine controls',
+// The original worker companion has its own authority and full SQL witnesses;
+// it is never padded into the HTTP request list or a fabricated commit event.
+{
+  const env = setup(), barrier = deferred(); let updates = 0, originalReturn;
+  const sql = { text: 'UPDATE market_listings SET qty=$1 WHERE id=$2', name: 'original-market-sweep' }, parameters = [0, 'listing-1'];
+  const nativeResult = { command: 'UPDATE', rowCount: 1, rows: [{ id: 'listing-1', qty: '0', expires_at: new Date(1000) }], fields: [{ name: 'id', dataTypeID: 25 }] };
+  const run = async statement => {
+    const text = typeof statement === 'string' ? statement : statement.text;
+    if (text.startsWith('UPDATE')) { if (++updates === 2) barrier.resolve(); await barrier.promise; env.increment(); }
+    return text.startsWith('UPDATE') ? nativeResult : { command: text, rowCount: null, rows: [], fields: [] };
+  };
+  const http = env.client(run), worker = env.client(async (statement, bindings) => {
+    if (typeof statement === 'object') { assert.equal(statement, sql); assert.equal(bindings, parameters); }
+    return run(statement);
+  });
+  const identity = companionIdentity(), returned = { settled: 0, lapsed: 1 };
+  const results = await env.router.runGroup([request(0)], { logicalAt: 1000, drain: async () => {},
+    execute: async () => { await http('UPDATE actor'); return response('http'); },
+    companion: { identity, execute: async () => {
+      await worker('BEGIN'); assert.equal(await worker(sql, parameters), nativeResult); await worker('COMMIT'); return originalReturn = returned;
+    } } });
+  assert.equal(originalReturn, returned); assert.equal(results.length, 1);
+  const evidence = env.groups[0], root = evidence.identity.traceRoot;
+  assert.equal(evidence.identity.requestCount, 1); assert.equal(evidence.identity.companionCount, 1);
+  assert.equal(evidence.summary.concurrentPlayerRequests, false); assert.equal(evidence.summary.workerRequestOverlap, true);
+  assert.equal(evidence.summary.maximumSqlInFlight, 2); assert.equal(evidence.summary.nativeCommitOrder, false);
+  assert.equal(root.format, 2); assert.deepEqual(evidence.companionOutcomes, [{ status: 'fulfilled', value: returned }]);
+  assert.deepEqual(evidence.companions, [{ ...identity, companionIndex: 0 }]);
+  assert.deepEqual(evidence.identity.context.companions, evidence.companions);
+  assert.equal(root.companionsSha256, actorValueHash(evidence.companions));
+  assert.equal(root.companionOutcomesSha256, actorValueHash(evidence.companionOutcomes));
+  const { sha256: rootHash, ...descriptor } = root; assert.equal(rootHash, actorValueHash(descriptor));
+  const dispatch = evidence.trace.find(row => row.phase === 'DISPATCH' && row.original?.sql?.name === sql.name);
+  assert.equal(dispatch.authority, 'original-worker-job'); assert.equal(dispatch.requestIndex, null); assert.equal(dispatch.companionIndex, 0);
+  assert.deepEqual(dispatch.original, { sql, parametersProvided: true, parameters });
+  const acknowledged = evidence.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.queryId === dispatch.queryId);
+  assert.deepEqual(acknowledged.nativeResult, nativeResult); assert.equal(acknowledged.nativeResultSha256, actorValueHash(nativeResult));
+  assert.equal(evidence.traceSha256, actorValueHash(JSON.parse(JSON.stringify(evidence.trace))));
+  assert(!Object.hasOwn(evidence.identity, 'sequence')); assert.equal(env.serialBoundaries.length, 0); env.router.assertComplete(); controls++;
+}
+
+{
+  const env = setup(), gate = deferred(), http = env.client(), worker = env.client();
+  await assert.rejects(env.router.runGroup([request(0)], { logicalAt: 1000, drain: async () => {},
+    execute: async () => { await gate.promise; await http('UPDATE actor'); return response('committed'); },
+    companion: { identity: companionIdentity(), execute: async () => {
+      await worker('BEGIN'); await worker('ROLLBACK'); gate.resolve(); throw Error('original market failure');
+    } } }), error => error instanceof AggregateError && error.rc1GroupReconciled === true);
+  assert.equal(env.groups[0].after.value, 1); assert.equal(env.groups[0].outcomes[0].status, 'fulfilled');
+  assert.equal(env.groups[0].companionOutcomes[0].error.message, 'original market failure');
+  assert.equal(env.groups[0].summary.rollbackAcknowledgments, 1); assert.equal(env.serial.diagnostic().armed, true); controls++;
+}
+
+{
+  const env = setup();
+  await assert.rejects(env.router.runGroup([request(0)], { logicalAt: 1000, drain: async () => {}, execute: async () => response(1),
+    companion: { identity: { ...companionIdentity(), logicalAt: 2000 }, execute: async () => {} } }));
+  assert.equal(env.native.length, 0); assert.equal(env.serial.diagnostic().armed, true); controls++;
+}
+
+console.log(JSON.stringify({ status: 'PASS_SCOPED', controls, scope: 'Observer router, native-call overlap, original SQL forwarding, explicit original-worker companions, drain, aggregate evidence, serial continuity and quarantine controls',
   gameNativeProof: 'Retained market-policy-d283982b-native; these controlled drivers do not replace canonical-handler native qualification' }));
