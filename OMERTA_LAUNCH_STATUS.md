@@ -10,8 +10,8 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 | Registered command gates | 111 / 114 |
 | Acceptance matrix | 0 / 225 |
 | Contracts | PASS — reused: 1,247 passed, 0 failed, 0 skipped |
-| PostgreSQL 16 | FAIL — final qualification absent; focused phone recovery passed |
-| PostgreSQL 18.4 | FAIL — final qualification absent; focused/component proofs passed |
+| PostgreSQL 16 | PASS_NEW — final frozen CI database lane passed |
+| PostgreSQL 18.4 | PASS_NEW — final frozen CI database lane passed |
 | Resource accounting | PASS — original P0 workload: zero unexplained entries |
 | Replay | FAIL — complete final serial/concurrent qualification absent |
 | Restart recovery | PASS — authoritative state, identities, RNG and ordered resource effects agree |
@@ -29,7 +29,7 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 
 ## Remaining blockers
 
-The three remaining registered gates are `linux-sigterm`, `rc1-golden`, and `rc1-source-pair`, reserved for the final hosted run. Escrow completed at f90cce38 with 98 passing scenarios, 3,907 zero-drift equations and independently verified artifacts. Focused retirement resource/metric closure and generated-knowledge verification now pass. All 225 qualifying cells, final PostgreSQL/mobile/replay qualification, the required soak, and final upgrade/rollback remain. Production configuration, deployment and external validation follow the existing gates.
+The three remaining registered gates are `linux-sigterm`, `rc1-golden`, and `rc1-source-pair`, reserved for the final hosted run. Escrow completed at f90cce38 with 98 passing scenarios, 3,907 zero-drift equations and independently verified artifacts. Focused retirement resource/metric closure and generated-knowledge verification now pass. Both final CI PostgreSQL lanes pass. All 225 qualifying cells, remaining mobile/replay/recovery qualification, the required soak, and final upgrade/rollback remain. Production configuration, deployment and external validation follow the existing gates.
 
 The user resumed work on 2026-09-24 after the usage-limit interruption. All five original P0 blockers remain closed. [FINAL_LAUNCH_LEDGER.md](FINAL_LAUNCH_LEDGER.md) contains current admissions and hashes. [CREDIT_CHECKPOINT.md](CREDIT_CHECKPOINT.md) retains the earlier stop and evidence history. Source 92e50fb9 adds tested opportunity receipt/expiry measurements to the harness; application source is unchanged. Source-phase authority closure is complete at357ff20a. Both cohort native integration smokes passed at85ed40b5. The retained refund entries now have source-bound classification evidence. All 104 subsequently inventoried shared resource entries have class coverage, including GTA and Family melting; original evidence is unchanged. The 169-hour churn check and focused Law check passed at 1ec074ff; abundance passed at 92f09bb4 with 6,853 boundaries and zero unexplained entries. These are scoped admissions, not matrix qualification. All 15 workload interfaces are connected. Actual daily market worker overlap, Family/scarcity baselines and cohort phase alignment now have focused evidence. The cohort's five retirement entries and two incomplete metrics are closed by exact retained-evidence supplements; all 14 metrics are covered for the focused run. Final integrated replay, long-duration/lifecycle/stability evidence and qualification remain unfinished.
 
