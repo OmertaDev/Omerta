@@ -373,7 +373,7 @@
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
-| [docs/release/nft-portrait-reveal.md](../../docs/release/nft-portrait-reveal.md) | documentation | 38 | 2026-09-24 |
+| [docs/release/nft-portrait-reveal.md](../../docs/release/nft-portrait-reveal.md) | documentation | 45 | 2026-09-24 |
 | [docs/release/RC1-MANIFEST.md](../../docs/release/RC1-MANIFEST.md) | documentation | 58 | 2026-09-19 |
 | [docs/release/RC1-OPPORTUNITY-QUALITY.md](../../docs/release/RC1-OPPORTUNITY-QUALITY.md) | documentation | 54 | 2026-09-19 |
 | [docs/release/RC1-PLAYER-VALIDATION.md](../../docs/release/RC1-PLAYER-VALIDATION.md) | documentation | 128 | 2026-09-20 |
@@ -450,7 +450,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 292 | 2026-09-09 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-19 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-24 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
@@ -538,5 +538,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 171 | 2026-09-14 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-06 |
-| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-20 |
+| [SPEC.md](../../SPEC.md) | documentation | 756 | 2026-09-24 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

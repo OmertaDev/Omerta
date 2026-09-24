@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bcd03318c2416205000353d51d2abc8bd93df11d",
+  "sourceRevision": "61134d60e69b038895c8ee7286272f57097ce9ae",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7882,
-    "edges": 34354,
+    "nodes": 7884,
+    "edges": 34369,
     "byNodeType": {
       "Artifact": 3268,
       "Command": 105,
-      "Commit": 1492,
+      "Commit": 1494,
       "Contract": 79,
       "Document": 604,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2524,
-      "CHANGED": 13011,
+      "CHANGED": 13024,
       "CONTAINS": 3289,
       "DECLARES": 105,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 437,
       "HANDLED_BY": 706,
-      "HAS_COMMIT": 1492,
+      "HAS_COMMIT": 1494,
       "IMPLEMENTS": 124,
       "IMPORTS": 2873,
       "INHERITS": 17,
@@ -34201,20 +34201,20 @@
       "path": "docs/release/nft-portrait-reveal.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 2629,
-      "lines": 38,
-      "version": "c1ec42b4203acfd7",
+      "bytes": 3119,
+      "lines": 45,
+      "version": "0dbeb231bdad66c3",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/nft-portrait-reveal.md",
           "line": 1,
-          "version": "c1ec42b4203acfd7"
+          "version": "0dbeb231bdad66c3"
         }
       ],
-      "lastChangedAt": "2026-09-24T21:20:23.000Z",
+      "lastChangedAt": "2026-09-24T22:06:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bcd03318c2416205000353d51d2abc8bd93df11d"
+      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
     },
     {
       "key": "Artifact:docs/release/RC1-MANIFEST.md",
@@ -35997,18 +35997,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "05cb0c23e9286189",
+      "version": "ede27201c86ab875",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "05cb0c23e9286189"
+          "version": "ede27201c86ab875"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-24T22:06:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -60210,18 +60210,18 @@
       "extension": ".md",
       "bytes": 56651,
       "lines": 756,
-      "version": "0c0110a5c407251a",
+      "version": "f0535ce788271c19",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0c0110a5c407251a"
+          "version": "f0535ce788271c19"
         }
       ],
-      "lastChangedAt": "2026-09-20T16:05:08.000Z",
+      "lastChangedAt": "2026-09-24T22:06:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72"
+      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
     },
     {
       "key": "Artifact:src/access.js",
@@ -69155,20 +69155,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 280116,
-      "lines": 4189,
-      "version": "a71f520825950116",
+      "bytes": 280357,
+      "lines": 4190,
+      "version": "1697e233ea4f2929",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a71f520825950116"
+          "version": "1697e233ea4f2929"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-09-24T22:06:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -85936,6 +85936,22 @@
       ]
     },
     {
+      "key": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "type": "Commit",
+      "id": "61134d60e69b038895c8ee7286272f57097ce9ae",
+      "label": "Register NFT artwork cache and refresh checked file counts",
+      "title": "Register NFT artwork cache and refresh checked file counts",
+      "date": "2026-09-24T22:06:46.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/61134d60e69b038895c8ee7286272f57097ce9ae",
+      "provenance": [
+        {
+          "commit": "61134d60e69b038895c8ee7286272f57097ce9ae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/61134d60e69b038895c8ee7286272f57097ce9ae"
+        }
+      ]
+    },
+    {
       "key": "Commit:611505babc42c8619002d598b1f968a51b928c3e",
       "type": "Commit",
       "id": "611505babc42c8619002d598b1f968a51b928c3e",
@@ -96668,6 +96684,22 @@
         {
           "commit": "d55353b9bdfdc3298031fae470757f56948d2724",
           "url": "https://github.com/OmertaDev/Omerta/commit/d55353b9bdfdc3298031fae470757f56948d2724"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "type": "Commit",
+      "id": "d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "label": "chore(knowledge): refresh NFT release artifacts",
+      "title": "chore(knowledge): refresh NFT release artifacts",
+      "date": "2026-09-24T21:21:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "provenance": [
+        {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d57884a1d48b5acbb7574f79b483cefa2702b86f"
         }
       ]
     },
@@ -108162,13 +108194,13 @@
       "id": "docs/release/nft-portrait-reveal.md",
       "label": "docs/release/nft-portrait-reveal.md",
       "documentType": "documentation",
-      "lines": 38,
-      "version": "c1ec42b4203acfd7",
+      "lines": 45,
+      "version": "0dbeb231bdad66c3",
       "provenance": [
         {
           "file": "docs/release/nft-portrait-reveal.md",
           "line": 1,
-          "version": "c1ec42b4203acfd7"
+          "version": "0dbeb231bdad66c3"
         }
       ]
     },
@@ -109395,12 +109427,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "05cb0c23e9286189",
+      "version": "ede27201c86ab875",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "05cb0c23e9286189"
+          "version": "ede27201c86ab875"
         }
       ]
     },
@@ -111443,12 +111475,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 756,
-      "version": "0c0110a5c407251a",
+      "version": "f0535ce788271c19",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0c0110a5c407251a"
+          "version": "f0535ce788271c19"
         }
       ]
     },
@@ -117240,6 +117272,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -117862,6 +117897,9 @@
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
@@ -118530,6 +118568,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -119196,6 +119237,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -119413,6 +119457,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -120021,6 +120068,9 @@
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "d580b9a7f0ead4d386f25c30a90905da7ee9b4ca"
         },
         {
@@ -120321,6 +120371,9 @@
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
         },
         {
@@ -120453,6 +120506,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+        },
+        {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         },
         {
@@ -120571,6 +120627,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -127977,7 +128036,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bcd03318c2416205000353d51d2abc8bd93df11d",
+      "revision": "61134d60e69b038895c8ee7286272f57097ce9ae",
       "currentBranch": "codex/nft-paid-portrait-release",
       "defaultBranch": "main",
       "visibility": "public",
@@ -157004,13 +157063,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4189,
-      "version": "a71f520825950116",
+      "lines": 4190,
+      "version": "1697e233ea4f2929",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a71f520825950116"
+          "version": "1697e233ea4f2929"
         }
       ]
     },
@@ -222406,6 +222465,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "to": "Artifact:docs/release/nft-portrait-reveal.md",
+      "provenance": {
+        "commit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:611505babc42c8619002d598b1f968a51b928c3e",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation-task0-crosswalk.md",
       "provenance": {
@@ -269634,6 +269725,78 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "commit": "d55353b9bdfdc3298031fae470757f56948d2724"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
       }
     },
     {
@@ -344102,6 +344265,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:61134d60e69b038895c8ee7286272f57097ce9ae",
+      "provenance": {
+        "commit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:611505babc42c8619002d598b1f968a51b928c3e",
       "provenance": {
         "commit": "611505babc42c8619002d598b1f968a51b928c3e"
@@ -349465,6 +349636,14 @@
       "to": "Commit:d55353b9bdfdc3298031fae470757f56948d2724",
       "provenance": {
         "commit": "d55353b9bdfdc3298031fae470757f56948d2724"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d57884a1d48b5acbb7574f79b483cefa2702b86f",
+      "provenance": {
+        "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
       }
     },
     {
