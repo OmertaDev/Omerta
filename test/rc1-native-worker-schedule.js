@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createWorkerSchedule, alignOriginalHourlyBaseline, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
 import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
 import { createRecordedQueryOrder, replayRowOrder, replayCandidateSelection, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
 import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
@@ -73,6 +73,40 @@ execFileSync(process.execPath, ['--input-type=module', '-e', `
   } finally { seam.restore(); }
 `], { stdio: 'pipe' });
 console.log('PASS: cached uninstrumented database refuses before creating any pool');
+
+// A non-UTC boot phase must survive preparation. Alignment neither invents an
+// hourly tick at boot nor skips five-minute work or same-time seasonal callbacks.
+const HOUR = 3600000, origin = 137, alignedCalls = [], alignedBoundaries = [];
+let alignedClock = origin;
+const alignment = createWorkerSchedule({ start: origin, setClock: value => { alignedClock = value; } });
+alignment.timers.setInterval(async function guardedTick() { alignedCalls.push(['hourly', alignedClock]); }, HOUR);
+alignment.timers.setInterval(async function healthTick() { alignedCalls.push(['health', alignedClock]); }, HOUR / 12);
+alignment.timers.setInterval(async function guardedSeasonTick() { await Promise.resolve(); alignedCalls.push(['season', alignedClock]); }, HOUR);
+assert.equal(await alignOriginalHourlyBaseline(alignment, { logicalAt: origin }), origin);
+assert.equal(alignedCalls.length, 0, 'Already aligned boot must not add an hour');
+await alignment.advanceTo(origin + HOUR / 12);
+assert.equal(await alignOriginalHourlyBaseline(alignment, { logicalAt: alignedClock,
+  afterBoundary: async (at, label) => { alignedBoundaries.push([label, at]); } }), origin + HOUR);
+assert.equal(alignedCalls.filter(([kind]) => kind === 'health').length, 12);
+assert.deepEqual(alignedCalls.filter(([, at]) => at === origin + HOUR),
+  [['hourly', origin + HOUR], ['health', origin + HOUR], ['season', origin + HOUR]]);
+assert.deepEqual(alignedBoundaries.slice(-3),
+  [['guardedTick', origin + HOUR], ['healthTick', origin + HOUR], ['guardedSeasonTick', origin + HOUR]]);
+const completedCalls = alignedCalls.length;
+assert.equal(await alignOriginalHourlyBaseline(alignment, { logicalAt: alignedClock }), origin + HOUR);
+assert.equal(alignedCalls.length, completedCalls, 'Completed aligned timestamp must not replay or advance');
+await assert.rejects(alignOriginalHourlyBaseline(alignment, { logicalAt: origin }), /clock differs/);
+await alignment.close();
+for (const mode of ['missing', 'duplicate', 'period', 'one-shot']) {
+  const invalid = createWorkerSchedule({ start: 0, setClock() {} });
+  const guardedTick = async function guardedTick() {};
+  if (mode !== 'missing') invalid.timers[mode === 'one-shot' ? 'setTimeout' : 'setInterval'](guardedTick, mode === 'period' ? HOUR / 2 : HOUR);
+  if (mode === 'duplicate') invalid.timers.setInterval(guardedTick, HOUR);
+  await assert.rejects(alignOriginalHourlyBaseline(invalid, { logicalAt: 0 }), /exactly one|period changed|must repeat/);
+  assert(!invalid.diagnostic().events.some(event => event.kind === 'timer.fire'));
+  await invalid.close();
+}
+console.log('PASS: baseline alignment preserves original hourly phase, boot/completed boundaries and every same-time callback');
 
 if (process.argv.includes('--postgres')) {
   const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);

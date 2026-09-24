@@ -115,6 +115,28 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
   return api;
 }
 
+// Preparation may stop between original hourly deadlines. Complete that phase
+// through the original scheduler before validating/capturing a measured baseline.
+// Callers retain the worker boot origin and assign the actor epoch afterward.
+export async function alignOriginalHourlyBaseline(controller, { logicalAt, afterBoundary = async () => {} }) {
+  assert(Number.isSafeInteger(logicalAt)); assert.equal(typeof afterBoundary, 'function');
+  const diagnostic = controller.diagnostic();
+  assert.equal(diagnostic.logicalAt, logicalAt, 'Baseline alignment clock differs from the original scheduler');
+  const hourly = diagnostic.activeTimers.filter(timer => timer.label === 'guardedTick');
+  assert.equal(hourly.length, 1, 'Baseline alignment requires exactly one original guardedTick timer');
+  const timer = hourly[0];
+  assert.equal(timer.repeat, true, 'Original guardedTick must repeat');
+  assert.equal(timer.period, 3600000, 'Original guardedTick period changed');
+  assert(Number.isSafeInteger(timer.due) && timer.due >= logicalAt && timer.due <= logicalAt + timer.period,
+    'Original guardedTick deadline is outside its current phase');
+  const target = (logicalAt - timer.due) % timer.period === 0 ? logicalAt : timer.due;
+  await controller.advanceTo(target, afterBoundary);
+  const completed = controller.diagnostic();
+  assert.equal(completed.logicalAt, target);
+  assert(completed.activeTimers.every(entry => entry.due > target), 'Baseline alignment left a due original callback');
+  return target;
+}
+
 export function installWorkerInstrumentation(controller, { namespace, queryOrder = null, commitObserver = null, root = new URL('../', import.meta.url) } = {}) {
   assert(!globalThis.__rc1Worker); assert(/^[a-z_][a-z_0-9]*$/.test(namespace));
   const clock = serialDatabaseOptions({ commitObserver });
