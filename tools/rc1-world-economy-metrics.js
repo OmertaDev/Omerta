@@ -264,6 +264,7 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
   assert.equal(new Set(roster).size, roster.length); assert(Number.isSafeInteger(logicalAt)); assert(typeof streamId === 'string' && streamId);
   const config = { format: 1, roster: [...roster].sort(), contract: economyDigest(WORLD_ECONOMY_METRICS_CONTRACT) };
   let state = { config, startAt: logicalAt, logicalAt, streamId, lastSequence: 0, lastBoundary: null,
+    enrolledRoster: [...config.roster], enrollments: [],
     nativeHash: economySnapshotHash(initial), stocks: economyStocks(initial), stockTime: {}, flows: {}, playerFlows: {}, rewards: {}, rewardCategories: {},
     missing: {}, boundaries: 0, freshReceipts: 0, freshItemEvents: 0, samples: [], chain: economyDigest(config) };
   function integrate(at) {
@@ -276,6 +277,8 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
     const elapsed = state.logicalAt - state.startAt;
     const resources = [...new Set([...Object.keys(state.stocks.values), ...Object.keys(state.flows), ...Object.keys(state.rewards)])].sort();
     return { format: 1, label, logicalAt: state.logicalAt, elapsedMs: elapsed, nativeHash: state.nativeHash, boundaryChain: state.chain,
+      distributionScope: 'Lifetime distribution across append-only canonically enrolled synthetic accounts, including retired accounts and zero-reward replacements',
+      initialRoster: [...config.roster], enrolledRoster: [...state.enrolledRoster],
       boundaries: state.boundaries, freshReceipts: state.freshReceipts, freshItemEvents: state.freshItemEvents,
       resources: resources.map(resource => {
         const flows = { created: '0', destroyed: '0', transferred: '0', custody: '0', ...state.flows[resource] };
@@ -285,13 +288,23 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
           flows, flowScope: 'Classified observed movements only; missingCoverage can contain additional unclassified activity',
           unitsPerLogicalDay: Object.fromEntries(Object.entries(flows).map(([type, amount]) => [type, elapsed ? ratio(multiply(amount, DAY), elapsed) : null])),
           transferTurnover: elapsed ? ratio(multiply(flows.transferred, elapsed), state.stockTime[resource] || '0') : null,
-          perPlayerFlows: config.roster.map(accountId => ({ accountId, created: '0', destroyed: '0', transferredIn: '0', transferredOut: '0', custody: '0',
+          perPlayerFlows: state.enrolledRoster.map(accountId => ({ accountId, created: '0', destroyed: '0', transferredIn: '0', transferredOut: '0', custody: '0',
             ...state.playerFlows[resource]?.[accountId] })),
-          reward: concentration(config.roster, state.rewards[resource] || {}),
-          rewardCategories: Object.entries(state.rewardCategories[resource] || {}).map(([category, rewards]) => ({ category, ...concentration(config.roster, rewards) })) };
+          reward: concentration(state.enrolledRoster, state.rewards[resource] || {}),
+          rewardCategories: Object.entries(state.rewardCategories[resource] || {}).map(([category, rewards]) => ({ category, ...concentration(state.enrolledRoster, rewards) })) };
       }), missingCoverage: Object.values(state.missing), scope: WORLD_ECONOMY_METRICS_CONTRACT.coverage };
   }
   return {
+    registerAccounts(ids) {
+      assert(Array.isArray(ids) && ids.every(id => typeof id === 'string' && id), 'Enrollment requires explicit canonical account IDs');
+      const added = [...new Set(ids)].filter(id => !state.enrolledRoster.includes(id)).sort();
+      if (added.length) {
+        state.enrolledRoster = [...state.enrolledRoster, ...added].sort();
+        state.enrollments.push({ logicalAt: state.logicalAt, accountIds: added });
+        state.chain = economyDigest({ prior: state.chain, enrollment: state.enrollments.at(-1) });
+      }
+      return { added: [...added], enrolledAccounts: state.enrolledRoster.length };
+    },
     observe({ event, journal, before, after }) {
       assert(Number.isSafeInteger(event.sequence) && event.sequence > 0);
       assert(['COMMITTED', 'AUTOCOMMITTED', 'ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome));
@@ -349,6 +362,16 @@ export function createWorldEconomyMetrics({ roster, initial, logicalAt, streamId
       assert.deepEqual(checkpoint.state.config, config, 'Economy checkpoint roster/contract mismatch');
       assert.equal(checkpoint.state.nativeHash, economySnapshotHash(nativeSnapshot), 'Economy checkpoint native state mismatch');
       const restored = clone(checkpoint.state);
+      const enrolled = new Set(config.roster);
+      assert(Array.isArray(restored.enrollments), 'Missing explicit enrollment history');
+      let enrolledAt = restored.startAt;
+      for (const entry of restored.enrollments) {
+        assert(Number.isSafeInteger(entry.logicalAt) && entry.logicalAt >= enrolledAt && entry.logicalAt <= restored.logicalAt, 'Invalid enrollment time');
+        assert(Array.isArray(entry.accountIds) && entry.accountIds.length > 0);
+        for (const id of entry.accountIds) { assert(typeof id === 'string' && id && !enrolled.has(id), 'Enrollment must be append-only'); enrolled.add(id); }
+        enrolledAt = entry.logicalAt;
+      }
+      assert.deepEqual(restored.enrolledRoster, [...enrolled].sort(), 'Enrolled roster differs from canonical enrollment history');
       if (options.streamId != null && options.streamId !== restored.streamId) {
         assert(typeof options.streamId === 'string' && options.streamId); restored.streamId = options.streamId;
         restored.lastSequence = 0; restored.lastBoundary = null;

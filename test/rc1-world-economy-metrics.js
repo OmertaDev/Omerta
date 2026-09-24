@@ -152,6 +152,22 @@ test('unpaired OMR bucket nets remain local missing flow coverage', () => {
   assert.equal(metrics.summary().missingCoverage[0].example.kind, 'omr-bucket-flow');
 });
 
+test('canonical churn enrollment adds zero-reward replacements and retains retired actors', () => {
+  const state = initial(), metrics = engine(state), request = boundary(state, { receipts: [receipt('earned', 'a', '12', 'crime:pick')] });
+  metrics.observe(request); metrics.sample(DAY, 'before-churn');
+  assert.deepEqual(metrics.registerAccounts(['replacement', 'a', 'replacement']), { added: ['replacement'], enrolledAccounts: 4 });
+  const cash = resource(metrics, 'cash'); assert.equal(cash.reward.perPlayer.length, 4);
+  assert.equal(cash.reward.perPlayer.find(row => row.accountId === 'replacement').quantity, '0');
+  assert.equal(cash.perPlayerFlows.find(row => row.accountId === 'replacement').created, '0');
+  assert.equal(cash.reward.perPlayer.find(row => row.accountId === 'a').quantity, '12');
+  assert.equal(ratio(cash.reward.gini), 3 / 4); assert.equal(metrics.summary().timeSeries[0].enrolledRoster.length, 3);
+  const checkpoint = metrics.checkpoint(); metrics.registerAccounts(['replacement']); assert.deepEqual(metrics.checkpoint(), checkpoint);
+  assert.deepEqual(engine(state).restore(checkpoint, request.after).summary(), metrics.summary());
+  assert.deepEqual(metrics.summary().initialRoster, roster); assert.throws(() => metrics.registerAccounts([null]), /Enrollment/);
+  const corrupt = structuredClone(checkpoint); corrupt.state.enrolledRoster.pop(); corrupt.sha256 = economyDigest(corrupt.state);
+  assert.throws(() => engine(state).restore(corrupt, request.after), /Enrolled roster/);
+});
+
 test('new lifecycle transfer/refund/turf classifiers partition flows without rewards', () => {
   const state = initial(), metrics = engine(state), request = boundary(state, { receipts: [
     receipt('order', 'a', '-100', 'market:order'), receipt('fee', 'a', '-5', 'market:list'),
