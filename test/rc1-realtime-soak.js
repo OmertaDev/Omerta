@@ -2,7 +2,11 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { once } from 'node:events';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { createSoakHttpClient, enterSoakActors, nextSoakRequest, createSoakMeasurements, runSoakTraffic } from '../tools/rc1-realtime-soak.js';
+import { localSoakEnvironmentValues, createLocalSoakEnvironment, localSoakFaultPlan } from '../tools/rc1-realtime-soak-local.js';
+import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const recorder = () => ({ events: [], artifacts: new Map(),
@@ -139,4 +143,47 @@ await withServer(async (_req, res) => { await sleep(40); if (!res.destroyed) sen
   const result = await client.request({ path: '/v1/me' }); assert.equal(result.status, null); assert.equal(result.error.code, 'SOAK_TIMEOUT'); passed++;
 }, { timeoutMs: 5 });
 assert.throws(() => createSoakHttpClient({ baseUrl: 'https://secret@example.com', maxInflight: 1 }));
+{
+  const values = { databaseUrl: 'postgres://postgres@127.0.0.1/rc1_world_000000000000000000000000', port: 49999,
+    secrets: { JWT_SECRET: 'a'.repeat(32), MARKET_SEED: 'b'.repeat(32), MOD_KEY: 'c'.repeat(32) } };
+  const env = localSoakEnvironmentValues(values);
+  assert.equal(env.RATE_LIMIT, 'on'); assert.equal(env.INVITE_MODE, 'on'); assert.equal(env.NODE_ENV, 'production');
+  for (const settings of [{ RATE_LIMIT: 'off' }, { CHAIN_RPC_URL: 'http://production.invalid' }, { CAR_THEFT_P: '1' }, { PG_LOCK_TIMEOUT_MS: '0' }])
+    assert.throws(() => localSoakEnvironmentValues({ ...values, settings }));
+  assert.throws(() => localSoakEnvironmentValues({ ...values, databaseUrl: 'postgres://postgres@elsewhere/production' }));
+  assert.throws(() => localSoakEnvironmentValues({ ...values, secrets: { ...values.secrets, RATE_LIMIT: 'off' } }));
+  assert.throws(() => localSoakFaultPlan({}, { schedule: {} })); passed++;
+}
 process.stdout.write(`${JSON.stringify({ status: 'PASS_SCOPED', controls: passed, scope: 'Real socket driver controls; no native game, twelve-hour soak, or production equivalence claim' })}\n`);
+
+if (process.argv.includes('--postgres')) {
+  assert(process.env.RC1_SOAK_CONTROL_URL && process.env.RC1_SOAK_OUTPUT, 'Explicit disposable control URL and fresh private output directory required');
+  const source = await sourceIdentity(), directory = path.resolve(process.env.RC1_SOAK_OUTPUT), runId = path.basename(directory);
+  const proof = await createProofRecorder({ directory, source, runId, seed: 'local-soak-control', scenarioId: 'realtime-soak-controls', population: 3,
+    configuration: { originalEntrypoints: true, population: 3, rateLimits: 'on', acceleratedClock: false, scope: 'Bounded local fault controls, not twelve-hour qualification' } });
+  let environment, client, finished = false, cleanupAttempted = false;
+  try {
+    environment = await createLocalSoakEnvironment({ source, recorder: proof, runId, controlUrl: process.env.RC1_SOAK_CONTROL_URL, population: 3 });
+    client = createSoakHttpClient({ baseUrl: environment.baseUrl, maxInflight: 3 });
+    const roster = await enterSoakActors({ admissions: environment.admissions, client, recorder: proof, spacingMs: 1000 });
+    const kinds = ['shared-object contention', 'reconnect storm', 'worker interruption', 'database reconnect', 'server restart'];
+    const plan = localSoakFaultPlan(environment, { schedule: Object.fromEntries(kinds.map(kind => [kind, 0])), reconnectActors: 2, pauseMs: 100 });
+    const results = [];
+    for (const fault of plan) results.push(await proof.invoke('local-original-fault-control', { kind: fault.kind }, () => fault.run({ actors: roster, client, recorder: proof })));
+    assert.equal(results[0].intervention.freshSales, 1); assert.equal(results[1].intervention.successful, 2);
+    assert.notEqual(results[2].intervention.stopped.pid, results[2].intervention.restarted.pid);
+    assert(results[3].intervention.results.some(row => row.result.some(value => value.terminated === true)));
+    assert.notEqual(results[4].intervention.stopped.pid, results[4].intervention.restarted.pid);
+    await proof.artifact('local-fault-controls.json', { results, scope: 'Actual original local processes, ordinary HTTP actors and five injected fault controls. Due-work completeness and production equivalence remain open.' });
+    client.close(); cleanupAttempted = true; await environment.close(); finished = true;
+    const record = await proof.finish({ status: 'PASS_SCOPED', controls: 5, faultCasesComplete: false, backlogRecoveryPassed: false, productionEquivalent: false });
+    const verified = await verifyArtifactIndex(directory, record);
+    await fs.writeFile(path.join(directory, 'verification.json'), JSON.stringify({ source: source.revision, verified }) + '\n', { flag: 'wx', mode: 0o600 });
+    process.stdout.write(JSON.stringify({ status: record.status, nativeFaultControls: 5, source: source.revision, originalProcesses: true, productionEquivalent: false }) + '\n');
+  } catch (error) {
+    client?.close(); if (environment && !cleanupAttempted) try { cleanupAttempted = true; await environment.close(); } catch { /* cleanup artifact retains details */ }
+    if (!finished) { await proof.record({ kind: 'local-soak-control-failure', error: { message: error.message, code: error.code || null } });
+      await proof.finish({ status: 'FAIL', message: error.message, productionEquivalent: false }); }
+    throw error;
+  }
+}

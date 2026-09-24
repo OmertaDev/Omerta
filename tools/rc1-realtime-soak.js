@@ -281,7 +281,7 @@ export async function captureSoakBackend({ pool, recorder, label }) {
   await recorder.record({ kind: 'soak-backend-observation', observation: value }); return value;
 }
 
-export async function runRealtimeSoak({ configuration, admissions, pool, faults = [], envelopeEvidence = null }) {
+export async function runRealtimeSoak({ configuration, admissions = [], pool, faults = [], envelopeEvidence = null, prepareEnvironment = null }) {
   const source = await sourceIdentity();
   const manifestBytes = await fs.readFile('docs/release/readiness-work/scenario-manifest.json');
   const frozenBytes = await fs.readFile('docs/release/evidence/freeze/manifest.json');
@@ -290,18 +290,28 @@ export async function runRealtimeSoak({ configuration, admissions, pool, faults 
     timeoutMs = 30000, entrySpacingMs = 1000, observationEveryMs = HOUR, historyStorage } = configuration;
   positive(durationMs, 'durationMs'); positive(arrivalsPerSecond, 'arrivalsPerSecond'); integer(maxInflight, 'maxInflight');
   integer(maxQueued, 'maxQueued'); integer(burstSize, 'burstSize'); positive(observationEveryMs, 'observationEveryMs');
-  assert(burstSize <= admissions.length && burstSize <= maxInflight && burstSize <= maxQueued);
+  const population = prepareEnvironment ? configuration.population : admissions.length;
+  integer(population, 'population'); assert(burstSize <= population && burstSize <= maxInflight && burstSize <= maxQueued);
+  if (prepareEnvironment) assert(configuration.faultSchedule && typeof configuration.faultSchedule === 'object', 'Prepared environment requires an explicit fault schedule');
   assert(Number.isFinite(entrySpacingMs) && entrySpacingMs >= 0);
-  const publicConfiguration = { baseUrl, runId, seed, durationMs, arrivalsPerSecond, maxInflight, maxQueued, burstSize,
-    timeoutMs, entrySpacingMs, observationEveryMs, admissionsSha256: digest(admissions),
+  const publicConfiguration = { baseUrl: baseUrl || null, runId, seed, durationMs, arrivalsPerSecond, maxInflight, maxQueued, burstSize, population,
+    timeoutMs, entrySpacingMs, observationEveryMs, admissionsSha256: prepareEnvironment ? null : digest(admissions),
+    environmentPreparation: prepareEnvironment ? 'Source-bound owned local environment; concrete setup artifacts precede entry' : 'External environment',
     criteria, criteriaManifestSha256: sha256(manifestBytes), historicalFreezeManifestSha256: sha256(frozenBytes),
-    requestedFaults: faults.map(({ kind, atMs }) => ({ kind, atMs })),
+    requestedFaults: prepareEnvironment ? configuration.faultSchedule : faults.map(({ kind, atMs }) => ({ kind, atMs })),
     deploymentEnvelope: envelopeEvidence ? { sha256: digest(envelopeEvidence), verification: 'NOT_ATTESTED' } : null };
   const recorder = await createProofRecorder({ directory, source, configuration: publicConfiguration, runId, seed,
-    scenarioId: 'realtime-soak', population: admissions.length, ...(historyStorage ? { historyStorage } : {}) });
-  const client = createSoakHttpClient({ baseUrl, maxInflight, timeoutMs });
-  let finishAttempted = false;
+    scenarioId: 'realtime-soak', population, ...(historyStorage ? { historyStorage } : {}) });
+  let finishAttempted = false, client = null, environment = null, cleanupAttempted = false;
   try {
+    if (prepareEnvironment) {
+      environment = await prepareEnvironment({ source, recorder });
+      ({ admissions, pool, faults } = environment); assert.equal(admissions.length, population);
+      envelopeEvidence = environment.envelopeEvidence;
+      await recorder.record({ kind: 'soak-owned-environment-ready', baseUrl: environment.baseUrl, admissionsSha256: digest(admissions),
+        faultSchedule: faults.map(({ kind, atMs }) => ({ kind, atMs })), sourceRevision: source.revision });
+    }
+    client = createSoakHttpClient({ baseUrl: environment?.baseUrl || baseUrl, maxInflight, timeoutMs });
     if (envelopeEvidence) await recorder.artifact('soak-envelope-input.json', envelopeEvidence);
     await captureSoakBackend({ pool, recorder, label: 'before-entry' });
     const actors = await enterSoakActors({ admissions, client, recorder, spacingMs: entrySpacingMs });
@@ -315,6 +325,7 @@ export async function runRealtimeSoak({ configuration, admissions, pool, faults 
     await captureSoakBackend({ pool, recorder, label: 'after-traffic' });
     const status = result.failure || result.unresolvedCommands.length || result.faults.some(fault => fault.status === 'FAILED') ? 'FAIL' : 'PASS_SCOPED';
     await recorder.artifact('soak-observations.json', result);
+    if (environment) { cleanupAttempted = true; await environment.close(); }
     finishAttempted = true;
     return await recorder.finish({ status, scope: 'Ordinary HTTP entry and measured wall-clock traffic with native read-only backend observations', ...result,
       matrixQualifying: false, productionEquivalent: false, originalWorkerSourceAttested: false, resourceEnvelope: null,
@@ -323,10 +334,12 @@ export async function runRealtimeSoak({ configuration, admissions, pool, faults 
         'Admit resource/state observations and measured results through the existing qualification verifier'] });
   } catch (error) {
     if (finishAttempted) throw error; // Never append after a final history hash or overwrite a retained failed report.
+    if (environment && !cleanupAttempted) { cleanupAttempted = true; try { await environment.close(); }
+      catch (cleanupError) { await recorder.record({ kind: 'soak-cleanup-failure', error: errorValue(cleanupError) }); } }
     await recorder.record({ kind: 'soak-driver-failure', error: errorValue(error) });
     await recorder.finish({ status: 'FAIL', error: errorValue(error), scope: 'Incomplete ordinary HTTP soak driver execution' });
     throw error;
-  } finally { client.close(); }
+  } finally { client?.close(); }
 }
 
 // A caller owns the already-running environment. DATABASE_URL is used only for
