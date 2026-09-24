@@ -511,7 +511,7 @@ const opportunities = observedOpportunityTracker();
 const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands: 0, legacyCrimeAttempts: 0,
   crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
   commandTypes: {}, observedAuthorizedOpportunities: 0 };
-const days = [], latencies = { read: [], command: [] }, latencyActors = { read: [], command: [] };
+const days = [], latencyTimeSeries = [], latencies = { read: [], command: [] }, latencyActors = { read: [], command: [] };
 const knowledgeBoundaries = [];
 const allianceActors = [];
 const familyActors = []; let familyAdapter = null;
@@ -1222,9 +1222,10 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary('alliance-day-' + day);
     const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
-      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster),
-      latencyObservation: latencyDistribution(roster, latencies, latencyActors) };
-    days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
+      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
+    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
+    latencyTimeSeries.push(latencyObservation);
+    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
     const economy = economyMetrics?.sample(at, 'day-' + day);
     if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
     const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
@@ -1508,9 +1509,10 @@ try {
     for (const account of selected) await session(account, day);
     await invariantBoundary(`${dailyFullRoster ? actorPolicy : 'quiet'}-day:${day}`);
     const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
-      opportunityObservation: opportunities.summarize(at, roster),
-      latencyObservation: latencyDistribution(roster, latencies, latencyActors) };
-    days.push(entry); await proof.record({ kind: 'day-summary', ...entry });
+      opportunityObservation: opportunities.summarize(at, roster) };
+    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
+    latencyTimeSeries.push(latencyObservation);
+    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
     const economy = economyMetrics?.sample(at, 'day-' + day);
     if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
     if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
@@ -1663,7 +1665,9 @@ try {
   }
   await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
   await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
-  await proof.artifact('player-metrics.json', { days, metrics, latencies, actorActions: Object.fromEntries(actorActions),
+  await proof.artifact('player-metrics.json', { days, metrics, latencies, latencyTimeSeries,
+    latencyScope: 'Current measured process segment; predecessor latency evidence stays in its referenced original artifact. Wall time is excluded from actor-policy state and semantic replay equality.',
+    actorActions: Object.fromEntries(actorActions),
     latencyDistribution: latencyDistribution(roster, latencies, latencyActors),
     opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
       + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
@@ -1689,8 +1693,7 @@ try {
     backlogDiagnosticsSha256: sha256(canonicalJson(backlogBoundaries)),
     durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
     lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
-    semanticMetricsSha256: sha256(canonicalJson({ days: days.map(({ latencyObservation, ...semantic }) => semantic),
-      metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
+    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
     checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
     worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
     resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
