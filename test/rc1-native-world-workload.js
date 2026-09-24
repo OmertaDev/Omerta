@@ -328,9 +328,9 @@ if (resume) runtime.restoreTape(parentTape);
 // registration IDs. Retain those draws without shifting the restored gameplay
 // stream, just as for the repeated original worker startup below.
 const initializeApplication = work => resume && httpEnabled ? runtime.withRestartStartup(work) : work();
-let prepareMarketBoundary = async () => {};
+let prepareMarketBoundary = async () => {}, observeQuiescentDaily = async () => {};
 const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant,
-  beforeCallback: identity => prepareMarketBoundary(identity) });
+  beforeCallback: identity => prepareMarketBoundary(identity), afterTimestamp: () => observeQuiescentDaily() });
 const namespace = resume ? parentCheckpoint.schema : `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
 const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: replay, artifact: proof.artifact });
 const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
@@ -773,6 +773,37 @@ try {
       diagnosticSha256: sha256(canonicalJson(diagnostic)) };
     knowledgeBoundaries.push(comparison); await proof.record({ kind: 'knowledge-observer-boundary', ...comparison });
   }
+  let pendingDailyObservation = null;
+  const queueDailyObservation = (day, selected, alliance = false) => {
+    assert.equal(pendingDailyObservation, null, 'Previous daily observation was not drained');
+    pendingDailyObservation = { day, selected, alliance, logicalAt: at };
+  };
+  observeQuiescentDaily = async () => {
+    if (!pendingDailyObservation) return;
+    const { day, selected, alliance, logicalAt } = pendingDailyObservation;
+    assert.equal(at, logicalAt, 'Daily observation moved beyond its original timestamp');
+    assert(!controller.diagnostic().activeTimers.some(timer => timer.due <= at), 'Daily observation precedes a due original callback');
+    await invariantBoundary((alliance ? 'alliance' : actorPolicy) + '-day:' + day);
+    const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
+      ...(alliance ? { alliance: allianceAdapter.summary() } : {}), opportunityObservation: opportunities.summarize(at, roster) };
+    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
+    latencyTimeSeries.push(latencyObservation);
+    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
+    const economy = economyMetrics?.sample(at, 'day-' + day);
+    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
+    if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
+    const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
+    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
+      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+    await proof.artifact('world-diagnostics-day-' + day + '.json', diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
+    if (alliance) await proof.artifact('alliance-day-' + day + '-checkpoint.json', allianceAdapter.checkpoint());
+    await guardBoundary('day:' + day);
+    originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
+      ...(alliance ? { allianceFresh: allianceAdapter.summary().fresh } : {}),
+      crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
+    pendingDailyObservation = null;
+  };
   if (familyEnabled && !resume) {
     const { PACING } = await import('../src/rules.js'), plan = configuration.familyPlan, grants = [];
     const founders = new Set(plan.groups.map(group => group.founder));
@@ -1224,23 +1255,7 @@ try {
       pending: allianceAdapter.checkpoint().payload.state.pending }); return; }
     lastDay = day;
     for (const account of selected) await session(account, day);
-    await invariantBoundary('alliance-day-' + day);
-    const entry = { day, logicalAt: at, selectedActors: selected, metrics: structuredClone(metrics),
-      alliance: allianceAdapter.summary(), opportunityObservation: opportunities.summarize(at, roster) };
-    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
-    latencyTimeSeries.push(latencyObservation);
-    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
-    const economy = economyMetrics?.sample(at, 'day-' + day);
-    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
-    const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
-    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
-      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
-    await proof.artifact('world-diagnostics-day-' + day + '.json', diagnostics);
-    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
-    await proof.artifact('alliance-day-' + day + '-checkpoint.json', allianceAdapter.checkpoint());
-    await guardBoundary('alliance-day:' + day);
-    originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, allianceFresh: allianceAdapter.summary().fresh,
-      crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
+    queueDailyObservation(day, selected, true);
   }
   async function churnWeek(day) {
     if (!day || day % 7) return;
@@ -1465,7 +1480,10 @@ try {
   }
   workPhase = 'measured';
   if (lawEnabled && !resume) await lawWindow(at);
-  if (allianceEnabled) { if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1); }
+  if (allianceEnabled) {
+    if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1);
+    await observeQuiescentDaily();
+  }
   const afterBoundary = async (logicalAt, label) => {
     if (configuration.stopOnResourceGap) {
       if (firstResourceError) throw firstResourceError;
@@ -1515,26 +1533,9 @@ try {
       checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt }, checkpoint),
     });
     for (const account of selected) await session(account, day);
-    await invariantBoundary(`${dailyFullRoster ? actorPolicy : 'quiet'}-day:${day}`);
-    const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
-      opportunityObservation: opportunities.summarize(at, roster) };
-    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
-    latencyTimeSeries.push(latencyObservation);
-    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
-    const economy = economyMetrics?.sample(at, 'day-' + day);
-    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
-    if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
-    const daily = await proof.snapshot(pool, `day-${day}`);
-    await knowledgeBoundary(`day-${day}`, daily);
-    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
-      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
-    await proof.artifact(`world-diagnostics-day-${day}.json`, diagnostics);
-    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
-    await guardBoundary(`day:${day}`);
-    originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
-      crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
+    queueDailyObservation(day, selected);
   };
-  if (dailyFullRoster && !resume) await afterBoundary(at, 'guardedTick');
+  if (dailyFullRoster && !resume) { await afterBoundary(at, 'guardedTick'); await observeQuiescentDaily(); }
   if (legacyAlliance && !resume) {
     await controller.advanceTo(epoch + 86400000, afterBoundary);
     await allianceDay(1, true);
@@ -1551,7 +1552,7 @@ try {
       resourceJournalPrefixSha256: observeResources ? resourceStream.copy().digest('hex') : null,
       resourceJournalPrefixCount: resourceSummary.boundaries,
       semantics: 'Actual quiescent native dump with selected but undispatched request. Prefix belongs to the sealed parent stream; no process startup has been suppressed.' });
-    if (hours === 48) await allianceDay(1);
+    if (hours === 48) { await allianceDay(1); await observeQuiescentDaily(); }
   }
   await controller.advanceTo(finish, afterBoundary);
   workPhase = 'final-observation';
@@ -1770,7 +1771,13 @@ try {
   await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
   if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
   if (pool) {
-    try { await proof.snapshot(diagnosticPool, 'first-failure'); await proof.checkpoint(diagnosticPool, 'first-failure', url); }
+    try {
+      // The read-only diagnostic pool bypasses quarantined canonical clients.
+      // Its sole connection still needs the isolated schema's existing clock GUCs.
+      await diagnosticPool.query("SELECT set_config('rc1.transaction_time',$1,false),set_config('rc1.statement_time',$1,false)",
+        [new Date(at).toISOString()]);
+      await proof.snapshot(diagnosticPool, 'first-failure'); await proof.checkpoint(diagnosticPool, 'first-failure', url);
+    }
     catch (captureError) { await retainWorldFailure(() => proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }), { historyStorage, result }); }
   }
   process.exitCode = 1;

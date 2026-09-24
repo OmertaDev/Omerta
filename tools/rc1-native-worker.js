@@ -14,7 +14,8 @@ const fingerprint = (value) => sha256(canonicalJson(plain(value)));
 const NativeDate = Date;
 const timeout = globalThis.setTimeout, clearTimeoutNative = globalThis.clearTimeout;
 
-export function createWorkerSchedule({ start, setClock, expectedDormant = [], deadlineMs = 60000, beforeCallback = async () => {} } = {}) {
+export function createWorkerSchedule({ start, setClock, expectedDormant = [], deadlineMs = 60000,
+  beforeCallback = async () => {}, afterTimestamp = async () => {} } = {}) {
   let now = start, identity = 0;
   const timers = new Map(), boots = [], events = [], jobs = [], actors = [], failures = [], logs = [], pools = [], transformations = [];
   const initial = performance.now();
@@ -92,6 +93,7 @@ export function createWorkerSchedule({ start, setClock, expectedDormant = [], de
         record('timer.fire', { id: next.id, label: next.label });
         await invoke(next.label, () => next.callback(...next.args));
         await afterBoundary(now, next.label);
+        if (![...timers.values()].some(timer => timer.due <= now)) await afterTimestamp(now);
       }
       now = until; setClock(now);
     },

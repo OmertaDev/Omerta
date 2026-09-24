@@ -26,6 +26,15 @@ assert.deepEqual(prepared, [{ logicalAt: 10, label: 'originalTick' }, { logicalA
 assert.deepEqual(ordering, [['clock', 10], ['prepare', 10], ['original', 10], ['clock', 20], ['prepare', 20], ['original', 20], ['clock', 20]]);
 assert.equal(withPreparation.diagnostic().events.filter(row => row.kind === 'timer.fire').length, 2);
 await withPreparation.close();
+const drained = [], sameTimeWork = [];
+const withObservation = createWorkerSchedule({ start: 0, setClock() {},
+  afterTimestamp: async at => drained.push({ at, completed: [...sameTimeWork] }) });
+withObservation.timers.setInterval(async function hourly() { sameTimeWork.push('hourly'); }, 10);
+withObservation.timers.setInterval(async function seasonal() { sameTimeWork.push('seasonal'); }, 10);
+await withObservation.advanceTo(10, async (_, label) => sameTimeWork.push('actor-after-' + label));
+assert.deepEqual(drained, [{ at: 10, completed: ['hourly', 'actor-after-hourly', 'seasonal', 'actor-after-seasonal'] }]);
+assert.equal(withObservation.diagnostic().events.filter(row => row.kind === 'timer.fire').length, 2);
+await withObservation.close();
 const bad = createWorkerSchedule({ start: 0, setClock() {} });
 bad.timers.setTimeout(async () => { try { await bad.job('deliberate', async () => { throw Error('retained sentinel'); }); } catch {} }, 1);
 await assert.rejects(bad.advanceTo(1), /Unexpected production worker failure/);
