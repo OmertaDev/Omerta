@@ -510,7 +510,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2782 | 2026-09-14 |
-| [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 204 | 2026-09-24 |
+| [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 222 | 2026-09-24 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 185 | 2026-09-14 |
