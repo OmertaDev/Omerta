@@ -1,18 +1,18 @@
 # OMERTÀ LAUNCH STATUS
 
 Current harness integration: `d2a1804e`; focused documentation census correction: `ac024525`. Native admissions retain their individually tested revisions.
-Final candidate: **Candidate22**, `982220305bf9738f63b0ca5561dc42938b1a2457`, recorded in FINAL_LAUNCH_SHA. Verified connection-release fix; strict source identity and knowledge checks pass. Full CI and affected replay refresh are running. Prior evidence remains scoped to its retained revision and reviewed unchanged mechanisms.
+Final candidate: **Candidate22**, `982220305bf9738f63b0ca5561dc42938b1a2457`, recorded in FINAL_LAUNCH_SHA. Verified connection-release fix; strict source identity and knowledge checks pass. Full CI and affected replay refresh pass. Prior evidence remains scoped to its retained revision and reviewed unchanged mechanisms.
 Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspection (2026-09-24): `468516d8d6f3729514711ad5a0b83e440c5c46f9`; the existing source-pair pin remains current.
 
 | Required result | Status |
 | --- | --- |
 | Technical qualification | FAIL |
 | Registered command gates | 114 / 114 |
-| Final regression | FAIL — Candidate22 full CI36069862467 in progress; prior scoped pass retained |
+| Final regression | PASS — Candidate22 full CI36069862467;96 successful steps,2 expected skips |
 | Acceptance matrix | NOT_REQUIRED — explicit user waiver2026-09-24;0/225 passed |
 | Contracts | PASS — reused: 1,247 passed, 0 failed, 0 skipped |
-| PostgreSQL 16 | FAIL — Candidate22 affected checks in progress; prior scoped pass retained |
-| PostgreSQL 18.4 | FAIL — local pgcheck221 passes; Candidate22 hosted lane and replay admission pending |
+| PostgreSQL 16 | PASS_NEW — Candidate22 hosted lane plus fresh serial/concurrent replay |
+| PostgreSQL 18.4 | PASS_NEW — Candidate22 hosted lane,pgcheck221 and fresh serial/concurrent replay |
 | Resource accounting | PASS — original P0 workload: zero unexplained entries |
 | Replay | PASS — Candidate22 serial/concurrent on PG16.15 and18.4; unchanged broader proof retained |
 | Restart recovery | PASS — authoritative state, identities, RNG and ordered resource effects agree |
@@ -20,7 +20,7 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 | Boat recovery | PASS — retained scoped proof |
 | Mobile automation | PASS — all nine Section11 areas at four widths on both database versions |
 | Authority | PASS — complete source-phase route/role/command review; deployed configuration remains separate |
-| Soak | FAIL — Candidate22 full run launched23:11UTC;12h qualifying interval still pending |
+| Soak | FAIL — all1000 admitted; measured12h began23:37:43UTC,ends11:37:43UTC Sep25; incomplete |
 | Upgrade | PASS — joined API migration and actual worker startup rehearsal |
 | Rollback | PASS — API state/receipt preservation and predecessor worker on candidate-written state |
 | Evidence integrity | PASS — admitted artifacts verified; final qualification package pending |
