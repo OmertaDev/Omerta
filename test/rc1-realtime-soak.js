@@ -5,7 +5,7 @@ import { once } from 'node:events';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createSoakHttpClient, enterSoakActors, nextSoakRequest, createSoakMeasurements, runSoakTraffic } from '../tools/rc1-realtime-soak.js';
-import { localSoakEnvironmentValues, createLocalSoakEnvironment, localSoakFaultPlan } from '../tools/rc1-realtime-soak-local.js';
+import { localSoakEnvironmentValues, createLocalSoakEnvironment, localSoakFaultPlan, withSharedSoakRead } from '../tools/rc1-realtime-soak-local.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -33,7 +33,7 @@ let passed = 0;
 // excludes bearer/recovery secrets while private artifacts retain recovery data.
 await withServer(async (req, res, body) => {
   assert(['POST /v1/auth/guest', 'POST /v1/character'].includes(`${req.method} ${req.url}`));
-  if (req.url.endsWith('/guest')) { assert(body.bootstrapSecret.length >= 32); assert.equal(body.inviteCode, 'already-issued'); send(res, { token: `token-${body.bootstrapSecret}` }); }
+  if (req.url.endsWith('/guest')) { assert.equal(body.bootstrapSecret.length, 43); assert.equal(Buffer.from(body.bootstrapSecret, 'base64url').length, 32); assert.equal(body.inviteCode, 'already-issued'); send(res, { token: `token-${body.bootstrapSecret}` }); }
   else { assert(req.headers.authorization.startsWith('Bearer token-')); assert(req.headers['idempotency-key']); send(res, { id: `character-${body.name}` }); }
 }, async client => {
   const proof = recorder(), roster = await enterSoakActors({ admissions: [{ name: 'Soak One', inviteCode: 'already-issued' }, { name: 'Soak Two', inviteCode: 'already-issued' }], client, recorder: proof, spacingMs: 0 });
@@ -166,6 +166,20 @@ if (process.argv.includes('--postgres')) {
     environment = await createLocalSoakEnvironment({ source, recorder: proof, runId, controlUrl: process.env.RC1_SOAK_CONTROL_URL, population: 3 });
     client = createSoakHttpClient({ baseUrl: environment.baseUrl, maxInflight: 3 });
     const roster = await enterSoakActors({ admissions: environment.admissions, client, recorder: proof, spacingMs: 1000 });
+    const consistency = await withSharedSoakRead(environment.pool, async ({ pool }) => {
+      const first = (await pool.query('SELECT muscle::text AS muscle,transaction_timestamp()::text AS at FROM characters WHERE id=$1', [roster[2].characterId])).rows[0];
+      const request = { method: 'POST', path: '/v1/train/muscle', body: {}, idempotencyKey: `native-mvcc-${runId}` };
+      await proof.record({ kind: 'soak-shared-snapshot-control-dispatch', actorIndex: 2, request });
+      const response = await client.request({ ...request, token: roster[2].token }); assert.equal(response.status, 200);
+      await proof.record({ kind: 'soak-shared-snapshot-control-completion', actorIndex: 2, response });
+      await sleep(20);
+      const second = (await pool.query('SELECT muscle::text AS muscle,transaction_timestamp()::text AS at FROM characters WHERE id=$1', [roster[2].characterId])).rows[0];
+      assert.deepEqual(first, second, 'One real read-only snapshot and SQL timestamp must survive a concurrent original HTTP commit');
+      return { first, second };
+    });
+    const current = (await environment.pool.query('SELECT muscle::text AS muscle FROM characters WHERE id=$1', [roster[2].characterId])).rows[0];
+    assert(Number(current.muscle) > Number(consistency.value.first.muscle));
+    await proof.artifact('local-shared-snapshot-control.json', { consistency, current });
     const kinds = ['shared-object contention', 'reconnect storm', 'worker interruption', 'database reconnect', 'server restart'];
     const plan = localSoakFaultPlan(environment, { schedule: Object.fromEntries(kinds.map(kind => [kind, 0])), reconnectActors: 2, pauseMs: 100 });
     const results = [];
@@ -176,7 +190,7 @@ if (process.argv.includes('--postgres')) {
     assert.notEqual(results[4].intervention.stopped.pid, results[4].intervention.restarted.pid);
     await proof.artifact('local-fault-controls.json', { results, scope: 'Actual original local processes, ordinary HTTP actors and five injected fault controls. Due-work completeness and production equivalence remain open.' });
     client.close(); cleanupAttempted = true; await environment.close(); finished = true;
-    const record = await proof.finish({ status: 'PASS_SCOPED', controls: 5, faultCasesComplete: false, backlogRecoveryPassed: false, productionEquivalent: false });
+    const record = await proof.finish({ status: 'PASS_SCOPED', controls: 5, sharedNativeSnapshotControl: true, faultCasesComplete: false, backlogRecoveryPassed: false, productionEquivalent: false });
     const verified = await verifyArtifactIndex(directory, record);
     await fs.writeFile(path.join(directory, 'verification.json'), JSON.stringify({ source: source.revision, verified }) + '\n', { flag: 'wx', mode: 0o600 });
     process.stdout.write(JSON.stringify({ status: record.status, nativeFaultControls: 5, source: source.revision, originalProcesses: true, productionEquivalent: false }) + '\n');

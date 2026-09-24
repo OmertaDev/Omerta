@@ -16,6 +16,8 @@ import { planOwnedWorldDatabase } from './rc1-native-database.js';
 import { makeInviteBatch, importBatch } from './invites.js';
 import { reviewWorldBacklog } from './rc1-world-backlog-review.js';
 import { runRealtimeSoak } from './rc1-realtime-soak.js';
+import { collectWorldDiagnostics } from './rc1-world-diagnostics.js';
+import { runLedgerInvariants } from '../src/invariants.js';
 
 const execute = promisify(execFile), sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const digest = value => sha256(canonicalJson(value));
@@ -26,6 +28,73 @@ const safeKeys = ['PG_POOL_MAX', 'PG_STATEMENT_TIMEOUT_MS', 'PG_LOCK_TIMEOUT_MS'
 const systemKeys = ['PATH', 'SystemRoot', 'SYSTEMROOT', 'WINDIR', 'COMSPEC', 'TEMP', 'TMP', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA'];
 const faultKinds = ['shared-object contention', 'reconnect storm', 'worker interruption', 'database reconnect', 'server restart'];
 const failure = error => ({ name: error.name, message: error.message, code: error.code || null });
+
+// Existing diagnostic helpers own their transaction boundaries. Borrow them a
+// read-only savepoint inside ONE real coordinator transaction: their original
+// SELECTs, SQL now(), and MVCC state are unchanged and share the same timestamp.
+// Only observer transaction-control statements are adapted; application pools
+// and clocks are untouched. The coordinator remains alive through every read.
+export async function withSharedSoakRead(pool, work) {
+  const client = await pool.connect(); let borrower = null, serial = 0;
+  const controls = [], collectors = [];
+  try {
+    await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    const row = (await client.query("SELECT transaction_timestamp() AS at,transaction_timestamp()::text AS exact_at,pg_current_snapshot()::text AS snapshot,pg_backend_pid() AS pid,current_setting('transaction_read_only') AS read_only,current_setting('transaction_isolation') AS isolation")).rows[0];
+    assert.equal(row.read_only, 'on'); assert.equal(row.isolation, 'repeatable read');
+    const logicalAt = new Date(row.at).getTime();
+    const scoped = {
+      query: (...args) => client.query(...args),
+      async connect() {
+        assert(!borrower, 'Diagnostic helpers must run serially in the shared snapshot');
+        const id = ++serial, savepoint = `soak_observer_${id}`; let begun = false, released = false;
+        borrower = id;
+        return {
+          async query(sql, ...args) {
+            assert(!released); const text = typeof sql === 'string' ? sql : sql.text;
+            if (/^BEGIN\b/i.test(text.trim())) {
+              assert(/^BEGIN ISOLATION LEVEL REPEATABLE READ,? READ ONLY$/i.test(text.trim()), 'Unexpected observer transaction mode');
+              assert(!begun); begun = true; controls.push({ borrower: id, requested: text, executed: `SAVEPOINT ${savepoint}` });
+              return client.query(`SAVEPOINT ${savepoint}`);
+            }
+            if (/^(COMMIT|ROLLBACK)$/i.test(text.trim())) {
+              assert(begun); const rollback = text.trim().toUpperCase() === 'ROLLBACK';
+              if (rollback) await client.query(`ROLLBACK TO SAVEPOINT ${savepoint}`);
+              begun = false; controls.push({ borrower: id, requested: text, executed: `${rollback ? `ROLLBACK TO SAVEPOINT ${savepoint}; ` : ''}RELEASE SAVEPOINT ${savepoint}` });
+              return client.query(`RELEASE SAVEPOINT ${savepoint}`);
+            }
+            return client.query(sql, ...args);
+          },
+          release() { assert(!begun, 'Diagnostic helper released an unfinished read'); released = true; borrower = null; },
+        };
+      },
+    };
+    const collect = async (name, action) => {
+      const startedAt = new Date().toISOString(); const value = await action(scoped, logicalAt);
+      collectors.push({ name, startedAt, completedAt: new Date().toISOString() }); return value;
+    };
+    const value = await work({ pool: scoped, logicalAt, collect }); assert.equal(borrower, null);
+    const after = (await client.query('SELECT transaction_timestamp()::text AS exact_at,pg_current_snapshot()::text AS snapshot')).rows[0];
+    assert.equal(after.exact_at, row.exact_at); assert.equal(after.snapshot, row.snapshot);
+    await client.query('COMMIT');
+    return { value, binding: { kind: 'one-native-read-only-repeatable-read-transaction', logicalAt, transactionTimestamp: row.exact_at,
+      databaseSnapshot: row.snapshot, backendPid: row.pid, controls, collectors,
+      nonMvcc: 'Sequence counters and physical relation sizes retain their actual observed values; PostgreSQL does not make these MVCC state.' } };
+  } catch (error) { await client.query('ROLLBACK'); throw error; }
+  finally { client.release(); }
+}
+
+export async function collectLocalSoakCheckpoint(pool, { sourceRevision, configuration, roster = [], actorActions = {} }) {
+  const { value, binding } = await withSharedSoakRead(pool, async ({ logicalAt, collect }) => {
+    const snapshot = await collect('canonical-state', q => canonicalDatabaseSnapshot(q));
+    const diagnostics = await collect('world-diagnostics', q => collectWorldDiagnostics(q, { logicalAt, roster, actorActions }));
+    const invariants = await collect('canonical-invariants', async q => ({ logicalAt, ...await runLedgerInvariants(q, { alert: false }) }));
+    assert.equal(new Date(snapshot.capturedAt).getTime(), logicalAt);
+    const backlog = reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, configuration,
+      lifecycleDiagnostics: diagnostics.semantic, invariants });
+    return { snapshot, diagnostics, invariants, backlog };
+  });
+  return { ...value, binding };
+}
 
 export function localSoakEnvironmentValues({ databaseUrl, port, secrets, settings = {} }) {
   for (const key of Object.keys(settings)) assert(safeKeys.includes(key), `Unsupported local environment override: ${key}`);
@@ -126,15 +195,14 @@ export async function createLocalSoakEnvironment({ source, recorder, runId, cont
     await note({ kind: 'soak-original-process-stop', ...value }); return value;
   };
   const checkpoint = async label => {
-    const snapshot = await canonicalDatabaseSnapshot(pool), logicalAt = new Date(snapshot.capturedAt).getTime();
+    const { snapshot, diagnostics, invariants, backlog, binding } = await collectLocalSoakCheckpoint(pool, {
+      sourceRevision: source.revision, configuration: { LIVING_WORLD_DIRECTOR: settings.LIVING_WORLD_DIRECTOR || 'DIRECTOR_DISABLED' } });
+    const logicalAt = binding.logicalAt;
     await recorder.artifact(`local-${label}-state.json`, snapshot);
-    let backlog;
-    try { backlog = reviewWorldBacklog(snapshot, { logicalAt, sourceRevision: source.revision,
-      configuration: { LIVING_WORLD_DIRECTOR: settings.LIVING_WORLD_DIRECTOR || 'DIRECTOR_DISABLED' } }); }
-    catch (error) { backlog = { status: 'UNSUPPORTED', error: failure(error) }; }
+    await recorder.artifact(`local-${label}-diagnostics.json`, { diagnostics, invariants, binding });
     await recorder.artifact(`local-${label}-backlog.json`, backlog);
     const value = { label, logicalAt, stateSha256: snapshot.stateSha256, heartbeat: await heartbeat(), sessions: await sessions(),
-      backlog, limitation: 'Exact snapshot-time selector inventory. Missing lifecycle/invariant binding remains explicit; no complete recovery assertion.' };
+      backlog, binding, limitation: 'Snapshot, lifecycle and invariants share original database time/state. Unsupported conditional worker authority remains explicit.' };
     await note({ kind: 'soak-local-checkpoint', checkpoint: value }); return value;
   };
   const close = () => closePromise ||= (async () => {

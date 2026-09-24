@@ -84,9 +84,11 @@ export function createSoakHttpClient({ baseUrl, maxInflight, timeoutMs = 30000, 
 export async function enterSoakActors({ admissions, client, recorder, spacingMs = 1000 }) {
   assert(Array.isArray(admissions) && admissions.length > 0); assert(Number.isFinite(spacingMs) && spacingMs >= 0);
   assert.equal(new Set(admissions.map(row => row.name)).size, admissions.length, 'Actor names must be unique');
-  const entries = admissions.map(({ name, inviteCode = null, bootstrapSecret = crypto.randomBytes(32).toString('hex') }, index) => {
+  const entries = admissions.map(({ name, inviteCode = null, bootstrapSecret = crypto.randomBytes(32).toString('base64url') }, index) => {
     assert(typeof name === 'string' && /^[\w .,'&-]{2,24}$/.test(name));
-    assert(typeof bootstrapSecret === 'string' && bootstrapSecret.length >= 32);
+    assert(typeof bootstrapSecret === 'string' && /^[A-Za-z0-9_-]{43}$/.test(bootstrapSecret)
+      && Buffer.from(bootstrapSecret, 'base64url').length === 32 && Buffer.from(bootstrapSecret, 'base64url').toString('base64url') === bootstrapSecret,
+    'Use the canonical 32-byte base64url guest bootstrap credential');
     return { index, name, inviteCode, bootstrapSecret };
   });
   assert.equal(new Set(entries.map(row => row.bootstrapSecret)).size, entries.length, 'Recovery credentials must be distinct');
@@ -97,6 +99,7 @@ export async function enterSoakActors({ admissions, client, recorder, spacingMs 
     const auth = await client.request({ method: 'POST', path: '/v1/auth/guest',
       body: { bootstrapSecret: entry.bootstrapSecret, ...(entry.inviteCode ? { inviteCode: entry.inviteCode } : {}) } });
     await recorder.record({ kind: 'soak-entry-auth', actorIndex: entry.index, status: auth.status, error: auth.error,
+      denialCode: typeof auth.body?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(auth.body.error) ? auth.body.error : null,
       responseSha256: auth.responseSha256, startedAt: auth.startedAt, completedAt: auth.completedAt, latencyMs: auth.latencyMs });
     assert(auth.status >= 200 && auth.status < 300 && typeof auth.body?.token === 'string', `Ordinary admission failed for actor ${entry.index}`);
     const token = auth.body.token, idempotencyKey = crypto.randomUUID();
