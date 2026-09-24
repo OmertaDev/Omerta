@@ -14,13 +14,13 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 | PostgreSQL 16 | FAIL — Candidate22 affected checks in progress; prior scoped pass retained |
 | PostgreSQL 18.4 | FAIL — local pgcheck221 passes; Candidate22 hosted lane and replay admission pending |
 | Resource accounting | PASS — original P0 workload: zero unexplained entries |
-| Replay | FAIL — Candidate22 serial/concurrent refresh pending; unchanged broader proof retained |
+| Replay | PASS — Candidate22 serial/concurrent on PG16.15 and18.4; unchanged broader proof retained |
 | Restart recovery | PASS — authoritative state, identities, RNG and ordered resource effects agree |
 | Market recovery | PASS — retained scoped proof |
 | Boat recovery | PASS — retained scoped proof |
 | Mobile automation | PASS — all nine Section11 areas at four widths on both database versions |
 | Authority | PASS — complete source-phase route/role/command review; deployed configuration remains separate |
-| Soak | FAIL — Candidate21 failed; Candidate22 reconnect retest100/100 passes; fresh12h interval pending |
+| Soak | FAIL — Candidate22 full run launched23:11UTC;12h qualifying interval still pending |
 | Upgrade | PASS — joined API migration and actual worker startup rehearsal |
 | Rollback | PASS — API state/receipt preservation and predecessor worker on candidate-written state |
 | Evidence integrity | PASS — admitted artifacts verified; final qualification package pending |
@@ -43,3 +43,5 @@ The user approved the temporary isolated Render setup and account-wide API crede
 **NOT TECHNICALLY QUALIFIED**
 
 Candidate22 reconnect closure and fresh-run preparation are recorded in FINAL_LAUNCH_LEDGER.md. Original failure evidence remains unchanged. All technical qualification criteria except the explicitly waived225-cell matrix remain required.
+
+Fresh Candidate22 controller is running; admission and the full measured12h remain to complete. See the current ledger for exact process/evidence identities.
