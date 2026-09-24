@@ -1,7 +1,7 @@
 // Classify existing worker/Family transitions; never authorize or execute them.
 import assert from 'node:assert/strict';
 import { isDeepStrictEqual as equal } from 'node:util';
-import { EXCHANGE, dayOf, weekOf, familyTaskOf } from '../src/rules.js';
+import { EXCHANGE, FAMILY_WAR, dayOf, weekOf, familyTaskOf } from '../src/rules.js';
 import { exactSum, negate } from './rc1-resource-journal.js';
 
 const rows = (state, table) => state.tables[table] || [];
@@ -38,6 +38,18 @@ export function reconcileWorkerTransitions(before, after, { identity = {}, recei
   for (const next of rows(after, 'gangs')) {
     const prior = oldFamilies.get(next.id);
     if (!prior || equal(prior, next)) continue;
+    if (worker && equal(omit(prior, ['npc_aggro_until']), omit(next, ['npc_aggro_until']))
+      && unchangedExcept(before, after, ['gangs', 'notifications'])) {
+      assert.equal(identity.outcome, 'COMMITTED'); assert.equal(identity.command, 'COMMIT');
+      assert.equal(prior.npc_flag, false, 'NPC hostility cooldown belongs to a player Family');
+      assert(prior.npc_aggro_until === null || Date.parse(prior.npc_aggro_until) <= logicalAt, 'Family retargeted inside cooldown');
+      assert(!process.env.NPC_AGGRO_MS, 'Overridden hostility duration is outside the observer scope');
+      assert.equal(Date.parse(next.npc_aggro_until), logicalAt + FAMILY_WAR.AGGRESSION.MS + FAMILY_WAR.AGGRESSION.COOLDOWN_MS,
+        'Family hostility cooldown differs from original worker duration');
+      result.familyFields.set(next.id, new Set(['npc_aggro_until']));
+      result.movements.push({ kind: 'family-npc-hostility-cooldown', familyId: next.id, until: next.npc_aggro_until,
+        economicGrant: false, scope: 'Observed cooldown metadata only; unobserved npc_aggression campaign/target-selection state is not qualified.' });
+    }
     const seasonFields = ['season', 'season_tribute', 'season_wars'];
     if (worker && equal(omit(prior, seasonFields), omit(next, seasonFields)) && unchangedExcept(before, after, ['gangs'])) {
       const current = Math.floor(dayOf(logicalAt) / 28);

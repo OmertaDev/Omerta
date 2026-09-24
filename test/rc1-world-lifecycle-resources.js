@@ -124,4 +124,16 @@ assert.throws(() => reconcileWorkerTransitions(crimeBefore, crimeAfter, { ...cri
 assert.throws(() => reconcileWorkerTransitions(crimeBefore, crimeAfter, { ...crimeOptions, receipts: [...crimeOptions.receipts, { ...crimeOptions.receipts[0], id: 'other', character_id: 'two' }] }));
 controls.push('http-crime-wrong-route', 'http-crime-wrong-account', 'http-crime-ambiguous-owner');
 cases.push({ name: 'http-crime-family-counter' });
+const hostilityBefore = initial(); hostilityBefore.tables.gangs[0].npc_aggro_until = null;
+const hostilityAfter = structuredClone(hostilityBefore); hostilityAfter.tables.gangs[0].npc_aggro_until = '2026-09-22T00:00:00.000Z';
+const hostilityOptions = { identity: { command: 'COMMIT', outcome: 'COMMITTED', context: { authority: 'original-worker', logicalAt } } };
+assert.equal(reconcileWorldResources(hostilityBefore, hostilityAfter, hostilityOptions).unsupported.length, 0);
+const earlyHostility = structuredClone(hostilityAfter); earlyHostility.tables.gangs[0].npc_aggro_until = '2026-09-21T00:00:00.000Z';
+assert.throws(() => reconcileWorldResources(hostilityBefore, earlyHostility, hostilityOptions));
+const busyHostility = structuredClone(hostilityBefore); busyHostility.tables.gangs[0].npc_aggro_until = '2026-09-21T00:00:00.000Z';
+assert.throws(() => reconcileWorldResources(busyHostility, hostilityAfter, hostilityOptions));
+const granted = structuredClone(hostilityAfter); granted.tables.gangs[0].treasury = '501';
+assert(reconcileWorldResources(hostilityBefore, granted, hostilityOptions).unsupported.some(row => row.kind === 'family-lineage'));
+controls.push('hostility-shortened-cooldown', 'hostility-repeated-inside-cooldown', 'hostility-resource-grant-remains-unsupported');
+cases.push({ name: 'family-hostility-cooldown-metadata' });
 console.log(JSON.stringify({ status: 'PASS', cases: cases.map(row => row.name), rejectedCorruptions: controls.length, controls }));
