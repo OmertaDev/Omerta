@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a66bba1f60f9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b4f54041dea0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1985 |
+| Commits in clone | 1987 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-25 — Merge remote-tracking branch 'origin/main' into codex/rc1-prod-integration-20260925 |
+| Latest commit | 2026-09-25 — Merge pull request #186 from OmertaDev/codex/rc1-prod-integration-20260925 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1107 |
+| OmertaDev | 1109 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 350 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 250 | historical |
-| knowledge/generated/graph-summary.md | 250 | historical |
-| knowledge/generated/graph.json | 250 | historical |
-| knowledge/generated/inventory.md | 250 | historical |
+| knowledge/generated/github-history.md | 251 | historical |
+| knowledge/generated/graph-summary.md | 251 | historical |
+| knowledge/generated/graph.json | 251 | historical |
+| knowledge/generated/inventory.md | 251 | historical |
 | [package.json](../../package.json) | 223 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
