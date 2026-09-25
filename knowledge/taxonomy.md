@@ -54,8 +54,9 @@ complementary rather than duplicated.
 - `audit` — point-in-time evaluation; findings need an explicit status elsewhere.
 - `decision` — an accepted founder/team choice with date and source.
 - `runbook` — operational procedure whose live environment must still be verified.
-- `historical` — retained for provenance; not current authority.
-- `superseded` — replaced by a named newer source, never silently deleted.
+- `historical` — dated security evidence or Git history; not current implementation authority.
+- `superseded` — replaced by a named current source; remove scrapped designs from the working tree
+  while preserving Git lineage and required security evidence.
 
 ## Tags for new curated findings
 

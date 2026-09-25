@@ -1,37 +1,37 @@
 # Generated repository inventory
 
-> Source: worktree at `b4f54041dea0`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `9893860f3a39`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,736 |
-| Text lines | 1,236,208 |
-| Repository bytes inventoried | 915,294,573 |
+| Current artifacts | 3,688 |
+| Text lines | 1,207,102 |
+| Repository bytes inventoried | 777,572,451 |
 | Backend/route modules | 276 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,987 |
+| Git commits | 1,995 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,161 / 38,970 |
+| Graph nodes / edges | 9,182 / 37,827 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 1,222 |
+| media-asset | 1,194 |
 | artifact | 657 |
 | test-suite | 426 |
-| documentation | 412 |
+| documentation | 406 |
 | backend-module | 248 |
 | engineering-harness | 193 |
-| contract-project | 153 |
+| contract-project | 148 |
 | audit | 98 |
 | contract-test | 98 |
-| design | 91 |
+| design | 82 |
 | contract-source | 59 |
 | route-module | 28 |
 | web-surface | 15 |
@@ -53,17 +53,16 @@
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json) | 22,972 | artifact | 2026-09-21 |
 | [docs/release/readiness-work/authority-inventory.json](../../docs/release/readiness-work/authority-inventory.json) | 20,579 | artifact | 2026-09-21 |
 | [docs/release/evidence/gates/fresh-forge-linux.txt](../../docs/release/evidence/gates/fresh-forge-linux.txt) | 18,797 | artifact | 2026-09-20 |
-| [CLAUDE.md](../../CLAUDE.md) | 18,679 | documentation | 2026-09-06 |
 | [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
-| [public/index.html](../../public/index.html) | 13,432 | web-surface | 2026-09-24 |
+| [public/index.html](../../public/index.html) | 13,422 | web-surface | 2026-09-25 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
+| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-25 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -72,37 +71,36 @@
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,380 | data-schema | 2026-09-24 |
-| [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-06 |
+| [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-25 |
 | [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 
 ## Media estate
 
 | Extension | Files | Bytes |
 |---|---:|---:|
-| .mp4 | 216 | 383,811,008 |
-| .png | 248 | 298,076,530 |
+| .png | 239 | 282,132,782 |
+| .mp4 | 208 | 273,426,998 |
 | .jpg | 326 | 63,294,254 |
 | .mp3 | 33 | 9,082,974 |
-| .zip | 1 | 8,866,982 |
-| .svg | 153 | 7,030,764 |
+| .svg | 153 | 7,012,049 |
 | .m4a | 10 | 6,069,278 |
-| .webp | 57 | 2,969,620 |
-| .json | 31 | 749,086 |
-| .mjs | 27 | 300,881 |
-| .html | 26 | 251,449 |
-| .md | 29 | 243,175 |
-| .tsx | 23 | 112,587 |
-| .csv | 3 | 105,809 |
+| .webp | 57 | 2,969,224 |
+| .json | 27 | 729,820 |
+| .mjs | 27 | 297,220 |
+| .html | 26 | 246,694 |
+| .md | 26 | 202,832 |
+| .tsx | 23 | 112,581 |
+| .csv | 3 | 105,826 |
 | .woff2 | 4 | 50,960 |
-| .txt | 7 | 20,133 |
-| .ts | 7 | 15,990 |
-| .js | 5 | 14,246 |
+| .txt | 6 | 18,258 |
+| .ts | 7 | 15,972 |
+| .js | 5 | 13,998 |
 | .css | 4 | 12,612 |
-| .pdf | 3 | 8,852 |
+| .pdf | 3 | 8,849 |
 | .ps1 | 1 | 8,530 |
-| .vtt | 3 | 3,682 |
 | .py | 1 | 2,249 |
-| .srt | 1 | 1,732 |
+| .vtt | 2 | 1,969 |
 | (none) | 3 | 262 |

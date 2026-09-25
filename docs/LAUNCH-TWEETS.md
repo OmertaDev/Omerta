@@ -48,20 +48,20 @@ posts with external links; the link goes in a reply (below).
 >
 > Would you play a game where the streets remember?
 
-**3/ (attach `hype-flywheel.mp4`)**
+**3/ (attach `hype-flywheel-v3.mp4`)**
 > The part nobody else does: $OMR isn't printed. It's *bought.*
 >
-> Every sink in the game buys $OMR off the market. Buybacks come from real revenue and pay the players
-> who play. Spenders fund earners.
+> OMR sinks are accounted for by the game. Market operations use funded inventory and reserves;
+> they do not create an unrestricted player-reward faucet.
 >
 > A real economy — with a real flywheel.
 
-**4/ (attach `hype-earn.mp4`)**
+**4/ (attach `hype-streets.mp4`)**
 > Build an empire. Or take one off someone who didn't.
 >
 > Every $OMR in the city was bought with real money — which is exactly why it's worth taking.
 >
-> Play well enough and the on-chain exit is yours — the rail is built, and it opens at launch.
+> Wallet extraction depends on chain activation, funded reserves, and the published withdrawal gates.
 
 **5/ (the link goes HERE, in a reply — much less throttled than the main post)**
 > The city: omerta.fun
@@ -125,6 +125,6 @@ posts with external links; the link goes in a reply (below).
 
 ## Which video where
 - **`hype.mp4`** → Post 1 (the launch).
-- **`hype-flywheel.mp4`** → thread 3/ (the "how the economy works" beat).
-- **`hype-earn.mp4`** → thread 4/ (the acquisition beat).
+- **`hype-flywheel-v3.mp4`** → thread 3/ (the "how the economy works" beat).
+- **`hype-streets.mp4`** → thread 4/ (the acquisition beat).
 - **`hype-short.mp4`** → standalone Post A (the shareable, and repost to TikTok/Reels/Shorts).

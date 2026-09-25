@@ -1,5 +1,10 @@
 # OMERTA smart-contract deployment plan
 
+For the canonical ETH/OMR market, start with the [market deployment runbook](docs/market/RUNBOOK.md).
+It covers the hook, stability reserves, funded inventory bonds, Turf and liquidity commitments.
+This runbook covers the core, Bank, genesis and separately configured contract rails; its scripts
+do not deploy the canonical market bundle or retire obligations in existing contracts.
+
 The [restricted liquidity automation runbook](LIQUIDITY-AUTOMATION.md) adds the Safe-owned POL
 vault, fixed buyback executors, non-mint fee routing, Genesis lifecycle and capped keeper services.
 Its unsigned deployment builder wires these after the core suite. Use its reviewed batch to
@@ -17,31 +22,28 @@ source-review completion does not activate those rails.
 The later [character mint allocation amendment](audits/2026-09-08-mint-dev-allocation/report.md)
 requires `payMintFee()` to forward 100% to `DEV_WALLET` (`feeRecipient`), with
 `mintDevBps() == 10000` in the deployed runtime. Respawn, reroll and package fees retain `VIG_BPS`.
-The old testnet OmertaFees is immutable and cannot satisfy this amendment; use a new reviewed fee
-deployment and fresh deployment-scoped indexing state or an explicitly reviewed migration.
+Verify `mintDevBps()` in the intended deployment. A fee contract without this allocation requires a
+reviewed replacement and fresh deployment-scoped indexing state or an explicitly reviewed migration.
 
 For the first character NFT activation workstream, start with
 [CHARACTER-NFT-LAUNCH.md](CHARACTER-NFT-LAUNCH.md): existing testnet addresses, a read-only
 preflight, and a disposable fee-to-NFT rehearsal. It preserves the mainnet gates below.
 
-The Uniswap CCA/LBP genesis launch has its own fail-closed ceremony and replaces the original
-concurrent bootstrap-bond concept. Read and sign off [GENESIS-LAUNCH.md](./GENESIS-LAUNCH.md) before
-deploying the launch hook, proceeds splitter, or launcher calldata. The older sections below still
-describe the core suite and post-launch bond/oracle rail; where they conflict on genesis sale order,
-`GENESIS-LAUNCH.md` controls.
+The Uniswap CCA/LBP genesis launch has its own fail-closed ceremony. Read and sign off
+[GENESIS-LAUNCH.md](./GENESIS-LAUNCH.md) before deploying the launch hook, proceeds splitter, or
+launcher calldata. That runbook controls genesis sale order; the core suite and post-launch
+bond/oracle rail below have separate deployment gates.
 
-This runbook deploys every contract that should have a top-level address while keeping every privileged
-path off until the Safe completes a separate, reviewable ceremony.
+These deployment scripts keep privileged paths off until the Safe completes a separate,
+reviewable activation ceremony.
 
 > **Mainnet gate:** do not broadcast a mainnet transaction until the scoped agent-led contract/signer
 > review, Safe signer ceremony, owner launch acceptance, and the launch checklist are complete. Production
 > is intentionally chain-dormant until those gates clear.
 
-> **First mainnet cut — founder direction, 2026-08-24:** Phase 0 governance and the ten Phase 1 core
-> contracts may proceed once the reviewed core report hash and signer scope are recorded in
-> `.env.mainnet`. Phase 2 THE BANK is deliberately excluded while its audit finishes and is reserved as
-> a post-deployment catalyst roughly one to two weeks later. Phase 3 still depends on a real pool; Phase 4
-> still follows the separate Uniswap routing-review sequence. Deploying Phase 1 does not arm any rail.
+> Record the reviewed core report hash and signer scope in `.env.mainnet`. Governance, core,
+> Bank, oracle and hook deployments each need their own approved scope and dependencies.
+> Deploying the core does not arm any rail or approve a Bank launch schedule.
 
 ## What actually gets deployed
 
@@ -52,7 +54,7 @@ path off until the Safe completes a separate, reviewable ceremony.
 | 2 — Bank | `script/DeployBank.s.sol` | Denari, Transmuter, Alchemist |
 | 3 — post-pool oracle | `script/DeployTwapOracle.s.sol` | OmrTwapOracle |
 | 4 — v4 hook | `script/DeployHook.s.sol` | OmertaHook at a mined CREATE2 address |
-| Additive legacy RWA machine | `script/DeployRwaStockMachine.s.sol` | StockTokenRegistry and RwaStockBuyer; both born with automation/venue authority off |
+| RWA machine | `script/DeployRwaStockMachine.s.sol` | StockTokenRegistry and RwaStockBuyer; both born with automation/venue authority off |
 | 5 — post-genesis v4 oracle | `script/DeployV4TwapOracle.s.sol` | ownerless OmrV4TwapOracle |
 | Genesis residual distribution | `script/DeployGenesisSplitter.s.sol` | ownerless GenesisProceedsSplitter, with immutable pool and recipient configuration |
 
@@ -65,7 +67,7 @@ The remaining source files do not get a standalone release transaction from thes
   remains blocked on the finalized consumer, health overlay, and AcquisitionVault budget bridge.
 - `SettlementGasPool` is a reviewed standalone dependency, but no gameplay-vault integration or deploy
   script is authorized by this runbook yet.
-- `AcquisitionVault` now includes native deposit/reclassification accounting as well as the legacy
+- `AcquisitionVault` includes native deposit/reclassification accounting as well as its
   authority base. Its later outflow integration remains incomplete; do not deploy or fund it.
 - `RwaHealthOverlay` is a separate implemented health-attestation module whose production writer,
   consumer and generation-change integration require their own activation configuration.
@@ -75,12 +77,12 @@ The remaining source files do not get a standalone release transaction from thes
   readiness gate deliberately cannot unpause and the execution/reconciliation components remain
   staged shells. Deposits do not imply a completed withdrawal or acquisition path. Do not fund it.
 
-The 2026-09-08 inventory has 32 top-level `src/*.sol` files: 31 contract-bearing files (including the
-abstract `FlashGuard`) plus `IOmrOracle`. Eight additional interface files live under `src/interfaces/`
-and receive no deployment transaction. The historical `reference/OmertaTradeFeeHook.sol` is an
-unimplemented reference, not the live hook. See [the comprehensive review](audits/2026-09-08-comprehensive/report.md)
-for file coverage, findings and retained test evidence. Freeze the exact release phase and refresh the review package
-under the current policy before any mainnet broadcast; source inventory alone is not release approval.
+The current source inventory also includes the [market bundle](docs/market/DESIGN.md) and
+[liquidity automation](LIQUIDITY-AUTOMATION.md), with their own deployment plans. Interfaces receive
+no standalone deployment transaction. The [comprehensive review](audits/2026-09-08-comprehensive/report.md)
+retains file coverage, findings and test evidence for its pinned source revision. Freeze the exact
+release phase and refresh the review package under the current policy before any mainnet broadcast;
+source inventory alone is not release approval.
 
 ## 1. Freeze and prove the source
 
@@ -441,18 +443,11 @@ Set `V4_POOL_MANAGER` to the official PoolManager for the target chain and verif
 uses the canonical Foundry CREATE2 proxy at `0x4e59…956C`, mines the exact low-14-bit permission pattern,
 and checks both the predicted and deployed addresses.
 
-The hook constructor now binds an exact authorized LBP strategy. The historical Robinhood testnet
-helper is deliberately retired: it pins the obsolete three-argument constructor, salt, and hook
-address, and chain 46630 has no reviewed official LBP strategy matching the pinned mainnet stack.
-Invoking it fails before simulation and sends nothing:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-TestnetHook.ps1 -PreflightOnly
-```
-
-Use a chain-4663 fork for an exact-stack rehearsal. A new testnet release requires deploying and
+The hook constructor binds an exact authorized LBP strategy. Chain 46630 has no reviewed official
+LBP strategy matching the pinned mainnet stack. Use a chain-4663 fork for an exact-stack rehearsal.
+A testnet release requires deploying and
 reviewing the complete LiquidityLauncher/CCA/LBP stack first, setting `LBP_STRATEGY` to the resulting
-testnet contract, mining a new hook salt/address, and freezing a replacement manifest-aware helper.
+testnet contract, mining a new hook salt/address, and freezing a manifest-aware deployment plan.
 Never put the mainnet strategy address into a testnet configuration when it has no code on that chain.
 
 ```powershell
@@ -477,7 +472,7 @@ enters observer code from inside `afterSwap`.
 After the CCA/LBP migration initializes the canonical pool, follow `GENESIS-LAUNCH.md`: deploy
 `DeployV4TwapOracle.s.sol` in simulation first, verify the exact pool/source/period, set it as the hook
 observer, accumulate a full bounded window, and cut `OmertaBond` over only after fork and audit sign-off.
-The older `OmrTwapOracle` remains the V2-compatible path for deployments that intentionally retain a
+`OmrTwapOracle` is the Uniswap V2-compatible path for deployments that intentionally use a
 separately reviewed V2 market; it is not the source for the native ETH/OMR genesis pool.
 
 ## 9. Activate backend addresses last

@@ -2,25 +2,25 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-Written 2026-07-25. Every number below was measured from the tree, not recalled.
+The census below is measured from the current repository. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Census refreshed 2026-09-24 from this workspace, including untracked source and documentation files; these counts do not identify a deployed revision.
+Census refreshed from the current repository; these counts do not identify a deployed revision.
 
 | | |
 |---|---|
-| Backend modules | **276** files, **106707** lines (`src/`, including routes and social modules) |
-| Test suites | **426** files, **136294** lines (`test/`) |
+| Backend modules | **276** files, **106702** lines (`src/`, including support modules) |
+| Test suites | **426** files, **136287** lines (`test/`, including support modules) |
 | HTTP routes | **802** registrations (**802** unique) |
 | Database tables | **369** (`schema.sql`, 7379 lines) |
-| Client | **13431** lines (`public/index.html`, single file, zero dependencies) |
+| Client | **13421** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **39** top-level Solidity files, **11340** lines, **1048** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **698** markdown files, **155044** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **679** markdown files, **130639** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **55** checks — **49** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **262,000 lines** of backend code, tests, schema and top-level contracts.
@@ -31,8 +31,7 @@ Roughly **262,000 lines** of backend code, tests, schema and top-level contracts
 
 Everything is built on five load-bearing decisions. None has needed revision in ~47 systems.
 
-**`rules.js` is the constants layer, in two files.** `rules.generated.js` holds the prototype's 22 data
-tables (479 lines) and is overwritten wholesale by the extractor; `rules.tail.js` holds every helper,
+**`rules.js` is the constants layer, in two files.** `rules.generated.js` holds the 22 tables from `data/rules.js` (474 lines) and is overwritten wholesale by the extractor; `rules.tail.js` holds every helper,
 catalog, ladder and founder-signed lever (6144 lines) and the extractor never opens it. `rules.js`
 re-exports both. Nothing in `src/` hardcodes a balance number.
 
@@ -60,7 +59,7 @@ Auth (guest / X / Privy / agent keys, invite gate) · character creation with ra
 total-conserved stats · 29 crimes with three risk approaches (case it / standard / go loud) · the gym ·
 the doc · bank with in-transit clearing · travel · 6 districts · the garage (60-car catalog, boost,
 melt, fence, repair) · the workshop and consumables · trade goods on the deterministic §7.11 price hash ·
-rackets and assets with lazy income · the AMM swap · staking (backed by a funded pool, not minted) ·
+rackets and assets with lazy income · the one-way OMR-to-cash Window · stake commitments with loss exposure ·
 NFT gear mint · the 12h buyback worker.
 
 ### 3.2 Social and PvP (M3, M7)
@@ -95,18 +94,18 @@ approved-but-unimplemented upgradeable `OMRGameplayVault` replacement · `Omerta
 SIWE wallet linking, a polled `getLogs` watcher over a persisted cursor, the exit toll, the early-exit
 surcharge.
 
-### 3.7 Risk-to-Earn economy
-Loot the living · located laundering · shield-not-bunker · the bank daily cap · THE VIG (real revenue →
-buyback → reserve + prize pool) · backed emission (staking paid from a funded pool) ·
-THE STREET WAGE (a fixed, halving, endowment-capped daily emission to minted accounts) · THE RESERVE
-BOND (protocol-owned liquidity, no reflexive mint) · THE VAULT (four ETH slices accumulate; burn $OMR
-to claim allocation, `allocated <= held` in ETH on both sides — the stock denomination was retired
-2026-07-31, `omerta-stock-layer-retirement.md`).
+### 3.7 Economy
+Cash and OMR use separate, server-authoritative accounting. Cash-to-OMR swapping and laundering,
+the Street Wage, and personal staking yield are retired. The Window spends OMR for cash subject to
+its funded till and account caps. Stakes remain exposed to gameplay loss and a six-hour unbonding
+delay. The canonical market uses funded liquidity and inventory; it does not promise a price floor.
+See `omerta-economy-design.md` and `omerta-contracts/docs/market/DESIGN.md` for current boundaries,
+including the separate stock-acquisition and contract-activation gates.
 
 ### 3.8 The pillars
 **Territory** — rackets with scale tiers and business types, the Bureau crackdown, fortification, rival
 raids, upkeep, specialists and special operations, the Empire leaderboard.
-**Business Empire** — five upgradeable fronts, private laundering, scrutiny and raids, shakedowns, the
+**Business Empire** — five upgradeable fronts, scrutiny and raids, shakedowns, the
 pad, hostile takeover, the Launderer and Tycoon legends.
 **The Casino** — craps, the Numbers, back-room PvP dice, the weekly fight and the fix, blackjack,
 heads-up hold'em, the poker tournament and bracket, ring poker, THE TRACK, THE FUTURITY.
@@ -168,7 +167,7 @@ the manifest, closed executable schemas, and exact zero-OMR/cash policy independ
 content compiler and `content:check`; server boot runs that same gate before accepting requests.
 
 **Authored Content** — immutable operator-activated graph bundles, hash/version-pinned instances,
-revision-checked server-issued actions, the playable four-role **Sixth Chair v2**, and six short
+revision-checked server-issued actions, the playable four-role **Sixth Chair**, and six short
 personal, district-gated storylets with exactly-once gameplay-inert mementos. Seven personal Don Cases
 then form the late-game spine from level 35 through 125: **The Iron Election**, **A House Made of Glass**,
 **Port of No Return**, **The Empty Seat**, **Two Funerals**, **The Federal Ledger**, and
@@ -195,11 +194,11 @@ self-claimed once each season, but additional scopes or content versions cannot 
 that season.
 The first production authored supply chain is **The Bellini Restoration** at the Old Foundry. Its two
 globally finite daily sources grant exact-hash, account-owned Ledger Plate and Charred Binding lots
-once per account per source/epoch. The v2 apprenticeship consumes fixed inputs when a server-timed
+once per account per source/epoch. The apprenticeship consumes fixed inputs when a server-timed
 work order starts, produces only stackable gameplay-inert workpieces when its `readyAt` clock clears,
 and trains one exact-hash Bellini Restoration skill through compiled XP thresholds. One active job is
 allowed per account and namespace. Skill level 2 unlocks the final FIFO recipe for one non-stackable,
-non-tradeable, gameplay-inert Restored Bellini Lockbox. The v3 Press Room adds a location-bound
+non-tradeable, gameplay-inert Restored Bellini Lockbox. The Press Room adds a location-bound
 Restoration Bench and an account-owned Bellini Restoration Press. Its only gameplay power is satisfying
 declared authored-crafting requirements: exact-hash durability wears once when a requiring job or
 recipe starts, and a board-issued repair consumes compiled same-hash material to restore the compiled
@@ -208,7 +207,7 @@ preserve provenance; inventory and XP survive street death; old-version lots and
 cannot enter or unlock a new version. An in-flight old-hash run remains collectible against its pinned
 immutable bundle and archives its output and XP under that hash. Non-stackable keepsake ownership caps
 span versions; tool ownership and durability stay exact-hash so an archived press cannot unlock or block
-its successor. The v4 Material Exchange adds a sealed barter manifest for Ledger Plates and Charred
+its successor. The Material Exchange adds a sealed barter manifest for Ledger Plates and Charred
 Bindings only: whole-lot offers stay inside one exact hash, use compiler-bounded TTL/listing caps, count
 escrow toward ownership limits, conserve both item totals, and append list/fill/cancel audit events.
 It cannot admit tools, workpieces, keepsakes, drugs, ordinary inventory, or exportable items. The adapter
@@ -225,9 +224,9 @@ Opportunity Board, public banded `/v1/arena`, authenticated detailed agent leade
 THE BROADCAST cards and profiles ·
 `/health` and the backup watchdog.
 
-### 3.10 Agent Turn v3 and Deep City
+### 3.10 Agent Turn and Deep City
 
-Agent Turn v3 preserves the server-authoritative EV lane: `recommendedActionId` and `actions` are the
+Agent Turn preserves the server-authoritative EV lane: `recommendedActionId` and `actions` are the
 only turn-issued execution authority, and `/v1/agent/act` accepts only the latest server-issued
 `{turnId, actionId}`. Its `exploration` sibling is read-only, non-EV, non-executable, and outside the
 authority fingerprint. It recommends exactly one relevant unvisited eligible system from the exact
@@ -520,34 +519,16 @@ The same run answered a question that could not be reasoned about: throughput is
 looks superlinear and produces deadlocks). So capacity here is bought with CPU, not with a locking
 rewrite. D6 stays accepted-as-is; the convention is now known to hold under load, not just under review.
 
-### D7 — Documentation mass **(LOW-MEDIUM, partly addressed)**
-208 markdown files, 60k lines, with CLAUDE.md alone 15156 lines of dense prose. Two codices already
-drifted once (a test now guards it). Onboarding a second developer means reading a novel.
+### D7 — Documentation maintenance **(LOW, guarded)**
+CLAUDE.md is 49 lines of current contributor guidance. The discarded browser prototype and
+superseded economic plans are removed from the current tree. Game data tables live in `data/rules.js`.
 
-**Addressed: the prose that a reader could ACT on is now machine-checked.** Stale prose does not fail
-loudly — it makes the next maintainer confidently do the wrong thing, and this pass found five live
-examples, including a comment instructing the reader to re-apply a line by hand after every extractor
-run (the hazard had not existed since the rules split), a "1,091 auto-generated lines" figure whose real
-value was 454, a module count that under-reported by 27 the moment code moved into subdirectories, and
-the `~1,000 lines` self-description this very section carried while being 5,368. So `test/docs.js` (the
-52nd suite) asserts every figure in §1 against the tree, the rules-seam split, that no doc misstates its
-own size, that the false by-hand warning cannot return, and that `docs/AUDITS.md` indexes every audit
-report; `test/routes.js` asserts the route count, which needs the app booted. All nine tripwires were
-mutation-tested. File COUNTS are exact; LINE totals get a 2% band, because a guard that nags on every
-unrelated edit gets deleted, and every error worth catching here was off by 27%, 140% or 5×.
+`test/docs.js` checks implementation counts, rule boundaries, shared public status, and audit-index
+coverage. The knowledge generator owns source inventories. Update current guidance when behavior
+changes; do not reintroduce a chronological development log as a specification.
 
-`docs/AUDITS.md` indexes all 63 audit reports with dates and subjects, and says plainly that they are
-point-in-time records while this file is what is current. They were deliberately NOT relocated: 68
-source comments name a design doc and 32 name an audit report, so moving them would stale 100 references
-to gain a tidier root. CLAUDE.md's chronological drop log was likewise kept in place, for a sharper
-reason — ~414 comments in `src/` cite a pattern by name ("the fade pattern", "the refundPot discipline"),
-and that log is where those names are defined, so it is the codebase's precedent lookup table and it
-only works because it is the file a session loads automatically. It instead gained a header saying what
-it is and how to read it (search it; do not read it front to back), and its stale opening claim that the
-chain is Solana was corrected.
-
-What remains is the mass itself. 26k lines of markdown is a lot to hand a second developer, and the only
-real reduction would be deleting history, which costs more than it saves.
+Dated security findings remain in `docs/AUDITS.md` and the scoped review packages, with their original
+revision and limits. Historical decisions and compatibility identifiers do not name separate game editions.
 
 ### D8 — No real migration tooling **(LOW, guarded)**
 `schema.sql` is all `CREATE TABLE IF NOT EXISTS` plus a derived `ADD COLUMN IF NOT EXISTS` pass. It
@@ -728,12 +709,7 @@ onboarding docs — not for retyping 55,000 lines.
    hand-written everything in another, the extractor writes only the first, `test/rules.js` enforces it.
 5. ~~**Split `social.js`** along death/estate | contracts | gangs | combat (D4).~~ **DONE** — seven
    layered modules under `src/social/`, byte-identical bodies, unchanged public surface.
-6. ~~**Consolidate the docs** (D7).~~ **DONE, differently than planned** — the plan was to archive the
-   audit reports; measurement said not to (100 source comments cite a design doc or an audit by name, and
-   CLAUDE.md's log is the precedent lookup table for ~414 more). So the docs were INDEXED rather than
-   moved (`docs/AUDITS.md`, which states they are point-in-time), and every load-bearing figure is now
-   machine-checked by `test/docs.js` + `test/routes.js` — five stale claims found and fixed, nine
-   tripwires mutation-tested. See D7.
+6. **Keep documentation current.** Contributor instructions and the backend/economy guides describe the current implementation. Superseded prototypes and plans are removed; dated security evidence remains. See D7.
 
 ### D13 — One unidentified suite flake **(LOW, open)**
 On 2026-08-02 a full `npm test` failed once with `AssertionError … operator: '==' … expected: 984924900`

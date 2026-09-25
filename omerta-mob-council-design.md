@@ -1,7 +1,7 @@
 # The Mob Council — governance design (D2d)
 
 **Status:** design draft. Not built. Legal-gated (see §9). This document answers the open
-questions the economy plan (`omerta-economy-plan.md` D2d) left standing — vote weight,
+governance questions recorded in the original D2d decision — vote weight,
 cadence, anti-capture, advisory-vs-binding, and which dials — and specifies a build that
 **cannot break §10.4 or mint value** no matter who captures it. Numbers here are provisional
 and need re-sim + founder sign-off before a build (ground rule #1).

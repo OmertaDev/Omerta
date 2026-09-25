@@ -58,7 +58,7 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
 `omerta-contracts/src` working tree — 59 Solidity files, 48 contracts and 11 interfaces.
 This is the complete source inventory, not a claim that one review package clears every component.
-The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market-v2/`;
+The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
 this inventory update does not extend the liquidity review to them or authorize chain activation.
 The 2026-09-08 liquidity review names its own source closure and release phase; earlier packages
 retain their original scopes and conclusions.
@@ -206,7 +206,7 @@ The pre-O1 walls (§2.1–§2.6 of `CHAIN-AUDIT-PACKET.md`) are unchanged and ar
 full; that document remains the long-form text for them. In brief, and then the new surfaces:
 
 ### 2.1 The mint: four walls, and the claim is that 3 and 4 COMPOSE rather than substitute
-Tokenomics v2 step 4 **deleted the property every prior review of this suite rested on** — "nothing
+economy step 4 **deleted the property every prior review of this suite rested on** — "nothing
 mints". Bonds mint now. What replaced it: **(1)** `OMR.mint` is callable only by a single owner-set
 `minter`, with **no owner mint path**, so "the Safe was compromised" and "supply was inflated" stay
 two separate events and `setMinter(0)` is a one-transaction stop; **(2)** `OmertaBond.dailyCapOMR`

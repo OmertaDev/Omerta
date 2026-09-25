@@ -64,15 +64,15 @@
 | 05-vice-city-12-frontier | VICE & THE LIVING CITY | THE CITY HAS AN OUTSIDE EDGE. | LIVE | SPEC.md §3.8 · frontier | [PNG](../png/05-vice-city/05-vice-city-12-frontier.png) |
 | 06-authored-01-content-desk | THE AUTHORED CITY | CASES. EVIDENCE. CHOICES THAT STAY. | LIVE | public/index.html · Content Desk | [PNG](../png/06-authored/06-authored-01-content-desk.png) |
 | 06-authored-02-permanent-choices | THE AUTHORED CITY | THE ENDING PAYS IN MEMORY. | LIVE | AGENTS.md · authored stories | [PNG](../png/06-authored/06-authored-02-permanent-choices.png) |
-| 06-authored-03-sixth-chair | THE AUTHORED CITY | FOUR ROLES. ONE MISSING SEAT. | LIVE | AGENTS.md · Sixth Chair v2 | [PNG](../png/06-authored/06-authored-03-sixth-chair.png) |
+| 06-authored-03-sixth-chair | THE AUTHORED CITY | FOUR ROLES. ONE MISSING SEAT. | LIVE | AGENTS.md · Sixth Chair | [PNG](../png/06-authored/06-authored-03-sixth-chair.png) |
 | 06-authored-04-district-stories | THE AUTHORED CITY | EVERY NEIGHBORHOOD KEEPS A SECRET. | LIVE | AGENTS.md · district sampler | [PNG](../png/06-authored/06-authored-04-district-stories.png) |
 | 06-authored-05-don-cases | THE AUTHORED CITY | SEVEN CASES TO THE TOP. | LIVE | AGENTS.md · Don Cases | [PNG](../png/06-authored/06-authored-05-don-cases.png) |
 | 06-authored-06-path-cases | THE AUTHORED CITY | YOUR SPECIALTY CHANGES THE METHOD. | LIVE | AGENTS.md · Path Cases | [PNG](../png/06-authored/06-authored-06-path-cases.png) |
 | 06-authored-07-two-man-rule | THE AUTHORED CITY | WATCHER. SIGNATORY. | LIVE | AGENTS.md · Two-Man Rule | [PNG](../png/06-authored/06-authored-07-two-man-rule.png) |
 | 06-authored-08-books-midnight | THE AUTHORED CITY | ONE OPENING. EVERY SEASON. | LIVE | AGENTS.md · seasonal case | [PNG](../png/06-authored/06-authored-08-books-midnight.png) |
-| 06-authored-09-bellini | THE AUTHORED CITY | SALVAGE. LEARN. RESTORE. | LIVE | AGENTS.md · Bellini v2 | [PNG](../png/06-authored/06-authored-09-bellini.png) |
-| 06-authored-10-press-room | THE AUTHORED CITY | TOOLS WEAR. REPAIRS HAVE INPUTS. | LIVE | AGENTS.md · Bellini v3 | [PNG](../png/06-authored/06-authored-10-press-room.png) |
-| 06-authored-11-material-exchange | THE AUTHORED CITY | BARTER THE LOT. NOT THE ECONOMY. | LIVE | AGENTS.md · Bellini v4 | [PNG](../png/06-authored/06-authored-11-material-exchange.png) |
+| 06-authored-09-bellini | THE AUTHORED CITY | SALVAGE. LEARN. RESTORE. | LIVE | AGENTS.md · Bellini Restoration | [PNG](../png/06-authored/06-authored-09-bellini.png) |
+| 06-authored-10-press-room | THE AUTHORED CITY | TOOLS WEAR. REPAIRS HAVE INPUTS. | LIVE | AGENTS.md · Bellini Restoration | [PNG](../png/06-authored/06-authored-10-press-room.png) |
+| 06-authored-11-material-exchange | THE AUTHORED CITY | BARTER THE LOT. NOT THE ECONOMY. | LIVE | AGENTS.md · Bellini Material Exchange | [PNG](../png/06-authored/06-authored-11-material-exchange.png) |
 | 06-authored-12-immutable-content | THE AUTHORED CITY | A NEW VERSION CANNOT REWRITE HISTORY. | LIVE | AGENTS.md · authored runtime | [PNG](../png/06-authored/06-authored-12-immutable-content.png) |
 | 07-omr-01-severance | $OMR & THE CAPITAL DESK | CASH CANNOT BECOME $OMR. | LIVE / STRUCTURAL | MARKETING.md §1 · severance | [PNG](../png/07-omr/07-omr-01-severance.png) |
 | 07-omr-02-demand | $OMR & THE CAPITAL DESK | THE TOKEN IS USED TO OPEN DOORS. | BUILT / GATED MIX | MARKETING.md §4 · player uses | [PNG](../png/07-omr/07-omr-02-demand.png) |
@@ -87,7 +87,7 @@
 | 07-omr-11-rwa-brokers | $OMR & THE CAPITAL DESK | THE TREASURY VOTES. ACTIVE PLAY WEIGHS. | BUILT / GATED | MARKETING.md §9a · RWA arc | [PNG](../png/07-omr/07-omr-11-rwa-brokers.png) |
 | 07-omr-12-bank-hooks | $OMR & THE CAPITAL DESK | THE BANK. THE ORACLE. THE MARKET WALLS. | BUILT / GATED | SPEC.md §3.6 · chain | [PNG](../png/07-omr/07-omr-12-bank-hooks.png) |
 | 08-agents-01-first-class | AUTONOMOUS PLAYERS | THE AGENT IS A PLAYER. | LIVE | AGENTS.md · why an agent should play | [PNG](../png/08-agents/08-agents-01-first-class.png) |
-| 08-agents-02-agent-turn | AUTONOMOUS PLAYERS | ONE READ. THE BEST NEXT MOVE. | LIVE | AGENTS.md · Agent Turn v3 | [PNG](../png/08-agents/08-agents-02-agent-turn.png) |
+| 08-agents-02-agent-turn | AUTONOMOUS PLAYERS | ONE READ. THE BEST NEXT MOVE. | LIVE | AGENTS.md · Agent Turn | [PNG](../png/08-agents/08-agents-02-agent-turn.png) |
 | 08-agents-03-agent-act | AUTONOMOUS PLAYERS | THE SNAPSHOT IS NOT PERMISSION FOREVER. | LIVE | AGENTS.md · Agent Act | [PNG](../png/08-agents/08-agents-03-agent-act.png) |
 | 08-agents-04-opportunity-board | AUTONOMOUS PLAYERS | EVERY OPEN ANGLE IN ONE CALL. | LIVE | AGENTS.md · Opportunity Board | [PNG](../png/08-agents/08-agents-04-opportunity-board.png) |
 | 08-agents-05-exploration | AUTONOMOUS PLAYERS | FORTY SYSTEMS. ONE NEXT DOOR. | LIVE | AGENTS.md · exploration | [PNG](../png/08-agents/08-agents-05-exploration.png) |

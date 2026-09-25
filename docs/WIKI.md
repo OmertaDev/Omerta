@@ -217,7 +217,7 @@ Turf allocates future funded fees to families, not liquidity principal. Game adj
 **Currencies:** **cash** (in your pocket and your bank), **$OMR** (premium, account-level, earned through
 enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens),
 **crates** (cb), and **ammo**. **Cash can never buy $OMR.** The one live conversion runs the other way at
-the Window: burn $OMR for cash from a funded till. The main economic rule (section 10.4) is that the game
+the Window: spend $OMR for cash from a funded till. The main economic rule (section 10.4) is that the game
 records and checks every movement of value.
 
 **Nothing you do in the game creates $OMR on a schedule.** There is no wage, no yield and no drip — the city has no
@@ -256,26 +256,25 @@ list of spends that feed it, so the claim is checkable. **$OMR bought at the des
 the full early-exit toll for its first 48 hours, same as any other fresh token.
 
 **The Exchange window** (`GET /v1/window`, `POST /v1/window/redeem`) — the ONE conversion in the
-game, and it runs one way: **burn $OMR, receive cash at a published rate**, from a till that real
-cash sinks fill (the street take). A short till refuses cleanly and burns nothing — the window is a
+game, and it runs one way: **spend $OMR, receive cash at a published rate**, from a till that real
+cash sinks fill (the street take). A short till refuses cleanly and takes nothing — the window is a
 claim on what was funded, never a promise. 5% of every redemption goes to the top families (the
 family yield). **Cash can never become $OMR** — the current player economy exposes no cash-to-$OMR
 conversion path, public or private.
 - **The early-exit tax on withdrawals:** $OMR that you received less than 48 hours ago pays an
   extra toll when you extract it on-chain — 50% at age zero, decreasing in a straight line to 0% at
   48 hours, newest tokens priced first so old savings cannot shield a fresh dump. Hold a token for
-  two days and it exits free. There are no exemptions.
+  two days and the surcharge reaches zero; the 2% base withdrawal toll still applies.
 
 **THE MADE MAN** (`GET`/`POST /v1/made`) — the recurring subscription. Pay **120 $OMR every 30 days**
 and you are *made*: the badge, the upper compound (Country Estate and above), a club of your own, and
 **the pad pays itself** — your fronts settle their own cash upkeep the moment you touch them, so a
 stretch away does not leave them cold.
 
-**It buys standing, never power.** No earning loop is gated, no odds move, no stat changes, and the
-pad is not discounted by a cent — the same money leaves your pocket, you just stop having to remember.
-Operating costs stay in cash, all of them, which is the line that keeps the game free: a man who never
-pays a dues runs the whole city at full strength — and can hunt made men for their $OMR. Paying buys
-you a seat at tables where you can lose money. It buys no advantage at any of them.
+**Dues buy standing, access and a rung on the Made Ladder.** That rung increases capped
+economic capacity such as carrying limits; it does not increase combat stats or the combat ceiling.
+Holding enough $OMR reaches the same ladder ceiling without paying dues. Operating costs stay in
+cash, and dues do not discount them. The high-stakes table keeps its existing odds.
 
 Dues are a sink like any other, so they go to **the Desk** to be sold again rather than being destroyed.
 
@@ -475,8 +474,8 @@ Four things follow, and each is a mechanism rather than a policy:
   the reserve cannot back, and the reserve is filled by real revenue — so "you can only take out what
   somebody put in" is a rule the rail enforces on every single withdrawal, whatever the supply does.
   That is the guarantee worth having, and it is the one that holds even with the mission tap open.
-- **The one conversion runs the other way, and only on money that already exists.** The Window burns
-  $OMR and pays cash out of a till that real cash sinks filled. A short till refuses and burns
+- **The one conversion runs the other way, and only on money that already exists.** The Window takes
+  $OMR and pays cash out of a till that real cash sinks filled. A short till refuses and takes
   nothing. It is a claim on what was collected, never a promise about what will be.
 
 **Why this particular game.** OMERTÀ's whole thesis is that things are lost — death is permanent, your
@@ -2227,9 +2226,9 @@ describe the posture as legally approved without written support. See
 **Cash does not buy $OMR** — there are no wash houses, no laundering at your own front, and no swap;
 any route that would convert cash into $OMR says so plainly if you try it. What you get instead:
 
-- **The Window** (`GET /v1/window`, `/v1/window/redeem`) — burn $OMR, take in-game cash at a published
+- **The Window** (`GET /v1/window`, `/v1/window/redeem`) — spend $OMR, take in-game cash at a published
   rate, from a till that the street take fills. It runs **one way only**: cash never becomes $OMR again.
-  The till can run dry, and a short window refuses and **burns nothing** — it is a claim on what was
+  The till can run dry, and a short window refuses and **takes nothing** — it is a claim on what was
   funded, never a promise. There is a daily limit per account. It is **open**, which it could not be
   while cash still bought $OMR: the two together would be a money pump, and the game refuses to run both.
 - **The Family Yield** (`GET /v1/yield`) — the top families by this season's standing split a pot of $OMR

@@ -101,7 +101,7 @@ alpha; a verdict makes it production balance. Measurements are the sim's, cited 
   surfaces — $OMR buying POWER there crosses even the new ceiling rule). Remaining: **watch realised
   $OMR loot per kill in the alpha** to see if whales actually commit.
 - **THE FARM rows** — superseded whole: the Street Wage (and its endowment schedule) was retired by
-  economy v3 step 1. There is no wage to farm.
+  economy step 1. There is no wage to farm.
 - **Real ticker symbols** — superseded by whatever D11 resolves to (retire = moot; keep = go fictional).
 - **`BUSINESS_SHUTTER_BPS` 0** — stays 0; the suite now pins the walk-away-vs-pay relation, so a
   future raise that flips it fails CI by name.

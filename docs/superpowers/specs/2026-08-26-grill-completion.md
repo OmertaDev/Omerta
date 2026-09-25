@@ -1,7 +1,7 @@
 # OMERTA Grill Interview Completion Specification
 
 **Status:** Binding implementation specification assembled 2026-08-26 from the
-retained Grill v2 interview, its handoff attachment, the repository's dirty
+retained Grill interview, its handoff attachment, the repository's dirty
 design amendments, and the verified implementation baseline.
 
 **Goal:** Implement every product and architecture decision that received an

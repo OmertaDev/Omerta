@@ -2,8 +2,8 @@
   {
     "id": "hook",
     "name": "Every cut has a job",
-    "status": "MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED",
-    "post": "Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market V2. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.",
+    "status": "MARKET CANDIDATE · NOT DEPLOYED OR FUNDED",
+    "post": "Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.",
     "slides": [
       {
         "title": [
@@ -16,7 +16,7 @@
           "9% BASE SELL FEE",
           "FOUR FIXED DESTINATIONS"
         ],
-        "note": "ETH / OMR · Uniswap v4 · Market V2"
+        "note": "ETH / OMR · Uniswap v4 · Market"
       },
       {
         "title": [

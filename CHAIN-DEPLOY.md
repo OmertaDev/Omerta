@@ -51,7 +51,7 @@ touches mainnet** until §0 is satisfied.
    applicable browser, API, watcher, storage, and deployment boundaries. Retain executed proofs,
    unit/integration and stateful fuzz/invariant results, static-analysis triage, findings and retests.
    Resolve critical/high findings before the affected scope is ready; name every remaining limitation.
-   ⚠ **The audit clock was RESET by tokenomics v2 step 4 (2026-07-29).** Until then OMR had no mint
+   ⚠ **The audit clock was RESET by economy step 4 (2026-07-29).** Until then OMR had no mint
    function and "nothing mints" was the property every prior review of this suite rested on. Supply is now
    unbounded and bonds mint it. Every review must address that specifically, and the FOUR walls
    that replaced the fixed cap: `OMR.minter` (one path, no owner mint) plus OmertaBond's `dailyCapOMR`,
@@ -60,7 +60,7 @@ touches mainnet** until §0 is satisfied.
    that `maxOmrPerEth` is checked independently, so a manipulated oracle can only ever TIGHTEN the ceiling,
    never raise it. Also review `OmrTwapOracle` (a Uniswap V2 cumulative-price TWAP) and the keeper
    dependency it creates.
-   ⚠ **The gate also WIDENED with `OmertaHook.sol` (economy v3 step 6).** v4 hook auditing is its own
+   ⚠ **The gate also WIDENED with `OmertaHook.sol` (economy step 6).** v4 hook auditing is its own
    specialty with its own attack surface, and this one holds three claims worth attacking directly:
    (a) `beforeInitialize`'s pool gate is what makes `SellTaxTaken` unforgeable — anyone can create a
    pool naming a hook, so without it a stranger emits real-looking revenue events from a worthless
@@ -159,13 +159,13 @@ touches mainnet** until §0 is satisfied.
    Recorded as the founder's statements, which is what closes this gate.
    **This gate does NOT unlock mainnet on its own, and the distinction is worth keeping
    sharp: gate 2 is a SECURITY review — a different thing entirely.** It is also the gate with the freshest reason to
-   exist — tokenomics v2 step 4 deleted the property every prior contract review rested on ("nothing
+   exist — economy step 4 deleted the property every prior contract review rested on ("nothing
    mints") and replaced it with four walls, and on 2026-08-12 two unbounded-mint holes were found in the
    BACKEND keepers (`AUDIT-family-buyback.md`) that had shipped with green tests and passing invariants.
    The scoped agent-led review must attack these cross-system assumptions and retain executable evidence
    for the fixes. **Nothing on this checklist should be armed until gate 2 also clears for that scope.**
    **What this gate covers has moved TWICE, and the current position is the second one.** The stock
-   layer was retired 2026-07-31 (`omerta-stock-layer-retirement.md`) and **reinstated 2026-08-10**
+   layer was retired 2026-07-31 and **reinstated 2026-08-10**
    (`omerta-brokers-design.md`, founder decision). Buying, holding and eventually delivering Stock
    Tokens is back in scope. The once-open eligibility-list/verification-depth question is now founder-
    resolved as **no in-game KYC or recipient-compliance check**; this resolves the product implementation
@@ -198,7 +198,7 @@ Devnet + testnet rehearsal may proceed now. **Mainnet is blocked on 1 + 2 + 3.**
 ## 0.5 RESOLVED — the bond's fourth slice (now the treasury's) leaves on-chain
 
 Found 2026-07-30 while scoping the v4 hook work; **fixed 2026-07-31** during review preparation, so
-it costs nothing extra (the audit clock was already reset by tokenomics v2 step 4 — changing the
+it costs nothing extra (the audit clock was already reset by economy step 4 — changing the
 contract AFTER an audit would mean paying to re-audit it).
 
 > **Note (2026-07-31, later the same day):** the founder retired the stock layer and kept the vault,
@@ -251,7 +251,7 @@ Deploy from the deployer account, but pass the Safe to every ownable constructor
 from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scripts for the exact calls/args;
 `tools/chain-e2e.js` remains the end-to-end behavior reference.
 - [ ] **`OMR(treasurySafe)`** — founding supply `100_000_000e18` minted once to the Safe. **No longer a
-      fixed-supply token** (tokenomics v2 §4): it has ONE mint path, the `minter` address, which ships
+      fixed-supply token** (economy §4): it has ONE mint path, the `minter` address, which ships
       **unset (= minting off)** and is armed deliberately below. There is no owner mint.
 - [ ] **`GearVault(safe, imageBase)`** — ERC-1155; mint gated to VoucherClaim (set in the next step);
       per-tokenId supply caps set by the Safe (set caps BEFORE signing any gear voucher — an uncapped id
@@ -290,11 +290,11 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       **Path A: 75% POL / 15% dev wallet / 5% treasury / the REMAINDER, 5%, to Vig** (POL-heavy for
       liquidity depth — up from 37.5% POL). All four leave the contract in the same tx; it custodies no
       ETH. **`rwaRecipient` must be the TREASURY Safe's own address, distinct from `vigRecipient`** (founder
-      ruling on key separation — §0.5; the `rwa` name is historical, see
-      `omerta-stock-layer-retirement.md`). **This contract MINTS** — see below. Keep
+      ruling on key separation — §0.5; `rwa` remains the contract
+      parameter name). **This contract MINTS** — see below. Keep
       `polBps`/`devBps`/`rwaBps`/`maxDiscountBps` in lockstep with the backend `BONDS.*` in `src/rules.js`
       / `deploy/fee-splits.env`.
-      **Operating rule (`omerta-v4-hook-design.md` §9.6): keep `BONDS.DISCOUNT_BPS` strictly BELOW
+      **Operating rule (`omerta-v4-hook-design.md` — Bond discount guard): keep `BONDS.DISCOUNT_BPS` strictly BELOW
       `SELL_TAX.BPS`.** At today's 800 vs 900 an immediate bond-and-flip nets `1.08 × 0.91 = 0.983` — a
       ~1.7% loss, which is what makes a bond a hold rather than an arbitrage. Invert the two and every
       bond becomes a subsidised sell. (`MAX_DISCOUNT_BPS` 2000 against a 900 tax would be a +9% guaranteed
@@ -1943,18 +1943,18 @@ The backend keeps its own reserve records; they must track the on-chain balances
   calls `setPackagePrice(skuChainId(sku), wei)` per live sku in lockstep with the backend
   `STORE.PACKAGES` prices, and sets `OMERTA_FEES_ADDRESS` on the worker.
 - **Liquidity bonds** (LP-token deposits) — launch-gated (§0.3).
-- **The tokenized-stock layer** — RETIRED 2026-07-31 (`omerta-stock-layer-retirement.md`) and
+- **The tokenized-stock layer** — RETIRED 2026-07-31 and
   **REINSTATED 2026-08-10** (`omerta-brokers-design.md`, founder decision). The treasury BUYS tokenized
   stock, `allocated ≤ held` (per ticker, in units) holds, and `StockVault` (now in the audit batch, §2c)
   is the GATELESS delivery leg. The BACKEND is now COMPLETE: the buy keeper (`runStockBuyback`), the
   per-account allocation ledger (`allocateStock` + nightly `runTreasuryInvariants`), and the delivery
   keeper (`runStockDeliveryKeeper`, 2026-08-15 — §2c) that drives `StockVault.deliverAuthorized` is built
   and chain-dormant. The ETH VAULT is the same shape one asset over
-  (`omerta-stock-layer-retirement.md`) — allocation-only, same asset both sides.
+  (`src/treasury.js`) — allocation-only, same asset both sides.
 
 ## 7b. Standing duty — reconcile the treasury Safe against what the vault owes
 
-The vault (`omerta-stock-layer-retirement.md`) lets a player burn earned $OMR to claim allocation of
+The vault (`src/treasury.js`) lets a player spend earned $OMR to claim allocation of
 **ETH the treasury holds**. `allocated ≤ held` is enforced in code and alarmed nightly, and it proves the
 vault never owes more than the books say **arrived**. It cannot prove the ETH is **still there** — the
 treasury Safe is a wallet a human controls, and ETH spent out of it writes no row in this database.

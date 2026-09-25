@@ -3,7 +3,7 @@ import {Video} from '@remotion/media';
 import '../fonts';
 import {TeaserOpening,TeaserMechanism,TeaserClose,type TeaserData} from './TeaserScenes';
 const data:TeaserData[]=[
- {id:'Teaser-Hook',title:'Every cut has a job',art:'city',headline:'EVERY CUT\nHAS A JOB.',mechanism:'9% BASE SELL FEE.\nFOUR DESTINATIONS.',detail:'2% developer · 1.6% RWA recipient · 2.4% community · 3% protocol liquidity. LP fees are additional.',status:'MARKET V2 CANDIDATE\nNot deployed or funded.'},
+ {id:'Teaser-Hook',title:'Every cut has a job',art:'city',headline:'EVERY CUT\nHAS A JOB.',mechanism:'9% BASE SELL FEE.\nFOUR DESTINATIONS.',detail:'2% developer · 1.6% RWA recipient · 2.4% community · 3% protocol liquidity. LP fees are additional.',status:'MARKET CANDIDATE\nNot deployed or funded.'},
  {id:'Teaser-WorldGraph',title:'The wreck is a beginning',art:'reserve',headline:'THE WRECK IS\nA BEGINNING.',mechanism:'SALVAGE.\nTRACK.\nCRAFT.',detail:'Conserved materials. Declared inputs. Recorded item history.',status:'WORLD GRAPH PHASE 1 IMPLEMENTED\nPhase 2A in development. NFT export not live.'},
  {id:'Teaser-Coordination',title:'No one has the whole story',art:'turf',headline:'NO ONE HAS\nTHE WHOLE STORY.',mechanism:'TWO ACCOUNTS.\nORIGINAL SOURCES.\nONE CONCLUSION.',detail:'Copies cannot manufacture independent evidence.',status:'COORDINATION PHASES 00–01\nValue-neutral API pilots. Default off.'},
 ];

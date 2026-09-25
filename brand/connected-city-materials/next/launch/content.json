@@ -11,12 +11,12 @@
     "gate": "Use when the campaign destination is publicly available; replace [CAMPAIGN_URL] with that verified destination.",
     "thread": [
       "Every cut has a destination. Every object has a history. No one has the whole story. Meet the three systems behind Omertà’s connected city.",
-      "Explore the Hook / Market V2 candidate, World Graph Phase 1, and default-off Coordination API pilots. Implementation and public availability are different milestones.",
+      "Explore the Hook / Market candidate, World Graph Phase 1, and default-off Coordination API pilots. Implementation and public availability are different milestones.",
       "Watch the films, trace a connection, and read the recorded local results: [CAMPAIGN_URL]"
     ],
     "discord": "The connected city showcase brings Omertà’s Hook, World Graph and Coordination Engine into one place. Watch the films, explore the browser simulations, or follow a real local API walkthrough. Each system has a clear built / next label. Explore: [CAMPAIGN_URL]",
     "subject": "Meet Omertà’s connected city",
-    "email": "Every object and every piece of evidence can lead somewhere. Our feature showcase explains three connected Omertà systems through films, diagrams and interactive examples. Market V2 remains a candidate; World Graph Phase 1 is implemented; Coordination pilots default off. Start with the interactive field guide: [CAMPAIGN_URL]"
+    "email": "Every object and every piece of evidence can lead somewhere. Our feature showcase explains three connected Omertà systems through films, diagrams and interactive examples. Market remains a candidate; World Graph Phase 1 is implemented; Coordination pilots default off. Start with the interactive field guide: [CAMPAIGN_URL]"
   },
   {
     "id": "world-graph",
@@ -57,22 +57,22 @@
     "email": "The Split Ledger needs evidence one investigator cannot provide alone. Our new case study follows two original discoveries through sharing and completion using real local API handlers. It includes the recorded responses and a runnable fixture: [CAMPAIGN_URL]. This is an implementation demonstration of default-off, value-neutral pilots."
   },
   {
-    "id": "market-v2",
+    "id": "market",
     "title": "Every cut has a job.",
     "lines": [
       "EVERY CUT",
       "HAS A JOB."
     ],
     "art": "city",
-    "status": "MARKET V2 CANDIDATE / NOT DEPLOYED OR FUNDED",
+    "status": "MARKET CANDIDATE / NOT DEPLOYED OR FUNDED",
     "gate": "Candidate design announcement only. Deployment, funding and final parameters must be verified before writing a market-launch announcement.",
     "thread": [
-      "Every cut has a job. Omertà’s Market V2 candidate defines a 9% base sell fee for the canonical pool: 2% developer, 1.6% RWA recipient, 2.4% community and 3% protocol liquidity.",
+      "Every cut has a job. Omertà’s Market candidate defines a 9% base sell fee for the canonical pool: 2% developer, 1.6% RWA recipient, 2.4% community and 3% protocol liquidity.",
       "Surge adds 0–1%; LP fees are additional. Companion mechanisms cover finite reserves, inventory bonds, solver-funded arbitrage, Turf fee rights and liquidity commitments.",
-      "Explore the allocation example: [CAMPAIGN_URL]. Market V2 is not deployed or funded. Independent pools have their own policies."
+      "Explore the allocation example: [CAMPAIGN_URL]. Market is not deployed or funded. Independent pools have their own policies."
     ],
-    "discord": "Explore the Market V2 candidate’s fee flow with a browser-only allocation example. The canonical pool design has a 9% base sell fee across four destinations, plus bounded surge; LP fees are additional. Market V2 is not deployed or funded. Read the design showcase: [CAMPAIGN_URL]",
-    "subject": "Follow the fee: Omertà’s Market V2 candidate",
-    "email": "The Market V2 candidate gives the canonical pool’s base sell fee four explicit destinations. Our new interactive example makes the 9% allocation visible, alongside a 0–1% surge input. LP fees and other trading costs are outside the example. Explore: [CAMPAIGN_URL]. Market V2 remains a candidate, not deployed or funded."
+    "discord": "Explore the Market candidate’s fee flow with a browser-only allocation example. The canonical pool design has a 9% base sell fee across four destinations, plus bounded surge; LP fees are additional. Market is not deployed or funded. Read the design showcase: [CAMPAIGN_URL]",
+    "subject": "Follow the fee: Omertà’s Market candidate",
+    "email": "The Market candidate gives the canonical pool’s base sell fee four explicit destinations. Our new interactive example makes the 9% allocation visible, alongside a 0–1% surge input. LP fees and other trading costs are outside the example. Explore: [CAMPAIGN_URL]. Market remains a candidate, not deployed or funded."
   }
 ]

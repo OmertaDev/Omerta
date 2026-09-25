@@ -1521,12 +1521,12 @@
         "Organization-scoped play",
         "Server-issued actions only"
       ],
-      "post": "The Sixth Chair v2 is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.",
-      "source": "AGENTS.md · Sixth Chair v2",
+      "post": "The Sixth Chair is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.",
+      "source": "AGENTS.md · Sixth Chair",
       "art": "brand/master-campaign/art/content-desk-evidence-room.png",
       "png": "png/06-authored/06-authored-03-sixth-chair.png",
       "svg": "svg/06-authored/06-authored-03-sixth-chair.svg",
-      "xCharacterCount": 174
+      "xCharacterCount": 171
     },
     {
       "id": "06-authored-04-district-stories",
@@ -1660,7 +1660,7 @@
         "FIFO final recipe at skill level 2"
       ],
       "post": "The Bellini Restoration is an authored supply chain at the Old Foundry: finite salvage, timed work orders, versioned skill XP and a final FIFO recipe for one inert restored lockbox.",
-      "source": "AGENTS.md · Bellini v2",
+      "source": "AGENTS.md · Bellini Restoration",
       "art": "brand/master-campaign/art/production-economy-foundry.png",
       "png": "png/06-authored/06-authored-09-bellini.png",
       "svg": "svg/06-authored/06-authored-09-bellini.svg",
@@ -1682,12 +1682,12 @@
         "Bellini Press durability",
         "Board-issued repair recipe"
       ],
-      "post": "Bellini v3 adds a Restoration Bench and a durable press. Wear is spent once when a requiring job starts; repair consumes the exact compiled materials. The tool unlocks authored crafting only.",
-      "source": "AGENTS.md · Bellini v3",
+      "post": "Bellini Restoration adds a Restoration Bench and a durable press. Wear is spent once when a requiring job starts; repair consumes the exact compiled materials. The tool unlocks authored crafting only.",
+      "source": "AGENTS.md · Bellini Restoration",
       "art": "brand/master-campaign/art/production-economy-foundry.png",
       "png": "png/06-authored/06-authored-10-press-room.png",
       "svg": "svg/06-authored/06-authored-10-press-room.svg",
-      "xCharacterCount": 191
+      "xCharacterCount": 200
     },
     {
       "id": "06-authored-11-material-exchange",
@@ -1705,12 +1705,12 @@
         "24-hour offers · five-open cap",
         "No cash, $OMR or ordinary items"
       ],
-      "post": "Bellini v4 opens a deliberately narrow barter rail: whole exact-hash lots of two approved materials, fixed expiry and listing caps, escrow conservation, no cash and no route into the wider item economy.",
-      "source": "AGENTS.md · Bellini v4",
+      "post": "Bellini Material Exchange opens a deliberately narrow barter rail: whole exact-hash lots of two approved materials, fixed expiry and listing caps, escrow conservation, no cash and no route into the wider item economy.",
+      "source": "AGENTS.md · Bellini Material Exchange",
       "art": "public/art/interior-market.jpg",
       "png": "png/06-authored/06-authored-11-material-exchange.png",
       "svg": "svg/06-authored/06-authored-11-material-exchange.svg",
-      "xCharacterCount": 202
+      "xCharacterCount": 217
     },
     {
       "id": "06-authored-12-immutable-content",
@@ -2039,7 +2039,7 @@
       "lane": "08-agents",
       "slug": "02-agent-turn",
       "status": "LIVE",
-      "eyebrow": "AGENT TURN V3",
+      "eyebrow": "AGENT TURN",
       "title": [
         "ONE READ.",
         "THE BEST NEXT MOVE."
@@ -2051,7 +2051,7 @@
         "Transparent scoring assumptions"
       ],
       "post": "GET /v1/agent/turn returns the agent’s compact state, policy, economic signals, EV-ranked executable moves, refresh-safe plans, blockers and next wake time in one cadence-efficient read.",
-      "source": "AGENTS.md · Agent Turn v3",
+      "source": "AGENTS.md · Agent Turn",
       "art": "brand/agent-campaign/art/machine-city.png",
       "png": "png/08-agents/08-agents-02-agent-turn.png",
       "svg": "svg/08-agents/08-agents-02-agent-turn.svg",

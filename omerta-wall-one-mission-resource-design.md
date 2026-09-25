@@ -1,4 +1,4 @@
-# Economy v3 — finishing wall 1: re-source the mission ladder off the desk's shelf
+# economy — finishing wall 1: re-source the mission ladder off the desk's shelf
 
 *Founder-directed 2026-08-03 ("re-source it"). Design only — NOT built. Every number and line
 reference below was verified at source on the day this was written, not recalled.*
@@ -7,7 +7,7 @@ reference below was verified at source on the day this was written, not recalled
 
 ## What wall 1 says, and the two mints that survive it
 
-`omerta-economy-v3-design.md` §9.1's first wall is **no faucet: zero mint reasons that pay a
+The proposed first wall in this dated design is **no faucet: zero mint reasons that pay a
 player**. That is what makes "extraction ≤ inflow" an identity the ledger *exhibits* rather than a
 constraint the full-reserve queue has to *enforce*.
 

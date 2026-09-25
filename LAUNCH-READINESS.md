@@ -173,7 +173,7 @@ genesis, liquidity, bonds, RWA delivery, THE BANK, and token withdrawals.
   executed proofs/tests/fuzzing/invariants, static-analysis triage, and findings/retests. Neither
   `StockTokenRegistryV2`, `SettlementGasPool`, nor the O1-only `AcquisitionVault` is authorized for
   production merely because its source and tests exist.
-- **Review the changed property.** Until tokenomics v2 step 4, every prior review of
+- **Review the changed property.** Until economy step 4, every prior review of
   this suite rested on "nothing mints". That is no longer true — bonds mint — and what replaced it is
   four walls (`dailyCapOMR`, `MAX_DISCOUNT_BPS`, `maxOmrPerEth`, the accretion oracle). A review based
   on the old claim assesses the wrong behavior.

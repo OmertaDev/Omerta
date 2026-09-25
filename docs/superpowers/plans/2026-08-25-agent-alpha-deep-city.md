@@ -106,7 +106,7 @@ Expected: PASS.
 feat: add the bounded Agent Alpha runner
 ~~~
 
-### Task 3: Add Coverage, Agent Turn v3, and Activation Evidence
+### Task 3: Add Coverage, Agent Turn, and Activation Evidence
 
 **Files:**
 - Modify: `src/explore.js`
@@ -138,7 +138,7 @@ Expected: FAIL because current Explore has 19 featured entries and a grid.
 
 Implement the spec's exact 40-row metadata, one grouped account query, existing state predicates, blocker categories, and ordering. Add ix_telemetry_account_event. Keep exploreBoard a thin wrapper.
 
-- [ ] **Step 4: Write failing Agent Turn v3 tests**
+- [ ] **Step 4: Write failing Agent Turn tests**
 
 Assert required OpenAPI exploration with no action/EV/executable fields; never in actions. Change telemetry and prove exploration changes while every action descriptor/rank/score/recommendation is identical. Assert /v1/agent/act rejects an exploration id.
 
@@ -255,7 +255,7 @@ Expected: every command exits 0.
 - [ ] **Step 6: Commit docs/generated graph**
 
 ~~~text
-docs: publish Agent Turn v3 and Deep City coverage
+docs: publish Agent Turn and Deep City coverage
 ~~~
 
 - [ ] **Step 7: Run bounded production canary outside Git**

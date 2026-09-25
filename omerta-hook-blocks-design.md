@@ -144,7 +144,7 @@ not exist. Building the reader against nothing means guessing at the shape. It f
 
 ### 2.4 Auto Burn — DECLINE. Our own design already answered this.
 
-Sending a share of buy output to the dead address contradicts a signed decision twice. Economy v3
+Sending a share of buy output to the dead address contradicts a signed decision twice. economy
 step 2 chose **recycle over burn** — every sink routes to the desk, which resells it for ETH; the
 founder picked revenue over deflation deliberately.
 
@@ -172,17 +172,7 @@ this idea that was ever really about OMERTÀ.
 
 ## 3. What this deliberately does not decide
 
-**The permanent buy-side rate.** `omerta-v4-hook-design.md:584` records a founder confirmation
-("one hook four slices") in which *"the D1 buy-side trade fee (30 bps, 100% → vig) joins as its own
-rate"*. The contract implements the sell tax's three slices and no permanent buy rate.
-
-Anti-snipe needs a buy fee **only inside its window**, so it is built as exactly that — a windowed
-rate, not a permanent one. This is on purpose: a permanent buy tax with a fourth (vig) slice changes
-`Owed`, `sweep`, the events, and the lockstep with `OMR.sol`, and it is an economic surface rather
-than a safety one. It should be decided on its own merits, not smuggled in behind a launch guard.
-
-It does, however, share the audit. **If the four-slice buy rate is wanted, decide it before the batch
-goes out** — a second buy-side change on an immutable contract is a second audit.
+**The permanent buy-side rate is closed.** The approved core-hook policy has no permanent buy fee. A bounded opening anti-snipe fee is a separate launch control. See `omerta-v4-hook-design.md` and the current deployment runbook.
 
 > **DECIDED (founder sign-off, 2026-08-16): BUYS STAY FREE FOREVER.** No permanent buy-side rate,
 > ever — the founder chose it explicitly with the immutability stated ("this is the one immutable

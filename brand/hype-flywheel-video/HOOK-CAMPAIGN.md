@@ -1,6 +1,6 @@
 # Omertà — The city is connected
 
-Seven vertical films designed 14 September 2026. A 92.3-second overview and six 54-second chapters, each at 1080 × 1920 / 30 fps. Black, ivory, brass and muted teal; cinematic establishing shots, kinetic titles, numbered ledger reveals and evidence paths. All copy is legible without audio. The overview includes fal-generated MiniMax narration; the six detailed chapters are silent. Overview subtitles are exported as SRT and WebVTT.
+Source compositions for seven vertical films. A 92.3-second overview and six 54-second chapters, each at 1080 × 1920 / 30 fps. Black, ivory, brass and muted teal; cinematic establishing shots, kinetic titles, numbered ledger reveals and evidence paths. All copy is legible without audio. The overview includes fal-generated MiniMax narration; the six detailed chapters are silent. Overview subtitles are exported as SRT and WebVTT. The checked-in Connected City gallery includes the World Graph and Coordination exports; render the market and overview compositions from the current source before publication.
 
 | Composition | Coverage |
 | --- | --- |
@@ -31,7 +31,7 @@ Each shot is eight seconds; ten-frame crossfades overlap adjacent shots. The ove
 
 ## Source and release boundaries
 
-- Hook mechanics: `../../omerta-contracts/src/market-v2/OmertaHookV2.sol` and `../../omerta-contracts/docs/market-v2/DESIGN.md` / `RUNBOOK.md`. Latest local implementation, not a funded or deployed market. Companion contracts are identified separately from the Hook. No universal tax, guaranteed floor, APY, token appreciation or MEV immunity is claimed.
+- Hook mechanics: `../../omerta-contracts/src/market-v2/OmertaHookV2.sol` and `../../omerta-contracts/docs/market/DESIGN.md` / `RUNBOOK.md`. Latest local implementation, not a funded or deployed market. Companion contracts are identified separately from the Hook. No universal tax, guaranteed floor, APY, token appreciation or MEV immunity is claimed.
 - World Graph: `../../SPEC.md` Phase 1 World Graph section, `../../src/worldgraph.js`, and the September 4 Phase 2A materials/salvage specification with September 13 workflow amendment. Phase 1 is implemented; Phase 2A is in development. NFT export is not live. The $300 crafting charge is game cash, not real dollars.
 - Coordination: `../../docs/coordination-engine/README.md`. Phases 00–01 are implemented for scoped review. Value-neutral JSON API pilots default off. Organization delegation, economic adapters, AI generation and mass operations remain planned.
 - Brand voice and handle: `../../MARKETING.md`. The CTA invites exploration and following development, not deposits or investment.
@@ -40,7 +40,7 @@ The campaign is a creative implementation, not a new contract audit or productio
 
 ## Asset provenance
 
-`../../public/art/hook-campaign/fal-prompts.json` holds three original Seedance 2.5 prompts for a city vault, a seven-compartment reserve desk and family Turf. Generated footage is visual metaphor, not a literal system diagram or gameplay capture. The generator retains request IDs and SHA-256 hashes in `fal-manifest.json`, and resumes existing jobs without automatic duplicate paid submissions. The legacy `art/hype/hero-backdrop.mp4` is the temporary Studio fallback until the new plates finish. Existing poster PNGs in that asset folder were copied without modification from the Market V2 campaign and are not used behind the film text.
+`../../public/art/hook-campaign/fal-prompts.json` holds three original Seedance 2.5 prompts for a city vault, a seven-compartment reserve desk and family Turf. Generated footage is visual metaphor, not a literal system diagram or gameplay capture. The generator retains request IDs and SHA-256 hashes in `fal-manifest.json`, and resumes existing jobs without automatic duplicate paid submissions. The legacy `art/hype/hero-backdrop.mp4` is the temporary Studio fallback until the new plates finish. Existing poster PNGs in that asset folder were copied without modification from the Market campaign and are not used behind the film text.
 
 Generation estimate: three eight-second 720p plates, approximately $11.35 using the repository's prior $0.473/second estimate. Actual fal billing may differ. The current model/schema was checked against https://fal.ai/models/bytedance/seedance-2.5/text-to-video/api on 14 September 2026. No key is saved in source or manifests.
 

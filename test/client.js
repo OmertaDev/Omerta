@@ -4020,7 +4020,7 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   // THE WINDOW — redeem earned $OMR for cash out of the till (one way). Read "done."
   await app.pool.query('UPDATE exchange_pool SET balance = 100000000 WHERE id=1');
   const redeemLine = fold19('POST', '/v1/window/redeem', await inject('POST', '/v1/window/redeem', a.t, { amount: 50 }));
-  assert(/burned .* \$OMR at the window/.test(redeemLine),
+  assert(/spent .* \$OMR at the window/.test(redeemLine),
     `redeeming $OMR at the window read "done." Got: ${JSON.stringify(redeemLine)}`);
 
   // THE LAW — a plea (certain forfeiture + short jail) and flipping informant, both "done." Flip is

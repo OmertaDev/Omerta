@@ -149,7 +149,7 @@ devnet-proven end to end, gated on a third-party audit before mainnet.
 > 2/ There's no respawn button. When you die, you're dead. Your heir inherits your money, your
 > enemies, and every vendetta you started. Would you play a game where the streets remember?
 
-> 3/ (attach hype-flywheel.mp4) The part nobody else does: $OMR isn't printed. Nothing in the city
+> 3/ (attach hype-flywheel-v3.mp4) The part nobody else does: $OMR isn't printed. Nothing in the city
 > creates it. Every coin was bought with real money — which is exactly why it's worth taking off
 > somebody. We even publish where every dollar goes.
 

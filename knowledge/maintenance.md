@@ -9,7 +9,8 @@ The knowledge base is useful only if adding and checking it is part of normal en
 - Refresh the GitHub snapshot when remote state is material, especially before releases, audits or
   planning reviews.
 - Review taxonomy, stale current claims and superseded decisions quarterly.
-- Archive and supersede historical evidence; do not delete the record of why a decision changed.
+- Keep guidance current and remove scrapped designs from the working tree; Git records replaced designs.
+- Preserve dated security findings, review scope and retest evidence under the security review policy.
 
 ## Normal change workflow
 

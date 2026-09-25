@@ -8,7 +8,7 @@ Draft prompts and answers; these are not attributed quotations.
 3. Why does original evidence matter?
    Two copies of one discovery cannot become two independent sources. Sharing preserves provenance and access is checked when evidence is used.
 4. How should people understand the Hook?
-   Start with the canonical pool and its base sell fee, then explain finite reserves and companion contracts. State that Market V2 is not deployed or funded.
+   Start with the canonical pool and its base sell fee, then explain finite reserves and companion contracts. State that Market is not deployed or funded.
 5. What comes next?
    Discuss World Graph Phase 2A and later Coordination phases as development plans. Do not attach launch dates that have not been approved.
 

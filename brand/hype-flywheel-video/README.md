@@ -1,4 +1,4 @@
-# OMERTA Hype Flywheel v3
+# OMERTA Hype Flywheel
 
 The 82.3-second hybrid film behind `/art/hype-flywheel-v3.mp4`.
 

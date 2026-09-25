@@ -4,7 +4,7 @@
 The city is connected. Follow the Hook, the World Graph and the Omertà Coordination Engine — with every system’s built / next status clearly marked. Explore: https://www.omerta.fun
 
 ## Hook teaser
-Every cut has a job. Explore the Market V2 candidate’s 9% base sell fee and four destinations. Surge and LP fees are additional. Candidate only: not deployed or funded.
+Every cut has a job. Explore the Market candidate’s 9% base sell fee and four destinations. Surge and LP fees are additional. Candidate only: not deployed or funded.
 
 ## World Graph teaser
 The wreck is a beginning. Salvage materials. Consume inputs. Craft the next object. World Graph Phase 1 is implemented; Phase 2A is in development. NFT export is not live.

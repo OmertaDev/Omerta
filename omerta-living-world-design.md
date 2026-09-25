@@ -44,8 +44,7 @@ give it texture, without changing a single balance surface.
   `cityEventOf(day + OFFSET)` (or a `hash01`-selected index) so the city has two dials on any given day
   instead of one. Both are still pure, deterministic, same-for-everyone.
 - **Streets-feed weather.** The day's event posts to the existing streets feed at UTC rollover (the
-  worker already runs nightly) so the town collectively knows "TONIGHT: THE CRACKDOWN" — the prototype
-  already wrote this line (`reference-prototype-v24.jsx`: "TONIGHT IN THE CITY…"); this ports it.
+  worker already runs nightly) so the town collectively knows "TONIGHT: THE CRACKDOWN".
 
 §10.4: none. Phase 1 moves no value — it surfaces and layers an existing deterministic modifier.
 The only new numbers are the second-track selection offset and any NEW event rows (which are content on

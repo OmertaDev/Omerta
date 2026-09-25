@@ -10,7 +10,7 @@ with something always to do, occupied and clicking to accomplish the next goal."
 
 The BUILD layer is deep but split across screens a new player rarely reads: three core stats
 (muscle/cunning/speed, the gym), the SKILLS tree (12 skills + capstones + actives + grandmastery), THE
-TRADES (10 use-XP mastery tracks with perks + level-50 traits), stats-by-use, Paths v2, and the
+TRADES (10 use-XP mastery tracks with perks + level-50 traits), stats-by-use, Paths, and the
 Underworld's daily leads + errand chains. Part of "too infant" is that the gym itself — the thing the
 coach sends a level-2 player to — is one verb over three numbers. This drop expands the gym itself and
 gives the fixtures a daily training quest, and the client puts the whole development picture on one

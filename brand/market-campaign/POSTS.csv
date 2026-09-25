@@ -1,0 +1,158 @@
+﻿"group","title","position","text","asset","alt","weighted_length"
+"01-city-treasury","The city has a treasury.","1","1/8 The city has a treasury.
+
+OMERTÀ Market puts liquidity, reserves, inventory bonds and family Turf around a new Uniswap v4 market.
+
+Built and tested locally. Not deployed or funded.
+
+Here is how the books work.","png/05-seven-compartments.png","OMERTÀ Market. The city has a treasury. A diagram of the seven capital compartments. Built and tested; not deployed.","213"
+"01-city-treasury","The city has a treasury.","2","2/8 Seven compartments. Seven jobs.
+
+Core. Lower Cushion. Garrison. Upper Cushion. Desk. War Chest. Turf.
+
+Liquidity, trading inventory and idle reserves each have a place in the books. Each operates within fixed limits.","png/05-seven-compartments.png","The seven Market compartments: Core, Lower Cushion, Garrison, Upper Cushion, Desk, War Chest and Turf. Finite capital with distinct roles.","220"
+"01-city-treasury","The city has a treasury.","3","3/8 The canonical ETH/OMR pool keeps a 9% base sell fee:
+
+2% developer
+1.6% RWA recipient
+2.4% community
+3% protocol-owned liquidity
+
+The destination is part of the contract. LP fees are separate.","png/04-tax-map.png","Canonical pool base sell fee: 2% developer, 1.6% RWA recipient, 2.4% community and 3% POL, totaling 9%. An additional 0 to 1% sell surge goes to stability. LP fees are separate.","196"
+"01-city-treasury","The city has a treasury.","4","4/8 Sell-driven tick pressure can add a 0-1% surge, paid entirely to stability. Pressure decays over time.
+
+The hook sell fee tops out at 10%, before separate LP fees.
+
+This is canonical pool policy. It does not tax every OMR venue.","","","232"
+"01-city-treasury","The city has a treasury.","5","5/8 Opening night has a clock.
+
+A finite anti-snipe window can apply a bounded temporary buy fee and an optional quote-size cap per swap.
+
+The administrator cannot extend the window. Splitting trades remains possible.","","","217"
+"01-city-treasury","The city has a treasury.","6","6/8 The hook settles swaps and records measurements.
+
+Companion contracts hold capital, manage reserve positions, vest inventory bonds and account for family fees.
+
+Each authority has a defined job. Each balance has an owner.","","","225"
+"01-city-treasury","The city has a treasury.","7","7/8 The city gets something to contest: future funded LP fee rights tied to seasonal Turf.
+
+Families can contest those rights. They cannot take the underlying liquidity principal.
+
+The distinction is written into custody.","png/08-fee-rights.png","Family Turf controls future funded LP fee entitlements. Protocol-owned liquidity principal remains outside family control. Historical fees stay with their recorded recipients.","221"
+"01-city-treasury","The city has a treasury.","8","8/8 The city has a treasury. The contracts now have to earn their place in it.
+
+Market is built and tested locally, not deployed or funded. Chain rehearsal, production integration and launch acceptance remain ahead.
+
+Follow the build. @OmertaOnRH","","","246"
+"02-reserve-desk","Capital with orders.","1","1/8 Capital with orders.
+
+OMERTÀ Market gives the reserve a finite balance, separate compartments and rules for each move.
+
+The contracts are built and tested locally. Not deployed or funded.
+
+Inside the reserve desk:","png/05-seven-compartments.png","OMERTÀ Market. Capital with orders. A diagram of seven ledger compartments. Seven compartments, finite budgets. Built and tested; not deployed.","217"
+"02-reserve-desk","Capital with orders.","2","2/8 Core holds two-sided liquidity. Lower Cushion and Garrison commit ETH against OMR selling. Upper Cushion and Desk supply OMR into buying.
+
+War Chest holds idle reserves. Turf holds a fixed seasonal range.","png/05-seven-compartments.png","Seven distinct compartments organize two-sided liquidity, downside ETH inventory, upside OMR inventory, idle reserves and fixed seasonal Turf.","208"
+"02-reserve-desk","Capital with orders.","3","3/8 An independent OMERTÀ implementation inspired by Olympus range-bound stability.
+
+Spending is capped. Recovery needs spaced observations and actual War Chest assets.
+
+Cooldowns apply. Lifetime deployment limits stay consumed.","","","228"
+"02-reserve-desk","Capital with orders.","4","4/8 A liquidity band has capacity. It can fill, reverse or be removed.
+
+Crossing it does not permanently retire its inventory. A violent market can outrun finite reserves.
+
+These are trading positions, not a promised price floor.","","","229"
+"02-reserve-desk","Capital with orders.","5","5/8 Inventory bonds sell OMR already held by the contract in exchange for ETH.
+
+Discounts and sale sizes are bounded. The full OMR entitlement is reserved at purchase.
+
+No mint authority. No promised sellback.","png/06-inventory-bonds.png","Inventory bonds exchange ETH for already funded OMR inventory. The complete entitlement is reserved at purchase and vests over time. No mint authority or sellback guarantee.","209"
+"02-reserve-desk","Capital with orders.","6","6/8 Bond notes vest linearly and cannot be transferred.
+
+Already vested claims remain available if new sales pause, inventory runs out or the oracle becomes unavailable.
+
+The sale desk can close. Existing claims keep their terms.","","","229"
+"02-reserve-desk","Capital with orders.","7","7/8 Arbitrage uses the solver's ETH across two approved pools.
+
+The atomic cycle must clear its profit threshold after swap fees, before gas. A fixed share goes to the reserve.
+
+The solver budgets gas separately. Failed attempts can still cost gas.","png/07-arbitrage.png","A solver-funded atomic ETH to OMR to ETH cycle through the canonical and an approved alternative pool. A fixed share of realized trading profit, before gas costs, funds the reserve. Failed attempts can cost gas.","248"
+"02-reserve-desk","Capital with orders.","8","8/8 The reserve desk has rules for spending, selling inventory and receiving realized arbitrage proceeds.
+
+It still needs a funded release.
+
+Market: built and tested locally. Not deployed or funded. No incentives are live from this build. @OmertaOnRH","","","250"
+"03-turf-city","Control the Turf.","1","1/8 Control the Turf. Know what comes with it.
+
+OMERTÀ Market gives families rights to future funded LP fees. The liquidity principal stays outside family control.
+
+Built and tested locally. Not deployed or funded.","png/08-fee-rights.png","OMERTÀ Market. Control the Turf. A diagram of family fee rights and protocol principal. Family fee rights, protocol-owned principal. Built and tested; not deployed.","214"
+"03-turf-city","Control the Turf.","2","2/8 Turf is a fixed price range for a defined season. Its fee source is bound before that season starts.
+
+The contract records which family holds the future fee entitlement. A family holds the rights; the protocol retains the principal.","png/08-fee-rights.png","Seasonal family fee entitlements are separate from liquidity principal. Families receive only their allocated funded LP fees and cannot remove the underlying capital.","236"
+"03-turf-city","Control the Turf.","3","3/8 A takeover starts with the books.
+
+The contracts collect and account for accrued fees before future rights change hands. Historical fees stay with their recorded recipients.
+
+A new flag does not rewrite an old ledger.","","","221"
+"03-turf-city","Control the Turf.","4","4/8 A siege has a deadline. Funded fees enter escrow, and the settlement rules divide what is actually there.
+
+The defender and attacker recipients are frozen for that siege.
+
+No outcome can award fees the contract never received.","","","230"
+"03-turf-city","Control the Turf.","5","5/8 Up to four families can share a Turf entitlement under predetermined shares.
+
+Corridors, fortification and loyalty carry bounded game state. They cannot multiply the fee balance.
+
+Politics can change the split. It cannot change the sum.","","","240"
+"03-turf-city","Control the Turf.","6","6/8 LP commitments put an actual canonical position NFT in custody for a finite term.
+
+The original depositor can recover it at maturity even if rewards are exhausted, the oracle is stale or new commitments are paused.","","","218"
+"03-turf-city","Control the Turf.","7","7/8 Commitment accounting measures sampled useful depth over time, using distinct fresh observations.
+
+Rewards require a prefunded campaign and available budget. Raw liquidity alone earns no claim.
+
+A commitment creates no unfunded promise.","","","240"
+"03-turf-city","Control the Turf.","8","8/8 The settlement and custody contracts are built and tested locally. Not deployed or funded.
+
+Production game integration remains ahead; this build activates no new Turf map or incentives.
+
+The city has a treasury. Every claim needs an entry. @OmertaOnRH","","","256"
+"standalone","s01-city-treasury","1","The city has a treasury.
+
+OMERTÀ Market: seven capital compartments, funded inventory bonds and seasonal family fee rights.
+
+Built and tested locally. Not deployed or funded.
+
+The next chapter has a ledger.","png/05-seven-compartments.png","The city has a treasury. OMERTÀ Market announcement, with a diagram of the seven capital compartments. Built and tested; not deployed.","206"
+"standalone","s02-tax-map","1","The canonical pool keeps its 9% base sell fee:
+2% developer
+1.6% RWA recipient
+2.4% community
+3% POL
+
+A 0-1% extra sell surge funds stability. LP fees are separate.
+
+OMERTÀ Market is built and tested. Not deployed or funded.","png/04-tax-map.png","The 9% canonical base sell fee is split 2% developer, 1.6% RWA recipient, 2.4% community and 3% POL. An additional 0 to 1% sell surge goes to stability. LP fees are separate.","224"
+"standalone","s03-reserve-desk","1","An empty War Chest cannot place an order.
+
+OMERTÀ Market gives reserve operations finite inventory, fixed limits and cooldowns. Recovery requires actual funding.
+
+Built and tested locally. Not deployed or funded.","png/05-seven-compartments.png","Capital with orders. A diagram representing seven distinct capital compartments and finite budgets. OMERTÀ Market is built and tested, not deployed.","212"
+"standalone","s04-inventory-bonds","1","The bond desk sells what is already in the vault.
+
+ETH buys a reserved claim on funded OMR inventory, vesting over time. No mint authority. No promised sellback.
+
+OMERTÀ Market: built and tested locally. Not deployed or funded.","png/06-inventory-bonds.png","Inventory bonds sell already funded OMR for ETH, reserve the full entitlement at purchase and release it through linear vesting. No minting or sellback guarantee.","227"
+"standalone","s05-arbitrage","1","Two pools. The solver's ETH. One atomic cycle.
+
+OMERTÀ Market routes a fixed share of realized trading profit, before gas, to the reserve. Competition still applies.
+
+Built and tested locally. Not deployed or funded.","png/07-arbitrage.png","Solver-funded ETH to OMR to ETH arbitrage through two approved pools, with a fixed reserve share of realized trading profit before gas and an on-chain profit threshold.","216"
+"standalone","s06-family-turf","1","A new flag does not rewrite an old ledger.
+
+In OMERTÀ Market, a Turf takeover changes future funded LP fee rights. Historical fees stay with recorded recipients. Families cannot remove principal.
+
+Built and tested. Not deployed or funded.","png/08-fee-rights.png","Control the Turf. A diagram of family fee rights and protocol-owned principal. Family fee rights are separate from protocol-owned liquidity principal. Built and tested; not deployed.","238"

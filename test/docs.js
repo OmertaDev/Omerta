@@ -453,7 +453,7 @@ for (const f of ['src/rules.tail.js', 'CLAUDE.md', 'SPEC.md']) {
 const claudeReal = lines('CLAUDE.md');
 const sizeClaims = [];
 for (const [name, text] of [['CLAUDE.md', read('CLAUDE.md')], ['SPEC.md', spec]])
-  for (const m of text.matchAll(/CLAUDE\.md`?\s+(?:alone\s+)?(?:is\s+)?~?([\d,]{3,})\s*lines/gi))
+  for (const m of text.matchAll(/CLAUDE\.md`?\s+(?:alone\s+)?(?:is\s+)?~?([\d,]+)\s*lines/gi))
     sizeClaims.push([name, Number(m[1].replace(/,/g, ''))]);
 assert(sizeClaims.length >= 1, "no doc states CLAUDE.md's size — SPEC's D7 section did, so if that "
   + 'claim is gone the guard below is inert; either restore the figure or delete this check');
@@ -3946,17 +3946,9 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${tol * 100}% out, so restate it. `
     + 'Its whole argument is carried by these numbers.');
 
-  // Stated three times in the document; all three must move together, or §6's lever argument is
-  // made against a size §2 has already contradicted.
-  const claimedLog = [...graphDoc.matchAll(/\*\*?([\d,]{5,})\*?\*? ?lines?\b|\b([\d,]{5,})-line\b/g)]
-    .map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
-  assert(claimedLog.length >= 3, 'GRAPH.md must state the CLAUDE.md line count where it argues from '
-    + `it (§2 evidence, §4 aside, §6 token cost); found ${claimedLog.length} such figures`);
-  const realLog = lines('CLAUDE.md');
-  for (const c of claimedLog) band(c, realLog, 'lines in CLAUDE.md', 0.10);
-  assert(new Set(claimedLog).size === 1,
-    `GRAPH.md states the CLAUDE.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
-    + 'sections; one of them is stale and the two arguments disagree');
+  // The current guide reports the size of contributor instructions once.
+  const claimedLog = figure('the contributor-guide size', /CLAUDE\.md[^\n]*?\*\*([\d,]+) lines\*\*/);
+  band(claimedLog, lines('CLAUDE.md'), 'lines in CLAUDE.md', 0.10);
 
   // Audit reports move only when an audit is written — worth restating, so this one is exact.
   const audits = fs.readdirSync('.').filter((f) => /^AUDIT-.*\.md$/.test(f)).length;

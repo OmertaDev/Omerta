@@ -1,25 +1,25 @@
 Every cut has a job
 
 POST COPY
-Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market V2. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.
+Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.
 
 POSTING ORDER + ALT TEXT
 1. hook-01.png
-EVERY CUT HAS A JOB.. Follow the canonical market’s fee flow. 9% BASE SELL FEE. FOUR FIXED DESTINATIONS. ETH / OMR · Uniswap v4 · Market V2 MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+EVERY CUT HAS A JOB.. Follow the canonical market’s fee flow. 9% BASE SELL FEE. FOUR FIXED DESTINATIONS. ETH / OMR · Uniswap v4 · Market MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 2. hook-02.png
-FOUR ORDERS. ONE BASE FEE.. 9% is the total base sell fee. 2% Developer. 1.6% RWA recipient. 2.4% Community. 3% Protocol liquidity. LP fees are additional. Other pools have their own policies. MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+FOUR ORDERS. ONE BASE FEE.. 9% is the total base sell fee. 2% Developer. 1.6% RWA recipient. 2.4% Community. 3% Protocol liquidity. LP fees are additional. Other pools have their own policies. MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 3. hook-03.png
-PRESSURE LEAVES A TRACE.. Extra sell pressure can add a bounded charge. Tick pressure accumulates. Surge adds 0–1%. Surge receipts go to stability. Pressure decays over time. Buys cannot instantly reset it. MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+PRESSURE LEAVES A TRACE.. Extra sell pressure can add a bounded charge. Tick pressure accumulates. Surge adds 0–1%. Surge receipts go to stability. Pressure decays over time. Buys cannot instantly reset it. MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 4. hook-04.png
-FUNDING HAS A DESTINATION.. Actual receipts enter defined compartments. 3% POL bucket → Core. Surge + bonds → War Chest. Arbitrage reserve share → War Chest. Funding does not reset lifetime deployment limits. MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+FUNDING HAS A DESTINATION.. Actual receipts enter defined compartments. 3% POL bucket → Core. Surge + bonds → War Chest. Arbitrage reserve share → War Chest. Funding does not reset lifetime deployment limits. MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 5. hook-05.png
-NO BOTTOMLESS VAULT.. Reserves use finite inventory and explicit limits. Capacity + cooldowns. Spot + liquidity checks. Funded partial recovery. No guaranteed floor, promised yield or MEV immunity. MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+NO BOTTOMLESS VAULT.. Reserves use finite inventory and explicit limits. Capacity + cooldowns. Spot + liquidity checks. Funded partial recovery. No guaranteed floor, promised yield or MEV immunity. MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 6. hook-06.png
-THE CITY KEEPS ACCOUNTS.. See the whole system in the film. EXPLORE OMERTA.FUN. FOLLOW @OMERTAONRH. Hook rules and companion contracts have separate responsibilities. MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED
+THE CITY KEEPS ACCOUNTS.. See the whole system in the film. EXPLORE OMERTA.FUN. FOLLOW @OMERTAONRH. Hook rules and companion contracts have separate responsibilities. MARKET CANDIDATE · NOT DEPLOYED OR FUNDED
 
 Use the six PNGs in numbered order. Add the matching alt text to each image. Status language is part of the copy. No posting or scheduling has been performed.

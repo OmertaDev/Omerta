@@ -377,7 +377,6 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   const films = [
     ['hype.mp4', 'hero-poster-960.webp', 'hero-poster-640.webp'],
     ['hype-streets.mp4', 'landing-break-960.webp', 'landing-break-640.webp'],
-    ['hype-earn.mp4', 'interior-scores-1024.webp', 'interior-scores-640.webp'],
   ];
   const videos = [...landing.matchAll(/<video\b[^>]*>[\s\S]*?<\/video>/g)].map((match) => match[0]);
   for (const [film, poster, mobilePoster] of films) {
@@ -403,7 +402,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     assert.equal(asset.statusCode, 200, `responsive landing asset ${name} must be mounted by /art`);
     assert.equal(asset.headers['content-type'], 'image/webp', `${name} must be served as WebP`);
   }
-  console.log('✅ landing media is responsive, all three below-fold videos are deferred, and each film range-streams');
+  console.log('✅ landing media is responsive, all retained below-fold videos are deferred, and each film range-streams');
 }
 
 // What the player DOWNLOADS. tools/pageweight.js measured a cold load of the landing at 5.3 MB on a

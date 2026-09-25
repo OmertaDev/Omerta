@@ -260,7 +260,7 @@ every-marketplace JSON blob must be **at most** as revealing as the paid one.
 ## 5. Sequencing — off-chain first, chain dormant
 
 The M6 pattern, for a specific reason: **a new contract resets the third-party audit clock**, and
-tokenomics v2 step 4 already reset it once (`OMR.mint` deleted the "nothing mints" property every
+economy step 4 already reset it once (`OMR.mint` deleted the "nothing mints" property every
 prior audit rested on). Mainnet is gated on `forge test` (green), third-party audit (not run), and
 the launch checklist (not done). None of that should block the part players can actually see.
 

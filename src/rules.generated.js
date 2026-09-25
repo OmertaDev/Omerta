@@ -1,14 +1,9 @@
 // AUTO-GENERATED — do not hand-edit. Regenerate with:
-//   node tools/extract-rules.js <path-to-prototype>.jsx
+//   node tools/extract-rules.js
 //
-// This file is MACHINE-OWNED and holds nothing but the prototype's data tables. That is the whole
-// point of it being separate: the extractor overwrites it wholesale, so nothing hand-written can
-// live here to be destroyed. Every helper, override and hand-authored constant lives in
-// rules.tail.js, which the extractor never touches. test/rules.js enforces both halves of that —
-// this file may contain only these table exports, and it may not import anything.
-//
-// Ground rule #2 ("src/rules.js is generated, never edited") is now mechanically true rather than
-// remembered: edit the PROTOTYPE and re-extract, exactly as the car-catalog expansion did.
+// Edit the current tables in data/rules.js. This file holds only their generated exports.
+// Helpers, overrides and hand-authored constants live in rules.tail.js, which the extractor
+// never touches. test/rules.js checks source parity, the data boundary and the combined exports.
 export const CRIMES = [
   { id: "pick", name: "Pickpocket a tourist", lvl: 1, nerve: 2, cash: [40, 120], respect: 2, base: 0.9, jail: 0 },
   { id: "stereo", name: "Boost a car stereo", lvl: 1, nerve: 3, cash: [90, 260], respect: 4, base: 0.78, jail: 8 },

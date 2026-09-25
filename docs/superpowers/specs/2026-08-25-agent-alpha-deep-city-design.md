@@ -4,7 +4,7 @@
 
 Ship two gated increments in order:
 
-1. **Agent Alpha** — one durable, honestly flagged production canary; a bounded conservative loop; public discovery that sends unauthenticated clients to the genuinely public Arena JSON; and Agent Turn v3 with a read-only exploration lane plus action/blocker/system activation evidence.
+1. **Agent Alpha** — one durable, honestly flagged production canary; a bounded conservative loop; public discovery that sends unauthenticated clients to the genuinely public Arena JSON; and Agent Turn with a read-only exploration lane plus action/blocker/system activation evidence.
 2. **Deep City** — replace the 19-card featured Explore grid with one canonical recommendation over the 40-system engagement vocabulary, chosen from systems this account has not used and can act on now.
 
 ## Binding constraints
@@ -122,7 +122,7 @@ The canonical metadata table contains these exact rows. Existing 19-item Explore
 | the store / pass | store-pass | 1 | store | policy-blocked; never proactive |
 | growth / social | growth-social | 3 | discover | human social; never agent-next |
 
-## Agent Turn v3 and activation evidence
+## Agent Turn and activation evidence
 
 The turn adds required exploration with the canonical coverage payload. It stays outside the authority fingerprint because it grants no execution. Changing visit telemetry must change exploration without changing action IDs, ranks, scores, descriptors, or recommendedActionId.
 
