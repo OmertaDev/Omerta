@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `35a4295ac387`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0f56e6b8e232`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1496 |
+| Commits in clone | 1500 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-24 — Merge pull request #184 from OmertaDev/codex/nft-paid-portrait-release |
+| Latest commit | 2026-09-25 — test(growth): select a real daily corner pair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 620 |
+| OmertaDev | 623 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 31 |
+| github-actions[bot] | 32 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -36,10 +36,10 @@
 | [SPEC.md](../../SPEC.md) | 324 | yes |
 | [schema.sql](../../schema.sql) | 297 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 221 | historical |
-| knowledge/generated/graph-summary.md | 221 | historical |
-| knowledge/generated/graph.json | 221 | historical |
-| knowledge/generated/inventory.md | 221 | historical |
+| knowledge/generated/github-history.md | 223 | historical |
+| knowledge/generated/graph-summary.md | 223 | historical |
+| knowledge/generated/graph.json | 223 | historical |
+| knowledge/generated/inventory.md | 223 | historical |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 172 | yes |
@@ -52,8 +52,8 @@
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| knowledge/generated/modules.md | 83 | historical |
-| [test/growth.js](../../test/growth.js) | 80 | yes |
+| knowledge/generated/modules.md | 84 | historical |
+| [test/growth.js](../../test/growth.js) | 81 | yes |
 | [test/gates.js](../../test/gates.js) | 77 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 73 | yes |
 | [test/hardening.js](../../test/hardening.js) | 66 | yes |

@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+file:///C:/Users/Jorge/.codex/worktrees/nft-paid-portrait-release/Omerta/src/rwahealthsweep.js:40
+function fail(code, message = code) { throw new RwaHealthError(code, message); }
+                                            ^
+
+RwaHealthError: health_registry_unavailable
+    at fail (file:///C:/Users/Jorge/.codex/worktrees/nft-paid-portrait-release/Omerta/src/rwahealthsweep.js:40:45)
+    at resumePending (file:///C:/Users/Jorge/.codex/worktrees/nft-paid-portrait-release/Omerta/src/rwahealthsweep.js:610:65)
+    at async sweepRwaHealth (file:///C:/Users/Jorge/.codex/worktrees/nft-paid-portrait-release/Omerta/src/rwahealthsweep.js:659:18)
+    at async file:///C:/Users/Jorge/.codex/worktrees/nft-paid-portrait-release/Omerta/test/rwahealth.integration.js:122:24 {
+  code: 'health_registry_unavailable'
+}
+
+Node.js v24.19.0

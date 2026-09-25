@@ -1,0 +1,17 @@
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2693311Z node:internal/modules/run_main:123
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2694097Z     triggerUncaughtException(
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2694595Z     ^
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2694838Z 
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2695824Z AssertionError [ERR_ASSERTION]: no other district draws 'goods' today — the corner draw changed, not this rule
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2696504Z     at file:///home/runner/work/Omerta/Omerta/test/growth.js:1006:3
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2697081Z     at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2697542Z   generatedMessage: false,
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2698205Z   code: 'ERR_ASSERTION',
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2698442Z   actual: null,
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2698661Z   expected: true,
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2699048Z   operator: '==',
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2699256Z   diff: 'simple'
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2699464Z }
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2699566Z 
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.2699655Z Node.js v22.23.2
+suites + sim (pg-mem)	npm test (the full suite, on pg-mem)	2026-09-25T01:04:55.3255681Z ##[error]Process completed with exit code 1.

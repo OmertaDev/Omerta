@@ -1,6 +1,8 @@
 import { encodeAbiParameters, keccak256, toBytes } from 'viem';
 
-import { finalizedStockCatalogForHealthV2 } from './stockcatalogv2.js';
+import {
+  finalizedStockCatalogForHealthV2, stockTokenRegistryV2ConfigurationAbsent,
+} from './stockcatalogv2.js';
 import { dbCaps } from './db.js';
 import {
   RwaHealthError,
@@ -600,6 +602,24 @@ async function verifySelectiveEvidence(client, batch) {
       || keccak256(body) !== evidence.raw_body_hash) fail('health_evidence_conflict');
 }
 
+// Called with the Registry share lock held. Missing configuration is expected only before
+// this rail has ever been initialized; removed, partial or malformed configuration must alert.
+async function registryNeverConfigured(client) {
+  if (!stockTokenRegistryV2ConfigurationAbsent()) return false;
+  const row = (await client.query(`SELECT
+    EXISTS (SELECT 1 FROM stock_catalog_sync_state_v2)
+    OR EXISTS (SELECT 1 FROM stock_catalog_getter_checkpoint_v2)
+    OR EXISTS (SELECT 1 FROM stock_asset_versions_v2)
+    OR EXISTS (SELECT 1 FROM stock_asset_active_heads_v2)
+    OR EXISTS (SELECT 1 FROM stock_catalog_sync_runs_v2)
+    OR EXISTS (SELECT 1 FROM stock_catalog_evidence_v2)
+    OR EXISTS (SELECT 1 FROM rwa_health_runtime_v2)
+    OR EXISTS (SELECT 1 FROM rwa_health_batches_v2)
+    OR EXISTS (SELECT 1 FROM rwa_health_current_v2)
+    OR EXISTS (SELECT 1 FROM rwa_health_reviewer_actions_v2) AS initialized`)).rows[0];
+  return row?.initialized === false;
+}
+
 async function resumePending(pool, timing) {
   const client = await checkedClient(pool);
   let committedFailure = null;
@@ -607,7 +627,13 @@ async function resumePending(pool, timing) {
     await client.query('BEGIN');
     const catalogResult = await lockedCatalogSnapshot(client);
     if (!catalogResult.available) {
-      if (!['stale', 'changed'].includes(catalogResult.reason)) fail('health_registry_unavailable');
+      if (catalogResult.reason === 'configuration' && await registryNeverConfigured(client)) {
+        await client.query('COMMIT');
+        return { status: 'dormant', reason: 'registry_unconfigured' };
+      }
+      if (!['stale', 'changed'].includes(catalogResult.reason)) {
+        fail('health_registry_unavailable', `health_registry_unavailable:${catalogResult.reason}`);
+      }
       await client.query(`SELECT id FROM rwa_health_apply_lock_v2 WHERE id=1${dbCaps.skipLocked ? ' FOR UPDATE' : ''}`);
       const pending = await pendingForRegistry(client, catalogResult.registryAddress);
       const code = catalogResult.reason === 'stale' ? 'health_registry_stale' : 'health_snapshot_changed';
@@ -657,6 +683,7 @@ export async function sweepRwaHealth(pool, { fetchFn = globalThis.fetch } = {}) 
   if (typeof fetchFn !== 'function') fail('health_bad_input');
   const timing = await preflight(pool);
   const resume = await resumePending(pool, timing);
+  if (resume?.status === 'dormant') return resume;
   if (resume?.capacityExceeded) fail('health_capacity_exceeded');
   if (resume?.pending) return applyRemaining(pool, resume.pending);
 

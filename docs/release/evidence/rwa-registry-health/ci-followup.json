@@ -1,0 +1,16 @@
+{
+  "baseRevision": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+  "source": "test/growth.js",
+  "sourceSha256Lf": "c3ab78d75c95c118c69e3db9bf1d773f40d8ca16c73ae227ac3ad14fba5aa037",
+  "ci": "https://github.com/OmertaDev/Omerta/actions/runs/36078158138",
+  "evidence": "RWA real-PostgreSQL races and 2048-version sweep passed; entire PostgreSQL job and recovery passed. Full npm pretest passed, followed by an existing date-dependent growth fixture failure.",
+  "cause": "On UTC day 20721 (2026-09-25), docks slot 0 draws goods and no other district draws goods. The fixture incorrectly applies the pigeonhole guarantee to a specific slot instead of the complete daily draw. The same code exists on base main 6bd1a1da.",
+  "correction": "Choose a real cross-district pair from all daily draws and move the seeded open job to that pair. Preserve the existing assertion that collecting the same kind elsewhere suppresses the coach suggestion, and deleting the collected twin restores it. Gameplay source is unchanged.",
+  "validation": [
+    "node test/growth.js passed",
+    "Exhaustive fixture selection over 3651 daily draws centered on day 20721 passed",
+    "git diff --check passed"
+  ],
+  "scope": "Test-fixture correction required to complete CI for the RWA fix. No gameplay, ledger, payout, production configuration or health authority changes.",
+  "remaining": "Rerun full CI before merge."
+}
