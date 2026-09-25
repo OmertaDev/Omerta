@@ -20,7 +20,7 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 | Boat recovery | PASS — retained scoped proof |
 | Mobile automation | PASS — all nine Section11 areas at four widths on both database versions |
 | Authority | PASS — complete source-phase route/role/command review; deployed configuration remains separate |
-| Soak | FAIL — all1000 admitted; measured12h began23:37:43UTC,ends11:37:43UTC Sep25; incomplete |
+| Soak | FAIL — Candidate22 worker runtime evidence missed original5min deadline; failed attempt cancelled and retained; reader/startup lock interference reproduced |
 | Upgrade | PASS — joined API migration and actual worker startup rehearsal |
 | Rollback | PASS — API state/receipt preservation and predecessor worker on candidate-written state |
 | Evidence integrity | PASS — admitted artifacts verified; final qualification package pending |
@@ -44,4 +44,4 @@ The user approved the temporary isolated Render setup and account-wide API crede
 
 Candidate22 reconnect closure and fresh-run preparation are recorded in FINAL_LAUNCH_LEDGER.md. Original failure evidence remains unchanged. All technical qualification criteria except the explicitly waived225-cell matrix remain required.
 
-Fresh Candidate22 controller is running; admission and the full measured12h remain to complete. See the current ledger for exact process/evidence identities.
+Candidate22 full CI and affected replay refresh pass. Its first Render attempt was cancelled after a failed worker runtime probe; all1000 admissions and partial measured traffic remain failed evidence. The private recorder held database read locks across worker boot. Unchanged startup fails at8s while the reader holds accounts and succeeds after reader release. A private recorder correction is being reviewed; no new run is active. A new full12h interval is still required. See the current ledger for exact evidence identities.
