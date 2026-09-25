@@ -991,19 +991,19 @@ assert.equal(await coachOf(), 'The trainers have work for you',
   'the day\'s allowance is spent, so the open envelope is dead weight — the corner goes quiet and the next LIVE rung leads');
 await pool.query(`DELETE FROM corner_jobs WHERE character_id='${rook.id}' AND day=${cday} AND district='canal'`);
 assert.equal(await coachOf(), 'The corner has an envelope for you', 'allowance back, envelope live again');
-// …and the OTHER gate: one envelope per KIND of work per day. The open envelope on docks slot 0 is
-// dead the moment the same kind is collected somewhere else, so the coach must stop pointing at it.
-// The pair is FOUND rather than hardcoded (the draw is per-day), and asserted to exist — 18 slots
-// drawing from ~9 kinds collide by pigeonhole, so a day with no pair means the draw itself changed.
+// …and the OTHER gate: one envelope per KIND of work per day. Find a pair across the entire daily
+// draw: pigeonhole guarantees a repeated kind somewhere, not a twin for the specific docks slot 0.
+// The open envelope dies when its kind is collected elsewhere, so the coach must stop pointing at it.
 {
-  const mine = cornerTasksOf('docks', cday).find((t) => t.slot === 0);
-  let twin = null;
-  for (const d of DISTRICTS) {
-    if (d.id === 'docks') continue;
-    const t = cornerTasksOf(d.id, cday).find((x) => x.kind === mine.kind);
-    if (t) { twin = { district: d.id, slot: t.slot }; break; }
-  }
-  assert(twin, `no other district draws '${mine.kind}' today — the corner draw changed, not this rule`);
+  const drawn = DISTRICTS.flatMap(({ id }) => cornerTasksOf(id, cday)
+    .map((task) => ({ ...task, district: id })));
+  const mine = drawn.find((task) => drawn.some((other) => other.district !== task.district
+    && other.kind === task.kind));
+  assert(mine, 'pigeonhole: some kind is drawn in two districts every day');
+  const twin = drawn.find((task) => task.district !== mine.district && task.kind === mine.kind);
+  await pool.query(`UPDATE corner_jobs SET district=$1, slot=$2
+    WHERE character_id=$3 AND day=$4 AND district='docks' AND slot=0`,
+  [mine.district, mine.slot, rook.id, cday]);
   await pool.query(`INSERT INTO corner_jobs (character_id, day, district, slot, baseline, claimed)
     VALUES ('${rook.id}', ${cday}, '${twin.district}', ${twin.slot}, '{}', true)`);
   assert.equal(await coachOf(), 'The trainers have work for you',

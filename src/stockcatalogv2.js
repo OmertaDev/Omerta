@@ -352,6 +352,11 @@ export function __setStockTokenRegistryV2ClientFactory(fn) {
 export const stockTokenRegistryV2ReaderConfigured = () => _registryReaderV2 !== readStockTokenRegistryV2Onchain
   || stockTokenRegistryV2ProductionConfig() !== null;
 
+// Shared RPC configuration does not opt into this rail. Blank or partial registry settings do.
+export const stockTokenRegistryV2ConfigurationAbsent = () =>
+  process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS === undefined
+  && process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK === undefined;
+
 const epochTimestampSql = (parameter) => `CASE WHEN ${parameter}='0' THEN NULL ELSE
   TIMESTAMPTZ '1970-01-01T00:00:00Z' + ((${parameter} || ' seconds')::interval) END`;
 
