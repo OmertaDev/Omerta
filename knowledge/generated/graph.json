@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8a6226340c41ca38d9a853907f3c9fceb4f53523",
+  "sourceRevision": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 7895,
-    "edges": 34406,
+    "nodes": 7900,
+    "edges": 34422,
     "byNodeType": {
-      "Artifact": 3275,
+      "Artifact": 3278,
       "Command": 105,
-      "Commit": 1498,
+      "Commit": 1500,
       "Contract": 79,
       "Document": 604,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 2524,
-      "CHANGED": 13044,
-      "CONTAINS": 3296,
+      "BELONGS_TO": 2525,
+      "CHANGED": 13054,
+      "CONTAINS": 3299,
       "DECLARES": 105,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 437,
       "HANDLED_BY": 706,
-      "HAS_COMMIT": 1498,
+      "HAS_COMMIT": 1500,
       "IMPLEMENTS": 124,
       "IMPORTS": 2872,
       "INHERITS": 17,
@@ -33044,6 +33044,52 @@
       "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
     },
     {
+      "key": "Artifact:docs/release/evidence/rwa-registry-health/ci-failure.log",
+      "type": "Artifact",
+      "id": "docs/release/evidence/rwa-registry-health/ci-failure.log",
+      "label": "ci-failure.log",
+      "path": "docs/release/evidence/rwa-registry-health/ci-failure.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 2037,
+      "lines": null,
+      "version": "0152471d122c6e17",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/release/evidence/rwa-registry-health/ci-failure.log",
+          "line": 1,
+          "version": "0152471d122c6e17"
+        }
+      ],
+      "lastChangedAt": "2026-09-25T01:08:25.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+    },
+    {
+      "key": "Artifact:docs/release/evidence/rwa-registry-health/ci-followup.json",
+      "type": "Artifact",
+      "id": "docs/release/evidence/rwa-registry-health/ci-followup.json",
+      "label": "ci-followup.json",
+      "path": "docs/release/evidence/rwa-registry-health/ci-followup.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 1400,
+      "lines": 17,
+      "version": "b926c82a8f5eb2c1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/release/evidence/rwa-registry-health/ci-followup.json",
+          "line": 1,
+          "version": "b926c82a8f5eb2c1"
+        }
+      ],
+      "lastChangedAt": "2026-09-25T01:08:25.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+    },
+    {
       "key": "Artifact:docs/release/evidence/rwa-registry-health/docs.log",
       "type": "Artifact",
       "id": "docs/release/evidence/rwa-registry-health/docs.log",
@@ -33088,6 +33134,29 @@
       "lastChangedAt": "2026-09-25T00:33:23.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "8a6226340c41ca38d9a853907f3c9fceb4f53523"
+    },
+    {
+      "key": "Artifact:docs/release/evidence/rwa-registry-health/growth.log",
+      "type": "Artifact",
+      "id": "docs/release/evidence/rwa-registry-health/growth.log",
+      "label": "growth.log",
+      "path": "docs/release/evidence/rwa-registry-health/growth.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 812,
+      "lines": null,
+      "version": "8ec5889b4ce54983",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/release/evidence/rwa-registry-health/growth.log",
+          "line": 1,
+          "version": "8ec5889b4ce54983"
+        }
+      ],
+      "lastChangedAt": "2026-09-25T01:08:25.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
     },
     {
       "key": "Artifact:docs/release/evidence/rwa-registry-health/integration.log",
@@ -69454,20 +69523,20 @@
       "path": "test/growth.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 181875,
+      "bytes": 181969,
       "lines": 2253,
-      "version": "707141a658b6350f",
+      "version": "c3ab78d75c95c118",
       "text": true,
       "provenance": [
         {
           "file": "test/growth.js",
           "line": 1,
-          "version": "707141a658b6350f"
+          "version": "c3ab78d75c95c118"
         }
       ],
-      "lastChangedAt": "2026-09-05T21:09:41.000Z",
+      "lastChangedAt": "2026-09-25T01:08:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56206d1a470459f7fbb94f61d617929475076aff"
+      "lastChangedCommit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
     },
     {
       "key": "Artifact:test/hardening.js",
@@ -77917,6 +77986,22 @@
         {
           "commit": "0f25859a92cc971d28fc007b5c2d83c6bdb7250f",
           "url": "https://github.com/OmertaDev/Omerta/commit/0f25859a92cc971d28fc007b5c2d83c6bdb7250f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "type": "Commit",
+      "id": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "label": "test(growth): select a real daily corner pair",
+      "title": "test(growth): select a real daily corner pair",
+      "date": "2026-09-25T01:08:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "provenance": [
+        {
+          "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
         }
       ]
     },
@@ -96365,6 +96450,22 @@
         {
           "commit": "cc733d2640065c4f7d0b60bc9d5a287126639a68",
           "url": "https://github.com/OmertaDev/Omerta/commit/cc733d2640065c4f7d0b60bc9d5a287126639a68"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "type": "Commit",
+      "id": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "label": "chore(knowledge): refresh RWA health fix artifacts",
+      "title": "chore(knowledge): refresh RWA health fix artifacts",
+      "date": "2026-09-25T00:34:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "provenance": [
+        {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
         }
       ]
     },
@@ -118124,6 +118225,9 @@
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
         },
         {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+        },
+        {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
@@ -118799,6 +118903,9 @@
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
         },
         {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+        },
+        {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
@@ -119472,6 +119579,9 @@
         },
         {
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
+        },
+        {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
         },
         {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
@@ -120311,6 +120421,9 @@
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
         },
         {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+        },
+        {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
@@ -120623,6 +120736,9 @@
           "commit": "cafce218e6eb7faa6435abf236f4ecf6b601a97a"
         },
         {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+        },
+        {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
         },
         {
@@ -120879,6 +120995,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
         },
         {
           "commit": "d57884a1d48b5acbb7574f79b483cefa2702b86f"
@@ -128288,12 +128407,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8a6226340c41ca38d9a853907f3c9fceb4f53523",
+      "revision": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
       "currentBranch": "codex/rwa-registry-health",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3275,
+      "currentArtifactCount": 3278,
       "provenance": [
         {
           "file": "README.md",
@@ -157406,12 +157525,12 @@
       "id": "test/growth.js",
       "label": "test/growth.js",
       "lines": 2253,
-      "version": "707141a658b6350f",
+      "version": "c3ab78d75c95c118",
       "provenance": [
         {
           "file": "test/growth.js",
           "line": 1,
-          "version": "707141a658b6350f"
+          "version": "c3ab78d75c95c118"
         }
       ]
     },
@@ -160834,6 +160953,15 @@
       "to": "Domain:engagement-growth",
       "provenance": {
         "file": "docs/release/evidence/player/mobile/results.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:docs/release/evidence/rwa-registry-health/growth.log",
+      "to": "Domain:engagement-growth",
+      "provenance": {
+        "file": "docs/release/evidence/rwa-registry-health/growth.log",
         "line": 1
       }
     },
@@ -186513,6 +186641,38 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "0f25859a92cc971d28fc007b5c2d83c6bdb7250f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/ci-failure.log",
+      "provenance": {
+        "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/ci-followup.json",
+      "provenance": {
+        "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/growth.log",
+      "provenance": {
+        "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "to": "Artifact:test/growth.js",
+      "provenance": {
+        "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
       }
     },
     {
@@ -267757,6 +267917,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:cc9e8524275b3ecbc4f1e52776db45c2554241a2",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -298893,6 +299101,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/ci-failure.log",
+      "provenance": {
+        "file": "docs/release/evidence/rwa-registry-health/ci-failure.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/ci-followup.json",
+      "provenance": {
+        "file": "docs/release/evidence/rwa-registry-health/ci-followup.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/release/evidence/rwa-registry-health/docs.log",
       "provenance": {
         "file": "docs/release/evidence/rwa-registry-health/docs.log",
@@ -298905,6 +299131,15 @@
       "to": "Artifact:docs/release/evidence/rwa-registry-health/gates.log",
       "provenance": {
         "file": "docs/release/evidence/rwa-registry-health/gates.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/release/evidence/rwa-registry-health/growth.log",
+      "provenance": {
+        "file": "docs/release/evidence/rwa-registry-health/growth.log",
         "line": 1
       }
     },
@@ -340652,6 +340887,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0f56e6b8e2322b51946e8c8d174ac31314c3dd18",
+      "provenance": {
+        "commit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0f643f3fdccffbdacdd31dc603e2093bf618b25e",
       "provenance": {
         "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
@@ -349871,6 +350114,14 @@
       "to": "Commit:cc733d2640065c4f7d0b60bc9d5a287126639a68",
       "provenance": {
         "commit": "cc733d2640065c4f7d0b60bc9d5a287126639a68"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
+      "provenance": {
+        "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
       }
     },
     {
