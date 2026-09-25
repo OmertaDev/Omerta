@@ -1,6 +1,6 @@
 # Generated repository inventory
 
-> Source: worktree at `f670407c1e8e`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e28c0a49e519`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
@@ -8,15 +8,15 @@
 |---|---:|
 | Current artifacts | 3,230 |
 | Text lines | 1,012,640 |
-| Repository bytes inventoried | 766,860,957 |
+| Repository bytes inventoried | 766,860,956 |
 | Backend/route modules | 275 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,506 |
+| Git commits | 1,508 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 7,919 / 33,270 |
+| Graph nodes / edges | 7,921 / 33,279 |
 
 ## Artifact kinds
 
@@ -59,7 +59,7 @@
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-17 |
+| [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-25 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
