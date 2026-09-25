@@ -59,6 +59,22 @@ if (!databaseUrl) {
     };
   }
 
+  function beforeQueryPool(base, beforeQuery) {
+    return {
+      query: (...args) => base.query(...args),
+      async connect() {
+        const client = await base.connect();
+        return {
+          async query(sql, params) {
+            await beforeQuery(String(sql));
+            return client.query(sql, params);
+          },
+          release() { client.release(); },
+        };
+      },
+    };
+  }
+
   try {
     await admin.query(`CREATE SCHEMA ${quotedSchema}`);
     pool = new Pool({
@@ -77,6 +93,93 @@ if (!databaseUrl) {
       'rwa_health_evaluations_v2', 'rwa_health_reviewer_actions_v2',
       'rwa_health_episodes_v2', 'rwa_health_episode_events_v2', 'rwa_health_current_v2',
     ]) assert(relations.includes(table), `H1 RED: missing ${table}`);
+
+    // A never-configured rail is dormant without inventing health or contacting the provider.
+    process.env.CHAIN_RPC_URL = 'https://shared-rpc-postgres.invalid/rpc';
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+    const initialHealthCounts = new Map();
+    for (const table of relations) initialHealthCounts.set(table,
+      (await pool.query(`SELECT count(*)::int AS n FROM ${table}`)).rows[0].n);
+    let dormantFetches = 0;
+    const noDormantFetch = async () => {
+      dormantFetches += 1;
+      throw new Error('dormant registry must not fetch provider data');
+    };
+    const dormantSql = [];
+    assert.deepEqual(await sweepRwaHealth(recordingPool(pool, dormantSql), {
+      fetchFn: noDormantFetch,
+    }), { status: 'dormant', reason: 'registry_unconfigured' });
+    assert.equal(dormantFetches, 0);
+    assert.equal(dormantSql.some((sql) => /^(INSERT|UPDATE|DELETE|MERGE|TRUNCATE)\b/i.test(sql)),
+      false, 'dormancy must not write authoritative state');
+    for (const table of relations) {
+      assert.equal((await pool.query(`SELECT count(*)::int AS n FROM ${table}`)).rows[0].n,
+        initialHealthCounts.get(table), `dormancy changed ${table}`);
+    }
+
+    // Pause the actual sweep at COMMIT: its dormant decision must still hold the Registry lock.
+    let signalDormantCommit;
+    let allowDormantCommit;
+    const dormantCommitReached = new Promise((resolve) => { signalDormantCommit = resolve; });
+    const dormantCommitReleased = new Promise((resolve) => { allowDormantCommit = resolve; });
+    const pausedSweep = sweepRwaHealth(beforeQueryPool(pool, async (sql) => {
+      if (sql.trim() === 'COMMIT') {
+        signalDormantCommit();
+        await dormantCommitReleased;
+      }
+    }), { fetchFn: noDormantFetch });
+    const dormantWriter = await pool.connect();
+    try {
+      await Promise.race([dormantCommitReached, pausedSweep.then(() => {
+        assert.fail('dormant sweep returned without its transaction commit');
+      })]);
+      await dormantWriter.query('BEGIN');
+      const registryWrite = dormantWriter.query(
+        'SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE',
+      );
+      await assertBlocked(registryWrite, 'Registry initialization must wait for the dormant decision');
+      allowDormantCommit();
+      assert.deepEqual(await pausedSweep, { status: 'dormant', reason: 'registry_unconfigured' });
+      await registryWrite;
+      await dormantWriter.query('ROLLBACK');
+    } finally {
+      allowDormantCommit();
+      await pausedSweep.catch(() => {});
+      await dormantWriter.query('ROLLBACK').catch(() => {});
+      dormantWriter.release();
+    }
+
+    // An initializer that already owns the lock must become visible before dormancy is decided.
+    const initializer = await pool.connect();
+    let racingSweep;
+    try {
+      await initializer.query('BEGIN');
+      await initializer.query('SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE');
+      let signalShareAttempt;
+      const shareAttempt = new Promise((resolve) => { signalShareAttempt = resolve; });
+      racingSweep = sweepRwaHealth(beforeQueryPool(pool, async (sql) => {
+        if (/stock_catalog_sync_lock_v2 WHERE id=1 FOR SHARE/.test(sql)) signalShareAttempt();
+      }), { fetchFn: noDormantFetch });
+      await Promise.race([shareAttempt, racingSweep.then(() => {
+        assert.fail('sweep decided dormancy before acquiring the Registry share lock');
+      })]);
+      await assertBlocked(racingSweep, 'dormant sweep must wait for in-flight Registry initialization');
+      await initializer.query(`INSERT INTO stock_catalog_getter_checkpoint_v2
+        (consumer_key,chain_id,contract_address,start_block_number)
+        VALUES ('stock_catalog_getter_v2',4663,$1,1)`, [address('9')]);
+      await initializer.query('COMMIT');
+      await assert.rejects(racingSweep, (error) => error?.code === 'health_registry_unavailable'
+        && error.message === 'health_registry_unavailable:configuration');
+      assert.equal((await pool.query('SELECT count(*)::int AS n FROM stock_catalog_getter_checkpoint_v2'))
+        .rows[0].n, 1, 'failed sweep preserves the committed initialization evidence');
+    } finally {
+      await initializer.query('ROLLBACK').catch(() => {});
+      await racingSweep?.catch(() => {});
+      initializer.release();
+      await pool.query('DELETE FROM stock_catalog_getter_checkpoint_v2');
+    }
+    assert.equal(dormantFetches, 0, 'neither dormancy nor missing configuration may fetch');
 
     // PostgreSQL must enforce Registry -> H1 lock order in both directions.
     const holder = await pool.connect();

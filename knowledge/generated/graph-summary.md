@@ -4,20 +4,20 @@
 
 ## Census
 
-8,658 nodes and 36,946 edges at `6bd1a1dab316`.
+9,144 nodes and 38,905 edges at `2115cdfab45f`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 3725 |
+| Artifact | 3735 |
 | Command | 177 |
-| Commit | 1497 |
+| Commit | 1972 |
 | Contract | 79 |
 | Document | 684 |
 | Domain | 13 |
 | ExternalDependency | 28 |
-| HistoricalArtifact | 343 |
+| HistoricalArtifact | 344 |
 | Module | 276 |
 | PullRequest | 126 |
 | Repository | 1 |
@@ -31,23 +31,23 @@
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 2778 |
-| CHANGED | 13033 |
-| CONTAINS | 3746 |
+| BELONGS_TO | 2779 |
+| CHANGED | 14501 |
+| CONTAINS | 3756 |
 | DECLARES | 177 |
 | DEFINED_IN | 1250 |
 | DEPENDS_ON | 65 |
 | EXECUTES | 602 |
 | HANDLED_BY | 708 |
-| HAS_COMMIT | 1497 |
+| HAS_COMMIT | 1972 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 3905 |
+| IMPORTS | 3904 |
 | INHERITS | 17 |
-| REFERENCES | 4264 |
+| REFERENCES | 4263 |
 | REPRESENTS | 1490 |
 | TESTS | 1347 |
 | TRACKS | 126 |
-| USES_TABLE | 1817 |
+| USES_TABLE | 1824 |
 
 ## Provenance contract
 

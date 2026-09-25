@@ -226,7 +226,7 @@
 | [src/rwahealthoverlay.js](../../src/rwahealthoverlay.js) | 304 | platform-core | 1 / 0 | 0 | 4 | 0 |
 | [src/rwahealthread.js](../../src/rwahealthread.js) | 491 | platform-core | 3 / 5 | 2 | 8 | 3 |
 | [src/rwahealthreview.js](../../src/rwahealthreview.js) | 226 | platform-core | 3 / 2 | 0 | 7 | 1 |
-| [src/rwahealthsweep.js](../../src/rwahealthsweep.js) | 736 | platform-core | 2 / 3 | 0 | 10 | 2 |
+| [src/rwahealthsweep.js](../../src/rwahealthsweep.js) | 763 | platform-core | 1 / 3 | 0 | 17 | 2 |
 | [src/rwanominations.js](../../src/rwanominations.js) | 1420 | platform-core | 3 / 0 | 0 | 7 | 0 |
 | [src/rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) | 1706 | platform-core | 1 / 3 | 0 | 19 | 2 |
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
@@ -250,7 +250,7 @@
 | [src/stable.js](../../src/stable.js) | 440 | vice-competition | 3 / 11 | 9 | 8 | 3 |
 | [src/standing.js](../../src/standing.js) | 119 | world-progression | 2 / 7 | 1 | 4 | 3 |
 | [src/stockcatalog.js](../../src/stockcatalog.js) | 388 | platform-core | 1 / 4 | 0 | 2 | 0 |
-| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 1216 | platform-core | 1 / 8 | 0 | 7 | 4 |
+| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 1221 | platform-core | 1 / 7 | 0 | 7 | 4 |
 | [src/stockdeliver.js](../../src/stockdeliver.js) | 579 | economy-ledger | 2 / 7 | 3 | 6 | 4 |
 | [src/store.js](../../src/store.js) | 435 | platform-core | 4 / 11 | 6 | 14 | 4 |
 | [src/streak.js](../../src/streak.js) | 108 | world-progression | 2 / 3 | 3 | 3 | 0 |
