@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d4584faacbb5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c434e5966607`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1978 |
+| Commits in clone | 1980 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-25 — docs: refresh merged release census |
+| Latest commit | 2026-09-25 — docs: authorize bounded production fixes release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1101 |
+| OmertaDev | 1103 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -33,20 +33,20 @@
 | [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
 | [public/index.html](../../public/index.html) | 421 | yes |
 | [src/server.js](../../src/server.js) | 366 | yes |
-| [SPEC.md](../../SPEC.md) | 349 | yes |
+| [SPEC.md](../../SPEC.md) | 350 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 247 | historical |
-| knowledge/generated/graph-summary.md | 247 | historical |
-| knowledge/generated/graph.json | 247 | historical |
-| knowledge/generated/inventory.md | 247 | historical |
+| knowledge/generated/github-history.md | 248 | historical |
+| knowledge/generated/graph-summary.md | 248 | historical |
+| knowledge/generated/graph.json | 248 | historical |
+| knowledge/generated/inventory.md | 248 | historical |
 | [package.json](../../package.json) | 223 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | [src/worker.js](../../src/worker.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
-| knowledge/generated/documents.md | 119 | historical |
+| knowledge/generated/documents.md | 120 | historical |
 | [test/client.js](../../test/client.js) | 117 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
 | knowledge/generated/modules.md | 102 | historical |
