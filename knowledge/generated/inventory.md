@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `c5b9128dedce`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `fd0e45ae0c08`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,688 |
-| Text lines | 1,207,102 |
-| Repository bytes inventoried | 777,572,451 |
+| Current artifacts | 3,690 |
+| Text lines | 1,207,053 |
+| Repository bytes inventoried | 777,623,855 |
 | Backend/route modules | 276 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 79 |
-| Git commits | 1,997 |
+| Git commits | 1,999 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,184 / 37,835 |
+| Graph nodes / edges | 9,190 / 37,994 |
 
 ## Artifact kinds
 
@@ -25,7 +25,7 @@
 | media-asset | 1,194 |
 | artifact | 657 |
 | test-suite | 426 |
-| documentation | 406 |
+| documentation | 408 |
 | backend-module | 248 |
 | engineering-harness | 193 |
 | contract-project | 148 |
@@ -71,7 +71,7 @@
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,380 | data-schema | 2026-09-24 |
-| [BALANCE.md](../../BALANCE.md) | 6,855 | documentation | 2026-09-25 |
+| [BALANCE.md](../../BALANCE.md) | 6,860 | documentation | 2026-09-25 |
 | [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
