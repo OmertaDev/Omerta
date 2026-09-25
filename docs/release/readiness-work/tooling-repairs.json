@@ -1,0 +1,909 @@
+{
+  "format": 1,
+  "phase": "development-regressions-not-release-clearance",
+  "findings": [
+    {
+      "id": "RC1-TOOL-29",
+      "classification": "D evidence generation workflow defect",
+      "owner": "Codex/root",
+      "failedGate": "fcaa6076 CI35569157185 full npm test / Knowledge artifact consistency",
+      "before": "Root incorrectly committed regenerated Knowledge artifacts together with source. Stored graph named4da713ba while the actual source commit wasfcaa6076; the unchanged consistency gate correctly failed.",
+      "repair": "Commit source first, regenerate from the clean tree, and commit generated artifacts alone. Preserve the exact sourceRevision/worktreeDirty guard and all original failure evidence.",
+      "changedSource": [
+        "knowledge/generated"
+      ],
+      "retest": "Generated-only09119b29 clean Knowledge consistency PASS; full hosted npm-test rerun remains required.",
+      "evidence": "Private fcaa6076-workflows/ci.json and ci.log"
+    },
+    {
+      "id": "RC1-TOOL-01",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Reduced arbitrary gate registry could be frozen",
+      "repair": "Source-pinned canonical registry deep equality",
+      "changedSource": [
+        "tools/rc1-evidence.mjs",
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-02",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Gate cwd could resolve outside frozen source",
+      "repair": "Lexical and realpath working-directory containment",
+      "changedSource": [
+        "tools/rc1-evidence.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-03",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Arbitrary JSON and failed/timed-out results could clear an individual proof declaration",
+      "repair": "Typed execution records and complete result/log/hash validation",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-04",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Index symlink could escape root",
+      "repair": "Validate SHA256SUMS.json through same realpath boundary as artifacts",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-05",
+      "classification": "D tooling defect",
+      "owner": "Codex/root; reviewed and repaired by Codex/source_repairs",
+      "before": "Nonexistent source and fabricated source inventory accepted structurally",
+      "repair": "Resolve source commit/tree and validate full selected Git-blob inventory/hashes",
+      "changedSource": [
+        "tools/rc1-qualification.mjs",
+        "test/rc1-qualification.js"
+      ],
+      "developmentRetest": {
+        "command": "node test/rc1-qualification.js",
+        "exitCode": 0,
+        "assertions": "70 negative controls plus real temporary-Git child capture/failure/timeout/source-mutation checks"
+      },
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "evidence freeze/run/verify/qualify"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-06",
+      "classification": "D tooling defect",
+      "owner": "Codex/root and Codex/source_repairs",
+      "before": "A clean Git status can hide assume-unchanged runtime modifications; standalone native and source-pair labels were not tied to the named Git blobs.",
+      "repair": "Compare actual source bytes with the pinned Git blob inventory, allowing only recorded LF/CRLF checkout equivalence. Retain full raw snapshots and checkout identities.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "tools/rc1-resource-proof.js",
+        "tools/rc1-resource-capital.js",
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Source-pair unit test creates a temporary Git repository and hidden runtime modification.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-resource",
+        "rc1-capital",
+        "rc1-serial",
+        "rc1-checkpoint",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-07",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "Missing receipt fields compared equal; a successful no-op response could pass response-only compatibility assertions.",
+      "repair": "Require response schema, execution identity, completion feedback, an actually created actor/graph mystery, owned character, and a matching completed durable mutation guard; retain raw replies and full database snapshots.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "No-op response and absent/mismatched persisted receipt negative controls.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-08",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "An output ancestor junction could place raw evidence inside a source checkout.",
+      "repair": "Resolve the existing parent and newly created output paths before accepting containment.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Temporary external alias into checkout is refused.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-09",
+      "classification": "D tooling defect",
+      "owner": "Codex/source_repairs",
+      "before": "Early connection failures and interrupted/hung child processes could escape final evidence recording.",
+      "repair": "Write reservation, phases, logs and request records incrementally; signal-triggered failure handling and bounded graceful/TERM/KILL cleanup retain a nonpassing result.",
+      "changedSource": [
+        "tools/rc1-source-pair.js",
+        "test/rc1-source-pair.js"
+      ],
+      "reproduction": "Deliberate database refusal, signal during stalled startup, and stubborn child controls.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair",
+        "Linux recovery workflow"
+      ]
+    },
+    {
+      "id": "RC1-TOOL-10",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "before": "Early source-pair harness used an invalid Director mode and then required byte-identical refreshed projections and replay telemetry.",
+      "repair": "Use DIRECTOR_DISABLED; compare durable command results and all game state. Only bootstrap observation time and explicitly validated replay diagnostic rows are excluded from the comparison; raw state remains retained.",
+      "changedSource": [
+        "tools/rc1-source-pair.js"
+      ],
+      "reproduction": "Private retained source-pair attempts 1-3 fail; attempt4 passed the scoped pre-review comparison. Reviewed controls and final integrated native rerun are separately required.",
+      "requiredIntegratedReruns": [
+        "test:rc1",
+        "rc1-source-pair"
+      ]
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-11",
+      "classification": "D tooling defect",
+      "before": "The2c469d85 rc1/redteam capture asserted gameplay successfully but changed a tracked sealed journey report; both wrapper gates correctly failed source identity.",
+      "repair": "45082605 writes a fresh exclusive journey report in temporary/private output. Sealed reports remain unchanged.",
+      "changedSource": [
+        "test/rc1-journeys.js"
+      ],
+      "retainedFailure": [
+        "2c469d85-rc1-branches-source-mutation.json",
+        "tmp/rc1-integrated-final/gates/rc1",
+        "tmp/rc1-integrated-final/gates/rc1-redteam"
+      ],
+      "retest": {
+        "source": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
+        "gates": [
+          "rc1",
+          "rc1-redteam"
+        ],
+        "result": "PASS with sourceUnchanged=true",
+        "evidence": "tmp/rc1-candidate-2"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-12",
+      "classification": "D test expectation defect",
+      "before": "Shipment city-exhaustion probe used an actor who had already taken the scaled daily share.",
+      "repair": "355eb64b expands the fixture and requires capacity strictly below the roster; per-owner movements are now asserted.",
+      "changedSource": [
+        "test/rc1-shipment-boundary.js"
+      ],
+      "retainedFailure": [
+        "d70b7d3b-shipment-midnight"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-shipment",
+        "result": "PASS_SCOPED",
+        "evidence": "resource-shipment-boundaries.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-13",
+      "classification": "D canonical wrapper usage defect",
+      "before": "Fast read returned null after a full day because the harness omitted canonical accrued-read fallback.",
+      "repair": "2129292b uses readCharacter, the complete production read wrapper; no game state/deadline rewrite.",
+      "changedSource": [
+        "test/rc1-shipment-boundary.js"
+      ],
+      "retainedFailure": [
+        "355eb64b-shipment-midnight"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-shipment",
+        "result": "PASS_SCOPED",
+        "evidence": "resource-shipment-boundaries.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-14",
+      "classification": "D execution configuration defect",
+      "before": "355eb64b native concurrent proof failed because pg_dump was absent from PATH (ENOENT).",
+      "repair": "Set RC1_PG_BIN to the installed PostgreSQL18 tools; no runtime or test assertion change.",
+      "changedSource": [],
+      "retainedFailure": [
+        "355eb64b-concurrent",
+        "tmp/rc1-candidate-3/gates/rc1-concurrent"
+      ],
+      "retest": {
+        "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+        "gate": "rc1-concurrent",
+        "result": "PASS; all four observation/replay cases",
+        "evidence": "expanded-native-results.json"
+      }
+    },
+    {
+      "owner": "Codex/root",
+      "id": "RC1-TOOL-15",
+      "classification": "D development expectation defects",
+      "before": "Campaign succession development proof assumed zero newborn ammunition and checked an exhausted shipment before canonical heir travel.",
+      "repair": "fd3cb549 asserts the actual 25 ammo schema default and travels the heir through canonical authority before testing exhausted-city denial.",
+      "changedSource": [
+        "tools/rc1-resource-proof.js"
+      ],
+      "retainedFailure": [
+        "campaign-death-development-1",
+        "campaign-death-development-2"
+      ],
+      "retest": {
+        "source": "355eb64be176df0600104a60bcb3e609f6e34b31",
+        "gate": "rc1-resource",
+        "result": "PASS, including old campaign/shipment receipt replay with no heir value",
+        "evidence": "expanded-native-results.json"
+      }
+    },
+    {
+      "id": "RC1-TOOL-16",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted recovery dispatch",
+      "before": "a4a3b9a6 workflow rejected HTTP422: runner.temp unavailable in job-level env.",
+      "repair": "815d02a8 places restricted output variables in step-level env.",
+      "changedSource": [
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "c429051d workflow accepted and all four jobs executed; individual failures retained in browser-refresh-retest.json."
+    },
+    {
+      "id": "RC1-TOOL-17",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted npm test / test/gates.js",
+      "before": "c429051d CI35562358638 failed because workflow-shape guard expected the old static PostgreSQL job name.",
+      "repair": "4c01e753 asserts both exact16/18.4 matrix entries, matching server images, unchanged20-minute budget and complete expanded native command list.",
+      "changedSource": [
+        "test/gates.js",
+        ".github/workflows/rc1-recovery.yml",
+        "package.json"
+      ],
+      "retest": "Focused test/gates.js PASS; fresh full CI required."
+    },
+    {
+      "id": "RC1-TOOL-18",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted connected golden phone journey",
+      "before": "c429051d LinuxPG16/18.4 controls missing during rendered refresh; controlled normal Refresh-world interruption reproduced failure.",
+      "repair": "c537bb4b handles observed rendered loading only, waits for board and reissues once. Stable missing/disabled controls still fail.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-controls.js"
+      ],
+      "retest": "Four native widths and controlled interruption PASS; browser-refresh-retest.json. Hosted cause remains inference until rerun."
+    },
+    {
+      "id": "RC1-TOOL-19",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Original worker full-state replay",
+      "before": "934fcf97 version2 replay diverged at458hours after an NPC job skipped a fixed database-scoped advisory lock during another schema-isolated world.",
+      "repair": "21cc4178/a9f41558 allocate an exclusively owned database and verify exact name/OID/ownership before cleanup.",
+      "changedSource": [
+        "tools/rc1-native-database.js",
+        "test/rc1-native-database.js",
+        "test/rc1-native-worker-schedule.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Native advisory-lock isolation control and full isolated673-hour replay PASS; exact sources in harness-worker-isolated-results.json. No matrix qualification."
+    },
+    {
+      "id": "RC1-TOOL-20",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Quiet world2160-hour evidence sealing",
+      "before": "db1749d8 finished logical90days but failed with Invalid string length while serializing version2 query tape.",
+      "repair": "61e03b8d writes bounded proof-indexed lossless chunks and reads replay lazily; version3 rejects incomplete/tampered tapes.",
+      "changedSource": [
+        "tools/rc1-native-query-tape.js",
+        "tools/rc1-native-query-order.js",
+        "test/rc1-native-query-tape.js",
+        "test/rc1-native-worker-schedule.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Chunk/large-number/failure/tamper controls PASS; new owned-database90-day run required.",
+      "evidence": "quiet-world-failed-run.json"
+    },
+    {
+      "id": "RC1-TOOL-21",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Quiet workload harness review",
+      "before": "7f310378 unused opportunity counter, age/persistence ambiguity, no final invariant boundary and stale command failure context.",
+      "repair": "1639ae6e derives distinct observations, separates age from sightings, adds final invariants and clears invocation context.",
+      "changedSource": [
+        "tools/rc1-native-player-policy.js",
+        "test/rc1-native-player-policy.js",
+        "test/rc1-native-world-workload.js"
+      ],
+      "retest": "Policy controls PASS; db1749d8 executed final invariants but whole run correctly remains FAIL due tape sealing and incomplete isolation."
+    },
+    {
+      "id": "RC1-TOOL-22",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Hosted PostgreSQL18 moderator ingress audit count",
+      "before": "8c2e4418 recovery35565168429 job106225424343 observed3audits when4were scheduled; production best-effort write was still asynchronous.",
+      "repair": "77e63027 tracks actual audit INSERT promises and awaits completion before exact-count assertions. A deliberately delayed native INSERT reproduces3beforecompletion/4aftercompletion.",
+      "changedSource": [
+        "test/rc1-mod-ingress-postgres.js"
+      ],
+      "retest": "fcaa6076 hosted Recovery35569159408 legacy-authority PostgreSQL16 and18.4 jobs PASS, including asynchronous audit completion; overall Linux recovery has separate retained browser failures.",
+      "evidence": "integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-23",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "Knowledge diagnostic evidence sealing",
+      "before": "54346c91 emitted snapshots but no history event; finish failedENOENT history.jsonl.",
+      "repair": "3aba7cc3 records startup and every canonical Knowledge invocation/completion.",
+      "changedSource": [
+        "test/rc1-knowledge-diagnostics.js"
+      ],
+      "retest": "Clean native3aba7cc3 PASS with verified artifact index; failed unsealed directory retained.",
+      "evidence": "integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-24",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "Mystery policy native evidence artifact naming",
+      "before": "a2688ba scenario underscores violated existing evidence artifact filename validator after3actualcommands.",
+      "repair": "972e7f46 maps artifact label underscores to hyphens; validator remains strict.",
+      "changedSource": [
+        "test/rc1-mystery-policies.js"
+      ],
+      "retest": "972e7f46 and4a586ae3 nativePASS_SCOPED; unit filename control added.",
+      "evidence": "mystery-player-policies.md;integrated-8c2e4418-results.json"
+    },
+    {
+      "id": "RC1-TOOL-25",
+      "classification": "C stale test with reproduced canonical contention",
+      "owner": "Codex/root",
+      "failedGate": "8c2e4418 CI35565166300 PostgreSQL16 job106225418843, Director network recovery",
+      "before": "Both concurrent native executions can refuse SQLSTATE55P03 while each holds a prerequisite SHARE lock and attempts FOR UPDATE NOWAIT. The old test required one immediate winner.",
+      "repair": "0fbde772 adds a deterministic SHARE-lock contention control, exact unchanged-state assertions, and an explicit same-key serial retry only after both outcomes are confirmed contention. Exactly one effect and durable replay remain mandatory.",
+      "changedSource": [
+        "test/director-network-recovery.js"
+      ],
+      "retest": "fcaa6076 hosted CI35569157185 PostgreSQL16 and18.4 coordination jobs PASS, including repaired contention assertion; overall CI failed separate Knowledge consistency.",
+      "evidence": "Private director-race-diagnostic-2, director-contention-retest-1.log; integrated-a5af028b-results.json retains original hosted failure"
+    },
+    {
+      "id": "RC1-TOOL-26",
+      "classification": "D tooling defect",
+      "owner": "Codex/root and Codex/mystery_workloads",
+      "failedGate": "Aggression evidence history validation and guarded database cleanup",
+      "before": "57a1bfa5 emitted undefined identity fields as invalid canonical JSON and failed cleanup. 6302816f fixed history but still left the owned pool open.",
+      "repair": "a0f37c74 rejects non-JSON primitives and sparse arrays at the evidence serializer. Actor records separately validate supported values before Date conversion. 4489b023 closes the exact owned pool before guarded deletion.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "test/rc1-native-proof.js",
+        "tools/rc1-native-actor-replay.js",
+        "test/rc1-native-actor-replay.js",
+        "test/rc1-aggression-policy.js"
+      ],
+      "retest": "Pure negative controls and native4489b023 PASS_SCOPED; history/artifact hashes independently verified. Earlier startup/configuration and cleanup failures retained.",
+      "evidence": "aggression-player-policy.md;integrated-a5af028b-results.json;harness-mystery-world-replay-results.json"
+    },
+    {
+      "id": "RC1-TOOL-27",
+      "classification": "D tooling defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "Original loan lifecycle journal oracle and injected fault identification",
+      "before": "e44411c9 incorrectly treated loan:house:vig as negative despite its positive canonical receipt. 02e371db expected a fault message that the original worker logs only as SQLSTATE.",
+      "repair": "02e371db uses the canonical positive receipt; dfb1a428 assigns unique SQLSTATE RCL01 to the exact injection and matches only that code. bfcba9a5 binds custody to lenders/targets/original deadlines; 15e6b83d retains all nonzero movement inputs.",
+      "changedSource": [
+        "tools/rc1-loan-lifecycle-journal.js",
+        "test/rc1-loan-lifecycle-journal.js",
+        "test/rc1-native-loan-lifecycles.js"
+      ],
+      "retest": "Two final independent77-hour native runs at15e6b83d PASS_SCOPED, each327 boundaries/4197 equations. Fifteen movement inputs per run independently reconciled.",
+      "evidence": "resource-loan-lifecycle-results.json"
+    },
+    {
+      "id": "RC1-TOOL-28",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "fcaa6076 hosted native newcomer phone journey,35569159408/job106236932943",
+      "before": "Generic world-notice status wait can return on the pending request; a subsequent read races the cleared refresh state. Native diagnostics observe the pending notice, while retained hosted screenshot shows completed receipt later.",
+      "repair": "Wait for the exact completed heading, assert response label matches selected action; pending and wrong-label notices cannot pass. Stabilize/reach the control before the unchanged44px measurement.",
+      "changedSource": [
+        "test/rc1-mobile-postgres.js",
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-receipt.js"
+      ],
+      "retest": "Exact09119b29 ordinary native newcomer phone PASS at320/360/390/430 with completed receipt and unchanged44px criterion; hosted retest remains required.",
+      "evidence": "integrated-fcaa6076-results.json"
+    },
+    {
+      "id": "RC1-TOOL-30",
+      "classification": "D missing recorded nondeterminism",
+      "owner": "Codex/native_harness",
+      "failedGate": "2ac778b3 isolated ninety-day full-state replay",
+      "before": "Day29 tied standings select a different champion; final due-market order exchanges generated refund and notification identities between orders. Full replay fails and original states remain retained.",
+      "repair": "Scope4 records exact original standing row order and complete due-market order after full eligible row multiset equality, with source/SQL/query identity pins. No production rule or normalization change.",
+      "changedSource": [
+        "tools/rc1-native-query-order.js",
+        "test/rc1-native-query-order.js"
+      ],
+      "retest": "c38fb9bd native causal controls and exact ninety-day observation/replay PASS: all90 daily states and final state match without exclusions;913 retained causal/short/long artifact hashes verified. Integrated9e05bf08 ten native controls and resource-enabled two-hour replay also pass. Full resources, matrix and latest integrated qualification remain open.",
+      "evidence": "harness-quiet-90day-regression-results.json;harness-query-order-causal-results.json;harness-recorded-query-order.md;harness-quiet-90day-order-replay-results.json;harness-quiet-90day-order-artifact-index.json;integrated-9e05bf08-results.json"
+    },
+    {
+      "id": "RC1-TOOL-31",
+      "classification": "D browser navigation control omitted reachability preparation",
+      "owner": "Codex/root",
+      "failedGate": "9e05bf08 integrated rc1-golden at430px",
+      "before": "Operation selection used a bare locator.click, unlike mutation controls. Actual trace repeatedly reports bottom navigation/vitals intercepting its target during automatic nearest scrolling.",
+      "repair": "Apply existing centered scroll, bounded stabilization, actual hit-test and unchanged44px reachability guard before read-only board selections. No DOM removal, force click or production UI change.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js"
+      ],
+      "retest": "Integratedb0c85c11 allfour native widths PASS with50commands and6interactions each, zero browser errors and actual hit testing. Both hosted workflows dispatched on that exact source; hosted outcomes pending.",
+      "evidence": "integrated-9e05bf08-results.json; restricted golden-9e05bf08-1 original failure assets;integrated-b0c85c11-results.json"
+    },
+    {
+      "id": "RC1-TOOL-32",
+      "classification": "D tooling defect",
+      "owner": "Codex/root",
+      "failedGate": "b0c85c11 hosted rc1-golden PostgreSQL16,35580193066/job106271037555",
+      "before": "390px recipe craft failed exact issued identity assertion: commandId unchanged, boardId changed. Locator re-resolves replacement DOM during reach; controlled actual browser/HTTP fixture reproduces the newer-board submission. Other widths and PostgreSQL18.4 passed separately; failure retained.",
+      "repair": "Track actual board GET generations, bound visible snapshot refreshes, pin selected DOM node, and authorize pre-submit reissue only on an observed newer board request with zero submissions. Detached unexplained nodes and any submitted identity mismatch remain hard failures. No production change. Refined after retainedf8 failure: recheck actual GET generation after awaited connectivity, and wait at most5s for an actual queued GET only when the canonical loading state is visible. Loading alone never authorizes reissue. Passive bounded DOM/request lifecycle diagnostics retain no identities, text, tokens or bodies.",
+      "changedSource": [
+        "test/lib/rc1-browser-controls.js",
+        "test/rc1-browser-board-refresh.js",
+        "test/lib/rc1-board-diagnostics.js"
+      ],
+      "retest": "Integratedf8b9b0d1 widths320/360/390 PASS50commands6interactions each;430 FAIL after32commands because pinned node detached before submission after the generation check. No browser JS errors. Whole golden gate remainsFAIL; failure and causal refinement retained. Hosted rerun required; b0failure retained. Controlled pinned production refresh coordinator and serialized API queue reproduce both pre-submit windows; same-board detachment, loading without GET and submitted mismatch remain failures. Clean2de580f1 native430 PASS50commands6interactions with two observed refresh recoveries and0submissions before reissue. Exact timing of historicalf8 failure remains unproven. Root all-four native and hosted reruns required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "Restricted b0c85c11-linux-pg16-failed.log and b0c85c11-linux-pg16/golden-browser.log; development controls retained; fresh integrated freeze required;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-33",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "fc069f31 alliance48h postseal verification, launcher exit1",
+      "before": "Whole-file UTF8 parsing exceeded Node single-string limit for1064824650-byte history. Original sealed PASS_SCOPED payload and launcher failure both retained; attempt classified POSTSEAL_VERIFICATION_FAILED.",
+      "repair": "Stream every exact artifact byte for size/hash and every history line for unchanged sequence/hash-chain/invocation checks. No sampling, normalization or source-pin waiver.",
+      "changedSource": [
+        "tools/rc1-native-proof.js",
+        "tools/rc1-native-proof-stream.js",
+        "test/rc1-native-proof-stream.js"
+      ],
+      "retest": "Independent retained-byte audit verified197artifacts15917events716invocations without changing failed status. Fresh90c80287 native48h observation/replay both exited0/PASS_SCOPED;18fields and complete canonical/resource hashes match without exclusions. Root integrated rerun remains required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "../../rc1-alliance-world.md; retained fc069f31 audit SHA1b6ba15b5dbf6472291c20896ed15792aff6bd302192c5c38f884c386db6af34;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-35",
+      "classification": "D tooling integration defect",
+      "owner": "Codex/root",
+      "failedGate": "b0c85c11 fullCI35580189986/job106271028134 test/gates.js suite ledger",
+      "before": "The retained Family historical verifier has no hosted runner or precise DECLARED input requirement. CI correctly rejects the orphan. New private native reducer has the same input property on later integrated source.",
+      "repair": "Declare only the exact restricted historical inputs and source-equality requirements which prevent these two evidence reclassifiers from running in generic CI. Current native Family and pure reducer controls remain workflow-wired. New car tests receive their own native lane/pure script; inventory assertions are unchanged.",
+      "changedSource": [
+        "test/gates.js",
+        "package.json",
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "Integratedf8b9b0d1 static suite inventory and harness gate PASS. Full hosted rerun still required; b0hostedCI remainsFAIL.",
+      "evidence": "Restricted b0c85c11-ci-failed.log; hosted35580189986"
+    },
+    {
+      "id": "RC1-TOOL-36",
+      "classification": "D tooling defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "ae7df025 native OMR loan terminals after45 completed boundaries",
+      "before": "Forfeiture notification payload is PostgreSQL TEXT JSON, but observer read it as an object. Native gate failed; historical independent verifier also initially rejected six-decimal strings before exact micro-unit parsing was corrected.",
+      "repair": "Parse canonical notification TEXT before checking its fields; independently parse exact micro-units without rounding. Preserve failed artifacts and add seizure, old-receipt and due-rewrite corruption controls.",
+      "changedSource": [
+        "tools/rc1-omr-loan-journal.js",
+        "test/rc1-native-omr-loan-terminals.js"
+      ],
+      "retest": "13868736 scoped native pass47boundaries2261equations13controls;186 artifacts across all3 attempts independently verified. Root integrated rerun pending. Integratedf8b9b0d1 native47boundaries2261equations13controls PASS;68 artifacts independently verified.",
+      "evidence": "omr-loan-terminal-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-34",
+      "classification": "D tooling defect",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "c65938a1 native alliance world observation",
+      "before": "HTTP injection returned before the original projection-events onResponse membership SELECT finished. The observer invariant query overlapped it and failed; failed history and cleanup are retained. Earlier activity attribution was an inference, superseded by exact membership evidence.",
+      "repair": "A test-only terminal onResponse barrier waits for all original returned hooks before the serial evidence boundary. No fixed sleep, callback suppression, production edit or observer relaxation.",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-alliance-response-barrier.js"
+      ],
+      "retest": "90c80287 activity and1a42a953 exact second-membership-query causal controls pass with55native invariants. Fresh90c80287 full48h observation/replay pass. Root integrated reruns required. Exact4b9db479 integrated affected native gates pass; both hosted Linux recovery lanes pass. Separate hosted PG18.4 alliance replay fails with missing detailed retention; no inherited clearance.",
+      "evidence": "../../rc1-alliance-world.md; retained failure run SHA366f848961f44899a8b24d10b78815469d4ace490119de74497c3189c2cc6c60;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-37",
+      "classification": "D integration fixture defect",
+      "owner": "Codex/root",
+      "failedGate": "4b9db479 candidate15 rc1-harness-units; hosted fullCI35586583471/job106291229534",
+      "before": "The old browser integration fixture created a new synthetic session per access and omitted the actual observed board GET generation. The repaired helper correctly refused this missing causal state.",
+      "repair": "5341808f keeps one session, tracks actual held HTTP reads, asserts zero pre-submit POSTs and waits for the real response before testing the settled disabled control. No production helper or criterion relaxed.",
+      "changedSource": [
+        "test/rc1-browser-controls.js"
+      ],
+      "retest": "Focused fixture and complete harness pass on clean5341808f. Candidate15 remains FAIL; current integrated rerun required. Hosted4b fullCI subsequently fails the same fixture; both original native PostgreSQL lanes and full npm test step pass.",
+      "evidence": "integrated-4b9db479-results.json; private browser-controls-generation-development.log, browser-controls-generation-development-2.log, browser-controls-generation-harness.log;hosted-4b9db479-ci-results.json"
+    },
+    {
+      "id": "RC1-TOOL-39",
+      "classification": "D overstrict bootstrap equivalence assertion",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "85121083 native alliance checkpoint continuation",
+      "before": "Exact native dump restoration passed, but the harness required original application bootstrap to leave every canonical row unchanged; makeDb legitimately stamps schema_meta.applied_at at the resumed clock.",
+      "repair": "c7b23435 preserves strict pre-application restore equality, permits only that exact original schema stamp in a separate aggregate bootstrap comparison and retains all rows and sequence differences. Other mutations fail.",
+      "changedSource": [
+        "tools/rc1-alliance-continuation.js",
+        "test/rc1-alliance-continuation.js",
+        "test/rc1-native-world-workload.js",
+        "test/rc1-alliance-continuation-native-audit.js"
+      ],
+      "retest": "Cleanc7b23435 reference, continuation, continuation replay and independent three-run audit PASS_SCOPED. All18 replay fields match;23-table uninterrupted difference and213 added startup resource boundaries retained. No uninterrupted-equivalence or general restart-safety claim.",
+      "evidence": "../../rc1-alliance-continuation.md"
+    },
+    {
+      "id": "RC1-TOOL-38",
+      "classification": "D incomplete hosted evidence retention",
+      "owner": "Codex/root",
+      "failedGate": "4b9db479 recovery35586586182 PostgreSQL18.4 alliance world replay,job106291241951",
+      "before": "Replay exited1 but the workflow uploaded no complete private run/history/comparison/dump. Public status alone cannot explain the failure. Original restricted artifacts are unavailable.",
+      "repair": "9d36a050 encrypts fixed native evidence roots with a locally held RSA3072 recipient; only authenticated AES256GCM envelopes are uploaded. A diagnostic dispatch copies retention tools outside an exact older checkout and records tested source separately from workflow/helper source.",
+      "changedSource": [
+        "tools/rc1-ci-envelope.js",
+        "tools/rc1-ci-retain.mjs",
+        "test/rc1-ci-envelope.js",
+        ".github/workflows/rc1-recovery.yml"
+      ],
+      "retest": "14 envelope test groups and exact9d36a050 archive/encrypt/decrypt CLI pipeline pass. Hosted reproduction35590753664 is pending, envelope controls passed on Node22. The original run remains failed and incompletely retained. Fresh exact4b9db479 reproduction35590753664 passes; authenticated retained evidence verifies all372indexed artifacts/full histories and18comparison fields. Both cancelled6368339e hosted smoke artifacts also authenticate with original unsealed TOOL46 failure prefixes. Original missing4b failed-run artifacts remain unavailable.",
+      "evidence": "ci-private-retention.md;../../rc1-ci-envelope.md;integrated-4b9db479-results.json"
+    },
+    {
+      "id": "RC1-TOOL-40",
+      "classification": "D compressed evidence publication barrier defect",
+      "owner": "Codex/root and Codex/native_harness",
+      "failedGate": "ee48d4d8 focused late-artifact source-bound reproduction of f5524e9 recorder",
+      "before": "A delayed admitted snapshot and post-finish artifact wrote physical files after publication, omitted from the sealed artifact index.",
+      "repair": "b5d97db5 closes artifact/snapshot/checkpoint admission and drains all previously admitted operations before verification/publication. Internal checkpoint writes share their admitted operation; any artifact failure retains INCOMPLETE. Pre-finish failure snapshots remain possible after poisoned history.",
+      "changedSource": [
+        "tools/rc1-native-proof-gzip.js",
+        "test/rc1-native-proof-gzip.js"
+      ],
+      "retest": "Focused delayed snapshot/checkpoint, late admission, failed artifact and poisoned-history diagnostic controls pass. Default format1 unchanged. Integrated and native gzip world reruns required.",
+      "evidence": "Restricted gzip-artifact-finish-gap-ee48d4d8-1/reproduction-result.json and run SHAee2641fb13dddac86ce2081bb0083ab9d280f826c766a1effb0deb9a8e0a28ac;harness-gzip-capture.md"
+    },
+    {
+      "id": "RC1-TOOL-41",
+      "classification": "D retained receipt verifier defect",
+      "owner": "Codex/resource_proof",
+      "failedGate": "d92a9198 native Family entry proof after34 boundaries and11 exact movements",
+      "before": "An adversarial duplicate historical durable receipt escaped a verifier that checked only the current command key. Native run correctly remained FAIL on the failed corruption control.",
+      "repair": "361efd90 enforces global account/key uniqueness in durable retained request receipts and updates the original observer regression for exact formation plus explicit unknown seasonal/membership changes.",
+      "changedSource": [
+        "test/lib/rc1-family-entry-controls.js",
+        "test/rc1-world-resource-observer.js"
+      ],
+      "retest": "361efd90 native34boundaries/11movements/33corruption controls and shared-observer native regression pass;124artifacts and two history chains independently verified.",
+      "evidence": "world-family-entry.md;family-entry-observer-summary.json; failed run SHA95b904247c24ed3306d1c395304805b0df564f767f223bca2af790750707db4a; failed history SHA33cea540c710bc2aafda5ce47bffa49a7924858b635d4488311bb093314b16ca"
+    },
+    {
+      "id": "RC1-TOOL-42",
+      "classification": "D test module load-order defect",
+      "owner": "Codex/native_harness",
+      "failedGate": "8e7ed931 resource-enabled native gzip world bootstrap",
+      "before": "World runner statically imported shared resource observer, whose canonical checkin quote imports game.js then db.js before the required worker instrumentation. The guard correctly refused cached uninstrumented authority before native workload.",
+      "repair": "2b47e79d moves only world observer module loading after instrumentation into the existing guarded try/finally. The original cached-module guard and runtime remain unchanged.",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-world-observer-load-order.js"
+      ],
+      "retest": "Two-process controls reject observer-first before Pool construction and accept instrumentation-first up to a deliberately throwing Pool sentinel with zero DB connections. Exact2b47e79d resource-enabled2h observation/replay pass18fields/1085boundaries with39unknowns. Original failure and cleanup retained; integrated rerun required.",
+      "evidence": "harness-world-gzip-integration.md;harness-world-gzip-integration-index.json"
+    },
+    {
+      "id": "RC1-TOOL-43",
+      "classification": "D terminal rollback harness precondition error",
+      "owner": "Codex/resource_proof",
+      "failedGate": "bd038f25 Family dissolution native proof after29 boundaries and zero completed terminals",
+      "before": "Full HTTP snapshot rollback assertion compared state before separately committed canonical preaction accrual. The later injected terminal action abort correctly preserved all cash/ammo/OMR custody, membership and receipts.",
+      "repair": "41127506 observes a canonical member GET at the same logical instant before installing the terminal fault. The full observed-state rollback assertion remains strict; no normalization or runtime change.",
+      "changedSource": [
+        "test/rc1-native-family-dissolution.js",
+        "test/rc1-world-family-dissolution.js",
+        "tools/rc1-world-resource-observer.js"
+      ],
+      "retest": "41127506 native40boundaries/two nonzero three-bucket terminals/60corruption controls/four invariant checkpoints pass.159artifacts and two history chains independently verified. Integrated rerun required.",
+      "evidence": "world-family-dissolution.md;family-terminal-observer-summary.json;family-terminal-oracle-finding.json"
+    },
+    {
+      "id": "RC1-TOOL-44",
+      "classification": "D turf terminal harness oracle/precondition errors",
+      "owner": "Codex/resource_proof",
+      "failedGate": "a4bc613b and c1e26872 native single-district terminal proofs",
+      "before": "Original boot adds an empty turf sweep beyond three hourly sweeps; corrected count then exposes an even fixture that never exercised required odd-unit refund rounding. Both full runs remain FAIL despite completed terminal.",
+      "repair": "c1e26872 retains boot separately and selects post-epoch original sweeps; dff63152 declares an odd-unit canonical stake policy before execution. No runtime, deadline, resolver or rounding change.",
+      "changedSource": [
+        "test/rc1-native-turf-terminal.js"
+      ],
+      "retest": "dff63152 passes120resource boundaries,20negative controls, original rollback/retry/empty sweep and odd loser53533→refund26766/burn26767.1129artifacts/3history chains independently verified; integrated rerun required.",
+      "evidence": "world-turf-terminal-observer.md;turf-terminal-observer-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-45",
+      "classification": "D Crew authority harness recorder/precondition errors",
+      "owner": "Codex/root",
+      "failedGate": "547d70e3 artifact admission and dd75db51 first no-character Crew route probe",
+      "before": "Recorder correctly refuses nested evidence names; after flat-name repair, Crew-first hook correctly returns no_crew before the character check while test expects no_character.",
+      "repair": "dd75db51 uses flat safe evidence names and explicit pending diagnostic status;64c3245a requires the exact existing Crew-first denial ordering. Runtime unchanged.",
+      "changedSource": [
+        "test/rc1-crew-authority-postgres.js"
+      ],
+      "retest": "64c3245a passes53denials/13replays/one concurrent fresh kick over368authority tables;67passing artifacts plus both failed histories independently verified. Bootstrap differs only in original schema stamp; integrated rerun required.",
+      "evidence": "authority-crew-review.md;authority-crew-summary.json"
+    },
+    {
+      "id": "RC1-TOOL-46",
+      "classification": "D shared Family observer applies player defaults to NPC formation",
+      "owner": "Codex/resource_proof",
+      "failedGate": "6368339e native raw/gzip/alliance world startup and74b29180 independent world startup",
+      "before": "Original runFamilies uses createGang then marks NPC standing in the same transaction. Player-only npc_flag/default assertions reject the original worker commit.",
+      "repair": "5f506844 validates stable NPC owner, exact formation cash fee and custody, and returns explicit unsupported NPC Family/war_pool lineage before player-only defaults. No NPC classification credit, skipped transition or normalization.",
+      "changedSource": [
+        "tools/rc1-world-resource-observer.js",
+        "test/rc1-world-family-npc.js"
+      ],
+      "retest": "Both original failed inputs and32native corruption variants plus16pure controls/generic57table native observer pass. Original-worker pair passes separately0648d1bd with47repair; fresh integrated qualification remains required.",
+      "evidence": "world-family-npc-observer.md;family-npc-observer-summary.json;integrated-6368339e-results.json"
+    },
+    {
+      "id": "RC1-TOOL-47",
+      "classification": "A required native-proof cleanup blocker; scoped runtime session leak",
+      "owner": "Codex/native_harness",
+      "failedGate": "6368339e world observer failure cleanup; independently reproduced at74b29180",
+      "before": "A successful native advisory-lock SELECT followed by observer rejection occurs before the original try/finally. The actual City worker keeps its checked-out client and lock; scheduler pool.end cannot complete.",
+      "repair": "86dc6ba7 encloses acquisition in cleanup; known false releases, known true unlocks/releases, acquisition or unlock rejection discards only the uncertain borrowed session. Original error identity and accounting remain unchanged.",
+      "changedSource": [
+        "src/bank.js",
+        "test/rc1-city-lock-release.js"
+      ],
+      "retest": "e4d56fc6 passes7pure/8native controls, full canonical state equality, actual scheduler closure, no residual locks and owned database cleanup. Separate0648d1bd original-worker pair passes. Fresh integrated reruns required.",
+      "evidence": "harness-city-lock-release.md;harness-observer-serialization.md;harness-observer-serialization-index.json;integrated-6368339e-results.json"
+    },
+    {
+      "id": "RC1-TOOL-48",
+      "classification": "D native proof invocation arity error",
+      "owner": "Codex/native_harness",
+      "failedGate": "86dc6ba7 City native control after bootstrap and before City invocation",
+      "before": "The test passed two arguments to the three-argument recorder API. Its strict JSON guard correctly rejected a function-valued identity.",
+      "repair": "e4d56fc6 provides authority, identity and work separately. No runtime change.",
+      "changedSource": [
+        "test/rc1-city-lock-release.js"
+      ],
+      "retest": "Fresh e4d56fc6 native controls pass; original unsealed689-byte prefix and database-absence verification retained.",
+      "evidence": "harness-city-lock-release.md;harness-observer-serialization-index.json"
+    },
+    {
+      "id": "RC1-TOOL-49",
+      "classification": "D car workload initialization violates canonical acquisition accounting",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "2683ebbc car native baseline invariants; zero measured transitions",
+      "before": "Two declared raw car fixtures have no canonical acquisition audit; original car conservation detects +2.",
+      "repair": "ed349b5b acquires both cars with ordinary canonical boosts during declared initialization; original cooldown clock advances are retained. No fabricated grant, receipt, deadline or invariant waiver.",
+      "changedSource": [
+        "test/rc1-car-melt-provenance-postgres.js"
+      ],
+      "retest": "e71eab8a fresh native baseline/final invariants and two melts pass; source-byte preflight failures and failed baseline remain retained.",
+      "evidence": "../../rc1-car-melt-commit.md"
+    },
+    {
+      "id": "RC1-TOOL-50",
+      "classification": "D test metadata overwrites reserved evidence sequence",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "ed349b5b independent postseal verification after two completed native melts",
+      "before": "A spread of native query metadata replaces recorder-owned sequence. Independent verification rejects the history, launcher exits1 and provisional PASS is invalidated without rewriting it.",
+      "repair": "e71eab8a nests query metadata under attempt. Collector, gameplay and strict verifier unchanged.",
+      "changedSource": [
+        "test/rc1-car-melt-provenance-postgres.js"
+      ],
+      "retest": "Fresh e71eab8a passes30boundaries/2melts/55baseline+55final invariants. All42artifacts and151history events independently verify; integrated rerun required.",
+      "evidence": "../../rc1-car-melt-commit.md"
+    },
+    {
+      "id": "RC1-TOOL-51",
+      "classification": "D native NPC fixture eligibility expectation",
+      "owner": "Codex/resource_proof",
+      "failedGate": "3bb7aada original NPC Family lineage probe",
+      "before": "The original boot population has no eligible founder. The test incorrectly required immediate formation and failed after217 resource boundaries with zero formations.",
+      "repair": "8f8f0d6b declares an eight-hour bound before a fresh run and advances original worker callbacks until legal eligibility; no status, progression or deadline rewrite.",
+      "changedSource": [
+        "test/rc1-native-npc-family-lineage.js"
+      ],
+      "retest": "22cca627 fresh native run reaches original rollback at01:00 and two successes at02:00/03:00. Original3bb failure remains retained.",
+      "evidence": "world-npc-family-lineage.md"
+    },
+    {
+      "id": "RC1-TOOL-52",
+      "classification": "D native invariant reader omits instrumented transaction clock",
+      "owner": "Codex/resource_proof",
+      "failedGate": "8f8f0d6b NPC Family lineage invariant read",
+      "before": "OMR fresh-emission SUM on the unclocked snapshot pool fails PostgreSQL42704: unrecognized configuration parameter rc1.transaction_time. Initial readonly/row-lock hypothesis was invalidated.",
+      "repair": "22cca627 uses the ordinary instrumented clocked pool for canonical invariants and retains readonly snapshot collection.",
+      "changedSource": [
+        "test/rc1-native-npc-family-lineage.js"
+      ],
+      "retest": "22cca627 passes855 resource boundaries,42 corruption controls and4345 canonical invariant checks. Both first failures and the invalidated hypothesis remain retained.",
+      "evidence": "world-npc-family-lineage.md"
+    },
+    {
+      "id": "RC1-TOOL-53",
+      "classification": "D concurrent HTTP test assertion and lifecycle race",
+      "owner": "Codex/root",
+      "failedGate": "Candidate17 b5c80a4e local Crew gate and hosted recovery35598247604 legacy authority on PostgreSQL16/18.4",
+      "before": "A second same-key request correctly returns409 in_progress; the test expected two immediate200 responses and could drop its schema before the first request finished.",
+      "repair": "4ad7dbcd holds the genuine reservation before the handler, proves pending409 has no authoritative effect, releases one successful request, verifies exact later replay and drains every HTTP call before teardown.",
+      "changedSource": [
+        "test/rc1-crew-authority-postgres.js",
+        "test/rc1-family-authority-postgres.js"
+      ],
+      "retest": "Fresh source4ad Crew53denials/14replays and Family51denials/15replays pass. All artifacts/history and exact contention effects independently verify. Original local/hosted failures remain failed; integrated and hosted reruns required.",
+      "evidence": "authority-pending-replay-finding.md;authority-family-results.json;authority-family-retention-index.json"
+    },
+    {
+      "id": "RC1-TOOL-54",
+      "classification": "D Node22 gzip verification error identity lost during stream teardown",
+      "owner": "Codex/native_harness",
+      "failedGate": "6368339e hosted CI35593259693 harness/world-history-storage line-byte control on Node22.23.2",
+      "before": "The default async iterator destroys its stream before pipeline receives the intended validation error, replacing it with ABORT_ERR. Unchanged test reproduces on the exact Node22 version.",
+      "repair": "172910e9 uses iterator destroyOnReturn:false for the pipeline-owned consumer; pipeline retains teardown responsibility and preserves the precise first exception.",
+      "changedSource": [
+        "tools/rc1-native-proof-gzip.js",
+        "test/rc1-history-error-preservation.js"
+      ],
+      "retest": "Five suites each pass on Node22.23.2 and Node24.19.0 Windows x64; eleven exact failure controls and all stream-destruction assertions pass. Limits/formats/default-v1 unchanged. Hosted/integrated reruns required. Exact integrated8ba78e71 hosted CI35604353498 passes on Linux, including the unchanged diagnostic harness controls; original failed runs remain failed.",
+      "evidence": "harness-history-error-preservation.md;harness-history-error-preservation-index.json;hosted-6368339e-final-results.json;hosted-8ba78e71-ci-results.json"
+    },
+    {
+      "id": "RC1-TOOL-55",
+      "classification": "D wrong original NPC caller label in provenance assertion",
+      "owner": "Codex/mystery_workloads",
+      "failedGate": "8295ede1 NPC car acquisition qualification inside scoped world observation",
+      "before": "Source pin is correct but expected wrapper runPopulation does not match actual runPopulationInner at the pinned caller line. Six candidates remain UNKNOWN; no false exact classification.",
+      "repair": "fef9f2e3 binds the actual wrapper/inner/spawnResident chain without relaxing source pins or custody/receipt checks.",
+      "changedSource": [
+        "tools/rc1-npc-car-acquisition.js",
+        "test/rc1-npc-car-acquisition.js"
+      ],
+      "retest": "Fresh fef native two-hour25actor observation/replay each classifies six original NPC car grants, all18 comparisons/full369table3sequence state pass.39other unknowns remain; missing full per-commit snapshots limit retrospective reclassification of that source.",
+      "evidence": "../../rc1-npc-car-acquisition.md"
+    },
+    {
+      "id": "RC1-TOOL-56",
+      "classification": "D composed provenance stack truncated before original ancestor",
+      "owner": "Codex/resource_proof",
+      "failedGate": "65ee96b8 combined original-worker observer before measured actors",
+      "before": "Default ten-frame stack capture retains ledger/createGang but loses the required population caller behind composed wrappers. Strict provenance rejects first NPC Family COMMIT59.",
+      "repair": "ebfc52ee captures40 synchronous stack frames and always restores the ambient setting.94a1a6cd verifies success/throw restoration and stale car/Family boundary rejection without weakening source/caller checks.",
+      "changedSource": [
+        "tools/rc1-npc-family-provenance.js",
+        "test/rc1-world-npc-family-lineage.js",
+        "test/rc1-world-car-melt-witness.js"
+      ],
+      "retest": "Fresh94a observation/replay each completes1085 boundaries with six exact NPC car grants and two formations; two season-record unknowns remain. The65ee prefix independently verifies364 events/360 completed boundaries; first failure and later diagnostic COMMIT-without-BEGIN remain unsealed. Exact DB is independently absent; dump/drop guard refused and no dump was fabricated.",
+      "evidence": "candidate18-resource-integration.md"
+    },
+    {
+      "id": "RC1-TOOL-57",
+      "classification": "D native test entry triggers original server main suffix guard",
+      "owner": "Codex/native_harness",
+      "failedGate": "d00e5575 stored-season-crown native cleanup",
+      "before": "Test filename ending observer.js also ends server.js. Importing the original server starts an unintended extra API/pool; native crown assertions complete but cleanup fails and the run seals overallFAIL.",
+      "repair": "e1caae37 renames the test entry to controls.js and rejects filenames matching the original server/worker main guards. No production or classifier change.",
+      "changedSource": [
+        "test/rc1-native-season-crown-controls.js"
+      ],
+      "retest": "Freshe1 focused crown proof, two native rollback faults, exact retry and six captured-input corruptions pass; seasonal recovery and short world observe/replay pass. Original failed run and postfailure dump remain retained; exact owned process/DB cleanup verified. Fresh integrated-source execution required.",
+      "evidence": "harness-season-crown-observer.md;harness-season-crown-index.json"
+    },
+    {
+      "id": "RC1-TOOL-58",
+      "classification": "D synthetic shared-observer fixture omitted required crown latch",
+      "owner": "Codex/root",
+      "failedGate": "Pre-freeze combined candidate18 development harness; exact failure log retained",
+      "before": "rc1-world-ammo-escrow.js synthetic unrelated season row omitted crowned; strict crown classifier rejected undefined instead of boolean",
+      "repair": "Declare schema crowned:false default in existing unknown-season insertion fixture. Original unsupported assertion and strict crown checks remain unchanged.",
+      "changedSource": [
+        "test/rc1-world-ammo-escrow.js"
+      ],
+      "retest": "Focused ammo/crown controls, combined harness and qualification controls pass. Development source only; frozen integrated reruns required.",
+      "evidence": "harness-season-fixture-compatibility.json"
+    },
+    {
+      "id": "RC1-TOOL-59",
+      "classification": "D composed observer source binding and retained election provenance",
+      "owner": "Codex/root",
+      "failedGate": "candidate19 pre-freeze composed observer control",
+      "before": "Expected source-bound runner block digest changed when the election callback was composed",
+      "repair": "Preserve car arg2 and NPC Family arg3, adding optional election provenance to the same classifier call; Keep acquired election provenance in first-resource-failure artifact if reconciliation rejects the candidate; Review/rebind exact block guard and retain17 existing controls plus4 election forwarding, replay/digest, failure retention and isolation controls",
+      "changedSource": [
+        "test/rc1-native-world-workload.js",
+        "test/rc1-world-car-melt-witness.js"
+      ],
+      "retest": "21 synthetic composition controls pass; original source-bound first failure retained. Integrated native rerun pending.",
+      "evidence": "harness-election-composition.json"
+    }
+  ]
+}

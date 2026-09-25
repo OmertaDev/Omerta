@@ -1,0 +1,2115 @@
+{
+  "format": 1,
+  "source": "6368339e82965679c1d1aae91ecea657489a6414",
+  "status": "FAILED_AND_CANCELLED_WORKFLOWS",
+  "releaseReady": false,
+  "workflows": [
+    {
+      "id": 35593259693,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35593259693",
+      "source": "6368339e82965679c1d1aae91ecea657489a6414",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 106312197934,
+          "name": "suites + sim (pg-mem)",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Phase 1 world graph (deterministic package validation)",
+              "conclusion": "success"
+            },
+            {
+              "name": "knowledge artifacts carry the merge's own revision (main only)",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "npm test (the full suite, on pg-mem)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Invite-only launch admission and Crew allowance",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 telemetry isolation and complementary campaign regressions",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 private command diagnostics and passive confirmation regression",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 original worker scheduling and diagnostic harness controls",
+              "conclusion": "failure"
+            },
+            {
+              "name": "economy sim (§10.4 drift-0)",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "scale (population-scale market reachability + §10.4)",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "install chromium for the client harness",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Invite gate and Crew invitation controls in the browser",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/setup-node@v7",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312198089,
+          "name": "real Postgres (18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "pgquery (every SQL string parses on real Postgres)",
+              "conclusion": "success"
+            },
+            {
+              "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native diagnostic precision and actual commit boundary controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Phase 2 definition registry (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Coordination foundation and knowledge (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Player projections and visibility snapshots (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "create throwaway databases for fee allocation and deed recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "character mint DEV allocation and migration (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "backup self-test (dump, verify, refuse, restore)",
+              "conclusion": "success"
+            },
+            {
+              "name": "create throwaway databases for the interruption + concurrency harnesses",
+              "conclusion": "success"
+            },
+            {
+              "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+              "conclusion": "success"
+            },
+            {
+              "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+              "conclusion": "success"
+            },
+            {
+              "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312198230,
+          "name": "real Postgres (16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "pgquery (every SQL string parses on real Postgres)",
+              "conclusion": "success"
+            },
+            {
+              "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native diagnostic precision and actual commit boundary controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Phase 2 definition registry (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Coordination foundation and knowledge (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Player projections and visibility snapshots (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "create throwaway databases for fee allocation and deed recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "character mint DEV allocation and migration (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+              "conclusion": "success"
+            },
+            {
+              "name": "backup self-test (dump, verify, refuse, restore)",
+              "conclusion": "success"
+            },
+            {
+              "name": "create throwaway databases for the interruption + concurrency harnesses",
+              "conclusion": "success"
+            },
+            {
+              "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+              "conclusion": "success"
+            },
+            {
+              "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+              "conclusion": "success"
+            },
+            {
+              "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "metadataSha256": "10e16543ab29c430a7f101fb93e1f9ecfe9a4c640c31d66bc7b68be3a488cceb",
+      "logArchiveSha256": "6b23395155ef029dbb83a139072ed00a0a2aff063dcab99c83fb5ff7be78a0eb"
+    },
+    {
+      "id": 35593262545,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35593262545",
+      "source": "6368339e82965679c1d1aae91ecea657489a6414",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "jobs": [
+        {
+          "id": 106312208447,
+          "name": "Authenticated evidence transport controls",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run node test/rc1-ci-envelope.js",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400345,
+          "name": "Policy and loan lifecycles (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Authorized conflict, retaliation and original hospital recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original loan offer, grace and funded Wanted lifecycles",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary entrant replacement preserves retired custody",
+              "conclusion": "success"
+            },
+            {
+              "name": "Seasonal status interruption and durable retry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original seasonal boundaries and complete status journals",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary market contention and original order expiry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Natural indictment, plea and original detention recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary outsiders under a declared Family monopoly",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary outsiders among ten fragmented Families",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original operation capital expiry and replacement disposition",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical death and heir recovery after original search",
+              "conclusion": "success"
+            },
+            {
+              "name": "Twenty genuine mixed aggression choices and heir policy continuation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400366,
+          "name": "Original resource timers (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original Family war and turf lifetimes with treasury reconciliation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two midnight shipment boundaries with aligned application and database clocks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400375,
+          "name": "Original escrow lifetimes (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native escrow with unchanged one-hour market and loan lifetimes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400426,
+          "name": "Original resource timers (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original Family war and turf lifetimes with treasury reconciliation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two midnight shipment boundaries with aligned application and database clocks",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400455,
+          "name": "Bounded resource pressure and response barriers (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original activity response hook completion",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original post-response membership query completion",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded scarcity and exact finite ammo custody",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded abundance and canonical replenishment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family OMR custody and original hourly yield",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family backing and native high-scale precision",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family formation and cash or OMR tribute",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact voluntary Family dissolution dispositions",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400459,
+          "name": "Linux recovery (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record exact candidate and runtime",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "PostgreSQL partial migration failure and retry",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 command tampering and concurrent replay on PostgreSQL",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install Chromium for the real PostgreSQL phone journey",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native item, recipe, world and situation authority probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 newcomer phone journey on PostgreSQL",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native backup, private file permissions and restore on Linux",
+              "conclusion": "success"
+            },
+            {
+              "name": "Crew draft and adjacent Send survive pending canonical reads",
+              "conclusion": "success"
+            },
+            {
+              "name": "Connected social, investigation and conflict phone journeys",
+              "conclusion": "success"
+            },
+            {
+              "name": "Nine production-process termination barriers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native checkpoint restore, receipt replay and deliberate corruption detection",
+              "conclusion": "success"
+            },
+            {
+              "name": "Same-seed serial replay with complete canonical state",
+              "conclusion": "success"
+            },
+            {
+              "name": "Recorded PostgreSQL contention and fault schedule replay",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check out the observed Render rollback predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install predecessor dependencies from its own lockfile",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upgrade, rollback and replay against the pinned predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Check out the observed Render rollback predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400476,
+          "name": "Bounded resource pressure and response barriers (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original activity response hook completion",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original post-response membership query completion",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded scarcity and exact finite ammo custody",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded abundance and canonical replenishment",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family OMR custody and original hourly yield",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family backing and native high-scale precision",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family formation and cash or OMR tribute",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact voluntary Family dissolution dispositions",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400483,
+          "name": "Linux recovery (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Record exact candidate and runtime",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "PostgreSQL partial migration failure and retry",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 command tampering and concurrent replay on PostgreSQL",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install Chromium for the real PostgreSQL phone journey",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native item, recipe, world and situation authority probes",
+              "conclusion": "success"
+            },
+            {
+              "name": "RC1 newcomer phone journey on PostgreSQL",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native backup, private file permissions and restore on Linux",
+              "conclusion": "success"
+            },
+            {
+              "name": "Crew draft and adjacent Send survive pending canonical reads",
+              "conclusion": "success"
+            },
+            {
+              "name": "Connected social, investigation and conflict phone journeys",
+              "conclusion": "success"
+            },
+            {
+              "name": "Nine production-process termination barriers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native checkpoint restore, receipt replay and deliberate corruption detection",
+              "conclusion": "success"
+            },
+            {
+              "name": "Same-seed serial replay with complete canonical state",
+              "conclusion": "success"
+            },
+            {
+              "name": "Recorded PostgreSQL contention and fault schedule replay",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check out the observed Render rollback predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install predecessor dependencies from its own lockfile",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upgrade, rollback and replay against the pinned predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Check out the observed Render rollback predecessor",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400486,
+          "name": "Legacy authority (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native pre-parser moderator authentication and rate limiting",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native moderator perimeter and direct ownership authority",
+              "conclusion": "success"
+            },
+            {
+              "name": "Separate native reviewer credential perimeter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400487,
+          "name": "Isolated two-hour world smoke (PostgreSQL 16)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native advisory-lock database isolation control",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two-hour authorized-player and original-worker smoke",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native seasonal and market query-order causal controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical Knowledge distribution and pagination",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded mystery participation policy exercise",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two-hour actual commit-boundary resource observations",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Optional compressed proof with original worker callbacks",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Replay complete compressed worker proof",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400511,
+          "name": "Policy and loan lifecycles (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Authorized conflict, retaliation and original hospital recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original loan offer, grace and funded Wanted lifecycles",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary entrant replacement preserves retired custody",
+              "conclusion": "success"
+            },
+            {
+              "name": "Seasonal status interruption and durable retry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original seasonal boundaries and complete status journals",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary market contention and original order expiry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Natural indictment, plea and original detention recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary outsiders under a declared Family monopoly",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ordinary outsiders among ten fragmented Families",
+              "conclusion": "success"
+            },
+            {
+              "name": "Original operation capital expiry and replacement disposition",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical death and heir recovery after original search",
+              "conclusion": "success"
+            },
+            {
+              "name": "Twenty genuine mixed aggression choices and heir policy continuation",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400519,
+          "name": "Legacy authority (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native pre-parser moderator authentication and rate limiting",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native moderator perimeter and direct ownership authority",
+              "conclusion": "success"
+            },
+            {
+              "name": "Separate native reviewer credential perimeter",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400551,
+          "name": "Original escrow lifetimes (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native escrow with unchanged one-hour market and loan lifetimes",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400644,
+          "name": "Checkpoint continuation and exact replay (PostgreSQL18.4)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Observe48 hours with actual hour24 checkpoint",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Resume remaining24 hours including original startup jobs",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Replay continuation from the identical native checkpoint",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Verify complete prefix lineage and all continuation artifacts",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400655,
+          "name": "Isolated two-hour world smoke (PostgreSQL 18.4)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native advisory-lock database isolation control",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two-hour authorized-player and original-worker smoke",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native seasonal and market query-order causal controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical Knowledge distribution and pagination",
+              "conclusion": "success"
+            },
+            {
+              "name": "Bounded mystery participation policy exercise",
+              "conclusion": "success"
+            },
+            {
+              "name": "Two-hour actual commit-boundary resource observations",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Optional compressed proof with original worker callbacks",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Replay complete compressed worker proof",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400727,
+          "name": "Bounded custody and mobile (PostgreSQL 16)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install Chromium for native adversity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family cash and ammo custody with late abort",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR custody and original six-hour unbond",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR redemption and historical balance boundaries",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical alliance pacts and explicit Knowledge grants",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native newcomer response loss reload and duplicate gesture",
+              "conclusion": "success"
+            },
+            {
+              "name": "Three Family stakes and original turf settlement",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native shipment midnight contention loot and commission terminals",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR loan collateral inheritance seizure and original grace expiry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact car salvage and listing custody with corruption controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400758,
+          "name": "Scoped48-hour alliance world replay (PostgreSQL 18.4)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Observe48 hours of original callbacks and25 authorized actors",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Replay complete canonical state and resource history",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400778,
+          "name": "Bounded custody and mobile (PostgreSQL 18.4)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install PostgreSQL client tools matching the server major",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install Chromium for native adversity",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact Family cash and ammo custody with late abort",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR custody and original six-hour unbond",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR redemption and historical balance boundaries",
+              "conclusion": "success"
+            },
+            {
+              "name": "Canonical alliance pacts and explicit Knowledge grants",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native newcomer response loss reload and duplicate gesture",
+              "conclusion": "success"
+            },
+            {
+              "name": "Three Family stakes and original turf settlement",
+              "conclusion": "success"
+            },
+            {
+              "name": "Native shipment midnight contention loot and commission terminals",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact OMR loan collateral inheritance seizure and original grace expiry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exact car salvage and listing custody with corruption controls",
+              "conclusion": "success"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312400812,
+          "name": "Scoped48-hour alliance world replay (PostgreSQL 16)",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require restricted evidence recipient",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install matching PostgreSQL checkpoint tools",
+              "conclusion": "success"
+            },
+            {
+              "name": "Observe48 hours of original callbacks and25 authorized actors",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Replay complete canonical state and resource history",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Encrypt restricted execution evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain authenticated encrypted evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 106312401714,
+          "name": "Retained exact-source alliance reproduction (PostgreSQL18.4)",
+          "conclusion": "skipped",
+          "steps": []
+        }
+      ],
+      "metadataSha256": "eb38d082fae34bb48c676d2e1a69731d0184cd123f413bad2df18fe0aeb6b06c",
+      "logArchiveSha256": "ec9d6171cf67d67f7cf19940192b682deed573c5d923e55a73c56f6aa5ad0e76"
+    }
+  ],
+  "observations": [
+    "CI completed npm test and both PostgreSQL16/18.4 jobs successfully; the Node22 harness lane failed TOOL54 in the unchanged gzip line-byte rejection assertion with ABORT_ERR.",
+    "Downstream CI simulation, scale and browser steps were skipped after that harness failure.",
+    "Recovery retains15 successful jobs,5 cancelled jobs and1 deliberately skipped diagnostic job. Cancellation is not a successful run.",
+    "Cancelled smoke artifacts separately retain original TOOL46 failure prefixes; their original first failures are not erased by later reproduction.",
+    "Foundry and liquidity successes are recorded separately at this same exact source; none of these results qualify a later merged candidate."
+  ],
+  "findings": [
+    "RC1-TOOL-46",
+    "RC1-TOOL-54"
+  ],
+  "related": [
+    "hosted-6368339e-contract-results.json",
+    "hosted-6368339e-retained-failures.json",
+    "harness-history-error-preservation.md"
+  ],
+  "retention": {
+    "failedCiLogSha256": "0bf45b80fa23a3a968a1452bb2c1f3c4985b28ae961871fbddd60212d8e625a2",
+    "privateDirectory": "hosted-6368339e-final"
+  },
+  "limits": [
+    "No successful full CI campaign at this source",
+    "No completed full recovery campaign at this source",
+    "No final candidate inheritance",
+    "No deployed recovery or matrix qualification"
+  ]
+}

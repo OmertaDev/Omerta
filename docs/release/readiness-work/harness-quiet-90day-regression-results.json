@@ -1,0 +1,837 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "status": "STORAGE_REGRESSION_PASS_EXACT_REPLAY_FAIL",
+  "matrixQualifying": false,
+  "source": {
+    "revision": "2ac778b3f6a66df6334e85306cd95696226355f5",
+    "gitTree": "a3716c953e9b98651ad945798068e79d63db5e9b",
+    "checkoutSha256": "85d747fc550fb4a3c8915663a3127db16b1dfd354af33daaf45070729801bbaf",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "configuration": {
+    "hours": 2160,
+    "population": 25,
+    "seed": "rc1-alpha",
+    "policy": "quiet_world",
+    "database": "PostgreSQL 18.4; separate owned disposable databases on loopback; verified normal cleanup",
+    "resourceObservation": "Disabled, predeclared targeted storage regression. Per-action/daily/final canonical invariants retained; no per-commit resource qualification.",
+    "maximumWallMs": 14400000,
+    "maximumOutputBytes": 17179869184,
+    "minimumFreeBytes": 34359738368
+  },
+  "artifactIndex": {
+    "path": "harness-quiet-90day-artifact-index.json",
+    "gitBlobSha256": "6eea6cbd0fa23fbf2555918b531d93d971a83b5fdbe7d8986e69afde159c13fd",
+    "hashEncoding": "UTF-8 LF bytes committed in Git; platform checkout line endings may differ"
+  },
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-v3-observation-1",
+      "source": "2ac778b3f6a66df6334e85306cd95696226355f5",
+      "status": "PASS_SCOPED",
+      "runSha256": "9a56d0f49855773e90dae4b5bd64e87629520d7338442fa97de07b4b97b44f15",
+      "configurationSha256": "331b92380bf8dd7dac3601aec478123e133e1a3585ad46698a49106bda7cbe48",
+      "artifacts": 403,
+      "indexedBytes": 3265556224,
+      "wallMs": 1237436,
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2160,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "quiet_world",
+        "mysteryPolicySummaries": {},
+        "actualActiveActors": 25,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 4,
+        "metrics": {
+          "playerSnapshots": 698,
+          "ownCharacterReads": 180,
+          "freshPlayerCommands": 686,
+          "legacyCrimeAttempts": 180,
+          "crimeSuccesses": 151,
+          "crimeLosses": 29,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 180,
+          "commandTypes": {
+            "discovery.start": 144,
+            "mystery.start": 203,
+            "discovery.act": 323,
+            "mystery.complete": 16
+          },
+          "observedAuthorizedOpportunities": 1063
+        },
+        "timerCounts": {
+          "directorTick": 25920,
+          "guardedTick": 2160,
+          "guardedSeasonTick": 2160,
+          "health-boundary": 25920
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "116be55a6c9715b48451d99e9f2bf289914d80f9ebf9226d0551d426ee38e443",
+        "workerScheduleSha256": "b1c0626d69fb39691d3eba65474b848a0e6fa533b5a1e25ed60373a14f88b324",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "a0e17edbcc0c8ce3c634f3eff667dee4071181f65b0cd11f3591da97d618f186",
+        "deterministicRandomTapeSha256": "dfa998db89e38fe5885d3cece99bbe7af95c83821897cf230607e16390d1184c",
+        "actorTapeSha256": "117da816339043c2373636fae1fc6d5dff29f65414434b2b8afe0054db857d8e",
+        "policyStateSha256": "9d00fb4698bb51e8747219f405608851f381f3e5b69dc089500aa4a4990852f6",
+        "mysteryPolicySummarySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "knowledgeDiagnosticsSha256": "42ddb3065d730b275bd3282fdcc47bd75aff53f667b41dfc36d60ccd01913090",
+        "semanticMetricsSha256": "d755791dd1c66231b9a8cc0d2d4fa0e820ed0ed5b6b59a2bb52eda0e5f5e0c1e",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": false,
+        "worldDiagnosticsSemanticSha256": "8baff007b6fee8833637c6cc853f2c2b0b5d2b3ca5f548350df64b0b961c106e",
+        "resourceObservationEnabled": false,
+        "resourceJournalCount": 0,
+        "resourceJournalSha256": null,
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-v3-replay-1",
+      "source": "2ac778b3f6a66df6334e85306cd95696226355f5",
+      "status": "FAIL",
+      "runSha256": "c31f339d13ffae5fcb2d72f60fe5fd6304a31d764b42373280345ffb2c6db545",
+      "configurationSha256": "e6afd2488cf1ae502718a383baf436c7b52c5576f301abd29fafb6f8f2f4c4ac",
+      "artifacts": 411,
+      "indexedBytes": 3469413955,
+      "wallMs": 1237126,
+      "result": {
+        "status": "FAIL",
+        "hours": 2160,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 698,
+          "ownCharacterReads": 180,
+          "freshPlayerCommands": 686,
+          "legacyCrimeAttempts": 180,
+          "crimeSuccesses": 151,
+          "crimeLosses": 29,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 180,
+          "commandTypes": {
+            "discovery.start": 144,
+            "mystery.start": 203,
+            "discovery.act": 323,
+            "mystery.complete": 16
+          },
+          "observedAuthorizedOpportunities": 1063
+        },
+        "error": "Actor replay differs: finalStateSha256\n+ actual - expected\n\n+ 'd5eddfce681299ece63756e6dc27a130fa06fd42b99fb93fd7e7241da719f3a7'\n- '116be55a6c9715b48451d99e9f2bf289914d80f9ebf9226d0551d426ee38e443'\n",
+        "invocation": null,
+        "logicalAt": 1797980400000
+      }
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-90day-guard-rejection-1",
+      "source": "2ac778b3f6a66df6334e85306cd95696226355f5",
+      "status": "FAIL",
+      "runSha256": "8368b1932aa86bf22a5d9aa1fd9967dadfc9d799e59333d1d525b4c18a9c256a",
+      "configurationSha256": "7c26c68cb835a39409bf144a04fcd448999f0c2b71509ca85495b292a77fff3f",
+      "artifacts": 7,
+      "indexedBytes": 62146,
+      "wallMs": 9016,
+      "result": {
+        "status": "FAIL",
+        "hours": 2,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 0,
+          "ownCharacterReads": 0,
+          "freshPlayerCommands": 0,
+          "legacyCrimeAttempts": 0,
+          "crimeSuccesses": 0,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 0,
+          "commandTypes": {},
+          "observedAuthorizedOpportunities": 0
+        },
+        "error": "Declared run output limit exceeded",
+        "invocation": null,
+        "logicalAt": 1790204400000
+      }
+    },
+    {
+      "directory": "C:/Users/Jorge/.codex/rc1-readiness-private-20260921/quiet-world-db1749d8-90days",
+      "source": "db1749d8a6c0a842f4b0022df1084b1b9a06a871",
+      "status": "FAIL",
+      "runSha256": "2fefb77198462e6d742bec377c25b35f100f1ca104816795b6816849994df5d3",
+      "configurationSha256": "624191da601267e774d33d68f6d110b89ba1f884c61eaa52ec61207d25b6c1d0",
+      "artifacts": 101,
+      "indexedBytes": 2480769232,
+      "wallMs": 1169925,
+      "result": {
+        "status": "FAIL",
+        "hours": 2160,
+        "population": 25,
+        "metrics": {
+          "playerSnapshots": 701,
+          "ownCharacterReads": 180,
+          "freshPlayerCommands": 688,
+          "legacyCrimeAttempts": 180,
+          "crimeSuccesses": 150,
+          "crimeLosses": 30,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 180,
+          "commandTypes": {
+            "discovery.start": 144,
+            "mystery.start": 211,
+            "discovery.act": 317,
+            "mystery.complete": 16
+          },
+          "observedAuthorizedOpportunities": 1054
+        },
+        "error": "Invalid string length",
+        "invocation": null,
+        "logicalAt": 1797980400000
+      }
+    }
+  ],
+  "nativeQueryTape": {
+    "records": 4322,
+    "chunks": 114,
+    "bytes": 950370543,
+    "maximumChunkBytes": 8386447,
+    "recordStreamSha256": "c1dd3900aa3cec5c9e96465bd6b180f7ff9330bf8ca2f48f6b016a8fc4015e42"
+  },
+  "exactComparisons": [
+    {
+      "name": "actor-tape.json",
+      "equal": true,
+      "observationSha256": "9c1fff9e41567e6c1408eb85ffa561033b006fdcbbd203f830a1483d9919f935",
+      "replaySha256": "9c1fff9e41567e6c1408eb85ffa561033b006fdcbbd203f830a1483d9919f935"
+    },
+    {
+      "name": "actor-policy-final.json",
+      "equal": true,
+      "observationSha256": "9d00fb4698bb51e8747219f405608851f381f3e5b69dc089500aa4a4990852f6",
+      "replaySha256": "9d00fb4698bb51e8747219f405608851f381f3e5b69dc089500aa4a4990852f6"
+    },
+    {
+      "name": "random-tape.json",
+      "equal": true,
+      "observationSha256": "138d46604e98a10e06b1127005cec70a9f1e8d6efeb9cd6fe64209a32f5050d7",
+      "replaySha256": "138d46604e98a10e06b1127005cec70a9f1e8d6efeb9cd6fe64209a32f5050d7"
+    },
+    {
+      "name": "player-metrics.json",
+      "equal": false,
+      "observationSha256": "bd6e8f4e2e1d160de626abc2ee02333cca0e23d21c1e7c14b950345a91bcbcf9",
+      "replaySha256": "4b4e8b6834f3f21952d480707d0959aad45fb80820967b1ce4a2f81f57c7db61"
+    },
+    {
+      "name": "worker-schedule.json",
+      "equal": false,
+      "observationSha256": "b6dca581e15332c6a5ae1addd24cf391861a0aac05b6e826410542d07e07fa54",
+      "replaySha256": "410538f3561afc2aaeaf838ce4177156b3c776da16d721f7e0e109ea11e487f0"
+    }
+  ],
+  "dailyStateComparisons": [
+    {
+      "day": 0,
+      "observationStateSha256": "7049baf4913f2e0c34ba7a34fb0566735ce9051d951c67cf11bbb33c7daea6ff",
+      "replayStateSha256": "7049baf4913f2e0c34ba7a34fb0566735ce9051d951c67cf11bbb33c7daea6ff",
+      "equal": true
+    },
+    {
+      "day": 1,
+      "observationStateSha256": "0756317f12074428d7f01bb1012cc71933853ec772cfcee79e236430031900d0",
+      "replayStateSha256": "0756317f12074428d7f01bb1012cc71933853ec772cfcee79e236430031900d0",
+      "equal": true
+    },
+    {
+      "day": 2,
+      "observationStateSha256": "71ccf887cd19df4fffdc4b826c300b20d8795675c70e71bf33d1971ce1777bfd",
+      "replayStateSha256": "71ccf887cd19df4fffdc4b826c300b20d8795675c70e71bf33d1971ce1777bfd",
+      "equal": true
+    },
+    {
+      "day": 3,
+      "observationStateSha256": "c66d3637eb8781e4ea250bc373ceae6dfa03be3328a60a6b45fd6186435dd50b",
+      "replayStateSha256": "c66d3637eb8781e4ea250bc373ceae6dfa03be3328a60a6b45fd6186435dd50b",
+      "equal": true
+    },
+    {
+      "day": 4,
+      "observationStateSha256": "44e0b3f7709d4c3fef563be8d0f100e444a6612400d6d262ff749d4c2a518fa8",
+      "replayStateSha256": "44e0b3f7709d4c3fef563be8d0f100e444a6612400d6d262ff749d4c2a518fa8",
+      "equal": true
+    },
+    {
+      "day": 5,
+      "observationStateSha256": "d02827c12f8010ee197d66c80387fd4f793f610296cb251355403fb48aeeb531",
+      "replayStateSha256": "d02827c12f8010ee197d66c80387fd4f793f610296cb251355403fb48aeeb531",
+      "equal": true
+    },
+    {
+      "day": 6,
+      "observationStateSha256": "566b78774f0391bcee3c7aee27416651db65675b7eec62469680f46af519bf21",
+      "replayStateSha256": "566b78774f0391bcee3c7aee27416651db65675b7eec62469680f46af519bf21",
+      "equal": true
+    },
+    {
+      "day": 7,
+      "observationStateSha256": "12f9bc3448388d268b44b751f8f2675a51fa98916da2cadee4dfa445707854da",
+      "replayStateSha256": "12f9bc3448388d268b44b751f8f2675a51fa98916da2cadee4dfa445707854da",
+      "equal": true
+    },
+    {
+      "day": 8,
+      "observationStateSha256": "4c1a13444f9b0e9b0d825f9ca03af4695ed2f0a613affde7a10fde9d00aeee23",
+      "replayStateSha256": "4c1a13444f9b0e9b0d825f9ca03af4695ed2f0a613affde7a10fde9d00aeee23",
+      "equal": true
+    },
+    {
+      "day": 9,
+      "observationStateSha256": "67a8b90641cc5391166a3fb12d7c5acc02ec7a6289ec3b40d993f8e530a0d868",
+      "replayStateSha256": "67a8b90641cc5391166a3fb12d7c5acc02ec7a6289ec3b40d993f8e530a0d868",
+      "equal": true
+    },
+    {
+      "day": 10,
+      "observationStateSha256": "8f38172385371cc85015409b56c776cd8526a31e871012ff5e8aab7349c9a2d2",
+      "replayStateSha256": "8f38172385371cc85015409b56c776cd8526a31e871012ff5e8aab7349c9a2d2",
+      "equal": true
+    },
+    {
+      "day": 11,
+      "observationStateSha256": "7bf098717cb0365b1bd408a8249d144e9f5ace6918a84b49e373458b08532b88",
+      "replayStateSha256": "7bf098717cb0365b1bd408a8249d144e9f5ace6918a84b49e373458b08532b88",
+      "equal": true
+    },
+    {
+      "day": 12,
+      "observationStateSha256": "69797570cf00a4c298ceeac448f77e2d5f2178a59a739a0bbbdfa9ed505e7aaa",
+      "replayStateSha256": "69797570cf00a4c298ceeac448f77e2d5f2178a59a739a0bbbdfa9ed505e7aaa",
+      "equal": true
+    },
+    {
+      "day": 13,
+      "observationStateSha256": "271428d54c823110bd7d93e4be91dbe197aadea8392dd116775105e39e2c55c6",
+      "replayStateSha256": "271428d54c823110bd7d93e4be91dbe197aadea8392dd116775105e39e2c55c6",
+      "equal": true
+    },
+    {
+      "day": 14,
+      "observationStateSha256": "447013de95c33b520310f65a4d5037868fb4d4c42c4bcc0106dff06d31d128d7",
+      "replayStateSha256": "447013de95c33b520310f65a4d5037868fb4d4c42c4bcc0106dff06d31d128d7",
+      "equal": true
+    },
+    {
+      "day": 15,
+      "observationStateSha256": "798d5ed08707d6529cc5254ccd0816780390bfa63a87c6896c31c846217885aa",
+      "replayStateSha256": "798d5ed08707d6529cc5254ccd0816780390bfa63a87c6896c31c846217885aa",
+      "equal": true
+    },
+    {
+      "day": 16,
+      "observationStateSha256": "5ba0c02e2de63b8e1cb3d01c9cfd18de6714404fc2481d42526d231bc6c835ad",
+      "replayStateSha256": "5ba0c02e2de63b8e1cb3d01c9cfd18de6714404fc2481d42526d231bc6c835ad",
+      "equal": true
+    },
+    {
+      "day": 17,
+      "observationStateSha256": "1f72729bd050ffc0931f432d19fbdea210d0105849f94e34719823fc77c63d5a",
+      "replayStateSha256": "1f72729bd050ffc0931f432d19fbdea210d0105849f94e34719823fc77c63d5a",
+      "equal": true
+    },
+    {
+      "day": 18,
+      "observationStateSha256": "aa9c6121736cb561a518c2e84bfa8f3e602a19a0254bb2a3010409b95bc977af",
+      "replayStateSha256": "aa9c6121736cb561a518c2e84bfa8f3e602a19a0254bb2a3010409b95bc977af",
+      "equal": true
+    },
+    {
+      "day": 19,
+      "observationStateSha256": "721d2b9b5d4e2ee4e07f087068b30d41e16c4832412e5997c680bdbf88e45c97",
+      "replayStateSha256": "721d2b9b5d4e2ee4e07f087068b30d41e16c4832412e5997c680bdbf88e45c97",
+      "equal": true
+    },
+    {
+      "day": 20,
+      "observationStateSha256": "ce2219b9d672e6dc070fd641922c6728c721bc32b990fe59b52331eb568d2948",
+      "replayStateSha256": "ce2219b9d672e6dc070fd641922c6728c721bc32b990fe59b52331eb568d2948",
+      "equal": true
+    },
+    {
+      "day": 21,
+      "observationStateSha256": "a1e7f1ba22bcbc5c7c41441f01e21d2f105fac3a7a5d583a7b4f6572580554b2",
+      "replayStateSha256": "a1e7f1ba22bcbc5c7c41441f01e21d2f105fac3a7a5d583a7b4f6572580554b2",
+      "equal": true
+    },
+    {
+      "day": 22,
+      "observationStateSha256": "8a2bc0a7753b9c7fca73ad0b2fb1a5ef5f4eb59e251d346faf45264eb06dfc66",
+      "replayStateSha256": "8a2bc0a7753b9c7fca73ad0b2fb1a5ef5f4eb59e251d346faf45264eb06dfc66",
+      "equal": true
+    },
+    {
+      "day": 23,
+      "observationStateSha256": "a7d17ad95afe19e5c26a7baeca2db7d7d15897bbdd2d9aa1f97de3286712dab6",
+      "replayStateSha256": "a7d17ad95afe19e5c26a7baeca2db7d7d15897bbdd2d9aa1f97de3286712dab6",
+      "equal": true
+    },
+    {
+      "day": 24,
+      "observationStateSha256": "5042bfa05e4b1d119191b2348dcf1f826fe1b5e9af1060d6b0c659fff0e7cb37",
+      "replayStateSha256": "5042bfa05e4b1d119191b2348dcf1f826fe1b5e9af1060d6b0c659fff0e7cb37",
+      "equal": true
+    },
+    {
+      "day": 25,
+      "observationStateSha256": "dd8fb7a9db0b08c3b41b4b42ab1ce96c92697f28242119db3c84e10699983135",
+      "replayStateSha256": "dd8fb7a9db0b08c3b41b4b42ab1ce96c92697f28242119db3c84e10699983135",
+      "equal": true
+    },
+    {
+      "day": 26,
+      "observationStateSha256": "4b9f951d303a4d66ff29c18ee3dc1afb5d415ff751c23ccd7c50c52bdb599e97",
+      "replayStateSha256": "4b9f951d303a4d66ff29c18ee3dc1afb5d415ff751c23ccd7c50c52bdb599e97",
+      "equal": true
+    },
+    {
+      "day": 27,
+      "observationStateSha256": "f714c9a1d537a04827a8e7dd194e0f79b887ee4919b7efaa4e6722ff790652e1",
+      "replayStateSha256": "f714c9a1d537a04827a8e7dd194e0f79b887ee4919b7efaa4e6722ff790652e1",
+      "equal": true
+    },
+    {
+      "day": 28,
+      "observationStateSha256": "990ed9965777de4fe2c891fd55eca637255b6c4f86c91e81aa09229300b9d362",
+      "replayStateSha256": "990ed9965777de4fe2c891fd55eca637255b6c4f86c91e81aa09229300b9d362",
+      "equal": true
+    },
+    {
+      "day": 29,
+      "observationStateSha256": "00b78e13647d1fc93a8b659b2ec53cfd0bf5c655dd4372fdfc47dd1cc8b8cb03",
+      "replayStateSha256": "78bf3d6c1536c37a0d3cc7eec8aa97854c8d67d39493f8a189aeb01ea4788548",
+      "equal": false
+    },
+    {
+      "day": 30,
+      "observationStateSha256": "6d94096e4c9e904bf952abcdca27a17a7e89fbbfa8fb1f4c052fe5de4c865087",
+      "replayStateSha256": "9859bcdffda6b31b382ef1e73eaa2fd815e92ad021de7eb33f6e02fa0fafbc36",
+      "equal": false
+    },
+    {
+      "day": 31,
+      "observationStateSha256": "083f2ed668b2081020956578f5047465ff506f0f7f8b594f7877f54b1a87933a",
+      "replayStateSha256": "bdc4de75973c30bb9115b5df808b638a3ad37ca50d4f49df4e1f7011434ad5ab",
+      "equal": false
+    },
+    {
+      "day": 32,
+      "observationStateSha256": "3910ef808e7963775acea0e2c0649cab313a00641f2ba8d9e6fbfed238ea433f",
+      "replayStateSha256": "71742dbb7502e1e7b3a2635fd039538902ee0bc0f8c81af4000a1266461ab131",
+      "equal": false
+    },
+    {
+      "day": 33,
+      "observationStateSha256": "249601e8eede6ff8e9b5bbaa0b236363e7f0959cebfe3849650d27010db37703",
+      "replayStateSha256": "9a03f6c65e41f666896ce75cdef6e6bc78e5fb077448c5f33d6be437c4db4643",
+      "equal": false
+    },
+    {
+      "day": 34,
+      "observationStateSha256": "cbd5aa09ac5f73b178bbb11edd8faba8cbb171a32ed1bc78dc0176bc2cb0d71f",
+      "replayStateSha256": "eac58f56bf672928d09fe82d3eeb4b900492ea646e45db165b7cbc8e629b69d1",
+      "equal": false
+    },
+    {
+      "day": 35,
+      "observationStateSha256": "368febd72aa5538faffcffdb5936745120d4ff0aff8b7070337deae16646f38b",
+      "replayStateSha256": "0e5c8892337e6559aa12fb5b897fa96fac278917756eefa1c3902bb819923557",
+      "equal": false
+    },
+    {
+      "day": 36,
+      "observationStateSha256": "afeb072efa9bd61a7b2033ae4411b15ab1221e4c29c046dca3e7b25485c7f093",
+      "replayStateSha256": "604c73522eda5def85d5b12c38920394c7da4ae2d593ec94077f19510e9b8bc7",
+      "equal": false
+    },
+    {
+      "day": 37,
+      "observationStateSha256": "537e112bc124eedfce4c0fa3dc759e0f5b368d05b7b259b2d9532f956b3a5e24",
+      "replayStateSha256": "0135aa4d6adbd24cec95d31a08fb7c7c80a3cd97a5ac168316e57de31875fb61",
+      "equal": false
+    },
+    {
+      "day": 38,
+      "observationStateSha256": "b9fd222977939b19c6239377f9ed4c8d53d9c5ab49d316476c2d74de1ffc4f47",
+      "replayStateSha256": "e7017d9adbad5d03e2c1745c92d41e4cc5c09ddf7671bcd27edbd347c3e897fc",
+      "equal": false
+    },
+    {
+      "day": 39,
+      "observationStateSha256": "688aa383bfa14af3dee3cef38882ad3498135479371787259609fee89733113b",
+      "replayStateSha256": "6d65ceba4fff3848277cda6771e409acbf242b520ffa4922adad68502ee2d218",
+      "equal": false
+    },
+    {
+      "day": 40,
+      "observationStateSha256": "4698b9c17a71f0585d9629e6d24aeb1d6281853a89ba0ffb69aa662bf73b344f",
+      "replayStateSha256": "242758674960ce8ab17c27fa62f0bc058b2d65d9dd10fc24269121f5e83265f4",
+      "equal": false
+    },
+    {
+      "day": 41,
+      "observationStateSha256": "fae4f709daa9891d5113f682e731b2980e6db6f4e39cb8214e94eb06192c71b4",
+      "replayStateSha256": "709f4643cc41e0d6677b28dfdc0530c46dae0ac7c75d3e38f9a23f657da79b13",
+      "equal": false
+    },
+    {
+      "day": 42,
+      "observationStateSha256": "6ac5123f30144b193d309b121a66b0ea035fd5bf3da099e8fa1c335689aa1413",
+      "replayStateSha256": "4a08b1df29d367b36bf5d6d8078feb4a5767db7d486f8d093b98a87298d4b377",
+      "equal": false
+    },
+    {
+      "day": 43,
+      "observationStateSha256": "4b84c75c86e49799b16732dce9d02587354a16f3e1cc5492d29cd2a6da946e27",
+      "replayStateSha256": "83beacd657385bf3698f31823558b5ae2041a95a2b2176e03c12a7f9d299c936",
+      "equal": false
+    },
+    {
+      "day": 44,
+      "observationStateSha256": "28045370fff88cd0796a3881522421d99cbf140982f50a6651986bcaf8007dd8",
+      "replayStateSha256": "b8be69d9f1edde03e833ce70cb16ca506d3470b6fd06e4640ef776a2bf652d7a",
+      "equal": false
+    },
+    {
+      "day": 45,
+      "observationStateSha256": "e7fabba4bcb5f37ba30fae8087bb8efe41d8293ae03667418947f01417871b16",
+      "replayStateSha256": "b653870963ecadf1dc5a1e24c0f5bb1487ee524fe35634ec080a268b1f0b1102",
+      "equal": false
+    },
+    {
+      "day": 46,
+      "observationStateSha256": "b6f68555eefea0ecc5f2015cb98f7c8571ead4e28869b4cd7ab60bbdc9707e54",
+      "replayStateSha256": "35b6b879e39267723cc06bdc474a999ede54b7f2d2778660aba4eead830d2fe6",
+      "equal": false
+    },
+    {
+      "day": 47,
+      "observationStateSha256": "e99df6db36a5e5c4faee39606beca37389a26dedae1e3eef53642f0f51f8f34d",
+      "replayStateSha256": "47035fe3575fb52819fc09909d18f7dc98c229fed2d3a8d49b61c124e031f389",
+      "equal": false
+    },
+    {
+      "day": 48,
+      "observationStateSha256": "bb44ebbd52f4e9390fb549d8377912b456837363132e6b0ec63fe6d6beb8129d",
+      "replayStateSha256": "b7987b25c24e0bce61f71fbd073038e9fcc60a615b77ea716ec0225eb26fc013",
+      "equal": false
+    },
+    {
+      "day": 49,
+      "observationStateSha256": "842b2532736a1da19c99ee14700a4a589726d8439670e00820e6da2b36f06cdc",
+      "replayStateSha256": "692aa37706f36f82a43a9f9e5c0fdda48e054424977603f7374c57226e9d8c4a",
+      "equal": false
+    },
+    {
+      "day": 50,
+      "observationStateSha256": "57e5d9b77345945ec28a988efe9a9c33392df2090e692fdb8058fbd868323b05",
+      "replayStateSha256": "955d1b6f1325b3b1eb1eec160a00de1e1d3f1178ecdf023e5b118a06185796cd",
+      "equal": false
+    },
+    {
+      "day": 51,
+      "observationStateSha256": "b9bc1200886679632bab888c8539e03657fd521b612c15e936c9039886349b17",
+      "replayStateSha256": "10b5998f6bf6b630b27466cbd1e8c45ba2caef4a5c79fb3ba20dbeda9eae7fc7",
+      "equal": false
+    },
+    {
+      "day": 52,
+      "observationStateSha256": "f963fc58833f658d34069edef3c6c661c2939d0d0191ede2d29e888df27b04b0",
+      "replayStateSha256": "19685f8f4e37aaef31ba9d50d1bc0b801d3a417e9313f61cecf0eb4eb19f4763",
+      "equal": false
+    },
+    {
+      "day": 53,
+      "observationStateSha256": "d80eae855f13a684db6cc7db881eac2ae98e6ce8de387d0f39bdf61261361bc4",
+      "replayStateSha256": "274826d1b694dfb0981d5e3756c669e2a9ed0be637e48af5c6798a0bf7101660",
+      "equal": false
+    },
+    {
+      "day": 54,
+      "observationStateSha256": "26ab707805f4f3375beab8fec392ff356ae0c449b4a9ae1fc909cf086a3de457",
+      "replayStateSha256": "0ce26549b9c479bdcb5303aef44ccd3328a73fe6955bfbdd95e953c2e9d0e130",
+      "equal": false
+    },
+    {
+      "day": 55,
+      "observationStateSha256": "47bbfbb6bc280e08966c96cc5e9b702466ebc205888cab9ecd45a2e0f17d5449",
+      "replayStateSha256": "ad9cd0a6659b461b2b3cdc996b883653836efdb7685cc159cc0aee7ae520351c",
+      "equal": false
+    },
+    {
+      "day": 56,
+      "observationStateSha256": "78165168558e0facc29ae970483306d731d97bde3b433066c6d3348b5d004aab",
+      "replayStateSha256": "fabfdb3dd2ecdcde52b6f2af25735323f6ba54228b946d4fdfc743b52b2a5790",
+      "equal": false
+    },
+    {
+      "day": 57,
+      "observationStateSha256": "c211ae88481582425cddcf5e99d8adb60c9a084e93beb0bb4971c82aab39f770",
+      "replayStateSha256": "ea1130a3f8df0bb2ce7da26da15db388bb58894957254d17db111757805d8725",
+      "equal": false
+    },
+    {
+      "day": 58,
+      "observationStateSha256": "8f32014d6c0856159d48d88788d1a32ce566780a6a58a4564390afc598d1fd3d",
+      "replayStateSha256": "d82898e49fe46397557fe9c2fab11026f38ea457f0deeab3f2e35174e1d847ec",
+      "equal": false
+    },
+    {
+      "day": 59,
+      "observationStateSha256": "0d91711940832974355c72e81fb4031de6276575e83a8b06b24e70f289e62714",
+      "replayStateSha256": "45d779cbe65b7189dd25a18bdb1b4a4c11ceb89284f391008caa0ce760abb217",
+      "equal": false
+    },
+    {
+      "day": 60,
+      "observationStateSha256": "6d35e2c7851f3e15719422724553c48d3016688472bb3be480f2710388f2f738",
+      "replayStateSha256": "2d3826b965e2ba04f857c18c00ae2d1755ea07aabaa92c1ecfcfe4efd8585635",
+      "equal": false
+    },
+    {
+      "day": 61,
+      "observationStateSha256": "0e58562b444982f86d47b01779e18564d60f33c7c8b365d226ed6b58e8f7bc51",
+      "replayStateSha256": "fd6c4adcba28773a91124cb5fff65a177e6a41fc9d7e9290cf20f3743dd16d09",
+      "equal": false
+    },
+    {
+      "day": 62,
+      "observationStateSha256": "ff79711076765f6e69ce2303db57e0527f021718cea86331f58a6e6156ca552f",
+      "replayStateSha256": "8da94d2046cfe51180c3b56b9f2c3d81bc59b9be000cc266f0e577d8e69339ce",
+      "equal": false
+    },
+    {
+      "day": 63,
+      "observationStateSha256": "f0b5989110bee09ca66398e93f40bba1feab7b73d0c316513965dd9c51b20af6",
+      "replayStateSha256": "7c4ac9a39c73e727d51bbdfb9320d4f06bcf70f8efd630bd1d4fbf20a9f044a9",
+      "equal": false
+    },
+    {
+      "day": 64,
+      "observationStateSha256": "de92d8a1b9f4a3b2d24ae5d52550ff9e61e9303bc71c87e18a60a75b28d906aa",
+      "replayStateSha256": "14c2c228a5feade8afb27438c99e71834263630d0457fe6cd074a67254aa1e8b",
+      "equal": false
+    },
+    {
+      "day": 65,
+      "observationStateSha256": "8e3298e58eb2d0845c0a555f73f580a1bf59a0950a0088ddbe1f379b4d525ad5",
+      "replayStateSha256": "24b9269ed62e0ef69a1b01f076d5d0e279699c1b383ab4e300e0aa6910c5f016",
+      "equal": false
+    },
+    {
+      "day": 66,
+      "observationStateSha256": "dd4582873d82e3406f73c236f1603b1a57ac351483488015f4475cfd28323a0a",
+      "replayStateSha256": "3be4022973a0dafa72875d1c41a98b574dd376f0811177e32fc0d21ec9fafb4c",
+      "equal": false
+    },
+    {
+      "day": 67,
+      "observationStateSha256": "19319323cdfdac3504c405cab8dc12d792facc443eb666ae496c58e9db76bb06",
+      "replayStateSha256": "1e015000bab2064c884f00597a39492476042d26b4febcf0f289e16d2f0f8767",
+      "equal": false
+    },
+    {
+      "day": 68,
+      "observationStateSha256": "921ae70205976bd78c66e1dc93b121552cc1f80ee546b7b9b2c7d8cc724439d4",
+      "replayStateSha256": "07d3ed344aa89be02dc89b37b5adbdf24c130b59a85e0013b7f0ece88344e1d7",
+      "equal": false
+    },
+    {
+      "day": 69,
+      "observationStateSha256": "cbcf69d2e1fd4c749bdca68c5c46b76c4faf94f8e5ba7ca4ded42a4c5c57eb59",
+      "replayStateSha256": "59a37a29ecabf5d17fa08ab239476de450cbe387398b7eaedf4eb246c9b1d2f3",
+      "equal": false
+    },
+    {
+      "day": 70,
+      "observationStateSha256": "e6e957d1eb0303d2e8a90d635c5056cc9091981a0ce3faff45bf88005428890f",
+      "replayStateSha256": "388d86236498ba5917a3649ba26e0527144ef5b0dddc736a34f53025ad8d5744",
+      "equal": false
+    },
+    {
+      "day": 71,
+      "observationStateSha256": "f56d57c21b0f861c855af6ffd997d3cdbaabcb036545b156dd625a0a38adb4bd",
+      "replayStateSha256": "e433e34dd66f7ffabec59c377e0447320c3372643686926b870e59bfa13dfb3f",
+      "equal": false
+    },
+    {
+      "day": 72,
+      "observationStateSha256": "3471cfa0bd0a9687a100e1effc9097a3755c5cc80c11376336b36fc28f27f9f8",
+      "replayStateSha256": "de08eaf10852c52773dbddc01fef0f6987cf6f32e5ed16c0c2853f88c99a854e",
+      "equal": false
+    },
+    {
+      "day": 73,
+      "observationStateSha256": "3ba2a7f28c5a7ebe257b06cf39986aa828f287cc49bf1ee3b53d9e2be0ac00d8",
+      "replayStateSha256": "4c699336095f4e6256a34e2eca8c5d8b0169639f25ce91347db94feb722214e8",
+      "equal": false
+    },
+    {
+      "day": 74,
+      "observationStateSha256": "38538afcbb10cdb97a664915dbecdd6f22d5d07fc8795c7b475b93e127ceb0a7",
+      "replayStateSha256": "75bb3beb8282f54273d1d1431fe0c8dd94e2a1012f10101764596fa1a1002f98",
+      "equal": false
+    },
+    {
+      "day": 75,
+      "observationStateSha256": "7281e6561cc5921693c961aeee897400a10f0c21642399aa2ee3ec17c2421d56",
+      "replayStateSha256": "346393a3d05f9a5d543f3db463f729d6658607b52db925e43f0d819d7fa958c5",
+      "equal": false
+    },
+    {
+      "day": 76,
+      "observationStateSha256": "05436474b829e1179b32e091e7de3f9292eb35d2cdade2db3eac46b594e34047",
+      "replayStateSha256": "3c7acf6b14f6c3b5b3bb295429cf3dc04b2dd657eeffdc4ed337e999d6f18041",
+      "equal": false
+    },
+    {
+      "day": 77,
+      "observationStateSha256": "e3eea919f2a8114c80b26c759cb963e0ff7d636f9f324ae2446023d84e4dce19",
+      "replayStateSha256": "3b2e758a58f35d0d0dba854f3f75456a4e835f63cec58b6a9912b72db7a76fd0",
+      "equal": false
+    },
+    {
+      "day": 78,
+      "observationStateSha256": "7a4fdafd47e817d8f1c1e3085ac8fe173b0bf3576f34116c3625006555d2ef49",
+      "replayStateSha256": "f33514a621d671b00ed041d6759f498555efde0263b68d38cb549cdbead64a6c",
+      "equal": false
+    },
+    {
+      "day": 79,
+      "observationStateSha256": "f7135b86a0eee5ab78b5d3c61b26b0bf7615b1281d5cb41657ce0f74711bbe34",
+      "replayStateSha256": "33da523ff01cd389bb628f042678fae5150dd6982d93ea5c9741e9f007d3e4e0",
+      "equal": false
+    },
+    {
+      "day": 80,
+      "observationStateSha256": "9f26fce8375ff20a3bb0420f512b83ad382bb2db208d8cbdf1995896b7c64557",
+      "replayStateSha256": "be550f5f32ab21dc7e4e6aa53b06b7a3e35f5b29b74832adf7af0aa6bdd6059a",
+      "equal": false
+    },
+    {
+      "day": 81,
+      "observationStateSha256": "a564911a5ba619dcee57a5c3ac34ca64a60c75b4d7df33507f413911651b9816",
+      "replayStateSha256": "13aed16a2d2450c48163df3139be625e5a991adcf5017f11f5f2b532bb18beb2",
+      "equal": false
+    },
+    {
+      "day": 82,
+      "observationStateSha256": "b04b384f6af50c63da0d0af27f0cf839dea4d4f98684fdd3c16eec5f2dae40cb",
+      "replayStateSha256": "b3111456c6ee638888f168debf55d86d3db0a01b892be5e1144f0c6e86ece1ff",
+      "equal": false
+    },
+    {
+      "day": 83,
+      "observationStateSha256": "f9dfb7c21a7e748f9f1c632951210c8e12cda2619562f50ba6f1b388a553d826",
+      "replayStateSha256": "d152759f45be1891613b24f2810885502c6bb82075b392ee294b06a1fe7f329f",
+      "equal": false
+    },
+    {
+      "day": 84,
+      "observationStateSha256": "103f58c90826823fed992ff862d8267e738b35a5b576794924cc6d2b8d5977a8",
+      "replayStateSha256": "afc67e220a23bb825605b9f2983b2aa317029fe0ee2fb61e8b4203c1d38be8be",
+      "equal": false
+    },
+    {
+      "day": 85,
+      "observationStateSha256": "6b6961a63ca6fe4145ec81be40607ee0ea308788cb61bcb74bae993c144a67f1",
+      "replayStateSha256": "44f57511f233c58e801948542024da9751c75dcc4dc7dd80b8f20f11409c057f",
+      "equal": false
+    },
+    {
+      "day": 86,
+      "observationStateSha256": "0a40225312c8697c8b9bad0750cdc5c32911a9d45da9bcd30b17c04a51ca59b3",
+      "replayStateSha256": "c10cf795f8be0ce10d1056e5a203dcc9a12aaaae887a0023d8eb10b375736812",
+      "equal": false
+    },
+    {
+      "day": 87,
+      "observationStateSha256": "8af756a30ffeb8d4dc7801f4d1b199af1b9837d90dfad32ad8973b6fbc15d53c",
+      "replayStateSha256": "5e7584e7015c87a9109a6aa26b53e904e866f82ff79e269a6a1d4a611c86f568",
+      "equal": false
+    },
+    {
+      "day": 88,
+      "observationStateSha256": "7b8d8a3610c0845e23ebeb8094d0dc7a70b0748e2eb824e31c0e62ed19f23c1d",
+      "replayStateSha256": "af2eb2f8313382067f226df7fc8b0739cbcda6e8559687ca8de521e890518c23",
+      "equal": false
+    },
+    {
+      "day": 89,
+      "observationStateSha256": "047c8f915f7b3b15be197894b19d3c24a2390e45a68d8e554f894f980b185272",
+      "replayStateSha256": "d4214d9490cddd5d2cc0ffcca0fe885dd3a8d52090c26761b48894940fab0cd1",
+      "equal": false
+    }
+  ],
+  "finalDifferingTables": [
+    "account_persistent",
+    "notifications",
+    "season_records",
+    "transactions"
+  ],
+  "rootCause": {
+    "firstDifferentDay": 29,
+    "season": 740,
+    "modId": "the_crackdown",
+    "observedChampion": "quiet-player-17",
+    "replayedChampion": "quiet-player-18",
+    "recordedStanding": null,
+    "sourceSites": [
+      "src/standing.js:41 unordered complete ranking-population SELECT",
+      "src/standing.js:65 score-only stable sort",
+      "src/season.js:116 top?.standing || null"
+    ],
+    "finding": "Canonical tied standing preserves unordered PostgreSQL row order. No authored individual tiebreak found in focused source/docs/tests. Zero standing is persisted as null by || null. This is missing recorded native nondeterminism; no gameplay policy changed.",
+    "retainedExactDiff": {
+      "path": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-first-difference-2ac778b3.json",
+      "sha256": "db61731a015dc52e31d81e427b4d8a422217b4767d3f4c6c039c95aba80e88fd"
+    }
+  },
+  "limitations": [
+    "No exact replay pass",
+    "No matrix cell qualification",
+    "No per-commit resource observation",
+    "No production concurrency/load/soak",
+    "Source predates parent seasonal crown atomicity repair; integrated source requires a new native observation/replay pair"
+  ],
+  "finalExactDiff": {
+    "path": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-final-differences-2ac778b3.json",
+    "sha256": "62d8e1f6133cfe70d6b9325e6084c7e3feb420d1bd1259a8bd32a9cca4963426"
+  },
+  "additionalReplayGap": {
+    "source": "src/market.js/sweepMarket",
+    "query": "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+    "at": "2026-12-20T11:00:00-05:00",
+    "finding": "Unordered due-list iteration assigns two generated market:refund receipt IDs and order_expired notification IDs to opposite NPC orders. Refunds 352 and 2492 still reach correct owners; complete final states differ and remain retained.",
+    "notNormalized": true
+  },
+  "exactComparisonsNote": "Raw player-metrics retains physical latencies; raw worker trace retains duration diagnostics. Their raw artifacts may differ; full canonical state must still match."
+}

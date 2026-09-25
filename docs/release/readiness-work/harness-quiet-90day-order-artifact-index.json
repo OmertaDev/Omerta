@@ -1,0 +1,4790 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "matrixQualifying": false,
+  "source": {
+    "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+    "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+    "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "scope": "Every indexed artifact from ten native causal cases, the 2-hour smoke pair and the 90-day observation/replay pair.",
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\observed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "94dda72aafa1751eb2a7155b81dab5fdbc0379376f86b98844b89c2050fa6ac4",
+      "runSha256": "b9ac5eb61086b3ab71621c4eb5048bc5fdf636ff79cc28f8fefe6b09c30aaab5",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "0948f1be708fcf172a4f3282050afc811b0fac2680208078f5aee3960c99645f",
+          "bytes": 25529
+        },
+        {
+          "path": "canonical-query-inputs.json",
+          "sha256": "d0d4e9ae393fd459b45da66c6f9ab657784ca4a1a8d7203cec68b0f2ba5ab349",
+          "bytes": 1583
+        },
+        {
+          "path": "final.json",
+          "sha256": "6acb7bc9c12ef7b8fa464755cdae0f10e31297021bd876eddf9063f5e3414ba3",
+          "bytes": 27192
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "6ea30a3ba1c518863921c1414acc59a0d831bbfe1546b6504e43d82fcf6fa782",
+          "bytes": 14983
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "041f0cc4ea3a8cf6e5cec2d6b4ea9ae40efe716b0ed1486c58a39a48fe34adcf",
+          "bytes": 119702
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "18f0c3b7f3d0497144160f1e874a455d2d3b99865cabdca692b4abdc66c1d7ea",
+          "bytes": 713
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "2c3079989e0f316b339ec5b0d3301e715543abd305f51edda4fe1653676f1e46",
+          "bytes": 2630
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\native-reversed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "4d03cd517240bc236182e2541102bdfc84a2cba8bb3180e625271f11c14548e5",
+      "runSha256": "d8122d6cc4c46d5436ec70180bc3c4c67128865a3ecfba2a635c9fd5d83a8432",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "0948f1be708fcf172a4f3282050afc811b0fac2680208078f5aee3960c99645f",
+          "bytes": 25529
+        },
+        {
+          "path": "canonical-query-inputs.json",
+          "sha256": "9985c87a3b846a3c77eba34101348df676df36c2cf19a2e5e7fb8f6ed395793e",
+          "bytes": 1583
+        },
+        {
+          "path": "final.json",
+          "sha256": "937873356d808d7ebb02c59a0aad02d386f066fd141eb53fa774c4f9872e3214",
+          "bytes": 27192
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "f80055e9e9c19a45b87a9d813ab2ef60fb87d77de5c26d30ecd6d8dfe472ce9f",
+          "bytes": 14983
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "f5c41d2f57ba8b1f7ddf361e18f1b449374115f1cb45a9c39e21cb6ce463409e",
+          "bytes": 119702
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "18f0c3b7f3d0497144160f1e874a455d2d3b99865cabdca692b4abdc66c1d7ea",
+          "bytes": 713
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "6a92a0bf2afae02f2e259f8f5a8a10b6e97c119e6accd939adbca02fe8033e98",
+          "bytes": 2637
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\replayed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "460c417a6951a5c6ea3940e07955d7228e416be11ee0f3b8b2753cf8a60dd6a0",
+      "runSha256": "97ed32746817229888abdb7e03911c9022552e41ec5778998c1e2af642bc39d1",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "0948f1be708fcf172a4f3282050afc811b0fac2680208078f5aee3960c99645f",
+          "bytes": 25529
+        },
+        {
+          "path": "canonical-query-inputs.json",
+          "sha256": "d0d4e9ae393fd459b45da66c6f9ab657784ca4a1a8d7203cec68b0f2ba5ab349",
+          "bytes": 1583
+        },
+        {
+          "path": "final.json",
+          "sha256": "6acb7bc9c12ef7b8fa464755cdae0f10e31297021bd876eddf9063f5e3414ba3",
+          "bytes": 27192
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "2290cc5ef4bdfb5b826f217f4ec98d61fa2ae897611f124a5225ea9327c1e461",
+          "bytes": 14983
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "92b2c547288957719aeeee98ebafc0143f6fc4bb43bbedc1616e67698f916bba",
+          "bytes": 119730
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "18f0c3b7f3d0497144160f1e874a455d2d3b99865cabdca692b4abdc66c1d7ea",
+          "bytes": 713
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "06778b2e20c8f736f1ad276245335fc94940d88d08ef44323afa9a853a68e3c3",
+          "bytes": 2630
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-value",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "2eac5ba2f3d5c5512866a21c92df5b286f82b3494328613cdcfe3f95770fcf43",
+      "runSha256": "a4b921d77fc1db4361bbbe0bd8e6fc04e30c0ee037f456cd57fa1edb8c55f89d",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "43ef4c3bdb2dc7929a65afa3daf9190504b0757737139afab6f55f940e54097f",
+          "bytes": 25529
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "43ef4c3bdb2dc7929a65afa3daf9190504b0757737139afab6f55f940e54097f",
+          "bytes": 25529
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "0dd5709f8161ba62db7b5ad76c001e1a92b3f4e99b350db0ff70a760b59067d0",
+          "bytes": 6073
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "69b15417827a940983dc34319c6e52f9a73ae0a20a4c0a036f37bae39900e739",
+          "bytes": 120931
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "fe15a81b1499c8e2af840032b37777b3325e0bbe60feb9309453fcb5d2b09c12",
+          "bytes": 1404
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-missing",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "489ce38a082c9bd0dae55c3b03ff1de49bd7979040631bbea25d17b42f2ef24c",
+      "runSha256": "ffc588a45c14eda938c1a53f2cfdb33e68c392a9b7795a859e8e77af91f59f93",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "c9e79696560cfdb47e04dbbfe939fca11a88a5fb7c31b5b445c8a6a51fb01bff",
+          "bytes": 21016
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "c9e79696560cfdb47e04dbbfe939fca11a88a5fb7c31b5b445c8a6a51fb01bff",
+          "bytes": 21016
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "d2c760d70d337722cb76ab0ae78e947eecfb14d7494772e35d45f203e97afbaa",
+          "bytes": 5118
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "306de58e23509e411dd6a064691c408a5bfcec7147c31c9e37418bf4114c1549",
+          "bytes": 120780
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "867e8fed44b32174a062c0cf36b3558c4b909244a7069a7dc2c2ebaef7b11e12",
+          "bytes": 1336
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-extra",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1bb1701e7f5c74107381d888d720ee0163e20437e2b5485a40d8c5d0171fb037",
+      "runSha256": "17d85711b31c9b3b12341d4dddd94997a428bad7e8ea7929c5c2ed72ea2ee5c3",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "9a8234a454367184c651c558b44840593793173a73eee53bb3b4f912220421f0",
+          "bytes": 29668
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "9a8234a454367184c651c558b44840593793173a73eee53bb3b4f912220421f0",
+          "bytes": 29668
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "c337fbd10f8aaa23c0a9d253f4b646474ffb4f25a55328c2742042c0cd5dab0c",
+          "bytes": 6726
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "35c2cc29e720ff6b865e232e5039cc51c89f8f8105475c39d663f2f6704f0d64",
+          "bytes": 120780
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "8a6804aadfda9a26833750ae88b9c704d1d1e6be4714f8ac15fd9c1601508196",
+          "bytes": 1414
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-value",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "fb5cded68ee32f92e8dc6a70427aa106aa6f280b00eb0b1939bfc0eb6653ab49",
+      "runSha256": "c79585fd516eb8714f3e85e21d49fba0b6b2f03ed4a24f58bda09de09228c9af",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "756554c2c7c23018fc93ab3d034fbf26537d52fcfc570ece2c85de295128fea4",
+          "bytes": 25529
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "756554c2c7c23018fc93ab3d034fbf26537d52fcfc570ece2c85de295128fea4",
+          "bytes": 25529
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "802c240990dbc9e1c65dfc9105bb97c39fa434eb16529c8bb3af9340c0dbc28c",
+          "bytes": 8872
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "4c6fba7fbbb3ef08c83038e0abc7456827d51d8c9aaef99ff3387e56d8c2da04",
+          "bytes": 121059
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "a7373b7c17cf4c208cd4a2dfdef3d096ba71cf7b61075b4f7e3c78c5b3d63399",
+          "bytes": 1402
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-missing",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "89bdc9865777178f25ab4f58264b11f40da89814bde47aea8d0c3c48ea11dd73",
+      "runSha256": "c14f3705d567ffeffef8049a2cf9e4a6ae62e8623f1212f892217edd92d7e801",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "571436f2514709a41768b603859e02919467a0348a6616f532129cfb36e741f7",
+          "bytes": 25155
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "571436f2514709a41768b603859e02919467a0348a6616f532129cfb36e741f7",
+          "bytes": 25155
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "6bbbecfabc433882c9766c3d571d3ba3248a8e9724128478d68bb8e3b9cb8de0",
+          "bytes": 8276
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "8a7e8ea98301c00c22dfe05b571c5209601683d0b16312840ca7d73d0deba43d",
+          "bytes": 121006
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "b1eb6edac7b3bd1bf3c22e9cd6f3b200daba0bce724bd264c2fa23bddfdca980",
+          "bytes": 1344
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-extra",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "728d51c9ba77e2433cd864b9be2958e8812f8177f7a443e9f7f50414e6bb8b04",
+      "runSha256": "8aaf5c169192f910d8e0d05ad9e2c69dcf05ab8436d86d344ce28da852fed215",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "5e4c9756e8b415e25d027dc5addc84a3101edeb904cd7639e2db9d8a35192749",
+          "bytes": 25901
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "5e4c9756e8b415e25d027dc5addc84a3101edeb904cd7639e2db9d8a35192749",
+          "bytes": 25901
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "e4c900fded985f62e0f68f45fc22afd8db980c21b174a5e8837234e3fe596810",
+          "bytes": 9360
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "705fd5f1738efc3cfc875a03e2bbc0c114c69ccdf69a5ca70fab2affc74b692a",
+          "bytes": 121006
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "046afd97605811838f8bcdf0d5ec1412d3c83b428d8e4c96de678292c4bacabb",
+          "bytes": 1460
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\query-identity",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "31993e82296be044947d7f44e9e6e48866957ce15ce5fb95a6021c1860efd184",
+      "runSha256": "d46fe3d8637587b8af4b4a29779f306493afe8433d573be7453cf597c8f1693f",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "initial.json",
+          "sha256": "0948f1be708fcf172a4f3282050afc811b0fac2680208078f5aee3960c99645f",
+          "bytes": 25529
+        },
+        {
+          "path": "rejected-input.json",
+          "sha256": "0948f1be708fcf172a4f3282050afc811b0fac2680208078f5aee3960c99645f",
+          "bytes": 25529
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "d70c023cf5b1b7e7891ec4e0019364fcb2921efbbabc85a64adee2e460fbf72e",
+          "bytes": 5371
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "d6a563986f3231ae2861a67e299f56fd06cb130925eca7d9da40b72a4d2a9c9c",
+          "bytes": 120755
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "d64d29125594e3f389ce1edf6100d7d67d8b35ee5803651cacb098f1e3be7421",
+          "bytes": 123
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "8b35e1e271fb61a36874e9432e8f3cdddda1ee795c962d18e84909e994fb892f",
+          "bytes": 1404
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-order-v4-smoke-observation-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "b0cf743b5b672a92780bb0ce4458861ca13c8b76059cf05c3573a184181d9fd0",
+      "runSha256": "478c419139b9083fd50108592d945de7f1c480279dad5eac0b7f4408820b1312",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "prior-failed-run.json",
+          "sha256": "851db76eed4a7b8d6186ceb8405a70e72bdd7b1c6b78a58adf180abc8e05c63d",
+          "bytes": 65706
+        },
+        {
+          "path": "initial.json",
+          "sha256": "00d121405e963343923f9cdef6056dedf8c0f8bdc2e363473a29c0cd905a0a4d",
+          "bytes": 121030
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "052617650f53293f2fc81abf91a4ecff8024093297ef6139758b9f747ea08462",
+          "bytes": 925219
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "6e20fe0a7f1463506729dca98c5e3c95a132843b2c5b138a3d64511cc37fe2d6",
+          "bytes": 734
+        },
+        {
+          "path": "actor-policy-initial.json",
+          "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723",
+          "bytes": 2572
+        },
+        {
+          "path": "day-0.json",
+          "sha256": "b396fcb6e4ce293cbfc369d669e7052d0f7255da77b528fcb89c919a32bd20ca",
+          "bytes": 519316
+        },
+        {
+          "path": "knowledge-day-0.json",
+          "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-0.json",
+          "sha256": "4ef9a164ed7206571ed3de59703c1d68cf38a89c6d1e892602ae298b2aa9d9c3",
+          "bytes": 68113
+        },
+        {
+          "path": "final.json",
+          "sha256": "2a0521f10ff9377ce2920cf461ab2ae6d24bc194ca41277b91160c6618454f97",
+          "bytes": 562728
+        },
+        {
+          "path": "final.dump",
+          "sha256": "24cd62447e765d10cb9a11bf712486f0d8a0f38c65a5d7039ec82c495928e9cb",
+          "bytes": 956124
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "e2b3444e2ab61ea011c1f9be02073993f890a5ba92ceca213fd5f60ffc70ed70",
+          "bytes": 734
+        },
+        {
+          "path": "knowledge-final.json",
+          "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-final.json",
+          "sha256": "45791de4d5bc609374546f8422101e268f1787ea0a16beffcc98eb827081c0fa",
+          "bytes": 70518
+        },
+        {
+          "path": "worker-schedule.json",
+          "sha256": "3db5b2b0c0d698c009cf84e839bb71e3edde7cf9de0f623de97102db752e82c0",
+          "bytes": 514879
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "04741f8842cdefd4eaba7d78cc38bf53e30570e2c87ec62e260264e4e6fd81c4",
+          "bytes": 258157
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "bc74063eff46955ccff2545d250e414edc0a71e60ba3581e55bd38781f1d6bce",
+          "bytes": 119706
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "581c173295c4f2be6889f265b638ea5db91c9f4b1354e086ff4d741d54487e4d",
+          "bytes": 48263
+        },
+        {
+          "path": "actor-tape.json",
+          "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142",
+          "bytes": 24034
+        },
+        {
+          "path": "actor-policy-final.json",
+          "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554",
+          "bytes": 13107
+        },
+        {
+          "path": "knowledge-boundaries.json",
+          "sha256": "a3bfc441c03639f85197a59397f0d9dbeb9a0974d8bcdcbe907e95c4a65773f3",
+          "bytes": 681
+        },
+        {
+          "path": "player-metrics.json",
+          "sha256": "e018339ac6617a5200f316321c9f07564c9b39dc21a05b5c75f6b1131305d77a",
+          "bytes": 3350
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "9adeda57536c7778ed56a78228d0b859821899c23f57b5b3b3bc153c190e0a7e",
+          "bytes": 848611
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-order-v4-smoke-replay-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "00613c80cc02aa8b3a2933db960689278b98cde020bd47f18ab416c50d77b3d1",
+      "runSha256": "e4610e6adb03455392a187ea85cd7b3a19af80bbeacb7033e75de2efd24bf956",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "prior-failed-run.json",
+          "sha256": "851db76eed4a7b8d6186ceb8405a70e72bdd7b1c6b78a58adf180abc8e05c63d",
+          "bytes": 65706
+        },
+        {
+          "path": "initial.json",
+          "sha256": "8b752e1384f6eeea0a8440c76873a116027c01d2ef82983aa0c25b171ce3ba75",
+          "bytes": 121030
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "a7095c2660a9152c48b0da556d303a273974b4caf02a37d3470386bcd9e53897",
+          "bytes": 925214
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "de02b9f7b97417f7a77451f6e5495369cac3222adb0a99cd65b625e0f44f8274",
+          "bytes": 734
+        },
+        {
+          "path": "actor-policy-initial.json",
+          "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723",
+          "bytes": 2572
+        },
+        {
+          "path": "day-0.json",
+          "sha256": "2087f92fe7922eeb2eb3f7693e5a82ae5fb100925619de288bbee9b952319d95",
+          "bytes": 519316
+        },
+        {
+          "path": "knowledge-day-0.json",
+          "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-0.json",
+          "sha256": "2e56105549cc2bd65219aab8b0171d42f7eaac738c967a2781516369fffe2da1",
+          "bytes": 68113
+        },
+        {
+          "path": "final.json",
+          "sha256": "096bac28b0ac5d2db2a177535c3866954e7ff7259e160a6b8ed5d0833185b054",
+          "bytes": 562728
+        },
+        {
+          "path": "final.dump",
+          "sha256": "0b62402fa1d1136b7ffe41a8bccfd50fffe50aa00487171c53d15f9ad5b42aa4",
+          "bytes": 956119
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "95a5cac0ee3c8a34469c6ee1454cddba446508e6d4994be9121114229bb89453",
+          "bytes": 734
+        },
+        {
+          "path": "knowledge-final.json",
+          "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-final.json",
+          "sha256": "7802440fb4dfed543bc738b35eb8d7899ab71f19c7c6000c7cb179314a09a9a9",
+          "bytes": 70518
+        },
+        {
+          "path": "worker-schedule.json",
+          "sha256": "4c7d45a41a70d7d6c6fcb22f8a6687dd4953acfc418cbc32e7a4debb5c3f2220",
+          "bytes": 514909
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "04741f8842cdefd4eaba7d78cc38bf53e30570e2c87ec62e260264e4e6fd81c4",
+          "bytes": 258157
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "10d33aea32de859fc07028efc04f7bf39a3721368abcb65114fe5dcc2d2e959d",
+          "bytes": 119734
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "581c173295c4f2be6889f265b638ea5db91c9f4b1354e086ff4d741d54487e4d",
+          "bytes": 48263
+        },
+        {
+          "path": "actor-tape.json",
+          "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142",
+          "bytes": 24034
+        },
+        {
+          "path": "actor-policy-final.json",
+          "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554",
+          "bytes": 13107
+        },
+        {
+          "path": "knowledge-boundaries.json",
+          "sha256": "a3bfc441c03639f85197a59397f0d9dbeb9a0974d8bcdcbe907e95c4a65773f3",
+          "bytes": 681
+        },
+        {
+          "path": "player-metrics.json",
+          "sha256": "c5d175faa244a39d6e515072b06c709db5579fc3de5c5386e83ad5e9e040eadd",
+          "bytes": 3354
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "26c1f6087cb0465f54733527614cc8edadfccd42059bc0dbefbf1ad4dca82ad7",
+          "bytes": 849713
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-observation-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1e27bc0ae49bd77b99a56b333b3e8987b2993059747a7b1c5c9749d4377c7f7f",
+      "runSha256": "77bc218eecc51134ee26fd9ecbd3073331547642f90bb02b286e97a810170c37",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "prior-failed-run.json",
+          "sha256": "851db76eed4a7b8d6186ceb8405a70e72bdd7b1c6b78a58adf180abc8e05c63d",
+          "bytes": 65706
+        },
+        {
+          "path": "initial.json",
+          "sha256": "0cf8b9193eef2772b4fd90f8b3c1eeaad9fd88c4ff9610fe75fc3333a94adf5f",
+          "bytes": 121031
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "b5ebc4f3dde446a8821b04142a38bf4bd6e062d7b2bd79f2023e2f6d404404d6",
+          "bytes": 929865
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "94ecb2303cc61b30d01b191066f3f5791597840c97aa06bd036faca478fc3e03",
+          "bytes": 735
+        },
+        {
+          "path": "actor-policy-initial.json",
+          "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723",
+          "bytes": 2572
+        },
+        {
+          "path": "day-0.json",
+          "sha256": "d8413c31dc70778c95705e6fc036eb3ccf30aac97deaa4ba9c9219877f337909",
+          "bytes": 519317
+        },
+        {
+          "path": "knowledge-day-0.json",
+          "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-0.json",
+          "sha256": "33e10b82fb67528c6e0f57e5c3a9af66668c27d6bcc2bcf811553c419bd077dd",
+          "bytes": 68113
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "e719628998f861702e8a572b15e2e8c0e7a5c781dfefc18cb939d275bc16650b",
+          "bytes": 6862191
+        },
+        {
+          "path": "day-1.json",
+          "sha256": "55d9e79462d0a20539c6e2c4c8abc5108d1ca5a9477fe61842fcba96364c8857",
+          "bytes": 1234070
+        },
+        {
+          "path": "knowledge-day-1.json",
+          "sha256": "0c473aec9229c1f811c9625ace818d6e83faf88bcb6de6f66defa6227dceff46",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-1.json",
+          "sha256": "c80651501c1c102c3db7d0d239fc94205aff2cd1170a7ebbe046f3eadc3e9e20",
+          "bytes": 102344
+        },
+        {
+          "path": "query-tape-00002.json",
+          "sha256": "045365bf3cfd4348904ddd898a81238438b4b03c1c6cfdebb05708f8ecbb763e",
+          "bytes": 8372144
+        },
+        {
+          "path": "day-2.json",
+          "sha256": "77673619abb76799c0cf872e084c48dd98118a240feca47d86530d96713e4a82",
+          "bytes": 1712746
+        },
+        {
+          "path": "knowledge-day-2.json",
+          "sha256": "10db222ba8d0a11dfc6ff0b7c3e45ef34b26f890701d65faf08b7bbd4f36c9cd",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-2.json",
+          "sha256": "c56dec1aaaa6ded7ebd81f42766687062b8f202a3d77c20232ea12327b86a4e5",
+          "bytes": 113047
+        },
+        {
+          "path": "query-tape-00003.json",
+          "sha256": "c1d2032d36cb41bffc3f675f8f8f571e8adbd5cb2f9472c9eb00f835b4775127",
+          "bytes": 8394296
+        },
+        {
+          "path": "day-3.json",
+          "sha256": "74ce471291610055a14557af941de33cdfe857b8585b691ee18f274ae4d7a0bf",
+          "bytes": 2205798
+        },
+        {
+          "path": "knowledge-day-3.json",
+          "sha256": "83976c943e899f9650bc05a11669b8525d362658ea947b8e1f021df24e271130",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-3.json",
+          "sha256": "0302b4c2b816f17fde4165c56dc0c94dc8665a15791324b5df6f012cf9c8b299",
+          "bytes": 129598
+        },
+        {
+          "path": "query-tape-00004.json",
+          "sha256": "b7a8e64214b59d057cc906b02de897a27b162e91795cc6cb4d5756e93119c83d",
+          "bytes": 8405756
+        },
+        {
+          "path": "day-4.json",
+          "sha256": "bbe3d8674d606c99c06e2e44ffc892c99c639981348b577b64c415493bd1ab48",
+          "bytes": 2692359
+        },
+        {
+          "path": "knowledge-day-4.json",
+          "sha256": "17a6fb95d25694db5b12020f25ee0ce4197b136c222a988b8deaf892ce737949",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-4.json",
+          "sha256": "782de1a15f96fdad906901b81f2c14df4f7482d1d3d8e4564444e46c340c93d8",
+          "bytes": 135281
+        },
+        {
+          "path": "query-tape-00005.json",
+          "sha256": "5e339c918125fb934dee1b81080216d6ea32f864b124a14a602532a7ae7bc261",
+          "bytes": 8394522
+        },
+        {
+          "path": "query-tape-00006.json",
+          "sha256": "37eeb684c663278a6d3fe043b99660255a30b50fbc17d36063ec217fc78d30c9",
+          "bytes": 8396886
+        },
+        {
+          "path": "day-5.json",
+          "sha256": "e976310da7daa955330d639e31023eee15151b4397bc2373a3fba7ea2ad53489",
+          "bytes": 3168360
+        },
+        {
+          "path": "knowledge-day-5.json",
+          "sha256": "a67683995763a43b991b29a3a0552356ae2123e28b158638026695246d43e8db",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-5.json",
+          "sha256": "a4761bba199a4a6f7f2906d0f7abfab43e48f6d0885a3f2c59b0f2f80579050b",
+          "bytes": 138145
+        },
+        {
+          "path": "query-tape-00007.json",
+          "sha256": "e8262f0ce20c68915c3210e837b70fd51371cb345fd85bd4c0bc94aad50f68e7",
+          "bytes": 8409338
+        },
+        {
+          "path": "day-6.json",
+          "sha256": "b4f393afc71c19643388aae7baa11dfe1e4980f32e3431f9b37cdae2f2a532f1",
+          "bytes": 3655630
+        },
+        {
+          "path": "knowledge-day-6.json",
+          "sha256": "cf48d1c83d8d361fe3801d67d6ef59a30a262e54f7d5626dc120c0d295259a1d",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-6.json",
+          "sha256": "7ded9c0c1370178ec2cce26448a50e774bf083c14851f41be4ef62e065ce76b2",
+          "bytes": 140126
+        },
+        {
+          "path": "query-tape-00008.json",
+          "sha256": "b75d31c23469ef687d6b5a2129626de140d051faafcf0a134a84ed3cd8ceb7de",
+          "bytes": 8403160
+        },
+        {
+          "path": "day-7.json",
+          "sha256": "2dcb150a2bed0926a9f4334dddb64174f55a58e54c0b32ebbc9c84720d4cf555",
+          "bytes": 4131170
+        },
+        {
+          "path": "knowledge-day-7.json",
+          "sha256": "0c57fcdb2b7e89307194f6dbe19d8066a3ab533a772c1b9e7c26f5b25e00218d",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-7.json",
+          "sha256": "fb1485bec8a4076ea45e301436f11576ba23f806f9e591e9793f5506bb1a3dc9",
+          "bytes": 140983
+        },
+        {
+          "path": "query-tape-00009.json",
+          "sha256": "a88e03781886bd6324e0e6c82702a7ab3accc9a38ffee08317e522f4a785b424",
+          "bytes": 8396004
+        },
+        {
+          "path": "query-tape-00010.json",
+          "sha256": "f5b8fe2811be2635c6eb57084c1609f93c28a89ee3862629fbdeb8fcaa2577e4",
+          "bytes": 8405952
+        },
+        {
+          "path": "day-8.json",
+          "sha256": "bd479c794ba4319d43baa9b541f461372bd92f1ce09e3a599098150b2cbf79b4",
+          "bytes": 4621236
+        },
+        {
+          "path": "knowledge-day-8.json",
+          "sha256": "1f48c9cb511253a4f60368b42965af0d0f33db34c3faf08576ffa10a5d112c55",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-8.json",
+          "sha256": "3b8eaa1f8913914eabe75bb1b34b4e5fea519e8b5bb38fda8efed724086c06ac",
+          "bytes": 142364
+        },
+        {
+          "path": "query-tape-00011.json",
+          "sha256": "2c3e71a3104d3ebd1929d2bfbca154ed955f14e73cb75d76f05eca077cba400c",
+          "bytes": 8399506
+        },
+        {
+          "path": "day-9.json",
+          "sha256": "fe84079026e3a778540e7c8239ba64eae2bc87d795a2597964e342dd30d9b8f2",
+          "bytes": 5105937
+        },
+        {
+          "path": "knowledge-day-9.json",
+          "sha256": "fcb07e017e08041c43edad8566ea2f91867d919952e3308e138036bf33d117d3",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-9.json",
+          "sha256": "4767dd945de5987933fbadde23da489feb270a5afa679b674e50c7032ee0d27c",
+          "bytes": 144037
+        },
+        {
+          "path": "query-tape-00012.json",
+          "sha256": "7aef01dc080a9e66f676f6f26621352599b8a2d35fbfda776a4efa2c41c2dde9",
+          "bytes": 8404980
+        },
+        {
+          "path": "day-10.json",
+          "sha256": "528272df13509da5488eec25510fb75dbfaca35adba298bdbdc676dd617c0df0",
+          "bytes": 5599963
+        },
+        {
+          "path": "knowledge-day-10.json",
+          "sha256": "371379ce326ddc6b0c86fd0f4534d6ee655254f3432e8e97fadc64ed3d0a9120",
+          "bytes": 5543
+        },
+        {
+          "path": "world-diagnostics-day-10.json",
+          "sha256": "a309c3bfa944a416bf571dca16e3aefb94c3a0ff72b9e4bd8221f41c8755d91f",
+          "bytes": 144885
+        },
+        {
+          "path": "query-tape-00013.json",
+          "sha256": "c58acb59751c9d63987c5e937a1c24c654bd2fa133e01bde0b4684d763847e3d",
+          "bytes": 8395910
+        },
+        {
+          "path": "day-11.json",
+          "sha256": "e57e2e1d396e4be8a478f240543be5368f6607f1c896c1e04c86990ef1178a34",
+          "bytes": 6089074
+        },
+        {
+          "path": "knowledge-day-11.json",
+          "sha256": "cda9b97c6db0e4c5af10013ed53a70eb4c0674af556dfa76e1b7856a318eba48",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-11.json",
+          "sha256": "4e0976c37c50c076922c1c02d2829a521fa29d3a9a6f04897d3283ac28eeb242",
+          "bytes": 145456
+        },
+        {
+          "path": "query-tape-00014.json",
+          "sha256": "0c71ac1ea2a0182f1639f6c204dee223465978989dda317d2daeab1146daa4eb",
+          "bytes": 8395188
+        },
+        {
+          "path": "query-tape-00015.json",
+          "sha256": "e33342d39ee3558552f9c37300242e018c8e48710c542cd6b9364b5e215e4a03",
+          "bytes": 8407468
+        },
+        {
+          "path": "day-12.json",
+          "sha256": "7c3d6af48d453cb143fdbc9fa2daf9cd913dd12ca97ad8da03c8f777cfe26f7b",
+          "bytes": 6573673
+        },
+        {
+          "path": "knowledge-day-12.json",
+          "sha256": "421ea952c0bd86c268851d54288d607903ab467abff0ddfa31486c30e8db0b4b",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-12.json",
+          "sha256": "b52e801e7d22a5a9659f4e0ffff2d1a226cfec8bcd66b15e8a4c93de2dba991f",
+          "bytes": 146016
+        },
+        {
+          "path": "query-tape-00016.json",
+          "sha256": "8e9027faef8350b933cdd011d308dbc8aba01fa6050369e1f290ed4bef713af6",
+          "bytes": 8403082
+        },
+        {
+          "path": "day-13.json",
+          "sha256": "58fc4bd25f6f74b550980ee2950ec1533e32addb106ea1e7531e80ebdca3d8a7",
+          "bytes": 7062426
+        },
+        {
+          "path": "knowledge-day-13.json",
+          "sha256": "3b0119ceb24e4c04047e9a421077a5214d05772f23d308593fbd8e070c1977ac",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-13.json",
+          "sha256": "3622ea66dff51183faacd86bceacb66fd44113e923724f829324af693553d404",
+          "bytes": 147387
+        },
+        {
+          "path": "query-tape-00017.json",
+          "sha256": "3b8c121272954a4283361649dd167462073ae499a9daf139a03739ba1637e25a",
+          "bytes": 8399882
+        },
+        {
+          "path": "day-14.json",
+          "sha256": "86c25ed1e2557e9caa19f5679fb9ed5e08527c94c5ccd64b6595001d9af9effc",
+          "bytes": 7537593
+        },
+        {
+          "path": "knowledge-day-14.json",
+          "sha256": "a071e5975a720b6895dc6689b1591e2ad4235f061d8f47abd99c7d383ef2ae3d",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-14.json",
+          "sha256": "7d25d74878aa5f4c2ce38c7d72534501f5de4fcd3e4af424a134f8b53e146505",
+          "bytes": 148476
+        },
+        {
+          "path": "query-tape-00018.json",
+          "sha256": "3ad2b65f1a26bca81490f015cbd7ae32efad926e07fd582b9ff8d85fdaad087a",
+          "bytes": 8405271
+        },
+        {
+          "path": "day-15.json",
+          "sha256": "711fb5a2e5ba1ade4b1ae3e2e88ef364b54b3e2ad54c0573e9c873fb319977a3",
+          "bytes": 8020208
+        },
+        {
+          "path": "knowledge-day-15.json",
+          "sha256": "5b6510cccda09534ecb2341cc9a2bdcc341148caaa2f4f78a37c89b4ebf6a579",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-15.json",
+          "sha256": "63b213fc9591c2debfd1fa45b27b560cb341a2aaef4421423cedfddd345c701b",
+          "bytes": 148768
+        },
+        {
+          "path": "query-tape-00019.json",
+          "sha256": "3892146619a94789f4b30fecf7eb0cf65148f10291568d1849aa6101c6360ae3",
+          "bytes": 8401161
+        },
+        {
+          "path": "query-tape-00020.json",
+          "sha256": "fd8318d7451044b4f16e462968a99f14e955a4e12182e45d45f71ec56590a542",
+          "bytes": 8401047
+        },
+        {
+          "path": "day-16.json",
+          "sha256": "8fffbffe01d1d594b72d0f3235ee66c6ef458ff2580d38e980e36da01e3cd50c",
+          "bytes": 8499601
+        },
+        {
+          "path": "knowledge-day-16.json",
+          "sha256": "177868f442d9fb173e9ce465060f085535a9ac2ff67c8867011a8a6ae5767173",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-16.json",
+          "sha256": "0fb3091fbf93d32ede67c4e0cec4c76bf467df74924846d60cc6a7a28265da2e",
+          "bytes": 149864
+        },
+        {
+          "path": "query-tape-00021.json",
+          "sha256": "0513ed8018ecf7d7eb432e79cb204c9df77334c5c4c27a73de032b963366bb5b",
+          "bytes": 8399203
+        },
+        {
+          "path": "day-17.json",
+          "sha256": "f51cb0d5907faa015fdee3bd20da210d15b346e301a587f3c89a3b51d176abac",
+          "bytes": 8992564
+        },
+        {
+          "path": "knowledge-day-17.json",
+          "sha256": "21ed24d49e1d81b25f7c47197bb11cd55477412c80c461ac9bc5e6f69458d5b5",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-17.json",
+          "sha256": "29754835f6817d3c8e6a130a806bab3077769ddd7b6b9daf9a4c1ec2eda7ef4c",
+          "bytes": 150438
+        },
+        {
+          "path": "query-tape-00022.json",
+          "sha256": "f6a4a4fcc3b06a4da7b95d503465672ae9f6b01a6a7ccfb5f3df31e5b8aa8cd6",
+          "bytes": 8404155
+        },
+        {
+          "path": "day-18.json",
+          "sha256": "7681b1fa5e5579093a92d46c736f24d757cdc59b72d9c999940058e1dccf919b",
+          "bytes": 9478263
+        },
+        {
+          "path": "knowledge-day-18.json",
+          "sha256": "85b64540f63ccfa21988fd0ba35424ee5e3ab87c76e7489d6e1750630570eaa7",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-18.json",
+          "sha256": "26fc455800d6dbde065e19c52188772082b06b98e3695594187a0cddb7cbfb77",
+          "bytes": 151265
+        },
+        {
+          "path": "query-tape-00023.json",
+          "sha256": "2b3e2a51d7697bd344755e9240c331e17096065678dc692581774339b22507a7",
+          "bytes": 8400543
+        },
+        {
+          "path": "day-19.json",
+          "sha256": "4f586d23ef441117d25dcc847807d9c992695b20cc3d679976facaff9edc1c40",
+          "bytes": 9955984
+        },
+        {
+          "path": "knowledge-day-19.json",
+          "sha256": "670a9a5ee6e73c62eca47aa0f002c03ff5592999c4be0dda5ee07e4d97f1240a",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-19.json",
+          "sha256": "3cf53d33c5d0bc01b33af57638d261fc76cd51a2b7779846999146c9a84fa26c",
+          "bytes": 151821
+        },
+        {
+          "path": "query-tape-00024.json",
+          "sha256": "fb7d0f6f2a4cbcb5222dbe8747c909bd3ed953cc689e972409fa977d0858fca8",
+          "bytes": 8401781
+        },
+        {
+          "path": "query-tape-00025.json",
+          "sha256": "04f919ae0504901f34d1ea062d3f15c5f153cfebf91bc6bd48c3c414a611b17e",
+          "bytes": 8405543
+        },
+        {
+          "path": "day-20.json",
+          "sha256": "1746d62b65b07698ee9d2f9e73dce7a80f6fbc545f298b8854c231b752c62352",
+          "bytes": 10444903
+        },
+        {
+          "path": "knowledge-day-20.json",
+          "sha256": "bedb3832e5995d9353eda52e5285dc1332794cb9abf6d0aa967324a434c124dd",
+          "bytes": 6462
+        },
+        {
+          "path": "world-diagnostics-day-20.json",
+          "sha256": "acb604102c893a377c841c1e8880939621edb769ecff85d54fbe6fedf12514cc",
+          "bytes": 152916
+        },
+        {
+          "path": "query-tape-00026.json",
+          "sha256": "8afbfcbe6094d5c1d98e46539d123e8f658c1dfc92c4412d421171f71e19ac62",
+          "bytes": 8398647
+        },
+        {
+          "path": "day-21.json",
+          "sha256": "52a298a243cdadae1df6a7b31f6c422d8f7e1c304d8c06800978aff234a2699b",
+          "bytes": 10918076
+        },
+        {
+          "path": "knowledge-day-21.json",
+          "sha256": "65069e64d22d07316b2b44e94233792fe09d0690381b9454abfc0dc21c452613",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-21.json",
+          "sha256": "76f77267ba59ef717d560b12745a07bd421235339b716814e1c872625e56a546",
+          "bytes": 153202
+        },
+        {
+          "path": "query-tape-00027.json",
+          "sha256": "deea11cd012ce4321191a0c6310a2fa683260185fe11881e51dec2c91bb29328",
+          "bytes": 8396789
+        },
+        {
+          "path": "day-22.json",
+          "sha256": "acbe98d063c6d5b6736d29072f83bc0d66a5b5a6bb1950bfec031e89610df53c",
+          "bytes": 11405197
+        },
+        {
+          "path": "knowledge-day-22.json",
+          "sha256": "38dc6c6ee5f5082650db09a0bc8d552b6f10dbcfe24ed7f43b077f3138b0fbc2",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-22.json",
+          "sha256": "c718c90b9c95190bc6941808596235483971e38943b15d8075e2d3a7b3ade415",
+          "bytes": 153501
+        },
+        {
+          "path": "query-tape-00028.json",
+          "sha256": "6003ac934a08ef5b4b49deca98413eb33003dc36115eb257e0df148f7c6597c4",
+          "bytes": 8406413
+        },
+        {
+          "path": "day-23.json",
+          "sha256": "88ba6e7b8c0d234fad8f0ed0a37ac79fbbf7c496d0beb2abee8003918965842b",
+          "bytes": 11887411
+        },
+        {
+          "path": "knowledge-day-23.json",
+          "sha256": "adc5c2092349f97258edb85e265a3bcb0bee69ac112a3b932d9a823bc1fa84c6",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-23.json",
+          "sha256": "4c9ba24c4d7725a81ac590400e7fa819e1eadbe9ae75a7ae8ce8b2baa32171fe",
+          "bytes": 154368
+        },
+        {
+          "path": "query-tape-00029.json",
+          "sha256": "ec54b42fefa342556437777bd392dc6134f826204973677f5ce5828bf6155b51",
+          "bytes": 8401477
+        },
+        {
+          "path": "query-tape-00030.json",
+          "sha256": "f91e1482404f582b1a087ce4c0176fb4f0771d63060d05339e922e4daf214342",
+          "bytes": 8397821
+        },
+        {
+          "path": "day-24.json",
+          "sha256": "19c7ec6cbb302c73596c4a77079a7d19f4ff5bb710d453d33692ea11b11df853",
+          "bytes": 12368277
+        },
+        {
+          "path": "knowledge-day-24.json",
+          "sha256": "d00c3468716a20e12447a9a3314ae9b14063c70a8270e74583f4ed4a21e988d5",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-24.json",
+          "sha256": "3159f49d11639cfad8e62d2a820458bd1a8f20ad594f2dd40c5f5947e57b9595",
+          "bytes": 154415
+        },
+        {
+          "path": "query-tape-00031.json",
+          "sha256": "93520e00b7dc6465ca132db5cdcf0e6acdad76b0637aacce9dc6ec30bf01e070",
+          "bytes": 8401533
+        },
+        {
+          "path": "day-25.json",
+          "sha256": "845284ee20eea31bc25d6ddd40d3d5a2440562e15638dc15d28fa66a50e9688e",
+          "bytes": 12847843
+        },
+        {
+          "path": "knowledge-day-25.json",
+          "sha256": "7a4126c311453aee24bd706e68982de6e898a1ff5f36a35aca1e40ae8e0acb04",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-25.json",
+          "sha256": "23595dfff05b903f120ab0bd358ed61f265f015a39c5729cc8f0f49fe418f73a",
+          "bytes": 154456
+        },
+        {
+          "path": "query-tape-00032.json",
+          "sha256": "5a805ad3cbc90a2d6d7afb85076eb44fa128b301b59dd8f129c8185e0014bd5d",
+          "bytes": 8404567
+        },
+        {
+          "path": "day-26.json",
+          "sha256": "92abd6a7efc5091c9b2785d011fb95e88fef801a81a8845d71f5e146616cc9c1",
+          "bytes": 13337742
+        },
+        {
+          "path": "knowledge-day-26.json",
+          "sha256": "a68bad47a5e2d992019683b825195fa385a287e69ab33d2e9e40c71838e78bb6",
+          "bytes": 7274
+        },
+        {
+          "path": "world-diagnostics-day-26.json",
+          "sha256": "4c066b656114b17d9c618e9650661520e54151d968d96004803d95128aa3a43f",
+          "bytes": 155316
+        },
+        {
+          "path": "query-tape-00033.json",
+          "sha256": "2059daca4fc2e20090bf3219e30496a200584ada83a486b1526f3a4b0e36936d",
+          "bytes": 8399647
+        },
+        {
+          "path": "query-tape-00034.json",
+          "sha256": "f3d7e970757fd24f0d62a00b0333f52ee1adcba4fbf499f69f87d615e5533b11",
+          "bytes": 8402953
+        },
+        {
+          "path": "day-27.json",
+          "sha256": "cba98df74db4e996a923a1d665a015dc30c859a50fa0fdfa0a751285fec16b64",
+          "bytes": 13822833
+        },
+        {
+          "path": "knowledge-day-27.json",
+          "sha256": "3e8aa1048289cfd0b2b003e6e8d8b20f2432d49239b91cdb8f304accc494ff60",
+          "bytes": 7274
+        },
+        {
+          "path": "world-diagnostics-day-27.json",
+          "sha256": "d4d65b5d5dccb5289432ff769e610f25c86ef7de248e77001f2eeebff8bb2fd4",
+          "bytes": 156128
+        },
+        {
+          "path": "query-tape-00035.json",
+          "sha256": "aa076db8e327386fd5abe4b2ef64e0eaa9afff916c0ffe6bf3f5418e348f72a5",
+          "bytes": 8405475
+        },
+        {
+          "path": "day-28.json",
+          "sha256": "79635ff9ab9a84e8b786a7719b06d42a61ec6752f1df5e072a94b5b97df4a3cf",
+          "bytes": 14321344
+        },
+        {
+          "path": "knowledge-day-28.json",
+          "sha256": "1b72e78e1b691722021d2283d99359bed7d189205a7a559f357d4fb16e7db36e",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-28.json",
+          "sha256": "a9b612da4ec942f59cd125e3642192f419901bf868bb7918c369469736643aa4",
+          "bytes": 156704
+        },
+        {
+          "path": "query-tape-00036.json",
+          "sha256": "a77db307443a6586cf7f6601a24362338609c4392b0835e169ca2e03f591505e",
+          "bytes": 8435818
+        },
+        {
+          "path": "day-29.json",
+          "sha256": "605f3ab26bf497d79ce422bc944cde02a2639c6d1570339e0f7bece0f34f4f40",
+          "bytes": 14825200
+        },
+        {
+          "path": "knowledge-day-29.json",
+          "sha256": "d5afe415b99d06c4d1c71b887a25901493d9e4e3d6d9edeedf72e2bc7daf40e6",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-29.json",
+          "sha256": "ab9585c298e459da35d746158c93f010fcf5f686034efd3a3fa56e8e473a847a",
+          "bytes": 157539
+        },
+        {
+          "path": "query-tape-00037.json",
+          "sha256": "0f495d3a79b60dbc06cd7ee8665486972f1dc7259b3160772ac74ecf7eda4c91",
+          "bytes": 8390627
+        },
+        {
+          "path": "day-30.json",
+          "sha256": "e7ce005ed88918c641a2c76427df851b532c3cfab39dc46de5097b3c0bb51d0e",
+          "bytes": 15318959
+        },
+        {
+          "path": "knowledge-day-30.json",
+          "sha256": "cefc332c0353912ea4e4eade3728f290aa28693272f70f58939777ed9e0aea70",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-30.json",
+          "sha256": "792050008dc211e4b69f8af9d9d0db5e1268984bace0cfa848c3bc9118e4ad68",
+          "bytes": 157550
+        },
+        {
+          "path": "query-tape-00038.json",
+          "sha256": "fc9dba8818c0116002198384a60d54576fc14baed292c13115a37ac314a9b88f",
+          "bytes": 8403195
+        },
+        {
+          "path": "query-tape-00039.json",
+          "sha256": "8deda6a84d17adc4ea7087a6fa28db3c9ed69f5598c4b5814e2f9982019dd8dc",
+          "bytes": 8387975
+        },
+        {
+          "path": "day-31.json",
+          "sha256": "388ac1321636a44b772b90ab2d037b15399ce2ef7540e0ccb1171ba86e1e54a6",
+          "bytes": 15809962
+        },
+        {
+          "path": "knowledge-day-31.json",
+          "sha256": "20eff7c4db3045a7d4ac98c41b3cfadcfef17fac3d121d186cd47a6177063606",
+          "bytes": 8096
+        },
+        {
+          "path": "world-diagnostics-day-31.json",
+          "sha256": "7b6f410a6637d0514b794d39aa323c3c84b18fdaaa10685fe302066e0b84abd9",
+          "bytes": 158091
+        },
+        {
+          "path": "query-tape-00040.json",
+          "sha256": "74eadea7c2aa9d9dd6093ec745b674b029373d85d883d483edf565e81a819fae",
+          "bytes": 8391587
+        },
+        {
+          "path": "day-32.json",
+          "sha256": "83794cf050ca6c92a7f47c4f55063ed924b3ca788e5c826b34bc9f00d0757a65",
+          "bytes": 16315610
+        },
+        {
+          "path": "knowledge-day-32.json",
+          "sha256": "6d04cd78686c46fef9de62dabc0fb1b0a31ffabac1b117ae61505cbdde256b2d",
+          "bytes": 8505
+        },
+        {
+          "path": "world-diagnostics-day-32.json",
+          "sha256": "b80ff2719672302133725b3725837bd754bba5242efed64baa5a85d437e76149",
+          "bytes": 158375
+        },
+        {
+          "path": "query-tape-00041.json",
+          "sha256": "89271bed044a51239d85926b844f5dc252f93e34c97db0632ffeff63931f2fa8",
+          "bytes": 8397139
+        },
+        {
+          "path": "day-33.json",
+          "sha256": "070ccc80475f503d3871d5ff4624dbe8b3ec0a1b6cd118f28845aae2eda9499b",
+          "bytes": 16802165
+        },
+        {
+          "path": "knowledge-day-33.json",
+          "sha256": "208f9b3e845d9e484269100b65511c4eca01dc5eca2b59ade06349e22ca90e10",
+          "bytes": 8505
+        },
+        {
+          "path": "world-diagnostics-day-33.json",
+          "sha256": "68887fdb68cc531b4f55042177d36f3d605a9c90af858b487865aa6729bc7af2",
+          "bytes": 158661
+        },
+        {
+          "path": "query-tape-00042.json",
+          "sha256": "09b560260451e9527f0ab8f3caf5ddc8e86aab05f4f6d07ccb5f99338235a0da",
+          "bytes": 8387799
+        },
+        {
+          "path": "day-34.json",
+          "sha256": "77a84d13f5d0a356e2671c48f930066bce9382a43e542f3047f6a87791abeed9",
+          "bytes": 17299478
+        },
+        {
+          "path": "knowledge-day-34.json",
+          "sha256": "89cfebeea8533232533865c7db44930c3a6782fa6e282b815d4b66eebfdb87d7",
+          "bytes": 8906
+        },
+        {
+          "path": "world-diagnostics-day-34.json",
+          "sha256": "29dcc0201b23cae5d5651b61ce23159a4eb22f3aef118cae9c5e06598353f6fd",
+          "bytes": 159206
+        },
+        {
+          "path": "query-tape-00043.json",
+          "sha256": "f838a1856565e5875e117d7e703cc7cc6efbf6e7580e87ca78750d44cd53c749",
+          "bytes": 8392459
+        },
+        {
+          "path": "query-tape-00044.json",
+          "sha256": "774a3f97c2500f892f676968e33393e6879b8683008f1f2410bf2358171d5943",
+          "bytes": 8391033
+        },
+        {
+          "path": "day-35.json",
+          "sha256": "9df21d47ecea453544472f4b95e360ab078846bf2837c5aaa092d99fe7dee874",
+          "bytes": 17800009
+        },
+        {
+          "path": "knowledge-day-35.json",
+          "sha256": "bac85fbac63cc27a4224758f6e554abc9f0af4e8413de39f7aed0a649ff59b9d",
+          "bytes": 9719
+        },
+        {
+          "path": "world-diagnostics-day-35.json",
+          "sha256": "22b78472d8f62610490bc762df461b458ee4c59b6c962507f977c0b26bd1bf0a",
+          "bytes": 159481
+        },
+        {
+          "path": "query-tape-00045.json",
+          "sha256": "161eff04bd61c607b40604ffba2f0daee4976d5b522e15f8b3529ddf3547ff5e",
+          "bytes": 8391825
+        },
+        {
+          "path": "day-36.json",
+          "sha256": "72d9635ab5f5442dc70d76d2d64687321bcafac1c0679dba3abd1af9b24f0caa",
+          "bytes": 18273750
+        },
+        {
+          "path": "knowledge-day-36.json",
+          "sha256": "7b14f7f950e9b6fc9c6f566414638825f5a528fd0644c481678b1cbf5d3ccd95",
+          "bytes": 10126
+        },
+        {
+          "path": "world-diagnostics-day-36.json",
+          "sha256": "ea1ddfed84a0c9d4ec8bdbbe0d1a400adc11f22b0c94ed14357d442fe6b5d96b",
+          "bytes": 159761
+        },
+        {
+          "path": "query-tape-00046.json",
+          "sha256": "0108bcdc7da9ca046ab6d4e61dfcf2ba98f555ffe605c8154c23fe7a2a99d332",
+          "bytes": 8393601
+        },
+        {
+          "path": "day-37.json",
+          "sha256": "be2568209bc3992d83a7bfa34ac0d53360ce74a541e4b1d809ff2132f31b106d",
+          "bytes": 18776650
+        },
+        {
+          "path": "knowledge-day-37.json",
+          "sha256": "94951bbab1dbd3edbfac64b8f52a7bf9fe035881680055c6bf940a20ceb60a61",
+          "bytes": 10126
+        },
+        {
+          "path": "world-diagnostics-day-37.json",
+          "sha256": "982015cf59dc906d23bab3cfd2dff7ee439597236e8a6f07e2c4caf31c9cc1fc",
+          "bytes": 160038
+        },
+        {
+          "path": "query-tape-00047.json",
+          "sha256": "67032ec17bd2947cc79892e1dc0084731deec70c89c3485f56e3760d9f878a3b",
+          "bytes": 8388009
+        },
+        {
+          "path": "day-38.json",
+          "sha256": "d2b83692ed69143b75a7751ba6d6bfc10fc911bbc5e2eac0280a5788dbd673e2",
+          "bytes": 19266086
+        },
+        {
+          "path": "knowledge-day-38.json",
+          "sha256": "a28866eb2d74ae2d4f04b38ee92a01908c90acdcfa47af0884ca466afebcec2d",
+          "bytes": 10938
+        },
+        {
+          "path": "world-diagnostics-day-38.json",
+          "sha256": "c2e159ef6b2e6a2a65404afbccb0fdfd75e905d896f732fff293c72381240dee",
+          "bytes": 160036
+        },
+        {
+          "path": "query-tape-00048.json",
+          "sha256": "1726f86a04a84cfdabf63fe99781ac26f53609f3164d1e6a8c05fba9be3d1af8",
+          "bytes": 8396229
+        },
+        {
+          "path": "query-tape-00049.json",
+          "sha256": "a1c279682e22d8f597e3bed318c3e6af955af88095109973be5f22835de91d30",
+          "bytes": 8393925
+        },
+        {
+          "path": "day-39.json",
+          "sha256": "ce3da88ed051fee37352d4d454b24bd4178b719583ab6cc5b49e5b361225b781",
+          "bytes": 19762783
+        },
+        {
+          "path": "knowledge-day-39.json",
+          "sha256": "c3293b36e9296b1ed0092deefe3737ebdde75837f8785d22e8ae8d220e6620be",
+          "bytes": 11341
+        },
+        {
+          "path": "world-diagnostics-day-39.json",
+          "sha256": "8721fd6d9d9cfe3b4bc31ef60429519e29256da823e159a2fa536d5187b43766",
+          "bytes": 160038
+        },
+        {
+          "path": "query-tape-00050.json",
+          "sha256": "e351860214947d719c397ceb347c827cc327a36475a077f0012c527d984fec15",
+          "bytes": 8395775
+        },
+        {
+          "path": "day-40.json",
+          "sha256": "ce9e07c741c94b998036db057c7afbddbd9889509f1c5a3b1dd351af657172f2",
+          "bytes": 20257481
+        },
+        {
+          "path": "knowledge-day-40.json",
+          "sha256": "43ee9a49588b90b8dce5784b5cccde6941d061d80d4ab45255a7aed196d1993e",
+          "bytes": 11742
+        },
+        {
+          "path": "world-diagnostics-day-40.json",
+          "sha256": "b6dd6b5a98ae4c659524103532af89c173883b165c43c692c4b9a7efc894189e",
+          "bytes": 160049
+        },
+        {
+          "path": "query-tape-00051.json",
+          "sha256": "210b28cbc13ee216476b6ad1a0b6e1d053f958270e479ab69e70d1b569299f84",
+          "bytes": 8401069
+        },
+        {
+          "path": "day-41.json",
+          "sha256": "6d2087f93c1eb1bacbdb7b7dd2ee9b45df5f80a641eae4af8a66edd53087e5a0",
+          "bytes": 20745407
+        },
+        {
+          "path": "knowledge-day-41.json",
+          "sha256": "e0453c1925d7450b6c7889aca9f77d6ef87d17c183b1de7f6841b4f67bdca6c2",
+          "bytes": 12942
+        },
+        {
+          "path": "world-diagnostics-day-41.json",
+          "sha256": "6cd345043c97d927d5948e18dbb3a30fafac09cfe9e35d132336c88a3bd92721",
+          "bytes": 160051
+        },
+        {
+          "path": "query-tape-00052.json",
+          "sha256": "23a89d6e4697d10e07e314cae589937eb3896fecb4c5c0068c4c60bd8522430d",
+          "bytes": 8388359
+        },
+        {
+          "path": "day-42.json",
+          "sha256": "41b3a322e6bb87c6a7d567be6296d453e3379673762476729b10e8640cc06bba",
+          "bytes": 21226031
+        },
+        {
+          "path": "knowledge-day-42.json",
+          "sha256": "ef0cdf1879319c7f13fcbed230d93f8853568fedaadf52c100fc1e7801886049",
+          "bytes": 12942
+        },
+        {
+          "path": "world-diagnostics-day-42.json",
+          "sha256": "69d6865e8f04bf7b8961a4967a19ade13b88a59e08a925f995822708cfa59671",
+          "bytes": 160870
+        },
+        {
+          "path": "query-tape-00053.json",
+          "sha256": "f6b2e01cd623c8ae7d2e60476cf93b9d0d98cd455924a0042e73d68b92d3e634",
+          "bytes": 8405889
+        },
+        {
+          "path": "query-tape-00054.json",
+          "sha256": "2a42f83f8b472d331be226b693663f80c29a0799ad6601c6a00f1f9b1f419be0",
+          "bytes": 8404585
+        },
+        {
+          "path": "day-43.json",
+          "sha256": "b0cb5b2596b8387a5df40e6a6b80989af590e2cf776189ca9934d21f4e41db16",
+          "bytes": 21718878
+        },
+        {
+          "path": "knowledge-day-43.json",
+          "sha256": "3471bdf17c15b6e4d301baa5ff8ffd8c063f512845506497ebf9ff74fb80f1c7",
+          "bytes": 13747
+        },
+        {
+          "path": "world-diagnostics-day-43.json",
+          "sha256": "311ffa993f71daf2fb30312360c23ed38f8d0e3e6c66eb9767e292261db68e69",
+          "bytes": 161138
+        },
+        {
+          "path": "query-tape-00055.json",
+          "sha256": "4c114dbb77b4912d04abbb0db346fd6e2870a5badb4f02fbe33e9546b47c8444",
+          "bytes": 8401211
+        },
+        {
+          "path": "day-44.json",
+          "sha256": "bd96c2229648bd1b3306522c01ad7ca4e661bad3078e54b4b48392020c74945d",
+          "bytes": 22202787
+        },
+        {
+          "path": "knowledge-day-44.json",
+          "sha256": "3636f9cbe52ce43cc711d4cc682ae18b624108833e10973c02bb2886a0e2cc82",
+          "bytes": 13747
+        },
+        {
+          "path": "world-diagnostics-day-44.json",
+          "sha256": "b8962411dcc3ab73a76539073b5b16cbf98069d80755d7ac1a1e1fa1bd290f4b",
+          "bytes": 161406
+        },
+        {
+          "path": "query-tape-00056.json",
+          "sha256": "55adcde3052ab5325984aa91f574c7713322fd21ef5395283a7ea0845da7864d",
+          "bytes": 8411401
+        },
+        {
+          "path": "day-45.json",
+          "sha256": "f84172118f75f7b8e1b419a5e6fe925892e04e8f52754d80da097c85d8549f03",
+          "bytes": 22705931
+        },
+        {
+          "path": "knowledge-day-45.json",
+          "sha256": "56d203c64abf1e438e2b15bedeb56f88d5f47d8f772732ea734ba7e611c21d10",
+          "bytes": 14550
+        },
+        {
+          "path": "world-diagnostics-day-45.json",
+          "sha256": "fa5e0d17592fa8ac5972cb705b39eb5c34f503ab7604a97d424a12ee42ee265f",
+          "bytes": 161420
+        },
+        {
+          "path": "query-tape-00057.json",
+          "sha256": "01c1ba00323aee38194e401df29ba9a75b664d5f8db9bcf3053f1e60970caad0",
+          "bytes": 8408761
+        },
+        {
+          "path": "query-tape-00058.json",
+          "sha256": "d6b69ce6e8c27e4b9c1e7eea68298739b09476d2bf4c7305298f8154b9158d18",
+          "bytes": 8408839
+        },
+        {
+          "path": "day-46.json",
+          "sha256": "fdff3aea255011dca226352e7af82b2ab76a402757918c26d6d15a6815440d00",
+          "bytes": 23193944
+        },
+        {
+          "path": "knowledge-day-46.json",
+          "sha256": "c96e54108b0712b52d655cf56601bb508e6c3af44150ebfd71024c28128df410",
+          "bytes": 14550
+        },
+        {
+          "path": "world-diagnostics-day-46.json",
+          "sha256": "2d3df2b51a2aa71532960d735bee283512f6909d3c8747f1adc0251b11b7941f",
+          "bytes": 161422
+        },
+        {
+          "path": "query-tape-00059.json",
+          "sha256": "10537e12a50309f4dc4c4a34fd77de9b91d6dcb87217e0e22e558bffa78cbb11",
+          "bytes": 8408929
+        },
+        {
+          "path": "day-47.json",
+          "sha256": "db1d9a305f77888592508bc9cc6ab8392d794173c81c1a1a67aecf457f902077",
+          "bytes": 23710831
+        },
+        {
+          "path": "knowledge-day-47.json",
+          "sha256": "6278df432563642272c1005d5347441077efed958226bf25710e0ea4d392d4cb",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-47.json",
+          "sha256": "91b6c8028c71a77f67e7a88113d85a2197f5be2ddae3b263d47461a50f80c611",
+          "bytes": 161984
+        },
+        {
+          "path": "query-tape-00060.json",
+          "sha256": "196ceb068299d5aca717e10b0e8411ca70a63bbf29662fbf87aa78b992faa961",
+          "bytes": 8407423
+        },
+        {
+          "path": "day-48.json",
+          "sha256": "a0e1477b7ea5977557bced367d84d11ecda1ec75a14cbfeb8778a59a204c5d18",
+          "bytes": 24201910
+        },
+        {
+          "path": "knowledge-day-48.json",
+          "sha256": "6fed7893394a57bac49d9b2bcd2420c5417b00a1e0f77378014dcd8c6537eff2",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-48.json",
+          "sha256": "09244f86c07c72e3e9094e9432215b5c64fe3a97f35d2335d15190c5fe0852b2",
+          "bytes": 161990
+        },
+        {
+          "path": "query-tape-00061.json",
+          "sha256": "2097140ac2afbe2cd6fc31d77e9ed2893793d1a575e9528ee33cc446b4774999",
+          "bytes": 8411375
+        },
+        {
+          "path": "day-49.json",
+          "sha256": "902de48d5de8d69faf44e856ab251e41b260c7cbf453a934872c4f59296cbe90",
+          "bytes": 24684569
+        },
+        {
+          "path": "knowledge-day-49.json",
+          "sha256": "d06948571c9f4caacf8f5ef1a69b46bd22466947242783d9f836766e24e5233d",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-49.json",
+          "sha256": "42e9e385eb383c4ff34f29f1c3420abf081869bca30df4e5268537800811522a",
+          "bytes": 162270
+        },
+        {
+          "path": "query-tape-00062.json",
+          "sha256": "48e483fbd7bcf3d1d9661bc435e705ed08f6460d65243814c4051ae2f6618ae5",
+          "bytes": 8408541
+        },
+        {
+          "path": "query-tape-00063.json",
+          "sha256": "a934e216db5fee31097bd4538040985c7d2d78cf6fd7a3b66ae1f6ac04741a0a",
+          "bytes": 8408671
+        },
+        {
+          "path": "day-50.json",
+          "sha256": "cc7def814b44fcc3c9ec74e7c68c63b40f8a3949a4159e60c780933f1ce4a1c2",
+          "bytes": 25163204
+        },
+        {
+          "path": "knowledge-day-50.json",
+          "sha256": "a96cd9342f04eacaabed6c2b2aaaaaf32aaf4eafd663566aec6b90c90b5e13d1",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-50.json",
+          "sha256": "b3954dd5e9f1999adcf5a94e2355be460f52dfc0dce5ef53f6ae59281f2aef2d",
+          "bytes": 162544
+        },
+        {
+          "path": "query-tape-00064.json",
+          "sha256": "84d1917164ee517b49edefcb0364e24a34439194aa28caeb729af5c1e27eb33d",
+          "bytes": 8413177
+        },
+        {
+          "path": "day-51.json",
+          "sha256": "af67908ce8c177da3aba74df6d0d9cc56c5d30ae9be4fa5b558ca6a0dc9fb61d",
+          "bytes": 25639748
+        },
+        {
+          "path": "knowledge-day-51.json",
+          "sha256": "d28bd11e93872e33104be9ed51c66c7f53e8530ff7976380b3423b5c6d68aa51",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-51.json",
+          "sha256": "f7eee2f4cd2c40c9cfa6316618bce01ad8f28897c17e4b9a6babdb1ea8106c98",
+          "bytes": 162821
+        },
+        {
+          "path": "query-tape-00065.json",
+          "sha256": "6970874bf402fc47938544dc8c636e9d75f61a9307a0820fb7e1e79ed59c8a68",
+          "bytes": 8408609
+        },
+        {
+          "path": "day-52.json",
+          "sha256": "81116943fdc871019465f66cb958d69aea8c442a2207df64da660eb49ec4fc1f",
+          "bytes": 26133713
+        },
+        {
+          "path": "knowledge-day-52.json",
+          "sha256": "910410a425cdd9e8ad9bb6b900df9bcb7f45160dada9caaee470650b80ae5bb5",
+          "bytes": 15763
+        },
+        {
+          "path": "world-diagnostics-day-52.json",
+          "sha256": "5da1bdfc2f7aa4554041d9643ef84a310a070e94d836c78e11ea5a1e707a9cd7",
+          "bytes": 163092
+        },
+        {
+          "path": "query-tape-00066.json",
+          "sha256": "22451fe55756d6eb47fb72fc4e62f4eefc43b8c92cb3d3ce232c288565a7fc6c",
+          "bytes": 8413735
+        },
+        {
+          "path": "day-53.json",
+          "sha256": "d04bf9e28f8fd58906ca746efa5e7c6d66caec7b85107537e5ec508c27f99c70",
+          "bytes": 26634290
+        },
+        {
+          "path": "knowledge-day-53.json",
+          "sha256": "8b39733679e90e973b1c40f0ffa4081a1eea3ab7f3fad4663cf0281313d2b81b",
+          "bytes": 15763
+        },
+        {
+          "path": "world-diagnostics-day-53.json",
+          "sha256": "f626e0454148abf2d4e951bd4464fcc62b1b026dfe8b546a21cbeafb6ce1f55b",
+          "bytes": 163372
+        },
+        {
+          "path": "query-tape-00067.json",
+          "sha256": "1eea5ac6f0072a0a2a50e0d573d699f601193c097e909ca9d42ed8b119fdaf90",
+          "bytes": 8408401
+        },
+        {
+          "path": "query-tape-00068.json",
+          "sha256": "1e15c609c2328cf77042381207280fabf7de81a2d9b1f34614360a9feb04342e",
+          "bytes": 8414169
+        },
+        {
+          "path": "day-54.json",
+          "sha256": "1b85417aa3a366181d5ea2bc48a432dcd2678c4efb9f272bae83e6c444f1c0f6",
+          "bytes": 27146302
+        },
+        {
+          "path": "knowledge-day-54.json",
+          "sha256": "7859680645afa7f97c9df9f79062e361d0fac176462ddee39def76a93315fbbd",
+          "bytes": 16159
+        },
+        {
+          "path": "world-diagnostics-day-54.json",
+          "sha256": "53dd7489a72cec90a480a033ddcbc19aacb8f4b48648a43b749c222c5bd6a0b6",
+          "bytes": 163640
+        },
+        {
+          "path": "query-tape-00069.json",
+          "sha256": "433eb7cda6eea957f9271e92bd4d327fb3c0da59b81a24482b6fdca384ac0b54",
+          "bytes": 8411377
+        },
+        {
+          "path": "day-55.json",
+          "sha256": "6ddff3e53421cd77ef63a3657e440b2ee69d065f3ca8e683e22d54ad8f98704f",
+          "bytes": 27644500
+        },
+        {
+          "path": "knowledge-day-55.json",
+          "sha256": "32fa536ef6ff4baed05a93eddeafeeb8df60fbce3baab6bd2dc9bb11a8d0993a",
+          "bytes": 16562
+        },
+        {
+          "path": "world-diagnostics-day-55.json",
+          "sha256": "b0ffb41ef3d4d9f2844d5669390a34084d2a274d4a45d8b7130da9da952bdd3a",
+          "bytes": 163648
+        },
+        {
+          "path": "query-tape-00070.json",
+          "sha256": "1a63f551cdbd7d3cfbc527cc298a2e347cde3cb1b8b32727078d2b6b61c99f98",
+          "bytes": 8410321
+        },
+        {
+          "path": "day-56.json",
+          "sha256": "652c5283e71696d8174a2979e5fb1caa83200aebae7edd082b232fe2995ee4a7",
+          "bytes": 28137301
+        },
+        {
+          "path": "knowledge-day-56.json",
+          "sha256": "24cb0c46c20b38d3cecf2617f70af6f603ae7b421d0e6362915aca7db3b427a1",
+          "bytes": 17358
+        },
+        {
+          "path": "world-diagnostics-day-56.json",
+          "sha256": "8dfc2c5ff48295b2d1909a80c4d54206ca583d6adc487edb68ea23090eacbf85",
+          "bytes": 163648
+        },
+        {
+          "path": "query-tape-00071.json",
+          "sha256": "bc3f421cd25020c6e4f5bc6a4f5b954b5123ef9bcb50941077a7c99cf3c9559b",
+          "bytes": 8454122
+        },
+        {
+          "path": "day-57.json",
+          "sha256": "b5aa553acb800ca632616e3cab0631d481182b070687bb65a03f4a2f268d7473",
+          "bytes": 28689054
+        },
+        {
+          "path": "knowledge-day-57.json",
+          "sha256": "5af8b42695960a1f19511954950c6d640070a4f341296ba1c395c683042bc4d0",
+          "bytes": 18160
+        },
+        {
+          "path": "world-diagnostics-day-57.json",
+          "sha256": "801b7b3f2cbc4055c37b7628a20a664d5cc8571884675ab1a76dcf99fd920604",
+          "bytes": 163938
+        },
+        {
+          "path": "query-tape-00072.json",
+          "sha256": "db84911b688438634a1dfabcb923d13c1e01889105990bb84ea2a58eed62b753",
+          "bytes": 8410437
+        },
+        {
+          "path": "query-tape-00073.json",
+          "sha256": "20a028727ffb67d31e29350f08b0cf76bd8e2de45093e3768b999b131f1c9947",
+          "bytes": 8409227
+        },
+        {
+          "path": "day-58.json",
+          "sha256": "a11cd938f4dc5088da1a03333c231ef19f48cea0063713cfeb3dcff82fe608f6",
+          "bytes": 29175893
+        },
+        {
+          "path": "knowledge-day-58.json",
+          "sha256": "cf3b628cf62b1fe946f8a5467d6a507096eee63330f2dc722f503e9081b8540d",
+          "bytes": 18566
+        },
+        {
+          "path": "world-diagnostics-day-58.json",
+          "sha256": "d981884bb937a2db0f00f834cfcaf45c1b3acdd72a592e0575c648e62387b636",
+          "bytes": 163938
+        },
+        {
+          "path": "query-tape-00074.json",
+          "sha256": "3f984da4cd00ef717e89a49e3416bcc6aa6c473fb3868d483ac08ac3428a25a4",
+          "bytes": 8414825
+        },
+        {
+          "path": "day-59.json",
+          "sha256": "0f945a087e00ef4ffb37ea2de5683814b7ab882626e6bc89b639ed33567f4063",
+          "bytes": 29664582
+        },
+        {
+          "path": "knowledge-day-59.json",
+          "sha256": "8151a69a9249fedc25ab9a9bc28ab42ecd23e8ba75be77e2eef36497d6de2877",
+          "bytes": 18566
+        },
+        {
+          "path": "world-diagnostics-day-59.json",
+          "sha256": "e7a7ca4e8f62a67b1d9cc84e7ac55a62c1d8da410284b88347dc6295972ca55b",
+          "bytes": 163941
+        },
+        {
+          "path": "query-tape-00075.json",
+          "sha256": "4fa01e790a6a933df68e20334628d7abb92f341a3a2655a414a35b1bcff80800",
+          "bytes": 8408455
+        },
+        {
+          "path": "day-60.json",
+          "sha256": "0f8a8f3cd70b2ccb347deafa3e26986c85ad84a0832ada60cb17af8e4065ca56",
+          "bytes": 30163897
+        },
+        {
+          "path": "knowledge-day-60.json",
+          "sha256": "38d08c9824b889e782cb903d408cd69336c7907298339eb59150981fb37597bb",
+          "bytes": 19362
+        },
+        {
+          "path": "world-diagnostics-day-60.json",
+          "sha256": "522f86b18056502756853848e4a3ea812aa54ed65127ed2e2a39d5f73f71946b",
+          "bytes": 164212
+        },
+        {
+          "path": "query-tape-00076.json",
+          "sha256": "2d4de74b428c5ff897c168004f14f4b89cf712ee5705ae307b0d7050dc799578",
+          "bytes": 8409717
+        },
+        {
+          "path": "day-61.json",
+          "sha256": "7e13fa95e2cee5248c980035b4752f165a499be2011dd7a4b471eea68364bd70",
+          "bytes": 30682283
+        },
+        {
+          "path": "knowledge-day-61.json",
+          "sha256": "56dc3fd6c52cfc38077b2e5af3157dfd593f3a66c16d10089eddda7c6eb616a8",
+          "bytes": 20175
+        },
+        {
+          "path": "world-diagnostics-day-61.json",
+          "sha256": "3e5855097aa8c34bce88968ce27ff2e0bec25858232ec4d74928b258744f565a",
+          "bytes": 164754
+        },
+        {
+          "path": "query-tape-00077.json",
+          "sha256": "76ec10895dd90ffb7768e3d7bc084a571c1d9e49b0fff60b6a0f58d7e6eeffaa",
+          "bytes": 8414597
+        },
+        {
+          "path": "query-tape-00078.json",
+          "sha256": "111f6eeab1c280ae36789c2a6e300c5bb5c19fa25d456e047532e86c8edfda09",
+          "bytes": 8405435
+        },
+        {
+          "path": "day-62.json",
+          "sha256": "9a28821d98f8af93ad90eb1e24e4be17c0813f4f5e824194d0d3e3a7d1b21d18",
+          "bytes": 31184186
+        },
+        {
+          "path": "knowledge-day-62.json",
+          "sha256": "0864c5890f0485a738997f91fd85df4cd353d1627e761f86c263f3d197008363",
+          "bytes": 20175
+        },
+        {
+          "path": "world-diagnostics-day-62.json",
+          "sha256": "f8f42db4922a36ee29ed47ed69ce7d7a7bca14b5a3376bc765c3a7ea7ab972b9",
+          "bytes": 165305
+        },
+        {
+          "path": "query-tape-00079.json",
+          "sha256": "3f3f1790c72011203a2e67f8d9374f6e0f39589d950b6d43f5c05c107d13c4bc",
+          "bytes": 8413555
+        },
+        {
+          "path": "day-63.json",
+          "sha256": "b440d7f1770ee47c57156c8cc08cf360b71ec9bfd0f32159e5aeaa379099e786",
+          "bytes": 31666690
+        },
+        {
+          "path": "knowledge-day-63.json",
+          "sha256": "3601954aefca4094bb893f82b57906e3b0c67ea6ec17aed671ccbcc487d48fdf",
+          "bytes": 20994
+        },
+        {
+          "path": "world-diagnostics-day-63.json",
+          "sha256": "ae8efb573b99c917386b83932dc7abf99d4571f53864617e8098dc7efc214f76",
+          "bytes": 165574
+        },
+        {
+          "path": "query-tape-00080.json",
+          "sha256": "cc1ac45d808dff10e971620037d7ee0effcb08e4887e4dd76b65a890809b9594",
+          "bytes": 8410255
+        },
+        {
+          "path": "day-64.json",
+          "sha256": "9c8702b9664de585e56b01ba963ee4e21650c0beef894579227bd18e82668c43",
+          "bytes": 32145112
+        },
+        {
+          "path": "knowledge-day-64.json",
+          "sha256": "d0c1ef4df404c6bc485de11d516e315a50bc0ff6539972cabe1ff01dd68238f4",
+          "bytes": 20994
+        },
+        {
+          "path": "world-diagnostics-day-64.json",
+          "sha256": "ad2b2238424988efe94297950dc8b3ca7279496f45561bd4c5d8e2a9dd5faf1f",
+          "bytes": 166122
+        },
+        {
+          "path": "query-tape-00081.json",
+          "sha256": "5d60505363d74eb8d0f1dfe81d47ba6f99711785735955e1d6fb22b0af1c85cf",
+          "bytes": 8406679
+        },
+        {
+          "path": "query-tape-00082.json",
+          "sha256": "19a5e1ef5ec517353eb818d14df1e3c73f265ff9ff16445e829e112872a8d449",
+          "bytes": 8411461
+        },
+        {
+          "path": "day-65.json",
+          "sha256": "7b056f3cf6162aa74eb68612ff143b67d2d5f9aa7f449b78b8d6767951fb5629",
+          "bytes": 32636148
+        },
+        {
+          "path": "knowledge-day-65.json",
+          "sha256": "99d1cadff328ff5f76bcd5f6ed28c5690b2a1cecc2236ed66976f7be06b9f4b4",
+          "bytes": 21396
+        },
+        {
+          "path": "world-diagnostics-day-65.json",
+          "sha256": "3dd4e6fc3e97699a625e7fda38b7a12f5b6128881c846f1770af2465bde0171d",
+          "bytes": 166403
+        },
+        {
+          "path": "query-tape-00083.json",
+          "sha256": "9c9355acbffff56ce88b1659007a809bc93d31e236e75ef15f529c8ba7311324",
+          "bytes": 8413945
+        },
+        {
+          "path": "day-66.json",
+          "sha256": "237e982a764d283a9cbcb852667d804f028b7dc44cc9e1502b9a0a731d37edfd",
+          "bytes": 33096051
+        },
+        {
+          "path": "knowledge-day-66.json",
+          "sha256": "2e6581d9195445a3ef1569b71724130047463d24554d7c524b59de038deb33ec",
+          "bytes": 21396
+        },
+        {
+          "path": "world-diagnostics-day-66.json",
+          "sha256": "044ec4027add4e70d8dad35ef7d0173b726d7707926144e53c796886155010d4",
+          "bytes": 166672
+        },
+        {
+          "path": "query-tape-00084.json",
+          "sha256": "e20c1f0d788bd58635b6ba97af58d95b4ad75fe066cf45a4b40cf0a9c7687453",
+          "bytes": 8409401
+        },
+        {
+          "path": "day-67.json",
+          "sha256": "81f9cfefdaf56d55597bcfc525d3336cef48aa8297e7a17299af588b50b6265c",
+          "bytes": 33586765
+        },
+        {
+          "path": "knowledge-day-67.json",
+          "sha256": "b5c3bd02cf5e8af453c1146c2969853a2f98f2c293b45fb53cceb820a395b4e7",
+          "bytes": 22592
+        },
+        {
+          "path": "world-diagnostics-day-67.json",
+          "sha256": "e0579a0a69ac01ba12f77843fe4f2644b54a3cd97b2f4189ba5c5d652848dc0d",
+          "bytes": 166942
+        },
+        {
+          "path": "query-tape-00085.json",
+          "sha256": "671ff629ea08b32ecf0d51e8ef0546802014ac8c35c5a1f408f60fb70135fabd",
+          "bytes": 8415103
+        },
+        {
+          "path": "day-68.json",
+          "sha256": "4830ed52acf49757f3e29dfbe4f7a5bee04969e4cb01f0301fe55ddde9e45297",
+          "bytes": 34056761
+        },
+        {
+          "path": "knowledge-day-68.json",
+          "sha256": "92474d8d743746ef21a2b61c3fce1b6c0bc9aee411583d1bdeaa3cd3d730f0b3",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-68.json",
+          "sha256": "bfa1f075d88ce93e7b79411ce1bd29d95b8000dff2cc3df966bbf181741f1c78",
+          "bytes": 167489
+        },
+        {
+          "path": "query-tape-00086.json",
+          "sha256": "64e6d88d61c935ce4b54b96a42c8533eecf8451daece6ddee1b7014957e92f16",
+          "bytes": 8406935
+        },
+        {
+          "path": "query-tape-00087.json",
+          "sha256": "dfeaab663271074d08b0670e42e2b1a8cd81e534692f3acecd293009b31e6f62",
+          "bytes": 8410181
+        },
+        {
+          "path": "day-69.json",
+          "sha256": "f3cb988022b9e1c3ca327dd66ee63873896ccd83c3763ee9700c1d8f2be23c2f",
+          "bytes": 34558474
+        },
+        {
+          "path": "knowledge-day-69.json",
+          "sha256": "e7d9dc810adf98c9ef7771d63620ba142e9eae17f252baecd9ee87776d43fc0c",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-69.json",
+          "sha256": "4c69162103ddd60faed63f3a02021bdc8148b2d7d86b0fbb22a4ca57a362e41c",
+          "bytes": 167491
+        },
+        {
+          "path": "query-tape-00088.json",
+          "sha256": "bd679f0a9044c158df4947f563f101d8b3c8e91f9d8f222a3ab958cb35d02d9b",
+          "bytes": 8408571
+        },
+        {
+          "path": "day-70.json",
+          "sha256": "decdf0071b2c86c66bb0f9d0e2a06a1a356081f98f4e7fb1260e062c90e1ccc9",
+          "bytes": 35058520
+        },
+        {
+          "path": "knowledge-day-70.json",
+          "sha256": "cb08fa0df6d4a7ffca1c2cc3e5b83b8bb78f1061741f9c4e9248d26d3d968528",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-70.json",
+          "sha256": "50651143d87087dcf81dd998ebec1071bc7a4de2a53c4e7504c662b27fab4a01",
+          "bytes": 167497
+        },
+        {
+          "path": "query-tape-00089.json",
+          "sha256": "1dc7f683fdb0d1b631a9a3f1887f01f9c30bc86dec978130a29f09f471f67f80",
+          "bytes": 8407103
+        },
+        {
+          "path": "day-71.json",
+          "sha256": "704e756cc0291c30c90f3ed94d951c7db893a1b66025ec7e7b0d9ba52f120208",
+          "bytes": 35533532
+        },
+        {
+          "path": "knowledge-day-71.json",
+          "sha256": "d73a414f2d6b7fb0015a8979930b2132d19570fc543ff4373b6ea9339ffa8428",
+          "bytes": 23389
+        },
+        {
+          "path": "world-diagnostics-day-71.json",
+          "sha256": "f29f64b025295354891632811b2f6d44d675dfba8a6d8b04dde96f51674c1771",
+          "bytes": 167502
+        },
+        {
+          "path": "query-tape-00090.json",
+          "sha256": "48c391e1c9d1195f41a26295170241778bf2126c6015914c36a641a45619db39",
+          "bytes": 8417941
+        },
+        {
+          "path": "day-72.json",
+          "sha256": "7e53b83f553a798cddbd72675b153c304a11471ca1ac3fc24dc9cfe438b689a2",
+          "bytes": 36030152
+        },
+        {
+          "path": "knowledge-day-72.json",
+          "sha256": "80d49a1cd86af9ded19ccde926ff133f28cc89fbc8b3289412447bd3986eebc0",
+          "bytes": 23790
+        },
+        {
+          "path": "world-diagnostics-day-72.json",
+          "sha256": "1d9a97de9f5648ccda2e117909c636c51af6099820627c39d8957225df749c91",
+          "bytes": 167783
+        },
+        {
+          "path": "query-tape-00091.json",
+          "sha256": "d5d26944e69ebef71c53a4deb1b26a61b1b463a8fd819ee5416e7ac86c64e094",
+          "bytes": 8410121
+        },
+        {
+          "path": "query-tape-00092.json",
+          "sha256": "5f5e276183715d09c5f1c8a68fbbd74753a5a3ea7a2862ca941f106079701e68",
+          "bytes": 8406153
+        },
+        {
+          "path": "day-73.json",
+          "sha256": "7e3c3274fcf530aa56cb48e5611063057dbd6cb0efbc05bca47ccb3d91f352bb",
+          "bytes": 36452738
+        },
+        {
+          "path": "knowledge-day-73.json",
+          "sha256": "75732259cd68721740289ed40dd63e5832af2761a3ab68d3cb88c5a492a1598e",
+          "bytes": 23790
+        },
+        {
+          "path": "world-diagnostics-day-73.json",
+          "sha256": "4352f1af64c2abe0604b35b252059a405bcc51f9db3bad9ca33df7b553cd659a",
+          "bytes": 168056
+        },
+        {
+          "path": "query-tape-00093.json",
+          "sha256": "5beb2ec2fefa4447cdeca5b29329fa8d0be66a5a40aa140d18c0f8ea9d855d7c",
+          "bytes": 8414973
+        },
+        {
+          "path": "day-74.json",
+          "sha256": "dcc298e3ace0be60a1b414d74b1defcbad23006e74f04586167d941ab113fe3b",
+          "bytes": 36953113
+        },
+        {
+          "path": "knowledge-day-74.json",
+          "sha256": "502ed1a88361856881a72d9840660bce9529c50541f6a54b90a597d73458f6b8",
+          "bytes": 24593
+        },
+        {
+          "path": "world-diagnostics-day-74.json",
+          "sha256": "2f2b0a6ceae8354ef66d9b609996b128b7430cac30e5f30160c8e2b9e6455919",
+          "bytes": 169137
+        },
+        {
+          "path": "query-tape-00094.json",
+          "sha256": "ed5f38db7aa9bd7aa6e1db742c83d789e63f9dcb8124cc8681f57264b786d89d",
+          "bytes": 8413357
+        },
+        {
+          "path": "day-75.json",
+          "sha256": "838229cbc496e22d4326ae03b3719efe187b5c78667c659b61aad54c9e6b1463",
+          "bytes": 37439572
+        },
+        {
+          "path": "knowledge-day-75.json",
+          "sha256": "4789bdd0cac7a1fbdbe439ca4b88466040fb5a89328ff943f162324dc59f320f",
+          "bytes": 25395
+        },
+        {
+          "path": "world-diagnostics-day-75.json",
+          "sha256": "a86ac34cd31eda5640be2eaf49e3c8db7932ca57624550f831b9a5efc4be0dd0",
+          "bytes": 169142
+        },
+        {
+          "path": "query-tape-00095.json",
+          "sha256": "cfb682ce62061b52ee4a2c668b3f85f1b0e29da6a81d46f46d5b269b87d77580",
+          "bytes": 8408779
+        },
+        {
+          "path": "day-76.json",
+          "sha256": "83c1e349e2aae6bf8078f33b624f4b9c12241675f51ca546979761972c70d60a",
+          "bytes": 37818974
+        },
+        {
+          "path": "knowledge-day-76.json",
+          "sha256": "018e3633c0f959fb1e9fb51ba88e7ee963722ccd5ac587b304ff812e4456d6c5",
+          "bytes": 25395
+        },
+        {
+          "path": "world-diagnostics-day-76.json",
+          "sha256": "0fcd3362ba4c61be2ab8d05357e287c605561113c9adfdfe27004782473805e7",
+          "bytes": 169142
+        },
+        {
+          "path": "query-tape-00096.json",
+          "sha256": "8999bb538fce0e71ed713c9f7c28e22fe33b6f894dcc12964e0c719ade382967",
+          "bytes": 8413269
+        },
+        {
+          "path": "query-tape-00097.json",
+          "sha256": "b33fcd848fe9f87d8cbda76ea2e50c29d7843bb8ef73fbbf65713e4fe6e727fc",
+          "bytes": 8410309
+        },
+        {
+          "path": "day-77.json",
+          "sha256": "451bd2c1563d7b0e56078df9306265b484642c84b455f7339a33de5022f5b09f",
+          "bytes": 38316090
+        },
+        {
+          "path": "knowledge-day-77.json",
+          "sha256": "746507552145a9fbe9b92ffdb1a7c61db3701a6cf0006b3e7d499c575b0095fb",
+          "bytes": 26593
+        },
+        {
+          "path": "world-diagnostics-day-77.json",
+          "sha256": "991c1a2282320ef99ad892e182249deb880570f87337fa92b9a43d7c6c5f7387",
+          "bytes": 169145
+        },
+        {
+          "path": "query-tape-00098.json",
+          "sha256": "1e4b5bd90e5b19d923ee6db24831e70f289347126180d666fe01ee24bbced832",
+          "bytes": 8410263
+        },
+        {
+          "path": "day-78.json",
+          "sha256": "ca1f2371d952e8561e8c6dde5bc887a9d557de2dfca393bb6147b9584d4c3871",
+          "bytes": 38771627
+        },
+        {
+          "path": "knowledge-day-78.json",
+          "sha256": "68b4ef0bcfb0de11543899a04dfeb13ff7fc67a8ce0de919dc962ef544c09e53",
+          "bytes": 26593
+        },
+        {
+          "path": "world-diagnostics-day-78.json",
+          "sha256": "e9904630b338c0411a088326331c7a2d1c0f3680f84f45cb62b4ec5d4f809d44",
+          "bytes": 169427
+        },
+        {
+          "path": "query-tape-00099.json",
+          "sha256": "5570a4f119d84f3142181414054da8e074e63e46972413de097314dfc4901dc3",
+          "bytes": 8412129
+        },
+        {
+          "path": "day-79.json",
+          "sha256": "ab3dd514aafe726a5a5549e300d1a23fc2552ce5ce4e79684fe835f574148827",
+          "bytes": 39289394
+        },
+        {
+          "path": "knowledge-day-79.json",
+          "sha256": "3b6c43adfc6ff75f5fac779656f529675a02970c655d3cc1b93264b2fe50615a",
+          "bytes": 26994
+        },
+        {
+          "path": "world-diagnostics-day-79.json",
+          "sha256": "a6335e0db87cc63640c692fb0f2c89d5ada6669b240879c0d0f27386eb94af01",
+          "bytes": 169695
+        },
+        {
+          "path": "query-tape-00100.json",
+          "sha256": "39213229333e1d02421b982a8fe7345cb647856e226743a187ead4dd16718fce",
+          "bytes": 8408795
+        },
+        {
+          "path": "day-80.json",
+          "sha256": "97f2d088a9670ae6efe1053c323a92e6cbd1b47fc57a7247ea5e9bee16cb1b05",
+          "bytes": 39685464
+        },
+        {
+          "path": "knowledge-day-80.json",
+          "sha256": "cc0a209d71981bcdf5d50fb05115828bc78c93d8085072abb1a21416354f0582",
+          "bytes": 27390
+        },
+        {
+          "path": "world-diagnostics-day-80.json",
+          "sha256": "faf3e4fd49f04a4301d91400ecc240f515ba68303e258c8938355f00c564aba5",
+          "bytes": 169970
+        },
+        {
+          "path": "query-tape-00101.json",
+          "sha256": "4286a1547c2b9517d09e155f08935a2000e3c9b0249a2b7996cc63d398794096",
+          "bytes": 8411225
+        },
+        {
+          "path": "query-tape-00102.json",
+          "sha256": "50e4bf1d4041da126ab6a266fd40a2bdf94c8ab5718a7753708304edbf771e24",
+          "bytes": 8410099
+        },
+        {
+          "path": "day-81.json",
+          "sha256": "a2b74e05ca7d750587636482d925f731d0370cbae8a81e9794a6b9a3c76d8629",
+          "bytes": 40200063
+        },
+        {
+          "path": "knowledge-day-81.json",
+          "sha256": "872a1335f64273dcfa5e6d0c90273862e26fe102507215cb86c15faef3ab47f1",
+          "bytes": 27791
+        },
+        {
+          "path": "world-diagnostics-day-81.json",
+          "sha256": "2a11336c6f5f59012fd2bf5425737fcc0d79fcc4722409f56fe551918a1e8ce1",
+          "bytes": 169972
+        },
+        {
+          "path": "query-tape-00103.json",
+          "sha256": "bf1d6e6275db7bb8e49cb03489d60c3f8aaa67fb398df1b74cd9fb5e5692da63",
+          "bytes": 8416241
+        },
+        {
+          "path": "day-82.json",
+          "sha256": "4a8a120357478c7b6966cf541bc6bd7f2cb7e369601906ae5518535cc95ec617",
+          "bytes": 40699839
+        },
+        {
+          "path": "knowledge-day-82.json",
+          "sha256": "66752b004b3656818998e17a7d38f8c419e688547f160bf051b7445e11a7aa30",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-82.json",
+          "sha256": "dfe88aee1fb1288eeb057557ca80c25feb7c81c89d6a659632d0c358e95be5ab",
+          "bytes": 169976
+        },
+        {
+          "path": "query-tape-00104.json",
+          "sha256": "e502720adb91586188aea684a0fe694fc1ee80f811451d827cbb6069bbb4c045",
+          "bytes": 8409675
+        },
+        {
+          "path": "day-83.json",
+          "sha256": "f236c7cbf90bbdea38a9575ddb7d45bd1e5c39d0f58c474eec12af7b2b736c97",
+          "bytes": 41186493
+        },
+        {
+          "path": "knowledge-day-83.json",
+          "sha256": "c8f9539df48041ce64a9c3b71e2cec37bfe036ea1555097624099de0a5d8d7d1",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-83.json",
+          "sha256": "7ce0e8f6f6e31569beeef1f87a827d513e7db519063397ac9dd633f9b0711534",
+          "bytes": 169976
+        },
+        {
+          "path": "query-tape-00105.json",
+          "sha256": "b53013632d2fcfdc1bdd400d9f85e29d9ae2c3f839ab2754e1b2113a701f6f1d",
+          "bytes": 8409517
+        },
+        {
+          "path": "query-tape-00106.json",
+          "sha256": "18da0dc1134c3e4cc7e44df5989b61208f34c1ef214d600aed948969da6107c3",
+          "bytes": 8409225
+        },
+        {
+          "path": "day-84.json",
+          "sha256": "55d42dd4cfab1ec089620f925ff561f92c10bf0314ad4b09f177dc51eddaff99",
+          "bytes": 41587148
+        },
+        {
+          "path": "knowledge-day-84.json",
+          "sha256": "ff6d4e4192eb7dcbfc6dbbd654aa7083496a89d63626c425a5833d41c0ad50ee",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-84.json",
+          "sha256": "696fef7b1e118c3a1ebe414e3fa41c925b0bed8d4f4378f22c593e27f79fd69c",
+          "bytes": 170520
+        },
+        {
+          "path": "query-tape-00107.json",
+          "sha256": "5e532de71ee957ca907c376bbff00ecd64488553eea335fc501a9cd681c7eebe",
+          "bytes": 8453026
+        },
+        {
+          "path": "day-85.json",
+          "sha256": "988f2e50f480e7d340b1b71cd37461d838c3c57a4a27be328fd944315987bdea",
+          "bytes": 41996857
+        },
+        {
+          "path": "knowledge-day-85.json",
+          "sha256": "09fbc5a71a9bd98306a815855ecf8e98c5a0efa39a1a8e6e472da02e92e39890",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-85.json",
+          "sha256": "53103453ad4a00670be3f79ac4a007a67f6db1950e12d8acfb025829932dfb6a",
+          "bytes": 170520
+        },
+        {
+          "path": "query-tape-00108.json",
+          "sha256": "5fb5e59f7cdfeb90fefc20eff48275580071c374b325b889eec8da3608b61346",
+          "bytes": 8412885
+        },
+        {
+          "path": "day-86.json",
+          "sha256": "3a01b50d9eeb6dabb6b2e39967c8cd8ee6392cf6c2c8d2143af33e1e63c82d11",
+          "bytes": 42386570
+        },
+        {
+          "path": "knowledge-day-86.json",
+          "sha256": "088e3d03c06a45f76faf9639544406a61d4629dd85488aa5549309a78b653487",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-86.json",
+          "sha256": "c48613b0b495fb833ae6ffb5db722b18e39a18f672c7a0a6a2706f5ee07388a5",
+          "bytes": 170521
+        },
+        {
+          "path": "query-tape-00109.json",
+          "sha256": "0f91780ee81384212253c0900715a0a88a16b63a0246cbe770a35e6d14661972",
+          "bytes": 8410733
+        },
+        {
+          "path": "day-87.json",
+          "sha256": "5ca775df019a8ba43a53ffb4c50dbfe9cefd93f57aff5a45138b624dc3241c89",
+          "bytes": 42837833
+        },
+        {
+          "path": "knowledge-day-87.json",
+          "sha256": "e2dc29edde35ef646e5bc848bd32ce6cf2a3443d292e9a59ee8b0e3abc6f482a",
+          "bytes": 29393
+        },
+        {
+          "path": "world-diagnostics-day-87.json",
+          "sha256": "04d8c936c6e7722f1ace0315c76c14c7f0df89de1f629df21008cd920f5dbe20",
+          "bytes": 171064
+        },
+        {
+          "path": "query-tape-00110.json",
+          "sha256": "ae3b44f0e544a23f6e44e38765042437e247dd3703c2bf4c7b520a314b8dec1a",
+          "bytes": 8410655
+        },
+        {
+          "path": "query-tape-00111.json",
+          "sha256": "ddc68ae44ae51db166fccc7ed7db89f420e5d0974e609a5fb37b7fa7801978dd",
+          "bytes": 8405361
+        },
+        {
+          "path": "day-88.json",
+          "sha256": "2d13842e092db7e9b4a5c66fcf3ae24084be0ef3c68f1a1e6b1259d9272b24d1",
+          "bytes": 43306772
+        },
+        {
+          "path": "knowledge-day-88.json",
+          "sha256": "d4e302d05b14ddb2d77ea5701892f24699aeacbdb0219281eebab1b75c3e96da",
+          "bytes": 29393
+        },
+        {
+          "path": "world-diagnostics-day-88.json",
+          "sha256": "1974f6871d6705d650714b463c71110adf19ab8464250c75220eeff8fa62871a",
+          "bytes": 171065
+        },
+        {
+          "path": "query-tape-00112.json",
+          "sha256": "2f9f31e4d5e8b48ff8fe0199138e3040485b564f07bf7a8b93981e0036ea32d2",
+          "bytes": 8410763
+        },
+        {
+          "path": "day-89.json",
+          "sha256": "60a6edd249c54dadd71496be3e2f1023a785a9f67bb3e1d863a1ee18739f5726",
+          "bytes": 43692557
+        },
+        {
+          "path": "knowledge-day-89.json",
+          "sha256": "cee7aa003c2b1bed596a65e32c77dbcc009faf413e7fd4edbf19000b11839244",
+          "bytes": 30203
+        },
+        {
+          "path": "world-diagnostics-day-89.json",
+          "sha256": "e1889e5cc0f0993251810d78cbe9487a8f2ca0f8f3aec6445fe745b3b68fbbb9",
+          "bytes": 171069
+        },
+        {
+          "path": "query-tape-00113.json",
+          "sha256": "44658d84fb4640211aa7b4d72b262a5a0815262f612ae991a6d3a759aed6b729",
+          "bytes": 8409119
+        },
+        {
+          "path": "final.json",
+          "sha256": "ae16b7fbe371d4f82fba807d2f367b1ef1f78b6afbd505e667d4d7b12a454523",
+          "bytes": 43914827
+        },
+        {
+          "path": "final.dump",
+          "sha256": "fb2b3652886836f03a6ce0435a9f6d72d529dd538ff55fffd7c050980228bb96",
+          "bytes": 4279916
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "04305cc99eaa150d9150caa4eae2303a76cc9aa0fb463194602c7ef7dab1b115",
+          "bytes": 736
+        },
+        {
+          "path": "knowledge-final.json",
+          "sha256": "3f0565b469611480c46bd2467b3be4147db2159e11e68a711571cfc982483e05",
+          "bytes": 30202
+        },
+        {
+          "path": "world-diagnostics-final.json",
+          "sha256": "91beb539b9e33954a2088d05cc1ddb95824a80230f144883c94e2316781275ea",
+          "bytes": 171069
+        },
+        {
+          "path": "worker-schedule.json",
+          "sha256": "35dce527b767d4de74842f82d32cb6fcf519621f64e18e45d82d71a78eb0eb29",
+          "bytes": 134820130
+        },
+        {
+          "path": "query-tape-00114.json",
+          "sha256": "c7beba7da911c56a2fa372ca9483ea302ee94c6aa5869ffd47c328b66aaecb0b",
+          "bytes": 5310883
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "139d7b59ff97bc701d2b05e5890127804d12d3fca2253959e868ce79b9b720c1",
+          "bytes": 145553
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "5606b92e73a938fae73c6335faba6092a004e9a51d4a1e5f851554bf26e0618e",
+          "bytes": 18456280
+        },
+        {
+          "path": "actor-tape.json",
+          "sha256": "6063d56ea1bdb43121ebe8193726744b8c24472eb0b404423da2a5db24ef61db",
+          "bytes": 2117971
+        },
+        {
+          "path": "actor-policy-final.json",
+          "sha256": "84d5d4db5b8ccfbace7e0fc5b21444716e70a27c2bd303fbd8c299d7d691651b",
+          "bytes": 340895
+        },
+        {
+          "path": "knowledge-boundaries.json",
+          "sha256": "174b39518c680a48d75c12cdd0d48ee73cc38d178957a8033a2cfa431dd33177",
+          "bytes": 30932
+        },
+        {
+          "path": "player-metrics.json",
+          "sha256": "955e964d7b84c42f341ba52f395ac54148ad77c68b510867687b390c73349b27",
+          "bytes": 149801
+        },
+        {
+          "path": "operational-guardrails.json",
+          "sha256": "ccc44d0b800b4cb735d71f23c91948e8af34fcab3275cfcc85355b6ccb135ecc",
+          "bytes": 192
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "9cd0e45a44f83f96da79280185611c85a7d8cdab0665bcef2f9210fb8d13b31f",
+          "bytes": 75998095
+        }
+      ]
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-replay-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "3d410f3c11a237bed778b5f545693c9fc516219e0f75598096e008a47d73ea30",
+      "runSha256": "c5620383cbfe7918f6f251927034d78c6334b5b4c0b5a553f2cdfaf810cd8b97",
+      "status": "PASS_SCOPED",
+      "artifacts": [
+        {
+          "path": "prior-failed-run.json",
+          "sha256": "851db76eed4a7b8d6186ceb8405a70e72bdd7b1c6b78a58adf180abc8e05c63d",
+          "bytes": 65706
+        },
+        {
+          "path": "initial.json",
+          "sha256": "d4a8e6119ab463e19de0fa7f17d3a380ff474315c80103327e194b74cb972126",
+          "bytes": 121031
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "58cda4781fbf0cc5ad0dcba2bfb06425ff5d78ebc671325d5a598e6261c67150",
+          "bytes": 929860
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "29628bf8516197a256747008f51822e34d5e62fa6013ce1395d8044cc98a3e3a",
+          "bytes": 735
+        },
+        {
+          "path": "actor-policy-initial.json",
+          "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723",
+          "bytes": 2572
+        },
+        {
+          "path": "day-0.json",
+          "sha256": "101699fde99f9a3b2e43602a3d0e771a421be4cfd8f3e22fc38ce713a20d2d64",
+          "bytes": 519317
+        },
+        {
+          "path": "knowledge-day-0.json",
+          "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-0.json",
+          "sha256": "236a7a18a4afc135493e5cf2a90cfc72c28e1930488d174224dc2f482851ed72",
+          "bytes": 68113
+        },
+        {
+          "path": "query-tape-00001.json",
+          "sha256": "e719628998f861702e8a572b15e2e8c0e7a5c781dfefc18cb939d275bc16650b",
+          "bytes": 6862191
+        },
+        {
+          "path": "day-1.json",
+          "sha256": "1faf8ca01bb0639d246ec30884fba1a7e27362187ff7f4ba8578d1b66d6491b6",
+          "bytes": 1234070
+        },
+        {
+          "path": "knowledge-day-1.json",
+          "sha256": "0c473aec9229c1f811c9625ace818d6e83faf88bcb6de6f66defa6227dceff46",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-1.json",
+          "sha256": "ea1ac0b9680a6f2917b1250875ee19bd06d1ae85631d3c8bb837e9120debb94d",
+          "bytes": 102344
+        },
+        {
+          "path": "query-tape-00002.json",
+          "sha256": "045365bf3cfd4348904ddd898a81238438b4b03c1c6cfdebb05708f8ecbb763e",
+          "bytes": 8372144
+        },
+        {
+          "path": "day-2.json",
+          "sha256": "4384097163df1e080e9785edcb9560f7222410af41ee60e289429389cdc3e275",
+          "bytes": 1712746
+        },
+        {
+          "path": "knowledge-day-2.json",
+          "sha256": "10db222ba8d0a11dfc6ff0b7c3e45ef34b26f890701d65faf08b7bbd4f36c9cd",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-2.json",
+          "sha256": "a60b6297ca81fcb0bf7a18e5a5d20c347a259b835eb27561c124eda0ddf61541",
+          "bytes": 113047
+        },
+        {
+          "path": "query-tape-00003.json",
+          "sha256": "c1d2032d36cb41bffc3f675f8f8f571e8adbd5cb2f9472c9eb00f835b4775127",
+          "bytes": 8394296
+        },
+        {
+          "path": "day-3.json",
+          "sha256": "bc68519dba87cb8f445501943bfb49e92bb204bc68c8a87d6f390d1e1e3882aa",
+          "bytes": 2205798
+        },
+        {
+          "path": "knowledge-day-3.json",
+          "sha256": "83976c943e899f9650bc05a11669b8525d362658ea947b8e1f021df24e271130",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-3.json",
+          "sha256": "a3aa1767ebc97a030e1f53c04ade313c937f08c3847a66d280fa9536656b3e2f",
+          "bytes": 129598
+        },
+        {
+          "path": "query-tape-00004.json",
+          "sha256": "b7a8e64214b59d057cc906b02de897a27b162e91795cc6cb4d5756e93119c83d",
+          "bytes": 8405756
+        },
+        {
+          "path": "day-4.json",
+          "sha256": "baf3620e6c49a6630c7a75058fbfe7c0e1f334a240f42fcc29dc2539b2e5af1e",
+          "bytes": 2692359
+        },
+        {
+          "path": "knowledge-day-4.json",
+          "sha256": "17a6fb95d25694db5b12020f25ee0ce4197b136c222a988b8deaf892ce737949",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-4.json",
+          "sha256": "79709383a2e15ff0648080d54e4b2198164fb803f6fe84c4d3bc7e460474c820",
+          "bytes": 135281
+        },
+        {
+          "path": "query-tape-00005.json",
+          "sha256": "5e339c918125fb934dee1b81080216d6ea32f864b124a14a602532a7ae7bc261",
+          "bytes": 8394522
+        },
+        {
+          "path": "query-tape-00006.json",
+          "sha256": "37eeb684c663278a6d3fe043b99660255a30b50fbc17d36063ec217fc78d30c9",
+          "bytes": 8396886
+        },
+        {
+          "path": "day-5.json",
+          "sha256": "cf5b7799aabb839732e010ce66f5471c55b658100faf9ffcaceb920d095719d2",
+          "bytes": 3168360
+        },
+        {
+          "path": "knowledge-day-5.json",
+          "sha256": "a67683995763a43b991b29a3a0552356ae2123e28b158638026695246d43e8db",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-5.json",
+          "sha256": "b16967e67ce51eae70cbc403ea84034e8b31fadd658b700e6a75fbf64dd48479",
+          "bytes": 138145
+        },
+        {
+          "path": "query-tape-00007.json",
+          "sha256": "e8262f0ce20c68915c3210e837b70fd51371cb345fd85bd4c0bc94aad50f68e7",
+          "bytes": 8409338
+        },
+        {
+          "path": "day-6.json",
+          "sha256": "5b7631421c68f94ed2aabe43a05eddc8cd988011d0b3df09f8de4f948c5d9a89",
+          "bytes": 3655630
+        },
+        {
+          "path": "knowledge-day-6.json",
+          "sha256": "cf48d1c83d8d361fe3801d67d6ef59a30a262e54f7d5626dc120c0d295259a1d",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-6.json",
+          "sha256": "810b5b3df5c391a8e826b2eb03c2afec1d5d3b70ed2b3d042fd113156cb50711",
+          "bytes": 140126
+        },
+        {
+          "path": "query-tape-00008.json",
+          "sha256": "b75d31c23469ef687d6b5a2129626de140d051faafcf0a134a84ed3cd8ceb7de",
+          "bytes": 8403160
+        },
+        {
+          "path": "day-7.json",
+          "sha256": "9788d88b2f20cc464fe1b2b7d5def0d20e63335d5afdb30a97da932e42a22650",
+          "bytes": 4131170
+        },
+        {
+          "path": "knowledge-day-7.json",
+          "sha256": "0c57fcdb2b7e89307194f6dbe19d8066a3ab533a772c1b9e7c26f5b25e00218d",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-7.json",
+          "sha256": "2813c1fb56d0fc72d2ddd2f547d932a7af1c416a64733b3b8bc13acab7977f8f",
+          "bytes": 140983
+        },
+        {
+          "path": "query-tape-00009.json",
+          "sha256": "a88e03781886bd6324e0e6c82702a7ab3accc9a38ffee08317e522f4a785b424",
+          "bytes": 8396004
+        },
+        {
+          "path": "query-tape-00010.json",
+          "sha256": "f5b8fe2811be2635c6eb57084c1609f93c28a89ee3862629fbdeb8fcaa2577e4",
+          "bytes": 8405952
+        },
+        {
+          "path": "day-8.json",
+          "sha256": "eb7d1d799270b77244dafbbda33fbd569b33dadd4adc67fca48bba4939915bae",
+          "bytes": 4621236
+        },
+        {
+          "path": "knowledge-day-8.json",
+          "sha256": "1f48c9cb511253a4f60368b42965af0d0f33db34c3faf08576ffa10a5d112c55",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-8.json",
+          "sha256": "88b8426e7083aa71cb6df7d12d5b5f83a8cd11fd70eea38d6b0f823b76e554bb",
+          "bytes": 142364
+        },
+        {
+          "path": "query-tape-00011.json",
+          "sha256": "2c3e71a3104d3ebd1929d2bfbca154ed955f14e73cb75d76f05eca077cba400c",
+          "bytes": 8399506
+        },
+        {
+          "path": "day-9.json",
+          "sha256": "76ef220951aeb2d3160fdec49bbe61dc64608b168ce6f7db55dfbf866a962d76",
+          "bytes": 5105937
+        },
+        {
+          "path": "knowledge-day-9.json",
+          "sha256": "fcb07e017e08041c43edad8566ea2f91867d919952e3308e138036bf33d117d3",
+          "bytes": 5542
+        },
+        {
+          "path": "world-diagnostics-day-9.json",
+          "sha256": "85a99a97e4451d1d2306dde16aa131b0f0f76c0c160baf777903fe6a160b7e7e",
+          "bytes": 144037
+        },
+        {
+          "path": "query-tape-00012.json",
+          "sha256": "7095c61609788b01db0ac740e1809c9684d7756880d6aa7b3d1adf719c56aa56",
+          "bytes": 8404980
+        },
+        {
+          "path": "day-10.json",
+          "sha256": "dd85e8d3a9ad9666148361703cec7637d3c2b1c81e3a161fbc3813cb26a0b060",
+          "bytes": 5599963
+        },
+        {
+          "path": "knowledge-day-10.json",
+          "sha256": "371379ce326ddc6b0c86fd0f4534d6ee655254f3432e8e97fadc64ed3d0a9120",
+          "bytes": 5543
+        },
+        {
+          "path": "world-diagnostics-day-10.json",
+          "sha256": "2811f974b62baf62a29c91bbc577aa05ff89c1c0592b2ec2a7338c7c2d5c48b0",
+          "bytes": 144900
+        },
+        {
+          "path": "query-tape-00013.json",
+          "sha256": "34b2efa380bcd6900cb27ea99a77dcd655312b932a21a0f30587cd261d9e390d",
+          "bytes": 8395910
+        },
+        {
+          "path": "day-11.json",
+          "sha256": "3d391fd76a81f0b3d16eef67730425bc919569f8aab4da59449a1b85124c2238",
+          "bytes": 6089074
+        },
+        {
+          "path": "knowledge-day-11.json",
+          "sha256": "cda9b97c6db0e4c5af10013ed53a70eb4c0674af556dfa76e1b7856a318eba48",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-11.json",
+          "sha256": "cba55a056c788cbef95612698bea21aa6d491e91ad7c64f4893a3b6d281dd85d",
+          "bytes": 145456
+        },
+        {
+          "path": "query-tape-00014.json",
+          "sha256": "e2d6e6ef988c66a887b2995522d6bcf05d27695b1afe1916f5d43bd4ae4cc8dc",
+          "bytes": 8395188
+        },
+        {
+          "path": "query-tape-00015.json",
+          "sha256": "64b3d8205a46e98227ba9773f61b7d5e4646a53945df4d1568d5d08de0f0ac95",
+          "bytes": 8407468
+        },
+        {
+          "path": "day-12.json",
+          "sha256": "bce4e7d190e7ac2796747cc9a3d15388f04c8e1c7a6315c217369abff2d5bdc5",
+          "bytes": 6573673
+        },
+        {
+          "path": "knowledge-day-12.json",
+          "sha256": "421ea952c0bd86c268851d54288d607903ab467abff0ddfa31486c30e8db0b4b",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-12.json",
+          "sha256": "eaaf0f3b166333de9b00fe3eed1d132c9c3011e6956eb02f623862897462edee",
+          "bytes": 146024
+        },
+        {
+          "path": "query-tape-00016.json",
+          "sha256": "c4e6ce911cf5f73fc9e23ac727851f9616b0816725b6d82ae9094edd81a6e74f",
+          "bytes": 8403082
+        },
+        {
+          "path": "day-13.json",
+          "sha256": "511701b90ffd037d4d3a55c247f64491fa278db3c512fc04a58eceeb0d0a5e92",
+          "bytes": 7062426
+        },
+        {
+          "path": "knowledge-day-13.json",
+          "sha256": "3b0119ceb24e4c04047e9a421077a5214d05772f23d308593fbd8e070c1977ac",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-13.json",
+          "sha256": "56b380f508d6ddb8ff21eb1f11b37e69dc624d5893bfa9dec602524ea6134e0d",
+          "bytes": 147387
+        },
+        {
+          "path": "query-tape-00017.json",
+          "sha256": "17d743b54a1f5d2da2e4003b8f088512b95ed78decba01416e2ab52d0b27af60",
+          "bytes": 8399882
+        },
+        {
+          "path": "day-14.json",
+          "sha256": "aaddc5a754518f61ded2c1c110a5baa0add0ebd00d66d457a93081725c341777",
+          "bytes": 7537593
+        },
+        {
+          "path": "knowledge-day-14.json",
+          "sha256": "a071e5975a720b6895dc6689b1591e2ad4235f061d8f47abd99c7d383ef2ae3d",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-14.json",
+          "sha256": "2bd261d01995f2c102d1a18caf0306f5b5aaf4b6bb39aa3146fca3538d349bb2",
+          "bytes": 148476
+        },
+        {
+          "path": "query-tape-00018.json",
+          "sha256": "5a740ab01d4ab97f1761b761e28685362bd23ce6afb4a561ce446f005eb7a382",
+          "bytes": 8405271
+        },
+        {
+          "path": "day-15.json",
+          "sha256": "a93593e896d6d30ae2c8f51e5550ab7bc558b78a45a141da5db700aea0a6ca62",
+          "bytes": 8020208
+        },
+        {
+          "path": "knowledge-day-15.json",
+          "sha256": "5b6510cccda09534ecb2341cc9a2bdcc341148caaa2f4f78a37c89b4ebf6a579",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-15.json",
+          "sha256": "48f51432bfc7901f8626057fc8865531586ada0973ef912b49980c70d312c7f7",
+          "bytes": 148768
+        },
+        {
+          "path": "query-tape-00019.json",
+          "sha256": "ae9a618db70ff2505d709643035e1827fd1a38b0a1f0ff75134bb117e1ac3f8c",
+          "bytes": 8401161
+        },
+        {
+          "path": "query-tape-00020.json",
+          "sha256": "001f3da5354447e97e3b02436fd5f7ba2bf3e74d1cc6708e9e25b37b73aba301",
+          "bytes": 8401047
+        },
+        {
+          "path": "day-16.json",
+          "sha256": "9069431385dc87967e907e508664d2628e1af513e10b2adb32b97bbb3a9ea330",
+          "bytes": 8499601
+        },
+        {
+          "path": "knowledge-day-16.json",
+          "sha256": "177868f442d9fb173e9ce465060f085535a9ac2ff67c8867011a8a6ae5767173",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-16.json",
+          "sha256": "42a1b87806de80769b4a7e46a67ad4af145370dae0e7ec4e773227b5db6a20ee",
+          "bytes": 149871
+        },
+        {
+          "path": "query-tape-00021.json",
+          "sha256": "12c9e86797395080d7e7a2d803bd27a5f234083ce39ae8683a4c76ce3ba00c6c",
+          "bytes": 8399203
+        },
+        {
+          "path": "day-17.json",
+          "sha256": "938d758a4ef64dfd96f9fac621f6a864604f3441633a390c9be0d1d5ddb3df97",
+          "bytes": 8992564
+        },
+        {
+          "path": "knowledge-day-17.json",
+          "sha256": "21ed24d49e1d81b25f7c47197bb11cd55477412c80c461ac9bc5e6f69458d5b5",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-17.json",
+          "sha256": "a228aeca82fb680eea47eceb24a26e0765b61680bbdb64437c9e8ae837788bbb",
+          "bytes": 150438
+        },
+        {
+          "path": "query-tape-00022.json",
+          "sha256": "2cc2a9b67c546107d7b65afcf7840b8242d023da681813959a9e8e55b7b0c3b3",
+          "bytes": 8404155
+        },
+        {
+          "path": "day-18.json",
+          "sha256": "2b341247b05dcfaf97ee41c98ce8a66af5e8dc77e4a32de0799f7bb01276b6ea",
+          "bytes": 9478263
+        },
+        {
+          "path": "knowledge-day-18.json",
+          "sha256": "85b64540f63ccfa21988fd0ba35424ee5e3ab87c76e7489d6e1750630570eaa7",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-18.json",
+          "sha256": "cabe87127aebe18a2cd1ada6b49da8db02e2538b99021840ffc54428a426a3a6",
+          "bytes": 151265
+        },
+        {
+          "path": "query-tape-00023.json",
+          "sha256": "4d91697757940fd66ce1877fb8fc8e377e119cccd2ed7c0c84dee0890ba35202",
+          "bytes": 8400543
+        },
+        {
+          "path": "day-19.json",
+          "sha256": "2019b48d55adc16d532bf38643209a54ad58ab957c0280d7035418b596d66c4c",
+          "bytes": 9955984
+        },
+        {
+          "path": "knowledge-day-19.json",
+          "sha256": "670a9a5ee6e73c62eca47aa0f002c03ff5592999c4be0dda5ee07e4d97f1240a",
+          "bytes": 6060
+        },
+        {
+          "path": "world-diagnostics-day-19.json",
+          "sha256": "722b0459310cb4ce2e5a8634ea3675db96d421b20f8273b8bff5eafd49f9d00e",
+          "bytes": 151821
+        },
+        {
+          "path": "query-tape-00024.json",
+          "sha256": "b3cc4ac2bb55c65ff9e21c14e49409583a0521db0433cd79048cc131a02a24d6",
+          "bytes": 8401781
+        },
+        {
+          "path": "query-tape-00025.json",
+          "sha256": "b67749706497a83bf5b6ab596d741e9070b8c0330886e4bcd95244db87e95909",
+          "bytes": 8405543
+        },
+        {
+          "path": "day-20.json",
+          "sha256": "4ff864f24d5e29c6f7b9056ead40c4f866f5acb643d4b34f98bd6ccdd233fe07",
+          "bytes": 10444903
+        },
+        {
+          "path": "knowledge-day-20.json",
+          "sha256": "bedb3832e5995d9353eda52e5285dc1332794cb9abf6d0aa967324a434c124dd",
+          "bytes": 6462
+        },
+        {
+          "path": "world-diagnostics-day-20.json",
+          "sha256": "9acd640a89ad0494c816bbb6ddc53eb7022936645517fafd7edf52f9e40dfcb9",
+          "bytes": 152916
+        },
+        {
+          "path": "query-tape-00026.json",
+          "sha256": "94c3d25b38fed29749abba283a322261f428846e284cb051bd727e73bebbe61a",
+          "bytes": 8398647
+        },
+        {
+          "path": "day-21.json",
+          "sha256": "6ed73ee354607ebceb94f3e94858c9b9b35efc40bb75961b63e6ea88661fea54",
+          "bytes": 10918076
+        },
+        {
+          "path": "knowledge-day-21.json",
+          "sha256": "65069e64d22d07316b2b44e94233792fe09d0690381b9454abfc0dc21c452613",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-21.json",
+          "sha256": "0128109250f0e196079331ebdaeb2c8dd7a080ecef70ca04281b6962eeb5673e",
+          "bytes": 153202
+        },
+        {
+          "path": "query-tape-00027.json",
+          "sha256": "627b29e8c2ed69a86e46be95a6ff01cbdb76e4a12b77f1fd0c3d5fb8346d4dd2",
+          "bytes": 8396789
+        },
+        {
+          "path": "day-22.json",
+          "sha256": "a7d0560df1bd27f157df1d679525413a523cbf9d80850d1ce1e583bf59577b03",
+          "bytes": 11405197
+        },
+        {
+          "path": "knowledge-day-22.json",
+          "sha256": "38dc6c6ee5f5082650db09a0bc8d552b6f10dbcfe24ed7f43b077f3138b0fbc2",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-22.json",
+          "sha256": "1948702ba6b4ae4e665d4aaa7ed0c988431a09ea36adc4512218da668157ace7",
+          "bytes": 153501
+        },
+        {
+          "path": "query-tape-00028.json",
+          "sha256": "1583ab1ea22df7523e069e2e07d341a4e6de8bf4110786e5a2c76b2c1c68f398",
+          "bytes": 8406413
+        },
+        {
+          "path": "day-23.json",
+          "sha256": "f22e3ea9b52c978fd02ad04c36031806bd51edacb06056bbccb25821d96bce13",
+          "bytes": 11887411
+        },
+        {
+          "path": "knowledge-day-23.json",
+          "sha256": "adc5c2092349f97258edb85e265a3bcb0bee69ac112a3b932d9a823bc1fa84c6",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-23.json",
+          "sha256": "b774276ce06f7390fba063898856f486f171fe67d066808120aebefd8f5a8a97",
+          "bytes": 154368
+        },
+        {
+          "path": "query-tape-00029.json",
+          "sha256": "35c0159772a7b4ec539e4316fb978651f61f789b1909ace7ef5c2508da97991b",
+          "bytes": 8401477
+        },
+        {
+          "path": "query-tape-00030.json",
+          "sha256": "26007a0b75fc72f58809a2e46cb7b462436b2c15b8dd8835060d874b66773d4c",
+          "bytes": 8397821
+        },
+        {
+          "path": "day-24.json",
+          "sha256": "0d0b7bff0beba97e4d5a8eb4fb4ac6bd1c02938a882c20fb56495235e017cd7c",
+          "bytes": 12368277
+        },
+        {
+          "path": "knowledge-day-24.json",
+          "sha256": "d00c3468716a20e12447a9a3314ae9b14063c70a8270e74583f4ed4a21e988d5",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-24.json",
+          "sha256": "f7c6e7d509c38ef547b85d713041252e9a74f0525ba5a221dfbb6ed913f16af1",
+          "bytes": 154415
+        },
+        {
+          "path": "query-tape-00031.json",
+          "sha256": "b1223a4725f4aefabf29cf906d0b99e3c79129d647ff0f806cd631e83304bae7",
+          "bytes": 8401533
+        },
+        {
+          "path": "day-25.json",
+          "sha256": "05c7a50f9bfff18282745116a77cf1cc1dd49707651b9b05381d7840298d33ea",
+          "bytes": 12847843
+        },
+        {
+          "path": "knowledge-day-25.json",
+          "sha256": "7a4126c311453aee24bd706e68982de6e898a1ff5f36a35aca1e40ae8e0acb04",
+          "bytes": 6871
+        },
+        {
+          "path": "world-diagnostics-day-25.json",
+          "sha256": "99b5313f23bb7a1117b1fb486b9a101ba42b6b12403832357920f5754d2ccb6b",
+          "bytes": 154456
+        },
+        {
+          "path": "query-tape-00032.json",
+          "sha256": "6b7190797f612eec907251dae057697aa8125a459be7b82187006a39d6ca7cb0",
+          "bytes": 8404567
+        },
+        {
+          "path": "day-26.json",
+          "sha256": "28af5daa5b63563f308502e8b7b39188909689ba6ebc1ff012e0cf2c0d744c7f",
+          "bytes": 13337742
+        },
+        {
+          "path": "knowledge-day-26.json",
+          "sha256": "a68bad47a5e2d992019683b825195fa385a287e69ab33d2e9e40c71838e78bb6",
+          "bytes": 7274
+        },
+        {
+          "path": "world-diagnostics-day-26.json",
+          "sha256": "ff726b73623ff26c0e2c920b6fe120571e01eb3be8851ccf5cdbbd233ec5ebaf",
+          "bytes": 155323
+        },
+        {
+          "path": "query-tape-00033.json",
+          "sha256": "af2c111613bf4152e2671cded060f0728f2c27d104bdc8cda452a3380e43b88b",
+          "bytes": 8399647
+        },
+        {
+          "path": "query-tape-00034.json",
+          "sha256": "7341c6586420cebf3313f75afb6744dab615c150775ae49324a9ee07ff779209",
+          "bytes": 8402953
+        },
+        {
+          "path": "day-27.json",
+          "sha256": "ab639866148df555de236f07669aaa5a6d98d829afba513d94e9bf1b000289dd",
+          "bytes": 13822833
+        },
+        {
+          "path": "knowledge-day-27.json",
+          "sha256": "3e8aa1048289cfd0b2b003e6e8d8b20f2432d49239b91cdb8f304accc494ff60",
+          "bytes": 7274
+        },
+        {
+          "path": "world-diagnostics-day-27.json",
+          "sha256": "50fe7dab85b5909dcb107a0df580d165a6a0f34bb0e9b9f321b1b0e4d4a0b862",
+          "bytes": 156135
+        },
+        {
+          "path": "query-tape-00035.json",
+          "sha256": "f749d64ca54274047bc5135261d08561b97e93fb7dbf149c4bd733c452749d34",
+          "bytes": 8405475
+        },
+        {
+          "path": "day-28.json",
+          "sha256": "60ce3eb1b11ace89cd425e89bbae57c4a16350da432788903ddb108e3a67ecb3",
+          "bytes": 14321344
+        },
+        {
+          "path": "knowledge-day-28.json",
+          "sha256": "1b72e78e1b691722021d2283d99359bed7d189205a7a559f357d4fb16e7db36e",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-28.json",
+          "sha256": "19fd520efd924dedf50eedf63f6986ef2f9137ddda633fbe23587ccb87b24925",
+          "bytes": 156704
+        },
+        {
+          "path": "query-tape-00036.json",
+          "sha256": "61612b5fe8b966a3e1d262741e7b4605838369e57b58bf26e3368037de0e30f8",
+          "bytes": 8435818
+        },
+        {
+          "path": "day-29.json",
+          "sha256": "69c350fdfe6816f22c134ac8586a0ab3e7fc5fa45c35225942c5ec352bcbba1c",
+          "bytes": 14825200
+        },
+        {
+          "path": "knowledge-day-29.json",
+          "sha256": "d5afe415b99d06c4d1c71b887a25901493d9e4e3d6d9edeedf72e2bc7daf40e6",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-29.json",
+          "sha256": "8f694ca0637457240a0a85b17d26a1dac7a90023d02afa20b48b53629dfd2b37",
+          "bytes": 157539
+        },
+        {
+          "path": "query-tape-00037.json",
+          "sha256": "9442d1089398285afec3ac4205de1fa37936b64be8f504227d73cfa210623874",
+          "bytes": 8390627
+        },
+        {
+          "path": "day-30.json",
+          "sha256": "9836d88c6120d3021515df5eb56ffbaca568f838471accaa934091a8f67f79df",
+          "bytes": 15318959
+        },
+        {
+          "path": "knowledge-day-30.json",
+          "sha256": "cefc332c0353912ea4e4eade3728f290aa28693272f70f58939777ed9e0aea70",
+          "bytes": 7684
+        },
+        {
+          "path": "world-diagnostics-day-30.json",
+          "sha256": "adb64a47849eb286375dcd0bd24612dba4436e4cf9bb498952867559d160c5c7",
+          "bytes": 157550
+        },
+        {
+          "path": "query-tape-00038.json",
+          "sha256": "e9f77a472ab164d3a00d45b32bb39974075385abff9de3bb8f1d5ea457efcd47",
+          "bytes": 8403195
+        },
+        {
+          "path": "query-tape-00039.json",
+          "sha256": "61c31356e7c56771837a090af33a4086f441127fe9f776a985cc684832a449d8",
+          "bytes": 8387975
+        },
+        {
+          "path": "day-31.json",
+          "sha256": "3214cfee377e70d25b1c2ecde5f96e3706b25b8f0ac49f3019fe8388d393fb53",
+          "bytes": 15809962
+        },
+        {
+          "path": "knowledge-day-31.json",
+          "sha256": "20eff7c4db3045a7d4ac98c41b3cfadcfef17fac3d121d186cd47a6177063606",
+          "bytes": 8096
+        },
+        {
+          "path": "world-diagnostics-day-31.json",
+          "sha256": "0bd4bf923b1b2e3939173f583789feb9ec1acb429e60b2c92f55ea9e5b470d0f",
+          "bytes": 158091
+        },
+        {
+          "path": "query-tape-00040.json",
+          "sha256": "46ad6e6e487a0e946b2ee72375fac8168b93f7f109ce4f53c21063fcbb1d9646",
+          "bytes": 8391587
+        },
+        {
+          "path": "day-32.json",
+          "sha256": "df9b4b17f153b0798a54156d2e87c327550b44732cdd86a1d57f1f813b79a51d",
+          "bytes": 16315610
+        },
+        {
+          "path": "knowledge-day-32.json",
+          "sha256": "6d04cd78686c46fef9de62dabc0fb1b0a31ffabac1b117ae61505cbdde256b2d",
+          "bytes": 8505
+        },
+        {
+          "path": "world-diagnostics-day-32.json",
+          "sha256": "2ce06862c27cff556433cda2c11cdc52ca1c2d159dfc6bcdca65af8881684932",
+          "bytes": 158375
+        },
+        {
+          "path": "query-tape-00041.json",
+          "sha256": "796cc6438c70556a86321fff2802e40ec157057d9b87e7312b9feaafa55fe2af",
+          "bytes": 8397139
+        },
+        {
+          "path": "day-33.json",
+          "sha256": "e0ed1d53a544595e615f5162881798636d538d63ff1ed2346edea57cb7934996",
+          "bytes": 16802165
+        },
+        {
+          "path": "knowledge-day-33.json",
+          "sha256": "208f9b3e845d9e484269100b65511c4eca01dc5eca2b59ade06349e22ca90e10",
+          "bytes": 8505
+        },
+        {
+          "path": "world-diagnostics-day-33.json",
+          "sha256": "1109e8b7a13106b5278d8707afdfb95b0f3b48eca0f964bc1995ed62c22b9008",
+          "bytes": 158661
+        },
+        {
+          "path": "query-tape-00042.json",
+          "sha256": "52d5c9de1d574df576b66168e25c601693b90cc12c2369078a1b203e43d9b825",
+          "bytes": 8387799
+        },
+        {
+          "path": "day-34.json",
+          "sha256": "52b742ac44dbec726f628ab63df6752578188cf8dd1cb6779b0b66954c5472b3",
+          "bytes": 17299478
+        },
+        {
+          "path": "knowledge-day-34.json",
+          "sha256": "89cfebeea8533232533865c7db44930c3a6782fa6e282b815d4b66eebfdb87d7",
+          "bytes": 8906
+        },
+        {
+          "path": "world-diagnostics-day-34.json",
+          "sha256": "13bf0684316f9de171186751d2c6f61c71dc5c315dcb896372fd88e824ac306c",
+          "bytes": 159206
+        },
+        {
+          "path": "query-tape-00043.json",
+          "sha256": "77fe3da9554003cb87568239250a31a17c24177c04a518520eb4e2255b71d747",
+          "bytes": 8392459
+        },
+        {
+          "path": "query-tape-00044.json",
+          "sha256": "277c996e85107219961f1d9d8e7010676241e3e6b96ba056e005e8f34f83ed96",
+          "bytes": 8391033
+        },
+        {
+          "path": "day-35.json",
+          "sha256": "9954b0ad62c0ad38902d38605aa5c27c3a42e4fd0290a27f934374923fec221d",
+          "bytes": 17800009
+        },
+        {
+          "path": "knowledge-day-35.json",
+          "sha256": "bac85fbac63cc27a4224758f6e554abc9f0af4e8413de39f7aed0a649ff59b9d",
+          "bytes": 9719
+        },
+        {
+          "path": "world-diagnostics-day-35.json",
+          "sha256": "569898b2315301e6fd46046f674c239b18aac17019f15edae8c170fe81af21c9",
+          "bytes": 159481
+        },
+        {
+          "path": "query-tape-00045.json",
+          "sha256": "ab1d0ab11aeeb940e0f4827390454f4b3b5d8589779e440f5cce75e453be4f79",
+          "bytes": 8391825
+        },
+        {
+          "path": "day-36.json",
+          "sha256": "6cd819161b6326c30e923d38b23f2b12d9012f4226bb93d67d19f5bf3e8f7199",
+          "bytes": 18273750
+        },
+        {
+          "path": "knowledge-day-36.json",
+          "sha256": "7b14f7f950e9b6fc9c6f566414638825f5a528fd0644c481678b1cbf5d3ccd95",
+          "bytes": 10126
+        },
+        {
+          "path": "world-diagnostics-day-36.json",
+          "sha256": "8cff37fe4dfd8e8154b53f8924dfe0627a18e6d2e6eaa16e5725eb3ffc29cd85",
+          "bytes": 159761
+        },
+        {
+          "path": "query-tape-00046.json",
+          "sha256": "197fad706e7c0760e1fdd7de629a1f473890eb32fcd0023d81a9424a222fc679",
+          "bytes": 8393601
+        },
+        {
+          "path": "day-37.json",
+          "sha256": "859291510410364db771c98fd8f65c923d5cd55d41fb00903c2378d2cba9ce76",
+          "bytes": 18776650
+        },
+        {
+          "path": "knowledge-day-37.json",
+          "sha256": "94951bbab1dbd3edbfac64b8f52a7bf9fe035881680055c6bf940a20ceb60a61",
+          "bytes": 10126
+        },
+        {
+          "path": "world-diagnostics-day-37.json",
+          "sha256": "ec932c841b3453037a8be6a4a621a96a985fc6c6fbf6dc6fa25a729ea00724e1",
+          "bytes": 160031
+        },
+        {
+          "path": "query-tape-00047.json",
+          "sha256": "0f304ff89e419faf1ef2a6504983b7a00b3fd7d96503d629cd549ade64b11231",
+          "bytes": 8388009
+        },
+        {
+          "path": "day-38.json",
+          "sha256": "5b7cbd7b1f2413c9e129875eeddaa3917b40d73ef1a91ce86b48d571a16161c2",
+          "bytes": 19266086
+        },
+        {
+          "path": "knowledge-day-38.json",
+          "sha256": "a28866eb2d74ae2d4f04b38ee92a01908c90acdcfa47af0884ca466afebcec2d",
+          "bytes": 10938
+        },
+        {
+          "path": "world-diagnostics-day-38.json",
+          "sha256": "f67ac63166d7f694753b8ec68a442d004980fc82f7babfd7028e2e1978ac0172",
+          "bytes": 160036
+        },
+        {
+          "path": "query-tape-00048.json",
+          "sha256": "d08f0b62c3a35a62e2423769ce4d6dba3340502dcd2461cfb26a26902c28b7dd",
+          "bytes": 8396229
+        },
+        {
+          "path": "query-tape-00049.json",
+          "sha256": "1553b79f2cccbffd22d3421a7d4c863be4499648f351a05ff2b7c07ba692a62d",
+          "bytes": 8393925
+        },
+        {
+          "path": "day-39.json",
+          "sha256": "0f09c9eb49aefa9155ece672b62c708c26cfaa99ac32f5ae340f9edb2b4791ba",
+          "bytes": 19762783
+        },
+        {
+          "path": "knowledge-day-39.json",
+          "sha256": "c3293b36e9296b1ed0092deefe3737ebdde75837f8785d22e8ae8d220e6620be",
+          "bytes": 11341
+        },
+        {
+          "path": "world-diagnostics-day-39.json",
+          "sha256": "69f82efee6e7cd94e91758598d7abda4e4967dad4e36fd867a2651dcb3e31589",
+          "bytes": 160038
+        },
+        {
+          "path": "query-tape-00050.json",
+          "sha256": "fafc7dff7ef148bc3c56c85fbc37eb7ecfd475cf3389f0ebe00451f29d1bc74a",
+          "bytes": 8395775
+        },
+        {
+          "path": "day-40.json",
+          "sha256": "263fd69489496b53c832bf1558f44207bd46be9f043100a3d4bb59c542da48d7",
+          "bytes": 20257481
+        },
+        {
+          "path": "knowledge-day-40.json",
+          "sha256": "43ee9a49588b90b8dce5784b5cccde6941d061d80d4ab45255a7aed196d1993e",
+          "bytes": 11742
+        },
+        {
+          "path": "world-diagnostics-day-40.json",
+          "sha256": "7e6548b37c78758d5e3144d1c131684a3057176f502fbb14fdbe4ed8a997890d",
+          "bytes": 160049
+        },
+        {
+          "path": "query-tape-00051.json",
+          "sha256": "206d93369baa1a12b60db9a9e4bb05aa444640fd59645ba09ceb4aa8bc2098d4",
+          "bytes": 8401069
+        },
+        {
+          "path": "day-41.json",
+          "sha256": "7da7a1e92fb800abf30a8d89a91e140120f907fe44a71be02e4e6fa18832dc4f",
+          "bytes": 20745407
+        },
+        {
+          "path": "knowledge-day-41.json",
+          "sha256": "e0453c1925d7450b6c7889aca9f77d6ef87d17c183b1de7f6841b4f67bdca6c2",
+          "bytes": 12942
+        },
+        {
+          "path": "world-diagnostics-day-41.json",
+          "sha256": "432cf9f02bf0adb0d4b2a250bc709bfb76d1fc8e9a01cac62be2cdf48a084fd0",
+          "bytes": 160051
+        },
+        {
+          "path": "query-tape-00052.json",
+          "sha256": "5195866b4d71705f1f15443033eea4005077ae384d98c371c7d72a988bfe8ba7",
+          "bytes": 8388359
+        },
+        {
+          "path": "day-42.json",
+          "sha256": "1ad6fcbe2b8ed468a7319d1c2ff73bd9883c9e3f8d526f7bc32fc45d4ed99f98",
+          "bytes": 21226031
+        },
+        {
+          "path": "knowledge-day-42.json",
+          "sha256": "ef0cdf1879319c7f13fcbed230d93f8853568fedaadf52c100fc1e7801886049",
+          "bytes": 12942
+        },
+        {
+          "path": "world-diagnostics-day-42.json",
+          "sha256": "80daccfd5ee84983539a05c9927f84d15e1b1f673b5d5b4a8ca3b2c0a575c81e",
+          "bytes": 160870
+        },
+        {
+          "path": "query-tape-00053.json",
+          "sha256": "386147352de43613bdf5c75440b8bfd68fc78654c5b6b234f4e699803fb0f0a8",
+          "bytes": 8405889
+        },
+        {
+          "path": "query-tape-00054.json",
+          "sha256": "3b8bdcd1b552c1ec576f021160813b20b0383b92e065685a647b856f0a3b284e",
+          "bytes": 8404585
+        },
+        {
+          "path": "day-43.json",
+          "sha256": "33f365c8a67b4ca229fc5dbead997bc99b17279793c9f6b3447fe60c9338cd76",
+          "bytes": 21718878
+        },
+        {
+          "path": "knowledge-day-43.json",
+          "sha256": "3471bdf17c15b6e4d301baa5ff8ffd8c063f512845506497ebf9ff74fb80f1c7",
+          "bytes": 13747
+        },
+        {
+          "path": "world-diagnostics-day-43.json",
+          "sha256": "a652002928b27710f882e558131e212b8d2c71f2fcd6382e656b0ef4c8fc9013",
+          "bytes": 161138
+        },
+        {
+          "path": "query-tape-00055.json",
+          "sha256": "327645361d053fb509d197a0939dd92b656063c4b35bc994b8e69e90794f73ad",
+          "bytes": 8401211
+        },
+        {
+          "path": "day-44.json",
+          "sha256": "37e0632d7abc9b8cdc5701f2c2ca366df9177ebfc38d913aba0c3e568587c61d",
+          "bytes": 22202787
+        },
+        {
+          "path": "knowledge-day-44.json",
+          "sha256": "3636f9cbe52ce43cc711d4cc682ae18b624108833e10973c02bb2886a0e2cc82",
+          "bytes": 13747
+        },
+        {
+          "path": "world-diagnostics-day-44.json",
+          "sha256": "0be73a310fc1ad82f4fceaaf4dd5243275db56a33b1fb5c00f04150fdaa8e279",
+          "bytes": 161406
+        },
+        {
+          "path": "query-tape-00056.json",
+          "sha256": "2be8eaf88c1d209950374d364afcc44bfce7ff9f0f14889025a04a624f96c68a",
+          "bytes": 8411401
+        },
+        {
+          "path": "day-45.json",
+          "sha256": "df30b683bf9ec96841164f61452456091de044327cdcb4039e95db65516b89b7",
+          "bytes": 22705931
+        },
+        {
+          "path": "knowledge-day-45.json",
+          "sha256": "56d203c64abf1e438e2b15bedeb56f88d5f47d8f772732ea734ba7e611c21d10",
+          "bytes": 14550
+        },
+        {
+          "path": "world-diagnostics-day-45.json",
+          "sha256": "c2e47e79e25c201d1ef8e81b3b4d416ec4afb645a88139f6da9f5159b0d4a3d3",
+          "bytes": 161420
+        },
+        {
+          "path": "query-tape-00057.json",
+          "sha256": "a4a230957cf7eb1ea318c2b715cf0af05c0740d2a28aad86a18e6b2806cc4b4a",
+          "bytes": 8408761
+        },
+        {
+          "path": "query-tape-00058.json",
+          "sha256": "94fa7866b306f00dbe7a5f3d16f0e1dad3feda3d7024456f3beee1ec55832655",
+          "bytes": 8408839
+        },
+        {
+          "path": "day-46.json",
+          "sha256": "641b2be78873407b45221fe4b3cd693fc771179c3c19ac160cc87ab4a9d96f6f",
+          "bytes": 23193944
+        },
+        {
+          "path": "knowledge-day-46.json",
+          "sha256": "c96e54108b0712b52d655cf56601bb508e6c3af44150ebfd71024c28128df410",
+          "bytes": 14550
+        },
+        {
+          "path": "world-diagnostics-day-46.json",
+          "sha256": "23e70b9860463c78316d4b050953017e71b2523f46369b07b312bdf74fb08d1e",
+          "bytes": 161422
+        },
+        {
+          "path": "query-tape-00059.json",
+          "sha256": "c6fe58257fd0cf1c653f2d7df9a6b8e423a8b51ed38e25d9d8a124de9b7b0fd6",
+          "bytes": 8408929
+        },
+        {
+          "path": "day-47.json",
+          "sha256": "c5fcd5878b30ecdd6f68350ce68cd8c31f0d99ab1e4d45363e565baec59d7ee7",
+          "bytes": 23710831
+        },
+        {
+          "path": "knowledge-day-47.json",
+          "sha256": "6278df432563642272c1005d5347441077efed958226bf25710e0ea4d392d4cb",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-47.json",
+          "sha256": "4a35e194a55de09ad7c2444223be38808ddc1b5b2cd7551d26e4b67116fcc203",
+          "bytes": 161984
+        },
+        {
+          "path": "query-tape-00060.json",
+          "sha256": "c770e745396afddf567fff412e533da6d7ce4f609d1e0c15a1d756726be4dad1",
+          "bytes": 8407423
+        },
+        {
+          "path": "day-48.json",
+          "sha256": "98269f07cf402cb18e16a1f392219294bc15f8afb1bac5b0994b692dd3161366",
+          "bytes": 24201910
+        },
+        {
+          "path": "knowledge-day-48.json",
+          "sha256": "6fed7893394a57bac49d9b2bcd2420c5417b00a1e0f77378014dcd8c6537eff2",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-48.json",
+          "sha256": "c75c3d349ab5f272c88586b200356ae8bb5b74187fe20cbeb27434369e2ced1c",
+          "bytes": 161990
+        },
+        {
+          "path": "query-tape-00061.json",
+          "sha256": "2db103bb67772425c3b04a9023ed8404ac850535d8da7517ba17f1556e528bd7",
+          "bytes": 8411375
+        },
+        {
+          "path": "day-49.json",
+          "sha256": "455419d088d96f390c9cded0455b112849d9676abcb7d2b37b5abc0285d000b2",
+          "bytes": 24684569
+        },
+        {
+          "path": "knowledge-day-49.json",
+          "sha256": "d06948571c9f4caacf8f5ef1a69b46bd22466947242783d9f836766e24e5233d",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-49.json",
+          "sha256": "516918ef64c9e809bee55f60f62c080ea3e7b40343b4f6f28af8aae174a6eb2f",
+          "bytes": 162270
+        },
+        {
+          "path": "query-tape-00062.json",
+          "sha256": "f0b0ac08a62c4442c7b6a30607632578c21f4b0d70aee0389aaac91b65974822",
+          "bytes": 8408541
+        },
+        {
+          "path": "query-tape-00063.json",
+          "sha256": "c55c61772dd970e13c8dd36554d965ab48e5c2eb6e783bcc6f071770961e7a98",
+          "bytes": 8408671
+        },
+        {
+          "path": "day-50.json",
+          "sha256": "7b3453d87c5e6b6e3a73bb204f221e428ff8580cc03dcc3142da8b4119c86314",
+          "bytes": 25163204
+        },
+        {
+          "path": "knowledge-day-50.json",
+          "sha256": "a96cd9342f04eacaabed6c2b2aaaaaf32aaf4eafd663566aec6b90c90b5e13d1",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-50.json",
+          "sha256": "1145c91a5108d0543d90ebb681229672ca5826a0e731fa9eb5cae32b50cd9873",
+          "bytes": 162544
+        },
+        {
+          "path": "query-tape-00064.json",
+          "sha256": "f7957f98ad8479444ca03a84b5561ad25ed05393c3cb0faee03215720390a6ca",
+          "bytes": 8413177
+        },
+        {
+          "path": "day-51.json",
+          "sha256": "0165f525663a981d293e7642e26e07360dee4a1318bef851f0872fbc0098a8e4",
+          "bytes": 25639748
+        },
+        {
+          "path": "knowledge-day-51.json",
+          "sha256": "d28bd11e93872e33104be9ed51c66c7f53e8530ff7976380b3423b5c6d68aa51",
+          "bytes": 15354
+        },
+        {
+          "path": "world-diagnostics-day-51.json",
+          "sha256": "e1a6f2ddc9f65b5f66e3dcfc919f782202db6db1e5d876066a307e841480350b",
+          "bytes": 162821
+        },
+        {
+          "path": "query-tape-00065.json",
+          "sha256": "11951f31d69546ef13cf1496326d827f63f39788037668437eecf3a2701c2d45",
+          "bytes": 8408609
+        },
+        {
+          "path": "day-52.json",
+          "sha256": "9dc8f233e39fd61a9a5c96822396cade5a207b4ff33c72ceea71bd22739c091d",
+          "bytes": 26133713
+        },
+        {
+          "path": "knowledge-day-52.json",
+          "sha256": "910410a425cdd9e8ad9bb6b900df9bcb7f45160dada9caaee470650b80ae5bb5",
+          "bytes": 15763
+        },
+        {
+          "path": "world-diagnostics-day-52.json",
+          "sha256": "1f7676943712e81e265991027f51e6fe8d959e7fbf3e07d6c8fd7617a33e6f5d",
+          "bytes": 163099
+        },
+        {
+          "path": "query-tape-00066.json",
+          "sha256": "d571358e6fcbd1794e571145196e7fef2f6a4c7193b234a1fd907682d209ae62",
+          "bytes": 8413735
+        },
+        {
+          "path": "day-53.json",
+          "sha256": "c78685b2846cf2b54f14839921b9ad0e34658d2b46f2b5f764ec52beb08f022a",
+          "bytes": 26634290
+        },
+        {
+          "path": "knowledge-day-53.json",
+          "sha256": "8b39733679e90e973b1c40f0ffa4081a1eea3ab7f3fad4663cf0281313d2b81b",
+          "bytes": 15763
+        },
+        {
+          "path": "world-diagnostics-day-53.json",
+          "sha256": "69e661a27ae4fed540a6c547eecb7b99c7bd3786667427c84910b58047b1c6e7",
+          "bytes": 163372
+        },
+        {
+          "path": "query-tape-00067.json",
+          "sha256": "9b2d9c5eb4482578f4532a7e5df6dc8a3f4d25a8a7efcf2adcdef769490d82ab",
+          "bytes": 8408401
+        },
+        {
+          "path": "query-tape-00068.json",
+          "sha256": "11e762c7779ee7d4629f679de91d53a20d08d0b5dff9d98cdbc2bb431b448801",
+          "bytes": 8414169
+        },
+        {
+          "path": "day-54.json",
+          "sha256": "20eedb000fb43c2b4d279b4f9e323f5e5a50267e5d48dbdc7a89ecdf756259ba",
+          "bytes": 27146302
+        },
+        {
+          "path": "knowledge-day-54.json",
+          "sha256": "7859680645afa7f97c9df9f79062e361d0fac176462ddee39def76a93315fbbd",
+          "bytes": 16159
+        },
+        {
+          "path": "world-diagnostics-day-54.json",
+          "sha256": "801c6fc83d3212b71ccf3fd0502f0a1329f8d52ffbde52c1ece07b310d495978",
+          "bytes": 163640
+        },
+        {
+          "path": "query-tape-00069.json",
+          "sha256": "fc0e46554039befbdc35b32f435982af4c9c8efcdd877d34238b12331c3b2b1d",
+          "bytes": 8411377
+        },
+        {
+          "path": "day-55.json",
+          "sha256": "c3e184e2af6098d048ef072cbdc2406aef6adf9613dcabdd9330f2469df7aa81",
+          "bytes": 27644500
+        },
+        {
+          "path": "knowledge-day-55.json",
+          "sha256": "32fa536ef6ff4baed05a93eddeafeeb8df60fbce3baab6bd2dc9bb11a8d0993a",
+          "bytes": 16562
+        },
+        {
+          "path": "world-diagnostics-day-55.json",
+          "sha256": "dbb7216dd060053ff3151ecd14097ea099c5905e986fca70c3c91dbc28674052",
+          "bytes": 163648
+        },
+        {
+          "path": "query-tape-00070.json",
+          "sha256": "2a12434303c97699ef9264ee2505fe2e70600f5b833f0759583542025842ca30",
+          "bytes": 8410321
+        },
+        {
+          "path": "day-56.json",
+          "sha256": "1a474362f09998520994e4ec1804d6fd2c558954be4c45628a95984d450b074b",
+          "bytes": 28137301
+        },
+        {
+          "path": "knowledge-day-56.json",
+          "sha256": "24cb0c46c20b38d3cecf2617f70af6f603ae7b421d0e6362915aca7db3b427a1",
+          "bytes": 17358
+        },
+        {
+          "path": "world-diagnostics-day-56.json",
+          "sha256": "2ca5c7cb41437d0b8cdb37ad571d65953ef9918e47a380e8ed53bf5cbe083eb3",
+          "bytes": 163648
+        },
+        {
+          "path": "query-tape-00071.json",
+          "sha256": "741220a4bcb038e9ab2bba5bfdd9a5eb9a06368712c500222923ab6dfa6b7668",
+          "bytes": 8454122
+        },
+        {
+          "path": "day-57.json",
+          "sha256": "4e9e27ec70ee2664dd0dace4087acd4d118597d122e3e520a7037eae343b0464",
+          "bytes": 28689054
+        },
+        {
+          "path": "knowledge-day-57.json",
+          "sha256": "5af8b42695960a1f19511954950c6d640070a4f341296ba1c395c683042bc4d0",
+          "bytes": 18160
+        },
+        {
+          "path": "world-diagnostics-day-57.json",
+          "sha256": "f51c689862f9dbba63ceee2bf057613838ea24172e0234e1deba9f25e0c30869",
+          "bytes": 163938
+        },
+        {
+          "path": "query-tape-00072.json",
+          "sha256": "95b3f0a1dda4f26a485f2021ffee7bbc21bd0b7817bb187e6be0e8aea03b90b1",
+          "bytes": 8410437
+        },
+        {
+          "path": "query-tape-00073.json",
+          "sha256": "feb07204f5110e2b9bf9201ecaf82b272be265bf51a2be7828c98ac2e7c7d86e",
+          "bytes": 8409227
+        },
+        {
+          "path": "day-58.json",
+          "sha256": "2ab91768de0eb5c43f8a9bd684719ccecd5dd73515f450bc0b6463b6dbd5eb3b",
+          "bytes": 29175893
+        },
+        {
+          "path": "knowledge-day-58.json",
+          "sha256": "cf3b628cf62b1fe946f8a5467d6a507096eee63330f2dc722f503e9081b8540d",
+          "bytes": 18566
+        },
+        {
+          "path": "world-diagnostics-day-58.json",
+          "sha256": "6f65bef1d69d13d359c848ff01f14a839e272e89732d55106d822e049cbf3a98",
+          "bytes": 163939
+        },
+        {
+          "path": "query-tape-00074.json",
+          "sha256": "29ffffc94aee1a89d3642cb212676ab1cdf70fb1b84295f595ed10ef7efa0e10",
+          "bytes": 8414825
+        },
+        {
+          "path": "day-59.json",
+          "sha256": "c0971314b8d8b35a7d6b25b9dfb7ed892222f5ee22fb7d40b6f08efc4f29223e",
+          "bytes": 29664582
+        },
+        {
+          "path": "knowledge-day-59.json",
+          "sha256": "8151a69a9249fedc25ab9a9bc28ab42ecd23e8ba75be77e2eef36497d6de2877",
+          "bytes": 18566
+        },
+        {
+          "path": "world-diagnostics-day-59.json",
+          "sha256": "486463119c5e922a5ee6eaee6b938ad3961faa2231b4e03b912e5b848c9379d2",
+          "bytes": 163942
+        },
+        {
+          "path": "query-tape-00075.json",
+          "sha256": "846a6a376d9886b44afa0bcbadb7aaf24ee1639072ff641e9927320e1f1f6ef3",
+          "bytes": 8408455
+        },
+        {
+          "path": "day-60.json",
+          "sha256": "32e30e9924b818eaa12e230bd64f18050714263c532606922152564100d44a45",
+          "bytes": 30163897
+        },
+        {
+          "path": "knowledge-day-60.json",
+          "sha256": "38d08c9824b889e782cb903d408cd69336c7907298339eb59150981fb37597bb",
+          "bytes": 19362
+        },
+        {
+          "path": "world-diagnostics-day-60.json",
+          "sha256": "3432eba3d6a7aa0afcce3729f0bc4854e5b51b49f8b183ed443123a6d4765459",
+          "bytes": 164213
+        },
+        {
+          "path": "query-tape-00076.json",
+          "sha256": "220899d3c40f6c869d264f1e6825f496e0e76b263f815783c2dea0cca05eb660",
+          "bytes": 8409717
+        },
+        {
+          "path": "day-61.json",
+          "sha256": "c30d4abe37957d00a23d25c61f14e7a76f1e6ae9492f3d4e56594dc001d00b8e",
+          "bytes": 30682283
+        },
+        {
+          "path": "knowledge-day-61.json",
+          "sha256": "56dc3fd6c52cfc38077b2e5af3157dfd593f3a66c16d10089eddda7c6eb616a8",
+          "bytes": 20175
+        },
+        {
+          "path": "world-diagnostics-day-61.json",
+          "sha256": "616a8508439a311a3a0152cc4f240f753246076de7c44d7e985e7a1020e7ba15",
+          "bytes": 164754
+        },
+        {
+          "path": "query-tape-00077.json",
+          "sha256": "b2f5466e422d698bdf58d74e0608a8d1e97d93887791a9f36af0634de4c3c3f4",
+          "bytes": 8414597
+        },
+        {
+          "path": "query-tape-00078.json",
+          "sha256": "968e9189f03aab670c37079d7c05e0dd8f7e37fc38e335a1fb6f156099e605ab",
+          "bytes": 8405435
+        },
+        {
+          "path": "day-62.json",
+          "sha256": "f5f4042e6027a3180922ab5b12235da125e5b9fe2b33d834f525bcdf23d9e2cb",
+          "bytes": 31184186
+        },
+        {
+          "path": "knowledge-day-62.json",
+          "sha256": "0864c5890f0485a738997f91fd85df4cd353d1627e761f86c263f3d197008363",
+          "bytes": 20175
+        },
+        {
+          "path": "world-diagnostics-day-62.json",
+          "sha256": "aa5a3d2af5cc31b57ee973dae19af7b494153b116c30044515e857ffd8ac86ef",
+          "bytes": 165305
+        },
+        {
+          "path": "query-tape-00079.json",
+          "sha256": "0671aeaf29e0d567d18ddb4f1153ddcd522490ed3555aadc3154efcd926b8644",
+          "bytes": 8413555
+        },
+        {
+          "path": "day-63.json",
+          "sha256": "65093707984f4ed583a649c58b14ada587294f88e5251b2d89f8f272f9079a47",
+          "bytes": 31666690
+        },
+        {
+          "path": "knowledge-day-63.json",
+          "sha256": "3601954aefca4094bb893f82b57906e3b0c67ea6ec17aed671ccbcc487d48fdf",
+          "bytes": 20994
+        },
+        {
+          "path": "world-diagnostics-day-63.json",
+          "sha256": "2489f296e59fea6663d310877c0bb4c478e618dbaadee24793c5f5c7d1009972",
+          "bytes": 165574
+        },
+        {
+          "path": "query-tape-00080.json",
+          "sha256": "fbdce563ad5d4e0f00b08388c2d7c39746c960a80dc767d0657581f079666f3d",
+          "bytes": 8410255
+        },
+        {
+          "path": "day-64.json",
+          "sha256": "5415bc0b6b1911ead6f798c8af40a12e381e8d2f70fb3631e54870f146e1e1c0",
+          "bytes": 32145112
+        },
+        {
+          "path": "knowledge-day-64.json",
+          "sha256": "d0c1ef4df404c6bc485de11d516e315a50bc0ff6539972cabe1ff01dd68238f4",
+          "bytes": 20994
+        },
+        {
+          "path": "world-diagnostics-day-64.json",
+          "sha256": "b48e90cefbd9c1a83f1fe554de8bf048f4e2f4d34fcef2fd41425a12d1090cfc",
+          "bytes": 166122
+        },
+        {
+          "path": "query-tape-00081.json",
+          "sha256": "68da41ac08c38f5e060567154d3240979722c0a397a9d5ef4eb626653cdab1dd",
+          "bytes": 8406679
+        },
+        {
+          "path": "query-tape-00082.json",
+          "sha256": "7f3af982fcf0f9ee02e39130edb4136a8ad74c249f393f182c123ab8d4261d7c",
+          "bytes": 8411461
+        },
+        {
+          "path": "day-65.json",
+          "sha256": "4f7f5db3efe1450f0a32b3091249c0477158ef05c29799db8b30175f41ded6d8",
+          "bytes": 32636148
+        },
+        {
+          "path": "knowledge-day-65.json",
+          "sha256": "99d1cadff328ff5f76bcd5f6ed28c5690b2a1cecc2236ed66976f7be06b9f4b4",
+          "bytes": 21396
+        },
+        {
+          "path": "world-diagnostics-day-65.json",
+          "sha256": "4e60aa8b195384d939219c325ab3dfb48bf56e84e5fc614442258726c963d898",
+          "bytes": 166410
+        },
+        {
+          "path": "query-tape-00083.json",
+          "sha256": "ab4b86ff4a06806981c9be9b14797b2092fca2f0abd9a83f88b30aef1428f71f",
+          "bytes": 8413945
+        },
+        {
+          "path": "day-66.json",
+          "sha256": "50873571908ce0fde96b1047912e5aeb0b4bf7d336881fa4a89d7803023d8ce5",
+          "bytes": 33096051
+        },
+        {
+          "path": "knowledge-day-66.json",
+          "sha256": "2e6581d9195445a3ef1569b71724130047463d24554d7c524b59de038deb33ec",
+          "bytes": 21396
+        },
+        {
+          "path": "world-diagnostics-day-66.json",
+          "sha256": "fd12151eb7eaf1251d8b46a89e985642940b374e8a6415dca1c5c890d7ef9a5b",
+          "bytes": 166672
+        },
+        {
+          "path": "query-tape-00084.json",
+          "sha256": "0c4300656d835af8a3819b68ba1de0cf8448f133460f12068ad8a686e8475fd3",
+          "bytes": 8409401
+        },
+        {
+          "path": "day-67.json",
+          "sha256": "c74cdf8fc9a9fc248b14d27f2d5f3d0c67f40e8edd2a6276f9e9da30ece8f2e5",
+          "bytes": 33586765
+        },
+        {
+          "path": "knowledge-day-67.json",
+          "sha256": "b5c3bd02cf5e8af453c1146c2969853a2f98f2c293b45fb53cceb820a395b4e7",
+          "bytes": 22592
+        },
+        {
+          "path": "world-diagnostics-day-67.json",
+          "sha256": "8df68e48271bad6a7cb7e9de1795157fb61bf91c0fcebf7a35ed9c12489f46d8",
+          "bytes": 166949
+        },
+        {
+          "path": "query-tape-00085.json",
+          "sha256": "ea45f66706d564e56c998e1f11f9e0be96e085ca9b24cf7a365c335750922cf1",
+          "bytes": 8415103
+        },
+        {
+          "path": "day-68.json",
+          "sha256": "5d86b6f7ff2d08cab7d0dd4aea8bff0e2fdf4c1b9768a07bff4d1f6dc0c7d555",
+          "bytes": 34056761
+        },
+        {
+          "path": "knowledge-day-68.json",
+          "sha256": "92474d8d743746ef21a2b61c3fce1b6c0bc9aee411583d1bdeaa3cd3d730f0b3",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-68.json",
+          "sha256": "cef3d833cc399a9e52f4573a608320b75c77cb7e55a3501d4b76428fe0945eaf",
+          "bytes": 167489
+        },
+        {
+          "path": "query-tape-00086.json",
+          "sha256": "9b9f62b1fe4064f9c9ca8049945f6c35d2339b6ca0546916254fcceed1f39631",
+          "bytes": 8406935
+        },
+        {
+          "path": "query-tape-00087.json",
+          "sha256": "cb23762802e03671157bf509526cd713ad8eaa1f9d641085cf7452d2069035be",
+          "bytes": 8410181
+        },
+        {
+          "path": "day-69.json",
+          "sha256": "781da4c2c5d3ba64ea26ebecbfb86129f94bb4f010a78e28099e7d451eb49884",
+          "bytes": 34558474
+        },
+        {
+          "path": "knowledge-day-69.json",
+          "sha256": "e7d9dc810adf98c9ef7771d63620ba142e9eae17f252baecd9ee87776d43fc0c",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-69.json",
+          "sha256": "afeef8ffe5d34ad89e8732fb72640b81fa8dd255d6ffd0e5445c847e707d3ce0",
+          "bytes": 167498
+        },
+        {
+          "path": "query-tape-00088.json",
+          "sha256": "bdd473bb184cd72f579daaf255bbf9152476811c41890f5c8b789c6a8ddf61cb",
+          "bytes": 8408571
+        },
+        {
+          "path": "day-70.json",
+          "sha256": "914bb138528025b89b282236d977e6548538eaa700d935e1773a0e633b0afaa2",
+          "bytes": 35058520
+        },
+        {
+          "path": "knowledge-day-70.json",
+          "sha256": "cb08fa0df6d4a7ffca1c2cc3e5b83b8bb78f1061741f9c4e9248d26d3d968528",
+          "bytes": 22993
+        },
+        {
+          "path": "world-diagnostics-day-70.json",
+          "sha256": "1e668a35c16a1be19a4550e131f47261e9eb96b35c78d3c1dff32ff83a7943ff",
+          "bytes": 167497
+        },
+        {
+          "path": "query-tape-00089.json",
+          "sha256": "839bf4af7913457863f135b0ae9afa9a1e01745a89e9c19eca6864d2113170c9",
+          "bytes": 8407103
+        },
+        {
+          "path": "day-71.json",
+          "sha256": "b9ebe3c856d682b670dc4eb8ebff34d59ca3b0f88407cbd23d876839604ff522",
+          "bytes": 35533532
+        },
+        {
+          "path": "knowledge-day-71.json",
+          "sha256": "d73a414f2d6b7fb0015a8979930b2132d19570fc543ff4373b6ea9339ffa8428",
+          "bytes": 23389
+        },
+        {
+          "path": "world-diagnostics-day-71.json",
+          "sha256": "20159eed9b581870ae322b2c1a4bd7d5a9e1028e89b0f625aadc61e3f24e13de",
+          "bytes": 167502
+        },
+        {
+          "path": "query-tape-00090.json",
+          "sha256": "9c5ac8abe7537726caf52a15ab2c86a578618ac8bd4c10b5d1bff89904b9c224",
+          "bytes": 8417941
+        },
+        {
+          "path": "day-72.json",
+          "sha256": "34ef9dc683c4965eec28a10ece3e2f1503951c0024cbfb88511d8144257e297e",
+          "bytes": 36030152
+        },
+        {
+          "path": "knowledge-day-72.json",
+          "sha256": "80d49a1cd86af9ded19ccde926ff133f28cc89fbc8b3289412447bd3986eebc0",
+          "bytes": 23790
+        },
+        {
+          "path": "world-diagnostics-day-72.json",
+          "sha256": "bc164be1f03c6b8ea5eb4f5234ff7413afcbb11937a226252f2e5fe0ba28b106",
+          "bytes": 167783
+        },
+        {
+          "path": "query-tape-00091.json",
+          "sha256": "b9ca40ad17465dfdee10f2776db1eb76ef6b980ab60c5cd467c6e10f60d57ff4",
+          "bytes": 8410121
+        },
+        {
+          "path": "query-tape-00092.json",
+          "sha256": "2f96264f27dfab458f7f17afaf5251d2a60dcdc68f028bd397307e8a97931a0f",
+          "bytes": 8406153
+        },
+        {
+          "path": "day-73.json",
+          "sha256": "6f24507964c3d45b201b811bed129b7e236a138b5f384e3dc1d0dad527351544",
+          "bytes": 36452738
+        },
+        {
+          "path": "knowledge-day-73.json",
+          "sha256": "75732259cd68721740289ed40dd63e5832af2761a3ab68d3cb88c5a492a1598e",
+          "bytes": 23790
+        },
+        {
+          "path": "world-diagnostics-day-73.json",
+          "sha256": "00b563edc7b008a4af4c2f7bde22246650fbc97c176cb2fab96a3e4b24566e03",
+          "bytes": 168056
+        },
+        {
+          "path": "query-tape-00093.json",
+          "sha256": "fb077d0afb95468b845f8f1650b59a8ea8028e44cd9cad099a07418841ee9d72",
+          "bytes": 8414973
+        },
+        {
+          "path": "day-74.json",
+          "sha256": "5f34a508d29579eb143cf247bf5f706a6a92d774c6f219b1e4792a3cc4df5b8e",
+          "bytes": 36953113
+        },
+        {
+          "path": "knowledge-day-74.json",
+          "sha256": "502ed1a88361856881a72d9840660bce9529c50541f6a54b90a597d73458f6b8",
+          "bytes": 24593
+        },
+        {
+          "path": "world-diagnostics-day-74.json",
+          "sha256": "549a48830ee4d946ae6a027dbfdd26b9dffb7ee02b49c923648513187caeaece",
+          "bytes": 169137
+        },
+        {
+          "path": "query-tape-00094.json",
+          "sha256": "5a745de3c852736f8504bc3ce73f99bda4b8d64bfb3c6d3b424e4c00f26a0b2e",
+          "bytes": 8413357
+        },
+        {
+          "path": "day-75.json",
+          "sha256": "c789dee06b282de15b9e467494efb14d302849afece96cef1481fd5465f06827",
+          "bytes": 37439572
+        },
+        {
+          "path": "knowledge-day-75.json",
+          "sha256": "4789bdd0cac7a1fbdbe439ca4b88466040fb5a89328ff943f162324dc59f320f",
+          "bytes": 25395
+        },
+        {
+          "path": "world-diagnostics-day-75.json",
+          "sha256": "6ca2842beb6fdb0f8ccf8d6e24d4ecccc2e9eeda60612790caef63f9514306e7",
+          "bytes": 169142
+        },
+        {
+          "path": "query-tape-00095.json",
+          "sha256": "07bfcb7eca21cbbefcf81e319eb8dc44a7c12e0f1440b8dd29d6d3d1ce9dbeb7",
+          "bytes": 8408779
+        },
+        {
+          "path": "day-76.json",
+          "sha256": "42cda8a4c4c4150e7a17757de375934c428e7255d3d5762d9524ccea48678ab9",
+          "bytes": 37818974
+        },
+        {
+          "path": "knowledge-day-76.json",
+          "sha256": "018e3633c0f959fb1e9fb51ba88e7ee963722ccd5ac587b304ff812e4456d6c5",
+          "bytes": 25395
+        },
+        {
+          "path": "world-diagnostics-day-76.json",
+          "sha256": "9332cf4f8b3a7bfb8574e0d0b2dc6140071f9eef7d8758669b1dc142b41e04c6",
+          "bytes": 169142
+        },
+        {
+          "path": "query-tape-00096.json",
+          "sha256": "59cd3c905058ced826e2bdd47f0e4ebae4b215342b052a6d5a87748f8b710ca8",
+          "bytes": 8413269
+        },
+        {
+          "path": "query-tape-00097.json",
+          "sha256": "b669a8e812a0ee21a942e4b9274aee3d32533da2ad70e032c3c21d65c2588e3d",
+          "bytes": 8410309
+        },
+        {
+          "path": "day-77.json",
+          "sha256": "4f2289f58dbfb08f9f84e16ea95506ecb9284d5b8ce522cb9cff73bec8c51b0f",
+          "bytes": 38316090
+        },
+        {
+          "path": "knowledge-day-77.json",
+          "sha256": "746507552145a9fbe9b92ffdb1a7c61db3701a6cf0006b3e7d499c575b0095fb",
+          "bytes": 26593
+        },
+        {
+          "path": "world-diagnostics-day-77.json",
+          "sha256": "ab1825bc92c07cf59e8435f4433c219fef496bfd6f79f02bf1942e93d3a7018d",
+          "bytes": 169145
+        },
+        {
+          "path": "query-tape-00098.json",
+          "sha256": "b354abfd686b92f52887c063e2d60a34ce42dfa52a15faa221c84cd9130ca0dc",
+          "bytes": 8410263
+        },
+        {
+          "path": "day-78.json",
+          "sha256": "ac6d60c168cbcb31f99362a680de6b07e43d85565f1578155a444264ef69a693",
+          "bytes": 38771627
+        },
+        {
+          "path": "knowledge-day-78.json",
+          "sha256": "68b4ef0bcfb0de11543899a04dfeb13ff7fc67a8ce0de919dc962ef544c09e53",
+          "bytes": 26593
+        },
+        {
+          "path": "world-diagnostics-day-78.json",
+          "sha256": "ba0baaf9f8a4ec41384040b6401afdfa43de92c619a7a4fc7e486a52ee8a68ee",
+          "bytes": 169427
+        },
+        {
+          "path": "query-tape-00099.json",
+          "sha256": "df03fccd8d9df6bb28a54f670083be51f828a62f2f7d6eab5750edebfd6c59f4",
+          "bytes": 8412129
+        },
+        {
+          "path": "day-79.json",
+          "sha256": "f7c5ca1540fd0afc6c08ef0189eb29603dffa430a9dd90bbc1063c02281c88df",
+          "bytes": 39289394
+        },
+        {
+          "path": "knowledge-day-79.json",
+          "sha256": "3b6c43adfc6ff75f5fac779656f529675a02970c655d3cc1b93264b2fe50615a",
+          "bytes": 26994
+        },
+        {
+          "path": "world-diagnostics-day-79.json",
+          "sha256": "6583fb522f6731fd5b9e740eece8ea691982800502c1a1382c9a9f57794b7731",
+          "bytes": 169702
+        },
+        {
+          "path": "query-tape-00100.json",
+          "sha256": "dafcf38d4c4379e8e6b3958411e494e3b21e5a2f74d5dba35d09370dbf06f6fd",
+          "bytes": 8408795
+        },
+        {
+          "path": "day-80.json",
+          "sha256": "2d3595e3521a71ebade9ef6227d5e29eedc2f1332ff60d3ffc841dfcce34704f",
+          "bytes": 39685464
+        },
+        {
+          "path": "knowledge-day-80.json",
+          "sha256": "cc0a209d71981bcdf5d50fb05115828bc78c93d8085072abb1a21416354f0582",
+          "bytes": 27390
+        },
+        {
+          "path": "world-diagnostics-day-80.json",
+          "sha256": "dfced4ed99d97deb6b34006c352a662f0fbe27b0f601ae1a3db2dd293a2126ee",
+          "bytes": 169970
+        },
+        {
+          "path": "query-tape-00101.json",
+          "sha256": "12db3e2503719ac60c0d0747bab1172895163f4db36a7607bc86fdf6fae37be6",
+          "bytes": 8411225
+        },
+        {
+          "path": "query-tape-00102.json",
+          "sha256": "7f2a4d93e0bd3fb3d5e8e20c7b281cbd914092e1d9b06458aa7eb7b9ad3d2b12",
+          "bytes": 8410099
+        },
+        {
+          "path": "day-81.json",
+          "sha256": "040689932c5ffdd2cb61fc8278de76743f16ca6ab03147bad84ee5819b1ac780",
+          "bytes": 40200063
+        },
+        {
+          "path": "knowledge-day-81.json",
+          "sha256": "872a1335f64273dcfa5e6d0c90273862e26fe102507215cb86c15faef3ab47f1",
+          "bytes": 27791
+        },
+        {
+          "path": "world-diagnostics-day-81.json",
+          "sha256": "e122e62865eac9c382ce2cf26d99f0fa04fe0ac4541792d366b68ac164775226",
+          "bytes": 169979
+        },
+        {
+          "path": "query-tape-00103.json",
+          "sha256": "531dd566a31be8cee78738ad6e994c120e4b9a4255f9a40fa1b281527f526a1e",
+          "bytes": 8416241
+        },
+        {
+          "path": "day-82.json",
+          "sha256": "b39293fc3d57be5c8dfdebc91374ff7d99f1ed3de9c71bf7a19881c4feb44d7a",
+          "bytes": 40699839
+        },
+        {
+          "path": "knowledge-day-82.json",
+          "sha256": "66752b004b3656818998e17a7d38f8c419e688547f160bf051b7445e11a7aa30",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-82.json",
+          "sha256": "bde3372421b28bf5aaf3d6b501bf928561c8bcc8949252ff078961e3357520f9",
+          "bytes": 169976
+        },
+        {
+          "path": "query-tape-00104.json",
+          "sha256": "1ad15a9c848b25058a6d0226511f3bf72df67f608f5b8963656a6f56c7d3ea60",
+          "bytes": 8409675
+        },
+        {
+          "path": "day-83.json",
+          "sha256": "794bf746a1442c2a5a6b5134b460cffd3d15778b42c3ec5b8c4cb3069d737e14",
+          "bytes": 41186493
+        },
+        {
+          "path": "knowledge-day-83.json",
+          "sha256": "c8f9539df48041ce64a9c3b71e2cec37bfe036ea1555097624099de0a5d8d7d1",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-83.json",
+          "sha256": "b985fb0bb4e71c4e16c7ecfb4c19dc6c36d100395f44617dd520307266d91e0a",
+          "bytes": 169976
+        },
+        {
+          "path": "query-tape-00105.json",
+          "sha256": "5d1215ee356e32e13b46b7f345e01488fb9b48c5bc98e6d51eb8c2a1ceebb821",
+          "bytes": 8409517
+        },
+        {
+          "path": "query-tape-00106.json",
+          "sha256": "08cab65ed6dd6f1a065ca2867e729221eb3eabc5ddd2ae3a4e70a2eda20401da",
+          "bytes": 8409225
+        },
+        {
+          "path": "day-84.json",
+          "sha256": "89815be2da61c8c0a4c674525a572d73e6ff026edce53e5693eb1c61f1cde21a",
+          "bytes": 41587148
+        },
+        {
+          "path": "knowledge-day-84.json",
+          "sha256": "ff6d4e4192eb7dcbfc6dbbd654aa7083496a89d63626c425a5833d41c0ad50ee",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-84.json",
+          "sha256": "718549cba7941f5861708dcf94865edc3d624dcab747be0cfb9ea93a28e95193",
+          "bytes": 170520
+        },
+        {
+          "path": "query-tape-00107.json",
+          "sha256": "300ca746bf9ea6e168656c764b57265e945d641476dbdc8efdb9d5ad3190f467",
+          "bytes": 8453026
+        },
+        {
+          "path": "day-85.json",
+          "sha256": "0da97ff85c6a2ceb7b1d7ae14953dde242c270861c49137dfc6a045af342e4e7",
+          "bytes": 41996857
+        },
+        {
+          "path": "knowledge-day-85.json",
+          "sha256": "09fbc5a71a9bd98306a815855ecf8e98c5a0efa39a1a8e6e472da02e92e39890",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-85.json",
+          "sha256": "522fe9cb3cafad516bb86d34a5cc04bbfb6714c9e135747912d29f0b3558c5f1",
+          "bytes": 170527
+        },
+        {
+          "path": "query-tape-00108.json",
+          "sha256": "339f42b4cbd81ea99dbec2a810e79fefbbeb23a1e5206655446fdf400eec3e3d",
+          "bytes": 8412885
+        },
+        {
+          "path": "day-86.json",
+          "sha256": "05a1d2f54ff7a16fd1b8d4de23190941aedb64bc61cc67f0d1093fbf4f29bede",
+          "bytes": 42386570
+        },
+        {
+          "path": "knowledge-day-86.json",
+          "sha256": "088e3d03c06a45f76faf9639544406a61d4629dd85488aa5549309a78b653487",
+          "bytes": 28991
+        },
+        {
+          "path": "world-diagnostics-day-86.json",
+          "sha256": "0ff11c89e23e79946f218f188e494a4842011eabcc1d31aba2e31726943dd6fa",
+          "bytes": 170521
+        },
+        {
+          "path": "query-tape-00109.json",
+          "sha256": "94763975e187a81b6a520f493654f2ec2a9ac54dfb415d716ae5fd8e932dcdbc",
+          "bytes": 8410733
+        },
+        {
+          "path": "day-87.json",
+          "sha256": "175328cdcf43ba46fae2908c6e03a219a20889555210a4de7e5a59a9a08ce9b9",
+          "bytes": 42837833
+        },
+        {
+          "path": "knowledge-day-87.json",
+          "sha256": "e2dc29edde35ef646e5bc848bd32ce6cf2a3443d292e9a59ee8b0e3abc6f482a",
+          "bytes": 29393
+        },
+        {
+          "path": "world-diagnostics-day-87.json",
+          "sha256": "7575a31dfe9480aaacea1b09b96264f4ee2b4a6b3328dfc2cae41c46977f7cce",
+          "bytes": 171064
+        },
+        {
+          "path": "query-tape-00110.json",
+          "sha256": "74274573ee0102c30d8a3ad223298273366b3dd619edd097bcfdd3a260725906",
+          "bytes": 8410655
+        },
+        {
+          "path": "query-tape-00111.json",
+          "sha256": "b221164ebc2199cd7d52987f12a2b136de91c6d00a036daf0c226bab373cd559",
+          "bytes": 8405361
+        },
+        {
+          "path": "day-88.json",
+          "sha256": "c464edcc877985cafa35bee7c8bec8eb38d0563e90ed7cc5c39a449cac20a590",
+          "bytes": 43306772
+        },
+        {
+          "path": "knowledge-day-88.json",
+          "sha256": "d4e302d05b14ddb2d77ea5701892f24699aeacbdb0219281eebab1b75c3e96da",
+          "bytes": 29393
+        },
+        {
+          "path": "world-diagnostics-day-88.json",
+          "sha256": "2e1ad590792ce58c45f16683386daad5e699cdef35378961223e10cedc53a6d1",
+          "bytes": 171065
+        },
+        {
+          "path": "query-tape-00112.json",
+          "sha256": "fdb2db4d5fc51a69c0ab8bb53ea37761dacff85088e3933445a0732a3f3a6968",
+          "bytes": 8410763
+        },
+        {
+          "path": "day-89.json",
+          "sha256": "5544500fd17272b730d8e8d5c308457d7486207bbedcd7608fa16be4c03d05bc",
+          "bytes": 43692557
+        },
+        {
+          "path": "knowledge-day-89.json",
+          "sha256": "cee7aa003c2b1bed596a65e32c77dbcc009faf413e7fd4edbf19000b11839244",
+          "bytes": 30203
+        },
+        {
+          "path": "world-diagnostics-day-89.json",
+          "sha256": "237b8f546f740d9c240cdc7d436ec951de2d73dab1b572ddfc1a7c8202414699",
+          "bytes": 171069
+        },
+        {
+          "path": "query-tape-00113.json",
+          "sha256": "dd9ff31a529410557507683249e742c9cc4cd5846ec624e157d7e70ffcadfae8",
+          "bytes": 8409119
+        },
+        {
+          "path": "final.json",
+          "sha256": "4aeefc89963b7eb5e0ce28a43a4d868678e30d57f743bf97c1bc188f76445017",
+          "bytes": 43914827
+        },
+        {
+          "path": "final.dump",
+          "sha256": "ccba6cbc7bdfa1bfd00eb208010c812c2113ff34add8bfc96ce4fea509367f2a",
+          "bytes": 4280107
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "f3f9525bc491263b90b787278552743640ede125e41d17b6f74fc58daaab568b",
+          "bytes": 736
+        },
+        {
+          "path": "knowledge-final.json",
+          "sha256": "3f0565b469611480c46bd2467b3be4147db2159e11e68a711571cfc982483e05",
+          "bytes": 30202
+        },
+        {
+          "path": "world-diagnostics-final.json",
+          "sha256": "4c55a36a1ca0ad83df39c2a7f9492e47fa67df16f4aea7d2dcd9c4b39799f8d0",
+          "bytes": 171069
+        },
+        {
+          "path": "worker-schedule.json",
+          "sha256": "947091d74333eadb332de99ad6b63b8618bea4e368ed646674f397a8f6ac41ec",
+          "bytes": 134816902
+        },
+        {
+          "path": "query-tape-00114.json",
+          "sha256": "2d4231e65bc12cb4160db6a112c11f7c5e3cb69baf53a93ed6049742b8b24f99",
+          "bytes": 5310883
+        },
+        {
+          "path": "query-order.json",
+          "sha256": "dc74b15aadf257c1f4640be20bef17c05e19ab9e4d84bd730673672161633480",
+          "bytes": 145581
+        },
+        {
+          "path": "random-tape.json",
+          "sha256": "5606b92e73a938fae73c6335faba6092a004e9a51d4a1e5f851554bf26e0618e",
+          "bytes": 18456280
+        },
+        {
+          "path": "actor-tape.json",
+          "sha256": "6063d56ea1bdb43121ebe8193726744b8c24472eb0b404423da2a5db24ef61db",
+          "bytes": 2117971
+        },
+        {
+          "path": "actor-policy-final.json",
+          "sha256": "84d5d4db5b8ccfbace7e0fc5b21444716e70a27c2bd303fbd8c299d7d691651b",
+          "bytes": 340895
+        },
+        {
+          "path": "knowledge-boundaries.json",
+          "sha256": "174b39518c680a48d75c12cdd0d48ee73cc38d178957a8033a2cfa431dd33177",
+          "bytes": 30932
+        },
+        {
+          "path": "player-metrics.json",
+          "sha256": "c82d614e064b191df1acff0bf4611656c4b731319b2f1df649f6d0c3a5d0d8b4",
+          "bytes": 149775
+        },
+        {
+          "path": "operational-guardrails.json",
+          "sha256": "14c6ee70512f08dfa77b8184e1911ebf3f14044b6150e4b81b5f86238791d96c",
+          "bytes": 186
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "6b31d2f305dbe815c56eadd5be8e255e91e75f0860a7200f2ac4df9d5aad19c9",
+          "bytes": 75999302
+        }
+      ]
+    }
+  ]
+}

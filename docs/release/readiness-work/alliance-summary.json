@@ -1,0 +1,108 @@
+{
+  "format": 1,
+  "source": {
+    "revision": "f548cf70590f7175932184e63a403d0495a0c59f",
+    "gitTree": "f591a8d468da171da2cf2a997afea9924c4d5eb5",
+    "checkoutSha256": "494c3b9e73dc53339a7d49691eb9c4ecc3e95618a43f6e07be72fd26eb4bf7e7",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "configurationSha256": "52bdf89868178915e97a9524c4bb496b4352fc9df84d25f7c5c26dfc67d5129a",
+  "startedAt": "2026-09-21T08:21:42.327Z",
+  "endedAt": "2026-09-21T08:22:11.698Z",
+  "runSha256": "b5c2d241dfc0341e95c45efbb6faa8ecbd627299d9759f87e7f56d92ebb562ba",
+  "artifactsVerified": 321,
+  "result": {
+    "status": "PASS_SCOPED",
+    "actualFamilies": 3,
+    "actualPacts": 3,
+    "ordinaryEntrants": 4,
+    "initialRespectFixtures": 3,
+    "otherDirectGameplayFixtureWrites": 0,
+    "independentContributors": 3,
+    "explicitFreshAccountGrants": 5,
+    "revocations": 1,
+    "authorizedConclusions": 3,
+    "permissionControls": 10,
+    "exactReplays": 5,
+    "conclusionRewards": 0,
+    "invariantChecks": 55,
+    "invariantBoundaries": 59,
+    "resourceBoundaries": 121,
+    "resourceChecks": 1646,
+    "custodyBoundaries": 106,
+    "familyChecks": 636,
+    "unsupportedResourceClassifications": 6,
+    "observedLogicalSeconds": 0,
+    "recurringWorkerCallbacks": 0,
+    "finalStateSha256": "9a7174d139f7fb8c812b430c529403ced45b70caaa0ac5545584390b94e50cd5",
+    "qualifyingFullResourcePass": false,
+    "matrixQualifying": false,
+    "exclusions": [
+      "Cross-Family operation execution (unsupported authority)",
+      "anti-hegemon warfare/coalitions",
+      "cash/item operation contributions",
+      "pact expiry/break/honor loss",
+      "OMR reserve lineage",
+      "full resource taxonomy",
+      "fresh-world replay",
+      "25 actors/90 days/three seeds/225-run matrix",
+      "deployed people and production"
+    ]
+  },
+  "policies": [
+    {
+      "choices": 12,
+      "waits": 1,
+      "fresh": 11,
+      "denied": 1,
+      "knownReplays": 2,
+      "unresolvedReplays": 0,
+      "byType": {
+        "pact.propose": 1,
+        "pact.accept": 1,
+        "coordination.create": 1,
+        "coordination.act": 5,
+        "knowledge.share": 1,
+        "knowledge.archive": 1,
+        "knowledge.link": 1
+      },
+      "matrixQualifying": false
+    },
+    {
+      "choices": 13,
+      "waits": 0,
+      "fresh": 13,
+      "denied": 0,
+      "knownReplays": 2,
+      "unresolvedReplays": 0,
+      "byType": {
+        "pact.accept": 1,
+        "pact.propose": 1,
+        "travel": 1,
+        "coordination.create": 1,
+        "coordination.act": 5,
+        "knowledge.share": 3,
+        "knowledge.revoke": 1
+      },
+      "matrixQualifying": false
+    },
+    {
+      "choices": 9,
+      "waits": 1,
+      "fresh": 9,
+      "denied": 0,
+      "knownReplays": 1,
+      "unresolvedReplays": 0,
+      "byType": {
+        "pact.accept": 1,
+        "pact.propose": 1,
+        "coordination.create": 1,
+        "coordination.act": 5,
+        "knowledge.share": 1
+      },
+      "matrixQualifying": false
+    }
+  ],
+  "scope": "Independent source component; fresh integrated-source retest required"
+}

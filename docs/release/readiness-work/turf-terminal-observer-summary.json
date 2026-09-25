@@ -1,0 +1,128 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "scope": "Shared observer single live-unchartered Family turf terminal",
+  "source": {
+    "revision": "dff63152db046714f718a6ddc2ed530fc3c6f425",
+    "gitTree": "4933a2f785d1940c37383661b4802b38aec4d4d0",
+    "checkoutSha256": "ca42f34a70d94cba2cde646b8582236eec30289e789956cb1969b05bb8636d3c",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "integrationCommits": [
+    "a4bc613b273eae052a1897e5edf73ecac937fa6a",
+    "c1e268727db42e8b3d0510033ec38e606884c5c9",
+    "dff63152db046714f718a6ddc2ed530fc3c6f425"
+  ],
+  "native": {
+    "boundaries": 120,
+    "parityChecks": 2171,
+    "independentTurfBoundaries": 100,
+    "independentTurfChecks": 378,
+    "terminalOwners": 3,
+    "terminals": 1,
+    "negativeControls": 20,
+    "canonicalInvariantBoundaries": 104,
+    "canonicalInvariantChecksPerCheckpoint": 55,
+    "originalContestSeconds": 900,
+    "originalLogicalSeconds": 10800,
+    "originalTimerCounts": {
+      "directorTick": 36,
+      "guardedTick": 3,
+      "guardedSeasonTick": 3,
+      "health-boundary": 36
+    },
+    "originalBootResolved": 0,
+    "originalHourlyResults": [
+      0,
+      1,
+      0
+    ],
+    "nonzeroDispositions": {
+      "winnerFullBurn": 1,
+      "loserRefundAndBurn": 2,
+      "oddUnitLoserFloor": 1
+    },
+    "lateAtomicRollback": true,
+    "originalNextSweepRetry": true,
+    "exactReplays": 2,
+    "unauthorizedOutsiderDenials": 1,
+    "inputBindings": "All successful claims retain completed HTTP and durable account/key/body-hash/response; invocation/completion order and bounded concurrent batch, no invented commit order",
+    "sourceAndArtifactVerified": true,
+    "databaseCleanupVerified": true,
+    "scopeUnknownsRetained": {
+      "receipt-reason:turf:seize:cathedral": 1,
+      "observed-table-change:districts": 2,
+      "family-lineage:": 2,
+      "receipt-reason:turf:claim": 3,
+      "observed-table-change:district_bids": 1
+    }
+  },
+  "regression": {
+    "source": "a4bc613b273eae052a1897e5edf73ecac937fa6a",
+    "outcome": "SCOPED_PASS",
+    "sourceImmutable": true,
+    "identicalSharedObserverBytes": true,
+    "canonicalBoundaries": 11,
+    "parityChecks": 77,
+    "observedTables": 58,
+    "exactBatchSequentialHashEquality": true,
+    "committedUnexplainedCashRejected": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+    "reportSha256": "13793903bb13fa53ba138e2030cc734a61bdf303f2602c8d36d9885740d9ac99",
+    "databaseRetention": "Existing generic observer test retains its isolated corruption database"
+  },
+  "failures": [
+    {
+      "findingId": "TOOL44",
+      "source": "a4bc613b273eae052a1897e5edf73ecac937fa6a",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n3 !== 2\n",
+      "completedBoundaries": 120,
+      "completedTerminals": 1,
+      "manifestSha256": "d387c37674e42b0a9db34fe8ec8f50d69c83cd6f2b18dda0e726cbfea721086b",
+      "historySha256": "7373724e06337ea840b7e5a0be6d41051e54e3dd88234304f7c907b093a67236",
+      "rollbackSha256": "34f1a8c3e6c2f4fdca52fb78ebe86697d8ff46264a3d58a3a65a98b257ffdee8",
+      "fullFailedGateRemainsFailed": true
+    },
+    {
+      "findingId": "TOOL44",
+      "source": "c1e268727db42e8b3d0510033ec38e606884c5c9",
+      "status": "FAIL",
+      "message": "Native odd-unit loser rounding must actually execute",
+      "completedBoundaries": 120,
+      "completedTerminals": 1,
+      "manifestSha256": "7a0c3a7bc9b2acebfdf5405758a8129fc3f47aa39c4581b1eb7229d0da6e720f",
+      "historySha256": "7d6ea9cc37bcfacd245c2da5ed74e7941ec78aee9622298cb67dc0250c4dc3a8",
+      "rollbackSha256": "ada300cb30e636dab6d144a881d64a23395ef1b4f6ede1668059de684ebc78b5",
+      "fullFailedGateRemainsFailed": true
+    }
+  ],
+  "verifiedEvidence": {
+    "artifactFiles": 1129,
+    "historyChains": 3,
+    "passingManifestSha256": "1746eefe2cac35c014b994467e37d8490f4c4d1f95544176dab797a0611c883b",
+    "passingHistorySha256": "2c76b247fb8a218616c6bc9540cfe0dbf9067915a44e1cfb77b908f987114d3c"
+  },
+  "open": [
+    "C02-FAMILY-TREASURY remains OPEN",
+    "Shared stake/raise/seize and other observed district changes remain unsupported",
+    "Unowned/dissolved incumbent, dissolved bidder, charter modifiers, multiple/reopened contests and native incumbent tie remain unexecuted here",
+    "Receipts carry Family counterparty but no district ID; no general cross-contest lineage inferred",
+    "Territory rackets, sovereignty structures/cooldowns and war spoils are outside observed terminal resource subset",
+    "No NPC Family closure, natural progression, provider/backing/deployment or full matrix qualification"
+  ],
+  "reruns": [
+    "Integrated clean-source native turf-terminal and retained-input verifier",
+    "Integrated generic shared observer and Family controls",
+    "Original-worker world observation/replay and affected release gates"
+  ],
+  "owner": "Codex/resource_proof; root owns integrated gates",
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false,
+    "rawRequests": false
+  }
+}

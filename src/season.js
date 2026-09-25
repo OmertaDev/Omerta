@@ -123,18 +123,27 @@ export async function recordReckoning(pool, season) {
   // It is also the more correct shape: the crown is bumped from the STORED record rather than from
   // this call's freshly-computed standings, so a retry that runs after the board has shifted still
   // crowns whoever is ON the record. The record and the crown can never disagree.
-  const claim = (await pool.query(
-    `UPDATE season_records SET crowned = true WHERE season=$1 AND NOT crowned
-     RETURNING champion_account, champion_name, champion_standing, family_name, family_districts`, [season])).rows[0];
-  if (!claim) return null;   // already closed — a retry, not a second season
+  // Keep the chosen standings durable before applying the crown. Claim, account
+  // legend and notification must commit together: a failed write must leave an
+  // uncrowned record that the original worker can retry after character conversion.
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const claim = (await client.query(
+      `UPDATE season_records SET crowned = true WHERE season=$1 AND NOT crowned
+       RETURNING champion_account, champion_name, champion_standing, family_name, family_districts`, [season])).rows[0];
+    if (!claim) { await client.query('COMMIT'); return null; }
 
-  // THE CROWN — a lifetime legend on the champion's bloodline (survives death, the duel_titles
-  // precedent).
-  if (claim.champion_account) {
-    await pool.query('UPDATE account_persistent SET season_crowns = season_crowns + 1 WHERE account_id=$1', [claim.champion_account]);
-    const liv = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive LIMIT 1', [claim.champion_account])).rows[0];
-    if (liv) await pool.query('INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)',
-      [crypto.randomUUID(), liv.id, 'season_crown', JSON.stringify({ season, standing: claim.champion_standing })]);
-  }
-  return { season, champion: claim.champion_name, family: claim.family_name, districts: claim.family_districts };
+    // THE CROWN — a lifetime legend on the champion's bloodline (survives death, the duel_titles
+    // precedent).
+    if (claim.champion_account) {
+      await client.query('UPDATE account_persistent SET season_crowns = season_crowns + 1 WHERE account_id=$1', [claim.champion_account]);
+      const liv = (await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive LIMIT 1', [claim.champion_account])).rows[0];
+      if (liv) await client.query('INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)',
+        [crypto.randomUUID(), liv.id, 'season_crown', JSON.stringify({ season, standing: claim.champion_standing })]);
+    }
+    await client.query('COMMIT');
+    return { season, champion: claim.champion_name, family: claim.family_name, districts: claim.family_districts };
+  } catch (error) { await client.query('ROLLBACK').catch(() => {}); throw error; }
+  finally { client.release(); }
 }

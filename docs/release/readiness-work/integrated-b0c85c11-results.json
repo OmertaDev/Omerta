@@ -1,0 +1,648 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "releaseReady": false,
+  "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+  "candidateManifestSha256": "91a710926059ec7f8f3bda303aecc2251e4cde3598b936964a8db9df8cb4a5b5",
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:39:55.476Z",
+      "endedAt": "2026-09-21T08:40:28.178Z",
+      "durationMs": 32701,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "f95098617a550dded1f80ee7f6d3a1c9d09a532fdf22e2318a18e7c39db27eca",
+      "resultSha256": "b725e217581e9dae21edd780a7809b22a7efcfe374a3a01d1cd4d561fd66d9bf"
+    },
+    {
+      "format": 1,
+      "id": "rc1-omr",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:39:55.696Z",
+      "endedAt": "2026-09-21T08:40:45.984Z",
+      "durationMs": 50287,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Bounded OMR redemption, sinks, six-hour unbond and repaid collateral; no complete mint/burn/backing taxonomy or world matrix"
+      ],
+      "log": "gates/rc1-omr/output.txt",
+      "logSha256": "c45503841074fb1687a849fa684526a0204bd6b12e63180e24396020ff9eaf6c",
+      "resultSha256": "45c3efcedba835a7115c2ec5b1fe37604cbdbc8b118b93ddf93f764ebf15b94d"
+    },
+    {
+      "format": 1,
+      "id": "rc1-omr-window",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr-window:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:40:58.134Z",
+      "endedAt": "2026-09-21T08:41:59.558Z",
+      "durationMs": 61423,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact redemption formats and historical dust boundaries only; no complete OMR or external reserve proof"
+      ],
+      "log": "gates/rc1-omr-window/output.txt",
+      "logSha256": "9075432b92506ba0acc5f9c57bb3ae0ce8bb2c147679cc9cb866320a89245f0d",
+      "resultSha256": "d06c26661d5e5cf7d32f8bf5850b51adedf4feca1f26ca94eb49e88b3cde61d6"
+    },
+    {
+      "format": 1,
+      "id": "rc1-family-custody",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-custody:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:42:12.543Z",
+      "endedAt": "2026-09-21T08:43:13.474Z",
+      "durationMs": 60929,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Bounded exact Family CASH/AMMO formation/tribute/melt/succession/dissolution; no OMR, original timed war/turf, complete resource taxonomy or matrix"
+      ],
+      "log": "gates/rc1-family-custody/output.txt",
+      "logSha256": "3232f2cd74d721b3caf5b8360ca3a2cc2cc3ead3e9849d2d10324c33a69a4542",
+      "resultSha256": "f629f3605e2ecd428613a3290339cf2e501eb4ef1bad6f57b2a75c38ef64ba8a"
+    },
+    {
+      "format": 1,
+      "id": "rc1-alliance",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:alliance:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:43:25.241Z",
+      "endedAt": "2026-09-21T08:44:32.345Z",
+      "durationMs": 67103,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three canonical pacts and explicit Knowledge grants; no elapsed expiry, cross-Family operations, warfare or qualifying world matrix"
+      ],
+      "log": "gates/rc1-alliance/output.txt",
+      "logSha256": "94c7a58a25c64cee9b64fe0bdbacf0a5981299ae3addca9dcaf0488d08a23055",
+      "resultSha256": "451a17f8d17ae657f27431de14c21cd6a079d52ced5f42cfe5c87b5403f13288"
+    },
+    {
+      "format": 1,
+      "id": "rc1-crew-focus",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:crew-focus:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:39:55.938Z",
+      "endedAt": "2026-09-21T08:40:29.925Z",
+      "durationMs": 33986,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Controlled native Crew pending-read and adjacent-Send interleavings; no physical keyboard, every renderer, hosted cause certainty or real-player qualification"
+      ],
+      "log": "gates/rc1-crew-focus/output.txt",
+      "logSha256": "203611db20d14898ae49db046a460dc8bf292f79e678e5897b039716e6336a9c",
+      "resultSha256": "94730df3c82fc828a21ab6a052eaa799ad3f7793787638f0013bbd83f16cc8a7"
+    },
+    {
+      "format": 1,
+      "id": "rc1-golden",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:golden:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:40:40.757Z",
+      "endedAt": "2026-09-21T08:49:55.488Z",
+      "durationMs": 554730,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"
+      ],
+      "log": "gates/rc1-golden/output.txt",
+      "logSha256": "719762c33f14bb3835e86e9063b8b30a08aea59bad98548aada83c04d793113a",
+      "resultSha256": "62ed9e763c983b886bf3f9315854092e5abf402ee824246e8f71dac85b94e125"
+    },
+    {
+      "format": 1,
+      "id": "rc1-mobile-adversity",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mobile-adversity:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:50:05.844Z",
+      "endedAt": "2026-09-21T08:52:25.451Z",
+      "durationMs": 139606,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Automated native newcomer response loss, reload, duplicate click and preparation; no physical devices, human comprehension or complete mobile clearance"
+      ],
+      "log": "gates/rc1-mobile-adversity/output.txt",
+      "logSha256": "88e778695e91d07ac05b60204e0c73dd2dde82d78f97b7e54f95d3644e2217a5",
+      "resultSha256": "87c6dcbc7383ec977fc7f5317c34651926a02df9f3cb28e64eff3bb5f70b11c8"
+    },
+    {
+      "format": 1,
+      "id": "rc1-source-pair",
+      "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:rollback:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:41:00.281Z",
+      "endedAt": "2026-09-21T08:42:43.638Z",
+      "durationMs": 103356,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Local source pair, two fixture accounts; not deployed recovery or all command families"
+      ],
+      "log": "gates/rc1-source-pair/output.txt",
+      "logSha256": "c34a2137ee8ace9f1a3217a52f3421dd9bbfc9a98223942bab4a60e53e24d229",
+      "resultSha256": "c6927d9f621cce2aa8ed61058443ac1f952700b6b16e80554aadb49ad31bcad2"
+    }
+  ],
+  "nativeRuns": [
+    {
+      "directory": "omr-b0c85c11-1",
+      "source": {
+        "revision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+        "gitTree": "6ba265f9c189cce4beed0df77e87264eddac0a55",
+        "checkoutSha256": "086eff3782652e22f1a70c34b65a89c368e5bdfc8beddb68bf43392a2ff3aa68",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "1a58719201034e37ad589a71532ef36d00664de101bb914bf6a94e18560eef80",
+      "startedAt": "2026-09-21T08:40:10.498Z",
+      "endedAt": "2026-09-21T08:40:34.964Z",
+      "runSha256": "b3908fa13b2bb57e1d26e4dd40e005929ca475a80469ea2bd0d2ff64a8033153",
+      "artifactsVerified": 54,
+      "counts": {
+        "boundaries": 37,
+        "equations": 632,
+        "movements": 20,
+        "invariants": 3,
+        "fullResourceCoverage": false
+      },
+      "matrixQualifying": false
+    },
+    {
+      "directory": "omr-window-b0c85c11-1",
+      "source": {
+        "revision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+        "gitTree": "6ba265f9c189cce4beed0df77e87264eddac0a55",
+        "checkoutSha256": "086eff3782652e22f1a70c34b65a89c368e5bdfc8beddb68bf43392a2ff3aa68",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "1597f8e39e04c3cbc006c268e2b73f3c09a3a7a7c19c4d1ae47d7e35d63f203f",
+      "startedAt": "2026-09-21T08:41:10.248Z",
+      "endedAt": "2026-09-21T08:41:29.096Z",
+      "runSha256": "98415f9218b3d6d21aef1f6023a2577e070e6172b73c55a686e5c4eaea22cd68",
+      "artifactsVerified": 22,
+      "counts": {
+        "fullResourceCoverage": false
+      },
+      "matrixQualifying": false
+    },
+    {
+      "directory": "family-custody-b0c85c11-1",
+      "source": {
+        "revision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+        "gitTree": "6ba265f9c189cce4beed0df77e87264eddac0a55",
+        "checkoutSha256": "086eff3782652e22f1a70c34b65a89c368e5bdfc8beddb68bf43392a2ff3aa68",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "9dc1f37405925862a52bb7ec2779c2832062d192c6fb08629829248c032f458b",
+      "startedAt": "2026-09-21T08:42:25.443Z",
+      "endedAt": "2026-09-21T08:43:01.309Z",
+      "runSha256": "5ff5bd1b53dbd4166be8462b13c299daa4f964f0c89b25c9341b20a89d249df9",
+      "artifactsVerified": 50,
+      "counts": {
+        "ordinaryEntrants": 2,
+        "initialRespectFixtures": 1,
+        "otherDirectGameplayFixtureWrites": 0,
+        "boostAttempts": 1,
+        "actualTribute": 200,
+        "personalMeltAmmo": 18,
+        "familyMeltAmmo": 5,
+        "familyMeltCash": 150,
+        "dissolvedCash": 350,
+        "dissolvedAmmo": 5,
+        "preservedSuccession": true,
+        "scopedFaults": 1,
+        "sameKeyRetriesAfterRollback": 1,
+        "exactSuccessfulReplays": 2,
+        "faultCleanupVerified": true,
+        "custodyBoundaries": 12,
+        "invariantChecks": 55,
+        "invariantBoundaries": 19,
+        "resourceBoundaries": 18,
+        "unsupportedResourceClassifications": 11,
+        "observedLogicalSeconds": 0,
+        "qualifyingFullResourcePass": false,
+        "matrixQualifying": false
+      },
+      "matrixQualifying": false
+    },
+    {
+      "directory": "alliance-b0c85c11-1",
+      "source": {
+        "revision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+        "gitTree": "6ba265f9c189cce4beed0df77e87264eddac0a55",
+        "checkoutSha256": "086eff3782652e22f1a70c34b65a89c368e5bdfc8beddb68bf43392a2ff3aa68",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "f0031374abb233c4600d2a09c100cb2e2fbf6df159791e20b3aad20ac231e995",
+      "startedAt": "2026-09-21T08:43:36.994Z",
+      "endedAt": "2026-09-21T08:44:19.777Z",
+      "runSha256": "303d4f544418bf05a194946d32a667480553aa174280267a92faa07f29fb2ab9",
+      "artifactsVerified": 321,
+      "counts": {
+        "actualFamilies": 3,
+        "actualPacts": 3,
+        "ordinaryEntrants": 4,
+        "initialRespectFixtures": 3,
+        "otherDirectGameplayFixtureWrites": 0,
+        "independentContributors": 3,
+        "explicitFreshAccountGrants": 5,
+        "revocations": 1,
+        "authorizedConclusions": 3,
+        "permissionControls": 10,
+        "exactReplays": 5,
+        "conclusionRewards": 0,
+        "invariantChecks": 55,
+        "invariantBoundaries": 59,
+        "resourceBoundaries": 121,
+        "resourceChecks": 1646,
+        "custodyBoundaries": 106,
+        "familyChecks": 636,
+        "unsupportedResourceClassifications": 6,
+        "observedLogicalSeconds": 0,
+        "recurringWorkerCallbacks": 0,
+        "qualifyingFullResourcePass": false,
+        "matrixQualifying": false
+      },
+      "matrixQualifying": false
+    },
+    {
+      "directory": "mobile-adversity-b0c85c11-1",
+      "source": {
+        "revision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+        "gitTree": "6ba265f9c189cce4beed0df77e87264eddac0a55",
+        "checkoutSha256": "086eff3782652e22f1a70c34b65a89c368e5bdfc8beddb68bf43392a2ff3aa68",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "1b24ae37f8388b580d2bc54000135a9adfc193e4c26ccd8ab51de57a13db9300",
+      "startedAt": "2026-09-21T08:50:15.970Z",
+      "endedAt": "2026-09-21T08:52:15.103Z",
+      "runSha256": "4da66adc3ea0723e470e7bc33fa4f0c8b4a31aa6e86dd9a2c3ae7669f2777c39",
+      "artifactsVerified": 22,
+      "counts": {
+        "browserAssetsVerified": 56,
+        "matrixQualifying": false
+      },
+      "matrixQualifying": false,
+      "browserAssetsVerified": 56,
+      "widths": [
+        {
+          "width": 320,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 802
+          }
+        },
+        {
+          "width": 360,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 801
+          }
+        },
+        {
+          "width": 390,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 803
+          }
+        },
+        {
+          "width": 430,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 803
+          }
+        }
+      ]
+    }
+  ],
+  "goldenBrowser": {
+    "directory": "golden-b0c85c11-1",
+    "resultsSha256": "5d15de650b1adc9049ad6d1de3a89ec0c1bf3fa4a76ebf0692d6c8d5f40f895f",
+    "browser": "153.0.8010.48",
+    "widths": [
+      {
+        "width": 320,
+        "status": "PASS",
+        "commands": 50,
+        "controls": 151,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 360,
+        "status": "PASS",
+        "commands": 50,
+        "controls": 152,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 390,
+        "status": "PASS",
+        "commands": 50,
+        "controls": 151,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 430,
+        "status": "PASS",
+        "commands": 50,
+        "controls": 149,
+        "interactions": 6,
+        "javascriptErrors": 0
+      }
+    ]
+  },
+  "crewFocus": {
+    "directory": "crew-focus-b0c85c11-1",
+    "resultsSha256": "bd772e9660d82d9168569d9f9d78c60e593859e97503209309680756db9d0f42",
+    "status": "PASS_SCOPED"
+  },
+  "sourcePair": {
+    "resultSha256": "d8f851df798ff49d9e70ea6efc178eade4608b3b8fd9e6b5f6c105d19e8550c9",
+    "status": "PASS_SCOPED",
+    "candidate": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+    "predecessor": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+    "assertions": [
+      {
+        "id": "fixture",
+        "stateSha256": "cf1cda6fbddc41ce41e1fd6b6a0067ebb0806435bbad16bad31b208cfb742e49",
+        "rawStateSha256": "5bd10791e229eec2704c37e1c162ac2c17adecc4fec7fb42dbd24fc3cd7f9feb"
+      },
+      {
+        "id": "predecessor-committed",
+        "stateSha256": "8a1315e8212dec384a3049f8d5d4fa8f5e7a4d2c61118733eefbbcccf48a16c5",
+        "rawStateSha256": "ff9dde6cd39859628c31273a56f6df9df78c9416f850a43172c902cf04123f41"
+      },
+      {
+        "id": "upgraded",
+        "stateSha256": "8a1315e8212dec384a3049f8d5d4fa8f5e7a4d2c61118733eefbbcccf48a16c5",
+        "rawStateSha256": "dea98dd075ac46ffe4f5f8ac9e036c622919159fa217198dbf5670bfdf6bdece"
+      },
+      {
+        "id": "upgrade preserves acknowledged state",
+        "status": "PASS"
+      },
+      {
+        "id": "predecessor receipt after upgrade",
+        "receipts": 1,
+        "status": "PASS"
+      },
+      {
+        "id": "upgrade-replayed",
+        "stateSha256": "8a1315e8212dec384a3049f8d5d4fa8f5e7a4d2c61118733eefbbcccf48a16c5",
+        "rawStateSha256": "481af3859e44931f41cb14101701834a123980ef2a7b09382ded7f4ba83cbcc5"
+      },
+      {
+        "id": "upgrade replay creates no new effect",
+        "status": "PASS"
+      },
+      {
+        "id": "candidate-committed",
+        "stateSha256": "a597cca6e98ad3a63b25127760e9c5ae369eaff4c9b15ba7ad6b1863f510dec0",
+        "rawStateSha256": "cae903243cffab404cdb39b8a1707d0cad7522158b622e58df545cd8ae88ffbd"
+      },
+      {
+        "id": "rolled-back",
+        "stateSha256": "a597cca6e98ad3a63b25127760e9c5ae369eaff4c9b15ba7ad6b1863f510dec0",
+        "rawStateSha256": "6db7a7817d795791a7bf713a2b27ea66996c9cd0604579ecb22acb5aed36cd3c"
+      },
+      {
+        "id": "rollback preserves acknowledged state",
+        "status": "PASS"
+      },
+      {
+        "id": "both receipts after rollback",
+        "receipts": 2,
+        "status": "PASS"
+      },
+      {
+        "id": "rollback-replayed",
+        "stateSha256": "a597cca6e98ad3a63b25127760e9c5ae369eaff4c9b15ba7ad6b1863f510dec0",
+        "rawStateSha256": "15af929121208311570c63daf3a46dd588e4fc27bdbb55979a51abd478bab75a"
+      },
+      {
+        "id": "rollback replay creates no new effect",
+        "status": "PASS"
+      },
+      {
+        "id": "both receipts after second upgrade",
+        "receipts": 2,
+        "status": "PASS"
+      },
+      {
+        "id": "re-upgraded",
+        "stateSha256": "a597cca6e98ad3a63b25127760e9c5ae369eaff4c9b15ba7ad6b1863f510dec0",
+        "rawStateSha256": "aa93aa1b8a7245771124add1e9a91390182b1d52925e77e29a30c8e0d38ca32a"
+      },
+      {
+        "id": "second upgrade preserves acknowledged state",
+        "status": "PASS"
+      }
+    ],
+    "normalization": {
+      "excludedFields": [
+        "schema_meta.applied_at"
+      ],
+      "excludedRows": "Only world_command/completed/replayed:true telemetry observations matching an actual recorded replay, with empty consequences. Raw rows remain retained; non-replay telemetry remains compared.",
+      "reason": "stampSchema updates this migration-observation timestamp on every bootstrap; schema hash and version remain compared.",
+      "retained": "All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts."
+    },
+    "coverageExclusions": [
+      "Not deployed Render recovery",
+      "No worker or Linux application-signal rehearsal in this tool",
+      "Two fixture accounts and mystery.start only; not full resource or journey coverage",
+      "No backup restore or recovery-point claim",
+      "Installed dependencies must independently match their lockfile"
+    ]
+  },
+  "regressions": {
+    "knowledge": {
+      "status": "PASS",
+      "generatedSource": "dcfb07a8",
+      "logSha256": "5a7d92736a3192eebc70fc0895fb027427f9626284725d1f66a615d12a6db755"
+    },
+    "tokenomics": {
+      "status": "PASS",
+      "logSha256": "01d39382cda83b7ab6c1d2518d962beaf4dbe793ec6023456746c5298036b244"
+    }
+  },
+  "scope": "Affected integrated native and browser regressions only. No complete resource taxonomy, qualifying world matrix, production soak, physical device, deployed recovery or human cohort clearance.",
+  "dispatchedWorkflows": [
+    {
+      "id": 35580189986,
+      "workflow": "ci",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35580189986"
+    },
+    {
+      "id": 35580193066,
+      "workflow": "RC1 Linux termination and recovery",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35580193066"
+    }
+  ]
+}

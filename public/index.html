@@ -4935,11 +4935,12 @@
     const commands = board?.commands || [], opportunities = board?.opportunities || [];
     const commandCard = (command) => {
       const index = moves.push(command) - 1, available = command.availability === 'AVAILABLE';
-      const knownBlockers = command.availability === 'LOCKED' ? [] : (command.blockers || []).map(prose).filter(Boolean);
+      const blockers = command.blockers || [];
+      const knownBlockers = (command.availability === 'LOCKED' ? blockers.filter((entry) => entry?.kind === 'known') : blockers).map(prose).filter(Boolean);
       return `<div class="world-command"><div class="world-command-heading"><b>${esc(command.label)}</b><small class="${available ? 'world-ready' : 'dim'}">${esc(name(command.availability))}</small></div>
         ${command.description && command.description !== command.label ? `<p class="dim">${esc(command.description)}</p>` : ''}
         ${knownBlockers.length ? `<p class="dim">${esc(knownBlockers.join(' · '))}</p>` : ''}
-        ${command.availability === 'LOCKED' ? '<p class="dim">Keep investigating. No further details are known.</p>' : ''}
+        ${command.availability === 'LOCKED' && (!knownBlockers.length || blockers.some((entry) => entry?.kind === 'undiscovered')) ? `<p class="dim">${knownBlockers.length ? 'Keep investigating to uncover the remaining requirements.' : 'Keep investigating. No further details are known.'}</p>` : ''}
         ${command.costs?.length ? `<p class="dim">Cost: ${esc(terms(command.costs))}</p>` : ''}
         ${command.committedResources?.length ? `<p class="dim">Committed: ${esc(terms(command.committedResources))}</p>` : ''}
         ${command.risk?.length ? `<p class="dim">${esc(command.risk.map(prose).filter(Boolean).join(' · '))}</p>` : ''}
@@ -8075,7 +8076,9 @@
   // ── THE CREW (omerta-crew-design.md) — the lightweight 2-4 player mutual-aid pact. Status +
   // coordination only: form/join, a board of your crewmates, a private room, and a rule you don't
   // raise a hand to your own. No money moves anywhere in here. ──
+  let crewRenderRevision = 0;
   async function renderCrew() {
+    const renderRevision = ++crewRenderRevision;
     const t = $('#tab-crew');
     await refresh();
     const b = (await api('GET', '/v1/crew')).body || {};
@@ -8101,6 +8104,20 @@
     // ── THE CIRCLE — the ambient stream of the people you know (crew + mentor + protégés + spouse). Shown
     // on the crew screen whether or not you're in a crew (your mentor/spouse count). Pure read.
     const cir = (await api('GET', '/v1/circle')).body || {};
+    // These reads can finish after the player starts typing in the previous
+    // board. Check again at the DOM commit, not only before renderActive starts.
+    // A newer entry owns the panel; an older response must never replace it.
+    if (renderRevision !== crewRenderRevision || currentTab !== 'crew') return;
+    const editing = document.activeElement;
+    const sendingDraft = editing?.id === 'crew-send' && t.querySelector('input#crew-say')?.value;
+    if (t.contains(editing) && (/^(INPUT|SELECT|TEXTAREA)$/.test(editing.tagName) || editing.isContentEditable || sendingDraft)) {
+      _reRenderNeeded = true;
+      // Send belongs to the draft interaction: preserve its node while a player
+      // Tabs to it or holds a pointer down. Refresh after leaving the interaction;
+      // keep the existing action-completion obligation for the eventual refresh.
+      _reRenderAfterAction = true;
+      return;
+    }
     const circleSection = (cir.people && cir.people.length) ? `
       <div class="card" style="margin-top:8px"><span class="t">Your Circle</span> <span class="d" style="font-size:11px">— your people: crew, mentor, protégés, family</span>
         <div class="grid" style="margin-top:6px">${cir.people.map((cp) => `
@@ -12118,7 +12135,7 @@
       <div class="card"${win.open ? '' : ' style="opacity:.75"'}>
         <div class="d">${esc(win.note)}</div>
         ${win.open ? `<div class="d">rate $${fmt(win.rate)} cash per $OMR · the till holds $${fmt(win.pool)} (${fmt(win.poolOmr)} $OMR worth) · your allowance today ${fmt(win.yourHeadroomOmr)} of ${fmt(win.dailyCapOmr)} $OMR</div>
-        <input id="win-amt" placeholder="$OMR" size="8"> <button class="act" id="win-go">burn it for cash</button>
+        <input id="win-amt" placeholder="$OMR" size="8"> <button class="act" id="win-go">spend it for cash</button>
         <div class="d" style="font-size:11px;color:var(--dim)">the till is filled from the street take, so it can run dry — a short window refuses and takes nothing.</div>`
         : `<div class="d" style="font-size:11px;color:var(--dim)">rate will be $${fmt(win.rate)} cash per $OMR, capped at ${fmt(win.dailyCapOmr)} $OMR a day.</div>`}
       </div>` : ''}

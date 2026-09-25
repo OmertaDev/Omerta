@@ -1,0 +1,150 @@
+{
+  "characters": [
+    {
+      "id": "capital-locksmith-character",
+      "account_id": "capital-locksmith",
+      "cash": "100000",
+      "bank": "0",
+      "alive": true
+    },
+    {
+      "id": "capital-organizer-character",
+      "account_id": "capital-organizer",
+      "cash": "100000",
+      "bank": "0",
+      "alive": true
+    },
+    {
+      "id": "capital-researcher-character",
+      "account_id": "capital-researcher",
+      "cash": "100000",
+      "bank": "0",
+      "alive": true
+    },
+    {
+      "id": "capital-supplier-character",
+      "account_id": "capital-supplier",
+      "cash": "100000",
+      "bank": "0",
+      "alive": true
+    }
+  ],
+  "transactions": [],
+  "world_operations": [],
+  "world_operation_roles": [],
+  "world_operation_commitments": [],
+  "world_operation_contributions": [],
+  "world_operation_capital": [],
+  "world_operation_events": [],
+  "item_instances": [],
+  "item_stacks": [],
+  "operation_escrow": [],
+  "item_events": [],
+  "item_mutation_guards": [],
+  "world_kernel_objects": [],
+  "world_kernel_events": [],
+  "gang_members": [
+    {
+      "gang_id": "capital-family",
+      "character_id": "capital-locksmith-character",
+      "role": "soldier",
+      "joined_at": "2026-09-21T03:17:12.152Z",
+      "post": null,
+      "post_at": null
+    },
+    {
+      "gang_id": "capital-family",
+      "character_id": "capital-organizer-character",
+      "role": "boss",
+      "joined_at": "2026-09-21T03:17:12.147Z",
+      "post": null,
+      "post_at": null
+    },
+    {
+      "gang_id": "capital-family",
+      "character_id": "capital-researcher-character",
+      "role": "soldier",
+      "joined_at": "2026-09-21T03:17:12.153Z",
+      "post": null,
+      "post_at": null
+    },
+    {
+      "gang_id": "capital-family",
+      "character_id": "capital-supplier-character",
+      "role": "soldier",
+      "joined_at": "2026-09-21T03:17:12.152Z",
+      "post": null,
+      "post_at": null
+    }
+  ],
+  "crew_members": [
+    {
+      "crew_id": "capital-crew",
+      "account_id": "capital-locksmith",
+      "name": "capital-locksmith",
+      "joined_at": "2026-09-21T03:17:12.152Z"
+    },
+    {
+      "crew_id": "capital-crew",
+      "account_id": "capital-organizer",
+      "name": "capital-organizer",
+      "joined_at": "2026-09-21T03:17:12.144Z"
+    },
+    {
+      "crew_id": "capital-crew",
+      "account_id": "capital-researcher",
+      "name": "capital-researcher",
+      "joined_at": "2026-09-21T03:17:12.153Z"
+    },
+    {
+      "crew_id": "capital-crew",
+      "account_id": "capital-supplier",
+      "name": "capital-supplier",
+      "joined_at": "2026-09-21T03:17:12.152Z"
+    }
+  ],
+  "cars": [
+    {
+      "id": "capital-locksmith-car",
+      "character_id": "capital-locksmith-character",
+      "model_id": "junker",
+      "trim_id": "stock",
+      "dmg": 30,
+      "plate": null,
+      "listed": false,
+      "pledged": false,
+      "tune": 0,
+      "race_limit": null,
+      "pink_slip": false,
+      "nos": 0,
+      "rarity": "common",
+      "minted_onchain": false,
+      "created_at": "2026-09-21T03:17:12.154Z",
+      "run_id": null,
+      "serial": null
+    },
+    {
+      "id": "capital-supplier-car",
+      "character_id": "capital-supplier-character",
+      "model_id": "junker",
+      "trim_id": "stock",
+      "dmg": 30,
+      "plate": null,
+      "listed": false,
+      "pledged": false,
+      "tune": 0,
+      "race_limit": null,
+      "pink_slip": false,
+      "nos": 0,
+      "rarity": "common",
+      "minted_onchain": false,
+      "created_at": "2026-09-21T03:17:12.158Z",
+      "run_id": null,
+      "serial": null
+    }
+  ],
+  "clock": {
+    "database_time": "2026-09-21T03:17:12.221Z",
+    "snapshot": "65334:65334:"
+  }
+}

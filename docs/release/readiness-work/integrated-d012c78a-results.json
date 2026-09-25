@@ -1,0 +1,192 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "releaseReady": false,
+  "source": "d012c78a1812b3c25547235788fdf65afee68f4e",
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-season-journal",
+      "source": "d012c78a1812b3c25547235788fdf65afee68f4e",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season-journal:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:23:52.309Z",
+      "endedAt": "2026-09-21T07:27:09.036Z",
+      "durationMs": 196726,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two original seasonal boundaries with complete job journals and declared status fixtures; initial ranking selection, unrelated currency and per-commit full-world lineage remain unclassified"
+      ],
+      "log": "gates/rc1-season-journal/output.txt",
+      "logSha256": "a5f8b0399c4d70132b82f731c9bcf58c8c12eff87e41c55b37336764c39411b7",
+      "resultSha256": "c4c28790c34ec289512c63d1e61b8d433b288705433d696f1244606e7b6f3efd"
+    },
+    {
+      "format": 1,
+      "id": "rc1-market-policy",
+      "source": "d012c78a1812b3c25547235788fdf65afee68f4e",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:market:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:27:19.424Z",
+      "endedAt": "2026-09-21T07:28:08.120Z",
+      "durationMs": 48695,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three ordinary entrants, shared-sale contention and original order expiry; SQL acknowledgment trace is not PostgreSQL total order, resource lineage and full market-stress matrix remain incomplete"
+      ],
+      "log": "gates/rc1-market-policy/output.txt",
+      "logSha256": "b96ac5b37e40007b4faf8fcaaff409f5eb001b401e1e04e60ae2720fa9c4580f",
+      "resultSha256": "65ae8724bdba5d7610dabd5e2af713f2279dbabc4b3ee9d4b5b2df85d5431b3d"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "d012c78a1812b3c25547235788fdf65afee68f4e",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:28:18.274Z",
+      "endedAt": "2026-09-21T07:29:22.497Z",
+      "durationMs": 64222,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "274588933c87927ddc4405713f25e108a29d5bfc9cb5a31f3b16ea303dbe7b0f",
+      "resultSha256": "dacbb0e9ceb6987c4b5e2894823539730b1540f75133ba54fdcd16d125b73c92"
+    },
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "d012c78a1812b3c25547235788fdf65afee68f4e",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:29:32.680Z",
+      "endedAt": "2026-09-21T07:29:49.401Z",
+      "durationMs": 16720,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "0f5a2ba633acc140ed0a3f744236cfe1979ae4572f38cb070c81474d410deb4b",
+      "resultSha256": "b1728fec4a20fa8c723f850ed440c3120e5e3b9c7dbcfcfedd2a58f1919d0dab"
+    }
+  ],
+  "nativeRuns": [
+    {
+      "directory": "season-journal-d012c78a-1",
+      "source": {
+        "revision": "d012c78a1812b3c25547235788fdf65afee68f4e",
+        "gitTree": "9e90e4e46459572fdf8f74ac638ced4a5bf03d4f",
+        "checkoutSha256": "80ce7a3a710ec7efb6769a44a9a3ac2058875b4373cad42194685b875f5619a4",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "b7109acdcab5984a3922e86eb8bc6108812c5456583f4a5475692fb682872c57",
+      "startedAt": "2026-09-21T07:24:02.101Z",
+      "endedAt": "2026-09-21T07:26:58.000Z",
+      "runSha256": "e3cfef1691cc620d87372600ae3f64bc83d59ccdd62a4d7b691187b12f580224",
+      "artifactsVerified": 694,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "market-d012c78a-1",
+      "source": {
+        "revision": "d012c78a1812b3c25547235788fdf65afee68f4e",
+        "gitTree": "9e90e4e46459572fdf8f74ac638ced4a5bf03d4f",
+        "checkoutSha256": "80ce7a3a710ec7efb6769a44a9a3ac2058875b4373cad42194685b875f5619a4",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "b66fd3933da6961b69f9db50980577116f2f6f621549ddc6d2c05c20faf60860",
+      "startedAt": "2026-09-21T07:27:29.879Z",
+      "endedAt": "2026-09-21T07:27:58.039Z",
+      "runSha256": "1b2bfd462bd8ded6f24297d115ddfb119ec2c7b5b0f0a40bb93476fcc0eb9286",
+      "artifactsVerified": 148,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "world-guardrails-d012c78a-1",
+      "source": {
+        "revision": "d012c78a1812b3c25547235788fdf65afee68f4e",
+        "gitTree": "9e90e4e46459572fdf8f74ac638ced4a5bf03d4f",
+        "checkoutSha256": "80ce7a3a710ec7efb6769a44a9a3ac2058875b4373cad42194685b875f5619a4",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "802b4afabe879c1434125f4f90bd61d2eb221e95e82d1f06dc042477f7b69d02",
+      "startedAt": "2026-09-21T07:28:28.614Z",
+      "endedAt": "2026-09-21T07:29:11.418Z",
+      "runSha256": "bc31bfa2d30aa933bfcfd6b6f712ca720a16a79bb407edbcf37da48740026caf",
+      "artifactsVerified": 63,
+      "matrixQualifying": false
+    }
+  ],
+  "knowledge": {
+    "status": "PASS",
+    "generatedSource": "36344320",
+    "generatedOnlyCommit": "d012c78a1812b3c25547235788fdf65afee68f4e",
+    "logSha256": "92add8a2429bf65fc367742eb1b94949a17d624e0443cc9e8febfd0cab66a770"
+  },
+  "scope": "Seasonal job and market component retests, two-hour resource smoke and harness controls. No exact ninety-day replay, complete resource taxonomy, qualifying matrix, production soak, physical device or human-cohort pass."
+}

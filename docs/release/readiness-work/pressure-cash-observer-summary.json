@@ -1,0 +1,181 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_OBSERVER_INCREMENT",
+  "owner": "Codex/resource_proof",
+  "source": {
+    "revision": "b457cc12147e33e4cf6d6dcccaaf43339afce6f8",
+    "gitTree": "a0570ebafe3d7139c30aa4f3e714857e619538a9",
+    "checkoutSha256": "383bf655c894fa1ee0e765a4145253463a8affe817598095f8e1b5cdb0f3d597",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "base": "202117080c2b210450538e015c4870353b5f2bf2",
+  "commits": [
+    "81804bbc537a8bd5e4f7edd39fc6d1242011c7bb",
+    "b457cc12147e33e4cf6d6dcccaaf43339afce6f8"
+  ],
+  "changedFiles": [
+    {
+      "file": "tools/rc1-world-resource-observer.js",
+      "sha256": "5790fd105e53c37a25d00de0bb07935164bdca7d659da84a98ada3d53575cd98"
+    },
+    {
+      "file": "test/rc1-world-pressure-cash.js",
+      "sha256": "2fcd3f21d350fdcd7f99356c967b7e5fb624992e786c8cdd896b9c3d412e8c1e"
+    },
+    {
+      "file": "docs/release/readiness-work/world-pressure-cash.md",
+      "sha256": "54b5251a16cfcc3926c2bb1e5dfac410d302071eee0de0d213c19cd6fb7c47a8"
+    }
+  ],
+  "productionEdits": 0,
+  "observedTables": 56,
+  "matrixQualifying": false,
+  "qualifyingFullResourcePass": false,
+  "authority": [
+    "Checkin original level/streak/day quote, one fresh owner receipt, exact day/streak/account lifetime latches",
+    "Same-owner armory cash2000/rounds50 reciprocal receipts and actual disposition",
+    "Bank positive integer marker with exact pocket/vault/transit transfer and original two-hour clear rule; actual HTTP actor/amount bound separately in native verifier",
+    "Isolated known cash routes leave street-tax and exchange-pool cash/counters unchanged; all other exchange-pool changes remain unsupported with full restricted rows"
+  ],
+  "executions": [
+    {
+      "scenario": "resource_scarcity",
+      "source": "b457cc12147e33e4cf6d6dcccaaf43339afce6f8",
+      "status": "PASS_SCOPED",
+      "artifactsVerified": 188,
+      "runSha256": "c3cab7a7e5e4ea58d2bd20eeb0b6864862511b5fe5831739f746a4d208fe2da6",
+      "cashVerificationSha256": "cc584d2d0a5a248057c86c9ff26ad561ca467554af84eb21d659e031b4f0e566",
+      "ammoVerificationSha256": "437b6f61d0b4513fcb09298ff36a929ab8046dcc8fd8e7baab516deee94dfae1",
+      "boundaries": 137,
+      "cashMovements": {
+        "checkin": 3,
+        "armory-ammo": 1
+      },
+      "ammoEscrowMovements": {
+        "ammo-list": 3,
+        "ammo-buy": 1,
+        "ammo-cancel": 2
+      },
+      "cashCorruptionControls": [
+        "native-checkin-wrong-owner",
+        "native-checkin-duplicate",
+        "native-checkin-stale",
+        "native-checkin-wrong-authorized-actor",
+        "native-armory-ammo-wrong-owner",
+        "native-armory-ammo-duplicate",
+        "native-armory-ammo-stale",
+        "native-armory-ammo-wrong-authorized-actor",
+        "native-checkin-balanced-overpay",
+        "native-armory-missing-reciprocal"
+      ],
+      "ammoCorruptionControls": [
+        "native-balanced-wrong-owner",
+        "native-duplicate-fresh-buy",
+        "native-stale-receipt-reuse",
+        "native-wrong-counterparty",
+        "native-list-wrong-owner",
+        "native-cancel-wrong-owner",
+        "actual-native-terminal-balanced-wrong-owner"
+      ],
+      "unsupportedInThisBoundedRun": {},
+      "originalLogicalSeconds": 900,
+      "invariantBoundaries": 35,
+      "exactStateRetries": 2,
+      "ordinaryEntrants": 3,
+      "directResourceGrants": 0,
+      "progressionFixtures": 0,
+      "cleanupIndependentlyVerified": true,
+      "terminalCorruption": "Original committed balanced wrong-owner ammo corruption rejected, followed only by retained evidence and owned database cleanup"
+    },
+    {
+      "scenario": "resource_abundance",
+      "source": "b457cc12147e33e4cf6d6dcccaaf43339afce6f8",
+      "status": "PASS_SCOPED",
+      "artifactsVerified": 160,
+      "runSha256": "24d5e403c9e9b556f69388b5974ad278ba110a60a71266ecaffe73e87aa4ce23",
+      "cashVerificationSha256": "c180c293f39ac21ac429500f44512837b87a79e08b1bf548aec88cb8388917cb",
+      "ammoVerificationSha256": "6eff1cfaf16ace04305c5eb7df4ae40075a77cf1169880c601fc0f90d5a902cf",
+      "boundaries": 108,
+      "cashMovements": {
+        "checkin": 3,
+        "armory-ammo": 9,
+        "bank-deposit": 3
+      },
+      "ammoEscrowMovements": {
+        "ammo-list": 4,
+        "ammo-buy": 3,
+        "ammo-cancel": 1
+      },
+      "cashCorruptionControls": [
+        "native-checkin-wrong-owner",
+        "native-checkin-duplicate",
+        "native-checkin-stale",
+        "native-checkin-wrong-authorized-actor",
+        "native-armory-ammo-wrong-owner",
+        "native-armory-ammo-duplicate",
+        "native-armory-ammo-stale",
+        "native-armory-ammo-wrong-authorized-actor",
+        "native-bank-deposit-wrong-owner",
+        "native-bank-deposit-duplicate",
+        "native-bank-deposit-stale",
+        "native-bank-deposit-wrong-authorized-actor",
+        "native-checkin-balanced-overpay",
+        "native-armory-missing-reciprocal",
+        "native-bank-missing-reciprocal",
+        "native-bank-wrong-requested-amount"
+      ],
+      "ammoCorruptionControls": [
+        "native-balanced-wrong-owner",
+        "native-duplicate-fresh-buy",
+        "native-stale-receipt-reuse",
+        "native-wrong-counterparty",
+        "native-list-wrong-owner",
+        "native-cancel-wrong-owner",
+        "actual-native-terminal-balanced-wrong-owner"
+      ],
+      "unsupportedInThisBoundedRun": {},
+      "originalLogicalSeconds": 900,
+      "invariantBoundaries": 36,
+      "exactStateRetries": 2,
+      "ordinaryEntrants": 3,
+      "directResourceGrants": 0,
+      "progressionFixtures": 3,
+      "cleanupIndependentlyVerified": true,
+      "terminalCorruption": "Original committed balanced wrong-owner ammo corruption rejected, followed only by retained evidence and owned database cleanup"
+    }
+  ],
+  "artifactsVerified": 348,
+  "independentlyRerunCorruptionInputs": 34,
+  "independentlyVerifiedCommandCorruptions": 6,
+  "pureCashControls": 25,
+  "pureAmmoControls": 16,
+  "regression": {
+    "source": "b457cc12147e33e4cf6d6dcccaaf43339afce6f8",
+    "status": "SCOPED_PASS",
+    "resultSha256": "947b8c7a96caacdb60217b604d1bb9c317b97d1b7adbcd1d53e071c2a38a2434",
+    "scope": "Existing native shared observer loan/Family/item/transport and unexplained-cash checks"
+  },
+  "retainedDevelopmentFailure": {
+    "class": "OBSERVER_LIMITATION",
+    "logSha256": "63bbc37d43da62aacead1394bcecd8cd83f84bad368a3a4983e72bda451f900e",
+    "trigger": "Stale zero-valued deposit marker plus pocket-to-vault transfer preserved aggregate cash and originally escaped.",
+    "repair": "Changed vault without a fresh owner receipt rejects; vault changes beyond the bounded deposit classifier remain explicitly unsupported.",
+    "runtimeBug": false
+  },
+  "unknown": [
+    "Unrelated cash creation/destruction and per-owner OMR/Family/season/resource lineage",
+    "Bank withdrawal and interest authorization, arbitrary compound actions and unsafe-integer deposit prices",
+    "Shared snapshots do not reconstruct durable HTTP request identity; native observed request binding is separate",
+    "No concurrent actor schedule, every-commit integration proof, full matrix, natural progression, deployment or provider/chain backing",
+    "Scarcity is ordinary-entry proxy; abundance declared initial respect precedes canonical earned cash/ammo. Installed dependencies reused, not independently attested"
+  ],
+  "reruns": [
+    "Native scarcity and abundance",
+    "rc1-world-pressure-cash verifier against each exact-source run",
+    "rc1-world-ammo-escrow verifier against each exact-source run",
+    "Native rc1-world-resource-observer regression",
+    "Integrated committed-boundary world and release gates remain release-integrator responsibility"
+  ],
+  "publicSafe": "No tokens, credentials, raw actor IDs, private balance values, request bodies or database row dumps included"
+}

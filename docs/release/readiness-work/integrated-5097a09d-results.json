@@ -1,0 +1,190 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "releaseReady": false,
+  "source": "5097a09db19fbafd754037e2b7a2572b7432e156",
+  "candidateManifestSha256": "65b526a47e09c80e5fdc9297eee9a4bf38a28f1838addf2d498bd188a47746fd",
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "5097a09db19fbafd754037e2b7a2572b7432e156",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:04:45.872Z",
+      "endedAt": "2026-09-21T09:05:16.731Z",
+      "durationMs": 30858,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "bf39acb6851c16bd050968793d27f3072f7362f4a3b93a088ed73f51be4a7e60",
+      "resultSha256": "8a4fcdd2af241ba506e92e666da519a21c2a714d39353bb5745108a2fadab014"
+    },
+    {
+      "format": 1,
+      "id": "rc1-turf-contention",
+      "source": "5097a09db19fbafd754037e2b7a2572b7432e156",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:turf-contention:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:04:46.267Z",
+      "endedAt": "2026-09-21T09:05:37.581Z",
+      "durationMs": 51313,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Three Family stakes and original hourly settlement; no full war, charter/dead-bidder branches, complete resource taxonomy or matrix"
+      ],
+      "log": "gates/rc1-turf-contention/output.txt",
+      "logSha256": "ddf99fbeb50d4e4245e7fe39d5264467290eaf6abd65404cc786d491cad11bc2",
+      "resultSha256": "c222ac7c6c076dcb35b48f1e96616b229db7d365293ad1fbd6679011004c1e3a"
+    },
+    {
+      "format": 1,
+      "id": "rc1-shipment-terminals",
+      "source": "5097a09db19fbafd754037e2b7a2572b7432e156",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:shipment-terminals:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:04:46.125Z",
+      "endedAt": "2026-09-21T09:05:33.218Z",
+      "durationMs": 47092,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native midnight race, fire loot/heir and commission rollback/duplicates; no natural acquisition, other terminal variants, full resources or matrix"
+      ],
+      "log": "gates/rc1-shipment-terminals/output.txt",
+      "logSha256": "165a9e91646914893d47647539a7c29b11ddfb99bff7113d8927e1f4b4a80480",
+      "resultSha256": "22750ba0aeab3cd590b292d07122fc0381e19a16a4c803f5aa55998980111977"
+    }
+  ],
+  "nativeRuns": [
+    {
+      "directory": "turf-5097a09d-1",
+      "source": {
+        "revision": "5097a09db19fbafd754037e2b7a2572b7432e156",
+        "gitTree": "7d1a83854c8703928c2217c4e9264a7caf84dd19",
+        "checkoutSha256": "9325e78e82aa7a49bdfaa64f9dfef004dc533c2fd531d0ca37f828fd65e48b86",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "36b1bdd817284b5f0a48ea435e971f5a4b6f194a8c4f98071bad8ae0fc2afe03",
+      "startedAt": "2026-09-21T09:04:56.973Z",
+      "endedAt": "2026-09-21T09:05:27.195Z",
+      "runSha256": "5550cdf0d0df4acbaaf5aa31a9fb4231175219d5e18bd61b98fb10b1ff63bc72",
+      "artifactsVerified": 194,
+      "counts": {
+        "actualFamilies": 3,
+        "ordinaryEntrants": 4,
+        "initialRespectFixtures": 3,
+        "otherDirectGameplayFixtureWrites": 0,
+        "simultaneousClaimRequests": 3,
+        "originalContestSeconds": 900,
+        "originalSettlementDelaySeconds": 2700,
+        "exactReplays": 2,
+        "ownPermissionDenials": 1,
+        "canonicalTerminalSettlements": 1,
+        "terminalSecondSweepResolved": 0,
+        "invariantChecks": 55,
+        "invariantBoundaries": 77,
+        "resourceBoundaries": 93,
+        "resourceChecks": 1254,
+        "turfBoundaries": 73,
+        "turfChecks": 216,
+        "sharedObserverUnknown": 26,
+        "familyJournalUnknown": 8,
+        "observedLogicalSeconds": 7200,
+        "matrixQualifying": false,
+        "qualifyingFullResourcePass": false
+      },
+      "timerCounts": {
+        "directorTick": 24,
+        "guardedTick": 2,
+        "guardedSeasonTick": 2,
+        "health-boundary": 24
+      },
+      "matrixQualifying": false
+    },
+    {
+      "directory": "shipment-terminals-5097a09d-1",
+      "source": {
+        "revision": "5097a09db19fbafd754037e2b7a2572b7432e156",
+        "gitTree": "7d1a83854c8703928c2217c4e9264a7caf84dd19",
+        "checkoutSha256": "9325e78e82aa7a49bdfaa64f9dfef004dc533c2fd531d0ca37f828fd65e48b86",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "5c435d4dbdd39c57494d7e2a7698d4ece3793f21f8014278f8724d1cb93a5db5",
+      "startedAt": "2026-09-21T09:04:56.865Z",
+      "endedAt": "2026-09-21T09:05:22.615Z",
+      "runSha256": "21b7f19490a8b1d3dac9b5375dd4da2fce24643607cddd58584db7f84a648153",
+      "artifactsVerified": 49,
+      "counts": {
+        "boundaries": 30,
+        "movements": 17,
+        "equations": 1668,
+        "invariants": 2,
+        "midnightBoundaries": 1,
+        "originalSearchMilliseconds": 10800000,
+        "terminalDeaths": 2,
+        "fullResourceCoverage": false
+      },
+      "timerCounts": {
+        "directorTick": 36,
+        "guardedTick": 3,
+        "guardedSeasonTick": 3,
+        "health-boundary": 36
+      },
+      "matrixQualifying": false
+    }
+  ],
+  "knowledge": {
+    "status": "PASS",
+    "generatedSource": "6252c271",
+    "logSha256": "cf64ccff17b9e6c35244ebf5f9d4b3b67c4d9755cfa83cc999da9414ab6add48"
+  },
+  "scope": "Three integrated regression gates only; no inherited earlier browser/runtime/full-CI result, complete resources, world matrix, deployed recovery, soak or human clearance."
+}

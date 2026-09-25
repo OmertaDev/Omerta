@@ -1,0 +1,653 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_CAR_JOURNAL_AND_WORKER_REPLAY",
+  "matrixQualifying": false,
+  "source": {
+    "revision": "ea639e63e5514f7ce645e9df2a971f370c64ead4",
+    "gitTree": "d4fcb271919d21b977462a05d2f3ea6d6f74ffd2",
+    "checkoutSha256": "7da869180bedbb373349bbd2dea1e8957d4494a126af200abab449d9b702d10c",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "baseRevision": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+  "productionFilesChanged": [],
+  "implementation": "Exact basic salvage car/guard/request/output lineage and exact market list/cancel custody; additional partial owner/count car audit checks. Other resources and unsupported car branches remain open.",
+  "focused": {
+    "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-journal-ea639e63-1",
+    "runSha256": "8022505d627477fcd91ff06922e8bcc66efea66d44c24076e8765cee5082128e",
+    "configurationSha256": "6d2786182bfad58cef500aa0ce6c0cd4325f7ca35b1bc6065b350f861517ae9f",
+    "configuration": {
+      "epoch": "2026-09-23T23:00:00.000Z",
+      "seed": "car-journal-native",
+      "database": {
+        "name": "rc1_world_6c1df5c061139e882bdbef77",
+        "ownerMarker": "{\"format\":1,\"nonce\":\"6c1df5c061139e882bdbef77\",\"runId\":\"native-car-journal\",\"sourceRevision\":\"ea639e63e5514f7ce645e9df2a971f370c64ead4\",\"tool\":\"rc1-native-world\"}",
+        "isolation": "New exclusively owned database per world; schema isolation alone does not isolate advisory locks.",
+        "cleanup": "Exact name/OID/ownership comment required; DROP DATABASE without FORCE; foreign backends are never terminated."
+      },
+      "scope": "Native canonical authority boundaries and terminal deliberate SQL-trigger corruption. No resource/matrix qualification.",
+      "fixture": "Two synthetic initial actors, three junker cars for salvage/melt/custody; resource ledger qualification is not claimed. No fixture changes after initialization.",
+      "clock": "Shared test-only app/SQL logical clock; no worker registered in this focused component. Separate original-worker world pair covers worker integration."
+    },
+    "cases": [
+      {
+        "name": "basic-salvage",
+        "checks": 12,
+        "carChecks": 1,
+        "exact": 1,
+        "unsupported": []
+      },
+      {
+        "name": "salvage-exact-replay",
+        "checks": 11,
+        "carChecks": 0,
+        "exact": 0,
+        "unsupported": []
+      },
+      {
+        "name": "market-list",
+        "checks": 12,
+        "carChecks": 1,
+        "exact": 1,
+        "unsupported": [
+          {
+            "kind": "receipt-reason",
+            "currency": "cash",
+            "reason": "market:list",
+            "receiptId": "e8c9801e-45f1-439e-babd-473738bee8f7"
+          },
+          {
+            "kind": "observed-table-change",
+            "table": "market_listings",
+            "detail": "Change observed; complete resource disposition classifier is not implemented"
+          }
+        ]
+      },
+      {
+        "name": "market-cancel",
+        "checks": 12,
+        "carChecks": 1,
+        "exact": 1,
+        "unsupported": [
+          {
+            "kind": "observed-table-change",
+            "table": "market_listings",
+            "detail": "Change observed; complete resource disposition classifier is not implemented"
+          }
+        ]
+      },
+      {
+        "name": "legacy-melt",
+        "checks": 12,
+        "carChecks": 1,
+        "exact": 0,
+        "unsupported": [
+          {
+            "kind": "car-sink-identity-yield-provenance",
+            "table": "cars",
+            "owner": "car-owner-character",
+            "carIds": [
+              "melt-car"
+            ],
+            "authority": [
+              {
+                "table": "transactions",
+                "id": "edc01286-50a1-44a3-9427-661d45411b31"
+              }
+            ],
+            "detail": "Receipt omits car ID; melt skill/ladder/tithe inputs and exact compound yield are not fully bound. Full sink lineage remains unsupported"
+          }
+        ]
+      },
+      {
+        "name": "legacy-boost-0",
+        "checks": 12,
+        "carChecks": 1,
+        "exact": 0,
+        "unsupported": [
+          {
+            "kind": "car-acquisition-identity-provenance",
+            "table": "cars",
+            "owner": "car-owner-character",
+            "carIds": [
+              "f4535b44-1e83-48d8-80e5-dc09b0565378"
+            ],
+            "authority": [
+              {
+                "table": "rng_audit",
+                "id": "5cafd85d-b891-469c-81a2-d4fb615f9063"
+              },
+              {
+                "table": "rng_audit",
+                "id": "1d51b038-382b-42d0-b1c2-e37238cba662"
+              }
+            ],
+            "detail": "Receipt binds owner/count/rarity, not car ID, selected model/trim/damage or limited-run allocation; full acquisition lineage remains unsupported"
+          }
+        ]
+      },
+      {
+        "name": "resident-grant",
+        "checks": 15,
+        "carChecks": 1,
+        "exact": 0,
+        "unsupported": [
+          {
+            "kind": "car-acquisition-identity-provenance",
+            "table": "cars",
+            "owner": "5322b1a2-8f95-4e1f-a1f3-ccf23d0cfe17",
+            "carIds": [
+              "c6f68cea-e494-4b6b-a2f6-d6e6911a3987"
+            ],
+            "authority": [
+              {
+                "table": "rng_audit",
+                "id": "09aa6c44-8338-41bd-8d16-de8387e4e2d4"
+              },
+              {
+                "table": "rng_audit",
+                "id": "9db02df0-b008-4db8-9bf5-50b9d44d2009"
+              }
+            ],
+            "detail": "Receipt binds owner/count/rarity, not car ID, selected model/trim/damage or limited-run allocation; full acquisition lineage remains unsupported"
+          }
+        ]
+      },
+      {
+        "name": "resident-retirement",
+        "checks": 15,
+        "carChecks": 1,
+        "exact": 0,
+        "unsupported": [
+          {
+            "kind": "receipt-reason",
+            "currency": "cash",
+            "reason": "npc:retire",
+            "receiptId": "89062f19-38d3-495c-b2b3-432fc978118a"
+          },
+          {
+            "kind": "car-sink-identity-yield-provenance",
+            "table": "cars",
+            "owner": "5322b1a2-8f95-4e1f-a1f3-ccf23d0cfe17",
+            "carIds": [
+              "c6f68cea-e494-4b6b-a2f6-d6e6911a3987"
+            ],
+            "authority": [
+              {
+                "table": "rng_audit",
+                "id": "270a02bb-a7fc-453c-8545-305a055fe04b"
+              }
+            ],
+            "detail": "Receipt omits car ID; melt skill/ladder/tithe inputs and exact compound yield are not fully bound. Full sink lineage remains unsupported"
+          }
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "name": "salvage-wrong-car",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Salvage receipt must consume its exact prior car",
+        "beforeSha256": "882a7c3fea8898df5b76733393edee5aedf2d45f4a5d2b59b8944728381c90ae",
+        "afterSha256": "52c24c239c6d3f5e9ea14c2909c5dc154e20139b7b407e7ac8df8d95c9695361"
+      },
+      {
+        "name": "salvage-wrong-request-digest",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Salvage request digest does not bind this exact car and recipe\n+ actual - expected\n\n+ 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'\n- '11e3adb60e892bc13d7cae2b4d3ff0698291e92c88452b6acf4a50ad2d499a7a'\n",
+        "beforeSha256": "882a7c3fea8898df5b76733393edee5aedf2d45f4a5d2b59b8944728381c90ae",
+        "afterSha256": "03db7050c65bae7bdd5ee0121cff4708353771a11fa97a9b6f7895c343d36d3e"
+      },
+      {
+        "name": "salvage-wrong-output-owner",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'car-other'\n- 'car-owner'\n        ^\n",
+        "beforeSha256": "882a7c3fea8898df5b76733393edee5aedf2d45f4a5d2b59b8944728381c90ae",
+        "afterSha256": "e7e55665766d67865baed36576ab206bd5472008d50117319bc9c66ae44e1141"
+      },
+      {
+        "name": "salvage-missing-output",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Salvage output event cardinality differs\n\n2 !== 3\n",
+        "beforeSha256": "882a7c3fea8898df5b76733393edee5aedf2d45f4a5d2b59b8944728381c90ae",
+        "afterSha256": "4749589f2d7ed3dcd8cb0992f70fdb01141950508d79236fc571b400115fc2db"
+      },
+      {
+        "name": "salvage-duplicated-output",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Salvage output event cardinality differs\n\n4 !== 3\n",
+        "beforeSha256": "882a7c3fea8898df5b76733393edee5aedf2d45f4a5d2b59b8944728381c90ae",
+        "afterSha256": "c6abfe12c544ccec1322f8b66d834c85376ba4f11c6520a90fc9b597147f5cbe"
+      },
+      {
+        "name": "salvage-wrong-input-owner",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "basic-salvage",
+        "result": "REJECTED",
+        "error": "Salvage car owner differs from guard account\n+ actual - expected\n\n+ 'car-other'\n- 'car-owner'\n        ^\n",
+        "beforeSha256": "ebe635e974c1c96f1cae66b271f368f692cef569c58beec3cc20993ee7c320b9",
+        "afterSha256": "feae604b4bb5c3d7cfb7fdecc3101619b885b0e21f08270e1fff2d502ff8dee7"
+      },
+      {
+        "name": "custody-wrong-owner",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "market-list",
+        "result": "REJECTED",
+        "error": "Listing custody changed car ownership\n+ actual - expected\n\n+ 'car-other-character'\n- 'car-owner-character'\n        ^\n",
+        "beforeSha256": "feae604b4bb5c3d7cfb7fdecc3101619b885b0e21f08270e1fff2d502ff8dee7",
+        "afterSha256": "c479222e6f2a4ea89db74cd779f48a98bf030618341005da7119f172d3790794"
+      },
+      {
+        "name": "custody-unrelated-damage",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "market-list",
+        "result": "REJECTED",
+        "error": "Listing custody changed unrelated car fields\n+ actual - expected\n\n  [\n+   'dmg',\n    'listed'\n  ]\n",
+        "beforeSha256": "feae604b4bb5c3d7cfb7fdecc3101619b885b0e21f08270e1fff2d502ff8dee7",
+        "afterSha256": "265836cb1ebe684d2febc1b832fda00064924c8551cac0c884486cc6fddd74cf"
+      },
+      {
+        "name": "source-duplicate-receipt",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "resident-grant",
+        "result": "REJECTED",
+        "error": "Car grant/boost receipt cardinality differs for 5322b1a2-8f95-4e1f-a1f3-ccf23d0cfe17\n\n1 !== 2\n",
+        "beforeSha256": "a33616921a47c3db733c83b674ddcabebfe70ca8eeb767a8deb0f2f9b389a904",
+        "afterSha256": "5f092673f4f22ffbe6578ad29b3995b96e3c6243fba5aa272dab0515c718d1b6"
+      },
+      {
+        "name": "source-wrong-owner",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "resident-grant",
+        "result": "REJECTED",
+        "error": "Car grant/boost receipt cardinality differs for 5322b1a2-8f95-4e1f-a1f3-ccf23d0cfe17\n\n0 !== 1\n",
+        "beforeSha256": "a33616921a47c3db733c83b674ddcabebfe70ca8eeb767a8deb0f2f9b389a904",
+        "afterSha256": "de7d8ba2167a8f51780835b55568887f816639d06feaa00948252fe10c602068"
+      },
+      {
+        "name": "sink-missing-disposition",
+        "type": "counterfactual alteration of retained native boundary",
+        "boundary": "legacy-melt",
+        "result": "REJECTED",
+        "error": "Car melt/retirement receipt cardinality differs for car-owner-character\n\n0 !== 1\n",
+        "beforeSha256": "239ca23d2aba595c82dc473a53dfd4d60740b2041ee0c7cbc46714f1a2a9a0e0",
+        "afterSha256": "b8728a8a81dfed821bbdece3e70f5a189fb430d3d9b2fb49ffcab13753db965e"
+      },
+      {
+        "name": "native-committed-custody-corruption",
+        "type": "actual PostgreSQL trigger",
+        "result": "REJECTED",
+        "error": "Listing custody changed unrelated car fields\n+ actual - expected\n\n  [\n+   'dmg',\n    'listed'\n  ]\n"
+      }
+    ],
+    "positiveBoundaries": 8,
+    "exactCarDispositions": 3,
+    "deliberateNativeCorruptionsRejected": 1,
+    "scope": "Completed canonical authority boundaries; not per-SQL-commit observation. Initial synthetic cars remain declared fixtures. Eleven controls alter copies of actual native before/after evidence; the twelfth installs an actual PostgreSQL corruption trigger and retains its committed state."
+  },
+  "world": {
+    "hoursPerRun": 2,
+    "population": 25,
+    "seed": "rc1-alpha",
+    "policy": "quiet_world",
+    "actualActiveActors": 2,
+    "metrics": {
+      "playerSnapshots": 8,
+      "ownCharacterReads": 2,
+      "freshPlayerCommands": 8,
+      "legacyCrimeAttempts": 2,
+      "crimeSuccesses": 2,
+      "crimeLosses": 0,
+      "exactReplays": 0,
+      "denials": {},
+      "sessionWaits": 0,
+      "sessions": 2,
+      "commandTypes": {
+        "discovery.start": 4,
+        "mystery.start": 3,
+        "discovery.act": 1
+      },
+      "observedAuthorizedOpportunities": 42
+    },
+    "originalDueCallbackCount": 52,
+    "timerCounts": {
+      "directorTick": 24,
+      "guardedTick": 2,
+      "guardedSeasonTick": 2,
+      "health-boundary": 24
+    },
+    "canonicalInvariantChecksPerBoundary": 55,
+    "canonicalInvariantBoundariesPerRun": 12,
+    "finalStateSha256": "a913b658b9396dc29a330b43cc9e84d07d28ea4cd12895992b66900c117f1628",
+    "replayComparison": {
+      "fields": [
+        "hours",
+        "population",
+        "seed",
+        "actorPolicy",
+        "initialStateSha256",
+        "finalStateSha256",
+        "workerScheduleSha256",
+        "jobOutcomesSha256",
+        "deterministicRandomTapeSha256",
+        "actorTapeSha256",
+        "policyStateSha256",
+        "semanticMetricsSha256",
+        "worldDiagnosticsSemanticSha256",
+        "mysteryPolicySummarySha256",
+        "knowledgeDiagnosticsSha256",
+        "resourceObservationEnabled",
+        "resourceJournalCount",
+        "resourceJournalSha256"
+      ],
+      "exclusions": [
+        "Native wall durations",
+        "Read-only physical MVCC and relation-size diagnostics"
+      ],
+      "canonicalStateExclusions": []
+    },
+    "resourceJournalCount": 1085,
+    "resourceJournalSha256": "0bd2c1fdfe24e0fa94d37067fc1085e5456e702c87b47a065d43c2cd58d94454",
+    "independentStreamDigestRecomputed": true,
+    "resourceHashContinuity": true,
+    "resourceEquationsPerRun": 105385,
+    "nonzeroResourceChecksPerRun": {
+      "cash": 22,
+      "ammo": 12,
+      "cars": 6,
+      "cb": 1
+    },
+    "omrNonzeroResourceChecksPerRun": 0,
+    "boundaryOutcomes": {
+      "COMMITTED": 295,
+      "AUTOCOMMITTED": 752,
+      "ROLLED_BACK": 38
+    },
+    "unsupported": {
+      "car-acquisition-identity-provenance:cars": 6,
+      "family-lineage": 2,
+      "observed-table-change:season_records": 2,
+      "observed-table-change:season_recaps": 29
+    },
+    "workerCarLineage": [
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790204400000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 225,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 13
+        },
+        "authority": [
+          {
+            "id": "51b996bc-9def-4eb7-81a1-d645f5b7fd00",
+            "table": "rng_audit"
+          },
+          {
+            "id": "204483d3-8b93-484d-824f-0cd4b463d3aa",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "87853442-6735-4dcd-b260-ea662183e4c1"
+        ],
+        "owner": "7756e72b-44e0-42b5-b238-2c09e54778f9"
+      },
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790208000000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 1660,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 55
+        },
+        "authority": [
+          {
+            "id": "84d4d257-bf80-403c-8906-c936dce73adf",
+            "table": "rng_audit"
+          },
+          {
+            "id": "d6dd21c5-e9c7-454b-b6bd-9832d57ddc9b",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "61008896-a461-4c12-8e70-3ccf4be72c78"
+        ],
+        "owner": "b4d2d6cf-8856-4d2d-a1b9-1d130c8a4708"
+      },
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790208000000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 1682,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 57
+        },
+        "authority": [
+          {
+            "id": "c2765112-d89d-4692-bbb5-9660d8485f40",
+            "table": "rng_audit"
+          },
+          {
+            "id": "f21e264d-9f7d-4618-9859-2465aca21a2d",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "a2840352-29cd-4b59-b02d-44d7d956220d"
+        ],
+        "owner": "6cc9950b-de10-4ea3-acf6-4bd11b4a47b9"
+      },
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790208000000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 1693,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 58
+        },
+        "authority": [
+          {
+            "id": "bf3f0d50-77ec-4bad-98dd-b6bc542fae72",
+            "table": "rng_audit"
+          },
+          {
+            "id": "2448b8ed-55ca-41ec-bd9e-2f5923727e53",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "c9c79782-96fb-46d4-8c23-1bc415543322"
+        ],
+        "owner": "c5537456-017a-472f-bb71-f24ae2ac1837"
+      },
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790211600000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 9544,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 292
+        },
+        "authority": [
+          {
+            "id": "48137bda-cc63-4eb8-b357-1373ab74e0bf",
+            "table": "rng_audit"
+          },
+          {
+            "id": "ed6565ed-057a-4d1e-8105-1b4375a6550f",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "f6125861-082d-4299-983f-4db571f4224b"
+        ],
+        "owner": "503e4ed3-4aae-4053-83d1-d71176aa4485"
+      },
+      {
+        "event": {
+          "clientId": 4,
+          "command": "COMMIT",
+          "context": {
+            "authority": "original-worker",
+            "logicalAt": 1790211600000
+          },
+          "outcome": "COMMITTED",
+          "sequence": 9555,
+          "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+          "transactionId": 293
+        },
+        "authority": [
+          {
+            "id": "653ed042-bdbf-4994-b759-e88fff7e0e27",
+            "table": "rng_audit"
+          },
+          {
+            "id": "e8ee7a9d-9893-4d5b-b1ea-b8df2141b803",
+            "table": "rng_audit"
+          }
+        ],
+        "kind": "owner-source-count-only",
+        "observedCarIds": [
+          "8fb37567-6609-4081-a781-eecdff2da9ca"
+        ],
+        "owner": "6124e780-a960-463d-8e8d-d99fd7c00c6b"
+      }
+    ],
+    "observedCost": {
+      "observedBoundaryWallMs": 13533.963199999867,
+      "maximumBoundaryWallMs": 77.11939999999595,
+      "serializedJournalBytes": 41033685,
+      "serializedRestrictedChangeBytes": 235864,
+      "logicalHours": 2,
+      "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+    },
+    "observation": {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-2",
+      "runSha256": "76cadb24707046c0071a68fb768d458874f2889a426ce27818792190a097f67a",
+      "configurationSha256": "7a9a0451111c838eb0b2bb5c7c9cba7edd8620fdc0adbdd23db12d4ad6f46022",
+      "wallMs": 42871
+    },
+    "replay": {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-replay-2",
+      "runSha256": "19c4c6663f03c1fc3354ea543820492fbf8f27b03dd03d1d1357b8b229fd049b",
+      "configurationSha256": "6f6768a1dbcfd6e95f99af7289b2de3eebdf24fcbc5acc8a5f56474fa2a13a84",
+      "wallMs": 42565
+    }
+  },
+  "retainedFailures": {
+    "sealed": [
+      {
+        "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-1",
+        "runSha256": "ff94baf3d5d46e4e615ab4faf69f76e72e7b6d468bec00ba7ac24b986f56280c",
+        "status": "FAIL",
+        "error": "spawnSync pg_dump ENOENT",
+        "scope": "PostgreSQL dump binary absent from initial command PATH; zero actor activity and zero observed resource boundaries; database cleaned up. Same committed source rerun with installed PostgreSQL18 tools on PATH."
+      }
+    ],
+    "preflights": [
+      {
+        "path": "C:/Users/Jorge/.codex/rc1-native-evidence/car-journal-ea639e63-preflight.json",
+        "sha256": "ae2847078291809346de3f90d137994b0516fb45f518986f50d3155e805da14b",
+        "sealed": false,
+        "status": "PREFLIGHT_REJECTED",
+        "source": "ea639e63e5514f7ce645e9df2a971f370c64ead4",
+        "command": "node test/rc1-car-journal-postgres.js --postgres --output=C:/Users/Jorge/.codex/rc1-native-evidence/car-journal-ea639e63-1",
+        "error": "Evidence requires a clean committed checkout: M tools/rc1-world-resource-observer.js",
+        "cause": "Exact Git LF bytes restored after mixed EOL checkout; Git index stat had not yet been refreshed.",
+        "databaseCreated": false,
+        "proofRecorderCreated": false
+      },
+      {
+        "path": "C:/Users/Jorge/.codex/rc1-native-evidence/car-world-ea639e63-replay-preflight.json",
+        "sha256": "646a0781e565d6758ef0a2a595fd5562896e7fb2e634314700fbe94667f0cfa0",
+        "sealed": false,
+        "status": "PREFLIGHT_REJECTED",
+        "source": "ea639e63e5514f7ce645e9df2a971f370c64ead4",
+        "error": "Replay predecessor linkage differs",
+        "cause": "Replay command omitted the observation command prior-failure linkage flag.",
+        "intendedOutput": "C:/Users/Jorge/.codex/rc1-native-evidence/car-world-ea639e63-replay-1",
+        "databaseCreated": false,
+        "proofRecorderCreated": false
+      }
+    ]
+  },
+  "verification": {
+    "allArtifactAndHistoryHashesVerified": true,
+    "indexedArtifacts": 165,
+    "indexedBytes": 95869273,
+    "ownedDatabases": 4,
+    "ownedDatabasesRemaining": 0,
+    "independentVerification": {
+      "path": "C:/Users/Jorge/.codex/rc1-native-evidence/car-journal-ea639e63-independent-verification.json",
+      "sha256": "8db47436330e7bfd8791223d7cea5bc7da7b754e8f1488e40ae5f5361e8791d8"
+    }
+  },
+  "artifactIndex": {
+    "path": "docs/release/readiness-work/harness-car-journal-artifact-index.json",
+    "gitBlobSha256": "1fee1899eee68d99c12b49625986d9ae237ec94d57932369a7e9fa493e23df33",
+    "encoding": "UTF-8 LF Git blob bytes; a CRLF checkout may differ."
+  },
+  "commands": {
+    "unit": [
+      "node test/rc1-car-journal.js",
+      "node test/rc1-world-resource-observer.js"
+    ],
+    "environment": "COORDINATION_TEST_DATABASE_URL points at disposable loopback PostgreSQL18.4 control database; PostgreSQL18/bin is on PATH for pg_dump and pg_restore.",
+    "focused": "node test/rc1-car-journal-postgres.js --postgres --output=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-journal-ea639e63-1",
+    "observation": "node test/rc1-native-world-workload.js --postgres --hours=2 --population=25 --seed=rc1-alpha --policy=quiet_world --observe-resources --max-wall-ms=900000 --max-output-bytes=2147483648 --min-free-bytes=17179869184 --prior-failure=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-1 --output=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-2",
+    "replay": "node test/rc1-native-world-workload.js --postgres --hours=2 --population=25 --seed=rc1-alpha --policy=quiet_world --observe-resources --max-wall-ms=900000 --max-output-bytes=2147483648 --min-free-bytes=17179869184 --prior-failure=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-1 --replay=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-observation-2 --output=C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\car-world-ea639e63-replay-2"
+  },
+  "limitations": [
+    "Only canonical basic salvage and market listing/cancellation without a standing bid have complete car identity bindings.",
+    "Boost and NPC car creation receipts omit the car ID and chosen model/trim/damage; exact identity provenance remains unsupported for all six worker grants.",
+    "Melt and resident retirement receipts omit car ID; melt skill/ladder/tithe yield inputs remain unsupported.",
+    "Car sale/auction settlement, theft, pink slips, collateral, extraction/import, heirs, repair and other car changes remain unsupported.",
+    "The worker pair has 25 initialized actors but only two active quiet-policy actors in two hours. This is not a full-population activity or long-run proof.",
+    "All other unsupported Family and season transitions remain recorded; no complete 13-resource or 225-cell matrix claim.",
+    "External chain/liquidity/RWA-health-registry integrations remain excluded as declared by the original worker harness.",
+    "No HTTP authentication/session, concurrent-writer, deployed load, production latency or new long-world campaign qualification."
+  ]
+}

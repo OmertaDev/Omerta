@@ -1,0 +1,293 @@
+{
+  "format": 1,
+  "gap": "C02-SHIPMENT-MATERIAL",
+  "status": "PASS_SCOPED_NATIVE_TERMINAL_AND_MIDNIGHT_SUBSET",
+  "source": "90268cc5ea044a2a1526a2600615f723af319990",
+  "fullGapStatus": "OPEN_PENDING_INTEGRATED_SIMULATION_AND_DEPLOYMENT",
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "scope": "Exact native completed-transaction/bounded-concurrent-batch shipment ownership and canonical fire terminal proof",
+  "commitRange": "52f5257256f05945e15e171cc9615abeecfefdec..90268cc5ea044a2a1526a2600615f723af319990",
+  "productionChanges": false,
+  "histories": [
+    {
+      "directory": "shipment-terminals-native-1",
+      "source": "8087d318ce1e374e23c5869a5705160a9c299085",
+      "status": "FAIL",
+      "artifactCount": 4,
+      "manifestSha256": "e2c4021ea8efe3d4cd7ad35ad03d879e36ee1b47445ab14fd58906c258ea37bb",
+      "independentlyVerified": {
+        "boundaries": 0,
+        "equations": 0,
+        "movements": 0,
+        "rejectedControls": 0
+      },
+      "failure": "Original worker rejected direct cash/ammo fixture offsets. Corrected by pre-baseline canonical window and ammo purchases; no invariant suppression."
+    },
+    {
+      "directory": "shipment-terminals-native-2",
+      "source": "5aabfc0d112d124af95ad301f3f2dd52a9e96d92",
+      "status": "PASS_SCOPED",
+      "artifactCount": 48,
+      "manifestSha256": "c87fc76c366552b108fe3b7c8bee4d1cf1a612793c9d260ccca1787b06c835bc",
+      "independentlyVerified": {
+        "boundaries": 30,
+        "equations": 1668,
+        "movements": 17,
+        "rejectedControls": 9
+      },
+      "failure": null
+    },
+    {
+      "directory": "shipment-terminals-native-3",
+      "source": "90268cc5ea044a2a1526a2600615f723af319990",
+      "status": "PASS_SCOPED",
+      "artifactCount": 49,
+      "manifestSha256": "0430a4572691d9d724c49bdc56c78322a5c3cc2a1ada8c363eb3109594501f0a",
+      "independentlyVerified": {
+        "boundaries": 30,
+        "equations": 1668,
+        "movements": 17,
+        "rejectedControls": 10
+      },
+      "failure": null
+    }
+  ],
+  "finalTotals": {
+    "initialMaterial": 4,
+    "canonicalDailyCreated": 52,
+    "commissionedMaterial": 4,
+    "terminalMaterialDestroyed": 8,
+    "finalLivingMaterial": 44,
+    "lootTransferred": 2,
+    "bespokePieces": 2,
+    "serials": [
+      1,
+      2
+    ],
+    "commissionCash": 240000,
+    "terminalDeaths": 2,
+    "heirMaterial": 0
+  },
+  "independentlyReadNativeFinal": {
+    "living_material": "44",
+    "pieces": 2,
+    "serial": 2,
+    "terminal_deaths": 2,
+    "heir_material": "0"
+  },
+  "exactExecutedBranches": [
+    {
+      "name": "original-worker-bootstrap",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "old-day:take-victim",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-1",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-2",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-3",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-4",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-5",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-6",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-7",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-8",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-9",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "old-day:fill-10",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "victim:commission-before-death",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "search:original-14",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "search:original-15",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "midnight:overlapping-original-day-claims",
+      "outcome": "PASS",
+      "movements": 2
+    },
+    {
+      "name": "midnight:old-success-retry-after-new-day",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "midnight:new-day-player-cap",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "workers:original-search-one-ms-early",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "fire:one-ms-early-refused",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "workers:original-search-ready",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "fire:odd-material-loot-and-replacement",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "fire:exact-retry-no-second-estate",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "fire:below-loot-floor-death",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "heir:historical-take-does-not-create-material",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "heir:historical-bespoke-does-not-charge-again",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "heir:fresh-commission-without-material-refused",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "loot-commission:abort-after-cash-and-serial",
+      "outcome": "PASS",
+      "movements": 0
+    },
+    {
+      "name": "loot-commission:same-key-concurrent-duplicate",
+      "outcome": "PASS",
+      "movements": 1
+    },
+    {
+      "name": "loot-commission:durable-exact-retry",
+      "outcome": "PASS",
+      "movements": 0
+    }
+  ],
+  "controls": [
+    {
+      "name": "wrong-loot-owner",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "heir-retains-material",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "missing-kill-receipt",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "cash-loot-balanced-wrong-owner",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "rewritten-old-day",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "missing-take-authority",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "orphan-serial",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "wrong-piece-owner",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "missing-cash-debit",
+      "outcome": "REJECTED"
+    },
+    {
+      "name": "wrong-request-owner",
+      "outcome": "REJECTED"
+    }
+  ],
+  "originalWorkerCallbacks": {
+    "directorTick": 36,
+    "guardedTick": 3,
+    "guardedSeasonTick": 3,
+    "health-boundary": 36
+  },
+  "searchMilliseconds": 10800000,
+  "canonicalInvariantChecks": 2,
+  "fixture": "Declared eligibility/stats/basic gun/material; reallocated2000OMR from retired AMM seed and declared cash till; canonical funding and240ammo boxes before baseline with all receipts retained.",
+  "ordering": "Two native old-day row-lock waiters; new-day commit completed before releasing old row lock; exactly one old winner. No total commit order is claimed.",
+  "remaining": [
+    "Integrated parent revision retest",
+    "Full-resource simulation matrix",
+    "Production deployment/compatibility and natural acquisition",
+    "Apex rout material creation",
+    "Other terminal paths and bank/transit/bounty/chop/escrow/blood-oath combat variants"
+  ],
+  "owner": "Codex/resource_proof; parent owns integrated gates and broader qualification",
+  "rerun": "node test/rc1-native-shipment-terminals.js --postgres --output=<new-private-directory> with loopback RC1_RESOURCE_DATABASE_URL",
+  "rawTokensOrPrivateActorDataIncluded": false
+}

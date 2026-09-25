@@ -1,0 +1,1286 @@
+{
+  "format": 1,
+  "status": "FAIL_HOSTED_RECOVERY",
+  "releaseReady": false,
+  "source": "b0c85c11dd636b04d92f8f017ca31982b9c63999",
+  "id": 35580193066,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35580193066",
+  "conclusion": "failure",
+  "completedObservation": "2026-09-21T09:57:01.043Z",
+  "metadataSha256": "edad895f322b9d742ac9af15b015337e9f7a709833ad84352a9670f8dc8417b5",
+  "logSha256": "e4c93718e6b15ae74fcec351bfd3328277568fbd48197c3c0b4ea9061e0bbe72",
+  "jobs": [
+    {
+      "name": "Original resource timers (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T09:25:13Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original Family war and turf lifetimes with treasury reconciliation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two midnight shipment boundaries with aligned application and database clocks",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Isolated two-hour world smoke (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T08:58:01Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install matching PostgreSQL checkpoint tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native advisory-lock database isolation control",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two-hour authorized-player and original-worker smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native seasonal and market query-order causal controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical Knowledge distribution and pagination",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Bounded mystery participation policy exercise",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two-hour actual commit-boundary resource observations",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Policy and loan lifecycles (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:49Z",
+      "completedAt": "2026-09-21T09:12:37Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authorized conflict, retaliation and original hospital recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original loan offer, grace and funded Wanted lifecycles",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary entrant replacement preserves retired custody",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Seasonal status interruption and durable retry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original seasonal boundaries and complete status journals",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary market contention and original order expiry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Natural indictment, plea and original detention recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary outsiders under a declared Family monopoly",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary outsiders among ten fragmented Families",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original operation capital expiry and replacement disposition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical death and heir recovery after original search",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Twenty genuine mixed aggression choices and heir policy continuation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Policy and loan lifecycles (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T09:12:05Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authorized conflict, retaliation and original hospital recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original loan offer, grace and funded Wanted lifecycles",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary entrant replacement preserves retired custody",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Seasonal status interruption and durable retry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original seasonal boundaries and complete status journals",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary market contention and original order expiry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Natural indictment, plea and original detention recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary outsiders under a declared Family monopoly",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Ordinary outsiders among ten fragmented Families",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original operation capital expiry and replacement disposition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical death and heir recovery after original search",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Twenty genuine mixed aggression choices and heir policy continuation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Linux recovery (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T09:14:04Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Record exact candidate and runtime",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "PostgreSQL partial migration failure and retry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering and concurrent replay on PostgreSQL",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install Chromium for the real PostgreSQL phone journey",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native item, recipe, world and situation authority probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 newcomer phone journey on PostgreSQL",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native backup, private file permissions and restore on Linux",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Crew draft and adjacent Send survive pending canonical reads",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Connected social, investigation and conflict phone journeys",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Nine production-process termination barriers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native checkpoint restore, receipt replay and deliberate corruption detection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Same-seed serial replay with complete canonical state",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Recorded PostgreSQL contention and fault schedule replay",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the observed Render rollback predecessor",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install predecessor dependencies from its own lockfile",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upgrade, rollback and replay against the pinned predecessor",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain exact-revision process logs and verdict",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out the observed Render rollback predecessor",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Original escrow lifetimes (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T09:54:32Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native escrow with unchanged one-hour market and loan lifetimes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Bounded custody and mobile (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T08:58:38Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install Chromium for native adversity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact Family cash and ammo custody with late abort",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact OMR custody and original six-hour unbond",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact OMR redemption and historical balance boundaries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical alliance pacts and explicit Knowledge grants",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native newcomer response loss reload and duplicate gesture",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Linux recovery (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T09:04:23Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Record exact candidate and runtime",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "PostgreSQL partial migration failure and retry",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering and concurrent replay on PostgreSQL",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install Chromium for the real PostgreSQL phone journey",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native item, recipe, world and situation authority probes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 newcomer phone journey on PostgreSQL",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native backup, private file permissions and restore on Linux",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Crew draft and adjacent Send survive pending canonical reads",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Connected social, investigation and conflict phone journeys",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Nine production-process termination barriers",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native checkpoint restore, receipt replay and deliberate corruption detection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Same-seed serial replay with complete canonical state",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Recorded PostgreSQL contention and fault schedule replay",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the observed Render rollback predecessor",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Install predecessor dependencies from its own lockfile",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Upgrade, rollback and replay against the pinned predecessor",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Retain exact-revision process logs and verdict",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Isolated two-hour world smoke (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T08:58:04Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install matching PostgreSQL checkpoint tools",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native advisory-lock database isolation control",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two-hour authorized-player and original-worker smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native seasonal and market query-order causal controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical Knowledge distribution and pagination",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Bounded mystery participation policy exercise",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two-hour actual commit-boundary resource observations",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Original escrow lifetimes (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T09:54:25Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native escrow with unchanged one-hour market and loan lifetimes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Legacy authority (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T08:54:49Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native pre-parser moderator authentication and rate limiting",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native moderator perimeter and direct ownership authority",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Separate native reviewer credential perimeter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Legacy authority (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T08:54:48Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native pre-parser moderator authentication and rate limiting",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native moderator perimeter and direct ownership authority",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Separate native reviewer credential perimeter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Original resource timers (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:45Z",
+      "completedAt": "2026-09-21T09:25:19Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Original Family war and turf lifetimes with treasury reconciliation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Two midnight shipment boundaries with aligned application and database clocks",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Bounded custody and mobile (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-09-21T08:52:44Z",
+      "completedAt": "2026-09-21T08:58:57Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install Chromium for native adversity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact Family cash and ammo custody with late abort",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact OMR custody and original six-hour unbond",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact OMR redemption and historical balance boundaries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Canonical alliance pacts and explicit Knowledge grants",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native newcomer response loss reload and duplicate gesture",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "passedJobs": 13,
+    "failedJobs": 1
+  },
+  "failedGate": "Linux recovery PostgreSQL16 golden390px exact issued-board identity; RC1-TOOL-32",
+  "requiredRerun": "Complete hostedCI and recovery on a clean repaired integrated source; no passed lane overrides the failed gate.",
+  "limits": [
+    "Pinnedb0source only; later loan/car/pressure/alliance48h/Family yield repairs are absent from this run.",
+    "Downstream steps skipped by the failed golden journey remain unexecuted at this source.",
+    "No deployed recovery, physical devices, real cohort, complete resources or qualifying world matrix."
+  ]
+}

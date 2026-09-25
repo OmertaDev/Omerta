@@ -1,0 +1,120 @@
+{
+  "format": 1,
+  "state": "NOT RELEASE READY",
+  "implementationComplete": false,
+  "note": "Scoped regressions do not close the required release proofs. Exact run/source references belong in the candidate evidence package. No external operator identities or participants are inferred.",
+  "open": [
+    {
+      "id": "RC1-05-HOSTED-GOLDEN-FOCUS",
+      "owner": "Codex/root",
+      "missing": "Original runtime focus and refreshed-board harness failures remain retained. Exact4b9db479 allfour native golden widths pass50commands/6interactions each with zero JS errors; both hosted Linux recovery lanes also pass. Old unit fixture fails that same candidate and is repaired separately5341808f. Latest integrated reruns and physical keyboard/human journeys remain required.",
+      "evidence": "Recovery35569159408 job106236932962; private fcaa6076-workflows/linux-pg16.log;crew-input-focus.md;golden-focus-summary.json;hosted-fcaa6076-results.json;integrated-b0c85c11-results.json;harness-board-detachment.md;hosted-b0c85c11-recovery-results.json;integrated-f8b9b0d1-results.json;integrated-4b9db479-results.json",
+      "reruns": [
+        "Causal native browser reproduction",
+        "Affected focus/keyboard controls",
+        "Complete four-width golden journey and hosted16/18.4 recovery"
+      ]
+    },
+    {
+      "id": "RC1-00-DEPLOYMENT-CONFIGURATION",
+      "owner": "Named release owner/operator required",
+      "missing": "My Workspace selected. Read-only Render service/group key inventories, public contract-address configuration and live468516d8 revision recorded09:28–09:33UTC. Listed world/coordination/Director opt-in flags are absent from those inventories; effective process/startup configuration is not attested. Named operator, enabled integration evidence, candidate-specific isolated services and deployment/recovery remain required.",
+      "evidence": "render-observation.json;render-envelope-observation.json;render-config-ui-20260921-0933.json;render-family-backing-observation.json",
+      "reruns": [
+        "candidate/configuration freeze",
+        "affected integration, migration and recovery proofs"
+      ]
+    },
+    {
+      "id": "RC1-01-CONCURRENT-REPLAY",
+      "owner": "Backend/test engineer; current engineering assignee Codex/native_harness",
+      "missing": "Recorded scoped contention, original-worker/actor checkpoint continuation and ninety-day quiet-world exact replay pass. Native direct-authority reduction at0a679ffb reduces the retained crown mismatch25-to2 actors and4-to1 operation with deletion controls and zero diagnostic delay. This does not minimize the90-day trajectory or prove elapsed season equivalence. Complete src-tree pin remains; latest integrated source needs fresh replay/input. Arbitrary concurrent failure schedules, full-world reduction, complete policies and matrix replay remain required. Exactc7b23435 hour24 native checkpoint continuation and replay pass all18fields; real repeated startup jobs and their213 extra boundaries remain, including NPC restart-cadence sensitivity. Exact4b9db479 local48h alliance replay passes, while hosted PG18.4 fails without retained detail; encrypted reproduction required. Exact4b hosted reproduction subsequently passes with authenticated complete artifacts; original hosted failure remains unresolved. Combined0648d1bd 57-table2h pair matches18fields/full state/1085journal entries;45unknowns remain.",
+      "evidence": "harness-worker-results.json;harness-database-isolation.md;expanded-native-results.json;harness-worker-isolated-results.json;harness-actor-replay-results.json;harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json;harness-recorded-query-order.md;harness-query-order-causal-results.json;harness-quiet-90day-order-replay-results.json;integrated-9e05bf08-results.json;harness-failure-reducer-results.json;harness-failure-reducer-artifact-index.json;../../rc1-alliance-continuation.md;integrated-4b9db479-results.json;harness-gzip-capture.md;hosted-4b9db479-retained-reproduction.json;harness-observer-serialization.md",
+      "reruns": [
+        "concurrent replay",
+        "checkpoint/failure reduction",
+        "complete native matrix"
+      ]
+    },
+    {
+      "id": "RC1-02-FULL-RESOURCE-COVERAGE",
+      "owner": "Backend/economy engineer; current engineering assignee Codex/resource_proof",
+      "missing": "All13categories and9originalgaps still require complete native branches plus simulation with no unknown lineage. Scoped exact OMR redemption/sinks/unbond/repaid collateral, Family cash/ammo formation-to-dissolution, three-Family turf settlement, midnight shipment races/loot/commission, original escrows/loans/capital and seasonal journals now pass at their pinned sources. Remaining include complete OMR mint/burn/backing/terminal collateral, NFT lifecycle/backing, other operation/material/escrow/Family/terminal variants, compound per-owner lineage and full-world per-commit classification. Cars, Family and seasonal world classifications remain explicit unknowns; no standalone component silently closes them. Separate13868736 OMR loan terminals pass47boundaries2261equations13controls and original27h worker callbacks, with186 retained artifacts independently verified; omitted races/death ecology/backing and full-world integration remain open. Separateea639e63 car journal proves exact basic salvage and list/cancel custody with12corruption controls and matching2h original-worker pair; boost/melt/worker identity and yield gaps remain explicit. ReproducedP2Family yield0.0005overpay repaired against exact stored backing; scoped native43-boundary custody and nine-case precision proofs pass at9e0a845f. Full integrated affected gates and remaining Family branches still required. Exact4b9db479 integrated Family yield/precision and affected OMR regressions pass. Separate20211708 ammo escrow and b457cc12 pressure cash observers add receipt-bound owner/custody assertions; bounded scarcity/abundance have no unknowns at that source only. Global taxonomy and compound/terminal branches remain incomplete. Separate361efd90 exact ordinary Family formation/cash/OMR tribute proves34boundaries,11movements and33corruption controls; canonical join remains unsupported and other Family branches remain open. Separate41127506 living-member Family dissolution proves two nonzero three-bucket terminals,40boundaries and60corruption controls; death/estate, war/turf/governance and compound terminals remain open. Separate dff63152 exact live single-district turf terminal passes; remaining variants and cross-contest receipt lineage stay open. Integrated6368339e fails NPC formation observer46 and cleanup47; NPC repair retains unclassified war_pool/Family lineage, not full resource coverage. Separatee71eab8a native COMMIT witness proves two exact neutral solo melts with30boundaries and zero unknowns in that narrow workload. Other car branches and integrated world qualification remain open.",
+      "evidence": "resource-proof.md;resource-family-runs/7df52b3f-summary.json;resource-shipment-boundaries.json;resource-capital-proof.md;resource-escrow-runs/e89e90fd-summary.json;resource-loan-lifecycle-results.json;harness-mystery-world-replay-results.json;resource-capital-lifecycle-summary.json;integrated-fcaa6076-results.json;season-journal-summary.json;integrated-09119b29-results.json;omr-custody-summary.json;family-cash-ammo-summary.json;alliance-summary.json;shipment-terminal-summary.json;turf-contention-summary.json;integrated-b0c85c11-results.json;omr-loan-terminal-summary.json;harness-car-journal-results.json;family-omr-summary.json;family-yield-repair.json;integrated-4b9db479-results.json;ammo-observer-summary.json;pressure-cash-observer-summary.json;family-entry-observer-summary.json;world-family-entry.md;family-terminal-observer-summary.json;world-family-dissolution.md;turf-terminal-observer-summary.json;family-npc-observer-summary.json;integrated-6368339e-results.json;../../rc1-car-melt-commit.md;hosted-6368339e-retained-failures.json",
+      "reruns": [
+        "resource inventory and journals",
+        "all affected transition/replay/fault branches",
+        "local-chain and enabled deployed backing attestation",
+        "complete native matrix"
+      ]
+    },
+    {
+      "id": "RC1-03-MATRIX-AND-SOAK",
+      "owner": "Simulation engineer; current engineering assignee Codex/native_harness",
+      "missing": "The repaired25-actor90-day quiet-world observation/replay atc38fb9bd matches all90 daily states and the final complete state. Resource observation was disabled in that long pair, so qualifying runs remain0. Complete policies, resource movement, metrics/reachability,225runs and12-hour production-equivalent soak remain required. Bounded quiet/mystery/aggression/churn/market/Law/Family/alliance/turf components exist; complete-world integration and remaining archetypes stay incomplete. Three Families now contest one objective through original2h workers; that is not full warfare or90-day coverage. Native48h alliance observation/replay and three-entrant scarcity/abundance components now pass at separate pinned sources; explicit unknown lineage and scenario/fixture limits remain, with0qualifying matrix runs.",
+      "evidence": "scenario-manifest.json;harness-quiet-90day-regression-results.json;market-player-policy.md;law-player-policy.md;integrated-d012c78a-results.json;family-player-policy.md;harness-quiet-90day-order-replay-results.json;alliance-summary.json;turf-contention-summary.json;../../rc1-alliance-world.md;harness-resource-pressure-results.json",
+      "reruns": [
+        "225 complete native runs after conservation coverage",
+        "12-hour 1000-actor soak",
+        "failure reduction and final complete matrix"
+      ]
+    },
+    {
+      "id": "RC1-04-AUTHORITY-INVENTORY",
+      "owner": "Security/backend role required; completed Codex/source_repairs work retained, platform-filter interruption recorded",
+      "missing": "24 PlayerCommands have partial reviewed native coverage. Additional398 denials cover42 moderator,35 selected ownership/account and4reviewer routes. A reproduced pre-parser moderator ingress issue is repaired with retained before/after controls. Remaining legacy routes, complete role/terminal branches and integration review stay open. Separate64c3245a all14Crew route perimeter plus selected roles/revocation/replays pass53denials/13replays; full crossproduct remains incomplete.",
+      "evidence": "authority-command-matrix.json;authority-legacy-review.json;expanded-native-results.json;authority-crew-review.md;authority-crew-summary.json",
+      "reruns": [
+        "reviewed complete authority matrix",
+        "native tampering/denial/replay tests",
+        "deployment-phase integration review"
+      ]
+    },
+    {
+      "id": "RC1-05-MOBILE-AND-JOURNEYS",
+      "owner": "Client/QA engineer; physical testers required",
+      "missing": "Integratedb0c85c11 passes allfour widths for connected fixture-assisted golden B/C/D/E segments and native newcomer response loss/reload/duplicate gesture through the canonical Family/Crew gate. Complete major-action failure/loss/expiry paths, stress counts, physical iPhone/Android keyboards/wallets and human A-E comprehension remain required.",
+      "evidence": "golden-browser-regressions.json;browser-refresh-retest.json;mobile-adversity-summary.json;integrated-b0c85c11-results.json",
+      "reruns": [
+        "complete four-width browser matrix",
+        "physical device matrix",
+        "golden journeys A-E",
+        "affected human journeys after repairs"
+      ]
+    },
+    {
+      "id": "RC1-06-DEPLOYED-RECOVERY",
+      "owner": "Named operator required; engineering assignee Codex/root",
+      "missing": "Isolated candidate deployment, API/worker/configuration agreement, actual callback/integration and invitation attestation, delivered operator alert, administrative drills and measured deployed recovery/rollback. Local PostgreSQL/Linux results retain their separate scope.",
+      "evidence": "render-observation.json",
+      "reruns": [
+        "deployment attestation",
+        "all recovery cases on selected source/predecessor pair",
+        "separate backup restoration and recovery-point measurement"
+      ]
+    },
+    {
+      "id": "RC1-07-REAL-COHORT",
+      "owner": "Unassigned cohort coordinator and release operator",
+      "missing": "Thirty consenting real participants for seven days, including the specified unfamiliar/mobile/Family groups, observed first sessions, later-day returns, real A-E completions and final-candidate 72-hour observation. No participants admitted before technical safety gates.",
+      "evidence": "Operator/cohort input pending; no cohort execution claimed",
+      "reruns": [
+        "technical admission gates",
+        "seven-day cohort",
+        "affected journeys and final 72-hour window after repairs"
+      ]
+    },
+    {
+      "id": "RC1-SEASON-01-AFFECTED-RERUNS",
+      "owner": "Codex/root",
+      "missing": "Atomic crown recovery and scoped source-pair upgrade/rollback pass at09119b29. Separate bfa51a3f original673-hour seasonal journal passes on repaired runtime. Hosted integrated full regression and exact original-lifetime replay still remain required; generic source-pair receipts do not independently cover all seasonal states.",
+      "evidence": "season-recovery-finding.md;integrated-fcaa6076-results.json;season-lock-review-summary.json;integrated-09119b29-results.json;season-journal-summary.json",
+      "reruns": [
+        "hosted16/18.4 recovery and full regression",
+        "source-pair upgrade/rollback",
+        "original-lifetime worker replay",
+        "season resource/matrix proofs"
+      ]
+    }
+  ]
+}

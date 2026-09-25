@@ -1,0 +1,3493 @@
+{
+  "schemaVersion": 1,
+  "gate": "C02-ESCROW-DISPOSITIONS",
+  "status": "OPEN_REQUIRED_PROOF",
+  "owner": "Codex/resource_proof",
+  "source": "e89e90fd26f5e94b4eebc48d12442af43d0055f6",
+  "runs": [
+    {
+      "runId": "resource-escrow-e89e90fd26f5-6d9822f5d5",
+      "source": "e89e90fd26f5e94b4eebc48d12442af43d0055f6",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:48:28.904Z",
+      "endedAt": "2026-09-21T04:49:42.011Z",
+      "invocation": {
+        "command": "node tools/rc1-resource-escrow.js",
+        "arguments": [
+          "--terminal-fixtures"
+        ],
+        "node": "v24.19.0",
+        "platform": "win32"
+      },
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "configuration": {
+        "terminalFixtures": true,
+        "shortField": false,
+        "longTerm": false,
+        "clocks": "Unmodified application and PostgreSQL wall clocks",
+        "chain": "unconfigured",
+        "timerMode": "Initial empty poker, GP and Stakes fixtures with 60-second deadlines",
+        "operatorConfiguration": "Local fixture flags only; installed dependencies and deployed integrations are not attested; preflight remains enforced"
+      },
+      "productionTimers": {
+        "pokerMs": 86400000,
+        "gpMs": 1800000,
+        "stakesMs": 1800000
+      },
+      "fixtureGrants": {
+        "accounts": 7,
+        "cashPerCharacter": "1000000",
+        "omrPerAccount": "2000",
+        "respectPerCharacter": 10000,
+        "location": "neon",
+        "cars": 10,
+        "emptyEventFixtures": [
+          "poker",
+          "gp",
+          "stakes"
+        ],
+        "initialEventPools": "0",
+        "racers": "Acquired canonically after baseline"
+      },
+      "deadlines": {
+        "poker": "2026-09-21T04:49:36.916Z",
+        "gp": "2026-09-21T04:49:36.916Z",
+        "stakes": "2026-09-21T04:49:36.916Z"
+      },
+      "boundaries": 83,
+      "executedScenarios": [
+        {
+          "name": "stakes:acquire-racer:buyer",
+          "outcome": "PASS",
+          "journalHash": "e0bf6ef67b42c2fd30649903beb72bf1833a2503d787effa025befbe14856cbe",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "cc0167839cdc3dde2c8ab65c2b45446528b8fe7ab0b37b638bf6df639bf868b4",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "c582ac051ccbcf8833885a6156006fea295ca87d5458ef5e82f92042869ac64e",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "1a7e4099c33c56eb3e9717cc568fd80817c97f742781e5932def330bb4c3e785",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:rival",
+          "outcome": "PASS",
+          "journalHash": "8a29c67ec72934d10796dddf4607252e01f0d29b03cafaf5b287e2f73d88e9b9",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "ea57dd8aaf00e0ac81434eb9798501d7af4820754be293c7358516b6d13b11d1",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "d379f519af31940cac46e9619fd1404f5f6e14c90c28c2b06ec6e4e988fc6f2c",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "370579e2523991263c21baa0c29467319e08a472e9416d65142b1ae245758f8c",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:killer",
+          "outcome": "PASS",
+          "journalHash": "c9892ca598da653258bd1d758456410f4e0d2005fc44aac0bd302e7f68896ed0",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "dba4b6adbf8dd9aa55a6d869c8085cf6ca5ee0aaff694a355dc518f0603103c8",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "c36fcc254414ba6042d6acc1f5478feb4e9ccaffbaf3c78018ee568e82eef0c4",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "2bc0de9e51622409f9d47d0abeb9e88adc05820cf75d6ee36bbd5657fbf8c17f",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:victim",
+          "outcome": "PASS",
+          "journalHash": "80367b35bef026f37f72dbeffa7362d34dfc851799939e9907ed39b6372bd7d0",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "8f42f7a962274e55ed519df48b9f1e823d772fa58704afb68939b97b5d366081",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "4531d85227ebf1304c1bec8ebc5bca50c22dce6a9472a38bc73ecfebe6944f3a",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "e2e68066b62d5e850082ba674c4448cd726492676efbc6b0a482fc56dc06cfc2",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "512f11a57bbeca1ec7c5cc74117bd7585a4df7f551e7b1a4a93ec7412d6676fe",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "9e27efcde033611b44734eca91b5f744a2dad69f02faaccf1f7a903d82e1eb81",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "ae4578165d5fd930a639f0891d4bf3662805f4eb194f0246efaa35018071302a",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "26b094135e8c3f95850f0101e064055625e3ef9415074811d8bd090b349eb377",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "2f6e612a36e5d4cd7a0bd15e91a3c78f4aee5ab6d26d488f61e1f23981121cae",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "70c45c9f251965543204a56f777796601139789756c7e7ae8ad19fa7fd93f089",
+          "equations": 38
+        },
+        {
+          "name": "market:car-list",
+          "outcome": "PASS",
+          "journalHash": "5a8391892ee49536a723f8b06447158da7aebe5e6ced7b4f793acacc52853600",
+          "equations": 38
+        },
+        {
+          "name": "market:first-bid",
+          "outcome": "PASS",
+          "journalHash": "5b1a2dcd2757294043d9b00bf45749ce42364781f5597c59ed5429f9993d9a52",
+          "equations": 38
+        },
+        {
+          "name": "market:outbid-refund",
+          "outcome": "PASS",
+          "journalHash": "adc69c03c23b7248441bd4e453e1c61a44d42ebe62a54976340188e68c7488f3",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-take-rollback",
+          "outcome": "PASS",
+          "journalHash": "2baac6557c763452377f255bc49aefc37e40305daf40ca808ccb35208df9b859",
+          "equations": 38
+        },
+        {
+          "name": "market:concurrent-buy-now",
+          "outcome": "PASS",
+          "journalHash": "3032c17825be28c1c032b4a1d52b0084ee5bde49b3c32db37de06675bbe7efc6",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "0dd28cd05bd05abca8a50f38180867997275f0b4abdb68bce8769963f58dc8d4",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-list",
+          "outcome": "PASS",
+          "journalHash": "3040b7a21f9eda245a3aa1b388d3c876c720213808b62d5003ab481697cf0e81",
+          "equations": 38
+        },
+        {
+          "name": "market:under-reserve-bid",
+          "outcome": "PASS",
+          "journalHash": "b6c71444561bafedd5ab80ece39805d0bbfe1c56299a8cc2e13b0c99cc0d86f2",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "cff8c18d151903703690ccd0830b92fae9ff9cec71009996c63cb5038f2af89c",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "d973b60a3e37d5aded8e8952b7b32f6fc32abd233db928b8c435a51b771de428",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-replay",
+          "outcome": "PASS",
+          "journalHash": "227c84a0088ceb6bc0507368c6ee893e1efe7fbcd57563ec75e301a0671b0436",
+          "equations": 38
+        },
+        {
+          "name": "market:order-post",
+          "outcome": "PASS",
+          "journalHash": "eed76c9cded36bbe614c5ee1ea40c11b1dbf11733f1e9e62c9f67b445caf99ba",
+          "equations": 38
+        },
+        {
+          "name": "market:order-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "a75585d35d69367d7149cda34df7c88bd46cdb967b70cb8a1f169a501dee362e",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-offer",
+          "outcome": "PASS",
+          "journalHash": "6882f3527aa44bb0f822bb5f32d3132d813dcbbccc5832c72abd4787e3bb6a77",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-take",
+          "outcome": "PASS",
+          "journalHash": "91f7a59b1f8228449e94a3079a71a5f92d96fda552891adb2fe36bca5d028c30",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-list",
+          "outcome": "PASS",
+          "journalHash": "741a078fa6bb3fd44f2e5f056bb547c1eb71aa14f1b7653e44ef82521808552b",
+          "equations": 38
+        },
+        {
+          "name": "loan:borrower-paper-denied",
+          "outcome": "PASS",
+          "journalHash": "518092fdbd2edc168f44c982038752f607f545955b3a538170de437face4b8c2",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "50031ce0f0c90d37ae3b9122d528f6f864956fc26a7eeb1011bcee4513512e97",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-concurrent-purchase",
+          "outcome": "PASS",
+          "journalHash": "3973e6c5377c666765c7db2cd13de898501e8149e6bddbb96c31338b1d10aa00",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "bb40e6a264b4a048f85baa6207a6260820e8a3cf5dffc11c18b2f9188b3798c5",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-new-owner-repayment",
+          "outcome": "PASS",
+          "journalHash": "0708d8f2be82636b83e6346be796f8383663dd1c6bc302b48c8a557e37c1bf9b",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-offer",
+          "outcome": "PASS",
+          "journalHash": "b6e8a0b6cca74c2b06efe9c46dafba76d24521280e23b091afe40d04579ed347",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "b78472d16968c3e448e9815b1bdc4af663ceaa0870ff45de0601046ef39edd06",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "b3a58bbf78f732d0b6683c27616a434a69f6d80c49e50c0bc155623e4fe91e63",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-order",
+          "outcome": "PASS",
+          "journalHash": "961a3c8fbd358fe604b2103965a39ab4c2787d962b22ed9d5e239ec4cb35fc1a",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "1c253315fa8a3413fc3bdd0d1786ab5d91c3086a529cf5e727814444187e1c5d",
+          "equations": 38
+        },
+        {
+          "name": "estate:victim-car-list",
+          "outcome": "PASS",
+          "journalHash": "f733a7a3e86c17d3675a82b1faf801cfba4c945c1c9f35e00ad01d4a6197392c",
+          "equations": 38
+        },
+        {
+          "name": "estate:killer-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "39f91dd2ebb560706c4f4acf3f23b2a2f35614b62b02c14f858f50b74e951c35",
+          "equations": 38
+        },
+        {
+          "name": "estate:dead-bid-list",
+          "outcome": "PASS",
+          "journalHash": "5f9bba8f42ba6e1712400ead6e5182d2e2fc3aa75a663c06076ab795e349a0fd",
+          "equations": 38
+        },
+        {
+          "name": "estate:doomed-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "aeffee63d22cc84d617cb63a3ddabbf1076cec148aab703a0fd3028f529df82e",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-offer",
+          "outcome": "PASS",
+          "journalHash": "6642bf667a1fae1a8a6dbe6a21ea0061602cfb410d6a75ed74683c475c1d0f0f",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-take",
+          "outcome": "PASS",
+          "journalHash": "785eac3e3911d41d6d907fa75cab5f4affe5645c16cd20233e01ab566ce8fa6f",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-offer",
+          "outcome": "PASS",
+          "journalHash": "7be47e1682ec39fd0b8de2889ba0a4576efd0ddbe6cb433366d502c2667c55ed",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-take",
+          "outcome": "PASS",
+          "journalHash": "3d5d1c651eafdd867f96d4de2b1d9df72c977c6da0532681d0b0ab2ff3c18836",
+          "equations": 38
+        },
+        {
+          "name": "estate:late-pledge-disposition-rollback",
+          "outcome": "PASS",
+          "journalHash": "2127f76b3242f4315a68b3f612b4fbcc9b19bca2ba4f9a30a9225f05c016fc46",
+          "equations": 38
+        },
+        {
+          "name": "estate:canonical-loot-death-and-heir",
+          "outcome": "PASS",
+          "journalHash": "53b93150a7a0786160e096f33b4145ebd7f4b7d7864df80f679f867af1bdd3bb",
+          "equations": 41
+        },
+        {
+          "name": "estate:dead-identity-retry-denied",
+          "outcome": "PASS",
+          "journalHash": "d29ea6ca079aa1129d879e87298c0dd05158bd7918616c91d271ce82abec76d7",
+          "equations": 41
+        },
+        {
+          "name": "estate:inherited-claim-repaid-to-heir",
+          "outcome": "PASS",
+          "journalHash": "94041ee0e39f71c8718e8308b6924e45f33c6534e0d22ccda271599dc2eaea81",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-order",
+          "outcome": "PASS",
+          "journalHash": "8203808fc9262c78944cb6049d8280cea26e5b8b3c19f3a5964233538b35591a",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "8482dd97a6d574de338fac868c950496e73dfdedd6d8c29a45416709a3b1acb0",
+          "equations": 41
+        },
+        {
+          "name": "estate:canonical-nonloot-death",
+          "outcome": "PASS",
+          "journalHash": "e9ccad49939f637030db4fa3a36916bcf692a9280772ae6f7764fcda274639c1",
+          "equations": 44
+        },
+        {
+          "name": "poker:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "8e1a9d22d671d908be2d563b10ddb5160405fb9833e089cff520644cd579bb22",
+          "equations": 44
+        },
+        {
+          "name": "poker:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "d8ead67f72ead9be77b4c05e6e2ffe74885b3d7d3850935d881deab5e45988f7",
+          "equations": 44
+        },
+        {
+          "name": "poker:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "42616deb60f4cf1940cfec1a1ebd6f856b46f56555c31756eab987c5a2506d4d",
+          "equations": 44
+        },
+        {
+          "name": "poker:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "b8b9f2db3889a9d7eeb1614e859f671d47adabe901aee3bcd400ebe46431bd51",
+          "equations": 44
+        },
+        {
+          "name": "gp:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "04d40c3667962152e17c951dd51012f57d215d5da2ff011a00b9b8a3c46df668",
+          "equations": 44
+        },
+        {
+          "name": "gp:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "a6a63d489634c1df878e18d7dd00d501da6181c6f9809800cded9edd5239d2ea",
+          "equations": 44
+        },
+        {
+          "name": "gp:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "31393f1d06c6719806f9110e3932dcb7d629fa0a0d8691d57dc52cf2a5a72ba6",
+          "equations": 44
+        },
+        {
+          "name": "gp:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "1f113f261dc984945722d809ca4ce3373f750186f6f1e1ee0f29a2cfc639519f",
+          "equations": 44
+        },
+        {
+          "name": "stakes:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "75c33427060ee21c5c233360a95efb156cf0b20b4124c46b74f4fadf7fcae34b",
+          "equations": 44
+        },
+        {
+          "name": "stakes:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "18507d1242d0d712d733c6c8fba462a5521678a48b73def4bb50425635ec1fc9",
+          "equations": 44
+        },
+        {
+          "name": "stakes:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "e6a5bb60c9c4ee01f7eb24fee252c7ef9ee530aecb989dc78af01ea9b3d3ae73",
+          "equations": 44
+        },
+        {
+          "name": "stakes:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "6bec4e566c362264c633e591c429c366c52958f13b68cf3533160c42c7452cca",
+          "equations": 44
+        },
+        {
+          "name": "market:server-reopen-sale-replay",
+          "outcome": "PASS",
+          "journalHash": "e6ecf3f193fd6da90de5e43b98c4c2873e89ea1f49850eb27ef0216d40488a67",
+          "equations": 44
+        },
+        {
+          "name": "loan:server-reopen-paper-replay",
+          "outcome": "PASS",
+          "journalHash": "f63778f5671279280591f2aa7d94cb62c3096674160ecf58068cc2c96d9a0878",
+          "equations": 44
+        },
+        {
+          "name": "poker:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "23000085ca6f88194456bc72a431eabcc61860d678a4d503b85f9ce1d8527212",
+          "equations": 44
+        },
+        {
+          "name": "poker:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "37d14234783294667436b36ea7c12814b3c1ce4edfda20fa2093b583b26be180",
+          "equations": 44
+        },
+        {
+          "name": "gp:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "a1533c8d29de24b099c158d60cab3d85977fbb7b53efd87992137ed6594a23e0",
+          "equations": 44
+        },
+        {
+          "name": "gp:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "18e7e00c762af229310b8c1be0eadea2e7947709040164916fe52a2439a3246a",
+          "equations": 44
+        },
+        {
+          "name": "stakes:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "c7ae72c3d626b361e05a9fd560b0bd9d1d9a36b81791d30ad4ba68f373dc6aaf",
+          "equations": 44
+        },
+        {
+          "name": "stakes:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "eca174fe64ca1bf4c2bedf89460621f6a2b73895602654df688b1e4627582e9c",
+          "equations": 44
+        }
+      ],
+      "verification": {
+        "artifactHashes": 5,
+        "journalHashes": 83,
+        "exactZeroEquations": 3295,
+        "continuousStateBoundaryChain": true,
+        "finalLedgerExact": true,
+        "ledgerRowsReconstructed": 99
+      },
+      "initialCanonicalInvariantDrift": [
+        {
+          "name": "character cash",
+          "drift": 6996500
+        },
+        {
+          "name": "$OMR conservation",
+          "drift": 14000
+        },
+        {
+          "name": "car conservation",
+          "drift": 10
+        }
+      ],
+      "invariantScope": "Every observed boundary preserves canonical initial fixture drift; fixture cash, OMR and vehicle grants are not represented as naturally earned value.",
+      "aggregateCashCustody": {
+        "before": "7000000",
+        "after": "4912250",
+        "created": "4200",
+        "destroyed": "2091950",
+        "drift": "0"
+      },
+      "nonzeroLedgerDispositionGroups": [
+        {
+          "currency": "cash",
+          "reason": "stable:buy",
+          "count": 4,
+          "debited": "120000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:buyin",
+          "count": 4,
+          "debited": "20000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:buyin",
+          "count": 4,
+          "debited": "100000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:buyin",
+          "count": 4,
+          "debited": "80000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:list",
+          "count": 7,
+          "debited": "680",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:bid",
+          "count": 6,
+          "debited": "39000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:refund",
+          "count": 5,
+          "debited": "0",
+          "credited": "26000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:sale",
+          "count": 1,
+          "debited": "0",
+          "credited": "19600"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:take",
+          "count": 1,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:order",
+          "count": 3,
+          "debited": "26000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:offer",
+          "count": 6,
+          "debited": "75000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:take",
+          "count": 3,
+          "debited": "0",
+          "credited": "35000"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge",
+          "count": 2,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:paper",
+          "count": 3,
+          "debited": "19380",
+          "credited": "18620"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:house:vig",
+          "count": 2,
+          "debited": "0",
+          "credited": "687"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:repay",
+          "count": 4,
+          "debited": "27500",
+          "credited": "26125"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:return",
+          "count": 1,
+          "debited": "0",
+          "credited": "200"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:vig",
+          "count": 2,
+          "debited": "688",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:death",
+          "count": 3,
+          "debited": "16500",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:seize:omr",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:legacy",
+          "count": 2,
+          "debited": "0",
+          "credited": "3200"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:loot",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "omr",
+          "reason": "death:duty",
+          "count": 2,
+          "debited": "950",
+          "credited": "0"
+        },
+        {
+          "currency": "ammo",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "50",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "desk:recycle",
+          "count": 2,
+          "debited": "0",
+          "credited": "950"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "1870820",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "whack:loot",
+          "count": 2,
+          "debited": "0",
+          "credited": "7500"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:loot",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:loot",
+          "count": 1,
+          "debited": "2500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:death",
+          "count": 2,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:take",
+          "count": 1,
+          "debited": "750",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "14250"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:death",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "71250"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:take",
+          "count": 1,
+          "debited": "3750",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:death",
+          "count": 1,
+          "debited": "25000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "57000"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:take",
+          "count": 1,
+          "debited": "3000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:death",
+          "count": 1,
+          "debited": "20000",
+          "credited": "0"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and fixture vehicle acquisition",
+        "Poker original 24-hour lifetime and bracket format",
+        "Natural combat-earned death; canonical estate runs with explicit terminal loot/nonloot modes",
+        "Loan open-offer 48-hour expiry and 24-hour collateral grace",
+        "Full native resource simulation and deployment attestation",
+        "Crash/backup restore; only server reopening is tested",
+        "Other market goods, casino, racing and animal-stakes variants outside the exact recorded branches",
+        "Original GP and Stakes lifetimes",
+        "Original market one-hour expiry and loan one-hour collection"
+      ],
+      "resultSha256": "3ec7efe40537f11b3555c488802cdea05edf5643c9a619b9d263b1c15efbceec",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "45abebb97d31edf790a6202d36e5a9402775884a284ed7972d8460405660dd0b"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "1899386ac2517d97a335c12befd7214cb63011e8213d2b7d8e9b26e6c741bb8e"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "99f2b1b5be6475746c47e73a76cefed3f07c51873d215257ff11cff79c4bc73c"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "c8631986be62b6116781731896f3a489750a4b53653b3aa0af6f485759bb5066"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "a4fd64136792238ce595685adcca60fc4ab41aca2d43e3c2b2774dd48fde44ec"
+        }
+      ]
+    },
+    {
+      "runId": "resource-escrow-e89e90fd26f5-e124a78a55",
+      "source": "e89e90fd26f5e94b4eebc48d12442af43d0055f6",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:48:29.188Z",
+      "endedAt": "2026-09-21T04:49:41.641Z",
+      "invocation": {
+        "command": "node tools/rc1-resource-escrow.js",
+        "arguments": [
+          "--terminal-fixtures",
+          "--short-field"
+        ],
+        "node": "v24.19.0",
+        "platform": "win32"
+      },
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "configuration": {
+        "terminalFixtures": true,
+        "shortField": true,
+        "longTerm": false,
+        "clocks": "Unmodified application and PostgreSQL wall clocks",
+        "chain": "unconfigured",
+        "timerMode": "Initial empty poker, GP and Stakes fixtures with 60-second deadlines",
+        "operatorConfiguration": "Local fixture flags only; installed dependencies and deployed integrations are not attested; preflight remains enforced"
+      },
+      "productionTimers": {
+        "pokerMs": 86400000,
+        "gpMs": 1800000,
+        "stakesMs": 1800000
+      },
+      "fixtureGrants": {
+        "accounts": 7,
+        "cashPerCharacter": "1000000",
+        "omrPerAccount": "2000",
+        "respectPerCharacter": 10000,
+        "location": "neon",
+        "cars": 10,
+        "emptyEventFixtures": [
+          "poker",
+          "gp",
+          "stakes"
+        ],
+        "initialEventPools": "0",
+        "racers": "Acquired canonically after baseline"
+      },
+      "deadlines": {
+        "poker": "2026-09-21T04:49:37.366Z",
+        "gp": "2026-09-21T04:49:37.366Z",
+        "stakes": "2026-09-21T04:49:37.366Z"
+      },
+      "boundaries": 68,
+      "executedScenarios": [
+        {
+          "name": "stakes:acquire-racer:buyer",
+          "outcome": "PASS",
+          "journalHash": "fd3b27e5acc8821be1781512d1c7e7c701302f3175f3ce07645e477152072ebe",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "b69b782c567449b311fd1afd49a42deb71a8185d263464dce725e4c5e1801a8f",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "88c0f61904f098f5dbfe72eb66bd51870e21ae874f9e310c76301842735f1428",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "2ef797882e8a04e57e89d1a912616606ae1690bc15316ebe5e96ef918cca9474",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "e4e3caa45542f1828a301b33426a62394f6a6bd75b9857bc60e74eaa5857e469",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "36ba8ee6ddbd0f677630d3a34d6b8b8938b7a441fb31ee3c21f99032d6d27271",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "0e651141f620ea900e5f2e48435ffaaa2691602a05883b96c4074a8ec01af24c",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "5643b0d28f6e2012970f8b55becc2f333750c35af026b3361a9f2e1d3a372b2c",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "7bb37e538b80fb5a1a815141ab0b6a6e766612ab1cfdd19e48e96b74b05be6bb",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "9a2dcfe8cec3aeecd452c2ddfb432c288c2ec0f640e704d0d38441534d7a76a0",
+          "equations": 38
+        },
+        {
+          "name": "market:car-list",
+          "outcome": "PASS",
+          "journalHash": "a66055f74f235a822f88cbc8a0b578443551532e8a0496d4c48b1175f1555680",
+          "equations": 38
+        },
+        {
+          "name": "market:first-bid",
+          "outcome": "PASS",
+          "journalHash": "f93f8da81677e5d0ed589f96c5b6ecd80748f42be42da2731392e7a0b09d872c",
+          "equations": 38
+        },
+        {
+          "name": "market:outbid-refund",
+          "outcome": "PASS",
+          "journalHash": "6ae92c14148732af02a1a05a567327c3f1ba55666deb879ac468de3685b8c51c",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-take-rollback",
+          "outcome": "PASS",
+          "journalHash": "6fb0e9a624e93af283b7f32190e11b672efb0451a4fd5e5ca0e628fa54278582",
+          "equations": 38
+        },
+        {
+          "name": "market:concurrent-buy-now",
+          "outcome": "PASS",
+          "journalHash": "54d37358522352b77182097d1380d81a6b4792274184e0b6049733e03f4172fd",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "017a605aaf36da22bfebc2c53394415c24745e4525b2a266b101e00a59d9dec9",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-list",
+          "outcome": "PASS",
+          "journalHash": "3269a1f449091bd70f57b1f8b8a85a2950ce8c2f6f9b6649793b6634c103cc75",
+          "equations": 38
+        },
+        {
+          "name": "market:under-reserve-bid",
+          "outcome": "PASS",
+          "journalHash": "5cfa9f8077a789c79fc42e9d37bf4c651df770c1d28fab051c4b1e7c893d78cf",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "9bcc8665a0838557c4a0064a6be33ff6c575db74cc6e81ca6e42b507c439b01c",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "cce765e0843056eb01b429b776adee56610dd30455c1e9ddad0ff5714aec0441",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-replay",
+          "outcome": "PASS",
+          "journalHash": "89f23d957b9c9490e195e5eb60b4126e550a0cd047248d2bd8d669bcc1db66db",
+          "equations": 38
+        },
+        {
+          "name": "market:order-post",
+          "outcome": "PASS",
+          "journalHash": "74cd612267d878be15adf88165e22e55f182bcdd98208243b1a1fd41997002db",
+          "equations": 38
+        },
+        {
+          "name": "market:order-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "afe538f947471374bebbe7066e35b1b3b7ac8adbb758180e3ab8ba398ffb5dc8",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-offer",
+          "outcome": "PASS",
+          "journalHash": "982d052d9850968ddbdb6e79db5aadce890d926fe5ebe9068ed13e4228fbde3d",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-take",
+          "outcome": "PASS",
+          "journalHash": "129528a869fcf7a0d430851b4f651c513930ce21c97babb8ca74ad871e823eea",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-list",
+          "outcome": "PASS",
+          "journalHash": "533f808514743e1895e743a71888b03ca6c86d0d94b4811651fa82d90a21b527",
+          "equations": 38
+        },
+        {
+          "name": "loan:borrower-paper-denied",
+          "outcome": "PASS",
+          "journalHash": "0bae2b8cfdabaccc725cfb01963da66a75396152191fff61d9be6cc0700f3e76",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "ffc56a468c36d0ba3db42647661581865ed607566c5c9d94de5192d1811251f0",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-concurrent-purchase",
+          "outcome": "PASS",
+          "journalHash": "f0073097dc26a778be60b4a0e0540e23d3a4ef8ca94fae9ee7616cf7f532e233",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "49eee204ff51a013edfd471fdaf2747d5872afcf85c4808e13b1d49e97199cde",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-new-owner-repayment",
+          "outcome": "PASS",
+          "journalHash": "6eb50605d4641b99aa788bf55d65887c53520b16c2b6a9a1677a77ff6ae6fecf",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-offer",
+          "outcome": "PASS",
+          "journalHash": "7e5d5811c7743a6afaeb4e7d7ad3b8636a3e2a2c032a78064980b04eca2a5c02",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "62707bd1c13f0abe182dde7eedcb49c7db217e212489f990d8a4c8be8e1c9843",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "9b1aad59c9c808ab5f90de386a76d693b3641d334dd8e34f118f69362dcacfe7",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-order",
+          "outcome": "PASS",
+          "journalHash": "f52c756b74968226b788bc470caa6f8ee70006d73668192aedcafc1d3d9c9a92",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "df592c82b4b1afae73d20cd2c24e694a52db28bb03f440155a402dfd709f9c4e",
+          "equations": 38
+        },
+        {
+          "name": "estate:victim-car-list",
+          "outcome": "PASS",
+          "journalHash": "898fcf0260aa1d0fbd6024603ff19587ea71f7e285ff8575e6d79f892858c644",
+          "equations": 38
+        },
+        {
+          "name": "estate:killer-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "cdf85420668ac546fdb4660716686592a6a09a8b99041f870c5ce8c5dc70e3ad",
+          "equations": 38
+        },
+        {
+          "name": "estate:dead-bid-list",
+          "outcome": "PASS",
+          "journalHash": "56d60c5026fdc4deca8222cf2ff3f80a2142e52ace04ebf32a8ad48b6a47695a",
+          "equations": 38
+        },
+        {
+          "name": "estate:doomed-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "41059d43a7c346d3a0b83b999e915d1cea2a54653de2951fa00a18974c163f5c",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-offer",
+          "outcome": "PASS",
+          "journalHash": "0662ce54bcab9ff67fc18b5da58fba3036c2bc0a8b0d6ee4993e41434ca2218c",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-take",
+          "outcome": "PASS",
+          "journalHash": "7db7dea03cf5c75427e4bb9be8ff152441197264de8db9df155ff6a5e5c5b3e8",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-offer",
+          "outcome": "PASS",
+          "journalHash": "32e13e418db156a918a425d079c239002d0d77ea55ab75ebfb325b3106b592fd",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-take",
+          "outcome": "PASS",
+          "journalHash": "9e85725cacddf347f860c6e9cb3235d71e65bbe47101477850545495e93f902c",
+          "equations": 38
+        },
+        {
+          "name": "estate:late-pledge-disposition-rollback",
+          "outcome": "PASS",
+          "journalHash": "cf97cba14d5aa32ddd80f3c02cd027b3d3d794337591d799a6268fa4622d274f",
+          "equations": 38
+        },
+        {
+          "name": "estate:canonical-loot-death-and-heir",
+          "outcome": "PASS",
+          "journalHash": "3093d94d917f9fedc048f62f971d794ef0c84c7488f050ab987da98feec991c9",
+          "equations": 41
+        },
+        {
+          "name": "estate:dead-identity-retry-denied",
+          "outcome": "PASS",
+          "journalHash": "95c2d7c96e735fe10f41c8426f06bc4ccd9aa7a7bbf84ab5d8a5e4974408df7a",
+          "equations": 41
+        },
+        {
+          "name": "estate:inherited-claim-repaid-to-heir",
+          "outcome": "PASS",
+          "journalHash": "8528f325632d8cd3cab7b71fee45a02ee0a250e883125c504388cd763c6b1d66",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-order",
+          "outcome": "PASS",
+          "journalHash": "a65f974c11bc3d5c64cdc04eef35e0327a1157dd1b96c2275bfa6e77752425e8",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "ddf54e584f8784fe763c7b7f09d5706dd2af1659136946729c4d80c722cadc5b",
+          "equations": 41
+        },
+        {
+          "name": "estate:canonical-nonloot-death",
+          "outcome": "PASS",
+          "journalHash": "3512ee4f85ec70dde90792e7a951be1de9927a63aa222cbca44311cdd296c277",
+          "equations": 44
+        },
+        {
+          "name": "poker:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "3c17ecefc225e35420848f87cbff0aa6fb87a2d7de54634320906bfd03f1fcf6",
+          "equations": 44
+        },
+        {
+          "name": "poker:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "299232df73d05c8c38000ed5ab9a0d76ceba7b035d37626b51c0c4c6b4cc669d",
+          "equations": 44
+        },
+        {
+          "name": "poker:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "227391a2ee44891fad33a1dd5fb1890371865993af2456992f283663e7baa25d",
+          "equations": 44
+        },
+        {
+          "name": "poker:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "3d2eabb716af04d40d3f0c32223cc4b52c88a8b6ea40f11a56fe8ad4c9a29c48",
+          "equations": 44
+        },
+        {
+          "name": "gp:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "9ac5ba4596315406927dec577c3f85da101a44491e51b7e827b3404f770ca14e",
+          "equations": 44
+        },
+        {
+          "name": "gp:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "f71092936042d8471b830511aa5b9acc942d450974031858d2cc92d4662f3f3e",
+          "equations": 44
+        },
+        {
+          "name": "gp:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "f3a2f4084f31f30d29cc485704540a59befe2bfc51d11824d68739c4e9242ba9",
+          "equations": 44
+        },
+        {
+          "name": "gp:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "7256f75755ff910a6c954594baad3d1f61075dd5c6220e5632cde8f0293b51da",
+          "equations": 44
+        },
+        {
+          "name": "stakes:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "907ba707591bc3350ba1b706bccf6dcc8fbf34169bb375430ed315a3c992f3b4",
+          "equations": 44
+        },
+        {
+          "name": "stakes:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "8d9535b7b526474269b37c4e64cddf81a7d59859d070e983406f4b12dbb01bff",
+          "equations": 44
+        },
+        {
+          "name": "stakes:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "f56f9d9521bef9eeca7464f5878f96eae0bc4dad2a592c393e8df333e506d2a1",
+          "equations": 44
+        },
+        {
+          "name": "stakes:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "1ff23479f2aeb91633c044bd249e3c2b0236058e24f74754ece52f73c9b1426e",
+          "equations": 44
+        },
+        {
+          "name": "market:server-reopen-sale-replay",
+          "outcome": "PASS",
+          "journalHash": "78ad5606465c87ed2d5cf0450852e3c9e1fea8f1bdb693311b7c9d94eefb36ba",
+          "equations": 44
+        },
+        {
+          "name": "loan:server-reopen-paper-replay",
+          "outcome": "PASS",
+          "journalHash": "3340592a87c091e52dd458b874f54d7907155a1bc36a08cd630980920ecd7f56",
+          "equations": 44
+        },
+        {
+          "name": "poker:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "d9c26ffd6a2663ee9043c9d9827fec73436db6a92c9d9621406f3fb11b587278",
+          "equations": 44
+        },
+        {
+          "name": "gp:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "b911e641402dadac8ba61b791f0f8daa26a061581963008fd96374e837b15954",
+          "equations": 44
+        },
+        {
+          "name": "stakes:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "758a1342237ebe31f7862bd5f3e52d009ec43d0cea82e983208383e0a0642e52",
+          "equations": 44
+        }
+      ],
+      "verification": {
+        "artifactHashes": 5,
+        "journalHashes": 68,
+        "exactZeroEquations": 2707,
+        "continuousStateBoundaryChain": true,
+        "finalLedgerExact": true,
+        "ledgerRowsReconstructed": 75
+      },
+      "initialCanonicalInvariantDrift": [
+        {
+          "name": "character cash",
+          "drift": 6996500
+        },
+        {
+          "name": "$OMR conservation",
+          "drift": 14000
+        },
+        {
+          "name": "car conservation",
+          "drift": 10
+        }
+      ],
+      "invariantScope": "Every observed boundary preserves canonical initial fixture drift; fixture cash, OMR and vehicle grants are not represented as naturally earned value.",
+      "aggregateCashCustody": {
+        "before": "7000000",
+        "after": "4976000",
+        "created": "4200",
+        "destroyed": "2028200",
+        "drift": "0"
+      },
+      "nonzeroLedgerDispositionGroups": [
+        {
+          "currency": "cash",
+          "reason": "stable:buy",
+          "count": 1,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:buyin",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:buyin",
+          "count": 1,
+          "debited": "25000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:buyin",
+          "count": 1,
+          "debited": "20000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:list",
+          "count": 7,
+          "debited": "680",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:bid",
+          "count": 6,
+          "debited": "39000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:refund",
+          "count": 5,
+          "debited": "0",
+          "credited": "26000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:sale",
+          "count": 1,
+          "debited": "0",
+          "credited": "19600"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:take",
+          "count": 1,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:order",
+          "count": 3,
+          "debited": "26000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:offer",
+          "count": 6,
+          "debited": "75000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:take",
+          "count": 3,
+          "debited": "0",
+          "credited": "35000"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge",
+          "count": 2,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:paper",
+          "count": 3,
+          "debited": "19380",
+          "credited": "18620"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:return",
+          "count": 1,
+          "debited": "0",
+          "credited": "200"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:repay",
+          "count": 4,
+          "debited": "27500",
+          "credited": "26125"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:vig",
+          "count": 2,
+          "debited": "688",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:house:vig",
+          "count": 2,
+          "debited": "0",
+          "credited": "687"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:loot",
+          "count": 1,
+          "debited": "2500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "1950820",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "whack:loot",
+          "count": 2,
+          "debited": "0",
+          "credited": "7500"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:legacy",
+          "count": 2,
+          "debited": "0",
+          "credited": "3200"
+        },
+        {
+          "currency": "omr",
+          "reason": "desk:recycle",
+          "count": 2,
+          "debited": "0",
+          "credited": "950"
+        },
+        {
+          "currency": "ammo",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "50",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:death",
+          "count": 3,
+          "debited": "16500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:death",
+          "count": 2,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:loot",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "death:duty",
+          "count": 2,
+          "debited": "950",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:loot",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:seize:omr",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "25000"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "20000"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and fixture vehicle acquisition",
+        "Poker original 24-hour lifetime and bracket format",
+        "Natural combat-earned death; canonical estate runs with explicit terminal loot/nonloot modes",
+        "Loan open-offer 48-hour expiry and 24-hour collateral grace",
+        "Full native resource simulation and deployment attestation",
+        "Crash/backup restore; only server reopening is tested",
+        "Other market goods, casino, racing and animal-stakes variants outside the exact recorded branches",
+        "Original GP and Stakes lifetimes",
+        "Original market one-hour expiry and loan one-hour collection"
+      ],
+      "resultSha256": "a989fbfab38a926d1335558f09ee79a8b2642e9ef6452c5dbba5fe4713d44489",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "9893993bfe4bf7f7c4a081e9364fd1051750cb7d2cd5b9f6ab92a5e1b1fb619a"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "64a0b673e8f8af4811c0baa99e182766baba43710b0b7ca78d46b3cf1329cf8d"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "9c02216e6823980deb7ee581a46d70e3d6a8ecd0c2615514f45559ffe55fd98a"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "431ba79113a2d2d9b62d2ad760fc1ac5df3ac39cee65662e134343b89847600e"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "399bd6d81436163575a051cbb0ef1aba374ab03c6563b451373892bcc643784f"
+        }
+      ]
+    },
+    {
+      "runId": "resource-escrow-e89e90fd26f5-a6e03f6e75",
+      "source": "e89e90fd26f5e94b4eebc48d12442af43d0055f6",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:48:28.605Z",
+      "endedAt": "2026-09-21T05:18:47.663Z",
+      "invocation": {
+        "command": "node tools/rc1-resource-escrow.js",
+        "arguments": [
+          "--short-field"
+        ],
+        "node": "v24.19.0",
+        "platform": "win32"
+      },
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "configuration": {
+        "terminalFixtures": false,
+        "shortField": true,
+        "longTerm": false,
+        "clocks": "Unmodified application and PostgreSQL wall clocks",
+        "chain": "unconfigured",
+        "timerMode": "Initial empty poker fixture with 60-second deadline; canonically materialized original 30-minute GP and Stakes",
+        "operatorConfiguration": "Local fixture flags only; installed dependencies and deployed integrations are not attested; preflight remains enforced"
+      },
+      "productionTimers": {
+        "pokerMs": 86400000,
+        "gpMs": 1800000,
+        "stakesMs": 1800000
+      },
+      "fixtureGrants": {
+        "accounts": 7,
+        "cashPerCharacter": "1000000",
+        "omrPerAccount": "2000",
+        "respectPerCharacter": 10000,
+        "location": "neon",
+        "cars": 10,
+        "emptyEventFixtures": [
+          "poker"
+        ],
+        "initialEventPools": "0",
+        "racers": "Acquired canonically after baseline"
+      },
+      "deadlines": {
+        "poker": "2026-09-21T04:49:36.683Z",
+        "gp": "2026-09-21T05:18:37.761Z",
+        "stakes": "2026-09-21T05:18:37.838Z"
+      },
+      "boundaries": 68,
+      "executedScenarios": [
+        {
+          "name": "stakes:acquire-racer:buyer",
+          "outcome": "PASS",
+          "journalHash": "39d46ea4d2e98c9edd7683950936eff157b24407e5a54e13b614cd8f8249fb64",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "d04aa08c8052524328163d3fe0c04fcc6143b045e883a11f77e4b914e1c250e0",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "63c9c688122d12b8dca9f3d0b9648264fcf3a6763a3e28da865d0d98f18c6f8b",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "dfe0ba81f2a6716bf37c2cdcf26371b77c58ee273256e75c6ac7ec7de072a7fb",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "20ea06709dbfc0b26afdeb8db51af4ede52ba5b40b70b2bb1874495001101a2e",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "488c54642a2b28601b82f2a002649cf289790c287f17f79fadfc33f9cb332caf",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "4260ed611bec570041d8abd13150d5b0d078d4f9f2747fe6e4b9694e3cf6df75",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "e41f301b820be85a9d36d6c23aa2f43f88218abbe30dfdb844204c931a43906a",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "72a5b79ee168ed97172ef52c81ae39dd7f64c93c17cb8e4e871b29263647eaf5",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "3d21b90e330dd44b6aeda6e0234899a892f7b2e378c4c27c674f204f01213d3c",
+          "equations": 38
+        },
+        {
+          "name": "market:car-list",
+          "outcome": "PASS",
+          "journalHash": "6fc3f16558df6525d82e85320dbb81a371be4728e7029500269e12bd4bb749f2",
+          "equations": 38
+        },
+        {
+          "name": "market:first-bid",
+          "outcome": "PASS",
+          "journalHash": "57e78e4c637e1933d9304d114f5b0d7a5558ce1139ff694a0570ab75acb546e4",
+          "equations": 38
+        },
+        {
+          "name": "market:outbid-refund",
+          "outcome": "PASS",
+          "journalHash": "844b5df2a5bd6989eea2b2856652637a26beec4179fdbe0af1505b44066eaa8a",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-take-rollback",
+          "outcome": "PASS",
+          "journalHash": "9d4f890650b65dbcd1c9d074b298bedfdf2b4b25744e422b320b3c56ca4ff17b",
+          "equations": 38
+        },
+        {
+          "name": "market:concurrent-buy-now",
+          "outcome": "PASS",
+          "journalHash": "ecde2f8bf71d0882bf87ae53c761d2697dc81b46ba378ec2359d78ea450ca888",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "8b8b3e0401efc67b468092f2bf1ac29a108d3dc3c5c6329be3cf68f42982d9dd",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-list",
+          "outcome": "PASS",
+          "journalHash": "39b13fa2b71e5e99d33d532c2c1c8d6214e7a57dafa76c7f6a79c018eb892b12",
+          "equations": 38
+        },
+        {
+          "name": "market:under-reserve-bid",
+          "outcome": "PASS",
+          "journalHash": "df2b41f465e8ee78e4d8eb054abb3f4b7ee076bce6e7d9504a1653d0c76ad3b1",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "3341b2f787cadc4a16bcba4c5ab83365fb3a093c5811ee72d41a93c29a38f9a7",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "283646a331829e51f5d43d67e3628a32242b3a962ec15107c73e044ad5065624",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-replay",
+          "outcome": "PASS",
+          "journalHash": "abb93cb56906ebd9105f59513d507496e59a2ed3487b3acce31297724b21d1c0",
+          "equations": 38
+        },
+        {
+          "name": "market:order-post",
+          "outcome": "PASS",
+          "journalHash": "9f1eefd3074e89c18ceaa1fa814338b664fe6723a24086c67aaa2ea86f74e850",
+          "equations": 38
+        },
+        {
+          "name": "market:order-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "ebb680fca57773ad1efc16f2be93700868525307919453978b5cfba93cab0d38",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-offer",
+          "outcome": "PASS",
+          "journalHash": "5c43b5c09cfa2a526dc1b1051f20f99e935a7731a132f5b2fb9cd122b13a8342",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-take",
+          "outcome": "PASS",
+          "journalHash": "6838d02196c5e69f8127596c009cec798ccecef84b4dc31ef47b0d1a1808e7b5",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-list",
+          "outcome": "PASS",
+          "journalHash": "cd6568160f262f20be411de5fa0a851b3c324791fd2f8b6d5ab44d03fc1a2a44",
+          "equations": 38
+        },
+        {
+          "name": "loan:borrower-paper-denied",
+          "outcome": "PASS",
+          "journalHash": "f7d988e4757f77db3afefa86aaed1c7bdf1068387a216d63aafc55c9cc851183",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "ed253f6f55f743b44bb6a10989010e8eb7fbf5630b9c986b972b15136bbdbac7",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-concurrent-purchase",
+          "outcome": "PASS",
+          "journalHash": "88f9687c1f7c5a6d2aeaa9bc4296fe7fdd199eaecf09f79b17cbb9741756541f",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "a4415291f0866fe91183fad2bc610e4dbdbfc01d336972f8dbc92d2b238ae874",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-new-owner-repayment",
+          "outcome": "PASS",
+          "journalHash": "fd225206e8637d1c01df0e2127888e2bc4d3222e1a92bb6ca0a4a09ae3f707b7",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-offer",
+          "outcome": "PASS",
+          "journalHash": "9bad95393d4c9e8aa32ca73cd17854e7660ebdf0b7e5c5749d2a8ef6f38618fc",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "d4b0967c35b8ba6a77027b1b34107451decd9b6bfeb57bdc7de8eed8dbd7e1bc",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "3b284c3be0d93f006ddcd1192b5bb89bbc3d1770f3acf41506393d1765310ce7",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-order",
+          "outcome": "PASS",
+          "journalHash": "b2c9e5c15ec6b2b2b5381e8ee61364fd0bd006838a2e075a37c1e8b37aec6ce5",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "69719eccf3f96f673612f82d5d50ea9a593fc31140177d75818d7bf79f3d21cf",
+          "equations": 38
+        },
+        {
+          "name": "estate:victim-car-list",
+          "outcome": "PASS",
+          "journalHash": "a295621abc14fa94a353555ff2c2d32dc5f31a8a8ebaf93bfc3476c07a659542",
+          "equations": 38
+        },
+        {
+          "name": "estate:killer-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "1746956e498448ae970ddb432364cc9b871ab661a10167aef8d6634a86e2c844",
+          "equations": 38
+        },
+        {
+          "name": "estate:dead-bid-list",
+          "outcome": "PASS",
+          "journalHash": "93cf791c01454ddac5cf58e7e5bf0b38106ad5bd98b4bf475e0a1a180fedc9c8",
+          "equations": 38
+        },
+        {
+          "name": "estate:doomed-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "cccc0987cbc3c2f94039f5b3c86927271e86ced198c3e0fe8ecb9cb94beffc3a",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-offer",
+          "outcome": "PASS",
+          "journalHash": "1a51bb82a1e29d43f3e453e4dcd95a289b65a320ed90972df28b982409094056",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-take",
+          "outcome": "PASS",
+          "journalHash": "52c493437e9c2607b1006e9b6de4ee0c625868e5aef59f6988b5dc784f1ab808",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-offer",
+          "outcome": "PASS",
+          "journalHash": "bc41e21aca24f9b78a2740ea4fd9780e66f722ceac24dc09752b78406bf2579a",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-take",
+          "outcome": "PASS",
+          "journalHash": "b2da49b29db85e97da39430ba90bddc33a20da3507d74feb1b90ec5e99e9209f",
+          "equations": 38
+        },
+        {
+          "name": "estate:late-pledge-disposition-rollback",
+          "outcome": "PASS",
+          "journalHash": "7ece614586972cd683ef32925f4f03f7dde6e02faefcd498dbc7581fc444eaf6",
+          "equations": 38
+        },
+        {
+          "name": "estate:canonical-loot-death-and-heir",
+          "outcome": "PASS",
+          "journalHash": "1ceb56c175276a1634e9977b0bceb8043c1c0ecda44c0456d99a930e36adedad",
+          "equations": 41
+        },
+        {
+          "name": "estate:dead-identity-retry-denied",
+          "outcome": "PASS",
+          "journalHash": "b0488e9cea7349398791b8a6d7b63ae5bd5a2237d1a68ddd0381513d6096bf06",
+          "equations": 41
+        },
+        {
+          "name": "estate:inherited-claim-repaid-to-heir",
+          "outcome": "PASS",
+          "journalHash": "f173130ec62983a287040c2837b3ea30fb1dcfc3203b8230ed915f8d6b92d5b2",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-order",
+          "outcome": "PASS",
+          "journalHash": "c7f448bc4ac08fc7671b88c1de46c6ada4dafb688d074dde2ddceaa8442d77c7",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "1eaae3b4aaa5e39f8e221f4ab31a64d3f5879d00fa0ed892d7dc656b47d24d29",
+          "equations": 41
+        },
+        {
+          "name": "estate:canonical-nonloot-death",
+          "outcome": "PASS",
+          "journalHash": "b9001897c93744155a186fc1351e59e517a2b23b80bb2593c9db9833c0f86820",
+          "equations": 44
+        },
+        {
+          "name": "poker:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "67084ad18a055101db1a93461e28e0a8db06218088417010c0159fa0d1256e24",
+          "equations": 44
+        },
+        {
+          "name": "poker:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "05d6352fe2413cfd0329408c9f7ee3c689ed8c495f4abd472f254fb66b8c47d1",
+          "equations": 44
+        },
+        {
+          "name": "poker:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "8d4cfceea173af241f036bf92f65cecc94813718bf00202e0c6c5fc4e72d6dc9",
+          "equations": 44
+        },
+        {
+          "name": "poker:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "1e31d81d634f8ca53bcd097801b1b257b546696271bd26f674082067a986bf06",
+          "equations": 44
+        },
+        {
+          "name": "gp:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "91ef5240f17c49a647c4c8454bd9de662ea2f9721ed2482f46ae686a1b882138",
+          "equations": 44
+        },
+        {
+          "name": "gp:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "b93f5bdac9a57b086652b122585a0e95be9587dc395f50692f0ce1e02da680ee",
+          "equations": 44
+        },
+        {
+          "name": "gp:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "20b60d0bb5b86f4a4b4b5e398fcd63711ee880887716753c527734367d59e540",
+          "equations": 44
+        },
+        {
+          "name": "gp:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "4805fd61ccbc26f9fecb3ace4326c21c3d94a120f45d64a9122f73c4f1a89432",
+          "equations": 44
+        },
+        {
+          "name": "stakes:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "93fc637a62b7037f3f7ee383a7a54b28ee5676c7ead1b417d573c515e5361305",
+          "equations": 44
+        },
+        {
+          "name": "stakes:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "8d88718d8a6ff51a26c9b90c9f4b5c381a63c5b09d0e048afe0504ad8c7f5783",
+          "equations": 44
+        },
+        {
+          "name": "stakes:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "10100a4f404a7ed5f6869dbdf3ea81cf69c6fe783e8979fb560e1b580670695e",
+          "equations": 44
+        },
+        {
+          "name": "stakes:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "c65e9211e4185a03eca3ab929fa0336e29e5a7df5209a72069f8ef192b272663",
+          "equations": 44
+        },
+        {
+          "name": "market:server-reopen-sale-replay",
+          "outcome": "PASS",
+          "journalHash": "0a2415792c0aea931077874986fb9b9863ba385cb7d1e9c68fd81f407918a2ce",
+          "equations": 44
+        },
+        {
+          "name": "loan:server-reopen-paper-replay",
+          "outcome": "PASS",
+          "journalHash": "701bc760ed09cb551b48e80131a394ddb0624ea585e59210c218a5ec456372d8",
+          "equations": 44
+        },
+        {
+          "name": "poker:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "4a72e1a77be2c5d6ad959a295fce940269ab31af0ba325916c922a35eec03cbb",
+          "equations": 44
+        },
+        {
+          "name": "gp:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "b34726e8afdfb92c6401930671e042de0f1fa39dcefbef5938ce69228333488e",
+          "equations": 44
+        },
+        {
+          "name": "stakes:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "e7d56dd1ff02708d42972c8fbe2d86277f67c35b94ec490151f01b0e1b7ac073",
+          "equations": 44
+        }
+      ],
+      "verification": {
+        "artifactHashes": 5,
+        "journalHashes": 68,
+        "exactZeroEquations": 2707,
+        "continuousStateBoundaryChain": true,
+        "finalLedgerExact": true,
+        "ledgerRowsReconstructed": 75
+      },
+      "initialCanonicalInvariantDrift": [
+        {
+          "name": "character cash",
+          "drift": 6996500
+        },
+        {
+          "name": "$OMR conservation",
+          "drift": 14000
+        },
+        {
+          "name": "car conservation",
+          "drift": 10
+        }
+      ],
+      "invariantScope": "Every observed boundary preserves canonical initial fixture drift; fixture cash, OMR and vehicle grants are not represented as naturally earned value.",
+      "aggregateCashCustody": {
+        "before": "7000000",
+        "after": "4976000",
+        "created": "4200",
+        "destroyed": "2028200",
+        "drift": "0"
+      },
+      "nonzeroLedgerDispositionGroups": [
+        {
+          "currency": "cash",
+          "reason": "stable:buy",
+          "count": 1,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:buyin",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:buyin",
+          "count": 1,
+          "debited": "25000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:buyin",
+          "count": 1,
+          "debited": "20000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:list",
+          "count": 7,
+          "debited": "680",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:bid",
+          "count": 6,
+          "debited": "39000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:refund",
+          "count": 5,
+          "debited": "0",
+          "credited": "26000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:take",
+          "count": 1,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:sale",
+          "count": 1,
+          "debited": "0",
+          "credited": "19600"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:order",
+          "count": 3,
+          "debited": "26000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:offer",
+          "count": 6,
+          "debited": "75000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:take",
+          "count": 3,
+          "debited": "0",
+          "credited": "35000"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge",
+          "count": 2,
+          "debited": "400",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:paper",
+          "count": 3,
+          "debited": "19380",
+          "credited": "18620"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:repay",
+          "count": 4,
+          "debited": "27500",
+          "credited": "26125"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:house:vig",
+          "count": 2,
+          "debited": "0",
+          "credited": "687"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:return",
+          "count": 1,
+          "debited": "0",
+          "credited": "200"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:vig",
+          "count": 2,
+          "debited": "688",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:legacy",
+          "count": 2,
+          "debited": "0",
+          "credited": "3200"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:seize:omr",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "omr",
+          "reason": "death:duty",
+          "count": 2,
+          "debited": "950",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:death",
+          "count": 3,
+          "debited": "16500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "1950820",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "desk:recycle",
+          "count": 2,
+          "debited": "0",
+          "credited": "950"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:loot",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "ammo",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "50",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "whack:loot",
+          "count": 2,
+          "debited": "0",
+          "credited": "7500"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:death",
+          "count": 2,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:loot",
+          "count": 1,
+          "debited": "2500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:loot",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "25000"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "20000"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and fixture vehicle acquisition",
+        "Poker original 24-hour lifetime and bracket format",
+        "Natural combat-earned death; canonical estate runs with explicit terminal loot/nonloot modes",
+        "Loan open-offer 48-hour expiry and 24-hour collateral grace",
+        "Full native resource simulation and deployment attestation",
+        "Crash/backup restore; only server reopening is tested",
+        "Other market goods, casino, racing and animal-stakes variants outside the exact recorded branches",
+        "Original market one-hour expiry and loan one-hour collection"
+      ],
+      "resultSha256": "7e23cf4dc5c9c2523d9c559b6433f3cca5c7204cc18d8e4b4822415ca0d15cd4",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "26bbc61acb3503cda9de6c23da31ec82325621553b28c8b9798ce374e8bec3fb"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "f62caaf7e1a4607e38f8896a1c62545a587c63f487be74807de052c5e24c1690"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "188946ba08db8806d46593d9b9e742d6df2d8d1494b2f1feab32dc891c45c2f5"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "675bff34c2fb69390f5822646fe43b608380488a18d91758db7971c7cdf3c2d6"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "85bcbb10ccece2ce003db9d0b0e9dd36205a4139e4f12e4ab735a5046022c7d3"
+        }
+      ]
+    },
+    {
+      "runId": "resource-escrow-e89e90fd26f5-0f14072329",
+      "source": "e89e90fd26f5e94b4eebc48d12442af43d0055f6",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:48:28.336Z",
+      "endedAt": "2026-09-21T05:48:53.094Z",
+      "invocation": {
+        "command": "node tools/rc1-resource-escrow.js",
+        "arguments": [],
+        "node": "v24.19.0",
+        "platform": "win32"
+      },
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "configuration": {
+        "terminalFixtures": false,
+        "shortField": false,
+        "longTerm": true,
+        "clocks": "Unmodified application and PostgreSQL wall clocks",
+        "chain": "unconfigured",
+        "timerMode": "Initial empty poker fixture with 60-second deadline; canonically materialized original 30-minute GP and Stakes",
+        "operatorConfiguration": "Local fixture flags only; installed dependencies and deployed integrations are not attested; preflight remains enforced"
+      },
+      "productionTimers": {
+        "pokerMs": 86400000,
+        "gpMs": 1800000,
+        "stakesMs": 1800000
+      },
+      "fixtureGrants": {
+        "accounts": 7,
+        "cashPerCharacter": "1000000",
+        "omrPerAccount": "2000",
+        "respectPerCharacter": 10000,
+        "location": "neon",
+        "cars": 10,
+        "emptyEventFixtures": [
+          "poker"
+        ],
+        "initialEventPools": "0",
+        "racers": "Acquired canonically after baseline"
+      },
+      "deadlines": {
+        "poker": "2026-09-21T04:49:36.379Z",
+        "gp": "2026-09-21T05:18:37.447Z",
+        "stakes": "2026-09-21T05:18:37.522Z"
+      },
+      "originalLongDeadline": "2026-09-21T05:48:40.402Z",
+      "boundaries": 98,
+      "executedScenarios": [
+        {
+          "name": "stakes:acquire-racer:buyer",
+          "outcome": "PASS",
+          "journalHash": "60987905fae12aa9a1557d1b8383c4392030aef738083f75876ee66682371dd3",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "f07a9ac0da3a538d0d78119ba6030b9cd6943d3cc357315ca5952e6c51b8bcbb",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "b4ddb294c83dc30b6e0136cf153c5e95cb554b2f896bfb06ad3018dc789269ec",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-concurrent:buyer",
+          "outcome": "PASS",
+          "journalHash": "9c3e30d415b861bc7006ddc3b62ff4cd172a98bb27aab047545a951c1ca5d0b8",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:rival",
+          "outcome": "PASS",
+          "journalHash": "0763704b1d505c3f48756abde86626320bcfd511ce5a48e16388178e6f19e8d2",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "4eea6fb88a363ec9dab36fb92219f657c80893f1ec001351d80c2eac376ffc0e",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "9eab7a23e3802d4119e33f977553e22c584022634fc856861164a68944348431",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:rival",
+          "outcome": "PASS",
+          "journalHash": "bbe25954a4aee354ff130ef801b774856c57c7cc5d135310fc123cbc3ff38ab4",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:killer",
+          "outcome": "PASS",
+          "journalHash": "834b585867d92abeafde5b11d62ca425d296c89393b2ca49f4089710e7254e81",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "12fb20ecee691dfa945327b9632ceb5211e8b082bb71d96b23a27b08e2450232",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "8cb9e15ded8dc63ebb8ea9f5e7d1ef74cce8f2680be3aa70c1e71cd7486cffe4",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:killer",
+          "outcome": "PASS",
+          "journalHash": "437dc43e29dee5ab11b15020e2357092b49f61b4992ff7950edd60dce07ff1fa",
+          "equations": 38
+        },
+        {
+          "name": "stakes:acquire-racer:victim",
+          "outcome": "PASS",
+          "journalHash": "183eb60c44d6b127d8d31f12abc456f49de183f64533c687794634bd59964100",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "20c5cfc92b32447e4633e1273aa900c75b42bf42bc3b84210d47cdfb41e3c439",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "7fcb3096a1ef7ffc96b014a32e377bdc251cf80178a2af439bcd45608f30d012",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry:victim",
+          "outcome": "PASS",
+          "journalHash": "e3923cf4f8b954e3cd15de7c5a3102f6b2dcca5c1005aa01aae6054bd83777e8",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "9f88a7271ced06a6f27517f8400b28ceb4441eb80f4077ae146f506df9eec5fb",
+          "equations": 38
+        },
+        {
+          "name": "poker:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "73c4f684ce7b69ca9ac1afe469dc91bcf9cc9aa2571af9c8baee9a47d8345c89",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "e0cd86aee4c26ad92669f466158a2b0e5c1a5a0e7aecc7e9a04646b84718d2ec",
+          "equations": 38
+        },
+        {
+          "name": "gp:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "e2b504aa468e569bec537841c5e3df36323037e2df8919fc5d3577489aeea851",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "bc9dbe52ac25bebb457c7e03ccfd2daf47dc6c8e9f79cefee77d38b9ff25d4c9",
+          "equations": 38
+        },
+        {
+          "name": "stakes:entry-new-key-denied",
+          "outcome": "PASS",
+          "journalHash": "77fb747ceb5c4d26840c65f75a0d51a226a0049396ab12a90966fc5b51b17ee3",
+          "equations": 38
+        },
+        {
+          "name": "market:original-expiry-list",
+          "outcome": "PASS",
+          "journalHash": "052686edc504f5a71747ab989a0099a8548621cbd5d4b8064c42c3bcef046ac2",
+          "equations": 38
+        },
+        {
+          "name": "market:original-expiry-bid",
+          "outcome": "PASS",
+          "journalHash": "4975edaabb7b30fc53aea9d740d5c46934cbfd1b086272fa46c0f1efa4618a4b",
+          "equations": 38
+        },
+        {
+          "name": "market:original-reserve-expiry-list",
+          "outcome": "PASS",
+          "journalHash": "23ddfcc28e0aa570b2fe4e00c48120e83b394529c6cbbbd83ec2b1606cd8adab",
+          "equations": 38
+        },
+        {
+          "name": "market:original-reserve-expiry-bid",
+          "outcome": "PASS",
+          "journalHash": "8af63df79af7b75f94eb399abd76f523fdd278b8786dcd1df317d6efe185d802",
+          "equations": 38
+        },
+        {
+          "name": "market:original-order-expiry-post",
+          "outcome": "PASS",
+          "journalHash": "4b8f451a8d9b069a6a1a513e4cb747c97e9b619f91b089d25da79394954632a7",
+          "equations": 38
+        },
+        {
+          "name": "loan:original-default-offer",
+          "outcome": "PASS",
+          "journalHash": "9b2c453a1dbe8468d3d7005b3c086a4216a4306f8ec6529dcebc286d9bdc95a2",
+          "equations": 38
+        },
+        {
+          "name": "loan:original-default-take",
+          "outcome": "PASS",
+          "journalHash": "f9ef66dfc53b862d61f630a2da809e806d632e2fdb0a9c6c4f5eb78cad2eaf02",
+          "equations": 38
+        },
+        {
+          "name": "loan:early-collect-denied",
+          "outcome": "PASS",
+          "journalHash": "8f6d2bb385ed2784de6b2d0160cd70783842334237343077049168048d773071",
+          "equations": 38
+        },
+        {
+          "name": "market:car-list",
+          "outcome": "PASS",
+          "journalHash": "bbe8fd2fbeeb7b6d443c677b3b99a5aed9226debbb64328b24ce6813c73e0718",
+          "equations": 38
+        },
+        {
+          "name": "market:first-bid",
+          "outcome": "PASS",
+          "journalHash": "40113ff0f2cc27e74e252d808fba564b3d729d6d9503aaf6e9c11d0ee76cca94",
+          "equations": 38
+        },
+        {
+          "name": "market:outbid-refund",
+          "outcome": "PASS",
+          "journalHash": "626d1e3553eead84a0f6df866e70513babab77e50df702e8c74a1e437f9873d0",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-take-rollback",
+          "outcome": "PASS",
+          "journalHash": "fa329de26d8b5fbfe377f0f71b697f4d89b5e631ba36f285936a8c42841e414e",
+          "equations": 38
+        },
+        {
+          "name": "market:concurrent-buy-now",
+          "outcome": "PASS",
+          "journalHash": "0b4dbc2cfa3b26af48822007d284feea1349457c570592c61f138b57c51ca0a0",
+          "equations": 38
+        },
+        {
+          "name": "market:sale-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "6793491d7854c778fd090b677cad96b357f482b4a8caec2f4ed5008edf1950d0",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-list",
+          "outcome": "PASS",
+          "journalHash": "6f03ae738d0cb4e72fe011b7a236785256366b0bb5013092091a44f68fbfb500",
+          "equations": 38
+        },
+        {
+          "name": "market:under-reserve-bid",
+          "outcome": "PASS",
+          "journalHash": "74edecd21d36e8a574fa356bf8e8ab8df4b03ed4d14088387dc080e41ffb2507",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "cc3f86977bed3dd44153a988cb49240ed1800a62c692fcc6e893fc1a82638f1d",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "74535bcee9ca8499d78f7032ed1821a539280e6602e62ae7c807c9c6d82afce3",
+          "equations": 38
+        },
+        {
+          "name": "market:reserve-cancel-replay",
+          "outcome": "PASS",
+          "journalHash": "3d57c77c8556af71dbede7b90c2c0629d3f9378ff1ac51d54f5eef573e2a1958",
+          "equations": 38
+        },
+        {
+          "name": "market:order-post",
+          "outcome": "PASS",
+          "journalHash": "1b53e6df2afe6f7e6c82e18acde07ea56849556291c8424c1dbf80a1b1aa25b9",
+          "equations": 38
+        },
+        {
+          "name": "market:order-cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "9d287d507af411dbd55ee130582ac65b26287d2228607decf434764f5f67efcf",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-offer",
+          "outcome": "PASS",
+          "journalHash": "030fc8b18ddf0c310eff6ab03d96e5abf3bf8f8c77b7c062f98fbead9971c49e",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-take",
+          "outcome": "PASS",
+          "journalHash": "901935f8d8f30bb7d0af39951fd595b2e034d65ceb640736aa0f08ca53cc0e2b",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-list",
+          "outcome": "PASS",
+          "journalHash": "71b2c44ba919ed5f25a1383e7102d1d4652676ff0ac2d2d916131b2b1323827a",
+          "equations": 38
+        },
+        {
+          "name": "loan:borrower-paper-denied",
+          "outcome": "PASS",
+          "journalHash": "c85bad3d680f53c86149b345185af9597188351a244b797807d8f954e43179d7",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "cfffcc00b127b2cdc07804679fe09d250b85bf1c9b4b4cc2316fc496b396684b",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-concurrent-purchase",
+          "outcome": "PASS",
+          "journalHash": "62912df7aa53fbc896a41af788f3b91c0417daa2d6e81f6e58b7e7fb7918550e",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-exact-replay",
+          "outcome": "PASS",
+          "journalHash": "5d2d07331f35fbc18c68ae21202e92ef94376eaeddfbe514f4b67e7266600628",
+          "equations": 38
+        },
+        {
+          "name": "loan:paper-new-owner-repayment",
+          "outcome": "PASS",
+          "journalHash": "d55eb86360f8c946543bdc9ccf1ab931e62f622fa440b5a8447c5a43e98f2d0c",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-offer",
+          "outcome": "PASS",
+          "journalHash": "92e09bc9d9190eea2bbb921f0515b78468ca703be4302657c903cb469a82e7ff",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund-rollback",
+          "outcome": "PASS",
+          "journalHash": "2db89cd6b066a2f62e048a4bfb1a7509a44f5c515ee7482f286627affd3d6e29",
+          "equations": 38
+        },
+        {
+          "name": "loan:cancel-refund",
+          "outcome": "PASS",
+          "journalHash": "580c8a9117acf78193124b1dd5aade7ae796d490791952e7199de5684b26896f",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-order",
+          "outcome": "PASS",
+          "journalHash": "47fef45425154c980d6fc723dd505770d403cb3fcd2d50ebcc0aca2b2d2a65ec",
+          "equations": 38
+        },
+        {
+          "name": "estate:loot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "96deafee61be6417e8beaaceb0e93e1d2eefb4cd0e533dde92ea06490073d569",
+          "equations": 38
+        },
+        {
+          "name": "estate:victim-car-list",
+          "outcome": "PASS",
+          "journalHash": "a22fc79a3e31ab56b6d9e3b72eb6fd62dc6b32fe3c273fc79ee702aa5c3a8dd7",
+          "equations": 38
+        },
+        {
+          "name": "estate:killer-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "26ad14facd87b89e21ac4ece2dbbd552875e4a55a3863a64f6003455217bbf7f",
+          "equations": 38
+        },
+        {
+          "name": "estate:dead-bid-list",
+          "outcome": "PASS",
+          "journalHash": "be483b008deea4d1b218439ea78bdaf2657c9205ece5d191ac8f6e4a9b621c42",
+          "equations": 38
+        },
+        {
+          "name": "estate:doomed-standing-bid",
+          "outcome": "PASS",
+          "journalHash": "b5286e11ae525ba6c2f6ab18c1c92917c3f71af9b335739ce415c278eae9393f",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-offer",
+          "outcome": "PASS",
+          "journalHash": "9b0902b5eb92db7eb36da4b9402199f55a3e2d1673096c174f258887d0b9bd92",
+          "equations": 38
+        },
+        {
+          "name": "estate:secured-take",
+          "outcome": "PASS",
+          "journalHash": "1f2539d7483f9ea318f27a8082a625e79935e9b3779f8563649823104536355f",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-offer",
+          "outcome": "PASS",
+          "journalHash": "e408de8cd13e9ecbef955f9482576f451325f67b60af049d3fb00f6e7a468861",
+          "equations": 38
+        },
+        {
+          "name": "estate:inherited-claim-take",
+          "outcome": "PASS",
+          "journalHash": "847e75b0872aa7c9545f6ced9f7944429b0211834a8e7b4aa71dec5e271a696b",
+          "equations": 38
+        },
+        {
+          "name": "estate:late-pledge-disposition-rollback",
+          "outcome": "PASS",
+          "journalHash": "ffa9df33d519625b9d61bd22cd1b3237b37a4eb9d8a2eee14fd8d6eacfddb389",
+          "equations": 38
+        },
+        {
+          "name": "estate:canonical-loot-death-and-heir",
+          "outcome": "PASS",
+          "journalHash": "b2a8ffef8afcec0a4fa35b7d5159358727583057ba6e6244ee8027357bed35a9",
+          "equations": 41
+        },
+        {
+          "name": "estate:dead-identity-retry-denied",
+          "outcome": "PASS",
+          "journalHash": "b9b46501a441d74c05d3694c67bd4f3ad7566ffdb9978d7035e90bfe0e134745",
+          "equations": 41
+        },
+        {
+          "name": "estate:inherited-claim-repaid-to-heir",
+          "outcome": "PASS",
+          "journalHash": "a3d21894e6af43f73a3496a064dfcde4c531ae27ae7dd46a24009da713b695cf",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-order",
+          "outcome": "PASS",
+          "journalHash": "b83f30f28db60bb906fc142ba7b3a6393d980c068bffa0ae1bb8d83e0f83136c",
+          "equations": 41
+        },
+        {
+          "name": "estate:nonloot-open-loan",
+          "outcome": "PASS",
+          "journalHash": "ba512680579adf42eca93931629bab40e3829de4a6c52c7afd7b5543d1e84fbd",
+          "equations": 41
+        },
+        {
+          "name": "estate:canonical-nonloot-death",
+          "outcome": "PASS",
+          "journalHash": "0b51b61d4ff59deb069b6eec2bcc0249c311651689a695e684fe46fe406f4ed3",
+          "equations": 44
+        },
+        {
+          "name": "poker:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "7caddfb3c9c05a48211521cf6aa625f037e4aec0015ad1b92b90d09f9df9eaee",
+          "equations": 44
+        },
+        {
+          "name": "poker:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "784cdc97eca94bf7444bfc5274de9b89555f0da982ecef33d275399f05201c4c",
+          "equations": 44
+        },
+        {
+          "name": "poker:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "f3063dade4edb791242f15ce59fcac49b644343263ecc5a960003ce5f245f219",
+          "equations": 44
+        },
+        {
+          "name": "poker:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "956faa146ba38c7aa0dca1cfed4b0ebba50b46abd468b65e233fed8e602ce400",
+          "equations": 44
+        },
+        {
+          "name": "gp:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "9615306502e8d368d44e56f751cf1356d28390462b371a3511f8d46f8cd4b2f4",
+          "equations": 44
+        },
+        {
+          "name": "gp:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "e719e78d4c819bfff00725ca56a220917aee8c29a0df9b3bfb8dc278fe729dd9",
+          "equations": 44
+        },
+        {
+          "name": "gp:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "ede76346fccfd0fc50f9bd18fc17b5b3c56aeb2ebea7e43e4c501e4f0378e874",
+          "equations": 44
+        },
+        {
+          "name": "gp:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "0ce811f52ad14f5b159402dc4f985ecb50ae64a65d6a60631e4d106b30bf164b",
+          "equations": 44
+        },
+        {
+          "name": "stakes:settlement-worker-ledger-rollback",
+          "outcome": "PASS",
+          "journalHash": "7ad7585a487a4cf7701f264ed2f2b57320eb188fab025f143c642f07a3fd1d46",
+          "equations": 44
+        },
+        {
+          "name": "stakes:concurrent-terminal-workers",
+          "outcome": "PASS",
+          "journalHash": "1d28c2fb74a4f9fea22ffaa9b98a1c39dbc6702b264bc9952dad4ec7c4acf07d",
+          "equations": 44
+        },
+        {
+          "name": "stakes:terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "adfd6a6fc3647924b9b47d49875741f98a08474b93893a5a4ffddd1bdd02ebeb",
+          "equations": 44
+        },
+        {
+          "name": "stakes:worker-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "48c7997b69849fad2965f8bdec1a01814ea7587dfde5b04ea874fe986e8bc8b7",
+          "equations": 44
+        },
+        {
+          "name": "market:expiry-refund-worker-failure",
+          "outcome": "PASS",
+          "journalHash": "da706f61b4a314b2eabb8b572a31b02e70dee4f7c334e477c9f61c3e40799390",
+          "equations": 44
+        },
+        {
+          "name": "market:original-expiry-worker-retry",
+          "outcome": "PASS",
+          "journalHash": "832a4a82ac5814cb1beafc0ec050ce31ed74fb572560019e34952b48067dd0db",
+          "equations": 44
+        },
+        {
+          "name": "market:original-expiry-worker-replay",
+          "outcome": "PASS",
+          "journalHash": "58f1956f7f41f9c4ac10ff47761536faab2a7df001df4787ae0cb64e73182e64",
+          "equations": 44
+        },
+        {
+          "name": "market:original-reserve-expiry-reclaim",
+          "outcome": "PASS",
+          "journalHash": "bfa214fcef20c708b4c603831f0e3099e202fb474e39625e475ee7083c30325f",
+          "equations": 44
+        },
+        {
+          "name": "loan:original-collect-pledge-rollback",
+          "outcome": "PASS",
+          "journalHash": "297a300b98bd80f8aa52f25ac45291ce80de9b22900d42f0749c6fdcc750a30a",
+          "equations": 44
+        },
+        {
+          "name": "loan:original-concurrent-collect",
+          "outcome": "PASS",
+          "journalHash": "510818c50bfa0e3d25932d245beec673756e0f416bf941ca637b0fa99118af61",
+          "equations": 44
+        },
+        {
+          "name": "loan:original-collect-replay",
+          "outcome": "PASS",
+          "journalHash": "d972499ddc18aca60e7fc85bfb29f1b9f44b70e36cafbbbc131044025ff5a3bc",
+          "equations": 44
+        },
+        {
+          "name": "market:server-reopen-sale-replay",
+          "outcome": "PASS",
+          "journalHash": "03036b28ae4430cfa44bef95d2faf2877f991d3807ee936df6edb7b3ed16e20a",
+          "equations": 44
+        },
+        {
+          "name": "loan:server-reopen-paper-replay",
+          "outcome": "PASS",
+          "journalHash": "0ce574bb2696f434180909ea867ee728eaf0fde76c4a4992ea416023d5baf23d",
+          "equations": 44
+        },
+        {
+          "name": "poker:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "226816e2392a2ae90baa9e0aa8539c8fd5a9753fb23fb5246a4e6fcc7d1c27ea",
+          "equations": 44
+        },
+        {
+          "name": "poker:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "f25e658eeaa73820c104d301af9f5bbf121b08d61102ccb218d73fa23415b2d6",
+          "equations": 44
+        },
+        {
+          "name": "gp:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "81d47f7fda9859b7b1efda3f419929faf6b92592920c740333f549d82caefa95",
+          "equations": 44
+        },
+        {
+          "name": "gp:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "c5dccbc430504f2e4dfbee22ed41a920f6527276cf5ba55c15cce7619ddea1d9",
+          "equations": 44
+        },
+        {
+          "name": "stakes:server-reopen-terminal-replay",
+          "outcome": "PASS",
+          "journalHash": "b3686a2782160842437d40dbeec1a81edf7869f770a8c85737c6129c26db1a2c",
+          "equations": 44
+        },
+        {
+          "name": "stakes:heir-stale-entry-replay",
+          "outcome": "PASS",
+          "journalHash": "d4aa20e490eae4834028a327a1d32c42a678db4b4bc000fbdb54d574714a5174",
+          "equations": 44
+        }
+      ],
+      "verification": {
+        "artifactHashes": 5,
+        "journalHashes": 98,
+        "exactZeroEquations": 3907,
+        "continuousStateBoundaryChain": true,
+        "finalLedgerExact": true,
+        "ledgerRowsReconstructed": 117
+      },
+      "initialCanonicalInvariantDrift": [
+        {
+          "name": "character cash",
+          "drift": 6996500
+        },
+        {
+          "name": "$OMR conservation",
+          "drift": 14000
+        },
+        {
+          "name": "car conservation",
+          "drift": 10
+        }
+      ],
+      "invariantScope": "Every observed boundary preserves canonical initial fixture drift; fixture cash, OMR and vehicle grants are not represented as naturally earned value.",
+      "aggregateCashCustody": {
+        "before": "7000000",
+        "after": "4911900",
+        "created": "4200",
+        "destroyed": "2092300",
+        "drift": "0"
+      },
+      "originalCollectionCheck": {
+        "originalPrincipal": "10000",
+        "originalOwed": "11000",
+        "collectedOnce": "11000",
+        "lenderCreditedOnce": "10450",
+        "vigOnce": "550",
+        "collateralOmrTransferredOnce": "200",
+        "cashReceiptRows": 2,
+        "omrReceiptRows": 1,
+        "collateralCarTransferred": true,
+        "rollbackAndReplayUnchanged": true
+      },
+      "nonzeroLedgerDispositionGroups": [
+        {
+          "currency": "cash",
+          "reason": "stable:buy",
+          "count": 4,
+          "debited": "120000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:buyin",
+          "count": 4,
+          "debited": "20000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:buyin",
+          "count": 4,
+          "debited": "100000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:buyin",
+          "count": 4,
+          "debited": "80000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:list",
+          "count": 10,
+          "debited": "980",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:bid",
+          "count": 8,
+          "debited": "49000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:order",
+          "count": 4,
+          "debited": "31000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:offer",
+          "count": 7,
+          "debited": "85000",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge",
+          "count": 3,
+          "debited": "600",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:take",
+          "count": 4,
+          "debited": "0",
+          "credited": "45000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:refund",
+          "count": 7,
+          "debited": "0",
+          "credited": "36000"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:sale",
+          "count": 2,
+          "debited": "0",
+          "credited": "24500"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:take",
+          "count": 2,
+          "debited": "500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:paper",
+          "count": 3,
+          "debited": "19380",
+          "credited": "18620"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:house:vig",
+          "count": 3,
+          "debited": "0",
+          "credited": "962"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:repay",
+          "count": 4,
+          "debited": "27500",
+          "credited": "26125"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:vig",
+          "count": 3,
+          "debited": "963",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:return",
+          "count": 1,
+          "debited": "0",
+          "credited": "200"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:refund",
+          "count": 1,
+          "debited": "0",
+          "credited": "5000"
+        },
+        {
+          "currency": "cash",
+          "reason": "whack:loot",
+          "count": 2,
+          "debited": "0",
+          "credited": "7500"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:seize:omr",
+          "count": 2,
+          "debited": "0",
+          "credited": "300"
+        },
+        {
+          "currency": "omr",
+          "reason": "loan:pledge:loot",
+          "count": 1,
+          "debited": "0",
+          "credited": "100"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:loot",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "1870820",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:loot",
+          "count": 1,
+          "debited": "2500",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "market:death",
+          "count": 3,
+          "debited": "16500",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "death:duty",
+          "count": 2,
+          "debited": "950",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:death",
+          "count": 2,
+          "debited": "30000",
+          "credited": "0"
+        },
+        {
+          "currency": "omr",
+          "reason": "desk:recycle",
+          "count": 2,
+          "debited": "0",
+          "credited": "950"
+        },
+        {
+          "currency": "cash",
+          "reason": "death:legacy",
+          "count": 2,
+          "debited": "0",
+          "credited": "3200"
+        },
+        {
+          "currency": "ammo",
+          "reason": "death:estate",
+          "count": 2,
+          "debited": "50",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "14250"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:death",
+          "count": 1,
+          "debited": "5000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "casino:tourney:take",
+          "count": 1,
+          "debited": "750",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:death",
+          "count": 1,
+          "debited": "25000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "71250"
+        },
+        {
+          "currency": "cash",
+          "reason": "race:gp:take",
+          "count": 1,
+          "debited": "3750",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:death",
+          "count": 1,
+          "debited": "20000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:win",
+          "count": 3,
+          "debited": "0",
+          "credited": "57000"
+        },
+        {
+          "currency": "cash",
+          "reason": "stable:stakes:take",
+          "count": 1,
+          "debited": "3000",
+          "credited": "0"
+        },
+        {
+          "currency": "cash",
+          "reason": "loan:collect",
+          "count": 2,
+          "debited": "11000",
+          "credited": "10450"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and fixture vehicle acquisition",
+        "Poker original 24-hour lifetime and bracket format",
+        "Natural combat-earned death; canonical estate runs with explicit terminal loot/nonloot modes",
+        "Loan open-offer 48-hour expiry and 24-hour collateral grace",
+        "Full native resource simulation and deployment attestation",
+        "Crash/backup restore; only server reopening is tested",
+        "Other market goods, casino, racing and animal-stakes variants outside the exact recorded branches"
+      ],
+      "resultSha256": "ab3eb7c849aaf75388e063e3093d72fcc5581d483c4ec56f98c0d0520ef18676",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "aaa95e90f9ec39adcc0eb93e1987e8ed9833abab028716547199fc1a32f5e635"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "384f9095eec53006bc66f0811e8f740d6780cd41fdfce22215774d0737eb9df9"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "df9bec73da91c6d9d3310dbaeacd2321ff9e1b830f25c3796492c886530a825f"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "ba5b4b52a43985883e383eb17b2b253d282bc7a987bc5fb11e8a6afd15177c31"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "da6ca7cecb1feff8f27cf9a2e360bf23d888f5c92f9dc9603c71b7757a9e8c75"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "group": "market cash custody",
+      "native": "Car listing, bid, outbid refund, buy-now sale/take, reserve cancellation refund, order cancellation refund, original one-hour winning sale, under-reserve expiry refund and order expiry refund.",
+      "failureReplayConcurrency": "Sale/take and reserve-refund rollback; same-key concurrent purchase; worker refund failure with unrelated committed sale retained; concurrent sweep retry; terminal and server-reopen replay."
+    },
+    {
+      "group": "loan custody and claim ownership",
+      "native": "Offer/take, funded OMR pledge, secondary paper sale, own-debt denial, repayment to new lender, pledge return, offer cancellation, original one-hour collection with car/OMR collateral.",
+      "failureReplayConcurrency": "Paper sale and cancellation late-ledger rollback; premature collection denial; late pledge-seizure rollback; concurrent same-key paper purchase and collection; exact and server-reopen replay."
+    },
+    {
+      "group": "estate custody",
+      "native": "Canonical estate loot and nonloot modes, open loan and market-order disposition, dead standing bid destruction, killer standing-bid refund, OMR collateral split, actual heir, inherited lender claim and repayment, dead entrant stakes destruction.",
+      "failureReplayConcurrency": "Late estate pledge-disposition abort retains all observed state; dead-identity retry denied; stale prior event-entry receipts after actual succession carry no new value.",
+      "limitation": "Canonical runEstate is called through withTwoCharacters with explicit terminal mode; natural combat eligibility and fire-earned kill are unexecuted."
+    },
+    {
+      "group": "poker, Grand Prix and Stakes pools",
+      "native": "Canonical paid entry; full-field winner/take/dead-entrant terminal branch; distinct short-field refund branch; original GP and Stakes registration deadlines, plus declared initial empty 60-second poker fixture.",
+      "failureReplayConcurrency": "Concurrent same-key entries, stored replay, fresh-key duplicate denial; actual sweep late-ledger failure; concurrent terminal workers; direct and worker terminal retries; server reopen.",
+      "limitation": "Original poker 24-hour lifetime and bracket format remain unexecuted."
+    }
+  ],
+  "openRequiredProof": [
+    "Natural account progression and acquisition",
+    "Original 24-hour poker lifetime and bracket format",
+    "Original 48-hour loan offer expiry and 24-hour collateral grace",
+    "Natural combat-earned death and targeting/fire eligibility",
+    "Other market goods and event variants outside these exact receipts",
+    "Funded Wanted bounty side effects of loan collection",
+    "Every required native simulation workload and resource transition",
+    "Deployment attestation, concurrency/resource ceilings and production external dependencies",
+    "Crash/backup restore and independently reproduced failed-run replay"
+  ],
+  "dependencyCaveat": "Installed Node dependencies were shared with the local repository and not independently attested. These runs prove their recorded source revision and local PostgreSQL execution only; they are not evidence for a later integrated revision.",
+  "rerun": {
+    "prerequisite": "Clean pinned checkout; RC1_RESOURCE_DATABASE_URL points to an isolated local PostgreSQL administrative database; private RC1_RESOURCE_OUTPUT optional.",
+    "commands": [
+      "node tools/rc1-resource-escrow.js --terminal-fixtures",
+      "node tools/rc1-resource-escrow.js --terminal-fixtures --short-field",
+      "node tools/rc1-resource-escrow.js --short-field",
+      "node tools/rc1-resource-escrow.js"
+    ]
+  },
+  "privacy": "Only source/run identities, declared fixture roles, public branch names, numeric aggregates, timestamps and hashes. No raw actor identities, authentication tokens, signed credentials, request bodies, connection strings or private paths."
+}

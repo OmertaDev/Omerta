@@ -1,0 +1,125 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "finding": "RC1-TOOL-30",
+  "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+  "comparisonSha256": "f823a8d02dd30f463574d547c82d0fa2813f60d5d56fcc4d315aafac287f5b21",
+  "artifactsVerified": 63,
+  "runs": [
+    {
+      "id": "observed",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "b9ac5eb61086b3ab71621c4eb5048bc5fdf636ff79cc28f8fefe6b09c30aaab5",
+      "configurationSha256": "94dda72aafa1751eb2a7155b81dab5fdbc0379376f86b98844b89c2050fa6ac4",
+      "startedAt": "2026-09-21T07:28:17.941Z",
+      "endedAt": "2026-09-21T07:28:33.669Z",
+      "artifactsVerified": 7,
+      "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+      "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf"
+    },
+    {
+      "id": "native-reversed",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "d8122d6cc4c46d5436ec70180bc3c4c67128865a3ecfba2a635c9fd5d83a8432",
+      "configurationSha256": "4d03cd517240bc236182e2541102bdfc84a2cba8bb3180e625271f11c14548e5",
+      "startedAt": "2026-09-21T07:28:33.712Z",
+      "endedAt": "2026-09-21T07:28:50.487Z",
+      "artifactsVerified": 7,
+      "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+      "finalStateSha256": "1d37a446c1539533313579954ec89f5b228e4c0c528610a9f99a73d8bf6a8a3c"
+    },
+    {
+      "id": "replayed",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "97ed32746817229888abdb7e03911c9022552e41ec5778998c1e2af642bc39d1",
+      "configurationSha256": "460c417a6951a5c6ea3940e07955d7228e416be11ee0f3b8b2753cf8a60dd6a0",
+      "startedAt": "2026-09-21T07:28:50.533Z",
+      "endedAt": "2026-09-21T07:29:06.181Z",
+      "artifactsVerified": 7,
+      "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+      "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf"
+    },
+    {
+      "id": "standing-value",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "a4b921d77fc1db4361bbbe0bd8e6fc04e30c0ee037f456cd57fa1edb8c55f89d",
+      "configurationSha256": "2eac5ba2f3d5c5512866a21c92df5b286f82b3494328613cdcfe3f95770fcf43",
+      "startedAt": "2026-09-21T07:29:06.224Z",
+      "endedAt": "2026-09-21T07:29:21.552Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "a69479cdc4fdc964ba1e1503d399ccbbcd4860158adfae5dbbac89217a6879b6"
+    },
+    {
+      "id": "standing-missing",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "ffc588a45c14eda938c1a53f2cfdb33e68c392a9b7795a859e8e77af91f59f93",
+      "configurationSha256": "489ce38a082c9bd0dae55c3b03ff1de49bd7979040631bbea25d17b42f2ef24c",
+      "startedAt": "2026-09-21T07:29:21.601Z",
+      "endedAt": "2026-09-21T07:29:37.184Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "de87def28f7f600076ec8bb8d6e902f4bb063083fba4a19daad86b7cbdc8cd64"
+    },
+    {
+      "id": "standing-extra",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "17d85711b31c9b3b12341d4dddd94997a428bad7e8ea7929c5c2ed72ea2ee5c3",
+      "configurationSha256": "1bb1701e7f5c74107381d888d720ee0163e20437e2b5485a40d8c5d0171fb037",
+      "startedAt": "2026-09-21T07:29:37.226Z",
+      "endedAt": "2026-09-21T07:29:52.899Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "679159a74330577f4572f8af8fc1c1cde888cc8ac927d9f233ffc60c4a74b775"
+    },
+    {
+      "id": "market-value",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "c79585fd516eb8714f3e85e21d49fba0b6b2f03ed4a24f58bda09de09228c9af",
+      "configurationSha256": "fb5cded68ee32f92e8dc6a70427aa106aa6f280b00eb0b1939bfc0eb6653ab49",
+      "startedAt": "2026-09-21T07:29:52.940Z",
+      "endedAt": "2026-09-21T07:30:08.682Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "373edec23eb8423d4c94fdc3e467b53faf3738a2f1c6e96d9b4c9aa8324938b9"
+    },
+    {
+      "id": "market-missing",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "c14f3705d567ffeffef8049a2cf9e4a6ae62e8623f1212f892217edd92d7e801",
+      "configurationSha256": "89bdc9865777178f25ab4f58264b11f40da89814bde47aea8d0c3c48ea11dd73",
+      "startedAt": "2026-09-21T07:30:08.728Z",
+      "endedAt": "2026-09-21T07:30:25.621Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "2c66e06543c736358e2e95074b87eb58a8d6d5fb2c5a625ef5d1753e1c49cd08"
+    },
+    {
+      "id": "market-extra",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "8aaf5c169192f910d8e0d05ad9e2c69dcf05ab8436d86d344ce28da852fed215",
+      "configurationSha256": "728d51c9ba77e2433cd864b9be2958e8812f8177f7a443e9f7f50414e6bb8b04",
+      "startedAt": "2026-09-21T07:30:25.663Z",
+      "endedAt": "2026-09-21T07:30:41.125Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "cf81a8ad664be2608d90a73ba6c6ae5e9763552669bac1f6cf60b40f19ee435d"
+    },
+    {
+      "id": "query-identity",
+      "status": "PASS_SCOPED",
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "runSha256": "d46fe3d8637587b8af4b4a29779f306493afe8433d573be7453cf597c8f1693f",
+      "configurationSha256": "31993e82296be044947d7f44e9e6e48866957ce15ce5fb95a6021c1860efd184",
+      "startedAt": "2026-09-21T07:30:41.168Z",
+      "endedAt": "2026-09-21T07:30:56.958Z",
+      "artifactsVerified": 6,
+      "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b"
+    }
+  ],
+  "matrixQualifying": false,
+  "scope": "Three opposite-physical-order causal cases plus seven native rejection controls. All original source state retained; no production tiebreak or receipt normalization. Long integrated replay and complete resource/matrix proof remain required."
+}

@@ -1,0 +1,502 @@
+{
+  "format": 1,
+  "findingId": "RC1-OMR-PRECISION-01",
+  "severity": "P2",
+  "status": "REPAIRED_AND_SCOPED_NATIVE_RETEST_PASS",
+  "reviewedSource": "43b86f77d68e0e371a5de100aa6537815044ee65",
+  "finalSource": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+  "runtimeCommits": [
+    "94a802b7",
+    "49d90d148298cd5ccf0af52c84a2d5b74b00b146"
+  ],
+  "runtimeSha256": "8135160a29f8a8952744675fdae4c3a302f92aecccf1f524cb89970d682d07d0",
+  "changes": [
+    "Integer micro-OMR split and cash floor; preserve arbitrary-scale historical balance",
+    "Refuse nonzero sub-micro requests before mutation; preserve ordinary decimal/scientific/trailing-zero forms",
+    "Exact affordability check prevents rounded legacy value from funding a larger transfer"
+  ],
+  "nativeCore": {
+    "runId": "omr-journal-0df3cadab46c-309ab2cd1a",
+    "source": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+    "manifestSha256": "c6f0c5858792f5a4cfb264ad1f160b1314db1d4ecfcb6a4093e1c9bde1bc7e09",
+    "boundaries": 37,
+    "movements": 20,
+    "equations": 632,
+    "controls": 11,
+    "canonicalInvariants": 3,
+    "timerCounts": {
+      "directorTick": 72,
+      "guardedTick": 6,
+      "guardedSeasonTick": 6,
+      "health-boundary": 72
+    },
+    "branches": [
+      {
+        "name": "original-worker-bootstrap",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:abort-after-split-recycle-and-cash",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:fractional-round-up",
+        "outcome": "PASS",
+        "movements": 2
+      },
+      {
+        "name": "window:exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:changed-body-refused",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:fractional-round-down",
+        "outcome": "PASS",
+        "movements": 2
+      },
+      {
+        "name": "window:half-micro-cut-concurrent-duplicate",
+        "outcome": "PASS",
+        "movements": 2
+      },
+      {
+        "name": "window:below-minimum-refused",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:subatomic-refused",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:full-balance",
+        "outcome": "PASS",
+        "movements": 2
+      },
+      {
+        "name": "sink:abort-after-ledger-and-recycle",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "sink:retry-after-rollback",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "sink:lost-response-exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "sink:concurrent-same-key",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "stake:fractional-floor",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "stake:exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "stake:negative-refused",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "stake:second-owner",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "unstake:owner-0",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "unstake:owner-0:exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "unstake:owner-1",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "unstake:owner-1:exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "window:canonically-fund-loan-lender",
+        "outcome": "PASS",
+        "movements": 2
+      },
+      {
+        "name": "loan:offer-collateral-demand-only",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "loan:wrong-borrower-denied",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "loan:pledge",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "loan:pledge-exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "loan:repay-return",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "loan:repay-exact-retry",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "original-workers:before-unbond-deadline",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "unbond:owner-0:one-ms-early",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "unbond:owner-1:one-ms-early",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "original-workers:at-six-hours",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "unbond:owner-0:original-expiry-release",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "unbond:owner-0:repeat-read",
+        "outcome": "PASS",
+        "movements": 0
+      },
+      {
+        "name": "unbond:owner-1:original-expiry-release",
+        "outcome": "PASS",
+        "movements": 1
+      },
+      {
+        "name": "unbond:owner-1:repeat-read",
+        "outcome": "PASS",
+        "movements": 0
+      }
+    ]
+  },
+  "nativeWindow": {
+    "runId": "omr-window-0df3cadab46c-7789531266",
+    "source": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+    "manifestSha256": "aa07b891c9c8a8599b7757ffc2b04276c650df35e745d582282de53663236896",
+    "cases": 20,
+    "success": 10,
+    "refusal": 10,
+    "branches": [
+      {
+        "name": "legacy-just-insufficient",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "legacy-value-preserved",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "full-balance-half-micro-cut",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "above-cap",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "exact-cap-full-balance",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-0",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-1",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-2",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-3",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-4",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-5",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "supported-format-6",
+        "outcome": "PASS",
+        "status": 200
+      },
+      {
+        "name": "refused-format-0",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-1",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-2",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-3",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-4",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-5",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-6",
+        "outcome": "PASS",
+        "status": 400
+      },
+      {
+        "name": "refused-format-7",
+        "outcome": "PASS",
+        "status": 400
+      }
+    ]
+  },
+  "independentReadOnlySql": [
+    {
+      "label": "failed-candidate",
+      "source": "52671886a43f9e2e06c4f6b6ae3a52dd274094c6",
+      "exactInsufficientFixtureBalance": "-0.0000000000000004"
+    },
+    {
+      "label": "repaired-candidate",
+      "source": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+      "exactInsufficientFixtureBalance": "6.0000099999999996"
+    }
+  ],
+  "historicalRuns": [
+    {
+      "directory": "omr-core-native-1",
+      "source": "356d2f0405bf00ccc3c13e20070140338e533f05",
+      "status": "FAIL",
+      "runId": "omr-journal-356d2f0405bf-67ccfeaa52",
+      "runSha256": "9024e48db127dc1353bc6c691d85af6ed30aacb006e7124339e3eab8096428fb",
+      "artifactCount": 2,
+      "independentlyReconciled": {
+        "boundaries": 0,
+        "movements": 0,
+        "equations": 0,
+        "rejectedControls": 0
+      },
+      "failureClass": "Harness preflight seed"
+    },
+    {
+      "directory": "omr-core-native-2",
+      "source": "8558ac561e5e6153d15a41251cc327323f142b01",
+      "status": "FAIL",
+      "runId": "omr-journal-8558ac561e5e-a53e8b4b52",
+      "runSha256": "71977db86be755c17f9e3570d6495f78763f0f53f5e2ebbd9bf449bf484eaa86",
+      "artifactCount": 5,
+      "independentlyReconciled": {
+        "boundaries": 1,
+        "movements": 0,
+        "equations": 17,
+        "rejectedControls": 0
+      },
+      "failureClass": "Reproduced window decimal residual"
+    },
+    {
+      "directory": "omr-core-native-3",
+      "source": "452cc19f847f6ebb85844f4068ec20d429869c36",
+      "status": "UNSEALED_HARNESS_FAILURE",
+      "files": 22
+    },
+    {
+      "directory": "omr-core-native-4",
+      "source": "2a3319b16895d96fa672e1af6e465f00c15e0786",
+      "status": "FAIL",
+      "runId": "omr-journal-2a3319b16895-a4774f408f",
+      "runSha256": "0f541fba208c145084d022b779ccda609a3a9948316f474a0fd0d6623a4bcf54",
+      "artifactCount": 26,
+      "independentlyReconciled": {
+        "boundaries": 21,
+        "movements": 14,
+        "equations": 357,
+        "rejectedControls": 0
+      },
+      "failureClass": "Harness loan amount below canonical minimum"
+    },
+    {
+      "directory": "omr-core-native-5",
+      "source": "39b39973f41b93170ef213694260c22ea668d696",
+      "status": "PASS_SCOPED",
+      "runId": "omr-journal-39b39973f41b-cb10c254d0",
+      "runSha256": "d4a2809dd27e2f723c34206b7fd32d2831b1d3a34bccbe6294054b09fb46ef85",
+      "artifactCount": 54,
+      "independentlyReconciled": {
+        "boundaries": 37,
+        "movements": 20,
+        "equations": 632,
+        "rejectedControls": 11
+      },
+      "failureClass": null
+    },
+    {
+      "directory": "omr-core-native-6",
+      "source": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+      "status": "PASS_SCOPED",
+      "runId": "omr-journal-0df3cadab46c-309ab2cd1a",
+      "runSha256": "c6f0c5858792f5a4cfb264ad1f160b1314db1d4ecfcb6a4093e1c9bde1bc7e09",
+      "artifactCount": 54,
+      "independentlyReconciled": {
+        "boundaries": 37,
+        "movements": 20,
+        "equations": 632,
+        "rejectedControls": 11
+      },
+      "failureClass": null
+    },
+    {
+      "directory": "omr-window-native-1",
+      "source": "d73c60dcea6b84c1a308eabaf42b8069c0dd7d8e",
+      "status": "FAIL",
+      "runId": "omr-window-d73c60dcea6b-c00a8e11bf",
+      "runSha256": "2c9478754704657b629b15a2e43ff58fda812311bbdd608a8cefe31be9a97b87",
+      "artifactCount": 1,
+      "independentlyReconciled": {
+        "boundaries": 0,
+        "movements": 0,
+        "equations": 0,
+        "rejectedControls": 0
+      },
+      "failureClass": "Harness fixture omitted required season"
+    },
+    {
+      "directory": "omr-window-native-2",
+      "source": "52671886a43f9e2e06c4f6b6ae3a52dd274094c6",
+      "status": "FAIL",
+      "runId": "omr-window-52671886a43f-2437dd12bb",
+      "runSha256": "9c29d52174e2924d0ce3cab102c026ac6740f26d48c36ed18d2b73b1da299b42",
+      "artifactCount": 3,
+      "independentlyReconciled": {
+        "boundaries": 0,
+        "movements": 0,
+        "equations": 0,
+        "rejectedControls": 0
+      },
+      "failureClass": "Reproduced exact insufficient historical balance paid cash and went negative"
+    },
+    {
+      "directory": "omr-window-native-3",
+      "source": "0df3cadab46c8eae24eaa265f5c514c24971554a",
+      "status": "PASS_SCOPED",
+      "runId": "omr-window-0df3cadab46c-7789531266",
+      "runSha256": "aa07b891c9c8a8599b7757ffc2b04276c650df35e745d582282de53663236896",
+      "artifactCount": 22,
+      "independentlyReconciled": {
+        "boundaries": 0,
+        "movements": 0,
+        "equations": 0,
+        "rejectedControls": 0
+      },
+      "failureClass": null
+    }
+  ],
+  "unsupported": [
+    "Privileged desk auction sales/buybacks and provider/chain backing",
+    "OMR mint/emission/drop/mission and external withdrawal",
+    "Family tribute/distribution/war/estate, taxes, auction escrow and other OMR sinks",
+    "Loan default/seizure/death/paper-sale dispositions",
+    "Stake commitment/loot and historic reward claims",
+    "Unrelated cash/material/status transitions and arbitrary per-commit HTTP receipt timing"
+  ],
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "dependencyCaveats": [
+    "Final integrated parent source must rerun affected tests; this source is isolated",
+    "Pre-baseline OMR/cash-till fixtures and logical-clock six-hour lifecycle; no natural entry",
+    "HTTP injection, not network/browser/deployed PostgreSQL compatibility",
+    "Chain/provider backing, privileged desk operation and omitted resource branches remain open"
+  ],
+  "rawTokensOrPrivateActorDataIncluded": false,
+  "failedGates": [
+    "8558ac56 native nonzero redemption reconciliation",
+    "52671886 native insufficient historical balance"
+  ],
+  "changedSource": [
+    "src/exchange.js"
+  ],
+  "affectedReruns": [
+    "Exact window arithmetic controls",
+    "Native OMR core journal",
+    "Native window boundary proof",
+    "Existing tokenomics suite",
+    "Full CI and native PostgreSQL16/18.4 recovery"
+  ]
+}

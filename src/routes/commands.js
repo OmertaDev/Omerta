@@ -3,10 +3,12 @@ import { coreProgressionContent } from '../content/core-progression.js';
 import { isDbDown } from '../dbhealth.js';
 import { createConfiguredDirector } from '../director/config.js';
 import { recordWorldObservation, recordWorldCommand, commandConsequenceReferences } from '../world-telemetry.js';
+import { commandRequestStart, commandRequestEnd, commandRequestFailure, traceAuthorizedCommand } from '../command-diagnostics.js';
 
 const invalid = () => { const error = new Error('Invalid command request'); error.code = 'bad_command_request'; throw error; };
 
-function safeError(error, _req, reply) {
+function safeError(error, req, reply) {
+  commandRequestFailure(req, { unauthorized: error?.statusCode === 401, database: isDbDown(error) });
   reply.header('cache-control', 'no-store');
   if (error?.statusCode === 401) return reply.code(401).send({ error: 'unauthorized', message: 'A valid bearer token is required.' });
   if (isDbDown(error)) return reply.code(503).send({ error: 'db_down', message: 'Retry this move using its original identity.' });
@@ -32,16 +34,17 @@ export function register(app, { pool, auth, receiptTrust = null }) {
     sharingEnabled: knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on',
     accountIds: (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean) });
   const options = { preHandler: auth, errorHandler: safeError,
+    onRequest: commandRequestStart, onResponse: commandRequestEnd,
     preValidation: async (req, reply) => {
       reply.header('cache-control', 'no-store');
       if (Object.entries(req.query || {}).some(([key, value]) => !['operationId', 'mysteryGraphId'].includes(key)
         || typeof value !== 'string' || !/^[\x21-\x7e]{1,160}$/.test(value))) invalid();
     } };
-  app.get('/v1/commands', options, async (req) => {
+  app.get('/v1/commands', options, (req) => traceAuthorizedCommand(req, async () => {
     const board = await service.snapshot(req.user.sub, { ...req.query });
     await recordWorldCommand(pool, req.user.sub, { phase: 'issued', count: board.commands.filter((command) => command.executionIdentity).length });
     return board;
-  });
+  }));
   // Presentation observations are untrusted, bounded counters. They never feed
   // admission, discovery, selection, or command execution.
   app.post('/v1/commands/observations', { preHandler: auth, errorHandler: safeError }, async (req) => {
@@ -55,7 +58,7 @@ export function register(app, { pool, auth, receiptTrust = null }) {
       reply.header('cache-control', 'no-store');
       if (Object.keys(req.query || {}).length || !req.body || typeof req.body !== 'object' || Array.isArray(req.body)
         || Object.keys(req.body).sort().join(',') !== 'confirmed,executionId') invalid();
-    } }, async (req) => {
+    } }, (req) => traceAuthorizedCommand(req, async () => {
       try {
         const result = await service.execute(req.user.sub, { executionId: req.body.executionId, confirmed: req.body.confirmed }, req.headers['idempotency-key']);
         await recordWorldCommand(pool, req.user.sub, { phase: 'completed', executionId: req.body.executionId, replayed: result.replayed,
@@ -65,5 +68,5 @@ export function register(app, { pool, auth, receiptTrust = null }) {
         await recordWorldCommand(pool, req.user.sub, { phase: 'rejected', executionId: req.body.executionId, reason: error?.code });
         throw error;
       }
-    });
+    }));
 }

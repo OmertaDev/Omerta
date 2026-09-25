@@ -1,0 +1,61 @@
+import assert from 'node:assert/strict';
+import { verifyNpcBoatAcquisition, NPC_BOAT_INSERT } from '../../tools/rc1-npc-boat-journal.js';
+import { NPC_CAR_SQL } from '../../tools/rc1-npc-car-acquisition.js';
+export function npcBoatCorruptions(input) {
+  const original = verifyNpcBoatAcquisition(input.before, input.after, input.provenance, input.event); assert(original);
+  const controls = [];
+  const query = x => x.provenance.queries.find(row => row.sql === NPC_BOAT_INSERT);
+  const boat = x => x.after.tables.boats.find(row => row.id === original.boatId);
+  const owner = x => x.after.tables.characters.find(row => row.id === original.owner);
+  const draw = x => query(x).origin.boatRandomInputs.draws[1];
+  const run = (name, edit, unsupported = false) => {
+    const x = structuredClone(input); edit(x);
+    if (unsupported) assert.equal(verifyNpcBoatAcquisition(x.before, x.after, x.provenance, x.event), null, name);
+    else assert.throws(() => verifyNpcBoatAcquisition(x.before, x.after, x.provenance, x.event), undefined, name);
+    controls.push({ name, expected: unsupported ? 'UNSUPPORTED' : 'REJECTED', input: x });
+  };
+  run('wrong-source', x => x.provenance.extensions.npcBoatAcquisition.sourcePins['src/population.js'] = 'wrong');
+  run('stale-boundary', x => x.provenance.boundary.sequence++);
+  run('aborted-boundary', x => { x.event.outcome = 'ROLLED_BACK'; x.provenance.boundary.outcome = 'ROLLED_BACK'; });
+  run('missing-commit', x => x.provenance.queries.pop());
+  run('missing-birth-write', x => x.provenance.queries.splice(x.provenance.queries.findIndex(q => q.sql === NPC_CAR_SQL.character), 1));
+  run('duplicate-birth-write', x => x.provenance.queries.push(structuredClone(x.provenance.queries.find(q => q.sql === NPC_CAR_SQL.character))));
+  run('wrong-insert-rowcount', x => query(x).rowCount = 0);
+  run('wrong-returned-rows', x => query(x).rows = [{ id: original.boatId }]);
+  run('wrong-insert-owner', x => query(x).parameters[1] = 'other-owner');
+  run('wrong-insert-id', x => query(x).parameters[0] = 'other-boat');
+  run('wrong-source-site', x => query(x).origin.frames[0].line++);
+  run('wrong-logical-time', x => query(x).logicalAt++);
+  run('missing-random-input', x => delete query(x).origin.boatRandomInputs);
+  run('wrong-random-seed', x => x.provenance.extensions.npcBoatAcquisition.seed += ':wrong');
+  run('wrong-random-bytes', x => draw(x).hex = '000000000000');
+  run('duplicate-random-counter', x => draw(x).counter--);
+  run('wrong-random-tape-index', x => draw(x).index--);
+  run('wrong-uuid-input', x => query(x).origin.boatRandomInputs.boatIdDraw.hex = '0'.repeat(32));
+  run('wrong-rarity', x => boat(x).rarity = 'wrong');
+  run('missing-asset', x => x.after.tables.boats = x.after.tables.boats.filter(row => row.id !== original.boatId));
+  run('duplicate-asset', x => x.after.tables.boats.push(structuredClone(boat(x))));
+  run('stale-asset', x => x.before.tables.boats.push(structuredClone(boat(x))));
+  run('wrong-owner-custody', x => boat(x).character_id = 'other-owner');
+  run('balanced-wrong-owner', x => {
+    const other = { ...structuredClone(boat(x)), id: 'old-other-boat', character_id: 'other-owner' };
+    x.before.tables.boats.push(other); x.after.tables.boats.push({ ...other, character_id: original.owner }); boat(x).character_id = 'other-owner';
+  });
+  run('unexplained-existing-asset-change', x => {
+    const other = { ...structuredClone(boat(x)), id: 'old-other-boat' };
+    x.before.tables.boats.push(other); x.after.tables.boats.push({ ...other, hull: 1 });
+  });
+  run('missing-NPC-owner', x => owner(x).is_npc = false);
+  run('wrong-NPC-account', x => owner(x).account_id = 'other-account');
+  run('missing-NPC-account-flag', x => x.after.tables.account_persistent.find(row => row.account_id === original.accountId).npc_flag = false);
+  run('unearned-upgrade', x => boat(x).engine = 1);
+  run('invented-mint', x => boat(x).minted_onchain = true);
+  run('invented-cargo', x => boat(x).run_hold = 1);
+  run('missing-extension', x => delete x.provenance.extensions.npcBoatAcquisition, true);
+  run('missing-original-caller', x => delete query(x).origin, true);
+  run('direct-fixture-caller', x => query(x).origin.frames.pop(), true);
+  run('duplicate-boat-statement', x => x.provenance.queries.splice(-1, 0, structuredClone(query(x))), true);
+  run('compound-boat-statement', x => x.provenance.queries.splice(-1, 0, { command: 'UPDATE', sql: 'UPDATE boats SET hull=1', rows: [], parameters: [], rowCount: 1 }), true);
+  run('unsupported-trace', x => x.provenance.unsupported = 'bounded-trace-overflow', true);
+  return controls;
+}

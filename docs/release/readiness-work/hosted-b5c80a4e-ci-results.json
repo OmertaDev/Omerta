@@ -1,0 +1,444 @@
+{
+  "format": 1,
+  "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+  "status": "FAIL",
+  "releaseReady": false,
+  "id": 35598245168,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35598245168",
+  "jobs": [
+    {
+      "id": 106327959315,
+      "name": "real Postgres (18.4)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "conclusion": "success"
+        },
+        {
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "conclusion": "success"
+        },
+        {
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "conclusion": "success"
+        },
+        {
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "conclusion": "success"
+        },
+        {
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 106327959525,
+      "name": "suites + sim (pg-mem)",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 1 world graph (deterministic package validation)",
+          "conclusion": "success"
+        },
+        {
+          "name": "knowledge artifacts carry the merge's own revision (main only)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "npm test (the full suite, on pg-mem)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Invite-only launch admission and Crew allowance",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 telemetry isolation and complementary campaign regressions",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 private command diagnostics and passive confirmation regression",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 original worker scheduling and diagnostic harness controls",
+          "conclusion": "failure"
+        },
+        {
+          "name": "economy sim (§10.4 drift-0)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "scale (population-scale market reachability + §10.4)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "install chromium for the client harness",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Invite gate and Crew invitation controls in the browser",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 106327959638,
+      "name": "real Postgres (16)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install PostgreSQL client tools matching the server major",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "conclusion": "success"
+        },
+        {
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "conclusion": "success"
+        },
+        {
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "conclusion": "success"
+        },
+        {
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "conclusion": "success"
+        },
+        {
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "conclusion": "success"
+        },
+        {
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "conclusion": "success"
+        },
+        {
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "conclusion": "success"
+        },
+        {
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "conclusion": "success"
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "retention": {
+    "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+    "id": 35598245168,
+    "status": "completed",
+    "conclusion": "failure",
+    "metadataSha256": "6048938c08bdd105298a15e9b77468c20e40f0676360fa739431c19edb8e5cad",
+    "logArchiveSha256": "579db0965336c760bb36dd142f52090769dc2f742ecb39fd783c9dfc52f604ef",
+    "failed": [
+      {
+        "id": 106327959525,
+        "name": "suites + sim (pg-mem)",
+        "sha256": "8f9122d1aa5b86c3d96c726975f32f23508f6171090efd46eff81d6e13ed6ee4",
+        "bytes": 329364,
+        "steps": [
+          "RC1 original worker scheduling and diagnostic harness controls"
+        ]
+      }
+    ]
+  },
+  "finding": "RC1-TOOL-54",
+  "cause": "The unchanged gzip line-byte assertion on Node22.23.2 received AbortError ABORT_ERR from async-iterator teardown.",
+  "observed": "Full npm test and both real PostgreSQL16/18.4 jobs passed. Harness failed; downstream sim, scale and browser stages did not execute.",
+  "repair": "172910e91642ee73d2577a9749bf2a5b090c2cc3 preserves the original verifier error while pipeline still owns cleanup. Separate exact-source Windows Node22/24 retests pass; this failed hosted source remains failed.",
+  "required": "Fresh integrated Linux hosted CI execution; no previous pass is inherited by merge",
+  "evidence": "harness-history-error-preservation.md"
+}

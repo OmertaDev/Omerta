@@ -1,0 +1,1850 @@
+{
+  "format": 1,
+  "gate": "C02-ESCROW-DISPOSITIONS",
+  "gateStatus": "OPEN_REQUIRED_PROOF",
+  "owner": "Codex/resource_proof",
+  "classification": "Native original-duration logical-clock fixture-assisted case group",
+  "runs": [
+    {
+      "runId": "loan-lifecycles-02e371db032a-a0961cd701",
+      "source": {
+        "revision": "02e371db032ae585d8b6f58d429ee77419fca79f",
+        "gitTree": "629077033547005fd42c96f54cc8b618c5787e63",
+        "checkoutSha256": "5d786cddfc0e1d2c960deac9b23818246359e49bb7a61f6e81f24bd62e0924a9",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "seed": "rc1-loan-alpha",
+      "startedAt": "2026-09-21T06:12:58.633Z",
+      "endedAt": "2026-09-21T06:13:43.254Z",
+      "manifestSha256": "f2601ab880c91d1693c5f0d708a0dcd6d7433956f95d1e881a3164cdb7eccbfc",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 75,
+      "sourceFailure": null,
+      "boundaries": 317,
+      "exactEquationsRecomputed": 3170,
+      "nonzeroEquations": 27,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "Wanted-bounty-escrow": 2,
+        "street-tax-pool": 4,
+        "loan-house-pool": 1,
+        "redemption-window": 1
+      },
+      "canonicalInvariantChecks": 76,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "bounty:wanted:refund": {
+          "rows": 1,
+          "net": "25000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "Not separately retained in this earlier source; real native database required by runner.",
+      "timerCounts": null,
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": "Retained expected-fault recognition error: bounty sweep logs SQLSTATE instead of exception text, corrected with unique test SQLSTATE.",
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "dd592c9a0098ae7d025d1d89922699808b86e237bb32fc02238efda14d5cbbc4",
+          "bytes": 26627
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "58e9da7ff75bb0b88e5655b905659e6b1450ebd64e941e4c23ca0814bedd00b6",
+          "bytes": 30800
+        },
+        {
+          "file": "first-resource-failure.json",
+          "sha256": "203a73d849acdf3233399ab6f6c49af45d6d6f46ed9dc551658a10519cce583b",
+          "bytes": 76758
+        },
+        {
+          "file": "failure-worker-schedule.json",
+          "sha256": "a16c5ee39bba9cc8d6f6255aedf7cd86eb9b644fa94fefda144d4d364ab8d7cc",
+          "bytes": 4950556
+        },
+        {
+          "file": "failure-random-tape.json",
+          "sha256": "bd6584369996e60bdcbd366f31592dfc5aee7945e795a9bb32f8978158e77564",
+          "bytes": 108066
+        },
+        {
+          "file": "failure-resources.json",
+          "sha256": "cb4414655743083e62d12331bfb4cce0f5c8d750e7ab1e9bbed79c4b72877014",
+          "bytes": 32656
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "9bdccaca13cf8e0689676570d5af0205ef719d530b69d7dfd05548567a232ff5",
+          "bytes": 1562424
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-15e6b83df0b0-3340a2df01",
+      "source": {
+        "revision": "15e6b83df0b008733bfbac28cdd57ee00a45e2ff",
+        "gitTree": "0c8283bf7185580b960716a8cf79da9508114e79",
+        "checkoutSha256": "82b8300f279a182d1a341cb849c4fb6a549a771ff1cf2130da79d26c0021d919",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-alpha",
+      "startedAt": "2026-09-21T06:22:57.949Z",
+      "endedAt": "2026-09-21T06:23:42.538Z",
+      "manifestSha256": "b7fbfeace23e2d131e20b218c50ee5381e61bf093ff985c6b11f4b1006c552a8",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 4197,
+      "nonzeroEquations": 45,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "open-loan-lender": 8,
+        "Wanted-bounty-escrow": 3,
+        "Wanted-target": 6,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 15,
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "716391f9c1895a4f5f8d20754cf18661119120b0f96c856fa0ba7261b4c71109",
+          "bytes": 26627
+        },
+        {
+          "file": "loan-movement-000005.json",
+          "sha256": "a71217b96daf7588599847bf29cf066af26a0b8bde8b2a7417966bfc6e1410ce",
+          "bytes": 62255
+        },
+        {
+          "file": "loan-movement-000006.json",
+          "sha256": "1d792802bbcc5259fa01b56b3208996e09c1fc4bf06b8a178cbcc2c97b5cb3d6",
+          "bytes": 63933
+        },
+        {
+          "file": "loan-movement-000007.json",
+          "sha256": "38469776fdf17b1ca74e0328ca41e3d616b7aece5e080971b81f04e050f33373",
+          "bytes": 65600
+        },
+        {
+          "file": "loan-movement-000008.json",
+          "sha256": "d9f419676ea25441535ac429d3b016ce78537a8178f169a93d06ff1aa07ea57d",
+          "bytes": 66526
+        },
+        {
+          "file": "loan-movement-000009.json",
+          "sha256": "5094017223c7d270a6e4d14ebea0e13fe944ff8cc9364afcb5e7392a171a65e2",
+          "bytes": 68199
+        },
+        {
+          "file": "loan-movement-000010.json",
+          "sha256": "bdceb339ed30f453cb80a83a75d3e960650932d102b67280e3550fc858c37b3b",
+          "bytes": 69118
+        },
+        {
+          "file": "loan-movement-000011.json",
+          "sha256": "0e881e3efb2fd752349a3f462b1395edff28705b8c9588a1112e09f84f0e9f5c",
+          "bytes": 70787
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "86cb52a4fcc839588d6850d374fc24d05a41ae0250c7613a3ef60e816b02c421",
+          "bytes": 30800
+        },
+        {
+          "file": "loan-movement-000022.json",
+          "sha256": "7e9f808080bd5367d875d9b6844f0164657ba0075a6fe394a805ff4c43fc50b5",
+          "bytes": 64212
+        },
+        {
+          "file": "loan-movement-000025.json",
+          "sha256": "e36543e354ff1a75386cc488994ff2a712142b7fda12ebea2d7710f02c7e60ca",
+          "bytes": 78294
+        },
+        {
+          "file": "loan-movement-000027.json",
+          "sha256": "554d5969c014d583d738f5be27af188dc2dfba2706374fbbd8ec3b11a96c1c16",
+          "bytes": 79592
+        },
+        {
+          "file": "loan-movement-000061.json",
+          "sha256": "e049e0dab5c3c574fdce41b098572d1bbb453fe65cc7ad89e4af607b237d9fd2",
+          "bytes": 69653
+        },
+        {
+          "file": "loan-movement-000123.json",
+          "sha256": "71e761cee1aa4d2cee3fdab991574a994cb1a05f96174c462ae61b1f68974da5",
+          "bytes": 69744
+        },
+        {
+          "file": "loan-movement-000216.json",
+          "sha256": "0ebc9d5d57ad1548c2295cbdaeac2db73a0f76bac3ee45b710bc33d76b55062f",
+          "bytes": 70084
+        },
+        {
+          "file": "loan-movement-000320.json",
+          "sha256": "6950e908bdbbb54ba2633e96f616e9d8e187c07ea6c5854fa2eded0864f0c679",
+          "bytes": 69781
+        },
+        {
+          "file": "loan-movement-000324.json",
+          "sha256": "400a00f6078c8b3b8171b06d767d6ea465fa014f0f9ec337d501d562524a3c0b",
+          "bytes": 69181
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "3055de871055ec106c31a468194a395b3310e44fff5483023e06cf63dc9de250",
+          "bytes": 32120
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "313fa0eb9145e4381e52231f733f6d439fab5ebb11bf591cc9a8caa3d3225803",
+          "bytes": 5072066
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "f44756aeec1da15eb7d7bca5bc1dcb25c6cc5b170ab0866f2908332546ef90d0",
+          "bytes": 110498
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "48b3892f978d44516bd4f77390dd8f2d5144b29680925c523589c74776252820",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "f4b46b83fe91032d2db59853e01a8372a6383ad8852df5d6cf51e0adb0850b44",
+          "bytes": 1900529
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-15e6b83df0b0-b451f22e29",
+      "source": {
+        "revision": "15e6b83df0b008733bfbac28cdd57ee00a45e2ff",
+        "gitTree": "0c8283bf7185580b960716a8cf79da9508114e79",
+        "checkoutSha256": "82b8300f279a182d1a341cb849c4fb6a549a771ff1cf2130da79d26c0021d919",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-beta",
+      "startedAt": "2026-09-21T06:22:58.123Z",
+      "endedAt": "2026-09-21T06:23:43.045Z",
+      "manifestSha256": "fce7bd055149e964b8cc196161d878ebf691b853f841ed2cf9b375683c97a4a8",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 4197,
+      "nonzeroEquations": 45,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "open-loan-lender": 8,
+        "Wanted-bounty-escrow": 3,
+        "Wanted-target": 6,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 15,
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "4eda0cf11b6fdcbb29ca9f6b3451faf9b36f05bd8960e56f8726a63fb24f2d1b",
+          "bytes": 26620
+        },
+        {
+          "file": "loan-movement-000005.json",
+          "sha256": "1708b3a6b9b618cf1b69505a32d8e44daec0f4516c670618343710e6540e0218",
+          "bytes": 62243
+        },
+        {
+          "file": "loan-movement-000006.json",
+          "sha256": "7cf5058b6207a29041ed227061758632db961c7c06e0838195c21eb17a25dd14",
+          "bytes": 63922
+        },
+        {
+          "file": "loan-movement-000007.json",
+          "sha256": "7853832323bbf6ce4f622d07afc1df05bcfe2ee115db85e57e44c62c4a8dc4e7",
+          "bytes": 65587
+        },
+        {
+          "file": "loan-movement-000008.json",
+          "sha256": "8d00ee06e3791df6d4cf9e9e965b3ea6ca11e8a5eb799f848df4c3a7a3bd1986",
+          "bytes": 66515
+        },
+        {
+          "file": "loan-movement-000009.json",
+          "sha256": "b3de719b2d0383e4ef99db011157dd8eae37eb8ccc37da29350f919882ff13fd",
+          "bytes": 68181
+        },
+        {
+          "file": "loan-movement-000010.json",
+          "sha256": "582b8f4c5d621289cbcc1f9ca027c97ff50f9931beae290dda20045ce24efc34",
+          "bytes": 69107
+        },
+        {
+          "file": "loan-movement-000011.json",
+          "sha256": "f8cdf3f2965bc6e8324a6932a8a872052e973705066f3a746d95a695207f1b02",
+          "bytes": 70775
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "26e237335a49d1b5209f57c1b1d6acf3ba932017b2054b0407acaace76f1f078",
+          "bytes": 30794
+        },
+        {
+          "file": "loan-movement-000022.json",
+          "sha256": "d8d3a9b3dfc762390ab9db3c1720cd0adc379b8b15eb1502b29e1a0f49e74cad",
+          "bytes": 64212
+        },
+        {
+          "file": "loan-movement-000025.json",
+          "sha256": "fc32ccbe03b0b2bb16a53e633225d818e1b85fdd7ab12c943a023a008d3ae903",
+          "bytes": 78282
+        },
+        {
+          "file": "loan-movement-000027.json",
+          "sha256": "63474f4f22657f06064623ff5778929a24c785a41f14981cdedc4e0ac91c7728",
+          "bytes": 79568
+        },
+        {
+          "file": "loan-movement-000061.json",
+          "sha256": "59e325e445d43848cc494105066058c72603f3bec89b39626af4d3b1794e97b7",
+          "bytes": 69647
+        },
+        {
+          "file": "loan-movement-000123.json",
+          "sha256": "0610d66f45f6b0d6dbe97447356d033f826d1617a128f44b5c7cc4bea1e7d43c",
+          "bytes": 69732
+        },
+        {
+          "file": "loan-movement-000216.json",
+          "sha256": "50260b4fd6be7b5fb8923a09ad0e1870d49a6b7f0bbf352c315b90bc28dd5dc3",
+          "bytes": 70078
+        },
+        {
+          "file": "loan-movement-000320.json",
+          "sha256": "7cd99ac5dae5726f10bd72c6fb35f8db4d13cb210945a19eb860b71930e7782f",
+          "bytes": 69757
+        },
+        {
+          "file": "loan-movement-000324.json",
+          "sha256": "1a4f8ab3f24d5e06c4df1c28e829d202378c7fe216f2977330649c53810bcbd4",
+          "bytes": 69157
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "6c66322afa37e494eb394c6ff1d49eb0deac5c56e7e9a83a81c57143704f9e12",
+          "bytes": 32114
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "f95a9c9fe3b9dcdd9ecb6652af054c9a7c3f0f7827f9d5e3d3149c5ef27a288c",
+          "bytes": 5072042
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "5f2a9127176e7cd9b4d05ec1c0cca48f7ba5832ffd7dfee3126a689acabf085e",
+          "bytes": 109734
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "48b3892f978d44516bd4f77390dd8f2d5144b29680925c523589c74776252820",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "f9d6f5b3be3fcf0defc105a803a34a5286b29888d989e1b2fbbb419126841fc5",
+          "bytes": 1902475
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-bfcba9a53d84-30c32a4851",
+      "source": {
+        "revision": "bfcba9a53d84203abd560d2a3ddca39ed9ea4ba6",
+        "gitTree": "c2c23a989222ab3304084b67d32f4e07443914b9",
+        "checkoutSha256": "46aa7f6ec5e439705b6809058d64b8c8c8d162e277b165e17669ce0d1174e10f",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-alpha",
+      "startedAt": "2026-09-21T06:19:57.917Z",
+      "endedAt": "2026-09-21T06:20:39.166Z",
+      "manifestSha256": "26cce56a0b3c3b148b36511178fdfb54fcbd50c2c70313858d53ad1587b38504",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 4197,
+      "nonzeroEquations": 45,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "open-loan-lender": 8,
+        "Wanted-bounty-escrow": 3,
+        "Wanted-target": 6,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "5633b881178a436868b10998f7a1348985491161ca9fb62e7670ef2321dc50da",
+          "bytes": 26627
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "86591ed89ef16c31d0e79555dcd99d0d25338cbd1a9ac44408dcb0aece61e72d",
+          "bytes": 30800
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "8a6a2ff1ff19c37eddbd67e24af458ab9269482642227589d685c372b0db8b50",
+          "bytes": 32120
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "724c477b2547d1686179d633a6d9ee60ee9b8bdf96d945b82e7e6c16ae63fee1",
+          "bytes": 5072401
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "f44756aeec1da15eb7d7bca5bc1dcb25c6cc5b170ab0866f2908332546ef90d0",
+          "bytes": 110498
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "408542ee84d8b193cef132b0b699ba15cc1422b478929fdf871f030bc0d45cda",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "9fc94ce556fea1f0368f33e6cf456bedc5d3abfbfe123590902b4630b28ddc8a",
+          "bytes": 1892990
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-bfcba9a53d84-e2cd126b60",
+      "source": {
+        "revision": "bfcba9a53d84203abd560d2a3ddca39ed9ea4ba6",
+        "gitTree": "c2c23a989222ab3304084b67d32f4e07443914b9",
+        "checkoutSha256": "46aa7f6ec5e439705b6809058d64b8c8c8d162e277b165e17669ce0d1174e10f",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-beta",
+      "startedAt": "2026-09-21T06:20:49.801Z",
+      "endedAt": "2026-09-21T06:21:29.887Z",
+      "manifestSha256": "a82d27bd57fb503e37824cefe90b99a3e2b5de8c80b97495c9dba22d254eb0ab",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 4197,
+      "nonzeroEquations": 45,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "open-loan-lender": 8,
+        "Wanted-bounty-escrow": 3,
+        "Wanted-target": 6,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "80a451bbe2d0fecf7038247a920e7b2bd6b2037a8ccff893ca01ee9bc7894235",
+          "bytes": 26620
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "734f8016cbcaa543452e81b89aa6e2acbf4c1e38794ddbfcc210d07631845026",
+          "bytes": 30794
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "4fdab7cfacb086f6964f52c5e20de441b2ac4beb163a82983c9aafba03e35cea",
+          "bytes": 32114
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "36238691f909337abf42603c43c3d7ee67032a9fbdee6b7b2fcea323848b8b9f",
+          "bytes": 5072488
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "5f2a9127176e7cd9b4d05ec1c0cca48f7ba5832ffd7dfee3126a689acabf085e",
+          "bytes": 109734
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "408542ee84d8b193cef132b0b699ba15cc1422b478929fdf871f030bc0d45cda",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "d70b8b2874c1a4227e46ca9bf18deabd3e0012213a587e24ae5c913d018d2949",
+          "bytes": 1894936
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-dfb1a4283944-8006e3671c",
+      "source": {
+        "revision": "dfb1a428394440109dabf7510832fb34dfa33d75",
+        "gitTree": "6a68babf4cf240959314e962302df0484b702dd2",
+        "checkoutSha256": "fdd00b18dd55f4f604905da637ca865ddccc3396edd6d9658476286c2df134ac",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-beta",
+      "startedAt": "2026-09-21T06:16:54.576Z",
+      "endedAt": "2026-09-21T06:17:40.281Z",
+      "manifestSha256": "94bc3f75f3f649e248755c41fba8f25a53626890bc714c907ee63c772b08d383",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 3270,
+      "nonzeroEquations": 31,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "Wanted-bounty-escrow": 3,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "Not separately retained in this earlier source; real native database required by runner.",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "31ff38c773df61e3f53e8812e0cad23fe13c2f21dcd79ab2c30c3d13412a76a4",
+          "bytes": 26620
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "924fea6025d812847a6e886b5eb44e901d35d201b7e5d56292f0b7eeba4a974e",
+          "bytes": 30794
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "00b6b6b78d7a4939c38c7a4fb6a26170152100e0ec2f5b1465f7d69decbecc78",
+          "bytes": 32114
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "a206c52272b2054b1dd51428c84090d8e2d5cfd3320d695fefbd22a7245f53d2",
+          "bytes": 5072111
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "5f2a9127176e7cd9b4d05ec1c0cca48f7ba5832ffd7dfee3126a689acabf085e",
+          "bytes": 109734
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "5d6a9c2af7823368c6ca7ee57fdfb816eefb4e6088c59a9117bce71402f7160b",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "ca833eddd0d5a5a810157bdb69cc655044bb54d2d445ced4bc50196b9db59438",
+          "bytes": 1614507
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-dfb1a4283944-de844c4ce3",
+      "source": {
+        "revision": "dfb1a428394440109dabf7510832fb34dfa33d75",
+        "gitTree": "6a68babf4cf240959314e962302df0484b702dd2",
+        "checkoutSha256": "fdd00b18dd55f4f604905da637ca865ddccc3396edd6d9658476286c2df134ac",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "seed": "rc1-loan-alpha",
+      "startedAt": "2026-09-21T06:15:41.044Z",
+      "endedAt": "2026-09-21T06:16:21.363Z",
+      "manifestSha256": "3a64c23191de5983e7a908c5f0d530d5b30087fbe19e2e44c0ddfa5a9701518a",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 77,
+      "sourceFailure": null,
+      "boundaries": 327,
+      "exactEquationsRecomputed": 3270,
+      "nonzeroEquations": 31,
+      "nonzeroOwnerKinds": {
+        "character": 11,
+        "open-loan-escrow": 8,
+        "Wanted-bounty-escrow": 3,
+        "street-tax-pool": 6,
+        "loan-house-pool": 1,
+        "redemption-window": 2
+      },
+      "canonicalInvariantChecks": 79,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 2,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        },
+        "loan:repay": {
+          "rows": 2,
+          "net": "-275"
+        },
+        "loan:house:vig": {
+          "rows": 1,
+          "net": "137"
+        },
+        "loan:vig": {
+          "rows": 1,
+          "net": "-138"
+        },
+        "loan:square": {
+          "rows": 1,
+          "net": "-50000"
+        },
+        "bounty:wanted:refund": {
+          "rows": 3,
+          "net": "75000"
+        },
+        "loan:refund": {
+          "rows": 1,
+          "net": "5000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "Not separately retained in this earlier source; real native database required by runner.",
+      "timerCounts": {
+        "directorTick": 924,
+        "guardedTick": 77,
+        "guardedSeasonTick": 77,
+        "health-boundary": 924
+      },
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-pool-and-personal-rollback",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "square-payment-and-HOUSE-share-refund-once",
+          "hour": 3,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-equality-no-early-forfeit",
+          "hour": 25,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:forfeit:rollback",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-car-transfer-rolled-back",
+          "hour": 26,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original24h-grace-two-car-forfeits-once",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "grace-terminal-sweep-retry",
+          "hour": 27,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer48h-equality-no-early-expiry",
+          "hour": 48,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:loan:refund:rollback",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-expiry-refund-rolled-back",
+          "hour": 49,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original48h-offer-next-tick-refund",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "offer-terminal-sweep-retry",
+          "hour": 50,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-before72h-no-early-expiry",
+          "hour": 74,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "bounty sweep:bounty:wanted:refund:rollback",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-expiry-HOUSE-refund-rolled-back",
+          "hour": 75,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "original72h-Wanted-expiry-two-HOUSE-refunds",
+          "hour": 76,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-terminal-sweep-retry",
+          "hour": 76,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": null,
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "b7a7bf2880a5b82d25260a3b59f8995e5ef33e47aede3c3a406d390b55c7ab21",
+          "bytes": 26627
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "2cfa0e2ab7b9611b81c52407a38a74f155f8e13c8686c9e90e65811a64366322",
+          "bytes": 30800
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "0977162036e97e51b70a224ed0e4eb13a5cb3954748dd71b4dd325abbaedefe6",
+          "bytes": 32120
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "503b3bdb012e20ff5e473cd4d9c0f0134155c062eea637fa73c59a4cff837035",
+          "bytes": 5072424
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "f44756aeec1da15eb7d7bca5bc1dcb25c6cc5b170ab0866f2908332546ef90d0",
+          "bytes": 110498
+        },
+        {
+          "file": "branch-coverage.json",
+          "sha256": "5d6a9c2af7823368c6ca7ee57fdfb816eefb4e6088c59a9117bce71402f7160b",
+          "bytes": 2770
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "bebb9464cadcf6da8e6b00ffe710289fff643e9598f4b4501e937660422052fc",
+          "bytes": 1612561
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "loan-lifecycles-e44411c93393-3a64a7ed52",
+      "source": {
+        "revision": "e44411c933934d065d93dd9e88634b0ece66e478",
+        "gitTree": "fb0dd0a58f9429383d59906b579bf13685f1092a",
+        "checkoutSha256": "88b07f9d37516485fcf0c0a728bf9ffff1827e0de490bff06feb6274b98b84b4",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "seed": "rc1-loan-alpha",
+      "startedAt": "2026-09-21T06:11:43.736Z",
+      "endedAt": "2026-09-21T06:12:01.611Z",
+      "manifestSha256": "e75d58c43a240364fa60e173af2c4c07a416204694be24898e1b4741ff8e86d2",
+      "artifactHashesAndHistoryVerified": true,
+      "logicalHoursCompleted": 3,
+      "sourceFailure": null,
+      "boundaries": 24,
+      "exactEquationsRecomputed": 240,
+      "nonzeroEquations": 16,
+      "nonzeroOwnerKinds": {
+        "character": 7,
+        "open-loan-escrow": 7,
+        "Wanted-bounty-escrow": 1,
+        "street-tax-pool": 1
+      },
+      "canonicalInvariantChecks": 4,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "carCollateralTransfers": 0,
+      "receiptGroups": {
+        "loan:offer": {
+          "rows": 4,
+          "net": "-20000"
+        },
+        "loan:take": {
+          "rows": 3,
+          "net": "15000"
+        },
+        "bounty:wanted": {
+          "rows": 3,
+          "net": "-75000"
+        }
+      },
+      "completeMovementInputsReconciledIndependently": 0,
+      "databaseVersion": "Not separately retained in this earlier source; real native database required by runner.",
+      "timerCounts": null,
+      "cases": [
+        {
+          "branch": "due-equality-no-early-Wanted",
+          "hour": 1,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "loan sweep:bounty:wanted:rollback",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "Wanted-rollback-no-pot-or-mark",
+          "hour": 2,
+          "outcome": "PASS"
+        },
+        {
+          "branch": "funded-Wanted-original-next-tick-retry",
+          "hour": 3,
+          "outcome": "PASS"
+        }
+      ],
+      "failureClassification": "Retained proof-oracle error: house vig uses a positive canonical receipt, corrected later.",
+      "artifacts": [
+        {
+          "file": "fixture-resources.json",
+          "sha256": "3e85c06d8a9c01c5fa561660efd102838429fdcae2fb64d194a13ae26d5870ce",
+          "bytes": 26627
+        },
+        {
+          "file": "loan-entry.json",
+          "sha256": "1d8a0fd5273b783cca0fd80188c214713ec2af869c3e4c92c1aa868519c2c71a",
+          "bytes": 30800
+        },
+        {
+          "file": "first-resource-failure.json",
+          "sha256": "21fbe12db141864a00f965dbb9dc2684cb5aee570d56a13635a0394ff4f45971",
+          "bytes": 80556
+        },
+        {
+          "file": "failure-worker-schedule.json",
+          "sha256": "50819a6e5fa06cfef2e60f103d1bbf0b76b7ccd7016da12b1bad7676f1014f2d",
+          "bytes": 542475
+        },
+        {
+          "file": "failure-random-tape.json",
+          "sha256": "568b3f918668e5e4639e29e6be1166dffb433647cc4e8fdca295788900d3a7f0",
+          "bytes": 14965
+        },
+        {
+          "file": "failure-resources.json",
+          "sha256": "a647fd134904dba7b59c239681ff388978020a5b85eaf63e4af7909ef3fcc084",
+          "bytes": 32320
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "abeb4c0a6408273791ec60731999625bba4facc774c2955edf37892bbdd0cfee",
+          "bytes": 153563
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    }
+  ],
+  "strongestExecuted": {
+    "source": "15e6b83df0b008733bfbac28cdd57ee00a45e2ff",
+    "independentWorlds": 2,
+    "logicalHoursEach": 77,
+    "branches": [
+      "Original48h untaken offer expiry: rollback, next original worker retry, exact lender refund, terminal sweep no-value retry",
+      "Original one-hour debt plus24h collateral grace: two car forfeits per world, rollback after car write, next original retry, exact owner/flags, terminal no-value retry",
+      "Three funded25000 Wanted HOUSE pots per world: posting rollback and next original worker retry",
+      "One square-name50000 payment plus25000 HOUSE-share refund per world after canonical repayment; late rollback and clean-name retry denial",
+      "Two original72h Wanted expiries per world: late HOUSE-refund rollback, next original retry, exact pool refunds, terminal sweep no-value retry",
+      "All original local callback deadlines driven through77h; exact job/action custody journals and unchanged full canonical invariants"
+    ],
+    "journalScope": "Every declared actor action plus original loan/bounty/Wanted/buyback job aggregates; no per-commit order claim"
+  },
+  "fixtures": [
+    "Canonical boss-band spawnResident cash and car grants, existing initial marks fixture seam",
+    "Initial hospital protection through80h, so unshielded survival/combat is not exercised",
+    "Initial street-tax cash100000 fixture; funding origin not earned",
+    "NPC population deploy switch off; no post-baseline data rewrites beyond canonical actions and rollback-trigger DDL"
+  ],
+  "remaining": [
+    "Full escrow category: other goods/events/claims/death and Wanted combat variants",
+    "OMR collateral in the24h grace case group",
+    "HTTP authentication and idempotency middleware in this driver",
+    "Concurrent execution, crash/recovery and recorded same-seed replay of this case group",
+    "Natural entry, shield acquisition and funded-pool origin",
+    "Every resource at every internal commit and full simulation matrix",
+    "Literal wall-clock48h/72h equivalence, deployment, real cohort and production soak"
+  ],
+  "dependencies": "Shared installed local runtime is not independently attested; all prior run source identities are preserved. The two earlier failures remain retained as harness defects, not erased or relabeled gameplay passes.",
+  "rerun": "From a clean integrated source, run node test/rc1-loan-lifecycle-journal.js and native driver --postgres with two separate --seed values and a disposable local RC1_RESOURCE_DATABASE_URL.",
+  "privacy": "Public-safe branches, counts and hashes only. No authentication material, actor/account identities or private row payloads; complete raw inputs remain restricted."
+}
