@@ -2,6 +2,8 @@
 
 OMERTÀ is a server-authoritative multiplayer mafia game with an EVM settlement rail targeting Robinhood Chain. Use the current implementation and its tests to establish behavior.
 
+Use the current market in `omerta-contracts/src/market-v2/` as the sole economic model. Public game and investor material should use unversioned wording and omit superseded model comparisons, following `AGENTS.override.md`.
+
 ## Sources of truth
 
 - `AGENTS.override.md` contains repository working instructions.

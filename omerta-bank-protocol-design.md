@@ -547,8 +547,8 @@ was *not* safe, and the reason was found in code rather than assumed: `src/casin
 Madame's tier-1 perk **comps the nerve on dice (:116) and blackjack (:844)**, and `sellGood` carries
 no nerve/energy/cooldown check at all. So for anyone with Madame standing, den and commerce XP are
 bounded only by cash and HTTP round trips — which would let **cash buy a larger share of the
-bought-$OMR pool**, reopening the tokenomics-v2 severance. (The pool is fixed, so nothing is
-*created* and the landing page's claim stays true — but the wall's own words are "at any price".)
+bought-$OMR pool** through unthrottled cash spending. The funded pool is finite, but the allocation
+rule must still prevent cash-only activity from buying a larger share of game rewards.
 The rule: **an action scores only if the GAME throttles it** — nerve, energy, a cooldown, or a hard
 per-day cap. *Nobody can buy wall-clock.* 22 tags qualify; `dice`, `blackjack`, `sell` and `fill`
 are excluded, each with its reason recorded at the list. A tag absent from the list scores **zero**,

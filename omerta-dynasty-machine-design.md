@@ -75,7 +75,7 @@ bought, never rolled — the RWA never-by-chance rule holds by construction (a b
 purchase buys, an activation burns). Activation is the missing $OMR demand engine: a deep,
 recurring, voluntary sink whose payout is the thing the whole machine exists to distribute. Every
 activation burn rides the audited `spendOmr` till under a new enumerated reason (its own §10.4
-vocabulary entry + `DESK.SINK_REASONS` row when built — sinks recycle to the desk since v3 step 2).
+vocabulary entry + `DESK.SINK_REASONS` row when built — listed sinks recycle to the Desk).
 
 ## 3. The allocation rail (why counterfactual accrual is the design)
 
@@ -166,8 +166,8 @@ payout cannot exist until the keeper buys would sell exposure to nothing).
 
 **The epoch is the DAY — the ticker ballot's own clock.** During day D the chamber's vote is
 public and anyone MINTED may **activate**: burn $OMR (reason `activation:share`, a new omr
-vocabulary prefix joining `omrBurns` + `DESK.SINK_REASONS` — sinks recycle to the desk since v3
-step 2) to take a linear share of day D's allocation pool. At the roll, the ballot freezes and the
+vocabulary prefix joining `omrBurns` + `DESK.SINK_REASONS` — listed sinks recycle to the Desk)
+to take a linear share of day D's allocation pool. At the roll, the ballot freezes and the
 keeper executes day D's buy with the treasury slice accrued through D; the units land pro-rata on
 day-D activations: `u_a = U × b_a / Σb`. So activation is an INFORMED act — you watch the ballot
 all day, then commit — and the loop reads: *the families vote the ticker, the town activates, the
@@ -438,7 +438,7 @@ number of OMR that gets burned and scales up as more NFTs are minted")
 banner above — recorded rather than deleted, because the analysis below turns on it). The
 $OMR-denominated mint was PLEX (`POST /v1/plex/mint`): pay the identity fee in earned $OMR
 (`PLEX_MINT_OMR` floor, market-linked at `max(floor, feeEth × oracle × 1.2)`), recycling to THE
-DESK rather than burning since economy-v3 step 2. **`payPlex('mint')` now refuses and there is no
+DESK under its recycling policy. **`payPlex('mint')` now refuses and there is no
 `PLEX_MINT_OMR`** — the mint has ONE rail, in ETH, because it is the Sybil bound and the
 extraction gate. The rail stays live for the RESPAWN and for Store SKUs (the line is the bound,
 not the denomination). So of the founder's proposal the genuinely open pieces were **the scaling**
@@ -473,7 +473,7 @@ not anti-farm. (4) **The copy problem is unsolvable**: there is no honest way to
 auto-escalating mint that does not imply appreciation.
 
 **Shape B — $OMR-only, retire the ETH rail ("instead of"): REJECTED, three reasons.**
-(1) The tokenomics-v2 severance means a fresh player holds ZERO $OMR by construction — $OMR-only
+(1) A fresh player starts with no OMR — requiring OMR for identity
 is ETH-with-extra-steps (buy at the bond/desk, then mint). (2) Worse, it couples ONBOARDING
 AVAILABILITY to token supply: bonds are throttled by THE DAILY OFFERING and the desk sells only
 what the sinks returned — a mint rush exhausts the day and NEW PLAYERS ARE LOCKED OUT OF IDENTITY
@@ -506,10 +506,10 @@ head, raise the price on both rails through Shape C's discipline.
 ### The burn-vs-recycle flag (a founder lever, one line either way)
 
 The proposal says "burned." Today a PLEX mint RECYCLES to the desk — house revenue, per the
-founder's own v3 decision ("you cannot burn AND recycle the same unit; the founder chose
+founder's recorded decision ("you cannot burn AND recycle the same unit; the founder chose
 revenue"). A TRUE burn for identity mints is a one-line exclusion (the `withdraw:omr` shape) and
 buys deflationary optics for the collection at the cost of desk revenue on every $OMR mint —
-recorded as a lever, recommendation: keep the recycle (the v3 argument is unchanged: revenue ≈
+recorded as a lever, recommendation: keep the recycle (the accounting argument is unchanged: revenue ≈
 sink volume × price, and the mint is about to become the single highest-volume sink the game has).
 
 ### What adopting Shape C changes (and what it does not)

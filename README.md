@@ -19,6 +19,9 @@ Open **http://localhost:8787/**. The API uses an in-memory database when `DATABA
 - [System inventory](SPEC.md): implementation inventory and technical debt.
 - [Backend specification](omerta-backend-spec.md): runtime architecture and consistency guarantees.
 - [Economy](omerta-economy-design.md): cash, OMR, custody, and the market.
+- Investor explanations: [plain language](docs/investors/01-plain-language.md) and
+  [technical detail](docs/investors/02-technical-detail.md), covering the current
+  market, game mechanics, contract rights, and speculative investment case.
 - [Deployment](DEPLOY.md) and [chain deployment](CHAIN-DEPLOY.md): configuration, release gates, and activation.
 - [Contracts](omerta-contracts/README.md): contract roles, current market design, and validation.
 - [Knowledge map](knowledge/README.md): source navigation and generated inventories.

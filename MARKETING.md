@@ -1,13 +1,8 @@
 # OMERTÀ — the marketing book
 
-**Rewritten 2026-08-11.** This supersedes the 2026-07-27 edition entirely. That version was written
-before the economy was severed, before the mint schedule was published, before THE BANK, and before
-the trade fee was retired — enough of it was stale that patching it would have left a document that
-reads confident and is wrong in places, which is worse than one that is visibly out of date.
-
-Everything here was checked against the tree on 2026-08-11. **When the build moves, re-measure before
-reusing a figure.** Where a number is a live constant, the file that owns it is named so you can check
-it yourself in one grep.
+The [market design](omerta-contracts/docs/market/DESIGN.md) defines the current token market.
+**When the build moves, re-measure before reusing a figure.** Source descriptions do not establish
+deployment, funding or activation; verify those separately before publishing live claims.
 
 Handle: **@OmertaOnRH** · Play: `www.omerta.fun` · Rulebook: `/wiki` · For agents: `/agents` · `/arena`
 
@@ -26,35 +21,28 @@ document is written to respect, and **new copy must respect them too.**
 | **That anyone can cash out real stocks** | Stock delivery is a future phase, gated on the launch checklist and a third-party audit. It is not live, and saying otherwise commits us to a date we do not control. |
 | **That referrals pay a percentage of anyone's earnings** | It is a flat, one-time, cash-only finder's fee, capped at two levels. That distinction is the anti-pyramid line and it is load-bearing. Never "revenue share", never "downline". |
 
-**One more, added this edition:** never describe $OMR as reachable by grinding. It isn't, and the sim
-measures the gap every run (P9.35). The whole in-game earn surface is **1,320 $OMR lifetime** plus
-**3/day**, against **4,118** for the cheapest thing the premium rail sells. A player reaches the token
-by taking it off somebody or by buying it. That is on-theme and it is a **better** story than the one
-it replaces — but it is a different story, so tell that one.
+**Acquisition claims must name the mechanism.** Cash cannot be converted into OMR. The career ladder
+contains **1,320 OMR across nine once-per-account mission awards**; the all-dailies bonus is **3 OMR
+only when its event fund covers it**. Purchases, transfers, looting and other explicitly funded rewards
+have their own rules. Internal awards are not automatic, immediately withdrawable chain payouts.
 
 ---
 
-## 1. The thesis — nothing here is printed
+## 1. The thesis — funded inventory and useful OMR
 
-Most crypto games are a pipe. You grind, the game prints a token, you sell it. Every payout the
-designers add is secretly a decision about the token price, and the only way to keep the token stable
-is to make the game stingy. Axie's SLP is the studied version of what happens next.
+Cash supports the ordinary game economy. OMR supports selected purchases, commitments, status and
+funded rewards. Cash has no conversion into OMR; every OMR acquisition path has an explicit authority.
 
-**OMERTÀ has no pipe.** Cash cannot become $OMR at any price, through any route. The two economies
-are severed on purpose.
-
-What that buys, stated as consequences rather than adjectives:
-
-- **Grinding cannot inflate the token.** There is no conversion, so there is no pressure valve to
-  manage and no reason to make the game stingy to protect a price.
-- **Supply is enumerated, and a nightly job proves it.** `omrMints` is a short list. A §10.4
-  conservation sweep runs every night across 30 checks; if a single token appears that the ledger
-  cannot account for, it alarms.
-- **The one conversion runs the other way.** You burn $OMR at the Exchange for in-game cash, out of a
-  till that real sinks filled — and it refuses cleanly when dry, rather than promising what it does
-  not hold.
-- **Every token in the city was bought with real money by somebody.** Which is exactly why it is
-  worth taking off them.
+- **Inventory bonds sell existing tokens.** Purchases reserve prefunded OMR under immutable terms
+  and finite sale limits. The bond cannot mint; the token owner's independent minter authority must
+  still be disclosed. Do not claim an immutable fixed supply.
+- **The ledger is reconciled.** `omrMints` classifies internal credits, while conservation checks
+  reconcile balances and custody. Those checks do not prove token scarcity or demand.
+- **The Window spends OMR for cash.** A funded till and account limits bound redemption. The OMR
+  funds Family allocations and the Desk; it is not automatically destroyed.
+- **Holding and spending have different effects.** Committed game OMR supports the ladder and remains
+  lootable. Specified spends recycle to the Desk for possible resale; an internal spend is not a
+  market buyback. Revenue-funded acquisitions require actual receipts and authorized execution.
 
 And the argument specific to *this* game: OMERTÀ is about risk. A currency that was an exit from that
 risk would undo the game it lives in.
@@ -148,8 +136,8 @@ Every figure below is a live constant. The file that owns it is named.
 |---|---|---|
 | **The identity mint** | **0.01 ETH** now, rising in five published waves to a **0.05 ETH ceiling** (`MINT_TRANCHES`) | The right to extract. A free trial character plays everything; a minted one can withdraw. **Also earnable free** — the level-14 mission grants a mint credit outright. |
 | **Revive insurance** | 0.10 ETH, or the same in earned $OMR | Absorbs one killing blow. |
-| **The Store** | 0.02–0.10 ETH | Cosmetics, access windows, consumables. Never power, never $OMR. |
-| **Dues (Made Man)** | 120 $OMR / 30 days | Status, the upper compound, and your fronts pay their own upkeep. Time and access, not power. |
+| **The Store** | Current `STORE.PACKAGES` catalog | Cosmetics, access windows and consumables. The pass separately unlocks a reward track with funded OMR claims. |
+| **Dues (Made Man)** | 120 $OMR / 30 days | Account status, specified access/upkeep benefits and a one-rung shortcut on the holding ladder, capped at the top. |
 
 **Identity supply is uncapped.** 186,000 is where the *price* stops rising, not where the *players*
 stop. The 186,001st identity pays 0.05 ETH and so does the ten-millionth. Say this whenever the
@@ -157,17 +145,20 @@ schedule comes up — it is the difference between an early-bird discount and a 
 
 ### 4.2 Where the money goes
 
-Four inflows, and the split is published rather than promised:
+Keep each source and denomination separate. The canonical market's current routing is:
 
 | Inflow | Split |
 |---|---|
-| **Gameplay fees** | 60% Vig (backs withdrawals) · 10% treasury · 30% founder |
-| **The Store** | 40% Vig · 20% treasury · 40% founder |
-| **Bonds** (ETH in for discounted OMR) | 37.5% protocol-owned liquidity · 25% treasury · 22.5% Vig · 15% founder |
-| **The DEX sell tax** (9% on sells only, never buys) | 22% founder · 44% treasury · 33% liquidity depth |
+| **Inventory-bond ETH proceeds** | Immutable recipient, wired through the War Chest funding adapter |
+| **Canonical base sell fee** | 2% developer · 1.6% RWA recipient · 2.4% community · 3% Core liquidity, totaling 9% of the applicable trade base |
+| **Additional sell-pressure fee** | 0–1% of the applicable base to stability; LP fees are additional |
+| **Seasonal Turf LP fees** | Actual funded lane fees credited to entitled Families or siege escrow; principal stays with the protocol |
 | **The exit toll** (2% of a withdrawal) | 50% founder · 50% the family yield pool |
 
-`GET /v1/mod/router` renders the whole map with lifetime figures. **We can show this to anyone.**
+Other fee and Store receipts retain source-specific rules. Check their runtime configuration and
+actual recipients separately; do not apply one blended percentage to all revenue. The authenticated
+`GET /v1/mod/router` reports backend accounting, while chain receipts establish market settlement.
+See the [market design](omerta-contracts/docs/market/DESIGN.md) and [Family funding guide](omerta-treasury-to-family-design.md).
 
 ### 4.3 THE BANK
 
@@ -189,8 +180,8 @@ with it (no yield, no number — never a promise).
 
 Each of these is one thread, and each is true.
 
-1. **"Nothing in this game prints money."** §1. Lead with it; it is the strongest and most
-   counter-positioned thing we have.
+1. **"Every balance has a source."** §1. Explain useful OMR, funded inventory bonds and explicit
+   custody; distinguish accounting checks from token-supply guarantees.
 2. **"We publish where every dollar goes."** Screenshot the router board. Nobody else does this.
 3. **"Death is real, and your bloodline remembers."** The estate, prestige, the vendetta your heir
    inherits, the collection that survives.
@@ -251,7 +242,7 @@ Getting this wrong is the fastest way to lose trust, so it has its own section.
 | | Status | How to say it |
 |---|---|---|
 | The game | **LIVE** | Play it now. |
-| $OMR in-game | **LIVE** | Earned, spent, burned, looted. |
+| $OMR in-game | **LIVE** | Awarded under explicit rules, transferred, spent, recycled and looted. |
 | Web push, the Discord wire, X sign-in | **BUILT, config-gated** | "Turning on" — do not promise a date. |
 | Withdrawals / bonds / the Store paywall | **BUILT, DORMANT** | "Built and deliberately not live — gated on the launch checklist review and a third-party audit." |
 | THE BANK | **BUILT, DORMANT** | Same sentence. |
@@ -303,12 +294,10 @@ URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
 >
 > $OMR's answer to each is structural, not a parameter tune.
 >
-> 1/ There is no emission schedule to discipline — because there is almost no emission.
-> Nothing in the game farms $OMR into existence. No APY, no wage, no drip. The staking ladder pays
-> from a funded pool — a redistribution of tokens that already exist, never a mint. The only mint
-> is the bond contract: hard-capped per day, discount-ceilinged at compile time, rate-walled
-> fail-closed, with a one-transaction kill switch. OHM's death spiral was reflexive emission. You
-> cannot unwind a loop that does not exist.
+> 1/ Bonds reserve funded inventory.
+> An ETH purchase reserves existing OMR with bounded discount, sale limits and linear vesting.
+> The bond cannot mint. The token owner retains separate minter-appointment authority, so this is
+> not a fixed-supply promise. The in-game staking ladder grants capacity and access, not passive yield.
 >
 > 2/ The game and the token are deliberately severed.
 > Most crypto games are a pipe: farm → convert → dump. OMERTÀ has no pipe — street cash cannot
@@ -318,20 +307,19 @@ URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
 >
 > 3/ Revenue over deflation.
 > An $OMR sink here does not burn. It lands on the desk and is resold at a daily auction for ETH.
-> The KPI is return velocity — how many times a year the same token comes home as revenue. A burn
-> is one revenue event; a recycle is a permanent one.
+> The KPI is return velocity — how many times a year the same token comes home as revenue.
+> Recycling creates inventory that can be sold again; it does not guarantee a buyer or revenue.
 >
 > 4/ Extraction ≤ inflow is an invariant, not a promise.
 > On-chain withdrawal runs through a full-reserve queue funded only by buybacks from real revenue —
 > the server cannot sign a withdrawal beyond what is backed. A nightly conservation sweep
 > reconciles every balance against the ledger; a drift is an alarm, not a footnote.
 >
-> 5/ Three buybacks, all hard-bounded.
-> The vig (real fee revenue → buys $OMR → fills the withdrawal reserve and the prize pool), the
-> desk (POL trading fees, band-gated), and the community pot (a declared cut of the city's revenue
-> buys $OMR for the top families, split by seasonal standing — every seat re-fought). Each is
-> root-capped at spend ≤ revenue behind fat-finger price walls. A buyback that is not hard-enforced
-> is a tweet. These are checked in code, every night.
+> 5/ Market funding has separate destinations.
+> The base sell fee supports developer, RWA, community and Core liquidity recipients. Additional
+> sell pressure, inventory-bond proceeds and the arbitrage reserve share fund the War Chest.
+> Seasonal Turf fees reach entitled Families from actual collected lane fees. Separate game reward
+> programs need their own received funds; market activity does not create unlimited payouts.
 >
 > 6/ The RWA arc.
 > The treasury stacks ETH. The families vote a daily stock ticker. A walled keeper buys tokenized
@@ -343,11 +331,10 @@ URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
 > 7/ What we do not claim.
 > No price targets. No yield promises. $OMR is a game token whose demand is the game — a ladder
 > you climb by HOLDING it, a subscription, family seals, the wire, the compound — and whose supply
-> nobody can print against hype. The ledger is public. Check any of this yourself.
+> and custody follow explicit authorities. Check the source, deployment and balances separately.
 >
-> $OHM's lesson was never "treasuries are bad." It was that reflexive emission plus a soft floor
-> plus no forced recycling is a bomb. $OMR ships with none of the three — and instead of a staking
-> dashboard, the thing on top is a full mafia RPG.
+> Funded inventory, finite reserves and a mafia RPG give the token specific mechanisms to inspect.
+> They do not guarantee a price floor, yield or freedom from governance risk.
 >
 > omerta.fun · the ledger is public · extraction opens at launch
 

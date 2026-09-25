@@ -1,5 +1,10 @@
 # OMERTÀ — launch readiness checklist and plan
 
+**Market scope:** the [current market design](omerta-contracts/docs/market/DESIGN.md) and
+[runbook](omerta-contracts/docs/market/RUNBOOK.md) define market economics and activation.
+Dated contract measurements and deployment commands below are evidence for their stated targets;
+they must not be reused as current market parameters or deployment clearance.
+
 **Written 2026-08-11; security policy amended 2026-09-08.** The gated plan. `GTM.md` says who we are reaching and in what order;
 `MARKETING.md` says what we say; this says **what has to be true before each door opens, and who
 decides.**
