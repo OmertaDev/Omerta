@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b5b55217fb1f8e56186a9c0cd82125f5cd821b6e",
-  "worktreeDirty": true,
+  "sourceRevision": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9156,
-    "edges": 38957,
+    "nodes": 9159,
+    "edges": 38964,
     "byNodeType": {
       "Artifact": 3736,
       "Command": 177,
-      "Commit": 1982,
+      "Commit": 1985,
       "Contract": 79,
       "Document": 685,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2779,
-      "CHANGED": 14541,
+      "CHANGED": 14545,
       "CONTAINS": 3757,
       "DECLARES": 177,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 602,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1982,
+      "HAS_COMMIT": 1985,
       "IMPLEMENTS": 124,
       "IMPORTS": 3904,
       "INHERITS": 17,
@@ -91076,6 +91076,22 @@
       ]
     },
     {
+      "key": "Commit:17841f29a6e2c4a0bf830b5a45dfd7d6b460606e",
+      "type": "Commit",
+      "id": "17841f29a6e2c4a0bf830b5a45dfd7d6b460606e",
+      "label": "Merge pull request #185 from OmertaDev/codex/rwa-registry-health",
+      "title": "Merge pull request #185 from OmertaDev/codex/rwa-registry-health",
+      "date": "2026-09-25T01:59:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/17841f29a6e2c4a0bf830b5a45dfd7d6b460606e",
+      "provenance": [
+        {
+          "commit": "17841f29a6e2c4a0bf830b5a45dfd7d6b460606e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/17841f29a6e2c4a0bf830b5a45dfd7d6b460606e"
+        }
+      ]
+    },
+    {
       "key": "Commit:17983afd36dcaf3d96068d62a9e4096f571b7c69",
       "type": "Commit",
       "id": "17983afd36dcaf3d96068d62a9e4096f571b7c69",
@@ -109492,6 +109508,22 @@
       ]
     },
     {
+      "key": "Commit:a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+      "type": "Commit",
+      "id": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+      "label": "Merge remote-tracking branch 'origin/main' into codex/rc1-prod-integration-20260925",
+      "title": "Merge remote-tracking branch 'origin/main' into codex/rc1-prod-integration-20260925",
+      "date": "2026-09-25T02:37:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+      "provenance": [
+        {
+          "commit": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be"
+        }
+      ]
+    },
+    {
       "key": "Commit:a6d0cc888ce0bd317f7061515a086db9a782c9c9",
       "type": "Commit",
       "id": "a6d0cc888ce0bd317f7061515a086db9a782c9c9",
@@ -115760,6 +115792,22 @@
         {
           "commit": "da82ff921238de9460f66f592c24e6e70358c47f",
           "url": "https://github.com/OmertaDev/Omerta/commit/da82ff921238de9460f66f592c24e6e70358c47f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "type": "Commit",
+      "id": "da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "label": "chore(knowledge): refresh generated artifacts for 17841f29",
+      "title": "chore(knowledge): refresh generated artifacts for 17841f29",
+      "date": "2026-09-25T02:00:54.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "provenance": [
+        {
+          "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91",
+          "url": "https://github.com/OmertaDev/Omerta/commit/da88c4b784b497697bfd9418e6153ddf2817ab91"
         }
       ]
     },
@@ -139118,6 +139166,9 @@
           "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
         },
         {
+          "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -139874,6 +139925,9 @@
           "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
         },
         {
+          "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -140628,6 +140682,9 @@
         },
         {
           "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
+        },
+        {
+          "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -141600,6 +141657,9 @@
         },
         {
           "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
+        },
+        {
+          "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -149666,11 +149726,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b5b55217fb1f8e56186a9c0cd82125f5cd821b6e",
+      "revision": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
       "currentBranch": "codex/rc1-prod-integration-20260925",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
+      "worktreeDirty": false,
       "currentArtifactCount": 3736,
       "provenance": [
         {
@@ -308678,6 +308738,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:db1749d8a6c0a842f4b0022df1084b1b9a06a871",
       "to": "Artifact:test/rc1-legacy-authority-postgres.js",
       "provenance": {
@@ -385811,6 +385903,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:17841f29a6e2c4a0bf830b5a45dfd7d6b460606e",
+      "provenance": {
+        "commit": "17841f29a6e2c4a0bf830b5a45dfd7d6b460606e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:17983afd36dcaf3d96068d62a9e4096f571b7c69",
       "provenance": {
         "commit": "17983afd36dcaf3d96068d62a9e4096f571b7c69"
@@ -395019,6 +395119,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
+      "provenance": {
+        "commit": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a6d0cc888ce0bd317f7061515a086db9a782c9c9",
       "provenance": {
         "commit": "a6d0cc888ce0bd317f7061515a086db9a782c9c9"
@@ -398150,6 +398258,14 @@
       "to": "Commit:da82ff921238de9460f66f592c24e6e70358c47f",
       "provenance": {
         "commit": "da82ff921238de9460f66f592c24e6e70358c47f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:da88c4b784b497697bfd9418e6153ddf2817ab91",
+      "provenance": {
+        "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
       }
     },
     {
