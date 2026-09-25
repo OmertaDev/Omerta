@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9893860f3a39`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c5b9128dedce`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1995 |
+| Commits in clone | 1997 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-25 — Merge production fixes and refresh cleanup census |
+| Latest commit | 2026-09-25 — Merge pull request #187 from OmertaDev/codex/current-game-cleanup |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1116 |
+| OmertaDev | 1118 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 366 | yes |
 | [SPEC.md](../../SPEC.md) | 351 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 255 | historical |
-| knowledge/generated/graph-summary.md | 255 | historical |
-| knowledge/generated/graph.json | 255 | historical |
-| knowledge/generated/inventory.md | 255 | historical |
+| knowledge/generated/github-history.md | 256 | historical |
+| knowledge/generated/graph-summary.md | 256 | historical |
+| knowledge/generated/graph.json | 256 | historical |
+| knowledge/generated/inventory.md | 256 | historical |
 | [BALANCE.md](../../BALANCE.md) | 255 | yes |
 | [package.json](../../package.json) | 223 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -46,10 +46,10 @@
 | [src/worker.js](../../src/worker.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
-| knowledge/generated/documents.md | 122 | historical |
+| knowledge/generated/documents.md | 123 | historical |
 | [test/client.js](../../test/client.js) | 118 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/modules.md | 104 | historical |
+| knowledge/generated/modules.md | 105 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 86 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
