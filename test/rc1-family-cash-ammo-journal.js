@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import { reconcileFamilyCashAmmo as reconcile } from '../tools/rc1-family-cash-ammo-journal.js';
+const clone = (v) => structuredClone(v);
+const base = () => ({ characters: [{ id: 'a', account_id: 'aa', cash: '30000', bank: '0', ammo: '25' },
+  { id: 'b', account_id: 'bb', cash: '500', bank: '0', ammo: '25' }], families: [{ id: 'f', treasury: '0', ammo_bank: '0' }],
+  members: [{ gang_id: 'f', character_id: 'a', role: 'boss' }, { gang_id: 'f', character_id: 'b', role: 'soldier' }],
+  cars: [], transactions: [] });
+const receipt = (id, currency, amount, reason, character_id = null, counterparty = null) =>
+  ({ id, currency, amount, reason, character_id, counterparty, account_id: null });
+const op = (characterId, path, response, body = {}) => ({ accountId: characterId + characterId, characterId, method: 'POST', path,
+  body, idempotencyKey: 'key-' + path + characterId, result: { status: 200, replayed: false, body: { ok: true, ...response } } });
+const init = base(); init.families = []; init.members = [];
+const formed = clone(init); formed.families = base().families; formed.members = [base().members[0]]; formed.characters[0].cash = '5000';
+formed.transactions.push(receipt('found', 'cash', '-25000', 'gang:found', 'a'));
+assert.equal(reconcile(init, formed, { operations: [op('a', '/v1/gangs', { gangId: 'f' })] }).flows[0].kind, 'formation-sink');
+const before = base(), tribute = clone(before); tribute.characters[1].cash = '400'; tribute.families[0].treasury = '100';
+tribute.transactions.push(receipt('tribute', 'cash', '-100', 'gang:tribute', 'b', 'f'));
+const paid = op('b', '/v1/gangs/tribute', { amount: 100, currency: 'cash' }, { amount: 100 });
+const transfer = reconcile(before, tribute, { operations: [paid] }); assert.equal(transfer.flows[0].kind, 'transfer-in');
+assert.equal(transfer.flows[0].amount, '100'); assert(transfer.checks.every((r) => r.drift === '0'));
+const promoted = clone(tribute); promoted.members[1].role = 'underboss';
+const membershipOnly = reconcile(tribute, promoted); assert(membershipOnly.membershipChanged); assert.equal(membershipOnly.flows.length, 0);
+const meltBefore = base(); meltBefore.cars.push({ id: 'car', character_id: 'a', model_id: 'junker', trim_id: 'stock', dmg: 0 });
+const melted = clone(meltBefore); melted.cars = []; melted.characters[0].ammo = '100'; melted.families[0].ammo_bank = '25'; melted.families[0].treasury = '750';
+melted.transactions.push(receipt('personal', 'ammo', '75', 'melt', 'a'), receipt('ammo', 'ammo', '25', 'melt:tithe', null, 'f'), receipt('cash', 'cash', '750', 'melt:tithe', null, 'f'));
+const melt = op('a', '/v1/garage/car/melt', { rounds: 75, tithe: 25 });
+assert.equal(reconcile(meltBefore, melted, { operations: [melt] }).flows.length, 3);
+const departure = clone(melted); departure.members = [{ gang_id: 'f', character_id: 'b', role: 'boss' }];
+assert.equal(reconcile(melted, departure, { operations: [op('a', '/v1/gangs/leave', { dissolved: false, newBoss: 'b' })] }).flows.length, 0);
+const dissolved = clone(departure); dissolved.families = []; dissolved.members = [];
+dissolved.transactions.push(receipt('burn-cash', 'cash', '-750', 'gang:dissolved', null, 'f'), receipt('burn-ammo', 'ammo', '-25', 'gang:dissolved', null, 'f'));
+const leave = op('b', '/v1/gangs/leave', { dissolved: true });
+assert.equal(reconcile(departure, dissolved, { operations: [leave] }).flows.length, 2);
+const replay = clone(leave); replay.result.replayed = true;
+assert.equal(reconcile(dissolved, dissolved, { operations: [replay] }).flows.length, 0);
+let controls = 0;
+const rejects = (prior, next, operation, mutate) => { const bad = clone(next), altered = clone(operation); mutate(bad, altered);
+  assert.throws(() => reconcile(prior, bad, { operations: [altered] })); controls++; };
+rejects(before, tribute, paid, (s) => s.transactions[0].counterparty = 'foreign');
+rejects(before, tribute, paid, (s) => s.transactions[0].character_id = 'a');
+rejects(before, tribute, paid, (s) => s.transactions = []);
+rejects(before, tribute, paid, (s) => s.transactions.push(clone(s.transactions[0])));
+rejects(before, tribute, paid, (s, o) => o.accountId = 'foreign');
+rejects(before, tribute, paid, (s, o) => o.result.body.amount = 101);
+rejects(before, tribute, paid, (s) => { s.families[0].treasury = '0'; s.families.push({ id: 'foreign', treasury: '100', ammo_bank: '0' }); });
+rejects(meltBefore, melted, melt, (s) => s.cars = clone(meltBefore.cars));
+rejects(meltBefore, melted, melt, (s) => s.transactions = s.transactions.filter((r) => r.id !== 'cash'));
+rejects(meltBefore, melted, melt, (s) => s.characters[0].ammo = '99');
+rejects(meltBefore, melted, melt, (s) => { s.families[0].treasury = '775'; s.transactions.find((r) => r.id === 'cash').amount = '775'; });
+rejects(departure, dissolved, leave, (s) => s.transactions = s.transactions.filter((r) => r.id !== 'burn-ammo'));
+rejects(departure, dissolved, leave, (s) => s.transactions.find((r) => r.id === 'burn-cash').amount = '750');
+rejects(departure, dissolved, leave, (s) => s.transactions.push({ ...s.transactions.find((r) => r.id === 'burn-ammo'), id: 'duplicate-burn' }));
+rejects(departure, dissolved, leave, (s) => s.transactions.find((r) => r.id === 'personal').amount = '76');
+const badMetadata = clone(promoted); badMetadata.families[0].treasury = '101'; assert.throws(() => reconcile(tribute, badMetadata)); controls++;
+assert.throws(() => reconcile(before, tribute, { operations: [paid, paid] })); controls++;
+const warBefore = base(); warBefore.families[0].treasury = '100';
+const warAfter = clone(warBefore); warAfter.families[0].treasury = '0'; warAfter.transactions.push(receipt('war', 'cash', '-100', 'gang:war', null, 'f'));
+const partial = reconcile(warBefore, warAfter); assert.equal(partial.status, 'PARTIAL_UNSUPPORTED'); assert.equal(partial.checks[0].status, 'UNSUPPORTED');
+assert.equal(partial.qualifyingFullResourcePass, false);
+const decimalBefore = base(); decimalBefore.characters[0].bank = '0.000000000000000001';
+const decimalAfter = clone(decimalBefore); decimalAfter.characters[0].bank = '0.000000000000000002';
+assert.throws(() => reconcile(decimalBefore, decimalAfter), /Personal endpoint/); controls++;
+const orphan = base(); orphan.members[0].gang_id = 'unobserved';
+assert.throws(() => reconcile(orphan, orphan), /absent Family/); controls++;
+const ephemeral = clone(init); ephemeral.characters[0].cash = '5000'; ephemeral.transactions = clone(formed.transactions);
+assert.throws(() => reconcile(init, ephemeral, { operations: [op('a', '/v1/gangs', { gangId: 'f' }),
+  op('a', '/v1/gangs/leave', { dissolved: true })] }), /Unobserved Family/); controls++;
+console.log('PASS: exact Family cash/ammo journal, lifecycle lineage and ' + controls + ' corruption controls; OMR/war stay excluded');

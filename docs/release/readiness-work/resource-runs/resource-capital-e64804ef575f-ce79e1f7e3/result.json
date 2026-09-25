@@ -1,0 +1,829 @@
+{
+  "schemaVersion": 1,
+  "runId": "resource-capital-e64804ef575f-ce79e1f7e3",
+  "source": {
+    "commit": "e64804ef575f1afaa6582ab4f704b614adb926ad",
+    "clean": true,
+    "hashes": {
+      "content/README.md": "9b3b4950dc1653ca20eb8b6aaaaf1118628e14d0d971c77f5cc2d7416d488aaf",
+      "content/packs/bad-batch/pack.json": "10d49f106b273f8eb715a9ec038162b3e9221cb258067f1b3f74fb27120dcb8f",
+      "content/packs/bellini-lockbox-v2/pack.json": "aad5fc81458b14049fd8ee001c7311afb418b538e562e6fb9e993ea326227730",
+      "content/packs/bellini-lockbox-v3/pack.json": "e47acb0f4af5c88a1a04da273c3bfb2ada1cf0942be0f8012a49d3b5124a468d",
+      "content/packs/bellini-lockbox-v4/pack.json": "b5df6e707a87bcd1a2492291ed48784f18a5604f8b2e0cd54b2be985adc02667",
+      "content/packs/bellini-lockbox/pack.json": "154d6276e6355156b73e73b86080dee9e723a8cd46208320053c98c314025d92",
+      "content/packs/black-ice/pack.json": "9d058475b17822589916f30bfca50f0df68daf8dab07a83a88e2f6bf95c830b7",
+      "content/packs/books-open-at-midnight/pack.json": "4bcdc80d74410a742554848ee081f62d9e5ada86205ea092f8ecbfbefaf2fb50",
+      "content/packs/brick-last-kiln/pack.json": "0c64b7a609b2fb54968e9c04cd5eb9b91350c05daa8109fba1357e926b2e1896",
+      "content/packs/canal-water-cellar/pack.json": "a9afc4dbcd46207a30cdad0a79fa6699693d414ffbee5dd36ae29f9ae317de40",
+      "content/packs/cathedral-saints-account/pack.json": "3f110647bd19f0d628e5024b84746bbfdfd148482d19529fa64ed5ee3a52df6a",
+      "content/packs/docks-missed-tide/pack.json": "ca0d18cb17ec3f00ea16239992a79c5fe51a5e2da77bbf67b96ecdc1ee3e763c",
+      "content/packs/don-of-the-city/pack.json": "282d5e6291ee261e8894f021a9faee2ea8f9f6ec60a18c33198dda188170570d",
+      "content/packs/empty-seat/pack.json": "301027d06d3bcdf9b2fbaaf32d48ab1850b00ea1d499599d1a554e1bbd2abe8e",
+      "content/packs/federal-ledger/pack.json": "09473985e9302330b60a968fc410281e4dc45ad621edb635b738f4169b42344e",
+      "content/packs/foundry-furnace-ledger/pack.json": "38a654dae171fcec84544f5394ab0a045e79069a0df10fd85e6bb9ce3c452309",
+      "content/packs/hostile-books/pack.json": "074552957a9f770799600e4e894925f557d089e2dc60fc83b9e9378bd03ac003",
+      "content/packs/house-made-of-glass/pack.json": "a35b82ad3290a767381a3734309139a63a673f1f8ef8111ddae419664027f68f",
+      "content/packs/iron-election/pack.json": "73a1b316a97a2faae218e726ace667b72db364aa2a6fd5aaf1f6257ad8696cfa",
+      "content/packs/last-clean-contract/pack.json": "eeb97fdd968aba7bfad308048398ed3aee651d0e62f146a95b98c2ab7fc04884",
+      "content/packs/neon-house-lights/pack.json": "da409ce0227e500e0b507757a8e000cb3da73cb70e03ff6593c418ff1b702d8a",
+      "content/packs/nobody-saw-him-leave/pack.json": "1c21f3b78898a3a722c7c51f58046dbcc9c6e8d1cd22bf16752d32822f4a20e6",
+      "content/packs/port-no-return/pack.json": "f92fc289daa315499ef7199bf28836c0418532f749f38aa95885a62944ea473b",
+      "content/packs/sixth-chair-v2/pack.json": "66b995f0026463bbf9f05541e673306df2a1d70382e9307d25a59c1a26a33c21",
+      "content/packs/sixth-chair/pack.json": "04deb87afc78664c5631bf65ca48389a595744e1a09d14d10c93386623e4e369",
+      "content/packs/twelve-rounds/pack.json": "9c5ad1526c50a45b6345c5c595842b12bdabdfab5a46c82749e3c873cc9d6c56",
+      "content/packs/two-funerals/pack.json": "427197929bcd15b7c2cd2fd716777a1725d9e10e2ab9b739c5c4ef1cf570f9e4",
+      "content/packs/two-man-rule/pack.json": "9b8c41604d82a69e3f759ed84c03c82a712c59e4104662e876c8c49956edf7d5",
+      "package-lock.json": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "package.json": "3ac43b869e0e553daafb25edf692a021246dfe375f075265278dfe5b21df7cf4",
+      "schema.sql": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4",
+      "src/access.js": "b924e7a32b6b193f66234f01829c4e757397b938f7809b56fa54e3613c32fc77",
+      "src/accrual.js": "e91bedfd0d4c4701d029b7f6af73e073266558fa29670de5d85991f42263767e",
+      "src/agentgateway.js": "00658e35449115cea0835af50c7823c1b53baed45420189c6391f3caeec9dfa4",
+      "src/agentreferrals.js": "d1c0e9beb572205369a8dda1e0ed934393379b74b5cf9e6ee4c4f47ea1545acf",
+      "src/agentturn.js": "2dc652c3e3a2393cb38d26f7066bb804f55dcc2f87394a224f3646f5a9a8e605",
+      "src/aggregate.js": "06d560cecc01e26fdc7c211815b5131fa5951a6b6541d724e8e07f1edc97a6f0",
+      "src/arena.js": "4dc3a2bf738537a25291db145b1fb4aac06aab401fcb8cc1f1b165f9e727c58e",
+      "src/assets.js": "f67e16f470fdcd78caf0480067448b5a36216c155de737af40accca0be882334",
+      "src/auction.js": "e23f0b6ca2a4667b8ee2c1b3b608bb7094d5c1a67a75aa0ae4d082ef5e8b3a67",
+      "src/auth.js": "b31d5f008a1aa5baf0c3878dad07207d04d37819281d65a58852f990a2bc8d28",
+      "src/avatar.js": "9ca323d5fd0be0f19e00604a6d59ea763f885fadb409778918366ee235734760",
+      "src/bank.js": "9c933ce5004862b131a25e299ec7a61b65a18e353f2768eb7ad91cc7672aeb96",
+      "src/bloodline.js": "e06503543bf44c76fb99bb8c83111636af69063bc8a739b9de10f7b97bf12c2e",
+      "src/bondquoteexpiry.js": "8473c6664cc1a3b9602042b78efa11a95b63e07da3e14485bd150deb8184454d",
+      "src/bonds.js": "cf0ce6d6d2ed999132708273854d0bcb23c890ba860a271c5ae29c2e99247fee",
+      "src/boxing.js": "9851f6a3d1f8b729d4f6e5e9ff16793b6563b51f7338d01becfb4a4829f306df",
+      "src/brokers.js": "4bffeb7f9d5f0ff229dda54a4ecfab0e8b78882451a587bb7f76c1d5d324c221",
+      "src/bulletin.js": "62dd08d9921a9c944c30c4d78a4378da285c3c7938e70778a781b7b293081343",
+      "src/business.js": "5b4708d3a67b23f2433dfdafdf9aeeb3dab8e5fbc5287fe3af9f37524d046322",
+      "src/campaigns.js": "58f281f5abdcf08a4ada504dfea5453830f11c4bc9e476692c1a1d9587da955c",
+      "src/cardpng.js": "4672745868de0b5bd68c13476a6b281cd333de4cc0887026836ab294bc7b5897",
+      "src/cards.js": "f6800303b614138e079cfb801e4cae9608ee66668a6796ba6deba9c52f7a70f2",
+      "src/career.js": "8aa283b40b9745c4891c8a08a6fc1c290591e2d7e2f900aae6a0d2983e5ad854",
+      "src/casino.js": "379b7e1a55eaef144021527f2fe021f63c03c982ed3ff8df923ebcf0da9160e2",
+      "src/chain.js": "52d283e7d2ca4fdbe768672cf51be33aa5d011f32e789d9ecbcee3c7749a11e0",
+      "src/chainparams.js": "a24507a1303c7616721f4efe201e4a31b2dd3d6b5eaa4e5a0a430c04401324b6",
+      "src/circle.js": "8a66253bf5a5f50a92f3b7adceaa77acd345302b2948b16d2eb5fd70b6ad9c34",
+      "src/citymap.js": "b567d53aea7fc36aa9e40e055cbc74c3fa380123b237d120071c9ac7e8c5fa06",
+      "src/citywide.js": "67dceadf98e58ee18e026687a87bcaa4c592268009bcfdf061d7fa9eb83caa9f",
+      "src/citywire.js": "1b639074cd60c9859ae8ed19ce1e28bbab5cbbcf2e9c9ef8d67f9b8058d0ec76",
+      "src/clues.js": "1c1e65768a31acd26b0ba2dd434dd182eac0a8f6a558a2332fcb550fc324be4f",
+      "src/collection.js": "b9d5291a979616f23c2577ac877b4bc0155959768e254c7c4863e3cdaaeff92c",
+      "src/collision.js": "7be8749d24b800c9229ea7373451622119ac095886bbd2c1655c4b0296fdf957",
+      "src/commission.js": "0f8ab3d01e03e1bf8e1ffa4e2d7535be7160413d53649858e958e64987757bea",
+      "src/community.js": "b324b75cf0491e99d5b66ee1cbd0584bec7bc02e84d2ec9f4c6e89340e693ead",
+      "src/contacts.js": "53317bb8c1198e6c6ad9be0621f02620da355d5621e428422ed0171be2809f49",
+      "src/content/activation-policy.js": "d1813790162cb3c72a0d233be207ad427a0ade25b045ec48dbb7c0fd2a5a88d3",
+      "src/content/artifact-storage.js": "eb30e9e13d31ab3cb967ab28c6aa9ef37d76ffb44e323fa3004f7e89a579adcb",
+      "src/content/artifacts.js": "83e8909ceb1269ff345fda4667f18cdd8a43f866ed4598c8b5a51865271f9d3e",
+      "src/content/automotive-salvage.js": "b09eee77ec92a55131a1768b6ade37f3485654ff79a126c22256ff55e0f46266",
+      "src/content/belladonna.js": "0d8e7c2ebb2d87ffa0f762cae860e19cf57449958c64ed9ce621cf0c2233cce4",
+      "src/content/campaign-network.js": "24cc7921b7e5280780004c5c81839616e2de564c1ef4486edf2869b221209af7",
+      "src/content/canonical.js": "d012d76200806755da939f2c0559ac3ebce2a6c126de02482b0a376110c02848",
+      "src/content/compiler.js": "645b977d5a55e873e8f365b4607dac211d854677ba711534b2a5dad614222f45",
+      "src/content/coordination-operation-pilot.js": "5b1d7b6486ceb1691c2d612dd68cf143fbe747dc289d1bd99b254d50dc057775",
+      "src/content/core-materials.js": "ad6b9880dee236bca4d9cb647e315bd1442a21083472159c00c9d21288889237",
+      "src/content/core-progression.js": "06a5e38a2dc3e1c1df1f1180734f5bc27f662487ee2b42788ae3078cf72691f7",
+      "src/content/corpus.js": "4b9e3708926dd21d847345f010db1e317b31d4d6c664d13a50ba7d866c303e60",
+      "src/content/crafting.js": "4a568aab0263d073c74e7a5fb5d5413b7abf514367cab994b52fbc671dfa7a78",
+      "src/content/definition-invariants.js": "4cd62d25797901ab6f6a6aae3d61684b17e52f8752aac593e11ab1c2d3eda322",
+      "src/content/diagnostics.js": "d374b27c7f4fe92a368191cfcb7f48ba916d3249ce072edec3c7e953412a255e",
+      "src/content/discovery.js": "ef7c2e20384d23d6e85ca7f4accf2a23fc4ec9f294bd174319905abd5981dd3a",
+      "src/content/dock-war.js": "5cc506de4e2c19d2ad039dcfb1b5bc8c4cb960d275b9fd778f6eac85b5506fa0",
+      "src/content/economy-profile.js": "89883977b75f2589eb48afb6d32ff72cb06546c046f91ed1ed5e55386ae8f367",
+      "src/content/exchange.js": "d46733ef856a53d5c26f0effd68413994002fe4d0ca70d8fc3fb65cd2f92139f",
+      "src/content/furnace-ledger.js": "174b4bd88dd63b7169ef417d44589d5f72f516b4af943741dc4c35d2630db2da",
+      "src/content/json-source.js": "d41fad32d628dc12b3ab24807ece19cf3d308077951063efdc147ae1bd306143",
+      "src/content/phase1-policy.js": "776f5fdf080ed934905b45860a830181c0f80ee8fc389ce2a30bc61a5fa0de58",
+      "src/content/phase1-validation.js": "58e6a620385d19a3f203c8a1e1900f3401d29f2e310e321b3a3da5dd168e23fb",
+      "src/content/phase1.js": "4a7a6068653f7cfc5b5c8ab1229b24164d40a472d5e010fa5667a52d23f007f7",
+      "src/content/phase2-transactions.js": "d6abb66508e7df4149f30a3464332b79e739fd981d81a111fc7daf32d864c3ba",
+      "src/content/progression-admission.js": "a9bab00b7e51eabd1d60674e06717b3b5b77901149dcfc37392852f6b6961525",
+      "src/content/runtime.js": "be50a85e1fa68b07a3fb253d0a51d1410f0abea096bebce7fe2f456f736161dc",
+      "src/content/world-kernel-pilot.js": "268cf38a8a177c465613af6900391ae22908eed1ce932d2d1a393bf06363a3a4",
+      "src/convoy.js": "95943fd98d49be79e7274dd3c9dbe9e6129f53c3825270c549924ea2de3d48b6",
+      "src/coordination/capital.js": "4905c701bc88aa64ba842fe6c3d1b295b0aeb72b442ee897f497dad92733f0cb",
+      "src/coordination/graph.js": "f2c0841a1fe995826f5c79843a0aee00bce41c70ce8fb20629c3276852b5ae5d",
+      "src/coordination/http-contract.js": "df482c3c60fcb96a7fb07e7ab9d984a6f448e978aa7f4a836bfca274477da918",
+      "src/coordination/knowledge.js": "46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3",
+      "src/coordination/operation-definitions.js": "77bc7749c4ac0c145f54b4281e5c91fcb560da2e553929726b2204bf7355522f",
+      "src/coordination/operation-invariants.js": "39e7d12c02728cb82eede0c1263e494ce2ea2576553767b7c01cde0c125b6b85",
+      "src/coordination/operations.js": "0e422fa588b74797cd424c83e0829d64f9eb3b759a31ff18250642e05cc00095",
+      "src/coordination/pilot.js": "a98c5cc99737497cb48bbefdfa71fb4539c80b366070d4ca49ca9e422c28bcd7",
+      "src/coordination/runtime.js": "972abc70cb75b232929e1f1907e556ed00eea22e42567da9e68ad83ef1082d99",
+      "src/corner.js": "31e85963fef14685014da134e747baf0035e78d950034ccecc4c0914a8f85c2e",
+      "src/crafting.js": "68bc2f9f430b8b5d274a89ac1a6e4c330febcdccc58825c84058276dfaf035e8",
+      "src/crew.js": "55c80abdc0043d2bb1a3cd1b0aac58b1a97c0637d547f2d5b7f5806543fb7d28",
+      "src/day.js": "c0021113775b12650beec2fc6786bb03ebde46421ddd88240b49de10e7af8efe",
+      "src/db.js": "2ef8926323ad266ef685856ebf7192f8005cc733eb104d5ddabf2bdc14fe1d52",
+      "src/dbhealth.js": "8f0e65e9a9dfc5c1353b2b918b95cd5e1afd9ce9d4b858e822ded860e6767aa5",
+      "src/deeds.js": "6f3fb2ad045079d4ea49751d362e9d6e16371c37f4bd596fba195b0a6e536110",
+      "src/defi.js": "150c946955bf95b011c82242e6f119ac6f6432592b092116028bb49836c52898",
+      "src/desk.js": "57b472198378d2a2bd82ebd23507e4a7f19cc5fa33e67caee126dfe1e845a7cb",
+      "src/dexbot.js": "7a5a49d6c18af2d4092f020d8384fdd89ab8324190a817f1111d1e95754863e1",
+      "src/diplomacy.js": "1d9307149c751f343b14bacd5a32b487768a2e79ec9ab27892e2c47f357bee0e",
+      "src/director/campaign-network.js": "f533ea726dffc7a56ceb6afe11079fe4274832618b855eec32f880327a4afaca",
+      "src/director/config.js": "0028a11faefcd9a5953ac30793dbf5b5e644df77706f9944e32aa152aad36826",
+      "src/director/definitions.js": "8f119a6f2847777da9ad0dd4d03f477b1f021a93933237032a2f3fa4f8c0a096",
+      "src/director/dock-war.js": "fe9f83f73a529e590962b6759c93ba65e057c19ffd741cffe42302b573f98be2",
+      "src/director/memory.js": "925c5431b9d6b0da6f2624caf79ee1dade0eb5926e8773242b4016f1369431dc",
+      "src/director/pressures.js": "6966ef857bdb8517016cc872196759d915ddeba4b4f6be3d6590cbb424f9cac3",
+      "src/director/runtime.js": "e6afb1e070646df207087b1d64af9264f857d053123fd720c43b21307e3edad4",
+      "src/director/selection.js": "577b7a862650e38ec43ac0fd774de831820af28618fd4dcbbc2d305d31052955",
+      "src/director/storage.js": "5b4107e521f6da72485bd378b2363b02bd03a1983f1f110d23cb14c683d673d0",
+      "src/discovery.js": "8009b7874f6b3e8ab70b7b53a9001af2f40022b7caf1ed92612e7901dc18e51e",
+      "src/dispatch.js": "4cc1cc6e087657c21be682f8593c26d93ae5be8de97258600287d455a716bc5b",
+      "src/drop.js": "922f06bdb6b5914a89a524cb4e3730eddd7cd3e0621ddade8c000ace9209f04c",
+      "src/duels.js": "2eedce0eea339b9b0c6199b2cad4895b4a0f9dc1f25413eed0eac661fa33aa6f",
+      "src/dynasty.js": "b0d41fea6e7baccaf395fb72b7447d3c009d38d376a0eea8834093a0ff21b5aa",
+      "src/economy.js": "b8c97f458c20b42e768f56445d3bae4a77fd0221b8939db313b381de5e6ae931",
+      "src/emission.js": "e15a8ed6a0b334e2310a81b82658ee95672803135344be8956d0afc3e48aeefc",
+      "src/engagement.js": "1e4bb1b9a0e22ac7d3ae9579bc5a4987157ad361ec5f645da331bcc69d25db77",
+      "src/estate.js": "46ea725f3249b0391a430120b8bac25c34bb73ba3b528763734d1bdaa38309c7",
+      "src/events.js": "6c1a0d35cdadbf55d20cba9918aac4dc7ab25294abdff96d5e21074b255a7a02",
+      "src/exchange.js": "9f451f7ceb9c2317d0f205576f05218d7b0288f38dc47d846e36ce8440fb8952",
+      "src/explore.js": "9e6cd37cc5ab7b89063ec53296c4984358fea86a5d3a6ce1f34ce28aedd6decc",
+      "src/fairness.js": "3a517a2f0e26b79aa31330cc274b77e9122857e228b5a5591de1514751288d25",
+      "src/favors.js": "de39cb6e5605cb0218ad05a6cb1edea833cee3b75c8731aea919a83619ed1491",
+      "src/fees.js": "6d105f8857b29a43eb87158cd0d6780462931f248411b372f906a59e6c2d13c9",
+      "src/finalizedobservation.js": "eba55f986ccb90521a9dc118822883a6b241644e1bec36bff9d73a55d93a4e4e",
+      "src/firstblood.js": "8f0edbaa701ffd20bf2a1e8276993f1a86e07277c54daf5782b0a847c99a8213",
+      "src/firsts.js": "561684e3e9371c68329490d3f669f59f11c74d66cf9587a3f48c0b8552ff24e3",
+      "src/game.js": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4",
+      "src/genesiscadence.js": "2fd546d44c5a0933d190acd355b2c0e9a384f46171883a8ca946155439c1ad73",
+      "src/genesiscca.js": "1af13fae438ef384026fca6da478194dc89383afcb50f33b625f199d97dedd32",
+      "src/genesiskeeper.js": "5b347cdb5c7aa4f1f9833eb372ab872ee181c27b91a0f1a00338aea2bba9b54b",
+      "src/genesislaunch.js": "066a091ff97c4ebe764b6dfaffbc2ec70c865df4c981eecb7d77369325f70710",
+      "src/genesisrelease.js": "b02ba89bff05c6b9e2b1bbaad6db49b1da2453482cda2fc50eeebe016b22310f",
+      "src/growth.js": "be010dc1ebdfd2ff3e04cb54b35bb9e98018d875833016c9e8ad6ccdc29aa665",
+      "src/heists.js": "4cbdfa6c663a9d46ff59088cec20d7610db064a710183df3d76d8808d5d46c9f",
+      "src/home.js": "80c01168e5bdd78f33c442de02dc72149287abb692637ac73935ab311ae91757",
+      "src/honor.js": "9927e8b3e43d3635d23c73898eccc6fd14b74316d6653b333d186026f44e42fe",
+      "src/hustle.js": "76368a19b4faed203e933a99c619cf1be19d2cd9b9e5798a5c3ea6a127d5d797",
+      "src/invariants.js": "4c3f34e320162201317a977990be824245374bbd303a2041b6e4de045686768e",
+      "src/invites.js": "259289a05e892b798e27910c4fb310c7ebb7f0ba13be8673402ccd3e868ebe6b",
+      "src/item-lock-trace.js": "e33b6faff41a356a7502323dc2b39cb49fec49be9198921c598cbcd16d00bc87",
+      "src/itemdefinitions.js": "2ad91c5deeaebec8a540762c0e6c0385de56fd50718fed018f67cb1f471991d0",
+      "src/itemlots.js": "8ad2cb3c8223d9e7258f5e6f140ea7189255074e432f4f8a928fb5b7e0c3f6d5",
+      "src/items.js": "f086d9a45ab5cb7bbd063bf84e91886ebc754efc7acc1a39dc6858e2634ae5e8",
+      "src/keepertransactions.js": "d48a8759f3d5947624a0ac6993a362130fed30460ecbcd62b1549bdcace1ab42",
+      "src/kitchen.js": "3b10d97f63df8579f0cf61898d33c36d46a144bc0da6a13204c3f7345e18d988",
+      "src/landmarks.js": "7e1d54de495d048db520cd1e1d3d4afe2c3e27654532383bef7b16e15c85ea94",
+      "src/law.js": "3dbdfb1387f6f77e59ee375049fed19c548f30364c06bd8e6781f2e712780d66",
+      "src/liquidityaccounting.js": "cf1045ef7d84d0c5cdb4675f481b0f9d66bb9fbef5e43aed29d0d3b632a3a0dc",
+      "src/liquidityautomation.js": "f0c208c03d8a0131e85c1a6e711f7f53e4498e32f2fe9f69a115d1d9a822d06f",
+      "src/liquidityindexer.js": "a02cc2860c31af9dcfaf78ce4d13afd518990ddf8ce2766086b8648d4c3d849a",
+      "src/liquiditykeeper.js": "863537b7474512496785e3ecb709336205996dec7acd300f965a46b8fa490774",
+      "src/liquiditypolicy.js": "f87f6add14812fe6a19f313822e515a09dc6bd7896cffcb9692658bf4558a611",
+      "src/liquidityqueue.js": "cc1346d6a620dd08d620c3c4b2d0a349bff27c61d67db92e8a41e09c6a697b48",
+      "src/liquiditystate.js": "819410afad94828f478b2b9b3111172f60fa49d67346c2ecc9abe9348b1d747c",
+      "src/loans.js": "ac2c9f943e9644a3d05f1386e316c7393aa538d3cf070fa2e718a218846b3d2d",
+      "src/made.js": "87eaeda135d22ec07857a230124a8d569301deb53e198aa66b06575596ab51ab",
+      "src/market.js": "aa0a70dbcac67a8dd43e48ec62309ba1aac8e74eca8f3d383bd0caab8c85216d",
+      "src/marketv2keeper.js": "f8a19ac572cd35c34e6cb8855db502751bb1479afc3069e6bf6a25ff5b9cc6c4",
+      "src/marketv2solver.js": "66417314edaa9a63c9e840f69f5d76dd7c10a5a3a2d8746b6bcd8ce66e796220",
+      "src/mastery.js": "bafc39ccd77e6d4055745dd5dcf8b9ad8587317846c3f22176a032a3b0f1d2bb",
+      "src/megaproject.js": "a77412041a2a7de4e761d92b7361fa116cf7f958e59ac62d07e8f995e4c0375e",
+      "src/memo.js": "7b08a6a2e18a4810312bc5196d2703b8a775614e0ea603c660e7bed208b63959",
+      "src/mentor.js": "ad65be148731257d2bf07006ffec004ff1652d5a52c66d7a2384121964f84673",
+      "src/mysteries.js": "9906386dff887b4ab528c6472418b00ae3d8b65ba971379e74065833bf2ea66b",
+      "src/nft.js": "9ee11df2ced5122d874343e9b19414af29879accc0dc32f9d15b86d0d18a9b01",
+      "src/notoriety.js": "4493bb649e9cef8d50efde96137940196c3fc678eb8e913cbe68868246a6be5e",
+      "src/npcwar.js": "3e0cb839fd0cc5c0d8d3affe40dd29a020cdd509e6e7b399c46cbb68263e8de5",
+      "src/operations.js": "198f96a02588fb1ed91d8f95664345657b166094f87ae9a69e05b53dcc95d245",
+      "src/opportunities.js": "15d4376e94cb29326a2608e4b546f8ee83077ed2eb7ab31ed4c5f3647d61c064",
+      "src/ops.js": "474baa732559e292d540662c84dbda487c0c5b5c79cf56267767650284cb9eaf",
+      "src/pass.js": "5508db9764d32bc5c01ce6a6c88c51a4e4fdd9630ccb307f26f754646ff805be",
+      "src/path-funnel.js": "2ab899861ba730297b7b1bab047724d943c58a384d48b025032152d055190cea",
+      "src/path-pages.js": "66b2787827e0b9e6b40965feeea6d36583e9e8206b7f59e45e1a3dd4d10b6af0",
+      "src/payroll.js": "fec42a9af224413fe954d5c3d4e322ab4c9779aba0fee3fc29f057409b701cde",
+      "src/pen.js": "677afe97bd9f4d6f11649931c6c49ccf4fc10202fb22cea72c5b9805879e4654",
+      "src/people.js": "dc5f66953ddb1aa4166a60fdc4962f544cfd39480a53092702dfc75ffedf63b3",
+      "src/phone.js": "502a25fd36e275a289a2ff5486e2a8a94f5616b94592af5bcc60af336181ab5d",
+      "src/player-commands.js": "ab8a7f1ee44a9c9c23d2e2f5fd17b06dffa5048c8d0dbe96859c2ba4bd4cea00",
+      "src/player-opportunities.js": "6390fb110c8de470f9072a8e41c1b3b110d4edd9206d0cf2e935518e584acedc",
+      "src/population.js": "4ec9a185b0e89eb60987d38880c06259a30601b1a7d5fa22ea12037bdcec818b",
+      "src/port.js": "63731e6b37def04bb806dc081734f0b67d5623936a08e941e35d9ef5599798e8",
+      "src/portfolio.js": "1f2d43d52a6f676e0c85828fa69778a322b1a0591997b6102fb1b3823557babb",
+      "src/portrait.js": "e57d4a72fcb67d5dfd591dff39d7c4e603a5ffc8ddd158950ca997f681d1815b",
+      "src/preflight.js": "aace2526ead5c95f10054311d9d77a4f8589bddf26103f40a0b7f6e1b022f705",
+      "src/primetime.js": "e06b526664f4d06b7583405681e8203ece0c8feb689bf36736e07883dc65c985",
+      "src/projection-events.js": "5a1e2866b9aa8fbc65a505960b2092552b87a7bdaa4a892b052125a80e44e7af",
+      "src/push.js": "a958bb1368177fcb758e824e7aa0db7165732ccb7b69c262f39c2bad331dd28d",
+      "src/races.js": "5c3b854f7689550b009543b31494b4ba47b8c8d7758c76a27ee09cdceda78f96",
+      "src/ratelimit.js": "51e239dbd34f9e9822adae4244539d5bf19c2e871fde47059e131688db940d8d",
+      "src/recipe-policy.js": "62706481aa9809f2f5a7b6df85576c89f729e19e85dd33289aeaad350bc8805c",
+      "src/recipe-scarcity.js": "27e2132897c05909c3c594df92abcef32985404e2429c14317a648ab30c32d74",
+      "src/regimen.js": "a3a8886ed1fa45e89f0ac6cf7c6eda6bd0d024e8c858e4a0606d6f4f36b7d9ab",
+      "src/ring.js": "261c97d135518ffe08075acf07913fda312dc0b0982332e05dd13274172a1011",
+      "src/rivals.js": "c1587d37b9cddef1399b51b16817fd6b2543603605fe0446cacbafbd907b43b4",
+      "src/roster.js": "e2061b6bd6315bcafc7f8081f7cceef99d33a123c5f638a878830321d61482a5",
+      "src/router.js": "bbdc25224560e0e2c9676773fc422bb222da53ab96f77af2c3386a77317674c8",
+      "src/routes/boxing.js": "a07d0ca4c209876fd66256bb27b04915658d66dce3807da4822c1333ad87b1a5",
+      "src/routes/casino.js": "91dfd7e1063a7f02e3899840464356a5c2c4decd27b4170d2d90011e45e88b70",
+      "src/routes/commands.js": "95d9722491a220c0ec1d023c5b891b3c5bd805bc9f918da90da49189d356f1a9",
+      "src/routes/content.js": "40a6f2a0a2e6da676f4be6b0d63fb236d2101463b5cea056b4035e5d06514b66",
+      "src/routes/convoy.js": "ce64c3bea9ba57f1385b21a5a6639383398852d88b9ff0ec56aebf4e8a46c6ac",
+      "src/routes/coordination.js": "ae2ec43e4428d27f0c4e4b2d4bbd5e73a08c9a100860f45f7ad7e81ecc474165",
+      "src/routes/deeds.js": "a56cc11a686c361540bc83f85b111dcb5de0937007b78632ef4c0107c6513124",
+      "src/routes/defi.js": "815a42d5c13382007bf3d2287bc7854b0a33a21cb628eedd491ad8f693302d90",
+      "src/routes/diplomacy.js": "4b5dc89c418c7991d1b11070407a401261842ade44ba83cb242e3d3e5514b785",
+      "src/routes/estate.js": "c4a729df729b2775eae113dcc35e1a89353397cd20323fcd20f2aa09deedbd5b",
+      "src/routes/family-operations.js": "efcd47b49b4a69ed889dc386f1c3c3c217b26e3180f98ad3770bf2c677ec0163",
+      "src/routes/heists.js": "27395aeef21064b6d662a37d83aa0e3027696ec05830cb37ee604302468045a1",
+      "src/routes/kitchen.js": "55016b22c622c1642615a9b99aaf0935ca6ecf73523f6b90b9fc8611cb8acc9e",
+      "src/routes/law.js": "829190192ba247ed86c5e13f0e26b214a5a556be012d90242a39358a66f5c223",
+      "src/routes/leaderboards.js": "9f3f7232a01711e43ae9f23123007c46197d72f8405b0aed5db3ea545690906c",
+      "src/routes/modtools.js": "ebdec2fb33a9a160bba64da485e5b96b866a19f2dcd3f8e67cfb45ae10c180a2",
+      "src/routes/pen.js": "040e1742ff48d27809721f44b995f5033ce867097fa8ecf503e91bdbd56434d0",
+      "src/routes/port.js": "789ef6ae236bb537c6dfc1a808688f7611b527a09d31c0be9f1ce1ba9bc48abb",
+      "src/routes/projections.js": "cb58c74c379fb03a6fbcf2aa8c4473ac5283cf20ed4a236e0d89eec41066ed36",
+      "src/routes/races.js": "d7b72e162d0221cb0cdf09c8355dfbbac35ac2d583a99d661765ee6dfb02dc08",
+      "src/routes/rwa.js": "8aba21874a9d414bb7490fd028fe04f5c15f92f9eef23582098306ef5390100a",
+      "src/routes/sov.js": "209593203e48cda58a42fb54dddc3a03a2914f0f0c11512b6e21f846c8f42ba4",
+      "src/routes/speakeasy.js": "6f2eabc67bc54a66e1e722633960f147485f2d01a486d39afdc7142b5a4fed37",
+      "src/routes/stable.js": "cc2c3a0a167f9a9b8ea5da2cec3ec3489b33f4e43b49a1f75726481dd68949da",
+      "src/routes/territory.js": "fd66d50e7f97771988351fa7e9235bd076e97264d3dbb531d2e32d44d40a45fe",
+      "src/routes/underworld.js": "f5ed3884cf5cf928380d144e1beecff6e6b4c842ade46e0d37f614ac410adfd8",
+      "src/routes/world-kernel.js": "bbf4ca70d034cc10dfcda94a9bf80f174d88ae9c985b3f1e4c25118070a88dea",
+      "src/routes/worldgraph.js": "79f36c58583b3d4ce498227d28f27cee93a68091fb72fd144bc1ded14822a158",
+      "src/rules.generated.js": "4c86682b7890b557040270613aa4abed4464257936867d2b499b3051b814d11f",
+      "src/rules.js": "fff8a956f608fcdfa834d86767699aa87026abe58ff1fcb5c18d92c9b467d0bb",
+      "src/rules.tail.js": "ab10af0a70ea476c5f38d16d677daade49840f6a672cde922d841068a7d8b8d5",
+      "src/rwahealth.js": "d926281ee80a04c888528854b0be438a0821b110d7b93ba01b47d77b4fa04011",
+      "src/rwahealthclearance.js": "21d86bc43ae025684f926b5def008a6557bada345e51e060160f1c9fa2dc8d98",
+      "src/rwahealtherror.js": "04adc7f9f098e8918e57df8cd77bd892d01448cd20bbfc9e5f90e025b584e322",
+      "src/rwahealthoverlay.js": "813a48ed3b1a61caf467998b3562e15b10cbc1135647a465d689fa739e0b2814",
+      "src/rwahealthread.js": "fdce5694e5103ce2a974421991a75d99efc3147c5a5575374bfb06f3d73ccde1",
+      "src/rwahealthreview.js": "6bedf363ac6517c0aadec312c47134537bbbcbb822c3ec71849bee1134d9b44d",
+      "src/rwahealthsweep.js": "85eb104db0b4beb50b08b50b6dca00db7e01fa5e37d79efbb6425a3af013055b",
+      "src/rwanominations.js": "ab805f74fec0938f78464c1156c45fea8ce3d32aaed4910ad04d21f0af996b73",
+      "src/rwaregistrylifecycle.js": "e8f9f702152f1983a079192ca319c0090c9866eab6215054af83d7545ca9ccf8",
+      "src/rwastockkeeper.js": "0378aa8c05bae35f34870e88b9393fbe1f1833c92dd2311ce33352375489dd39",
+      "src/season.js": "26d1d0e2f7d798e80a2f61aa26bd488c5bc140bc6294dfff3180797418f0d762",
+      "src/secrets.js": "0f5813baa11640cc299933fd346e9a9d6e31e64df87153f0298dfcc6ca721184",
+      "src/server.js": "fa6119599698ca5bfeefb3b65e1b4195a38ff729d849f1ba9c2eee18f1ee5521",
+      "src/shipment.js": "aead0a23ffa7a8268a6d071d8377ddf47a36be83eb04f75e45f55a96c30ddf3b",
+      "src/skills.js": "554e4799835ce3724afacd1029c28eed39af69c570abe5e9dfcbcb876828e889",
+      "src/social.js": "c10f2874b912cd053dc1b32e98d8794295a7da70a17824aeb3731ce9efe8455c",
+      "src/social/combat.js": "bc9ccbcf684fe4c235b5ac75f92b351f4c7bb85d56e1103ac8593adc15bbd852",
+      "src/social/contracts.js": "5a7b013bd3ff85c1bec7137abe1b142ddff3ebb9fc09fd1140c341be9816d8fc",
+      "src/social/defense.js": "d96854d2e5f1a894204c80108673589838def4b8de46b7268b1ded7a7c684d72",
+      "src/social/estate.js": "e089698b3ae27ae51cdfff10d37167bb5547cff0b330f1f2542c01f56d7d579b",
+      "src/social/exchange.js": "0c2868358b24c6b15a49c46396c69b47d2ed4c770fe9b6d6be52953a0f3b894f",
+      "src/social/gangs.js": "d768b69b1d6473d650594277637c9625824eb8d43f9ea0ee937ec91fcd918644",
+      "src/social/shared.js": "c430f7a1e6334b8b3585d0cf8c6a747a95bd0572984d9f00fca14bd113d840fe",
+      "src/sol.js": "fc30eb05d0ceff6edf072f407ad2c5a23d0b3db4c679df9f4b63ef8699976d02",
+      "src/soldiers.js": "3a012be4403bbd1f8082473574e0718d2b42cbce16ab80e34112991a601ba887",
+      "src/sov.js": "0b376990010d822bea57d308e9769e29d51ab172bc3b0360a3ebc5216efafe8c",
+      "src/speakeasy.js": "30aef75769f562fa7f2ff410acf9a11e2d09cc39df12bddde4afa8c0d6e3434e",
+      "src/stable.js": "d9d36900ed7259e9bea34a387b9a13052d4be98c0b2a10c6b1fe5693ca33f209",
+      "src/standing.js": "c246a54161aea285f8e9459496a760bbee19455444a733f2749a9c5bc61a91d3",
+      "src/stockcatalog.js": "ed4048923114dea8fa384f83f6cf5336b119c347a2b501feb1c93cec59660187",
+      "src/stockcatalogv2.js": "59db1bbf10157d5f4fd47615470633859fc0fad9121ad5348e3a541f411cb04b",
+      "src/stockdeliver.js": "10bf2f2365777f6394ff2b8f2929d3143fc42e865051430bf13fdb9d29a7beeb",
+      "src/store.js": "147660350633ac197277d42ba36a9fcc42f72fba67929ec3bd6e86120311edb2",
+      "src/streak.js": "27570d58536680fcf891d56c6890fde2ea357b645fe414f828f983dd14a3e8f9",
+      "src/streets.js": "d86bb4dd110d19098b9d034c8012f94d9c8dc47311f0bf8c1497dd219822ac51",
+      "src/tax.js": "b7f5e3bc887daae1c62706ba7d7a14ba5bc942575115659f2acf6a045abee9f3",
+      "src/territory.js": "00c69fbff5219806fa1b423b9df78ad285ce21676734cda0a65cd5a929749907",
+      "src/tokenhealth.js": "ae582d5bad87e9f226f434f53959177d945d37a091a0c46d4797cf622838929f",
+      "src/treasury.js": "f9e03264eb51e602b38184e94de4ec9671639f599016a52ee9bff10d726f0707",
+      "src/underworld.js": "edf5f37194dcee22ce5cde7a73e772f639482d52ef0394879a6ddd69bfdd7c3b",
+      "src/v4oraclekeeper.js": "999c0037f55bac96952b1e2054b72e59c02db49ce2868e55c767e342ac0df187",
+      "src/vanity.js": "3d9b88e3f02644c51162b8b4d81367ee2263aff52c5f3ccee410e5f13b6d8c5f",
+      "src/verify.js": "9440aac42b3d4ce6301f9d45958596a8734035e39e631c52402c86bec9a88c12",
+      "src/vig.js": "f84fee1a06dfd51e40ad80d16f736161a3d514c9b2d494869d99c42edaaa3bf3",
+      "src/vouch.js": "f7b1ac74a3899c4768b13af9b8489100a45497de2b5c7623b5037abe6cf5b0a2",
+      "src/walletforge.js": "aecdee359c34348f508811633af2ca397cfce5ac1117d636d6751eb74b333bf2",
+      "src/watcher.js": "68c538e3fb09b40168c4040612f32c0f2d66faffa4b431a65e2f0e6bae354dcb",
+      "src/wire.js": "677f08ead05ff3c38d65b2458a8f2a8e5c79aca9235a9306f5c9e43c8f281490",
+      "src/worker.js": "2717d60f0382f3bdc868af293b7653394ac56e152902fa205e055e1c837c71c6",
+      "src/world-consequences.js": "85cafc080fc5bf80835b898e440c07b9aafed00cd290014d0eaf34f6b52272ec",
+      "src/world-kernel-invariants.js": "7a159ad906041eb72451eaacd26c336ea1e6a5758bc8da6449cc4755e1a94112",
+      "src/world-kernel-query.js": "4b5d98ad87d905c9aad893f0c6fc447ee7b5870a216e76acbc73bb4b8eb16245",
+      "src/world-kernel.js": "d73455c6c13d1c1d6da624fb6fb486e850ee675df8114d96cd9e4cfbb0d4d052",
+      "src/world-knowledge.js": "b5bb787e2a6a5af60a04f28f98061232e936176f114d8ee4e929777cac52e816",
+      "src/world-prerequisites.js": "b10249c0a66af084db8437e426d1f7659c5212390b3113a49e9583503820c2c9",
+      "src/world-projection.js": "89d095d460cfe45526c6c971db379b0e028361921880c7263e484e45b2db90d0",
+      "src/world-telemetry.js": "13fc961ff97d40c7978d089baae0b84490f90be2a4f81ca95d29cfe38b89188a",
+      "src/world.js": "6bd4de7918b3053a51b07d483a1841d7ba43d66469980c9225da7ce7d46ff292",
+      "src/worldgraph-validate.js": "3ed97d98c8dce5a2c45c02f61dc273caaf6a3924863539fa824f32a1b1700565",
+      "src/worldgraph.js": "c7d857551b9f29c742c02bada8282d41d1311b48fb4d52ab7170a5aded2f0979",
+      "tools/rc1-resource-capital.js": "72554dd2d71f77eafafde3711cc0b3d8ef7a9b6d944f57bd2c12c6bc24f9484f",
+      "tools/rc1-resource-journal.js": "a7965549d5ef78fc2453b231cd8ae5862ce66cf7dfc47856b82d38034bf127ce"
+    },
+    "immutableDuringRun": true
+  },
+  "owner": "Codex/resource_proof",
+  "gate": "C02-OPERATION-CAPITAL",
+  "outcome": "SCOPED_PASS",
+  "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+  "startedAt": "2026-09-21T03:17:08.113Z",
+  "invocation": {
+    "command": "node tools/rc1-resource-capital.js",
+    "arguments": [],
+    "node": "v24.19.0",
+    "platform": "win32"
+  },
+  "configuration": {
+    "authority": "createFamilyOperations public create/command service; runEstate canonical death transaction",
+    "clocks": "Unmodified application and PostgreSQL wall clocks",
+    "fixtureExpirySeconds": 60,
+    "productionPilotExpirySeconds": 86400,
+    "worker": "No Family-operation expiry worker exists; canonical expire command performs recovery",
+    "contractRails": "No chain calls",
+    "simulation": false,
+    "population": 4,
+    "serviceFlags": {
+      "enabled": true,
+      "knowledgeEnabled": true,
+      "sharingEnabled": true
+    },
+    "omittedOperatorConfiguration": "HTTP/server feature flags, deployment services, integrations and secret-source identities are not attested by this direct-service fixture"
+  },
+  "exclusions": [
+    "Original 24-hour pilot lifetime and long-duration simulation",
+    "HTTP transport/authentication and full Player Command dispatcher",
+    "Natural progression and combat-earned death (canonical estate transaction is invoked by the trusted harness)",
+    "Full resource simulation matrix and deployed configuration",
+    "Process crash and backup restore; pool/service reopen only"
+  ],
+  "scenarios": [
+    {
+      "name": "expiry:create",
+      "outcome": "PASS",
+      "journalHash": "d26a8537da7d3a52ac6b680fac5c0d140c2191e0dbad82ceb583ee677728dff9",
+      "movements": 4
+    },
+    {
+      "name": "expiry:publish",
+      "outcome": "PASS",
+      "journalHash": "19fb69e3bd9ef401e610d4144f993eadda7ad799315761f80703c1fc1354c7af",
+      "movements": 4
+    },
+    {
+      "name": "expiry:join-organizer",
+      "outcome": "PASS",
+      "journalHash": "0b626fbdc271160c25cdf09f9f4c50d99b22f61b3cde7eb303fee70c830d9b93",
+      "movements": 4
+    },
+    {
+      "name": "expiry:commit-capital",
+      "outcome": "PASS",
+      "journalHash": "15719aca075b6481581d4c4271a1a1bd83eb34360e34d35fbeac56b2f67e0ca1",
+      "movements": 4
+    },
+    {
+      "name": "expiry:deposit",
+      "outcome": "PASS",
+      "journalHash": "1b484d2ed4af1d50ec2fc136f7d49d6438e44460964d84c8eee5f51e7153fc15",
+      "movements": 5
+    },
+    {
+      "name": "expiry:early-refused",
+      "outcome": "PASS",
+      "journalHash": "a83fcf29f9652270f80f2142a59045217efcb20a67c44aa2e0fdca669cca4a38",
+      "movements": 5
+    },
+    {
+      "name": "withdrawal:create",
+      "outcome": "PASS",
+      "journalHash": "190f91be9c065db00cf23949bfe54b863c0c551d5ee8cfdcec01c6e272bf7645",
+      "movements": 5
+    },
+    {
+      "name": "withdrawal:publish",
+      "outcome": "PASS",
+      "journalHash": "1783b7697ddcd0f9466e79f978b85504edb0d7a11938a2e1ac9a2e5201685b6e",
+      "movements": 5
+    },
+    {
+      "name": "withdrawal:join-organizer",
+      "outcome": "PASS",
+      "journalHash": "4e65ff546f1e5ffcfc188f014c31a3962d2dbb7d2684adfeb63373fbfa6c5b76",
+      "movements": 5
+    },
+    {
+      "name": "withdrawal:commit-capital",
+      "outcome": "PASS",
+      "journalHash": "bcb670d61f31fea4b73aeb373bb0ca3d991745acbefcbd27125402344e59a6b5",
+      "movements": 5
+    },
+    {
+      "name": "deposit:ledger-failure-rollback",
+      "outcome": "PASS",
+      "journalHash": "cb9f9bedf828d4f1ab1c4e752eb762f44f313200a0dec1d53816a070f62173d8",
+      "movements": 5
+    },
+    {
+      "name": "deposit:concurrent-exact-duplicate",
+      "outcome": "PASS",
+      "journalHash": "d67e39758d1e8acc3faae3b41e4c09929d6a3bfe82eda4a95783810e2b585e3d",
+      "movements": 6
+    },
+    {
+      "name": "deposit:lost-response-replay",
+      "outcome": "PASS",
+      "journalHash": "94795c2ad491eb325845753a3386fbabe414f30c709ee738963f5efac69b0186",
+      "movements": 6
+    },
+    {
+      "name": "deposit:unauthorized-role",
+      "outcome": "PASS",
+      "journalHash": "a57e641590ce014e3f76b859739ff0659d12d1f91cb8633faa76f76b46120f76",
+      "movements": 6
+    },
+    {
+      "name": "refund:ledger-failure-rollback",
+      "outcome": "PASS",
+      "journalHash": "1271f3800588e0aec01d2eee74f5c01bc09c11e437b51758b13a6c1eaa698c5d",
+      "movements": 6
+    },
+    {
+      "name": "refund:withdraw",
+      "outcome": "PASS",
+      "journalHash": "7d814b2942168138f1f211e6027c8ecde5389232e0459f82088991e8540516f7",
+      "movements": 6
+    },
+    {
+      "name": "refund:exact-replay",
+      "outcome": "PASS",
+      "journalHash": "be418e622b0fa09655f5467dc93336712d3896899d26271d138a62024069f1fa",
+      "movements": 6
+    },
+    {
+      "name": "withdrawal:cancel",
+      "outcome": "PASS",
+      "journalHash": "4defbd6b4ec13012a5a7b466b76ca531f8f01044cb7d7d1a410a01a545f7abea",
+      "movements": 6
+    },
+    {
+      "name": "cancellation:create",
+      "outcome": "PASS",
+      "journalHash": "8faa6196fa1a689bc8cf8051515156ee299eb0d1d5c19a44affb8f41170b840f",
+      "movements": 6
+    },
+    {
+      "name": "cancellation:publish",
+      "outcome": "PASS",
+      "journalHash": "d14d03ba81118ec94f985089ec4ef99bec3a2494cbd5926c8dcd918b782610ab",
+      "movements": 6
+    },
+    {
+      "name": "cancellation:join-organizer",
+      "outcome": "PASS",
+      "journalHash": "6f70a8f60bbba4bdfcf099c5cfdf7cc33fa3160d31739d4da2630aecd16d7a5c",
+      "movements": 6
+    },
+    {
+      "name": "cancellation:commit-capital",
+      "outcome": "PASS",
+      "journalHash": "d619563d69632794850514b21c3070a544b1ee7960dd701fc1165af8a1999072",
+      "movements": 6
+    },
+    {
+      "name": "cancellation:deposit",
+      "outcome": "PASS",
+      "journalHash": "74edb9a4690b18ddcb9f0ccb9563419a75ba1b9219717fe892068894fc30bada",
+      "movements": 7
+    },
+    {
+      "name": "cancellation:refund-rollback",
+      "outcome": "PASS",
+      "journalHash": "3a11f0a1303309339e44b408bcbc6606e301942d2c35185843de08eb55de519d",
+      "movements": 7
+    },
+    {
+      "name": "cancellation:refund",
+      "outcome": "PASS",
+      "journalHash": "9617beca31a17e778dfa32678834dd35d7a9822d6cfcec9b7f1456277af03526",
+      "movements": 7
+    },
+    {
+      "name": "cancellation:exact-replay",
+      "outcome": "PASS",
+      "journalHash": "c70849daca4121f37684ea2d1d99ac8577f0efe5f8df53b0f6bd8290841daf62",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:travel-to-source",
+      "outcome": "PASS",
+      "journalHash": "404a04d140acc3010066abe4a03d73250651c09c46c0aa7275096921637c620a",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:start",
+      "outcome": "PASS",
+      "journalHash": "78503dbcef38d2387638d1ed6235807224ea118e17cbfb3767222d9745dca9ca",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:complete",
+      "outcome": "PASS",
+      "journalHash": "f578d6155162186d926003a97011ac2d286aa90e1a2d141ccd9b15b250610e95",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:discover",
+      "outcome": "PASS",
+      "journalHash": "5a0b322bbc4a3ee7eac86a1391cc86af503dc515515d2086fc31ef4275af88ab",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:share:capital-organizer",
+      "outcome": "PASS",
+      "journalHash": "207e14be5fb5d57a9cab8c5b9854603ae20126c9f8c89209b3c237d8f5d69c3e",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:share:capital-researcher",
+      "outcome": "PASS",
+      "journalHash": "10fb8757509d689263d76b00f63a302761cea56e23ac066fc082827fa709ea29",
+      "movements": 7
+    },
+    {
+      "name": "knowledge:return-to-foundry",
+      "outcome": "PASS",
+      "journalHash": "b804875b6e925510aac1af7944d8041e964f987ec871b261f143e812cf8ed2f1",
+      "movements": 7
+    },
+    {
+      "name": "materials:salvage:locksmith",
+      "outcome": "PASS",
+      "journalHash": "509562171370bc13590e1b269de09c2ace249ce361cde94c4e7f1d8cfb9e1ae5",
+      "movements": 7
+    },
+    {
+      "name": "materials:salvage:supplier",
+      "outcome": "PASS",
+      "journalHash": "160c5406446fd8950f640a7e3b0f154d8d60dbf58de5207da3513fa47c9f9fa6",
+      "movements": 7
+    },
+    {
+      "name": "materials:craft-operation-key",
+      "outcome": "PASS",
+      "journalHash": "d05a0e7434d50e1864bd5d45368e5b9543d5af06909d462bc7359072bd9368ff",
+      "movements": 7
+    },
+    {
+      "name": "spending:create",
+      "outcome": "PASS",
+      "journalHash": "7069ebdeb3ef37d3fb6f9da5944dfe37563147c27855bda70e50aaf97844355e",
+      "movements": 7
+    },
+    {
+      "name": "spending:publish",
+      "outcome": "PASS",
+      "journalHash": "249b11b5a407e8faa90afa5c975e6bd4065941bf8ad85c254dcd408019b93ed2",
+      "movements": 7
+    },
+    {
+      "name": "spending:join-organizer",
+      "outcome": "PASS",
+      "journalHash": "54e19d4e9985e07c90ab09002061b9f8b8816e8f94bf1ce4a84d31b41a5e5288",
+      "movements": 7
+    },
+    {
+      "name": "spending:commit-capital",
+      "outcome": "PASS",
+      "journalHash": "4c7d385a7879e95a626e1689e65067dac30ab8d4c9e0e7cd2221951b9439be60",
+      "movements": 7
+    },
+    {
+      "name": "spending:deposit",
+      "outcome": "PASS",
+      "journalHash": "172023a0925540ed0f29f9ffe756213a11af7311d3d17c66087a7d8212e75703",
+      "movements": 8
+    },
+    {
+      "name": "spending:join:locksmith",
+      "outcome": "PASS",
+      "journalHash": "32962f1684894d31129492600341aa8cd85ad38922f68263c6efad4dd71e5c6e",
+      "movements": 8
+    },
+    {
+      "name": "spending:join:supplier",
+      "outcome": "PASS",
+      "journalHash": "f85c27abed0c17277baf31499a9bfaaf67bc0b331107a7c8b17985c1ea01c081",
+      "movements": 8
+    },
+    {
+      "name": "spending:join:researcher",
+      "outcome": "PASS",
+      "journalHash": "aa455ef73b61da93fe4d398bee76799ab23522e4f60135631681cc5a6a1aa321",
+      "movements": 8
+    },
+    {
+      "name": "spending:commit:presence",
+      "outcome": "PASS",
+      "journalHash": "553fbd183a76c602f8c1710c990d9fea0a4f098d039c2e8f169092c12042b2c1",
+      "movements": 8
+    },
+    {
+      "name": "spending:contribute:presence",
+      "outcome": "PASS",
+      "journalHash": "7c9b5c3f85ab518612c88044af1445f4b05e64a68a5d4ed1f3c0f39f9023d204",
+      "movements": 8
+    },
+    {
+      "name": "spending:commit:archive_key",
+      "outcome": "PASS",
+      "journalHash": "1ccdf125e551aed3a54bf7d5b74805ffb65e52a03ca99816bb34d496e8d8d8d3",
+      "movements": 8
+    },
+    {
+      "name": "spending:contribute:archive_key",
+      "outcome": "PASS",
+      "journalHash": "535e0a8da813f5068250de04e74d49c6158091d2d2713e2ea75aaa7a1e094e74",
+      "movements": 8
+    },
+    {
+      "name": "spending:commit:wire",
+      "outcome": "PASS",
+      "journalHash": "52cfd064deb47c662bd27df2f7fda9c952b81522d851a449b52988b8ab24330d",
+      "movements": 8
+    },
+    {
+      "name": "spending:contribute:wire",
+      "outcome": "PASS",
+      "journalHash": "0aacfa333cd5595b9b960d79822e99cccf7faf93cb563f0af707789d9f9bfbcd",
+      "movements": 8
+    },
+    {
+      "name": "spending:commit:ledger",
+      "outcome": "PASS",
+      "journalHash": "a075d4eeb00f89d81510beffae63eb9640b84d95251cf08dcff761db50f6d817",
+      "movements": 8
+    },
+    {
+      "name": "spending:contribute:ledger",
+      "outcome": "PASS",
+      "journalHash": "77430ba940fabff613ecef6606558298c0b73730c5ebf4ae8af7b5bbbd39d1be",
+      "movements": 8
+    },
+    {
+      "name": "spending:approve",
+      "outcome": "PASS",
+      "journalHash": "be07dac9cd12955db98591933950fa27cbae512c7455108a03fb97ebe4361cb1",
+      "movements": 8
+    },
+    {
+      "name": "spending:world-and-custody-rollback",
+      "outcome": "PASS",
+      "journalHash": "c692858dad1f946e1c35d06c2cd2cc40ee3c9792558f2008dd72158e66509fb8",
+      "movements": 8
+    },
+    {
+      "name": "spending:execute",
+      "outcome": "PASS",
+      "journalHash": "a2a0ac546e84b34548aec76a6c69d791c27c65192bcba45f8cf3111dabdfd0ae",
+      "movements": 8
+    },
+    {
+      "name": "spending:exact-replay",
+      "outcome": "PASS",
+      "journalHash": "f37315850cff267454be3e21c53f3268619c632a311d48cc01ec1f8b3d9a9020",
+      "movements": 8
+    },
+    {
+      "name": "spending:new-key-terminal-denial",
+      "outcome": "PASS",
+      "journalHash": "a7670130bc4dddf5f8f1eb5ff5a7a79df8a4b0b4a26ec9d3250761cf67b2ed0e",
+      "movements": 8
+    },
+    {
+      "name": "expiry:refund-rollback",
+      "outcome": "PASS",
+      "journalHash": "0bace9c0c0459bc253583d9ad414e02042cc75e8d4e31d66e3abe34a6339b7bf",
+      "movements": 8
+    },
+    {
+      "name": "expiry:canonical-refund",
+      "outcome": "PASS",
+      "journalHash": "430e90dab5ac28f373385ad84bc870e56ed0b0e1aebf233ff0b5ab2936e7d890",
+      "movements": 8
+    },
+    {
+      "name": "expiry:exact-replay",
+      "outcome": "PASS",
+      "journalHash": "cf276a14f10e9cb77f5c41c7555292d5063197025ad86093e90bc56ac1f9815d",
+      "movements": 8
+    },
+    {
+      "name": "death:create",
+      "outcome": "PASS",
+      "journalHash": "a5dad98b3c160aaadca118105093e9c07b7a49e234e0b31298fd7800a9b25a26",
+      "movements": 8
+    },
+    {
+      "name": "death:publish",
+      "outcome": "PASS",
+      "journalHash": "53a838187142f401c54e197521edc9c273667309d7889802481d0c58bdbf12e0",
+      "movements": 8
+    },
+    {
+      "name": "death:join-organizer",
+      "outcome": "PASS",
+      "journalHash": "2e8173cf1062cdfa824924d63881b50a4095dff0ab21d5b4395a43d880ea0c90",
+      "movements": 8
+    },
+    {
+      "name": "death:commit-capital",
+      "outcome": "PASS",
+      "journalHash": "1405c183c533b887eabfc00e45bcecc5cf4a7c420fc313080fe7052aebccdb30",
+      "movements": 8
+    },
+    {
+      "name": "death:deposit",
+      "outcome": "PASS",
+      "journalHash": "c8cfdac7df23c2fcc7d20909063817b27c33f626af929dda8dac718079a2658b",
+      "movements": 9
+    },
+    {
+      "name": "death:canonical-estate-and-heir",
+      "outcome": "PASS",
+      "journalHash": "ec87794fa911d7bf5b23caf25456d880958e0ab4739f5b2f9eacf697851016f8",
+      "movements": 10
+    },
+    {
+      "name": "death:forfeit-rollback",
+      "outcome": "PASS",
+      "journalHash": "88d174b17760dcc1813a1247654872abe54ab6597909cff107c87602677095da",
+      "movements": 10
+    },
+    {
+      "name": "death:replacement-cancellation-forfeits",
+      "outcome": "PASS",
+      "journalHash": "6dd1bfc1a3a4723f1dcdd4cacc9f9cfe522dabb889516097f281f864979dbac3",
+      "movements": 10
+    },
+    {
+      "name": "death:forfeit-exact-replay",
+      "outcome": "PASS",
+      "journalHash": "bbffa50e3dec08e2d9dadca816bf32b7ce5ba51552181dc1afb5dfc8585e274a",
+      "movements": 10
+    },
+    {
+      "name": "restart:forfeit-receipt",
+      "outcome": "PASS",
+      "journalHash": "cb24ad712b5fd05d82a643480fbf4e34818271e4483b7f43eec48aacd061e65a",
+      "movements": 10
+    }
+  ],
+  "database": {
+    "name": "rc1_capital_a3a8b99121371fa1",
+    "version": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit"
+  },
+  "fixtureGrants": {
+    "accounts": [
+      "capital-organizer",
+      "capital-locksmith",
+      "capital-supplier",
+      "capital-researcher"
+    ],
+    "perCharacter": {
+      "cash": "100000",
+      "respect": 10000,
+      "location": "foundry",
+      "muscle": 50,
+      "cunning": 50,
+      "speed": 50
+    },
+    "family": "capital-family",
+    "crew": "capital-crew",
+    "cars": [
+      "capital-locksmith-car",
+      "capital-supplier-car"
+    ],
+    "initialOperations": 0,
+    "omittedClaims": [
+      "Natural formation/progression",
+      "Natural acquisition of fixture cars"
+    ]
+  },
+  "dispositions": {
+    "held": "0",
+    "refunded": "300",
+    "spent": "100",
+    "forfeited": "100"
+  },
+  "endedAt": "2026-09-21T03:18:15.113Z",
+  "artifacts": [
+    {
+      "file": "actions.json",
+      "sha256": "6831fb86ee7b0f735cdf4b3c1f607bd9b335effbb2d4c636c4ec35aab308be24"
+    },
+    {
+      "file": "final-state.json",
+      "sha256": "c79a192dbf2294dfc48637aa03b6b6e2c9638edfb478f432ca525f7cfce59574"
+    },
+    {
+      "file": "initial-state.json",
+      "sha256": "f4b834cedd92c27fa65110546131eb8eb41fa7836e82abf1b9581f43c7bd1035"
+    },
+    {
+      "file": "movements.ndjson",
+      "sha256": "4e2fe039bb20847bff013ac574fa0e9af42709d768964d8ba12c6d5349e48686"
+    }
+  ]
+}

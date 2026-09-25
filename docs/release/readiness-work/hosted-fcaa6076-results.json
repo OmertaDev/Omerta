@@ -1,0 +1,202 @@
+{
+  "format": 1,
+  "state": "FAILED_HOSTED_REGRESSION_RETAINED",
+  "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+  "releaseReady": false,
+  "workflows": [
+    {
+      "name": "CI",
+      "id": 35569157185,
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35569157185",
+      "conclusion": "failure",
+      "metadataSha256": "e2326e4b3de82d63296fe84efd0407c8338e1b08afdf16ac1eba3f3ff24ff672",
+      "logSha256": "4d839f71e6293decfc72467113c975a841993cfc1e0eaeab44bab2d5f9da279b",
+      "jobs": [
+        {
+          "id": 106236926640,
+          "name": "real Postgres (16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236926853,
+          "name": "real Postgres (18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236926883,
+          "name": "suites + sim (pg-mem)",
+          "status": "completed",
+          "conclusion": "failure",
+          "failedSteps": [
+            "npm test (the full suite, on pg-mem)"
+          ],
+          "skippedSteps": [
+            "knowledge artifacts carry the merge's own revision (main only)",
+            "Invite-only launch admission and Crew allowance",
+            "RC1 telemetry isolation and complementary campaign regressions",
+            "RC1 private command diagnostics and passive confirmation regression",
+            "RC1 original worker scheduling and diagnostic harness controls",
+            "economy sim (§10.4 drift-0)",
+            "scale (population-scale market reachability + §10.4)",
+            "install chromium for the client harness",
+            "Invite gate and Crew invitation controls in the browser",
+            "mobile (every screen at phone size — overflow, the fold, nav targets, page errors)",
+            "Post Run actions/setup-node@v7"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RC1 Linux termination and recovery",
+      "id": 35569159408,
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35569159408",
+      "conclusion": "failure",
+      "metadataSha256": "857df773f99518edea40502c6ceca2000ae212b540efa0dd54231daf1d9b5ed8",
+      "logSha256": "710e915afb731c46ea4d59913c0e12fcfac78085c80e897b5a82f800f74d899c",
+      "jobs": [
+        {
+          "id": 106236932749,
+          "name": "Original resource timers (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236932877,
+          "name": "Legacy authority (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236932942,
+          "name": "Policy and loan lifecycles (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236932943,
+          "name": "Linux recovery (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "failure",
+          "failedSteps": [
+            "RC1 newcomer phone journey on PostgreSQL"
+          ],
+          "skippedSteps": [
+            "Connected social, investigation and conflict phone journeys",
+            "Nine production-process termination barriers",
+            "Check out the observed Render rollback predecessor",
+            "Install predecessor dependencies from its own lockfile",
+            "Upgrade, rollback and replay against the pinned predecessor",
+            "Post Run actions/setup-node@v4"
+          ]
+        },
+        {
+          "id": 106236932948,
+          "name": "Original escrow lifetimes (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236932962,
+          "name": "Linux recovery (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Connected social, investigation and conflict phone journeys"
+          ],
+          "skippedSteps": [
+            "Nine production-process termination barriers",
+            "Check out the observed Render rollback predecessor",
+            "Install predecessor dependencies from its own lockfile",
+            "Upgrade, rollback and replay against the pinned predecessor",
+            "Post Run actions/setup-node@v4"
+          ]
+        },
+        {
+          "id": 106236932964,
+          "name": "Isolated two-hour world smoke (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236932971,
+          "name": "Legacy authority (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236933007,
+          "name": "Original resource timers (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236933030,
+          "name": "Isolated two-hour world smoke (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236933042,
+          "name": "Policy and loan lifecycles (PostgreSQL 16)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        },
+        {
+          "id": 106236933051,
+          "name": "Original escrow lifetimes (PostgreSQL 18.4)",
+          "status": "completed",
+          "conclusion": "success",
+          "failedSteps": [],
+          "skippedSteps": []
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "finding": "RC1-TOOL-29",
+      "scope": "CI full npm suite",
+      "cause": "Knowledge artifacts generated with mixed source/generated commit; unchanged consistency check failed",
+      "retest": "Local clean generation now passes; fresh hosted full suite required"
+    },
+    {
+      "finding": "RC1-TOOL-28",
+      "scope": "Recovery PostgreSQL18.4 newcomer phone",
+      "cause": "Pending receipt/render timing inferred from controlled and native diagnostics; exact hosted interleaving not recorded",
+      "retest": "Repaired four-width native test passes at09119b29; hosted rerun required"
+    },
+    {
+      "finding": "RC1-05-HOSTED-GOLDEN-FOCUS",
+      "scope": "Recovery PostgreSQL16 golden phone",
+      "cause": "Immediate focused-input assertion failed; separate causal native draft-loss defect reproduced, hosted exact interleaving unobserved",
+      "retest": "Runtime repair and complete affected retests pending"
+    }
+  ],
+  "scope": "Ten of twelve recovery jobs passed, including both original one-hour escrow jobs. Both Linux jobs failed and their skipped steps are retained. No previous pass transfers to the changed candidate."
+}

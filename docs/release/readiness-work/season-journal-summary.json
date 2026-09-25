@@ -1,0 +1,3655 @@
+{
+  "format": 1,
+  "owner": "Codex/resource_proof",
+  "scope": "Pure seasonal status and exact prestige journal, complete original worker job boundaries",
+  "repairedProductionBase": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+  "gateStatus": "OPEN_REQUIRED_PROOF",
+  "runs": [
+    {
+      "runId": "season-journal-48014a6666c2-3766d0b871",
+      "source": {
+        "revision": "48014a6666c2d785ba19e88db6fb11c95ac38c58",
+        "gitTree": "7361630a549ff82ab96c6612bb6404fae47b43b5",
+        "checkoutSha256": "986e51bdefb17c9903d90244165504ed98e4bf0f1a34a7e21b3987d33797a918",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "manifestSha256": "90add865e5409360a5329f2e759e1ecf18def60fd9d4cd3797f296759dba70a4",
+      "seed": "rc1-season-journal-alpha",
+      "startedAt": "2026-09-21T07:05:56.252Z",
+      "endedAt": "2026-09-21T07:06:12.003Z",
+      "artifactHashesAndHistoryVerified": true,
+      "boundaries": 0,
+      "completeInputsReconciledIndependently": 0,
+      "nonmonetaryChecks": 0,
+      "exactPrestigeEquations": 0,
+      "exactPrestigeUnitsCreated": "0",
+      "canonicalInvariantSweeps": 1,
+      "canonicalChecks": 55,
+      "unsupportedReasons": {},
+      "negativeControlsIndependentlyRejected": 0,
+      "logicalHours": null,
+      "timerCounts": null,
+      "originalRolloverCount": 0,
+      "failure": "Retained harness configuration failure: missing required Director foundation flags; no seasonal job ran.",
+      "artifacts": [
+        {
+          "file": "initial-season-state.json",
+          "sha256": "0f5a89e0d2eb72dec873253416a88970ee7426dbb1266d0b732c924725613e47",
+          "bytes": 11364
+        },
+        {
+          "file": "failure-worker-schedule.json",
+          "sha256": "0df402526fd1783e27a91a41bce82ff34c22d6cf9f3e3c6ebc873bb40c4bdaea",
+          "bytes": 303691
+        },
+        {
+          "file": "failure-season-state.json",
+          "sha256": "522c67f9b1c49862deed325f49555a50492afc18caf72d1a0887ab85501af15c",
+          "bytes": 11364
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "38e6a84c8fd828fd5067d15e3af437cb313a6019aa8410918de1e8ce36fd777c",
+          "bytes": 7391
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "season-journal-bfa51a3f96ab-609c0270e9",
+      "source": {
+        "revision": "bfa51a3f96abac30243a5989a997e311eb947c18",
+        "gitTree": "db67db144f874bff5e8d0e6928f4811358bb0e75",
+        "checkoutSha256": "082c29ea0e96475e024bc8645a4f2a3a2a774318e893c09be0bec63c987c8d5c",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "manifestSha256": "f80ad861320fb3e60a8680740ba61150cf8be7c6223631c369eea038d607dc23",
+      "seed": "rc1-season-journal-alpha",
+      "startedAt": "2026-09-21T07:08:20.120Z",
+      "endedAt": "2026-09-21T07:11:42.406Z",
+      "artifactHashesAndHistoryVerified": true,
+      "boundaries": 674,
+      "completeInputsReconciledIndependently": 674,
+      "nonmonetaryChecks": 2704,
+      "exactPrestigeEquations": 1348,
+      "exactPrestigeUnitsCreated": "8",
+      "canonicalInvariantSweeps": 4,
+      "canonicalChecks": 220,
+      "unsupportedReasons": {
+        "initial-standing-selection-not-independently-recomputed": 2
+      },
+      "negativeControlsIndependentlyRejected": 14,
+      "logicalHours": 673,
+      "timerCounts": {
+        "directorTick": 8076,
+        "guardedTick": 673,
+        "guardedSeasonTick": 673,
+        "health-boundary": 8076
+      },
+      "originalRolloverCount": 2,
+      "failure": null,
+      "artifacts": [
+        {
+          "file": "initial-season-state.json",
+          "sha256": "ae815600b1e4ca4cba80be1698fceac78d9076969efef319852d1d933a831297",
+          "bytes": 11364
+        },
+        {
+          "file": "season-boundary-00001.json",
+          "sha256": "93e3c526447a34a4eaf61d360076b8d77d5cb40e2afa53a337c584f20811be62",
+          "bytes": 24710
+        },
+        {
+          "file": "season-boundary-00002.json",
+          "sha256": "aea8bc9a56705e77bb1303ef1392018d0c9a8c21ed62388b9a4af6e55b67f71e",
+          "bytes": 27610
+        },
+        {
+          "file": "season-boundary-00003.json",
+          "sha256": "5b55934b13211e1c93ff84b32fcf9b90160817fa4467a953084e6e5b713c19e8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00004.json",
+          "sha256": "27f131f9a39124a21e4d55ece5c473d507c3203c33d6910b2ef1c28e863aa08a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00005.json",
+          "sha256": "c65a96e9ce74bbea50b48659c6a9ce7e90b5e39ea0e4a79651d49ab8a31cae51",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00006.json",
+          "sha256": "7a29941fc11c46d4d78f5bb6899806b519484ca3caa8128cdf9580b54899dc3e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00007.json",
+          "sha256": "67117d1ed89b8a9b4be896e50482d32824f5dd787c46aadf1803178d7782fac8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00008.json",
+          "sha256": "ae03aa02d669bd5f6f2481797c922a224af8e2228fd228bd985f8cd542932f62",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00009.json",
+          "sha256": "6991470016f018417bd3762eabdc6d5cfb61364eafe913f12d102c034184ea32",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00010.json",
+          "sha256": "da32346a2a26ed0fce7571ea8624f27e9cb179c19c79efe81764d3936ed0c929",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00011.json",
+          "sha256": "66004a567fcc3c1835f8a4601dab2ebc1996de86323e992b308c277bc203e56b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00012.json",
+          "sha256": "6156547c4a88651fa894debfb018b46f4bf3280fcae846dece8f019111374a34",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00013.json",
+          "sha256": "0a631cc1243e145ea9806366e53699faab9a5c96c8a288556bb787ea6f42b6c4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00014.json",
+          "sha256": "c93f04b303d559a54e39ab6adde8735679d757e486ac66bf432741f9f126ab9c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00015.json",
+          "sha256": "e366787ba85641b2ea9724d57b00552ea86f55e3d596cf27ea437fc75588ccc9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00016.json",
+          "sha256": "129ffaf2b175ca904ff18a3c7e7e9196e6789202fac5baa9b2d30216b90b4c9f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00017.json",
+          "sha256": "671b24a7deb1f9980e27bb31bf267fbdbdf7de7c602e606ee5dbd5e7009de0b9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00018.json",
+          "sha256": "75560cb529766ac550236461bd10d2d30dd30b3a83986a357eb39b143ec93c66",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00019.json",
+          "sha256": "366959c72a738d6f44678bdf80987e3d21f02830334ed82fff4cfd2964f024ff",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00020.json",
+          "sha256": "feb83f5f88658140da6dcd73823cc66cab13d39f1a06ec712a2755eb34d70b5a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00021.json",
+          "sha256": "c3254896f5b97492fc1ea07f641fe910cd7fc379390a8be7aa4dbfa5e48807e9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00022.json",
+          "sha256": "83062d6e52784dd89b28aa7d19d51712d3605a02dc12fe09cb8354d930c5b5ed",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00023.json",
+          "sha256": "5513ef0f0184cb25b7afbc6696dd564bc0f6fd4ac8a88c3e13f95d3116f05483",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00024.json",
+          "sha256": "f7e2e112af0d25a8179bfeff33c391b1a4aa9e7123ff51aa95b58bc087512d8a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00025.json",
+          "sha256": "deecc4195fb167ed6c64c1907746b31ba38fcb2a13d41dcb38f04b77a5e50869",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00026.json",
+          "sha256": "60abf123fd6eda48cf67a5f06c7d606571b6a7d4c0e8239caf75a1244c5ff96e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00027.json",
+          "sha256": "581323c0801cfbf79ef2c3d4f1b271a70f93de69b73e3b4ae0b98d0ae085a7db",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00028.json",
+          "sha256": "e5674bd03f20ff85239b590b2cbfa5ed2fd5b82863370fefe1ea57cfbc488c4e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00029.json",
+          "sha256": "88cf92f5ec642645f81e850ca371075327a1867604b8e93ad9fda17cf95b76fa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00030.json",
+          "sha256": "ee925a75297a9db9f29bd015268185a11f3d535c5893cc82997bc23ed98784f9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00031.json",
+          "sha256": "63ab5082e4b94d997a5cb43df1e62561ed549c1e9a4a5dd405cc7a5ad34640cf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00032.json",
+          "sha256": "d5782b66ca6ffefe78a826a2e28f7dd5ab502ec3b7ecf890603b9370bcf1801e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00033.json",
+          "sha256": "7ebfd0577f43adde17ce2e15c97f9f78a889cfde34994d1cad67a42476249971",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00034.json",
+          "sha256": "e6d58ca94bf9674928ee800478e4e071ce9e758e5c24fdac2b09da5f30687e67",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00035.json",
+          "sha256": "9bc69034b3d9cd9d041783c149799a155e8328d74ad6e25779c115ae823f3305",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00036.json",
+          "sha256": "b66a4c836ec58d8d9d1a64df22a35e21485cc7794987a13b4a7740499e4363ad",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00037.json",
+          "sha256": "1914e3903931270f1eb4de94e5ea9406cc0a66e3dcf893dfc3391c7f0c754173",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00038.json",
+          "sha256": "dc6ec8f82c5ada275b42357af92addc6179dd5f1132e85124a347c4710f73dac",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00039.json",
+          "sha256": "67eb6b7988906a8dfc7dc504653f305dcb96f3af47282c40ea611e4f339731d2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00040.json",
+          "sha256": "67c9f43f33494f57cd9ad358ef758372101e0c4d0d835d687e749318e6bb6f6b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00041.json",
+          "sha256": "2d25077bce11cc9d4f4f6bd6090736a2f93b43a0289e2c5dc503e04999f92b2c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00042.json",
+          "sha256": "3f99da2c5b1612d66d8dd55f1a24bb9319066b25433f37470b7b3bd4284cd7a7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00043.json",
+          "sha256": "14fb842c095044efd83e1e3615d198033d93d219c1bddc8f5876f2242d28996b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00044.json",
+          "sha256": "2efcde8f19743addbcafba660146ed6e03fd8d40fa2024de6dfb1f152aae1687",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00045.json",
+          "sha256": "f6491a0bfc5eb0dd96ccd85ab72190a481ed9d885e3f2b3d049280a176dabaaf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00046.json",
+          "sha256": "51285526e9f2d6fb402926b28bf3d0b5e61c04f94d7b98dbdca2c215d1ac5b1c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00047.json",
+          "sha256": "57bbe68ed3542b9cad789885a00ca0f7a6378b08ac7dc66878212fe8a9565123",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00048.json",
+          "sha256": "b09b2ce11d3a24f296311b01d503d2ece7630cd1b3db74ed383778e34ff9af25",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00049.json",
+          "sha256": "88bc6d13fb0207c00bb297672dcb89ccc48b21882f16369b989428ba8e2140ef",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00050.json",
+          "sha256": "80ec017b4b83962cc33b9105540a3186dd721ca8f42c95b986afe65e93cd5b7f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00051.json",
+          "sha256": "7d8722405ed8f495f2456b8f389fc01f1418dfac58a9ea2365943f5d162e7c49",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00052.json",
+          "sha256": "524f3600c927734397043b016c3465b55fb8801ea4b2813ac7b2cf4644a3c6dc",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00053.json",
+          "sha256": "b00c3b53c0260683bd6650b9fbd7de2699591e948f06d5ebcce68d9b0f5c968e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00054.json",
+          "sha256": "fad2f9198082dfc6807020095edb3e857653ac1c9535725f4d51285686f0de4f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00055.json",
+          "sha256": "d5c2c2649977243bedddea1c790a2822d77c61dfddf5136ed62fe63677b993b8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00056.json",
+          "sha256": "fe897a4f74269db4d73290d6ece2b030cc1fa8b012545651fbb9aaaac93cf3fb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00057.json",
+          "sha256": "8ab7cd5d1df61c9b7ca90c1f3a834a71871cc773440f39190862cbb1e82aaf8b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00058.json",
+          "sha256": "ac6ce893e98f13870a4a1b1d394bfee5ee8153fea7fff784427456bd9213bf8a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00059.json",
+          "sha256": "4ded70117a98a8f398a9ef2a60234627db17607af8e689eba3d772697e445601",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00060.json",
+          "sha256": "4b4d48713a910eacf7011c1b34a69c665f1a0c0a4901e9af4b652563b8681052",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00061.json",
+          "sha256": "6032f1e7ed58e2eb5b34224bf5564b7a6a7f4e7513dac7c32c2fad129215ac8c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00062.json",
+          "sha256": "13be35811e549614d43a6341c223af4fdd6fb8c8edf541d59a965c6a1ca0d5c1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00063.json",
+          "sha256": "dc3b535f208284ef370d534b2bfe6771ce1e1391011b2680b543d758fe041949",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00064.json",
+          "sha256": "400dac5a20337c7a941cb144939720b819238df9164dae793208698865d31496",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00065.json",
+          "sha256": "87cad3e52f373573cb2e31e64dada28ff507bee0caaf7593a5c21da19345d903",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00066.json",
+          "sha256": "84580748e33d373a59f7d763018d23e9a8df7e31c3d5754e34d7e23e534b01c4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00067.json",
+          "sha256": "eb9a5c1d940b9dee792547fe4adbcd47b08fc161b43db62776937dfddfb4a68b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00068.json",
+          "sha256": "ce977b68ccdd6c5a5e7256b925f7d279076b450f5c7b5e00999ecf0e53c890cb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00069.json",
+          "sha256": "4cff36c6e66dba2d7b5bf3b34955ea7f874031547293d8971612019c918eab2a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00070.json",
+          "sha256": "01c92fde35bcee2d3f210dc4be254412c8c4466702e8d9b7ccfae26663db0b1e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00071.json",
+          "sha256": "5fc994c7887b548af0afee541b8db8fad148ec5e2e6ee290b3f058ce709f3528",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00072.json",
+          "sha256": "3a935c9961b6a3eccce074c2ff0fe91de531c995422c18498a494d2a0ad958d8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00073.json",
+          "sha256": "cb70ebdef6891e6e7e893116c20a1a85a3ee0a501ab02ff7be7863ea74832e38",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00074.json",
+          "sha256": "31bbaba6df5627f1a22a4318df2b2dd17db915dce2691bd0c404afb9c52a2ef5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00075.json",
+          "sha256": "07c16050c0e5befd3e9b7501329bc566464cc161805d78f55450655c46899578",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00076.json",
+          "sha256": "11fcc6921a2d2b815e30b37689e63a2bb631209655c7d37098b27ef27d1cf974",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00077.json",
+          "sha256": "9dc20a20f91e0c2de442a64cb757ee8fbf759b94c8343957134eaabb9a35325c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00078.json",
+          "sha256": "9c46e52a8360c6a2e659717d7cbb93d05122ac7499df4c15b6f50622d534a2e7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00079.json",
+          "sha256": "e026b2fa0043a04e6cc0de99eb3f7aa8a623d2804d97092f212dcf08ae49647f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00080.json",
+          "sha256": "dc9866b80ad7b823ffd89ae026709af97fbe477354d8e11967d72a0a98574c85",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00081.json",
+          "sha256": "d472cf9c848c59d54166005e9f286e9209724dac781f7798ad4c2811ad821043",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00082.json",
+          "sha256": "f69a6f5ce7864e4ccef35cf56c411e86f239dcf6ab50f7c8f225457cdecaa677",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00083.json",
+          "sha256": "69d62e03ad6e7bcb0bcd319bf86e636d8ce58e3da180789b7effd45770d7708f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00084.json",
+          "sha256": "615cd560e21b593ead486255ba84d5d67d0dc13f65aceb5237b8753ae9664e72",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00085.json",
+          "sha256": "bd38adcfda6a804084015a8ea8b9843c44ad76d0b8b4d639266a1c97d3def809",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00086.json",
+          "sha256": "1e9b5d734d4bde2418bfaffbdcedb5db3483d9a494043902203ed0c00ac7b3a5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00087.json",
+          "sha256": "154e6c0547552bb9b985cacbeda83698fe284aca9d80e36c1a52b6c07d74ff08",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00088.json",
+          "sha256": "d41bb31102fa7d50baaee815783f630cce488873cc3f0ac2061c1a9224aec4f1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00089.json",
+          "sha256": "a65ac33de8b797e758750cf4d3343aa1a61b36e05d6fe03e7a2e879455c79820",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00090.json",
+          "sha256": "ace0d3f45838c9ffa39383916ecd60421a2271a3e73777593e9f2aad97c26159",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00091.json",
+          "sha256": "2653b4118da5dbb6bfc1c6b4494ab35592575a3144f97c5d6c9dd4f83e2a9a41",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00092.json",
+          "sha256": "e40d575c4f2b9e6cd761b52c5cd5a574c56da42c119840064a5b04dcf44b42bd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00093.json",
+          "sha256": "bde417f993ce913413ed3992ad4ee0a7118a364190c7db23ae56099023045acb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00094.json",
+          "sha256": "f44aaa2f28042061164e6d44be8e66acd584d298cba73d6278bea06934941711",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00095.json",
+          "sha256": "c78aa8c0b4d753d58fae5d382eb65d10d6bb5cac377bd8dceedeefd92297165f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00096.json",
+          "sha256": "2a954bb43900140638b253439be9c4382ff74006c34692fbbf3724559f33b678",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00097.json",
+          "sha256": "1a7b1c07012970aa9ceb1f3855ba2eaa83436939b9a0893e237ec7d22d397da4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00098.json",
+          "sha256": "46710cacb07e97e1d76f6c57c6a2ea9baa7883cc7fcabe8517fabcb0e078894e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00099.json",
+          "sha256": "a276ffa7c4e9cbd5b7bc2ec22056cbcfa0751f49c8876b88abe30fc9dfc2b443",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00100.json",
+          "sha256": "59a99e725e1da6c66359ceb0a95f749125457f831e312136b63d9deebd285d80",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00101.json",
+          "sha256": "93198c1ecdf2ad05555b30c3e4ebacbef97f2e79806c8206b1255c57bdfb33b7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00102.json",
+          "sha256": "1ec064f5e362f4aa446af7b1a7d75481e18f800d461bec41682132c8572f3321",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00103.json",
+          "sha256": "1f2466e418440c7bfa0923b45cfab2683a44dcc6f0b7571d317749ae49d72896",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00104.json",
+          "sha256": "bb283d79943b42c7179a79de9009100e11bd822aebe5abc224491e2015be3b24",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00105.json",
+          "sha256": "e910d1ad4ad7c890140f74f37f0a65a4a4dbaf8829b73f7a48d69fb407b839ab",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00106.json",
+          "sha256": "fbba5d43a520846c072ed909922f7f7115040f1a864dc2ff9e34167d4954c4de",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00107.json",
+          "sha256": "f9dac224157eaf0a4ee447734050bf9a9ed92f17f7f9a13f901e3400ddcac2bf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00108.json",
+          "sha256": "e6d53e1c109bdeefc7157dfb05c1db2d0d218e7b5507403e67eb9fcc8925db82",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00109.json",
+          "sha256": "c05d1b0f7cb02ff33f50a1cbf7a330ffeb3a53782992eacf35a843f46628cf05",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00110.json",
+          "sha256": "dfca3ffff849550a600f2eeafebacdc57772847a561b4699aee6b28205ed9c4a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00111.json",
+          "sha256": "13af79869538744e36b314f68556240ddc8e7ad345a49fe61bf2e7c414c9eefb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00112.json",
+          "sha256": "2db770a28f4f4f5795b34af2e38ccd4ecdb8561d50377648bfadd85776a538f0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00113.json",
+          "sha256": "366effe692e68ea288277121442397c1d11dbcc498e7e5535ed9b94a5ad628d3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00114.json",
+          "sha256": "2ddbf823af8e5c8a8d106dfc8c957acdc628fb1aa5f0cfd3a48dcf2b4474d1a3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00115.json",
+          "sha256": "b3cb99940abe91727ef64bed48e452f155c9eb3e027dd8664ea590ab79b5d1f8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00116.json",
+          "sha256": "bde5c29157f4824787043f608efdf2f9cc46d0d8a7f1d858b0fae502709eb8ea",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00117.json",
+          "sha256": "69f12aee67db85938d5827d71645a3821891a8dbf5304fa32a9dc31a604faae4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00118.json",
+          "sha256": "ce848e93d769efa1533c31a81b25b3dae071761c270984c9f1e4230910e2dfd5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00119.json",
+          "sha256": "20f0f269819446fdd4d4a19996759bda1a9194c5f91098572989b50d8e40b6d0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00120.json",
+          "sha256": "b52aae136963408a800db67882b0d264c96df63decae1604a42dfdf74b32dcbc",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00121.json",
+          "sha256": "a607401b34749460bc60addb410da5653a76dfaec4229da72910cd0eddc250c0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00122.json",
+          "sha256": "d1065fbcb0e079e37af8eb7bace98b59d479207ed1dbec1d459ca0beb61eeacd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00123.json",
+          "sha256": "ca07931fb4290fcca6a4d277133d7422ceb49e6963035f6f973971501fc19e67",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00124.json",
+          "sha256": "1d85edd1e960dd3acc03cd99e904e27fe30e82d187bff37eed13a304cbf4ab69",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00125.json",
+          "sha256": "7305b147c27d733429deb8c1a0aea0c381966aeccfa97f2f214cfc9798478af0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00126.json",
+          "sha256": "2c0b8f0d01fc5851dfa344304a843aada1c8dc77b27b45377e0b4d3db096242d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00127.json",
+          "sha256": "bd0ccfd5e542b2ed0be638d6d3590cc6df82db2fd48785cce0454f6a57867acd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00128.json",
+          "sha256": "a0057623cc964fcb43363b43294ba1b6e6cdf8f7a1690ee08b3064b3291581f2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00129.json",
+          "sha256": "6854dac74931c842e79a8c91858b75d97f394b486bf0b8edb574e6f9b7913662",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00130.json",
+          "sha256": "565cb3eadfca30dd8475c49f49ffcf6525eec62ed4f0f677590b54c92b09da28",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00131.json",
+          "sha256": "29d133d77afac12f567235dedc1719c7419202ba593e8985bbe07248ad841830",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00132.json",
+          "sha256": "d0d10fd662e238bcc26d91c4786d22e0e47c78de4aa9251a928fe8dc9d878d4e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00133.json",
+          "sha256": "3825e987a4c1994665a55ed62b10d11e74bcd49e81235c22e6e9a966726fca6b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00134.json",
+          "sha256": "ced073b8db43543342b4ec07e84b859751d70f38786349094acaad031565da24",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00135.json",
+          "sha256": "710de23932ec04273497ead5f70766ef296d6554ada81bf199147529e4122227",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00136.json",
+          "sha256": "e6806f29258a1d87e0c4c4cb9d9af21dd2936a9f4c48617ac293c3fce8fa43f0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00137.json",
+          "sha256": "33b05bc7b4e11e5d9be3b1f410e00d783971a0c6f9273c0b3e9b25888c7b36dd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00138.json",
+          "sha256": "04e87a21246a355da972fd3cfa02771de0b6cd55c4d23a8fc7dac9820b7c4946",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00139.json",
+          "sha256": "8dd598edf681cfcfd5407ff265d4e35d432119b4c5053bbcf6d5815cf8bf267f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00140.json",
+          "sha256": "facccead3dd67db6a7e2a174947efe885043776490d287ca7aef130530fb6e5d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00141.json",
+          "sha256": "39fa25e2692e705980ac73c846b9528f0e85826b681529c3fa02954673d16a3e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00142.json",
+          "sha256": "7233713a25e094649d7080a7a48ce5a8c77f2b7fb4b6e10e4f86d565f59ae9bc",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00143.json",
+          "sha256": "3acdd4ef1922c9da7e59fb1931557f5ed09d1adf744e900da34f16c940a957c9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00144.json",
+          "sha256": "ce27c103bb2adf81166ed454fe9a190b419be228bbb251a40673d05df3bc9506",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00145.json",
+          "sha256": "ce3a6f9c68a21a0dd850590eb2ff80eda75fdeb10adc348edd394ca3816ed04f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00146.json",
+          "sha256": "93fdc8c4febcb41c56906a5123c79a48f071e79940a8a3744947098f5136dcae",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00147.json",
+          "sha256": "85bace17ad3cd1a950cac65292a4457749265447bddf8ddec7443563181ca2ae",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00148.json",
+          "sha256": "d7185880094e93463af7269c453e02357a45d30ab424bbb322f95c246ea78254",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00149.json",
+          "sha256": "b59972272409e3b78b0d4c24eb1f675b8b526440ba09e5b2363a81c3c1b59058",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00150.json",
+          "sha256": "badaaadbd85fa628451ee06a83a31c614d431023b54e3e1db3c5d065bfef793d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00151.json",
+          "sha256": "e76b73128f5e53c61281625f4e30029e50496d25e63c8f280206527a54fc669f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00152.json",
+          "sha256": "7bfddbc1a28ccc24f3791fceae5c7d566c68b31566d0b9ead72a70dc06baf008",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00153.json",
+          "sha256": "24f0c83c15b03c25a2680f8f3518ec6d2b625c0132de4ad1295666fa1ef81864",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00154.json",
+          "sha256": "a886d5bdd40873622b5d33e22482555aad66940e18df036f58806beab49ed702",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00155.json",
+          "sha256": "3ac9c71477a87e4b95bac673d21db7953d0b577d3f9fb9a8d2037fec8475d0e1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00156.json",
+          "sha256": "8c7a3aea20f10ae8077a1b10778803b1693af57e3732e3711ca49dee05b1c914",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00157.json",
+          "sha256": "3df4093c43948eb7ee82fe324203ec33d1c57acb7aee4bb75d3f4a466bcdfb65",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00158.json",
+          "sha256": "edbdf36cf55f605bdb4066cc11eadf78458c23c388d04d92f738166823abe60d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00159.json",
+          "sha256": "f9127fff3727680f7a16d6853a8cae46115f1fb59fe7a032b61d770b14188451",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00160.json",
+          "sha256": "3548a7140a7cd39b5bd6bee9809847f053d73e3c4e0081502cfc5185f4b608d5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00161.json",
+          "sha256": "7e9e0fc5c1508b3bc856ec1db028ed6e15643897518e06bf60f7af16c3efc381",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00162.json",
+          "sha256": "f82c1597b609442f52570adde5c3d1f356dfef3cab6956faffd96e1db362a9f3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00163.json",
+          "sha256": "7948bf6fddddc00911a6c84e7f01bed0737d964e0b052f49cb9345c134cc0a9e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00164.json",
+          "sha256": "5bd72fdc387b522521a61a0b30ae2fbc4c04aa394fd97a18422288d0564786f1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00165.json",
+          "sha256": "f21ad6499f1100e35ef29109a0328629ad1c9c90e5d85432d437e05557f91067",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00166.json",
+          "sha256": "f8f3e367250a9eaf1afa407ea21af99b09402a1f02a3ffce127d96f025e00f19",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00167.json",
+          "sha256": "f6c575377c598a3b1cbdd25c4d7d7ecfaff4980b1cbde8e81ee13c282a6150e4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00168.json",
+          "sha256": "6356688433cc68f0af23b39165f73eef99bf78b67642995eea208919ff9cf0a8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00169.json",
+          "sha256": "942962544d0e81be69c08bfdde45f37e441b3b5138f8bf0f68025c6dfa6218d8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00170.json",
+          "sha256": "b600823e6104b1e57b4a9f466275eda1b61e5390913cf7e3eba105c868826be9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00171.json",
+          "sha256": "f53d8ac3414a2fb36efdbe51ef2e60629f2612784eeee440407a2ad57701a761",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00172.json",
+          "sha256": "7c8ee2c49fbe24cb46d97f658e34b0dde7334a507caddb44695279328987a795",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00173.json",
+          "sha256": "cf6453bed54cac89d70d331f5e473c46801536bf633a107f16a1741b74e3d5cc",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00174.json",
+          "sha256": "8e7d03f188fa8697935e0e41cbc422c4485fec25fcd503526d1e32efaf293618",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00175.json",
+          "sha256": "3db772b49555f753500d0064466b91a8815078f54278a9b33d6b86663017cb20",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00176.json",
+          "sha256": "7391206d3cd06f04da48f32832b618f19c93daf181301dc456ff2f4cbf7af58d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00177.json",
+          "sha256": "d06325a160f66f425901ef1a2531e494fb59162494946cf9aff27c39315a91b7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00178.json",
+          "sha256": "278a5e366d936d63b02afe38ff910381a9e96d166b4ed2fb0591af1beb0b86c8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00179.json",
+          "sha256": "86b0b6be8eb59afec305d38761ab7a89a798ca380eff8eaa66ba6547d5455153",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00180.json",
+          "sha256": "57f01122496a65b3f4d3b5df1dc8733b8e1cbddd4bd90d806c3f8881deb85fa3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00181.json",
+          "sha256": "5bb1f61ad0611283cd3ab4bc7adacb5cea9d7a9ac97fd5db94d29d05d9df73cd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00182.json",
+          "sha256": "4c93e110832c9e051e8146409088007cb09a94e0364d5adbb55363117bdb5f0e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00183.json",
+          "sha256": "3ef368b6baaf204ed167e699d1579e2b0ef2d0017dade26ab5f2c0030fc6f7bc",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00184.json",
+          "sha256": "6e1744964293c4cb3b94098a9ab68425c39b187dd7b6d592d4b91bc17de11673",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00185.json",
+          "sha256": "c58380739d61bf012044bae62256cb61288a20a65bec32a1116d8a996804034a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00186.json",
+          "sha256": "ef3e5454abba8877973273f5ede42cccb9992118b36e296ef07f7d88daa48b79",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00187.json",
+          "sha256": "3b33d6c9272be8938eb580ae3536bc25574372c6262936e12c6bd88fc5f35d23",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00188.json",
+          "sha256": "a57cc7a4431e5cbbf49f508cf5446b43f583b2d23c01e899252730a69e38e8ac",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00189.json",
+          "sha256": "f6bac35b836cbd0bb23fdffcf2788eed8e28777f275210a58e31af987a131cee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00190.json",
+          "sha256": "959b40dea15f192beabda8a3df596faae6699c0b896c3b403f691927b80e428b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00191.json",
+          "sha256": "4b518e729aff458b22d872f40c546e6cd6fe97f23ee9d87ad65f787a6644ba3a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00192.json",
+          "sha256": "05257e292aec0c15b36921dd92667f62b50f716f6d015ae5be27322390e02223",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00193.json",
+          "sha256": "80ef7656165d2220ae6a6aa454506eea42df63a65d17a23d388b5e8199a50ee9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00194.json",
+          "sha256": "9ce259f3f44d6a5c3bd87d01e8ead3cb189f07b103d1e6d795d7521f47bba49d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00195.json",
+          "sha256": "ecd2741956b2051af5c4177ec7d7e5ebd1cf0ba792a9eb7152153d4d84046aba",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00196.json",
+          "sha256": "507c249c7e4d05e8184351a3e4c071243d5bf512e8995d2706600c6f0219eb0d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00197.json",
+          "sha256": "dae3eafffd77a301db890ece0c987b8b300dc46806348b46e53ac1c4b67ee151",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00198.json",
+          "sha256": "0ffc5e65eff98ce5259bdffd18fd5e0891e8607346c769d56da9133259683590",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00199.json",
+          "sha256": "04fc0bf4a4e92361bfae3f4535dd605c45d7488480fa96cd758bc63fd42377ef",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00200.json",
+          "sha256": "bbca6c2061d5b02a10ae1688832742edaf396669056eedc4ce37008d3138b0f6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00201.json",
+          "sha256": "b44246352a0be655bfde543e9ee890ad079fadbc3e382c658549deab7060b1c7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00202.json",
+          "sha256": "3e92e3bca1ddcf7f40b3a01221d52a8e536a115a8a8142a75d6bc3d461292a7b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00203.json",
+          "sha256": "8960c6d402f3eccbd75595148b66787ef8eb51dc338fcd5aa747533e2e0d8e44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00204.json",
+          "sha256": "754ec57c8b03fbe72ef09816e0b72da24769fd311a856b4aadccbcd0c6be291d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00205.json",
+          "sha256": "308a9dbb6edfeb7c8b543177bede40922278b6a0029d092bea38eded505b5aba",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00206.json",
+          "sha256": "672cc09005539fbbddbeb840c7ce861721266fa95250e3fd4523cda7c21a7992",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00207.json",
+          "sha256": "3ea23a09ae3b56dd9f2287738c993cd30ca6d4deb0ceef567c7e57021e727d1e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00208.json",
+          "sha256": "f4035ab369b10c5363e98a0f7d951197453f7e1eaf5a588794a798170acad877",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00209.json",
+          "sha256": "f6011fc06323d2e84338a63f4f2f66125578c2b8c1f066687de910d0bd27c19b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00210.json",
+          "sha256": "e2533ecc7598d57637950f9e212df13863994659a4453fc9a102262fdc8cdc53",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00211.json",
+          "sha256": "6a676e5521b9ec6a74ad6f50c098d553e8c40b239349d5337ea46be7eb7f71e8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00212.json",
+          "sha256": "1b608a4f87762527ca82b0c1f23b334f825315c64c679393a288042164c2d7a3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00213.json",
+          "sha256": "4f60f9ef6e47a79d25452edee2c52178b0fada4b89b65b331cd03982357ca43f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00214.json",
+          "sha256": "ce8c21d28d8a9f40ff84c386794beaec4fcdd4bfac77a3cb302eb7d78b0b6347",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00215.json",
+          "sha256": "b2566e5b013b10b47e687c69406646edb86c4fbd9c7fd622696fa5cc4e274dac",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00216.json",
+          "sha256": "370adea92cc4445d203c394b961d8567a6ee7d982b68072f94491aef571c7b90",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00217.json",
+          "sha256": "1278a86cf2514ae3b8672816daff9ffb0d742ee34994cf18ef418fca30dbec84",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00218.json",
+          "sha256": "ebd3c3e071a79d811233b7004ffdc5a28a0b0f8a24c211af5a65529d37425ec1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00219.json",
+          "sha256": "e0de5155393e19e7d1e8465864c47eb1a4d33fdeb38762493676cfbbed618959",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00220.json",
+          "sha256": "ab7439232d7b9da89b877541e2a6359fe5a89396656790436f541452bbd9014e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00221.json",
+          "sha256": "5a4bfc9a7569e5a9cc28fdccf03e5e22ccf71d5062de8c5830a331cbde06f254",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00222.json",
+          "sha256": "34869bd66a3fc175c587573e9dda2ad39bbf04e2f8ec5d48b8abc408d8a6627b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00223.json",
+          "sha256": "feefd13f2b81724fd6272b9c36b3b19f3509f6cc554ce3ef04057938f4314ece",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00224.json",
+          "sha256": "9e6247e7a04b0c519842e522f88b855d6c984843a9d06039d0d86fbea7b6192e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00225.json",
+          "sha256": "cf9e5e9850e80d12b45c675c8a08d23e9d9857f441d760f1c0fd91d3d532b7c4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00226.json",
+          "sha256": "17c615ae20319c578432a36a48d8be76045b19e45c867902d58bbab8742f15fe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00227.json",
+          "sha256": "94035d763794645bec07dec06fa4d2fdcf0632b146ab9cba4a7261055f1c63e6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00228.json",
+          "sha256": "64df5bdb38e7199f6ffaa0a3804d2ca2ab0a205c348cc2afb4b76cddfde79ce0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00229.json",
+          "sha256": "ef4003bc61769871e92ff481e05b7e9934f5f32cfa32286fa3db0701b1e2ea15",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00230.json",
+          "sha256": "b4e1c529142d8045709c176253146fd83a450f9f7b72e991f5872d4b299f8473",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00231.json",
+          "sha256": "7cf94fe1617c14a9cfd54af5a33ed7d3c3bf31b5d96eaa8230c8bf28306dd273",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00232.json",
+          "sha256": "9b7d0a31872669a023afdb7a12c38df8375308d365c13299d0f6f7de7c977fc0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00233.json",
+          "sha256": "7a0e657effba9b4eab35661fc0e5965ad51f75ebe6ec42ede2a313d666427a2f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00234.json",
+          "sha256": "ce5dfafddf084d7a22c1d644ba6cab159a61d8de9d8818d77dd3d24bde7a6fec",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00235.json",
+          "sha256": "b95258d8d2ce391c010efa9fb4cba310f1546fa3da6427ea7ac96ac347cca086",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00236.json",
+          "sha256": "5ae017a1f2d8049d6499b3ae1df0b9cbf6cfdfa7bac1330ca9b71bd48fab654a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00237.json",
+          "sha256": "923202d3b6c0554cd488b435c5bfbaa20b6c6cd2ef73815f3b018b1dd2d9278e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00238.json",
+          "sha256": "ab4fd439581e36a0b56eeb2d592e50ffd82d7c231f745dda3e7751045f237b57",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00239.json",
+          "sha256": "3787dbc25cefa6f3888bd554bdffd834b181e386dc1385037f90aba1f8502901",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00240.json",
+          "sha256": "87f442c85813e74b320a98c745e09d88a25c8c296cc50d41bcc00d3b73f131a6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00241.json",
+          "sha256": "ecf164aa9e0493e56ac09c9b2cd766e41e6c9bec5fe8cf010785b8f452d5fdb7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00242.json",
+          "sha256": "0e6cff294ceb7847a6eabcb62e0c0e09dd005c5c73284701b8e64fbac870842c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00243.json",
+          "sha256": "001a07ddeb884a866229eccb4e4bb962c94ea748a59e50abd2a0fa149af37062",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00244.json",
+          "sha256": "38dbbfa8c37d37910e273285814bda24e41d612ca320e5869b04f30d6857c108",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00245.json",
+          "sha256": "53045d2f4f79f2ccd0c0e695bf290f4f9e35389a3f40d250d6d193faed7d4a0c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00246.json",
+          "sha256": "2fb7ca6a56c9934b3a697316ee5291015638efc7a0fc769c05e95a42a7cdf0e2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00247.json",
+          "sha256": "38f4b6e4fab52dbb15b52ddbd4f04a0466442e87bd1302e96bbcd13da13f2475",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00248.json",
+          "sha256": "f78c429f22cae7624aa6b53eee8a2dbd751fa1a8a2ca76c173076b6efda4d1d6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00249.json",
+          "sha256": "52ce5cd1eb0be9bd3442fcd3c32e524afff00ef7ecc00a3c5ec20f44b8fd5110",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00250.json",
+          "sha256": "8f6e2618463641907fd786e2ccd51935510135046691aed7df356cec8d28ed05",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00251.json",
+          "sha256": "39148ef0a718f5176746d9532d3c3329510d85f8e881ef7bb15537791d576f56",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00252.json",
+          "sha256": "e1fd271d943501d4770668437b573afb883bf64232ffe03658a72c023557789f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00253.json",
+          "sha256": "fc17ec5d494f859d1ce848fa5cd67080a128c9fffb9ed706d25721a2f69439b3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00254.json",
+          "sha256": "4ff4bac32094e820a7073dee17c3ce5dc0ecad22382b7b738cb1c195cac86390",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00255.json",
+          "sha256": "bc0ee673c8f07db4124b70cd4030ff277a44b562f996d1ebe2e0e957185c12af",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00256.json",
+          "sha256": "606668b2b9fd6480a92d27aea998ca08f158a0fbab876182925d9171abc8a456",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00257.json",
+          "sha256": "c8726badd02ace562ed41b750f2971fccfd087f51488afe85e46717043122a22",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00258.json",
+          "sha256": "0d49b4891cdc784d34fd475573a4bb3f4154719292babf699bc9f5f8f89cc009",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00259.json",
+          "sha256": "cc1ba421ac3c9df3f92aeaff53440ecb2d3472e561ffe57b1b01bb5257757c60",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00260.json",
+          "sha256": "3ecfa0b3332a30c9b40e342a3846ef1277eeb9efd5034899f83c12708a1ee9a3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00261.json",
+          "sha256": "485fdcd02c1a26dc7e9b85b4045af4e66698764305bc61992fc7bf8765f70bb5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00262.json",
+          "sha256": "4c8c18545be4d3b64cd878b5f5caecf3bcf724d563ed114f020807f2b0ca3278",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00263.json",
+          "sha256": "8651dbd66722c2c1c30956a525d0328cd0e4929b861f69cc9947522f90f65283",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00264.json",
+          "sha256": "e717378432e190157d4784227acbc534334a293b67cc7bb4731cb5816027ca44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00265.json",
+          "sha256": "01461eff889b931983409d664e537c80d5ff5b2f617ce56f2be8c7144c8f33d9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00266.json",
+          "sha256": "88ac6a5bc21f43d597ba1a4a2dc9a4a5ca4d3d1d8a89115c93c8af68f30c84f0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00267.json",
+          "sha256": "adf872b95092fecb92a335afb7889324ed66ff5586bfe0d2d4aa106ea031da72",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00268.json",
+          "sha256": "1209647e6bc0f014cbf8e7c414f88b2a0509d508ab7bd841d43663439e976cca",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00269.json",
+          "sha256": "633b44b70f6f5a9a73f26bf4b4afbb1c28367c58602f09981d9d49a29e15761d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00270.json",
+          "sha256": "8f9e80fd4d1b27cb69dbc2600ccb3e32b722185a97979d5fd4bdded1ab5c2a5a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00271.json",
+          "sha256": "3e5420027f38f450497799be8e0b54e25d28d3914d98793d0d82496cb85bbd95",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00272.json",
+          "sha256": "364ae23c86737c3396139abd2784d161b7202bb84ea91926a7db169c733d995f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00273.json",
+          "sha256": "f506224218550fb4b94cffd71e02ef39ee065dc3325744204193139fda7aad49",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00274.json",
+          "sha256": "3af29a3bfa032e2d074a660530932b7f017d16a837b0c7b16a567e31fb2014fa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00275.json",
+          "sha256": "ffdf448a3ae777e8c689e223ea50870b47f2a7e22bd12ae4e8a66ece6e84092f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00276.json",
+          "sha256": "58a75e5246a104dcf0cfd36227e027676c993399ea5fa516f3248c611cb33074",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00277.json",
+          "sha256": "91ec647d3ffc1e8aa6af7ac23f4a31721226ea40e653763b44bf0cda9ff7feb4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00278.json",
+          "sha256": "f2631c75ae9e69b3e6eac5d8b4f17cf2c98c6aaaa0f120fd678a1db9ba349dd7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00279.json",
+          "sha256": "db8222f74b9b7090e654e5bd2e436592179de6035933c16f36b4d0868855c092",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00280.json",
+          "sha256": "f59e060411d721412571a252d4e62aeed00be01d56f00a680dbbb8aeda1b8a3f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00281.json",
+          "sha256": "18cd7bdf784046797b3aefb46091149ea1e4705f626ae3f8c42c2263570e9623",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00282.json",
+          "sha256": "2e3e1884c4552e5b6934c2352dfe071a715c05af67820fc6eef0e8d95dae848b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00283.json",
+          "sha256": "27665835d72dd4b5979d37336398aa828e82ca506bd572275e1f4679439b2a27",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00284.json",
+          "sha256": "a12e5375dcca0b70e4b951e8f62741f6792bef3ee87c7d357a5e00a961e5af4d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00285.json",
+          "sha256": "e6d89c2b4831f060907c5d8fd95350de13a390c30c364c9a8f4f1ec464ce147f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00286.json",
+          "sha256": "884e89b51180aafd64e9b669d0aaac55c36fe2f8a1ec07f615c769c6bdc6d1ed",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00287.json",
+          "sha256": "5910ba3c9d2bb94bf99a9f616b2115d375025fda9ca0bfc2a764e6db68a385bb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00288.json",
+          "sha256": "88c738df9150bd7db143336cdce7b74f2bb673bb17132749932ef34957f03f57",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00289.json",
+          "sha256": "dbb6727799fe3151ee6c49899d881886aeb9d877a008c5a3947c718528f0918c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00290.json",
+          "sha256": "a7d6056cb72cd1d281ae4751209a48fb05085f1ef66e31a29560a471bb582ef6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00291.json",
+          "sha256": "110d78698e9900c2d2ffa7edfb1c5cd46194d2da23dec89e24be2744ce282557",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00292.json",
+          "sha256": "373d54d63dee124c916a4a7c19ca8dc5e47a34c20a95f76c9df450e24d511d72",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00293.json",
+          "sha256": "36174fc1f9c77393759e92feab30a2106d965821fdd87193cb1ba65b8ea3343e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00294.json",
+          "sha256": "2ce4d1012eb2630eac5416ee445cbf74a6724f21fe6bf2fcfabc85e41725e862",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00295.json",
+          "sha256": "0e3fd70f1e4be6b6ec81d44039c50d8dee5cdf4efad33e54bf4d685c49b1c365",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00296.json",
+          "sha256": "c0ec883c33804ec128bbe1cc0f9cc77ddee495bb9be88f6c90c3d551369c3ae8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00297.json",
+          "sha256": "e72f1d5c9835c7e1d1de823b4b19c4cb850152e8a87d2beb07f1ee851e16d56c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00298.json",
+          "sha256": "0e909f237db8fb9872fe85582eb03bb78c2cce516800eb307a29cc5018e1ade2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00299.json",
+          "sha256": "7d7d758eec48d2511f9f0cef519eabfe328e10a7b3b7e5687c1554fb4270d9e5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00300.json",
+          "sha256": "b7778f58e9c3d203c6770e16bbcf9cdc07a271bcc702417b63382343537f44d5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00301.json",
+          "sha256": "5bd59e82036dfbb094b57480a714d4253118ee8f993a352d765c68ca452ecbf4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00302.json",
+          "sha256": "907b07c96b0a6644aeac25b1b3580d317741fc540143dbea931cfb1d3d6b946c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00303.json",
+          "sha256": "63acaa1d4fda586500d2b858b4a01b4b9e659ce981b03b089086fb23314e63f0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00304.json",
+          "sha256": "d0401fb3a4737b1c69527ff5362ec8e173d99181dfb8375614811e1615cb47f4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00305.json",
+          "sha256": "97b1a7345719614f6cf17f4b60f47b6d9eedb79bf69a040a3dea6de96f8dc04e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00306.json",
+          "sha256": "0def9ed7ac290fc6a60c6784a7ede027b2de2b0970a4d4a41677586fb2821344",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00307.json",
+          "sha256": "fa229dc9b32cfc4c56c37fed67a47e920d0fda30ff0c5ef79cb4b5607620f17f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00308.json",
+          "sha256": "f6a886b475af1a1a96b64c19e1801a2dd5ec7962b619cfd1d33b065be9e8fa28",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00309.json",
+          "sha256": "32591c55b033db0bfb5e385b87678ef3337278cebadbef85c8c9d72babe0e600",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00310.json",
+          "sha256": "8d552d2a33da5eff5bef97199f4a1161bea1900194acc6d85d0eeea38196f964",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00311.json",
+          "sha256": "580342ff2ae7c5abd04d3e6e9498b8bb280a6b2a101597798c06da234839994e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00312.json",
+          "sha256": "35566f5bbf7f82ee0aede34e229600e65d784657d0c4c8fa580312b83d719b40",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00313.json",
+          "sha256": "19974c603c08e2f9562b9e26c87a39a704416aa2f3ee673ca9f48f79e650f965",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00314.json",
+          "sha256": "f8b7a159bd099b4df6821a81f80a6072ed07f3e6e1d5b189e646bf356c5f8c22",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00315.json",
+          "sha256": "24b8d182bcf995a856e59c72b07e812e04d01614a7678353d73f283284370629",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00316.json",
+          "sha256": "31645ff7d07a539ab482be5fc74ceabe4372e7384a0e94b84560e457e3b39c06",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00317.json",
+          "sha256": "8b31a30170963e8ab07808d946502506e35b10b19da72bf05582035c2bc4a3e4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00318.json",
+          "sha256": "06262e20eb5be5f542cd29d2c5dd68efedd8c427600ef535c97a65698ba8caf6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00319.json",
+          "sha256": "7dab747708dbdfe8ea6ec066df6d575b506066508aa5e7e0408086c92ce393f8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00320.json",
+          "sha256": "440806a8a353432024e78331d2f62eeaeef533dfee92c4fa622023387094c384",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00321.json",
+          "sha256": "c83f56945c0ca42a23ec1cbfc324579a5c56f6bde607ddd0093f71c7061eaa80",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00322.json",
+          "sha256": "4da58d91d9626c88410ace324793f7e75fc1c2846edb3fc9c60c987c92a287ba",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00323.json",
+          "sha256": "8a88cea576a003b70bd9e6478c38b4606571126e0e40340e2f3c029aec2ed9ac",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00324.json",
+          "sha256": "31f708d8d02840740ac86af1c8e22a8c7ace5e3f8992940dda4e67dc4af4e96e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00325.json",
+          "sha256": "33dd5bcc667d116e70b5ec2008ebb50b12305cffcc632717281f80119b1eed90",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00326.json",
+          "sha256": "a456c92174da0ec7fcb148ef4e0ff690a2af46cc0c80c054069fcfb16b3b47e4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00327.json",
+          "sha256": "a32f2168a46e3925ddcd99418447da58282b3425eda0f6a994da80bfbd4a3337",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00328.json",
+          "sha256": "7010ae23623a1cfffcb9f2ab939dd0a1c6b25a47aebd34e90fe710f4cd5b043e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00329.json",
+          "sha256": "7ef6278f6cef2763101231ba0a29ded7313720cb388623ff2b399294649f0afe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00330.json",
+          "sha256": "2f6bdc63660f68517a9263eed0f7a66b434adc42135e4ea98eee3ee7da9ae1ab",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00331.json",
+          "sha256": "fd3ade1d83b6d86b3522f5234d88455f47655128226226ed6d24d94c30e1f522",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00332.json",
+          "sha256": "64b974e33e564bdcfcd3061c81a935667ecb3c39da937ec236f4dea8041a828d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00333.json",
+          "sha256": "eaad60db306544b9db76645b30b30fd4cb90b77f2d0de77167d72b2ba8a78e44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00334.json",
+          "sha256": "0569cae048a3bcb57d25e6aed776c6b3b0d342259ba4682794df444e7fd2ee37",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00335.json",
+          "sha256": "79813434a6a60d55e3407086e5707bd5081660dbf87972ac47a569d8ed0e09b6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00336.json",
+          "sha256": "d890ec02b62b807ffb2971925ef5e791e6763a5fa0014dbc5de10025eb8a860b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00337.json",
+          "sha256": "57425a13b2ef94d0b170c54a3bac53f44d0afb695e2ea32020f2944226269b5c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00338.json",
+          "sha256": "0457fa4575604211d28d5b73e4b49ddab4c247fdd26b957e0ba4bdb2405c98a2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00339.json",
+          "sha256": "93cc70e842fd844dc8de38679b70e315047d45507003fa6bd3bcc231998ec268",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00340.json",
+          "sha256": "6ff0782d918f8a141f94d8a3195539f60bddbb4ec2bf7834ff44f80c4946ce66",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00341.json",
+          "sha256": "67a1768e2d1df5ec09f745809a0e7e3ad726735aab765ea108019eb7503e3651",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00342.json",
+          "sha256": "ddc973881319144a69848c5b3bc4040646471f06ff032dbdea7929f9050f14ee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00343.json",
+          "sha256": "b68c172b11f59ecd9ccc3f8f871c5cc02c9be456a091acecbfba742ddc8ee251",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00344.json",
+          "sha256": "f1967a7d429573d20317d5f3d1001ea777c41945e52b5828c9fbfa5f6a6c64ff",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00345.json",
+          "sha256": "464553fb9613fc0218a80bad71c733948993bfe0520309738948898a9db102ce",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00346.json",
+          "sha256": "a599f733ade615c13e732950b5d44d2c3863774e9508f76266f00c55841864ee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00347.json",
+          "sha256": "c0395ccb862675e1eaf4d306e9ca049725b1112ba8c4f6abdf7458f14a4e5cbe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00348.json",
+          "sha256": "6a8e689239f3e2eff33601c73d1dae59225f51225f6ab2ce7046d0b4bea08042",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00349.json",
+          "sha256": "2d58a2d075eb932dd99b75a20f3daac1c563f393d0d8f4f2d6f37d7adc0d44e7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00350.json",
+          "sha256": "466ae3e3c8bdd381206c006a16aa45d2b7c608ad918e789ca5c345e9bd2d08bb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00351.json",
+          "sha256": "52eb63c6f752d94b2a57461440a58b44931f52bdb76f1e8f0159af6244dca68c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00352.json",
+          "sha256": "ddcb77a60378a92ed0d748e86e8f6de7b15bbea467d846d70d1b63047502ffad",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00353.json",
+          "sha256": "10596d854b6e42b7ef47a517ef26902cf648e1187fc51443a7f3b34681d95f44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00354.json",
+          "sha256": "f2176e0c39934539ecd4d6f4e3062c50f3ddbc04c3bb5f002b521f29cea59e27",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00355.json",
+          "sha256": "32f292355a0442a6d37ac90e7ff55424600cbb56aaa295c4e74e8baff4a2fde9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00356.json",
+          "sha256": "f68b7fce51912d3893e2a2a3675be3e22dd6ec4945a6642e1a5d174cc89b7e68",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00357.json",
+          "sha256": "0a1790020932a689cc0601fba84ec640dbb88297e7b58a50f361c9a65f991232",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00358.json",
+          "sha256": "1801b9509c6190883c49e58153862574d6a8e50c30b0b4c7e2419d764029b84a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00359.json",
+          "sha256": "0b6ab1439613805526b56815559e63cc1a0d8bb593c1f53bbf897d38b7ce0199",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00360.json",
+          "sha256": "4c2b8b37f473e1fad7d4b96cc7206d6ac5e19fc2c8e4c059515325a99c8af942",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00361.json",
+          "sha256": "f31e2737d1d9723aa7a391bf9cf9b47328d475ae143d84926e85d521b0f52495",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00362.json",
+          "sha256": "b46b7758eeb4578afc63173483b8c67702fbc6a043353ffb8871c4e44525970a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00363.json",
+          "sha256": "d241ac5e56cdee7d98aa8c542ca6baa7475f61b1a5379b8765a6e2ad59c47cd5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00364.json",
+          "sha256": "c6ef506d7af250539c37bd2b305a2681a6d8d219f07186b827778355b60f62ed",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00365.json",
+          "sha256": "aa05623ef820561c6b34f86978672b34dc95cd23fc5b8e36e981dff04d1491fe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00366.json",
+          "sha256": "c03be65719197bb16e8f6741624ea9b866300375ec89218f7a6d3af672d7f2a7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00367.json",
+          "sha256": "1578ef3c18af36cc3908d217e4643a19cd2e05fba46d20b2b6fd27827bcb6e70",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00368.json",
+          "sha256": "0e75a30f1f80c0392f3ea44dddec84b5ba3edbc9ba2c8af1d5cdc866d8fcc458",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00369.json",
+          "sha256": "c8613d4b000ebb54eb88ed145b6466b018f3968609eb016a360d7417b7fe3a80",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00370.json",
+          "sha256": "86ce9cc26a4408542d6bf727d0135f2867b8a979c037c180ae59f04816a92a69",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00371.json",
+          "sha256": "ecff084ace355a3375695425349e385cdcf7c05adde201b29cb562c902130b97",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00372.json",
+          "sha256": "79d75b84bd2d37908dbff2f3f412496fdaf3ea21c9964f52fc9b629d4205adb3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00373.json",
+          "sha256": "850dc1a5e3892b618675766f56e241199fd9e481951dce83395bcaa7344b5183",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00374.json",
+          "sha256": "298004ee34388f254fdb19773a2e998d6942492af4f54c8b4d1ea481d7eddc08",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00375.json",
+          "sha256": "83f20517a05a6321ec15d1b09e6c741a9abf0bd0293124fb39f4e036bcdbf33f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00376.json",
+          "sha256": "7f0aa11b6428b092cdd033b38495dce7b9a45a96dd5c9ea4bd335139559aa5db",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00377.json",
+          "sha256": "76ccd72771eef74c2684d93e1b5b0c6f048f0d6845957df6d68c82b193efd048",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00378.json",
+          "sha256": "b9c67c24dbd804965cc9a3a650bb492404d727c48263514ca1e80124aee17471",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00379.json",
+          "sha256": "94630a5ae2bdda2465ffe370632ba213b130aa67645d03bcaecb9d2e9bfb890a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00380.json",
+          "sha256": "0f5226e94e0e5aa405ef4f8222ea55c6c60f5d52c9c814e5b6d4fb74931e1773",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00381.json",
+          "sha256": "c38904a272f084f616037b53c42cfaad08f880f711f12ef0166a0d3c8a4c19ae",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00382.json",
+          "sha256": "d6e09ccdb4a41fc032b1d6a0d6a454eea0c1124586878cb3dfaf778b77775ea2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00383.json",
+          "sha256": "62392029237e0094314cc75194d2caf6df8a87ebc8165d620bfbe81f52d4df9c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00384.json",
+          "sha256": "6cd39c47b668ac0213ce528bb60b8f063720a9f25af91295a2a4c9ebbb9c4baa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00385.json",
+          "sha256": "a3e1a91e4cb8ca90c24acda51697562c617be6db02153a8e76e58dc4f06dc235",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00386.json",
+          "sha256": "a70ee126d548174d9afd30fe544fa45ce6441132ff288b1a5716760f19c02b63",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00387.json",
+          "sha256": "da53ea05bdc12853893f00cc06b81c7c61bd66b2da2b61ff08cc6f97ff5f705b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00388.json",
+          "sha256": "3e798749653109bd26f309b5538c1efacc4bd11e51e18c356c40ec1e0839baf4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00389.json",
+          "sha256": "b5a79afc0a325322ff4d814c203294040bc3ec3eac376dc9f07db3efad8212ef",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00390.json",
+          "sha256": "616ad5fb89ce9759b0cf0ce8d43af017a6f0c805cc719236005370a9f22dc2c9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00391.json",
+          "sha256": "eed9d7d065c769b29e50c92106c471390481abb293691428b20b09591db57fe6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00392.json",
+          "sha256": "336d6444730e54f237fcf5acf5e5c67059c955bcedc45dcf30caead5d88a57de",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00393.json",
+          "sha256": "22dd7f0d7d6521407976d79fde179978fec27eaf440199e4c7a8fdae55e72e3c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00394.json",
+          "sha256": "1b0fe209c5639ba8fdc057eafd453d2b4c1ec20b56acd8aeaa1acb5b6e537788",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00395.json",
+          "sha256": "2f57e324edcd9d09df6982034c30988cb5af1d37249cd8eb777e51fd9b4fc24d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00396.json",
+          "sha256": "5993d9c8a1276b9feeef59e95f0b0a354072813dfcb4bf0ffec5dcd2eb3ec1e2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00397.json",
+          "sha256": "5ded980a23a1de30d434356096d224a615dc2da9f72a9ebaba365378ac690e5c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00398.json",
+          "sha256": "4f390bb47128e4de0fc3cf09c8e2b84061626894422448a9ddffd04b950695f0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00399.json",
+          "sha256": "f10f7ee8e386fd624fd499c64c5d8ec8554a32848d37d92e81c2a1af97265418",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00400.json",
+          "sha256": "545327287e466d437abfab6894d763a32ab73cf143d994aeda1db77e412ea81e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00401.json",
+          "sha256": "ed9edb88c713ecaa96daaec9032139f10654c55426739942e28ff1423c133715",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00402.json",
+          "sha256": "d833e6452d19f321fb7ff82ed84b1c13b7727dac95de68a5f22fa9e9a9a1a1a5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00403.json",
+          "sha256": "956b70aaf75d58dc4a234ed8c109ec9389a35615d3f977d631fd539d878a5fc1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00404.json",
+          "sha256": "6386f7bc274ff9135b553dce19a2db1d2f3b6b8705db5685bed2f3e3bcac7e46",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00405.json",
+          "sha256": "0dc36d0e64ee041d8a1549d3a54c892ecb392f21a7b1d09b3ac551aef3e257c8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00406.json",
+          "sha256": "18532a0953e23d179491a0d010a8a09512a0f4f8cd51e6c17a61aeb5641823ca",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00407.json",
+          "sha256": "d52743c32dcafa1b8bebc66634a9f66a6dfac363aaf95d8007acb07af0b58e3d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00408.json",
+          "sha256": "db31792b52caa036ffeb2efd356f9dde283b4ad8f9dd1980027aafb5951947e0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00409.json",
+          "sha256": "c8c414877764183c85fa5d0585e3dcee6a776a8f98c16d8f3c7cd8e553bcba88",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00410.json",
+          "sha256": "a50acd85899767ee37301c989b831286759b5a3abe47092d8ae61bd903844ca6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00411.json",
+          "sha256": "c92bde4a29cf8f537e8babe3f5a3f42215c1551b70e82c738f71aaee42a43579",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00412.json",
+          "sha256": "58cc3958cea79a6b1a77a0b276398dedd3d624437433135ee53f20edb737494d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00413.json",
+          "sha256": "21de8f39e62f6a84024064b996276d644e9447e338bd30b177ff536c55b9082a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00414.json",
+          "sha256": "14d1feae1424586ae50f119765462093e41a0957678749c1f1a1c5030e9767b4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00415.json",
+          "sha256": "acfb313d109fa9f2b118b0a1c51e726fdde6557cdec1da4855c09733bf845ca9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00416.json",
+          "sha256": "9510f59a1acca081b7b5e64b3e8b7353ce1fadd80831f3d0b067ea6a40735bee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00417.json",
+          "sha256": "9488c955f92910c61f12426679e7e034e536c9aebfdf387d0d11bbc4b16b4c98",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00418.json",
+          "sha256": "44f28d34bcc9667e4da28fc3a902fc474f09c8182e832b49452890dd4361bbd3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00419.json",
+          "sha256": "573a581d763c8ac21debf505043698ed4630faf753437293b63f4efffe542bde",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00420.json",
+          "sha256": "b852e4b6e5b0e4f7d85b73c941d580fc2c9f6d137da4feb37a5535b4becdcd19",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00421.json",
+          "sha256": "005b1aa2d8a515c45a2907a0361d38c45c3b69747cffc9633b1303271a83509f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00422.json",
+          "sha256": "2fba4725ee3b793ac1a31bf645de4314b5cc4210cc2751efc1aa3bdc401dc149",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00423.json",
+          "sha256": "e60de90040b6aa4d012146725097c5e68bc47c0e5ccbd91095a34b8e130b0066",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00424.json",
+          "sha256": "8cdf6b8da2088db3fd2d62f335041904d251e56a3e5f5dbbc4c5f238e884d650",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00425.json",
+          "sha256": "289d73e0f4c91221d14f9b25fa1ecbd063fb37e3489a2c6c95bb7b8d9a29dbac",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00426.json",
+          "sha256": "15aa557ad90e12bd7e87d43d4745b2f4a0648bd3c0b75a8290612ead5d973862",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00427.json",
+          "sha256": "71f752e62aa24d3da20af8cc3b02cf0b9bf17db67bf4fc405096e7246a25216e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00428.json",
+          "sha256": "f4be650a631af4e4b7a38e47ca0d99bdc41116050cbb6063830e4dd7c51b13f4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00429.json",
+          "sha256": "2281b1f002a334197ce9425193c25f35f0a4aa6edaa49f2c9faf6400b877840c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00430.json",
+          "sha256": "1887d674eed05e89e10bff2b6bbf39a73b8a5bf263b9dc9e3fd8f6ca692e8011",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00431.json",
+          "sha256": "2d87e9d8f76c21bb9b7da2fd315137e2161bcb8b21908ad0855c43470e21e4b1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00432.json",
+          "sha256": "ddace15eb2177911a66c0baa8afc0170e8c981add92c4a21d214c52fda93a065",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00433.json",
+          "sha256": "9c2b8f49561e53b2dfd82a427a3dab4819c208d68110b095acbcc324315129c2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00434.json",
+          "sha256": "0a8e002bce0ed127fbb02f72740b64326894dffad82913fe8b274c367e3e3189",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00435.json",
+          "sha256": "6e0c36228801f8cf3c77f4d301872d82c2663689e323d82baf86d209677056e2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00436.json",
+          "sha256": "f7dc02d787006d54d4d4d218ce1bd1ac75adbe8fff7fe7f19d96a8cd47a6b912",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00437.json",
+          "sha256": "c9bd81b9c9feb3da16aa36cd462a7ac28ccf40334bb7d382a15ebadfacb585ef",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00438.json",
+          "sha256": "f4a23e7f3336159607988a21bcf2a6bc4b8a1e482b9385e700b55013056bd646",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00439.json",
+          "sha256": "2c9f17d499e7f854b1261e22345b67ae17425e2bf4dff0dba39c03971c14018e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00440.json",
+          "sha256": "7fd935cae2093cd44fd811b77733f346421c78f7d9c6c013bf9acaee71eca7b7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00441.json",
+          "sha256": "6b337ef8d7d83e49fe016bf52ce0b73ed1cedc7597768c65b606aa6cae71db1c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00442.json",
+          "sha256": "97643599ce18c596247b916407122bf08acef88b7d6d9f6883797d615da50f09",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00443.json",
+          "sha256": "c073fa8397d7f9a08de87f2d4dcb769578ab5bdf6f9b48d3531e8ca17e33752c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00444.json",
+          "sha256": "1141e0daec03d79f426777c25eb97bb73b73a9e85abd908bfd02e3add57d70aa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00445.json",
+          "sha256": "d1f90010cd099ccb2efeee72ce0a2862eca2336b46afe235ae518ccd9751bb44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00446.json",
+          "sha256": "0487d1f97f95926eaf3f8f11e89d046b1fc003e4c069c67285e9bfc7d8d6197b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00447.json",
+          "sha256": "0e190851280f6aa972623489d5d247a6140a8016767a2fd9ce26ef83d935f1a0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00448.json",
+          "sha256": "afe2a258abdcd319b5154512e29f0080807cde8c007147338e97fc5eb8668b38",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00449.json",
+          "sha256": "a1324796187d657b2d62a3382a50cd21d18f2ec1c92303c2d2119b72d1e3008b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00450.json",
+          "sha256": "23a9c44648f557cfd2a6d7fd7b2cbea1516b2b0f803e7e426c220e9596a4503a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00451.json",
+          "sha256": "a83952dea43f19753a4b8744c0956a2cef5214bb09f80cf6368c995a21da84d9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00452.json",
+          "sha256": "4156637886aef861da1a57a5ff6a47f847d7ee95f64cad1e5605047ffefc921e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00453.json",
+          "sha256": "0878d1df305a489d482d6edd59d28774537df6bc66d602d4d20e36044cfc0ece",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00454.json",
+          "sha256": "f5b93717918b0fffab5696f29fe929aec4db801faf46c130b1a6aa63f59d8186",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00455.json",
+          "sha256": "85d286fe20136af7e1e3a3a882f2ec72965fd423e6e0717d23f28692b06bd396",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00456.json",
+          "sha256": "f481201b0567474ac934f951b9d599f72960afe40e13da19a030522dbe5a16c3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00457.json",
+          "sha256": "539cae4ab2f332ebd6ad48b794f5c564168f876a273c33cb6cca01021925fa2e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00458.json",
+          "sha256": "3db8f6884a73b3ee6b81c69f3a44b9a3a5209f87a1dc2b776745298e04f614d3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00459.json",
+          "sha256": "44f477bba89f8ef7914f3a7fc7e9c7c66c59ed2db8c94b3e7e62dea0237e63b3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00460.json",
+          "sha256": "92e4893b840c90807556d08d9e3db0cc48abb5ce0c082527adf71a4351326be4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00461.json",
+          "sha256": "cbec2ddb7f21d24de5aff65153c8251c21d50e77bac48fe297e2580a84eade37",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00462.json",
+          "sha256": "8dcda12b26a8d1ef33a19d19bdf66a9909b4c3159946f0f1a82d91377e397cd3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00463.json",
+          "sha256": "ca81fdbad2d83129af82bf3da99bd6e340934aed51ca25c70e0b0ddab7980089",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00464.json",
+          "sha256": "a9326aff94434a817e69e12a435f4b8272439cdad44b1a6f380474b3bcf93286",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00465.json",
+          "sha256": "94cdab52c6a013f5055e0117f5022d7ff2881d7cb8406e741f2f5fe18276b2a5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00466.json",
+          "sha256": "02f945ddc5f13d93ba81d9ceb8aa84e024a162db0831255f850444c71e3bfc0c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00467.json",
+          "sha256": "4b4a9abea24d1e7fd5c44abdeaff4cd9648ed3255d87be06cc7069738b12763b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00468.json",
+          "sha256": "2ef445b5f46353ebec9dcc906246dfca28a8fc573c9a2cc41b4a3f979b55a327",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00469.json",
+          "sha256": "fe83866c9eef37d2316b310a43faca121e6e57ec7c15ee4236a044808cece530",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00470.json",
+          "sha256": "1f0de607bb8478007f81025fb606051c2fe6f3aa2663a3cbb05066b0cfcc3965",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00471.json",
+          "sha256": "b4f1403ba9875282b0e7ce3155d2e3e2e7a1852d4f7f2bf2e43ee85a48b77b2b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00472.json",
+          "sha256": "2377fb32dd21f664923494ef9fc83e3ee87f7d0b668ec8ec73199cd0a866ddce",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00473.json",
+          "sha256": "9b73907248a6790679d8f5d2ed586475c4922eb4259cca7dd2e3e30b4e5c89f6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00474.json",
+          "sha256": "818fccc6f9a75ffa7b226cf83369313306218674f5223b93a73316add93c2d60",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00475.json",
+          "sha256": "c30f2bae5c8b6dfe5d00d00557cabfb681e000cd689cc6d440730ee82bea9581",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00476.json",
+          "sha256": "b48fc8c873d210bddd2c4b9a6ef3f1add76868b8b35563d81e1690a5e726df07",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00477.json",
+          "sha256": "a7890f7507fd38f19ed7703030bd2a886743260c5dc107a99c4c801e4666ea05",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00478.json",
+          "sha256": "69b63538d0818b140b1acb102d5c57d8328fcfe9077c5287aabff38c7ba47ca3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00479.json",
+          "sha256": "23a4fc231feeaf14e4de677b1a7b0c59644b95eb1170f71eb9a44ca007975745",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00480.json",
+          "sha256": "a0a915803eea5fe3ac83ecba0d89d1aeaa72abdc4de5f12a34325ea888e9481d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00481.json",
+          "sha256": "6785a453fcb56c6e4fa1adbc9e241486170cc2a9afc48896243d9c7126eecf9b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00482.json",
+          "sha256": "db6f356f12dde67c414085d3694fe8332fbcfe69a1bcac8dcb2e1768693e3ddd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00483.json",
+          "sha256": "28b2f6ab2c9b27e1aa43ce642beb50e21ca596e3dc1b64ae83c72b77e748d883",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00484.json",
+          "sha256": "3a481513f3d8f7e638235e95b0446af5061bb487c7ab37cffb621c2a1ef194d7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00485.json",
+          "sha256": "0612a5504de65ee99cde25e03ae2d3303df25c816e95af38ab15908b9f59b1fd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00486.json",
+          "sha256": "37a3ab9b464ab1faf57f37cd8627f51d3e262f1dddad61e1a986a6351832414b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00487.json",
+          "sha256": "2211ec42ffeeb86240062aec5e1330ea8e508c94e697060aea9296857e61342b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00488.json",
+          "sha256": "7e11e39c264c136a17e9f8f3d6f239d6a4bbd97df8d9927b5cf4c750e32870ee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00489.json",
+          "sha256": "74971f15a14fa5b2fe73989cbdf900c3de3e6c2f3109f394e8df1ab048f181d6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00490.json",
+          "sha256": "584cfeb5c3616d48567527ddab6f57f28216362161a852648068bbe42a724e16",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00491.json",
+          "sha256": "737deee2dd7b947015ba1f20cb83dd712867b9afe3e0538683f78b38a78bd411",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00492.json",
+          "sha256": "639e8462ae62e66917eccd666b46ccee50b0280a1ac13bc6daef62ad5f5c11e7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00493.json",
+          "sha256": "ab269ba1a165f3d0e4c8d4bd2c5fd440db66fee2227fc6c1666b4e0562dfa3fb",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00494.json",
+          "sha256": "34d7da70c1971a6822d567b60c3edc26a15966a5949edbd54ee3ca326a8c0998",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00495.json",
+          "sha256": "c10688bfa0f8dba44ae5715335e8857e271f8bccf747ee16d1453b58b31f0650",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00496.json",
+          "sha256": "2fac10246f14e4bad8573ec19cc60d984b0c76d98f39945b2d8d6fb66981d46a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00497.json",
+          "sha256": "166edd043c08b0e44eda6a8d672d7ed5d1352176ba0742a377063bc11e09bd38",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00498.json",
+          "sha256": "a8454fb4bb9a425a0bbcb0098ff2972272673dfcc3f6a12bf8faa4b936bcdcb3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00499.json",
+          "sha256": "b899809ff8cd3281ff99aae4910bea19b615ab63acc23f7726f1f9e8ecee7318",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00500.json",
+          "sha256": "c9683a09dc2bc53329d5a903a806824f14767bef49931a5415366f6d68b52df0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00501.json",
+          "sha256": "1e3443dc4f99cfd61a289365784b1ce51cbb7d2755f92ccddf619b4296d59164",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00502.json",
+          "sha256": "0cd47abfbb3e3ddd04f100122bfcd3a238a6751a1172b99aa26874fff8d73877",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00503.json",
+          "sha256": "490c53e8ac92ca484259dffc1b77f94679ce29a36017dcd65c5da36b9de9758a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00504.json",
+          "sha256": "0f87c53c28d6ba655511f8accbdf8099d73d2d994cf03c4a2ceab47855d14952",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00505.json",
+          "sha256": "6f42ac0f7f990876fea626f4863615497dd071f834880a8f7d35dc310ba8c786",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00506.json",
+          "sha256": "8ef993e14a607715727a81a2d368a6babe3a5a0875d19282705a1595c750b503",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00507.json",
+          "sha256": "6f40ad4b114c9369f19a7efdc656dd052f15f46e84dd055aa5902638ac40d7e6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00508.json",
+          "sha256": "d3676b20741ed392ca12e0168567c287c35c240fddd4e88c00691a6ca059a6f8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00509.json",
+          "sha256": "eca8742bed8aa93d1d51fe7e5e765e0f59a727b1bb0d3d56cb7da3b4533fb28a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00510.json",
+          "sha256": "e35d13af4b08e4a05a3e3b9b84c0154d4f8590e4678a774ce3e074992b1d5d2a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00511.json",
+          "sha256": "483f4ef08b2a3cfae91432f09ba06c077acebaa701569f77a54c55feaa44dc8c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00512.json",
+          "sha256": "d3c00b0436a27a6eff1f5e2e42e72812996c53b79f42d1a4cab3392a4fe2339b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00513.json",
+          "sha256": "3e13df47a9a8a754aa85f813a61f6a8a43844cb69f6413b7bee99f0cf9a82ddf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00514.json",
+          "sha256": "a71a14b55efcca8fc3cfeb4b8863c44b3b0b54646a7dda4b9f2529f0ba603b6a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00515.json",
+          "sha256": "c896a68d15e1929813866e4fd1866fd0a0e64197590559cdd11d2a1bdded5c34",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00516.json",
+          "sha256": "ace51e1d5cb86c2010bf8f6c15fdd2350cc4e28c5a7689318844d47498e855b9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00517.json",
+          "sha256": "dba91a5f4735c554137fa563870be53e83826e5e5f7b1d69802c85b5092690e9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00518.json",
+          "sha256": "d2ab072cd0c36d03a4c033936ca0ffd6320a07adcedb87a608cdbec546dc5d91",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00519.json",
+          "sha256": "fcba94513c22f5e835bb4521989d48b7b5c8142f8d2ba42e895bb1f4c2155cee",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00520.json",
+          "sha256": "8ab6566c58414952ade8cc87c0f0647000932603889a96cb852744c295ee28e1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00521.json",
+          "sha256": "5c89cf0bee5dfef3704fb581e6c72963080f894bdc42245e41bec2dc479ccb9c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00522.json",
+          "sha256": "4389b00dc5390aab2435010b5b2f5ea4f6f46eeb6cb533ef62575874a0b56612",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00523.json",
+          "sha256": "119cf8241efbb2f5a8161e063cb0f5cd6be661b7c2ed22c310b52030475b6d07",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00524.json",
+          "sha256": "c9bd9d4c8d8ced5d3df7f9d3daf9e01612a55724aba397b6de9c7b0b32d588b4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00525.json",
+          "sha256": "6b5cea60ac3f73584d33cdc6f720976173be8bdded346d03b360b6de2b9db6ed",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00526.json",
+          "sha256": "49a31a8643029513a29d7eea681a4085a9ea97b747d96b29ae73dd00113fca39",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00527.json",
+          "sha256": "e6ca2252d9d293fcc1bb416293cb60f2b39eb5358a92beae37af94ec934bdc30",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00528.json",
+          "sha256": "27796f9bee42d8ed26c1363dc82421a4cd8cb594aea9974c84de079f17a6958d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00529.json",
+          "sha256": "eb63a93498c985b5fd5c51fd1b9c11ec6bc3b9fcdce54c4e98e82b5ed6b161d9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00530.json",
+          "sha256": "f5bae343b64be04649328e37429cae8879a2ec5fc0d872062e5775e13d410400",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00531.json",
+          "sha256": "df13adc0f273614ad3b675a8a7c20268291fb2448469ea23448a7dd34f9383c8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00532.json",
+          "sha256": "c9782367ff71e713f693c1de4195ad3c2fe1f59ddd8ee206d4d20093d92d42f5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00533.json",
+          "sha256": "7b0a160af9569356e7479aabdb3eebdf7371619a25aeb469423ce157e7b61a71",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00534.json",
+          "sha256": "5c0a897b93bf755514880829813f7b5a181a1eb4410c164192ad2c41326ae456",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00535.json",
+          "sha256": "059abd29e93791e03fc2f8ad526cf42495e2b6594d45c82e04521316d1576394",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00536.json",
+          "sha256": "b5f81d727cf5342814a9d422d3936737c90a3f8c17ba24d5bca8679d2d0fd543",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00537.json",
+          "sha256": "cf20f20ed803715cc8e932687db2d3cada559924fe627a890770b18596ef52fa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00538.json",
+          "sha256": "a6272862dc5476ca66f6ec167ab3e71373c34f73ba718a63fd28975b210219ea",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00539.json",
+          "sha256": "a8633f465f615deb211392c963fe18e8389de2b5e1477daa32a76b82fade001e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00540.json",
+          "sha256": "e0da4071e45d47abe203d91a98a637de09ed64811dab0852786e835c501d290a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00541.json",
+          "sha256": "15b613d099694f40221feed6a9717437b3baeb2f2c57b51501a9871d5cd908f2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00542.json",
+          "sha256": "95340066dcb31b3cb32692dd318f8b4320ea851956ffebec5b1d8a561eb2a4d5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00543.json",
+          "sha256": "f80b0a1e2cb29448611ba5d6b9c3bb5e97aced09241266e3783c51afed4448d1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00544.json",
+          "sha256": "20eb2c7a6a1190a3fd3b5a49e4d6d293fdd3b1c91d5847ef0a6f423a8d7e18f2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00545.json",
+          "sha256": "a4377e6d569921219f30ce66158b37e2268deeee77939ad20f5fdd48d06c9172",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00546.json",
+          "sha256": "5798816a513395522b1ae27fe68a1c55ca9e5d05562277e7d92681195a57216f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00547.json",
+          "sha256": "b44691a39622f2cc8e7ed5c97a732c7c164ad6c41d2c18ffe3a94cd535690681",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00548.json",
+          "sha256": "9ff75eb4f67027b91c00a4ea6f0bab1453d50cfd266d10d40a59778a5902273c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00549.json",
+          "sha256": "b62e30fce81e76c0cb01e16372b3d15f23a81004a1409f56d8944629a203bccd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00550.json",
+          "sha256": "657dd973ddb3bc8200bfe4b16a3b1a0ce40af53623702ab4c2a647798e46afcd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00551.json",
+          "sha256": "fb1ca847d6384e89ced67473149b3c0c51db6ec09c3a2682da825dd25c40c6b8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00552.json",
+          "sha256": "1a8aba8c6b18990e4f7fc62844bf251565eebb127fcae39834b3d47376d1908c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00553.json",
+          "sha256": "54fb2524cc2117ebdcc40e74434de239cf14d2ea3202809cb27cb503dfdfcea9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00554.json",
+          "sha256": "99094503cd76175780e23c5f78755a4671f76fa682b2b440bbb1a5483c8de324",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00555.json",
+          "sha256": "1ca86494ca73ac601bcd2e12645ae43e6a235a2142df26b2a96b214c11a8ee21",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00556.json",
+          "sha256": "cc6c5ff917d016f5ced15db2ac1d6dc89087a9c383e01bff004db63ae01c65da",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00557.json",
+          "sha256": "e4d8d67b42baa51551c14b0de0b72deaa7475e8fea41eaa14fb9ca80461c9b20",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00558.json",
+          "sha256": "429b54ec3783cafb72a85f8cfa89be3388e7247b1ebe82cf6d869f906c36195b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00559.json",
+          "sha256": "601ff4b43ceb512ce04ed27c7b09cd62a51f169747815ea284bc52fe7cff4ab0",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00560.json",
+          "sha256": "e5dc4e4b0ca72174e36a1b9b202c684c87513bfb439905c2b3a6069fa1e4fe4d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00561.json",
+          "sha256": "8c58b0f435801a34eb56d70994f9473d510236ae2db4211b96ad2b10f72ffea7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00562.json",
+          "sha256": "3c9989f0e1e3e1e98b78f4e0ad221c6448a209ddc5cd95f7e15872ad2db8ed62",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00563.json",
+          "sha256": "0eb8f6369586aee00de8f8e39a94273f26c0337a1d813782ea9f2cb6543e2f72",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00564.json",
+          "sha256": "2bc2ce83ecfff5bf688a1e0d098094fe73f70fe456265da6bd4a9c6f4bc51bff",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00565.json",
+          "sha256": "f184b7ad446be8c1acd139190f639227201690337725380cb7f6dc519f8bb403",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00566.json",
+          "sha256": "2b967b24f85fecc42cee2754e7454daafca3a792db9f93c970cc0df130ca9600",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00567.json",
+          "sha256": "094373c2d7a7735fa4db61c93215d87ac33b5839c44629554d20c63833dc73d2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00568.json",
+          "sha256": "f5af518ea7fa78d2b3c13e643419cda723c62eab73eb0647379bd2ba8dd63586",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00569.json",
+          "sha256": "588d07cc1a11d5de73d2ab893c792bc94731c48690276c63906fdbe4b57a27a4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00570.json",
+          "sha256": "bb807faac1cab8f3643c461618ff4a0a89d7e88be16e9128fd62204b29b39149",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00571.json",
+          "sha256": "baf1dca1f65ca34801e0b9fd835d209c3b216c128b84014959d2b71247d49ad5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00572.json",
+          "sha256": "89dc171479ef7f52db0ef2b9f9a26c6fc016c993287f07a66b20f49edad204bf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00573.json",
+          "sha256": "3d00e6ef252498a95c6ebeb8d074749c37f991b5f1c1d26d042ed1af6732dfec",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00574.json",
+          "sha256": "8eec0a17a809ffbdb8c3ed85d44b52652c335a5b1fbd3cdeddd1def14e0ca86c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00575.json",
+          "sha256": "6b5fe6fc7624c60a3f0d29225d4bc2febdd27d3da34171f34da46353f158c850",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00576.json",
+          "sha256": "951a9a21a1c6c9e2673092ed4e8c3b4f12f8e362f81e0fb1e09a04b712c6af49",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00577.json",
+          "sha256": "e4dc50994fef40a45ff147ae52bcf3694a85d460b5226f6cf0fbcbaf3627d9a2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00578.json",
+          "sha256": "5df20bef2b42f7e5519fc3273541f65420bb98a71dbcf43f2c98ea17132f3b4e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00579.json",
+          "sha256": "8292dad4a535e28df0942363f53560a384b9f31997b4f597c73319c3207f418e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00580.json",
+          "sha256": "959ff3d27186b570d2b7cdcabedd4700d7b73189789e124d78c6f381fc8a8d2c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00581.json",
+          "sha256": "861b84f60ca35cc77d8b57564f3b5efdfbbe414ea629aed3f6dc12ae8652f760",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00582.json",
+          "sha256": "9b8c5b922fba7309a928bd59f707ddeb4d539e572ab98b4da1a39810b0183362",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00583.json",
+          "sha256": "94a47889176d0a4c85161bdb6ca6b03e94e6869761541de32a78786458d0c0a7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00584.json",
+          "sha256": "581b7f10c87899d1eb009665845933d61b4fb0eee38157b2cf497cbb906fccb1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00585.json",
+          "sha256": "99aa0d74071d4b5d951cba8e6e22f4a221254facddc7a4394e1a799de864c75c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00586.json",
+          "sha256": "01a2228add7cf30d0901a27665e630c5ed0fb78e866f0d01cc042a27e26cbf12",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00587.json",
+          "sha256": "dfc87997cff5d3946c6defe7f21ee63b362a7e2e65c05dc2edac8054a2dced0c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00588.json",
+          "sha256": "82a0f0f347cea6fef2aefd397ed1d0a39a1fa176cf60dea241e2db5119ab4daa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00589.json",
+          "sha256": "ca33169c4907929643af02b312d1707017801e73ee908aad978c220b3ec205dd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00590.json",
+          "sha256": "0deba5ae538a022488752130cf097b4d9970d9f17b98f609fa1be304c704150e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00591.json",
+          "sha256": "d39478ff23493c6857e3c13f0c90e10cff91f6ed4cdb65c77039f0e680645763",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00592.json",
+          "sha256": "e66603bf309affaf56fbec3539ce740758f52a3bd146b1e9fdf35533c79fa466",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00593.json",
+          "sha256": "c3455cd554cd5516e2fba1d54ca7918fd8c8216eefec231d28af9bf8ba82edca",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00594.json",
+          "sha256": "c17668071ba58f9bc0b64d382dec20fac6462ef40537b77be76993f58f625d24",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00595.json",
+          "sha256": "f066c23a4bb48146bf92398df96c41cce3d1cb526b077867bbd5938e23393b44",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00596.json",
+          "sha256": "d53a8b05bfc0274f2e9d48ff6c0495caabd900619721a0fa8225a99f7555468e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00597.json",
+          "sha256": "ca0e049404a13223e9af52bac56b66384dbbebdd52cf0a09f03819fc3a9e0f29",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00598.json",
+          "sha256": "798944cf83c53edab3aba5f4a2f4cfdb648d02013432e66a61ded7514c2c0b59",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00599.json",
+          "sha256": "636ee0a10e9ea3b9a69f615563ab42bd6171fb41676ffd1b997cc6c4061f0c38",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00600.json",
+          "sha256": "371d8a64f45bd0639c1fd9c99f04e854cc1e0280a1fd90f47d35d016f278efd5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00601.json",
+          "sha256": "b4417614e4d3b414dbfef07e91678d75acd92942fd86c2b2571fc2344b5b141d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00602.json",
+          "sha256": "f3f5d0187f8eaf6fdb3342b87bb42f4a5bc4a7eacec6ed9195852775ea09bb1a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00603.json",
+          "sha256": "fd6404dd4a6870bb64c31f829e8ca7afaa2ea9f67691d52b353f4388f1bc827d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00604.json",
+          "sha256": "c3b42d744440bb2fefe2352cf590413c97ae90e6591bd029f33c18eae421e13c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00605.json",
+          "sha256": "258a5fea839c795cd73e949036aaabb1b71a067026ec8c9b02c76609001d80b8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00606.json",
+          "sha256": "8d5d6a9767dfe96fa8a13ad461e3e7645af502904b245f327f5d45055e5de6ab",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00607.json",
+          "sha256": "2339f8890876be29d4b416d370b956dddf5eecdd2f3c0239fc741336e81eb866",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00608.json",
+          "sha256": "13e41a21bcbb2dcd40c7ca881446b44fb7922143251ad27e91db66537157f745",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00609.json",
+          "sha256": "212614056a7d267ca5977d73ccde6a2c108f8d195214e62337f452dd7c5dfd57",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00610.json",
+          "sha256": "f346c866768e31cf43fe44bcd62016d9800dfb25832bf80b80df68f772a272bd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00611.json",
+          "sha256": "0b88dbdf4893090a33dcdc07a89565745fd664a357f1c18b7f6911b42167ed5a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00612.json",
+          "sha256": "f45207da99e3f1471ecf67c20f0b2ec46f2e97af6488eadb2a561eed4dd7fd05",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00613.json",
+          "sha256": "01451fee78647d7b8d51001eace3007f8b24a96e67043406feca90180aaa742a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00614.json",
+          "sha256": "992f7f0e80717f0d6f402d45a7c3e480ed6c521308745bd13cccc44d07299b1f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00615.json",
+          "sha256": "d61b6e485492b6ade14aa2710dd36bec66501350a78efe929da39c61fc4412b8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00616.json",
+          "sha256": "5f1060ee12192a4334e4a144c532d0202c49704cf11ba68425b31ecfde0efaf9",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00617.json",
+          "sha256": "40ad13aca35e030d3bdb6cc1b73f0ef956d2f01a0cba5f248ac6ff1f0a36c147",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00618.json",
+          "sha256": "aad5e37c63edd05eeb3db085bdb8878054cfc6105897f5148c34ec12254be30b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00619.json",
+          "sha256": "4249e2c8fac46b0bb50605355b4c662799d0f40b5f4d56b061fc07d0ba989f75",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00620.json",
+          "sha256": "50cebf219054a6697f10663cc507be25a38c42dc828a5fc393718724e210a180",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00621.json",
+          "sha256": "8c43a01eceda13ad335def8534abb0cc670d1a47a94494b57c0ce0ae0479bac5",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00622.json",
+          "sha256": "26e78ba84cf3d2d124bdfb263b6a816e78f6b514f78c4c86db168e25e4484890",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00623.json",
+          "sha256": "630e525783ddff9ad49282857fa0fb9cc0df2ab6505940505e1a50c18df51ff6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00624.json",
+          "sha256": "f50f8ee6374e3b2b4d0b6e4b725f4d17dd23f8dc54eb320201c4337a5bb27cbe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00625.json",
+          "sha256": "523f7e9b0e9a258f0b263ad3d3fd7654e1aba03232dc3c084b28833c5918f62f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00626.json",
+          "sha256": "b085d0f5496860e79e97ae4c63db9e42b7caf5c5d4e4220154f6fae0c938adfd",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00627.json",
+          "sha256": "33b4a840377a39165c4e86db4e07af5ea801112430bf1846b8abd506455b8f9e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00628.json",
+          "sha256": "cd08222d76d8e3808504820e30d2a54da0c974bb37ab360be9ccd1f69bdf8348",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00629.json",
+          "sha256": "0f6dad50ff8dfeb06b972709433091be56dd8f870cccdef57c96eeb28b9b4869",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00630.json",
+          "sha256": "e3cdccbb4a9b2eb2142f0a46d2907f78c6dc243c212494d489d089fdaff3850e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00631.json",
+          "sha256": "c7d97e52d4492fe9b94bc6a9f8f1859643184244b803f14ba580ef11b9f5efb8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00632.json",
+          "sha256": "dc835e43855723b109bdd77e2ed7064933555266db3c2fea37dfaf5427c559b2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00633.json",
+          "sha256": "55c049aebce2bee3a7215372bd9ad6e710a55f095752db264500841f73de59f6",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00634.json",
+          "sha256": "073b67344a106ad7fc7b810c17f3f18a210c6979ff28b3253f4fb36a719827db",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00635.json",
+          "sha256": "45177e83270fb9d7a64cceed262eb1177155a96c59ffe6a85178c98f3a9a8672",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00636.json",
+          "sha256": "a28895ae0c67560359a5368c45d49aa63c58d3d6d16ea03269f5b792b05d2378",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00637.json",
+          "sha256": "a11c4b9f4a5bab98ec3bce6f59d4ce0588996b44abe928cef6ede93d2534d9a8",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00638.json",
+          "sha256": "56222c7737fdd1311a2877b1c52de1c62245ba1eb91588f7a960227b3f20b1a4",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00639.json",
+          "sha256": "f9f8fa3589cd6d2f894e19dc1452e2fc8e025f1d2faf018dc6e2f8203d4b320d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00640.json",
+          "sha256": "0d8ea9cd76ab27d555d923f4cdbb497db82af57fd1f54c8becf0d9fc330fa493",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00641.json",
+          "sha256": "4bc04ee88690e6488676ba1b23f9e568e2dd528187ed39fd5e0fff7be0e2cf4e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00642.json",
+          "sha256": "adea97a7d0e8e08416bfadd1057dfac2ae21f7a09eab9f875cb4ac99d81c1591",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00643.json",
+          "sha256": "1fefa6a2c1aed9d4d546c7180a1b3606bbd25b3414c4844df4107d7eceda6c43",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00644.json",
+          "sha256": "d356cd14f0bfe26e26766c88e3ff24154c73d16c3ed9aff9ec43c9c87d9054f1",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00645.json",
+          "sha256": "ffb99b158751267fc43eb391bf10bdb36f655d5af6c00d66fa784a8122620e3a",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00646.json",
+          "sha256": "00aa4270e0c2be7d4dfd4f02051ffbe975db84b25bde6e23a19707e3c73b57da",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00647.json",
+          "sha256": "382f97cdc178b2cbb845a8c7cd9764218964ecfe46c39f42d3b8adcfaf21d334",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00648.json",
+          "sha256": "7a47b4d9fd8f27b066cccf18cfbdeab5fc1c4b81a62d868f3992b28b34556928",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00649.json",
+          "sha256": "a720ba73f7aa67bc4767aef1b087a1c6ea6d16d5b3b0b439b4d6267db2c8d94c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00650.json",
+          "sha256": "1e317dad0d32d6c448647d93027bfb5446bd947a338629140335b99092abe78d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00651.json",
+          "sha256": "898fb4d3edb66d11b0a04e2d7de3b56e212836dae70adf1090572ad06118e291",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00652.json",
+          "sha256": "7596022ad70b8a0a053157f9ff70d6daa61f4ec0f9d187a646d85d4de405234c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00653.json",
+          "sha256": "147e1d73a6012fc7e153d4a6f574c687e2d6ef6c7ddefc8551aa06b78586ad75",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00654.json",
+          "sha256": "e3c7fd19fd3ace5044c2b949a92664dc16ff6f0b62346fab46cf884dd90144e2",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00655.json",
+          "sha256": "ee5ac75b18d1145e5755806c100ce72169a6d8dc8f38808a35658219eb935aaa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00656.json",
+          "sha256": "011717d5a3a00794c286886c5a82c736afd04e4126affb724886ad4eb6385afe",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00657.json",
+          "sha256": "989d180109eecd3b123708d8f5b58b69625368ab5141cd2b5fc72db38780fdbf",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00658.json",
+          "sha256": "28c525f967d0ec76b5d30f5c6c644735b05ed7336a801f03eae57bfa4ac5e45b",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00659.json",
+          "sha256": "590e6911064de5b9e88c7f398c0225b53c6da42aa47f60dea4ab218a0a1ac5ab",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00660.json",
+          "sha256": "d7deb86915e15d1e81225315e4c559655f06cef151ac8e0da2463e16c587937d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00661.json",
+          "sha256": "2d3546b6d5c5f9ae365d3280b3c9c2fe28c4b77130f6fbfc65ed991d293a8aca",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00662.json",
+          "sha256": "de4623b3f8df9363f21b41beb6af014c83dd825e3b64b68ad0cf7203f095bd37",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00663.json",
+          "sha256": "e440e0559be5ab6250d577dcb806e18e88a87a5819a2cd8753d27cec2c83067f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00664.json",
+          "sha256": "292d0d567dddd5ba7fc356043c5ea2b58ce6ecf43ddfc966b3582922c05f2d8c",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00665.json",
+          "sha256": "7907309df39ecba242095c8845eb0bcc5681a2d2d34e66b9cb75e0c0abd672c7",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00666.json",
+          "sha256": "c6583b605feb1a395b1511f7643f2b8f94e8dd71e1008b5776387144e4b4189d",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00667.json",
+          "sha256": "3d53e0e19ba2f3c7aaf2ffc4aba93a1a9a549decc31772a8fd8ccc5279afe81f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00668.json",
+          "sha256": "f5e178b295de5b1cd3244b1c2acb76806791dd7d948c4e2790a8746713a7ce6e",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00669.json",
+          "sha256": "2659ee03e5e29d9b5bfbfba99e9e4ea471727009c4af3e4ae41cfcd2dad8e485",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00670.json",
+          "sha256": "1e688a57ee04873f8233559c1d2cf42bd7cffe9ce42a9861a79c3d3709ce6562",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00671.json",
+          "sha256": "6a18227c02129a7dfb96e9d56e07ef9f2a49620ce10dada7a0f33f9140cbc6fa",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00672.json",
+          "sha256": "abcceb797fddabe72a7bea7d58945a2debf7d1624f72bb72066c84fb11bdf3c3",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00673.json",
+          "sha256": "6961b3f27a09a7802bd9d57f40ca396a078a770eb2e869a8889af29389adfb1f",
+          "bytes": 29364
+        },
+        {
+          "file": "season-boundary-00674.json",
+          "sha256": "c50344bb73c9d9048ca84f1b42c811ea1d82f6782c39f38d3a27dc00a2093bf3",
+          "bytes": 31313
+        },
+        {
+          "file": "final-season-state.json",
+          "sha256": "65d4ea42f9271d71a526ca3e7625d03be9e4436dd445b229540479d52251670e",
+          "bytes": 15266
+        },
+        {
+          "file": "negative-missing-recap.json",
+          "sha256": "42d439401a44658645abc50b9b1eb2870b68dd4b18a66b5d1c7f254ea14b96d9",
+          "bytes": 27357
+        },
+        {
+          "file": "negative-wrong-owner-recap.json",
+          "sha256": "a0284171507850b18d77a91f4e38581fc18022777029cc5af4fff23df4d7087e",
+          "bytes": 27594
+        },
+        {
+          "file": "negative-duplicate-recap.json",
+          "sha256": "b404132f489b79a42ac99c45e24f04f64d9933b7397e35261fe0aedbd99be444",
+          "bytes": 27803
+        },
+        {
+          "file": "negative-missing-crown.json",
+          "sha256": "a92d28608fd06b8a4a76e0fdfa6f8582dcd6b8cd85dee2cbdbbf9f96b9ebb020",
+          "bytes": 27598
+        },
+        {
+          "file": "negative-duplicate-crown.json",
+          "sha256": "64b9283ec6dd1588eaf248cb1943197da9c4b198a4610c95100005534b7199e9",
+          "bytes": 27598
+        },
+        {
+          "file": "negative-wrong-owner-crown.json",
+          "sha256": "a22ae9332e7fb90ed3b2c03de06f19fb5ad87217a4e8d6a011fa57b97e7e0ef1",
+          "bytes": 27618
+        },
+        {
+          "file": "negative-wrong-prestige.json",
+          "sha256": "646db78f013a09307bc7aa4ad2b6d48d00a5ccc959d98c01dc998ab39f073dc0",
+          "bytes": 27914
+        },
+        {
+          "file": "negative-missing-notification.json",
+          "sha256": "48775eb0aff3df3020d57c0e124da059d9b8ccdc7bd4a4f935d9c6aa36359a1e",
+          "bytes": 27283
+        },
+        {
+          "file": "negative-wrong-owner-notification.json",
+          "sha256": "0ad9d5bebe946dda5e760f87d6f0d009c41c5afbeae876488444f56044597da9",
+          "bytes": 27603
+        },
+        {
+          "file": "negative-duplicate-notification.json",
+          "sha256": "dce8aebfe8dd11ff3ad3b7f1696f80085d8666b3ed720da8409b82f8912b5603",
+          "bytes": 27882
+        },
+        {
+          "file": "negative-wrong-season-reset.json",
+          "sha256": "eb78268724923fba7b6514c517a70ae89912825ee4e1c78bed661c34681295c4",
+          "bytes": 27566
+        },
+        {
+          "file": "negative-wrong-conversion-owner.json",
+          "sha256": "eb94a7c22ce92c88a80e3b684c83cbb31f764e613fe56fe6b9ee87b538630be1",
+          "bytes": 27621
+        },
+        {
+          "file": "negative-rewritten-standings.json",
+          "sha256": "1109176bbaa90a3a38fcb9ae87de07e6d2d67fa8249a85db8cddbf3b8dcdd189",
+          "bytes": 29683
+        },
+        {
+          "file": "negative-rewritten-recap.json",
+          "sha256": "06eef5c4829c288d527ae4ac851db5dde85c8b2a842a43f8956f9da4a86f0375",
+          "bytes": 29628
+        },
+        {
+          "file": "unclassified-native-cash.json",
+          "sha256": "72a2e0db99af873d236439487cc0b05c09351669f2a052c3bfd5f75272a504bf",
+          "bytes": 37522
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "23aa559c9854943e861bb5151a5ca5c69dc59f361bdd31599004355426c7d003",
+          "bytes": 41678594
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "435e6ede20fc7fcc779afdeb4948629205525c30ba8cca9a7957d4511b5e708a",
+          "bytes": 746941
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "f9e97a46d93b0dd204735b03e087c001ec8fbbd967a7f9e5d8fb285ab21be2fc",
+          "bytes": 1113785
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "season-journal-d771ede9db96-692544a6ce",
+      "source": {
+        "revision": "d771ede9db965458f2f8adc43cca410d5256441c",
+        "gitTree": "658d63233e43a188aefb0bfb7ebf916a346a1bf0",
+        "checkoutSha256": "fbc5c98809607c75da08f71cb0aef0015fc8c8770e75bb53cfc1a832c9413b31",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "manifestSha256": "c892fee304a33a98fd443103423673f9b5b6bd99adeed412334ad448133aa768",
+      "seed": "rc1-season-journal-alpha",
+      "startedAt": "2026-09-21T07:07:03.249Z",
+      "endedAt": "2026-09-21T07:07:21.096Z",
+      "artifactHashesAndHistoryVerified": true,
+      "boundaries": 1,
+      "completeInputsReconciledIndependently": 1,
+      "nonmonetaryChecks": 4,
+      "exactPrestigeEquations": 2,
+      "exactPrestigeUnitsCreated": "0",
+      "canonicalInvariantSweeps": 1,
+      "canonicalChecks": 55,
+      "unsupportedReasons": {},
+      "negativeControlsIndependentlyRejected": 0,
+      "logicalHours": null,
+      "timerCounts": null,
+      "originalRolloverCount": 0,
+      "failure": "Retained journal type error: native NUMERIC Family season_wars is exact decimal text; corrected without production edits.",
+      "artifacts": [
+        {
+          "file": "initial-season-state.json",
+          "sha256": "5da17e0e183785699c01f3f7c39f578dc56815a3a1fa6603ea44a2e6dd6f7797",
+          "bytes": 11364
+        },
+        {
+          "file": "season-boundary-00001.json",
+          "sha256": "8e1d578d8b6249c05cbb9796f66f570025b1f256f835f02fa93bdab74bd2ee7b",
+          "bytes": 24710
+        },
+        {
+          "file": "first-season-failure.json",
+          "sha256": "22124e72a31afab018c55bf6d43ec1b0397f92b1050c09fac11ba43023246b3d",
+          "bytes": 28925
+        },
+        {
+          "file": "failure-worker-schedule.json",
+          "sha256": "e139998185d142e7efa4eb49e62009930f31b58a62f8a02ad07017f7d1db1147",
+          "bytes": 451147
+        },
+        {
+          "file": "failure-season-state.json",
+          "sha256": "3fc365e327eb531f81225f30ded91f601720988971d0bb8458c563cab9b20724",
+          "bytes": 13543
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "39551911f29a24114a41b478d7723a13eda2488c9622e1127df5b3cdb7db3530",
+          "bytes": 9231
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    }
+  ],
+  "executed": [
+    "Two original season rollovers, 28 logical days apart, with all original local callbacks driven through673h",
+    "Immutable stored standings and recaps; crown latch/account/notification parity, two crowns and two duel titles",
+    "Per-owner recap, original respect-to-level formula, exact prestige conversion:8 units first rollover and0 second",
+    "Character seasonal resets, account spend-marker reset, Family seasonal marker reset and conversion telemetry linkage",
+    "Fourteen native copied-input corruption controls reject missing, rewritten, duplicate and wrong-owner rows/increments; native cash movement stays explicitly unsupported"
+  ],
+  "sufficientProjection": "All columns from characters, account_persistent, season_records, season_recaps, notifications, telemetry, gangs and transactions; full typed rows retained privately",
+  "initialFixtures": [
+    "Two default-cash/ammo actors with respect1000/360, kills2/1, listed-duel ELO1100/1200",
+    "Account prestige7/0, season spend markers4/2 and zero-resource Family seasonal tribute12000/wins3",
+    "One hour of an initial partial season followed by a complete unchanged28-day season; population disabled through its normal deployment switch"
+  ],
+  "remaining": [
+    "Initial City Standing cached ranking and Family election selection are not independently recomputed",
+    "Currency/resources outside seasonal prestige/status remain unclassified; no new currency award exists",
+    "Integration into shared resource observer and per-commit invocation context",
+    "Natural progression, HTTP, concurrency, deployment and full release matrix"
+  ],
+  "integrationContract": "Use complete original seasonal job before/after. Do not apply as an arbitrary per-commit classifier: duel champion selection precedes the per-character transactions. Preserve unsupported entries.",
+  "dependencies": "Shared installed local dependencies are not independently attested; source-bound integrated reruns remain required. Production source is unchanged from repaired5ffc; all failed harness runs remain FAIL.",
+  "rerun": "node test/rc1-season-journal.js; then from clean integrated source run node test/rc1-native-season-journal.js --postgres with local RC1_RESOURCE_DATABASE_URL and new private output.",
+  "privacy": "Public-safe branches, counts and hashes only; raw actor/account identifiers, rows and copied corruption projections remain restricted."
+}

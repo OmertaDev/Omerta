@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "status": "READ_ONLY_POINT_IN_TIME_CHECK",
+  "observationDateUtc": "2026-09-21",
+  "workspaceId": "tea-d9gkgfbbc2fs738o1jkg",
+  "databaseId": "dpg-d9gkii4m0tmc73cc6uf0-a",
+  "query": "SELECT balance < 0 AS negative_balance, lifetime_paid > lifetime_funded AS overspent, balance = lifetime_funded - lifetime_paid AS exact_backing_identity FROM family_yield_pool WHERE id=1",
+  "rows": [
+    {
+      "exact_backing_identity": true,
+      "negative_balance": false,
+      "overspent": false
+    }
+  ],
+  "scope": "Read-only transaction returns booleans only. No actor data or monetary balances read. This instant's healthy stored state does not refute the retained native RC1-FAMILY-YIELD-01 reproduction or attest candidate runtime/deployment readiness.",
+  "releaseReady": false
+}

@@ -1,0 +1,1067 @@
+{
+  "format": 1,
+  "status": "FAIL_INTEGRATED_GOLDEN",
+  "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+  "releaseReady": false,
+  "matrixQualifyingRuns": 0,
+  "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+  "gates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:28:50.078Z",
+      "endedAt": "2026-09-21T09:29:27.727Z",
+      "durationMs": 37647,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "6c951f09831543bde31c73ded1ae84f36d4bb84baceeafd29c531b96fd5b283b"
+    },
+    {
+      "format": 1,
+      "id": "rc1-static-gates",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "node",
+        "test/gates.js"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:28:50.295Z",
+      "endedAt": "2026-09-21T09:29:10.651Z",
+      "durationMs": 20355,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Static repository safeguards only; no native, deployment or human clearance."
+      ],
+      "log": "gates/rc1-static-gates/output.txt",
+      "logSha256": "08f9daeed70c033979a4f9d5656cca6fae2a614b4ab699343e80f1e32fe990b2"
+    },
+    {
+      "format": 1,
+      "id": "rc1-omr-loan-terminals",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:omr-loan-terminals:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:28:50.800Z",
+      "endedAt": "2026-09-21T09:29:50.065Z",
+      "durationMs": 59263,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact directed OMR collateral transfer, inheritance, selected death and original grace expiry; no full cash/death ecology, all races, backing or matrix"
+      ],
+      "log": "gates/rc1-omr-loan-terminals/output.txt",
+      "logSha256": "219c7d4a4d2c7b87c2a43a87f7a2deb018fa684b7b8c76e66c017eba4c59a557"
+    },
+    {
+      "format": 1,
+      "id": "rc1-car-journal",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:car-journal:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:28:50.551Z",
+      "endedAt": "2026-09-21T09:29:35.874Z",
+      "durationMs": 45322,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Exact basic salvage and list/cancel custody only. Boost, melt and worker grant/retirement identity/yield provenance remain explicit unknowns; no full resources or matrix."
+      ],
+      "log": "gates/rc1-car-journal/output.txt",
+      "logSha256": "a00513f0503d27974c08381d239610edc39f7756b7ec00f4121a920723e16c48"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:30:09.864Z",
+      "endedAt": "2026-09-21T09:31:22.975Z",
+      "durationMs": 73110,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "4ef3595ac268f980e459db266635a9a5d4ad4b6e2faf9e1bec7998736691f61e"
+    },
+    {
+      "format": 1,
+      "id": "rc1-golden",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:golden:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T09:30:09.626Z",
+      "endedAt": "2026-09-21T09:39:26.679Z",
+      "durationMs": 557052,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "FAIL",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"
+      ],
+      "log": "gates/rc1-golden/output.txt",
+      "logSha256": "099d06b33cdd6dc5e107d61ad3e6c510aeb0e82ffde5e8475b0dc333262ce8e0"
+    }
+  ],
+  "nativeArtifactsVerified": 218,
+  "verification": [
+    {
+      "name": "omr-loans-f8b9b0d1-1",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "71593c6c28be8fc43590605809a70c82ea2428cd80dbeb1c1a8426bc534f22c7",
+      "artifactsVerified": 68,
+      "resultKeys": [
+        "status",
+        "boundaries",
+        "movements",
+        "equations",
+        "invariants",
+        "cases",
+        "controls",
+        "timerCounts",
+        "logicalHours",
+        "graceExpiries",
+        "fullResourceCoverage",
+        "exclusions"
+      ]
+    },
+    {
+      "name": "car-f8b9b0d1-1",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "5725477adad424bce53d6b83cbaac6b3d81d41b55dd33eb2b61a86537688bd91",
+      "artifactsVerified": 24,
+      "resultKeys": [
+        "status",
+        "cases",
+        "controls",
+        "positiveBoundaries",
+        "deliberateNativeCorruptionsRejected",
+        "fullResourceQualification",
+        "statement"
+      ]
+    },
+    {
+      "name": "world-f8b9b0d1-1",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "f8d580c206ae066ba5a139b04ffca8699d1412ef48f69f8ff30e29884f5bad76",
+      "artifactsVerified": 63,
+      "resultKeys": [
+        "status",
+        "hours",
+        "population",
+        "seed",
+        "actorPolicy",
+        "mysteryPolicySummaries",
+        "actualActiveActors",
+        "dailySelectedActors",
+        "seasonalRolloversPerActor",
+        "metrics",
+        "timerCounts",
+        "invariantChecks",
+        "initialStateSha256",
+        "finalStateSha256",
+        "workerScheduleSha256",
+        "missingRequiredProof",
+        "jobOutcomesSha256",
+        "deterministicRandomTapeSha256",
+        "actorTapeSha256",
+        "policyStateSha256",
+        "mysteryPolicySummarySha256",
+        "knowledgeDiagnosticsSha256",
+        "semanticMetricsSha256",
+        "checkpointRestart",
+        "recordedActorAndSelectionReplay",
+        "worldDiagnosticsSemanticSha256",
+        "resourceObservationEnabled",
+        "resourceJournalCount",
+        "resourceJournalSha256",
+        "resourceObservation",
+        "statement"
+      ]
+    },
+    {
+      "name": "world-f8b9b0d1-replay-1",
+      "source": "f8b9b0d19629abc3f8875ee533d80dd424d5f9bd",
+      "status": "PASS_SCOPED",
+      "manifestSha256": "13afb5641f139afbbb4747084d67e62169c63e6d8eaa6741d615d415caa16ae3",
+      "artifactsVerified": 63,
+      "resultKeys": [
+        "status",
+        "hours",
+        "population",
+        "seed",
+        "actorPolicy",
+        "mysteryPolicySummaries",
+        "actualActiveActors",
+        "dailySelectedActors",
+        "seasonalRolloversPerActor",
+        "metrics",
+        "timerCounts",
+        "invariantChecks",
+        "initialStateSha256",
+        "finalStateSha256",
+        "workerScheduleSha256",
+        "missingRequiredProof",
+        "jobOutcomesSha256",
+        "deterministicRandomTapeSha256",
+        "actorTapeSha256",
+        "policyStateSha256",
+        "mysteryPolicySummarySha256",
+        "knowledgeDiagnosticsSha256",
+        "semanticMetricsSha256",
+        "checkpointRestart",
+        "recordedActorAndSelectionReplay",
+        "worldDiagnosticsSemanticSha256",
+        "resourceObservationEnabled",
+        "resourceJournalCount",
+        "resourceJournalSha256",
+        "resourceObservation",
+        "statement",
+        "replayComparison"
+      ]
+    }
+  ],
+  "nativeLoanTerminals": {
+    "boundaries": 47,
+    "equations": 2261,
+    "movements": 16,
+    "negativeControls": 13,
+    "originalLogicalHours": 27
+  },
+  "nativeCars": {
+    "boundaries": 8,
+    "corruptionControls": 12,
+    "exactDispositions": [
+      "basic salvage",
+      "market listing custody",
+      "market cancellation custody"
+    ]
+  },
+  "nativeWorld": {
+    "hours": 2,
+    "population": 25,
+    "actualActiveActors": 2,
+    "metrics": {
+      "playerSnapshots": 8,
+      "ownCharacterReads": 2,
+      "freshPlayerCommands": 8,
+      "legacyCrimeAttempts": 2,
+      "crimeSuccesses": 2,
+      "crimeLosses": 0,
+      "exactReplays": 0,
+      "denials": {},
+      "sessionWaits": 0,
+      "sessions": 2,
+      "commandTypes": {
+        "discovery.start": 4,
+        "mystery.start": 3,
+        "discovery.act": 1
+      },
+      "observedAuthorizedOpportunities": 42
+    },
+    "timerCounts": {
+      "directorTick": 24,
+      "guardedTick": 2,
+      "guardedSeasonTick": 2,
+      "health-boundary": 24
+    },
+    "finalStateSha256": "748aea725098ff46730eb6e62aae4403e1eb4c22e92fa520e3721d42eb5a52d2",
+    "resourceJournalSha256": "fc15a4648ddf94b1d725f10bb1662a1b8c32c91fa96a7246edac9a28e441ccc0",
+    "resourceJournalCount": 1085,
+    "replayComparison": {
+      "fields": [
+        "hours",
+        "population",
+        "seed",
+        "actorPolicy",
+        "initialStateSha256",
+        "finalStateSha256",
+        "workerScheduleSha256",
+        "jobOutcomesSha256",
+        "deterministicRandomTapeSha256",
+        "actorTapeSha256",
+        "policyStateSha256",
+        "semanticMetricsSha256",
+        "worldDiagnosticsSemanticSha256",
+        "mysteryPolicySummarySha256",
+        "knowledgeDiagnosticsSha256",
+        "resourceObservationEnabled",
+        "resourceJournalCount",
+        "resourceJournalSha256"
+      ],
+      "exclusions": [
+        "Native wall durations",
+        "Read-only physical MVCC and relation-size diagnostics"
+      ],
+      "canonicalStateExclusions": []
+    },
+    "replayLogSha256": "6738c305c26609bdf27544ae41b260827d059d4d8f73ad619d892711b2625169"
+  },
+  "browser": {
+    "widths": [
+      {
+        "width": 320,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "controls": 187,
+        "browserErrors": 0,
+        "recoveries": 0,
+        "failure": null,
+        "reachabilityDiagnostics": [
+          {
+            "event": "rc1-finite-toast-obstruction",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 320
+          }
+        ]
+      },
+      {
+        "width": 360,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "controls": 189,
+        "browserErrors": 0,
+        "recoveries": 0,
+        "failure": null,
+        "reachabilityDiagnostics": [
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 360
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "controls": 190,
+        "browserErrors": 0,
+        "recoveries": 0,
+        "failure": null,
+        "reachabilityDiagnostics": [
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 390
+          }
+        ]
+      },
+      {
+        "width": 430,
+        "status": "FAIL",
+        "commands": 32,
+        "interactions": 6,
+        "controls": 134,
+        "browserErrors": 0,
+        "recoveries": 0,
+        "failure": "AssertionError [ERR_ASSERTION]: Selected command detached without an observed board refresh",
+        "reachabilityDiagnostics": [
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          },
+          {
+            "event": "rc1-board-read-superseded",
+            "width": 430
+          }
+        ]
+      }
+    ],
+    "resultSha256": "d523a62481c4e23812c5cb17e5c2d8aedbfac209e59b7a82d0bbb5e73eb95931"
+  },
+  "knowledge": {
+    "generatedFromCleanSource": "56b8ca2f",
+    "validationLogSha256": "a37d8cbbe6cc048247bc15550aece9ab46de7689cc17a725a73b358ee35b8cae"
+  },
+  "exclusions": [
+    "RC1-FAMILY-YIELD-01 reproduced separately on this runtime lineage; repair and affected reruns pending",
+    "Hosted checks for this exact source not run",
+    "No complete thirteen-resource/nine-gap proof; unknown lineage remains explicit",
+    "No qualifying90day matrix,12h1000actor soak,deployed recovery,physical devices or real cohort",
+    "Separate90c80287 alliance world proof is not an integrated-source pass",
+    "Browser automation does not prove human comprehension or physical keyboard behavior"
+  ]
+}

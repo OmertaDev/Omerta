@@ -1,0 +1,3 @@
+coordination-capital: root authority, cash bounds, duplicate commands, refund and role replacement pass
+coordination-capital: cash/escrow/ledger rollback, caught-error poisoning and overflow refusal pass
+coordination-capital: deterministic settlement, death forfeiture and signed cash reconciliation pass (postgres)

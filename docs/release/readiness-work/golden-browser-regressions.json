@@ -1,0 +1,700 @@
+{
+  "format": "rc1-browser-scoped-evidence-v1",
+  "owner": "Codex/source_repairs",
+  "gate": "RC1-05",
+  "status": "PASS_SCOPED",
+  "phase": "local prerelease browser regression",
+  "source": "870f131bada3c401410394dc77b6af0a6ebb2b9a",
+  "cleanBeforeAndAfter": true,
+  "harnessSha256": "1305331306507895c1f9adbf54abb997ba51f804a2c839e760ef01291de6a210",
+  "helperSha256": "4a367464d04bf0f91f9e9abca7ddfb2a1ff9246ed6bc6a603fd7287b056fd176",
+  "command": "COORDINATION_TEST_DATABASE_URL=<isolated loopback PostgreSQL database> RC1_GOLDEN_BROWSER_OUTPUT=<new directory> node test/rc1-golden-browser-postgres.js",
+  "runtime": {
+    "node": "v24.19.0",
+    "browser": "153.0.8010.48",
+    "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit"
+  },
+  "startedAt": "2026-09-21T04:14:04.156Z",
+  "endedAt": "2026-09-21T04:22:24.821Z",
+  "durationSeconds": 500.665,
+  "fixtures": "Five actors start at cash100000/respect10000; two initial Families/Crews formed through domain APIs. Canonical initial dock route and acquired/salvaged materials use existing services; setup garage success is pinned. Rival route knowledge/seal are prepared before baseline. Recruit remains outside all social groups and without discovery/equipment until browser play. JWT login selects only these fixtures.",
+  "scope": "Automated Chromium phone viewport segments of returning/social/investigation/Family-conflict journeys, from declared canonical fixtures.",
+  "exclusions": [
+    "A fresh-player entry",
+    "natural low-resource entry",
+    "human comprehension or complete A-E acceptance",
+    "physical iOS/Android keyboards and wallets",
+    "all operation loss/expiry branches",
+    "all responsive screens and list sizes",
+    "750ms adversity and lost responses (separate harnesses)",
+    "production deployment",
+    "real-time worker schedule: Director uses a declared601second clock advance for aftermath selection"
+  ],
+  "results": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "status": "PASS",
+      "renderedCommands": 50,
+      "commandFamilies": [
+        "discovery.start",
+        "discovery.act",
+        "mystery.start",
+        "mystery.complete",
+        "recipe.craft",
+        "mystery.discover",
+        "knowledge.share",
+        "operation.create",
+        "operation.publish",
+        "operation.join",
+        "operation.commit",
+        "operation.contribute",
+        "operation.approve",
+        "operation.execute",
+        "operation.cancel"
+      ],
+      "socialTravelInteractions": 6,
+      "criticalControls": 60,
+      "minimumHitWidth": 57.703125,
+      "minimumHitHeight": 44,
+      "javascriptErrors": [],
+      "milestones": [
+        "social-request-sent",
+        "social-approved",
+        "investigation-incomplete",
+        "investigation-combined",
+        "social-shared-threshold",
+        "rival-shared-threshold",
+        "returning-after-shared-outcome",
+        "conflict-terminal-cancellation"
+      ],
+      "keyboardCheck": "Emulated reduced420px viewport and focus retention; no message sent, no native-keyboard claim",
+      "baselineStateSha256": "285f0b62fe283359186c46185714f2509a45133912a489c96302d533cdf229d2",
+      "returningBefore": {
+        "state": "shortage",
+        "consequences": [
+          "e054ee45-4c04-4656-93ea-0f926db32d2d"
+        ]
+      },
+      "returningAfter": {
+        "state": "protected",
+        "changes": [
+          {
+            "title": "The Dock Supply Route",
+            "description": "The Dock Supply Route: protected."
+          }
+        ],
+        "nextActionCount": 21
+      },
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "status": "PASS",
+      "renderedCommands": 50,
+      "commandFamilies": [
+        "discovery.start",
+        "discovery.act",
+        "mystery.start",
+        "mystery.complete",
+        "recipe.craft",
+        "mystery.discover",
+        "knowledge.share",
+        "operation.create",
+        "operation.publish",
+        "operation.join",
+        "operation.commit",
+        "operation.contribute",
+        "operation.approve",
+        "operation.execute",
+        "operation.cancel"
+      ],
+      "socialTravelInteractions": 6,
+      "criticalControls": 60,
+      "minimumHitWidth": 57.703125,
+      "minimumHitHeight": 44,
+      "javascriptErrors": [],
+      "milestones": [
+        "social-request-sent",
+        "social-approved",
+        "investigation-incomplete",
+        "investigation-combined",
+        "social-shared-threshold",
+        "rival-shared-threshold",
+        "returning-after-shared-outcome",
+        "conflict-terminal-cancellation"
+      ],
+      "keyboardCheck": "Emulated reduced420px viewport and focus retention; no message sent, no native-keyboard claim",
+      "baselineStateSha256": "9b292ff31b02d6a4c48c74188cd0337d0de85c95a2d4525110c0428949488e3b",
+      "returningBefore": {
+        "state": "shortage",
+        "consequences": [
+          "97f895ab-44c6-417d-a646-269afb8fadbf"
+        ]
+      },
+      "returningAfter": {
+        "state": "protected",
+        "changes": [
+          {
+            "title": "The Dock Supply Route",
+            "description": "The Dock Supply Route: protected."
+          }
+        ],
+        "nextActionCount": 21
+      },
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": "PASS",
+      "renderedCommands": 50,
+      "commandFamilies": [
+        "discovery.start",
+        "discovery.act",
+        "mystery.start",
+        "mystery.complete",
+        "recipe.craft",
+        "mystery.discover",
+        "knowledge.share",
+        "operation.create",
+        "operation.publish",
+        "operation.join",
+        "operation.commit",
+        "operation.contribute",
+        "operation.approve",
+        "operation.execute",
+        "operation.cancel"
+      ],
+      "socialTravelInteractions": 6,
+      "criticalControls": 60,
+      "minimumHitWidth": 57.703125,
+      "minimumHitHeight": 44,
+      "javascriptErrors": [],
+      "milestones": [
+        "social-request-sent",
+        "social-approved",
+        "investigation-incomplete",
+        "investigation-combined",
+        "social-shared-threshold",
+        "rival-shared-threshold",
+        "returning-after-shared-outcome",
+        "conflict-terminal-cancellation"
+      ],
+      "keyboardCheck": "Emulated reduced420px viewport and focus retention; no message sent, no native-keyboard claim",
+      "baselineStateSha256": "dbd405bfab7f093be312f1705b083d066aeb77b25060c1aa67fa3268ac2d462f",
+      "returningBefore": {
+        "state": "shortage",
+        "consequences": [
+          "7913d4c3-afd6-4119-9002-15d362f5f2dd"
+        ]
+      },
+      "returningAfter": {
+        "state": "protected",
+        "changes": [
+          {
+            "title": "The Dock Supply Route",
+            "description": "The Dock Supply Route: protected."
+          }
+        ],
+        "nextActionCount": 21
+      },
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    },
+    {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "status": "PASS",
+      "renderedCommands": 50,
+      "commandFamilies": [
+        "discovery.start",
+        "discovery.act",
+        "mystery.start",
+        "mystery.complete",
+        "recipe.craft",
+        "mystery.discover",
+        "knowledge.share",
+        "operation.create",
+        "operation.publish",
+        "operation.join",
+        "operation.commit",
+        "operation.contribute",
+        "operation.approve",
+        "operation.execute",
+        "operation.cancel"
+      ],
+      "socialTravelInteractions": 6,
+      "criticalControls": 60,
+      "minimumHitWidth": 57.703125,
+      "minimumHitHeight": 44,
+      "javascriptErrors": [],
+      "milestones": [
+        "social-request-sent",
+        "social-approved",
+        "investigation-incomplete",
+        "investigation-combined",
+        "social-shared-threshold",
+        "rival-shared-threshold",
+        "returning-after-shared-outcome",
+        "conflict-terminal-cancellation"
+      ],
+      "keyboardCheck": "Emulated reduced420px viewport and focus retention; no message sent, no native-keyboard claim",
+      "baselineStateSha256": "9858406a221e68141d6e1d757bec1853f84c88e477cebe20a0de278ea48460f5",
+      "returningBefore": {
+        "state": "shortage",
+        "consequences": [
+          "5f98dbca-a766-432f-af32-b880a9806194"
+        ]
+      },
+      "returningAfter": {
+        "state": "protected",
+        "changes": [
+          {
+            "title": "The Dock Supply Route",
+            "description": "The Dock Supply Route: protected."
+          }
+        ],
+        "nextActionCount": 21
+      },
+      "invariants": {
+        "world": {
+          "ok": true,
+          "issues": []
+        },
+        "operations": {
+          "ok": true,
+          "historyIssues": [],
+          "custodyIssues": [],
+          "capitalIssues": []
+        }
+      }
+    }
+  ],
+  "rawEvidence": {
+    "directory": "output/rc1-golden-frozen-2",
+    "artifacts": [
+      {
+        "file": "320-baseline.json",
+        "bytes": 138530,
+        "sha256": "841857ea952cd08b5a626e9105186ca5bffff96d69ddb991991979adc434b70b"
+      },
+      {
+        "file": "320-conflict-terminal-cancellation.png",
+        "bytes": 1136663,
+        "sha256": "b1d86e38a3f8bbf2f06dc02bec6889f8fcaffb034c071a2fbf9daa3d137ff44a"
+      },
+      {
+        "file": "320-conflict-terminal-cancellation.txt",
+        "bytes": 13963,
+        "sha256": "a9c6d22fafea958649cfb9f3f6de1554b4b50215d29a01338dcdb508df26a6c5"
+      },
+      {
+        "file": "320-investigation-combined.png",
+        "bytes": 1373187,
+        "sha256": "2972b07839c980cef0bd0b2831531fa00690ead935a41fde1b46558034edbb9a"
+      },
+      {
+        "file": "320-investigation-combined.txt",
+        "bytes": 26921,
+        "sha256": "343341dcff8039cda534cc583df6d108139094472efb75c2c95adf698ac3f703"
+      },
+      {
+        "file": "320-investigation-incomplete.png",
+        "bytes": 1279468,
+        "sha256": "9afbd27cc6207b6f4584fe4ec658bff8e23fc295612fe77c7dd02513e6178ed8"
+      },
+      {
+        "file": "320-investigation-incomplete.txt",
+        "bytes": 25300,
+        "sha256": "3494e9a33f2ca255348c93bd307cce9de0d77d1aa1b342e7a13cedeb8d79ff34"
+      },
+      {
+        "file": "320-returning-after-shared-outcome.png",
+        "bytes": 1420843,
+        "sha256": "bbeaa7693a435856812372474c92a10de2a914c24dbbf43e585a717e354574a9"
+      },
+      {
+        "file": "320-returning-after-shared-outcome.txt",
+        "bytes": 17201,
+        "sha256": "9191470d7b6d3aaeb99cf5f487e4ed95cd129b3908f27b041cb323f480f18641"
+      },
+      {
+        "file": "320-rival-shared-threshold.png",
+        "bytes": 1303555,
+        "sha256": "70294680ad0829291025acc486330543a0de5db906e39601a295d5ff43aec124"
+      },
+      {
+        "file": "320-rival-shared-threshold.txt",
+        "bytes": 18408,
+        "sha256": "8b76e6af27b1ff12a422555b82e88e6517389c8cbefc2aa6989e9f7427bc0820"
+      },
+      {
+        "file": "320-social-approved.png",
+        "bytes": 300368,
+        "sha256": "fa28ebefcd4070a6ebc079fa7915fa1d22307fc40d6b0dbc6b9194f7836ea050"
+      },
+      {
+        "file": "320-social-approved.txt",
+        "bytes": 11500,
+        "sha256": "9065594b32fac8c5d294cdc12923c2af581214cf03675512f5386379789dfa82"
+      },
+      {
+        "file": "320-social-request-sent.png",
+        "bytes": 379333,
+        "sha256": "e6e6396929899c4bab88b2cc1a2afbd75081842bd2effdfb3b2aaf1c407aa2e2"
+      },
+      {
+        "file": "320-social-request-sent.txt",
+        "bytes": 11441,
+        "sha256": "86861e95b4b6a6a00bf0cee9f6c947973245c656cb8b21f0714ebfd0c80bc0a2"
+      },
+      {
+        "file": "320-social-shared-threshold.png",
+        "bytes": 1600278,
+        "sha256": "8a880343bf8cb63298994d84599b0f0005903f5833c45991f10dfd7221dfd05d"
+      },
+      {
+        "file": "320-social-shared-threshold.txt",
+        "bytes": 30657,
+        "sha256": "1aedb23f8786d38f0f2d6628a3c373e6d6e3a677a3b8dec0b62e4e1ca5e9eadb"
+      },
+      {
+        "file": "360-baseline.json",
+        "bytes": 138527,
+        "sha256": "226db13316f63cae506dc9127712c14edf0b104b5628022eeb04ed7bc288df42"
+      },
+      {
+        "file": "360-conflict-terminal-cancellation.png",
+        "bytes": 1200496,
+        "sha256": "bea07e01fcc3b164bde00164496bfff593c3d02630afefa42fd1842e742e61c3"
+      },
+      {
+        "file": "360-conflict-terminal-cancellation.txt",
+        "bytes": 13963,
+        "sha256": "37759b7b75bbb6a6f9cab71aec5cfd297c26d82fdcc0cd5ef4f2c4fbe8ac97a1"
+      },
+      {
+        "file": "360-investigation-combined.png",
+        "bytes": 1501498,
+        "sha256": "f95b3a607ccd8ae9b15325d702490ac2f4a33bdf50c642d55188f26de8b63b31"
+      },
+      {
+        "file": "360-investigation-combined.txt",
+        "bytes": 27098,
+        "sha256": "5e42321671b905a461d9699d6c032855f06fbba0f2e9a02bcaeb2415b2c3e14d"
+      },
+      {
+        "file": "360-investigation-incomplete.png",
+        "bytes": 1377865,
+        "sha256": "dadc8e7698ca61d89ed6a834fecb23fcc6881d9680cc8b71ab2b999db510d81e"
+      },
+      {
+        "file": "360-investigation-incomplete.txt",
+        "bytes": 25500,
+        "sha256": "e5e54957d36cd799ab5b62fc3a7e4eb21ec0fa44f6ebbfe413f2f80f87a4b27c"
+      },
+      {
+        "file": "360-returning-after-shared-outcome.png",
+        "bytes": 1380104,
+        "sha256": "12482e46d3b904ce4b3b592c9addffe89001dc9e9067848fb2ba25a9ac46ef60"
+      },
+      {
+        "file": "360-returning-after-shared-outcome.txt",
+        "bytes": 17212,
+        "sha256": "3ab3ea5e0bcf50d7232008a580a034cc874b58096b0cee557a6ea52a6ff811a7"
+      },
+      {
+        "file": "360-rival-shared-threshold.png",
+        "bytes": 1406118,
+        "sha256": "972939611086c7035f764a2cb1b6c76508f05cb810a11b5cd14a25e8fbb3212f"
+      },
+      {
+        "file": "360-rival-shared-threshold.txt",
+        "bytes": 18314,
+        "sha256": "6083ae581635b8cae5dd80307d0d919c12494ba691187d4d427b252644640b19"
+      },
+      {
+        "file": "360-social-approved.png",
+        "bytes": 365439,
+        "sha256": "b5cddbb48f27d78101702c4eba81df4bcb2a0fc25b8cc95102a4bdf3f6204b05"
+      },
+      {
+        "file": "360-social-approved.txt",
+        "bytes": 11835,
+        "sha256": "cdc519ec61301a148f3e77ce16c7e4685a6b17bc9e44f7d17ebcedb056717c8d"
+      },
+      {
+        "file": "360-social-request-sent.png",
+        "bytes": 406477,
+        "sha256": "be79bda87a3f77f7cd1e171c02412ed8b10fd017d6ebfdd382669f9d44d03838"
+      },
+      {
+        "file": "360-social-request-sent.txt",
+        "bytes": 11610,
+        "sha256": "fd4b5ada27901d9ea67958d4331e304f20eef9b34a8e0757b2d7a732c7fb7564"
+      },
+      {
+        "file": "360-social-shared-threshold.png",
+        "bytes": 1725074,
+        "sha256": "2600ded463ce617dcad122e8ae3dff5ff97863c365ed11825e50b855260fd5dd"
+      },
+      {
+        "file": "360-social-shared-threshold.txt",
+        "bytes": 30781,
+        "sha256": "f527422a521d62d36bb7846da26064439d59cf392e066825e2acabf3387be02e"
+      },
+      {
+        "file": "390-baseline.json",
+        "bytes": 138540,
+        "sha256": "71facbc63a4a081a33341437c9d9a3972a7776f058ec3ba92570e030ce4027a7"
+      },
+      {
+        "file": "390-conflict-terminal-cancellation.png",
+        "bytes": 1226183,
+        "sha256": "1bdc62cafc201cd46645f804dd6ff875b8ca610768b3913328699d26023341d0"
+      },
+      {
+        "file": "390-conflict-terminal-cancellation.txt",
+        "bytes": 13957,
+        "sha256": "d0c1cfd39300285c085be145ee54b3279201ed0908762561529782e6c63ea0cd"
+      },
+      {
+        "file": "390-investigation-combined.png",
+        "bytes": 1518735,
+        "sha256": "ea471ba24f881affd0438d6f229be504742f29426b2c4f14c80a8fd269cc7a74"
+      },
+      {
+        "file": "390-investigation-combined.txt",
+        "bytes": 27092,
+        "sha256": "4680cba6c14174ef531eab6c81de0c359d2c45d7e9f871ab3d6928e71d5fe7ce"
+      },
+      {
+        "file": "390-investigation-incomplete.png",
+        "bytes": 1396457,
+        "sha256": "d4c35248672d9f6400775bb5774eddf796b4724365a7a004a4693c3c0f8c7bfc"
+      },
+      {
+        "file": "390-investigation-incomplete.txt",
+        "bytes": 25544,
+        "sha256": "6ab52299405bec3561920a9dd09aeba75563711243ff39132a3ffefc3f167dfe"
+      },
+      {
+        "file": "390-returning-after-shared-outcome.png",
+        "bytes": 1376884,
+        "sha256": "3dca9aea1e37a8243653087bea1431d559c457bb7f1f7c62ef7eddacf0d4c8cb"
+      },
+      {
+        "file": "390-returning-after-shared-outcome.txt",
+        "bytes": 17206,
+        "sha256": "07afe1e3b4d8fcf5e543487bd2b25ab2c540b180eace13357c38e25b80f1ff32"
+      },
+      {
+        "file": "390-rival-shared-threshold.png",
+        "bytes": 1483774,
+        "sha256": "b12bfe3de076217e1c8a1d5208ccf344c984aea42cbb55a34b7055e9e26eb58a"
+      },
+      {
+        "file": "390-rival-shared-threshold.txt",
+        "bytes": 18356,
+        "sha256": "bef244c60eb2dcd893a5bdbc3b1a6917331b8172b9241483b8309df5564f88a1"
+      },
+      {
+        "file": "390-social-approved.png",
+        "bytes": 375465,
+        "sha256": "0ccbf215c6dc0918afd65a5cb6c086df9ece1547a38d8f3ae29b5d723882a27f"
+      },
+      {
+        "file": "390-social-approved.txt",
+        "bytes": 11833,
+        "sha256": "1b57e9ce4c7511a04c2878806c6e0e76a31ac3c82f2fe45ce1897af0945b7869"
+      },
+      {
+        "file": "390-social-request-sent.png",
+        "bytes": 408207,
+        "sha256": "f9c0b445b6b8febabb5e90c790e1323c8ce42997148d3e8bf70bd2795296816e"
+      },
+      {
+        "file": "390-social-request-sent.txt",
+        "bytes": 11573,
+        "sha256": "bc5128783d1035840cc6f6b91c37abdf279cd98600a518f02533cf07214864ff"
+      },
+      {
+        "file": "390-social-shared-threshold.png",
+        "bytes": 1705916,
+        "sha256": "f507308b56821ecbe300183b8ff067c870bda359f341a485f301cea4b4040847"
+      },
+      {
+        "file": "390-social-shared-threshold.txt",
+        "bytes": 30765,
+        "sha256": "08d7023044c32db801d0abe77b323ff05c643ed3658035377c1db5be54bc427b"
+      },
+      {
+        "file": "430-baseline.json",
+        "bytes": 138540,
+        "sha256": "3b7b6a1f0d8a9c429978d5e23ef9ffbb97b938f6c4838548f5df7647842065cf"
+      },
+      {
+        "file": "430-conflict-terminal-cancellation.png",
+        "bytes": 1206060,
+        "sha256": "10c1b26fc97c1e3715e5ae8a4eae439e361ddf5cf9248f0d459ed2381d192307"
+      },
+      {
+        "file": "430-conflict-terminal-cancellation.txt",
+        "bytes": 13910,
+        "sha256": "9c3c9ca44c3f64720465b9650f3bd8b12b5ae116c1a3b8194ff98a24461da223"
+      },
+      {
+        "file": "430-investigation-combined.png",
+        "bytes": 1424475,
+        "sha256": "3a20157fdb971bceec622c76a4751e02f717d6e5ebd4a134b6cc9f32f6726c88"
+      },
+      {
+        "file": "430-investigation-combined.txt",
+        "bytes": 27106,
+        "sha256": "2a31d88cb6cc3223f3863bd2c7ce38d6424746b5c765ff925af6adcb9301344e"
+      },
+      {
+        "file": "430-investigation-incomplete.png",
+        "bytes": 1329932,
+        "sha256": "5e3cfcbc4c085511974765badfd4e5014a42f0fbb22a74a4dd8d8900cd005ef8"
+      },
+      {
+        "file": "430-investigation-incomplete.txt",
+        "bytes": 25632,
+        "sha256": "2d1798e81f8e8594f1c75579013ed7d9a0da7deaed6c0fd14987f4e1420a3372"
+      },
+      {
+        "file": "430-returning-after-shared-outcome.png",
+        "bytes": 1377285,
+        "sha256": "a541114f2c83b535b348a274816b0145a44235b97b05ca20778f4d089e60ec0c"
+      },
+      {
+        "file": "430-returning-after-shared-outcome.txt",
+        "bytes": 17222,
+        "sha256": "c17225bd97a61a3398a645be9965fbadab28dd8964147f743d200afafbb020e7"
+      },
+      {
+        "file": "430-rival-shared-threshold.png",
+        "bytes": 1479653,
+        "sha256": "4d66d974214d6524af622733bf141a208c1f80d0852f5f28953289d45d8f8e13"
+      },
+      {
+        "file": "430-rival-shared-threshold.txt",
+        "bytes": 18526,
+        "sha256": "c1bca3775d84ad3f0aa7dfe697e6aa6e5b29acbcb656e5f80b217f5ca4395e6d"
+      },
+      {
+        "file": "430-social-approved.png",
+        "bytes": 379092,
+        "sha256": "be1566eaf04958d366b108665aa4589273258e9c5627feb876695a2836225da6"
+      },
+      {
+        "file": "430-social-approved.txt",
+        "bytes": 11870,
+        "sha256": "2321a35e8810ae3f39b14b088b49cf07493a6f214ca08bb00dac9f36a277fb00"
+      },
+      {
+        "file": "430-social-request-sent.png",
+        "bytes": 416180,
+        "sha256": "0f608c49c3ad9001d3b9604e600241dbd059e9db0f5747a398c5b67433d29676"
+      },
+      {
+        "file": "430-social-request-sent.txt",
+        "bytes": 11575,
+        "sha256": "bd2fd5525e9c859055652e20b7917d7e0825747d32d582b4c99469c9128ea93c"
+      },
+      {
+        "file": "430-social-shared-threshold.png",
+        "bytes": 1678496,
+        "sha256": "1f94b38bb9ee3b8d460b79fa29ed788313e2d542cfa43d9ad05c8fc5cc840591"
+      },
+      {
+        "file": "430-social-shared-threshold.txt",
+        "bytes": 30943,
+        "sha256": "676b29c2fa16b193cab075446d1ffe08bd31b1f157229f17f78fa9cb7e20fe6d"
+      },
+      {
+        "file": "results.json",
+        "bytes": 59383712,
+        "sha256": "37858f894393522051ae24d36ff42738b13bdd580fe11887e58b12feb5590b67"
+      }
+    ],
+    "log": {
+      "path": "output/source-reconciliation/golden-frozen-2.log",
+      "sha256": "72c1c962c328ff0847334c03b793dbc34a0aeac1ce11bae6cfc5f918f0b3fdf4"
+    },
+    "retention": "Local ignored full raw results, state snapshots, screenshots, text captures and log; compact source-specific summary retained here."
+  },
+  "previousAttempt": {
+    "directory": "output/rc1-golden-frozen-1",
+    "source": "e057121a295f1d750af69b3dccab3d4147b325f3",
+    "initiallyClean": true,
+    "qualification": "FAIL; helper working tree changed after first failure while this loaded process completed. No source-immutability or release qualification claim.",
+    "resultHash": "20efab2256a1a93d5cd6a957d700e1fa4d303cdb7f9bb796b27dc22492992c83",
+    "results": [
+      {
+        "width": 320,
+        "status": "FAIL",
+        "error": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\""
+      },
+      {
+        "width": 360,
+        "status": "FAIL",
+        "error": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\""
+      },
+      {
+        "width": 390,
+        "status": "PASS"
+      },
+      {
+        "width": 430,
+        "status": "FAIL",
+        "error": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\""
+      }
+    ],
+    "disposition": "Coordinate Command Center taps did not emit requests at320/360/430. Replaced by ordinary actionability-checked locator clicks; no force or runtime/UI changes. The full updated four-width run passed."
+  },
+  "conclusion": "The explicit fixture-assisted automated B/C/D/E segments passed. Full A-E, human comprehension and physical-device acceptance remain unqualified."
+}

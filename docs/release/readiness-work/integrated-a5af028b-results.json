@@ -1,0 +1,542 @@
+{
+  "format": 1,
+  "releaseReady": false,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "gates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:02:20.419Z",
+      "endedAt": "2026-09-21T06:02:36.239Z",
+      "durationMs": 15819,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "18f47a4d5e9a98e5e1e4930bdf0e3261991bb36e8a4646427513db8b5ff0b4b0",
+      "resultSha256": "c51e259b2d2a7f3ffe944773e2cf72f44b0584a3bdec50c436416f978d03d3db"
+    },
+    {
+      "format": 1,
+      "id": "rc1-knowledge-distribution",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:knowledge:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:02:20.639Z",
+      "endedAt": "2026-09-21T06:03:04.023Z",
+      "durationMs": 43383,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native access/pagination/revocation metrics; no future Knowledge reachability or whole world qualification"
+      ],
+      "log": "gates/rc1-knowledge-distribution/output.txt",
+      "logSha256": "abc1e6bb5952c50f07f6770e9a2222152a121317c09a000e74ca2501b6d77199",
+      "resultSha256": "73ccd7436527d5e27f6292b3580a8913706c90d631e3ce9da2366adc7db3b439"
+    },
+    {
+      "format": 1,
+      "id": "rc1-mod-ingress",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mod-ingress:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:04:15.105Z",
+      "endedAt": "2026-09-21T06:04:32.978Z",
+      "durationMs": 17871,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native HTTP injection only; no deployed proxy or external load test"
+      ],
+      "log": "gates/rc1-mod-ingress/output.txt",
+      "logSha256": "60f6256186b6fdc2f4f5c6e827b57410dd54d68a58204795295a96738ec29fd4",
+      "resultSha256": "20c424e4cb1a4f681085bd79cec17a4603411c659b258970ab79de55aae34bc8"
+    },
+    {
+      "format": 1,
+      "id": "rc1-mystery-policies",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mystery-policies:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:03:14.539Z",
+      "endedAt": "2026-09-21T06:04:04.145Z",
+      "durationMs": 49605,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Bounded canonical discovery; native fixture offers no mixed investigation/other choices; no full archetype qualification"
+      ],
+      "log": "gates/rc1-mystery-policies/output.txt",
+      "logSha256": "57e80e8f60ad46fa9c21aea03ffbff8af98500a4dc65eac4ecc3a175bb641f3d",
+      "resultSha256": "131b2a233c074e184c53f6bd9bcc3e01805f1174065719566b0ccb64d3b1d656"
+    },
+    {
+      "format": 1,
+      "id": "rc1-observers",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:observers:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:02:47.803Z",
+      "endedAt": "2026-09-21T06:03:09.867Z",
+      "durationMs": 22062,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Read-only diagnostic precision and serialized SQL boundary controls; complete movement taxonomy remains required"
+      ],
+      "log": "gates/rc1-observers/output.txt",
+      "logSha256": "62da79194559f7113af2fc77c512c3574839c60ddee4c45768ecfc4151dc463b",
+      "resultSha256": "ecce38a43e21b8ad298e01e6d710ad7fbee8a36859e0e08c97b4212cf52cc1c0"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "a5af028bd4be816b5836314f2272dfba51a79814",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:03:20.272Z",
+      "endedAt": "2026-09-21T06:04:29.738Z",
+      "durationMs": 69465,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "2df2c545d2bebf785779b7df79dc03c6d7482c4eaa799553cb99522053dc8a3d",
+      "resultSha256": "f9a7dc1c86886955c7c7fb3cd6abba559997b2a239da4333e9a87ac2f0ece0c0"
+    }
+  ],
+  "hostedPreviousCandidate": [
+    {
+      "name": "ci",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35565166300",
+      "metadataSha256": "0413537070383a60c307f13f39b9675f8e4ad3da81c82489703f81e0a314e20c",
+      "logSha256": "6e1d0af35815e8c0a5f94d4a6a83a986cad590256e2952bacc842b6ddc4b2c2a",
+      "jobs": [
+        {
+          "name": "suites + sim (pg-mem)",
+          "id": 106225418701,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:34Z",
+          "completedAt": "2026-09-21T06:26:26Z",
+          "failedSteps": []
+        },
+        {
+          "name": "real Postgres (16)",
+          "id": 106225418843,
+          "conclusion": "failure",
+          "startedAt": "2026-09-21T05:36:34Z",
+          "completedAt": "2026-09-21T05:50:26Z",
+          "failedSteps": [
+            "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)"
+          ]
+        },
+        {
+          "name": "real Postgres (18.4)",
+          "id": 106225418858,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:34Z",
+          "completedAt": "2026-09-21T05:52:00Z",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "name": "linux-recovery",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35565168429",
+      "metadataSha256": "551f6e4ea380c57872eb9d0792d381c9ad4a805ac51e1ed2508fe0634c8fd3a0",
+      "logSha256": "8fa5bc021690f6978609aa42d7ae9e13c4afdba0107003962bf4551fb73800d9",
+      "jobs": [
+        {
+          "name": "Legacy authority (PostgreSQL 18.4)",
+          "id": 106225424343,
+          "conclusion": "failure",
+          "startedAt": "2026-09-21T05:36:35Z",
+          "completedAt": "2026-09-21T05:38:35Z",
+          "failedSteps": [
+            "Native pre-parser moderator authentication and rate limiting"
+          ]
+        },
+        {
+          "name": "Linux recovery (PostgreSQL 16)",
+          "id": 106225424450,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T05:56:08Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Isolated two-hour world smoke (PostgreSQL 16)",
+          "id": 106225424491,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:35Z",
+          "completedAt": "2026-09-21T05:38:22Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Legacy authority (PostgreSQL 16)",
+          "id": 106225424498,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T05:38:27Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Linux recovery (PostgreSQL 18.4)",
+          "id": 106225424511,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T05:56:07Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Original resource timers (PostgreSQL 16)",
+          "id": 106225424518,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T06:08:44Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Isolated two-hour world smoke (PostgreSQL 18.4)",
+          "id": 106225424531,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T05:38:45Z",
+          "failedSteps": []
+        },
+        {
+          "name": "Original resource timers (PostgreSQL 18.4)",
+          "id": 106225424544,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:36Z",
+          "completedAt": "2026-09-21T06:09:02Z",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "name": "forge",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35565170487",
+      "metadataSha256": "3c4755a75ecba64ec190e898cb8b499c897947b43d549378bebe892dba6c1115",
+      "logSha256": "3f48c1fdcc8e601a1aef941aed3923998f1c3d40d4ca0dbdddde18b620afddb0",
+      "jobs": [
+        {
+          "name": "forge",
+          "id": 106225430764,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:38Z",
+          "completedAt": "2026-09-21T06:16:14Z",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "name": "liquidity",
+      "source": "8c2e4418173a7383c788a08ea70168ff0a6c11cd",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35565172275",
+      "metadataSha256": "2660970214ae01da582560b8772c8122aafda4d6eb705eb77e6579ca3aecf4f3",
+      "logSha256": "aa52f204dde10aafe4d44fafd505fd0e7d13cb9ba50bd5b849055df5330f77ce",
+      "jobs": [
+        {
+          "name": "recovery",
+          "id": 106225435546,
+          "conclusion": "success",
+          "startedAt": "2026-09-21T05:36:40Z",
+          "completedAt": "2026-09-21T05:38:01Z",
+          "failedSteps": []
+        }
+      ]
+    }
+  ],
+  "resourceTransport": {
+    "runId": "world-resource-3284490d099c-1aec192032",
+    "source": {
+      "revision": "3284490d099c0d1f9fd1c525e1aa069f343c6101",
+      "gitTree": "5910dff617311c8950657f76d470ddad5cc7cef4",
+      "checkoutSha256": "fa7d23af256822ddefbcb937bdb916091367baddbcb147bde0da98260e112c4c",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+    "outcome": "SCOPED_PASS",
+    "startedAt": "2026-09-21T06:14:03.782Z",
+    "fixture": "One account/character with declared initial cash100000 and respect10000; no progression claim",
+    "command": "node test/rc1-world-resource-observer.js --postgres",
+    "qualifyingFullResourcePass": false,
+    "exclusions": [
+      "Original worker integration",
+      "Per-commit proxy hook",
+      "Full resource taxonomy and matrix",
+      "Real deployment and chain backing",
+      "Native lot/capital branches in this focused invocation"
+    ],
+    "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+    "observationTransport": {
+      "tables": 55,
+      "equalFullResourceHashes": true,
+      "samplesMs": {
+        "batch": [
+          3.735000000000582,
+          3.505799999998999,
+          4.4606000000003405,
+          6.6945999999989,
+          3.3047999999998865,
+          3.220500000001266
+        ],
+        "sequential": [
+          8.548600000000079,
+          7.855799999999363,
+          10.208599999999933,
+          8.904500000000553,
+          6.986299999998664,
+          6.622400000000198
+        ]
+      },
+      "sqlSemantics": "Identical ordered SELECT list in one READ ONLY repeatable-read transaction",
+      "claim": "Local alternating transport measurements only; no full-matrix capacity or production latency inference"
+    },
+    "restrictedDiagnostics": {
+      "nativeBranch": "canonical Family formation",
+      "hash": "d21129f980980c9f4ea411c8767255e46a222569aff5ffc2c6426a4855156475",
+      "reconstructedExact": true,
+      "unsupportedStatusPreserved": true,
+      "publicRowsIncluded": false
+    },
+    "canonicalBoundaries": 11,
+    "parityChecks": 65,
+    "negativeControl": {
+      "outcome": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+      "quantity": "0.000000001"
+    },
+    "sourceImmutable": true,
+    "endedAt": "2026-09-21T06:14:17.513Z",
+    "artifacts": [
+      {
+        "file": "initial-state.json",
+        "sha256": "b7a67000223e53d1c63bed79e2258bf3aa6e887a4d50c2b979bd0b42eb293b11"
+      },
+      {
+        "file": "movements.ndjson",
+        "sha256": "4ef2f2241ec55362b74a76c51e1fcd642bb5b816b9d87e2b9aba30d2232d3dc2"
+      },
+      {
+        "file": "pre-injection-state.json",
+        "sha256": "460f67c20b0b168d9c56e332d251ebdf0d57a71135ee11cb0fc670c0f2b54f70"
+      },
+      {
+        "file": "restricted-family-row-changes.json",
+        "sha256": "1118242c7e469cc244ce659b34d19cf8493907fb3907d97066dffb7542aede41"
+      }
+    ],
+    "resultSha256": "4bceb927199555ea73ace30f809abe4c957ca404a6e85feb4eedffa8ad8a1220",
+    "artifactsVerified": 4
+  },
+  "aggression": {
+    "source": {
+      "revision": "4489b023680f0be6eb9ca1999b83c6c2a5668d74",
+      "gitTree": "238b30e2f661bf03d5533df1ba10c1212c347bbb",
+      "checkoutSha256": "afc2188f6a6b3bb12a65728280d84885fe10652868e6d381d59f51e8d65e00d8",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "startedAt": "2026-09-21T06:13:51.255Z",
+    "endedAt": "2026-09-21T06:17:17.480Z",
+    "status": "PASS_SCOPED",
+    "configurationSha256": "8a02cb55755b52e4ff6221d11875d42d7ddc9f868221cc0ec12079349430f62e",
+    "result": {
+      "status": "PASS_SCOPED",
+      "policyResults": [
+        {
+          "configuration": {
+            "accountId": "aggression-weak",
+            "seed": "rc1-alpha"
+          },
+          "observations": 6,
+          "choices": 6,
+          "noCandidateWaits": 0,
+          "fresh": 6,
+          "freshConflict": 3,
+          "mixedFresh": 5,
+          "mixedConflict": 3,
+          "forcedConflict": 0,
+          "forcedOther": 1,
+          "conflictPreferenceAttempts": 3,
+          "otherPreferenceAttempts": 2,
+          "forcedConflictAttempts": 0,
+          "forcedOtherAttempts": 1,
+          "denials": 0,
+          "unresolvedReplays": 0,
+          "wins": 0,
+          "losses": 3,
+          "heals": 1,
+          "retaliationAttempts": 1,
+          "retaliationCompletions": 1,
+          "completedByType": {
+            "discovery.start": 2,
+            "legacy.jump": 3,
+            "legacy.heal": 1
+          },
+          "actualConflictFraction": 0.5,
+          "mixedConflictFraction": 0.6,
+          "incompleteBlockChoices": 5,
+          "matrixQualifying": false
+        },
+        {
+          "configuration": {
+            "accountId": "aggression-strong",
+            "seed": "rc1-alpha"
+          },
+          "observations": 2,
+          "choices": 2,
+          "noCandidateWaits": 0,
+          "fresh": 2,
+          "freshConflict": 1,
+          "mixedFresh": 2,
+          "mixedConflict": 1,
+          "forcedConflict": 0,
+          "forcedOther": 0,
+          "conflictPreferenceAttempts": 1,
+          "otherPreferenceAttempts": 1,
+          "forcedConflictAttempts": 0,
+          "forcedOtherAttempts": 0,
+          "denials": 0,
+          "unresolvedReplays": 0,
+          "wins": 1,
+          "losses": 0,
+          "heals": 0,
+          "retaliationAttempts": 0,
+          "retaliationCompletions": 0,
+          "completedByType": {
+            "discovery.start": 1,
+            "legacy.jump": 1
+          },
+          "actualConflictFraction": 0.5,
+          "mixedConflictFraction": 0.5,
+          "incompleteBlockChoices": 2,
+          "matrixQualifying": false
+        }
+      ],
+      "invariantChecks": 55,
+      "hospitalWaitMs": 181000,
+      "exactHttpReplays": 1,
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "finalStateSha256": "19bae73250eab321f50eb2f1c90e581992e37504bb376631a0b808c69d01ea16",
+      "matrixQualifying": false,
+      "exclusions": [
+        "replacement/death characters",
+        "search/fire and other conflict authorities",
+        "all thirteen resource journals",
+        "90 days/225 runs",
+        "complete workers",
+        "database restart and crash-window reconciliation",
+        "full-game seeded replay",
+        "production-equivalent load"
+      ]
+    },
+    "runSha256": "0292380f538f38acc26fcf4ecfb324fd20995195d3f7c81ee07325d706584c16",
+    "artifactsVerified": 22,
+    "failureHistory": "aggression-player-policy.md; all four earlier failed native attempts retained privately",
+    "privacy": "Only synthetic actor policy labels are included; credentials and invocation bodies remain private"
+  },
+  "loanSummary": {
+    "file": "resource-loan-lifecycle-results.json",
+    "sha256": "d90e2a9fe75f203f83dbc426aa9b7d8d2c425a3299f9807c3e311148ecae2e9b"
+  },
+  "scope": "Results retain their actual source. Later integrated source requires affected-gate retests. Zero qualifying matrix runs; no deployment, soak, physical device or real-cohort pass."
+}

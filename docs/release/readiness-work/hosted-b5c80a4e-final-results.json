@@ -1,0 +1,622 @@
+{
+  "format": 1,
+  "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+  "releaseReady": false,
+  "hosted": {
+    "ci": {
+      "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "id": 35598245168,
+      "status": "completed",
+      "conclusion": "failure",
+      "metadataSha256": "6048938c08bdd105298a15e9b77468c20e40f0676360fa739431c19edb8e5cad",
+      "logArchiveSha256": "579db0965336c760bb36dd142f52090769dc2f742ecb39fd783c9dfc52f604ef",
+      "failed": [
+        {
+          "id": 106327959525,
+          "name": "suites + sim (pg-mem)",
+          "sha256": "8f9122d1aa5b86c3d96c726975f32f23508f6171090efd46eff81d6e13ed6ee4",
+          "bytes": 329364,
+          "steps": [
+            "RC1 original worker scheduling and diagnostic harness controls"
+          ]
+        }
+      ],
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35598245168",
+      "finding": "RC1-TOOL-54; Windows Node22 reproduction and later fix are separate-source results"
+    },
+    "recovery": {
+      "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "id": 35598247604,
+      "status": "completed",
+      "conclusion": "failure",
+      "metadataSha256": "aafe3d6e81fc0ee8872336acdbdebde92e49f333b8cc355b1d00b5463529f122",
+      "logArchiveSha256": "8e5ecec2564385356ad8d1ad2d6164d55a6f0c975b3ccf91280fb7999b6997d0",
+      "failed": [
+        {
+          "id": 106328180827,
+          "name": "Legacy authority (PostgreSQL 16)",
+          "sha256": "3d70f1df30a92b56fab257d552358ab80f7e89949f4e90445effafa03f5b1c95",
+          "bytes": 59772,
+          "steps": [
+            "Native Crew roles revocation and persistent retries"
+          ]
+        },
+        {
+          "id": 106328180833,
+          "name": "Legacy authority (PostgreSQL 18.4)",
+          "sha256": "ac0e4392babe1598cdf58d58dd7957282712e1f273603ec784a5b1f0f99f495d",
+          "bytes": 58743,
+          "steps": [
+            "Native Crew roles revocation and persistent retries"
+          ]
+        }
+      ],
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35598247604",
+      "jobConclusions": {
+        "success": 18,
+        "failure": 2,
+        "skipped": 1
+      },
+      "finding": "RC1-TOOL-53; two Crew pending409/teardown failures. All other executed hosted jobs pass, independently scoped."
+    }
+  },
+  "retained": {
+    "archives": 19,
+    "archiveBytes": 957231912,
+    "nativeRuns": 123,
+    "failedNativeRuns": [
+      {
+        "job": "legacy-authority:pg18.4",
+        "name": "rc1-crew-authority"
+      },
+      {
+        "job": "legacy-authority:pg16",
+        "name": "rc1-crew-authority"
+      }
+    ],
+    "indexedArtifacts": 11447,
+    "historyEvents": 124134,
+    "extractedFiles": 12279,
+    "extractedBytes": 9587901486,
+    "nativeAudit": {
+      "bytes": 16249,
+      "sha256": "c7e136366fd24939e8147181310e56fb5ccc940676cef9b462b7ae27b02cb51c"
+    },
+    "transportAudit": {
+      "bytes": 22288,
+      "sha256": "28ce9e002cf6dd49d2a3644698fe73e7d692ba38971b0c25914b6334c1250c26"
+    }
+  },
+  "lanes": [
+    {
+      "name": "rc1-private-original-escrow-timers-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "original-escrow-timers:pg16",
+        "attemptId": "1"
+      },
+      "files": 7,
+      "bytes": 2757891,
+      "sealedRuns": 0,
+      "failures": [],
+      "artifacts": 0,
+      "historyEvents": 0,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "9e91af8764cfb604eaf2e17b26fcee5aa6a466fa9e130fa4af18ea8be6519306",
+        "bytes": 2944
+      }
+    },
+    {
+      "name": "rc1-private-original-escrow-timers-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "original-escrow-timers:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 7,
+      "bytes": 2757905,
+      "sealedRuns": 0,
+      "failures": [],
+      "artifacts": 0,
+      "historyEvents": 0,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "c36fac91614016fe549fc8850bff44ba20f5ab57d00e381086ac7d0d465cef84",
+        "bytes": 2952
+      }
+    },
+    {
+      "name": "rc1-private-original-resource-timers-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "original-resource-timers:pg16",
+        "attemptId": "1"
+      },
+      "files": 109,
+      "bytes": 13056689,
+      "sealedRuns": 1,
+      "failures": [],
+      "artifacts": 100,
+      "historyEvents": 295,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "eca9339d245561ddbc6d61d2ec9e174ed40cf29b71ff84f7f8aabb804641b6ce",
+        "bytes": 37079
+      }
+    },
+    {
+      "name": "rc1-private-original-resource-timers-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "original-resource-timers:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 109,
+      "bytes": 13056279,
+      "sealedRuns": 1,
+      "failures": [],
+      "artifacts": 100,
+      "historyEvents": 295,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "bed902dfa393d9d2cee3a6150208737c6130fd78d3d690b431087de79d852c74",
+        "bytes": 37087
+      }
+    },
+    {
+      "name": "rc1-private-policy-and-loan-lifecycles-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "policy-and-loan-lifecycles:pg16",
+        "attemptId": "1"
+      },
+      "files": 2853,
+      "bytes": 215781571,
+      "sealedRuns": 12,
+      "failures": [],
+      "artifacts": 2828,
+      "historyEvents": 7849,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "215e6d5fde0e01d1c390bfe3bfd3fa77a903e58e31f98b27f487915e88b779c8",
+        "bytes": 552790
+      }
+    },
+    {
+      "name": "rc1-private-policy-and-loan-lifecycles-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "policy-and-loan-lifecycles:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 2853,
+      "bytes": 215782187,
+      "sealedRuns": 12,
+      "failures": [],
+      "artifacts": 2828,
+      "historyEvents": 7849,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "1253d60fbcebee2e71d5d5cb64e69b4348c96fa7458148b6e3452241427c56f4",
+        "bytes": 552788
+      }
+    },
+    {
+      "name": "rc1-private-isolated-world-smoke-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "isolated-world-smoke:pg16",
+        "attemptId": "1"
+      },
+      "files": 268,
+      "bytes": 71605732,
+      "sealedRuns": 18,
+      "failures": [],
+      "artifacts": 229,
+      "historyEvents": 1827,
+      "resourceBoundaries": 1085,
+      "comparisons": [],
+      "summary": {
+        "sha256": "705683aa56b44f9ce043a94aec42616bc58fcd2b96a68b38d0a297872e52d979",
+        "bytes": 88704
+      }
+    },
+    {
+      "name": "rc1-private-bounded-resource-pressure-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "bounded-resource-pressure:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 1034,
+      "bytes": 123546811,
+      "sealedRuns": 9,
+      "failures": [],
+      "artifacts": 1011,
+      "historyEvents": 1340,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "2749cace1c5d9a2b3353c0fc34ce3c4d1f9492e71e9465367a05bca00784a1d6",
+        "bytes": 256838
+      }
+    },
+    {
+      "name": "rc1-private-bounded-custody-and-mobile-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "bounded-custody-and-mobile:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 923,
+      "bytes": 153437731,
+      "sealedRuns": 10,
+      "failures": [],
+      "artifacts": 846,
+      "historyEvents": 2417,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "82423292ee801d9b6a127b5a31158793ebb8f9c159d0e741404ff144289f55d0",
+        "bytes": 234200
+      }
+    },
+    {
+      "name": "rc1-private-continuation-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "alliance-checkpoint-continuation:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 343,
+      "bytes": 2796952550,
+      "sealedRuns": 3,
+      "failures": [],
+      "artifacts": 335,
+      "historyEvents": 30566,
+      "resourceBoundaries": 26306,
+      "comparisons": [
+        {
+          "a": "rc1-continuation-observe",
+          "b": "rc1-continuation-replay",
+          "comparison": {
+            "fields": [
+              "hours",
+              "population",
+              "seed",
+              "actorPolicy",
+              "initialStateSha256",
+              "finalStateSha256",
+              "workerScheduleSha256",
+              "jobOutcomesSha256",
+              "deterministicRandomTapeSha256",
+              "actorTapeSha256",
+              "policyStateSha256",
+              "semanticMetricsSha256",
+              "worldDiagnosticsSemanticSha256",
+              "mysteryPolicySummarySha256",
+              "knowledgeDiagnosticsSha256",
+              "resourceObservationEnabled",
+              "resourceJournalCount",
+              "resourceJournalSha256"
+            ],
+            "exclusions": [
+              "Native wall durations",
+              "Read-only physical MVCC and relation-size diagnostics"
+            ],
+            "canonicalStateExclusions": []
+          },
+          "allFinalTablesAndSequencesEqual": true
+        }
+      ],
+      "summary": {
+        "sha256": "806c641bfce04cf3de4818bdd989d3fd9648008886d6e04dadc3a4ab6d5ff786",
+        "bytes": 1278950
+      }
+    },
+    {
+      "name": "rc1-private-legacy-authority-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "legacy-authority:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 74,
+      "bytes": 1343924,
+      "sealedRuns": 1,
+      "failures": [
+        "rc1-crew-authority"
+      ],
+      "artifacts": 62,
+      "historyEvents": 81,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "2ce79a75e1e9ddeb862758c60298d97d6b6eeb6f3e577f4b7486516b4b33cce5",
+        "bytes": 17678
+      }
+    },
+    {
+      "name": "rc1-private-isolated-world-smoke-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "isolated-world-smoke:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 268,
+      "bytes": 71665776,
+      "sealedRuns": 18,
+      "failures": [],
+      "artifacts": 229,
+      "historyEvents": 1827,
+      "resourceBoundaries": 1085,
+      "comparisons": [],
+      "summary": {
+        "sha256": "7cd4d768141191dfebb4a7684434717c160a29b93ecdcc8fe5219d2f74c0e040",
+        "bytes": 88710
+      }
+    },
+    {
+      "name": "rc1-private-alliance-world-replay-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "alliance-world-replay:pg16",
+        "attemptId": "1"
+      },
+      "files": 419,
+      "bytes": 2616451665,
+      "sealedRuns": 2,
+      "failures": [],
+      "artifacts": 414,
+      "historyEvents": 31848,
+      "resourceBoundaries": 26960,
+      "comparisons": [
+        {
+          "a": "rc1-alliance-world-observe",
+          "b": "rc1-alliance-world-replay",
+          "comparison": {
+            "fields": [
+              "hours",
+              "population",
+              "seed",
+              "actorPolicy",
+              "initialStateSha256",
+              "finalStateSha256",
+              "workerScheduleSha256",
+              "jobOutcomesSha256",
+              "deterministicRandomTapeSha256",
+              "actorTapeSha256",
+              "policyStateSha256",
+              "semanticMetricsSha256",
+              "worldDiagnosticsSemanticSha256",
+              "mysteryPolicySummarySha256",
+              "knowledgeDiagnosticsSha256",
+              "resourceObservationEnabled",
+              "resourceJournalCount",
+              "resourceJournalSha256"
+            ],
+            "exclusions": [
+              "Native wall durations",
+              "Read-only physical MVCC and relation-size diagnostics"
+            ],
+            "canonicalStateExclusions": []
+          },
+          "allFinalTablesAndSequencesEqual": true
+        }
+      ],
+      "summary": {
+        "sha256": "9b3f3b4cbb68d55931b851a6f2632697d6dfc54c4e3bdbd2e11b94d2d5004c57",
+        "bytes": 343476
+      }
+    },
+    {
+      "name": "rc1-private-linux-sigterm-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "linux-sigterm:pg16",
+        "attemptId": "1"
+      },
+      "files": 280,
+      "bytes": 197222812,
+      "sealedRuns": 7,
+      "failures": [],
+      "artifacts": 65,
+      "historyEvents": 1127,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "45d2cc77d48ca7b3f420f99f3e3a68286398c4126db70f12f1673701c226d23e",
+        "bytes": 124094
+      }
+    },
+    {
+      "name": "rc1-private-bounded-custody-and-mobile-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "bounded-custody-and-mobile:pg16",
+        "attemptId": "1"
+      },
+      "files": 923,
+      "bytes": 153335675,
+      "sealedRuns": 10,
+      "failures": [],
+      "artifacts": 846,
+      "historyEvents": 2417,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "dc8312dbed460368a5c067af3841b618d8a6fd883532f79c2a33211241f7055e",
+        "bytes": 234200
+      }
+    },
+    {
+      "name": "rc1-private-linux-sigterm-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "linux-sigterm:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 280,
+      "bytes": 197709590,
+      "sealedRuns": 7,
+      "failures": [],
+      "artifacts": 65,
+      "historyEvents": 1127,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "e631da478cdf037a0394794a56a13d1d7303a548216fe62d5e12804351eccfac",
+        "bytes": 124100
+      }
+    },
+    {
+      "name": "rc1-private-legacy-authority-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "legacy-authority:pg16",
+        "attemptId": "1"
+      },
+      "files": 74,
+      "bytes": 1343912,
+      "sealedRuns": 1,
+      "failures": [
+        "rc1-crew-authority"
+      ],
+      "artifacts": 62,
+      "historyEvents": 81,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "23d1aa5de61fe26c825189b6385b50fd655d505721de2e4bdda70b340a505fcd",
+        "bytes": 17670
+      }
+    },
+    {
+      "name": "rc1-private-bounded-resource-pressure-pg16-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "bounded-resource-pressure:pg16",
+        "attemptId": "1"
+      },
+      "files": 1034,
+      "bytes": 123546585,
+      "sealedRuns": 9,
+      "failures": [],
+      "artifacts": 1011,
+      "historyEvents": 1340,
+      "resourceBoundaries": 0,
+      "comparisons": [],
+      "summary": {
+        "sha256": "360d45ee586c0d019474441c7e3a6833c15b237d959da93b169bc1a5f724df5a",
+        "bytes": 256830
+      }
+    },
+    {
+      "name": "rc1-private-alliance-world-replay-pg18.4-b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "context": {
+        "sourceRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "runId": "35598247604",
+        "jobId": "alliance-world-replay:pg18.4",
+        "attemptId": "1"
+      },
+      "files": 421,
+      "bytes": 2616546201,
+      "sealedRuns": 2,
+      "failures": [],
+      "artifacts": 416,
+      "historyEvents": 31848,
+      "resourceBoundaries": 26960,
+      "comparisons": [
+        {
+          "a": "rc1-alliance-world-observe",
+          "b": "rc1-alliance-world-replay",
+          "comparison": {
+            "fields": [
+              "hours",
+              "population",
+              "seed",
+              "actorPolicy",
+              "initialStateSha256",
+              "finalStateSha256",
+              "workerScheduleSha256",
+              "jobOutcomesSha256",
+              "deterministicRandomTapeSha256",
+              "actorTapeSha256",
+              "policyStateSha256",
+              "semanticMetricsSha256",
+              "worldDiagnosticsSemanticSha256",
+              "mysteryPolicySummarySha256",
+              "knowledgeDiagnosticsSha256",
+              "resourceObservationEnabled",
+              "resourceJournalCount",
+              "resourceJournalSha256"
+            ],
+            "exclusions": [
+              "Native wall durations",
+              "Read-only physical MVCC and relation-size diagnostics"
+            ],
+            "canonicalStateExclusions": []
+          },
+          "allFinalTablesAndSequencesEqual": true
+        }
+      ],
+      "summary": {
+        "sha256": "4a0230e6d9c652bb60bc0eb9576bafee474621320dc94d25e045e086a1588f74",
+        "bytes": 343886
+      }
+    }
+  ],
+  "auditorFailure": {
+    "kind": "Read-only auditor incorrectly paired different scenario runs sharing coarse policy/seed/initial-state fields",
+    "firstScript": {
+      "bytes": 8124,
+      "sha256": "4ca9bafced04836aa0f08bd4b10a622e6e54376dfb7285becacb941d4c9f9094"
+    },
+    "firstLog": {
+      "bytes": 3857,
+      "sha256": "eaf09c78f97713841eefc2dfd1bf1286a7d2295e29b3cfa08896bc43dcea33c8"
+    },
+    "correction": "Compare only explicitly recorded replay parent manifest SHA256 references, then require all18 fields and every final table/sequence to match. All19 lanes were freshly reverified in attempt2; first six partial summaries retained unchanged.",
+    "finalScript": {
+      "bytes": 8079,
+      "sha256": "859a2355abdeb568c6c11ff73f1d20bd2f56dab522e250e6f2fab3e403089dee"
+    },
+    "finalLog": {
+      "bytes": 11093,
+      "sha256": "0a9169de6208338af6ed553fa15986c88255812e375d464b449dd10eb921b275"
+    }
+  },
+  "limits": [
+    "Only exact b5 source; no pass inherited by candidate18 or19",
+    "Encrypted transport authentication is not deployed-service or sender attestation",
+    "Tests retaining logs only are not counted as sealed native runs",
+    "Native Crew failures remain failures; original unclassified resource movements remain open",
+    "Hosted cleanup claims are retained records only, not later live OID inspection",
+    "No225 full matrix,12h1000actor soak,physical-device or real-cohort qualification"
+  ]
+}

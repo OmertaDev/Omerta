@@ -1,0 +1,287 @@
+{
+  "format": 1,
+  "sourceRevision": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+  "owner": "Codex/resource_proof",
+  "scope": [
+    "src/season.js recordReckoning",
+    "src/worker.js runSeasonRollover",
+    "Canonical withCharacter lock order",
+    "Actual native notification constraints/triggers"
+  ],
+  "outcome": "No actionable lock-cycle finding in the pinned schema; native recovery and concurrency tests PASS_SCOPED",
+  "finding": "The proposed account→notification foreign key→character cycle does not exist: notifications.character_id has no foreign key or trigger, and the award reads its living character without a row lock. Native barriers confirm that holding the character while waiting for the award-held account does not block notification insertion or award COMMIT.",
+  "executed": [
+    "Original committed season recovery suite: insert/award/notification failures, retry after conversion, duplicate claims and lost native COMMIT response",
+    "Canonical withCharacter action holds character while waiting for the crown account: native blocker verified, both complete",
+    "Native notification fault produces pending intent; normal conversion holds character while waiting for concurrent award recovery account: native blocker verified, one conversion and one award",
+    "Two ordinary rollover workers: one award and one conversion; duplicate terminal retries preserve full canonical database snapshot"
+  ],
+  "repairRequiredForConcern": false,
+  "sourceEdits": false,
+  "runs": [
+    {
+      "directory": "season-recovery-independent-5ffc-1",
+      "source": {
+        "revision": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+        "gitTree": "a5462f2d6b982a858bd23cbf2c7b1a9b23716472",
+        "checkoutSha256": "c00ceeb4d1681f7153177e77d3d5fdea9ce8608c9a2d06b3b73ff46500f61030",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "manifestSha256": "2bf6c2cede30b39b25add391d5e029a772817ed66c7879fe2bffd13b90d827b7",
+      "artifactHashesAndHistoryVerified": true,
+      "canonicalInvariantSweeps": 8,
+      "canonicalChecksVerified": 440,
+      "cases": [
+        "record insert rollback preserves original standings and retry",
+        "crown rollback and worker retry after character conversion",
+        "notification rollback and worker retry after character conversion",
+        "two concurrent claims award once",
+        "lost native COMMIT response and exact retry"
+      ],
+      "failure": null,
+      "artifacts": [
+        {
+          "file": "record-insert-before.json",
+          "sha256": "eef7cb87eae9afd7fb755140c4a38cc242e09ff387b31c8ca332a6696243573a",
+          "bytes": 21592
+        },
+        {
+          "file": "record-insert-after.json",
+          "sha256": "526638b385b56722632822f85b294d531831a02b264b0e4d20cf74ce42a83de7",
+          "bytes": 21592
+        },
+        {
+          "file": "crown-rolled-back.json",
+          "sha256": "72b3cc14f7628f2e2afa406102c783a5e868e9ddc206e1016e45dd3385715755",
+          "bytes": 23428
+        },
+        {
+          "file": "crown-recovered.json",
+          "sha256": "e40054f1f614ad74d61698663c7f07573a8de8097687df65f81265663a3c922b",
+          "bytes": 23718
+        },
+        {
+          "file": "crown-exact-retry.json",
+          "sha256": "a9756a66f8100847ac04c0af9789de973373804d8ce3255e7a8d300ba3d03969",
+          "bytes": 23718
+        },
+        {
+          "file": "notification-rolled-back.json",
+          "sha256": "edc9f1be630c1e1eb70b34ecc1eb9a6eb1a72631f015f09b911f37fe0e5083b9",
+          "bytes": 24480
+        },
+        {
+          "file": "notification-recovered.json",
+          "sha256": "874c251fde3cec595d5ee1e7a3f6b7c8740ebf775c76346d56717b020efdc672",
+          "bytes": 24770
+        },
+        {
+          "file": "notification-exact-retry.json",
+          "sha256": "b54cc4f50baba0b57a8b603a51a8f1d9b691466a78f516e36fa8bdb530f35dea",
+          "bytes": 24770
+        },
+        {
+          "file": "lost-response-committed.json",
+          "sha256": "614f76c3e06ea0dbd84ca4b159fc61f52e40e115b1be65f3b4dcc7a58e3fed0e",
+          "bytes": 26028
+        },
+        {
+          "file": "lost-response-retry.json",
+          "sha256": "c1583489c31740475fdba9cd00da3c7d0fe21af7073144249ca10696f19bd741",
+          "bytes": 26028
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "548107d54fd7e5e5ada74879f5e6faa98e82200973642d0d8e0fe67738ff4285",
+          "bytes": 46511
+        }
+      ],
+      "matrixQualifying": false
+    },
+    {
+      "directory": "season-lock-barriers-5ffc-1",
+      "source": {
+        "revision": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+        "gitTree": "a5462f2d6b982a858bd23cbf2c7b1a9b23716472",
+        "checkoutSha256": "c00ceeb4d1681f7153177e77d3d5fdea9ce8608c9a2d06b3b73ff46500f61030",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "manifestSha256": "15643c63035db603364dafd8787b9a3ea437d0fa7448e4e855dd2c47ba030058",
+      "artifactHashesAndHistoryVerified": true,
+      "canonicalInvariantSweeps": 0,
+      "canonicalChecksVerified": 0,
+      "cases": [],
+      "failure": "Retained harness preflight failure: unnecessary STANDING_CACHE_MS=0 was correctly rejected. Removed from external helper; no production source change.",
+      "artifacts": [
+        {
+          "file": "helper-source.json",
+          "sha256": "b9d165e1c9b6d96ca12687e82bc7dc3f1245e1b83e8e85f150c547c6a90a53aa",
+          "bytes": 13872
+        },
+        {
+          "file": "native-query-trace.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "bytes": 3
+        },
+        {
+          "file": "native-blocking-observations.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "bytes": 3
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "55221003135572faca702f225db3dd004ee5828d40b9f04f7df2243af550b5d3",
+          "bytes": 2311
+        }
+      ],
+      "matrixQualifying": false
+    },
+    {
+      "directory": "season-lock-barriers-5ffc-2",
+      "source": {
+        "revision": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+        "gitTree": "a5462f2d6b982a858bd23cbf2c7b1a9b23716472",
+        "checkoutSha256": "c00ceeb4d1681f7153177e77d3d5fdea9ce8608c9a2d06b3b73ff46500f61030",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "manifestSha256": "d18ffe401c0d4676298acaca19f916e077fb01f6dfbfe026e8c727efda3325c2",
+      "artifactHashesAndHistoryVerified": true,
+      "canonicalInvariantSweeps": 4,
+      "canonicalChecksVerified": 220,
+      "cases": [
+        "Canonical withCharacter holds character and waits on crown account; crown notification commits without character FK wait or deadlock",
+        "Native notification fault saves pending intent; normal conversion waits on concurrent recovery account; both complete, one crown and one conversion",
+        "Two normal rollover workers serialize claim and character conversion exactly once; two terminal retries leave full state unchanged"
+      ],
+      "actualNotificationConstraints": [
+        {
+          "conname": "notifications_character_id_not_null",
+          "contype": "n",
+          "definition": "NOT NULL character_id"
+        },
+        {
+          "conname": "notifications_created_at_not_null",
+          "contype": "n",
+          "definition": "NOT NULL created_at"
+        },
+        {
+          "conname": "notifications_delivered_not_null",
+          "contype": "n",
+          "definition": "NOT NULL delivered"
+        },
+        {
+          "conname": "notifications_id_not_null",
+          "contype": "n",
+          "definition": "NOT NULL id"
+        },
+        {
+          "conname": "notifications_payload_not_null",
+          "contype": "n",
+          "definition": "NOT NULL payload"
+        },
+        {
+          "conname": "notifications_pkey",
+          "contype": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "conname": "notifications_pushed_not_null",
+          "contype": "n",
+          "definition": "NOT NULL pushed"
+        },
+        {
+          "conname": "notifications_type_not_null",
+          "contype": "n",
+          "definition": "NOT NULL type"
+        }
+      ],
+      "actualNotificationTriggers": [],
+      "nativeDatabase": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "nativeLockWaits": [
+        {
+          "label": "withCharacter waits on crown account",
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        },
+        {
+          "label": "normal rollover waits on recovery account",
+          "wait_event_type": "Lock",
+          "wait_event": "transactionid"
+        }
+      ],
+      "unexpectedNativeQueryErrors": 0,
+      "expectedInjectedNotificationFailures": 1,
+      "fullFinalReplayStateIdentical": true,
+      "helperSha256": "0fb51dad1646213b8aa1f4ce021f856b56ca04c126b278cc55cc7a1526d00c4a",
+      "failure": null,
+      "artifacts": [
+        {
+          "file": "helper-source.json",
+          "sha256": "e28c0fd8dcceba8b1163f8282966755bc8a5367b3d2912d6c0bcce584a489253",
+          "bytes": 13848
+        },
+        {
+          "file": "actual-notification-schema.json",
+          "sha256": "466cf44cfb78576090efbadd4367777d6462e641acf0b38feaf66da1ab06afa4",
+          "bytes": 1122
+        },
+        {
+          "file": "initial.json",
+          "sha256": "a39597a5f724458e85d44af47c04ac963bd212783ec1f35193ed7ac19a622ecd",
+          "bytes": 21596
+        },
+        {
+          "file": "after-character-barrier.json",
+          "sha256": "95997c0f8cd0ecdafb3d1a47137830d6c8142eff49e799c2b4d8f640a0f0a7a6",
+          "bytes": 22232
+        },
+        {
+          "file": "after-rollover-recovery.json",
+          "sha256": "cc8d1550a87dea53c67789b446a8220ec0c290ff1a757470bee7bd596c38feca",
+          "bytes": 23298
+        },
+        {
+          "file": "final.json",
+          "sha256": "e1f6dcf30f47c8898de1573b4124882213fdb4d6a23839c32d6027ee0901301a",
+          "bytes": 24356
+        },
+        {
+          "file": "final-replay.json",
+          "sha256": "ae3455cb7e4a4ae330ffe4b68effa85b3e84e3c0aedc0d123b67a89e61163c83",
+          "bytes": 24356
+        },
+        {
+          "file": "native-query-trace.json",
+          "sha256": "b2271954fe379b16eba0eaf1c36e0e22265fcbec94fbc013759fadb5a693cd4f",
+          "bytes": 35317
+        },
+        {
+          "file": "native-blocking-observations.json",
+          "sha256": "ebc630c33c5a49c04f9a169c621dd781ab623180a0cb61612e0693e5842e9197",
+          "bytes": 532
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "23d2530404f46c04191f395b77cc0fbbd5dc2bc1e7accf32944f1d56c27a8426",
+          "bytes": 22272
+        }
+      ],
+      "matrixQualifying": false
+    }
+  ],
+  "limitations": [
+    "Bounded explicit-season option; not elapsed28-day lifetimes or all worker timers",
+    "Local PostgreSQL18.4 schema, not hosted/deployment migrations",
+    "Synchronized wrapper barriers preserve actual SQL/results but do not constitute a production scheduler or complete concurrency proof",
+    "Current notification schema is essential; adding a character FK or locking trigger requires rerunning this lock-order review",
+    "Shared installed dependencies are not independently attested; full resource/release gates stay OPEN"
+  ],
+  "reproduction": "Use the helper source retained in the successful run with a clean checkout of5ffc1c30, a fresh RC1_SEASON_OUTPUT and a local COORDINATION_TEST_DATABASE_URL. Existing suite: node test/rc1-season-recovery.js --postgres.",
+  "privacy": "Public-safe code references, cases, counts, hashes and schema metadata only. Raw SQL trace, backend identities, actor rows and full snapshots remain restricted."
+}

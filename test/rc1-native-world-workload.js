@@ -1,0 +1,1885 @@
+// Scoped quiet-world integration: authorized actors plus every original local
+// worker deadline. It cannot qualify a matrix cell while required metrics,
+// resource branches, lifecycle workloads and deployment scope remain incomplete.
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import pg from 'pg';
+import { createWorkerSchedule, installWorkerInstrumentation, makeWorkerDatabase, bootOriginalWorker, alignOriginalHourlyBaseline, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
+import { createSeasonElectionProbe, snapshotElectionCandidates, ELECTION_SOURCE_PINS } from '../tools/rc1-season-election-provenance.js';
+import { planOwnedWorldDatabase } from '../tools/rc1-native-database.js';
+import { createRecordedQueryOrder, QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
+import { installSerialRuntime } from '../tools/rc1-native-determinism.js';
+import { sourceIdentity, createProofRecorder, verifyArtifactIndex, restoreCheckpoint, canonicalDatabaseSnapshot, canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
+import { createRecordedActors, compareActorReplay, actorValueHash } from '../tools/rc1-native-actor-replay.js';
+import { createNativeQuiescentGroupObserver, QUIESCENT_GROUP_CONTRACT } from '../tools/rc1-native-quiescent-group.js';
+import { activeQuietRoster, chooseAuthorizedCommand, choosePublicCrime, observedOpportunityTracker } from '../tools/rc1-native-player-policy.js';
+import { collectWorldDiagnostics, latencyDistribution } from '../tools/rc1-world-diagnostics.js';
+import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
+import { reviewWorldBacklog } from '../tools/rc1-world-backlog-review.js';
+import { reviewWorldCheckpointSeries } from '../tools/rc1-world-checkpoint-series.js';
+import { CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
+import { createNpcCarAcquisitionCommitObserver, NPC_CAR_SOURCE_PINS } from '../tools/rc1-npc-car-acquisition.js';
+import { createNpcBoatFault, NPC_BOAT_FAULT_CONTRACT } from '../tools/rc1-npc-boat-fault.js';
+import { createNpcBoatAcquisitionCommitObserver, NPC_BOAT_SOURCE_PINS } from '../tools/rc1-npc-boat-journal.js';
+import { createNpcMarketOrderCommitObserver, NPC_MARKET_SOURCE_PINS, NPC_MARKET_SQL } from '../tools/rc1-npc-market-order-journal.js';
+import { createNpcFamilyCommitObserver, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
+import { captureDuelSelection } from '../tools/rc1-duel-selection-provenance.js';
+import { collectKnowledgeDiagnostics } from '../tools/rc1-knowledge-diagnostics.js';
+import { createMysteryPolicy, MYSTERY_POLICY_CONTRACT } from '../tools/rc1-mystery-policies.js';
+import { planCohort, createCohortPolicy, assessCohortBaseline, COHORT_POLICY_CONTRACT } from '../tools/rc1-cohort-policy.js';
+import { createRunGuardrails } from '../tools/rc1-native-run-guardrails.js';
+import { createAllianceWorldAdapter, ALLIANCE_WORLD_CONTRACT, ALLIANCE_CONTINUOUS_WORLD_CONTRACT } from '../tools/rc1-alliance-world-adapter.js';
+import { createFamilyWorldAdapter, assessFamilyInitialState, FAMILY_WORLD_CONTRACT } from '../tools/rc1-family-world-adapter.js';
+import { planFamilyFixture } from '../tools/rc1-family-policy.js';
+import { createChurnPolicy, CHURN_POLICY_CONTRACT } from '../tools/rc1-churn-policy.js';
+import { createLawWorldAdapter, LAW_WORLD_CONTRACT } from '../tools/rc1-law-world-adapter.js';
+import { createPressureWorldAdapter, PRESSURE_WORLD_CONTRACT } from '../tools/rc1-pressure-world-adapter.js';
+import { createScarcityInitialization, SCARCITY_INITIALIZATION_CONTRACT } from '../tools/rc1-scarcity-initialization.js';
+import { createAggressionPolicy, AGGRESSION_POLICY_CONTRACT } from '../tools/rc1-aggression-policy.js';
+import { createWorldEconomyMetrics, WORLD_ECONOMY_METRICS_CONTRACT } from '../tools/rc1-world-economy-metrics.js';
+import { createWarWorldAdapter, planWarWorld, WAR_WORLD_CONTRACT } from '../tools/rc1-war-world-adapter.js';
+import { createPlayerCarCommitObserver, PLAYER_CAR_SOURCE_PINS, PLAYER_CAR_COLLECTION_PIN } from '../tools/rc1-player-car-provenance.js';
+import { createMarketWorldAdapter, MARKET_WORLD_CONTRACT } from '../tools/rc1-market-world-adapter.js';
+import { assertAllianceContinuation, assertAllianceApplicationBootstrap, compareAllianceStates } from '../tools/rc1-alliance-continuation.js';
+import { parseWorldHistoryStorage, assertWorldHistoryStorage, retainWorldFailure } from '../tools/rc1-world-history-storage.js';
+
+const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
+assert(process.argv.includes('--postgres'), 'Real PostgreSQL is required');
+const output = argument('output') || process.env.RC1_WORLD_OUTPUT; assert(output, 'Provide a new restricted output directory');
+const faultNpcBoatGrant = process.argv.includes('--fault-npc-boat-grant');
+const observeResources = process.argv.includes('--observe-resources');
+const historyStorage = parseWorldHistoryStorage(process.argv.slice(2));
+const hours = Number(argument('hours') || 2160), population = Number(argument('population') || 25);
+assert(Number.isSafeInteger(hours) && hours > 0 && hours <= 2161);
+assert([25, 100, 250, 500, 1000].includes(population));
+const guardArguments = ['max-wall-ms', 'max-output-bytes', 'min-free-bytes'].map(argument);
+assert(guardArguments.every(value => value === undefined) || guardArguments.every(value => value !== undefined), 'Declare all three operational limits together');
+assert(hours <= 48 || guardArguments.every(value => value !== undefined), 'Long runs require explicit operational guardrails');
+const guardLimits = guardArguments[0] === undefined ? null : {
+  maximumWallMs: Number(guardArguments[0]), maximumOutputBytes: Number(guardArguments[1]), minimumFreeBytes: Number(guardArguments[2]),
+};
+const seed = argument('seed') || 'rc1-alpha'; assert(['rc1-alpha', 'rc1-beta', 'rc1-gamma'].includes(seed));
+const actorPolicy = argument('policy') || 'quiet_world';
+assert(['quiet_world', 'high_mystery_participation', 'low_mystery_participation', 'coordinated_alliance', 'mostly_new_players', 'mostly_veteran_players', 'family_monopoly', 'fragmented_families', 'high_player_churn', 'law_pressure', 'resource_scarcity', 'resource_abundance', 'high_aggression', 'multi_family_war', 'market_stress'].includes(actorPolicy));
+const allianceEnabled = actorPolicy === 'coordinated_alliance';
+const continuousAlliance = allianceEnabled && (population !== 25 || ![24, 48].includes(hours) || process.argv.includes('--continuous-alliance'));
+const legacyAlliance = allianceEnabled && !continuousAlliance;
+const allianceMode = continuousAlliance ? 'continuous' : 'legacy';
+const cohortEnabled = actorPolicy === 'mostly_new_players' || actorPolicy === 'mostly_veteran_players';
+const familyEnabled = actorPolicy === 'family_monopoly' || actorPolicy === 'fragmented_families';
+const churnEnabled = actorPolicy === 'high_player_churn';
+const lawEnabled = actorPolicy === 'law_pressure';
+const pressureEnabled = actorPolicy === 'resource_scarcity' || actorPolicy === 'resource_abundance';
+const aggressionEnabled = actorPolicy === 'high_aggression';
+const warEnabled = actorPolicy === 'multi_family_war';
+const marketEnabled = actorPolicy === 'market_stress';
+const dailyFullRoster = cohortEnabled || familyEnabled || churnEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled;
+const httpEnabled = allianceEnabled || dailyFullRoster;
+if (faultNpcBoatGrant) {
+  assert(observeResources && hours === 12 && population === 25 && seed === 'rc1-alpha' && actorPolicy === 'quiet_world');
+  assert(!argument('resume'), 'Fault workload does not support continuation');
+}
+const scenarioId = faultNpcBoatGrant ? 'scoped-quiet-world-npc-boat-late-fault' : continuousAlliance ? 'scoped-continuous-alliance-world' : allianceEnabled ? 'scoped-coordinated-alliance-world' : dailyFullRoster ? 'scoped-' + actorPolicy + '-world' : 'scoped-quiet-world-active-players-and-workers';
+if (legacyAlliance) {
+  assert.equal(population, 25, 'Alliance adapter currently supports the declared 25-actor cohort only');
+  assert([24, 48].includes(hours), 'Alliance adapter supports a 24-hour checkpoint or 48-hour observation');
+}
+const source = await sourceIdentity(), controlUrl = process.env.COORDINATION_TEST_DATABASE_URL;
+const priorFailureDirectory = argument('prior-failure');
+let priorFailure = null;
+if (priorFailureDirectory) {
+  const bytes = await fs.readFile(path.join(priorFailureDirectory, 'run.json'));
+  const run = JSON.parse(bytes); await verifyArtifactIndex(priorFailureDirectory, run); assert.equal(run.status, 'FAIL');
+  priorFailure = { directory: path.resolve(priorFailureDirectory), source: run.source, runSha256: sha256(bytes),
+    status: run.status, error: run.result.error, artifacts: run.artifacts };
+}
+const replay = argument('replay'), resume = argument('resume');
+const comparisonDirectory = argument('compare-uninterrupted');
+assert(!comparisonDirectory || (legacyAlliance && resume), 'Uninterrupted comparison requires legacy alliance continuation');
+const injectActorMismatch = process.argv.includes('--inject-actor-input-mismatch');
+assert(!injectActorMismatch || replay, 'Actor mismatch control requires recorded replay');
+async function readPrior(directory) {
+  const run = JSON.parse(await fs.readFile(path.join(directory, 'run.json'), 'utf8'));
+  await verifyArtifactIndex(directory, run); assert.equal(run.status, 'PASS_SCOPED');
+  assert.equal(run.scenarioId, scenarioId);
+  assert.equal(run.source.revision, source.revision, 'Actor replay and continuation require exactly the same source');
+  assert.equal(run.configuration.population, population); assert.equal(run.configuration.seed, seed);
+  assert.equal(run.configuration.actorPolicy, actorPolicy, 'Actor policy differs');
+  assertWorldHistoryStorage(run, historyStorage);
+  return run;
+}
+const replayRun = replay ? await readPrior(replay) : null, parentRun = resume ? await readPrior(resume) : null;
+const comparisonRun = comparisonDirectory ? await readPrior(comparisonDirectory) : null;
+const readArtifact = async (directory, name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'));
+const retainedActors = replay ? await readArtifact(replay, 'actor-tape.json') : null;
+const retainedOrder = replay ? await readArtifact(replay, 'query-order.json') : null;
+const checkpointLabel = legacyAlliance ? 'alliance-hour24' : 'final';
+const parentContinuation = resume && legacyAlliance ? await readArtifact(resume, 'alliance-hour24-continuation.json') : null;
+const parentCheckpoint = resume ? await readArtifact(resume, checkpointLabel + '-checkpoint.json') : null;
+const parentTape = resume ? (await readArtifact(resume, legacyAlliance ? 'alliance-hour24-random-tape.json' : 'random-tape.json')).draws : null;
+const parentPolicy = resume ? await readArtifact(resume, legacyAlliance ? 'alliance-hour24-policy.json' : 'actor-policy-final.json') : null;
+if (resume) {
+  const parentBoundary = parentContinuation || parentRun.result;
+  assert.equal(parentCheckpoint.stateSha256, parentBoundary.finalStateSha256);
+  assert.equal(sha256(canonicalJson(parentTape)), parentBoundary.deterministicRandomTapeSha256);
+  assert.equal(sha256(canonicalJson(parentPolicy)), parentBoundary.policyStateSha256);
+  assert(/^rc1_worker_world_[a-z_0-9]+$/.test(parentCheckpoint.schema));
+  if (legacyAlliance) assertAllianceContinuation({ source, parentRun, parentPolicy, parentCheckpoint, seed, population,
+    parentContinuation, observeResources, hours, guardLimits });
+}
+assert(controlUrl, 'Explicit disposable local PostgreSQL control database required');
+for (const key of ['CHAIN_RPC_URL', 'INVARIANT_WEBHOOK_URL', 'LIQUIDITY_RPC_URL', 'LIQUIDITY_RPC_FALLBACK_URL'])
+  assert(!process.env[key], `No external integration is authorized for this isolated workload: ${key}`);
+const database = planOwnedWorldDatabase({ controlUrl, runId: path.basename(output), sourceRevision: source.revision });
+const url = database.url;
+const declared = { DATABASE_URL: url, CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on',
+  COORDINATION_KNOWLEDGE: 'on', COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on',
+  COORDINATION_ACCOUNT_IDS: '', LIVING_WORLD_DIRECTOR: 'LIVE', DIRECTOR_ACCOUNT_IDS: '',
+  POPULATION_OFF: 'off', LIQUIDITY_AUTOMATION_ENABLED: 'off' };
+if (httpEnabled) Object.assign(declared, { RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off',
+  JWT_SECRET: sha256('rc1-isolated-alliance-world-jwt:' + seed), MARKET_SEED: sha256('rc1-isolated-alliance-market:' + seed),
+  MOD_KEY: sha256('rc1-isolated-alliance-mod:' + seed) });
+const previousEnv = Object.fromEntries(Object.keys(declared).map((key) => [key, process.env[key]]));
+Object.assign(process.env, declared);
+const seasonMs = 28 * 86400000;
+let epoch = resume ? parentPolicy.epoch : Math.ceil(Date.parse('2026-09-20T12:00:00.000Z') / seasonMs) * seasonMs - 3600000;
+const start = resume ? parentPolicy.logicalAt : epoch;
+let measuredStart = start, finish = start + hours * 3600000;
+const expectedDormant = [{ label: 'RWA health', code: 'health_registry_unavailable' }];
+const configuration = { ...(faultNpcBoatGrant ? { npcBoatFault: NPC_BOAT_FAULT_CONTRACT } : {}), scenario: 'quiet_world', population, seed, hours, sourcePins: WORKER_SOURCE_PINS,
+  ...(historyStorage ? { historyStorage } : {}),
+  actorPolicy, mysteryPolicyContract: actorPolicy.includes('mystery') ? MYSTERY_POLICY_CONTRACT : null,
+  priorFailedRun: priorFailure ? { directory: priorFailure.directory, source: priorFailure.source,
+    runSha256: priorFailure.runSha256, status: priorFailure.status, error: priorFailure.error,
+    semantics: 'Retained failed predecessor, not qualifying evidence and not relabeled as this source.' } : null,
+  guardrails: guardLimits ? { ...guardLimits,
+    cadence: 'Wall time after every completed native callback; output/free space before initialization, hourly, daily and final. A running callback retains the existing 60-second deadline.',
+    overflow: 'FAIL with diagnostics and cleanup; no skipped work or pass. A single callback/artifact may exceed a checked limit before the next quiescent check. Final verification/cleanup are retained beyond execution limits.' } : null,
+  policyScope: 'Only the PlayerCommand selection component changes. Quiet daily roster/session limits stay declared; legacy crimes are independent and excluded from mystery quotas. No full-archetype qualification.',
+  knowledgeObservation: 'Complete canonical Knowledge pages at daily/final serial checkpoints; full canonical state equality before/after each observation; never policy feedback',
+  failureControl: injectActorMismatch ? 'Change the first authorized snapshot comparison input only; no canonical write or command executes from the altered projection.' : null,
+  databaseIsolation: database.descriptor,
+  resourceObservation: observeResources ? 'Native committed-boundary parity for serial work; explicitly traced quiescent aggregate boundaries for command telemetry and concurrent market requests' : 'Disabled',
+  stopOnResourceGap: observeResources && hours > 48,
+  quiescentGroupObservation: observeResources ? QUIESCENT_GROUP_CONTRACT : null,
+  economyObservation: observeResources ? WORLD_ECONOMY_METRICS_CONTRACT : null,
+  carMeltWitness: observeResources ? { format: 1, sourcePins: CAR_MELT_SOURCE_PINS,
+    scope: 'Native COMMIT provenance for exact solo and Family human melt. Retain full car-deletion/melt-candidate and bounded-overflow witnesses privately; all other commits keep ordinary resource evidence. No added actor actions or grants.' } : null,
+  npcCarAcquisitionWitness: observeResources ? { format: 1, sourcePins: NPC_CAR_SOURCE_PINS,
+    playerSourcePins: PLAYER_CAR_SOURCE_PINS, collectionSourcePin: PLAYER_CAR_COLLECTION_PIN,
+    scope: 'Same bounded native transaction witness with actual source caller frames: default runPopulation NPC car grant and canonical player GTA. Other acquisition branches remain unknown.' } : null,
+  npcFamilyWitness: observeResources ? { format: 1, sourcePins: NPC_FAMILY_SOURCE_PINS,
+    scope: 'Original worker formation only; exact cash fee/owner/receipt and nonmonetary initial war_pool. Full candidate states retained; other Family changes stay unsupported.' } : null,
+  seasonElectionObservation: observeResources ? { sourcePins: ELECTION_SOURCE_PINS, maximumBytes: 8388608, maximumQueries: 64,
+    scope: 'Original cold all-zero standing cohort with no core Family holder only; cached/shared-flight, nonzero and compound selections remain unsupported' } : null,
+  npcBoatWitness: observeResources ? { format: 1, sourcePins: NPC_BOAT_SOURCE_PINS,
+    scope: 'Same native transaction witness; exact default NPC dinghy birth, source caller and original serial RNG tape inputs. No authored boat grant receipt exists; all other boat dispositions remain unsupported.' } : null,
+  npcMarketOrderWitness: observeResources ? { format: 1, sourcePins: NPC_MARKET_SOURCE_PINS,
+    scope: 'Same bounded transaction witness: one original worker NPC buy order, exact fee sink/pocket debit/owned escrow/default custody/deadline. No terminal or human postOrder classification.' } : null,
+  resourceBootstrap: 'Both original makeDb initializations precede per-commit observation; exact authoritative resource state must agree before/after second bootstrap. Arm before every queued boot job.',
+  epoch: new Date(epoch).toISOString(), start: new Date(start).toISOString(), finish: new Date(finish).toISOString(),
+  replay: replay ? { runSha256: sha256(await fs.readFile(path.join(replay, 'run.json'))), source: replayRun.source,
+    semantics: 'Recorded actor decisions and PostgreSQL subset selection; exact inputs, outcomes and complete state must match.' } : null,
+  parentCheckpoint: resume ? { runSha256: sha256(await fs.readFile(path.join(resume, 'run.json'))), source: parentRun.source,
+    stateSha256: parentCheckpoint.stateSha256, policyStateSha256: parentContinuation?.policyStateSha256 || parentRun.result.policyStateSha256,
+    ...(allianceEnabled ? { checkpointLabel, logicalAt: start } : {}),
+    semantics: 'Fresh worker boots from exact database, RNG and actor-policy checkpoint. Boot effects retained; no uninterrupted-schedule equivalence.' } : null,
+  policy: { dailyActiveActors: Math.floor(population / 10), proposedFraction: .10,
+    realizedFraction: Math.floor(population / 10) / population,
+    integerConstraint: '25 actors cannot supply 2.5 active identities; choose the lower integer quiet extreme before execution.',
+    sessionsPerSelectedActorPerDay: 1, maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: 'Authorized PlayerCommand snapshots, own canonical character read, and only public crime catalog fields',
+    observerFeedback: 'Diagnostic database rows never feed policy choices' },
+  entry: 'Synthetic account/character initialization only: schema-default birth resources/stats, zero progression, current canonical season, docks',
+  authority: 'Original PlayerCommand dispatcher and withCharacter/readCharacter domains; no HTTP/authentication-session coverage',
+  latencySemantics: 'In-process wall durations include test instrumentation; no production latency acceptance is claimed',
+  clocks: 'One controller advances application and isolated SQL clocks and executes every due original local worker callback',
+  workerOrder: 'Serial accepted callback order; actor session follows the scheduled hourly callback once per rolling day',
+  expectedDormant, queryOrder: QUERY_ORDER_SCOPE, deploymentAttested: false,
+  syntheticSessionRenewal: 'Before an ordinary HTTP bearer is within two logical days of expiry, the same authenticated actor calls /v1/auth/agent-key. This canonical registration sets agent_flag and referral exclusion, issues its real90-day agent token and retains the credential privately. No direct JWT signing or postbaseline fixture.',
+  excludedIntegrations: ['Unconfigured chain watcher', 'Disabled liquidity automation', 'Unavailable external RWA registry'],
+  coverageMissing: ['All 15 archetypes and 225 runs', 'All 13 resource journals at every worker transition',
+    'Actor-policy replay across all archetypes and seeds',
+    'Dead-world reachability proof and failure minimization',
+    'Two executions of every longest lifecycle', 'Production-equivalent 12-hour soak', 'HTTP/provider authentication', 'Deployed environment and real cohort'] };
+if (allianceEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, allianceContract: ALLIANCE_WORLD_CONTRACT,
+  policyScope: 'Three independent Family contributors plus 22 ordinary outsiders; explicit hour-0/hour-24 schedule. All 25 receive both daily crime sessions. Original independent Knowledge grants alone authorize conclusions.',
+  policy: { dailyActiveActors: 25, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 0, maximumCrimesPerSession: 1,
+    information: 'Own authenticated session/me, public rules/Family directory, own diplomacy, Coordination and visible Knowledge/issued targets',
+    observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: '25 ordinary guest/character HTTP entries. Three initialization-only level-75 respect fixtures; zero other progression/resource/membership/ACL fixtures. All check-ins and Family formation occur after measured baseline.',
+  authority: 'Alliance requests use ordinary authenticated HTTP routes; daily crimes retain the existing canonical withCharacter domain and public own-character reads. External authentication providers remain excluded.',
+  workerOrder: 'Serial original callbacks; hour-0 work follows startup. Hour-24 work follows all callbacks due at that boundary. A 24-hour initial segment pauses with the first conclusion request selected but undispatched; continuation runs real startup callbacks before dispatch.',
+  httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. This is not production HTTP capacity or admission qualification.',
+  continuation: { version: 1, mode: resume ? 'restored-continuation' : hours === 24 ? 'pending-checkpoint' : 'uninterrupted',
+    originalStartupJobs: 'Always executed in each fresh process; no scheduler state transplant or omitted callbacks',
+    comparisonRunSha256: comparisonRun ? sha256(await fs.readFile(path.join(comparisonDirectory, 'run.json'))) : null },
+});
+if (continuousAlliance) {
+  Object.assign(configuration, { allianceContract: ALLIANCE_CONTINUOUS_WORLD_CONTRACT,
+    policyScope: ALLIANCE_CONTINUOUS_WORLD_CONTRACT.schedule,
+    policy: { ...configuration.policy, dailyActiveActors: population },
+    entry: population + ' ordinary HTTP entrants; only first three receive prebaseline founder respect. Every rolling day executes canonical alliance cooperation and all declared actor crime sessions.',
+    workerOrder: 'All due original callbacks execute; daily alliance work follows the first hourly callback of each rolling day, with day0 immediately after startup.',
+  });
+  delete configuration.continuation;
+}
+if (cohortEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, cohortContract: COHORT_POLICY_CONTRACT,
+  policyScope: 'All assigned actors use current issued PlayerCommands and their own public crime eligibility. Starting cohort labels never grant continuing eligibility.',
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: 'Authorized PlayerCommand snapshots, own public character, public crimes and pacing', observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: 'Ordinary HTTP guest/character entry. Mostly-new veterans earn progression before new majority character entry; mostly-veteran majority receives only the declared initialization respect fixture.',
+  authority: 'Ordinary HTTP entry; original PlayerCommand engine and canonical withCharacter crimes. No external authentication-provider qualification.',
+  initialization: { maximumLogicalDays: 14, maximumWallMs: 7200000,
+    progression: 'Highest unlocked public level crime, stable public ID tie-break. Wait for its public nerve cost or jail recovery on the shared controller; every due original worker callback runs. No hospital crime gate.',
+    measurement: 'Warmup is retained before the measured initial checkpoint and excluded from measured player/resource totals. No postbaseline fixtures.' },
+  resourceBootstrap: 'Resource observation starts at the measured baseline. Mostly-new initial worker boot and all canonical warmup precede it; no worker callback is omitted or repeated.',
+  workerOrder: 'Initial cohort sessions follow original startup and measured baseline; subsequent sessions follow the first hourly callback of each rolling day.',
+  httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. No production admission or capacity qualification.',
+});
+if (familyEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, familyContract: FAMILY_WORLD_CONTRACT, familyPlan: planFamilyFixture(actorPolicy, population),
+  policyScope: FAMILY_WORLD_CONTRACT.schedule,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: FAMILY_WORLD_CONTRACT.information, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: FAMILY_WORLD_CONTRACT.initialization,
+  authority: 'Ordinary authenticated Family HTTP actions; original PlayerCommand dispatcher and canonical crimes.',
+  httpConfiguration: 'Local deterministic test secrets; rate limit/invite/social gates off. No production admission or capacity qualification.',
+});
+if (churnEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, churnContract: CHURN_POLICY_CONTRACT,
+  policyScope: 'All current actors receive daily ordinary sessions; replace30% of actual weekly active actors with carried integer remainder at each original seven-day boundary. Retired accounts and custody remain untouched and observed.',
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: 'Authorized PlayerCommands, own character, public crimes and recorded actual activity', observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: 'Every initial/replacement actor uses ordinary guest and character HTTP; no progression or resource fixtures.',
+  authority: 'Original guest/session entry, PlayerCommand dispatcher and canonical crimes; no external authentication-provider qualification.',
+});
+if (lawEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, lawContract: LAW_WORLD_CONTRACT,
+  policyScope: 'A seeded10% pressure cohort (rounded up, at least3) follows consecutive original five-minute Law windows. All declared actors retain daily ordinary sessions. Heat, indictment, loss and recovery use public canonical choices only.',
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: LAW_WORLD_CONTRACT.inputs, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: 'Ordinary guest/character HTTP; no progression or resource fixtures.',
+  authority: 'Authenticated Law HTTP, original PlayerCommands and canonical crimes; no external provider qualification.',
+});
+if (marketEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, marketContract: MARKET_WORLD_CONTRACT,
+  policyScope: MARKET_WORLD_CONTRACT.cadence,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: MARKET_WORLD_CONTRACT.inputs, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: MARKET_WORLD_CONTRACT.entry,
+  authority: 'Original authenticated market HTTP and original worker expiry. This integration uses serial competition; concurrent-native proof is retained separately.',
+});
+if (warEnabled) Object.assign(configuration, {
+  scenario: actorPolicy, warContract: WAR_WORLD_CONTRACT, warPlan: planWarWorld(population),
+  policyScope: WAR_WORLD_CONTRACT.schedule,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: 4, maximumCrimesPerSession: 1,
+    information: WAR_WORLD_CONTRACT.information, observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: WAR_WORLD_CONTRACT.initialization,
+  authority: 'Original authenticated Family/turf HTTP with canonical workers; no external provider qualification.',
+});
+if (pressureEnabled || aggressionEnabled) Object.assign(configuration, {
+  scenario: actorPolicy,
+  ...(pressureEnabled ? { pressureContract: PRESSURE_WORLD_CONTRACT } : { aggressionContract: AGGRESSION_POLICY_CONTRACT }),
+  policyScope: pressureEnabled ? PRESSURE_WORLD_CONTRACT.daily : AGGRESSION_POLICY_CONTRACT.quota,
+  policy: { dailyActiveActors: population, proposedFraction: 1, realizedFraction: 1, sessionsPerSelectedActorPerDay: 1,
+    maximumCommandsPerSession: aggressionEnabled ? 10 : 4, maximumCrimesPerSession: 1,
+    information: pressureEnabled ? PRESSURE_WORLD_CONTRACT.authority : AGGRESSION_POLICY_CONTRACT.inputs,
+    observerFeedback: 'No diagnostic rows feed policy choices' },
+  entry: pressureEnabled ? actorPolicy === 'resource_abundance' ? PRESSURE_WORLD_CONTRACT.abundance : PRESSURE_WORLD_CONTRACT.scarcity
+    : 'Ordinary guest/character HTTP; sustained check-in and paid ammo choices share the nonconflict denominator. No fixtures.',
+  authority: 'Ordinary authenticated public handlers and original worker callbacks; no external provider qualification.',
+});
+if (replay) {
+  assert.equal(replayRun.configuration.hours, hours);
+  assert.deepEqual(replayRun.configuration.npcBoatFault, configuration.npcBoatFault);
+  assert.equal(replayRun.configuration.resourceObservation, configuration.resourceObservation);
+  assert.deepEqual(replayRun.configuration.economyObservation, configuration.economyObservation);
+  assert.deepEqual(replayRun.configuration.carMeltWitness, configuration.carMeltWitness);
+  assert.deepEqual(replayRun.configuration.npcCarAcquisitionWitness, configuration.npcCarAcquisitionWitness);
+  assert.deepEqual(replayRun.configuration.npcFamilyWitness, configuration.npcFamilyWitness);
+  assert.deepEqual(replayRun.configuration.npcBoatWitness, configuration.npcBoatWitness);
+  assert.deepEqual(replayRun.configuration.npcMarketOrderWitness, configuration.npcMarketOrderWitness);
+  assert.deepEqual(replayRun.configuration.guardrails, configuration.guardrails, 'Replay operational limits differ');
+  assert.deepEqual(replayRun.configuration.priorFailedRun, configuration.priorFailedRun, 'Replay predecessor linkage differs');
+  assert.deepEqual(replayRun.configuration.parentCheckpoint, configuration.parentCheckpoint, 'Replay continuation parent differs');
+  if (allianceEnabled) assert.deepEqual(replayRun.configuration.continuation, configuration.continuation);
+}
+const proof = await createProofRecorder({ directory: output, source, configuration,
+  runId: path.basename(output), seed, scenarioId, population, ...(historyStorage ? { historyStorage } : {}) });
+const workloadCallUnion = new Map();
+let trackMeasuredCalls = false, measuredInvocationCount = 0;
+const guardrails = guardLimits ? createRunGuardrails({ directory: output, ...guardLimits }) : null;
+const guardBoundary = async label => { if (guardrails) await proof.record({ kind: 'operational-guard-check', ...await guardrails.check(label) }); };
+const runtime = installSerialRuntime(seed, configuration.start); let at = start;
+runtime.bindClock(() => at);
+if (resume) runtime.restoreTape(parentTape);
+// A fresh application rebuilds process-local sealing keys and Fastify's random
+// registration IDs. Retain those draws without shifting the restored gameplay
+// stream, just as for the repeated original worker startup below.
+const initializeApplication = work => resume && httpEnabled ? runtime.withRestartStartup(work) : work();
+let prepareMarketBoundary = async () => {}, observeQuiescentDaily = async () => {};
+const controller = createWorkerSchedule({ start, setClock: (value) => { at = value; }, expectedDormant,
+  beforeCallback: identity => prepareMarketBoundary(identity), afterTimestamp: () => observeQuiescentDaily() });
+const namespace = resume ? parentCheckpoint.schema : `rc1_worker_world_${process.pid}_${Math.floor(performance.now())}`;
+const base = new pg.Pool({ connectionString: url }), queryOrder = createRecordedQueryOrder({ replay: retainedOrder, replayDirectory: replay, artifact: proof.artifact });
+const actors = createRecordedActors({ replay: retainedActors, record: proof.record });
+const diagnosticPool = new pg.Pool({ connectionString: url, max: 1,
+  options: `-c search_path=${namespace},pg_catalog -c default_transaction_read_only=on` });
+const electionProbe = observeResources ? createSeasonElectionProbe({ snapshot: () => snapshotElectionCandidates(diagnosticPool) }) : null;
+const electionSeam = electionProbe?.install();
+let snapshotWorldResources, reconcileWorldResources, worldResourceHash;
+let priorResources, firstResourceError, economyMetrics = null, economyBoundaryIndex = 0, workPhase = 'initialization';
+let duelSelection = null, duelSelectionArtifact = null;
+const resourceSummary = { boundaries: 0, unsupportedEntries: 0, unsupportedKinds: {}, qualifyingFullResourcePass: false };
+const carMeltWitnessSummary = { committedWitnesses: 0, retainedCandidateWitnesses: 0, collectorUnsupportedWitnesses: 0,
+  exactMeltTransitions: 0, unclassifiedCandidateBoundaries: 0 };
+const carAcquisitionWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
+const npcFamilyWitnessSummary = { retainedCandidateWitnesses: 0, exactFormations: 0, rolledBackCandidates: 0, unclassifiedCandidateBoundaries: 0 };
+const npcBoatWitnessSummary = { retainedCandidateWitnesses: 0, exactAcquisitions: 0, unclassifiedCandidateBoundaries: 0 };
+const npcMarketOrderWitnessSummary = { retainedCandidateWitnesses: 0, exactPlacements: 0, unclassifiedCandidateBoundaries: 0 };
+const resourceStream = crypto.createHash('sha256');
+const resourceCost = { observedBoundaryWallMs: 0, maximumBoundaryWallMs: 0, serializedJournalBytes: 0, serializedRestrictedChangeBytes: 0 };
+const npcBoatFault = createNpcBoatFault({ enabled: faultNpcBoatGrant, proof, stateHash: value => worldResourceHash(value) });
+// BEGIN source-bound car witness integration control.
+const commitObserver = observeResources ? createNpcFamilyCommitObserver({
+  innerObserverFactory: options => createPlayerCarCommitObserver({ ...options,
+    innerObserverFactory: player => createNpcMarketOrderCommitObserver({ ...player,
+      innerObserverFactory: extra => createNpcBoatAcquisitionCommitObserver({ ...extra, seed, readRandomTape: () => runtime.tape }) }) }),
+  context: () => currentInvocation || { authority: 'original-worker', logicalAt: at, ...(allianceEnabled ? { workPhase } : {}) },
+  onAttempt: event => npcBoatFault.onAttempt(event),
+  onBoundary: async (event, carMeltProvenance = null, npcFamilyProvenance = null) => {
+    const started = performance.now();
+    if (firstResourceError) throw firstResourceError;
+    const after = await snapshotWorldResources(diagnosticPool), before = priorResources;
+    let seasonElectionProvenance = null;
+    try {
+      if (['ROLLED_BACK', 'STATEMENT_ABORTED'].includes(event.outcome))
+        assert.equal(worldResourceHash(after), worldResourceHash(before), 'Aborted SQL changed committed world resources');
+      seasonElectionProvenance = await electionProbe?.boundary(event) ?? null;
+      const selection = captureDuelSelection(event, before, after);
+      if (selection) {
+        duelSelection = selection;
+        duelSelectionArtifact = `restricted-duel-selection-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(duelSelectionArtifact, { event, before, after, duelSelection });
+      }
+      await npcBoatFault.boundary(event, before, after, carMeltProvenance);
+      if (carMeltProvenance) carMeltWitnessSummary.committedWitnesses++;
+      // Keep unknown/overflow scopes explicit. Only original executed SQL can
+      // select a candidate; a request label or actor-supplied claim cannot.
+      const retainedWitness = carMeltProvenance && (carMeltProvenance.unsupported || carMeltProvenance.queries.some(query =>
+        /^\s*DELETE\s+FROM\s+cars\b/i.test(query.sql)
+        || /^\s*INSERT\s+INTO\s+transactions\b/i.test(query.sql) && /^melt(?::|$)/.test(String(query.parameters[5] || ''))))
+        ? carMeltProvenance : null;
+      const acquisitionWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+cars\b/i.test(query.sql))
+        ? carMeltProvenance : null;
+      const boatWitness = carMeltProvenance?.queries.some(query => /^\s*INSERT\s+INTO\s+boats\b/i.test(query.sql))
+        ? carMeltProvenance : null;
+      const marketWitness = carMeltProvenance?.queries.some(query => query.sql === NPC_MARKET_SQL.listing) ? carMeltProvenance : null;
+      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
+        { identity: event, includeRestrictedChanges: true, carMeltProvenance: retainedWitness, carAcquisitionProvenance: acquisitionWitness, npcFamilyProvenance, seasonElectionProvenance, npcBoatProvenance: boatWitness, npcMarketOrderProvenance: marketWitness, duelSelection });
+      if (journal.seasonConversions.movements.some(row => row.kind === 'season-duel-title'))
+        journal.duelSelection = { artifact: duelSelectionArtifact, sha256: sha256(canonicalJson(duelSelection)) };
+      if (marketWitness) {
+        const artifact = `restricted-npc-market-order-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, npcMarketOrderProvenance: marketWitness });
+        journal.npcMarketOrderWitness = { artifact, sha256: sha256(canonicalJson(marketWitness)) };
+        npcMarketOrderWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.npcMarketOrder.movements.length; npcMarketOrderWitnessSummary.exactPlacements += exact;
+        if (!exact) npcMarketOrderWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (retainedWitness) {
+        const artifact = `restricted-car-melt-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, carMeltProvenance: retainedWitness });
+        journal.carMeltWitness = { artifact, sha256: sha256(canonicalJson(retainedWitness)) };
+        carMeltWitnessSummary.retainedCandidateWitnesses++;
+        if (retainedWitness.unsupported) carMeltWitnessSummary.collectorUnsupportedWitnesses++;
+        const exact = journal.cars.lineage.filter(row => ['exact-solo-melt-sink', 'exact-family-melt-sink'].includes(row.kind)).length;
+        carMeltWitnessSummary.exactMeltTransitions += exact;
+        if (!exact) carMeltWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (acquisitionWitness) {
+        const artifact = `restricted-car-acquisition-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, carAcquisitionProvenance: acquisitionWitness });
+        journal.carAcquisitionWitness = { artifact, sha256: sha256(canonicalJson(acquisitionWitness)) };
+        carAcquisitionWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.cars.lineage.filter(row => ['exact-npc-spawn-car-source', 'exact-player-gta-car-source'].includes(row.kind)).length;
+        carAcquisitionWitnessSummary.exactAcquisitions += exact;
+        if (!exact) carAcquisitionWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (boatWitness) {
+        assert.deepEqual(boatWitness.boundary, event, 'Boat witness belongs to another native boundary');
+        const artifact = `restricted-npc-boat-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, npcBoatProvenance: boatWitness });
+        journal.npcBoatWitness = { artifact, sha256: sha256(canonicalJson(boatWitness)) };
+        npcBoatWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.boats.movements.filter(row => row.kind === 'exact-npc-spawn-boat-source').length;
+        npcBoatWitnessSummary.exactAcquisitions += exact;
+        if (!exact) npcBoatWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (npcFamilyProvenance) {
+        const artifact = `restricted-npc-family-witness-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, before, after, npcFamilyProvenance });
+        journal.npcFamilyWitness = { artifact, sha256: sha256(canonicalJson(npcFamilyProvenance)) };
+        npcFamilyWitnessSummary.retainedCandidateWitnesses++;
+        const exact = journal.familyEntry.movements.filter(row => row.kind === 'npc-family-formation-cash-sink').length;
+        npcFamilyWitnessSummary.exactFormations += exact;
+        if (event.outcome === 'ROLLED_BACK') npcFamilyWitnessSummary.rolledBackCandidates++;
+        else if (!exact) npcFamilyWitnessSummary.unclassifiedCandidateBoundaries++;
+      }
+      if (seasonElectionProvenance) {
+        const artifact = `restricted-season-election-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, seasonElectionProvenance);
+        journal.seasonCrowns.electionProvenanceArtifact = artifact;
+        journal.seasonCrowns.electionProvenanceSha256 = sha256(canonicalJson(seasonElectionProvenance));
+      }
+      if (restrictedChanges) {
+        const artifact = `restricted-resource-change-${String(resourceSummary.boundaries + 1).padStart(7, '0')}.json`;
+        await proof.artifact(artifact, { event, restrictedChanges });
+        resourceCost.serializedRestrictedChangeBytes += Buffer.byteLength(JSON.stringify({ event, restrictedChanges }));
+        journal.restrictedChangesArtifact = artifact;
+      }
+      await npcBoatFault.classified(event, journal);
+      if (economyMetrics) await proof.record({ kind: 'economy-commit-boundary', boundarySequence: event.sequence,
+        ...economyMetrics.observe({ event, journal, before, after, boundaryIndex: ++economyBoundaryIndex }) });
+      await proof.record({ kind: 'resource-commit-boundary', event, journal });
+      const serializedJournal = canonicalJson({ event, journal });
+      resourceStream.update(`${serializedJournal}\n`);
+      resourceCost.serializedJournalBytes += Buffer.byteLength(serializedJournal);
+      resourceSummary.boundaries++;
+      for (const unsupported of journal.unsupported) {
+        resourceSummary.unsupportedEntries++;
+        resourceSummary.unsupportedKinds[unsupported.kind] = (resourceSummary.unsupportedKinds[unsupported.kind] || 0) + 1;
+      }
+      priorResources = after;
+      const elapsed = performance.now() - started;
+      resourceCost.observedBoundaryWallMs += elapsed; resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
+    } catch (error) {
+      firstResourceError = error;
+      await proof.artifact('first-resource-failure.json', { before, after, event, carMeltProvenance, npcFamilyProvenance, seasonElectionProvenance, error: { message: error.message, stack: error.stack } });
+      throw error;
+    }
+  },
+}) : null;
+// END source-bound car witness integration control.
+const aggregateObserver = commitObserver ? createNativeQuiescentGroupObserver({ serialObserver: commitObserver,
+  clock: () => at, snapshot: () => snapshotWorldResources(diagnosticPool), record: proof.record,
+  onGroup: async evidence => {
+    const started = performance.now(), { identity: event, before, after } = evidence;
+    if (firstResourceError) throw firstResourceError;
+    try {
+      assert.equal(worldResourceHash(before), worldResourceHash(priorResources), 'Aggregate starts outside the prior resource boundary');
+      const { restrictedChanges, ...journal } = reconcileWorldResources(before, after,
+        { identity: event, includeRestrictedChanges: true, quiescentGroupEvidence: evidence });
+      const artifact = 'restricted-resource-group-' + String(event.groupId).padStart(7, '0') + '.json';
+      await proof.artifact(artifact, { ...evidence, restrictedChanges });
+      journal.quiescentGroupArtifact = artifact;
+      if (economyMetrics) await proof.record({ kind: 'economy-quiescent-boundary', groupId: event.groupId,
+        ...economyMetrics.observe({ event, journal, before, after, boundaryIndex: ++economyBoundaryIndex }) });
+      await proof.record({ kind: 'resource-quiescent-boundary', event, journal });
+      const serialized = canonicalJson({ event, journal }); resourceStream.update(`${serialized}\n`);
+      resourceCost.serializedJournalBytes += Buffer.byteLength(serialized);
+      resourceCost.serializedRestrictedChangeBytes += Buffer.byteLength(JSON.stringify({ ...evidence, restrictedChanges }));
+      resourceSummary.boundaries++;
+      for (const unsupported of journal.unsupported) {
+        resourceSummary.unsupportedEntries++;
+        resourceSummary.unsupportedKinds[unsupported.kind] = (resourceSummary.unsupportedKinds[unsupported.kind] || 0) + 1;
+      }
+      priorResources = after;
+      const elapsed = performance.now() - started;
+      resourceCost.observedBoundaryWallMs += elapsed;
+      resourceCost.maximumBoundaryWallMs = Math.max(resourceCost.maximumBoundaryWallMs, elapsed);
+    } catch (error) { firstResourceError = error; throw error; }
+  },
+}) : null;
+const seam = installWorkerInstrumentation(controller, { namespace, queryOrder, commitObserver: aggregateObserver || commitObserver });
+const originalConsole = { log: console.log, warn: console.warn, error: console.error };
+const roster = httpEnabled ? [] : Array.from({ length: population }, (_, index) => `quiet-player-${index}`);
+const actorOptions = new Map(roster.map((account) => [account, {}]));
+const actorActions = new Map(roster.map((account) => [account, 0]));
+const mysteryPolicies = new Map(!actorPolicy.includes('mystery') ? [] : roster.map((accountId) => [accountId,
+  createMysteryPolicy({ scenarioId: actorPolicy, accountId, seed })]));
+const opportunities = observedOpportunityTracker();
+const metrics = { playerSnapshots: 0, ownCharacterReads: 0, freshPlayerCommands: 0, legacyCrimeAttempts: 0,
+  crimeSuccesses: 0, crimeLosses: 0, exactReplays: 0, denials: {}, sessionWaits: 0, sessions: 0,
+  commandTypes: {}, observedAuthorizedOpportunities: 0 };
+const days = [], latencyTimeSeries = [], latencies = { read: [], command: [] }, latencyActors = { read: [], command: [] };
+const knowledgeBoundaries = [];
+const allianceActors = [];
+const familyActors = []; let familyAdapter = null;
+const churnActors = [], churnWeeklyActive = new Set(); let churnPolicy = null;
+const lawActors = []; let lawAdapter = null;
+const pressureActors = []; let pressureAdapter = null;
+const aggressionActors = [], aggressionPolicies = new Map();
+const warActors = []; let warAdapter = null;
+const marketActors = []; let marketAdapter = null;
+const cohortActors = [], cohortPolicies = new Map();
+let cohortPlan = null, cohortBaseline = null, cohortWarmup = null, workerBooted = false;
+let allianceAdapter = null, app = null;
+const responseCompletions = new Map(); let responseSequence = 0;
+let lastDay = -1;
+if (resume) {
+  if (allianceEnabled) {
+    allianceActors.push(...structuredClone(parentPolicy.allianceActors)); roster.push(...parentPolicy.roster);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+    allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors, mode: allianceMode }).restore(parentPolicy.allianceAdapter);
+  }
+  if (cohortEnabled) {
+    cohortActors.push(...structuredClone(parentPolicy.cohortActors)); roster.push(...parentPolicy.roster);
+    cohortPlan = structuredClone(parentPolicy.cohortPlan); cohortBaseline = structuredClone(parentPolicy.cohortBaseline);
+    cohortWarmup = structuredClone(parentPolicy.cohortWarmup); responseSequence = parentPolicy.nativeBoundary.responseSequence;
+    for (const accountId of roster) cohortPolicies.set(accountId,
+      createCohortPolicy({ plan: cohortPlan, accountId }).restore(parentPolicy.cohortPolicies[accountId]));
+  }
+  if (familyEnabled) {
+    familyActors.push(...structuredClone(parentPolicy.familyActors)); roster.push(...parentPolicy.roster);
+    familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors }).restore(parentPolicy.familyAdapter);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (churnEnabled) {
+    churnActors.push(...structuredClone(parentPolicy.churnActors)); roster.push(...parentPolicy.roster);
+    churnPolicy = createChurnPolicy(parentPolicy.churn.configuration).restore(parentPolicy.churn);
+    for (const accountId of parentPolicy.churnWeeklyActive) churnWeeklyActive.add(accountId);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (lawEnabled) {
+    lawActors.push(...structuredClone(parentPolicy.lawActors)); roster.push(...parentPolicy.roster);
+    lawAdapter = createLawWorldAdapter(parentPolicy.law.payload.state.configuration).restore(parentPolicy.law);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (marketEnabled) {
+    marketActors.push(...structuredClone(parentPolicy.marketActors)); roster.push(...parentPolicy.roster);
+    marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors, expiryHours: 24 }).restore(parentPolicy.market);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (warEnabled) {
+    warActors.push(...structuredClone(parentPolicy.warActors)); roster.push(...parentPolicy.roster);
+    warAdapter = createWarWorldAdapter({ seed, epoch, roster: warActors }).restore(parentPolicy.war);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (pressureEnabled) {
+    pressureActors.push(...structuredClone(parentPolicy.pressureActors)); roster.push(...parentPolicy.roster);
+    pressureAdapter = createPressureWorldAdapter(parentPolicy.pressure.payload.state.configuration).restore(parentPolicy.pressure);
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  if (aggressionEnabled) {
+    aggressionActors.push(...structuredClone(parentPolicy.aggressionActors)); roster.push(...parentPolicy.roster);
+    for (const accountId of roster) aggressionPolicies.set(accountId,
+      createAggressionPolicy({ accountId, seed, sustained: true }).restore(parentPolicy.aggressionPolicies[accountId]));
+    responseSequence = parentPolicy.nativeBoundary.responseSequence;
+  }
+  assert.equal(parentPolicy.format, 1); assert.equal(parentPolicy.seed, seed); assert.deepEqual(parentPolicy.roster, roster);
+  assert.equal(parentPolicy.logicalAt, start); assert(Number.isSafeInteger(parentPolicy.lastDay));
+  for (const [name, target] of [['actorOptions', actorOptions], ['actorActions', actorActions]]) {
+    assert.deepEqual(Object.keys(parentPolicy[name]).sort(), [...roster].sort());
+    for (const [key, value] of Object.entries(parentPolicy[name])) target.set(key, structuredClone(value));
+  }
+  assert.deepEqual(Object.keys(parentPolicy.metrics).sort(), Object.keys(metrics).sort());
+  Object.assign(metrics, structuredClone(parentPolicy.metrics)); opportunities.restore(parentPolicy.opportunities);
+  assert.equal(parentPolicy.actorPolicy, actorPolicy);
+  assert.deepEqual(Object.keys(parentPolicy.mysteryPolicies).sort(), [...mysteryPolicies.keys()].sort());
+  for (const [accountId, policy] of mysteryPolicies) policy.restore(parentPolicy.mysteryPolicies[accountId]);
+  days.push(...structuredClone(parentPolicy.days)); lastDay = parentPolicy.lastDay;
+}
+const mysterySummaries = () => Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.summary()]));
+const policyState = () => ({ format: 1, seed, actorPolicy, epoch, logicalAt: at, roster, lastDay,
+  economy: economyMetrics?.checkpoint() || null,
+  ...(marketEnabled ? { marketActors, market: marketAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(warEnabled ? { warActors, war: warAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(pressureEnabled ? { pressureActors, pressure: pressureAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(aggressionEnabled ? { aggressionActors,
+    aggressionPolicies: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.checkpoint()])),
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(lawEnabled ? { lawActors, law: lawAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(churnEnabled ? { churnActors, churn: churnPolicy?.checkpoint() || null, churnWeeklyActive: [...churnWeeklyActive].sort(),
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(familyEnabled ? { familyActors, familyAdapter: familyAdapter?.checkpoint() || null,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(cohortEnabled ? { cohortActors, cohortPlan, cohortBaseline, cohortWarmup, measuredStart,
+    cohortPolicies: Object.fromEntries([...cohortPolicies].map(([accountId, policy]) => [accountId, policy.checkpoint()])),
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  ...(allianceEnabled ? { allianceAdapter: allianceAdapter?.checkpoint() || null, allianceActors,
+    nativeBoundary: { responseSequence, pendingResponses: responseCompletions.size, invocationPending: !!currentInvocation } } : {}),
+  mysteryPolicies: Object.fromEntries([...mysteryPolicies].map(([account, policy]) => [account, policy.checkpoint()])),
+  mysterySummaries: mysterySummaries(),
+  actorOptions: Object.fromEntries(actorOptions), actorActions: Object.fromEntries(actorActions),
+  metrics, opportunities: opportunities.checkpoint(), days });
+let pool, result, currentInvocation = null, failureInvocation = null, injectedActorMismatch = false;
+let restoredState = null, applicationBootstrap = null;
+try {
+  for (const level of ['log', 'warn', 'error']) console[level] = (...args) => {
+    if (!npcBoatFault.acceptConsole(level, args, at)) controller.log(level, args);
+  };
+  // The observer imports canonical check-in rules through game.js -> db.js.
+  // Install the source-pinned DB seam before loading that production module.
+  ({ snapshotWorldResources, reconcileWorldResources, worldResourceHash } = await import('../tools/rc1-world-resource-observer.js'));
+  const { flushWorldTelemetry } = await import('../src/world-telemetry.js');
+  if (priorFailure) await proof.artifact('prior-failed-run.json', priorFailure);
+  await guardBoundary('before-initialization');
+  await proof.record({ kind: 'database-created', ...await database.create() });
+  if (resume) {
+    pool = await restoreCheckpoint(parentCheckpoint, path.join(resume, checkpointLabel + '.dump'), url,
+      { poolFactory: seam.clock.poolFactory }); controller.pools.push(pool);
+    const restoredClock = (await pool.query('SELECT now() AS tx,clock_timestamp() AS statement')).rows[0];
+    assert.equal(restoredClock.tx.getTime(), start); assert.equal(restoredClock.statement.getTime(), start);
+    if (httpEnabled) restoredState = await proof.snapshot(pool, 'restored-before-application-bootstrap');
+  } else {
+    await base.query(`CREATE SCHEMA ${namespace}`);
+    const bootstrap = new controller.Pool({ connectionString: url, options: '', max: 20 });
+    await seam.clock.initialize(bootstrap);
+  }
+    if (httpEnabled) {
+      await initializeApplication(async () => {
+        const { buildServer } = await import('../src/server.js'); app = await buildServer();
+      });
+      pool = app.pool;
+      // inject can resolve at response delivery before original onResponse
+      // hooks finish their native queries. Retain all original hooks and
+      // wait for their completion before the next serial observed query.
+      app.addHook('onResponse', async req => {
+        const key = req.headers['x-rc1-response-completion'];
+        const complete = responseCompletions.get(key); assert(complete, 'Untracked alliance response');
+        responseCompletions.delete(key); complete();
+      });
+      if (resume) {
+        // Complete deferred plugin registration before the first player request;
+        // otherwise its final diagnostic random draw escapes the startup scope.
+        await initializeApplication(() => app.ready());
+        const after = await proof.snapshot(pool, 'after-application-bootstrap');
+        applicationBootstrap = assertAllianceApplicationBootstrap(restoredState, after, at);
+        await proof.artifact('alliance-application-bootstrap.json', applicationBootstrap);
+      } else if (allianceEnabled) {
+      const { PACING } = await import('../src/rules.js'), grants = [];
+      for (let index = 0; index < population; index++) {
+        const name = 'World Alliance Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+        const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+        assert.equal(guest.status, 200, JSON.stringify(guest));
+        const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+        const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'alliance-entry-' + index });
+        assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+        allianceActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+        await proof.artifact('alliance-entry-' + index + '.json', { bootstrapSecret, ...actor });
+        if (index < 3) {
+          const before = (await pool.query('SELECT id,respect,cash,bank,ammo,loc FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+          const respect = PACING.LEVEL_DIVISOR * 74 ** 2;
+          await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, respect]);
+          grants.push({ accountId: actor.accountId, before, after: { respect }, classification: 'Initialization-only lawful founder progression fixture' });
+        }
+      }
+      await proof.artifact('alliance-initialization.json', { actors: allianceActors.map(({ token: _token, ...actor }) => actor),
+        grants, ordinaryUnmodifiedOutsiders: population - 3, directOtherFixtures: 0, fixtureWritesAfterBaseline: false });
+      allianceAdapter = createAllianceWorldAdapter({ seed, roster: allianceActors, mode: allianceMode });
+      }
+    } else if (!resume) pool = await makeWorkerDatabase(controller);
+    for (const account of httpEnabled || resume ? [] : roster) {
+    await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [account]);
+    await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);
+    await pool.query('INSERT INTO characters(id,account_id,name,season,loc) VALUES($1,$2,$3,$4,$5)',
+      [`${account}-character`, account, account, Math.floor(epoch / seasonMs), 'docks']);
+    }
+  const [{ createPlayerCommandEngine }, { coreProgressionContent }, { createConfiguredDirector },
+    { readCharacter, withCharacter, doCrime }, { CRIMES }, { runLedgerInvariants }] = await Promise.all([
+    import('../src/player-commands.js'), import('../src/content/core-progression.js'), import('../src/director/config.js'),
+    import('../src/game.js'), import('../src/rules.js'), import('../src/invariants.js')]);
+  // Match the public /v1/rules projection; private rule fields are not policy input.
+  const publicCrimes = CRIMES.map(({ id, name, lvl, nerve, cash, base: chance, jail }) => ({ id, name, lvl, nerve, cash, base: chance, jail }));
+  const { engine, knowledgeService, content } = await initializeApplication(async () => {
+    const content = coreProgressionContent(), director = createConfiguredDirector(pool, content);
+    const engine = createPlayerCommandEngine({ pool, content, director, enabled: true,
+      knowledgeEnabled: true, sharingEnabled: true, operationsEnabled: true, discoveryEnabled: true });
+    const { createCoordinationService } = await import('../src/coordination/runtime.js');
+    const knowledgeService = createCoordinationService({ pool, registry: content.coordinationRegistry,
+      prerequisitesEnabled: content.progression === true, enabled: true, knowledgeEnabled: true, sharingEnabled: true, accountIds: [] });
+    return { engine, knowledgeService, content };
+  });
+  const { verifyCheckpointRecoverySources, recoveryCatalog, reviewCanonicalCheckpoint, CHECKPOINT_RECOVERY_REVIEW } =
+    await import('../tools/rc1-checkpoint-recovery-review.js');
+  const recoverySource = await verifyCheckpointRecoverySources({ sourceRevision: source.revision,
+    readFile: async file => (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n') });
+  const frozenScenarios = JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8'));
+  let configurationSha256;
+  const recoveryConfiguration = { binding: { sourceRevision: source.revision, configurationSha256 },
+    coreProgression: content.progression === true, coordination: declared.COORDINATION_ENGINE === 'on',
+    knowledge: declared.COORDINATION_KNOWLEDGE === 'on', sharing: declared.COORDINATION_KNOWLEDGE_SHARING === 'on',
+    unrestrictedCohort: declared.COORDINATION_ACCOUNT_IDS === '' };
+  const artifactReference = (name, value) => ({ path: name, sha256: sha256(`${JSON.stringify(value, null, 2)}\n`) });
+  const recoveryAuthority = { source: recoverySource, review: CHECKPOINT_RECOVERY_REVIEW,
+    catalog: recoveryCatalog(content), configuration: recoveryConfiguration };
+  const recoveryBoundaries = [], backlogBoundaries = [], checkpointSeriesPoints = [];
+  let latestInvariants = null;
+  async function recoveryBoundary(label, snapshot, diagnostic, economy = null) {
+    const checkpoint = { stateSha256: snapshot.stateSha256, configurationSha256, logicalAt: at };
+    const result = reviewCanonicalCheckpoint({ manifest: frozenScenarios, source: recoverySource, checkpoint, snapshot,
+      diagnostics: diagnostic.semantic, diagnosticEvidence: {
+        ...artifactReference(`world-diagnostics-${label}.json`, diagnostic),
+        binding: { sourceRevision: source.revision, ...checkpoint }, contentSha256: sha256(canonicalJson(diagnostic.semantic)) },
+      roster: churnEnabled ? churnPolicy.roster().current : roster, catalog: recoveryAuthority.catalog,
+      configurationEvidence: recoveryConfiguration, inventoryEvidence: artifactReference(`${label}.json`, snapshot),
+      reviewEvidence: artifactReference('checkpoint-recovery-authority.json', recoveryAuthority) });
+    await proof.artifact(`checkpoint-recovery-${label}.json`, result);
+    recoveryBoundaries.push({ label, checkpoint, artifact: artifactReference(`checkpoint-recovery-${label}.json`, result),
+      assertions: result.joined.assertions, scopes: Object.fromEntries(Object.entries(result.joined.scopes).map(([scope, value]) =>
+        [scope, { status: value.status, obligations: value.results?.length ?? 0, unknown: value.results?.filter(row => row.status === 'UNKNOWN').length ?? null }])) });
+    assert.equal(latestInvariants?.logicalAt, at, 'Backlog checkpoint needs current canonical invariant evidence');
+    const backlog = reviewWorldBacklog(snapshot, { logicalAt: at, sourceRevision: source.revision,
+      configuration: declared, lifecycleDiagnostics: diagnostic.semantic, invariants: latestInvariants });
+    const backlogEvidence = { binding: { sourceRevision: source.revision, ...checkpoint },
+      snapshot: artifactReference(`${label}.json`, snapshot),
+      diagnostics: artifactReference(`world-diagnostics-${label}.json`, diagnostic), invariants: latestInvariants, review: backlog };
+    await proof.artifact(`world-backlog-${label}.json`, backlogEvidence);
+    backlogBoundaries.push({ label, checkpoint, artifact: artifactReference(`world-backlog-${label}.json`, backlogEvidence),
+      reviewSha256: backlog.sha256, unknown: backlog.unknown });
+    if (economy) {
+      assert.equal(economy.logicalAt, at);
+      assert.equal(economy.nativeHash, worldResourceHash(priorResources), 'Economy sample differs from the quiescent resource boundary');
+    }
+    checkpointSeriesPoints.push({ binding: { sourceRevision: source.revision, ...checkpoint },
+      snapshot: artifactReference(`${label}.json`, snapshot),
+      recovery: artifactReference(`checkpoint-recovery-${label}.json`, result),
+      backlog: artifactReference(`world-backlog-${label}.json`, backlogEvidence),
+      diagnostics: artifactReference(`world-diagnostics-${label}.json`, diagnostic),
+      economy: economy ? artifactReference(`economy-metrics-${label}.json`, economy) : null,
+      economyNativeHash: economy?.nativeHash ?? null, economyBoundaryChain: economy?.boundaryChain ?? null,
+      observation: 'Existing quiescent actor/worker boundary; full snapshot, canonical diagnostics and economy resource state captured without intervening writes.' });
+    if (configuration.stopOnResourceGap && economy)
+      assert.equal(economy.missingCoverage.length, 0, 'Stop long workload at the first measured economy classification gap');
+  }
+  async function knowledgeBoundary(label, before) {
+    const diagnostic = await collectKnowledgeDiagnostics({ roster, serialBoundary: `${label}:${at}`,
+      readPage: (accountId, options) => {
+        recordWorkloadCall({ kind: 'canonical-read', handler: 'knowledge.board' });
+        return proof.invoke('observer.knowledgeBoard', { accountId, options, logicalAt: at },
+          () => knowledgeService.knowledgeBoard(accountId, options));
+      } });
+    const after = await canonicalDatabaseSnapshot(pool);
+    if (before.stateSha256 !== after.stateSha256) await proof.artifact(`knowledge-${label}-changed-state.json`, after);
+    assert.equal(after.stateSha256, before.stateSha256, 'Knowledge observer changed canonical state');
+    await proof.artifact(`knowledge-${label}.json`, diagnostic);
+    const comparison = { label, logicalAt: at, beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256,
+      diagnosticSha256: sha256(canonicalJson(diagnostic)) };
+    knowledgeBoundaries.push(comparison); await proof.record({ kind: 'knowledge-observer-boundary', ...comparison });
+  }
+  let pendingDailyObservation = null;
+  const queueDailyObservation = (day, selected, alliance = false) => {
+    assert.equal(pendingDailyObservation, null, 'Previous daily observation was not drained');
+    pendingDailyObservation = { day, selected, alliance, logicalAt: at };
+  };
+  observeQuiescentDaily = async () => {
+    if (!pendingDailyObservation) return;
+    const { day, selected, alliance, logicalAt } = pendingDailyObservation;
+    assert.equal(at, logicalAt, 'Daily observation moved beyond its original timestamp');
+    assert(!controller.diagnostic().activeTimers.some(timer => timer.due <= at), 'Daily observation precedes a due original callback');
+    await invariantBoundary((alliance ? 'alliance' : actorPolicy) + '-day:' + day);
+    const entry = { day, logicalAt, selectedActors: selected, metrics: structuredClone(metrics),
+      ...(alliance ? { alliance: allianceAdapter.summary() } : {}), opportunityObservation: opportunities.summarize(at, roster) };
+    const latencyObservation = { logicalAt: at, ...latencyDistribution(roster, latencies, latencyActors) };
+    latencyTimeSeries.push(latencyObservation);
+    days.push(entry); await proof.record({ kind: 'day-summary', ...entry, latencyObservation });
+    const economy = economyMetrics?.sample(at, 'day-' + day);
+    if (economy) await proof.artifact('economy-metrics-day-' + day + '.json', economy);
+    if (lawEnabled) await proof.artifact('law-day-' + day + '.json', { summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
+    const daily = await proof.snapshot(pool, 'day-' + day); await knowledgeBoundary('day-' + day, daily);
+    const diagnostics = await collectWorldDiagnostics(diagnosticPool,
+      { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+    await proof.artifact('world-diagnostics-day-' + day + '.json', diagnostics);
+    await recoveryBoundary('day-' + day, daily, diagnostics, economy);
+    if (alliance) await proof.artifact('alliance-day-' + day + '-checkpoint.json', allianceAdapter.checkpoint());
+    await guardBoundary('day:' + day);
+    originalConsole.log(JSON.stringify({ day, sessions: metrics.sessions, commands: metrics.freshPlayerCommands,
+      ...(alliance ? { allianceFresh: allianceAdapter.summary().fresh } : {}),
+      crimes: metrics.legacyCrimeAttempts, actorCoverage: [...actorActions.values()].filter(Boolean).length }));
+    pendingDailyObservation = null;
+  };
+  if (familyEnabled && !resume) {
+    const { PACING } = await import('../src/rules.js'), plan = configuration.familyPlan, grants = [];
+    const founders = new Set(plan.groups.map(group => group.founder));
+    for (let index = 0; index < population; index++) {
+      const name = 'World Family Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'family-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      familyActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      await proof.artifact('family-entry-' + index + '.json', { bootstrapSecret, ...actor });
+      if (founders.has(index)) {
+        const before = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        const respect = PACING.LEVEL_DIVISOR * (plan.founderLevel - 1) ** 2;
+        await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, respect]);
+        const after = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        assert.deepEqual({ ...after, respect: before.respect }, before, 'Only declared founder respect may change');
+        grants.push({ accountId: actor.accountId, before, after });
+      }
+    }
+    await proof.artifact('family-initialization.json', { plan, grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
+    familyAdapter = createFamilyWorldAdapter({ scenario: actorPolicy, seed, roster: familyActors });
+    await familyDay(0);
+    const views = [];
+    for (const group of plan.groups) {
+      const founder = familyActors[group.founder], familyId = familyAdapter.summary().families[group.founder];
+      const view = await http(founder, { method: 'GET', path: '/v1/gangs/' + familyId });
+      assert.equal(view.status, 200); views.push(view.body);
+      for (const member of group.members) {
+        const own = await http(familyActors[member], { method: 'GET', path: '/v1/me' });
+        assert.equal(own.status, 200); assert.equal(Number(own.body.character.cash), 0, 'Initial Family cash was not concentrated');
+      }
+    }
+    const assessment = assessFamilyInitialState(plan, familyActors, views);
+    configuration.familyInitialization = { assessment, fresh: familyAdapter.summary().fresh,
+      measured: false, fixtureWritesAfterBaseline: false };
+    await proof.artifact('family-prepared.json', { plan, assessment, views, summary: familyAdapter.summary(),
+      checkpoint: familyAdapter.checkpoint(), authority: 'Original ordinary HTTP day0 preparation before the measured snapshot' });
+  }
+  if (churnEnabled && !resume) {
+    for (let index = 0; index < population; index++) {
+      const name = 'World Churn Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact('churn-initial-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token,
+        sessionRef: 'churn-initial-session-' + index, joinedAt: at };
+      await proof.artifact(actor.sessionRef + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'churn-initial-character-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      churnActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+    }
+    churnPolicy = createChurnPolicy({ seed, epochAt: epoch,
+      initialRoster: churnActors.map(({ accountId, characterId, sessionRef }) => ({ accountId, characterId, sessionRef })) });
+    await proof.artifact('churn-initialization.json', { actors: churnActors, policy: churnPolicy.checkpoint(), directFixtures: 0 });
+  }
+  if (lawEnabled && !resume) {
+    for (let index = 0; index < population; index++) {
+      const name = 'World Law Entry ' + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact('law-entry-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      await proof.artifact('law-entry-session-' + index + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: 'law-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      lawActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+    }
+    const activeAccountIds = [...roster].sort((a, b) => actorValueHash([seed, a]).localeCompare(actorValueHash([seed, b])))
+      .slice(0, Math.max(3, Math.ceil(population / 10)));
+    lawAdapter = createLawWorldAdapter({ seed, epoch, roster: lawActors, activeAccountIds });
+    await proof.artifact('law-initialization.json', { actors: lawActors, activeAccountIds, directFixtures: 0 });
+  }
+  if ((pressureEnabled || aggressionEnabled || warEnabled || marketEnabled) && !resume) {
+    const target = marketEnabled ? marketActors : warEnabled ? warActors : pressureEnabled ? pressureActors : aggressionActors, grants = [];
+    const { PACING } = await import('../src/rules.js');
+    const founders = new Set(configuration.warPlan?.groups.map(group => group.founder) || []);
+    for (let index = 0; index < population; index++) {
+      const name = (marketEnabled ? 'World Market ' : warEnabled ? 'World War ' : pressureEnabled ? 'World Pressure ' : 'World Aggression ') + index, bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      await proof.artifact(actorPolicy.replaceAll('_', '-') + '-entry-secret-' + index + '.json', { bootstrapSecret });
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token };
+      await proof.artifact(actorPolicy.replaceAll('_', '-') + '-entry-session-' + index + '.json', actor);
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name }, idempotencyKey: actorPolicy + '-entry-' + index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      target.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      const before = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+      if (actorPolicy === 'resource_abundance' || warEnabled && founders.has(index)) {
+        const respect = PACING.LEVEL_DIVISOR * ((warEnabled ? configuration.warPlan.founderLevel : 75) - 1) ** 2;
+        await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, respect]);
+        const after = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        assert.deepEqual({ ...after, respect: before.respect }, before, 'Only declared initialization respect may change');
+        grants.push({ accountId: actor.accountId, before, after });
+      } else grants.push({ accountId: actor.accountId, ordinaryEntry: before, directFixtures: 0 });
+      if (aggressionEnabled) aggressionPolicies.set(actor.accountId, createAggressionPolicy({ accountId: actor.accountId, seed, sustained: true }));
+    }
+    await proof.artifact(actorPolicy.replaceAll('_', '-') + '-initialization.json', { grants, otherDirectFixtures: 0, fixtureWritesAfterBaseline: false });
+    if (pressureEnabled) {
+      if (actorPolicy === 'resource_scarcity') {
+        const preparation = createScarcityInitialization({ seed, epoch, roster: pressureActors, maximumLogicalMs: 14 * 86400000 });
+        const before = await proof.snapshot(pool, 'scarcity-before-depletion');
+        const wallStart = performance.now();
+        const preparationBoundary = async (logicalAt, label) => {
+          assert(performance.now() - wallStart <= 7200000, 'Scarcity initialization exceeded two-hour wall limit');
+          guardrails?.time('scarcity-initialization:' + label);
+          if (label === 'guardedTick') {
+            await invariantBoundary('scarcity-initialization:' + logicalAt);
+            await guardBoundary('scarcity-initialization:' + logicalAt);
+          }
+        };
+        const hooks = () => ({ logicalAt: at,
+          read: async (accountId, path) => {
+            const response = await http(pressureActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+            assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+          },
+          execute: async (accountId, request) => {
+            const response = await http(pressureActors.find(actor => actor.accountId === accountId), request);
+            await invariantBoundary('scarcity-initialization:' + request.idempotencyKey); return response;
+          },
+          record: event => actors.observe(event.kind, { logicalAt: at, accountId: event.accountId || null }, event),
+          advanceOriginalWorkers: async target => { await controller.advanceTo(target, preparationBoundary); return at; },
+        });
+        // Verify every ordinary birth before any original worker can affect it.
+        let outcome = await preparation.run(hooks(), { maximumSteps: population });
+        assert(!outcome.blocked && preparation.summary().entryVerified === population, 'Scarcity ordinary entry was not established');
+        workPhase = 'scarcity-canonical-initialization';
+        await bootOriginalWorker(controller); workerBooted = true;
+        do {
+          outcome = await preparation.run(hooks());
+          assert(!outcome.blocked && !outcome.paused, 'Scarcity initialization lacks a resolved canonical outcome: ' + JSON.stringify(outcome.summary));
+        } while (!outcome.complete);
+        await alignOriginalHourlyBaseline(controller, { logicalAt: at, afterBoundary: preparationBoundary });
+        const after = await proof.snapshot(pool, 'scarcity-after-depletion');
+        const characters = after.tables.characters.map(JSON.parse);
+        for (const actor of pressureActors) {
+          const own = characters.find(row => row.id === actor.characterId);
+          assert(own?.alive && own.account_id === actor.accountId && own.generation === 1, 'Scarcity initial character changed');
+          for (const field of ['cash', 'bank', 'ammo']) assert.equal(Number(own[field]), 0, 'Scarcity exact native floor differs: ' + field);
+        }
+        await invariantBoundary('scarcity-depleted-baseline');
+        await proof.artifact('scarcity-prepared.json', { contract: SCARCITY_INITIALIZATION_CONTRACT,
+          beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256,
+          preparation: preparation.checkpoint(), summary: preparation.summary(), baselineAt: at,
+          originalWorkerAlignment: true, exactNativeFloorVerified: true, measured: false, fixtureWrites: 0 });
+        epoch = measuredStart = at; finish = at + hours * 3600000;
+        configuration.start = new Date(at).toISOString(); configuration.finish = new Date(finish).toISOString();
+        configuration.scarcityInitialization = { logicalHours: (at - start) / 3600000, baselineAt: at,
+          exactNativeFloorVerified: true, artifact: 'scarcity-prepared.json', measured: false };
+      }
+      pressureAdapter = createPressureWorldAdapter({ scenario: actorPolicy, seed, epoch, roster: pressureActors });
+      await pressureDay(null);
+    }
+    if (warEnabled) {
+      warAdapter = createWarWorldAdapter({ seed, epoch, roster: warActors });
+      await warStep('prepare');
+    }
+    if (marketEnabled) marketAdapter = createMarketWorldAdapter({ seed, roster: marketActors, expiryHours: 24 });
+  }
+  if (cohortEnabled && !resume) {
+    const provenance = new Map(), grants = [];
+    for (let index = 0; index < population; index++) {
+      const bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+      const guest = await http(null, { method: 'POST', path: '/v1/auth/guest', body: { bootstrapSecret } });
+      assert.equal(guest.status, 200, JSON.stringify(guest));
+      const actor = { name: 'World Cohort Entry ' + index, accountId: app.jwt.verify(guest.body.token).sub, token: guest.body.token, index };
+      cohortActors.push(actor); roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+      await proof.artifact('cohort-guest-' + index + '.json', { bootstrapSecret, ...actor });
+    }
+    cohortPlan = planCohort({ scenarioId: actorPolicy, seed, roster });
+    await proof.artifact('cohort-plan.json', cohortPlan);
+    for (const accountId of roster) cohortPolicies.set(accountId, createCohortPolicy({ plan: cohortPlan, accountId }));
+    const enter = async actor => {
+      const entry = await http(actor, { method: 'POST', path: '/v1/character', body: { name: actor.name }, idempotencyKey: 'cohort-entry-' + actor.index });
+      assert.equal(entry.status, 200, JSON.stringify(entry)); actor.characterId = entry.body.id;
+      const evidenceRef = 'cohort-entry-' + actor.index + '.json';
+      await proof.artifact(evidenceRef, { accountId: actor.accountId, logicalAt: at, entry });
+      provenance.set(actor.accountId, { kind: 'ordinary-entry', evidenceRef });
+    };
+    const veteranIds = new Set(cohortPlan.actors.filter(a => a.cohort === 'veteran').map(a => a.accountId));
+    const veterans = cohortActors.filter(a => veteranIds.has(a.accountId));
+    for (const actor of actorPolicy === 'mostly_new_players' ? veterans : cohortActors) await enter(actor);
+    if (actorPolicy === 'mostly_veteran_players') {
+      const resourcesBefore = await snapshotWorldResources(diagnosticPool);
+      for (const actor of veterans) {
+        const descriptor = cohortPlan.actors.find(a => a.accountId === actor.accountId);
+        const before = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [actor.characterId, descriptor.initialization.respect]);
+        const after = (await pool.query('SELECT * FROM characters WHERE id=$1', [actor.characterId])).rows[0];
+        assert.deepEqual({ ...after, respect: before.respect }, before, 'Only initialization respect may change');
+        grants.push({ accountId: actor.accountId, before, after, initialization: descriptor.initialization });
+        provenance.set(actor.accountId, { kind: 'respect-fixture', evidenceRef: 'cohort-respect-fixtures.json' });
+      }
+      const resourcesAfter = await snapshotWorldResources(diagnosticPool);
+      for (const table of Object.keys(resourcesBefore.tables)) {
+        const normalized = resourcesAfter.tables[table].map(row => table === 'characters'
+          ? { ...row, respect: resourcesBefore.tables.characters.find(before => before.id === row.id)?.respect } : row);
+        assert.deepEqual(normalized.map(canonicalJson).sort(), resourcesBefore.tables[table].map(canonicalJson).sort(),
+          'Respect fixture changed another authoritative field: ' + table);
+      }
+      await proof.artifact('cohort-respect-fixtures.json', { grants, resourcesBefore, resourcesAfter, directOtherFixtures: 0 });
+    } else {
+      const rules = await http(null, { method: 'GET', path: '/v1/rules' }); assert.equal(rules.status, 200);
+      assert.deepEqual(rules.body.crimes, publicCrimes);
+      const regenPerMinute = rules.body.pacing.nerveRegenPerMin; assert(regenPerMinute > 0);
+      cohortWarmup = { startedAt: at, finishedAt: null, attempts: 0, successes: 0, losses: 0, recoveries: 0,
+        actors: Object.fromEntries(veterans.map(a => [a.accountId, { attempts: 0, character: null }])),
+        maximumLogicalDays: 14, maximumWallMs: 7200000, directProgressionWrites: 0 };
+      await proof.snapshot(pool, 'cohort-before-warmup');
+      workPhase = 'cohort-canonical-warmup';
+      await bootOriginalWorker(controller); workerBooted = true;
+      const wallStart = performance.now(), logicalLimit = at + 14 * 86400000;
+      const checkWarmup = async (logicalAt, label) => {
+        assert(performance.now() - wallStart <= cohortWarmup.maximumWallMs, 'Cohort canonical warmup exceeded two-hour wall limit');
+        assert(logicalAt <= logicalLimit, 'Cohort canonical warmup exceeded fourteen logical days');
+        guardrails?.time('cohort-warmup:' + label);
+        if (label === 'guardedTick') {
+          await invariantBoundary('cohort-warmup:' + logicalAt); await guardBoundary('cohort-warmup:' + logicalAt);
+          originalConsole.log(JSON.stringify({ phase: 'cohort-warmup', logicalHours: (at - cohortWarmup.startedAt) / 3600000,
+            attempts: cohortWarmup.attempts, levels: Object.values(cohortWarmup.actors).map(a => a.character?.level || 1) }));
+        }
+      };
+      while (true) {
+        let pending = 0, attempts = 0, waitMs = Infinity;
+        for (const actor of veterans) {
+          await checkWarmup(at, 'actor');
+          const own = await invoke('cohort-warmup.character.read', { accountId: actor.accountId },
+            () => readCharacter(pool, actor.accountId, async () => ({})), 'read');
+          const state = cohortWarmup.actors[actor.accountId]; state.character = own.character;
+          if (own.character.level >= COHORT_POLICY_CONTRACT.veteranLevel) continue;
+          pending++;
+          const eligible = publicCrimes.filter(c => c.lvl <= own.character.level).sort((a, b) => b.lvl - a.lvl || a.id.localeCompare(b.id));
+          const chosen = own.character.jailSeconds > 0 || own.character.nerve < eligible[0].nerve ? null : eligible[0];
+          const crime = await actors.decide('cohort-warmup.public-crime', { accountId: actor.accountId, attempt: state.attempts, logicalAt: at },
+            { character: own.character, publicCrimes }, () => chosen || null);
+          assert.deepEqual(crime, chosen || null, 'Warmup choice differs from own public eligibility');
+          if (crime) {
+            const response = await invoke('cohort-warmup.canonical-crime', { accountId: actor.accountId, crimeId: crime.id, approach: 'standard' },
+              () => withCharacter(pool, actor.accountId, (ch, client, hooks) => doCrime(ch, crime.id, client, hooks, 'standard')), 'command');
+            assert.equal(typeof response.success, 'boolean');
+            cohortWarmup.attempts++; state.attempts++; attempts++;
+            cohortWarmup[response.success ? 'successes' : 'losses']++;
+          } else {
+            const nerveWait = Math.ceil(Math.max(0, eligible[0].nerve - own.character.nerve) / regenPerMinute * 60000);
+            waitMs = Math.min(waitMs, Math.max(1000, own.character.jailSeconds * 1000, nerveWait));
+          }
+        }
+        if (!pending) break;
+        if (!attempts) {
+          assert(Number.isFinite(waitMs));
+          const next = Math.min(at + waitMs, logicalLimit);
+          assert(next > at, 'Cohort canonical warmup exhausted fourteen logical days before the veteran baseline');
+          await controller.advanceTo(next, checkWarmup); cohortWarmup.recoveries++;
+        }
+      }
+      cohortWarmup.finishedAt = at;
+      await invariantBoundary('cohort-warmup-complete');
+      await proof.snapshot(pool, 'cohort-after-warmup');
+      await proof.artifact('cohort-canonical-progression.json', { ...cohortWarmup, elapsedWallMs: performance.now() - wallStart });
+      for (const actor of veterans) provenance.set(actor.accountId, { kind: 'canonical-progression', evidenceRef: 'cohort-canonical-progression.json' });
+      for (const actor of cohortActors.filter(a => !veteranIds.has(a.accountId))) await enter(actor);
+    }
+    if (workerBooted) await alignOriginalHourlyBaseline(controller, { logicalAt: at, afterBoundary: async (logicalAt, label) => {
+      guardrails?.time('cohort-baseline-alignment:' + label);
+      if (label === 'guardedTick') await invariantBoundary('cohort-baseline-alignment:' + logicalAt);
+    } });
+    const observations = [];
+    for (const actor of cohortActors) {
+      const own = await invoke('cohort-baseline.character.read', { accountId: actor.accountId },
+        () => readCharacter(pool, actor.accountId, async () => ({})), 'read');
+      observations.push({ accountId: actor.accountId, character: own.character, provenance: provenance.get(actor.accountId) });
+    }
+    cohortBaseline = assessCohortBaseline(cohortPlan, observations);
+    await proof.artifact('cohort-baseline.json', { plan: cohortPlan, observations, assessment: cohortBaseline,
+      nativeHistory: 'Ordinary entry receipts, canonical warmup calls/results and worker schedule retained in this run. Only declared respect fixture writes above.' });
+    assert(cohortBaseline.ready, 'Required public cohort starting progression was not established');
+    epoch = measuredStart = at; finish = at + hours * 3600000;
+    configuration.start = new Date(at).toISOString(); configuration.finish = new Date(finish).toISOString();
+    configuration.initialization.realizedCounts = cohortPlan.counts;
+    configuration.initialization.realizedFractions = cohortPlan.realized;
+    latencies.read.length = 0; latencies.command.length = 0;
+  }
+  await npcBoatFault.installBeforeBaseline(pool);
+  configuration.actorEpoch = epoch;
+  const baseline = await runLedgerInvariants(pool, { alert: false }); assert(baseline.ok, 'Birth fixtures must reconcile without baseline drift');
+  await proof.record({ kind: 'measured-initialization', roster, configuration, publicCrimes, randomDraws: runtime.tape,
+    logicalAt: at, restoredCheckpoint: configuration.parentCheckpoint, fixtureWritesAfterThisRecord: false });
+  const initial = await proof.snapshot(pool, 'initial'); await proof.checkpoint(pool, 'initial', url);
+  // Cohort preparation may move the measured start/finish. Bind observer reviews
+  // only after that declared configuration has reached its final form.
+  configurationSha256 = sha256(canonicalJson(configuration));
+  recoveryConfiguration.binding.configurationSha256 = configurationSha256;
+  await proof.artifact('checkpoint-recovery-authority.json', recoveryAuthority);
+  const { verifyLifecycleSources, reviewWorkloadLifecycleApplicability, LIFECYCLE_APPLICABILITY_REVIEW } =
+    await import('../tools/rc1-lifecycle-applicability.js');
+  const lifecycleSource = await verifyLifecycleSources({ sourceRevision: source.revision,
+    readFile: file => fs.readFile(file) });
+  const lifecycleAuthority = { source: lifecycleSource, review: LIFECYCLE_APPLICABILITY_REVIEW,
+    configuration: { binding: { sourceRevision: source.revision, configurationSha256 },
+      external: { chainWatcher: 'DORMANT_UNCONFIGURED', liquidityAutomation: 'DISABLED_LOCAL_CONFIG', rwaRegistry: 'UNAVAILABLE_LOCAL_CONFIG' },
+      basis: { declared, expectedDormant, chainRpcAbsent: !process.env.CHAIN_RPC_URL } } };
+  await proof.artifact('world-lifecycle-authority.json', lifecycleAuthority);
+  trackMeasuredCalls = true;
+  if (resume) assert.equal(initial.stateSha256, httpEnabled ? applicationBootstrap.afterStateSha256 : parentCheckpoint.stateSha256,
+    'Measured state differs from the recorded restore/bootstrap boundary');
+  const initialRecaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
+  if (commitObserver) {
+    priorResources = await snapshotWorldResources(diagnosticPool);
+    if (parentContinuation) assert.equal(worldResourceHash(priorResources), parentContinuation.resourceStateSha256,
+      'Restored resource state differs from recorded checkpoint');
+    const streamId = `world-economy:${seed}:${actorPolicy}:${start}`;
+    economyMetrics = createWorldEconomyMetrics({ roster: parentPolicy?.economy?.state.config.roster || roster,
+      initial: priorResources, logicalAt: at, streamId });
+    if (resume && parentPolicy.economy) economyMetrics.restore(parentPolicy.economy, priorResources, { streamId });
+    economyMetrics.sample(at, resume ? 'resumed' : 'initial');
+  }
+  await proof.artifact('actor-policy-initial.json', policyState());
+  function recordWorkloadCall(call) {
+    if (!trackMeasuredCalls) return;
+    const key = canonicalJson(call), prior = workloadCallUnion.get(key);
+    workloadCallUnion.set(key, prior ? { ...prior, count: prior.count + 1, lastLogicalAt: at }
+      : { call, count: 1, firstLogicalAt: at, lastLogicalAt: at });
+    measuredInvocationCount++;
+  }
+  async function invoke(authority, identity, work, latencyClass) {
+    const invocation = { authority, ...identity, logicalAt: at };
+    if (trackMeasuredCalls) {
+      const call = authority === 'ordinary-http' ? { kind: 'http', method: identity.method, path: identity.path,
+        ...(identity.body === undefined ? {} : { body: identity.body }) }
+        : authority === 'player.execute' ? { kind: 'player-command', commandType: identity.commandType }
+        : authority === 'canonical-crime' ? { kind: 'canonical-crime', handler: 'game.doCrime' }
+        : ['character.read', 'player.snapshot'].includes(authority) ? { kind: 'canonical-read',
+          handler: authority === 'character.read' ? 'game.readCharacter' : 'player.snapshot' }
+        : { kind: 'unknown-dispatch', authority };
+      recordWorkloadCall(call);
+    }
+    currentInvocation = invocation;
+    const started = performance.now();
+    try {
+      const value = await proof.invoke(authority, invocation, work);
+      if (injectActorMismatch && !injectedActorMismatch && authority === 'player.snapshot') {
+        injectedActorMismatch = true;
+        await actors.observe('native-outcome', invocation, { ...value, deliberateSemanticMutation: true });
+        throw Error('Actor replay incorrectly accepted the deliberate semantic mutation');
+      }
+      await actors.observe('native-outcome', invocation, value); return value;
+    }
+    catch (error) {
+      failureInvocation = invocation;
+      metrics.denials[error.code || error.name] = (metrics.denials[error.code || error.name] || 0) + 1;
+      throw error;
+    }
+    finally {
+      if (currentInvocation === invocation) currentInvocation = null;
+      if (trackMeasuredCalls) {
+        latencies[latencyClass].push(performance.now() - started);
+        latencyActors[latencyClass].push(identity.accountId ?? null);
+      }
+    }
+  }
+  async function http(actor, request, insideGroup = false) {
+    if (actor && request.path !== '/v1/auth/agent-key') {
+      const identity = app.jwt.verify(actor.token); assert.equal(identity.sub, actor.accountId);
+      assert(Number.isFinite(identity.exp), 'Ordinary session lacks an expiry');
+      if (identity.exp * 1000 <= at + 2 * 86400000) {
+        const renewal = await http(actor, { method: 'POST', path: '/v1/auth/agent-key', body: {} });
+        assert.equal(renewal.status, 200, JSON.stringify(renewal)); assert.equal(renewal.body.agent, true);
+        const renewed = app.jwt.verify(renewal.body.token);
+        assert.equal(renewed.sub, actor.accountId); assert.equal(renewed.agent, true); assert(renewed.exp > identity.exp);
+        actor.token = renewal.body.token; actor.authRenewals = (actor.authRenewals || 0) + 1;
+        await proof.artifact('agent-session-' + actor.accountId + '-' + actor.authRenewals + '.json',
+          { accountId: actor.accountId, logicalAt: at, token: actor.token, expiresAt: renewed.exp * 1000,
+            canonicalEffects: ['agent_flag=true', 'agent referral exclusion'], fixture: false });
+      }
+    }
+    if (aggregateObserver && !insideGroup && /^\/v1\/commands(?:[/?]|$)/.test(request.path))
+      return (await aggregateObserver.runGroup([{ accountId: actor.accountId, request }], { logicalAt: at,
+        execute: () => http(actor, request, true), drain: () => flushWorldTelemetry(pool),
+        identity: { purpose: 'canonical-command-with-queued-telemetry' } }))[0];
+    return invoke('ordinary-http', { accountId: actor?.accountId || null, ...request }, async () => {
+      const completionKey = String(++responseSequence);
+      let timer;
+      const completed = new Promise((resolve, reject) => {
+        responseCompletions.set(completionKey, resolve);
+        timer = setTimeout(() => reject(Error('Original HTTP response hooks did not complete within 60 seconds')), 60000);
+      });
+      // Attach rejection handling before inject can spend time in native work.
+      completed.catch(() => {});
+      let r;
+      try {
+      r = await app.inject({ method: request.method, url: request.path,
+        headers: { 'x-rc1-response-completion': completionKey, ...(actor ? { authorization: 'Bearer ' + actor.token } : {}),
+          ...(request.idempotencyKey ? { 'idempotency-key': request.idempotencyKey } : {}) },
+        ...(request.body === undefined ? {} : { payload: request.body }) });
+      await completed;
+      // The canonical command routes intentionally enqueue best-effort telemetry
+      // beyond their HTTP response. Drain that existing queue before the next
+      // serial snapshot; do not drop it or turn this into a latency/load proof.
+      await flushWorldTelemetry(pool);
+      } finally { clearTimeout(timer); }
+      const body = r.json(); return { status: r.statusCode,
+        replayed: r.headers['x-idempotent-replay'] === 'true' || body.replayed === true, body };
+    }, request.method === 'GET' ? 'read' : 'command');
+  }
+  async function invariantBoundary(label) {
+    const value = await runLedgerInvariants(pool, { alert: false });
+    await proof.record({ kind: 'canonical-invariants', label, logicalAt: at, checks: value.checks });
+    assert(value.ok, `Invariant failed after ${label}`);
+    latestInvariants = { logicalAt: at, label, ...value };
+  }
+  async function session(accountId, day) {
+    metrics.sessions++;
+    let actions = 0;
+    for (let action = 0; action < configuration.policy.maximumCommandsPerSession; action++) {
+      if (aggressionEnabled) {
+        actions += await aggressionChoice(accountId, day, action);
+        continue;
+      }
+      const view = await invoke('player.snapshot', { accountId, options: actorOptions.get(accountId) },
+        () => engine.snapshot(accountId, actorOptions.get(accountId)), 'read');
+      metrics.playerSnapshots++;
+      metrics.observedAuthorizedOpportunities = opportunities.observe(accountId, view.opportunities, at);
+      const mysteryPolicy = mysteryPolicies.get(accountId), cohortPolicy = cohortPolicies.get(accountId);
+      let command;
+      if (cohortPolicy) {
+        const chosen = cohortPolicy.choose(view, { day, logicalAt: at });
+        const decision = await actors.decide('cohort-policy', { actorPolicy, accountId, day, action, logicalAt: at }, view, () => chosen);
+        assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded cohort decision differs from restored policy state');
+        await actors.observe('cohort-policy-pending', { accountId, logicalAt: at }, cohortPolicy.checkpoint());
+        if (decision.kind === 'wait') break;
+        command = view.commands.find(candidate => candidate.commandId === decision.command.commandId
+          && candidate.executionIdentity?.executionId === decision.command.executionIdentity.executionId);
+        assert(command, 'Cohort policy decision is not currently issued');
+      } else if (mysteryPolicy) {
+        const chosen = mysteryPolicy.choose(view, { logicalAt: at });
+        const decision = await actors.decide('mystery-policy', { actorPolicy, accountId, day, action, logicalAt: at }, view, () => chosen);
+        assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded policy decision differs from restored policy state');
+        await actors.observe('mystery-policy-pending', { accountId, logicalAt: at }, mysteryPolicy.checkpoint());
+        if (decision.kind === 'wait') break;
+        command = view.commands.find((candidate) => candidate.commandId === decision.command.commandId
+          && candidate.executionIdentity?.executionId === decision.command.executionIdentity.executionId);
+        assert(command, 'Mystery policy decision is not currently issued');
+      } else command = await actors.decide('authorized-command', { accountId, day, action, logicalAt: at }, view,
+        () => chooseAuthorizedCommand(view, { seed, accountId, day, action }));
+      if (!command) break;
+      assert(view.commands.some((candidate) => candidate.availability === 'AVAILABLE' && actorValueHash(candidate) === actorValueHash(command)),
+        'Recorded command is not in the current exact authorized view');
+      const executionId = command.executionIdentity.executionId;
+      await proof.record({ kind: 'authorized-policy-choice', accountId, day, action,
+        commandType: command.commandType, commandId: command.commandId, executionId });
+      const response = await invoke('player.execute', { accountId, executionId, commandType: command.commandType },
+        () => engine.execute(accountId, { executionId, confirmed: true }, executionId), 'command');
+      assert.equal(response.status, 'COMPLETED');
+      opportunities.accept(accountId, command, response, at);
+      if (mysteryPolicy) {
+        mysteryPolicy.settle(response);
+        await actors.observe('mystery-policy-settled', { accountId, logicalAt: at }, mysteryPolicy.checkpoint());
+      }
+      if (cohortPolicy) {
+        cohortPolicy.settle(response);
+        await actors.observe('cohort-policy-settled', { accountId, logicalAt: at }, cohortPolicy.checkpoint());
+      }
+      if (response.replayed) metrics.exactReplays++;
+      else { metrics.freshPlayerCommands++; actions++; metrics.commandTypes[command.commandType] = (metrics.commandTypes[command.commandType] || 0) + 1; }
+      if (command.commandType === 'mystery.start') actorOptions.get(accountId).mysteryGraphId = command.parameters.graphId;
+      await invariantBoundary(`player.execute:${accountId}:${executionId}`);
+    }
+    const own = await invoke('character.read', { accountId }, () => readCharacter(pool, accountId, async () => ({})), 'read');
+    metrics.ownCharacterReads++;
+    const crime = await actors.decide('public-crime', { accountId, day, logicalAt: at }, { character: own.character, publicCrimes },
+      () => cohortEnabled ? cohortPolicies.get(accountId).chooseCrime({ accountId, character: own.character, publicCrimes }, { day })
+        : choosePublicCrime(own.character, publicCrimes, { seed, accountId, day }));
+    if (crime) {
+      assert(publicCrimes.some((candidate) => actorValueHash(candidate) === actorValueHash(crime)), 'Recorded crime is not public catalog content');
+      const response = await invoke('canonical-crime', { accountId, crimeId: crime.id, approach: 'standard' },
+        () => withCharacter(pool, accountId, (ch, client, hooks) => doCrime(ch, crime.id, client, hooks, 'standard')), 'command');
+      metrics.legacyCrimeAttempts++; actions++;
+      if (response.success === true) metrics.crimeSuccesses++;
+      else if (response.success === false) metrics.crimeLosses++;
+      else throw Error('Crime response lacks a classified canonical success/loss result');
+      await invariantBoundary(`canonical-crime:${accountId}:${day}`);
+    }
+    if (!actions) metrics.sessionWaits++;
+    actorActions.set(accountId, actorActions.get(accountId) + actions);
+    if (churnEnabled && actions > 0) { assert(churnPolicy.isCurrent(accountId)); churnWeeklyActive.add(accountId); }
+    await proof.record({ kind: 'actor-session-complete', accountId, day, actions,
+      wait: !actions ? { jailSeconds: own.character.jailSeconds, nerve: own.character.nerve,
+        classification: 'Observed wait only; no inference that world reachability is proved or disproved' } : null });
+  }
+  async function allianceDay(day, pauseBeforeDispatch = false) {
+    const selected = await actors.decide('alliance-roster', { day, logicalAt: at }, roster, () => allianceAdapter.roster(day));
+    assert.deepEqual(selected, roster);
+    const actorFor = accountId => { const actor = allianceActors.find(a => a.accountId === accountId); assert(actor); return actor; };
+    const execute = async (accountId, request) => {
+      const response = await http(actorFor(accountId), request);
+      await invariantBoundary(`alliance:${accountId}:${request.idempotencyKey}`);
+      if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+      if (response.replayed) metrics.exactReplays++;
+      return response;
+    };
+    const stage = await allianceAdapter.runStage(day, { logicalAt: at, pauseBeforeDispatch,
+      read: async (accountId, path, expected = 200) => {
+        const response = await http(actorFor(accountId), { method: 'GET', path });
+        assert.equal(response.status, expected, JSON.stringify(response)); return response.body;
+      }, execute,
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('alliance-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen), 'Restored alliance decision differs');
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('alliance-policy-' + phase, { day, logicalAt: at }, checkpoint),
+      retry: async (accountId, request) => {
+        const before = await canonicalDatabaseSnapshot(pool), response = await execute(accountId, request);
+        assert.equal(response.status, 200); assert(response.replayed);
+        const after = await canonicalDatabaseSnapshot(pool); assert.equal(after.stateSha256, before.stateSha256, 'Alliance exact retry changed full canonical state');
+        await proof.record({ kind: 'alliance-exact-retry', accountId, request, logicalAt: at,
+          beforeStateSha256: before.stateSha256, afterStateSha256: after.stateSha256 }); return response;
+      },
+    });
+    if (stage?.paused) { await proof.record({ kind: 'alliance-checkpoint-pause', day, logicalAt: at,
+      pending: allianceAdapter.checkpoint().payload.state.pending }); return; }
+    lastDay = day;
+    for (const account of selected) await session(account, day);
+    queueDailyObservation(day, selected, true);
+  }
+  async function churnWeek(day) {
+    if (!day || day % 7) return;
+    const input = { week: day / 7, logicalAt: at, activeAccountIds: [...churnWeeklyActive].sort() };
+    const preview = churnPolicy.previewWeek(input);
+    const selected = await actors.decide('churn-week', input, churnPolicy.roster(), () => preview);
+    assert.deepEqual(selected, preview); churnPolicy.beginWeek(input);
+    await actors.observe('churn-retired', { day, logicalAt: at }, churnPolicy.checkpoint());
+    let enrollment;
+    while ((enrollment = churnPolicy.nextEnrollment())) {
+      await actors.observe('churn-enrollment-pending', { day, logicalAt: at }, enrollment);
+      if (enrollment.phase === 'guest') {
+        const bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+        await proof.artifact(enrollment.credentialRef + '.json', { bootstrapSecret });
+        const response = await http(null, { method: 'POST', path: enrollment.request.path, body: { bootstrapSecret } });
+        assert.equal(response.status, 200, JSON.stringify(response));
+        const actor = { accountId: app.jwt.verify(response.body.token).sub, token: response.body.token,
+          sessionRef: 'churn-session-' + enrollment.requestId, joinedAt: at };
+        await proof.artifact(actor.sessionRef + '.json', actor); churnActors.push(actor);
+        churnPolicy.settleEnrollment({ requestId: enrollment.requestId, phase: 'guest', status: 'COMPLETED',
+          accountId: actor.accountId, sessionRef: actor.sessionRef });
+      } else {
+        const actor = churnActors.find(actor => actor.accountId === enrollment.accountId); assert(actor);
+        const response = await http(actor, enrollment.request); assert.equal(response.status, 200, JSON.stringify(response));
+        actor.characterId = response.body.id; actor.name = enrollment.request.body.name;
+        churnPolicy.settleEnrollment({ requestId: enrollment.requestId, phase: 'character', status: 'COMPLETED',
+          accountId: actor.accountId, characterId: actor.characterId, idempotencyKey: enrollment.request.idempotencyKey });
+        roster.push(actor.accountId); actorOptions.set(actor.accountId, {}); actorActions.set(actor.accountId, 0);
+        economyMetrics?.registerAccounts([actor.accountId]);
+      }
+      await actors.observe('churn-enrollment-settled', { day, logicalAt: at }, { enrollment, policy: churnPolicy.checkpoint() });
+    }
+    assert.equal(churnPolicy.roster().current.length, population); churnWeeklyActive.clear();
+    await invariantBoundary('churn-week-' + day / 7);
+    await proof.artifact('churn-week-' + day / 7 + '.json', { summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
+  }
+  async function aggressionChoice(accountId, day, action) {
+    const actor = aggressionActors.find(entry => entry.accountId === accountId), policy = aggressionPolicies.get(accountId);
+    const read = async path => { const response = await http(actor, { method: 'GET', path });
+      assert.equal(response.status, 200, JSON.stringify(response)); return response.body; };
+    const commands = await read('/v1/commands?' + new URLSearchParams(actorOptions.get(accountId)));
+    const view = { commands, me: await read('/v1/me'), streets: await read('/v1/streets'), rivals: await read('/v1/rivals') };
+    metrics.playerSnapshots++;
+    metrics.observedAuthorizedOpportunities = opportunities.observe(accountId, commands.opportunities, at);
+    const chosen = policy.choose(view, { logicalAt: at });
+    const decision = await actors.decide('aggression-policy', { accountId, day, action, logicalAt: at }, view, () => chosen);
+    assert.equal(actorValueHash(decision), actorValueHash(chosen), 'Recorded aggression choice differs from restored policy');
+    await actors.observe('aggression-policy-pending', { accountId, logicalAt: at },
+      { kind: 'aggression-incremental-step', decision, summary: policy.summary(), restore: 'Use full native policy checkpoint and intervening recorded choices/responses.' });
+    if (decision.kind === 'wait') return 0;
+    const response = await http(actor, decision.request);
+    assert(response.status < 500, 'Aggression request did not resolve canonically');
+    const body = { ...response.body }; delete body.replayed;
+    policy.settle({ idempotencyKey: decision.request.idempotencyKey, status: response.status === 200 ? 'COMPLETED' : 'DENIED',
+      replayed: response.replayed, response: body });
+    await actors.observe('aggression-policy-settled', { accountId, logicalAt: at },
+      { kind: 'aggression-incremental-step', request: decision.request, response, summary: policy.summary() });
+    assert.equal(policy.summary().unresolvedReplays, 0);
+    if (response.status === 200 && !response.replayed) {
+      metrics.commandTypes[decision.type] = (metrics.commandTypes[decision.type] || 0) + 1;
+      if (decision.request.authority === 'player-command') {
+        const command = commands.commands.find(entry => entry.executionIdentity?.executionId === decision.request.idempotencyKey);
+        assert(command); opportunities.accept(accountId, command, response.body, at); metrics.freshPlayerCommands++;
+        if (command.commandType === 'mystery.start') actorOptions.get(accountId).mysteryGraphId = command.parameters.graphId;
+      }
+    } else if (response.replayed) metrics.exactReplays++;
+    else metrics.denials[response.body?.error || response.status] = (metrics.denials[response.body?.error || response.status] || 0) + 1;
+    await invariantBoundary('aggression:' + decision.request.idempotencyKey);
+    return Number(response.status === 200 && !response.replayed);
+  }
+  async function pressureDay(day) {
+    let outcome;
+    const hooks = { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(pressureActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(pressureActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('pressure:' + request.idempotencyKey);
+        if (day !== null && response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      record: event => actors.observe(event.kind, { logicalAt: at, accountId: event.accountId || null }, event),
+    };
+    do {
+      outcome = day === null ? await pressureAdapter.prepare(hooks) : await pressureAdapter.runDay(day, hooks);
+      assert(!outcome.blocked && !outcome.paused, 'Pressure phase lacks a resolved canonical outcome');
+    } while (!outcome.complete);
+    await proof.artifact(day === null ? 'pressure-prepared.json' : 'pressure-day-' + day + '.json',
+      { summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
+  }
+  async function marketStep(day, timer = false, options = {}) {
+    const alreadyComplete = marketAdapter.summary().completedDays.includes(day);
+    const hooks = { logicalAt: at, pauseBeforeDispatch: options.pauseBeforeDispatch, stopAfterMixed: options.stopAfterMixed,
+      read: async (accountId, path) => {
+        const response = await http(marketActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(marketActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('market:' + request.idempotencyKey);
+        if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      executeGroup: async (requests, identity) => {
+        const execute = (accountId, request) => http(marketActors.find(actor => actor.accountId === accountId), request, true);
+        const companion = identity.kind === 'market-mixed-lifecycle' ? options.companion : null;
+        const responses = aggregateObserver ? await aggregateObserver.runGroup(requests,
+          { logicalAt: at, execute, drain: () => flushWorldTelemetry(pool), identity, companion })
+          : (await Promise.all([...requests.map(item => execute(item.accountId, item.request)),
+            ...(companion ? [companion.execute()] : [])])).slice(0, requests.length);
+        await flushWorldTelemetry(pool);
+        await invariantBoundary('market-group:' + day + ':' + identity.group);
+        responses.forEach((response, index) => {
+          if (response.status === 200 && !response.replayed) {
+            const accountId = requests[index].accountId; actorActions.set(accountId, actorActions.get(accountId) + 1);
+          }
+        });
+        return responses;
+      },
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('market-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('market-policy-' + phase, { day, logicalAt: at }, checkpoint),
+    };
+    const outcome = timer ? await marketAdapter.runTimerWindow(day, hooks) : await marketAdapter.runDay(day, hooks);
+    if (!options.pauseBeforeDispatch && !options.stopAfterMixed)
+      assert(!outcome.paused && !marketAdapter.summary().pending, 'Market phase lacks a resolved canonical outcome');
+    if (!timer && !alreadyComplete && !outcome.paused)
+      await proof.artifact('market-day-' + day + '.json', { summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
+    return outcome;
+  }
+  if (marketEnabled) {
+    let preparedDay = null;
+    const originalJob = controller.job.bind(controller);
+    prepareMarketBoundary = async ({ logicalAt, label }) => {
+      const day = Math.floor((logicalAt - epoch) / 86400000);
+      if (label !== 'guardedTick' || day === 0 || day >= Math.ceil((finish - epoch) / 86400000)
+        || marketAdapter.summary().completedDays.includes(day)) return;
+      assert.equal(preparedDay, null, 'Prepared market requests crossed an original worker deadline');
+      const outcome = await marketStep(day, false, { pauseBeforeDispatch: 'mixed' });
+      if (outcome.paused) { assert.equal(outcome.phase, 'mixed'); preparedDay = day; }
+    };
+    controller.job = async (label, fn) => {
+      if (label !== 'market sweep' || preparedDay === null) return originalJob(label, fn);
+      let invoked = false, result;
+      const companion = { identity: { kind: 'original-worker-job', label, logicalAt: at,
+        sourceFile: 'src/worker.js', sourceSha256: WORKER_SOURCE_PINS['src/worker.js'],
+        handlerSourceFile: 'src/market.js', handlerSourceSha256: QUERY_ORDER_SCOPE.queries.find(row => row.id === 'market-due').sourceSha256 },
+        execute: async () => { assert(!invoked, 'Original market sweep invoked twice'); invoked = true;
+          result = await originalJob(label, fn); return result; } };
+      const outcome = await marketStep(preparedDay, false, { stopAfterMixed: true, companion });
+      assert(invoked && outcome.phase === 'after-mixed', 'Prepared market batch did not execute with its original sweep');
+      preparedDay = null; return result;
+    };
+  }
+  async function warStep(mode, day = null) {
+    const hooks = { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(warActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(warActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('war:' + request.idempotencyKey);
+        if (mode !== 'prepare' && response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      record: event => actors.observe(event.kind, { logicalAt: at, mode }, event),
+    };
+    let outcome;
+    do {
+      outcome = mode === 'day' ? await warAdapter.runDay(day, hooks) : await warAdapter[mode](hooks);
+      assert(!outcome.blocked && !outcome.paused && !outcome.waitingForSettlement && !outcome.failure,
+        'War phase lacks a resolved canonical outcome');
+    } while (!outcome.complete);
+    if (mode !== 'observeSettlements') await proof.artifact(mode === 'prepare' ? 'war-prepared.json' : 'war-day-' + day + '.json',
+      { summary: warAdapter.summary(), checkpoint: warAdapter.checkpoint() });
+  }
+  async function familyDay(day) {
+    return familyAdapter.runDay(day, { logicalAt: at,
+      read: async (accountId, path) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+        assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+      },
+      execute: async (accountId, request) => {
+        const response = await http(familyActors.find(actor => actor.accountId === accountId), request);
+        await invariantBoundary('family:' + request.idempotencyKey);
+        if (trackMeasuredCalls && response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+        return response;
+      },
+      decision: async (identity, view, chosen) => {
+        const recorded = await actors.decide('family-policy', identity, view, () => chosen);
+        assert.equal(actorValueHash(recorded), actorValueHash(chosen));
+      },
+      checkpoint: (phase, checkpoint) => actors.observe('family-policy-' + phase, { day, logicalAt: at }, checkpoint),
+    });
+  }
+  async function lawWindow(logicalAt) {
+    let window;
+    do {
+      window = await lawAdapter.runWindow(logicalAt, {
+        read: async (accountId, path) => {
+          const response = await http(lawActors.find(actor => actor.accountId === accountId), { method: 'GET', path });
+          assert.equal(response.status, 200, JSON.stringify(response)); return response.body;
+        },
+        execute: async (accountId, request) => {
+          const response = await http(lawActors.find(actor => actor.accountId === accountId), request);
+          await invariantBoundary('law:' + request.idempotencyKey);
+          if (response.status === 200 && !response.replayed) actorActions.set(accountId, actorActions.get(accountId) + 1);
+          return response;
+        },
+        record: event => actors.observe(event.kind, { logicalAt, accountId: event.accountId || null }, event),
+      });
+      assert(!window.blocked && !window.paused, 'Law window lacks a resolved canonical outcome');
+    } while (!window.complete);
+  }
+  const startupBefore = allianceEnabled ? await proof.snapshot(pool, 'before-original-worker-startup') : null;
+  workPhase = 'worker-startup';
+  const workerStartup = () => bootOriginalWorker(controller, { beforeCallbacks: async () => {
+    if (!commitObserver) return;
+    const after = await snapshotWorldResources(diagnosticPool);
+    await proof.artifact('resource-worker-bootstrap.json', { classification: 'Aggregate initialization comparison; not per-commit coverage',
+      before: priorResources, after, beforeHash: worldResourceHash(priorResources), afterHash: worldResourceHash(after) });
+    assert.equal(worldResourceHash(after), worldResourceHash(priorResources), 'Original worker bootstrap changed authoritative resource state');
+    priorResources = after; (aggregateObserver || commitObserver).arm();
+  } });
+  if (workerBooted) { if (commitObserver) (aggregateObserver || commitObserver).arm(); }
+  else if (resume && httpEnabled) await runtime.withRestartStartup(workerStartup);
+  else await workerStartup();
+  let startupLineage = null;
+  if (allianceEnabled) {
+    const startupAfter = await proof.snapshot(pool, 'after-original-worker-startup');
+    startupLineage = { beforeStateSha256: startupBefore.stateSha256, afterStateSha256: startupAfter.stateSha256,
+      resourceBoundaries: resourceSummary.boundaries, resourceStreamSha256: observeResources ? resourceStream.copy().digest('hex') : null,
+      callbackEvents: controller.diagnostic().events.filter(e => e.kind.startsWith('callback.') && e.kind !== 'callback.wall-duration'),
+      stateDifference: compareAllianceStates(startupBefore, startupAfter) };
+    await proof.artifact('alliance-startup-lineage.json', startupLineage);
+  }
+  workPhase = 'measured';
+  if (lawEnabled && !resume) await lawWindow(at);
+  if (allianceEnabled) {
+    if (!resume) await allianceDay(0); else if (legacyAlliance) await allianceDay(1);
+    await observeQuiescentDaily();
+  }
+  const afterBoundary = async (logicalAt, label) => {
+    if (configuration.stopOnResourceGap) {
+      if (firstResourceError) throw firstResourceError;
+      assert.equal(resourceSummary.unsupportedEntries, 0, 'Stop long workload at the first resource classification gap');
+    }
+    guardrails?.time(`after:${label}:${logicalAt}`);
+    if (lawEnabled && label === 'health-boundary') await lawWindow(logicalAt);
+    if (label !== 'guardedTick') return;
+    await guardBoundary(`hour:${(logicalAt - start) / 3600000}`);
+    if (warEnabled) await warStep('observeSettlements');
+    const day = Math.floor((logicalAt - epoch) / 86400000);
+    if (marketEnabled && day > 0 && day < Math.ceil((finish - epoch) / 86400000)
+      && !marketAdapter.summary().completedDays.includes(day)) await marketStep(day);
+    if (marketEnabled && marketAdapter.summary().expiryCandidates.some(candidate => !candidate.resolved)) {
+      const marketDay = marketAdapter.summary().completedDays.filter(value => at >= epoch + (value + 1) * 86400000).at(-1);
+      if (marketDay !== undefined) await marketStep(marketDay, true);
+    }
+    if (allianceEnabled) {
+      if (continuousAlliance && day !== lastDay && day < Math.ceil((finish - epoch) / 86400000)) await allianceDay(day);
+      return;
+    }
+    if (day === lastDay || day >= Math.ceil((finish - epoch) / 86400000)) return;
+    if (churnEnabled) await churnWeek(day);
+    lastDay = day;
+    const selected = await actors.decide(churnEnabled ? 'churn-roster' : familyEnabled ? 'family-roster' : cohortEnabled ? 'cohort-roster' : lawEnabled ? 'law-roster' : pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? actorPolicy + '-roster' : 'quiet-roster', { day, logicalAt }, roster,
+      () => churnEnabled ? churnPolicy.roster().current : dailyFullRoster ? [...roster] : activeQuietRoster(roster, seed, day));
+    assert.equal(selected.length, dailyFullRoster ? population : Math.floor(population / 10)); assert.equal(new Set(selected).size, selected.length);
+    assert(selected.every((account) => roster.includes(account)));
+    if (pressureEnabled) await pressureDay(day);
+    if (warEnabled) await warStep('day', day);
+    if (marketEnabled) await marketStep(day);
+    if (familyEnabled) {
+      if (day === 0) assert.equal(familyAdapter.summary().nextDay, 1, 'Initial Family preparation was not completed');
+      else await familyDay(day);
+    }
+    for (const account of selected) await session(account, day);
+    queueDailyObservation(day, selected);
+  };
+  if (dailyFullRoster && !resume) { await afterBoundary(at, 'guardedTick'); await observeQuiescentDaily(); }
+  if (legacyAlliance && !resume) {
+    await controller.advanceTo(epoch + 86400000, afterBoundary);
+    await allianceDay(1, true);
+    const checkpointState = await proof.snapshot(pool, 'alliance-hour24');
+    await proof.checkpoint(pool, 'alliance-hour24', url);
+    const savedPolicy = policyState();
+    await proof.artifact('alliance-hour24-policy.json', savedPolicy);
+    await proof.artifact('alliance-hour24-random-tape.json', { draws: runtime.tape });
+    await proof.artifact('alliance-hour24-worker-schedule.json', controller.diagnostic());
+    await proof.artifact('alliance-hour24-continuation.json', { version: 1, logicalAt: at, source,
+      finalStateSha256: checkpointState.stateSha256, policyStateSha256: sha256(canonicalJson(savedPolicy)),
+      deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
+      resourceStateSha256: observeResources ? worldResourceHash(priorResources) : null,
+      resourceJournalPrefixSha256: observeResources ? resourceStream.copy().digest('hex') : null,
+      resourceJournalPrefixCount: resourceSummary.boundaries,
+      semantics: 'Actual quiescent native dump with selected but undispatched request. Prefix belongs to the sealed parent stream; no process startup has been suppressed.' });
+    if (hours === 48) { await allianceDay(1); await observeQuiescentDaily(); }
+  }
+  await controller.advanceTo(finish, afterBoundary);
+  workPhase = 'final-observation';
+  await invariantBoundary('final');
+  const final = await proof.snapshot(pool, 'final'); await proof.checkpoint(pool, 'final', url);
+  await knowledgeBoundary('final', final);
+  const finalDiagnostics = await collectWorldDiagnostics(diagnosticPool,
+    { logicalAt: at, roster, actorActions: Object.fromEntries(actorActions) });
+  await proof.artifact('world-diagnostics-final.json', finalDiagnostics);
+  let finalEconomy = null;
+  if (economyMetrics) {
+    economyMetrics.sample(at, 'final');
+    finalEconomy = economyMetrics.summary();
+    await proof.artifact('economy-metrics-final.json', finalEconomy);
+  }
+  await recoveryBoundary('final', final, finalDiagnostics, finalEconomy);
+  await proof.artifact('checkpoint-recovery-summary.json', { boundaries: recoveryBoundaries, matrixQualifying: false });
+  await proof.artifact('world-backlog-summary.json', { boundaries: backlogBoundaries, matrixQualifying: false });
+  const checkpointSeriesIndex = { binding: { sourceRevision: source.revision, configurationSha256 },
+    startAt: measuredStart, endAt: finish, sampling: { periodMs: 86400000, phaseAt: measuredStart }, points: checkpointSeriesPoints };
+  await proof.artifact('checkpoint-series-points.json', checkpointSeriesIndex);
+  if (commitObserver) {
+    (aggregateObserver || commitObserver).assertComplete(); await proof.artifact('resource-observer.json', { ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
+    await proof.artifact('car-melt-witness-summary.json', { ...carMeltWitnessSummary, scope: configuration.carMeltWitness });
+    await proof.artifact('car-acquisition-witness-summary.json', { ...carAcquisitionWitnessSummary, scope: configuration.npcCarAcquisitionWitness });
+    await proof.artifact('npc-family-witness-summary.json', { ...npcFamilyWitnessSummary, scope: configuration.npcFamilyWitness });
+    await proof.artifact('npc-boat-witness-summary.json', { ...npcBoatWitnessSummary, scope: configuration.npcBoatWitness });
+    await proof.artifact('npc-market-order-witness-summary.json', { ...npcMarketOrderWitnessSummary, scope: configuration.npcMarketOrderWitness });
+  }
+  const npcBoatFaultObservation = await npcBoatFault.finish(pool);
+  const trace = controller.diagnostic(); assert.equal(trace.failures.length, 0);
+  const timerCounts = Object.fromEntries(['directorTick', 'guardedTick', 'guardedSeasonTick', 'health-boundary']
+    .map((label) => [label, trace.events.filter((entry) => entry.kind === 'timer.fire' && entry.label === label).length]));
+  const elapsed = finish - start;
+  assert.deepEqual(timerCounts, { directorTick: Math.floor(elapsed / 300000), guardedTick: Math.floor(elapsed / 3600000),
+    guardedSeasonTick: Math.floor(elapsed / 3600000), 'health-boundary': Math.floor(elapsed / 300000) });
+  const recaps = (await pool.query('SELECT account_id,season FROM season_recaps ORDER BY account_id,season')).rows;
+  const expectedRollovers = Math.floor(finish / seasonMs) - Math.floor(measuredStart / seasonMs);
+  for (const actor of roster) {
+    const actorStart = churnEnabled ? Math.max(measuredStart, churnActors.find(entry => entry.accountId === actor).joinedAt) : measuredStart;
+    assert.equal(recaps.filter(row => row.account_id === actor).length - initialRecaps.filter(row => row.account_id === actor).length,
+      Math.floor(finish / seasonMs) - Math.floor(actorStart / seasonMs));
+  }
+  await proof.artifact('worker-schedule.json', trace); await proof.artifact('query-order.json', await queryOrder.finish());
+  const durationMeasurements = measureWorldWorkerDuration({ sourceRevision: source.revision, configurationSha256,
+    startAt: measuredStart, endAt: finish, trace, expectedDormant,
+    evidence: artifactReference('worker-schedule.json', trace) });
+  await proof.artifact('world-duration-measurements.json', durationMeasurements);
+  const workloadInventory = { binding: { sourceRevision: source.revision, configurationSha256,
+    initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
+    fromLogicalAt: measuredStart, throughLogicalAt: finish }, complete: true, canonicalDispatchOnly: true,
+    originalWorkersOnly: true, calls: [...workloadCallUnion.values()].map(row => row.call),
+    observedInvocations: measuredInvocationCount, union: [...workloadCallUnion.values()],
+    coverage: 'Every measured actor invoke wrapper and Knowledge observer call, including retries, reads and preparation; original worker coverage is separately verified. Complete identities and outcomes remain in the sealed native history.' };
+  await proof.artifact('world-invocation-inventory.json', workloadInventory);
+  const lifecycleApplicability = reviewWorkloadLifecycleApplicability({ source: lifecycleSource, configurationSha256,
+    startAt: measuredStart, endAt: finish, initialSnapshot: initial, finalSnapshot: final,
+    workload: { ...workloadInventory, evidence: artifactReference('world-invocation-inventory.json', workloadInventory) },
+    configurationEvidence: { ...lifecycleAuthority.configuration, evidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) },
+    reviewEvidence: artifactReference('world-lifecycle-authority.json', lifecycleAuthority) });
+  await proof.artifact('world-lifecycle-applicability.json', lifecycleApplicability);
+  const durationReview = await reviewWorldCheckpointSeries({ manifest: frozenScenarios, source: recoverySource,
+    pointIndex: artifactReference('checkpoint-series-points.json', checkpointSeriesIndex),
+    workerDuration: artifactReference('world-duration-measurements.json', durationMeasurements),
+    lifecycleReview: artifactReference('world-lifecycle-applicability.json', lifecycleApplicability),
+    readArtifact: reference => fs.readFile(path.join(output, reference.path)),
+    retain: async (name, value) => { await proof.artifact(name, value); return artifactReference(name, value); } });
+  await proof.artifact('world-duration-review.json', durationReview);
+  await proof.artifact('random-tape.json', { draws: runtime.tape });
+  const actorTape = actors.finish(), finalPolicy = policyState();
+  if (allianceEnabled) {
+    assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
+    if (legacyAlliance) {
+      const paused = !resume && hours === 24;
+      assert.deepEqual(allianceAdapter.summary().completedStages, paused ? [0] : [0, 1]);
+      assert.equal(allianceAdapter.summary().completions.length, paused ? 0 : 3);
+      assert.equal(!!finalPolicy.allianceAdapter.payload.state.pending, paused);
+    } else {
+      assert.deepEqual(allianceAdapter.summary().completedStages, Array.from({ length: Math.ceil((finish - epoch) / 86400000) }, (_, day) => day));
+      assert.equal(allianceAdapter.summary().unknownResponses, 0);
+      assert(allianceAdapter.summary().dailyCooperation.every(day => day.cooperationSatisfied));
+    }
+    assert.equal([...actorActions.values()].filter(Boolean).length, population);
+    await proof.artifact('alliance-final.json', { contract: configuration.allianceContract, summary: allianceAdapter.summary(), checkpoint: allianceAdapter.checkpoint() });
+  }
+  if (cohortEnabled) {
+    assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
+    assert(cohortBaseline.ready);
+    await proof.artifact('cohort-final.json', { plan: cohortPlan, baseline: cohortBaseline, warmup: cohortWarmup,
+      summaries: Object.fromEntries([...cohortPolicies].map(([accountId, policy]) => [accountId, policy.summary()])),
+      measuredStart, measuredFinish: finish, fixtureWritesAfterBaseline: false, matrixQualifying: false });
+  }
+  if (familyEnabled) {
+    assert.equal(responseCompletions.size, 0, 'Outstanding original HTTP response hook');
+    assert.equal(familyAdapter.summary().unresolvedResponses, 0);
+    await proof.artifact('family-final.json', { contract: FAMILY_WORLD_CONTRACT, summary: familyAdapter.summary(), checkpoint: familyAdapter.checkpoint() });
+  }
+  if (churnEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(churnPolicy.summary().pendingEnrollments, 0);
+    await proof.artifact('churn-final.json', { contract: CHURN_POLICY_CONTRACT, summary: churnPolicy.summary(), checkpoint: churnPolicy.checkpoint() });
+  }
+  if (lawEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(lawAdapter.summary().unresolvedResponses, 0);
+    assert.equal(lawAdapter.cursor().nextWindowAt, finish + LAW_WORLD_CONTRACT.windowMilliseconds);
+    await proof.artifact('law-final.json', { contract: LAW_WORLD_CONTRACT, summary: lawAdapter.summary(), checkpoint: lawAdapter.checkpoint() });
+  }
+  if (marketEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(marketAdapter.summary().unresolvedResponses, 0);
+    assert.equal(marketAdapter.summary().completedDays.length, Math.ceil((finish - epoch) / 86400000));
+    await proof.artifact('market-final.json', { contract: MARKET_WORLD_CONTRACT, summary: marketAdapter.summary(), checkpoint: marketAdapter.checkpoint() });
+  }
+  if (warEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(warAdapter.summary().unresolvedResponses, 0);
+    assert.equal(warAdapter.summary().nextDay, Math.ceil((finish - epoch) / 86400000));
+    await proof.artifact('war-final.json', { contract: WAR_WORLD_CONTRACT, summary: warAdapter.summary(), checkpoint: warAdapter.checkpoint() });
+  }
+  if (pressureEnabled) {
+    assert.equal(responseCompletions.size, 0); assert.equal(pressureAdapter.summary().unresolvedResponses, 0);
+    assert.equal(pressureAdapter.summary().completedDays, Math.ceil((finish - epoch) / 86400000));
+    await proof.artifact('pressure-final.json', { contract: PRESSURE_WORLD_CONTRACT, summary: pressureAdapter.summary(), checkpoint: pressureAdapter.checkpoint() });
+  }
+  if (aggressionEnabled) {
+    assert.equal(responseCompletions.size, 0);
+    assert([...aggressionPolicies.values()].every(policy => policy.summary().unresolvedReplays === 0));
+    await proof.artifact('aggression-final.json', { contract: AGGRESSION_POLICY_CONTRACT,
+      summaries: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.summary()])) });
+  }
+  await proof.artifact('actor-tape.json', actorTape); await proof.artifact('actor-policy-final.json', finalPolicy);
+  await proof.artifact('knowledge-boundaries.json', knowledgeBoundaries);
+  await proof.artifact('player-metrics.json', { days, metrics, latencies, latencyTimeSeries,
+    latencyScope: 'Current measured process segment; predecessor latency evidence stays in its referenced original artifact. Wall time is excluded from actor-policy state and semantic replay equality.',
+    actorActions: Object.fromEntries(actorActions),
+    latencyDistribution: latencyDistribution(roster, latencies, latencyActors),
+    opportunities: opportunities.summarize(at, roster), meaningfulActionDefinition: 'Fresh completed domain PlayerCommands plus canonical crime attempts with committed success or loss'
+      + (allianceEnabled || familyEnabled || lawEnabled || pressureEnabled || aggressionEnabled || warEnabled || marketEnabled ? ' plus fresh completed policy HTTP operations' : '') + '; excludes reads/replays/denials/authentication' });
+  result = { ...(faultNpcBoatGrant ? { npcBoatFaultObservation } : {}), status: 'PASS_SCOPED', hours, population, seed, actorPolicy, mysteryPolicySummaries: mysterySummaries(),
+    actualActiveActors: [...actorActions.values()].filter(Boolean).length,
+    dailySelectedActors: configuration.policy.dailyActiveActors, seasonalRolloversPerActor: expectedRollovers, metrics,
+    ...(allianceEnabled ? { alliance: allianceAdapter.summary() } : {}),
+    ...(familyEnabled ? { family: familyAdapter.summary() } : {}),
+    ...(churnEnabled ? { churn: churnPolicy.summary() } : {}),
+    ...(lawEnabled ? { law: lawAdapter.summary() } : {}),
+    ...(pressureEnabled ? { pressure: pressureAdapter.summary() } : {}),
+    ...(warEnabled ? { war: warAdapter.summary() } : {}),
+    ...(marketEnabled ? { market: marketAdapter.summary() } : {}),
+    ...(aggressionEnabled ? { aggression: Object.fromEntries([...aggressionPolicies].map(([accountId, policy]) => [accountId, policy.summary()])) } : {}),
+    ...(cohortEnabled ? { cohort: { counts: cohortPlan.counts, realized: cohortPlan.realized, baselineReady: cohortBaseline.ready,
+      warmup: cohortWarmup, measuredStart, measuredFinish: finish, initializationLogicalHours: (measuredStart - start) / 3600000 } } : {}),
+    timerCounts, invariantChecks: baseline.checks.length, initialStateSha256: initial.stateSha256, finalStateSha256: final.stateSha256,
+    workerScheduleSha256: trace.scheduleSha256, missingRequiredProof: configuration.coverageMissing,
+    jobOutcomesSha256: sha256(canonicalJson(trace.jobs)), deterministicRandomTapeSha256: sha256(canonicalJson(runtime.tape)),
+    actorTapeSha256: actorTape.entriesSha256, policyStateSha256: sha256(canonicalJson(finalPolicy)),
+    mysteryPolicySummarySha256: sha256(canonicalJson(mysterySummaries())), knowledgeDiagnosticsSha256: sha256(canonicalJson(knowledgeBoundaries)),
+    recoveryDiagnosticsSha256: sha256(canonicalJson(recoveryBoundaries)),
+    backlogDiagnosticsSha256: sha256(canonicalJson(backlogBoundaries)),
+    durationMeasurementsSha256: sha256(canonicalJson(durationMeasurements)),
+    durationReviewSha256: sha256(canonicalJson(durationReview)),
+    lifecycleApplicabilitySha256: sha256(canonicalJson(lifecycleApplicability)),
+    semanticMetricsSha256: sha256(canonicalJson({ days, metrics, actorActions: Object.fromEntries(actorActions), opportunities: opportunities.summarize(at, roster) })),
+    checkpointRestart: !!resume, recordedActorAndSelectionReplay: !!replay,
+    worldDiagnosticsSemanticSha256: sha256(canonicalJson(finalDiagnostics.semantic)),
+    resourceObservationEnabled: observeResources, resourceJournalCount: resourceSummary.boundaries,
+    economyMetricsSha256: economyMetrics ? sha256(canonicalJson(economyMetrics.summary())) : null,
+    resourceJournalSha256: observeResources ? resourceStream.copy().digest('hex') : null,
+    resourceObservation: observeResources ? resourceSummary : null,
+    carMeltWitnessObservation: observeResources ? carMeltWitnessSummary : null,
+    carAcquisitionWitnessObservation: observeResources ? carAcquisitionWitnessSummary : null,
+    npcFamilyWitnessObservation: observeResources ? npcFamilyWitnessSummary : null,
+    npcBoatWitnessObservation: observeResources ? npcBoatWitnessSummary : null,
+    npcMarketOrderWitnessObservation: observeResources ? npcMarketOrderWitnessSummary : null,
+    statement: 'Completed only the declared ' + actorPolicy + ' workload; no matrix qualification or dead-world clearance' };
+  if (legacyAlliance) {
+    result.continuation = { mode: configuration.continuation.mode, totalLogicalHours: (finish - epoch) / 3600000,
+      parent: configuration.parentCheckpoint, restoredStateSha256: restoredState?.stateSha256 || null,
+      applicationBootstrap, startup: startupLineage,
+      resourceLineage: { parentJournalPrefixSha256: parentContinuation?.resourceJournalPrefixSha256 || null,
+        parentJournalPrefixCount: parentContinuation?.resourceJournalPrefixCount || 0,
+        parentCompleteJournalSha256: parentRun?.result.resourceJournalSha256 || null,
+        segmentJournalSha256: result.resourceJournalSha256, segmentBoundaries: result.resourceJournalCount,
+        semantics: 'Separate verified streams, joined by exact restored canonical state; physical setup/startup is retained and streams are not asserted identical to uninterrupted history.' } };
+    if (comparisonRun) {
+      assert.equal(comparisonRun.configuration.finish, configuration.finish);
+      assert.equal(comparisonRun.configuration.continuation.mode, 'uninterrupted');
+      result.continuation.uninterruptedComparison = compareAllianceStates(await readArtifact(comparisonDirectory, 'final.json'), final);
+      await proof.artifact('alliance-uninterrupted-comparison.json', result.continuation.uninterruptedComparison);
+    }
+  }
+  if (replay) {
+    result.replayComparison = compareActorReplay(result, replayRun.result);
+    assert.equal(result.economyMetricsSha256, replayRun.result.economyMetricsSha256, 'Economy measurement replay differs');
+    assert.deepEqual(result.carMeltWitnessObservation, replayRun.result.carMeltWitnessObservation, 'Car COMMIT witness replay differs');
+    assert.deepEqual(result.carAcquisitionWitnessObservation, replayRun.result.carAcquisitionWitnessObservation, 'Car acquisition witness replay differs');
+    result.carMeltWitnessReplayEqual = true;
+    assert.deepEqual(result.npcFamilyWitnessObservation, replayRun.result.npcFamilyWitnessObservation, 'NPC Family COMMIT witness replay differs');
+    result.npcFamilyWitnessReplayEqual = true;
+    assert.deepEqual(result.npcBoatWitnessObservation, replayRun.result.npcBoatWitnessObservation, 'NPC boat COMMIT witness replay differs');
+    result.npcBoatWitnessReplayEqual = true;
+    assert.deepEqual(result.npcMarketOrderWitnessObservation, replayRun.result.npcMarketOrderWitnessObservation, 'NPC order witness replay differs');
+    result.npcMarketOrderWitnessReplayEqual = true;
+    assert.deepEqual(result.npcBoatFaultObservation, replayRun.result.npcBoatFaultObservation, 'NPC boat fault schedule differs');
+  }
+  await guardBoundary('final');
+  if (guardrails) await proof.artifact('operational-guardrails.json', guardrails.diagnostic());
+  await proof.record({ kind: 'assertions', ...result });
+} catch (error) {
+  result = { status: 'FAIL', hours, population, metrics, error: error.message, invocation: failureInvocation, logicalAt: at };
+  await retainWorldFailure(() => proof.record({ kind: 'failure', invocation: failureInvocation, logicalAt: at, message: error.message, stack: error.stack }), { historyStorage, result });
+  if (historyStorage && result.captureErrors?.length && commitObserver)
+    await retainWorldFailure(async () => (aggregateObserver || commitObserver).disarm(), { historyStorage, result });
+  if (faultNpcBoatGrant) await proof.artifact('failure-npc-boat-fault.json', npcBoatFault.diagnostic());
+  await proof.artifact('failure-worker-schedule.json', controller.diagnostic());
+  await proof.artifact('failure-random-tape.json', { draws: runtime.tape });
+  await proof.artifact('failure-actor-tape.json', actors.diagnostic());
+  await proof.artifact('failure-actor-policy.json', policyState());
+  if (guardrails) await proof.artifact('failure-operational-guardrails.json', guardrails.diagnostic());
+  await proof.artifact('failure-query-order.json', await queryOrder.diagnostic());
+  if (commitObserver) await proof.artifact('failure-resource-observer.json', { capturedAt: 'First failure, before diagnostic state capture', ...resourceSummary, diagnostic: (aggregateObserver || commitObserver).diagnostic() });
+  if (pool) {
+    try {
+      // The read-only diagnostic pool bypasses quarantined canonical clients.
+      // Its sole connection still needs the isolated schema's existing clock GUCs.
+      await diagnosticPool.query("SELECT set_config('rc1.transaction_time',$1,false),set_config('rc1.statement_time',$1,false)",
+        [new Date(at).toISOString()]);
+      await proof.snapshot(diagnosticPool, 'first-failure'); await proof.checkpoint(diagnosticPool, 'first-failure', url);
+    }
+    catch (captureError) { await retainWorldFailure(() => proof.record({ kind: 'failure-capture-error', message: captureError.message, stack: captureError.stack }), { historyStorage, result }); }
+  }
+  process.exitCode = 1;
+} finally {
+  for (const level of ['log', 'warn', 'error']) console[level] = originalConsole[level];
+  for (const close of [async () => {
+    if (!commitObserver) return;
+    try { (aggregateObserver || commitObserver).disarm(); }
+    finally { await proof.artifact('resource-observer-final.json', { capturedAt: 'After diagnostic state capture, before cleanup', ...resourceSummary,
+      resourceJournalSha256: resourceStream.copy().digest('hex'),
+      cost: { ...resourceCost, logicalHours: (at - start) / 3600000,
+        note: 'Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained.' }, diagnostic: (aggregateObserver || commitObserver).diagnostic() }); }
+  }, async () => { if (app) await app.close(); }, () => controller.close(), () => diagnosticPool.end(), () => base.end(),
+    async () => proof.record({ kind: 'database-cleanup', ...await database.close() })]) {
+    try { await close(); }
+    catch (error) {
+      result.status = 'FAIL'; result.cleanupFailure = error.message; process.exitCode = 1;
+      await retainWorldFailure(() => proof.record({ kind: 'cleanup-failure', message: error.message }), { historyStorage, result });
+    }
+  }
+  if (electionProbe) await retainWorldFailure(() => proof.artifact('season-election-observer-final.json', electionProbe.diagnostic()), { historyStorage, result });
+  electionSeam?.restore(); seam.restore(); runtime.restore();
+  for (const [key, value] of Object.entries(previousEnv)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+  const record = await proof.finish(result); await verifyArtifactIndex(output, record);
+}
+console.log(JSON.stringify({ status: result.status, source: source.revision, hours, population, metrics, matrixQualifying: false }));

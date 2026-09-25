@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "source": {
+    "revision": "9cef58c3a3bf774366b17064ad0461e4318d6d26",
+    "gitTree": "d14b8296678e5ae5e3b20ec4e0935e59e0c7641c",
+    "checkoutSha256": "63d268d23c74381e7e5910e6ebe56309be71e3ecbf7b9826fdd9e730a6337cb6",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "configurationSha256": "32e4b1771bfc4fa1825602c7c1914edf23370bea33e23f80f05da342afdcbfd4",
+  "runSha256": "1db10c7fd47fb34bd5af197dd6226b4b8068a2ab4a7114457db7bbd6e62dcd31",
+  "startedAt": "2026-09-21T08:09:57.568Z",
+  "endedAt": "2026-09-21T08:10:22.524Z",
+  "artifactsVerified": 50,
+  "scope": "Formation, tribute, melt tithe, succession, dissolution, late abort and retries at isolated complete boundaries; no elapsed lifecycle, OMR, war/turf or full-world per-commit clearance",
+  "ordinaryEntrants": 2,
+  "prebaselineRespectFixtures": 1,
+  "directBalanceItemMembershipGrants": 0,
+  "qualifyingFullResourcePass": false,
+  "matrixQualifying": false,
+  "historicalAudit": {
+    "source": "9cef58c3a3bf774366b17064ad0461e4318d6d26",
+    "directory": "family-custody-9cef58c3-retained",
+    "status": "Separate retained-input audit; no fresh-source pass inheritance",
+    "coverage": "Three initial/final windows only; original intermediate full snapshots and legacy request payloads unavailable"
+  },
+  "priorFailure": {
+    "source": "0c0f134b5f1f86b83a3673b11a65459fc400ee98",
+    "classification": "Exact declared injected fault was incorrectly rejected by generic diagnostic; failure retained"
+  }
+}

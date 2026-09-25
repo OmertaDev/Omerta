@@ -1,0 +1,1457 @@
+{
+  "format": 1,
+  "id": "omerta-rc1-world-acceptance-v1",
+  "owner": "Codex/native_harness",
+  "criteriaStatus": "Frozen proposed project acceptance targets; not observed results",
+  "populations": [
+    25,
+    100,
+    250,
+    500,
+    1000
+  ],
+  "seeds": [
+    "rc1-alpha",
+    "rc1-beta",
+    "rc1-gamma"
+  ],
+  "scenarios": [
+    {
+      "id": "quiet_world",
+      "label": "Quiet world",
+      "policy": {
+        "dailyActiveFraction": 0.1
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json;harness-quiet-90day-regression-results.json;harness-quiet-90day-order-replay-results.json"
+    },
+    {
+      "id": "high_aggression",
+      "label": "High aggression",
+      "policy": {
+        "eligibleConflictChoiceFraction": 0.7
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "aggression-player-policy.md"
+    },
+    {
+      "id": "family_monopoly",
+      "label": "Family monopoly",
+      "policy": {
+        "largestFamilyJoinableFraction": 0.8,
+        "initialSupply": "largest legal position",
+        "outsiders": "natural entry"
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "family-player-policy.md"
+    },
+    {
+      "id": "fragmented_families",
+      "label": "Fragmented Families",
+      "policy": {
+        "minimumFamilies": 10,
+        "maximumFamilyActorFraction": 0.2,
+        "exception": "Use nearest legal formation extreme; retain invariant-based reason."
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "family-player-policy.md"
+    },
+    {
+      "id": "resource_scarcity",
+      "label": "Resource scarcity",
+      "policy": {
+        "initialSupply": "lowest valid",
+        "replenishment": "canonical paths"
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-resource-pressure.md;harness-resource-pressure-results.json",
+      "qualificationLimit": "Ordinary-entry low-supply proxy, not the absolute valid extreme for all13 resources; serial stale-choice contention only."
+    },
+    {
+      "id": "resource_abundance",
+      "label": "Resource abundance",
+      "policy": {
+        "initialSupply": "high legally valid",
+        "observe": [
+          "spending",
+          "hoarding",
+          "concentration",
+          "sinks"
+        ]
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-resource-pressure.md;harness-resource-pressure-results.json",
+      "qualificationLimit": "Declared initial level75 respect fixtures yield high canonical check-in/purchase supply; no natural progression or absolute all13-resource extreme."
+    },
+    {
+      "id": "high_player_churn",
+      "label": "High player churn",
+      "policy": {
+        "weeklyActiveReplacementFraction": 0.3
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "churn-player-policy.md"
+    },
+    {
+      "id": "mostly_new_players",
+      "label": "Mostly new players",
+      "policy": {
+        "newActorFraction": 0.9,
+        "privilegedGrants": false
+      },
+      "implementationStatus": "UNIMPLEMENTED",
+      "qualifyingRuns": 0
+    },
+    {
+      "id": "mostly_veteran_players",
+      "label": "Mostly veteran players",
+      "policy": {
+        "validProgressionFixtureFraction": 0.9,
+        "newActorFraction": 0.1
+      },
+      "implementationStatus": "UNIMPLEMENTED",
+      "qualifyingRuns": 0
+    },
+    {
+      "id": "coordinated_alliance",
+      "label": "Coordinated alliance",
+      "policy": {
+        "minimumFamilies": 3,
+        "sharing": "canonical permissions"
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "alliance-summary.json;docs/rc1-coordinated-alliance.md;../../rc1-alliance-world.md"
+    },
+    {
+      "id": "multi_family_war",
+      "label": "Multi-Family war",
+      "policy": {
+        "minimumOpposingFamilies": 3,
+        "objectives": "overlapping scarce"
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "turf-contention-summary.json;docs/rc1-multifamily-conflict.md"
+    },
+    {
+      "id": "high_mystery_participation",
+      "label": "High mystery participation",
+      "policy": {
+        "eligibleInvestigationChoiceFraction": 0.7
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json"
+    },
+    {
+      "id": "low_mystery_participation",
+      "label": "Low mystery participation",
+      "policy": {
+        "maximumEligibleInvestigationChoiceFraction": 0.05
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "harness-mystery-world-replay-results.json"
+    },
+    {
+      "id": "market_stress",
+      "label": "Market stress",
+      "policy": {
+        "concurrent": [
+          "posting",
+          "taking",
+          "refund",
+          "expiry",
+          "escrow settlement"
+        ]
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "market-player-policy.md"
+    },
+    {
+      "id": "law_pressure",
+      "label": "Law pressure",
+      "policy": {
+        "pressure": "sustained canonical Heat/Law",
+        "recoveries": [
+          "detention",
+          "loss",
+          "legal progression"
+        ]
+      },
+      "implementationStatus": "PARTIAL_SCOPED",
+      "qualifyingRuns": 0,
+      "implementationEvidence": "law-player-policy.md"
+    }
+  ],
+  "requiredRuns": 225,
+  "cells": [
+    {
+      "scenarioId": "quiet_world",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "quiet_world",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_aggression",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "family_monopoly",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "fragmented_families",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_scarcity",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "resource_abundance",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_player_churn",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_new_players",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "mostly_veteran_players",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "coordinated_alliance",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "multi_family_war",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "high_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "low_mystery_participation",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "market_stress",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 25,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 25,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 25,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 100,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 100,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 100,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 250,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 250,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 250,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 500,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 500,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 500,
+      "seed": "rc1-gamma"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 1000,
+      "seed": "rc1-alpha"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 1000,
+      "seed": "rc1-beta"
+    },
+    {
+      "scenarioId": "law_pressure",
+      "population": 1000,
+      "seed": "rc1-gamma"
+    }
+  ],
+  "thresholds": {
+    "minimumLogicalDays": 90,
+    "minimumApplicableSeasonalRollovers": 2,
+    "minimumLongestLifecycleExecutions": 2,
+    "durationRule": "Continue for the longest requirement, and longer until concentration/backlog/reachability stabilize. Every due worker interval must execute.",
+    "maximumUnexplainedResourceDrift": 0,
+    "maximumDuplicateValue": 0,
+    "maximumUnclassifiedTransitionGaps": 0,
+    "maximumUnauthorizedDisclosures": 0,
+    "maximumPersistentDeadWorlds": 0,
+    "maximumUnresolvedP0P1": 0,
+    "soak": {
+      "wallClockHours": 12,
+      "population": 1000,
+      "minimumActiveActorsPerHour": 250,
+      "minimumInFlightBurst": 100,
+      "allActorsMustParticipate": true,
+      "resourceEnvelope": "recorded production equivalent",
+      "requiredFaults": [
+        "shared-object contention",
+        "reconnect storm",
+        "worker interruption",
+        "database reconnect",
+        "server restart"
+      ],
+      "rateMeasurements": [
+        "intended arrival rate",
+        "queue time",
+        "completed rate"
+      ]
+    },
+    "recovery": {
+      "acknowledgedWritesLostThroughRestartOrCodeRollback": 0,
+      "maximumRestoreMinutes": 30
+    },
+    "cohort": {
+      "finalCandidateHoursWithoutUnresolvedP0P1": 72,
+      "denominatorUnfamiliarPlayers": 20,
+      "repeatedBlockingEligibleParticipants": 3,
+      "repeatedBlockingAboveAttemptFraction": 0.1,
+      "minimumIndependentRealCompletionsPerJourney": 3,
+      "minimumUnfamiliarPlayers": 20,
+      "consequenceAndNextObjective": 18,
+      "minimumEligibleBlockingAttempts": 20,
+      "minimumVoluntaryLaterDayReturns": 10,
+      "meaningfulActionWithin5Minutes": 16,
+      "initialObservedMinutes": 15,
+      "minimumMobileFirstParticipants": 10,
+      "minimumCompetingFamilies": 2,
+      "minimumParticipants": 30,
+      "consecutiveDays": 7,
+      "meaningfulActionWithin15Minutes": 18,
+      "minimumRealParticipantsPerFamily": 5
+    },
+    "load": {
+      "maximumBacklogRecoverySchedulingPeriods": 2,
+      "maximumAuthoritativeCommandP99Ms": 3000,
+      "unexpected5xxOrTimeoutRateExclusiveUpperBound": 0.001,
+      "backlogException": "Only a larger canonical recovery deadline documented before the run",
+      "maximumAuthoritativeCommandP95Ms": 1500,
+      "rateExcludesDeliberateFaults": true,
+      "externalWalletProviderTimeMeasuredSeparately": true,
+      "maximumReadP95Ms": 500,
+      "intendedDenialsAndInjectedOutagesHaveSeparateCounters": true
+    }
+  },
+  "qualification": {
+    "requiresResourceGate": true,
+    "requiredDatabase": "real PostgreSQL",
+    "requiredInterfaces": [
+      "canonical API",
+      "Player Command dispatcher",
+      "production workers",
+      "domain transactions"
+    ],
+    "forbiddenEvidenceKinds": [
+      "model",
+      "fixture-only",
+      "scoped",
+      "pg-mem",
+      "skipped",
+      "pending",
+      "environment-blocked"
+    ]
+  },
+  "deadWorldAssertions": [
+    "Eligible new/returning actor has a reachable meaningful path or a bounded legal wait",
+    "Exhausted prerequisite resources have an existing reachable canonical replenishment path",
+    "No dependency cycles, orphaned operations, impossible mysteries or permanently unreachable thresholds after canonical recovery",
+    "No permanent Family exclusion or missing authorized Knowledge acquisition/propagation path",
+    "Unresolved worker backlog/live-state orphans do not grow across successive lifecycle windows"
+  ],
+  "metrics": [
+    "meaningful actions",
+    "generated/accepted/ignored authorized opportunities",
+    "created/completed/failed campaigns",
+    "coordination participation",
+    "resource velocity",
+    "inventory/Family concentration",
+    "deadlocked campaigns",
+    "orphaned operations",
+    "unreachable objectives",
+    "Knowledge distribution",
+    "inactivity",
+    "reward concentration",
+    "world/database growth",
+    "command latency"
+  ],
+  "metricRules": {
+    "meaningfulActionsExclude": [
+      "reads",
+      "telemetry",
+      "invalid attempts",
+      "replays"
+    ],
+    "ignoredOpportunity": "Expiration or explicit observation window after an authorized exposure",
+    "distributions": "time series, per-player distributions, final totals",
+    "syntheticCounts": "Synthetic actors are never human cohort evidence"
+  },
+  "failureRetention": {
+    "required": [
+      "first failing checkpoint",
+      "source/configuration",
+      "seed",
+      "command identities",
+      "worker schedule",
+      "ordering",
+      "resource journals",
+      "smallest achieved reproduction",
+      "replay command"
+    ],
+    "minimality": "No claim of mathematical minimality"
+  }
+}

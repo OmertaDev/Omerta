@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+  "releaseReady": false,
+  "executions": [
+    {
+      "name": "foundry",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586588955",
+      "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "forge",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "forge test (unit + fuzz)",
+              "conclusion": "success"
+            },
+            {
+              "name": "v4 encodings on a real pool (dexbot-e2e)",
+              "conclusion": "success"
+            },
+            {
+              "name": "the stock rail on a real chain (stock-e2e)",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "metadataSha256": "bebd7418787957023e70b718771fc0c3542cc0b1630771dc0c2fb858b861fb94",
+      "logSha256": "a15f486aaddaacb865db08577f651f37f4a16997b9453a5943387da3d7dd783b"
+    },
+    {
+      "name": "liquidity",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586591989",
+      "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "recovery",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "durable nonce and cross-process transaction recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "exact custody-backed books",
+              "conclusion": "success"
+            },
+            {
+              "name": "canonical indexer and existing queue recovery",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "metadataSha256": "247215cd9de907fe528e12c05a9ba50af945f119da28bd4308e1a2a35fda3af4",
+      "logSha256": "616abefd7536728f0e4e11422e422f629e54e76164802986721bfe898b5a1948"
+    }
+  ],
+  "foundry": {
+    "suites": 82,
+    "passed": 1247,
+    "failed": 0,
+    "skipped": 0
+  },
+  "exclusions": [
+    "No deployed contract configuration/backing attestation",
+    "Other candidate gates include failures; no release clearance",
+    "No pass inherited by later source"
+  ]
+}

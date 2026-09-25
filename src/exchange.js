@@ -49,7 +49,27 @@ function spentToday(acct, now) {
   const at = acct?.exchange_at ? new Date(acct.exchange_at).getTime() : 0;
   return Math.max(0, num(acct?.exchange_used) - EXCHANGE.DAILY_CAP_OMR * (Math.max(0, now - at) / 864e5));
 }
-const round6 = (n) => Math.round(n * 1e6) / 1e6;   // $OMR is 6dp, same as the NUMERIC column
+const round6 = (n) => Math.round(n * 1e6) / 1e6;
+// NUMERIC preserves arbitrary scale. Keep this window's six-decimal transfer
+// arithmetic exact, without rounding away dust already present in an account.
+function decimalParts(value) {
+  const match = /^([+-]?)(\d+)(?:\.(\d*))?(?:e([+-]?\d+))?$/i.exec(String(value).trim());
+  if (!match) throw new GameError('amount', 'Invalid $OMR amount.');
+  return { coefficient: BigInt(`${match[1]}${match[2]}${match[3] || ''}`), scale: (match[3] || '').length - Number(match[4] || 0) };
+}
+function windowUnits(value) {
+  const { coefficient, scale } = decimalParts(value);
+  if (scale <= 6) return coefficient * 10n ** BigInt(6 - scale);
+  const divisor = 10n ** BigInt(scale - 6);
+  if (coefficient % divisor) throw new GameError('precision', 'The window takes $OMR amounts with at most six decimal places.');
+  return coefficient / divisor;
+}
+function windowBalanceAfter(balance, debit) {
+  const parsed = decimalParts(balance), scale = Math.max(6, parsed.scale);
+  const remaining = parsed.coefficient * 10n ** BigInt(scale - parsed.scale) - debit * 10n ** BigInt(scale - 6);
+  const sign = remaining < 0n ? '-' : '', digits = (remaining < 0n ? -remaining : remaining).toString().padStart(scale + 1, '0');
+  return `${sign}${digits.slice(0, -scale)}.${digits.slice(-scale)}`;
+}
 
 // What is LEFT of the bucket, and what the till can actually pay — the two numbers a caller must
 // supply to succeed. Both were computed inline at the refusal AND again on the board, and both
@@ -124,8 +144,9 @@ export async function redeem(ch, amount, client, h) {
     { headroomOmr: left, dailyCapOmr: EXCHANGE.DAILY_CAP_OMR });
   }
 
+  const units = windowUnits(amount);
   const p = (await client.query('SELECT balance FROM exchange_pool WHERE id=1 FOR UPDATE')).rows[0];
-  const cash = Math.floor(omr * EXCHANGE.RATE);
+  const cash = Number(units * BigInt(EXCHANGE.RATE) / 1000000n);
   if (num(p?.balance) < cash) {
     // NOTHING is burned on a dry pool. The window is a claim on what was funded, not a promise —
     // burning into an empty till would be taking the token and giving nothing back.
@@ -150,14 +171,14 @@ export async function redeem(ch, amount, client, h) {
   // THE REMAINDER RULE sits on the BURN (the sell-tax discipline): the cut is computed, the burn is
   // whatever is left, so the two always sum to exactly what the player asked to redeem and no dust
   // goes unowned. Sizing is a founder lever — see FAMILY_YIELD.FUND_BPS.
-  const cut = round6(omr * FAMILY_YIELD.FUND_BPS / 10000);
-  const burn = round6(omr - cut);
+  const cutUnits = (units * BigInt(FAMILY_YIELD.FUND_BPS) + 5000n) / 10000n;
+  const cut = Number(cutUnits) / 1e6, burn = Number(units - cutUnits) / 1e6;
+  const originalBalance = h.acct.omr;
+  const remainingBalance = windowBalanceAfter(originalBalance, units);
+  if (remainingBalance.startsWith('-')) throw new GameError('omr', `That costs ${omr} $OMR. Come back flush.`);
   if (cut > 0) {
     await spendOmr(client, h, cut, 'yield:window');
-    // Re-round the in-memory balance before the second debit. Without this, redeeming your ENTIRE
-    // balance can fail: `balance - cut` in float can sit a few 1e-16 BELOW `round6(omr - cut)`, and
-    // spendOmr's own `balance < cost` guard would then refuse the burn on a perfectly funded account.
-    h.acct.omr = round6(Number(h.acct.omr));
+    h.acct.omr = windowBalanceAfter(originalBalance, cutUnits);
     await fundFamilyYield(client, cut);
   }
   // The rest is the house's cut. NOT destroyed: `window:burn` is in DESK.SINK_REASONS, so since
@@ -165,6 +186,7 @@ export async function redeem(ch, amount, client, h) {
   // reason keeps its name (renaming a live reason drifts every historical row) but the economics
   // are revenue, not deflation — do not describe this as burning supply.
   await spendOmr(client, h, burn, 'window:burn');
+  h.acct.omr = remainingBalance;
   await client.query(
     'UPDATE exchange_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [cash]);
   ch.cash = num(ch.cash) + cash;
@@ -297,30 +319,41 @@ export async function payFamilyYield(pool) {
 
     const total = ranked.reduce((a, _, i) => a + (FAMILY_YIELD.WEIGHTS[i] ?? 1), 0);
     const out = [];
-    let paid = 0;
+    // Payouts are whole cents, but the locked NUMERIC pot can contain six-decimal
+    // window cuts or older higher-scale dust. Floor ONLY its spendable cents;
+    // SQL below retains every unspent digit in the original balance.
+    const backing = decimalParts(p.balance);
+    const backedCents = backing.scale <= 2
+      ? backing.coefficient * 10n ** BigInt(2 - backing.scale)
+      : backing.coefficient / 10n ** BigInt(backing.scale - 2);
+    const centsText = (cents) => `${cents / 100n}.${String(cents % 100n).padStart(2, '0')}`;
+    let paidCents = 0n;
     // pay in RANK order (the locks are already held, so order here is free) — the head seat gets its
     // full share and the tail seat absorbs any rounding
     for (let i = 0; i < ranked.length; i++) {
       const g = ranked[i];
       if (!live.includes(g.id)) continue;      // dissolved under the lock — share stays in the pot
-      // CLAMP to what the pot actually holds (red-team F2). Rounding each share to 2dp can sum to a
-      // cent MORE than the balance — measured at 53 of the first 400 cent-values — which drives the
-      // pool NEGATIVE and trips this system's own `family yield backed` invariant. Never pay out
-      // more than is there.
-      const share = Math.min(round2(bal * (FAMILY_YIELD.WEIGHTS[i] ?? 1) / total), round2(bal - paid));
+      // Preserve the authored nearest-cent rank quota, but never round remaining
+      // backing UP: 0.3095 cannot fund a 0.31 payout (RC1-FAMILY-YIELD-01).
+      const quotaCents = BigInt(Math.round(bal * (FAMILY_YIELD.WEIGHTS[i] ?? 1) / total * 100));
+      const remainingCents = backedCents - paidCents;
+      const shareCents = quotaCents < remainingCents ? quotaCents : remainingCents;
+      const share = Number(shareCents) / 100;
       if (share < FAMILY_YIELD.MIN_PAYOUT) continue;
-      await client.query('UPDATE gangs SET omr_reserve = omr_reserve + $2 WHERE id=$1', [g.id, share]);
+      const exactShare = centsText(shareCents);
+      await client.query('UPDATE gangs SET omr_reserve = omr_reserve + $2 WHERE id=$1', [g.id, exactShare]);
       // the headless-ledger convention (emission.js): a JS-generated id, because pg-mem has no
       // gen_random_uuid(). NULL character_id + the gang as counterparty — the `gang:contract` shape.
       await client.query(
         'INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [crypto.randomUUID(), null, null, 'omr', share, 'yield:family', g.id]);
-      paid = round2(paid + share);
+        [crypto.randomUUID(), null, null, 'omr', exactShare, 'yield:family', g.id]);
+      paidCents += shareCents;
       out.push({ gang: g.id, name: g.name, share, rank: i + 1 });
     }
+    const paid = Number(paidCents) / 100;
     if (paid > 0) {
       await client.query(
-        'UPDATE family_yield_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [paid]);
+        'UPDATE family_yield_pool SET balance = balance - $1, lifetime_paid = lifetime_paid + $1 WHERE id=1', [centsText(paidCents)]);
     }
     await client.query('COMMIT');
     return { paid, families: out };
@@ -356,21 +389,26 @@ export async function yieldBoard(db) {
 // runVigInvariants — checked on demand and by the worker, separate from the §10.4 sweep.
 export async function runExchangeInvariants(pool) {
   const ex = await exchangePool(pool);
-  const fy = await familyYieldPool(pool);
+  const rawFamily = (await pool.query('SELECT balance, lifetime_funded, lifetime_paid FROM family_yield_pool WHERE id=1')).rows[0];
+  const fy = { balance: num(rawFamily.balance), funded: num(rawFamily.lifetime_funded), paid: num(rawFamily.lifetime_paid) };
+  // The Family pot is NUMERIC. Compare its actual stored precision: tolerating a
+  // cent in backing and 0.001 in negativity hid the reproduced 0.0005 overpay.
+  const parts = [rawFamily.balance, rawFamily.lifetime_funded, rawFamily.lifetime_paid].map(decimalParts);
+  const scale = Math.max(0, ...parts.map(part => part.scale));
+  const [familyBalance, familyFunded, familyPaid] = parts.map(part => part.coefficient * 10n ** BigInt(scale - part.scale));
+  const familyStored = { balance: String(rawFamily.balance), funded: String(rawFamily.lifetime_funded), paid: String(rawFamily.lifetime_paid) };
   const checks = [
     { name: 'exchange pool backed', lhs: ex.paid, rhs: ex.funded, ok: ex.paid <= ex.funded + 0.01,
       note: 'cash paid out of the redemption window <= cash funded into it' },
     { name: 'exchange pool balance', lhs: round2(ex.balance), rhs: round2(ex.funded - ex.paid),
       ok: Math.abs(ex.balance - (ex.funded - ex.paid)) < 0.01,
       note: 'balance == funded - paid' },
-    { name: 'family yield backed', lhs: fy.paid, rhs: fy.funded, ok: fy.paid <= fy.funded + 0.01,
+    { name: 'family yield backed', lhs: fy.paid, rhs: fy.funded, ok: familyPaid <= familyFunded, stored: familyStored,
       note: '$OMR paid to families <= $OMR funded into the pot' },
-    // (red-team F7) The pot needs the SAME identity the exchange pool has. `backed` alone is not
-    // enough: it carries a 0.01 tolerance, which is exactly the size of the per-share rounding
-    // over-pay it would have to catch — so a pot driven NEGATIVE reads ok:true and the alarm never
-    // fires. This is the check that actually sees it. Verified against the unclamped code.
+    // Backing alone does not prove the exact stored balance identity or catch a
+    // negative pot independently. Neither check rounds away historical dust.
     { name: 'family yield balance', lhs: round2(fy.balance), rhs: round2(fy.funded - fy.paid),
-      ok: Math.abs(fy.balance - (fy.funded - fy.paid)) < 0.01 && fy.balance >= -0.001,
+      ok: familyBalance === familyFunded - familyPaid && familyBalance >= 0n, stored: familyStored,
       note: 'balance == funded - paid, and never negative' },
   ];
   return { ok: checks.every((c) => c.ok), checks };

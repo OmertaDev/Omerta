@@ -167,6 +167,7 @@ function performModeledOperation(scope, resolution, metrics, at) {
     materialTemplateId: 'mat:wire', authority: 'modeled_player_operation' });
   metrics.operationVolume++; metrics.outcomes[resolution.id] = (metrics.outcomes[resolution.id] || 0) + 1;
   assert.equal(scope.initialWire, sum([...scope.holdings.values()]) + scope.consumedWire);
+  assert.equal(scope.initialSeals, scope.seals + scope.operations);
   assert([...scope.holdings.values()].every((quantity) => quantity >= 0));
   return true;
 }
@@ -183,8 +184,10 @@ function authorizedAdapter(adapter, definition, scope, player) {
 }
 
 export function simulateDirectorScenario(scenario, { periods = DIRECTOR_SIMULATION_PERIODS, tickSeconds = 3600,
-  seed = DIRECTOR_SIMULATION_SEED } = {}) {
+  seed = DIRECTOR_SIMULATION_SEED, population = scenario.players } = {}) {
   assert(DIRECTOR_SIMULATION_SCENARIOS.includes(scenario), 'Choose an admitted scenario');
+  assert(Number.isSafeInteger(population) && population >= 1 && population <= 1000, 'Choose a bounded modeled population');
+  scenario = { ...scenario, players: population };
   assert(typeof seed === 'string' && seed.length > 0 && seed.length <= 128, 'A bounded, declared simulation seed is required');
   assert(Array.isArray(periods) && periods.length && periods.every((day) => Number.isInteger(day) && day >= 1 && day <= 180));
   assert(Number.isInteger(tickSeconds) && tickSeconds >= DIRECTOR_LIMITS.tickSeconds && tickSeconds <= 3600 && 3600 % tickSeconds === 0);

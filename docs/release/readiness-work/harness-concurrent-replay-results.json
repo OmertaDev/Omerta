@@ -1,0 +1,155 @@
+{
+  "owner": "Codex/native_harness",
+  "scope": "Recorded two-backend salvage contention with SQL-failure rollback and connection/engine restart; synthetic initialization; no production race or matrix clearance",
+  "matrixQualifying": false,
+  "normalization": "All canonical state including IDs/times/sequences retained; physical backend/tx identifiers and ungated driver timing are diagnostic only.",
+  "preflight": "Initial 0e8a2323 attempts rejected inherited mixed line endings before fixture creation; restored exact Git bytes and refreshed index; guard unchanged.",
+  "runs": [
+    {
+      "directory": "C:/Users/Jorge/.codex/rc1-native-evidence/concurrent-replay-experiment-1",
+      "source": {
+        "revision": "0e8a2323f8c839a46efab47e3c2aa75c03e3282c",
+        "gitTree": "1a1e346fe353c629aab97fde69817f1e020a8391",
+        "checkoutSha256": "7eecfc02847860d0f86d3662077c8824927563be8d0408d1a5b32880c47b0f15",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED_RECORDED_CONCURRENT_REPLAY",
+      "results": [
+        {
+          "label": "commit-observe",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": false,
+          "controlledObservation": true,
+          "faultRollbackVerified": false,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "18d3b15905d8cf92289b34a794502b4f33142f439ec4ffdf77fc9bcbe3fca02e",
+          "finalStateSha256": "ea6b45de2b4b4ee63d57dfa8973638ba7dd6c94935fe097d46bcbf4030abe00d",
+          "scheduleSha256": "9a2afd1ef9f7571f0e6c194f938eec9154ebfb66bc503f5912d06f90e03309ce",
+          "events": 1151,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "commit-replay",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": true,
+          "controlledObservation": false,
+          "faultRollbackVerified": false,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "18d3b15905d8cf92289b34a794502b4f33142f439ec4ffdf77fc9bcbe3fca02e",
+          "finalStateSha256": "ea6b45de2b4b4ee63d57dfa8973638ba7dd6c94935fe097d46bcbf4030abe00d",
+          "scheduleSha256": "9a2afd1ef9f7571f0e6c194f938eec9154ebfb66bc503f5912d06f90e03309ce",
+          "events": 1151,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "fault-observe",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": false,
+          "controlledObservation": true,
+          "faultRollbackVerified": true,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "7af27c7dce37d0ee77594d2ad9d785a849df332ac446f56cf7267bac69bd944e",
+          "finalStateSha256": "c38a4c3db24379d547b959e6c1039afc1a02f513f0d49cc66e32c38091825b4f",
+          "scheduleSha256": "64326316faad0c2f6aef3a7c7de443f9b1adb3926d38ee5d84595c71f2270d1c",
+          "events": 1212,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "fault-replay",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": true,
+          "controlledObservation": false,
+          "faultRollbackVerified": true,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "7af27c7dce37d0ee77594d2ad9d785a849df332ac446f56cf7267bac69bd944e",
+          "finalStateSha256": "c38a4c3db24379d547b959e6c1039afc1a02f513f0d49cc66e32c38091825b4f",
+          "scheduleSha256": "64326316faad0c2f6aef3a7c7de443f9b1adb3926d38ee5d84595c71f2270d1c",
+          "events": 1212,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        }
+      ]
+    },
+    {
+      "directory": "C:/Users/Jorge/.codex/rc1-native-evidence/concurrent-replay-retest-1",
+      "source": {
+        "revision": "d8aafea28a9bdf7f98fc5357702ced0ca717abf8",
+        "gitTree": "d84dabb3c51f88ac731a7dc6d0b24ef863516820",
+        "checkoutSha256": "607da3a60410eba0ff21a68eb67250bc7029cbf24682aace3b4412839f07594e",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED_RECORDED_CONCURRENT_REPLAY",
+      "results": [
+        {
+          "label": "commit-observe",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": false,
+          "controlledObservation": true,
+          "faultRollbackVerified": false,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "18d3b15905d8cf92289b34a794502b4f33142f439ec4ffdf77fc9bcbe3fca02e",
+          "finalStateSha256": "ea6b45de2b4b4ee63d57dfa8973638ba7dd6c94935fe097d46bcbf4030abe00d",
+          "scheduleSha256": "9a2afd1ef9f7571f0e6c194f938eec9154ebfb66bc503f5912d06f90e03309ce",
+          "events": 1151,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "commit-replay",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": true,
+          "controlledObservation": false,
+          "faultRollbackVerified": false,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "18d3b15905d8cf92289b34a794502b4f33142f439ec4ffdf77fc9bcbe3fca02e",
+          "finalStateSha256": "ea6b45de2b4b4ee63d57dfa8973638ba7dd6c94935fe097d46bcbf4030abe00d",
+          "scheduleSha256": "9a2afd1ef9f7571f0e6c194f938eec9154ebfb66bc503f5912d06f90e03309ce",
+          "events": 1151,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "fault-observe",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": false,
+          "controlledObservation": true,
+          "faultRollbackVerified": true,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "7af27c7dce37d0ee77594d2ad9d785a849df332ac446f56cf7267bac69bd944e",
+          "finalStateSha256": "c38a4c3db24379d547b959e6c1039afc1a02f513f0d49cc66e32c38091825b4f",
+          "scheduleSha256": "64326316faad0c2f6aef3a7c7de443f9b1adb3926d38ee5d84595c71f2270d1c",
+          "events": 1212,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        },
+        {
+          "label": "fault-replay",
+          "status": "PASS_SCOPED",
+          "recordedConcurrentReplay": true,
+          "controlledObservation": false,
+          "faultRollbackVerified": true,
+          "postgresLockConflicts": 1,
+          "initialStateSha256": "7af27c7dce37d0ee77594d2ad9d785a849df332ac446f56cf7267bac69bd944e",
+          "finalStateSha256": "c38a4c3db24379d547b959e6c1039afc1a02f513f0d49cc66e32c38091825b4f",
+          "scheduleSha256": "64326316faad0c2f6aef3a7c7de443f9b1adb3926d38ee5d84595c71f2270d1c",
+          "events": 1212,
+          "commits": 13,
+          "invariantChecks": 55,
+          "matrixQualifying": false
+        }
+      ]
+    }
+  ]
+}

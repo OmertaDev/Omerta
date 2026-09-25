@@ -1,0 +1,110 @@
+{
+  "format": 1,
+  "findingId": "TOOL46",
+  "status": "SCOPED_PROJECTION_AND_GENERIC_NATIVE_PASS_ORIGINAL_WORKER_RETEST_PENDING",
+  "source": {
+    "revision": "5f506844b02d8720c8b6674ec8a69cbb5beb4ff6",
+    "gitTree": "ff23b679e3a1fd79587cba409da1813ff1c5170d",
+    "checkoutSha256": "1f5b0ae6300b1106983e2b152ab5a65a36d0d2e4e93bf3769e949af2ae9dea90",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "parent": "6368339e82965679c1d1aae91ecea657489a6414",
+  "integrationCommit": "5f506844b02d8720c8b6674ec8a69cbb5beb4ff6",
+  "cause": "Original runFamilies calls createGang then marks NPC flag and war-pool standing before the same COMMIT; player-only classifier incorrectly asserted false NPC flag",
+  "change": "Validate stable living NPC character/account and new Family/boss linkage, exact formation fee and pocket/bank custody; retain NPC formation/war-pool/Family/membership lineage as unsupported",
+  "noRuntimeChanges": true,
+  "supportedNPCFamilyMovements": 0,
+  "retainedNativeFailures": [
+    {
+      "originalSource": "6368339e82965679c1d1aae91ecea657489a6414",
+      "originalInputSha256": "c93fc32c0d90222438dc573d18bb525f89a2e70d9b67cd167230a72d4c853701",
+      "originalError": "Expected values to be strictly equal:\n\ntrue !== false\n",
+      "originalOutcome": "FAILED_WORLD_RETAINED",
+      "boundaryOutcome": "COMMITTED",
+      "correctedStatus": "PASS_PARITY_WITH_UNSUPPORTED_LINEAGE",
+      "supportedFamilyMovements": 0,
+      "negativeControls": 16,
+      "unsupported": [
+        {
+          "kind": "family-npc-formation"
+        },
+        {
+          "kind": "receipt-reason",
+          "reason": "gang:found"
+        },
+        {
+          "kind": "family-lineage"
+        },
+        {
+          "kind": "observed-table-change",
+          "table": "gang_members"
+        }
+      ],
+      "fullRestrictedRowsVerified": true
+    },
+    {
+      "originalSource": "74b2918023d14f442138b3cf982943647b675e99",
+      "originalInputSha256": "b5ce8aecd56fac1a56a93d082c16df33d10a3b92c1fa463c08708f0be3fc2677",
+      "originalError": "Expected values to be strictly equal:\n\ntrue !== false\n",
+      "originalOutcome": "FAILED_WORLD_RETAINED",
+      "boundaryOutcome": "COMMITTED",
+      "correctedStatus": "PASS_PARITY_WITH_UNSUPPORTED_LINEAGE",
+      "supportedFamilyMovements": 0,
+      "negativeControls": 16,
+      "unsupported": [
+        {
+          "kind": "family-npc-formation"
+        },
+        {
+          "kind": "receipt-reason",
+          "reason": "gang:found"
+        },
+        {
+          "kind": "family-lineage"
+        },
+        {
+          "kind": "observed-table-change",
+          "table": "gang_members"
+        }
+      ],
+      "fullRestrictedRowsVerified": true
+    }
+  ],
+  "pureNegativeControls": 16,
+  "retainedNativeNegativeControls": 32,
+  "restrictedDetailLossRejected": true,
+  "priorEntryControls": 36,
+  "priorDissolutionControls": 30,
+  "genericNative": {
+    "status": "SCOPED_PASS",
+    "canonicalBoundaries": 11,
+    "parityChecks": 77,
+    "observedTables": 57,
+    "exactBatchSequentialHashEquality": true,
+    "committedUnexplainedCashRejected": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+    "reportSha256": "4477d30c40308e21f21ba73a75105f5c729fd5ab7e6960a194d3640fdab374e5",
+    "databaseRetention": "Existing generic observer runner retains isolated deliberate-corruption database"
+  },
+  "evidence": {
+    "verifiedArtifactFiles": 41,
+    "retainedInputReportSha256": "639f92faf75ceaaad597149a8ce3ebb352b97c495912ac97a05682e264a8a049",
+    "oldSourceReproductionLogSha256": "639d8be5038053cafded7a920bdbaf7c4eb2d7d9fa0f628a9ef50dc3c83684c1"
+  },
+  "open": [
+    "Native original-worker fresh observation and exact recorded replay are pending combined46/47 retest by native_harness",
+    "Original failing world outcomes remain failed; saved-input verification is not a fresh worker pass",
+    "TOOL47 cleanup repair is separately owned and not included",
+    "NPC war-pool standing/creation and broader Family resource lineage remain unsupported",
+    "Full resource and release qualification remain OPEN"
+  ],
+  "owner": "Codex/resource_proof; native_harness owns original-worker pair; root owns integration and catalog",
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false,
+    "rawRequests": false
+  }
+}

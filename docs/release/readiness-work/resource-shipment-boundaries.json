@@ -1,0 +1,1024 @@
+{
+  "format": 1,
+  "source": {
+    "revision": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+    "gitTree": "96e5400b369ad8d3982634eeea197c46f1415105",
+    "checkoutSha256": "4cefeeab14d52dbd8900ea037981c875574e3afbf4a7715a4f7c9d2cd8a22513",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "status": "PASS_SCOPED",
+  "matrixQualifying": false,
+  "configuration": {
+    "epoch": "2026-09-20T23:59:59.999Z",
+    "population": 18,
+    "seed": "rc1-shipment-midnight-v1",
+    "authority": "Unmodified withCharacter/readCharacter, shipmentBoard, takeShipment and travel",
+    "clock": "Test application Date and isolated PostgreSQL transaction/statement clocks advance together",
+    "entryMode": "Declared accounts with schema defaults plus 100000 cash, 10000 respect and 50 physical stats",
+    "workers": "No background worker executes; no full-world or rollover claim",
+    "identity": "Each domain invocation is recorded; HTTP receipt replay is covered by the separate resource runner"
+  },
+  "configurationSha256": "cd3ad2d772ff33a2945b81c4360fc991a1fbce01e56582b1a78a1778da6f070d",
+  "startedAt": "2026-09-21T04:36:46.651Z",
+  "endedAt": "2026-09-21T04:38:09.794Z",
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "cpuCount": 16,
+    "totalMemoryBytes": 17081044992,
+    "availableParallelism": 16,
+    "productionEquivalent": false,
+    "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+  },
+  "result": {
+    "status": "PASS_SCOPED",
+    "logicalDurationMs": 86400001,
+    "midnightBoundaries": 2,
+    "population": 18,
+    "activeActors": 13,
+    "canonicalCalls": 97,
+    "observedBoundaries": 97,
+    "finalStateSha256": "382698beb85064e365dccd094b33ec0e63e0d63a13c42f8f3e4715bcc7302614",
+    "invariants": [
+      {
+        "name": "character cash",
+        "baselineDrift": 1791000,
+        "finalDrift": 1791000,
+        "ok": true
+      },
+      {
+        "name": "gang treasuries",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "commission escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "bounty escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "$OMR conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "emission faucet retired",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "plex mint retired",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "portfolio retired",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "desk inventory backed",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "desk inventory ledgered",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "desk sales ledgered",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "auction escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "world graph salvage car audit",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "car conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "cb conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "ammo conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "convoy insurance pool",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "market escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "loan escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "loan omr pledge escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "drop claims ledgered",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "favor escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "turf contest escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "loan house pool",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "boxing bet escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "den profit",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "den distributions",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "poker tourney escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "ring poker escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "grand prix escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "stakes escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "futurity escrow",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "agent acquisition budget accounting",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "agent referral claim ledger",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "world graph stack conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "world graph unique custody and provenance",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "world graph object transitions",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "family operation history",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "family operation custody",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "family operation capital",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "world graph hardening cash sink",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "world graph currency boundary",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "reason vocabulary",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true
+      },
+      {
+        "name": "content_artifact_integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item_definition_integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "content_membership_integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "content_activation_chain_integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "content_selection_integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "content_activation_history_policy",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "content_activation_policy_drift",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item lot definition integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item lot quantity integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item lot custody integrity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item lot lineage parity",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "item lot conservation",
+        "baselineDrift": 0,
+        "finalDrift": 0,
+        "ok": true,
+        "issues": []
+      }
+    ],
+    "exclusions": [
+      "No HTTP receipt/key replay in this runner",
+      "No recorded concurrent boundary race",
+      "No shipment loot branch",
+      "No complete worker schedule, simulation matrix or deployment attestation"
+    ]
+  },
+  "observedCaseLabels": [
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:board:synthetic-actor",
+    "one-ms-before-midnight:take:synthetic-actor",
+    "one-ms-before-midnight:same-player-cap",
+    "one-ms-before-midnight:spare-board",
+    "one-ms-before-midnight:city-exhausted",
+    "midnight:authorized-board",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:board:synthetic-actor",
+    "at-midnight:take:synthetic-actor",
+    "at-midnight:same-player-cap",
+    "at-midnight:spare-board",
+    "at-midnight:city-exhausted",
+    "restart:today-cap-persists",
+    "restart:city-cap-persists",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:board:synthetic-actor",
+    "second-midnight:travel:synthetic-actor",
+    "second-midnight:take:synthetic-actor",
+    "second-midnight:same-player-cap",
+    "second-midnight:spare-board",
+    "second-midnight:spare-travel",
+    "second-midnight:city-exhausted"
+  ],
+  "privateEvidence": {
+    "id": "7bfdc8ff-shipment-midnight",
+    "runSha256": "6604d8a015531a9cb2dc11673c28abd24980cc92a96d5a52f5ac702bccf408aa",
+    "artifacts": [
+      {
+        "path": "initial.json",
+        "sha256": "dae0a9376b2af57025a5a5f1c6c301eaa9523a4920ef22b59cce4a967a05ce38",
+        "bytes": 92633
+      },
+      {
+        "path": "boundary-1.json",
+        "sha256": "dae0a9376b2af57025a5a5f1c6c301eaa9523a4920ef22b59cce4a967a05ce38",
+        "bytes": 92633
+      },
+      {
+        "path": "boundary-2.json",
+        "sha256": "f4c68706b3a1d44cfde167c569df10e6db781a7532dc2f9b64ccd3e7c249da65",
+        "bytes": 92809
+      },
+      {
+        "path": "boundary-3.json",
+        "sha256": "f4c68706b3a1d44cfde167c569df10e6db781a7532dc2f9b64ccd3e7c249da65",
+        "bytes": 92809
+      },
+      {
+        "path": "boundary-4.json",
+        "sha256": "ffb565f86f766e97c7e8e4504304ea25b873d71dfac07836d59d045288c3a467",
+        "bytes": 92893
+      },
+      {
+        "path": "boundary-5.json",
+        "sha256": "ffb565f86f766e97c7e8e4504304ea25b873d71dfac07836d59d045288c3a467",
+        "bytes": 92893
+      },
+      {
+        "path": "boundary-6.json",
+        "sha256": "39ae67fe9aedc1c962318e722c455d4b7bb4c5ce3e650839b9dafa7e7496d51c",
+        "bytes": 92978
+      },
+      {
+        "path": "boundary-7.json",
+        "sha256": "39ae67fe9aedc1c962318e722c455d4b7bb4c5ce3e650839b9dafa7e7496d51c",
+        "bytes": 92978
+      },
+      {
+        "path": "boundary-8.json",
+        "sha256": "87fc77e6fd8c583621ce92818642aa223abbc891956b3d66633de4a5e2463e78",
+        "bytes": 93062
+      },
+      {
+        "path": "boundary-9.json",
+        "sha256": "87fc77e6fd8c583621ce92818642aa223abbc891956b3d66633de4a5e2463e78",
+        "bytes": 93062
+      },
+      {
+        "path": "boundary-10.json",
+        "sha256": "889a0ae1945613871defdba07ebff5ae0992dbc677ded145d28f60bb58b4fd0b",
+        "bytes": 93146
+      },
+      {
+        "path": "boundary-11.json",
+        "sha256": "889a0ae1945613871defdba07ebff5ae0992dbc677ded145d28f60bb58b4fd0b",
+        "bytes": 93146
+      },
+      {
+        "path": "boundary-12.json",
+        "sha256": "3adceb87566072aa5e9cba353016f2e034d96b85e27bd26683f0d59bd4d21df9",
+        "bytes": 93230
+      },
+      {
+        "path": "boundary-13.json",
+        "sha256": "3adceb87566072aa5e9cba353016f2e034d96b85e27bd26683f0d59bd4d21df9",
+        "bytes": 93230
+      },
+      {
+        "path": "boundary-14.json",
+        "sha256": "1ecd7c5f9f8ffbdfcf94da3e2bf6a10893efab4b0af33e8dad9ff170aff87ea9",
+        "bytes": 93314
+      },
+      {
+        "path": "boundary-15.json",
+        "sha256": "1ecd7c5f9f8ffbdfcf94da3e2bf6a10893efab4b0af33e8dad9ff170aff87ea9",
+        "bytes": 93314
+      },
+      {
+        "path": "boundary-16.json",
+        "sha256": "f3aefd89bb181e39c589a0ffebb57f37cc07fcc7f64a664b54f1f200c679666c",
+        "bytes": 93398
+      },
+      {
+        "path": "boundary-17.json",
+        "sha256": "f3aefd89bb181e39c589a0ffebb57f37cc07fcc7f64a664b54f1f200c679666c",
+        "bytes": 93398
+      },
+      {
+        "path": "boundary-18.json",
+        "sha256": "b6d020c282b181b80db01ab8a242485fef86ab3209979bfb201c26ca0720a351",
+        "bytes": 93482
+      },
+      {
+        "path": "boundary-19.json",
+        "sha256": "b6d020c282b181b80db01ab8a242485fef86ab3209979bfb201c26ca0720a351",
+        "bytes": 93482
+      },
+      {
+        "path": "boundary-20.json",
+        "sha256": "65041e0317781d6e5af363c2230d72cd8ce849fd24a9b3d68f82c97873e781ae",
+        "bytes": 93566
+      },
+      {
+        "path": "boundary-21.json",
+        "sha256": "65041e0317781d6e5af363c2230d72cd8ce849fd24a9b3d68f82c97873e781ae",
+        "bytes": 93566
+      },
+      {
+        "path": "boundary-22.json",
+        "sha256": "d50103e4298ac36b42081dd95138df7fe4d3bb46058df70b5f560032cc2a5000",
+        "bytes": 93651
+      },
+      {
+        "path": "boundary-23.json",
+        "sha256": "d50103e4298ac36b42081dd95138df7fe4d3bb46058df70b5f560032cc2a5000",
+        "bytes": 93651
+      },
+      {
+        "path": "boundary-24.json",
+        "sha256": "b118447a96e11ce67ec89cfe933e38f03459f94ef6e022fdd25fa16f92a6a2cc",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-25.json",
+        "sha256": "b118447a96e11ce67ec89cfe933e38f03459f94ef6e022fdd25fa16f92a6a2cc",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-26.json",
+        "sha256": "b118447a96e11ce67ec89cfe933e38f03459f94ef6e022fdd25fa16f92a6a2cc",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-27.json",
+        "sha256": "b118447a96e11ce67ec89cfe933e38f03459f94ef6e022fdd25fa16f92a6a2cc",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-28.json",
+        "sha256": "a02ea17fdf941986a4b37087cf775eb606b2c72532defe7cfeb1e3a3c500d7e9",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-29.json",
+        "sha256": "a02ea17fdf941986a4b37087cf775eb606b2c72532defe7cfeb1e3a3c500d7e9",
+        "bytes": 93736
+      },
+      {
+        "path": "boundary-30.json",
+        "sha256": "b68fd195dbe353aabe434fe3ed976f24351d16cf4f9dd86e57c31a0ff37b03aa",
+        "bytes": 93904
+      },
+      {
+        "path": "boundary-31.json",
+        "sha256": "b68fd195dbe353aabe434fe3ed976f24351d16cf4f9dd86e57c31a0ff37b03aa",
+        "bytes": 93904
+      },
+      {
+        "path": "boundary-32.json",
+        "sha256": "835f5f6bfb102c73af529ade356a0053a4650ce6bac99af11cb1ade25ea08209",
+        "bytes": 93988
+      },
+      {
+        "path": "boundary-33.json",
+        "sha256": "835f5f6bfb102c73af529ade356a0053a4650ce6bac99af11cb1ade25ea08209",
+        "bytes": 93988
+      },
+      {
+        "path": "boundary-34.json",
+        "sha256": "d10e5aaa42e3d7990b3b23392396e48e5643e20f2ece5c980e003b7ff4531f54",
+        "bytes": 94073
+      },
+      {
+        "path": "boundary-35.json",
+        "sha256": "d10e5aaa42e3d7990b3b23392396e48e5643e20f2ece5c980e003b7ff4531f54",
+        "bytes": 94073
+      },
+      {
+        "path": "boundary-36.json",
+        "sha256": "a57d1b61354a98555f49bab3159531617aa367ee47790c3086c77abddd4a12f2",
+        "bytes": 94157
+      },
+      {
+        "path": "boundary-37.json",
+        "sha256": "a57d1b61354a98555f49bab3159531617aa367ee47790c3086c77abddd4a12f2",
+        "bytes": 94157
+      },
+      {
+        "path": "boundary-38.json",
+        "sha256": "c02c2b01f40ce1eab1dc58b95a775e6d4d39617bf37ab97213dc3f6729a92f43",
+        "bytes": 94241
+      },
+      {
+        "path": "boundary-39.json",
+        "sha256": "c02c2b01f40ce1eab1dc58b95a775e6d4d39617bf37ab97213dc3f6729a92f43",
+        "bytes": 94241
+      },
+      {
+        "path": "boundary-40.json",
+        "sha256": "d668d00fda0a8a8a7941ba8090f1cd6e461391130808e370507b2ac7f6019295",
+        "bytes": 94325
+      },
+      {
+        "path": "boundary-41.json",
+        "sha256": "d668d00fda0a8a8a7941ba8090f1cd6e461391130808e370507b2ac7f6019295",
+        "bytes": 94325
+      },
+      {
+        "path": "boundary-42.json",
+        "sha256": "4f45a2261823758ad5ee5cfb239e057b333bf91f4a68eaebc4df9f53402e4d8f",
+        "bytes": 94409
+      },
+      {
+        "path": "boundary-43.json",
+        "sha256": "4f45a2261823758ad5ee5cfb239e057b333bf91f4a68eaebc4df9f53402e4d8f",
+        "bytes": 94409
+      },
+      {
+        "path": "boundary-44.json",
+        "sha256": "19b31f09d80ddc03491852bc83ba03e641b41b5e5715faf99b5ef078d03ab472",
+        "bytes": 94493
+      },
+      {
+        "path": "boundary-45.json",
+        "sha256": "19b31f09d80ddc03491852bc83ba03e641b41b5e5715faf99b5ef078d03ab472",
+        "bytes": 94493
+      },
+      {
+        "path": "boundary-46.json",
+        "sha256": "ee87034e1ef6b5a84f9318b1be6ea480c6fdfda43e5d9b5b96b0bda575af8c91",
+        "bytes": 94577
+      },
+      {
+        "path": "boundary-47.json",
+        "sha256": "ee87034e1ef6b5a84f9318b1be6ea480c6fdfda43e5d9b5b96b0bda575af8c91",
+        "bytes": 94577
+      },
+      {
+        "path": "boundary-48.json",
+        "sha256": "28dce276931a32bb18ec63f978ebd07b438e9a307e9e82e87c64e6ee592a51a6",
+        "bytes": 94661
+      },
+      {
+        "path": "boundary-49.json",
+        "sha256": "28dce276931a32bb18ec63f978ebd07b438e9a307e9e82e87c64e6ee592a51a6",
+        "bytes": 94661
+      },
+      {
+        "path": "boundary-50.json",
+        "sha256": "10fd459f2cb2f306598658e7d3d0490cfcd2fc8a055f0cb743c354e23bb9be85",
+        "bytes": 94746
+      },
+      {
+        "path": "boundary-51.json",
+        "sha256": "10fd459f2cb2f306598658e7d3d0490cfcd2fc8a055f0cb743c354e23bb9be85",
+        "bytes": 94746
+      },
+      {
+        "path": "boundary-52.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-53.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-54.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-55.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-56.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-57.json",
+        "sha256": "e45918da689370c4dbaba76abd4d14c007d88143e09e2aab76e40353b21a5b8f",
+        "bytes": 94831
+      },
+      {
+        "path": "boundary-58.json",
+        "sha256": "3cdd5e4394ff96cf38a482c29ccc1bb3fa1d3140257c1b0734833afc0cf68a6e",
+        "bytes": 94814
+      },
+      {
+        "path": "boundary-59.json",
+        "sha256": "2069af7b6e99271cbbb9b79dd33fe4d17587a8406a0d83fe3f6fca2566599ecc",
+        "bytes": 95210
+      },
+      {
+        "path": "boundary-60.json",
+        "sha256": "9a6bc62d2c14ef850881a08eda8f818ccf1a50777f8d1ec5b8e58d5408d24c5f",
+        "bytes": 95377
+      },
+      {
+        "path": "boundary-61.json",
+        "sha256": "809801024b2cc3f0a45063a6395b35adb7562e7e3376a1fbd96dd2208c41809a",
+        "bytes": 95360
+      },
+      {
+        "path": "boundary-62.json",
+        "sha256": "9bc3c4f5066d2996280adb3924c1f6f38486831b39e52333672d8d5edfa4ac88",
+        "bytes": 95748
+      },
+      {
+        "path": "boundary-63.json",
+        "sha256": "12c31082dc248908f7575f857c24a430720d4704ac89ca6a6015f1d917da4804",
+        "bytes": 95833
+      },
+      {
+        "path": "boundary-64.json",
+        "sha256": "9e1b1b3e42b5641060bfc5ea49731fade6e52699425db6d891323bbab88e600b",
+        "bytes": 95816
+      },
+      {
+        "path": "boundary-65.json",
+        "sha256": "38908d8db05619329c581c5a26b71772a5d516677de388c44d265397d9232b8f",
+        "bytes": 96204
+      },
+      {
+        "path": "boundary-66.json",
+        "sha256": "9981cceeb1c043d12be0f75f90e5570919d2cb8c8cda754691177a9e47492d9d",
+        "bytes": 96290
+      },
+      {
+        "path": "boundary-67.json",
+        "sha256": "e87ec83d379db49bdde7bb88b424ca31b65ef02c90f6770b13f98415be5869b4",
+        "bytes": 96273
+      },
+      {
+        "path": "boundary-68.json",
+        "sha256": "109012f8accd199cd6084c2e3463871f18472c94245a2505caad92b22519b253",
+        "bytes": 96661
+      },
+      {
+        "path": "boundary-69.json",
+        "sha256": "6a1262a23062c0e452a20cd378b331a34d65ae4efbc3145a10870f2507779fc3",
+        "bytes": 96746
+      },
+      {
+        "path": "boundary-70.json",
+        "sha256": "34e1ae1989abf92d176af915af6773d2f1521d8b09d6b3ab5bdd0f5091fe41bc",
+        "bytes": 96729
+      },
+      {
+        "path": "boundary-71.json",
+        "sha256": "ad9db591dc4525ed4f3a8313807d0991257e045b5c0e74157ee8108ed501c9a6",
+        "bytes": 97117
+      },
+      {
+        "path": "boundary-72.json",
+        "sha256": "bed16f09f71e78d352226dca1972a93287f29355f1b9f5ca8fa8c7e9726790b9",
+        "bytes": 97202
+      },
+      {
+        "path": "boundary-73.json",
+        "sha256": "f7c29b41dd4089908d0ae377be2880a2aac7bbc15df23ae0da330dff2673637e",
+        "bytes": 97185
+      },
+      {
+        "path": "boundary-74.json",
+        "sha256": "eedc088a570d07a7aec9b1ff6c985c2c5d2f2bf50c96fb91c3c0674f170eb5b1",
+        "bytes": 97573
+      },
+      {
+        "path": "boundary-75.json",
+        "sha256": "7832a41d8f8d3cd60694a98ffba488752dba0f9488ec204fe82cb3eff6b8f015",
+        "bytes": 97658
+      },
+      {
+        "path": "boundary-76.json",
+        "sha256": "ea542d1e4aeca5319038cfec825465da3f8fad98143b7dd483e5c98340973320",
+        "bytes": 97641
+      },
+      {
+        "path": "boundary-77.json",
+        "sha256": "788bd7bf53f81ce0a870a30cdfe7893bc08e8ac4a933463549cc0c0bd1e66be0",
+        "bytes": 98029
+      },
+      {
+        "path": "boundary-78.json",
+        "sha256": "ad72690d10147eeaab2a699fe125c7a8b64bd8210b7e60f8bf5bed6d44f0427b",
+        "bytes": 98114
+      },
+      {
+        "path": "boundary-79.json",
+        "sha256": "e8c230e67cbcdedaee70ed8be508dc9e5c243cb12d873806b0db65b901bc4438",
+        "bytes": 98097
+      },
+      {
+        "path": "boundary-80.json",
+        "sha256": "74b2bd1749ba6bb77616a7ba7f92e1245c683135f7904e2c623d5c9ba69c1b92",
+        "bytes": 98485
+      },
+      {
+        "path": "boundary-81.json",
+        "sha256": "13400fdb714602249d2222fe946ffa1b5960fa8eaef58ef4c7105a127418df9e",
+        "bytes": 98570
+      },
+      {
+        "path": "boundary-82.json",
+        "sha256": "d54fd17aecf1aa2587c3b7379d8204796f20ec561b54614bf45fc0410fb9c7dd",
+        "bytes": 98553
+      },
+      {
+        "path": "boundary-83.json",
+        "sha256": "f96ce3c4da339d236d966368c011f4df0b49f15417a8fd2cd3b89250b49273bb",
+        "bytes": 98941
+      },
+      {
+        "path": "boundary-84.json",
+        "sha256": "4953f8db3ff177826438409964c7063646d9ad159c98cb2f84c82dea965dcb59",
+        "bytes": 99026
+      },
+      {
+        "path": "boundary-85.json",
+        "sha256": "5d6e315a95919ee525544c8dd8590f613945b3d81fe4e24e577f41406c0d4e35",
+        "bytes": 99009
+      },
+      {
+        "path": "boundary-86.json",
+        "sha256": "57adeb346202e890f8e63de230247d752fcd9b9e5e4501aad8e2a53ddc404f79",
+        "bytes": 99397
+      },
+      {
+        "path": "boundary-87.json",
+        "sha256": "e6cd90ba7d0ce2b5d8150ce1c0e70776c565981929ef8ae8a7018c960f19bfc9",
+        "bytes": 99482
+      },
+      {
+        "path": "boundary-88.json",
+        "sha256": "bff2f8b64e88e2bf03fdda8c0a76254626fd6678479ab7b0d333d121edbda9cd",
+        "bytes": 99465
+      },
+      {
+        "path": "boundary-89.json",
+        "sha256": "fc176bb95ee95fceadd0f80acfe712ab2e6a8b0ec5546589065659edbbcfb098",
+        "bytes": 99855
+      },
+      {
+        "path": "boundary-90.json",
+        "sha256": "e98b70e42edbe24de905c335339d297b4887e2f1b3c7a6793239416885a38bf2",
+        "bytes": 99941
+      },
+      {
+        "path": "boundary-91.json",
+        "sha256": "fdfd36d3ce38e7c1f20bf17beac9998e753a3f30bf7ea3d6ddf3dda7fde4b846",
+        "bytes": 99924
+      },
+      {
+        "path": "boundary-92.json",
+        "sha256": "5bd65473a909e462e504b8e17ddf5e8634fd3629e00b6868de1b897a1b8e5620",
+        "bytes": 100314
+      },
+      {
+        "path": "boundary-93.json",
+        "sha256": "788382839bb3872e8b99f835fc097c594bc7c99fb39ee46f627fb7ef6c9ecff2",
+        "bytes": 100400
+      },
+      {
+        "path": "boundary-94.json",
+        "sha256": "788382839bb3872e8b99f835fc097c594bc7c99fb39ee46f627fb7ef6c9ecff2",
+        "bytes": 100400
+      },
+      {
+        "path": "boundary-95.json",
+        "sha256": "9bd4c54d5e4206d5a032bfc51283dad5149cf9730f85b99a4b480faf208929af",
+        "bytes": 100383
+      },
+      {
+        "path": "boundary-96.json",
+        "sha256": "685e85adf26c082ae82126a15bdbda3d37953a09e43ef13127d2a8fff9b9e7b3",
+        "bytes": 100773
+      },
+      {
+        "path": "boundary-97.json",
+        "sha256": "685e85adf26c082ae82126a15bdbda3d37953a09e43ef13127d2a8fff9b9e7b3",
+        "bytes": 100773
+      },
+      {
+        "path": "final.json",
+        "sha256": "685e85adf26c082ae82126a15bdbda3d37953a09e43ef13127d2a8fff9b9e7b3",
+        "bytes": 100773
+      },
+      {
+        "path": "history.jsonl",
+        "sha256": "d6aa748b76b89ad865cbbd9531cc1e5e171b03c619ac015baf618a56877f99ef",
+        "bytes": 2373617
+      }
+    ],
+    "access": "Raw actor and state artifacts retained in user-and-SYSTEM-only local storage; this summary contains hashes and synthetic labels."
+  },
+  "failedRuns": [
+    {
+      "source": "d70b7d3bf649754c52d7b6edfc32f17507a96a43",
+      "privateEvidenceId": "d70b7d3b-shipment-midnight",
+      "runSha256": "df5ec4c19b4261f6303f14c3dc9b9b76f8f510fe85e74d04919c26aec723cd90",
+      "cause": "The scaled cap let all 12 fixture actors take, so the city-exhaustion probe hit its own player cap. Added an untapped actor and an explicit capacity assertion."
+    },
+    {
+      "source": "355eb64be176df0600104a60bcb3e609f6e34b31",
+      "privateEvidenceId": "355eb64b-shipment-midnight",
+      "runSha256": "8c284a7c299d11af16e8ec3122828f0d9aff2846b12373ee460d42523da12324",
+      "cause": "The harness called the fast read half directly; due accrual returns null for the canonical fallback. Now uses unmodified readCharacter."
+    }
+  ]
+}

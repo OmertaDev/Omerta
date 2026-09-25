@@ -1,0 +1,493 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS_WITH_FAILURE",
+  "releaseReady": false,
+  "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:58:10.165Z",
+      "endedAt": "2026-09-21T07:58:40.084Z",
+      "durationMs": 29918,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "929b44adb6cc30ca23542504b09c6feea8f766d732e791f21e3645e30e9f6f3d",
+      "resultSha256": "c07f2d23061b4f31d58d6f7ec607314943b383df1cba4f0594714c5877efb365"
+    },
+    {
+      "format": 1,
+      "id": "rc1-crew-focus",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:crew-focus:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:58:51.662Z",
+      "endedAt": "2026-09-21T07:59:23.722Z",
+      "durationMs": 32059,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Controlled native Crew pending-read and adjacent-Send interleavings; no physical keyboard, every renderer, hosted cause certainty or real-player qualification"
+      ],
+      "log": "gates/rc1-crew-focus/output.txt",
+      "logSha256": "153ebebe48860e481be358db0e02fc0428de31f30125dade88a7a286199357c2",
+      "resultSha256": "57041e3a624c1c529231737068f1558fd2b09eda3683c3b91fa822a4f8f32278"
+    },
+    {
+      "format": 1,
+      "id": "rc1-law-policy",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:law:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:58:10.417Z",
+      "endedAt": "2026-09-21T07:59:29.136Z",
+      "durationMs": 78718,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "One ordinary entrant through natural indictment, plea and original detention expiry; offline forced trial, other Law branches, shared resource taxonomy and full matrix remain incomplete"
+      ],
+      "log": "gates/rc1-law-policy/output.txt",
+      "logSha256": "22fb8776f64af5d62af8e4eb6be081f054d62b1df56ea28fc143b56255694924",
+      "resultSha256": "714a50a377d252a5339eec921310a8ac049e2ce55e22e5364b50a2e08ea827d3"
+    },
+    {
+      "format": 1,
+      "id": "rc1-query-order",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:query-order:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:59:40.008Z",
+      "endedAt": "2026-09-21T08:03:30.104Z",
+      "durationMs": 230095,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native opposite-order seasonal and market causal controls; no ninety-day integrated replay, complete resource taxonomy or qualifying matrix"
+      ],
+      "log": "gates/rc1-query-order/output.txt",
+      "logSha256": "9715750ed459d27d17380e10d2fb25026046c96f18b74da1698ddcc2b3d36118",
+      "resultSha256": "2396cbd3a17f556e05167fd9ea9fa7e14306f2ba599572d79de373e734c7f65b"
+    },
+    {
+      "format": 1,
+      "id": "rc1-family-monopoly",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-monopoly:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:58:10.635Z",
+      "endedAt": "2026-09-21T07:59:14.760Z",
+      "durationMs": 64124,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Declared25-actor20-member fixture, ordinary outsider entry/progression and succession; no elapsed days, all-actor workload, all-resource extreme or full matrix"
+      ],
+      "log": "gates/rc1-family-monopoly/output.txt",
+      "logSha256": "a9a9c46cbc5d348a415b70985ca570acc4ae479b3279ec276d7f3686e39d4a07",
+      "resultSha256": "2f55e10d5ab928f304286e52b07e8413954d8a9f099599a267b00d9b288a0f8a"
+    },
+    {
+      "format": 1,
+      "id": "rc1-family-fragmented",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:family-fragmented:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:00:03.684Z",
+      "endedAt": "2026-09-21T08:01:15.472Z",
+      "durationMs": 71787,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Declared25-actor ten-Family fixture, ordinary outsiders and succession; no elapsed days, alliance/war, full resource lineage or full matrix"
+      ],
+      "log": "gates/rc1-family-fragmented/output.txt",
+      "logSha256": "17e04f03048aa300aaec718f238617537f2952042533e77d968288e264492104",
+      "resultSha256": "c83433396ff446d10530b5e1b6da4b305b2c1743c73de5c0959e16c62dbb46e0"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:00:03.941Z",
+      "endedAt": "2026-09-21T08:01:32.685Z",
+      "durationMs": 88743,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "ed80e9f98649d4fb067a6372f40f000ede70838d54129a4d6d6f0b0649cd7bb3",
+      "resultSha256": "f12f462613adb3f0d2a8897c52885174e98c67ea07ca6cb0ef5fac197201336a"
+    },
+    {
+      "format": 1,
+      "id": "rc1-golden",
+      "source": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:golden:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T08:00:03.448Z",
+      "endedAt": "2026-09-21T08:08:11.319Z",
+      "durationMs": 487870,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "FAIL",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Fixture-assisted browser B/C/D/E segments; no physical device or real comprehension evidence"
+      ],
+      "log": "gates/rc1-golden/output.txt",
+      "logSha256": "effaf687a9dc31fae3cd28b3f4f20a5f0e1e7bb0b18520628be448693d3eb10b",
+      "resultSha256": "7c52e41426a3521a19f1b362a91073c93a9d199a9315c050329b1d1d8e457634"
+    }
+  ],
+  "nativeRuns": [
+    {
+      "directory": "law-9e05bf08-1",
+      "source": {
+        "revision": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+        "gitTree": "6cc80db679cb09d858145db28b2471dd8c4427dd",
+        "checkoutSha256": "f925db166ce0dc08faa271851001fc5ed11b169f4bf1bb2339c09db8522be049",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "0990d1c7dee676d3fbdd1e717162432c18b2c4d1e71f42529e7cbed93d4b5e59",
+      "startedAt": "2026-09-21T07:58:23.537Z",
+      "endedAt": "2026-09-21T07:59:17.839Z",
+      "runSha256": "bcb561cdfa5de9dac539f080ad4c5d59dcea1320b173207bcfb8836d14acca9a",
+      "artifactsVerified": 494,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "family-monopoly-9e05bf08-1",
+      "source": {
+        "revision": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+        "gitTree": "6cc80db679cb09d858145db28b2471dd8c4427dd",
+        "checkoutSha256": "f925db166ce0dc08faa271851001fc5ed11b169f4bf1bb2339c09db8522be049",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "2ca6171bd4162eb30b442d8d5604665720f3e678da699705dcb0aa3ff2d98eb3",
+      "startedAt": "2026-09-21T07:58:23.542Z",
+      "endedAt": "2026-09-21T07:59:02.700Z",
+      "runSha256": "c9c2573cf9d55d69941e29d4e0deeab5f7c4e68bca5d8eabdd128280ea47cfb4",
+      "artifactsVerified": 294,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "family-fragmented-9e05bf08-1",
+      "source": {
+        "revision": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+        "gitTree": "6cc80db679cb09d858145db28b2471dd8c4427dd",
+        "checkoutSha256": "f925db166ce0dc08faa271851001fc5ed11b169f4bf1bb2339c09db8522be049",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "3a69347cedeb16c08fc101789a0e9c706a8e43f5bcac04d74ed851b58afab93d",
+      "startedAt": "2026-09-21T08:00:16.266Z",
+      "endedAt": "2026-09-21T08:01:01.764Z",
+      "runSha256": "5c22a32c96300bfe0c4208f98a1c115dea9f53c8d7b0c710abaf5f06a515db82",
+      "artifactsVerified": 298,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "world-resource-9e05bf08-1",
+      "source": {
+        "revision": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+        "gitTree": "6cc80db679cb09d858145db28b2471dd8c4427dd",
+        "checkoutSha256": "f925db166ce0dc08faa271851001fc5ed11b169f4bf1bb2339c09db8522be049",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "92a184b847c30db85d09c9bb07182a9d1b852370180b97a6ee315857142a861d",
+      "startedAt": "2026-09-21T08:00:16.626Z",
+      "endedAt": "2026-09-21T08:01:18.913Z",
+      "runSha256": "0d6496d2308422a3c63302ae0240b85c6dc6a9cb35302ea96689e74717a0991d",
+      "artifactsVerified": 63,
+      "matrixQualifying": false
+    },
+    {
+      "directory": "world-resource-9e05bf08-replay-1",
+      "source": {
+        "revision": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24",
+        "gitTree": "6cc80db679cb09d858145db28b2471dd8c4427dd",
+        "checkoutSha256": "f925db166ce0dc08faa271851001fc5ed11b169f4bf1bb2339c09db8522be049",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "19b4670b73eb50f9bbd3a54e616b405c17d7b7603a9aeffc873e08883f2579ee",
+      "startedAt": "2026-09-21T08:03:17.887Z",
+      "endedAt": "2026-09-21T08:04:12.486Z",
+      "runSha256": "f702978c9ef3472b9c691dbf48fdf23ab1a0d8e422cfe1a8904178a1aab61dd2",
+      "artifactsVerified": 63,
+      "matrixQualifying": false,
+      "replayComparison": {
+        "fields": [
+          "hours",
+          "population",
+          "seed",
+          "actorPolicy",
+          "initialStateSha256",
+          "finalStateSha256",
+          "workerScheduleSha256",
+          "jobOutcomesSha256",
+          "deterministicRandomTapeSha256",
+          "actorTapeSha256",
+          "policyStateSha256",
+          "semanticMetricsSha256",
+          "worldDiagnosticsSemanticSha256",
+          "mysteryPolicySummarySha256",
+          "knowledgeDiagnosticsSha256",
+          "resourceObservationEnabled",
+          "resourceJournalCount",
+          "resourceJournalSha256"
+        ],
+        "exclusions": [
+          "Native wall durations",
+          "Read-only physical MVCC and relation-size diagnostics"
+        ],
+        "canonicalStateExclusions": []
+      }
+    }
+  ],
+  "queryOrderCausal": {
+    "comparisonSha256": "fa22c1c5ef29224582502f2eef74600f3280821b0c99da48a3d6e34080487879",
+    "runs": [
+      {
+        "id": "observed",
+        "status": "PASS_SCOPED",
+        "runSha256": "057255663062046a86484720a6f7c4b4e9bdf4ae24ff52ca50485ef7c1ab46c8",
+        "artifactsVerified": 7
+      },
+      {
+        "id": "native-reversed",
+        "status": "PASS_SCOPED",
+        "runSha256": "813f03b167831f29b54c807573eb225185e16c56fdfefcff09d9e5bedcabd977",
+        "artifactsVerified": 7
+      },
+      {
+        "id": "replayed",
+        "status": "PASS_SCOPED",
+        "runSha256": "24a92b78fd74519f8d16244d37c845fe267d3c3be2694be33729925ee4468b29",
+        "artifactsVerified": 7
+      },
+      {
+        "id": "standing-value",
+        "status": "PASS_SCOPED",
+        "runSha256": "ad2696f07d59d0eea654a7c7eadb612dbaa09cb3021b50195ce942780d83b554",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "standing-missing",
+        "status": "PASS_SCOPED",
+        "runSha256": "8482fc2293d1615ae5c2b03c1878d7ab3c9a3e13a3d3dd32dab6fac6c860c7fd",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "standing-extra",
+        "status": "PASS_SCOPED",
+        "runSha256": "aceef7dab1e4a45196b888e249cb6ec95c886c27334c37bed1efd3268b67442c",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "market-value",
+        "status": "PASS_SCOPED",
+        "runSha256": "ae433731dc2f256d341d5c9dea374002a611cbf571237b413bfefc29aeaaf1e9",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "market-missing",
+        "status": "PASS_SCOPED",
+        "runSha256": "414d4d84d198d7cae6982a7f4e8ea4992a412826c1da58479da0e9309229e9ae",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "market-extra",
+        "status": "PASS_SCOPED",
+        "runSha256": "18e764560c671d1c74755cb6e37cc6fae5d4f08ada93ef12366cdf58e3374819",
+        "artifactsVerified": 6
+      },
+      {
+        "id": "query-identity",
+        "status": "PASS_SCOPED",
+        "runSha256": "aba0128c8792fb5f3743af61b4570f3ae039bd47723093feb55f87e8cf995aa1",
+        "artifactsVerified": 6
+      }
+    ]
+  },
+  "crewFocus": {
+    "directory": "crew-focus-9e05bf08-1",
+    "resultsSha256": "1d6f2791f0a8be374fff66127e2ce6d8159e1c81fc6448877c80e66e3dc18ea3",
+    "status": "PASS_SCOPED"
+  },
+  "goldenBrowser": {
+    "directory": "golden-9e05bf08-1",
+    "resultsSha256": "08113e725f35f5f7958763c0a24cc95d6c79c49fd9507500a25d73effccd877e",
+    "widths": [
+      {
+        "width": 320,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 360,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 390,
+        "status": "PASS",
+        "commands": 50,
+        "interactions": 6,
+        "javascriptErrors": 0
+      },
+      {
+        "width": 430,
+        "status": "FAIL",
+        "commands": 38,
+        "interactions": 6,
+        "javascriptErrors": 0
+      }
+    ],
+    "failure": "430px operation selector click times out under fixed bottom navigation/vitals; three other complete widths pass. This failed gate remains failed."
+  },
+  "knowledge": {
+    "status": "PASS",
+    "generatedSource": "fcbc2167",
+    "logSha256": "b9b6226d885762b2197a676059e39fcd48a63a15c60a52606a2ee0850ce170fa"
+  },
+  "dispatchedWorkflows": [
+    {
+      "id": 35575657031,
+      "workflow": "ci",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35575657031"
+    },
+    {
+      "id": 35575660265,
+      "workflow": "RC1 Linux termination and recovery",
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35575660265"
+    }
+  ],
+  "scope": "Seven regression gates pass; full golden gate fails at430px. Exact two-hour world replay includes resource stream. No full resource taxonomy, qualifying matrix, production soak, physical device or human-cohort pass."
+}

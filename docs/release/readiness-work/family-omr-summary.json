@@ -1,0 +1,498 @@
+{
+  "format": 1,
+  "gap": "C02-FAMILY-TREASURY",
+  "status": "OPEN_PARTIAL_NATIVE",
+  "fullResourceCoverage": false,
+  "source": "9e0a845fa1259bb2f8e9045c62dd49233821acf5",
+  "sourceIdentity": {
+    "revision": "9e0a845fa1259bb2f8e9045c62dd49233821acf5",
+    "gitTree": "248be84e4b22f9cf3826557a774c6c58ceea57c2",
+    "checkoutSha256": "1092388c169c4173b904aa3fa2000a475c14a84ef8ddf4a3919697e1ea858d1e",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "commits": [
+    "ac82b5bac1967ebebccc14775c89d8317213c054",
+    "32cb0e035ee2122a3f78452d68bc0a3dbddc8f8a",
+    "938651d4e1d9ffbb54e2fa2af97c155e09634a07",
+    "1bac73556f8346c5081bf76e36e0f353ef773801",
+    "9e0a845fa1259bb2f8e9045c62dd49233821acf5"
+  ],
+  "runtimeFinding": {
+    "id": "RC1-FAMILY-YIELD-01",
+    "severity": "P2",
+    "status": "REPAIRED_NATIVE_RETESTED",
+    "originalSource": "938651d4e1d9ffbb54e2fa2af97c155e09634a07",
+    "originalExchangeSha256": "93b973a2553b1ec884cd22ba3f173ae844a44c2abb2cb1b874ad97bf7c552e4b",
+    "repairedExchangeSha256": "ab28cdc4d722fce1699a486b66314b720bca93601b1b83e4fb88f2d542f4c956",
+    "originalFindingSha256": "df65f36b99901837ea6232daa51a06836e2ed20a4271c72ca5f22b3756bf5884",
+    "before": {
+      "funding": "0.3095",
+      "paid": "0.31",
+      "remaining": "-0.0005",
+      "canonicalInvariantFalseNegative": true
+    },
+    "after": {
+      "funding": "0.3095",
+      "paid": "0.30",
+      "remaining": "0.0095",
+      "nativeExactInvariantsPass": true
+    },
+    "authority": "Original hourly worker and canonical6.19OMR window funding; exact locked backing, unchanged rank quotas; full legacy remainder preserved",
+    "invariantSites": [
+      "src/exchange.js: family yield backed",
+      "src/exchange.js: family yield balance"
+    ],
+    "limits": "Local source-scoped custody defect; no deployed defect, mint, external backing or release-clearance claim"
+  },
+  "verifiedHistory": [
+    {
+      "name": "family-omr-native-1",
+      "source": "ac82b5bac1967ebebccc14775c89d8317213c054",
+      "status": "FAIL",
+      "runSha256": "8a386bd40d3bae4511f83a9748a1a76f31cfe083d493735a5d20ebf4dd3420b3",
+      "artifactsVerified": 37,
+      "completedBoundaries": 29
+    },
+    {
+      "name": "family-omr-native-2",
+      "source": "32cb0e035ee2122a3f78452d68bc0a3dbddc8f8a",
+      "status": "FAIL",
+      "runSha256": "2f1739d808571d91d5bfce73301a1ea1daff23d244719043daa189dda25f8258",
+      "artifactsVerified": 38,
+      "completedBoundaries": 30
+    },
+    {
+      "name": "family-omr-native-3",
+      "source": "938651d4e1d9ffbb54e2fa2af97c155e09634a07",
+      "status": "FAIL",
+      "runSha256": "925d1a545d3f276e25819b9bb76d00aba64581ddc5ced46ed57421bacd5aced8",
+      "artifactsVerified": 49,
+      "completedBoundaries": 41
+    },
+    {
+      "name": "family-omr-native-5",
+      "source": "9e0a845fa1259bb2f8e9045c62dd49233821acf5",
+      "status": "PASS_SCOPED",
+      "runSha256": "9205c99657352f70a8b8bdd1ff83f2fd29edc0c0ac84a1ddf67ae3002a05a90c",
+      "artifactsVerified": 61,
+      "completedBoundaries": 43
+    },
+    {
+      "name": "family-yield-precision-native-2",
+      "source": "9e0a845fa1259bb2f8e9045c62dd49233821acf5",
+      "status": "PASS_SCOPED",
+      "runSha256": "78039834a0c341a8c500ecd02ffba62bd712eba760ee0d62a0e78d146858898f",
+      "artifactsVerified": 20,
+      "completedBoundaries": null
+    }
+  ],
+  "preflightFailures": [
+    {
+      "logs": [
+        "family-omr-native-4.log",
+        "family-yield-precision-native-1.log"
+      ],
+      "status": "SOURCE_BYTES_REJECTED_BEFORE_DATABASE",
+      "cause": "Mixed line endings from editing; restored exact committed Git blobs, sourceIdentity then passed; no check suppressed"
+    }
+  ],
+  "mainProof": {
+    "boundaries": 43,
+    "movements": 15,
+    "equations": 1233,
+    "corruptionControls": 10,
+    "canonicalInvariantCheckpoints": 3,
+    "logicalHours": 3,
+    "timerCounts": {
+      "directorTick": 36,
+      "guardedTick": 3,
+      "guardedSeasonTick": 3,
+      "health-boundary": 36
+    },
+    "originalWarMilliseconds": 1800000,
+    "branches": [
+      {
+        "name": "original-worker-bootstrap",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "family:a:found",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "family:b:found",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "family:c:found",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "family:soldier:join",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "family:member:join",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "tribute:outsider-refused",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "tribute:a",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "tribute:b",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "tribute:c",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "tribute:member-concurrent-exact-duplicate",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "tribute:exact-retry",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:soldier-seal-refused",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:seal-late-recycle-abort",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:seal-spend",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "reserve:seal-exact-retry",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:promote-underboss",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:underboss-foundation",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "reserve:foundation-exact-retry",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:charter-first-free",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:charter-paid",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "reserve:charter-exact-retry",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "reserve:charter-original-cooldown-refused",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "standing:a:cash-tribute",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "standing:b:cash-tribute",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "standing:c:cash-tribute",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "war:declare-OMR-unchanged",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "war:canonical-scored-jump-OMR-unchanged",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "workers:original-war-deadline",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "war:original-due-touch-and-standing",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "yield:first-original-hour-abort-after-credits",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "yield:next-original-hour-three-ranked-shares",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 3
+      },
+      {
+        "name": "yield:empty-pot-canonical-replay",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "membership:boss-leaves-reserve-preserved",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "membership:member-leaves-reserve-preserved",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "dissolution:late-abort-after-reserve-recycle",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "membership:canonical-rejoin",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "dissolution:concurrent-last-two-members",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "dissolution:exact-retry",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      },
+      {
+        "name": "dissolution:second-family",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "yield:fractional-canonical-window-funding",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 2
+      },
+      {
+        "name": "yield:fractional-backing-original-hour",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 1
+      },
+      {
+        "name": "yield:sub-cent-remainder-replay",
+        "outcome": "PASS",
+        "nonzeroOmrMovements": 0
+      }
+    ],
+    "controls": [
+      {
+        "name": "missing-tribute-receipt",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "tribute-wrong-family-balanced",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "missing-recycle",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "duplicate-yield-receipt",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "wrong-ranked-share",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "yield-not-observed",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "dissolution-personal-refund",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "lost-reserve-on-succession",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "missing-request-owner",
+        "outcome": "REJECTED"
+      },
+      {
+        "name": "subatomic-pool-drift",
+        "outcome": "REJECTED"
+      }
+    ],
+    "warning": "War cash settlement is a standing/OMR no-change control, not full cash custody proof"
+  },
+  "precisionProof": {
+    "validCases": 6,
+    "corruptCases": 3,
+    "lateRollback": true,
+    "results": [
+      {
+        "name": "fractional-window-sized",
+        "outcome": "PASS",
+        "paid": "0.30",
+        "remainder": "0.0095",
+        "receipts": 1,
+        "concurrentCalls": 2,
+        "lateRollback": false,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "legacy-high-scale-remainder",
+        "outcome": "PASS",
+        "paid": "0.30",
+        "remainder": "0.009999999999999999",
+        "receipts": 1,
+        "concurrentCalls": 2,
+        "lateRollback": false,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "sub-cent-rounds-to-cent-as-number",
+        "outcome": "PASS",
+        "paid": "0",
+        "remainder": "0.009999999999999999",
+        "receipts": 0,
+        "concurrentCalls": 2,
+        "lateRollback": false,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "legacy-one-attounit-remainder",
+        "outcome": "PASS",
+        "paid": "1.01",
+        "remainder": "0.000000000000000001",
+        "receipts": 1,
+        "concurrentCalls": 2,
+        "lateRollback": true,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "five-authored-quotas-clamped",
+        "outcome": "PASS",
+        "paid": "0.23",
+        "remainder": "0.00",
+        "receipts": 5,
+        "concurrentCalls": 2,
+        "lateRollback": false,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "five-authored-quotas-below-minimum",
+        "outcome": "PASS",
+        "paid": "0",
+        "remainder": "0.01",
+        "receipts": 0,
+        "concurrentCalls": 2,
+        "lateRollback": false,
+        "replay": "EXACT_NO_VALUE"
+      },
+      {
+        "name": "negative-attounit",
+        "outcome": "CORRUPTION_REJECTED",
+        "rejected": [
+          "family yield backed",
+          "family yield balance"
+        ]
+      },
+      {
+        "name": "positive-identity-attounit",
+        "outcome": "CORRUPTION_REJECTED",
+        "rejected": [
+          "family yield balance"
+        ]
+      },
+      {
+        "name": "overspent-attounit",
+        "outcome": "CORRUPTION_REJECTED",
+        "rejected": [
+          "family yield backed",
+          "family yield balance"
+        ]
+      }
+    ],
+    "exactFreshNativeStateRechecked": true
+  },
+  "fixtures": [
+    "Six ordinary accounts with defaultcash500/ammo25; respect10000 eligibility; stats50 except rival b stats5",
+    "Initial4920OMR reallocated from retired AMM20000 seed to accounts; declared1000000cash till before baseline",
+    "Canonical prebaseline redemption400/200/200 funds formation/tribute; actual window receipts retained; no Family membership or reserve fixture",
+    "Population off deploy switch; no provider or rail configuration; no postbaseline status/deadline/balance edits"
+  ],
+  "precisionFixtures": [
+    "One exclusively owned database per case; declared eligible Family rows with ordered standing and zero reserve before baseline",
+    "Exact desired pool balance reallocated from retired AMM initial20000; matching lifetime funding before baseline for valid cases",
+    "Three named intentionally corrupt prebaseline counter/balance states are rejection controls, not valid game entry"
+  ],
+  "unknown": [
+    "Weekly contract OMR reward, legacy pool merges and Commission Levy redirection",
+    "Dissolution via death/kick and yield races with dissolution/ranking changes",
+    "Full cash/ammo/war/turf custody and unrelated OMR systems",
+    "Natural account/progression/resource acquisition, provider/local-chain backing, deployment, installed-dependency attestation and full simulation matrix",
+    "This precision suite does not drive a worker timer; rc1-native-family-omr drives the original hourly callbacks",
+    "Formation/progression, Levy, other rank counts/ties, distribution versus membership changes, external backing and full resource qualification"
+  ],
+  "dependencyCaveat": "Node modules reused from installed local dependency tree; lockfile/source pinned, installed package bytes not independently attested",
+  "responsibleRole": "Codex/resource_proof for native subset; release integrator for combined gates, deployment/backing owner for external proof",
+  "affectedReruns": [
+    "Native Family OMR proof",
+    "Native Family yield precision proof",
+    "tokenomics",
+    "social",
+    "commission",
+    "community",
+    "population",
+    "integrated exchange/Family/ledger and release gates"
+  ],
+  "privateActorsOrTokensIncluded": false
+}

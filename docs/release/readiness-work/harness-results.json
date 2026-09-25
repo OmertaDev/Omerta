@@ -1,0 +1,376 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "qualification": "NOT_CLOSED",
+  "requiredMatrixRuns": 225,
+  "qualifyingMatrixRuns": 0,
+  "nativeRuns": [
+    {
+      "evidenceId": "hardened-checkpoint-1/run.json",
+      "runRecordSha256": "d9ae8882a752652c6101cc677ce177743448bd3f7d2f183e451cd622c261f02d",
+      "source": {
+        "revision": "67d33908ccb44c8db3ef99e6ac1376d1be73f11f",
+        "gitTree": "5fdb585282ef65f312fc097cb9683307fddaf0c5",
+        "checkoutSha256": "3601bb9f750af5533bbed74586b067a6079fa93cb4082ced7c5b0a523dbb60b2",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configuration": {
+        "test": "checkpoint-receipt-replay",
+        "postgres": true
+      },
+      "configurationSha256": "c7f461ab69b66abc8ee8957c8729ab0bf6012ca6b95d8a1dff1be59404705ba1",
+      "startedAt": "2026-09-21T02:40:44.848Z",
+      "endedAt": "2026-09-21T02:41:05.471Z",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "evidenceKind": "native-postgresql-scoped-fixture",
+      "matrixQualifying": false,
+      "population": 5,
+      "assertionsPassed": 6,
+      "deliberateFailureDetected": true,
+      "checkpointRestore": true,
+      "receiptReplay": true,
+      "metrics": null,
+      "logicalDurationMs": null,
+      "logicalClockScope": null,
+      "artifacts": [
+        {
+          "path": "restart.dump",
+          "sha256": "827f835b71f7235e2ccefe3cc92bc69ac468036c1fdeb4ab7ff2d57bb2ede036",
+          "bytes": 978893
+        },
+        {
+          "path": "restart-checkpoint.json",
+          "sha256": "7f28a13d52b8819decf0e4c240623095607077164b2050fc4b0f8fc027c9ff66",
+          "bytes": 748
+        },
+        {
+          "path": "before-restart.json",
+          "sha256": "60cc2d2d8c5cf6601b8219765ab0b99f80151981dd3671e2ec2273bd169d2426",
+          "bytes": 78998
+        },
+        {
+          "path": "injected-failure.json",
+          "sha256": "ee5dc0faa1223a9e7d5e1fa50a64f41787f06f60c286bc3a390b34bfde9f03dc",
+          "bytes": 78998
+        },
+        {
+          "path": "injected-failure.dump",
+          "sha256": "f53d887a0c065ec536f6113755a3101630376108e069c0b0235f901b2a1d4873",
+          "bytes": 978869
+        },
+        {
+          "path": "injected-failure-checkpoint.json",
+          "sha256": "c509eb092d893309d414d878a5c28291d84ddf43cef776848ff2d5b3b48590c2",
+          "bytes": 748
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "a3564620d544c5933eb072a86e19f8de9737fa5fadf7ff7a75a2687520c6d28b",
+          "bytes": 62344
+        }
+      ],
+      "coverageExclusions": [
+        "90 simulated days",
+        "two seasonal rollovers",
+        "all due production worker intervals",
+        "full thirteen-resource transition coverage",
+        "same-seed normalized fresh-world equivalence",
+        "transaction-commit total order / deterministic concurrency scheduler",
+        "12-hour production-equivalent soak",
+        "natural entry",
+        "real people and deployed environment"
+      ]
+    },
+    {
+      "evidenceId": "policy-a/25-rc1-alpha-0/run.json",
+      "runRecordSha256": "ba75cf48fb94be7c4f2cf7cea9fdeaa14c723ed903991d6f677f8b24b8fc1b88",
+      "source": {
+        "revision": "1b12efb2d4bc1bec53e368737efc1b90dddb81c0",
+        "gitTree": "5608d6f2192dc5e3c6a642abb8ba54e11b1284e4",
+        "checkoutSha256": "3675e97313ab63c16de3783505292693abac209fed76b511d5d9b4aa0f79fc25",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configuration": {
+        "population": 25,
+        "seed": "rc1-alpha",
+        "replicate": 0,
+        "rounds": 1,
+        "postgres": true,
+        "fixtureAssisted": true
+      },
+      "configurationSha256": "863efeb104545351bcb7bec4574eb232b4ef99bcc3daa2c0a6e2b91257affc0c",
+      "startedAt": "2026-09-21T02:49:52.162Z",
+      "endedAt": "2026-09-21T02:50:24.149Z",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "evidenceKind": "native-postgresql-scoped-fixture",
+      "matrixQualifying": false,
+      "population": 25,
+      "assertionsPassed": null,
+      "deliberateFailureDetected": null,
+      "checkpointRestore": null,
+      "receiptReplay": null,
+      "metrics": {
+        "snapshots": 161,
+        "commandsIssuedAvailable": 3370,
+        "commandsExecuted": 94,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 1,
+          "contention": 1
+        },
+        "opportunityCardsShown": 5425,
+        "opportunityCardsUniquePerActor": 553,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 1,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 19,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1
+      },
+      "logicalDurationMs": 8402000,
+      "logicalClockScope": "Director/fixture application clock; database wall clock is not advanced",
+      "artifacts": [
+        {
+          "path": "initial-state.json",
+          "sha256": "227b20b60dcdcccace6e738fad66418b4f9548dfbaf89d483c819231ccaa9aa5",
+          "bytes": 132149
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "17482df304191ea18bab98582eecc9b18d41692074e304f3cb9031ac44a90108",
+          "bytes": 971649
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "2556e4d4fcee1d505bde645c4755e38406616622e5d481e8705ee72a0110b71e",
+          "bytes": 747
+        },
+        {
+          "path": "final-state.json",
+          "sha256": "afb997004fe516934c4b3eda5348c433eb516bfca092f02551136772d8dea6b9",
+          "bytes": 8042012
+        },
+        {
+          "path": "final.dump",
+          "sha256": "2c19f6bb1e55852f4e7962075d1f0a76de3035006161aeb95ae4d615a021891d",
+          "bytes": 1469591
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "77b31635591e9c05fed0d7bf6f95e390564dc66e416de49be5cac8171723d1ca",
+          "bytes": 748
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "9a7a10258d8fe5da9a2f6aaa0e3cc7d83141860befe59d4b66485925c3c1fb1e",
+          "bytes": 24372277
+        }
+      ],
+      "coverageExclusions": [
+        "90 simulated days",
+        "two seasonal rollovers",
+        "all due production worker intervals",
+        "full thirteen-resource transition coverage",
+        "same-seed normalized fresh-world equivalence",
+        "transaction-commit total order / deterministic concurrency scheduler",
+        "12-hour production-equivalent soak",
+        "natural entry",
+        "real people and deployed environment"
+      ]
+    },
+    {
+      "evidenceId": "policy-b/25-rc1-alpha-0/run.json",
+      "runRecordSha256": "8865fc04cb42ba47d33f452878cb77b806cd01a32c5ffe3730ce15de453c783e",
+      "source": {
+        "revision": "1b12efb2d4bc1bec53e368737efc1b90dddb81c0",
+        "gitTree": "5608d6f2192dc5e3c6a642abb8ba54e11b1284e4",
+        "checkoutSha256": "3675e97313ab63c16de3783505292693abac209fed76b511d5d9b4aa0f79fc25",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configuration": {
+        "population": 25,
+        "seed": "rc1-alpha",
+        "replicate": 0,
+        "rounds": 1,
+        "postgres": true,
+        "fixtureAssisted": true
+      },
+      "configurationSha256": "863efeb104545351bcb7bec4574eb232b4ef99bcc3daa2c0a6e2b91257affc0c",
+      "startedAt": "2026-09-21T02:50:29.974Z",
+      "endedAt": "2026-09-21T02:51:01.935Z",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "evidenceKind": "native-postgresql-scoped-fixture",
+      "matrixQualifying": false,
+      "population": 25,
+      "assertionsPassed": null,
+      "deliberateFailureDetected": null,
+      "checkpointRestore": null,
+      "receiptReplay": null,
+      "metrics": {
+        "snapshots": 161,
+        "commandsIssuedAvailable": 3370,
+        "commandsExecuted": 94,
+        "commandReplays": 4,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 1,
+          "contention": 1
+        },
+        "opportunityCardsShown": 5425,
+        "opportunityCardsUniquePerActor": 553,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 1,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 19,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 1
+      },
+      "logicalDurationMs": 8402000,
+      "logicalClockScope": "Director/fixture application clock; database wall clock is not advanced",
+      "artifacts": [
+        {
+          "path": "initial-state.json",
+          "sha256": "25c19a20c35a61d20eeac72d9f52094cd05dc74caa9db387438917af0792e0ed",
+          "bytes": 132131
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "9e67bc2aeef3e18342ef45bd8fcb73746b4590094a7f93ae5e6f76473a740df1",
+          "bytes": 971650
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "1a52e021cac197edbe0ff39ff994553ff16d063eaf8fcfdda763f569787a9ba8",
+          "bytes": 747
+        },
+        {
+          "path": "final-state.json",
+          "sha256": "5c3f8fb875d8c2ae8de1d08ee48a218386d4c8bb700781abb8407626786cfb45",
+          "bytes": 7948884
+        },
+        {
+          "path": "final.dump",
+          "sha256": "6a06c3a07434254595243a93d1c0069b72cb01d7d1b5bca729a54e713ff3d1ed",
+          "bytes": 1462308
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "448d203cb8ed352d21aab2bc567d8f487827812402e25d8c8b210a7f3dc7810d",
+          "bytes": 748
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "2c0f84a529b0ea393fe46b0c22c8342fb753e2800540cd7fb7841d59b17165ec",
+          "bytes": 24375207
+        }
+      ],
+      "coverageExclusions": [
+        "90 simulated days",
+        "two seasonal rollovers",
+        "all due production worker intervals",
+        "full thirteen-resource transition coverage",
+        "same-seed normalized fresh-world equivalence",
+        "transaction-commit total order / deterministic concurrency scheduler",
+        "12-hour production-equivalent soak",
+        "natural entry",
+        "real people and deployed environment"
+      ]
+    }
+  ],
+  "policyReplay": {
+    "status": "PASS_POLICY_REPLAY_ONLY",
+    "sameSeedPolicyChoices": 20,
+    "fullCanonicalStateEqual": false,
+    "reason": "No ID or timestamp fields normalized; policy replay does not prove full-state deterministic replay.",
+    "runs": [
+      {
+        "source": "1b12efb2d4bc1bec53e368737efc1b90dddb81c0",
+        "stateSha256": "2fb4b0fc2d118a76d15ed5364cfff158da80ee932e8aa8dc01f817fd65df2ac8",
+        "commands": 94
+      },
+      {
+        "source": "1b12efb2d4bc1bec53e368737efc1b90dddb81c0",
+        "stateSha256": "1be6e6b488ccc8070558bf724851ff5b82521e39b775421376941dc773f0cd7a",
+        "commands": 94
+      }
+    ]
+  },
+  "scaleRegression": {
+    "source": "67d33908ccb44c8db3ef99e6ac1376d1be73f11f",
+    "command": "DATABASE_URL=<isolated-local-db> JWT_SECRET=<ephemeral-local-test-secret> INVITE_MODE=off SCALE_PLAYERS=36 SCALE_DAYS=5 SCALE_ASSERT_EACH_TRANSITION=on node tools/scale.js",
+    "exitCode": 0,
+    "database": "PostgreSQL 18.4",
+    "platform": "Windows x64",
+    "players": 36,
+    "fixtureWarpedDays": 5,
+    "transitionChecks": 6730,
+    "invariantChecks": 55,
+    "driftChanges": 0,
+    "drivenMarketsReceivingPosts": 9,
+    "censusReconciled": true,
+    "evidenceId": "scale-p36-d5-local-fixture.log",
+    "sha256": "621103aa9f5ff60844c652d6c5d55d5e79f4339aaebea8429049b5e56886d117",
+    "matrixQualifying": false,
+    "exclusions": [
+      "Fixture grants and direct deadline/resource time warping",
+      "Unseeded actor randomness",
+      "No native90day/full-resource matrix claim",
+      "Local invitation checks disabled solely in disposable fixture environment; no deployment attestation"
+    ]
+  },
+  "diagnostics": [
+    {
+      "id": "HARNESS-6PLAYER-ONEFAMILY",
+      "class": "D tooling/workload configuration",
+      "source": "f1218f5cea82388483770712d8ed3416f838cdfb",
+      "command": "SCALE_PLAYERS=6 SCALE_DAYS=1 SCALE_ASSERT_EACH_TRANSITION=on with same disposable PostgreSQL configuration",
+      "exitCode": 1,
+      "failure": "Contracts received zero posts",
+      "reproduction": "tools/scale.js FAMILY_SIZE=6 places all six fixture players in one Family. postBounty in src/social/contracts.js denies contracts on non-rat, non-wanted Family members. Database confirms all six guest characters shared a Family.",
+      "conservation": "55 checks unchanged across280API/worker transitions",
+      "resolution": "Retain failed unsupported diagnostic; standard36player5day workload passes. No production rule changed.",
+      "evidenceId": "scale-p6-d1-local-fixture.log",
+      "sha256": "e221418474ab174281fd0677db122e5d3186ceed394bf85df989933fe5d34ff0"
+    }
+  ],
+  "unmetProofs": [
+    "RC1-01 same-seed normalized complete-state equivalence",
+    "RC1-01 deterministic replay of actual concurrent commit schedule",
+    "RC1-01 coordinated application/database/production-worker logical time",
+    "RC1-01 automatic reduction of failing histories",
+    "RC1-02 full resource transition prerequisites for matrix qualification",
+    "RC1-03 all225full-game90day/two-rollover/two-longest-lifecycle cells",
+    "RC1-03 dead-world assertions/distributions for every required metric",
+    "RC1-03 12hour1000actor production-envelope soak and load targets"
+  ],
+  "evidenceAccess": "Raw dumps and command/snapshot traces are retained outside source under user/SYSTEM-only filesystem ACL; public report contains hashes and synthetic workload totals only."
+}

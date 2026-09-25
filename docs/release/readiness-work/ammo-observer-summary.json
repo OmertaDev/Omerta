@@ -1,0 +1,217 @@
+{
+  "format": 1,
+  "owner": "Codex/resource_proof",
+  "status": "PASS_SCOPED_OBSERVER_REPAIR",
+  "source": {
+    "revision": "202117080c2b210450538e015c4870353b5f2bf2",
+    "gitTree": "f794dbc8770cffcfe4dc4c35b5271a872f666ccd",
+    "checkoutSha256": "61a212e1a7bb608fbb4c833dbe065c9b662a105875f8f4b85cfbe68a7154495d",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "baseRevision": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
+  "commits": [
+    "ace1d276c8cfac2f2f924ca98a3c73359c505526",
+    "202117080c2b210450538e015c4870353b5f2bf2"
+  ],
+  "changedFiles": [
+    {
+      "file": "tools/rc1-world-resource-observer.js",
+      "sha256": "739f4c8ff181e5c8d8936578570c22af6302a718b6197105a43789129bd55870"
+    },
+    {
+      "file": "test/rc1-world-ammo-escrow.js",
+      "sha256": "276ae49ee5724c336a953f1606d6888d5bbe41cb7109ff1b4ef6aeee3c52219b"
+    },
+    {
+      "file": "docs/release/readiness-work/world-ammo-escrow.md",
+      "sha256": "77d4024bd4a7038907b0ccb4a936933e9c42fc5e68deeaa1b2a20d762a64f53e"
+    }
+  ],
+  "productionChanges": 0,
+  "matrixQualifying": false,
+  "qualifyingFullResourcePass": false,
+  "priorEvidence": {
+    "source": "f9a4c84d8847a18dd65603a0dc8972e9b0058a36",
+    "kind": "Historical full component PASS_SCOPED with individual shared-observer escrow rejections, never full observer pass",
+    "sharedEscrowLimitations": {
+      "resource_scarcity": 6,
+      "resource_abundance": 8
+    }
+  },
+  "cause": "Canonical ammo listing, delivery and pull are internal inventory transfers without ammo ledger entries. Personal-only parity omitted the seller-owned live escrow.",
+  "repair": "Exact personal and personal-plus-owned-live-escrow parity. Fresh one-use reciprocal cash receipts bind consumed lot seller, buyer, quantity, price and seller net. Immutable retained lots; exact pure-market tax destination.",
+  "executions": [
+    {
+      "scenario": "resource_scarcity",
+      "source": "202117080c2b210450538e015c4870353b5f2bf2",
+      "status": "PASS_SCOPED",
+      "runSha256": "30993db0e3e037642eaa6230cfca7a83d45293fb98ac51944dea48d45db64186",
+      "verificationSha256": "480270619603e56fdbcd67fd595196d36c3202a09b638471aab35c5076d52915",
+      "resourceBoundaries": 137,
+      "ammoMovements": {
+        "ammo-list": 3,
+        "ammo-buy": 1,
+        "ammo-cancel": 2
+      },
+      "sharedEscrowLimitations": 0,
+      "pureCorruptionControls": [
+        "balanced-wrong-owner-ammo",
+        "wrong-buyer-counterparty",
+        "wrong-seller-counterparty",
+        "duplicate-buy-id",
+        "duplicate-buy-new-id",
+        "duplicate-sale-new-id",
+        "stale-receipts",
+        "same-receipts-for-two-lots",
+        "missing-sale-receipt",
+        "rewritten-old-receipt",
+        "receipt-without-consumed-lot",
+        "retained-lot-owner-rewrite",
+        "listed-to-foreign-escrow-balanced",
+        "cancel-to-foreign-owner",
+        "tax-destination-missing",
+        "unknown-escrow-owner"
+      ],
+      "nativeCorruptionControls": [
+        "native-balanced-wrong-owner",
+        "native-duplicate-fresh-buy",
+        "native-stale-receipt-reuse",
+        "native-wrong-counterparty",
+        "native-list-wrong-owner",
+        "native-cancel-wrong-owner",
+        "actual-native-terminal-balanced-wrong-owner"
+      ],
+      "unsupported": {
+        "receipt-reason:checkin": 3,
+        "receipt-reason:ammo:buy": 1
+      },
+      "originalLogicalSeconds": 900,
+      "originalInvariantBoundaries": 35,
+      "exactFullStateRetries": 2,
+      "staleChoiceDenials": 1,
+      "ordinaryEntrants": 3,
+      "directResourceGrants": 0,
+      "progressionFixtures": 0,
+      "cleanupIndependentlyVerified": true,
+      "actualTerminalCorruption": "Committed balanced wrong-owner ammo change rejected; no gameplay continuation or compensation, then owned database cleanup"
+    },
+    {
+      "scenario": "resource_abundance",
+      "source": "202117080c2b210450538e015c4870353b5f2bf2",
+      "status": "PASS_SCOPED",
+      "runSha256": "aea6a12137b45354dcc4ea15144b37dbb7769ab214ebd391ec2b093db7729bf1",
+      "verificationSha256": "04c2cb179f81d1b2995ad11af4c806998e946f44a3a29787dc632be8d980c9a9",
+      "resourceBoundaries": 108,
+      "ammoMovements": {
+        "ammo-list": 4,
+        "ammo-buy": 3,
+        "ammo-cancel": 1
+      },
+      "sharedEscrowLimitations": 0,
+      "pureCorruptionControls": [
+        "balanced-wrong-owner-ammo",
+        "wrong-buyer-counterparty",
+        "wrong-seller-counterparty",
+        "duplicate-buy-id",
+        "duplicate-buy-new-id",
+        "duplicate-sale-new-id",
+        "stale-receipts",
+        "same-receipts-for-two-lots",
+        "missing-sale-receipt",
+        "rewritten-old-receipt",
+        "receipt-without-consumed-lot",
+        "retained-lot-owner-rewrite",
+        "listed-to-foreign-escrow-balanced",
+        "cancel-to-foreign-owner",
+        "tax-destination-missing",
+        "unknown-escrow-owner"
+      ],
+      "nativeCorruptionControls": [
+        "native-balanced-wrong-owner",
+        "native-duplicate-fresh-buy",
+        "native-stale-receipt-reuse",
+        "native-wrong-counterparty",
+        "native-list-wrong-owner",
+        "native-cancel-wrong-owner",
+        "actual-native-terminal-balanced-wrong-owner"
+      ],
+      "unsupported": {
+        "receipt-reason:checkin": 3,
+        "receipt-reason:ammo:buy": 9,
+        "receipt-reason:bank:deposit:<amount>": 3
+      },
+      "originalLogicalSeconds": 900,
+      "originalInvariantBoundaries": 36,
+      "exactFullStateRetries": 2,
+      "staleChoiceDenials": 1,
+      "ordinaryEntrants": 3,
+      "directResourceGrants": 0,
+      "progressionFixtures": 3,
+      "cleanupIndependentlyVerified": true,
+      "actualTerminalCorruption": "Committed balanced wrong-owner ammo change rejected; no gameplay continuation or compensation, then owned database cleanup"
+    }
+  ],
+  "verifiedHistory": [
+    {
+      "scenario": "resource_scarcity",
+      "source": "ace1d276c8cfac2f2f924ca98a3c73359c505526",
+      "status": "PASS_SCOPED",
+      "runSha256": "10f6d481b2fe96eb1e249c75b352a6d178f542f98eecaff73b6486e4cb2b9fbb",
+      "artifactsVerified": 188,
+      "cleanupIndependentlyVerified": true,
+      "sharedEscrowLimitations": 0
+    },
+    {
+      "scenario": "resource_abundance",
+      "source": "ace1d276c8cfac2f2f924ca98a3c73359c505526",
+      "status": "PASS_SCOPED",
+      "runSha256": "e95751f731328e2bd7388c39aaa181fc8a56461beb4915022e60d746272df114",
+      "artifactsVerified": 160,
+      "cleanupIndependentlyVerified": true,
+      "sharedEscrowLimitations": 0
+    },
+    {
+      "scenario": "resource_scarcity",
+      "source": "202117080c2b210450538e015c4870353b5f2bf2",
+      "status": "PASS_SCOPED",
+      "runSha256": "30993db0e3e037642eaa6230cfca7a83d45293fb98ac51944dea48d45db64186",
+      "artifactsVerified": 188,
+      "cleanupIndependentlyVerified": true,
+      "sharedEscrowLimitations": 0
+    },
+    {
+      "scenario": "resource_abundance",
+      "source": "202117080c2b210450538e015c4870353b5f2bf2",
+      "status": "PASS_SCOPED",
+      "runSha256": "aea6a12137b45354dcc4ea15144b37dbb7769ab214ebd391ec2b093db7729bf1",
+      "artifactsVerified": 160,
+      "cleanupIndependentlyVerified": true,
+      "sharedEscrowLimitations": 0
+    }
+  ],
+  "regression": {
+    "source": "ace1d276c8cfac2f2f924ca98a3c73359c505526",
+    "outcome": "SCOPED_PASS",
+    "resultSha256": "f9008b3acc2bd84ad30c9ba25c651eb1130eea37a12adbc420ce3fc29db6e543",
+    "observerBytesEqualToFinalSource": true,
+    "scope": "Existing native observer canonical loan/Family/item/transport checks and unexplained-cash rejection"
+  },
+  "retainedDevelopmentFailure": "An incomplete synthetic fixture omitted street_tax.fund; existing exact OMR snapshot check rejected it. Added explicit zero fixture field; no arithmetic tolerance or runtime change.",
+  "limits": [
+    "Shared observer proves custody and receipt lineage, not HTTP request identity; native focused journal independently binds observed requests/responses",
+    "Non-ammo escrow, death/retirement and ambiguous compound trades remain unsupported; safe-integer gross price subset only",
+    "Unrelated resource creation/destruction, OMR owner lineage, Family and seasonal gaps remain unchanged",
+    "Native pressure uses serial HTTP/original callback boundaries, not per-commit or concurrent transaction qualification",
+    "Scarcity is ordinary-entry proxy; abundance initial respect is declared fixture before canonical checkin and ammo purchases",
+    "Full matrix, natural progression, deployment and provider/chain backing unproven; installed dependencies reused, not independently attested"
+  ],
+  "reruns": [
+    "node test/rc1-world-resource-observer.js --postgres",
+    "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_scarcity",
+    "node test/rc1-native-resource-pressure.js --postgres --scenario=resource_abundance",
+    "node test/rc1-world-ammo-escrow.js --evidence=<each exact clean native run>",
+    "Integrated committed-boundary world observer gates remain release-integrator responsibility"
+  ],
+  "publicSafe": "No tokens, raw actor IDs, request bodies, private balances, SQL row dumps or credential strings included"
+}

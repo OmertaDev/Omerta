@@ -1,0 +1,717 @@
+{
+  "format": 1,
+  "sourceRevision": "e1caae3783c808015c2da84bddd2682fa1b83584",
+  "scope": "Stored season crown observer: native fault/retry controls plus original-worker2h quiet25 observation/fresh replay;59 observed tables; initial winner election unsupported; no matrix credit",
+  "failedRun": {
+    "sourceRevision": "d00e5575f06004b28e3512ad2df9a30ac7052584",
+    "finding": "RC1-TOOL-57",
+    "status": "FAIL",
+    "manifestSha256": "79a62de88086ebd942d0a5f289e3ba06a620e77f03e0b6113d5c0864413ec430",
+    "scope": "Test entry suffix accidentally starts original API; failed cleanup retained, owned process stopped and postfailure dump retained; exact OID/marker/zero-backend DROP without FORCE"
+  },
+  "priorWorld": {
+    "sourceRevision": "3929f33a064342a76732d4cf94ef6002c19cf755",
+    "directory": "season-conversion-3929f33a-1/observe",
+    "manifestSha256": "dbfae12d507b29b731d5e61c4fb9f1500b94fc409ad00d1cfb9b59794152b4c8",
+    "scope": "Two original season_records changes retained; insertion remains unsupported, stored crown+1 is the new classified subset"
+  },
+  "files": 139,
+  "totalBytes": 20270116,
+  "artifacts": [
+    {
+      "path": "season-crown-d00e5575-1/cleanup-result.json",
+      "bytes": 292,
+      "sha256": "e92145be744e14aaeea7ae60fec0b33f093a4016736c1567bd3e56a0fe684120"
+    },
+    {
+      "path": "season-crown-d00e5575-1/cleanup.mjs",
+      "bytes": 1850,
+      "sha256": "af9ab42c7446de4374f8fb223b83b61fda8f6d674f2b54f4163706e49c2ffff0"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused-output.txt",
+      "bytes": 2837,
+      "sha256": "95932c976045fcb8074d200910b51757df99ad97c22db670008f4d190e6d7ac2"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/account-fault-pending.json",
+      "bytes": 22382,
+      "sha256": "0ed8af939b12c239c6b2dec64a16ea28d57adbcba798714ef0787f24544a13d4"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/commit-observer-final.json",
+      "bytes": 107,
+      "sha256": "42f0b0ddb3869bd8cf47d3628d7722ffd6fd0a9bed7d7bd462ee49f9beee7f1d"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/crown-committed.json",
+      "bytes": 22676,
+      "sha256": "5c7e788967629056e859cda4c62be948b1f5241aae009c6b875a24d87ec59209"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/crown-exact-replay.json",
+      "bytes": 22676,
+      "sha256": "817062b544768e6c48b51a995c541424d8b42706fb8e7aa873bcbb62ae131b39"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/history.jsonl",
+      "bytes": 277375,
+      "sha256": "c516627b193cd2693a90cf8055afc0edca26a6cbee73b86f80641eacad3947f2"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/native-positive-projection-controls.json",
+      "bytes": 251,
+      "sha256": "af6b2fd458b821854e6b8d5a69b9c8d2197e3c1845b8758bc21524f21071f5bf"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/notice-fault-after.json",
+      "bytes": 22382,
+      "sha256": "a95f90acb2bb50f65098984c8f2c3be083bd9c2c6460bcddcb4be34759d8e736"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/notice-fault-before.json",
+      "bytes": 22382,
+      "sha256": "9ce6cd3d23a8aedbf1105487457480f835970e3f6c77518e07c3873f4745df0e"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/positive-crown-after.json",
+      "bytes": 11264,
+      "sha256": "6aed460b201a3b1b6c226f590153a2b3070f8d6f239b4eee3c91a6c624be6f49"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/positive-crown-before.json",
+      "bytes": 10935,
+      "sha256": "a9e330feeb4dfa02ab60ceddfca778a5c072486b65f9419dc86142e1fd3368a0"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/resource-initial.json",
+      "bytes": 10009,
+      "sha256": "36e7036d6e0795b703a44536832b6b190b8c30da1013c148183b24a1294e1b28"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/resource-restricted-6.json",
+      "bytes": 1580,
+      "sha256": "2cf03fb5b3d8962c533cb44b14a1cf1f14c6bb36e35cad76cb421c74677fade5"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/run-reserved.json",
+      "bytes": 401,
+      "sha256": "9e0683a1be1125af3d4d21a9d43b90f88f9b9d60325c7f169df4c221108fbd23"
+    },
+    {
+      "path": "season-crown-d00e5575-1/focused/run.json",
+      "bytes": 6514,
+      "sha256": "79a62de88086ebd942d0a5f289e3ba06a620e77f03e0b6113d5c0864413ec430"
+    },
+    {
+      "path": "season-crown-d00e5575-1/owned-process-stop.json",
+      "bytes": 170,
+      "sha256": "ef2190331b611bab0678108f303d6fcd43649c326c63a92c64d79893255bb247"
+    },
+    {
+      "path": "season-crown-d00e5575-1/postfailure-abandoned.dump",
+      "bytes": 820436,
+      "sha256": "537ad9dfab1a3ffb6eb88c90d3476b575293713d0452835ed75dd954f1b82d70"
+    },
+    {
+      "path": "season-crown-e1caae37-1/audit-controls.mjs",
+      "bytes": 3837,
+      "sha256": "d1e24d377d7a922e5a1bf4c80ff21d02fd7168181bb0e7e748fa5c98daf46260"
+    },
+    {
+      "path": "season-crown-e1caae37-1/audit-output.txt",
+      "bytes": 3850,
+      "sha256": "d5f8bc50d9924d1dcc058fbb03083feb13d31698fc3805c2db35fd371c00d88f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/audit.mjs",
+      "bytes": 9292,
+      "sha256": "70821d2c5874c41ea03290cae35d49122d40d3f57ede2aea323a6e01cd4b1480"
+    },
+    {
+      "path": "season-crown-e1caae37-1/car-controls.txt",
+      "bytes": 109,
+      "sha256": "cecd6110f434db3f763a2507fedd3e8fed9eb96b6a290aee990d649357e0de66"
+    },
+    {
+      "path": "season-crown-e1caae37-1/car-melt-controls.txt",
+      "bytes": 158,
+      "sha256": "281856e55695ada70208865d8f6aa3ec3dfa2fde5d9e00b1c5689782888ffc53"
+    },
+    {
+      "path": "season-crown-e1caae37-1/crown-controls.txt",
+      "bytes": 228,
+      "sha256": "b117f3c510143ec3a6146b4f5d6de3a90f6c05744ca37b11e0d3344a4fd3a84e"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/account-fault-pending.json",
+      "bytes": 22384,
+      "sha256": "65bd75fae3e57749abeee00765aa81bfe99fafe06dee3a9c78e8c0d4482bf650"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/commit-observer-final.json",
+      "bytes": 107,
+      "sha256": "42f0b0ddb3869bd8cf47d3628d7722ffd6fd0a9bed7d7bd462ee49f9beee7f1d"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/crown-committed.json",
+      "bytes": 22678,
+      "sha256": "adad4fc3d1baeb3992f03b3ead282378b1092a00f13eed8272cdbb0b3e803950"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/crown-exact-replay.json",
+      "bytes": 22678,
+      "sha256": "59d9e6d2f2136b8b03c637e2e3617b90f22332f1227825868a06da7696d70d9f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/history.jsonl",
+      "bytes": 277686,
+      "sha256": "499b1d829ba8b676e85556e97d4286b9dd298a69b7f9a58e01659f1b2496ee5f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/native-positive-projection-controls.json",
+      "bytes": 251,
+      "sha256": "af6b2fd458b821854e6b8d5a69b9c8d2197e3c1845b8758bc21524f21071f5bf"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/notice-fault-after.json",
+      "bytes": 22384,
+      "sha256": "610aced6a9f1d9832dde93be5cd5e341956ff1015d28b30e955778abc917b15e"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/notice-fault-before.json",
+      "bytes": 22384,
+      "sha256": "76dcd2b627a20a40bb4e35991bbd7c6d5ccc38cd5a06737006664d2c19abdce1"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/positive-crown-after.json",
+      "bytes": 11265,
+      "sha256": "46c982b7c5e82d99becd74232dedf60cedc3c33f8c7b33f8047b1df59b6f4a9c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/positive-crown-before.json",
+      "bytes": 10936,
+      "sha256": "9741bd65b88fa1a375fa5cda4f4d110a134831bf11eb1251c81e0597f2227858"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/resource-initial.json",
+      "bytes": 10010,
+      "sha256": "ef969c50177f8b2318cd44bc09379d19409a05eba9838d8e7eb6bf7cd1b67e6d"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/resource-restricted-6.json",
+      "bytes": 1580,
+      "sha256": "628fc6ad1c2b4f3829bd9b82437d61c84be8278ab037233ad62fd24ebdc59356"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/run-reserved.json",
+      "bytes": 401,
+      "sha256": "88913361906660821c889d5d954af38f77c9f813fd08b5e20a20dd1a5ef2937b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/focused/run.json",
+      "bytes": 6424,
+      "sha256": "86fe009a4846af3e7d641eff7482cf23131246c0e5a8038a30c1901a6c873e9c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/independent-audit.json",
+      "bytes": 19934,
+      "sha256": "9b1ef321510556fa84df452099fbebe04a863c5a475f80beb498772fccb37d26"
+    },
+    {
+      "path": "season-crown-e1caae37-1/independent-controls-audit.json",
+      "bytes": 1408,
+      "sha256": "d3a153d5b4727686c1f32eec3baae35d60e8b89c33ac35287e69bf7a5e647266"
+    },
+    {
+      "path": "season-crown-e1caae37-1/index-evidence.mjs",
+      "bytes": 2314,
+      "sha256": "aaf67f6a463a97c85a79b4e76d3dc15ae0d4549b7cc6cc99516d051a2c2ec6cb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/launch.cjs",
+      "bytes": 4515,
+      "sha256": "c94ca4909429f0218ca17714b77a46408d2afb6cd9d1132d0743fca4aa59f7cb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/launch.json",
+      "bytes": 2598,
+      "sha256": "c9967fda939523a234936e39fd32b038e090491fc9a4a5fc7a9b9f55b7524d56"
+    },
+    {
+      "path": "season-crown-e1caae37-1/native-crown-controls.txt",
+      "bytes": 1983,
+      "sha256": "3fc735d92af04c04027153cbca58fc0d8b28379e73035eb063a1df7c6d911e7b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/native-season-recovery.txt",
+      "bytes": 1306,
+      "sha256": "014b9f9cf531f54b812a7b5dd164d5d5c0022449878c7c11f54bd08fc304104f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe-launch-result.json",
+      "bytes": 192,
+      "sha256": "57df48c639cd2af7fd95234dc55630b10d46fcb84a9b9c10f3fddec60420f08b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe-output.txt",
+      "bytes": 500,
+      "sha256": "27373e4a990feb3b0b2bfad44e645cb32fe3bf384e6411081079d1221b8e2383"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/actor-policy-final.json",
+      "bytes": 13107,
+      "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/actor-policy-initial.json",
+      "bytes": 2572,
+      "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/actor-tape.json",
+      "bytes": 24034,
+      "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/day-0.json",
+      "bytes": 519317,
+      "sha256": "26aee89676e7c3924d9ec1bbdc504dd48ac32ef2a2d0bdca9e92e2a4b91ae6b7"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/final-checkpoint.json",
+      "bytes": 735,
+      "sha256": "987c2b840fefb9a96cf0763d66c9931484d4234c3d0ee09178d986e5eb5c6965"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/final.dump",
+      "bytes": 960731,
+      "sha256": "30aed33d06bae7c19b67cc259da8f124c42ded620a061caba936eedc64b9c548"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/final.json",
+      "bytes": 562754,
+      "sha256": "91d160567f0550c923e0cb2b9f7a810a38b3efb43d937c514fbd8e495fbcde3a"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/history.jsonl.gz",
+      "bytes": 4468730,
+      "sha256": "9a33bbb9392d6645aa6abe0fc9d96eadc2649362f5317819bd041e7a5b485a6f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/initial-checkpoint.json",
+      "bytes": 735,
+      "sha256": "9be399b6ff61d3d6778cd79238958a850757ef2355d9ea6492b10b3a6c1f744c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/initial.dump",
+      "bytes": 929832,
+      "sha256": "a7ee186d7f3a3a81001ba5a1dd6307bb72becb96498735dc3e68d616abc47bf6"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/initial.json",
+      "bytes": 121031,
+      "sha256": "b5b9a695f2c6ae5ec464f5b94cef04404ebe7ca389073c79a0cff195a092a173"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/knowledge-boundaries.json",
+      "bytes": 681,
+      "sha256": "55795bcb2dc8e4aaf3b2c6448d35008dc1015ce1694da5b67417d0df43d9111c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/knowledge-day-0.json",
+      "bytes": 5542,
+      "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/knowledge-final.json",
+      "bytes": 5542,
+      "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/operational-guardrails.json",
+      "bytes": 185,
+      "sha256": "6c446cdfd6b738d4af1deae32aa9224c2fab5838165a4bc1e869b676fdbfe926"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/player-metrics.json",
+      "bytes": 3349,
+      "sha256": "4b527b150a4ac7ec1cc79d8486624b6e43e8191dd369161a0a273cfcdf71918b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/query-order.json",
+      "bytes": 119706,
+      "sha256": "392eaf2abd18cd5fae94665918b3e21624c438d31b15b9b313b16a99c4260dfc"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/query-tape-00001.json",
+      "bytes": 258201,
+      "sha256": "0bffc2635615b530257aae4b26c1ef70258e2d967ead0cf11a6ec91afa778285"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/random-tape.json",
+      "bytes": 48263,
+      "sha256": "581c173295c4f2be6889f265b638ea5db91c9f4b1354e086ff4d741d54487e4d"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/resource-observer-final.json",
+      "bytes": 999,
+      "sha256": "4c954689db9e92edbe9920bd22fef9d7aca8cbf8714abf75b56e4176245045e2"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/resource-observer.json",
+      "bytes": 453,
+      "sha256": "b2dbc9fb661ab03eedb902a0440ae9b1d80bdb601e94dd85d842541793ffc7b7"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/resource-worker-bootstrap.json",
+      "bytes": 304363,
+      "sha256": "ec1c5f394ff27c7c9f61d7c8fa503536d726329503faa63d4765ad3f5f9f5740"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000083.json",
+      "bytes": 10474,
+      "sha256": "223b1a495ad6289972db77d01b8d7396c00352341f5b209029255d03bb790cbb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000351.json",
+      "bytes": 10477,
+      "sha256": "868d0a8298a3eb3dbb17a74547f8f1689fae6fd28b8f32ade8cd66990dacbca9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000353.json",
+      "bytes": 10475,
+      "sha256": "ba6c2830a910b78ee8625b01bcbe878e237f9cf7fb307bf73b9d1fd8248fcf9b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000354.json",
+      "bytes": 10468,
+      "sha256": "8ccefd5097c7fb3c456dc0803cb7514adefad4d6c46aabb9eecc9946142d17e4"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000361.json",
+      "bytes": 11582,
+      "sha256": "7527093745778f1a1ec32a666d15d6396e88e3079bfd8ee69a7b65446178a68f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0000835.json",
+      "bytes": 1515,
+      "sha256": "e9ec70ed3ed0e14fb8b47b4223f60d8a6dff5b67fad8a0a9f048798a5b0d4e1b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0001003.json",
+      "bytes": 10475,
+      "sha256": "8d9d91a0d7c73b857d57e777af378ab32009b4e805b0bcc72560c45b66414801"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0001004.json",
+      "bytes": 10477,
+      "sha256": "925e0ab52690c1362943a929bb28f281d16dfe7e17cf6be21bf73dc6673bc5d1"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/restricted-resource-change-0001012.json",
+      "bytes": 11589,
+      "sha256": "d0f7c5c59c7243f4793034b711b3ac8c3cabb88f6ce84b4a247b03c4cc44ae3c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/run-reserved.json",
+      "bytes": 882,
+      "sha256": "a43bb46a9341bf0672c9ea8ef74c6ee1d1ec65c7c85175aa83669d2802dc7ac9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/run.json",
+      "bytes": 23764,
+      "sha256": "9d871816ace00aaefdfc3a44dea22b19d4d5f1067864605f1f86f203d1b74a1a"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/worker-schedule.json",
+      "bytes": 515366,
+      "sha256": "25872d949ce637972c4a088757cb9e78f08e679c3d56bded0bdce375dfdd4ad1"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/world-diagnostics-day-0.json",
+      "bytes": 68113,
+      "sha256": "c7c50bc8d41d40f137ccc216b2dd2a47f2e1c5c04d85aa4feef3d1e6ee7a0fe6"
+    },
+    {
+      "path": "season-crown-e1caae37-1/observe/world-diagnostics-final.json",
+      "bytes": 70518,
+      "sha256": "cfc3ffd4ab4edf11542fa19b98c7bfbac65620a04ca6732ff8e66db36c4a3a02"
+    },
+    {
+      "path": "season-crown-e1caae37-1/pair-launch-result.json",
+      "bytes": 564,
+      "sha256": "6b743d1bd595fb2a003059d2779c0876e2b18858a2716f92b56cd06047371b64"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/crown-exact-retry.json",
+      "bytes": 23727,
+      "sha256": "cb7449c100705504af314ea3dade8ca3c6dcaf6f1907a5fd1346cd5a62ae4712"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/crown-recovered.json",
+      "bytes": 23727,
+      "sha256": "8fab509d86509417c8c752e365d3005bd65093b6b254242a546f801462409d3c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/crown-rolled-back.json",
+      "bytes": 23437,
+      "sha256": "708467b6d297bfaf4f81f0c76787f041a4db4a105b116b9c5e4ce1a02bf2ff9b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/history.jsonl",
+      "bytes": 46513,
+      "sha256": "a8fd01679d8d0e9ed65359912f9a5e9a57449e809c287b5fe817da94b23ef832"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/lost-response-committed.json",
+      "bytes": 26016,
+      "sha256": "0aede816b2e7d47d4ea7df0afa7e38bf21cff67e292c6957ec34b5fd8a40120c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/lost-response-retry.json",
+      "bytes": 26016,
+      "sha256": "c080d32cbafdad261352f8c2c70643db67b37610dd9a0b2b883db519f040ef71"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/notification-exact-retry.json",
+      "bytes": 24778,
+      "sha256": "249cee29b6ea809d1cb3e00b97d9071d095d9febaad0c5a5d6dc6316fb2e147b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/notification-recovered.json",
+      "bytes": 24778,
+      "sha256": "fbd202eb64f1f4cea596f02ff908b3c23a961c1dbfcef7b9cc3796a26312e995"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/notification-rolled-back.json",
+      "bytes": 24488,
+      "sha256": "81e471401ab3768cd2f3cb11a17d5a30f15d5f479a11f1c05a3925d1731edef6"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/record-insert-after.json",
+      "bytes": 21596,
+      "sha256": "4d491638b8a86c00d5c8693d670f3bf2526aa376abd30caea3dfd336dfdb0e6b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/record-insert-before.json",
+      "bytes": 21596,
+      "sha256": "a17282bec0431cc258b7cf151ced24e2ff7f3043b39bbcbdcb804fef6c78f805"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/run-reserved.json",
+      "bytes": 395,
+      "sha256": "379b536ebbfe040cd8f415678b8c4e69513d4fe04c951e60a796a3ad816f4b63"
+    },
+    {
+      "path": "season-crown-e1caae37-1/recovery/run.json",
+      "bytes": 5167,
+      "sha256": "ddfcb34e5237ee1866756069edd2429ca8dcb535ad805a76cfe6af9d96532cfb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay-launch-result.json",
+      "bytes": 191,
+      "sha256": "ca7635cb74dfcc79c957838a95d2fee6d1fec1b95650504fac53c4155901b054"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay-output.txt",
+      "bytes": 500,
+      "sha256": "27373e4a990feb3b0b2bfad44e645cb32fe3bf384e6411081079d1221b8e2383"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/actor-policy-final.json",
+      "bytes": 13107,
+      "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/actor-policy-initial.json",
+      "bytes": 2572,
+      "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/actor-tape.json",
+      "bytes": 24034,
+      "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/day-0.json",
+      "bytes": 519317,
+      "sha256": "69e93e6f86457f01daa7121648f3bb1eaca24d2ca8866fda91aa22e5865ae381"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/final-checkpoint.json",
+      "bytes": 735,
+      "sha256": "9b2bdce1c80e029d1cbe8cd15aa711cbb67b55a8f7630b4f98343ce6c4b29bdb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/final.dump",
+      "bytes": 960730,
+      "sha256": "35445f85752b0b5d83989578579263e0f377322f4c08244e8a4aa5891c5d4882"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/final.json",
+      "bytes": 562754,
+      "sha256": "b0ab6b49acb38fd520470ee20a3863241e54a626e15057560d7272ee4107b294"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/history.jsonl.gz",
+      "bytes": 4469185,
+      "sha256": "03e919270e9a3ccda210834eaff886016821e2defe5994d555419f02871f2e60"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/initial-checkpoint.json",
+      "bytes": 735,
+      "sha256": "08afe37de9b302f1a032db7ec90185fa01d2734deb5e564e57945d92d1e3bede"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/initial.dump",
+      "bytes": 929831,
+      "sha256": "e70d7fb339bb94947af9719e1aaee1c798fcebf2366fde5aaed7bf6dcce8ae69"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/initial.json",
+      "bytes": 121031,
+      "sha256": "a80c716bb3ace9f7fc6d5a2dd98ba82d92094619fe2d15ec9903f54d0aec71a5"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/knowledge-boundaries.json",
+      "bytes": 681,
+      "sha256": "55795bcb2dc8e4aaf3b2c6448d35008dc1015ce1694da5b67417d0df43d9111c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/knowledge-day-0.json",
+      "bytes": 5542,
+      "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/knowledge-final.json",
+      "bytes": 5542,
+      "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/operational-guardrails.json",
+      "bytes": 177,
+      "sha256": "923f8ed4913719dc4c2ee0049c87c0a19c493b7fc1a3dd0d93dcb38f3e1d9801"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/player-metrics.json",
+      "bytes": 3357,
+      "sha256": "26cc07c3013ca2f594b06c8bbd46fa612c1823d79b76914414c833fefe391001"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/query-order.json",
+      "bytes": 119734,
+      "sha256": "2c127b0e7b2101baf0b4f91b4b444df103cde8cc365a96ac8d23861c33770556"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/query-tape-00001.json",
+      "bytes": 258201,
+      "sha256": "0bffc2635615b530257aae4b26c1ef70258e2d967ead0cf11a6ec91afa778285"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/random-tape.json",
+      "bytes": 48263,
+      "sha256": "581c173295c4f2be6889f265b638ea5db91c9f4b1354e086ff4d741d54487e4d"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/resource-observer-final.json",
+      "bytes": 998,
+      "sha256": "e0b3fe6a551eea37f525c4f11f81d7ed9d935efa5a8f25572edfb11552bd55f3"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/resource-observer.json",
+      "bytes": 453,
+      "sha256": "b2dbc9fb661ab03eedb902a0440ae9b1d80bdb601e94dd85d842541793ffc7b7"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/resource-worker-bootstrap.json",
+      "bytes": 304363,
+      "sha256": "28e9c187ede5d9641bb5079896d44fc41e4b5428f8954e741efeb0777fa761f4"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000083.json",
+      "bytes": 10474,
+      "sha256": "223b1a495ad6289972db77d01b8d7396c00352341f5b209029255d03bb790cbb"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000351.json",
+      "bytes": 10477,
+      "sha256": "868d0a8298a3eb3dbb17a74547f8f1689fae6fd28b8f32ade8cd66990dacbca9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000353.json",
+      "bytes": 10475,
+      "sha256": "ba6c2830a910b78ee8625b01bcbe878e237f9cf7fb307bf73b9d1fd8248fcf9b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000354.json",
+      "bytes": 10468,
+      "sha256": "8ccefd5097c7fb3c456dc0803cb7514adefad4d6c46aabb9eecc9946142d17e4"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000361.json",
+      "bytes": 11582,
+      "sha256": "7527093745778f1a1ec32a666d15d6396e88e3079bfd8ee69a7b65446178a68f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0000835.json",
+      "bytes": 1515,
+      "sha256": "e9ec70ed3ed0e14fb8b47b4223f60d8a6dff5b67fad8a0a9f048798a5b0d4e1b"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0001003.json",
+      "bytes": 10475,
+      "sha256": "8d9d91a0d7c73b857d57e777af378ab32009b4e805b0bcc72560c45b66414801"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0001004.json",
+      "bytes": 10477,
+      "sha256": "925e0ab52690c1362943a929bb28f281d16dfe7e17cf6be21bf73dc6673bc5d1"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/restricted-resource-change-0001012.json",
+      "bytes": 11589,
+      "sha256": "d0f7c5c59c7243f4793034b711b3ac8c3cabb88f6ce84b4a247b03c4cc44ae3c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/run-reserved.json",
+      "bytes": 881,
+      "sha256": "6bb237904685225f714102988ea2f2008d81a329736ef389f592ff8ac6ececc9"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/run.json",
+      "bytes": 25189,
+      "sha256": "6d9bd11feaf1846fb7de704efc3cfd9bae8639285d910241395acc74c5353db8"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/worker-schedule.json",
+      "bytes": 515362,
+      "sha256": "51a35efd62bd1f9dc2fdb001a7b9d865307f655ba2d9d9c86c74aa22030c29b4"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/world-diagnostics-day-0.json",
+      "bytes": 68113,
+      "sha256": "0c778566667900fe0c67725e7fb60c91c7c56feded9109788bad3b24b0746e6c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/replay/world-diagnostics-final.json",
+      "bytes": 70518,
+      "sha256": "8ba62c1329c896c6a61873cd093824735dc8025d8c04ea8dd69884c27af57c4f"
+    },
+    {
+      "path": "season-crown-e1caae37-1/resource-controls.txt",
+      "bytes": 122,
+      "sha256": "16c3814eecd09714a1bcf35d3f21e03f8ac5e5b175fd9c7807fc8cd5df9fe8ab"
+    },
+    {
+      "path": "season-crown-e1caae37-1/season-controls.txt",
+      "bytes": 464,
+      "sha256": "a7a3487a3f56207450cdd499b599297ebf50b28c94411b5df0f3cdc8b7a5527c"
+    },
+    {
+      "path": "season-crown-e1caae37-1/serialization-controls.txt",
+      "bytes": 156,
+      "sha256": "0f9e30ab469c46cd4bab31e6b289df99f0318820e0be6ae5485a29e23eb4cbfd"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "sourceCommit": "04230658acbd57df745e7ba10cb1462a197323d1",
+  "sourceClean": true,
+  "owner": "Codex/resource_proof",
+  "runs": [
+    {
+      "command": "node tools/rc1-resource-proof.js",
+      "requiredEnvironment": [
+        "RC1_RESOURCE_DATABASE_URL=isolated localhost PostgreSQL admin database",
+        "RC1_RESOURCE_OUTPUT=tmp/rc1-resource-source-04230658"
+      ],
+      "exitCode": 0,
+      "result": "result.json"
+    },
+    {
+      "log": "capital.log",
+      "command": "node test/coordination-capital.js --postgres",
+      "requiredEnvironment": [
+        "COORDINATION_TEST_DATABASE_URL=isolated localhost PostgreSQL database"
+      ],
+      "scope": "Canonical mutation-root integration; fixture death/replacement and source tests, not full-game lifecycle/simulation evidence",
+      "exitCode": 0
+    }
+  ],
+  "qualification": "RC1-02 remains open; no required full-game simulation or deployment backing proof",
+  "artifactHashes": [
+    {
+      "sha256": "e3d7cf339ce57f94dbe7b62763eb4493491524bfe1950c41519ec0729ebd31af",
+      "file": "capital.log"
+    },
+    {
+      "sha256": "0bb2c1679125904cefa39fe125a69cce0cd9a77b725c3aa2943759ba64b2802e",
+      "file": "coverage-inventory.json"
+    },
+    {
+      "sha256": "b65e241ba040ac44cf042e317d1d41a7c219dce4344fbe9bd38245c4c9d94a1c",
+      "file": "final-state.json"
+    },
+    {
+      "sha256": "0318607f273b36d89d2bda6465c79544f4e70361248c69f4a9c64f53b3e4dfb1",
+      "file": "initial-state.json"
+    },
+    {
+      "sha256": "3973fc77ceeaf58289958cc8f3169c659058268e19e3f221640e83d774da0c7e",
+      "file": "movements.ndjson"
+    },
+    {
+      "sha256": "a73325a78b4db67c54cab00f84cd618e161c57ed9b86f442e7bba1fbedb405e8",
+      "file": "native.log"
+    },
+    {
+      "sha256": "b47930b593f723ebda0db51d906ba4a449ea1b1f15ff0400a9532cedaa467a7a",
+      "file": "requests.json"
+    },
+    {
+      "sha256": "7f6b95093652da23fa47da5fd06cab6b3e5abcb1054b41c61e1c36e90ed62ee4",
+      "file": "result.json"
+    }
+  ]
+}

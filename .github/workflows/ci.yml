@@ -1,4 +1,5 @@
 name: ci
+run-name: ${{ inputs.tail_only && 'Candidate19 affected CI remainder' || 'ci' }}
 
 # The three gates the codebase already treats as required, run automatically instead of by hand.
 # Until now they only ran when someone typed the command — which is how, on 2026-07-25, a change
@@ -19,7 +20,13 @@ on:
     paths-ignore:
       - 'omerta-contracts/**'
       - '**/*.md'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tail_only:
+        description: 'Run the repaired candidate19 safeguard and unexecuted CI remainder; preserve prior prefix evidence'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:                        # a new push supersedes an in-flight run of the same branch
   group: ci-${{ github.ref }}
@@ -85,13 +92,32 @@ jobs:
           fi
 
       - name: npm test (the full suite, on pg-mem)
+        if: ${{ !inputs.tail_only }}
         run: npm test
+
+      # Candidate19's retained npm test passed the prefix and failed at the suite
+      # inventory safeguard. Resume there without repeating that expensive prefix.
+      # Default push/PR runs still execute the complete npm lifecycle above.
+      - name: Repaired safeguard and remaining npm test commands
+        if: ${{ inputs.tail_only }}
+        run: |
+          node test/gates.js
+          node test/chainparams.js
+          node test/docs.js
+          node test/playthrough-truth.js
+          node tools/knowledge-test.js
 
       - name: Invite-only launch admission and Crew allowance
         run: npm run test:invites
 
       - name: RC1 telemetry isolation and complementary campaign regressions
         run: npm run test:rc1
+
+      - name: RC1 private command diagnostics and passive confirmation regression
+        run: npm run test:rc1:observability
+
+      - name: RC1 original worker scheduling and diagnostic harness controls
+        run: npm run test:rc1:harness
 
       - name: economy sim (§10.4 drift-0)
         run: npm run sim
@@ -133,14 +159,19 @@ jobs:
         run: npm run mobile
 
   pgcheck:
-    name: real Postgres
+    if: ${{ !inputs.tail_only }}
+    name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
     services:
       postgres:
-        # Pin the major to what production runs. The point of this job is fidelity, so tracking
-        # `latest` here would quietly test something the deployment isn't.
-        image: postgres:16
+        # Retain the existing compatibility lane and test the Render version observed
+        # for RC1 (2026-09-21). A PostgreSQL 16 pass alone does not attest PostgreSQL 18.4.
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: pgcheck
           POSTGRES_DB: omerta_check
@@ -162,6 +193,9 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
 
       # FIRST, because it is the cheapest and the most diagnostic. `PREPARE`s every static SQL string
       # in src/ against the real engine: full parse and type resolution, no rows read, about a second.
@@ -196,6 +230,45 @@ jobs:
           SOCIAL_VERIFY_MODE: 'off'
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
+
+      - name: Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:db-migration:postgres
+
+      - name: RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:rc1:security:postgres
+
+      - name: Moderator authentication and limiter precede body parsing (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+          RC1_MOD_INGRESS_OUTPUT: ${{ runner.temp }}/rc1-mod-ingress
+        run: npm run test:rc1:mod-ingress:postgres
+
+      - name: Native diagnostic precision and actual commit boundary controls
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:rc1:observers:postgres
+
+      - name: RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-resource-proof
+        run: npm run test:rc1:resource:postgres
+
+      - name: RC1 operation capital terminal custody and rollback (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-capital-proof
+        run: npm run test:rc1:capital:postgres
 
       - name: Phase 2 definition registry (real PostgreSQL)
         if: '!cancelled()'

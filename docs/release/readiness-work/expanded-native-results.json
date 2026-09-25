@@ -1,0 +1,146 @@
+{
+  "format": 1,
+  "state": "NOT RELEASE READY",
+  "implementationComplete": false,
+  "note": "These are actual source-bound scoped results. No source inherits a pass merely by merging. Full worker replay, 225 world runs,12-hour soak,complete resources/authority,physical devices,deployment and real cohort remain open.",
+  "localGates": [
+    {
+      "format": 1,
+      "id": "rc1-resource",
+      "source": "355eb64be176df0600104a60bcb3e609f6e34b31",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:resource:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T04:32:32.461Z",
+      "endedAt": "2026-09-21T04:33:25.501Z",
+      "durationMs": 53039,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Full resource transition coverage remains unproven"
+      ],
+      "logSha256": "015d7b31dc1c22b8a9f7aaf81d883d71bdff2469b7fe4bfe19560e04176a98d7",
+      "privateEvidenceId": "355eb64b-rc1-resource"
+    },
+    {
+      "format": 1,
+      "id": "rc1-shipment",
+      "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:shipment:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T04:36:34.481Z",
+      "endedAt": "2026-09-21T04:38:20.475Z",
+      "durationMs": 105993,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Canonical domain daily caps with aligned test clocks; no full worker schedule or HTTP replay in this runner"
+      ],
+      "logSha256": "6a1cd97c96dd2dfe6c4706e89639707a8f0281e74f6db49c138fb0415c3578dd",
+      "privateEvidenceId": "7bfdc8ff-rc1-shipment"
+    },
+    {
+      "format": 1,
+      "id": "rc1-concurrent",
+      "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:concurrent:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T04:36:34.721Z",
+      "endedAt": "2026-09-21T04:38:22.442Z",
+      "durationMs": 107720,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Recorded native salvage schedule only; not arbitrary concurrency or the full matrix"
+      ],
+      "logSha256": "8f9e2bc28f65b970e8f00e2d69d059f941d0426599c83ed329a32dbc8a628133",
+      "privateEvidenceId": "7bfdc8ff-rc1-concurrent"
+    },
+    {
+      "format": 1,
+      "id": "rc1-command-family",
+      "source": "7bfdc8ff5647889db8b648fa288a8e8c558bc17a",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:command-family:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T04:36:34.943Z",
+      "endedAt": "2026-09-21T04:37:01.682Z",
+      "durationMs": 26737,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native item, recipe, world and situation probes; full legacy-route and role matrix remains required"
+      ],
+      "logSha256": "07d947ed45bed675acd1e1f2474da51ba7118b33c74ef5094c8f4f4c0ac106a4",
+      "privateEvidenceId": "7bfdc8ff-rc1-command-family"
+    }
+  ],
+  "previousFullCI": {
+    "source": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83",
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/35558616144",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "suites + sim (pg-mem)",
+        "conclusion": "success"
+      },
+      {
+        "name": "real Postgres",
+        "conclusion": "success"
+      }
+    ],
+    "metadataSha256": "df25b9e01f0b367373bf30560e37017acf236275b25fa99d75bfc750b172b8b3",
+    "logSha256": "db48eb205a5b219e72dc1410c0f3df3f530188743b68c4950c3a9970e4a4ac15",
+    "scope": "a9b74a32 full CI including PostgreSQL16. Newer integrated source and PostgreSQL18.4 hosted lanes must still run."
+  }
+}

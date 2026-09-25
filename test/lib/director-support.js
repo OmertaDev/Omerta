@@ -16,8 +16,8 @@ import { createMysteryContext, startMystery, mysteryBoard, discoverNode, complet
 import { createDockWarContent, DOCK_WAR_IDS as ids } from '../../src/content/dock-war.js';
 
 export { key, characterId, ids };
-export async function dockFixture(tag = 'dock', suppliedContent = null) {
-  const db = await commandDatabase(tag), pool = db.pool, content = suppliedContent || createDockWarContent();
+export async function dockFixture(tag = 'dock', suppliedContent = null, { databaseOptions } = {}) {
+  const db = await commandDatabase(tag, databaseOptions), pool = db.pool, content = suppliedContent || createDockWarContent();
   const actors = Object.fromEntries(['aBoss', 'aRunner', 'bBoss', 'bRunner', 'outsider'].map((role) => [role, `${tag}-${role}`]));
   const names = Object.fromEntries(Object.keys(actors).map((role) => [role, `${tag} ${role}`]));
   const social = (account, work, hooks) => withCharacter(pool, account, work, hooks);

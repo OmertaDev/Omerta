@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "source": {
+    "revision": "ab7c9e2ff603e98d18d55963f2ddf875b55ac7e4",
+    "gitTree": "31a2ef38994032bce41f04dbe9687c4f146dfbfd",
+    "checkoutSha256": "d1bb790530717cf8c2a04f9a8a83a161a554b5165e75033440de4324a42772c8",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "configurationSha256": "cbe385a17f7163c8957c76e7d79b82a674eb984b56ad4484de82ac5ac88b08e7",
+  "startedAt": "2026-09-21T08:36:43.907Z",
+  "endedAt": "2026-09-21T08:37:10.054Z",
+  "runSha256": "4a3bac465b4d62bdde87a149a18830b24cf77a583143181b869cf80ded3f95dd",
+  "artifactsVerified": 194,
+  "result": {
+    "status": "PASS_SCOPED",
+    "actualFamilies": 3,
+    "ordinaryEntrants": 4,
+    "initialRespectFixtures": 3,
+    "otherDirectGameplayFixtureWrites": 0,
+    "objective": "cathedral",
+    "simultaneousClaimRequests": 3,
+    "originalContestSeconds": 900,
+    "originalSettlementDelaySeconds": 2700,
+    "stakes": [
+      54292,
+      60044,
+      80088
+    ],
+    "exactReplays": 2,
+    "ownPermissionDenials": 1,
+    "canonicalTerminalSettlements": 1,
+    "terminalSecondSweepResolved": 0,
+    "invariantChecks": 55,
+    "invariantBoundaries": 77,
+    "resourceBoundaries": 93,
+    "resourceChecks": 1254,
+    "turfBoundaries": 73,
+    "turfChecks": 216,
+    "sharedObserverUnknown": 26,
+    "familyJournalUnknown": 8,
+    "observedLogicalSeconds": 7200,
+    "timerCounts": {
+      "directorTick": 24,
+      "guardedTick": 2,
+      "guardedSeasonTick": 2,
+      "health-boundary": 24
+    },
+    "finalStateSha256": "1d84aea4561df95834ae39c060d2967cc752fdd190ead645cb13f6d43756ffac",
+    "matrixQualifying": false,
+    "qualifyingFullResourcePass": false,
+    "exclusions": [
+      "Three-way declareWar triangle",
+      "war/spoils/OMR",
+      "charter modifiers and dissolved bidders",
+      "incumbent tie native exercise",
+      "other objectives and resource taxonomy",
+      "same-seed fresh-world replay",
+      "25 actors/90 days/three seeds/225-run matrix",
+      "production and real people"
+    ],
+    "outcomes": [
+      {
+        "actor": 0,
+        "won": false,
+        "staked": 54292,
+        "refunded": 27146
+      },
+      {
+        "actor": 1,
+        "won": false,
+        "staked": 60044,
+        "refunded": 30022
+      },
+      {
+        "actor": 2,
+        "won": true,
+        "staked": 80088,
+        "refunded": 0
+      }
+    ]
+  },
+  "scope": "Independent native three-Family shared objective component; fresh integrated-source retest required"
+}

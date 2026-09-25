@@ -14,6 +14,7 @@ import { createPlayerCommandEngine } from '../src/player-commands.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createCampaignNetworkDefinitions } from '../src/director/campaign-network.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { sourceIdentity, createProofRecorder, validateScenarioManifest } from './rc1-native-proof.js';
 
 export const ARCHETYPES = Object.freeze(['solo', 'high_activity', 'low_activity', 'crew_focused',
   'family_focused', 'economic', 'information_focused', 'aggressive', 'cooperative', 'opportunistic',
@@ -28,6 +29,30 @@ export function rosterFor(population, seed, replicate) {
     id: `sim-${index}`, archetype: ARCHETYPES[(index + sample(seed, replicate)) % ARCHETYPES.length],
     priority: sample(seed, replicate, index),
   })).sort((a, b) => a.priority - b.priority);
+}
+
+// Policy randomness must not depend on generated command/instance IDs. Resolve
+// only the actor's authorized projection; hidden discover nodes remain hidden.
+export function policyCommandKey(view, command) {
+  const parameters = command.parameters || {};
+  if (command.commandType === 'discovery.act') {
+    const instance = view.discovery.instances.find((entry) => entry.id === parameters.instanceId);
+    assert(instance, 'A policy may only select an authorized discovery instance');
+    const ordinal = instance.actions.findIndex((entry) => entry.id === parameters.actionId);
+    assert(ordinal >= 0, 'A policy may only select an authorized discovery action');
+    const action = instance.actions[ordinal];
+    return JSON.stringify([command.commandType, instance.graphId, instance.revision, action.kind, action.nodeId || null, ordinal]);
+  }
+  assert(['discovery.start', 'mystery.start', 'mystery.complete'].includes(command.commandType));
+  return JSON.stringify([command.commandType, parameters.graphId, parameters.nodeId || null, parameters.optionId || null]);
+}
+export function chooseSeededCommand(view, seed, replicate, actorId, round) {
+  const ranked = view.commands.filter((command) => command.availability === 'AVAILABLE'
+    && ['discovery.start', 'discovery.act', 'mystery.start', 'mystery.complete'].includes(command.commandType))
+    .map((command) => ({ command, key: policyCommandKey(view, command) }));
+  ranked.sort((a, b) => sample(seed, replicate, actorId, round, a.key) - sample(seed, replicate, actorId, round, b.key)
+    || a.key.localeCompare(b.key, 'en'));
+  return ranked[0]?.command;
 }
 
 export function verifyLedgerChecks(baseline, final, population) {
@@ -49,9 +74,15 @@ export function verifyLedgerChecks(baseline, final, population) {
   });
 }
 
-export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {} }) {
-  const started = Date.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
-  const f = await campaignNetworkFixture(tag);
+export async function runNativeSimulation({ population, seed, replicate, rounds = 2, progress = () => {}, proof = null,
+  fixtureOptions = {}, fixtureReady = () => {}, serial = false,
+  clockScope = 'Director/fixture application clock; database wall clock is not advanced' }) {
+  assert(Number.isSafeInteger(rounds) && rounds > 0, 'A run must execute at least one round');
+  if (proof) assert(process.argv.includes('--postgres'), 'Proof artifacts require real PostgreSQL');
+  const started = performance.now(), tag = `rc1_${population}_${replicate}_${digest(seed).slice(0, 6)}`;
+  const f = await campaignNetworkFixture(tag, fixtureOptions);
+  fixtureReady(f);
+  const initialLogicalTime = f.clock();
   const roster = rosterFor(population, seed, replicate);
   const metrics = { snapshots: 0, commandsIssuedAvailable: 0, commandsExecuted: 0, commandReplays: 0,
     rejectedCommands: {}, opportunityCardsShown: 0, opportunityCardsUniquePerActor: 0,
@@ -59,7 +90,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     knowledgePrivacyProbes: 0, unauthorizedKnowledgeDisclosures: 0, foreignCommandProbes: 0,
     staleCommandProbes: 0, replayStateChecks: 0, disappearedBeforeCommand: 0,
     directorTicks: 0, directorSelections: 0, directorTransitions: 0, completedOpportunityCommandLinks: 0,
-    knowledgeShares: 0, authorizedKnowledgeReads: 0, abandonedOperationsRecovered: 0, concurrentOperationExecuteBursts: 0 };
+    knowledgeShares: 0, authorizedKnowledgeReads: 0, abandonedOperationsRecovered: 0, concurrentOperationExecuteBursts: 0,
+    serialOperationExecuteRetries: 0 };
   const seen = new Set(), attempts = [], playerActions = new Map();
   const definitions = createCampaignNetworkDefinitions(f.content);
   const director = createLivingWorldDirector({ pool: f.pool, content: f.content, definitions, mode: 'LIVE', clock: f.clock });
@@ -67,7 +99,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     enabled: true, knowledgeEnabled: true, sharingEnabled: true });
   const engine = {
     async snapshot(account, options) {
-      const view = await raw.snapshot(account, options);
+      const view = proof ? await proof.invoke('player.snapshot', { account, options: options || {} }, () => raw.snapshot(account, options))
+        : await raw.snapshot(account, options);
       metrics.snapshots++; metrics.commandsIssuedAvailable += view.commands.filter((c) => c.availability === 'AVAILABLE').length;
       metrics.opportunityCardsShown += view.opportunities.length;
       metrics.maximumCardsPerVisit = Math.max(metrics.maximumCardsPerVisit, view.opportunities.length);
@@ -78,7 +111,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     },
     async execute(account, input, key) {
       try {
-        const response = await raw.execute(account, input, key);
+        const response = proof ? await proof.invoke('player.execute', { account, input, idempotencyKey: key }, () => raw.execute(account, input, key))
+          : await raw.execute(account, input, key);
         if (response.replayed) metrics.commandReplays++;
         else { metrics.commandsExecuted++; playerActions.set(account, (playerActions.get(account) || 0) + 1); }
         return response;
@@ -86,7 +120,8 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     },
   };
   const tick = async () => {
-    f.advance(); const result = await director.tick(); metrics.directorTicks++;
+    f.advance(); const result = proof ? await proof.invoke('director.tick', { logicalTime: f.clock() }, () => director.tick())
+      : await director.tick(); metrics.directorTicks++;
     metrics.directorSelections += result.selected?.length || 0;
     metrics.directorTransitions += result.transitions?.length || 0;
     return result;
@@ -111,6 +146,13 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         await f.social(mate.id, (ch, client, hooks) => joinGang(ch, family.gangId, client, hooks));
         leader.mate = mate.id; mate.mate = leader.id;
       }
+    }
+    if (proof) {
+      await proof.record({ kind: 'initialization', roster, fixtureActors: f.actors,
+        grants: { perActorCash: 100000, perActorRespect: 10000, perActorMuscleCunningSpeed: 50 },
+        entryMode: 'fixture-assisted', clockScope });
+      await proof.snapshot(f.pool, 'initial-state');
+      await proof.checkpoint(f.pool, 'initial', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
     }
     await f.networkEstablish(); await tick();
     const privateClaim = (await f.knowledge.knowledgeBoard(f.actors.aBoss)).claims.find((c) => c.owned);
@@ -150,12 +192,10 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         : actor.archetype === 'high_activity' ? rounds + 2 : rounds;
       for (let round = 0; round < actionRounds; round++) {
         if (round) view = await engine.snapshot(actor.id);
-        const allowed = view.commands.filter((c) => c.availability === 'AVAILABLE'
-          && ['discovery.start', 'discovery.act', 'mystery.start', 'mystery.complete'].includes(c.commandType));
-        allowed.sort((a, b) => sample(seed, replicate, actor.id, round, a.commandId)
-          - sample(seed, replicate, actor.id, round, b.commandId));
-        const command = allowed[0];
+        const command = chooseSeededCommand(view, seed, replicate, actor.id, round);
         if (!command) break;
+        if (proof) await proof.record({ kind: 'policy-choice', actor: actor.id, seed, replicate, round,
+          semanticKey: policyCommandKey(view, command), commandId: command.commandId });
         if (actor.archetype === 'repeated_failure') {
           const originalLocation = view.player.character.locationId || view.player.character.loc || 'docks';
           await f.move(actor.id, originalLocation === 'docks' ? 'foundry' : 'docks');
@@ -182,7 +222,10 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     try {
       // Move the process test clock across the actual persisted deadline. No
       // deadline, escrow, outcome or other canonical row is edited by the harness.
-      Date.now = () => new Date(expiresAt).getTime() + 1;
+      if (serial) {
+        f.advance(Math.max(0, (new Date(expiresAt).getTime() + 1 - f.clock()) / 1000));
+        Date.now = () => f.clock();
+      } else Date.now = () => new Date(expiresAt).getTime() + 1;
       await f.family.command(abandoned.boss, abandoned.operationId, 'expire', {}, key());
     } finally { Date.now = originalNow; }
     assert.equal((await f.family.get(abandoned.boss, abandoned.operationId)).status, 'expired');
@@ -191,13 +234,17 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     const prefix = branch === 'intercept_shipment' ? 'b' : 'a';
     const action = await f.networkPrepare(branch, { prefix, engine });
     const execute = findCommand(await engine.snapshot(action.boss, { operationId: action.operationId }), 'operation.execute', { operationId: action.operationId });
-    const burst = await Promise.allSettled([executeIssued(engine, action.boss, execute), executeIssued(engine, action.boss, execute)]);
+    const burst = serial
+      ? [...await Promise.allSettled([executeIssued(engine, action.boss, execute)]),
+        ...await Promise.allSettled([executeIssued(engine, action.boss, execute)])]
+      : await Promise.allSettled([executeIssued(engine, action.boss, execute), executeIssued(engine, action.boss, execute)]);
     // Production uses a nonblocking issuance lock: an in-flight duplicate may
     // receive retryable contention, while a later duplicate returns its receipt.
     // Accept only that documented refusal or a durable replay, never two writes.
     assert.equal(burst.filter((r) => r.status === 'fulfilled' && !r.value.replayed).length, 1);
     for (const result of burst) if (result.status === 'rejected') assert.equal(result.reason.code, 'contention');
-    metrics.concurrentOperationExecuteBursts++;
+    if (serial) metrics.serialOperationExecuteRetries++;
+    else metrics.concurrentOperationExecuteBursts++;
     const beforeReplay = await stateCounts();
     assert.equal((await executeIssued(engine, action.boss, execute)).replayed, true);
     assert.deepEqual(await stateCounts(), beforeReplay); metrics.replayStateChecks++;
@@ -221,8 +268,14 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
     const participation = (await f.pool.query('SELECT character_id FROM world_operation_roles WHERE character_id IS NOT NULL')).rows;
     const claims = (await f.pool.query('SELECT id FROM coordination_claims')).rows;
     metrics.opportunityCardsUniquePerActor = seen.size;
+    if (proof) {
+      await proof.snapshot(f.pool, 'final-state');
+      await proof.checkpoint(f.pool, 'final', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
+      await proof.record({ kind: 'assertions', invariantChecks, logicalTime: f.clock(), metrics });
+    }
     return { population, seed, replicate, rounds, database: process.argv.includes('--postgres') ? 'postgresql' : 'pg-mem',
-      status: 'PASS_SCOPED', durationMs: Date.now() - started, archetypes: counts(roster.map((a) => a.archetype)),
+      status: 'PASS_SCOPED', durationMs: Math.round(performance.now() - started), archetypes: counts(roster.map((a) => a.archetype)),
+      logicalDurationMs: f.clock() - initialLogicalTime, logicalClockScope: clockScope,
       fixturePlayers: 5, actorsExecutingCommands: playerActions.size, metrics, actions: attempts,
       authoritative: { situationsGenerated: situations.length, situationStates: counts(situations.map((s) => s.state)),
         situationsWithCanonicalResolution: situations.filter((s) => s.world_event_id).length,
@@ -248,6 +301,15 @@ export async function runNativeSimulation({ population, seed, replicate, rounds 
         'independent Crew/Family campaign dynamics', 'engine-caused irreversible dead ends across every branch',
         'reward-bearing operations', 'nonzero OMR movement', 'Knowledge revocation races'],
     };
+  } catch (error) {
+    if (proof) {
+      await proof.record({ kind: 'failure', error: { message: error.message, code: error.code || null, stack: error.stack } });
+      try {
+        await proof.snapshot(f.pool, 'first-failure-state');
+        await proof.checkpoint(f.pool, 'first-failure', process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL);
+      } catch (captureError) { await proof.record({ kind: 'failure-capture-error', message: captureError.message }); }
+    }
+    throw error;
   } finally { await f.cleanup(); }
 }
 
@@ -257,6 +319,15 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   const populations = (options.populations || '25,100,500,1000').split(',').map(Number);
   const seeds = (options.seeds || 'rc1-alpha,rc1-beta').split(',');
   const replicates = Number(options.replicates || 2), rounds = Number(options.rounds || 2);
+  assert(populations.length && populations.every((p) => Number.isSafeInteger(p) && p >= 5));
+  assert(seeds.length && seeds.every((seed) => /^[a-z0-9_-]+$/i.test(seed)));
+  assert(Number.isSafeInteger(replicates) && replicates > 0 && Number.isSafeInteger(rounds) && rounds > 0,
+    'Empty, partial, or zero-round campaigns cannot pass');
+  const proofSource = options['proof-directory'] ? await sourceIdentity() : null;
+  if (proofSource) {
+    assert(process.argv.includes('--postgres'), 'Proof artifacts require --postgres');
+    validateScenarioManifest(JSON.parse(await fs.readFile(new URL('../docs/release/readiness-work/scenario-manifest.json', import.meta.url), 'utf8')));
+  }
   const output = path.resolve(options.output || 'docs/release/evidence/simulation');
   await fs.mkdir(output, { recursive: true });
   const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
@@ -265,10 +336,14 @@ if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) 
   for (const population of populations) for (const seed of seeds) for (let replicate = 0; replicate < replicates; replicate++) {
     const identity = `${population}-${seed}-${replicate}`;
     console.log(JSON.stringify({ event: 'start', identity }));
+    const proof = proofSource ? await createProofRecorder({ directory: path.join(options['proof-directory'], identity),
+      source: proofSource, configuration: { population, seed, replicate, rounds, postgres: true, fixtureAssisted: true },
+      runId: identity, population, seed, scenarioId: 'scoped-campaign-regression' }) : null;
     let result;
     try { result = await runNativeSimulation({ population, seed, replicate, rounds,
-      progress: (data) => console.log(JSON.stringify({ event: 'progress', ...data })) }); }
+      proof, progress: (data) => console.log(JSON.stringify({ event: 'progress', ...data })) }); }
     catch (error) { result = { population, seed, replicate, status: 'FAIL', error: { message: error.message, code: error.code, stack: error.stack } }; }
+    if (proof) await proof.finish(result);
     result.revision = revision; result.harnessSha256 = sourceHash;
     await fs.writeFile(path.join(output, `${identity}.json`), `${JSON.stringify(result, null, 2)}\n`);
     results.push(result);
