@@ -1,0 +1,43 @@
+{
+  "baseRevision": "6bd1a1dab316543b46a1f535ddbfac4161b2fead",
+  "phase": "pre-merge application worker fix; no rail activation",
+  "reviewedAt": "2026-09-25T00:33:23.669Z",
+  "workingTree": "four changed files, identified below by SHA256 of UTF-8 with LF line endings",
+  "sourceFiles": {
+    "src/rwahealthsweep.js": "55f9659ddbccc868dcfbc06800931d821c24ee6f95f21817d5bb3d5152b6d1ec",
+    "src/stockcatalogv2.js": "25fa942dabc6738bfa44b0c6e4ee76f28d19170b1e1c83db2b2e2ba0d08fb945",
+    "test/rwahealth.integration.js": "2d36a36cb7850318c2f21fec6199e2dc12e26b43d7fab082089cf8f60f3f74de",
+    "test/rwahealth.postgres.js": "69bffdd4fef893f4a6ccc623637e6bb8ea51eb2c6c20a09de0fcf1794c64389a"
+  },
+  "scope": "Registry configuration absence and first-use history detection in the five-minute H1 sweep; public API and action-wall contracts unchanged.",
+  "model": "worker safe wrapper -> sweepRwaHealth -> DB clock preflight -> transaction -> Registry share lock -> authoritative catalog/config read -> dormant history check. Registry writers acquire the same row exclusively. Provider I/O and H1 mutations occur only after normal configured readiness checks.",
+  "invariant": "Dormancy requires both registry-specific env keys strictly absent and no catalog/checkpoint/asset/head/sync/evidence or H1 runtime/batch/current/reviewer history. Blank, partial, malformed or removed configuration and read failures remain errors. Dormancy never grants health or financial authority.",
+  "method": "Adapted entry-point/trust-boundary mapping, specification comparison, adversarial configuration/recovery traces, invariants, native static gates, false-positive triage and independent agent review from the Pashov, Plamen and Trail of Bits pins in omerta-contracts/SECURITY-REVIEW-POLICY.md. No upstream orchestration is claimed.",
+  "finding": {
+    "id": "RWA-DORMANT-01",
+    "severity": "low",
+    "impact": "Unconfigured unused production rail emits a misleading operational error every five minutes.",
+    "rootCause": "resumePending throws before recognizing the named dormant result required by the H1 plan.",
+    "correction": "Return an explicit dormant receipt under the existing Registry lock for the never-configured case only; preserve catalog diagnostic reasons for actual errors.",
+    "reproduction": "red.log records the original health_registry_unavailable thrown on the virgin fixture.",
+    "retest": "integration.log passes the same case and adverse configuration/history cases."
+  },
+  "validation": {
+    "runtime": "Node v24.19.0 on Windows; npm lockfile dependencies already installed",
+    "passed": [
+      "node test/rwahealth.js (13 cases)",
+      "node test/rwahealth.integration.js (dormancy, no I/O/writes, public/action refusal, partial/blank/malformed settings, unsynchronized catalog, history read failure, removed config/pending preservation, healthy/provider failure/crash-resume/replay/zero-active)",
+      "node test/stockcatalogv2.js",
+      "node test/gates.js",
+      "node test/docs.js",
+      "node --check on changed production modules and PostgreSQL suite",
+      "git diff --check"
+    ],
+    "staticTriage": "Initial native gate rejected direct process.env access in H1. Moved the configuration-absence query to stockcatalogv2 beside its existing configuration authority; gate then passed without weakening rules. No new signing, network destination, mutation, cache or authority bypass was added.",
+    "concurrency": "test/rwahealth.postgres.js adds actual sweep Registry-lock retention and concurrent initialization checks. Local PostgreSQL unavailable; required real-PostgreSQL CI must pass before merge. pg-mem is not proof of lock behavior.",
+    "independentReview": "rwa_health_review found no blocker after tracing callers, registry writer locks, strict absence semantics, sentinel/FK coverage and unchanged public/action refusal. Real PostgreSQL execution remains required."
+  },
+  "exclusions": "No contracts, signing, token movement, accounting, RPC configuration, provider URL, NFT generation, fee gate or deployment secrets changed. Solidity fuzzing, reentrancy, rounding and malicious token callbacks are outside this read-only dormancy decision.",
+  "residual": "An operator deleting both configuration and all historical authority is indistinguishable from a virgin database. Production RWA remains unavailable until deliberately configured and synchronized. The existing public health endpoint continues to fail closed.",
+  "conclusion": "Scoped implementation and local regressions ready for CI; merge is conditional on full required CI including real PostgreSQL. This is not a financial rail launch clearance."
+}

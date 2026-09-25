@@ -108,6 +108,114 @@ function crashOnceBeforeFirstPage(pool) {
 }
 
 try {
+  const dormantPool = await makeDb();
+  const unavailableConfiguration = (error) => error?.code === 'health_registry_unavailable'
+    && error.message === 'health_registry_unavailable:configuration';
+  try {
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+    let fetches = 0;
+    const fetchFn = async () => { fetches += 1; throw new Error('dormant must not fetch'); };
+    for (const rpc of [undefined, 'https://shared-rpc.invalid']) {
+      if (rpc === undefined) delete process.env.CHAIN_RPC_URL;
+      else process.env.CHAIN_RPC_URL = rpc;
+      assert.deepEqual(await sweepRwaHealth(dormantPool, { fetchFn }),
+        { status: 'dormant', reason: 'registry_unconfigured' });
+    }
+    assert.equal(fetches, 0);
+    for (const table of ['rwa_health_runtime_v2', 'rwa_health_batches_v2',
+      'rwa_health_pages_v2', 'rwa_health_evaluations_v2', 'rwa_health_current_v2']) {
+      assert.equal((await dormantPool.query(`SELECT count(*)::int AS n FROM ${table}`)).rows[0].n, 0);
+    }
+    await assert.rejects(() => rwaHealthBoard(dormantPool),
+      (error) => error?.code === 'health_registry_unavailable');
+    await assert.rejects(() => rwaHealthDetail(dormantPool, catalogAsset.assetVersionKey),
+      (error) => error?.code === 'health_registry_unavailable');
+    const client = await dormantPool.connect();
+    try {
+      await client.query('BEGIN');
+      await assert.rejects(() => requireFreshRwaHealth(client, catalogAsset.assetVersionKey, {
+        expectedEvaluationId: HASH('1'), purpose: 'purchase_broadcast',
+        expectedEpisodeGeneration: null, expectedStateSequence: '1',
+        expectedEpisodeEventId: null, expectedMaterialEvidenceHash: null,
+      }), (error) => error?.code === 'health_registry_unavailable');
+      await client.query('ROLLBACK');
+    } finally { client.release(); }
+    for (const [registry, start, rpc] of [
+      [REGISTRY, undefined, 'https://shared-rpc.invalid'],
+      [undefined, '1', 'https://shared-rpc.invalid'],
+      ['', '', 'https://shared-rpc.invalid'],
+      ['invalid', '1', 'https://shared-rpc.invalid'],
+      [REGISTRY, 'invalid', 'https://shared-rpc.invalid'],
+      [REGISTRY, '1', 'invalid'],
+    ]) {
+      if (registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+      else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = registry;
+      if (start === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+      else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = start;
+      process.env.CHAIN_RPC_URL = rpc;
+      await assert.rejects(() => sweepRwaHealth(dormantPool, { fetchFn }), unavailableConfiguration);
+    }
+    assert.equal(fetches, 0);
+    process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+    process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+    process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '1';
+    await assert.rejects(() => sweepRwaHealth(dormantPool, { fetchFn }),
+      (error) => error?.code === 'health_registry_unavailable'
+        && error.message === 'health_registry_unavailable:unsynchronized');
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+    const failingPool = {
+      async connect() {
+        const checked = await dormantPool.connect();
+        return {
+          query(sql, params) {
+            if (/AS initialized/.test(String(sql))) throw new Error('injected history read failure');
+            return checked.query(sql, params);
+          },
+          release: () => checked.release(),
+        };
+      },
+    };
+    await assert.rejects(() => sweepRwaHealth(failingPool, { fetchFn }), /injected history read failure/);
+    assert.equal(fetches, 0);
+  } finally {
+    await dormantPool.end();
+    process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+    process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+    process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '1';
+  }
+
+  const initializedPool = await preparedDb();
+  try {
+    await assert.rejects(() => sweepRwaHealth(crashOnceBeforeFirstPage(initializedPool), {
+      fetchFn: fetchBody(providerBody()),
+    }), /injected crash/);
+    const before = (await initializedPool.query('SELECT * FROM rwa_health_batches_v2')).rows;
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+    delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+    let fetches = 0;
+    await assert.rejects(() => sweepRwaHealth(initializedPool, {
+      fetchFn: async () => { fetches += 1; throw new Error('missing config must not fetch'); },
+    }), unavailableConfiguration);
+    assert.equal(fetches, 0);
+    assert.deepEqual((await initializedPool.query('SELECT * FROM rwa_health_batches_v2')).rows, before);
+    // A catalog reset cannot hide the pending health work or silently disable monitoring.
+    for (const table of ['stock_asset_active_heads_v2', 'stock_asset_versions_v2',
+      'stock_catalog_sync_state_v2', 'stock_catalog_sync_runs_v2', 'stock_catalog_getter_checkpoint_v2']) {
+      await initializedPool.query(`DELETE FROM ${table}`);
+    }
+    await assert.rejects(() => sweepRwaHealth(initializedPool, {
+      fetchFn: async () => { fetches += 1; throw new Error('pending work must not fetch'); },
+    }), unavailableConfiguration);
+    assert.equal(fetches, 0);
+    assert.deepEqual((await initializedPool.query('SELECT * FROM rwa_health_batches_v2')).rows, before);
+  } finally {
+    await initializedPool.end();
+    process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+    process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '1';
+  }
+
   const healthyPool = await preparedDb();
   try {
     const fetched = await fetchRwaHealthProvider(fetchBody(providerBody()));
