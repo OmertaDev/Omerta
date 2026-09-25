@@ -49,12 +49,39 @@ const invariants = async (pool) => {
     const a = await f.networkPrepare('destroy_shipment');
     const b = await f.networkPrepare('intercept_shipment', { prefix: 'b' });
     const money = await financial(f.pool), stock = await wire(f.pool), keys = [key(), key()];
+    const beforeContention = await physical(f.pool);
     const attempts = [a, b];
     const execute = (index) => attempts[index].command('organizer', 'execute', {}, keys[index]);
-    const results = postgres ? await Promise.allSettled([execute(0), execute(1)])
+    const settled = (index) => execute(index).then((value) => ({ status: 'fulfilled', value }),
+      (reason) => ({ status: 'rejected', reason }));
+    if (postgres) {
+      // Two contenders can both hold prerequisite SHARE locks and both fail a
+      // NOWAIT upgrade. Reproduce that legal contention outcome deterministically
+      // before checking recovery with the same command identities.
+      const blocker = await f.pool.connect();
+      try {
+        await blocker.query('BEGIN');
+        await blocker.query('SELECT id FROM world_kernel_objects WHERE id=$1 FOR SHARE', [f.ids.object]);
+        const blocked = await Promise.allSettled([execute(0), execute(1)]);
+        assert(blocked.every((entry) => entry.status === 'rejected' && entry.reason.code === 'contention'),
+          JSON.stringify(blocked.map((entry) => ({ status: entry.status, code: entry.reason?.code }))));
+        assert.deepEqual(await physical(f.pool), beforeContention, 'Rejected lock upgrades cannot leave partial effects');
+      } finally { await blocker.query('ROLLBACK'); blocker.release(); }
+    }
+    let results = postgres ? await Promise.allSettled([execute(0), execute(1)])
       : [await execute(0).then((value) => ({ status: 'fulfilled', value }), (reason) => ({ status: 'rejected', reason })),
         await execute(1).then((value) => ({ status: 'fulfilled', value }), (reason) => ({ status: 'rejected', reason }))];
-    assert.equal(results.filter((entry) => entry.status === 'fulfilled').length, 1);
+    const initialOutcomes = results.map((entry) => ({ status: entry.status, ...(entry.reason ? { code: entry.reason.code } : {}) }));
+    if (postgres && results.every((entry) => entry.status === 'rejected' && entry.reason.code === 'contention')) {
+      assert.deepEqual(await physical(f.pool), beforeContention, 'Both contended attempts rolled back completely');
+      // Explicit serial retry after the concurrent batch; this is recovery, not
+      // a claim that the first racing batch necessarily elected a winner.
+      results = [await settled(0), await settled(1)];
+    }
+    assert.equal(results.filter((entry) => entry.status === 'fulfilled').length, 1,
+      JSON.stringify({ initialOutcomes, final: results.map((entry) => ({ status: entry.status, code: entry.reason?.code })) }));
+    if (postgres) console.log(JSON.stringify({ campaignContention: initialOutcomes,
+      recovery: initialOutcomes.every((entry) => entry.status === 'rejected') ? 'serial exact-key retry' : 'concurrent winner' }));
     const winnerIndex = results.findIndex((entry) => entry.status === 'fulfilled'), loserIndex = 1 - winnerIndex;
     const winner = attempts[winnerIndex], loser = attempts[loserIndex];
     assert(['coordination_operation_not_ready', 'coordination_operation_requirements', 'contention', 'world_stale', '40P01', '40001']

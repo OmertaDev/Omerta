@@ -1,0 +1,195 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_RETEST_WITH_RETAINED_FAILURE",
+  "releaseReady": false,
+  "phase": "RC1 prerelease",
+  "finding": "TOOL53",
+  "implementationCommits": [
+    "0049b92a631c328bf71da4406e48d692bff2f05e",
+    "4ad7dbcd87a2d524cead2d2647a88b06f4c89443"
+  ],
+  "platform": {
+    "os": "Windows x64",
+    "node": "24.19.0",
+    "postgresql": "18.4"
+  },
+  "scope": "Core Family HTTP authority and Crew/Family durable pending-response scheduling; synthetic funded fixtures in isolated native PostgreSQL schemas",
+  "runs": [
+    {
+      "format": 1,
+      "status": "VERIFIED_SCOPED_AUTHORITY",
+      "source": "0049b92a631c328bf71da4406e48d692bff2f05e",
+      "manifestSha256": "2bdf94570244b41295beb18d923e799aceb025a519d251923ae5d82657fd33b0",
+      "indexedArtifacts": 67,
+      "historyEvents": 88,
+      "historySha256": "2027af8b24927c8558936673e38d127b4bf3415b11e00cd941ce6a8dd3e67ee5",
+      "retainedDenials": 51,
+      "retainedReplayComparisons": 14,
+      "retainedResponses": 88,
+      "runStatus": "PASS_SCOPED",
+      "cleanupEvidence": "Sealed native control flow awaits application closure and isolated-schema DROP before finish; no independent creation-time schema/OID receipt was retained.",
+      "limits": [
+        "Complete global authority matrix",
+        "Natural progression",
+        "Other Family routes, tribute success, war/turf terminals, deadline expiry",
+        "Websocket delivery",
+        "Client rendering/XSS execution",
+        "Native worker/deployment/physical-device behavior",
+        "Arbitrary concurrent authorization revocation schedules; no in-flight revocation defect established",
+        "HTTP receipt expiration"
+      ],
+      "releaseReady": false
+    },
+    {
+      "format": 1,
+      "status": "VERIFIED_RETAINED_FAILURE",
+      "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+      "manifestSha256": "16fbf21f7dff2c43ab8e073c64045c8e87886847847d21810a618387b74592a5",
+      "indexedArtifacts": 62,
+      "historyEvents": 81,
+      "historySha256": "08e1e6ac73e85eddf53ca7ae3139e05915ee02324a98471415a9bf633130568a",
+      "retainedDenials": 51,
+      "retainedReplayComparisons": 8,
+      "retainedResponses": 81,
+      "runStatus": "FAIL",
+      "cleanupEvidence": "Original test teardown did not drain the pending HTTP call; local retained 42P01 follows test-schema teardown. Failure remains unqualified.",
+      "limits": [
+        "Complete global authority matrix",
+        "Natural progression",
+        "Objective reward success or expiry",
+        "Websocket delivery",
+        "Client rendering/XSS execution",
+        "Native worker/deployment/physical-device behavior",
+        "Arbitrary concurrent leave/kick/use schedules",
+        "HTTP receipt expiration"
+      ],
+      "releaseReady": false
+    },
+    {
+      "format": 1,
+      "status": "VERIFIED_SCOPED_AUTHORITY",
+      "source": "4ad7dbcd87a2d524cead2d2647a88b06f4c89443",
+      "manifestSha256": "d5b4f18452918a2f2a9ac6368bbd1176b1aced8d926e1fbd0aefa6e569791c20",
+      "indexedArtifacts": 68,
+      "historyEvents": 90,
+      "historySha256": "1956e8f2007a63071a339b7f606c4b8d62339fc89f3da928245443a087690d42",
+      "retainedDenials": 53,
+      "retainedReplayComparisons": 14,
+      "retainedResponses": 90,
+      "runStatus": "PASS_SCOPED",
+      "cleanupEvidence": "Sealed native control flow awaits application closure and isolated-schema DROP before finish; no independent creation-time schema/OID receipt was retained.",
+      "limits": [
+        "Complete global authority matrix",
+        "Natural progression",
+        "Objective reward success or expiry",
+        "Websocket delivery",
+        "Client rendering/XSS execution",
+        "Native worker/deployment/physical-device behavior",
+        "Arbitrary concurrent leave/kick/use schedules",
+        "HTTP receipt expiration"
+      ],
+      "releaseReady": false
+    },
+    {
+      "format": 1,
+      "status": "VERIFIED_SCOPED_AUTHORITY",
+      "source": "4ad7dbcd87a2d524cead2d2647a88b06f4c89443",
+      "manifestSha256": "fba943c2ec252199a6598f5cdf78c9c5d55039e070a08fd3ea96cf1cdde607bf",
+      "indexedArtifacts": 68,
+      "historyEvents": 89,
+      "historySha256": "b3f617502e06d5346aa9fd7500c910c16067237da41f8fbab083753f3bed89d9",
+      "retainedDenials": 51,
+      "retainedReplayComparisons": 15,
+      "retainedResponses": 89,
+      "runStatus": "PASS_SCOPED",
+      "cleanupEvidence": "Sealed native control flow awaits application closure and isolated-schema DROP before finish; no independent creation-time schema/OID receipt was retained.",
+      "limits": [
+        "Complete global authority matrix",
+        "Natural progression",
+        "Other Family routes, tribute success, war/turf terminals, deadline expiry",
+        "Websocket delivery",
+        "Client rendering/XSS execution",
+        "Native worker/deployment/physical-device behavior",
+        "Arbitrary concurrent authorization revocation schedules; no in-flight revocation defect established",
+        "HTTP receipt expiration"
+      ],
+      "releaseReady": false
+    }
+  ],
+  "contentionAudit": {
+    "status": "PASS_SCOPED_INDEPENDENT_CONTENTION_AUDIT",
+    "reports": [
+      {
+        "kind": "crew",
+        "source": "4ad7dbcd87a2d524cead2d2647a88b06f4c89443",
+        "exactFreshEffects": 1,
+        "pending409": 1,
+        "exactCachedReplays": 2,
+        "pendingAuthorityUnchanged": true,
+        "removedOnlyObservedTarget": true,
+        "concurrentArtifactSha256": "68475b2af4bc2293e1b23d9510f156f69a3ef992209f924d61132dad8fbb7834",
+        "pendingArtifactSha256": "d8ae4c303743371a6f85082be731f5053ed4b04f5e1413b0315cebe6bffe9f8c"
+      },
+      {
+        "kind": "family",
+        "source": "4ad7dbcd87a2d524cead2d2647a88b06f4c89443",
+        "exactFreshEffects": 1,
+        "pending409": 1,
+        "exactCachedReplays": 2,
+        "pendingAuthorityUnchanged": true,
+        "removedOnlyObservedTarget": true,
+        "concurrentArtifactSha256": "5d1baeaed45131f8164b0e7aac6e098388d76d4a4e8eefef546246f99953bea0",
+        "pendingArtifactSha256": "43fdcf5f5df6c9f50ae8048ff81e50eb7f3067b286c975fa5bf51cda4523d8f6"
+      }
+    ],
+    "posttestSchemaPrefixCensus": [],
+    "scope": "Source-bound synthetic roles and owned local schemas; no global authority or economic clearance"
+  },
+  "hostedFailures": {
+    "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+    "runId": 35598247604,
+    "reports": [
+      {
+        "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "jobId": 106328180827,
+        "name": "Legacy authority (PostgreSQL 16)",
+        "conclusion": "failure",
+        "failedSteps": [
+          "Native Crew roles revocation and persistent retries"
+        ],
+        "logSha256": "3d70f1df30a92b56fab257d552358ab80f7e89949f4e90445effafa03f5b1c95",
+        "logBytes": 59772
+      },
+      {
+        "source": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+        "jobId": 106328180833,
+        "name": "Legacy authority (PostgreSQL 18.4)",
+        "conclusion": "failure",
+        "failedSteps": [
+          "Native Crew roles revocation and persistent retries"
+        ],
+        "logSha256": "ac0e4392babe1598cdf58d58dd7957282712e1f273603ec784a5b1f0f99f495d",
+        "logBytes": 58743
+      }
+    ]
+  },
+  "retention": {
+    "index": "authority-family-retention-index.json",
+    "sha256": "9611ecc4b0608f682636e7333db8c605158cf784e9375c1a120cc8b3e7922759",
+    "files": 288,
+    "bytes": 3772408
+  },
+  "requiredReruns": [
+    "Integrated-source native Crew authority",
+    "Integrated-source native Family authority",
+    "Hosted legacy authority on supported PostgreSQL versions"
+  ],
+  "limits": [
+    "No global authority matrix clearance",
+    "No fixture economic-conservation proof",
+    "No physical-device or deployed-environment clearance",
+    "No independent creation-time schema/OID receipt",
+    "Source0049 pending schedule was not exercised",
+    "Hosted first failures remain failed; no pass inherited by merge"
+  ]
+}

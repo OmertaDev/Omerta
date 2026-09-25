@@ -1,0 +1,177 @@
+{
+  "format": "omerta-rc1-scoped-development-evidence-v1",
+  "gateId": "RC1-04",
+  "owner": "Codex/source_repairs",
+  "phase": "local prerelease regression engineering; does not qualify full RC1-04",
+  "source": {
+    "baseCommit": "6a2af13cfdfd940de236e785e295dcee390218f5",
+    "dirty": true,
+    "runtimeDiff": "",
+    "changes": "Test/helper changes only when the retained run executed; this note was added afterward.",
+    "files": [
+      {
+        "path": "src/routes/family-operations.js",
+        "sha256": "efcd47b49b4a69ed889dc386f1c3c3c217b26e3180f98ad3770bf2c677ec0163"
+      },
+      {
+        "path": "src/routes/coordination.js",
+        "sha256": "ae2ec43e4428d27f0c4e4b2d4bbd5e73a08c9a100860f45f7ad7e81ecc474165"
+      },
+      {
+        "path": "src/routes/commands.js",
+        "sha256": "b9bdd8f815be396acd8cbe9be597101ad1773f66c0c28d08844ed266bd9432c2"
+      },
+      {
+        "path": "src/coordination/operations.js",
+        "sha256": "0e422fa588b74797cd424c83e0829d64f9eb3b759a31ff18250642e05cc00095"
+      },
+      {
+        "path": "src/coordination/knowledge.js",
+        "sha256": "46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3"
+      },
+      {
+        "path": "src/coordination/runtime.js",
+        "sha256": "972abc70cb75b232929e1f1907e556ed00eea22e42567da9e68ad83ef1082d99"
+      },
+      {
+        "path": "src/player-commands.js",
+        "sha256": "a8a2e071e851025b18b3268b40a16aa7a7449fbeefd8b036b0c8f101ac84a6e6"
+      },
+      {
+        "path": "src/server.js",
+        "sha256": "fa6119599698ca5bfeefb3b65e1b4195a38ff729d849f1ba9c2eee18f1ee5521"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551"
+      },
+      {
+        "path": "test/rc1-command-redteam.js",
+        "sha256": "e60bfca6c30883303a297dffc4e2844ff5cc5c3591c8b0bef094ae4d3c478577"
+      },
+      {
+        "path": "test/lib/rc1-authority-probes.js",
+        "sha256": "122cd5de75078e39bed8722abe839c3de2ba8c7a0e24a1939ba6e72ad18dfe15"
+      }
+    ]
+  },
+  "invocation": {
+    "command": "node test/rc1-command-redteam.js",
+    "env": {
+      "RC1_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/postgres"
+    },
+    "nodeVersion": "v24.19.0",
+    "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+    "configuration": {
+      "CORE_PROGRESSION": "on",
+      "WORLD_GRAPH_KERNEL": "on",
+      "COORDINATION_ENGINE": "on",
+      "COORDINATION_KNOWLEDGE": "on",
+      "COORDINATION_KNOWLEDGE_SHARING": "on",
+      "COORDINATION_OPERATIONS": "on",
+      "SOCIAL_VERIFY_MODE": "off",
+      "RATE_LIMIT": "off",
+      "INVITE_MODE": "off",
+      "POPULATION_OFF": "on"
+    },
+    "databaseIsolation": "random rc1_security_* database created and dropped by the harness",
+    "randomness": "unseeded cryptographic execution/HTTP request identities; fixed fixture inputs"
+  },
+  "execution": {
+    "exitCode": 0,
+    "completedAt": "2026-09-21T03:10:45.421Z",
+    "rawLog": {
+      "path": "docs/release/readiness-work/authority-role-regressions.stdout.txt",
+      "sha256": "e7b05ab0c8966786d78d97cbe3759254ca48353d3069a5958619cc484caa0d9d",
+      "bytes": 41343,
+      "retention": "tracked raw output from the scoped development run"
+    },
+    "result": {
+      "gate": "RC1 command HTTP redteam",
+      "database": "real PostgreSQL",
+      "deniedCases": 71,
+      "inputTamperingDenials": 42,
+      "roleKnowledge": {
+        "scope": "native fixture-assisted Family/Knowledge HTTP boundary regression",
+        "groups": [
+          "Family leadership, participant/nonparticipant, hidden operation IDs, native capital and restart/terminal replay",
+          "hidden claim/instance IDs, stale ACL, revoked Knowledge, hidden archive/link views, stale direct/Player Commands and restart replay"
+        ],
+        "deniedCases": 29,
+        "authorityTablesCompared": 30,
+        "serverReconstructions": 2,
+        "initialFixture": {
+          "actors": [
+            "boss",
+            "participant",
+            "nonparticipant",
+            "outsider",
+            "reader",
+            "author"
+          ],
+          "cashPerActor": 100000,
+          "respectPerActor": 10000,
+          "locations": {
+            "reader": "docks",
+            "others": "foundry"
+          },
+          "familyAndCrewMembers": [
+            "boss",
+            "participant",
+            "nonparticipant"
+          ],
+          "note": "Only initial actors and memberships are inserted; all measured operations, discovery, sharing and revocation use canonical HTTP."
+        },
+        "exclusions": [
+          "complete route/role cross product",
+          "all operation terminal branches",
+          "all Knowledge source/propagation policies",
+          "natural social entry"
+        ]
+      },
+      "concurrentRequests": 8,
+      "concurrentStatuses": [
+        200,
+        409,
+        409,
+        200,
+        409,
+        409,
+        409,
+        409
+      ],
+      "freshExecutions": 1,
+      "uniqueMysteryInstances": 1,
+      "restartReplay": true,
+      "gameStateUnchangedOnDenialAndReplay": true,
+      "status": "PASS"
+    }
+  },
+  "exclusions": [
+    "complete route/role cross product",
+    "all operation terminal branches",
+    "all Knowledge source/propagation policies",
+    "natural social entry",
+    "complete 529-route/24-command inventory review",
+    "HTTP cache expiry and forced coordination receipt fallback",
+    "concurrent revoke/use schedule",
+    "natural low-resource entry",
+    "complete security, browser, deployment or release clearance"
+  ],
+  "findings": [
+    {
+      "id": "RC1-04-PROBE-01",
+      "status": "INVALIDATED_HARNESS_EXPECTATION",
+      "severity": null,
+      "observation": "First development run expected outsider selected-operation board HTTP 200; current server returns generic HTTP 409.",
+      "disposition": "Changed test to require identical known-hidden and missing-ID HTTP 409, plus absence on ordinary board. No runtime change.",
+      "retest": "PASS in final development run."
+    }
+  ],
+  "validation": [
+    "node --check test/rc1-command-redteam.js",
+    "node --check test/lib/rc1-authority-probes.js",
+    "git diff --check"
+  ],
+  "conclusion": "The explicit fixture-assisted native HTTP denial/replay cases passed; broad RC1-04 remains missing review."
+}

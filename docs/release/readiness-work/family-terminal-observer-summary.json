@@ -1,0 +1,130 @@
+{
+  "format": 1,
+  "scope": "Shared observer single-Family voluntary living-member terminal custody",
+  "status": "PASS_SCOPED",
+  "source": {
+    "revision": "41127506b59ce916e6698c34500788b0afe5e4a1",
+    "gitTree": "eddeb1be85526a1577aa65ed650c94bb0d3b9d47",
+    "checkoutSha256": "2e2263c8051f6eeb14c4c747c66136acedc8f20f6fff407242edd08b58725294",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "integrationCommits": [
+    "bd038f259cd4576e079ecbe81abddb88191d5588",
+    "41127506b59ce916e6698c34500788b0afe5e4a1"
+  ],
+  "native": {
+    "boundaries": 40,
+    "phases": {
+      "canonical-preparation": 26,
+      "terminal-proof": 14
+    },
+    "terminals": 2,
+    "nonzeroDispositions": {
+      "cash:destroyed": 2,
+      "ammo:destroyed": 2,
+      "omr:reserve-to-desk": 2
+    },
+    "negativeControls": 60,
+    "canonicalInvariantCheckpoints": 4,
+    "initialization": "Declared eligibility and preinitial OMR/till allocation; canonical redemption/formation/tribute plus actual GTA→melt; no car/ammo/membership grants",
+    "acquisitionAttempts": [
+      1,
+      4
+    ],
+    "originalLogicalMilliseconds": 1800000,
+    "originalTimerCounts": {
+      "directorTick": 6,
+      "guardedTick": 0,
+      "guardedSeasonTick": 0,
+      "health-boundary": 6
+    },
+    "scopeUnknownsRetained": {
+      "observed-table-change:gang_members": 2,
+      "car-acquisition-identity-provenance:cars": 2,
+      "receipt-reason:melt:tithe": 2,
+      "car-sink-identity-yield-provenance:cars": 2,
+      "family-lineage:": 2
+    },
+    "rollback": "Diagnostic trigger confirms all three disposal receipts, recycle and exact desk balance/lifetime update before aborting Family DELETE; after separate canonical preaction settlement, full observed state equals before",
+    "retries": "Same failed key succeeds once after trigger removal; completed key replays zero movement",
+    "concurrency": "Two same-key last-member leave invocations produce one fresh terminal; replay preserved; no invented total commit order",
+    "authoritativeLineage": "Null personal owners and exact Family counterparty; cash/ammo destruction, reserve-to-desk transfer and lifetime input; unchanged other OMR buckets/Family custody",
+    "requestBinding": "Retained completed HTTP and durable account/key/route/body hash/response; all departing owners and one terminal response checked",
+    "databaseCleanupVerified": true
+  },
+  "regressions": [
+    {
+      "source": "bd038f259cd4576e079ecbe81abddb88191d5588",
+      "status": "SCOPED_PASS",
+      "canonicalBoundaries": 11,
+      "parityChecks": 77,
+      "observedTables": 57,
+      "exactBatchSequentialHashEquality": true,
+      "committedUnexplainedCashRejected": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+      "reportSha256": "46a1d38fc0b30c89821814514cfc2bc587634660412dee25d84f6e27f4081baf",
+      "databaseRetention": "Existing generic observer runner retains its isolated database by design"
+    },
+    {
+      "source": "41127506b59ce916e6698c34500788b0afe5e4a1",
+      "status": "SCOPED_PASS",
+      "canonicalBoundaries": 11,
+      "parityChecks": 77,
+      "observedTables": 57,
+      "exactBatchSequentialHashEquality": true,
+      "committedUnexplainedCashRejected": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+      "reportSha256": "6dd325c5f855389ca9fe2210ade0117b9a8d299d295c744ddc42a63debe3c109",
+      "databaseRetention": "Existing generic observer runner retains its isolated database by design"
+    }
+  ],
+  "pureCorruptions": 30,
+  "additionalPureAssertions": [
+    "zero-reserve desk must stay unchanged",
+    "dissolution requires original owners",
+    "death compound remains unsupported"
+  ],
+  "entryPureControls": 36,
+  "ammoPureControls": 16,
+  "pressureCashPureControls": 25,
+  "retainedFailure": {
+    "findingId": "TOOL43",
+    "source": "bd038f259cd4576e079ecbe81abddb88191d5588",
+    "status": "FAIL",
+    "completedBoundaries": 29,
+    "terminalMovements": 0,
+    "cause": "Full-HTTP snapshot rollback oracle omitted the separately committed canonical preaction accrual transaction",
+    "findingSha256": "db778ef7d292fdfb55d3d5c84dc0b02dd67c704533a51aaed0ded2a43964288b",
+    "failedManifestSha256": "bb7c5ea77170f0d66f9806fc85f8108c9496c4fd3cc30e4d5c99aaea187064c9",
+    "fullFailedGateRemainsFailed": true,
+    "databaseCleanupVerified": true
+  },
+  "verifiedEvidence": {
+    "artifactFiles": 159,
+    "historyChains": 2,
+    "independentlyReconciledBoundaries": 40,
+    "independentlyRejectedInputs": 60,
+    "passingManifestSha256": "6640b95645b1cfbbc575c996c15973ddca058e00358ce5d54bcd1e407bd74060"
+  },
+  "open": [
+    "C02-FAMILY-TREASURY remains OPEN; this proof does not cover all reserve/war/turf/weekly/season transitions",
+    "Death/estate, territorial/war/governance cleanup and multiple-Family or other compound terminals remain unqualified",
+    "Shared GTA identity/yield, car-melt Family funding, join and succession unknowns are retained in preparation/measurement",
+    "No personal ammo tribute endpoint exists; melt funding does not manufacture such an interface",
+    "Shared receipt observer does not reconstruct HTTP request authorization; focused native request binding is separate",
+    "Natural progression, provider/chain backing, deployment, installed dependency attestation and full resource/matrix qualification unproven"
+  ],
+  "reruns": [
+    "Integrated clean-source dissolution component and native retained-input verifier",
+    "Family entry/shared observer regressions",
+    "Affected full world observer and release gates"
+  ],
+  "owner": "Codex/resource_proof; parent owns integrated release gates",
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false,
+    "rawRequests": false
+  }
+}

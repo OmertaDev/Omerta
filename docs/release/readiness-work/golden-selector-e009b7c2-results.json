@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "finding": "RC1-TOOL-31",
+  "source": "e009b7c22ede12f72c03a1d34ff5309bef70c158",
+  "resultsSha256": "85fd5fb94b7f874396293ad5e8bec7a9856783e4de3294bdee75f73f66dbd4cd",
+  "startedAt": "2026-09-21T08:13:08.166Z",
+  "endedAt": "2026-09-21T08:14:53.511Z",
+  "browser": "153.0.8010.48",
+  "width": 430,
+  "commands": 50,
+  "controls": 151,
+  "interactions": 6,
+  "javascriptErrors": 0,
+  "scope": "Focused failed-width retest with actual centered scroll/hit-test; full four-width integrated and hosted reruns still required"
+}

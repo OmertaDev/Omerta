@@ -1,0 +1,155 @@
+{
+  "format": 1,
+  "status": "READ_ONLY_CONFIGURED_ENVIRONMENT_OBSERVATION",
+  "observedWindowUtc": [
+    "2026-09-21T09:28:00Z",
+    "2026-09-21T09:33:40Z"
+  ],
+  "timePrecision": "Inspection window, not a transactionally consistent snapshot",
+  "workspace": {
+    "name": "My Workspace",
+    "id": "tea-d9gkgfbbc2fs738o1jkg"
+  },
+  "method": "Authenticated Render dashboard UI via CUA. Service and shared-group key inventories read; only non-secret flags and public contract addresses revealed. No configuration edited, saved, deployed or copied to clipboard.",
+  "runtimeAttested": false,
+  "candidateAttested": false,
+  "api": {
+    "id": "srv-d9gkiscm0tmc73cc7ah0",
+    "url": "https://dashboard.render.com/web/srv-d9gkiscm0tmc73cc7ah0/env",
+    "displayedLiveSource": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+    "directKeys": [
+      "CHAIN_CONFIRMATIONS",
+      "CHAIN_ID",
+      "CHAIN_RPC_URL",
+      "CHAIN_START_BLOCK",
+      "DATABASE_URL",
+      "GENESIS_LAUNCH_PHASE",
+      "INVITE_MODE",
+      "LIQUIDITY_AUTOMATION_ENABLED",
+      "NODE_ENV",
+      "OMERTA_BOND_ADDRESS",
+      "OMERTA_FEES_ADDRESS",
+      "OMERTA_HOOK_ADDRESS",
+      "OMR_ADDRESS",
+      "OMR_V4_ORACLE_ADDRESS",
+      "PG_POOL_MAX",
+      "RATE_LIMIT",
+      "SOCIAL_VERIFY_MODE",
+      "STREET_DEED_ADDRESS",
+      "TRUST_PROXY",
+      "VAPID_PRIVATE_KEY",
+      "VAPID_PUBLIC_KEY",
+      "VAPID_SUBJECT",
+      "VOUCHER_CLAIM_ADDRESS",
+      "VOUCHER_SIGNER_PK"
+    ],
+    "observedNonSecretFlags": {
+      "CHAIN_CONFIRMATIONS": "5",
+      "CHAIN_ID": "4663",
+      "CHAIN_START_BLOCK": "59875569",
+      "GENESIS_LAUNCH_PHASE": "legacy",
+      "INVITE_MODE": "on",
+      "LIQUIDITY_AUTOMATION_ENABLED": "off",
+      "NODE_ENV": "production",
+      "PG_POOL_MAX": "40",
+      "RATE_LIMIT": "on",
+      "SOCIAL_VERIFY_MODE": "live",
+      "TRUST_PROXY": "on"
+    }
+  },
+  "worker": {
+    "id": "srv-d9gkiscm0tmc73cc7agg",
+    "url": "https://dashboard.render.com/worker/srv-d9gkiscm0tmc73cc7agg/env",
+    "displayedLiveSource": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+    "directKeys": [
+      "CHAIN_CONFIRMATIONS",
+      "CHAIN_ID",
+      "CHAIN_RPC_URL",
+      "CHAIN_START_BLOCK",
+      "DATABASE_URL",
+      "GENESIS_LAUNCH_PHASE",
+      "INVITE_MODE",
+      "LIQUIDITY_AUTOMATION_ENABLED",
+      "LIQUIDITY_KEEPER_PK",
+      "NODE_ENV",
+      "OMERTA_BOND_ADDRESS",
+      "OMERTA_FEES_ADDRESS",
+      "OMERTA_HOOK_ADDRESS",
+      "OMR_ADDRESS",
+      "OMR_V4_ORACLE_ADDRESS",
+      "STREET_DEED_ADDRESS",
+      "V4_ORACLE_KEEPER_PK",
+      "VAPID_PRIVATE_KEY",
+      "VAPID_PUBLIC_KEY",
+      "VAPID_SUBJECT",
+      "VOUCHER_CLAIM_ADDRESS"
+    ],
+    "observedNonSecretFlags": {
+      "CHAIN_CONFIRMATIONS": "5",
+      "CHAIN_ID": "4663",
+      "CHAIN_START_BLOCK": "59875569",
+      "GENESIS_LAUNCH_PHASE": "legacy",
+      "INVITE_MODE": "on",
+      "LIQUIDITY_AUTOMATION_ENABLED": "off",
+      "NODE_ENV": "production"
+    }
+  },
+  "linkedGroupOnBothServices": {
+    "name": "omerta-secrets",
+    "id": "evg-d9gkihsm0tmc73cc6tq0",
+    "url": "https://dashboard.render.com/env-group/evg-d9gkihsm0tmc73cc6tq0",
+    "keys": [
+      "INVARIANT_WEBHOOK_URL",
+      "JWT_SECRET",
+      "MARKET_SEED",
+      "MOD_KEY",
+      "PUBLIC_URL",
+      "VAPID_PRIVATE_KEY",
+      "VAPID_PUBLIC_KEY",
+      "VAPID_SUBJECT",
+      "WALLETCONNECT_PROJECT_ID",
+      "X_BEARER_TOKEN",
+      "X_CLIENT_ID",
+      "X_CLIENT_SECRET",
+      "X_TARGET_USER_ID"
+    ],
+    "valuesRead": false
+  },
+  "publicContractsConfiguredIdenticallyOnBothServices": {
+    "OMERTA_BOND_ADDRESS": "0xA15933Cb7c05c43bfdf97CC7f7809511530dC4CF",
+    "OMERTA_FEES_ADDRESS": "0x69c037751e3F8c076089038d9F6988dDA0cf0bAA",
+    "OMERTA_HOOK_ADDRESS": "0x53d3Bf835DC77eb62bF6D4D0f90D9c8BEb2030cc",
+    "OMR_ADDRESS": "0x2e82f8C1cFD5172612b3aF56088d7D68d920545D",
+    "OMR_V4_ORACLE_ADDRESS": "0x8BC63E0dD9C5bEd48681AB50Bbd1ebf8F2359B90",
+    "STREET_DEED_ADDRESS": "0xF3D56cea0C7BF005F10DeCbE646cFdd6bD609372",
+    "VOUCHER_CLAIM_ADDRESS": "0x7b16cfE21e5e3f5cF2a9c6e72163F3A5F9d4b3f3"
+  },
+  "absentFromBothDisplayedServiceAndLinkedGroupInventories": [
+    "CORE_PROGRESSION",
+    "WORLD_GRAPH_KERNEL",
+    "COORDINATION_ENGINE",
+    "COORDINATION_KNOWLEDGE",
+    "COORDINATION_KNOWLEDGE_SHARING",
+    "COORDINATION_OPERATIONS",
+    "LIVING_WORLD_DIRECTOR",
+    "COORDINATION_ACCOUNT_IDS",
+    "DIRECTOR_ACCOUNT_IDS"
+  ],
+  "sourceInference": {
+    "revision": "468516d8d6f3729514711ad5a0b83e440c5c46f9",
+    "files": [
+      "src/server.js:1011",
+      "src/content/core-progression.js:16",
+      "src/director/config.js:19"
+    ],
+    "inference": "At the displayed source, absent flags do not enable world foundations and the Director defaults to DIRECTOR_DISABLED. This is an inference from displayed configuration plus source, not proof of current process environment or hidden build/start injection."
+  },
+  "unresolved": [
+    "Current process environment, source/configuration attestation and isolated RC1 service admission",
+    "RPC reachability, chain bytecode and deployed contract revision/backing",
+    "Credentials and webhook delivery validity, OAuth callbacks, wallet and physical-device behavior",
+    "VAPID keys/subject appear at both direct-service and shared-group levels; value equality and effective source were not inspected",
+    "Named release owner/operator/cohort coordinator and real participant/device availability"
+  ],
+  "releaseReady": false
+}

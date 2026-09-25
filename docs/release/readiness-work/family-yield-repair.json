@@ -1,0 +1,37 @@
+{
+  "id": "RC1-FAMILY-YIELD-01",
+  "severity": "P2",
+  "phase": "Pre-release local native qualification",
+  "status": "REPAIRED_SCOPED_NATIVE_RETESTED_INTEGRATED_RETEST_REQUIRED",
+  "originalSource": "938651d4e1d9ffbb54e2fa2af97c155e09634a07",
+  "repairedProofSource": "9e0a845fa1259bb2f8e9045c62dd49233821acf5",
+  "failedGate": "Native Family OMR original hourly yield, family-omr-native-3,41 completed boundaries",
+  "reproduction": "Canonical6.19OMR redemption funds0.3095Family pot. Original hourly payout rounds remaining backing up and pays0.31, leaving-0.0005. Existing aggregate and exchange invariant tolerances both reportOK.",
+  "repair": "Floor only whole spendable cents from the locked exact NUMERIC pot; preserve authored nearest-cent rank quotas and SQL dust. Compare Family backing and identity using aligned stored BigInts, with stored-string diagnostics. Missing mandatory singleton fails closed.",
+  "changedRuntime": [
+    "src/exchange.js"
+  ],
+  "changedRegression": [
+    "test/tokenomics.js"
+  ],
+  "regressionFixture": "Add0.23 to actual retained Family dust instead of replacing it. Exactly two pg-mem assertions permit only one machine epsilon of identity arithmetic; negativity and overspending never tolerated, native DATABASE_URL remains strict.",
+  "after": {
+    "funding": "0.3095",
+    "payout": "0.30",
+    "remainder": "0.0095",
+    "nativeAttounitCorruptionControlsRejected": 3
+  },
+  "requiredAffectedGates": [
+    "rc1-family-omr",
+    "rc1-family-yield-precision",
+    "rc1-tokenomics-regression",
+    "rc1-omr",
+    "rc1-omr-window",
+    "rc1-omr-loan-terminals",
+    "rc1-world-resource-smoke",
+    "rc1-alliance-world",
+    "full hosted CI and PostgreSQL16/18.4 recovery"
+  ],
+  "evidence": "family-omr-summary.json;family-omr-journal.md",
+  "limitations": "No deployed-defect claim. Read-only selected Render database backing booleans were valid when observed. Complete Family branches, external backing and release qualification remain open."
+}

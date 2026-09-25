@@ -1,0 +1,1361 @@
+{
+  "format": 1,
+  "gate": "C02-OPERATION-CAPITAL",
+  "gateStatus": "OPEN_REQUIRED_PROOF",
+  "owner": "Codex/resource_proof",
+  "classification": "Native unchanged original-duration logical-clock proof with explicit initial social fixtures",
+  "runs": [
+    {
+      "runId": "capital-lifecycles-cbf41bce0808-78f0a9a261",
+      "source": {
+        "revision": "cbf41bce0808b402f88ea3fbf545bad0717ad4bf",
+        "gitTree": "e8425404f89a811a98e588ac20b58ba483dca921",
+        "checkoutSha256": "4b3d4efef3f83d83d631494d2b423acd98e118d95f07ed6506176463dd371008",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "seed": "rc1-capital-alpha",
+      "status": "PASS_SCOPED",
+      "startedAt": "2026-09-21T06:42:41.156Z",
+      "endedAt": "2026-09-21T06:43:09.408Z",
+      "manifestSha256": "3c8d6af26a9d8c5382b7db8edd9886ec64df8bf0fc7c54effdec2d77af4bd7c5",
+      "sourceFailure": null,
+      "logicalHours": 24,
+      "boundaries": 100,
+      "exactEquationsRecomputed": 1955,
+      "nonzeroEquations": 37,
+      "completeBoundaryInputsReconciledIndependently": 100,
+      "continuousResourceHashChainVerified": true,
+      "canonicalInvariantChecks": 28,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "timerCounts": {
+        "directorTick": 288,
+        "guardedTick": 24,
+        "guardedSeasonTick": 24,
+        "health-boundary": 288
+      },
+      "dispositions": {
+        "held": "0",
+        "refunded": "400",
+        "spent": "0",
+        "forfeited": "400"
+      },
+      "receiptGroups": {
+        "cash/coordination:capital:deposit": {
+          "rows": 8,
+          "net": "-800"
+        },
+        "cash/coordination:capital:refund": {
+          "rows": 4,
+          "net": "400"
+        },
+        "ammo/death:estate": {
+          "rows": 1,
+          "net": "-25"
+        },
+        "cash/death:estate": {
+          "rows": 1,
+          "net": "-100"
+        },
+        "cash/coordination:capital:forfeit": {
+          "rows": 4,
+          "net": "-400"
+        }
+      },
+      "cases": [
+        {
+          "operation": "withdrawal",
+          "action": "withdraw",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "cancellation",
+          "action": "cancel",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-withdrawal",
+          "action": "withdraw",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-cancellation",
+          "action": "cancel",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "live-expiry-a",
+          "action": "expire",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "live-expiry-b",
+          "action": "expire",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-expiry-a",
+          "action": "expire",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-expiry-b",
+          "action": "expire",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        }
+      ],
+      "originalDefinitionHash": "5fbd0310e0917a579fd4eaf87f07100c5b9f29a1752ee8004fb9b5ef06ec5931",
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "originalExpiryRefunds": 2,
+      "originalExpiryForfeits": 2,
+      "lateAbortBoundaries": 9,
+      "reopenedPoolReplays": 8,
+      "artifactHashesAndHistoryVerified": true,
+      "artifacts": [
+        {
+          "file": "initial-resources.json",
+          "sha256": "e359e691ca1c750c3eee4794e518c8607e08e384673ba22012ed97b42230933e",
+          "bytes": 27642
+        },
+        {
+          "file": "capital-boundary-00001.json",
+          "sha256": "b059e6790068f17bcdfd12ea509d03dbfe2d3de0848611f2f4fd90d53b555bfb",
+          "bytes": 50849
+        },
+        {
+          "file": "capital-boundary-00002.json",
+          "sha256": "8264ad0bb9d53dad36826eec936746ba2657bc660065795a8638d77203937597",
+          "bytes": 54740
+        },
+        {
+          "file": "capital-boundary-00003.json",
+          "sha256": "8c01f76de49fb4e459307f11e1d6343d8dff2ad90cc3c2f3fb1e225480827eb6",
+          "bytes": 59897
+        },
+        {
+          "file": "capital-boundary-00004.json",
+          "sha256": "4511ec9b53a8fa00c8f4fce4b5884671c0a048cb9f423c42a9d111086a0ef210",
+          "bytes": 62831
+        },
+        {
+          "file": "capital-boundary-00005.json",
+          "sha256": "bf5c5ed50f06bab743c7c9fa62818a0981c7509b9dc7c30d9e65f4bdda5eb432",
+          "bytes": 66184
+        },
+        {
+          "file": "capital-boundary-00006.json",
+          "sha256": "c81688b20289201dfb44431301d50903edd9caa1dcc10d5fa0e2150f526bedff",
+          "bytes": 67873
+        },
+        {
+          "file": "capital-boundary-00007.json",
+          "sha256": "da218626b3fced0a93ab93fc1428cafe0dc1e1e40ca3fff6dfa2f5b55187f5e0",
+          "bytes": 70299
+        },
+        {
+          "file": "capital-boundary-00008.json",
+          "sha256": "41de439e3782911d465bc6cf4f45b8c62eebb423aa71c999dc5b6f9b8e307333",
+          "bytes": 72667
+        },
+        {
+          "file": "capital-boundary-00009.json",
+          "sha256": "263a8920a28d5677762de1b507f8ff41e26d2403c51f8a5cad68bf42281975af",
+          "bytes": 72595
+        },
+        {
+          "file": "capital-boundary-00010.json",
+          "sha256": "b8f64a747af5959da33c0e8b2c4c9de510051be6346361262237e13edf668d13",
+          "bytes": 74615
+        },
+        {
+          "file": "capital-boundary-00011.json",
+          "sha256": "024b0fdce41c90f9ddb87f2a4acb7551e08410ee0a8b1e2840f3e9dc924fa179",
+          "bytes": 76588
+        },
+        {
+          "file": "capital-boundary-00012.json",
+          "sha256": "c01580ba84f34404f441bd05a8b2ec3776be95b08cfda5607a03a6c59d8b1ccf",
+          "bytes": 77959
+        },
+        {
+          "file": "capital-boundary-00013.json",
+          "sha256": "b419eab4e7b89c9c5a2887f81b593a9bf38cecf9da7702619b0c2add0451d6f2",
+          "bytes": 83138
+        },
+        {
+          "file": "capital-boundary-00014.json",
+          "sha256": "77e7e2d31444ed1d45a40c1de35238e5f63c8d2073604d7f222c5de1145bd4a7",
+          "bytes": 88283
+        },
+        {
+          "file": "capital-boundary-00015.json",
+          "sha256": "57f8446f4b37e3264649329629f0cfb94f57904d29d637d6c7b06aad58fa9763",
+          "bytes": 91213
+        },
+        {
+          "file": "capital-boundary-00016.json",
+          "sha256": "fbeb79c79da02890cec18ff4dbdbe3e29bbb71de355530f72e182595d5555fda",
+          "bytes": 94558
+        },
+        {
+          "file": "capital-boundary-00017.json",
+          "sha256": "0e350c83038f3e6bd281d00f6b84bc8547df4596bca0fd28023041fa96ee3bdc",
+          "bytes": 98661
+        },
+        {
+          "file": "capital-boundary-00018.json",
+          "sha256": "ea33ffe59d099cd1b23fc6460850ab71b4d0577585f5f09259d6b34795a60315",
+          "bytes": 101021
+        },
+        {
+          "file": "capital-boundary-00019.json",
+          "sha256": "e31d4ac75cfd278b9acbc81649ed3d7117f53529d700cf94b585bd371c72995d",
+          "bytes": 100947
+        },
+        {
+          "file": "capital-boundary-00020.json",
+          "sha256": "3ec17a03229ce7bb0296914c6cc289815f839cf2a8ea84558ce9e1e4b3465b11",
+          "bytes": 103004
+        },
+        {
+          "file": "capital-boundary-00021.json",
+          "sha256": "660893b238a1dd37788a804c3a769c2c68ab7f9ab941d63c371e3a72b6327a85",
+          "bytes": 105016
+        },
+        {
+          "file": "capital-boundary-00022.json",
+          "sha256": "99f5948d45aae744a0572d6ffe99eda5501762a1bbcaa364684beb676f9df24d",
+          "bytes": 108805
+        },
+        {
+          "file": "capital-boundary-00023.json",
+          "sha256": "95bfe3290d6f12e190f691f36845e75e62b77344a772307da7e95eb3892a3f41",
+          "bytes": 113950
+        },
+        {
+          "file": "capital-boundary-00024.json",
+          "sha256": "323a48ec5a9d5c3d0943ee6e51e88cb7b140f8aa1f05b6d3cf869d6727bd2d67",
+          "bytes": 116880
+        },
+        {
+          "file": "capital-boundary-00025.json",
+          "sha256": "30e3c4a8befafc2b8f25e69188fac623de2181f04ea8ec9d3aa6b6350b8344c2",
+          "bytes": 120225
+        },
+        {
+          "file": "capital-boundary-00026.json",
+          "sha256": "58b672d0ade09b09d242b8f3d8ccc76e2e4861defe4e08529f9096b52edf44fd",
+          "bytes": 124328
+        },
+        {
+          "file": "capital-boundary-00027.json",
+          "sha256": "57c7da538c9a9e433437df1e04f57c84e7f37cea91408a5516bf7b9f9ffbcda5",
+          "bytes": 126688
+        },
+        {
+          "file": "capital-boundary-00028.json",
+          "sha256": "a89af8602f129fc2d436def29f30d7150bab1e76c023ff4fe33e0b981f05ed57",
+          "bytes": 130473
+        },
+        {
+          "file": "capital-boundary-00029.json",
+          "sha256": "fa2868de2cdab78d37cad2e9f8cf4be17117eb4cecced659814fe9cd77d18aa6",
+          "bytes": 135618
+        },
+        {
+          "file": "capital-boundary-00030.json",
+          "sha256": "efdb39a2d3b4769f92e43410f065a51a63a98f9af43c85cec835e22571a93ba3",
+          "bytes": 138548
+        },
+        {
+          "file": "capital-boundary-00031.json",
+          "sha256": "77faaafbfd6f38b1aadd2dd96761e4932f009ddc0f7c1dd3fc39e30a7478090e",
+          "bytes": 141893
+        },
+        {
+          "file": "capital-boundary-00032.json",
+          "sha256": "d200616174910c3e940d243a9620139e28e2d890798c06de39c6245a6aef1fd1",
+          "bytes": 145992
+        },
+        {
+          "file": "capital-boundary-00033.json",
+          "sha256": "572ac3353d3b40dd8a463d6c7e55e663e7deb6fcc30785114266e05e2bdf381f",
+          "bytes": 148348
+        },
+        {
+          "file": "capital-boundary-00034.json",
+          "sha256": "3fe16697172e1db04c13c3a7711f7d2c580dfb6323e462224c74467454489186",
+          "bytes": 152135
+        },
+        {
+          "file": "capital-boundary-00035.json",
+          "sha256": "4ba4594d3e730aa4612df82f6fbf83051b9e92e6c518106ca314e8afd4bd5de1",
+          "bytes": 157280
+        },
+        {
+          "file": "capital-boundary-00036.json",
+          "sha256": "142568732887657fc7175bef4a8c6e171787870eea6bcd423aefd767e5542833",
+          "bytes": 160210
+        },
+        {
+          "file": "capital-boundary-00037.json",
+          "sha256": "a0c9d8c41ec738e00f658c7f1afa363317e534c7cbc1de8a49487dc0454aafc9",
+          "bytes": 163555
+        },
+        {
+          "file": "capital-boundary-00038.json",
+          "sha256": "5e6778dbbaffb66b095cc360155fad555abbc8ddd75fd844edfae7990c53b1d8",
+          "bytes": 167654
+        },
+        {
+          "file": "capital-boundary-00039.json",
+          "sha256": "f0e6001015510ddf30e8a8b729e274abfd304f6a75c3bfa30d908d5ad0156dc0",
+          "bytes": 170010
+        },
+        {
+          "file": "capital-boundary-00040.json",
+          "sha256": "88e033668289a530871aa13e64bcadc2f9e811c98498d146a173f2c6c580c9fe",
+          "bytes": 173797
+        },
+        {
+          "file": "capital-boundary-00041.json",
+          "sha256": "ac9463eded83c2967ee4cd414acf3ec24ed2b524d729b4e9b6d81271883b3d1c",
+          "bytes": 178942
+        },
+        {
+          "file": "capital-boundary-00042.json",
+          "sha256": "2f48848a00d49266e47e9ef2c00135a338772ab5eb655ff43d970045b847e278",
+          "bytes": 181872
+        },
+        {
+          "file": "capital-boundary-00043.json",
+          "sha256": "e3da84b4b4ad180754274db766310c526dcfab76c87a06504880adcb40b4b1aa",
+          "bytes": 185217
+        },
+        {
+          "file": "capital-boundary-00044.json",
+          "sha256": "f7adc94fafb02f8c920d843e4e9cafdd9bdae341b6dfcf6bbccec0f60b3a0ff5",
+          "bytes": 189316
+        },
+        {
+          "file": "capital-boundary-00045.json",
+          "sha256": "d9a26ed17ed5ad648e7f0e3a059f21d36da05437ceff0e5329811013fcfb7334",
+          "bytes": 191672
+        },
+        {
+          "file": "capital-boundary-00046.json",
+          "sha256": "939578202527cfb259ce5c8de2715c36c624f78e43bb056c487bf90d0ecfb13d",
+          "bytes": 195453
+        },
+        {
+          "file": "capital-boundary-00047.json",
+          "sha256": "57336269fc84f2400e653bb52da0c81a83cc32a9b56dd1db99316d5a10abcf58",
+          "bytes": 200598
+        },
+        {
+          "file": "capital-boundary-00048.json",
+          "sha256": "9eaca83a5b62ba996a308d3c08b1e157c8837667bcaf8c9d65240b32f8ab8dfd",
+          "bytes": 203528
+        },
+        {
+          "file": "capital-boundary-00049.json",
+          "sha256": "2a8c62baa3117444b2653d86adfc8ee0e57fe7695cded8175951526bdc1151d2",
+          "bytes": 206873
+        },
+        {
+          "file": "capital-boundary-00050.json",
+          "sha256": "46ffd4617010cf26fbf757ba8f437ae1b3d588f1e2afcb857fe648ebf02baf3d",
+          "bytes": 210972
+        },
+        {
+          "file": "capital-boundary-00051.json",
+          "sha256": "261a827e4ca3d586175b67872f09903a4275645e35447d7cd249819495f7141f",
+          "bytes": 213328
+        },
+        {
+          "file": "capital-boundary-00052.json",
+          "sha256": "b1de418041653ea8c3526515e3afdfb33715aa7e753b0a99fe45429f70e1e56c",
+          "bytes": 217113
+        },
+        {
+          "file": "capital-boundary-00053.json",
+          "sha256": "9238089c34c69e4228dd14002c306365ed742594cc89cbbe49eff17022b1b9ea",
+          "bytes": 222258
+        },
+        {
+          "file": "capital-boundary-00054.json",
+          "sha256": "d6524ee188cc2fd5edef03c208c517a8a2f7a704be3cc84480ce8bfdbafcb678",
+          "bytes": 225188
+        },
+        {
+          "file": "capital-boundary-00055.json",
+          "sha256": "b92eb8e2e2db9779827f8c417cf83b6ee13275b7d0e642c234b546497f822950",
+          "bytes": 228533
+        },
+        {
+          "file": "capital-boundary-00056.json",
+          "sha256": "70e537247f1e26044ab83a249a6ff6b5c45f52a3a60a0050abb7124b3e0b32c2",
+          "bytes": 232632
+        },
+        {
+          "file": "capital-boundary-00057.json",
+          "sha256": "3d9840c91fa8f651a28b0ac2f4b07868140191ef69a0105afe7876afdb4821cc",
+          "bytes": 234988
+        },
+        {
+          "file": "capital-boundary-00058.json",
+          "sha256": "557b003c315fe5fe894518ad678db689fc4b92d7a3be3931996395c2ce954684",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00059.json",
+          "sha256": "5de4254c239a0108c5fde9b793696d0eeeb5ef5bf191d91687761f8806a63fe9",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00060.json",
+          "sha256": "097db7c328129841f2ab299b456605b5895854691ccf21d291e4e08cd868516d",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00061.json",
+          "sha256": "98ca25d66d901186167b1ae3c6033b3d680ffe7f8f9dce0c800ba12532de90c8",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00062.json",
+          "sha256": "d3b75ed255a76c1813cefdb9eba5754168f761ec79433be1e4291ba75fbbedbe",
+          "bytes": 238502
+        },
+        {
+          "file": "capital-boundary-00063.json",
+          "sha256": "5fa5b0bd935f55eb5a11b44e9b75dbd2dbc69f9f5123f44cc2c0cb25fa8b7d1f",
+          "bytes": 242077
+        },
+        {
+          "file": "capital-boundary-00064.json",
+          "sha256": "7b7d9d8c5ad17a9843335627032e6635a1dd49547b2c231c4b410c7d6c58ced0",
+          "bytes": 242054
+        },
+        {
+          "file": "capital-boundary-00065.json",
+          "sha256": "d65ab557fc716152f4ad9a75ff8785cc5ee6bb47c9bd0dde34fd847d53adc005",
+          "bytes": 244079
+        },
+        {
+          "file": "capital-boundary-00066.json",
+          "sha256": "b69d9359536deb1201cbb7c09d2de1855b7595e1e01c898970c4b26c6b535f76",
+          "bytes": 246057
+        },
+        {
+          "file": "capital-boundary-00067.json",
+          "sha256": "47da6ba1834d39fb3c8835ae1707b380e72adf4eef6a726b5e972dadfb8d7c65",
+          "bytes": 247442
+        },
+        {
+          "file": "capital-boundary-00068.json",
+          "sha256": "f1968d7087d8b3013d5b4625df3d5aa6c8234f722ad03bdd81f6182c9a668e4c",
+          "bytes": 248776
+        },
+        {
+          "file": "capital-boundary-00069.json",
+          "sha256": "ea3d8e7054d878b49e5ad2b989db4f3f9cd8c91f1e9760ce513f14484f481abd",
+          "bytes": 250838
+        },
+        {
+          "file": "capital-boundary-00070.json",
+          "sha256": "76f817eea66fd5bde00b0134ebb7782763f92eb4c89ee42df1fa019493378031",
+          "bytes": 252855
+        },
+        {
+          "file": "capital-boundary-00071.json",
+          "sha256": "dd0990fe179b89a04572d45b4bc3e9f4c75731d4b51c91e30576cf744045da3c",
+          "bytes": 252777
+        },
+        {
+          "file": "capital-boundary-00072.json",
+          "sha256": "83b3c772316137aa3bdc5c943ca85be1535c8731bec18770ad66b14e6d27afbc",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00073.json",
+          "sha256": "72db0865b0c1686db2263ceec0bca82422a90f2fb8c82d000d5451e56d534cbd",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00074.json",
+          "sha256": "2f021529fa522aee052d576b92c914b840d200d4192f960419a767dec0b49d87",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00075.json",
+          "sha256": "8206330adf151439e8efbd186fd915824cbe790d1c339dce4d4dc5fb8eb3810e",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00076.json",
+          "sha256": "edd209d6e393afa30338bb82acbc3a0cded1983272f5a215cea6c8c5b068caee",
+          "bytes": 252777
+        },
+        {
+          "file": "capital-boundary-00077.json",
+          "sha256": "8c8bf71c809838bda20a6fc21b2d56af31f043043d783f0c4deb426d261db896",
+          "bytes": 252780
+        },
+        {
+          "file": "capital-boundary-00078.json",
+          "sha256": "185a53c786399b50bd32910f3299ad989d6695374c8a97805d7403b831a0a0cd",
+          "bytes": 254818
+        },
+        {
+          "file": "capital-boundary-00079.json",
+          "sha256": "e1dc83935acae5dc6ce2a7a7929f5b0760558872f74e346dd7401d8f0f71e360",
+          "bytes": 256812
+        },
+        {
+          "file": "capital-boundary-00080.json",
+          "sha256": "27148bc29e538a8d274be87e37f35f699a30e9020f0a8265e7bf6d09d249a420",
+          "bytes": 256742
+        },
+        {
+          "file": "capital-boundary-00081.json",
+          "sha256": "507318a4f033b6d47479c515052fed86f7494edb2cb92648c91f11b612798c73",
+          "bytes": 258780
+        },
+        {
+          "file": "capital-boundary-00082.json",
+          "sha256": "44210634694c8b3d2253f3c44d8c025264b51fe7ef665e9c3b9846581e2ce59e",
+          "bytes": 260774
+        },
+        {
+          "file": "capital-boundary-00083.json",
+          "sha256": "41913624fa866d7f729d88a040db3404d85ccb3e6617c1f793569a6313425271",
+          "bytes": 260704
+        },
+        {
+          "file": "capital-boundary-00084.json",
+          "sha256": "57a509ef6489decf326a328e74bbab596dac8397f45429e4a8be547910bcfe27",
+          "bytes": 262740
+        },
+        {
+          "file": "capital-boundary-00085.json",
+          "sha256": "4b820b0f4e6fb45947174680e2e3d4285e478e4029c47f09e18981084f167bc8",
+          "bytes": 264732
+        },
+        {
+          "file": "capital-boundary-00086.json",
+          "sha256": "8aadb7495045ff8ceecdfb6e303b4c87b4b0a3368f01350c6770767aa5f91205",
+          "bytes": 264662
+        },
+        {
+          "file": "capital-boundary-00087.json",
+          "sha256": "b08d7fa7e6d18bb776ca25489e939f148f05706859e3026f6fe725008647fa6e",
+          "bytes": 266694
+        },
+        {
+          "file": "capital-boundary-00088.json",
+          "sha256": "8f26f6debb066ea932c9bdfcd874e2cb6a427cddf8f8fbdb7e74e836dffd2027",
+          "bytes": 268682
+        },
+        {
+          "file": "capital-boundary-00089.json",
+          "sha256": "0854378f6db992ef3d0050701d050645a869a3b993673a7950d7eac7023c13ad",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00090.json",
+          "sha256": "adb927fc90509bfa483e212c90db1439e4be5087b710e348381f2832e0113bdf",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00091.json",
+          "sha256": "b0291ea1bd62d8c0bb32e1bd499f9ffacc6babfa2625daf2a634f52c3357c448",
+          "bytes": 268689
+        },
+        {
+          "file": "capital-boundary-00092.json",
+          "sha256": "a8935b69567102e5b1b2e26954f83d419a225e9f0bbf8941b7d5280a057f0ee4",
+          "bytes": 268689
+        },
+        {
+          "file": "capital-boundary-00093.json",
+          "sha256": "22d96e9c17062bdab281b2370d56221647ee8e6755b734988785db71432315b3",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00094.json",
+          "sha256": "95353df406420971454826667067d201c4e3d03ef00108d5a4e86d6dd3e4c96c",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00095.json",
+          "sha256": "1beee8c0a2341e55a0d611af2363214b0eb54001d14a424dc28a0e6aa8059ee9",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00096.json",
+          "sha256": "ab729868b2450f6e3c8085131d9d64c7cab49414c1508edaca090a41883803ff",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00097.json",
+          "sha256": "a7da61a319cea9531ec0ca143460c2b6ef00b612887248969ffb179a012801cd",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00098.json",
+          "sha256": "90aca90c67635e1ee83400b0c587e564949ed6a5ec5d5ff9257a43619296c15c",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00099.json",
+          "sha256": "d94e19a9a50051e4fcf367d3595733e47b21fafe076d98484d1df5d044a77396",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00100.json",
+          "sha256": "f8d7cec8facbcb5847f839d1597231b38029d2b100cb5723ab85c80e062f0214",
+          "bytes": 268639
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "9e854a7a8167d826db6ceb8758e63da0f1699efe757ff812e83ca11b1ddbb8af",
+          "bytes": 127636
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "4abf7b2a3b5e876d49fa31ef6b86c15340e21f5db9a9eefdb632bc54ecec1479",
+          "bytes": 1832420
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "6ce39815828443fe0c86713ada6ed48f43536da6a53881c2176cec83d5ddb3c5",
+          "bytes": 61406
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "f3d3596a93928556c1c76ce8a6ac40fe6c7a1e224ad171cdeda08799c74acf74",
+          "bytes": 848759
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    },
+    {
+      "runId": "capital-lifecycles-cbf41bce0808-92707821d8",
+      "source": {
+        "revision": "cbf41bce0808b402f88ea3fbf545bad0717ad4bf",
+        "gitTree": "e8425404f89a811a98e588ac20b58ba483dca921",
+        "checkoutSha256": "4b3d4efef3f83d83d631494d2b423acd98e118d95f07ed6506176463dd371008",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "seed": "rc1-capital-beta",
+      "status": "PASS_SCOPED",
+      "startedAt": "2026-09-21T06:43:42.630Z",
+      "endedAt": "2026-09-21T06:44:09.244Z",
+      "manifestSha256": "80b49a7605dd3b905f8d3c03e13ede03fac82db2103e833ab16b59a7866c8f0e",
+      "sourceFailure": null,
+      "logicalHours": 24,
+      "boundaries": 100,
+      "exactEquationsRecomputed": 1955,
+      "nonzeroEquations": 37,
+      "completeBoundaryInputsReconciledIndependently": 100,
+      "continuousResourceHashChainVerified": true,
+      "canonicalInvariantChecks": 28,
+      "allRecordedCanonicalInvariantsPassed": true,
+      "timerCounts": {
+        "directorTick": 288,
+        "guardedTick": 24,
+        "guardedSeasonTick": 24,
+        "health-boundary": 288
+      },
+      "dispositions": {
+        "held": "0",
+        "refunded": "400",
+        "spent": "0",
+        "forfeited": "400"
+      },
+      "receiptGroups": {
+        "cash/coordination:capital:deposit": {
+          "rows": 8,
+          "net": "-800"
+        },
+        "cash/coordination:capital:refund": {
+          "rows": 4,
+          "net": "400"
+        },
+        "cash/death:estate": {
+          "rows": 1,
+          "net": "-100"
+        },
+        "ammo/death:estate": {
+          "rows": 1,
+          "net": "-25"
+        },
+        "cash/coordination:capital:forfeit": {
+          "rows": 4,
+          "net": "-400"
+        }
+      },
+      "cases": [
+        {
+          "operation": "withdrawal",
+          "action": "withdraw",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "cancellation",
+          "action": "cancel",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-withdrawal",
+          "action": "withdraw",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-cancellation",
+          "action": "cancel",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789905600000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "live-expiry-a",
+          "action": "expire",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "live-expiry-b",
+          "action": "expire",
+          "disposition": "refunded",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-expiry-a",
+          "action": "expire",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        },
+        {
+          "operation": "dead-expiry-b",
+          "action": "expire",
+          "disposition": "forfeited",
+          "originalLifetimeSeconds": 86400,
+          "logicalAt": 1789992000000,
+          "outcome": "PASS"
+        }
+      ],
+      "originalDefinitionHash": "5fbd0310e0917a579fd4eaf87f07100c5b9f29a1752ee8004fb9b5ef06ec5931",
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "originalExpiryRefunds": 2,
+      "originalExpiryForfeits": 2,
+      "lateAbortBoundaries": 9,
+      "reopenedPoolReplays": 8,
+      "artifactHashesAndHistoryVerified": true,
+      "artifacts": [
+        {
+          "file": "initial-resources.json",
+          "sha256": "6c777217c3e6964814af8956eb92654d4f3f0cf65d37e48a2d1f4b409d9bda08",
+          "bytes": 27642
+        },
+        {
+          "file": "capital-boundary-00001.json",
+          "sha256": "b4a492c5d6e70287fa98832645cdc78314f58122786270d47ee6ffc971149ce4",
+          "bytes": 50849
+        },
+        {
+          "file": "capital-boundary-00002.json",
+          "sha256": "eb9134a1823ca7e335109643d2e4e183c9f8fb4c60274d5a951b34e3799c61ea",
+          "bytes": 54740
+        },
+        {
+          "file": "capital-boundary-00003.json",
+          "sha256": "da839c85fc6962c4f1ad18d95a9de0ece415b98fca9446abfee7998fbd4b3b34",
+          "bytes": 59897
+        },
+        {
+          "file": "capital-boundary-00004.json",
+          "sha256": "cae146826057d9fc5b552495eed577a1ca88b442c900ce3b52e5880e78dec041",
+          "bytes": 62831
+        },
+        {
+          "file": "capital-boundary-00005.json",
+          "sha256": "4b7fc0ea79011047be86693d1feeb1ddfe745dfbc813b957b6d877c55a4ba6b4",
+          "bytes": 66184
+        },
+        {
+          "file": "capital-boundary-00006.json",
+          "sha256": "8083b464aa8c3d3ebe550685e4403e0be24cdea048ad18e3f05b91acf7ea3a7b",
+          "bytes": 67873
+        },
+        {
+          "file": "capital-boundary-00007.json",
+          "sha256": "7b83a5852a06452fd722343d30aaa0f85bfef24e76a3a6768881ce164beb3873",
+          "bytes": 70299
+        },
+        {
+          "file": "capital-boundary-00008.json",
+          "sha256": "64b616d938f086171c7b38e2317b3328f708c0daf4688b7a9626805744949f38",
+          "bytes": 72667
+        },
+        {
+          "file": "capital-boundary-00009.json",
+          "sha256": "9b6622e7b7248d9f6befcea8e7f33b68d2389b8b78c45d10fb7ccc87672d7d55",
+          "bytes": 72595
+        },
+        {
+          "file": "capital-boundary-00010.json",
+          "sha256": "1302329e85cdd5d557b559f2fb84d594e71d02b7ceeca9611280ebfec65a5deb",
+          "bytes": 74615
+        },
+        {
+          "file": "capital-boundary-00011.json",
+          "sha256": "24dd924029d04d9ca97e3a26fb27f139a24e812a3e479a8346a8a736f32dc3af",
+          "bytes": 76588
+        },
+        {
+          "file": "capital-boundary-00012.json",
+          "sha256": "fb6d7bff97747637adf78836a877f0073b970e11d92d1f6389d7a2b471b4107d",
+          "bytes": 77959
+        },
+        {
+          "file": "capital-boundary-00013.json",
+          "sha256": "8f13ecd51dad71498df180fead31299c3c5b80a8a600bb84781bace7b0ae4ba5",
+          "bytes": 83138
+        },
+        {
+          "file": "capital-boundary-00014.json",
+          "sha256": "087ec4b156cc6fb7d5a684138c25c3902bcc22d2c07d5ae102db201a7c2f44b4",
+          "bytes": 88283
+        },
+        {
+          "file": "capital-boundary-00015.json",
+          "sha256": "08d919e3d3a2ff33d6464fbc6a68c5aea57aa66ecb768c6d4af63320d664b51f",
+          "bytes": 91213
+        },
+        {
+          "file": "capital-boundary-00016.json",
+          "sha256": "c11264dcaabad23393553ccfcc10eba0de96685d53b2689800090eb21efa9324",
+          "bytes": 94558
+        },
+        {
+          "file": "capital-boundary-00017.json",
+          "sha256": "ddfe51514626d97e32d61dbd51902c01e18127d0b07219086fcefece97d3e6aa",
+          "bytes": 98661
+        },
+        {
+          "file": "capital-boundary-00018.json",
+          "sha256": "4e7d08255fb3e81b345e6663cab6e2df1bb7fb0d6b39f477e431686eecf339db",
+          "bytes": 101021
+        },
+        {
+          "file": "capital-boundary-00019.json",
+          "sha256": "64a6737e8937c3d943dcee5c97e871270f8f5be7ae8aa1bc7b5aaa88cc26ab9f",
+          "bytes": 100947
+        },
+        {
+          "file": "capital-boundary-00020.json",
+          "sha256": "d9b0740b17c43b385d1b6449c4336638ebdd2b28343aec093fbfeb69fb1a0857",
+          "bytes": 103004
+        },
+        {
+          "file": "capital-boundary-00021.json",
+          "sha256": "300be07fc24b81c72913c2f5f6b4033a6585cab3a9e9e0030dd45f7252fdeb7b",
+          "bytes": 105016
+        },
+        {
+          "file": "capital-boundary-00022.json",
+          "sha256": "aa5d747e77e1393a8139fc82e7c1e5d3c7dedc129735dc0d46f4115f0d6a8142",
+          "bytes": 108805
+        },
+        {
+          "file": "capital-boundary-00023.json",
+          "sha256": "c2d6709a324d79bdb413131c9d3c842dfc9ca1d8c6a4c8783cc72d9909bebe07",
+          "bytes": 113950
+        },
+        {
+          "file": "capital-boundary-00024.json",
+          "sha256": "50a9409c99367c876f564be44e54e6f916b20dd460cae14cbb729d95d29608b7",
+          "bytes": 116880
+        },
+        {
+          "file": "capital-boundary-00025.json",
+          "sha256": "2a431cf032421720ca789c330f71caeef0c129521594878c02dac835144b58ea",
+          "bytes": 120225
+        },
+        {
+          "file": "capital-boundary-00026.json",
+          "sha256": "506a696f5171e29b901bd145f9b9346fce5d31d95b74f7e595db411a5eed3e40",
+          "bytes": 124328
+        },
+        {
+          "file": "capital-boundary-00027.json",
+          "sha256": "898e5a952481dd622b88b3be922574924c7071988ae53d3c5ad8fa00fcb33d77",
+          "bytes": 126688
+        },
+        {
+          "file": "capital-boundary-00028.json",
+          "sha256": "73b68aec4e25e128d3ca30344fb5d06a0347c3c97ad690d3e2961dcba24a02d9",
+          "bytes": 130473
+        },
+        {
+          "file": "capital-boundary-00029.json",
+          "sha256": "767a4449df75e90e55de39a919c94375e20ce15d8afb7512bdee78c2ee0ff8bf",
+          "bytes": 135618
+        },
+        {
+          "file": "capital-boundary-00030.json",
+          "sha256": "99db305cf78169cf45d232f1bf85db730f59ecf3877675fedf1ce52df461ccb4",
+          "bytes": 138548
+        },
+        {
+          "file": "capital-boundary-00031.json",
+          "sha256": "4af15ff8f52f6ce5f80e538bdd7a1392acee92ae586f6c6109d08a0eb7b99a28",
+          "bytes": 141893
+        },
+        {
+          "file": "capital-boundary-00032.json",
+          "sha256": "12a5c1cfc371800e8384945a7809b2075d8fc78077a7444c39fa72d2fcd7570b",
+          "bytes": 145992
+        },
+        {
+          "file": "capital-boundary-00033.json",
+          "sha256": "113ee2883d6a684222e6f69eaf5f080c38557ee45fcc55ed2ed95cde05abf1ae",
+          "bytes": 148348
+        },
+        {
+          "file": "capital-boundary-00034.json",
+          "sha256": "936707703382be3082cefc2c4089ef34af23c9d7ee57ad3a97cc92350646991e",
+          "bytes": 152135
+        },
+        {
+          "file": "capital-boundary-00035.json",
+          "sha256": "429e99ed29f34cc9462b69e2d5dc82ff15e657ee08171dab3247d44e11426ab7",
+          "bytes": 157280
+        },
+        {
+          "file": "capital-boundary-00036.json",
+          "sha256": "fe5b02e1815d547a194a29a099f13cf8ed39a4db749fd543961c1ca21ed56388",
+          "bytes": 160210
+        },
+        {
+          "file": "capital-boundary-00037.json",
+          "sha256": "2332dc4fd99a7bea920ea52e89237757255657925d9b695405840dccd734c24a",
+          "bytes": 163555
+        },
+        {
+          "file": "capital-boundary-00038.json",
+          "sha256": "a7aad05085f06888d8146fc67cf6820071e2ba50ed5ef82831c2db168bb6f6e8",
+          "bytes": 167654
+        },
+        {
+          "file": "capital-boundary-00039.json",
+          "sha256": "9da523decafd3ba4a2d07c26fe29c3b1e333bbed4ccd87bf1096536fa253b53e",
+          "bytes": 170010
+        },
+        {
+          "file": "capital-boundary-00040.json",
+          "sha256": "f4a18a0ace043b54cd1ceb88118299ec052a55a86a456c2ff6aac77106163a5a",
+          "bytes": 173797
+        },
+        {
+          "file": "capital-boundary-00041.json",
+          "sha256": "b1a3e28205f535b4c28172b7f487b89bfa8095bd3d8d38095ebfff0390f8a55a",
+          "bytes": 178942
+        },
+        {
+          "file": "capital-boundary-00042.json",
+          "sha256": "bd42a43c219392e940c78e150dd4f1e7c8176f7a9cb2b7b3219784bb32c94754",
+          "bytes": 181872
+        },
+        {
+          "file": "capital-boundary-00043.json",
+          "sha256": "8eb382bf945ce4c72c9f9caf9740d414eef8e45567e639404bdaf43a74520407",
+          "bytes": 185217
+        },
+        {
+          "file": "capital-boundary-00044.json",
+          "sha256": "ae5857dbfc5557e915047f0a5ab7241899ef1f4d690159f0b757a0a56f8bc712",
+          "bytes": 189316
+        },
+        {
+          "file": "capital-boundary-00045.json",
+          "sha256": "3eb3ed5651f798ff6542e1f2b4334667ee9c73e77a43ebdde44d0209b3f305e7",
+          "bytes": 191672
+        },
+        {
+          "file": "capital-boundary-00046.json",
+          "sha256": "102d3aa3be1fc83740afe4bc5705d1a4ef471bd4029be239946e2713492f1eb7",
+          "bytes": 195453
+        },
+        {
+          "file": "capital-boundary-00047.json",
+          "sha256": "1232708335d3455310ccc9318384d5e0a94f776862b16d4b007374003255f9f9",
+          "bytes": 200598
+        },
+        {
+          "file": "capital-boundary-00048.json",
+          "sha256": "5404b5d6ff01fe5cfad50544db67576355cadd3084323c55615d42cfccb68744",
+          "bytes": 203528
+        },
+        {
+          "file": "capital-boundary-00049.json",
+          "sha256": "850a7ff7e7a5cbebd0dd35b5284fd9213b25edf69e3937f55e6405629a9ef504",
+          "bytes": 206873
+        },
+        {
+          "file": "capital-boundary-00050.json",
+          "sha256": "b9483e062d4ddceaf28887ed42348f4b64b9ed24e77220a2a9b52d7515d907c0",
+          "bytes": 210972
+        },
+        {
+          "file": "capital-boundary-00051.json",
+          "sha256": "9fc5fff6b7e638e863a010e19590ce64d710fe8994a1766f5a08db2d7b7739c5",
+          "bytes": 213328
+        },
+        {
+          "file": "capital-boundary-00052.json",
+          "sha256": "cacc2068089156bafea0ec255c79c8321ce53cae90329d3411517bf4a16cd043",
+          "bytes": 217113
+        },
+        {
+          "file": "capital-boundary-00053.json",
+          "sha256": "d9b78236810153de6b25e1f86301dd453b0b22e0dd6d6b511bbc42841eb3f2ea",
+          "bytes": 222258
+        },
+        {
+          "file": "capital-boundary-00054.json",
+          "sha256": "d4d36437e5beb21a28f7d0c805879f8f269a81cb2162acb1a9f6f2300a47d260",
+          "bytes": 225188
+        },
+        {
+          "file": "capital-boundary-00055.json",
+          "sha256": "43df3f3adf989d736870bc732813b89896244c07dd5a854d52ea22b7732b37f8",
+          "bytes": 228533
+        },
+        {
+          "file": "capital-boundary-00056.json",
+          "sha256": "59b2becbdee124a5098a46c7617b82029bccbdd14c7da48288a65dc20cb50495",
+          "bytes": 232632
+        },
+        {
+          "file": "capital-boundary-00057.json",
+          "sha256": "722955cd05504e7b396217fb0528de261c017b84a3b3ceb904b4d4e1c7362076",
+          "bytes": 234988
+        },
+        {
+          "file": "capital-boundary-00058.json",
+          "sha256": "dbf749e6c3d18ddf046d57fa19df4916993d69426907f7b533d4bac178484d00",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00059.json",
+          "sha256": "8a54c907604b1f6163607d97ea064148e536095bcec7b6acf06c7fc5a982bbc0",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00060.json",
+          "sha256": "5860b16b7a421aa62e2fd3283b143efe56101797bf4e6a56dffe5773f1108c23",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00061.json",
+          "sha256": "3df6d39844e39ab87d7402672619f9bbf0c9153968f3c61b93597319c768aa15",
+          "bytes": 234948
+        },
+        {
+          "file": "capital-boundary-00062.json",
+          "sha256": "3a1ecde954ecd8ccb073727ac72a252445aa43c34a95ced3277a77bf9d89bd28",
+          "bytes": 238502
+        },
+        {
+          "file": "capital-boundary-00063.json",
+          "sha256": "8954f1a27395c13a6ab7a1ede1e60ceafe4f642646a5de45d2a5f0c7e3a46797",
+          "bytes": 242077
+        },
+        {
+          "file": "capital-boundary-00064.json",
+          "sha256": "387495971053c18221b92593ebd7e2c26285e49f032513de43969192a5614223",
+          "bytes": 242054
+        },
+        {
+          "file": "capital-boundary-00065.json",
+          "sha256": "8af24738eb5c89466b5349e40475e76186be5da0a3a1e7b0da9edf39a6806106",
+          "bytes": 244079
+        },
+        {
+          "file": "capital-boundary-00066.json",
+          "sha256": "9778756e36f2546829188ea3e1c438fbba7f48b2308481940c7ce47186723a3d",
+          "bytes": 246057
+        },
+        {
+          "file": "capital-boundary-00067.json",
+          "sha256": "732064e669c4124ff7d8624b4ec6faf7ff9aa8ddd131e32c5a3b666afa0fc818",
+          "bytes": 247442
+        },
+        {
+          "file": "capital-boundary-00068.json",
+          "sha256": "33f1db4c838cb3b57814bfc8d51635cb4b38214be7472dab098fc356b41223a5",
+          "bytes": 248776
+        },
+        {
+          "file": "capital-boundary-00069.json",
+          "sha256": "e8b04c061b0332bfaec5ae267d2f1d472929e3fd1eb2df23879d63cd5db74015",
+          "bytes": 250838
+        },
+        {
+          "file": "capital-boundary-00070.json",
+          "sha256": "e8c42d00bbb0033a1ea8055632b4dc875fabc87486265013ec45364081ddbbb8",
+          "bytes": 252855
+        },
+        {
+          "file": "capital-boundary-00071.json",
+          "sha256": "e1efff1f39280a23e58b532dc60533c50d7fdeda1bbc92755a94afe4a040c53d",
+          "bytes": 252777
+        },
+        {
+          "file": "capital-boundary-00072.json",
+          "sha256": "cec40de8447e9a364710ede0d020036f88f3f6c785f13b1653d8266201e284ca",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00073.json",
+          "sha256": "d3dcdcd66e32666bfe59e70a4cadbe4278491dc4e67a80d89347f19a30e5bf4a",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00074.json",
+          "sha256": "d799f17dd676390e06d97feb9fc2f87e59a7920816ea2fb0f0f9c2ab7e84e824",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00075.json",
+          "sha256": "45503362beee8310ec45063e57b7bd17103fe0634243ce51a3a84b6aea05c285",
+          "bytes": 252814
+        },
+        {
+          "file": "capital-boundary-00076.json",
+          "sha256": "253a8f1e21a462db7ab12d1c9c9068b1edc0e08c2a050a1012d2880f74b4e657",
+          "bytes": 252777
+        },
+        {
+          "file": "capital-boundary-00077.json",
+          "sha256": "0100653cc5ac9b1dae043534307c699e9181d54bf93d05f1f1c99f9146df705a",
+          "bytes": 252780
+        },
+        {
+          "file": "capital-boundary-00078.json",
+          "sha256": "9e71c8ba16b70e63d1c64392727b0252f42d5be7b6d3b4ec4c673784dc5acfed",
+          "bytes": 254818
+        },
+        {
+          "file": "capital-boundary-00079.json",
+          "sha256": "3dd7972cd09842f5bdbc7d996fef6758852e27a0b496bd90cfab730243633c7c",
+          "bytes": 256812
+        },
+        {
+          "file": "capital-boundary-00080.json",
+          "sha256": "426f2673957f7971260122beb25da6563bbcb1c062195b4545945dd325b2256c",
+          "bytes": 256742
+        },
+        {
+          "file": "capital-boundary-00081.json",
+          "sha256": "fc811725ce847769ad354d2e64f6ca0d78a14bf91cf77f72a03acc03dc2b6905",
+          "bytes": 258780
+        },
+        {
+          "file": "capital-boundary-00082.json",
+          "sha256": "347da2f938b72fb7d065f2224d87e2eed6dd87006b46a4f37ff7270218cf39a7",
+          "bytes": 260774
+        },
+        {
+          "file": "capital-boundary-00083.json",
+          "sha256": "4172ce47a14d4acaf747564bb408a998abd227c955890fd99676b5372bb667c0",
+          "bytes": 260704
+        },
+        {
+          "file": "capital-boundary-00084.json",
+          "sha256": "b545068ef0b3fcfbabfcbdd8390fe76626d1be46df8549bb12a4b12db92a594f",
+          "bytes": 262740
+        },
+        {
+          "file": "capital-boundary-00085.json",
+          "sha256": "f38a310e287d39c4f52ab10c4158f2c2c8439889ccdddd2b9deeb1ed093fc396",
+          "bytes": 264732
+        },
+        {
+          "file": "capital-boundary-00086.json",
+          "sha256": "b7f69b8fe76b002de820199fb9700b092ad68f3cd5637bc8691f7363d9b33135",
+          "bytes": 264662
+        },
+        {
+          "file": "capital-boundary-00087.json",
+          "sha256": "db82b1aa84a9ca860fba7cdbe5b21649454c54462c5024fe5a7eac4321bf35ce",
+          "bytes": 266694
+        },
+        {
+          "file": "capital-boundary-00088.json",
+          "sha256": "9e012e06416eba1a5308da79668566568f28b62d29985ef4cf81999e4f2941ac",
+          "bytes": 268682
+        },
+        {
+          "file": "capital-boundary-00089.json",
+          "sha256": "86a774a35fab0427cbf0ce0a4578eff9ae3f52e6c935dc93aeee0b50a946d299",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00090.json",
+          "sha256": "07531f56323542cfb002cef370f2fe280da3d86db6e446803f60a758e52d67df",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00091.json",
+          "sha256": "350048aeaf2c523e2939253ac5a5404593be25e6550b2c3deb4c94272fbf573d",
+          "bytes": 268689
+        },
+        {
+          "file": "capital-boundary-00092.json",
+          "sha256": "b33a1c0c96418535dc18b252b658e9bed0637340bd18519ba65d45aeb9427720",
+          "bytes": 268689
+        },
+        {
+          "file": "capital-boundary-00093.json",
+          "sha256": "b8990e7a0564bc8f511c27491866568158234b6dc3f00faf61dba363c39cfcd6",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00094.json",
+          "sha256": "9083bcab1e54a0c4671f30f6f8ce0c33eac7bfcba5a2cb1d1eab6db5aea01a08",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00095.json",
+          "sha256": "474c6cdef28f5ed5834d25b2437d09f1bf8d525e9db490a2d384d3beadb526ba",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00096.json",
+          "sha256": "c279760bcb0fc459f79a2bc0fb38021ed183f4130f043023949aa49b89ba0875",
+          "bytes": 268684
+        },
+        {
+          "file": "capital-boundary-00097.json",
+          "sha256": "f38702197b362c54561c0db723b6a7ead0b816de5ec8328cab8fe7253e55cf67",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00098.json",
+          "sha256": "ef0e392db669aef5da83dfefaf5cebcc02341b20315dd552d80e1556733eb59a",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00099.json",
+          "sha256": "52e4edfd685d5da3b27868236e01084b3e2bd678756088391d1a4e04815174bc",
+          "bytes": 268639
+        },
+        {
+          "file": "capital-boundary-00100.json",
+          "sha256": "7f0d1035a188f610d0c4b9c932d4b2866045b9c1aa60d44ce8aa3d02825e0973",
+          "bytes": 268639
+        },
+        {
+          "file": "final-resources.json",
+          "sha256": "53f2f070ef6738d1ff07d9e08066922c00ecf15af434ccd089b406f4cac4424b",
+          "bytes": 127636
+        },
+        {
+          "file": "worker-schedule.json",
+          "sha256": "d8aad880132fa4d0899969d1347f4dbeebaa0c5ba720720b23350b3fa8880a88",
+          "bytes": 1832357
+        },
+        {
+          "file": "random-tape.json",
+          "sha256": "4829af8d76c9095ea802feb87a32537dfa25ec03421084fbf9b959d8e06f9d3d",
+          "bytes": 61070
+        },
+        {
+          "file": "history.jsonl",
+          "sha256": "2c5a4fb66f8b8ab048a33a8f5673d31145c83b3663f24438509346c3cacf42eb",
+          "bytes": 848759
+        }
+      ],
+      "qualifyingFullResourcePass": false
+    }
+  ],
+  "strongestExecuted": {
+    "source": "cbf41bce0808b402f88ea3fbf545bad0717ad4bf",
+    "independentWorlds": 2,
+    "logicalHoursEach": 24,
+    "branches": [
+      "Eight canonical100-cash deposits per world; deposit late failure, same-key retry and exact replay",
+      "Living original-owner withdrawal and cancellation each refund100; late rollback, same-key recovery and no-value replay",
+      "Canonical estate creates replacement while six obligations remain held and original depositor identities remain intact",
+      "Replacement withdrawal and cancellation each forfeit100; late rollback, same-key recovery, no replacement payment",
+      "Two living original24h expiry refunds plus two dead-owner original24h expiry forfeits per world; each late rollback, retry and exact replay",
+      "Expiry denied at birth and one millisecond before original deadline; original local callbacks leave capital held until explicit canonical expiry at equality",
+      "Eight terminal exact replays through a new pool/service; stale-character refusal and new-key terminal expiry denial",
+      "All original local callback deadlines driven through24h; full canonical invariants and independent complete before/after resource reconciliation"
+    ],
+    "journalScope": "Every declared canonical command and worker advance; advances are aggregates, not internal commit order"
+  },
+  "fixtures": [
+    "Four schema-default characters with500 cash and25 ammunition each; no extra resources or progression",
+    "Initial zero-resource Family and four-member crew; natural formation is not claimed",
+    "Canonical trusted estate invocation, not combat-earned death; normal population-off deployment switch",
+    "No post-baseline balance, status, deadline or outcome rewrites; only late-failure trigger DDL"
+  ],
+  "earlierEvidence": "The existing60s definition-fixture material/spend proof remains independently preserved. Its source and lifetime labels are unchanged; those branches were not re-executed here.",
+  "remaining": [
+    "Natural entry, Family/crew formation, material/knowledge acquisition and combat-earned death",
+    "Original material/spend path in this case group; this proof adds expiry and custody recovery only",
+    "HTTP authentication, Player Command dispatcher and concurrent scheduling",
+    "Process crash/recovery and recorded same-seed replay",
+    "Every resource at every internal commit, all13 categories and full simulation matrix",
+    "Literal24h wall-time, deployment, real cohort and production soak"
+  ],
+  "dependencies": "Shared installed local runtime is not independently attested. These two runs bind the original source SHA; integration requires a clean-source rerun. No failures occurred in this two-world native case group.",
+  "rerun": "From a clean integrated source, run node test/rc1-capital-lifecycle-journal.js then node test/rc1-native-capital-lifecycles.js --postgres with two distinct --seed values and a local RC1_RESOURCE_DATABASE_URL.",
+  "privacy": "Public-safe branches, counts and hashes only. No credentials, actor/account identities or private row payloads; complete raw inputs remain restricted."
+}

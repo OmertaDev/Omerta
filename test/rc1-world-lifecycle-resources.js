@@ -1,0 +1,280 @@
+import assert from 'node:assert/strict';
+import { WORLD_RESOURCE_TABLES, reconcileWorldResources } from '../tools/rc1-world-resource-observer.js';
+import { reconcileMembershipResources, reconcileLifecycleCash, reconcileOrderExpiry, MARKET_EXPIRY_SOURCE_PINS } from '../tools/rc1-world-lifecycle-resources.js';
+import { reconcileWorkerTransitions } from '../tools/rc1-world-worker-transitions.js';
+import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.js';
+import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescent-group.js';
+import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
+import { sha256 } from '../tools/rc1-resource-journal.js';
+import { QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
+
+const at = '2026-09-20T12:00:00.000Z', logicalAt = Date.parse(at);
+const initial = () => {
+  const state = { format: 1, tables: Object.fromEntries(WORLD_RESOURCE_TABLES.map(table => [table, []])) };
+  state.tables.characters = ['boss', 'one', 'two'].map(id => ({ id, account_id: 'account-' + id, alive: true, is_npc: false,
+    cash: '1000', bank: '500', bank_intransit: '100', ammo: 25, cb: 0, jury_bought: false, indicted_at: null }));
+  state.tables.account_persistent = state.tables.characters.map(row => ({ account_id: row.account_id, omr: '0', staked: '0', unbonding: '0' }));
+  state.tables.gangs = [{ id: 'family', npc_flag: false, treasury: '500', ammo_bank: 0, omr_reserve: '0' }];
+  state.tables.gang_members = [member('boss', 'boss')];
+  state.tables.street_tax = [{ id: 1, pool: '0', fund: '0' }];
+  return state;
+};
+const member = (character_id, role = 'soldier') => ({ character_id, gang_id: 'family', role, joined_at: at, post: null, post_at: null });
+const identity = path => ({ method: 'POST', path, logicalAt });
+const receipt = (id, character_id, amount, reason, counterparty = null) => ({ id, at, character_id, account_id: null, currency: 'cash', amount, reason, counterparty });
+const cases = [], controls = [];
+function run(name, before, after, route, expected, field = 'membership') {
+  const options = { identity: identity(route), includeRestrictedChanges: true };
+  const journal = reconcileWorldResources(before, after, options);
+  assert.equal(journal.unsupported.length, 0, JSON.stringify(journal.unsupported));
+  assert.equal(journal[field].movements.length, expected); assert.equal(journal.qualifyingFullResourcePass, false);
+  assert.equal(reconcileWorldResources(after, after, options)[field].movements.length, 0, 'Replay created another movement');
+  const item = { name, before, after, options }; cases.push(item); return item;
+}
+function corrupt(item, name, edit, helper = null) {
+  const a = structuredClone(item.before), b = structuredClone(item.after), options = structuredClone(item.options); edit(a, b, options);
+  assert.throws(() => helper ? helper(a, b, { ...options, receipts: b.tables.transactions }) : reconcileWorldResources(a, b, options), undefined, name);
+  controls.push(name);
+}
+const before = initial(), joined = structuredClone(before); joined.tables.gang_members.push(member('one'));
+const join = run('join', before, joined, '/v1/gangs/family/join', 1);
+corrupt(join, 'join-other-family', (_, b) => { b.tables.gang_members[1].gang_id = 'foreign'; });
+corrupt(join, 'join-boss-injection', (_, b) => { b.tables.gang_members[1].role = 'boss'; });
+corrupt(join, 'join-timestamp', (_, b) => { b.tables.gang_members[1].joined_at = '2026-09-20T12:00:01.000Z'; });
+corrupt(join, 'join-extra-fields', (_, b) => { b.tables.gang_members[1].grant = 'cash'; });
+corrupt(join, 'join-cash-grant', (_, b) => { b.tables.characters[1].cash = '1001'; });
+corrupt(join, 'join-bank-diversion', (_, b) => { b.tables.characters[1].cash = '900'; b.tables.characters[1].bank = '600'; });
+corrupt(join, 'join-family-grant', (_, b) => { b.tables.gangs[0].treasury = '501'; });
+corrupt(join, 'join-wrong-account', (_, __, o) => { o.identity.accountId = 'account-two'; });
+const promoted = structuredClone(joined); promoted.tables.gang_members[1].role = 'underboss';
+const promote = run('promote', joined, promoted, '/v1/gangs/promote', 1);
+corrupt(promote, 'promotion-moved-family', (_, b) => { b.tables.gang_members[1].gang_id = 'foreign'; });
+corrupt(promote, 'promotion-rewrote-joined-at', (_, b) => { b.tables.gang_members[1].joined_at = null; });
+const left = structuredClone(promoted); left.tables.gang_members = [{ ...left.tables.gang_members[1], role: 'boss' }];
+const leave = run('succession', promoted, left, '/v1/gangs/leave', 1);
+corrupt(leave, 'succession-wrong-role', (_, b) => { b.tables.gang_members[0].role = 'capo'; });
+corrupt(leave, 'succession-npc-flag', (_, b) => { b.tables.gangs[0].npc_flag = true; });
+const rankBefore = structuredClone(promoted); rankBefore.tables.gang_members.push(member('two', 'capo'));
+const rankAfter = structuredClone(rankBefore); rankAfter.tables.gang_members.shift(); rankAfter.tables.gang_members[0].role = 'boss';
+const ranked = run('ranked-succession', rankBefore, rankAfter, '/v1/gangs/leave', 1);
+corrupt(ranked, 'succession-selected-capo-before-underboss', (_, b) => { b.tables.gang_members[0].role = 'underboss'; b.tables.gang_members[1].role = 'boss'; });
+const ordinaryLeft = structuredClone(joined); ordinaryLeft.tables.gang_members.pop();
+run('ordinary-leave', joined, ordinaryLeft, '/v1/gangs/leave', 1);
+run('ordinary-kick', joined, ordinaryLeft, '/v1/gangs/kick', 1);
+const noRoute = reconcileWorldResources(before, joined);
+assert(noRoute.unsupported.some(row => row.table === 'gang_members')); controls.push('missing-membership-boundary-remains-unsupported');
+const unknown = structuredClone(joined); unknown.tables.gang_members[1].post = 'bagman';
+assert.equal(reconcileMembershipResources(joined, unknown, { identity: identity('/v1/roster') }).memberIds.size, 0);
+controls.push('unclassified-post-remains-unsupported');
+
+const stolen = initial(), stolenAfter = structuredClone(stolen);
+stolenAfter.tables.characters[0].cash = '1100'; stolenAfter.tables.characters[1].cash = '900';
+stolenAfter.tables.transactions = [receipt('credit', 'boss', '100', 'jump:steal', 'one'), receipt('debit', 'one', '-100', 'jump:stolen', 'boss')];
+const jump = run('jump', stolen, stolenAfter, '/v1/streets/one/jump', 1, 'lifecycleCash');
+corrupt(jump, 'jump-counterparty', (_, b) => { b.tables.transactions[1].counterparty = 'two'; });
+corrupt(jump, 'jump-value', (_, b) => { b.tables.transactions[1].amount = '-99'; });
+corrupt(jump, 'jump-missing-reciprocal', (_, b) => { b.tables.transactions.pop(); });
+corrupt(jump, 'jump-duplicate-reciprocal', (_, b) => { b.tables.transactions.push({ ...b.tables.transactions[1], id: 'duplicate' }); });
+corrupt(jump, 'jump-bank-diversion', (_, b) => { b.tables.characters[0].cash = '1000'; b.tables.characters[0].bank = '600'; });
+corrupt(jump, 'jump-correct-ledger-wrong-pocket', (_, b) => { b.tables.characters[0].cash = '1101'; });
+
+const cbBefore = initial(); cbBefore.tables.characters[1].cb = 7;
+const cbAfter = structuredClone(cbBefore); cbAfter.tables.characters[0].cb = 3; cbAfter.tables.characters[1].cb = 4;
+cbAfter.tables.transactions = [receipt('cb-credit', 'boss', '3', 'jump:steal', 'one'), receipt('cb-debit', 'one', '-3', 'jump:stolen', 'boss')]
+  .map(row => ({ ...row, currency: 'cb' }));
+const cbJump = run('jump-contraband-transfer', cbBefore, cbAfter, '/v1/streets/one/jump', 1, 'lifecycleCash');
+corrupt(cbJump, 'cb-jump-missing-credit', (_, b) => { b.tables.transactions.shift(); });
+corrupt(cbJump, 'cb-jump-wrong-counterparty', (_, b) => { b.tables.transactions[1].counterparty = 'two'; });
+corrupt(cbJump, 'cb-jump-wrong-pocket', (_, b) => { b.tables.characters[0].cb = 2; });
+corrupt(cbJump, 'cb-jump-over-three', (_, b) => { b.tables.characters[0].cb = 4; b.tables.characters[1].cb = 3; b.tables.transactions[0].amount = '4'; b.tables.transactions[1].amount = '-4'; });
+const mixedJump = structuredClone(cbAfter); mixedJump.tables.characters[0].cash = '1100'; mixedJump.tables.characters[1].cash = '900';
+mixedJump.tables.transactions.push(...stolenAfter.tables.transactions);
+run('jump-cash-and-contraband', cbBefore, mixedJump, '/v1/streets/one/jump', 2, 'lifecycleCash');
+
+const hurt = initial(); hurt.tables.characters[0].health = 80;
+const healed = structuredClone(hurt); Object.assign(healed.tables.characters[0], { health: 100, cash: '700' });
+healed.tables.transactions = [receipt('heal', 'boss', '-300', 'heal')];
+const heal = run('heal-executed-cash-sink', hurt, healed, '/v1/heal', 1, 'lifecycleCash');
+corrupt(heal, 'heal-wrong-cash', (_, b) => { b.tables.characters[0].cash = '701'; });
+corrupt(heal, 'heal-wrong-health', (_, b) => { b.tables.characters[0].health = 99; });
+corrupt(heal, 'heal-bank-diversion', (_, b) => { b.tables.characters[0].bank = '501'; });
+corrupt(heal, 'heal-counterparty', (_, b) => { b.tables.transactions[0].counterparty = 'one'; });
+corrupt(heal, 'heal-mixed-account', (_, b) => { b.tables.characters[0].account_id = 'foreign'; });
+assert(reconcileWorldResources(hurt, healed, { identity: identity('/v1/unknown') }).unsupported.some(row => row.reason === 'heal'));
+controls.push('heal-unknown-route-remains-unsupported');
+
+const indicted = initial(); indicted.tables.characters[0].indicted_at = at;
+const pleaded = structuredClone(indicted); Object.assign(pleaded.tables.characters[0], { cash: '775', indicted_at: null, heat_exposure: '0', jail_until: '2026-09-20T12:04:00.000Z' });
+pleaded.tables.street_tax[0].pool = '225'; pleaded.tables.transactions = [receipt('plea', 'boss', '-225', 'law:plea')];
+const plea = run('plea', indicted, pleaded, '/v1/law/plea', 1, 'lifecycleCash');
+corrupt(plea, 'plea-diverted-pool', (_, b) => { b.tables.street_tax[0].pool = '224'; });
+corrupt(plea, 'plea-receipt-wrong-sign', (_, b) => { b.tables.transactions[0].amount = '225'; });
+corrupt(plea, 'plea-excess-forfeiture', (_, b) => { b.tables.characters[0].cash = '774'; b.tables.transactions[0].amount = '-226'; b.tables.street_tax[0].pool = '226'; });
+corrupt(plea, 'plea-no-indictment', a => { a.tables.characters[0].indicted_at = null; });
+corrupt(plea, 'plea-wrong-jail-deadline', (_, b) => { b.tables.characters[0].jail_until = at; });
+corrupt(plea, 'plea-pool-other-field', (_, b) => { b.tables.street_tax[0].fund = '1'; });
+const splitBefore = initial(); Object.assign(splitBefore.tables.characters[0], { cash: '10', bank: '990', bank_intransit: '900', indicted_at: at });
+const splitAfter = structuredClone(splitBefore); Object.assign(splitAfter.tables.characters[0], { cash: '0', bank: '850', bank_intransit: '850', indicted_at: null, heat_exposure: '0', jail_until: '2026-09-20T12:04:00.000Z' });
+splitAfter.tables.street_tax[0].pool = '150'; splitAfter.tables.transactions = [receipt('split-plea', 'boss', '-150', 'law:plea')];
+const split = run('plea-pocket-bank-transit', splitBefore, splitAfter, '/v1/law/plea', 1, 'lifecycleCash');
+corrupt(split, 'plea-stale-transit', (_, b) => { b.tables.characters[0].bank_intransit = '900'; });
+assert.equal(reconcileLifecycleCash(before, before).movements.length, 0);
+const orderBefore = initial();
+orderBefore.tables.market_listings = [{ id: 'order', kind: 'order', status: 'live', seller_character: 'one', qty: 2, price: '200', filled_qty: 3,
+  good_id: 'gin', district: 'docks', created_at: '2026-09-20T11:00:00.000Z', expires_at: at, bidder: null, bid: null }];
+const orderAfter = structuredClone(orderBefore); orderAfter.tables.market_listings[0].qty = 0; orderAfter.tables.market_listings[0].status = 'expired';
+orderAfter.tables.characters[1].cash = '1400'; orderAfter.tables.transactions = [receipt('refund', 'one', '400', 'market:refund')];
+const expiry = { name: 'order-expiry', before: orderBefore, after: orderAfter,
+  options: { identity: { command: 'COMMIT', outcome: 'COMMITTED', context: { authority: 'original-worker', logicalAt } } } };
+const expiryJournal = reconcileWorldResources(orderBefore, orderAfter, expiry.options);
+assert.equal(expiryJournal.unsupported.length, 0); assert.equal(expiryJournal.orderExpiry.movements.length, 1); cases.push(expiry);
+assert.equal(reconcileWorldResources(orderAfter, orderAfter, expiry.options).orderExpiry.movements.length, 0);
+corrupt(expiry, 'expiry-early', (a, b) => { a.tables.market_listings[0].expires_at = b.tables.market_listings[0].expires_at = '2026-09-20T12:00:01.000Z'; });
+corrupt(expiry, 'expiry-wrong-recipient', (_, b) => { b.tables.transactions[0].character_id = 'boss'; });
+corrupt(expiry, 'expiry-duplicate-refund', (_, b) => { b.tables.transactions.push({ ...b.tables.transactions[0], id: 'extra' }); });
+corrupt(expiry, 'expiry-wrong-price', (a, b) => { a.tables.market_listings[0].price = b.tables.market_listings[0].price = '201'; });
+corrupt(expiry, 'expiry-warehouse-loss', (_, b) => { b.tables.market_listings[0].filled_qty = 0; });
+corrupt(expiry, 'expiry-dead-owner', (a, b) => { a.tables.characters[1].alive = b.tables.characters[1].alive = false; });
+corrupt(expiry, 'expiry-bank-diversion', (_, b) => { b.tables.characters[1].cash = '1300'; b.tables.characters[1].bank = '600'; });
+corrupt(expiry, 'expiry-foreign-owner-change', (_, b) => { b.tables.characters[2].cash = '1001'; });
+corrupt(expiry, 'expiry-owner-rewrite', (_, b) => { b.tables.market_listings[0].seller_character = 'boss'; });
+corrupt(expiry, 'expiry-rollback', (_, __, o) => { o.identity.outcome = 'ROLLED_BACK'; });
+assert.equal(reconcileOrderExpiry(orderBefore, orderAfter, { identity: identity('/v1/market/order'), receipts: orderAfter.tables.transactions }).listingIds.size, 0);
+controls.push('expiry-missing-worker-boundary-remains-unsupported');
+
+// Use the actual aggregate producer with controlled query results. Two same-
+// owner orders refund alongside a separate listing fee; no intermediate state
+// or commit ordering is fabricated to isolate these resource contributions.
+const aggregateBefore = structuredClone(orderBefore);
+aggregateBefore.tables.characters[1].loc = 'docks';
+aggregateBefore.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'order-2' });
+aggregateBefore.tables.character_cargo.push({ character_id: 'one', good_id: 'gin', qty: 1 });
+const aggregateAfter = structuredClone(aggregateBefore);
+aggregateAfter.tables.market_listings.forEach(row => { row.qty = 0; row.status = 'expired'; });
+aggregateAfter.tables.market_listings.push({ ...aggregateBefore.tables.market_listings[0], id: 'fresh-good', kind: 'good', qty: 1, price: '50', filled_qty: 0, created_at: at, expires_at: '2026-09-20T13:00:00.000Z', car_id: null, buy_now: null, reserve: null });
+aggregateAfter.tables.character_cargo = [];
+aggregateAfter.tables.characters[1].cash = '1790';
+aggregateAfter.tables.transactions = [receipt('refund-1', 'one', '400', 'market:refund'), receipt('refund-2', 'one', '400', 'market:refund'), receipt('mixed-fee', 'one', '-10', 'market:list')];
+aggregateAfter.tables.notifications = ['order', 'order-2'].map((listing, i) => ({ id: 'notice-' + (i + 1), character_id: 'one', type: 'order_expired',
+  created_at: at, delivered: false, pushed: false, payload: JSON.stringify({ listing, refunded: 400, awaiting: 3 }) }));
+let aggregateEvidence, snapshots = 0;
+const serialObserver = createNativeCommitObserver({ context: () => ({}), onBoundary: async () => {} }); serialObserver.arm();
+const producer = createNativeQuiescentGroupObserver({ serialObserver, clock: () => logicalAt,
+  snapshot: async () => structuredClone(snapshots++ ? aggregateAfter : aggregateBefore), onGroup: async evidence => { aggregateEvidence = evidence; } });
+const query = producer.wrapQuery({}, async (sql, params) => {
+  const command = sql.split(' ')[0]; let found = [];
+  if (sql.startsWith('SELECT id, kind')) found = aggregateBefore.tables.market_listings.map(({ id, kind, seller_character, bidder }) => ({ id, kind, seller_character, bidder }));
+  else if (sql.startsWith('SELECT * FROM market_listings')) found = [structuredClone(aggregateBefore.tables.market_listings.find(row => row.id === params[0]))];
+  else if (sql.startsWith('SELECT 1')) found = [{ '?column?': 1 }];
+  return { command, rowCount: command === 'SELECT' ? found.length : ['BEGIN', 'COMMIT'].includes(command) ? null : 1, rows: found, fields: [] };
+});
+await producer.runGroup([{ accountId: 'account-one', request: { method: 'POST', path: '/v1/market', body: { goodId: 'gin', qty: 1, price: 50, hours: 1 }, idempotencyKey: 'mixed-post' } }], {
+  logicalAt, execute: async () => ({ status: 200, replayed: false, body: { ok: true, id: 'fresh-good' } }), drain: async () => {},
+  companion: { identity: { kind: 'original-worker-job', label: 'market sweep', logicalAt,
+    sourceFile: 'src/worker.js', sourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/worker.js'], handlerSourceFile: 'src/market.js', handlerSourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/market.js'] },
+  execute: async () => {
+    await query("SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()");
+    for (const [i, order] of aggregateBefore.tables.market_listings.entries()) {
+      await query('BEGIN'); await query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [order.seller_character]);
+      await query("SELECT * FROM market_listings WHERE id=$1 AND status='live' AND expires_at <= now() FOR UPDATE", [order.id]);
+      await query('SELECT 1 FROM characters WHERE id=$1 AND alive', [order.seller_character]);
+      await query('UPDATE characters SET cash = cash + $2 WHERE id=$1', [order.seller_character, 400]);
+      await query('INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)', ['refund-' + (i + 1), order.seller_character, null, 'cash', 400, 'market:refund', null]);
+      await query("UPDATE market_listings SET qty=0, status='expired' WHERE id=$1", [order.id]);
+      await query('INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)', ['notice-' + (i + 1), order.seller_character, 'order_expired', JSON.stringify({ listing: order.id, refunded: 400, awaiting: 3 })]);
+      await query('COMMIT');
+    }
+    return { settled: 0, lapsed: 2 };
+  } },
+});
+const aggregateOptions = { identity: aggregateEvidence.identity, quiescentGroupEvidence: aggregateEvidence };
+const aggregateJournal = reconcileWorldResources(aggregateBefore, aggregateAfter, aggregateOptions);
+assert.equal(aggregateJournal.orderExpiry.movements.length, 2);
+assert(aggregateJournal.orderExpiry.movements.every(row => row.provenance === 'original-market-sweep-quiescent-companion'));
+assert.equal(aggregateJournal.unsupported.length, 0); assert.equal(aggregateJournal.marketResources.movements[0].kind, 'market-good-post');
+assert.equal(aggregateJournal.identity.outcome, 'QUIESCENT_AGGREGATE'); assert(!Object.hasOwn(aggregateJournal.identity, 'sequence'));
+assert.equal(reconcileOrderExpiry(aggregateBefore, aggregateAfter, { identity: aggregateEvidence.identity, receipts: aggregateAfter.tables.transactions }).movements.length, 0);
+cases.push({ name: 'aggregate-two-order-expiry-with-concurrent-owner-fee' });
+controls.push('aggregate-without-worker-trace-remains-unsupported');
+function resealAggregate(a, b, evidence) {
+  evidence.before = a; evidence.after = b;
+  evidence.trace.forEach((event, i) => { event.sequence = i + 1;
+    if (event.original) event.sqlSha256 = sha256(typeof event.original.sql === 'string' ? event.original.sql : event.original.sql.text);
+    if (event.nativeResult) event.nativeResultSha256 = actorValueHash(event.nativeResult);
+  });
+  evidence.identity.context.companions = evidence.companions;
+  evidence.identity.companionsSha256 = actorValueHash(evidence.companions);
+  const { sha256: _, ...root } = evidence.identity.traceRoot;
+  Object.assign(root, { beforeHash: sha256(a), afterHash: sha256(b), traceSha256: actorValueHash(evidence.trace), companionsSha256: evidence.identity.companionsSha256,
+    companionOutcomesSha256: actorValueHash(evidence.companionOutcomes) });
+  evidence.traceSha256 = root.traceSha256; evidence.identity.traceRoot = { ...root, sha256: actorValueHash(root) };
+  return evidence;
+}
+function aggregateCorruption(name, edit, originalEvidence = aggregateEvidence) {
+  const a = structuredClone(aggregateBefore), b = structuredClone(aggregateAfter), evidence = structuredClone(originalEvidence);
+  edit(a, b, evidence); resealAggregate(a, b, evidence);
+  assert.throws(() => reconcileOrderExpiry(a, b, { identity: evidence.identity, quiescentGroupEvidence: evidence, receipts: b.tables.transactions }), undefined, name);
+  controls.push(name);
+}
+aggregateCorruption('aggregate-expiry-wrong-handler-pin', (_, __, e) => { e.companions[0].handlerSourceSha256 = '0'.repeat(64); });
+aggregateCorruption('aggregate-expiry-wrong-refund-receipt', (_, b) => { b.tables.transactions[0].amount = '399'; b.tables.characters[1].cash = '1789'; });
+aggregateCorruption('aggregate-expiry-warehouse-loss', (_, b) => { b.tables.market_listings[0].filled_qty = 0; });
+aggregateCorruption('aggregate-expiry-bank-diversion', (_, b) => { b.tables.characters[1].cash = '1789'; b.tables.characters[1].bank = '501'; });
+aggregateCorruption('aggregate-expiry-notification-mismatch', (_, b) => { b.tables.notifications[0].payload = JSON.stringify({ listing: 'order', refunded: 399, awaiting: 3 }); });
+aggregateCorruption('aggregate-expiry-locked-row-does-not-match-input', (_, __, e) => { e.trace.find(row => row.nativeResult?.rows[0]?.id === 'order' && row.nativeResult.rows[0].qty === 2).nativeResult.rows[0].qty = 3; });
+aggregateCorruption('aggregate-expiry-native-credit-differs', (_, __, e) => { e.trace.find(row => row.original?.sql.startsWith('UPDATE characters')).original.parameters[1] = 399; });
+aggregateCorruption('aggregate-expiry-native-row-not-updated', (_, __, e) => { const row = e.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.command === 'UPDATE'); row.rowCount = row.nativeResult.rowCount = 0; });
+aggregateCorruption('aggregate-expiry-rollback-not-commit', (_, __, e) => {
+  const start = e.trace.find(row => row.original?.sql === 'COMMIT'), end = e.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.queryId === start.queryId);
+  start.original.sql = 'ROLLBACK'; end.command = end.nativeResult.command = 'ROLLBACK'; end.sqlSha256 = sha256('ROLLBACK');
+});
+aggregateCorruption('aggregate-expiry-worker-return-contradicts-count', (_, __, e) => { e.companionOutcomes[0].value.lapsed = 1; });
+{
+  const evidence = structuredClone(aggregateEvidence), scope = QUERY_ORDER_SCOPE.queries.find(row => row.id === 'market-due');
+  const dispatch = evidence.trace.find(row => row.original?.sql === scope.originalSql);
+  const response = evidence.trace.find(row => row.phase === 'ACKNOWLEDGED' && row.queryId === dispatch.queryId);
+  dispatch.original.sql = scope.transformedSql;
+  response.nativeResult.rows = [{ limited_rows: response.nativeResult.rows,
+    eligible_rows: aggregateBefore.tables.market_listings.map(row => JSON.stringify(row)) }];
+  response.rowCount = response.nativeResult.rowCount = 1;
+  response.sqlSha256 = sha256(scope.transformedSql);
+  resealAggregate(aggregateBefore, aggregateAfter, evidence);
+  const options = { identity: evidence.identity, quiescentGroupEvidence: evidence };
+  assert.equal(reconcileWorldResources(aggregateBefore, aggregateAfter, options).unsupported.length, 0);
+  cases.push({ name: 'aggregate-expiry-original-query-order-transport' });
+  const scan = e => e.trace.find(row => row.nativeResult?.rows?.[0]?.limited_rows)?.nativeResult.rows[0];
+  aggregateCorruption('ordered-expiry-missing-projected-row', (_, __, e) => { scan(e).limited_rows.pop(); }, evidence);
+  aggregateCorruption('ordered-expiry-changed-projected-owner', (_, __, e) => { scan(e).limited_rows[0].seller_character = 'wrong'; }, evidence);
+  aggregateCorruption('ordered-expiry-ineligible-full-row', (_, __, e) => {
+    const row = JSON.parse(scan(e).eligible_rows[0]); row.status = 'cancelled'; scan(e).eligible_rows[0] = JSON.stringify(row);
+  }, evidence);
+  aggregateCorruption('ordered-expiry-unreviewed-query', (_, __, e) => {
+    e.trace.find(row => row.original?.sql === scope.transformedSql).original.sql += ' LIMIT 1';
+  }, evidence);
+}
+const crimeBefore = initial(); Object.assign(crimeBefore.tables.gangs[0], { weekly_progress: '0', weekly_week: null, weekly_done: false });
+crimeBefore.tables.characters[0].lc_crime = 0;
+const crimeAfter = structuredClone(crimeBefore); Object.assign(crimeAfter.tables.gangs[0], { weekly_progress: '1', weekly_week: 2959 });
+crimeAfter.tables.characters[0].lc_crime = 1; crimeAfter.tables.characters[0].cash = '1100';
+crimeAfter.tables.transactions = [receipt('crime', 'boss', '100', 'crime:pick')];
+const crimeOptions = { identity: identity('/v1/crimes/pick'), receipts: crimeAfter.tables.transactions };
+assert(reconcileWorkerTransitions(crimeBefore, crimeAfter, crimeOptions).familyFields.has('family'));
+assert.equal(reconcileWorldResources(crimeBefore, crimeAfter, { identity: crimeOptions.identity }).unsupported.length, 0);
+assert.throws(() => reconcileWorkerTransitions(crimeBefore, crimeAfter, { ...crimeOptions, identity: identity('/v1/crimes/foreign') }));
+assert.throws(() => reconcileWorkerTransitions(crimeBefore, crimeAfter, { ...crimeOptions, identity: { ...crimeOptions.identity, accountId: 'account-two' } }));
+assert.throws(() => reconcileWorkerTransitions(crimeBefore, crimeAfter, { ...crimeOptions, receipts: [...crimeOptions.receipts, { ...crimeOptions.receipts[0], id: 'other', character_id: 'two' }] }));
+controls.push('http-crime-wrong-route', 'http-crime-wrong-account', 'http-crime-ambiguous-owner');
+cases.push({ name: 'http-crime-family-counter' });
+const hostilityBefore = initial(); hostilityBefore.tables.gangs[0].npc_aggro_until = null;
+const hostilityAfter = structuredClone(hostilityBefore); hostilityAfter.tables.gangs[0].npc_aggro_until = '2026-09-22T00:00:00.000Z';
+const hostilityOptions = { identity: { command: 'COMMIT', outcome: 'COMMITTED', context: { authority: 'original-worker', logicalAt } } };
+assert.equal(reconcileWorldResources(hostilityBefore, hostilityAfter, hostilityOptions).unsupported.length, 0);
+const earlyHostility = structuredClone(hostilityAfter); earlyHostility.tables.gangs[0].npc_aggro_until = '2026-09-21T00:00:00.000Z';
+assert.throws(() => reconcileWorldResources(hostilityBefore, earlyHostility, hostilityOptions));
+const busyHostility = structuredClone(hostilityBefore); busyHostility.tables.gangs[0].npc_aggro_until = '2026-09-21T00:00:00.000Z';
+assert.throws(() => reconcileWorldResources(busyHostility, hostilityAfter, hostilityOptions));
+const granted = structuredClone(hostilityAfter); granted.tables.gangs[0].treasury = '501';
+assert(reconcileWorldResources(hostilityBefore, granted, hostilityOptions).unsupported.some(row => row.kind === 'family-lineage'));
+controls.push('hostility-shortened-cooldown', 'hostility-repeated-inside-cooldown', 'hostility-resource-grant-remains-unsupported');
+cases.push({ name: 'family-hostility-cooldown-metadata' });
+console.log(JSON.stringify({ status: 'PASS', cases: cases.map(row => row.name), rejectedCorruptions: controls.length, controls }));

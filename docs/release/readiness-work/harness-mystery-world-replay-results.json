@@ -1,0 +1,793 @@
+{
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_POLICY_AND_OBSERVER_REPLAY",
+  "matrixQualifying": false,
+  "qualifyingMatrixRuns": 0,
+  "scope": "High/low mystery PlayerCommand selection components within the declared quiet two-actor daily roster; original local worker callbacks, real PostgreSQL, separate owned databases and exact recorded replay.",
+  "qualificationLimits": [
+    "All high choices were forced investigation; no mixed-choice 70% claim.",
+    "Low choices deliberately waited at the cap; zero PlayerCommand completions gives no measured investigation fraction.",
+    "Legacy crimes remain outside the mystery quota denominator.",
+    "All25 actor Knowledge reads completed with zero accessible claims; no propagation or future-acquisition coverage.",
+    "Unsupported car/Family/season lineage remains unsupported despite faithful changed-row reconstruction.",
+    "No long-run resource capacity, all225 worlds, production concurrency/load, external health/chain/liquidity or deployment qualification."
+  ],
+  "resourceComparison": "Every canonical {event,journal} plus newline independently hashed from retained history. All observed pairs match. The final source also requires scope, count and digest in its mandatory comparator.",
+  "costAssessment": {
+    "beforeLongRun": true,
+    "resourceTablesPerSnapshot": 55,
+    "measuredTwoHourObservation": {
+      "wallSeconds": 43.881,
+      "historyBytes": 41754607,
+      "indexedArtifactBytes": 46664622,
+      "observedRetainedStorageFloorBytes": 46718459,
+      "observer": {
+        "observedBoundaryWallMs": 13562.462999999942,
+        "maximumBoundaryWallMs": 78.58750000000146,
+        "serializedJournalBytes": 40628993,
+        "serializedRestrictedChangeBytes": 232651,
+        "logicalHours": 2,
+        "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+      }
+    },
+    "linear90DayProjection": {
+      "method": "Multiply the observed two-hour run by1080. This is a sizing warning, not a guaranteed lower bound, benchmark or capacity assurance; boot cost and state growth are not modeled.",
+      "boundaries": 1167480,
+      "tableReads": 64211400,
+      "serializedJournalBytes": 43879312440,
+      "observedBoundaryWallHours": 4.068738899999983,
+      "wholeRunWallHours": 13.1643
+    },
+    "decision": "No90-day resource run launched. Retain every required boundary; do not omit checks to assert capacity."
+  },
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-world-2h-1",
+      "source": {
+        "revision": "ced267a7fefa410d3c849e3085dd490cd8cc5102",
+        "gitTree": "73bd41657298b1061f37c9d3304fb7ad7496dc07",
+        "checkoutSha256": "509b2e31c4162a5403bee1405356747e75374c855c4f982a7c287c3460fdb5a9",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "7605b14611ffdfd12c1599c21efc2b0d2d49de9c791543863acbb7ef3e48d521",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "d008d200b5fbbc2686dbb86f1be7a9441482d7d7efefe6facb8d9d4c5cbbfea6",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "caec31d31eb2f0134ccaf9720b329b91df18dfdd499205825c7b526eaeed95c2"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "a08ab4eb4ea59e3ec23913f5ea97231fdbfe7853222f95f3363693bb23bcdeac"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 47.801,
+        "historyBytes": 41754432,
+        "indexedArtifactBytes": 46673628,
+        "observedRetainedStorageFloorBytes": 46727272,
+        "observer": {
+          "observedBoundaryWallMs": 18037.296900000034,
+          "maximumBoundaryWallMs": 111.97490000000107,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232607,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-world-replay-2h-1",
+      "source": {
+        "revision": "ced267a7fefa410d3c849e3085dd490cd8cc5102",
+        "gitTree": "73bd41657298b1061f37c9d3304fb7ad7496dc07",
+        "checkoutSha256": "509b2e31c4162a5403bee1405356747e75374c855c4f982a7c287c3460fdb5a9",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "b03bd4105db0fc2d0c90039b14da9512e2fa432fe47d2be0b2d3eb377ae61c8a",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "d008d200b5fbbc2686dbb86f1be7a9441482d7d7efefe6facb8d9d4c5cbbfea6",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "caec31d31eb2f0134ccaf9720b329b91df18dfdd499205825c7b526eaeed95c2"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "a08ab4eb4ea59e3ec23913f5ea97231fdbfe7853222f95f3363693bb23bcdeac"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 46.116,
+        "historyBytes": 41755482,
+        "indexedArtifactBytes": 46674691,
+        "observedRetainedStorageFloorBytes": 46729673,
+        "observer": {
+          "observedBoundaryWallMs": 17540.412999999957,
+          "maximumBoundaryWallMs": 107.3527000000031,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232607,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-low-world-2h-1",
+      "source": {
+        "revision": "ced267a7fefa410d3c849e3085dd490cd8cc5102",
+        "gitTree": "73bd41657298b1061f37c9d3304fb7ad7496dc07",
+        "checkoutSha256": "509b2e31c4162a5403bee1405356747e75374c855c4f982a7c287c3460fdb5a9",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "240e7bb6698a747389d8d4b1be23c79660abb4ad9d68935ee984e175f50c69ef",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "low_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "edd61a27a66380becf385f604f10acf180a40a626f7be5f70011f00e7559b67b",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "9254d222e0398b230b64d9af23a64049a1bb96cacd66a1a1499de522ef845f5e",
+        "actorTapeSha256": "566f3770761a777e6279b9f8a7c9ab2e5f541b8a704e4d29a3b16d0f1755363e",
+        "policyStateSha256": "8c4aa83142a744dd9fbb124142400fd2409747de483e95be72413b33626710fd",
+        "semanticMetricsSha256": "4e7eec4e2e10ba7f4fe81dce4d0e48b86eb69b6621953675be81e95828413e63",
+        "mysteryPolicySummarySha256": "d3f5ddc3d820969bb9b6c78f85d5d91f129c978cdfc22a6d0689c9d3716e75cb",
+        "worldDiagnosticsSemanticSha256": "dd4226b07af57d3847d98bf8dbed33a54de952953f68146d5d8a4712cb2b243e",
+        "knowledgeDiagnosticsSha256": "954b5ed15e8b0337e0673dbcb82e856e7ed91a151cb2e0555a9c9331f6bc13aa"
+      },
+      "metrics": {
+        "playerSnapshots": 2,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 0,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {},
+        "observedAuthorizedOpportunities": 36
+      },
+      "policyCounters": {
+        "observations": 2,
+        "freshCompletions": 0,
+        "freshInvestigation": 0,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 0,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 2
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": null,
+      "resourceUnsupported": null,
+      "measuredCost": {
+        "wallSeconds": 38.316,
+        "historyBytes": 206528,
+        "indexedArtifactBytes": 3967730,
+        "observedRetainedStorageFloorBytes": 4013500,
+        "observer": null
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-low-world-replay-2h-1",
+      "source": {
+        "revision": "ced267a7fefa410d3c849e3085dd490cd8cc5102",
+        "gitTree": "73bd41657298b1061f37c9d3304fb7ad7496dc07",
+        "checkoutSha256": "509b2e31c4162a5403bee1405356747e75374c855c4f982a7c287c3460fdb5a9",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "91715519e1b04dcb3bfb0cb2e226f69e1bb84c18e69d6bdecf5d9aef891748e1",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "low_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "edd61a27a66380becf385f604f10acf180a40a626f7be5f70011f00e7559b67b",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "9254d222e0398b230b64d9af23a64049a1bb96cacd66a1a1499de522ef845f5e",
+        "actorTapeSha256": "566f3770761a777e6279b9f8a7c9ab2e5f541b8a704e4d29a3b16d0f1755363e",
+        "policyStateSha256": "8c4aa83142a744dd9fbb124142400fd2409747de483e95be72413b33626710fd",
+        "semanticMetricsSha256": "4e7eec4e2e10ba7f4fe81dce4d0e48b86eb69b6621953675be81e95828413e63",
+        "mysteryPolicySummarySha256": "d3f5ddc3d820969bb9b6c78f85d5d91f129c978cdfc22a6d0689c9d3716e75cb",
+        "worldDiagnosticsSemanticSha256": "dd4226b07af57d3847d98bf8dbed33a54de952953f68146d5d8a4712cb2b243e",
+        "knowledgeDiagnosticsSha256": "954b5ed15e8b0337e0673dbcb82e856e7ed91a151cb2e0555a9c9331f6bc13aa"
+      },
+      "metrics": {
+        "playerSnapshots": 2,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 0,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {},
+        "observedAuthorizedOpportunities": 36
+      },
+      "policyCounters": {
+        "observations": 2,
+        "freshCompletions": 0,
+        "freshInvestigation": 0,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 0,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 2
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": null,
+      "resourceUnsupported": null,
+      "measuredCost": {
+        "wallSeconds": 29.842,
+        "historyBytes": 207578,
+        "indexedArtifactBytes": 3959528,
+        "observedRetainedStorageFloorBytes": 4006636,
+        "observer": null
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-strict-json-2h-1",
+      "source": {
+        "revision": "4888cda4ddb5bb860ec3aface08edf58e0a67aa4",
+        "gitTree": "b6a2e4fb44163386f92c1a17e2ef15d5cc52e119",
+        "checkoutSha256": "cbfff3764e76e6ccbc790b04ffa01f53c8db9e01911448a664b50aa00bdec572",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "4817cc5789f925de58e04245adc8d36da225b90dd0c58f4ca43041fd4e518268",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "e75932e3c19c068eda31e47d82625537699ee181446cd7015f8b5a9eb678b118",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "c43667dc9ede692e3c871b8b08e76e2fdd6bc247ba79df968288080dafb1e7ce"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 49.994,
+        "historyBytes": 41754444,
+        "indexedArtifactBytes": 46664320,
+        "observedRetainedStorageFloorBytes": 46717976,
+        "observer": {
+          "observedBoundaryWallMs": 18486.26890000002,
+          "maximumBoundaryWallMs": 132.8735000000015,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232651,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-strict-json-replay-2h-1",
+      "source": {
+        "revision": "4888cda4ddb5bb860ec3aface08edf58e0a67aa4",
+        "gitTree": "b6a2e4fb44163386f92c1a17e2ef15d5cc52e119",
+        "checkoutSha256": "cbfff3764e76e6ccbc790b04ffa01f53c8db9e01911448a664b50aa00bdec572",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "059efd972ada97735af248e68c48cab09174e4ae9bf805f2bfd5beffd311460d",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "e75932e3c19c068eda31e47d82625537699ee181446cd7015f8b5a9eb678b118",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "c43667dc9ede692e3c871b8b08e76e2fdd6bc247ba79df968288080dafb1e7ce"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 44.266,
+        "historyBytes": 41755494,
+        "indexedArtifactBytes": 46665393,
+        "observedRetainedStorageFloorBytes": 46720387,
+        "observer": {
+          "observedBoundaryWallMs": 16712.1181999999,
+          "maximumBoundaryWallMs": 74.73319999999512,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232651,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-batched-resource-2h-1",
+      "source": {
+        "revision": "2a52d6383e536d7a9a092fd251fbfb2070cd5a9d",
+        "gitTree": "89e941809b356cada1dc00259c124e53c98ed642",
+        "checkoutSha256": "eacfb75ef75c4602c9835d76cf9e0094763cece564e0a3676b14eb832b38c89b",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "1cef7b844a30100c73b54ed9a06f2783761c2043510d73ae0aa9ee46fd75f476",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "e75932e3c19c068eda31e47d82625537699ee181446cd7015f8b5a9eb678b118",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "c43667dc9ede692e3c871b8b08e76e2fdd6bc247ba79df968288080dafb1e7ce",
+        "resourceObservationEnabled": true,
+        "resourceJournalCount": 1081,
+        "resourceJournalSha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 43.881,
+        "historyBytes": 41754607,
+        "indexedArtifactBytes": 46664622,
+        "observedRetainedStorageFloorBytes": 46718459,
+        "observer": {
+          "observedBoundaryWallMs": 13562.462999999942,
+          "maximumBoundaryWallMs": 78.58750000000146,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232651,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\mystery-high-batched-resource-replay-2h-1",
+      "source": {
+        "revision": "2a52d6383e536d7a9a092fd251fbfb2070cd5a9d",
+        "gitTree": "89e941809b356cada1dc00259c124e53c98ed642",
+        "checkoutSha256": "eacfb75ef75c4602c9835d76cf9e0094763cece564e0a3676b14eb832b38c89b",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "runSha256": "2c24f16bcd5d62edfe18792cfb54689b96918c4abb499863bda5951f7197a637",
+      "result": {
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "high_mystery_participation",
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "e75932e3c19c068eda31e47d82625537699ee181446cd7015f8b5a9eb678b118",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "8b4e641414e07e883c70108efead547c10b2dbba84f16a5e80e0837b79631f7b",
+        "actorTapeSha256": "0b707aa5f786de18d55f2aaf61954e14e036426cdf3377bb666e53d7b6f24de0",
+        "policyStateSha256": "1292540516222371bd1159b17e0c8b4cd1ce12d9c35b84ed4f67d4bc7342eca6",
+        "semanticMetricsSha256": "1047cd3c000950d4a8bf8d6fcb6c46e5b515d2f1b54e4c32dc25f5146a8d53df",
+        "mysteryPolicySummarySha256": "be204440d75b0813dd9c7eb7d7e754d0628e14d22837b558b8edf05784e163f5",
+        "worldDiagnosticsSemanticSha256": "ac0414f0fa8d5abc0fb71acf339d55b81c5ec633a4853e6cf7bb8f4817c31314",
+        "knowledgeDiagnosticsSha256": "c43667dc9ede692e3c871b8b08e76e2fdd6bc247ba79df968288080dafb1e7ce",
+        "resourceObservationEnabled": true,
+        "resourceJournalCount": 1081,
+        "resourceJournalSha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 3,
+          "mystery.start": 4,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 40
+      },
+      "policyCounters": {
+        "observations": 8,
+        "freshCompletions": 8,
+        "freshInvestigation": 8,
+        "freshOther": 0,
+        "freshMixedChoices": 0,
+        "freshForcedInvestigation": 8,
+        "freshForcedOther": 0,
+        "deliberateCapWaits": 0
+      },
+      "knowledge": {
+        "complete": true,
+        "actors": 25,
+        "distinctAccessibleClaims": 0
+      },
+      "resourceStream": {
+        "boundaries": 1081,
+        "equations": 104987,
+        "nonzero": {
+          "cash": 22,
+          "ammo": 12,
+          "cb": 1
+        },
+        "outcomes": {
+          "COMMITTED": 290,
+          "AUTOCOMMITTED": 753,
+          "ROLLED_BACK": 38
+        },
+        "sha256": "b67b817e4ccdac2803c0729ff7d5cf5dbdfd5f2798649121529d065cfd682bc4"
+      },
+      "resourceUnsupported": {
+        "boundaries": 1081,
+        "unsupportedEntries": 39,
+        "unsupportedKinds": {
+          "observed-table-change": 37,
+          "family-lineage": 2
+        },
+        "qualifyingFullResourcePass": false
+      },
+      "measuredCost": {
+        "wallSeconds": 39.484,
+        "historyBytes": 41755733,
+        "indexedArtifactBytes": 46675093,
+        "observedRetainedStorageFloorBytes": 46730371,
+        "observer": {
+          "observedBoundaryWallMs": 12722.988799999908,
+          "maximumBoundaryWallMs": 70.24210000000312,
+          "serializedJournalBytes": 40628993,
+          "serializedRestrictedChangeBytes": 232651,
+          "logicalHours": 2,
+          "note": "Measured native snapshot/reconciliation/artifact overhead only; linear projection is not a capacity guarantee. Every required boundary retained."
+        }
+      },
+      "cleanupRecorded": true
+    }
+  ]
+}

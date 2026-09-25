@@ -1,3 +1,5 @@
+// Reused from reviewed validation commit 36156ace3f4e4600badc8394a205d0e10432d227.
+// Historical results are not evidence: run this harness against the candidate.
 // Seeded multiplayer campaign actions through rendered mobile command controls.
 // Starting characters/social structures are fixtures. Every tested command is
 // issued and executed by the production HTTP server against real PostgreSQL.
@@ -20,7 +22,7 @@ for (const flag of ['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGI
 Object.assign(process.env, { LIVING_WORLD_DIRECTOR: 'LIVE', RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on', SOCIAL_VERIFY_MODE: 'off' });
 for (const name of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) process.env[name] = crypto.randomBytes(32).toString('hex');
 delete process.env.COORDINATION_ACCOUNT_IDS; delete process.env.DIRECTOR_ACCOUNT_IDS;
-const output = path.resolve(process.env.RC1_CAMPAIGN_MOBILE_OUTPUT || 'docs/release/evidence/player/campaign-mobile');
+const output = path.resolve(process.env.RC1_CAMPAIGN_MOBILE_OUTPUT || 'output/rc1-campaign-mobile');
 fs.mkdirSync(output, { recursive: true });
 const binary = [process.env.CHROMIUM_PATH, 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/usr/bin/chromium'].find((file) => file && fs.existsSync(file));
 const browser = await chromium.launch({ ...(binary ? { executablePath: binary } : {}), headless: true });
@@ -41,7 +43,7 @@ try {
     if (process.env.RC1_CAMPAIGN_MOBILE_CASE && !process.env.RC1_CAMPAIGN_MOBILE_CASE.split(',').includes(scenario.name)) continue;
     const f = await campaignNetworkFixture(`rc1m_${width}_${scenarios.indexOf(scenario)}`);
     let app; const contexts = [], sessions = new Map();
-    const result = { width, scenario: scenario.name, status: 'RUNNING', commands: [], outcomes: [], errors: [] }; report.results.push(result); save();
+    const result = { width, scenario: scenario.name, status: 'RUNNING', commands: [], outcomes: [], recoveries: [], errors: [] }; report.results.push(result); save();
     try {
       await f.networkEstablish();
       const director = createLivingWorldDirector({ pool: f.pool, content: f.content, definitions: createCampaignNetworkDefinitions(f.content), mode: 'LIVE', clock: f.clock });
@@ -73,6 +75,17 @@ try {
         sessions.set(account, { page, board: null }); return sessions.get(account);
       };
       const engine = {
+        retryIssuedCommand: async (account, command, error) => {
+          if (error.statusCode !== 409 || !['command_stale', 'command_unavailable', 'command_expired'].includes(error.body?.error)) return false;
+          const { page } = await pageFor(account);
+          await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);
+          await page.waitForSelector('#tab-world .world-summary');
+          await page.waitForLoadState('networkidle');
+          result.recoveries.push({ account, type: command.commandType, parameters: command.parameters,
+            rejectedExecutionId: command.executionIdentity.executionId, error: error.body.error,
+            action: 'Use visible Refresh world, then issue and click the same command type/parameters once' });
+          save(); return true;
+        },
         snapshot: async (account, options = {}) => {
           const session = await pageFor(account), { page } = session;
           await page.waitForLoadState('networkidle');
@@ -126,6 +139,9 @@ try {
             chosen = await reachable(); if (chosen) break;
           }
           assert(chosen, `No reachable ${width}px primary action: ${command.label}`);
+          // Position the real control clear of fixed phone navigation, then use
+          // a normal hit-tested click. Never force clicks through an overlay.
+          await chosen.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }));
           const waiting = page.waitForResponse((response) => response.request().method() === 'POST' && response.url().endsWith('/v1/commands/execute'));
           waiting.catch(() => {}); await chosen.click();
           if (command.confirmation.required) {
@@ -133,9 +149,11 @@ try {
             const box = await confirm.boundingBox(); assert(box && box.width > 0 && box.x >= -1 && box.x + box.width <= width + 1, 'Confirmation must fit viewport');
             await confirm.click();
           }
-          const response = await waiting; assert.equal(response.status(), 200, await response.text());
+          const response = await waiting;
           const executed = response.request().postDataJSON(); assert.equal(executed.executionId, input.executionId, 'Clicked control must execute the requested identity');
-          const body = await response.json(); assert.equal(body.status, 'COMPLETED');
+          const body = await response.json();
+          if (response.status() !== 200) throw Object.assign(new Error(JSON.stringify(body)), { statusCode: response.status(), body });
+          assert.equal(body.status, 'COMPLETED');
           await page.waitForFunction(() => sessionStorage.getItem('omerta_world_pending') === null);
           await page.waitForSelector('#tab-world .world-summary');
           await page.waitForLoadState('networkidle');

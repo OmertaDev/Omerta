@@ -1,0 +1,635 @@
+{
+  "schemaVersion": 1,
+  "baselineEvidenceCommit": "a3d2d56aecc9e6d10c24e3c12ff9cf29e9257c8d",
+  "gate": "RC1-02",
+  "status": "REQUIRED_TRANSITION_PROOF_MISSING",
+  "categories": [
+    {
+      "resource": "OMR",
+      "authoritative": [
+        "account_persistent",
+        "desk_inventory",
+        "chain_reserve",
+        "transactions",
+        "loans.collateral_omr"
+      ],
+      "mutators": [
+        "src/vanity.js:spendOmr",
+        "src/game.js:ledger",
+        "src/loans.js:takeLoan/repayLoan/collectLoan",
+        "src/chain.js"
+      ],
+      "gapIds": [
+        "C02-OMR",
+        "C02-NFT-CHAIN"
+      ],
+      "existingNativeTestCandidates": [
+        "test/tokenomics.js",
+        "test/loans.js",
+        "test/chain.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "cash",
+      "authoritative": [
+        "characters.cash/bank",
+        "transactions",
+        "gangs.treasury"
+      ],
+      "mutators": [
+        "src/campaigns.js:claimCampaign",
+        "src/crafting.js:craftWorldGraphRecipe",
+        "src/game.js:ledger"
+      ],
+      "gapIds": [
+        "C02-CAMPAIGN-CASH",
+        "C02-HARDENING",
+        "C02-FAMILY-TREASURY"
+      ],
+      "existingNativeTestCandidates": [
+        "test/economy.js",
+        "test/crafting.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "inventory",
+      "authoritative": [
+        "cars",
+        "account_gear",
+        "item_instances",
+        "item_stacks",
+        "item_events"
+      ],
+      "mutators": [
+        "src/items.js",
+        "src/crafting.js:salvageCar"
+      ],
+      "gapIds": [
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ],
+      "existingNativeTestCandidates": [
+        "test/items.js",
+        "test/crafting.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "crafted items",
+      "authoritative": [
+        "item_instances",
+        "item_stacks",
+        "item_events",
+        "item_mutation_guards",
+        "bespoke_pieces"
+      ],
+      "mutators": [
+        "src/crafting.js:craftWorldGraphRecipe",
+        "src/shipment.js:commissionPiece"
+      ],
+      "gapIds": [
+        "C02-HARDENING",
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ],
+      "existingNativeTestCandidates": [
+        "test/crafting.js",
+        "test/shipment.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "consumed materials",
+      "authoritative": [
+        "item_stacks",
+        "item_events",
+        "characters.shipment",
+        "shipment_takes",
+        "bespoke_pieces"
+      ],
+      "mutators": [
+        "src/crafting.js:salvageCar/craftWorldGraphRecipe",
+        "src/shipment.js:takeShipment/commissionPiece"
+      ],
+      "gapIds": [
+        "C02-COMPOUND-JOURNAL",
+        "C02-SHIPMENT-MATERIAL"
+      ],
+      "existingNativeTestCandidates": [
+        "test/crafting.js",
+        "test/shipment.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "rewards",
+      "authoritative": [
+        "transactions",
+        "campaign_progress",
+        "drop_allocations"
+      ],
+      "mutators": [
+        "src/campaigns.js:claimCampaign",
+        "src/chain.js"
+      ],
+      "gapIds": [
+        "C02-CAMPAIGN-CASH",
+        "C02-OMR"
+      ],
+      "existingNativeTestCandidates": [
+        "test/underworld.js",
+        "test/drop.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "escrow",
+      "authoritative": [
+        "listings",
+        "loans",
+        "world_operation_capital",
+        "district_bids",
+        "transactions"
+      ],
+      "mutators": [
+        "src/market.js",
+        "src/loans.js",
+        "src/coordination/capital.js"
+      ],
+      "gapIds": [
+        "C02-ESCROW-DISPOSITIONS",
+        "C02-OPERATION-CAPITAL",
+        "C02-OMR"
+      ],
+      "existingNativeTestCandidates": [
+        "test/market.js",
+        "test/loans.js",
+        "test/casino.js",
+        "test/races.js",
+        "test/coordination-capital.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "operation custody",
+      "authoritative": [
+        "world_operation_capital",
+        "world_operation_commitments",
+        "item_instances",
+        "item_events"
+      ],
+      "mutators": [
+        "src/coordination/capital.js:depositCapital/refundCapital/settleCapital",
+        "src/coordination/operations.js"
+      ],
+      "gapIds": [
+        "C02-OPERATION-CAPITAL",
+        "C02-COMPOUND-JOURNAL"
+      ],
+      "existingNativeTestCandidates": [
+        "test/coordination-capital.js",
+        "test/coordination-materials.js",
+        "test/family-operations.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "Family resources",
+      "authoritative": [
+        "gangs.treasury/omr_reserve/ammo_bank",
+        "transactions",
+        "district_bids"
+      ],
+      "mutators": [
+        "src/social/gangs.js:tribute/tributeOmr/resolveWarIfDue"
+      ],
+      "gapIds": [
+        "C02-FAMILY-TREASURY",
+        "C02-OPERATION-CAPITAL"
+      ],
+      "existingNativeTestCandidates": [
+        "test/social.js",
+        "test/treasury.js",
+        "test/coordination-capital.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "campaign rewards",
+      "authoritative": [
+        "campaign_progress",
+        "transactions",
+        "world_kernel_events",
+        "director_campaigns"
+      ],
+      "mutators": [
+        "src/campaigns.js:claimCampaign",
+        "src/director/campaign-network.js"
+      ],
+      "gapIds": [
+        "C02-CAMPAIGN-CASH"
+      ],
+      "existingNativeTestCandidates": [
+        "test/underworld.js",
+        "test/campaign-network-journey.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "seasonal resources",
+      "authoritative": [
+        "season_records",
+        "gangs.season_tribute",
+        "district_bids",
+        "item_lots"
+      ],
+      "mutators": [
+        "src/season.js:recordReckoning",
+        "src/social/gangs.js"
+      ],
+      "gapIds": [
+        "C02-FAMILY-TREASURY"
+      ],
+      "existingNativeTestCandidates": [
+        "test/seasons.js",
+        "test/content-seasonal.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "NFT eligible items",
+      "authoritative": [
+        "cars.minted_onchain",
+        "boats.minted_onchain",
+        "vouchers",
+        "transactions"
+      ],
+      "mutators": [
+        "src/nft.js:upgradeRarity",
+        "src/chain.js:requestItemWithdraw/reclaimExpiredVouchers/reimportItem"
+      ],
+      "gapIds": [
+        "C02-NFT-CHAIN"
+      ],
+      "existingNativeTestCandidates": [
+        "test/nft.js",
+        "test/reimport.js"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    },
+    {
+      "resource": "contract related balances",
+      "authoritative": [
+        "chain_reserve",
+        "desk_inventory",
+        "vouchers",
+        "on-chain token/vault receipts"
+      ],
+      "mutators": [
+        "src/chain.js",
+        "src/desk.js:runDeskInvariants; src/community.js:runFamilyBuybackInvariants"
+      ],
+      "gapIds": [
+        "C02-OMR",
+        "C02-NFT-CHAIN"
+      ],
+      "existingNativeTestCandidates": [
+        "test/chain.js",
+        "test/desk.js",
+        "omerta-contracts/test"
+      ],
+      "nativeExecution": "See retained run; source file existence grants no pass",
+      "simulationExecution": "MISSING_REQUIRED_FULL_GAME_RESOURCE_WORKLOAD",
+      "simulationHarness": "tools/rc1-sim.js:runNativeSimulation (requires additional resource policies and retained per-transition attribution)"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "C02-OMR",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "authenticated account; lender/borrower; deployment chain roles",
+      "replayIdentity": "HTTP account + Idempotency-Key + method/path/body hash; chain nonce/event identity",
+      "nativeScenarios": [
+        "omr:rarity-recycles-to-desk",
+        "loan:take-and-omr-pledge",
+        "loan:repay-and-omr-refund"
+      ],
+      "requiredBranches": [
+        "player-to-desk recycling",
+        "nonzero pledge",
+        "pledge refund",
+        "collateral seizure",
+        "mint",
+        "burn",
+        "backing",
+        "aggregate custody"
+      ],
+      "missingNativeBranches": [
+        "collateral seizure",
+        "mint/burn and backed creation receipts",
+        "deployed backing attestation"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-CAMPAIGN-CASH",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "current living character owns completed unclaimed legacy campaign",
+      "replayIdentity": "character/campaign claimed latch plus HTTP account/key/request hash",
+      "nativeScenarios": [
+        "campaign:save:claim",
+        "campaign:walk:claim",
+        "campaign:save:lost-response-retry",
+        "campaign:walk:lost-response-retry",
+        "campaign:server-reopen-replay"
+      ],
+      "requiredBranches": [
+        "base reward",
+        "branch reward",
+        "exact retry",
+        "concurrent duplicate",
+        "lost response",
+        "restart",
+        "unauthorized",
+        "rollback between claim/reward"
+      ],
+      "missingNativeBranches": [
+        "concurrent duplicate payout attempt",
+        "claim/reward fault injection",
+        "natural earned campaign eligibility"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-OPERATION-CAPITAL",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "coordinator mutation root; declared operation; original living depositor for refund",
+      "replayIdentity": "item_mutation_guards operation_action key plus requirement/role/operation custody identity",
+      "nativeScenarios": [],
+      "requiredBranches": [
+        "deposit",
+        "refund",
+        "spend",
+        "cancel",
+        "expiry",
+        "death/replacement forfeit",
+        "replay",
+        "concurrent duplicate",
+        "rollback"
+      ],
+      "missingNativeBranches": [
+        "retained per-transition native journal for complete operation lifecycle",
+        "canonical cancellation/expiry/death and replacement at operation service boundary"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-HARDENING",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "authenticated current character; foundry, level, resources and recipe gates",
+      "replayIdentity": "HTTP account/key/request hash plus item_mutation_guards craft identity",
+      "nativeScenarios": [
+        "hardening:concurrent-duplicate",
+        "hardening:lost-response-retry",
+        "hardening:insufficient-materials",
+        "hardening:failure-between-debit-and-output",
+        "hardening:retry-after-rollback",
+        "hardening:server-reopen-replay"
+      ],
+      "requiredBranches": [
+        "four scrap consumed",
+        "exact 300 cash charge",
+        "one hardened steel output",
+        "rejection",
+        "concurrent duplicate",
+        "lost response",
+        "restart",
+        "rollback"
+      ],
+      "missingNativeBranches": [],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-COMPOUND-JOURNAL",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "canonical mutation root and each resource owner",
+      "replayIdentity": "item_mutation_guards + ordered item_events + cash transactions",
+      "nativeScenarios": [
+        "salvage:resource-actor-0",
+        "salvage:resource-actor-1",
+        "hardening:concurrent-duplicate"
+      ],
+      "requiredBranches": [
+        "boost",
+        "salvage",
+        "grant",
+        "destruction",
+        "per-owner custody",
+        "internal logical steps",
+        "transaction completion",
+        "aborted transaction"
+      ],
+      "missingNativeBranches": [
+        "boost acquisition journal",
+        "operation custody/release/consume internal steps",
+        "remaining compound actions"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-ESCROW-DISPOSITIONS",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "listing/loan owner, counterparty, gambler or canonical death/expiry worker",
+      "replayIdentity": "HTTP account/key/request hash plus locked listing/loan/game settlement state",
+      "nativeScenarios": [
+        "loan:offer:cancel",
+        "loan:cancel-refund",
+        "loan:take-and-omr-pledge",
+        "loan:repay-and-omr-refund"
+      ],
+      "requiredBranches": [
+        "market sale",
+        "loan sale",
+        "take",
+        "refund",
+        "death/loot release",
+        "poker win/refund/rake/death",
+        "racing win/refund/rake/death",
+        "stake win/refund/rake/death"
+      ],
+      "missingNativeBranches": [
+        "market and loan-paper sale",
+        "death/loot release",
+        "all poker/racing/stake terminal branches"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-FAMILY-TREASURY",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "current Family member for tribute; leadership for war/turf; canonical dissolve authority",
+      "replayIdentity": "HTTP account/key/request hash; locked Family/turf terminal state",
+      "nativeScenarios": [
+        "family:cash:tribute",
+        "family:omr:tribute",
+        "family:cash:tribute-replay",
+        "family:omr:tribute-replay"
+      ],
+      "requiredBranches": [
+        "cash tribute",
+        "OMR tribute",
+        "reserve",
+        "war spoils",
+        "turf stake",
+        "turf refund",
+        "turf burn",
+        "dissolve treasury",
+        "dissolve reserve",
+        "dissolve ammo"
+      ],
+      "missingNativeBranches": [
+        "war spoils",
+        "turf stake/refund/burn",
+        "dissolution of treasury/reserve/ammo"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-NFT-CHAIN",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "current eligible item owner; made account/wallet and enabled rail attestation",
+      "replayIdentity": "HTTP key + voucher nonce + finalized import transaction/log reference",
+      "nativeScenarios": [
+        "omr:rarity-recycles-to-desk",
+        "omr:rarity-lost-response-retry",
+        "omr:rarity-foreign-owner-denied"
+      ],
+      "requiredBranches": [
+        "paid rarity",
+        "extraction",
+        "expiry",
+        "return/import",
+        "backing",
+        "mutually exclusive chain/game custody",
+        "disabled-rail server denial"
+      ],
+      "missingNativeBranches": [
+        "extraction/expiry/import",
+        "backing and exclusive chain/game custody",
+        "deployment rail inventory and denial/attestation"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    },
+    {
+      "id": "C02-SHIPMENT-MATERIAL",
+      "owner": "Codex/resource_proof",
+      "status": "OPEN_REQUIRED_PROOF",
+      "authorization": "living character at current shipment district; eligible commission owner",
+      "replayIdentity": "day/character cap; HTTP account/key/request hash; bespoke_serials and pieces identity",
+      "nativeScenarios": [
+        "shipment:take:resource-actor-2",
+        "shipment:take-replay-after-city-exhaustion",
+        "shipment:player-cap-new-key",
+        "shipment:concurrent-commission",
+        "shipment:commission-lost-response-retry",
+        "shipment:server-reopen-replay"
+      ],
+      "requiredBranches": [
+        "capped creation",
+        "cash debit",
+        "material consumption",
+        "exactly one bespoke serial",
+        "concurrent duplicate",
+        "replay",
+        "boundary time",
+        "rollback"
+      ],
+      "missingNativeBranches": [
+        "midnight boundary with application/database clocks aligned",
+        "material/cash/serial rollback injection",
+        "distinct-owner simultaneous serial allocation"
+      ],
+      "simulation": {
+        "status": "MISSING",
+        "required": "Native full-game exercise of every required branch with nonzero movement and retained journal"
+      }
+    }
+  ],
+  "nativeRun": {
+    "runId": "resource-04230658acbd-d161250dc8",
+    "source": {
+      "commit": "04230658acbd57df745e7ba10cb1462a197323d1",
+      "clean": true,
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "outcome": "SCOPED_PASS",
+    "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+    "qualifyingFullResourcePass": false
+  },
+  "notes": [
+    "This is a starting inventory of all 13 named resource categories and all nine recorded gaps; terminal coverage remains explicitly incomplete.",
+    "Season reckoning and Director Campaign Network outcomes are state-only; do not invent monetary rewards.",
+    "Retired emission/plex/portfolio rails stay retired. Missing deployment configuration is not proof of deliberate inapplicability.",
+    "Custody claims are counted with their asset once. Repaid loan collateral_omr is historical metadata, not an active escrow balance.",
+    "Fixture cash/OMR/cars and completed legacy campaign eligibility are declared before the measured sequence; no natural-entry claim is made."
+  ]
+}

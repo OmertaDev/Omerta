@@ -245,7 +245,12 @@ const bossBand = POPULATION.BANDS.find((b) => b.id === 'boss');
 assert(bossBand.seed[0] * POPULATION.BEHAVIOUR.DUEL_BPS / 10000 >= DUELS.STAKE_MIN,
   'the boss band must clear the duel floor outright, or this precondition is not guaranteed after all');
 assert(await spawnResident(pool, { band: bossBand }), 'the guaranteed duel-capable resident spawns');
-for (let i = 0; i < 60; i++) await runResidentBehaviour(pool);  // turns, for the later branches
+// This behavior suite supplies distinct hourly turns; native restart controls verify the clock.
+const residentTurn = async () => {
+  await pool.query('UPDATE population_state SET behaviour_turn=NULL WHERE id=1');
+  return runResidentBehaviour(pool);
+};
+for (let i = 0; i < 60; i++) await residentTurn();  // turns, for the later branches
 
 // (1) CONSENT LIMITS — this is what lights up the bodyguard market, the fade board and the duel
 //     ladder. All three are consent-by-listing, so without residents an empty alpha has NOBODY.
@@ -460,7 +465,7 @@ assert(credits.includes('npc:seed'), 'and the seed is the source it all traces b
 let withEscrow = (await pool.query(
   "SELECT c.id FROM characters c JOIN loans l ON l.lender_character=c.id AND l.status='open' WHERE c.is_npc AND c.alive LIMIT 1")).rows[0];
 for (let attempt = 0; !withEscrow && attempt < 40; attempt++) {
-  await runResidentBehaviour(pool);
+  await residentTurn();
   withEscrow = (await pool.query(
     "SELECT c.id FROM characters c JOIN loans l ON l.lender_character=c.id AND l.status='open' WHERE c.is_npc AND c.alive LIMIT 1")).rows[0];
 }

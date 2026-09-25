@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "findingId": "TOOL43",
+  "status": "REPRODUCED_HARNESS_PRECONDITION_ERROR",
+  "source": {
+    "revision": "bd038f259cd4576e079ecbe81abddb88191d5588",
+    "gitTree": "228ee364d234f0a2f9eceaa6b45f7af82bd256a3",
+    "checkoutSha256": "bfa68f57f659e2a3b8e3cd67a0f4f0527c1ebb08c0dbe1ac421b68dc9b591950",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "fullNativeGateStatus": "FAIL",
+  "completedBoundariesBeforeFailure": 29,
+  "completedTerminalMovements": 0,
+  "cause": "Canonical settleIfDue commits elapsed accrual before the action transaction; an injected action abort does not undo that separate commit",
+  "actualChanges": {
+    "table": "characters",
+    "changedRows": 1,
+    "fields": [
+      "bank_credit_ms",
+      "energy",
+      "last_accrued_at",
+      "nerve",
+      "racket_credit_ms"
+    ]
+  },
+  "fullBeforeAfterVerified": true,
+  "allOtherObservedRowsUnchanged": true,
+  "cashAmmoOmrCustodyMembershipAndReceiptsUnchanged": true,
+  "affectedAssertion": "Whole observed snapshot equality around HTTP request before due accrual was settled",
+  "fixSource": "41127506b59ce916e6698c34500788b0afe5e4a1",
+  "fix": "Observed canonical member GET at the same logical instant before installing fault; original full snapshot rollback assertion preserved",
+  "runManifestSha256": "bb7c5ea77170f0d66f9806fc85f8108c9496c4fd3cc30e4d5c99aaea187064c9",
+  "historySha256": "b3b358ab38f09fa69bd66640d6828ddf83d5673a68037b919c43545f1ee21e26",
+  "retainedBoundary": "family-terminal-boundary-0029.json",
+  "retainedBoundarySha256": "47207ad1068fdc0bf95cea61ea32f1e5e2f657fe374c4902edf9deb6c87b6f76",
+  "verifiedArtifacts": 38,
+  "releaseClearance": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false
+  }
+}

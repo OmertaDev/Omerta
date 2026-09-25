@@ -1,0 +1,371 @@
+{
+  "finding": "RC1-CREW-INPUT-01",
+  "severity": "P1",
+  "releaseReady": false,
+  "rationale": "Ordinary pending Crew read replaces focused input and silently loses unsent message and focus; first repair also lost the draft on adjacent Send focus.",
+  "hostedRelation": "RC1-05-HOSTED-GOLDEN-FOCUS can encounter this defect; exact historical hosted interleaving is inferred. TOOL28 phone pending-receipt race is separate.",
+  "runtimeCommits": [
+    "df5cc3d4cc42d5800879652ce88989332bd9aade",
+    "f9997988a2f0e46ce951fd02f2697bb86d8dd583"
+  ],
+  "sourceScope": "Local native PostgreSQL18.4, Chrome153; actual unchanged canonical responses with controlled transport hold for causal checks. Explicit initial actor/social fixtures. No synthetic gameplay writes.",
+  "limitations": [
+    "No claim all renderers or focus races repaired",
+    "No native mobile keyboard claim",
+    "Hosted PG16/PG18 golden and phone lanes require integrated rerun",
+    "Deployment and full release readiness remain open"
+  ],
+  "reruns": [
+    "node test/rc1-browser-controls.js",
+    "node test/rc1-browser-receipt.js",
+    "node test/rc1-browser-toast-controls.js",
+    "node test/client.js",
+    "native test/rc1-golden-focus-race.js",
+    "native test/rc1-golden-browser-postgres.js widths320,360,390,430",
+    "affected integrated hosted PG16/PG18 release gates"
+  ],
+  "auxiliaryChecks": {
+    "source": "9c8ffdcf2dc1025954769238c161294815b085af",
+    "exitCode": 0,
+    "logSha256": "eb6b9fec78d0642fb77f5f3b2fda729254f2917ca94142fdfcbca5ebd8d49ddc",
+    "tests": [
+      "test/rc1-browser-controls.js",
+      "test/rc1-browser-receipt.js",
+      "test/rc1-browser-toast-controls.js",
+      "test/client.js"
+    ],
+    "earlierControlFailure": {
+      "source": "c6eba116b388ec173e9e2cab77a15d6518410311",
+      "type": "harness-only HTTP response cleanup",
+      "error": "ERR_HTTP_HEADERS_SENT: controlled toast response released twice; fixed idempotent release in f8588309503afb048d7010d4d686dfa3f45d1c0e",
+      "retainedIn": "Parent-visible tool transcript; occurred before native execution at that source."
+    }
+  },
+  "runs": [
+    {
+      "runId": "golden-focus-257212c47cba-15499c89",
+      "source": "257212c47cbafa9d59d7cb0da3c866bb820e3bc9",
+      "status": "FAIL",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "checkoutSha256": "ed68e46b9f1ddb79dfa79277c4d0f70dce81cd5e3ab1ace95a82cc5f7bef29dd",
+      "manifestSha256": "c85361005f12e209cafa4709f0e323275b2dfe1b378002ad2a28009cbf6f96d1",
+      "verifiedFiles": 12,
+      "runtimeGitBlobSha256": "49d6b3d3e3951800d81fc89f4ea16de5a8d518ff52c85943e42d405824e9f979",
+      "helperGitBlobSha256": "89e92fec7c3e083d80a0aeb5f0fbbe81fcb3d53f0141d92949bd8bffa1177851",
+      "type": "golden-browser",
+      "requestedWidth": 320,
+      "widths": [
+        {
+          "width": 320,
+          "status": "FAIL",
+          "commands": 0,
+          "interactions": 4,
+          "milestoneCount": 1,
+          "finiteToastWaits": 0,
+          "browserErrors": 0,
+          "failure": "AssertionError [ERR_ASSERTION]: crew input adjacent action with reduced viewport: another control or overlay covers the hit area: DIV#toast"
+        }
+      ],
+      "interpretation": "Separate finite-toast hit obstruction after the focus assertion passed."
+    },
+    {
+      "runId": "golden-focus-2b6f4ecc4fc7-82d26236",
+      "source": "2b6f4ecc4fc758012ad3c4d8939517d0ca9ec148",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "checkoutSha256": "8b98efdce3e345cc5840245ca54aa59e823ccb19f43b3e48d80886953fca89c2",
+      "manifestSha256": "fe6d02ece9ed8109d49d803a18eca5e1540f20db57056a0f29a525715c4105d3",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "bf12d6a2e6552eca28e12810cdfb6545faf8fb683698a4e3e685f84e74c8b450",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [
+        "focused-node-retained",
+        "draft-retained",
+        "selection-retained",
+        "tab-to-send-node-and-draft-retained",
+        "ordinary-enter-submits-exact-draft-once",
+        "fresh-render-on-interaction-exit",
+        "older-response-cannot-overwrite-newer-entry"
+      ],
+      "failure": null,
+      "afterResponse": {
+        "sameNode": true,
+        "focused": true,
+        "priorConnected": true,
+        "draftPreserved": true,
+        "selection": [
+          0,
+          4,
+          "forward"
+        ]
+      },
+      "sendFocus": {
+        "sameNode": true,
+        "sameSend": true,
+        "focusedSend": true,
+        "draftPreserved": true
+      },
+      "submission": {
+        "status": 200,
+        "count": 1,
+        "exactDraft": true,
+        "rendered": true
+      },
+      "deferred": {
+        "freshCircleReads": 2,
+        "changedNode": true,
+        "wired": true
+      },
+      "stale": {
+        "sameNode": true,
+        "draftPreserved": true
+      },
+      "interpretation": "See complete retained native branch assertions; scoped only."
+    },
+    {
+      "runId": "golden-focus-320254b83b03-f61f165d",
+      "source": "320254b83b030d5b5c9f94630038a0e21d4ab67a",
+      "status": "FAIL",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "checkoutSha256": "7525bcbcca0294a09feb77dbbf88e5f14cbbab3e58058fc1558fe86fe3741f92",
+      "manifestSha256": "df0c718d80fc1ad1b50b2a6d05c6e42f8810d67e7526c56a4127f333ee895899",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "336dd045da5834199f6088279458a30e3efec0a9fa35c137a8ef24f4b5ebcebc",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [],
+      "failure": "AssertionError [ERR_ASSERTION]: Tab-to-Send refresh replaced the unsent draft input",
+      "afterResponse": {
+        "sameNode": true,
+        "focused": true,
+        "priorConnected": true,
+        "draftPreserved": true,
+        "selection": [
+          0,
+          4,
+          "forward"
+        ]
+      },
+      "sendFocus": {
+        "sameNode": false,
+        "sameSend": false,
+        "focusedSend": false,
+        "draftPreserved": false
+      },
+      "interpretation": "Initial repair still lost draft and Send target during actual deferred refresh after Tab."
+    },
+    {
+      "runId": "golden-focus-9c8ffdcf2dc1-cb615614",
+      "source": "9c8ffdcf2dc1025954769238c161294815b085af",
+      "status": "FAIL",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "checkoutSha256": "92ff7d34d45c117b7c1ad96391ccff73e8019eaae271f1b8cd9e49e7de0320c3",
+      "manifestSha256": "cd8acfe054ac7b830df4f296d9a98cc506abdb759c3d04e75cd289db26251fe3",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "bf12d6a2e6552eca28e12810cdfb6545faf8fb683698a4e3e685f84e74c8b450",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [],
+      "failure": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\"",
+      "afterResponse": {
+        "sameNode": true,
+        "focused": true,
+        "priorConnected": true,
+        "draftPreserved": true,
+        "selection": [
+          0,
+          4,
+          "forward"
+        ]
+      },
+      "sendFocus": {
+        "sameNode": true,
+        "sameSend": true,
+        "focusedSend": true,
+        "draftPreserved": true
+      },
+      "submission": {
+        "status": 200,
+        "count": 1,
+        "exactDraft": true,
+        "rendered": true
+      },
+      "deferred": {
+        "freshCircleReads": 2,
+        "changedNode": true,
+        "wired": true
+      },
+      "stale": {
+        "sameNode": true,
+        "draftPreserved": true
+      },
+      "interpretation": "Full causal gate failed on stale-entry control precondition; input/selection/Send preservation, exact Enter submission and later refresh had passed. Not a passing full causal gate."
+    },
+    {
+      "runId": "golden-focus-9c8ffdcf2dc1-ecf9216b",
+      "source": "9c8ffdcf2dc1025954769238c161294815b085af",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "checkoutSha256": "92ff7d34d45c117b7c1ad96391ccff73e8019eaae271f1b8cd9e49e7de0320c3",
+      "manifestSha256": "6c68a65fbac13f7807675d62c739101e05c9e7c254e029825f16a7140712aedb",
+      "verifiedFiles": 71,
+      "runtimeGitBlobSha256": "bf12d6a2e6552eca28e12810cdfb6545faf8fb683698a4e3e685f84e74c8b450",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "golden-browser",
+      "requestedWidth": null,
+      "widths": [
+        {
+          "width": 320,
+          "status": "PASS",
+          "commands": 50,
+          "interactions": 6,
+          "milestoneCount": 8,
+          "finiteToastWaits": 1,
+          "browserErrors": 0,
+          "failure": null
+        },
+        {
+          "width": 360,
+          "status": "PASS",
+          "commands": 50,
+          "interactions": 6,
+          "milestoneCount": 8,
+          "finiteToastWaits": 0,
+          "browserErrors": 0,
+          "failure": null
+        },
+        {
+          "width": 390,
+          "status": "PASS",
+          "commands": 50,
+          "interactions": 6,
+          "milestoneCount": 8,
+          "finiteToastWaits": 0,
+          "browserErrors": 0,
+          "failure": null
+        },
+        {
+          "width": 430,
+          "status": "PASS",
+          "commands": 50,
+          "interactions": 6,
+          "milestoneCount": 8,
+          "finiteToastWaits": 0,
+          "browserErrors": 0,
+          "failure": null
+        }
+      ],
+      "interpretation": "Final runtime/helper bytes: native golden journey."
+    },
+    {
+      "runId": "golden-focus-a102590596c4-0af26671",
+      "source": "a102590596c4f5cd690d900f944f8c17c4d938d6",
+      "status": "FAIL",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "checkoutSha256": "51e8f848bc4d6d0f032f3188b76d258e20ccc65a3f001480652a7a804b61fab1",
+      "manifestSha256": "4384551848de725fd2370c261451b4fc39e1b7802ec84ccfee4cbc5a30460b12",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "49d6b3d3e3951800d81fc89f4ea16de5a8d518ff52c85943e42d405824e9f979",
+      "helperGitBlobSha256": "89e92fec7c3e083d80a0aeb5f0fbbe81fcb3d53f0141d92949bd8bffa1177851",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [],
+      "failure": "AssertionError [ERR_ASSERTION]: Pending crew render replaced the active draft input",
+      "afterResponse": {
+        "sameNode": false,
+        "focused": false,
+        "priorConnected": false,
+        "draftPreserved": false,
+        "selection": null
+      },
+      "interpretation": "Original runtime focused-input/draft-loss causal reproduction."
+    },
+    {
+      "runId": "golden-focus-dc889c997ea0-b043d798",
+      "source": "dc889c997ea05506f1533e071f374e1592c541bc",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "checkoutSha256": "86c84c4430cc8a30caabdd5649c773271ab48994b49ea300f1da5e93e1c8a3b8",
+      "manifestSha256": "ba128c0c155e1e9fbf423dbbd72c70ef58ca849589629a46f2e350f3a942ba7e",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "336dd045da5834199f6088279458a30e3efec0a9fa35c137a8ef24f4b5ebcebc",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [
+        "focused-node-retained",
+        "draft-retained",
+        "selection-retained",
+        "fresh-render-on-focusout",
+        "older-response-cannot-overwrite-newer-entry"
+      ],
+      "failure": null,
+      "afterResponse": {
+        "sameNode": true,
+        "focused": true,
+        "priorConnected": true,
+        "draftPreserved": true,
+        "selection": [
+          0,
+          4,
+          "forward"
+        ]
+      },
+      "deferred": {
+        "freshCircleReads": 1,
+        "changedNode": true,
+        "wired": true
+      },
+      "stale": {
+        "sameNode": true,
+        "draftPreserved": true
+      },
+      "interpretation": "Early causal scope passed; adjacent-Send preservation was not yet asserted."
+    },
+    {
+      "runId": "golden-focus-f8588309503a-849aa4c3",
+      "source": "f8588309503afb048d7010d4d686dfa3f45d1c0e",
+      "status": "FAIL",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "checkoutSha256": "c9f31663d3c2e32e16cc282a6868c6d6fdcc5f3997ef9cd523e0669ce387c52c",
+      "manifestSha256": "7b907259a96d20a01c8f2cb29282c681fd1b51446c93ce2b9eb6819a85b88597",
+      "verifiedFiles": 4,
+      "runtimeGitBlobSha256": "336dd045da5834199f6088279458a30e3efec0a9fa35c137a8ef24f4b5ebcebc",
+      "helperGitBlobSha256": "9b17e530748f23f0387e1ee955cb6fe99abd21b5034b4ffc288a9f4b882aab46",
+      "type": "causal-crew-focus",
+      "width": 320,
+      "checks": [],
+      "failure": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\"",
+      "afterResponse": {
+        "sameNode": true,
+        "focused": true,
+        "priorConnected": true,
+        "draftPreserved": true,
+        "selection": [
+          0,
+          4,
+          "forward"
+        ]
+      },
+      "deferred": {
+        "freshCircleReads": 1,
+        "changedNode": true,
+        "wired": true
+      },
+      "interpretation": "Harness incorrectly expected reversed wire completion despite serialized authenticated requests; focused node/selection and initial deferral had passed."
+    }
+  ],
+  "privacy": "Public-safe aggregates/source hashes only; raw token, account/character identity, response body, draft contents and private DOM trace omitted."
+}

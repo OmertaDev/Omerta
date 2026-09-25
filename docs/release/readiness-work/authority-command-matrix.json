@@ -1,0 +1,1691 @@
+{
+  "schemaVersion": 1,
+  "gate": "RC1-04",
+  "status": "PARTIAL_REVIEW",
+  "owner": "Codex/source_repairs",
+  "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+  "phase": "RC1 readiness engineering; scoped native adversarial regressions",
+  "reviewedAt": "2026-09-21T04:37:47.542Z",
+  "sourceFiles": [
+    {
+      "path": "src/routes/commands.js",
+      "sha256": "b9bdd8f815be396acd8cbe9be597101ad1773f66c0c28d08844ed266bd9432c2",
+      "bytes": 5152
+    },
+    {
+      "path": "src/player-commands.js",
+      "sha256": "a8a2e071e851025b18b3268b40a16aa7a7449fbeefd8b036b0c8f101ac84a6e6",
+      "bytes": 27764
+    },
+    {
+      "path": "src/routes/family-operations.js",
+      "sha256": "efcd47b49b4a69ed889dc386f1c3c3c217b26e3180f98ad3770bf2c677ec0163",
+      "bytes": 5448
+    },
+    {
+      "path": "src/routes/coordination.js",
+      "sha256": "ae2ec43e4428d27f0c4e4b2d4bbd5e73a08c9a100860f45f7ad7e81ecc474165",
+      "bytes": 10628
+    },
+    {
+      "path": "src/routes/world-kernel.js",
+      "sha256": "bbf4ca70d034cc10dfcda94a9bf80f174d88ae9c985b3f1e4c25118070a88dea",
+      "bytes": 6468
+    },
+    {
+      "path": "src/content/dock-war.js",
+      "sha256": "5cc506de4e2c19d2ad039dcfb1b5bc8c4cb960d275b9fd778f6eac85b5506fa0",
+      "bytes": 12993
+    },
+    {
+      "path": "schema.sql",
+      "sha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4",
+      "bytes": 460486
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "bytes": 119402
+    },
+    {
+      "path": "src/mysteries.js",
+      "sha256": "9906386dff887b4ab528c6472418b00ae3d8b65ba971379e74065833bf2ea66b",
+      "bytes": 89490
+    },
+    {
+      "path": "src/coordination/runtime.js",
+      "sha256": "972abc70cb75b232929e1f1907e556ed00eea22e42567da9e68ad83ef1082d99",
+      "bytes": 26983
+    },
+    {
+      "path": "src/coordination/knowledge.js",
+      "sha256": "46aa18d88dbf25e9c80adf2646e71ff4b7501cbaba5b556609e6caabd970e7e3",
+      "bytes": 52410
+    },
+    {
+      "path": "src/coordination/operations.js",
+      "sha256": "0e422fa588b74797cd424c83e0829d64f9eb3b759a31ff18250642e05cc00095",
+      "bytes": 53112
+    },
+    {
+      "path": "src/crafting.js",
+      "sha256": "68bc2f9f430b8b5d274a89ac1a6e4c330febcdccc58825c84058276dfaf035e8",
+      "bytes": 48963
+    },
+    {
+      "path": "src/world-kernel.js",
+      "sha256": "d73455c6c13d1c1d6da624fb6fb486e850ee675df8114d96cd9e4cfbb0d4d052",
+      "bytes": 27058
+    },
+    {
+      "path": "src/director/runtime.js",
+      "sha256": "e6afb1e070646df207087b1d64af9264f857d053123fd720c43b21307e3edad4",
+      "bytes": 38092
+    }
+  ],
+  "census": {
+    "artifact": "docs/release/readiness-work/authority-inventory.json",
+    "source": "3207df3b1a4eb201d28f31afa20ec1714faeca32",
+    "routes": 529,
+    "commandTypes": 24,
+    "runtimeAndLockfileDiff": "git diff3207df3b..b6bc56e5 -- src schema.sql package-lock.json: empty",
+    "status": "Mounted route census remains MISSING_REVIEW. Text reference, anonymous rejection and command mapping are not route-role coverage."
+  },
+  "sharedCommandBoundary": {
+    "references": [
+      {
+        "file": "src/routes/commands.js",
+        "line": 55,
+        "expression": "app.post('/v1/commands/execute'"
+      },
+      {
+        "file": "src/player-commands.js",
+        "line": 284,
+        "expression": "async function execute("
+      }
+    ],
+    "authority": "Only executionId and boolean confirmed are accepted. Header must match identity. Stored issued board is account-bound, current living character re-admitted, receipt consulted, expiry/current state checked before locked dispatch.",
+    "caution": "Generic envelope checks execute on selected commands; they do not mean every downstream definition, role or error branch was exercised."
+  },
+  "stateComparison": {
+    "HTTP_INPUT": "30 allowlisted authority tables, excluding issuance/passive telemetry/HTTP cache; no concurrent gameplay during comparison.",
+    "HTTP_FAMILY": {
+      "tables": [
+        "characters",
+        "crews",
+        "crew_members",
+        "gangs",
+        "gang_members",
+        "mystery_instances",
+        "item_mutation_guards",
+        "item_instances",
+        "item_stacks",
+        "item_events",
+        "world_operations",
+        "world_operation_roles",
+        "world_operation_commitments",
+        "world_operation_capital",
+        "world_operation_contributions",
+        "world_operation_events",
+        "world_kernel_objects",
+        "world_kernel_events",
+        "coordination_instances",
+        "coordination_commands",
+        "coordination_events",
+        "coordination_claims",
+        "coordination_claim_acl_state",
+        "coordination_claim_acl_events",
+        "coordination_claim_grants",
+        "coordination_claim_links",
+        "coordination_knowledge_archives",
+        "coordination_archive_events",
+        "coordination_archive_entries",
+        "transactions",
+        "cars",
+        "mystery_node_state",
+        "mystery_choices",
+        "world_recipe_usage",
+        "director_definitions",
+        "director_clock",
+        "director_campaigns",
+        "director_situations",
+        "director_receipts",
+        "director_selections",
+        "director_action_intents"
+      ],
+      "semantics": "41 exact SQL row_to_json text tables before/after every denial; raw snapshots retained. Excludes issuance/passive telemetry/HTTP cache and sequences; no concurrent worker/gameplay.",
+      "rawArtifacts": [
+        {
+          "path": "output/rc1-command-family-frozen-1/results.json",
+          "sha256": "1f612469e5a8132c234797e9805ab2f92f3c82a88edee90b303a07218e4666e8",
+          "bytes": 21350
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-01-after.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-01-before.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-02-after.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-02-before.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-03-after.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-03-before.json",
+          "sha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+          "bytes": 45994
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-04-after.json",
+          "sha256": "c8902c81b9cb5c400557cafc4e9ed590c8b6364ad7b9f3b545f712e61266b51f",
+          "bytes": 46275
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-04-before.json",
+          "sha256": "c8902c81b9cb5c400557cafc4e9ed590c8b6364ad7b9f3b545f712e61266b51f",
+          "bytes": 46275
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-05-after.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-05-before.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-06-after.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-06-before.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-07-after.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-07-before.json",
+          "sha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+          "bytes": 51033
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-08-after.json",
+          "sha256": "ae9d6ecae16c2a4cb3f62b4c9af89576f1cd8e4bcfbef229dc7de7cb2fd6b641",
+          "bytes": 51309
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-08-before.json",
+          "sha256": "ae9d6ecae16c2a4cb3f62b4c9af89576f1cd8e4bcfbef229dc7de7cb2fd6b641",
+          "bytes": 51309
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-09-after.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-09-before.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-10-after.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-10-before.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-11-after.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-11-before.json",
+          "sha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+          "bytes": 61431
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-12-after.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-12-before.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-13-after.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-13-before.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-14-after.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-14-before.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-15-after.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-15-before.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-16-after.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-16-before.json",
+          "sha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+          "bytes": 64916
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-17-after.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-17-before.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-18-after.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-18-before.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-19-after.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-19-before.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-20-after.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-20-before.json",
+          "sha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+          "bytes": 96723
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-21-after.json",
+          "sha256": "143b78a6c98b17c8de417b6ec9adc66b93ddff34381c11870ce03035b7bcfb1f",
+          "bytes": 96527
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-21-before.json",
+          "sha256": "143b78a6c98b17c8de417b6ec9adc66b93ddff34381c11870ce03035b7bcfb1f",
+          "bytes": 96527
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-22-after.json",
+          "sha256": "a66a99d2a019e0cc056866614512f3ccd084b2b940a3e27a151b6996b2923e42",
+          "bytes": 96293
+        },
+        {
+          "path": "output/rc1-command-family-frozen-1/denial-22-before.json",
+          "sha256": "a66a99d2a019e0cc056866614512f3ccd084b2b940a3e27a151b6996b2923e42",
+          "bytes": 96293
+        }
+      ]
+    }
+  },
+  "runs": [
+    {
+      "id": "HTTP-FAMILY",
+      "argv": [
+        "node",
+        "test/rc1-command-family-postgres.js"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359",
+        "RC1_COMMAND_FAMILY_OUTPUT": "output/rc1-command-family-frozen-1"
+      },
+      "log": {
+        "path": "output/source-reconciliation/command-family-frozen-1.log",
+        "sha256": "e5cfea662948d315c040818afa30bebe8ffb76ba106cdc53414f6cfeb75c24fa",
+        "bytes": 26243
+      },
+      "tests": [
+        {
+          "path": "test/rc1-command-family-postgres.js",
+          "sha256": "a3ffcaa7709f07b090eacf534bf885bf32e007a2faad432d8599ed1ca94d4250",
+          "bytes": 14205
+        }
+      ],
+      "note": "Complete buildServer HTTP injection; fixture-assisted; no browser."
+    },
+    {
+      "id": "HTTP-INPUT",
+      "argv": [
+        "node",
+        "test/rc1-command-redteam.js"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "RC1_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-expanded-frozen-1.log",
+        "sha256": "73cd35ee4d2132eca3ec721158adf1b6117af2bbfc983288dfdf8b29265b6a4b",
+        "bytes": 41633
+      },
+      "tests": [
+        {
+          "path": "test/rc1-command-redteam.js",
+          "sha256": "e60bfca6c30883303a297dffc4e2844ff5cc5c3591c8b0bef094ae4d3c478577",
+          "bytes": 6954
+        }
+      ],
+      "note": "Complete buildServer HTTP injection; fixture-assisted; no browser."
+    },
+    {
+      "id": "PG-KNOWLEDGE",
+      "argv": [
+        "node",
+        "test/coordination-knowledge-postgres.js"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-knowledge-frozen-1.log",
+        "sha256": "4a99a815c9ebcc214b29b3d9ce89ffacbebcae124ca0d8a22ef393ef94b1248f",
+        "bytes": 900
+      },
+      "tests": [
+        {
+          "path": "test/coordination-knowledge-postgres.js",
+          "sha256": "872c319f250acaf2c54c366c7acf21a47bcb1dfce7df660ef10122b102ec39d9",
+          "bytes": 20014
+        }
+      ],
+      "note": "Canonical native service regression; fixture-assisted; not full HTTP-route coverage."
+    },
+    {
+      "id": "PG-OPERATIONS",
+      "argv": [
+        "node",
+        "test/family-operations.js",
+        "--postgres"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-operations-frozen-1.log",
+        "sha256": "0799e7ea6e86a4d2025d2b28460b85e96e78d85af4d44ccd0b9fc8c08a09a342",
+        "bytes": 484
+      },
+      "tests": [
+        {
+          "path": "test/family-operations.js",
+          "sha256": "43b20477eb715b9e24f2792fe078f3f11f67bff28027a655eb0ac12adb5b8706",
+          "bytes": 27681
+        }
+      ],
+      "note": "Canonical native service regression; fixture-assisted; not full HTTP-route coverage."
+    },
+    {
+      "id": "PG-PLAYER",
+      "argv": [
+        "node",
+        "test/player-commands.js",
+        "--postgres"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-player-commands-frozen-1.log",
+        "sha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040",
+        "bytes": 1517
+      },
+      "tests": [
+        {
+          "path": "test/player-commands.js",
+          "sha256": "bc33328bba4af6e0b0f047a6bb3c73328eae90c23a8380da1c5c4e11f19f3f53",
+          "bytes": 19397
+        }
+      ],
+      "note": "Canonical native service regression; fixture-assisted; not full HTTP-route coverage."
+    },
+    {
+      "id": "PG-DIRECTOR",
+      "argv": [
+        "node",
+        "test/director-security.js",
+        "--postgres"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-director-security-frozen-1.log",
+        "sha256": "fc377c54132eda9c1fa9f74a11c5a362c6d78fd1a36c75d1f83ee9a73260e0ab",
+        "bytes": 238
+      },
+      "tests": [
+        {
+          "path": "test/director-security.js",
+          "sha256": "b77535e7c8bcc87ddaf45a1774b9fe719223aab56cf4ea1e00d2822333fd73ad",
+          "bytes": 11779
+        }
+      ],
+      "note": "Canonical native service regression; fixture-assisted; not full HTTP-route coverage."
+    },
+    {
+      "id": "PG-FURNACE",
+      "argv": [
+        "node",
+        "test/furnace-ledger.js",
+        "--postgres"
+      ],
+      "exitCode": 0,
+      "status": "PASS_SCOPED",
+      "sourceRevision": "b6bc56e58d19605106cfc8d14934ba741a4cee6c",
+      "cleanBeforeAndAfter": true,
+      "database": "PostgreSQL18.4 loopback55441, private schema or disposable database",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_golden_browser_0359"
+      },
+      "log": {
+        "path": "output/source-reconciliation/authority-furnace-frozen-1.log",
+        "sha256": "3a756b00b51237ee94d05d984b681adc4b339a3be4f79265b7606cd924ef5c33",
+        "bytes": 432
+      },
+      "tests": [
+        {
+          "path": "test/furnace-ledger.js",
+          "sha256": "22a5122147a350caf7fd679ec354854c5758b0b04dc5edd47c389502184946da",
+          "bytes": 19240
+        }
+      ],
+      "note": "Canonical native service regression; fixture-assisted; not full HTTP-route coverage."
+    }
+  ],
+  "summary": {
+    "denialRequestsAcrossHTTPRuns": 100,
+    "addedDenialRequests": 29,
+    "newFamilyDenials": 22,
+    "newFamilyReplayChecks": 8,
+    "reviewedCommandRows": 24,
+    "allRoutesCleared": false,
+    "fullSecurityClearance": false
+  },
+  "concreteNewDenials": [
+    {
+      "id": "item.salvage:stolen-identity",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-01-before.json",
+      "after": "denial-01-after.json",
+      "beforeSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "afterSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "passed": true
+    },
+    {
+      "id": "item.salvage:authoritative-parameter-substitution",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 400,
+      "status": 400,
+      "response": {
+        "error": "bad_command_request",
+        "message": "Invalid command request."
+      },
+      "before": "denial-02-before.json",
+      "after": "denial-02-after.json",
+      "beforeSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "afterSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "passed": true
+    },
+    {
+      "id": "item.salvage:unconfirmed-consumption",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_confirmation_required",
+        "message": "Confirm this move before continuing."
+      },
+      "before": "denial-03-before.json",
+      "after": "denial-03-after.json",
+      "beforeSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "afterSha256": "6023f7c553375a0b14fdc8a056efb4694dd4ac9231d92c71855757838679fb13",
+      "passed": true
+    },
+    {
+      "id": "item.salvage:stale-location",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-04-before.json",
+      "after": "denial-04-after.json",
+      "beforeSha256": "c8902c81b9cb5c400557cafc4e9ed590c8b6364ad7b9f3b545f712e61266b51f",
+      "afterSha256": "c8902c81b9cb5c400557cafc4e9ed590c8b6364ad7b9f3b545f712e61266b51f",
+      "passed": true
+    },
+    {
+      "id": "recipe.craft:stolen-identity",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-05-before.json",
+      "after": "denial-05-after.json",
+      "beforeSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "afterSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "passed": true
+    },
+    {
+      "id": "recipe.craft:authoritative-parameter-substitution",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 400,
+      "status": 400,
+      "response": {
+        "error": "bad_command_request",
+        "message": "Invalid command request."
+      },
+      "before": "denial-06-before.json",
+      "after": "denial-06-after.json",
+      "beforeSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "afterSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "passed": true
+    },
+    {
+      "id": "recipe.craft:foreign-cost-and-output",
+      "method": "POST",
+      "route": "/v1/worldgraph/kernel/recipes/recipe:dock_route_seal/craft",
+      "expectedStatus": 400,
+      "status": 400,
+      "response": {
+        "error": "bad_world_request",
+        "message": "The world request requirements are not satisfied."
+      },
+      "before": "denial-07-before.json",
+      "after": "denial-07-after.json",
+      "beforeSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "afterSha256": "65682c549cb86dc27437188599ca9e5001931da43de73a2d0cd1ba4903176bf3",
+      "passed": true
+    },
+    {
+      "id": "recipe.craft:stale-location",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-08-before.json",
+      "after": "denial-08-after.json",
+      "beforeSha256": "ae9d6ecae16c2a4cb3f62b4c9af89576f1cd8e4bcfbef229dc7de7cb2fd6b641",
+      "afterSha256": "ae9d6ecae16c2a4cb3f62b4c9af89576f1cd8e4bcfbef229dc7de7cb2fd6b641",
+      "passed": true
+    },
+    {
+      "id": "world.execute:stolen-identity",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-09-before.json",
+      "after": "denial-09-after.json",
+      "beforeSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "afterSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "passed": true
+    },
+    {
+      "id": "world.execute:authoritative-parameter-substitution",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 400,
+      "status": 400,
+      "response": {
+        "error": "bad_command_request",
+        "message": "Invalid command request."
+      },
+      "before": "denial-10-before.json",
+      "after": "denial-10-after.json",
+      "beforeSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "afterSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "passed": true
+    },
+    {
+      "id": "world.execute:known-foreign-item",
+      "method": "POST",
+      "route": "/v1/worldgraph/objects/territory:dock_supply_route/actions/establish_route",
+      "expectedStatus": 404,
+      "status": 404,
+      "response": {
+        "error": "world_unavailable",
+        "message": "That world action or object is unavailable."
+      },
+      "before": "denial-11-before.json",
+      "after": "denial-11-after.json",
+      "beforeSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "afterSha256": "3d495edaf48bccb659e1290349d45f2f7927bce71729254aa4ccd0ba3a841459",
+      "passed": true
+    },
+    {
+      "id": "world.execute:unknown-object-known-id",
+      "method": "GET",
+      "route": "/v1/worldgraph/objects/territory:dock_supply_route",
+      "expectedStatus": 404,
+      "status": 404,
+      "response": {
+        "error": "world_unavailable",
+        "message": "That world action or object is unavailable."
+      },
+      "before": "denial-12-before.json",
+      "after": "denial-12-after.json",
+      "beforeSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "afterSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "passed": true
+    },
+    {
+      "id": "world.execute:unknown-object-missing-id",
+      "method": "GET",
+      "route": "/v1/worldgraph/objects/missing-world-object",
+      "expectedStatus": 404,
+      "status": 404,
+      "response": {
+        "error": "world_unavailable",
+        "message": "That world action or object is unavailable."
+      },
+      "before": "denial-13-before.json",
+      "after": "denial-13-after.json",
+      "beforeSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "afterSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "passed": true
+    },
+    {
+      "id": "world.execute:competing-stale-world",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-14-before.json",
+      "after": "denial-14-after.json",
+      "beforeSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "afterSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "passed": true
+    },
+    {
+      "id": "world.execute:stale-authoritative-revision",
+      "method": "POST",
+      "route": "/v1/worldgraph/objects/territory:dock_supply_route/actions/establish_route",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "world_stale",
+        "message": "Refresh world state before trying again."
+      },
+      "before": "denial-15-before.json",
+      "after": "denial-15-after.json",
+      "beforeSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "afterSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "passed": true
+    },
+    {
+      "id": "world.execute:operation-proof-cannot-be-bypassed",
+      "method": "POST",
+      "route": "/v1/worldgraph/objects/territory:dock_supply_route/actions/protect_shipment",
+      "expectedStatus": 404,
+      "status": 404,
+      "response": {
+        "error": "world_unavailable",
+        "message": "That world action or object is unavailable."
+      },
+      "before": "denial-16-before.json",
+      "after": "denial-16-after.json",
+      "beforeSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "afterSha256": "6d1c40f3e9906ea2233af4202fb7a5e838c5a60faa74dd18e2f7a3328e1b1bae",
+      "passed": true
+    },
+    {
+      "id": "situation.act:stolen-identity",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-17-before.json",
+      "after": "denial-17-after.json",
+      "beforeSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "afterSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "passed": true
+    },
+    {
+      "id": "situation.act:authoritative-parameter-substitution",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 400,
+      "status": 400,
+      "response": {
+        "error": "bad_command_request",
+        "message": "Invalid command request."
+      },
+      "before": "denial-18-before.json",
+      "after": "denial-18-after.json",
+      "beforeSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "afterSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "passed": true
+    },
+    {
+      "id": "situation.act:member-cannot-borrow-leader-command",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-19-before.json",
+      "after": "denial-19-after.json",
+      "beforeSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "afterSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "passed": true
+    },
+    {
+      "id": "situation.act:rival-cannot-borrow-controller-command",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-20-before.json",
+      "after": "denial-20-after.json",
+      "beforeSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "afterSha256": "0ff9e6835523a948943a3f51f855e1e2ed2abafc95eaa98b4b6082111bad31f3",
+      "passed": true
+    },
+    {
+      "id": "situation.act:crew-departure-invalidates-issued-rumor",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-21-before.json",
+      "after": "denial-21-after.json",
+      "beforeSha256": "143b78a6c98b17c8de417b6ec9adc66b93ddff34381c11870ce03035b7bcfb1f",
+      "afterSha256": "143b78a6c98b17c8de417b6ec9adc66b93ddff34381c11870ce03035b7bcfb1f",
+      "passed": true
+    },
+    {
+      "id": "situation.act:family-departure-invalidates-issued-leadership",
+      "method": "POST",
+      "route": "/v1/commands/execute",
+      "expectedStatus": 409,
+      "status": 409,
+      "response": {
+        "error": "command_unavailable",
+        "message": "Refresh your commands before trying again."
+      },
+      "before": "denial-22-before.json",
+      "after": "denial-22-after.json",
+      "beforeSha256": "a66a99d2a019e0cc056866614512f3ccd084b2b940a3e27a151b6996b2923e42",
+      "afterSha256": "a66a99d2a019e0cc056866614512f3ccd084b2b940a3e27a151b6996b2923e42",
+      "passed": true
+    }
+  ],
+  "commandMatrix": [
+    {
+      "command": "mystery.start",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Authenticated living character; graph/version pinned by server; graph ownership bound to account/character.",
+      "reviewedReferences": [
+        {
+          "file": "src/mysteries.js",
+          "line": 929,
+          "expression": "export async function startMystery("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 773,
+          "expression": "async function actorOf("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 1233,
+          "expression": "async function actionAuthority("
+        }
+      ],
+      "executedChecks": [
+        "42 HTTP input/identity/authentication denial cases; 8 concurrent calls produce one fresh execution and one instance; complete-server replay.",
+        "Suspended/dead/replaced current character and expired board cannot authorize new action."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-PLAYER"
+      ],
+      "remainingCoverage": [
+        "Every authored graph prerequisite/version transition; all graph/owner scope combinations."
+      ]
+    },
+    {
+      "command": "mystery.choice",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Owned active instance, locked current character, discovered choice, uncommitted compatible branch and authoritative prerequisites; permanent effects fixed by authored option.",
+      "reviewedReferences": [
+        {
+          "file": "src/mysteries.js",
+          "line": 1588,
+          "expression": "export async function commitChoice("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 773,
+          "expression": "async function actorOf("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 1233,
+          "expression": "async function actionAuthority("
+        }
+      ],
+      "executedChecks": [
+        "Both Furnace branches commit the selected option and reject its opposite with choice_committed; exact authority snapshot unchanged; opposite controls/blueprints hidden."
+      ],
+      "evidence": [
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "Choice-specific HTTP confirmation=false and account substitution not executed in this new batch; no exhaustive choice graph cross product."
+      ]
+    },
+    {
+      "command": "mystery.discover",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Owned pinned active instance; server node conditions and knowledge/item predicates resolved before effects.",
+      "reviewedReferences": [
+        {
+          "file": "src/mysteries.js",
+          "line": 1481,
+          "expression": "export async function discoverNode("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 773,
+          "expression": "async function actorOf("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 1233,
+          "expression": "async function actionAuthority("
+        }
+      ],
+      "executedChecks": [
+        "Furnace hidden crafted clue omitted before eligibility; actual evidence/item acquisition enables discover in both authored branches."
+      ],
+      "evidence": [
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "Dedicated foreign issued discover command and every failed node predicate not separately executed here."
+      ]
+    },
+    {
+      "command": "mystery.complete",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Owned pinned active instance and locked current prerequisites; effects/rewards from authored content.",
+      "reviewedReferences": [
+        {
+          "file": "src/mysteries.js",
+          "line": 1532,
+          "expression": "export async function completeNode("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 773,
+          "expression": "async function actorOf("
+        },
+        {
+          "file": "src/mysteries.js",
+          "line": 1233,
+          "expression": "async function actionAuthority("
+        }
+      ],
+      "executedChecks": [
+        "Issued completion refuses changed location, suspended account, dead character; completion then succeeds from fresh state.",
+        "Furnace completion/ending bound to independent evidence and participant outcome."
+      ],
+      "evidence": [
+        "PG-PLAYER",
+        "PG-FURNACE",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every completion reward and branch; all stale prerequisite combinations."
+      ]
+    },
+    {
+      "command": "discovery.start",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current account/character and admitted graph/content hash; account-bound persistent receipt.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 147,
+          "expression": "async function ownedInstance("
+        },
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 232,
+          "expression": "async function command("
+        }
+      ],
+      "executedChecks": [
+        "Private owner discoveries created through native HTTP; situation adapter starts real discovery and survives reconstructed-server replay."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "HTTP-FAMILY",
+        "PG-KNOWLEDGE"
+      ],
+      "remainingCoverage": [
+        "Direct start content-hash substitution/role cross product not newly tested."
+      ]
+    },
+    {
+      "command": "discovery.act",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Owner instance, current revision/action, pinned content and live independent Knowledge; no inherited foreign action authority.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 147,
+          "expression": "async function ownedInstance("
+        },
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 232,
+          "expression": "async function command("
+        }
+      ],
+      "executedChecks": [
+        "Foreign known instance/current valid owner action returns404 unchanged; owner succeeds.",
+        "Revoked stale direct action returns404 and issued command409 unchanged; pending revoke blocks progress until it refuses without partial transition."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-KNOWLEDGE"
+      ],
+      "remainingCoverage": [
+        "All authored discovery actions and content migration branches."
+      ]
+    },
+    {
+      "command": "knowledge.share",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Claim owner, current actor/group membership, sealed target bound to account and expected ACL revision.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 379,
+          "expression": "shareKnowledgeWithGroup("
+        },
+        {
+          "file": "src/coordination/knowledge.js",
+          "line": 580,
+          "expression": "async share("
+        }
+      ],
+      "executedChecks": [
+        "Recipient cannot reshare (404), stale ACL refuses409, hidden/missing claim responses match; replay after revoke does not regrant.",
+        "Native read/revoke and Crew/Family kick/read tests cover both lock orders and current visibility."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-KNOWLEDGE",
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "All group-target substitutions and propagation combinations; old HTTP-cache expiry fallback."
+      ]
+    },
+    {
+      "command": "knowledge.revoke",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Claim owner; grant belongs to claim; expected ACL revision; replay is historic receipt, not renewed access.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/runtime.js",
+          "line": 386,
+          "expression": "revokeKnowledge("
+        },
+        {
+          "file": "src/coordination/knowledge.js",
+          "line": 602,
+          "expression": "async revoke("
+        }
+      ],
+      "executedChecks": [
+        "Revoke removes claim/archive/link visibility; stale progression blocked; reverse concurrent order refuses after commit; replay/restart unchanged.",
+        "Recipient receipt bodies omit foreign revoked claim IDs."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-KNOWLEDGE"
+      ],
+      "remainingCoverage": [
+        "Dedicated nonowner revoke route probe and PlayerCommand revoke key substitution not newly executed; every ACL limit."
+      ]
+    },
+    {
+      "command": "operation.create",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current Family officer, eligible uniform Crew, known authored definition and admission predicates.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Ordinary member403; pre-deduction and opposite branch blueprint hidden/unavailable; officer creates real operation."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS",
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "All definition-specific admission and underboss/cohort combinations."
+      ]
+    },
+    {
+      "command": "operation.publish",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current Family officer and draft status.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Ordinary member403 unchanged; officer publication succeeds."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every status/race and retired opener combination."
+      ]
+    },
+    {
+      "command": "operation.join",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current live Family member; active account; no occupied target role or existing actor seat; non-draft status.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Same-Family nonparticipant cannot take occupied organizer role409; real join/rejoin succeeds."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Role join contention and all named role definitions."
+      ]
+    },
+    {
+      "command": "operation.assign",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current officer; assigned account active/current live character in same Family; free role and no existing seat.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonofficer403 and officer assigning known outsider409, both unchanged."
+      ],
+      "evidence": [
+        "HTTP-INPUT"
+      ],
+      "remainingCoverage": [
+        "Positive officer assignment and every inactive/cohort/stale-character target not newly exercised."
+      ]
+    },
+    {
+      "command": "operation.leave",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "A seat owned by caller; held promises returned; approval cleared. Recovery can be available after membership loss.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonparticipant cannot leave another seat409; actual funded organizer leave/rejoin tested."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every removed/dead participant recovery combination."
+      ]
+    },
+    {
+      "command": "operation.commit",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current eligible seat; requirement belongs to that role; no live duplicate promise; authoritative quantity/template.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonparticipant409; stolen organizer issued commitment409; positive fixed100 funding promise."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every requirement kind and stale seat generation."
+      ]
+    },
+    {
+      "command": "operation.contribute",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Caller owns eligible seat and promise; item ownership/custody or canonical material/capital amount; live prerequisites.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonparticipant and wrong role409; funding debits100 once; native/restart/terminal replay cannot restore refunded escrow."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "All item/material templates and competing contribution/revocation interleavings."
+      ]
+    },
+    {
+      "command": "operation.withdraw",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Caller owns seat and live promise; returns only its commitment/capital; approval cleared.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonparticipant and wrong role funding withdrawal409 unchanged; actual owner withdrawal refunds once."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every post-membership-loss custody branch."
+      ]
+    },
+    {
+      "command": "operation.approve",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current officer; non-draft; approval alone cannot satisfy readiness.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Ordinary participant403; fresh leader approval and later readiness/approval invalidation tested."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "All member/knowledge changes between approval and execution."
+      ]
+    },
+    {
+      "command": "operation.execute",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current officer, uniform Crew, executor seat, every readiness requirement; deterministic authoritative resolution and escrow effects.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Participant/nonready409; wrong expected actor field rejects; live movement/membership changes refuse; two-key race terminalizes once; rollback/retry preserved."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS",
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "All operation definitions, each possible failure/reward and contention schedule."
+      ]
+    },
+    {
+      "command": "operation.cancel",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current officer or original opener; active readable operation; refund/forfeit from original-character custody.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Nonofficer403; cancel refunds once; old contribution replay cannot restore escrow; original character death forfeits capital without heir payout."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "Every expelled opener/readability condition and cancel/execute schedule."
+      ]
+    },
+    {
+      "command": "operation.expire",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Readable nonterminal operation and server deadline passed; expiry recovery does not require officer.",
+      "reviewedReferences": [
+        {
+          "file": "src/coordination/operations.js",
+          "line": 60,
+          "expression": "async function authority("
+        },
+        {
+          "file": "src/coordination/operations.js",
+          "line": 515,
+          "expression": "async command(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Unexpired ordinary member403 unchanged; native expired operation refunds and becomes expired."
+      ],
+      "evidence": [
+        "HTTP-INPUT",
+        "PG-OPERATIONS"
+      ],
+      "remainingCoverage": [
+        "HTTP positive expiry and natural wall-clock boundary not run; existing native suite explicitly backdates expiry fixture."
+      ]
+    },
+    {
+      "command": "recipe.craft",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current actor, admitted/known recipe, location/material/cash/skill/scarcity predicates; server debits inputs and produces authored outputs atomically.",
+      "reviewedReferences": [
+        {
+          "file": "src/crafting.js",
+          "line": 927,
+          "expression": "export async function craftWorldGraphRecipe("
+        },
+        {
+          "file": "src/crafting.js",
+          "line": 821,
+          "expression": "async function resolveRecipeAuthority("
+        }
+      ],
+      "executedChecks": [
+        "Stolen command409; parameter substitution and direct cost/output injection400; stale location409; exact/restarted replay unchanged.",
+        "Revoked recipe evidence refuses native crafting; hidden output omitted."
+      ],
+      "evidence": [
+        "HTTP-FAMILY",
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "Every recipe scarcity/skill/cash branch; all knowledge-policy combinations."
+      ]
+    },
+    {
+      "command": "item.salvage",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Current character owns selected exact car; graph requirements and listed/pledged/chain/race restrictions; vehicle consumed once.",
+      "reviewedReferences": [
+        {
+          "file": "src/crafting.js",
+          "line": 970,
+          "expression": "export async function salvageCar("
+        },
+        {
+          "file": "src/crafting.js",
+          "line": 1004,
+          "expression": "await consumeOwnedCarForItemMutation("
+        }
+      ],
+      "executedChecks": [
+        "Stolen command409, parameter substitution400, unconfirmed consumption409, stale location409; successful exact car removal; repeated/restarted receipts unchanged.",
+        "Native current-character replacement during snapshot/locked mutation refuses; lost response and postcommit projection recovery preserve effects."
+      ],
+      "evidence": [
+        "HTTP-FAMILY",
+        "PG-PLAYER"
+      ],
+      "remainingCoverage": [
+        "All listed/pledged/minted/racing flag combinations are outside new probes."
+      ]
+    },
+    {
+      "command": "world.execute",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Known authored object/action, current actor district/Family officer authority, owned item, exact world revision/state; collective effects require internal operation proof.",
+      "reviewedReferences": [
+        {
+          "file": "src/world-kernel.js",
+          "line": 151,
+          "expression": "async function applyCommand("
+        },
+        {
+          "file": "src/world-kernel.js",
+          "line": 324,
+          "expression": "async execute(accountId"
+        }
+      ],
+      "executedChecks": [
+        "Stolen command409, parameter injection400, known foreign item404, competing stale board409, stale direct revision409, collective bypass404; all unchanged.",
+        "Idle state intentionally public; shortage unknown known/missing IDs return identical404; successful world transition/restarted replay preserve authority."
+      ],
+      "evidence": [
+        "HTTP-FAMILY",
+        "PG-FURNACE"
+      ],
+      "remainingCoverage": [
+        "All world definitions/actions, ally/enemy combinations and operation internal proof corruption."
+      ]
+    },
+    {
+      "command": "situation.act",
+      "status": "PARTIAL_NATIVE_REVIEW",
+      "authority": "Account-bound issued identity, current character/audience/membership/Knowledge, current situation and world revision, admitted adapter; delegated domain remains authoritative.",
+      "reviewedReferences": [
+        {
+          "file": "src/director/runtime.js",
+          "line": 161,
+          "expression": "async function validateAction("
+        },
+        {
+          "file": "src/director/runtime.js",
+          "line": 210,
+          "expression": "async function command("
+        }
+      ],
+      "executedChecks": [
+        "Outsider/member/rival cannot borrow leader command409; client parameter substitution400; real Crew/Family departure invalidates prior commands409.",
+        "Real discovery adapter succeeds and reconstructed-server receipt does not mutate authority; native suite covers revoked evidence, expiry, disabled/shadow/cohort modes, forged definition and worker race."
+      ],
+      "evidence": [
+        "HTTP-FAMILY",
+        "PG-DIRECTOR"
+      ],
+      "remainingCoverage": [
+        "Every situation adapter/audience/campaign state; suspended replay across every adapter."
+      ]
+    }
+  ],
+  "reusedConcurrency": {
+    "evidence": "PG-KNOWLEDGE",
+    "cases": [
+      "read before revoke: revoke waits and then removes access",
+      "revoke before read: read waits then refuses",
+      "Crew and Family kick/read in both orders",
+      "pending revoke versus discovery progression without partial transition",
+      "private receipt/archives and death/heir current-authority checks"
+    ],
+    "note": "These are existing native tests rerun here, not newly implemented or absent coverage."
+  },
+  "findings": [
+    {
+      "id": "RC1-04-HARNESS-02",
+      "status": "INVALIDATED_EXPECTATION",
+      "evidence": "output/rc1-command-family-dev-1/results.json",
+      "explanation": "Static test helper import selected pg-mem before mode setup. Private native-schema assertion stopped before measured HTTP probes. Import moved after native selection."
+    },
+    {
+      "id": "RC1-04-HARNESS-03",
+      "status": "INVALIDATED_EXPECTATION",
+      "evidence": "output/rc1-command-family-dev-2/results.json",
+      "explanation": "Idle dock is explicitly public in content. Corrected test asserts idle public projection, then known/missing404 equality for private shortage after real world transition."
+    },
+    {
+      "id": "RC1-04-HARNESS-04",
+      "status": "INVALIDATED_EXPECTATION",
+      "evidence": "output/rc1-command-family-dev-3/results.json",
+      "explanation": "Outer world execute intentionally returns generic404 for collective-only actions before internal403 authority check. Corrected exact expected404; no runtime repair."
+    }
+  ],
+  "methods": [
+    {
+      "source": "pashov/skills",
+      "pin": "c577eb7799c349de0acb187ba00ca98e14e436fd",
+      "adaptation": "access-control-agent source-to-caller/role boundary hypotheses with concrete native denial trace"
+    },
+    {
+      "source": "PlamenTSV/plamen",
+      "pin": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69",
+      "adaptation": "outcome determinism, replay domains, actor/custody conservation"
+    },
+    {
+      "source": "trailofbits/skills",
+      "pin": "d3323cefbcf645678b8dc481de204b02ad3d02dc",
+      "adaptation": "audit context building, trust-boundary map and test assertions checked against implementation"
+    }
+  ],
+  "exclusions": [
+    "Complete529-route role/tampering review",
+    "all authored content, privileges and API combinations",
+    "production flags/cohort/dependencies",
+    "exhaustive concurrency/fuzzing or standalone static analyzer",
+    "contract rails/signers/chain proof",
+    "HTTP cache expiry fallback",
+    "natural player provisioning",
+    "A passing mapped command row is not a full gate clearance"
+  ]
+}

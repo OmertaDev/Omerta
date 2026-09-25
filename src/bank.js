@@ -215,18 +215,25 @@ export async function runCityLeg(pool, opts = {}) {
   // the worker log rather than as nothing. The advisory lock is the documented posture for a metered
   // faucet (the wage epoch's, then the population's); a crashed run releases it with its session.
   // pg-mem (no DATABASE_URL) is single-process, so there is nothing to serialize there.
-  let lockConn = null;
-  if (process.env.DATABASE_URL) {
-    lockConn = await pool.connect();
-    const got = (await lockConn.query('SELECT pg_try_advisory_lock($1,$2) AS ok', [CITY_LOCK_CLASS, 0])).rows[0].ok;
-    if (!got) { lockConn.release(); return { skipped: 'locked' }; }
-  }
+  let lockConn = null, acquisitionKnown = false, acquired = false;
   try {
+    if (process.env.DATABASE_URL) {
+      lockConn = await pool.connect();
+      acquired = (await lockConn.query('SELECT pg_try_advisory_lock($1,$2) AS ok', [CITY_LOCK_CLASS, 0])).rows[0].ok;
+      acquisitionKnown = true;
+      if (!acquired) return { skipped: 'locked' };
+    }
     return await runCityLegInner(pool, opts);
   } finally {
     if (lockConn) {
-      await lockConn.query('SELECT pg_advisory_unlock($1,$2)', [CITY_LOCK_CLASS, 0]).catch(() => {});
-      lockConn.release();
+      // A rejected query can have acquired the session lock before its result
+      // was lost. Never return that uncertain session to the pool.
+      let discard = !acquisitionKnown;
+      if (acquired) {
+        try { await lockConn.query('SELECT pg_advisory_unlock($1,$2)', [CITY_LOCK_CLASS, 0]); }
+        catch { discard = true; }
+      }
+      lockConn.release(discard || undefined);
     }
   }
 }

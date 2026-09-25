@@ -1,0 +1,2390 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "status": "PASS_SCOPED_RECORDED_NATIVE_ORDER_REPLAY",
+  "matrixQualifying": false,
+  "source": {
+    "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+    "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+    "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "sourceBoundary": "Based on integrated root 09119b2921514f3c76bbd65c0613f926cf700400, including the seasonal crown atomicity/retry repair, plus guardrails/report and test-only query order recording. Later integrated revisions are not relabeled as this proof.",
+  "result": {
+    "logicalHoursPerRun": 2160,
+    "population": 25,
+    "seed": "rc1-alpha",
+    "policy": "quiet_world",
+    "actualActiveActors": 25,
+    "sessions": 180,
+    "freshCommands": 690,
+    "legacyCrimes": 180,
+    "crimeSuccesses": 145,
+    "crimeLosses": 35,
+    "authorizedOpportunities": 1062,
+    "seasonalRolloversPerActor": 4,
+    "originalDueCallbacksPerRun": 56160,
+    "timerCounts": {
+      "directorTick": 25920,
+      "guardedTick": 2160,
+      "guardedSeasonTick": 2160,
+      "health-boundary": 25920
+    },
+    "finalStateSha256": "712bfc49a9e8c3827e2f048d948a3ca6573805199401f4c38e2991e3d78761cf",
+    "all90DailyCanonicalStatesEqual": true,
+    "fullReplayComparison": {
+      "fields": [
+        "hours",
+        "population",
+        "seed",
+        "actorPolicy",
+        "initialStateSha256",
+        "finalStateSha256",
+        "workerScheduleSha256",
+        "jobOutcomesSha256",
+        "deterministicRandomTapeSha256",
+        "actorTapeSha256",
+        "policyStateSha256",
+        "semanticMetricsSha256",
+        "worldDiagnosticsSemanticSha256",
+        "mysteryPolicySummarySha256",
+        "knowledgeDiagnosticsSha256",
+        "resourceObservationEnabled",
+        "resourceJournalCount",
+        "resourceJournalSha256"
+      ],
+      "exclusions": [
+        "Native wall durations",
+        "Read-only physical MVCC and relation-size diagnostics"
+      ],
+      "canonicalStateExclusions": []
+    }
+  },
+  "resourceScope": {
+    "observedPerCommit": false,
+    "resourceJournalCount": 0,
+    "resourceJournalSha256": null,
+    "canonicalInvariants": "55 checks per recorded canonical invariant boundary; retained in history. This does not replace per-commit resource equations or unsupported-lineage proof.",
+    "recordedInvariantBoundariesPerRun": 961
+  },
+  "queryReplay": {
+    "scopeVersion": 4,
+    "storageVersion": 3,
+    "records": 6487,
+    "chunksPerRun": 114,
+    "observationChunkBytes": 953627629,
+    "recordStreamSha256": "809933e5e41c3489d7bc357728b857282fd1ab2ac9f661bf3f2f1d5009034bb9",
+    "nativeArrivalComparison": {
+      "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+      "scopeVersion": 4,
+      "records": 6487,
+      "counts": {
+        "market-due": {
+          "records": 2161,
+          "nativeSelectionOrOrderDiffered": 1,
+          "atLeastTwoRows": 218
+        },
+        "population-jailbirds": {
+          "records": 4322,
+          "nativeSelectionOrOrderDiffered": 3874,
+          "atLeastTwoRows": 4322
+        },
+        "standing-population": {
+          "records": 4,
+          "nativeSelectionOrOrderDiffered": 3,
+          "atLeastTwoRows": 4
+        }
+      },
+      "semantics": "Actual native arrival compared with accepted recorded rows; every difference was replayed only after the complete eligible multiset matched. No field normalization."
+    },
+    "semantics": "Recorded native nondeterminism, not seed-only determinism. Every eligible row/value/multiplicity must match before replay; no canonical state exclusions."
+  },
+  "causalProof": {
+    "comparison": {
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "scope": {
+        "version": 4,
+        "storageFormat": 3,
+        "reason": "Retained 90-day replay changed a tied seasonal champion and exchanged generated market refund/notification IDs. Record only the three exact demonstrated queries; no gameplay tiebreak or ID normalization.",
+        "queries": [
+          {
+            "id": "population-jailbirds",
+            "kind": "limited-projection",
+            "file": "src/population.js",
+            "site": "SELECT id FROM characters WHERE alive AND is_npc\n         AND (jail_until IS NULL OR jail_until < now())\n         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24",
+            "source": "src/population.js/runPopulationInner/JAILBIRDS",
+            "sourceSha256": "7a54934015fa68f99d008aca4699b168efc6b8e1c73dbccd8e3c9802396c151c",
+            "sql": "SELECT id FROM characters WHERE alive AND is_npc AND (jail_until IS NULL OR jail_until < now()) AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24",
+            "originalSql": "SELECT id FROM characters WHERE alive AND is_npc\n         AND (jail_until IS NULL OR jail_until < now())\n         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24",
+            "eligibleSql": "SELECT * FROM characters WHERE alive AND is_npc\n         AND (jail_until IS NULL OR jail_until < now())\n         AND (hosp_until IS NULL OR hosp_until < now())",
+            "transformedSql": "SELECT\n  COALESCE((SELECT json_agg(rc1_limited) FROM (SELECT id FROM characters WHERE alive AND is_npc\n         AND (jail_until IS NULL OR jail_until < now())\n         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24) rc1_limited), '[]'::json) AS limited_rows,\n  COALESCE((SELECT json_agg(row_to_json(rc1_eligible)::text) FROM (SELECT * FROM characters WHERE alive AND is_npc\n         AND (jail_until IS NULL OR jail_until < now())\n         AND (hosp_until IS NULL OR hosp_until < now())) rc1_eligible), '[]'::json) AS eligible_rows",
+            "originalSqlSha256": "a4b5a27a314dddd736a5aead64c8ab584e258aac797e6b17f8d90c59b669af61",
+            "transformedSqlSha256": "120c801914ecf6f1305afb8635816704ecd38b0993daa4e00e00033198fc39c8",
+            "limit": 24,
+            "reason": "Native SQL leaves LIMIT membership and order unspecified before canonical Math.random indexing. Version 1 full replay failed at occurrence 269 because three candidate IDs changed.",
+            "permitted": "Record the actual native limited result and complete eligible character rows in one PostgreSQL statement snapshot. Replay the observed subset/order only after exact eligible multiset equality including all values and duplicate multiplicities.",
+            "failClosed": "Changed eligible membership, values, multiplicities, source, SQL, parameters, query count or selected cardinality fails. This records nondeterministic selection; it is not seed-only equivalence."
+          },
+          {
+            "id": "standing-population",
+            "kind": "complete-typed-rows",
+            "file": "src/standing.js",
+            "site": "SELECT a.account_id, ${sel}, c.name, c.respect\n       FROM account_persistent a\n       JOIN characters c ON c.account_id = a.account_id AND c.alive\n       JOIN accounts ac ON ac.id = a.account_id\n      WHERE NOT a.agent_flag AND NOT a.npc_flag AND ac.status <> 'banned'",
+            "sourceSha256": "e86fdd2ee3a24a01f37c28714bc79466edfe31a1b1d39d3af6a35c7f899b164b",
+            "originalSql": "SELECT a.account_id, COALESCE(a.kills,0) AS kills, COALESCE(a.hitman_rep,0) AS hitman_rep, COALESCE(a.boxing_wins,0) AS boxing_wins, COALESCE(a.duel_wins,0) AS duel_wins, COALESCE(a.cartel_damage,0) AS cartel_damage, COALESCE(a.soldiers_led,0) AS soldiers_led, COALESCE(a.tycoon_earned,0) AS tycoon_earned, COALESCE(a.laundered_lifetime,0) AS laundered_lifetime, COALESCE(a.smuggled,0) AS smuggled, COALESCE(a.product_moved,0) AS product_moved, COALESCE(a.freight_delivered,0) AS freight_delivered, COALESCE(a.heists_pulled,0) AS heists_pulled, COALESCE(a.statecraft,0) AS statecraft, COALESCE(a.recruits,0) AS recruits, COALESCE(a.prestige,0) AS prestige, COALESCE(a.monument_built,0) AS monument_built, COALESCE(a.prestige_sunk,0) AS prestige_sunk, COALESCE(a.race_wins,0) AS race_wins, COALESCE(a.racer_wins,0) AS racer_wins, COALESCE(a.caskets,0) AS caskets, COALESCE(a.intel_ops,0) AS intel_ops, COALESCE(a.honor_peak,0) AS honor_peak, c.name, c.respect\n       FROM account_persistent a\n       JOIN characters c ON c.account_id = a.account_id AND c.alive\n       JOIN accounts ac ON ac.id = a.account_id\n      WHERE NOT a.agent_flag AND NOT a.npc_flag AND ac.status <> 'banned'",
+            "sql": "SELECT a.account_id, COALESCE(a.kills,0) AS kills, COALESCE(a.hitman_rep,0) AS hitman_rep, COALESCE(a.boxing_wins,0) AS boxing_wins, COALESCE(a.duel_wins,0) AS duel_wins, COALESCE(a.cartel_damage,0) AS cartel_damage, COALESCE(a.soldiers_led,0) AS soldiers_led, COALESCE(a.tycoon_earned,0) AS tycoon_earned, COALESCE(a.laundered_lifetime,0) AS laundered_lifetime, COALESCE(a.smuggled,0) AS smuggled, COALESCE(a.product_moved,0) AS product_moved, COALESCE(a.freight_delivered,0) AS freight_delivered, COALESCE(a.heists_pulled,0) AS heists_pulled, COALESCE(a.statecraft,0) AS statecraft, COALESCE(a.recruits,0) AS recruits, COALESCE(a.prestige,0) AS prestige, COALESCE(a.monument_built,0) AS monument_built, COALESCE(a.prestige_sunk,0) AS prestige_sunk, COALESCE(a.race_wins,0) AS race_wins, COALESCE(a.racer_wins,0) AS racer_wins, COALESCE(a.caskets,0) AS caskets, COALESCE(a.intel_ops,0) AS intel_ops, COALESCE(a.honor_peak,0) AS honor_peak, c.name, c.respect FROM account_persistent a JOIN characters c ON c.account_id = a.account_id AND c.alive JOIN accounts ac ON ac.id = a.account_id WHERE NOT a.agent_flag AND NOT a.npc_flag AND ac.status <> 'banned'",
+            "originalSqlSha256": "c57b5faaf02acc7c5c9bc74fcc8b0831487de0328ffa5cc29bb98d889fb41015",
+            "transformedSql": null,
+            "transformedSqlSha256": null,
+            "eligibility": "Unchanged full canonical ranking input: every eligible returned row and column, with native pg types/numeric strings and duplicate multiplicities. No LIMIT or SQL rewriting."
+          },
+          {
+            "id": "market-due",
+            "kind": "complete-projection",
+            "file": "src/market.js",
+            "site": "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+            "sourceSha256": "ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40",
+            "originalSql": "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+            "sql": "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+            "originalSqlSha256": "6fdbf81d0765afedc49866da5973626e1c2d835cc3504d3d1fba99131d04d4a6",
+            "eligibleSql": "SELECT * FROM market_listings WHERE status='live' AND expires_at <= now()",
+            "transformedSql": "SELECT\n  COALESCE((SELECT json_agg(rc1_selected) FROM (SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()) rc1_selected), '[]'::json) AS limited_rows,\n  COALESCE((SELECT json_agg(row_to_json(rc1_eligible)::text) FROM (SELECT * FROM market_listings WHERE status='live' AND expires_at <= now()) rc1_eligible), '[]'::json) AS eligible_rows",
+            "transformedSqlSha256": "68f128ea4b497acfec882c3a142cfba48cb506c872f7d336dd77b5c6cab08055",
+            "projection": [
+              "id",
+              "kind",
+              "seller_character",
+              "bidder"
+            ],
+            "eligibility": "One statement snapshot retains the unchanged original due projection plus every full eligible listing as exact PostgreSQL JSON text, including empty results."
+          }
+        ],
+        "failClosed": "Exact source/query/parameters and complete eligible row multiset, values and multiplicities must match before any recorded ordering is returned. Earlier tape scope versions cannot qualify this scope."
+      },
+      "results": [
+        {
+          "id": "observed",
+          "result": {
+            "status": "PASS_SCOPED",
+            "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+            "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf",
+            "nativeOrReplayedStandingOrder": [
+              "order-a",
+              "order-b"
+            ],
+            "nativeOrReplayedMarketOrder": [
+              "listing-a",
+              "listing-b"
+            ],
+            "crown": {
+              "season": 738,
+              "champion": "order-a",
+              "family": null,
+              "districts": null
+            },
+            "marketResult": {
+              "settled": 0,
+              "lapsed": 2
+            }
+          },
+          "runSha256": "b9ac5eb61086b3ab71621c4eb5048bc5fdf636ff79cc28f8fefe6b09c30aaab5"
+        },
+        {
+          "id": "native-reversed",
+          "result": {
+            "status": "PASS_SCOPED",
+            "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+            "finalStateSha256": "1d37a446c1539533313579954ec89f5b228e4c0c528610a9f99a73d8bf6a8a3c",
+            "nativeOrReplayedStandingOrder": [
+              "order-b",
+              "order-a"
+            ],
+            "nativeOrReplayedMarketOrder": [
+              "listing-b",
+              "listing-a"
+            ],
+            "crown": {
+              "season": 738,
+              "champion": "order-b",
+              "family": null,
+              "districts": null
+            },
+            "marketResult": {
+              "settled": 0,
+              "lapsed": 2
+            }
+          },
+          "runSha256": "d8122d6cc4c46d5436ec70180bc3c4c67128865a3ecfba2a635c9fd5d83a8432"
+        },
+        {
+          "id": "replayed",
+          "result": {
+            "status": "PASS_SCOPED",
+            "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+            "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf",
+            "nativeOrReplayedStandingOrder": [
+              "order-a",
+              "order-b"
+            ],
+            "nativeOrReplayedMarketOrder": [
+              "listing-a",
+              "listing-b"
+            ],
+            "crown": {
+              "season": 738,
+              "champion": "order-a",
+              "family": null,
+              "districts": null
+            },
+            "marketResult": {
+              "settled": 0,
+              "lapsed": 2
+            }
+          },
+          "runSha256": "97ed32746817229888abdb7e03911c9022552e41ec5778998c1e2af642bc39d1"
+        },
+        {
+          "id": "standing-value",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "a69479cdc4fdc964ba1e1503d399ccbbcd4860158adfae5dbbac89217a6879b6"
+          },
+          "runSha256": "a4b921d77fc1db4361bbbe0bd8e6fc04e30c0ee037f456cd57fa1edb8c55f89d"
+        },
+        {
+          "id": "standing-missing",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "de87def28f7f600076ec8bb8d6e902f4bb063083fba4a19daad86b7cbdc8cd64"
+          },
+          "runSha256": "ffc588a45c14eda938c1a53f2cfdb33e68c392a9b7795a859e8e77af91f59f93"
+        },
+        {
+          "id": "standing-extra",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "679159a74330577f4572f8af8fc1c1cde888cc8ac927d9f233ffc60c4a74b775"
+          },
+          "runSha256": "17d85711b31c9b3b12341d4dddd94997a428bad7e8ea7929c5c2ed72ea2ee5c3"
+        },
+        {
+          "id": "market-value",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "373edec23eb8423d4c94fdc3e467b53faf3738a2f1c6e96d9b4c9aa8324938b9"
+          },
+          "runSha256": "c79585fd516eb8714f3e85e21d49fba0b6b2f03ed4a24f58bda09de09228c9af"
+        },
+        {
+          "id": "market-missing",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "2c66e06543c736358e2e95074b87eb58a8d6d5fb2c5a625ef5d1753e1c49cd08"
+          },
+          "runSha256": "c14f3705d567ffeffef8049a2cf9e4a6ae62e8623f1212f892217edd92d7e801"
+        },
+        {
+          "id": "market-extra",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "cf81a8ad664be2608d90a73ba6c6ae5e9763552669bac1f6cf60b40f19ee435d"
+          },
+          "runSha256": "8aaf5c169192f910d8e0d05ad9e2c69dcf05ab8436d86d344ce28da852fed215"
+        },
+        {
+          "id": "query-identity",
+          "result": {
+            "status": "PASS_SCOPED",
+            "expectedReplayRejected": true,
+            "stateUnchanged": true,
+            "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b"
+          },
+          "runSha256": "d46fe3d8637587b8af4b4a29779f306493afe8433d573be7453cf597c8f1693f"
+        }
+      ],
+      "matrixQualifying": false
+    },
+    "artifactVerification": "All 63 indexed causal artifacts verified; unchanged-state rejection for seven altered-input native controls."
+  },
+  "commands": {
+    "workingDirectory": "C:/Users/Jorge/.codex/worktrees/omerta-rc1-world-order-replay",
+    "environment": {
+      "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55441/rc1_native_harness",
+      "RC1_PG_BIN": "C:/Program Files/PostgreSQL/18/bin"
+    },
+    "nativeCausal": [
+      "node",
+      "test/rc1-native-query-order.js",
+      "--postgres",
+      "--output=C:/Users/Jorge/.codex/rc1-native-evidence/query-order-causal-c38fb9bd-1"
+    ],
+    "observation": [
+      "node",
+      "test/rc1-native-world-workload.js",
+      "--postgres",
+      "--hours=2160",
+      "--population=25",
+      "--seed=rc1-alpha",
+      "--policy=quiet_world",
+      "--max-wall-ms=14400000",
+      "--max-output-bytes=17179869184",
+      "--min-free-bytes=34359738368",
+      "--prior-failure=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-v3-replay-1",
+      "--output=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-order-v4-observation-1"
+    ],
+    "replay": [
+      "node",
+      "test/rc1-native-world-workload.js",
+      "--postgres",
+      "--hours=2160",
+      "--population=25",
+      "--seed=rc1-alpha",
+      "--policy=quiet_world",
+      "--max-wall-ms=14400000",
+      "--max-output-bytes=17179869184",
+      "--min-free-bytes=34359738368",
+      "--prior-failure=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-v3-replay-1",
+      "--replay=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-order-v4-observation-1",
+      "--output=C:/Users/Jorge/.codex/rc1-native-evidence/quiet-world-90day-order-v4-replay-1"
+    ]
+  },
+  "guardrails": [
+    {
+      "name": "quiet-world-90day-order-v4-observation-1",
+      "wallMs": 1337376,
+      "guard": {
+        "checks": 2252,
+        "last": {
+          "label": "final",
+          "wallMs": 1320194.4409999999,
+          "outputBytes": 3270874650,
+          "freeBytes": 631401832448,
+          "files": 403
+        },
+        "failure": null
+      }
+    },
+    {
+      "name": "quiet-world-90day-order-v4-replay-1",
+      "wallMs": 1438579,
+      "guard": {
+        "checks": 2252,
+        "last": {
+          "label": "final",
+          "wallMs": 1419418.9834,
+          "outputBytes": 3270872365,
+          "freeBytes": 626507292672,
+          "files": 403
+        },
+        "failure": null
+      }
+    }
+  ],
+  "artifactIndex": {
+    "path": "harness-quiet-90day-order-artifact-index.json",
+    "gitBlobSha256": "d225bf71fd48f7969eba2adb92e0d4b8e218412dbcdb0d0c0869faf845da5ff3",
+    "hashEncoding": "UTF-8 LF bytes committed in Git; platform checkout line endings may differ"
+  },
+  "runs": [
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\observed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "94dda72aafa1751eb2a7155b81dab5fdbc0379376f86b98844b89c2050fa6ac4",
+      "runSha256": "b9ac5eb61086b3ab71621c4eb5048bc5fdf636ff79cc28f8fefe6b09c30aaab5",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+        "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf",
+        "nativeOrReplayedStandingOrder": [
+          "order-a",
+          "order-b"
+        ],
+        "nativeOrReplayedMarketOrder": [
+          "listing-a",
+          "listing-b"
+        ],
+        "crown": {
+          "season": 738,
+          "champion": "order-a",
+          "family": null,
+          "districts": null
+        },
+        "marketResult": {
+          "settled": 0,
+          "lapsed": 2
+        }
+      },
+      "wallMs": 15728,
+      "cleanup": {
+        "closed": true,
+        "hash": "f91dd183c17d081a21de19acbb7d59765a05044aaf6834ed63d6d718d016cc89",
+        "kind": "database-cleanup",
+        "name": "rc1_world_fc16360ae0110792006d176c",
+        "observedAt": "2026-09-21T07:28:24.246Z",
+        "oid": 1587452,
+        "previousHash": "00896e1ff73d63c3715fee60025d7132d25afe69f72ddbd95e3729e2b438e410",
+        "sequence": 7
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "invocation": 2,
+        "completion": 2,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 7,
+      "indexedBytes": 192332
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\native-reversed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "4d03cd517240bc236182e2541102bdfc84a2cba8bb3180e625271f11c14548e5",
+      "runSha256": "d8122d6cc4c46d5436ec70180bc3c4c67128865a3ecfba2a635c9fd5d83a8432",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+        "finalStateSha256": "1d37a446c1539533313579954ec89f5b228e4c0c528610a9f99a73d8bf6a8a3c",
+        "nativeOrReplayedStandingOrder": [
+          "order-b",
+          "order-a"
+        ],
+        "nativeOrReplayedMarketOrder": [
+          "listing-b",
+          "listing-a"
+        ],
+        "crown": {
+          "season": 738,
+          "champion": "order-b",
+          "family": null,
+          "districts": null
+        },
+        "marketResult": {
+          "settled": 0,
+          "lapsed": 2
+        }
+      },
+      "wallMs": 16775,
+      "cleanup": {
+        "closed": true,
+        "hash": "7f61cd89fd28782353527377fce141527c9f122095745bcda56cd820563ed311",
+        "kind": "database-cleanup",
+        "name": "rc1_world_7b0a0528a920825fa9360f4e",
+        "observedAt": "2026-09-21T07:28:40.955Z",
+        "oid": 1602704,
+        "previousHash": "82a831ec2bb274314a058289fbbde1653c8d3dbd9360fcd030116dfb182e13ec",
+        "sequence": 7
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "invocation": 2,
+        "completion": 2,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 7,
+      "indexedBytes": 192339
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\replayed",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "460c417a6951a5c6ea3940e07955d7228e416be11ee0f3b8b2753cf8a60dd6a0",
+      "runSha256": "97ed32746817229888abdb7e03911c9022552e41ec5778998c1e2af642bc39d1",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b",
+        "finalStateSha256": "3d9246792e9074f2a0e7eed6fbc144f5aee81bf779438616761173cb478dbdaf",
+        "nativeOrReplayedStandingOrder": [
+          "order-a",
+          "order-b"
+        ],
+        "nativeOrReplayedMarketOrder": [
+          "listing-a",
+          "listing-b"
+        ],
+        "crown": {
+          "season": 738,
+          "champion": "order-a",
+          "family": null,
+          "districts": null
+        },
+        "marketResult": {
+          "settled": 0,
+          "lapsed": 2
+        }
+      },
+      "wallMs": 15648,
+      "cleanup": {
+        "closed": true,
+        "hash": "b92476a12cf7e4a60256cef078c1f1e5da47266bd486a30efb6b1a466c541fb6",
+        "kind": "database-cleanup",
+        "name": "rc1_world_669455e34adb01243ff9e55c",
+        "observedAt": "2026-09-21T07:28:56.735Z",
+        "oid": 1610439,
+        "previousHash": "13823191651b0a34fbe3ae5248612fe0d42de84a4cdc781b3d0383c26a9a162c",
+        "sequence": 7
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "invocation": 2,
+        "completion": 2,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 7,
+      "indexedBytes": 192360
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-value",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "2eac5ba2f3d5c5512866a21c92df5b286f82b3494328613cdcfe3f95770fcf43",
+      "runSha256": "a4b921d77fc1db4361bbbe0bd8e6fc04e30c0ee037f456cd57fa1edb8c55f89d",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "a69479cdc4fdc964ba1e1503d399ccbbcd4860158adfae5dbbac89217a6879b6"
+      },
+      "wallMs": 15328,
+      "cleanup": {
+        "closed": true,
+        "hash": "ce61f55bdf6a89a5e4a06d2ab9113081bb775082a9098e831f6618ca95fdb52b",
+        "kind": "database-cleanup",
+        "name": "rc1_world_6d4a866d4d9bc8b97e217a3c",
+        "observedAt": "2026-09-21T07:29:12.262Z",
+        "oid": 1618061,
+        "previousHash": "831b630cf3a80c768c7bc7814943a282c783a99a1d07e17beceaccade3c3c8bd",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 179589
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-missing",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "489ce38a082c9bd0dae55c3b03ff1de49bd7979040631bbea25d17b42f2ef24c",
+      "runSha256": "ffc588a45c14eda938c1a53f2cfdb33e68c392a9b7795a859e8e77af91f59f93",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "de87def28f7f600076ec8bb8d6e902f4bb063083fba4a19daad86b7cbdc8cd64"
+      },
+      "wallMs": 15583,
+      "cleanup": {
+        "closed": true,
+        "hash": "4a8d401b4da05f1821d76c4b217fe03710560c56886c18ce571819bd3f1387fb",
+        "kind": "database-cleanup",
+        "name": "rc1_world_bc9eff8105c32b292d382a5d",
+        "observedAt": "2026-09-21T07:29:27.543Z",
+        "oid": 1625683,
+        "previousHash": "863f12680a0045c00c397acb5527eb90146c337ac77287cefbec6eb12f81fa44",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 169389
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\standing-extra",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1bb1701e7f5c74107381d888d720ee0163e20437e2b5485a40d8c5d0171fb037",
+      "runSha256": "17d85711b31c9b3b12341d4dddd94997a428bad7e8ea7929c5c2ed72ea2ee5c3",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "679159a74330577f4572f8af8fc1c1cde888cc8ac927d9f233ffc60c4a74b775"
+      },
+      "wallMs": 15673,
+      "cleanup": {
+        "closed": true,
+        "hash": "e2efc479b0aad77e633d6e724d14f1691562ff14cf94bd16dc0ddf02153aabf1",
+        "kind": "database-cleanup",
+        "name": "rc1_world_01f820f46f7cef1b190a5e65",
+        "observedAt": "2026-09-21T07:29:43.504Z",
+        "oid": 1633304,
+        "previousHash": "01a2f85a37b36fa9a69b91539ced59cf3a6f53bd268c32a36fedc6135382b47b",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 188379
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-value",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "fb5cded68ee32f92e8dc6a70427aa106aa6f280b00eb0b1939bfc0eb6653ab49",
+      "runSha256": "c79585fd516eb8714f3e85e21d49fba0b6b2f03ed4a24f58bda09de09228c9af",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "373edec23eb8423d4c94fdc3e467b53faf3738a2f1c6e96d9b4c9aa8324938b9"
+      },
+      "wallMs": 15742,
+      "cleanup": {
+        "closed": true,
+        "hash": "a9a3e29485d99e80dabe3f64d4632b1aea10a00c60bafb76253992bc7ab1dc16",
+        "kind": "database-cleanup",
+        "name": "rc1_world_ead9de7caefdf69c2a50527c",
+        "observedAt": "2026-09-21T07:29:58.906Z",
+        "oid": 1640926,
+        "previousHash": "104e480300ce3d08e24080a577a2ad5703aa2caa237bbcb4931091852c678969",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 182514
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-missing",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "89bdc9865777178f25ab4f58264b11f40da89814bde47aea8d0c3c48ea11dd73",
+      "runSha256": "c14f3705d567ffeffef8049a2cf9e4a6ae62e8623f1212f892217edd92d7e801",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "2c66e06543c736358e2e95074b87eb58a8d6d5fb2c5a625ef5d1753e1c49cd08"
+      },
+      "wallMs": 16893,
+      "cleanup": {
+        "closed": true,
+        "hash": "420f03562e38e35a38df0b75d0a80a0910dc5bd3c3a08b6ed049790dc22b0087",
+        "kind": "database-cleanup",
+        "name": "rc1_world_261b93a07d96d8b0be34813e",
+        "observedAt": "2026-09-21T07:30:15.294Z",
+        "oid": 1648550,
+        "previousHash": "a01b2967a4c5d5b1c0963086cc336447295e62a471be1b9172734348b5130d2c",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 181059
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\market-extra",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "728d51c9ba77e2433cd864b9be2958e8812f8177f7a443e9f7f50414e6bb8b04",
+      "runSha256": "8aaf5c169192f910d8e0d05ad9e2c69dcf05ab8436d86d344ce28da852fed215",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "cf81a8ad664be2608d90a73ba6c6ae5e9763552669bac1f6cf60b40f19ee435d"
+      },
+      "wallMs": 15462,
+      "cleanup": {
+        "closed": true,
+        "hash": "fe213356405fd5460c4ea82ad0d88b13bdb09bc88ed4ff1c02781f86acfb5fdb",
+        "kind": "database-cleanup",
+        "name": "rc1_world_ff04daaf9e241db259f32aa8",
+        "observedAt": "2026-09-21T07:30:31.617Z",
+        "oid": 1656171,
+        "previousHash": "e83a01e4d7068ae073f73b379d73c602e977ded7a08ae5bd7eb4f387836ebc3d",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 183751
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\query-order-causal-c38fb9bd-1\\query-identity",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "31993e82296be044947d7f44e9e6e48866957ce15ce5fb95a6021c1860efd184",
+      "runSha256": "d46fe3d8637587b8af4b4a29779f306493afe8433d573be7453cf597c8f1693f",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "expectedReplayRejected": true,
+        "stateUnchanged": true,
+        "initialStateSha256": "48e6435439b9428ac8c0e240d4997bf78bac320f9221c5b76d76daaeb456160b"
+      },
+      "wallMs": 15790,
+      "cleanup": {
+        "closed": true,
+        "hash": "7f29dc0f18e6afa6b97dc6cd76f7502b88c9da26141505699c3f5e77a6db4644",
+        "kind": "database-cleanup",
+        "name": "rc1_world_658ee3379b7c7557a4847b74",
+        "observedAt": "2026-09-21T07:30:47.187Z",
+        "oid": 1663793,
+        "previousHash": "ba92a28f3c3d0451d54e3235ae749f6f52ff953b43e72fc8373df6a752acfadb",
+        "sequence": 3
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "initialization-complete": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 6,
+      "indexedBytes": 178711
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-order-v4-smoke-observation-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "b0cf743b5b672a92780bb0ce4458861ca13c8b76059cf05c3573a184181d9fd0",
+      "runSha256": "478c419139b9083fd50108592d945de7f1c480279dad5eac0b7f4408820b1312",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "quiet_world",
+        "mysteryPolicySummaries": {},
+        "actualActiveActors": 2,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 1,
+        "metrics": {
+          "playerSnapshots": 8,
+          "ownCharacterReads": 2,
+          "freshPlayerCommands": 8,
+          "legacyCrimeAttempts": 2,
+          "crimeSuccesses": 2,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 2,
+          "commandTypes": {
+            "discovery.start": 4,
+            "mystery.start": 3,
+            "discovery.act": 1
+          },
+          "observedAuthorizedOpportunities": 42
+        },
+        "timerCounts": {
+          "directorTick": 24,
+          "guardedTick": 2,
+          "guardedSeasonTick": 2,
+          "health-boundary": 24
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "bcadbbca6ae68d9281d180b6a7b7a23da28eab705eeadfa09667e7e286899a05",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "7420300d7d50ea40f257c1e34ed84d619de8ca78f7b0624a111b03e8c5286a3d",
+        "actorTapeSha256": "e68b8f7cff04c662ad18da6cf8b395fd590dcd6cf53532a30afa52beb1ec5f46",
+        "policyStateSha256": "ce5ce7bde8ba7fb4abcc1ab17e3538a5c2591deb75711aaa198a8166af61bd91",
+        "mysteryPolicySummarySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "knowledgeDiagnosticsSha256": "c14084bdc9eae0c6a117084803ff4c462c648a0eec9ab6f37f84c4ed34485bec",
+        "semanticMetricsSha256": "0bf8f45a77baa669497c671f9f479a0b769b7d9892aa73de8041d796751ebf0d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": false,
+        "worldDiagnosticsSemanticSha256": "9c9b2ff846327f494b1132802381df8a8a2131045701f56249ca0a4b14210933",
+        "resourceObservationEnabled": false,
+        "resourceJournalCount": 0,
+        "resourceJournalSha256": null,
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      },
+      "wallMs": 29708,
+      "cleanup": {
+        "closed": true,
+        "hash": "42d34ae8af5221d68c763768b4abc76179ccdbeeb530c822588dc3450af33721",
+        "kind": "database-cleanup",
+        "name": "rc1_world_85b3890cde88ff6d9c680e1f",
+        "observedAt": "2026-09-21T07:32:10.474Z",
+        "oid": 1671415,
+        "previousHash": "c48b01560af6625e686c3054eb019dfeb3c644b822d628711fc377a840f70173",
+        "sequence": 200
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "measured-initialization": 1,
+        "actor-replay-entry": 31,
+        "invocation": 70,
+        "completion": 70,
+        "authorized-policy-choice": 8,
+        "canonical-invariants": 12,
+        "actor-session-complete": 2,
+        "day-summary": 1,
+        "knowledge-observer-boundary": 2,
+        "assertions": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 22,
+      "indexedBytes": 5134666
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-order-v4-smoke-replay-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "00613c80cc02aa8b3a2933db960689278b98cde020bd47f18ab416c50d77b3d1",
+      "runSha256": "e4610e6adb03455392a187ea85cd7b3a19af80bbeacb7033e75de2efd24bf956",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "quiet_world",
+        "mysteryPolicySummaries": {},
+        "actualActiveActors": 2,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 1,
+        "metrics": {
+          "playerSnapshots": 8,
+          "ownCharacterReads": 2,
+          "freshPlayerCommands": 8,
+          "legacyCrimeAttempts": 2,
+          "crimeSuccesses": 2,
+          "crimeLosses": 0,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 2,
+          "commandTypes": {
+            "discovery.start": 4,
+            "mystery.start": 3,
+            "discovery.act": 1
+          },
+          "observedAuthorizedOpportunities": 42
+        },
+        "timerCounts": {
+          "directorTick": 24,
+          "guardedTick": 2,
+          "guardedSeasonTick": 2,
+          "health-boundary": 24
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "bcadbbca6ae68d9281d180b6a7b7a23da28eab705eeadfa09667e7e286899a05",
+        "workerScheduleSha256": "a5d569231a23d57afa0779f13137c0a87f73b7fa26c15cd0eb0fac557b6b4b41",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "f9a40cb228a20a72e2eb05eef8cbbd32867b716985c275daa146ddc25792b897",
+        "deterministicRandomTapeSha256": "7420300d7d50ea40f257c1e34ed84d619de8ca78f7b0624a111b03e8c5286a3d",
+        "actorTapeSha256": "e68b8f7cff04c662ad18da6cf8b395fd590dcd6cf53532a30afa52beb1ec5f46",
+        "policyStateSha256": "ce5ce7bde8ba7fb4abcc1ab17e3538a5c2591deb75711aaa198a8166af61bd91",
+        "mysteryPolicySummarySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "knowledgeDiagnosticsSha256": "c14084bdc9eae0c6a117084803ff4c462c648a0eec9ab6f37f84c4ed34485bec",
+        "semanticMetricsSha256": "0bf8f45a77baa669497c671f9f479a0b769b7d9892aa73de8041d796751ebf0d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": true,
+        "worldDiagnosticsSemanticSha256": "9c9b2ff846327f494b1132802381df8a8a2131045701f56249ca0a4b14210933",
+        "resourceObservationEnabled": false,
+        "resourceJournalCount": 0,
+        "resourceJournalSha256": null,
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance",
+        "replayComparison": {
+          "fields": [
+            "hours",
+            "population",
+            "seed",
+            "actorPolicy",
+            "initialStateSha256",
+            "finalStateSha256",
+            "workerScheduleSha256",
+            "jobOutcomesSha256",
+            "deterministicRandomTapeSha256",
+            "actorTapeSha256",
+            "policyStateSha256",
+            "semanticMetricsSha256",
+            "worldDiagnosticsSemanticSha256",
+            "mysteryPolicySummarySha256",
+            "knowledgeDiagnosticsSha256",
+            "resourceObservationEnabled",
+            "resourceJournalCount",
+            "resourceJournalSha256"
+          ],
+          "exclusions": [
+            "Native wall durations",
+            "Read-only physical MVCC and relation-size diagnostics"
+          ],
+          "canonicalStateExclusions": []
+        }
+      },
+      "wallMs": 26296,
+      "cleanup": {
+        "closed": true,
+        "hash": "eeeca2ee9d3a482399592c1cf78d2cace7770a9ab4192cf2225e3a239137eb5f",
+        "kind": "database-cleanup",
+        "name": "rc1_world_85a7e993af63dd0c9cdef92c",
+        "observedAt": "2026-09-21T07:32:53.446Z",
+        "oid": 1679154,
+        "previousHash": "82979ccd35e0720ccbb7c7f8a5472215cfbafcab3cced3798e604b033d4e8661",
+        "sequence": 200
+      },
+      "historyKinds": {
+        "database-created": 1,
+        "measured-initialization": 1,
+        "actor-replay-entry": 31,
+        "invocation": 70,
+        "completion": 70,
+        "authorized-policy-choice": 8,
+        "canonical-invariants": 12,
+        "actor-session-complete": 2,
+        "day-summary": 1,
+        "knowledge-observer-boundary": 2,
+        "assertions": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 22,
+      "indexedBytes": 5135820
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-observation-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1e27bc0ae49bd77b99a56b333b3e8987b2993059747a7b1c5c9749d4377c7f7f",
+      "runSha256": "77bc218eecc51134ee26fd9ecbd3073331547642f90bb02b286e97a810170c37",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2160,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "quiet_world",
+        "mysteryPolicySummaries": {},
+        "actualActiveActors": 25,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 4,
+        "metrics": {
+          "playerSnapshots": 701,
+          "ownCharacterReads": 180,
+          "freshPlayerCommands": 690,
+          "legacyCrimeAttempts": 180,
+          "crimeSuccesses": 145,
+          "crimeLosses": 35,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 180,
+          "commandTypes": {
+            "discovery.start": 147,
+            "mystery.start": 208,
+            "discovery.act": 317,
+            "mystery.complete": 18
+          },
+          "observedAuthorizedOpportunities": 1062
+        },
+        "timerCounts": {
+          "directorTick": 25920,
+          "guardedTick": 2160,
+          "guardedSeasonTick": 2160,
+          "health-boundary": 25920
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "712bfc49a9e8c3827e2f048d948a3ca6573805199401f4c38e2991e3d78761cf",
+        "workerScheduleSha256": "b1c0626d69fb39691d3eba65474b848a0e6fa533b5a1e25ed60373a14f88b324",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "93534bd45b04af4a15cd7b65278e0ec3823839a75780b701ccbb3be5e5997d04",
+        "deterministicRandomTapeSha256": "bf449baace19faba44980d6adf8ab1eddc86d396c049723deb85c00522b993ec",
+        "actorTapeSha256": "4f34ea861919930eb2b194458654abe013fb7a1884f0c4d229618cdd272798d8",
+        "policyStateSha256": "7a7143501978764e0e537ffda59dbb7251955306dcd98dec8eac011624518afb",
+        "mysteryPolicySummarySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "knowledgeDiagnosticsSha256": "9df83bf791349022c9dae201a2e78a5a92ff560c2507572b2cacd22c256a06ac",
+        "semanticMetricsSha256": "d31e6815659bcae42b8072cbe228dc0cf254d5868e70a696fe7affa7b1f6789d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": false,
+        "worldDiagnosticsSemanticSha256": "2f484e8d1312811fcb2366c9293a7cc98b583d71f3c22b7ed268f64049156f8f",
+        "resourceObservationEnabled": false,
+        "resourceJournalCount": 0,
+        "resourceJournalSha256": null,
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance"
+      },
+      "wallMs": 1337376,
+      "cleanup": {
+        "closed": true,
+        "hash": "fa5f29588a7edd5f13e7fbb276dfbfd06c98edca9f2dc30622af32053a41d22c",
+        "kind": "database-cleanup",
+        "name": "rc1_world_adae8c566213a33ae86db5f3",
+        "observedAt": "2026-09-21T07:55:35.455Z",
+        "oid": 1686893,
+        "previousHash": "752f77a9e008d6e721677144af891aebf556b7c06a5589aa1ecf993cc81e67e7",
+        "sequence": 15042
+      },
+      "historyKinds": {
+        "operational-guard-check": 2252,
+        "database-created": 1,
+        "measured-initialization": 1,
+        "actor-replay-entry": 2722,
+        "invocation": 4026,
+        "completion": 4026,
+        "authorized-policy-choice": 690,
+        "canonical-invariants": 961,
+        "actor-session-complete": 180,
+        "day-summary": 90,
+        "knowledge-observer-boundary": 91,
+        "assertions": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 403,
+      "indexedBytes": 3270877728
+    },
+    {
+      "directory": "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-replay-1",
+      "source": {
+        "revision": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+        "gitTree": "f5382572347a19263dc423d648d78ccbccc7e094",
+        "checkoutSha256": "7b9f6d5f63b7f267434371d6ad8d751e7b8de6e9c904eb009d05279182bc0f18",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "3d410f3c11a237bed778b5f545693c9fc516219e0f75598096e008a47d73ea30",
+      "runSha256": "c5620383cbfe7918f6f251927034d78c6334b5b4c0b5a553f2cdfaf810cd8b97",
+      "status": "PASS_SCOPED",
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "result": {
+        "status": "PASS_SCOPED",
+        "hours": 2160,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "actorPolicy": "quiet_world",
+        "mysteryPolicySummaries": {},
+        "actualActiveActors": 25,
+        "dailySelectedActors": 2,
+        "seasonalRolloversPerActor": 4,
+        "metrics": {
+          "playerSnapshots": 701,
+          "ownCharacterReads": 180,
+          "freshPlayerCommands": 690,
+          "legacyCrimeAttempts": 180,
+          "crimeSuccesses": 145,
+          "crimeLosses": 35,
+          "exactReplays": 0,
+          "denials": {},
+          "sessionWaits": 0,
+          "sessions": 180,
+          "commandTypes": {
+            "discovery.start": 147,
+            "mystery.start": 208,
+            "discovery.act": 317,
+            "mystery.complete": 18
+          },
+          "observedAuthorizedOpportunities": 1062
+        },
+        "timerCounts": {
+          "directorTick": 25920,
+          "guardedTick": 2160,
+          "guardedSeasonTick": 2160,
+          "health-boundary": 25920
+        },
+        "invariantChecks": 55,
+        "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+        "finalStateSha256": "712bfc49a9e8c3827e2f048d948a3ca6573805199401f4c38e2991e3d78761cf",
+        "workerScheduleSha256": "b1c0626d69fb39691d3eba65474b848a0e6fa533b5a1e25ed60373a14f88b324",
+        "missingRequiredProof": [
+          "All 15 archetypes and 225 runs",
+          "All 13 resource journals at every worker transition",
+          "Complete opportunity acceptance/ignored linkage",
+          "Actor-policy replay across all archetypes and seeds",
+          "Dead-world reachability proof and failure minimization",
+          "Two executions of every longest lifecycle",
+          "Production-equivalent 12-hour soak",
+          "HTTP/provider authentication",
+          "Deployed environment and real cohort"
+        ],
+        "jobOutcomesSha256": "93534bd45b04af4a15cd7b65278e0ec3823839a75780b701ccbb3be5e5997d04",
+        "deterministicRandomTapeSha256": "bf449baace19faba44980d6adf8ab1eddc86d396c049723deb85c00522b993ec",
+        "actorTapeSha256": "4f34ea861919930eb2b194458654abe013fb7a1884f0c4d229618cdd272798d8",
+        "policyStateSha256": "7a7143501978764e0e537ffda59dbb7251955306dcd98dec8eac011624518afb",
+        "mysteryPolicySummarySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "knowledgeDiagnosticsSha256": "9df83bf791349022c9dae201a2e78a5a92ff560c2507572b2cacd22c256a06ac",
+        "semanticMetricsSha256": "d31e6815659bcae42b8072cbe228dc0cf254d5868e70a696fe7affa7b1f6789d",
+        "checkpointRestart": false,
+        "recordedActorAndSelectionReplay": true,
+        "worldDiagnosticsSemanticSha256": "2f484e8d1312811fcb2366c9293a7cc98b583d71f3c22b7ed268f64049156f8f",
+        "resourceObservationEnabled": false,
+        "resourceJournalCount": 0,
+        "resourceJournalSha256": null,
+        "resourceObservation": null,
+        "statement": "Completed only the declared quiet-world workload; no matrix qualification or dead-world clearance",
+        "replayComparison": {
+          "fields": [
+            "hours",
+            "population",
+            "seed",
+            "actorPolicy",
+            "initialStateSha256",
+            "finalStateSha256",
+            "workerScheduleSha256",
+            "jobOutcomesSha256",
+            "deterministicRandomTapeSha256",
+            "actorTapeSha256",
+            "policyStateSha256",
+            "semanticMetricsSha256",
+            "worldDiagnosticsSemanticSha256",
+            "mysteryPolicySummarySha256",
+            "knowledgeDiagnosticsSha256",
+            "resourceObservationEnabled",
+            "resourceJournalCount",
+            "resourceJournalSha256"
+          ],
+          "exclusions": [
+            "Native wall durations",
+            "Read-only physical MVCC and relation-size diagnostics"
+          ],
+          "canonicalStateExclusions": []
+        }
+      },
+      "wallMs": 1438579,
+      "cleanup": {
+        "closed": true,
+        "hash": "16005788c22da68693e6a3defa1d73df4ae17c2e103f9bb90d28232c733ff233",
+        "kind": "database-cleanup",
+        "name": "rc1_world_e0e5038bd0558794a3e03c3b",
+        "observedAt": "2026-09-21T08:20:00.697Z",
+        "oid": 1711346,
+        "previousHash": "08ead12f5bb6218bf3a90d20e423315157d678b1b36e5f390f931e102a5474ee",
+        "sequence": 15042
+      },
+      "historyKinds": {
+        "operational-guard-check": 2252,
+        "database-created": 1,
+        "measured-initialization": 1,
+        "actor-replay-entry": 2722,
+        "invocation": 4026,
+        "completion": 4026,
+        "authorized-policy-choice": 690,
+        "canonical-invariants": 961,
+        "actor-session-complete": 180,
+        "day-summary": 90,
+        "knowledge-observer-boundary": 91,
+        "assertions": 1,
+        "database-cleanup": 1
+      },
+      "indexedArtifacts": 403,
+      "indexedBytes": 3270875978
+    }
+  ],
+  "dailyStateComparison": {
+    "format": 1,
+    "source": "c38fb9bdf8d1e2ec68358b665613e9354347b9e0",
+    "status": "ALL_90_DAILY_STATES_EQUAL_BOTH_RUNS_SEALED",
+    "canonicalStateExclusions": [],
+    "directories": [
+      "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-observation-1",
+      "C:\\Users\\Jorge\\.codex\\rc1-native-evidence\\quiet-world-90day-order-v4-replay-1"
+    ],
+    "days": [
+      {
+        "day": 0,
+        "equal": true,
+        "observationStateSha256": "7049baf4913f2e0c34ba7a34fb0566735ce9051d951c67cf11bbb33c7daea6ff",
+        "replayStateSha256": "7049baf4913f2e0c34ba7a34fb0566735ce9051d951c67cf11bbb33c7daea6ff",
+        "artifactSha256": [
+          "d8413c31dc70778c95705e6fc036eb3ccf30aac97deaa4ba9c9219877f337909",
+          "101699fde99f9a3b2e43602a3d0e771a421be4cfd8f3e22fc38ce713a20d2d64"
+        ]
+      },
+      {
+        "day": 1,
+        "equal": true,
+        "observationStateSha256": "0756317f12074428d7f01bb1012cc71933853ec772cfcee79e236430031900d0",
+        "replayStateSha256": "0756317f12074428d7f01bb1012cc71933853ec772cfcee79e236430031900d0",
+        "artifactSha256": [
+          "55d9e79462d0a20539c6e2c4c8abc5108d1ca5a9477fe61842fcba96364c8857",
+          "1faf8ca01bb0639d246ec30884fba1a7e27362187ff7f4ba8578d1b66d6491b6"
+        ]
+      },
+      {
+        "day": 2,
+        "equal": true,
+        "observationStateSha256": "71ccf887cd19df4fffdc4b826c300b20d8795675c70e71bf33d1971ce1777bfd",
+        "replayStateSha256": "71ccf887cd19df4fffdc4b826c300b20d8795675c70e71bf33d1971ce1777bfd",
+        "artifactSha256": [
+          "77673619abb76799c0cf872e084c48dd98118a240feca47d86530d96713e4a82",
+          "4384097163df1e080e9785edcb9560f7222410af41ee60e289429389cdc3e275"
+        ]
+      },
+      {
+        "day": 3,
+        "equal": true,
+        "observationStateSha256": "c66d3637eb8781e4ea250bc373ceae6dfa03be3328a60a6b45fd6186435dd50b",
+        "replayStateSha256": "c66d3637eb8781e4ea250bc373ceae6dfa03be3328a60a6b45fd6186435dd50b",
+        "artifactSha256": [
+          "74ce471291610055a14557af941de33cdfe857b8585b691ee18f274ae4d7a0bf",
+          "bc68519dba87cb8f445501943bfb49e92bb204bc68c8a87d6f390d1e1e3882aa"
+        ]
+      },
+      {
+        "day": 4,
+        "equal": true,
+        "observationStateSha256": "44e0b3f7709d4c3fef563be8d0f100e444a6612400d6d262ff749d4c2a518fa8",
+        "replayStateSha256": "44e0b3f7709d4c3fef563be8d0f100e444a6612400d6d262ff749d4c2a518fa8",
+        "artifactSha256": [
+          "bbe3d8674d606c99c06e2e44ffc892c99c639981348b577b64c415493bd1ab48",
+          "baf3620e6c49a6630c7a75058fbfe7c0e1f334a240f42fcc29dc2539b2e5af1e"
+        ]
+      },
+      {
+        "day": 5,
+        "equal": true,
+        "observationStateSha256": "d02827c12f8010ee197d66c80387fd4f793f610296cb251355403fb48aeeb531",
+        "replayStateSha256": "d02827c12f8010ee197d66c80387fd4f793f610296cb251355403fb48aeeb531",
+        "artifactSha256": [
+          "e976310da7daa955330d639e31023eee15151b4397bc2373a3fba7ea2ad53489",
+          "cf5b7799aabb839732e010ce66f5471c55b658100faf9ffcaceb920d095719d2"
+        ]
+      },
+      {
+        "day": 6,
+        "equal": true,
+        "observationStateSha256": "566b78774f0391bcee3c7aee27416651db65675b7eec62469680f46af519bf21",
+        "replayStateSha256": "566b78774f0391bcee3c7aee27416651db65675b7eec62469680f46af519bf21",
+        "artifactSha256": [
+          "b4f393afc71c19643388aae7baa11dfe1e4980f32e3431f9b37cdae2f2a532f1",
+          "5b7631421c68f94ed2aabe43a05eddc8cd988011d0b3df09f8de4f948c5d9a89"
+        ]
+      },
+      {
+        "day": 7,
+        "equal": true,
+        "observationStateSha256": "12f9bc3448388d268b44b751f8f2675a51fa98916da2cadee4dfa445707854da",
+        "replayStateSha256": "12f9bc3448388d268b44b751f8f2675a51fa98916da2cadee4dfa445707854da",
+        "artifactSha256": [
+          "2dcb150a2bed0926a9f4334dddb64174f55a58e54c0b32ebbc9c84720d4cf555",
+          "9788d88b2f20cc464fe1b2b7d5def0d20e63335d5afdb30a97da932e42a22650"
+        ]
+      },
+      {
+        "day": 8,
+        "equal": true,
+        "observationStateSha256": "4c1a13444f9b0e9b0d825f9ca03af4695ed2f0a613affde7a10fde9d00aeee23",
+        "replayStateSha256": "4c1a13444f9b0e9b0d825f9ca03af4695ed2f0a613affde7a10fde9d00aeee23",
+        "artifactSha256": [
+          "bd479c794ba4319d43baa9b541f461372bd92f1ce09e3a599098150b2cbf79b4",
+          "eb7d1d799270b77244dafbbda33fbd569b33dadd4adc67fca48bba4939915bae"
+        ]
+      },
+      {
+        "day": 9,
+        "equal": true,
+        "observationStateSha256": "67a8b90641cc5391166a3fb12d7c5acc02ec7a6289ec3b40d993f8e530a0d868",
+        "replayStateSha256": "67a8b90641cc5391166a3fb12d7c5acc02ec7a6289ec3b40d993f8e530a0d868",
+        "artifactSha256": [
+          "fe84079026e3a778540e7c8239ba64eae2bc87d795a2597964e342dd30d9b8f2",
+          "76ef220951aeb2d3160fdec49bbe61dc64608b168ce6f7db55dfbf866a962d76"
+        ]
+      },
+      {
+        "day": 10,
+        "equal": true,
+        "observationStateSha256": "b741619390ae6a8954701c68fb5d206e26060b3c8231ff681126d71accebd499",
+        "replayStateSha256": "b741619390ae6a8954701c68fb5d206e26060b3c8231ff681126d71accebd499",
+        "artifactSha256": [
+          "528272df13509da5488eec25510fb75dbfaca35adba298bdbdc676dd617c0df0",
+          "dd85e8d3a9ad9666148361703cec7637d3c2b1c81e3a161fbc3813cb26a0b060"
+        ]
+      },
+      {
+        "day": 11,
+        "equal": true,
+        "observationStateSha256": "22709e19a96803c5383bbd95791794e16af0aafdff9f5716d9319e8409a33061",
+        "replayStateSha256": "22709e19a96803c5383bbd95791794e16af0aafdff9f5716d9319e8409a33061",
+        "artifactSha256": [
+          "e57e2e1d396e4be8a478f240543be5368f6607f1c896c1e04c86990ef1178a34",
+          "3d391fd76a81f0b3d16eef67730425bc919569f8aab4da59449a1b85124c2238"
+        ]
+      },
+      {
+        "day": 12,
+        "equal": true,
+        "observationStateSha256": "58842fc8082ac026bdeb20ef9288e968d2ff87a3177c2825509893b24247892d",
+        "replayStateSha256": "58842fc8082ac026bdeb20ef9288e968d2ff87a3177c2825509893b24247892d",
+        "artifactSha256": [
+          "7c3d6af48d453cb143fdbc9fa2daf9cd913dd12ca97ad8da03c8f777cfe26f7b",
+          "bce4e7d190e7ac2796747cc9a3d15388f04c8e1c7a6315c217369abff2d5bdc5"
+        ]
+      },
+      {
+        "day": 13,
+        "equal": true,
+        "observationStateSha256": "9c5bb5029bd02573e7f1f2aeab6ae1b02295867f694d1dba66fd58cdabea63d7",
+        "replayStateSha256": "9c5bb5029bd02573e7f1f2aeab6ae1b02295867f694d1dba66fd58cdabea63d7",
+        "artifactSha256": [
+          "58fc4bd25f6f74b550980ee2950ec1533e32addb106ea1e7531e80ebdca3d8a7",
+          "511701b90ffd037d4d3a55c247f64491fa278db3c512fc04a58eceeb0d0a5e92"
+        ]
+      },
+      {
+        "day": 14,
+        "equal": true,
+        "observationStateSha256": "69d5871e5f1217ec68503c7045ed98fcf87e9c138e527104294c45f92b8f6292",
+        "replayStateSha256": "69d5871e5f1217ec68503c7045ed98fcf87e9c138e527104294c45f92b8f6292",
+        "artifactSha256": [
+          "86c25ed1e2557e9caa19f5679fb9ed5e08527c94c5ccd64b6595001d9af9effc",
+          "aaddc5a754518f61ded2c1c110a5baa0add0ebd00d66d457a93081725c341777"
+        ]
+      },
+      {
+        "day": 15,
+        "equal": true,
+        "observationStateSha256": "4125d1d6b52c5ffbcba42afc72330f648eef8662c67395058fcc8844b9c7cee7",
+        "replayStateSha256": "4125d1d6b52c5ffbcba42afc72330f648eef8662c67395058fcc8844b9c7cee7",
+        "artifactSha256": [
+          "711fb5a2e5ba1ade4b1ae3e2e88ef364b54b3e2ad54c0573e9c873fb319977a3",
+          "a93593e896d6d30ae2c8f51e5550ab7bc558b78a45a141da5db700aea0a6ca62"
+        ]
+      },
+      {
+        "day": 16,
+        "equal": true,
+        "observationStateSha256": "a3772396cdf6eff588a29cef79c769f151c1d4b436b15615105eaa5bdcb9eddc",
+        "replayStateSha256": "a3772396cdf6eff588a29cef79c769f151c1d4b436b15615105eaa5bdcb9eddc",
+        "artifactSha256": [
+          "8fffbffe01d1d594b72d0f3235ee66c6ef458ff2580d38e980e36da01e3cd50c",
+          "9069431385dc87967e907e508664d2628e1af513e10b2adb32b97bbb3a9ea330"
+        ]
+      },
+      {
+        "day": 17,
+        "equal": true,
+        "observationStateSha256": "4835432fa108e22035ad8981676b1cfbb80f8fdf5c2eac43d79b8a4dbabf80f2",
+        "replayStateSha256": "4835432fa108e22035ad8981676b1cfbb80f8fdf5c2eac43d79b8a4dbabf80f2",
+        "artifactSha256": [
+          "f51cb0d5907faa015fdee3bd20da210d15b346e301a587f3c89a3b51d176abac",
+          "938d758a4ef64dfd96f9fac621f6a864604f3441633a390c9be0d1d5ddb3df97"
+        ]
+      },
+      {
+        "day": 18,
+        "equal": true,
+        "observationStateSha256": "b88b6f7176a95536b9337d7a68645663e6fb3d87421eaac6b3ea275e9c1235d0",
+        "replayStateSha256": "b88b6f7176a95536b9337d7a68645663e6fb3d87421eaac6b3ea275e9c1235d0",
+        "artifactSha256": [
+          "7681b1fa5e5579093a92d46c736f24d757cdc59b72d9c999940058e1dccf919b",
+          "2b341247b05dcfaf97ee41c98ce8a66af5e8dc77e4a32de0799f7bb01276b6ea"
+        ]
+      },
+      {
+        "day": 19,
+        "equal": true,
+        "observationStateSha256": "36d71f2b5229e52acda0709e6ee5558c4a1d6b998a6fb6318efc394d44a6dabf",
+        "replayStateSha256": "36d71f2b5229e52acda0709e6ee5558c4a1d6b998a6fb6318efc394d44a6dabf",
+        "artifactSha256": [
+          "4f586d23ef441117d25dcc847807d9c992695b20cc3d679976facaff9edc1c40",
+          "2019b48d55adc16d532bf38643209a54ad58ab957c0280d7035418b596d66c4c"
+        ]
+      },
+      {
+        "day": 20,
+        "equal": true,
+        "observationStateSha256": "40a86dcac45667a5219b2aaf9811c482d63215c3e82de3ca96498313d327f7b8",
+        "replayStateSha256": "40a86dcac45667a5219b2aaf9811c482d63215c3e82de3ca96498313d327f7b8",
+        "artifactSha256": [
+          "1746d62b65b07698ee9d2f9e73dce7a80f6fbc545f298b8854c231b752c62352",
+          "4ff864f24d5e29c6f7b9056ead40c4f866f5acb643d4b34f98bd6ccdd233fe07"
+        ]
+      },
+      {
+        "day": 21,
+        "equal": true,
+        "observationStateSha256": "fca2675bdf9cd67e64ac69debe9b50ea379f039b9cd05e51a6eaa63777935c38",
+        "replayStateSha256": "fca2675bdf9cd67e64ac69debe9b50ea379f039b9cd05e51a6eaa63777935c38",
+        "artifactSha256": [
+          "52a298a243cdadae1df6a7b31f6c422d8f7e1c304d8c06800978aff234a2699b",
+          "6ed73ee354607ebceb94f3e94858c9b9b35efc40bb75961b63e6ea88661fea54"
+        ]
+      },
+      {
+        "day": 22,
+        "equal": true,
+        "observationStateSha256": "aaa46b52773f3f898e84c2ce5871c3ecfc8753bf121ae37a6a9eb726009162a4",
+        "replayStateSha256": "aaa46b52773f3f898e84c2ce5871c3ecfc8753bf121ae37a6a9eb726009162a4",
+        "artifactSha256": [
+          "acbe98d063c6d5b6736d29072f83bc0d66a5b5a6bb1950bfec031e89610df53c",
+          "a7d0560df1bd27f157df1d679525413a523cbf9d80850d1ce1e583bf59577b03"
+        ]
+      },
+      {
+        "day": 23,
+        "equal": true,
+        "observationStateSha256": "150a3b8560f60315d7753371caba14d0ad5b272dcf21dbdbe20907b51c1f1a29",
+        "replayStateSha256": "150a3b8560f60315d7753371caba14d0ad5b272dcf21dbdbe20907b51c1f1a29",
+        "artifactSha256": [
+          "88ba6e7b8c0d234fad8f0ed0a37ac79fbbf7c496d0beb2abee8003918965842b",
+          "f22e3ea9b52c978fd02ad04c36031806bd51edacb06056bbccb25821d96bce13"
+        ]
+      },
+      {
+        "day": 24,
+        "equal": true,
+        "observationStateSha256": "4486d7b45466a7f766196b5cc326908eb2b095f17c675dc3e3eda495fe98d246",
+        "replayStateSha256": "4486d7b45466a7f766196b5cc326908eb2b095f17c675dc3e3eda495fe98d246",
+        "artifactSha256": [
+          "19c7ec6cbb302c73596c4a77079a7d19f4ff5bb710d453d33692ea11b11df853",
+          "0d0b7bff0beba97e4d5a8eb4fb4ac6bd1c02938a882c20fb56495235e017cd7c"
+        ]
+      },
+      {
+        "day": 25,
+        "equal": true,
+        "observationStateSha256": "dcc763d08ac52cde3eb41cde01487d3247b559c76ff0d1b2d755d6bf4afc4905",
+        "replayStateSha256": "dcc763d08ac52cde3eb41cde01487d3247b559c76ff0d1b2d755d6bf4afc4905",
+        "artifactSha256": [
+          "845284ee20eea31bc25d6ddd40d3d5a2440562e15638dc15d28fa66a50e9688e",
+          "05c7a50f9bfff18282745116a77cf1cc1dd49707651b9b05381d7840298d33ea"
+        ]
+      },
+      {
+        "day": 26,
+        "equal": true,
+        "observationStateSha256": "620674f8774da8277a1beae909fb6995ddc3a5f7bb0b73c7e704922d8dd39ded",
+        "replayStateSha256": "620674f8774da8277a1beae909fb6995ddc3a5f7bb0b73c7e704922d8dd39ded",
+        "artifactSha256": [
+          "92abd6a7efc5091c9b2785d011fb95e88fef801a81a8845d71f5e146616cc9c1",
+          "28af5daa5b63563f308502e8b7b39188909689ba6ebc1ff012e0cf2c0d744c7f"
+        ]
+      },
+      {
+        "day": 27,
+        "equal": true,
+        "observationStateSha256": "6859c6c0c396a2e1c8cfc613788b746c2b44bc8dc8726cca4be8831d1d901aad",
+        "replayStateSha256": "6859c6c0c396a2e1c8cfc613788b746c2b44bc8dc8726cca4be8831d1d901aad",
+        "artifactSha256": [
+          "cba98df74db4e996a923a1d665a015dc30c859a50fa0fdfa0a751285fec16b64",
+          "ab639866148df555de236f07669aaa5a6d98d829afba513d94e9bf1b000289dd"
+        ]
+      },
+      {
+        "day": 28,
+        "equal": true,
+        "observationStateSha256": "5cf620470d1e26a07b733342b34b3a77820fdafb42cb634ae07027a2dcf7d3d3",
+        "replayStateSha256": "5cf620470d1e26a07b733342b34b3a77820fdafb42cb634ae07027a2dcf7d3d3",
+        "artifactSha256": [
+          "79635ff9ab9a84e8b786a7719b06d42a61ec6752f1df5e072a94b5b97df4a3cf",
+          "60ce3eb1b11ace89cd425e89bbae57c4a16350da432788903ddb108e3a67ecb3"
+        ]
+      },
+      {
+        "day": 29,
+        "equal": true,
+        "observationStateSha256": "452306510c549ea3ee37e3b4ac9d53f4f04cbeb0b5e5a3937329c6134805bf69",
+        "replayStateSha256": "452306510c549ea3ee37e3b4ac9d53f4f04cbeb0b5e5a3937329c6134805bf69",
+        "artifactSha256": [
+          "605f3ab26bf497d79ce422bc944cde02a2639c6d1570339e0f7bece0f34f4f40",
+          "69c350fdfe6816f22c134ac8586a0ab3e7fc5fa45c35225942c5ec352bcbba1c"
+        ]
+      },
+      {
+        "day": 30,
+        "equal": true,
+        "observationStateSha256": "afc116c2f250ca2335841541c696b9bad22d17ca5812b852b9b3c30f9a46c741",
+        "replayStateSha256": "afc116c2f250ca2335841541c696b9bad22d17ca5812b852b9b3c30f9a46c741",
+        "artifactSha256": [
+          "e7ce005ed88918c641a2c76427df851b532c3cfab39dc46de5097b3c0bb51d0e",
+          "9836d88c6120d3021515df5eb56ffbaca568f838471accaa934091a8f67f79df"
+        ]
+      },
+      {
+        "day": 31,
+        "equal": true,
+        "observationStateSha256": "844975fba81385fa40b72a9e26533152ed3e6ad0b41d372c77d9124b1a527fbb",
+        "replayStateSha256": "844975fba81385fa40b72a9e26533152ed3e6ad0b41d372c77d9124b1a527fbb",
+        "artifactSha256": [
+          "388ac1321636a44b772b90ab2d037b15399ce2ef7540e0ccb1171ba86e1e54a6",
+          "3214cfee377e70d25b1c2ecde5f96e3706b25b8f0ac49f3019fe8388d393fb53"
+        ]
+      },
+      {
+        "day": 32,
+        "equal": true,
+        "observationStateSha256": "d3917e51556b7550f1b4400ad7a643bd6c752f18e2e714758ae97534be1560b4",
+        "replayStateSha256": "d3917e51556b7550f1b4400ad7a643bd6c752f18e2e714758ae97534be1560b4",
+        "artifactSha256": [
+          "83794cf050ca6c92a7f47c4f55063ed924b3ca788e5c826b34bc9f00d0757a65",
+          "df9b4b17f153b0798a54156d2e87c327550b44732cdd86a1d57f1f813b79a51d"
+        ]
+      },
+      {
+        "day": 33,
+        "equal": true,
+        "observationStateSha256": "8bbb50283aff4759cc45b9cac7fd01fcabac1a743a0834c2ee111c3fb3408f1b",
+        "replayStateSha256": "8bbb50283aff4759cc45b9cac7fd01fcabac1a743a0834c2ee111c3fb3408f1b",
+        "artifactSha256": [
+          "070ccc80475f503d3871d5ff4624dbe8b3ec0a1b6cd118f28845aae2eda9499b",
+          "e0ed1d53a544595e615f5162881798636d538d63ff1ed2346edea57cb7934996"
+        ]
+      },
+      {
+        "day": 34,
+        "equal": true,
+        "observationStateSha256": "bdf021a482ddaf37b44ce90aeffa6cde0d6af5088eb300529a86415780b94b7a",
+        "replayStateSha256": "bdf021a482ddaf37b44ce90aeffa6cde0d6af5088eb300529a86415780b94b7a",
+        "artifactSha256": [
+          "77a84d13f5d0a356e2671c48f930066bce9382a43e542f3047f6a87791abeed9",
+          "52b742ac44dbec726f628ab63df6752578188cf8dd1cb6779b0b66954c5472b3"
+        ]
+      },
+      {
+        "day": 35,
+        "equal": true,
+        "observationStateSha256": "7d4fde0d96e4acee2a63f89c6c7a14c651b7f375e34a0844a9753957f3d3d12e",
+        "replayStateSha256": "7d4fde0d96e4acee2a63f89c6c7a14c651b7f375e34a0844a9753957f3d3d12e",
+        "artifactSha256": [
+          "9df21d47ecea453544472f4b95e360ab078846bf2837c5aaa092d99fe7dee874",
+          "9954b0ad62c0ad38902d38605aa5c27c3a42e4fd0290a27f934374923fec221d"
+        ]
+      },
+      {
+        "day": 36,
+        "equal": true,
+        "observationStateSha256": "c1364d42eab6e348b9cfcfee5dbc3e2d4bcefbd3a45ffdc69799183f211b469e",
+        "replayStateSha256": "c1364d42eab6e348b9cfcfee5dbc3e2d4bcefbd3a45ffdc69799183f211b469e",
+        "artifactSha256": [
+          "72d9635ab5f5442dc70d76d2d64687321bcafac1c0679dba3abd1af9b24f0caa",
+          "6cd819161b6326c30e923d38b23f2b12d9012f4226bb93d67d19f5bf3e8f7199"
+        ]
+      },
+      {
+        "day": 37,
+        "equal": true,
+        "observationStateSha256": "24d3b6c133977b2ced5fc5cf8171d27a2f9759910c54918d3da0fa9fbd343c64",
+        "replayStateSha256": "24d3b6c133977b2ced5fc5cf8171d27a2f9759910c54918d3da0fa9fbd343c64",
+        "artifactSha256": [
+          "be2568209bc3992d83a7bfa34ac0d53360ce74a541e4b1d809ff2132f31b106d",
+          "859291510410364db771c98fd8f65c923d5cd55d41fb00903c2378d2cba9ce76"
+        ]
+      },
+      {
+        "day": 38,
+        "equal": true,
+        "observationStateSha256": "f2585abedb76253d58c0e55025e1a2ed1cc0cf3ebe08942a69923c2f1340fa57",
+        "replayStateSha256": "f2585abedb76253d58c0e55025e1a2ed1cc0cf3ebe08942a69923c2f1340fa57",
+        "artifactSha256": [
+          "d2b83692ed69143b75a7751ba6d6bfc10fc911bbc5e2eac0280a5788dbd673e2",
+          "5b7cbd7b1f2413c9e129875eeddaa3917b40d73ef1a91ce86b48d571a16161c2"
+        ]
+      },
+      {
+        "day": 39,
+        "equal": true,
+        "observationStateSha256": "31e02ff5af80d2dbf1d98ef31022eded5055f8a989bbad3222188375b3de6916",
+        "replayStateSha256": "31e02ff5af80d2dbf1d98ef31022eded5055f8a989bbad3222188375b3de6916",
+        "artifactSha256": [
+          "ce3da88ed051fee37352d4d454b24bd4178b719583ab6cc5b49e5b361225b781",
+          "0f09c9eb49aefa9155ece672b62c708c26cfaa99ac32f5ae340f9edb2b4791ba"
+        ]
+      },
+      {
+        "day": 40,
+        "equal": true,
+        "observationStateSha256": "2d55cd4c7fe980737c342e5093174553519b9d16a83b166b3b44726348217160",
+        "replayStateSha256": "2d55cd4c7fe980737c342e5093174553519b9d16a83b166b3b44726348217160",
+        "artifactSha256": [
+          "ce9e07c741c94b998036db057c7afbddbd9889509f1c5a3b1dd351af657172f2",
+          "263fd69489496b53c832bf1558f44207bd46be9f043100a3d4bb59c542da48d7"
+        ]
+      },
+      {
+        "day": 41,
+        "equal": true,
+        "observationStateSha256": "352300258530adb01e3311dacdb7d881a902b06b0a424bdc04a4fdd7dbcf2179",
+        "replayStateSha256": "352300258530adb01e3311dacdb7d881a902b06b0a424bdc04a4fdd7dbcf2179",
+        "artifactSha256": [
+          "6d2087f93c1eb1bacbdb7b7dd2ee9b45df5f80a641eae4af8a66edd53087e5a0",
+          "7da7a1e92fb800abf30a8d89a91e140120f907fe44a71be02e4e6fa18832dc4f"
+        ]
+      },
+      {
+        "day": 42,
+        "equal": true,
+        "observationStateSha256": "3718fa84646a721f8c39529a1396de1061872fa3ed50f3542a0e9866815500c5",
+        "replayStateSha256": "3718fa84646a721f8c39529a1396de1061872fa3ed50f3542a0e9866815500c5",
+        "artifactSha256": [
+          "41b3a322e6bb87c6a7d567be6296d453e3379673762476729b10e8640cc06bba",
+          "1ad6fcbe2b8ed468a7319d1c2ff73bd9883c9e3f8d526f7bc32fc45d4ed99f98"
+        ]
+      },
+      {
+        "day": 43,
+        "equal": true,
+        "observationStateSha256": "cc88dc3a0242feb36e88772a324a58124bc00b4f4e3ab81248ea6cd8376be78f",
+        "replayStateSha256": "cc88dc3a0242feb36e88772a324a58124bc00b4f4e3ab81248ea6cd8376be78f",
+        "artifactSha256": [
+          "b0cb5b2596b8387a5df40e6a6b80989af590e2cf776189ca9934d21f4e41db16",
+          "33f365c8a67b4ca229fc5dbead997bc99b17279793c9f6b3447fe60c9338cd76"
+        ]
+      },
+      {
+        "day": 44,
+        "equal": true,
+        "observationStateSha256": "b2fef575aea8e2d8754277f4a41f5a9bc01fb220a2e2b1e9f7e865a67e7bf03e",
+        "replayStateSha256": "b2fef575aea8e2d8754277f4a41f5a9bc01fb220a2e2b1e9f7e865a67e7bf03e",
+        "artifactSha256": [
+          "bd96c2229648bd1b3306522c01ad7ca4e661bad3078e54b4b48392020c74945d",
+          "37e0632d7abc9b8cdc5701f2c2ca366df9177ebfc38d913aba0c3e568587c61d"
+        ]
+      },
+      {
+        "day": 45,
+        "equal": true,
+        "observationStateSha256": "4db3b3a01e0e8b06352913a034e3a02f747bf52590fe73b6a8a65942ae3e8d80",
+        "replayStateSha256": "4db3b3a01e0e8b06352913a034e3a02f747bf52590fe73b6a8a65942ae3e8d80",
+        "artifactSha256": [
+          "f84172118f75f7b8e1b419a5e6fe925892e04e8f52754d80da097c85d8549f03",
+          "df30b683bf9ec96841164f61452456091de044327cdcb4039e95db65516b89b7"
+        ]
+      },
+      {
+        "day": 46,
+        "equal": true,
+        "observationStateSha256": "df98caddb64eaff031e714c763c6b2f11a8acf60f4f1684cb4046802948809fa",
+        "replayStateSha256": "df98caddb64eaff031e714c763c6b2f11a8acf60f4f1684cb4046802948809fa",
+        "artifactSha256": [
+          "fdff3aea255011dca226352e7af82b2ab76a402757918c26d6d15a6815440d00",
+          "641b2be78873407b45221fe4b3cd693fc771179c3c19ac160cc87ab4a9d96f6f"
+        ]
+      },
+      {
+        "day": 47,
+        "equal": true,
+        "observationStateSha256": "3c11e5e178d8834d3c347d2b3b10bc12e8c4786859941489b5d952a479cd3ec1",
+        "replayStateSha256": "3c11e5e178d8834d3c347d2b3b10bc12e8c4786859941489b5d952a479cd3ec1",
+        "artifactSha256": [
+          "db1d9a305f77888592508bc9cc6ab8392d794173c81c1a1a67aecf457f902077",
+          "c5fcd5878b30ecdd6f68350ce68cd8c31f0d99ab1e4d45363e565baec59d7ee7"
+        ]
+      },
+      {
+        "day": 48,
+        "equal": true,
+        "observationStateSha256": "43767236c2300d4dc47338ad8e2de8611e26376270b181083bfb50f4ab19c104",
+        "replayStateSha256": "43767236c2300d4dc47338ad8e2de8611e26376270b181083bfb50f4ab19c104",
+        "artifactSha256": [
+          "a0e1477b7ea5977557bced367d84d11ecda1ec75a14cbfeb8778a59a204c5d18",
+          "98269f07cf402cb18e16a1f392219294bc15f8afb1bac5b0994b692dd3161366"
+        ]
+      },
+      {
+        "day": 49,
+        "equal": true,
+        "observationStateSha256": "98988e51e567daca20fdfe05637ebf6b36c6b7be206cde8930829764e94b7316",
+        "replayStateSha256": "98988e51e567daca20fdfe05637ebf6b36c6b7be206cde8930829764e94b7316",
+        "artifactSha256": [
+          "902de48d5de8d69faf44e856ab251e41b260c7cbf453a934872c4f59296cbe90",
+          "455419d088d96f390c9cded0455b112849d9676abcb7d2b37b5abc0285d000b2"
+        ]
+      },
+      {
+        "day": 50,
+        "equal": true,
+        "observationStateSha256": "f954f9dd02e5d838656309b4a3ac504dea5e5092af7e83572a70c9514d6a8656",
+        "replayStateSha256": "f954f9dd02e5d838656309b4a3ac504dea5e5092af7e83572a70c9514d6a8656",
+        "artifactSha256": [
+          "cc7def814b44fcc3c9ec74e7c68c63b40f8a3949a4159e60c780933f1ce4a1c2",
+          "7b3453d87c5e6b6e3a73bb204f221e428ff8580cc03dcc3142da8b4119c86314"
+        ]
+      },
+      {
+        "day": 51,
+        "equal": true,
+        "observationStateSha256": "2eecc1b5e7465792fb845f5e8093b857e69abd982228a07c424200f611a8daa0",
+        "replayStateSha256": "2eecc1b5e7465792fb845f5e8093b857e69abd982228a07c424200f611a8daa0",
+        "artifactSha256": [
+          "af67908ce8c177da3aba74df6d0d9cc56c5d30ae9be4fa5b558ca6a0dc9fb61d",
+          "0165f525663a981d293e7642e26e07360dee4a1318bef851f0872fbc0098a8e4"
+        ]
+      },
+      {
+        "day": 52,
+        "equal": true,
+        "observationStateSha256": "ba395b7a5e20a65d92ce148d90cb218ebb5046fe80c3722892632ba0c0ca4849",
+        "replayStateSha256": "ba395b7a5e20a65d92ce148d90cb218ebb5046fe80c3722892632ba0c0ca4849",
+        "artifactSha256": [
+          "81116943fdc871019465f66cb958d69aea8c442a2207df64da660eb49ec4fc1f",
+          "9dc8f233e39fd61a9a5c96822396cade5a207b4ff33c72ceea71bd22739c091d"
+        ]
+      },
+      {
+        "day": 53,
+        "equal": true,
+        "observationStateSha256": "34d0a2ab18db924d10788b8864ab0a4e81f5aad0f72ba4595446d1e4e428a521",
+        "replayStateSha256": "34d0a2ab18db924d10788b8864ab0a4e81f5aad0f72ba4595446d1e4e428a521",
+        "artifactSha256": [
+          "d04bf9e28f8fd58906ca746efa5e7c6d66caec7b85107537e5ec508c27f99c70",
+          "c78685b2846cf2b54f14839921b9ad0e34658d2b46f2b5f764ec52beb08f022a"
+        ]
+      },
+      {
+        "day": 54,
+        "equal": true,
+        "observationStateSha256": "3493ca46a43c50c6b400580fbb238d588fa29a242d70cf22ea1f7352764461ac",
+        "replayStateSha256": "3493ca46a43c50c6b400580fbb238d588fa29a242d70cf22ea1f7352764461ac",
+        "artifactSha256": [
+          "1b85417aa3a366181d5ea2bc48a432dcd2678c4efb9f272bae83e6c444f1c0f6",
+          "20eedb000fb43c2b4d279b4f9e323f5e5a50267e5d48dbdc7a89ecdf756259ba"
+        ]
+      },
+      {
+        "day": 55,
+        "equal": true,
+        "observationStateSha256": "a8dbae7753c453fbb609b2b637028f2330330d6a027cc50db50912e1bcfc6491",
+        "replayStateSha256": "a8dbae7753c453fbb609b2b637028f2330330d6a027cc50db50912e1bcfc6491",
+        "artifactSha256": [
+          "6ddff3e53421cd77ef63a3657e440b2ee69d065f3ca8e683e22d54ad8f98704f",
+          "c3e184e2af6098d048ef072cbdc2406aef6adf9613dcabdd9330f2469df7aa81"
+        ]
+      },
+      {
+        "day": 56,
+        "equal": true,
+        "observationStateSha256": "67b60e185abb630d6783c1ee17d46a58e08a7fd383c8685140bc72e6a6769541",
+        "replayStateSha256": "67b60e185abb630d6783c1ee17d46a58e08a7fd383c8685140bc72e6a6769541",
+        "artifactSha256": [
+          "652c5283e71696d8174a2979e5fb1caa83200aebae7edd082b232fe2995ee4a7",
+          "1a474362f09998520994e4ec1804d6fd2c558954be4c45628a95984d450b074b"
+        ]
+      },
+      {
+        "day": 57,
+        "equal": true,
+        "observationStateSha256": "5d898c2e9fe5c59a130d0449696d3f459f9f43f22c4c26591e70f0da95838c38",
+        "replayStateSha256": "5d898c2e9fe5c59a130d0449696d3f459f9f43f22c4c26591e70f0da95838c38",
+        "artifactSha256": [
+          "b5aa553acb800ca632616e3cab0631d481182b070687bb65a03f4a2f268d7473",
+          "4e9e27ec70ee2664dd0dace4087acd4d118597d122e3e520a7037eae343b0464"
+        ]
+      },
+      {
+        "day": 58,
+        "equal": true,
+        "observationStateSha256": "25bf0f789f775425aab65270ab0d7e241f82ef296d6933872ce83981939ddb78",
+        "replayStateSha256": "25bf0f789f775425aab65270ab0d7e241f82ef296d6933872ce83981939ddb78",
+        "artifactSha256": [
+          "a11cd938f4dc5088da1a03333c231ef19f48cea0063713cfeb3dcff82fe608f6",
+          "2ab91768de0eb5c43f8a9bd684719ccecd5dd73515f450bc0b6463b6dbd5eb3b"
+        ]
+      },
+      {
+        "day": 59,
+        "equal": true,
+        "observationStateSha256": "8944b490d61630225866fe55643af80efcc3870bef00ff307e6ff11049ae2d35",
+        "replayStateSha256": "8944b490d61630225866fe55643af80efcc3870bef00ff307e6ff11049ae2d35",
+        "artifactSha256": [
+          "0f945a087e00ef4ffb37ea2de5683814b7ab882626e6bc89b639ed33567f4063",
+          "c0971314b8d8b35a7d6b25b9dfb7ed892222f5ee22fb7d40b6f08efc4f29223e"
+        ]
+      },
+      {
+        "day": 60,
+        "equal": true,
+        "observationStateSha256": "15cbc485d5b02cfd7db893f5b0afc17f044d2116aa383cb091fc838dcc93d0da",
+        "replayStateSha256": "15cbc485d5b02cfd7db893f5b0afc17f044d2116aa383cb091fc838dcc93d0da",
+        "artifactSha256": [
+          "0f8a8f3cd70b2ccb347deafa3e26986c85ad84a0832ada60cb17af8e4065ca56",
+          "32e30e9924b818eaa12e230bd64f18050714263c532606922152564100d44a45"
+        ]
+      },
+      {
+        "day": 61,
+        "equal": true,
+        "observationStateSha256": "95d0236089e72808fadc71d034ec14f43da6de2ae7e1ef12a51533e2d56eb70a",
+        "replayStateSha256": "95d0236089e72808fadc71d034ec14f43da6de2ae7e1ef12a51533e2d56eb70a",
+        "artifactSha256": [
+          "7e13fa95e2cee5248c980035b4752f165a499be2011dd7a4b471eea68364bd70",
+          "c30d4abe37957d00a23d25c61f14e7a76f1e6ae9492f3d4e56594dc001d00b8e"
+        ]
+      },
+      {
+        "day": 62,
+        "equal": true,
+        "observationStateSha256": "627a2a80bb9e0f8644e6be17abee8ae679a36bd65d400b7570b249cd6d05dbf1",
+        "replayStateSha256": "627a2a80bb9e0f8644e6be17abee8ae679a36bd65d400b7570b249cd6d05dbf1",
+        "artifactSha256": [
+          "9a28821d98f8af93ad90eb1e24e4be17c0813f4f5e824194d0d3e3a7d1b21d18",
+          "f5f4042e6027a3180922ab5b12235da125e5b9fe2b33d834f525bcdf23d9e2cb"
+        ]
+      },
+      {
+        "day": 63,
+        "equal": true,
+        "observationStateSha256": "fa38bf2651cf530935f3134eb6ed891f030d832fb36d89e4c85a72166ca7c782",
+        "replayStateSha256": "fa38bf2651cf530935f3134eb6ed891f030d832fb36d89e4c85a72166ca7c782",
+        "artifactSha256": [
+          "b440d7f1770ee47c57156c8cc08cf360b71ec9bfd0f32159e5aeaa379099e786",
+          "65093707984f4ed583a649c58b14ada587294f88e5251b2d89f8f272f9079a47"
+        ]
+      },
+      {
+        "day": 64,
+        "equal": true,
+        "observationStateSha256": "afbb4789f9bfd5471eb96289b07a6437d0d2dfb25602dbdb39f47a89b752946d",
+        "replayStateSha256": "afbb4789f9bfd5471eb96289b07a6437d0d2dfb25602dbdb39f47a89b752946d",
+        "artifactSha256": [
+          "9c8702b9664de585e56b01ba963ee4e21650c0beef894579227bd18e82668c43",
+          "5415bc0b6b1911ead6f798c8af40a12e381e8d2f70fb3631e54870f146e1e1c0"
+        ]
+      },
+      {
+        "day": 65,
+        "equal": true,
+        "observationStateSha256": "9ae6a1fb124fdf66a1561dabc31b7b23f2dd4bf8d45b2c14466d4226c3eecea1",
+        "replayStateSha256": "9ae6a1fb124fdf66a1561dabc31b7b23f2dd4bf8d45b2c14466d4226c3eecea1",
+        "artifactSha256": [
+          "7b056f3cf6162aa74eb68612ff143b67d2d5f9aa7f449b78b8d6767951fb5629",
+          "4f7f5db3efe1450f0a32b3091249c0477158ef05c29799db8b30175f41ded6d8"
+        ]
+      },
+      {
+        "day": 66,
+        "equal": true,
+        "observationStateSha256": "141881d88d142522dc97618b2575b1ca5f1ab72901953f51518d831690dd732a",
+        "replayStateSha256": "141881d88d142522dc97618b2575b1ca5f1ab72901953f51518d831690dd732a",
+        "artifactSha256": [
+          "237e982a764d283a9cbcb852667d804f028b7dc44cc9e1502b9a0a731d37edfd",
+          "50873571908ce0fde96b1047912e5aeb0b4bf7d336881fa4a89d7803023d8ce5"
+        ]
+      },
+      {
+        "day": 67,
+        "equal": true,
+        "observationStateSha256": "5752a5239697d9e58eda1107da0d32a008afca82233ffb1df52b7aff039449e9",
+        "replayStateSha256": "5752a5239697d9e58eda1107da0d32a008afca82233ffb1df52b7aff039449e9",
+        "artifactSha256": [
+          "81f9cfefdaf56d55597bcfc525d3336cef48aa8297e7a17299af588b50b6265c",
+          "c74cdf8fc9a9fc248b14d27f2d5f3d0c67f40e8edd2a6276f9e9da30ece8f2e5"
+        ]
+      },
+      {
+        "day": 68,
+        "equal": true,
+        "observationStateSha256": "5bb3e714ddb7389f436c412fabdb69d7bcf6431f850d04bf0ab34b34865a77cb",
+        "replayStateSha256": "5bb3e714ddb7389f436c412fabdb69d7bcf6431f850d04bf0ab34b34865a77cb",
+        "artifactSha256": [
+          "4830ed52acf49757f3e29dfbe4f7a5bee04969e4cb01f0301fe55ddde9e45297",
+          "5d86b6f7ff2d08cab7d0dd4aea8bff0e2fdf4c1b9768a07bff4d1f6dc0c7d555"
+        ]
+      },
+      {
+        "day": 69,
+        "equal": true,
+        "observationStateSha256": "cdb23b541308ee7ffaa1f32cf199b53dd936fabaf3809decd89e59ee1e8387a8",
+        "replayStateSha256": "cdb23b541308ee7ffaa1f32cf199b53dd936fabaf3809decd89e59ee1e8387a8",
+        "artifactSha256": [
+          "f3cb988022b9e1c3ca327dd66ee63873896ccd83c3763ee9700c1d8f2be23c2f",
+          "781da4c2c5d3ba64ea26ebecbfb86129f94bb4f010a78e28099e7d451eb49884"
+        ]
+      },
+      {
+        "day": 70,
+        "equal": true,
+        "observationStateSha256": "f18186ff79f7d83b7ff2a9a87bbb098db671f90174ca7b3106fdebcee87f7076",
+        "replayStateSha256": "f18186ff79f7d83b7ff2a9a87bbb098db671f90174ca7b3106fdebcee87f7076",
+        "artifactSha256": [
+          "decdf0071b2c86c66bb0f9d0e2a06a1a356081f98f4e7fb1260e062c90e1ccc9",
+          "914bb138528025b89b282236d977e6548538eaa700d935e1773a0e633b0afaa2"
+        ]
+      },
+      {
+        "day": 71,
+        "equal": true,
+        "observationStateSha256": "a7bb575432b3c7f7b98bb857b27b52d05c1b3a00e1299898baac4172fe91dccf",
+        "replayStateSha256": "a7bb575432b3c7f7b98bb857b27b52d05c1b3a00e1299898baac4172fe91dccf",
+        "artifactSha256": [
+          "704e756cc0291c30c90f3ed94d951c7db893a1b66025ec7e7b0d9ba52f120208",
+          "b9ebe3c856d682b670dc4eb8ebff34d59ca3b0f88407cbd23d876839604ff522"
+        ]
+      },
+      {
+        "day": 72,
+        "equal": true,
+        "observationStateSha256": "a181d1a33a088a3977b1a108214a2bad5736d0318d546437896912b577508668",
+        "replayStateSha256": "a181d1a33a088a3977b1a108214a2bad5736d0318d546437896912b577508668",
+        "artifactSha256": [
+          "7e53b83f553a798cddbd72675b153c304a11471ca1ac3fc24dc9cfe438b689a2",
+          "34ef9dc683c4965eec28a10ece3e2f1503951c0024cbfb88511d8144257e297e"
+        ]
+      },
+      {
+        "day": 73,
+        "equal": true,
+        "observationStateSha256": "5bcec4d37f0492a054cf800f059ccbebb698f9e1f26da394d2864537061035dd",
+        "replayStateSha256": "5bcec4d37f0492a054cf800f059ccbebb698f9e1f26da394d2864537061035dd",
+        "artifactSha256": [
+          "7e3c3274fcf530aa56cb48e5611063057dbd6cb0efbc05bca47ccb3d91f352bb",
+          "6f24507964c3d45b201b811bed129b7e236a138b5f384e3dc1d0dad527351544"
+        ]
+      },
+      {
+        "day": 74,
+        "equal": true,
+        "observationStateSha256": "02d26ca3ff82150d5f88b028f582ac49f298eb22c381b1d0436b48dd2955903d",
+        "replayStateSha256": "02d26ca3ff82150d5f88b028f582ac49f298eb22c381b1d0436b48dd2955903d",
+        "artifactSha256": [
+          "dcc298e3ace0be60a1b414d74b1defcbad23006e74f04586167d941ab113fe3b",
+          "5f34a508d29579eb143cf247bf5f706a6a92d774c6f219b1e4792a3cc4df5b8e"
+        ]
+      },
+      {
+        "day": 75,
+        "equal": true,
+        "observationStateSha256": "6c0d09796dd9d5927da7cfac84e2f1fd54156ce5e14e44585ed3f568aa348705",
+        "replayStateSha256": "6c0d09796dd9d5927da7cfac84e2f1fd54156ce5e14e44585ed3f568aa348705",
+        "artifactSha256": [
+          "838229cbc496e22d4326ae03b3719efe187b5c78667c659b61aad54c9e6b1463",
+          "c789dee06b282de15b9e467494efb14d302849afece96cef1481fd5465f06827"
+        ]
+      },
+      {
+        "day": 76,
+        "equal": true,
+        "observationStateSha256": "bbecda15d74259dc8801d1d7094843378c0cbf3227930edfa56b86dae14d3166",
+        "replayStateSha256": "bbecda15d74259dc8801d1d7094843378c0cbf3227930edfa56b86dae14d3166",
+        "artifactSha256": [
+          "83c1e349e2aae6bf8078f33b624f4b9c12241675f51ca546979761972c70d60a",
+          "42cda8a4c4c4150e7a17757de375934c428e7255d3d5762d9524ccea48678ab9"
+        ]
+      },
+      {
+        "day": 77,
+        "equal": true,
+        "observationStateSha256": "d3049cdc7fa299572c88749dab2528a2115ce98207977ef013a206f013c461b4",
+        "replayStateSha256": "d3049cdc7fa299572c88749dab2528a2115ce98207977ef013a206f013c461b4",
+        "artifactSha256": [
+          "451bd2c1563d7b0e56078df9306265b484642c84b455f7339a33de5022f5b09f",
+          "4f2289f58dbfb08f9f84e16ea95506ecb9284d5b8ce522cb9cff73bec8c51b0f"
+        ]
+      },
+      {
+        "day": 78,
+        "equal": true,
+        "observationStateSha256": "50b2afa01c8a3908dd53d5a069fbd3aacbed17b0c1c83f68c376b8ef1ba51ac9",
+        "replayStateSha256": "50b2afa01c8a3908dd53d5a069fbd3aacbed17b0c1c83f68c376b8ef1ba51ac9",
+        "artifactSha256": [
+          "ca1f2371d952e8561e8c6dde5bc887a9d557de2dfca393bb6147b9584d4c3871",
+          "ac6d60c168cbcb31f99362a680de6b07e43d85565f1578155a444264ef69a693"
+        ]
+      },
+      {
+        "day": 79,
+        "equal": true,
+        "observationStateSha256": "d508044a4ab24a47515ecc0488eb42441dd13d404d2667145c396021e51336ca",
+        "replayStateSha256": "d508044a4ab24a47515ecc0488eb42441dd13d404d2667145c396021e51336ca",
+        "artifactSha256": [
+          "ab3dd514aafe726a5a5549e300d1a23fc2552ce5ce4e79684fe835f574148827",
+          "f7c5ca1540fd0afc6c08ef0189eb29603dffa430a9dd90bbc1063c02281c88df"
+        ]
+      },
+      {
+        "day": 80,
+        "equal": true,
+        "observationStateSha256": "437eb2981ffe147cae50ed64312d109d15d7b884342124be66ced2f38b68a5dd",
+        "replayStateSha256": "437eb2981ffe147cae50ed64312d109d15d7b884342124be66ced2f38b68a5dd",
+        "artifactSha256": [
+          "97f2d088a9670ae6efe1053c323a92e6cbd1b47fc57a7247ea5e9bee16cb1b05",
+          "2d3595e3521a71ebade9ef6227d5e29eedc2f1332ff60d3ffc841dfcce34704f"
+        ]
+      },
+      {
+        "day": 81,
+        "equal": true,
+        "observationStateSha256": "553ad80e4c3d4c5ea13e958e1948f454bcc5767671e8526c15215db57c7124c0",
+        "replayStateSha256": "553ad80e4c3d4c5ea13e958e1948f454bcc5767671e8526c15215db57c7124c0",
+        "artifactSha256": [
+          "a2b74e05ca7d750587636482d925f731d0370cbae8a81e9794a6b9a3c76d8629",
+          "040689932c5ffdd2cb61fc8278de76743f16ca6ab03147bad84ee5819b1ac780"
+        ]
+      },
+      {
+        "day": 82,
+        "equal": true,
+        "observationStateSha256": "fefb325c572c87ae7483ef27602b261c792ce483f0c3b0499bed760a8408d629",
+        "replayStateSha256": "fefb325c572c87ae7483ef27602b261c792ce483f0c3b0499bed760a8408d629",
+        "artifactSha256": [
+          "4a8a120357478c7b6966cf541bc6bd7f2cb7e369601906ae5518535cc95ec617",
+          "b39293fc3d57be5c8dfdebc91374ff7d99f1ed3de9c71bf7a19881c4feb44d7a"
+        ]
+      },
+      {
+        "day": 83,
+        "equal": true,
+        "observationStateSha256": "741f9d4fd6040f1560c1d1ea56c3608f1cad0b23cb71d5b2118641c51c27d196",
+        "replayStateSha256": "741f9d4fd6040f1560c1d1ea56c3608f1cad0b23cb71d5b2118641c51c27d196",
+        "artifactSha256": [
+          "f236c7cbf90bbdea38a9575ddb7d45bd1e5c39d0f58c474eec12af7b2b736c97",
+          "794bf746a1442c2a5a6b5134b460cffd3d15778b42c3ec5b8c4cb3069d737e14"
+        ]
+      },
+      {
+        "day": 84,
+        "equal": true,
+        "observationStateSha256": "4ec551b6ba5856c53135620112d1078e462240bef6a880710e0d826b62fd8149",
+        "replayStateSha256": "4ec551b6ba5856c53135620112d1078e462240bef6a880710e0d826b62fd8149",
+        "artifactSha256": [
+          "55d42dd4cfab1ec089620f925ff561f92c10bf0314ad4b09f177dc51eddaff99",
+          "89815be2da61c8c0a4c674525a572d73e6ff026edce53e5693eb1c61f1cde21a"
+        ]
+      },
+      {
+        "day": 85,
+        "equal": true,
+        "observationStateSha256": "debb98272351d7cface9b79f6ff9ad399ef06ea2f26b8996b9768c9fef21e0a9",
+        "replayStateSha256": "debb98272351d7cface9b79f6ff9ad399ef06ea2f26b8996b9768c9fef21e0a9",
+        "artifactSha256": [
+          "988f2e50f480e7d340b1b71cd37461d838c3c57a4a27be328fd944315987bdea",
+          "0da97ff85c6a2ceb7b1d7ae14953dde242c270861c49137dfc6a045af342e4e7"
+        ]
+      },
+      {
+        "day": 86,
+        "equal": true,
+        "observationStateSha256": "c36cff335a64afb4643e4a5f5b6f7d5dc86106e52b4fea29b61146098c4124de",
+        "replayStateSha256": "c36cff335a64afb4643e4a5f5b6f7d5dc86106e52b4fea29b61146098c4124de",
+        "artifactSha256": [
+          "3a01b50d9eeb6dabb6b2e39967c8cd8ee6392cf6c2c8d2143af33e1e63c82d11",
+          "05a1d2f54ff7a16fd1b8d4de23190941aedb64bc61cc67f0d1093fbf4f29bede"
+        ]
+      },
+      {
+        "day": 87,
+        "equal": true,
+        "observationStateSha256": "56b03753806ed320a7c37726cb63f8fd21b2736d0e6c9b3e87487dadb0bada1f",
+        "replayStateSha256": "56b03753806ed320a7c37726cb63f8fd21b2736d0e6c9b3e87487dadb0bada1f",
+        "artifactSha256": [
+          "5ca775df019a8ba43a53ffb4c50dbfe9cefd93f57aff5a45138b624dc3241c89",
+          "175328cdcf43ba46fae2908c6e03a219a20889555210a4de7e5a59a9a08ce9b9"
+        ]
+      },
+      {
+        "day": 88,
+        "equal": true,
+        "observationStateSha256": "c5b709eae8fc386befa1bfd63a36476bfc7b43bc5a9818c45041ff1ac0270dea",
+        "replayStateSha256": "c5b709eae8fc386befa1bfd63a36476bfc7b43bc5a9818c45041ff1ac0270dea",
+        "artifactSha256": [
+          "2d13842e092db7e9b4a5c66fcf3ae24084be0ef3c68f1a1e6b1259d9272b24d1",
+          "c464edcc877985cafa35bee7c8bec8eb38d0563e90ed7cc5c39a449cac20a590"
+        ]
+      },
+      {
+        "day": 89,
+        "equal": true,
+        "observationStateSha256": "d192f0f5f67578b66655cf2869160ffc2451381089e016cc7841fe37f618e24c",
+        "replayStateSha256": "d192f0f5f67578b66655cf2869160ffc2451381089e016cc7841fe37f618e24c",
+        "artifactSha256": [
+          "60a6edd249c54dadd71496be3e2f1023a785a9f67bb3e1d863a1ee18739f5726",
+          "5544500fd17272b730d8e8d5c308457d7486207bbedcd7608fa16be4c03d05bc"
+        ]
+      }
+    ],
+    "runSha256": [
+      "77bc218eecc51134ee26fd9ecbd3073331547642f90bb02b286e97a810170c37",
+      "c5620383cbfe7918f6f251927034d78c6334b5b4c0b5a553f2cdfaf810cd8b97"
+    ]
+  },
+  "failureLineage": {
+    "report": "harness-quiet-90day-regression-results.json",
+    "fullArtifactIndex": "harness-quiet-90day-artifact-index.json",
+    "originalSource": "db1749d8a6c0a842f4b0022df1084b1b9a06a871",
+    "originalFailure": "Invalid string length plus invalid shared-database isolation",
+    "intermediateSource": "2ac778b3f6a66df6334e85306cd95696226355f5",
+    "intermediateFailure": "90-day recorded replay failed exact final state: tied crown selection and receipt ownership ordering",
+    "intermediateRunSha256": "c31f339d13ffae5fcb2d72f60fe5fd6304a31d764b42373280345ffb2c6db545",
+    "retention": "Both sealed failures, raw state, checkpoints, traces and complete artifact hashes remain unchanged."
+  },
+  "limitations": [
+    "No 225-run matrix qualification",
+    "Resource commit observation disabled",
+    "Only one quiet policy/population/seed",
+    "No seed-only determinism claim",
+    "No long-run checkpoint/restart equivalence claim",
+    "No complete longest-lifecycle, dead-world, concurrency/load/soak, deployed environment or real-cohort qualification",
+    "Health registry unavailable; external chain and liquidity integrations excluded",
+    "Larger-population complete snapshot serialization/storage capacity remains unproved"
+  ]
+}

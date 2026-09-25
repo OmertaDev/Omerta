@@ -1,0 +1,973 @@
+{
+  "characters": [
+    {
+      "id": "resource-actor-0-character",
+      "account_id": "resource-actor-0",
+      "cash": "5009700",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-1-character",
+      "account_id": "resource-actor-1",
+      "cash": "5014700",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-10-character",
+      "account_id": "resource-actor-10",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-11-character",
+      "account_id": "resource-actor-11",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-12-character",
+      "account_id": "resource-actor-12",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-13-character",
+      "account_id": "resource-actor-13",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-14-character",
+      "account_id": "resource-actor-14",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-15-character",
+      "account_id": "resource-actor-15",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-16-character",
+      "account_id": "resource-actor-16",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-17-character",
+      "account_id": "resource-actor-17",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 0,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-2-character",
+      "account_id": "resource-actor-2",
+      "cash": "4881250",
+      "bank": "0",
+      "shipment": 2,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-3-character",
+      "account_id": "resource-actor-3",
+      "cash": "4995000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-4-character",
+      "account_id": "resource-actor-4",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-5-character",
+      "account_id": "resource-actor-5",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-6-character",
+      "account_id": "resource-actor-6",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-7-character",
+      "account_id": "resource-actor-7",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-8-character",
+      "account_id": "resource-actor-8",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    },
+    {
+      "id": "resource-actor-9-character",
+      "account_id": "resource-actor-9",
+      "cash": "5000000",
+      "bank": "0",
+      "shipment": 4,
+      "alive": true
+    }
+  ],
+  "accounts": [
+    {
+      "account_id": "resource-actor-0",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-1",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-10",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-11",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-12",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-13",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-14",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-15",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-16",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-17",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-2",
+      "omr": "1650",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-3",
+      "omr": "2000",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-4",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-5",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-6",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-7",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-8",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    },
+    {
+      "account_id": "resource-actor-9",
+      "omr": "0",
+      "staked": "0",
+      "rewards": "0",
+      "unbonding": "0"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "0be24d1c-1c0c-4fe6-8b88-70c31859e551",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-120000",
+      "reason": "shipment:commission",
+      "counterparty": null
+    },
+    {
+      "id": "0f510b0d-337c-4aae-ad5d-23de4d3fba2d",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "52250",
+      "reason": "loan:repay",
+      "counterparty": "resource-actor-3-character"
+    },
+    {
+      "id": "1f898088-b722-4769-85f2-a1dd82a79d8c",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-50000",
+      "reason": "loan:offer",
+      "counterparty": null
+    },
+    {
+      "id": "22e41a30-bd00-4652-9ae0-e8781dee4bf4",
+      "character_id": "resource-actor-3-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-55000",
+      "reason": "loan:repay",
+      "counterparty": "resource-actor-2-character"
+    },
+    {
+      "id": "3076145b-9914-43e2-8602-bcc41872f8b6",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-50000",
+      "reason": "loan:offer",
+      "counterparty": null
+    },
+    {
+      "id": "36b48446-babf-41e9-8f34-3aa27271ff91",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-1000",
+      "reason": "gang:tribute",
+      "counterparty": "resource-family"
+    },
+    {
+      "id": "4f3a57a8-cd3f-433d-ada9-8ca50029220a",
+      "character_id": null,
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-1375",
+      "reason": "loan:vig",
+      "counterparty": null
+    },
+    {
+      "id": "53f64ff8-2c55-4378-842a-e1c401e6503a",
+      "character_id": null,
+      "account_id": "resource-actor-2",
+      "currency": "omr",
+      "amount": "-150",
+      "reason": "rarity:upgrade",
+      "counterparty": null
+    },
+    {
+      "id": "5e32b4fe-cfcf-4e98-8d1c-b86d01027fda",
+      "character_id": "resource-actor-1-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-300",
+      "reason": "craft:recipe:hardened_steel",
+      "counterparty": null
+    },
+    {
+      "id": "67db187c-f339-4c2f-8ed6-6ded3d3c922c",
+      "character_id": null,
+      "account_id": null,
+      "currency": "omr",
+      "amount": "150",
+      "reason": "desk:recycle",
+      "counterparty": "rarity:upgrade"
+    },
+    {
+      "id": "68008e92-49de-4baf-8cdd-f8e0cf7b9eb2",
+      "character_id": null,
+      "account_id": "resource-actor-3",
+      "currency": "omr",
+      "amount": "500",
+      "reason": "loan:pledge:return",
+      "counterparty": "resource-actor-2-character"
+    },
+    {
+      "id": "6d6647ca-8a03-4050-b128-6863a5dd452b",
+      "character_id": null,
+      "account_id": null,
+      "currency": "cash",
+      "amount": "1375",
+      "reason": "loan:house:vig",
+      "counterparty": null
+    },
+    {
+      "id": "77abe582-b516-4d2a-b330-c607d2376249",
+      "character_id": null,
+      "account_id": "resource-actor-2",
+      "currency": "omr",
+      "amount": "-200",
+      "reason": "gang:tribute",
+      "counterparty": "resource-family"
+    },
+    {
+      "id": "78e31f21-d2b7-40fb-8226-4a26ba104d19",
+      "character_id": null,
+      "account_id": "resource-actor-3",
+      "currency": "omr",
+      "amount": "-500",
+      "reason": "loan:pledge",
+      "counterparty": "resource-actor-2-character"
+    },
+    {
+      "id": "83183ece-462a-4e2b-8ab4-5a77f0537580",
+      "character_id": "resource-actor-3-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "50000",
+      "reason": "loan:take",
+      "counterparty": "resource-actor-2-character"
+    },
+    {
+      "id": "bb13066b-5939-46bb-a35f-e01a37fdead6",
+      "character_id": "resource-actor-2-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "50000",
+      "reason": "loan:refund",
+      "counterparty": null
+    },
+    {
+      "id": "d6445a7e-0437-48fa-9adb-0424950989f7",
+      "character_id": "resource-actor-1-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "15000",
+      "reason": "campaign:reward",
+      "counterparty": "doc"
+    },
+    {
+      "id": "e9a9ede1-c4ac-4ea8-993f-452404e82011",
+      "character_id": "resource-actor-0-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "-300",
+      "reason": "craft:recipe:hardened_steel",
+      "counterparty": null
+    },
+    {
+      "id": "fbb0bd33-6d32-47b6-ab7a-3dafd787ece3",
+      "character_id": "resource-actor-0-character",
+      "account_id": null,
+      "currency": "cash",
+      "amount": "10000",
+      "reason": "campaign:reward",
+      "counterparty": "doc"
+    }
+  ],
+  "stacks": [
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-0",
+      "template_id": "mat:hardened_steel",
+      "quality": "standard",
+      "quantity": 1
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-0",
+      "template_id": "mat:salvage_parts",
+      "quality": "standard",
+      "quantity": 2
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-0",
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity": 2
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-0",
+      "template_id": "mat:wire",
+      "quality": "standard",
+      "quantity": 2
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-1",
+      "template_id": "mat:hardened_steel",
+      "quality": "standard",
+      "quantity": 1
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-1",
+      "template_id": "mat:salvage_parts",
+      "quality": "standard",
+      "quantity": 2
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-1",
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity": 2
+    },
+    {
+      "owner_scope": "account",
+      "owner_id": "resource-actor-1",
+      "template_id": "mat:wire",
+      "quality": "standard",
+      "quantity": 2
+    }
+  ],
+  "items": [],
+  "itemEvents": [
+    {
+      "sequence": "1",
+      "id": "b0281db8-e3eb-45ae-b7f7-7110d75360c7",
+      "event_key": "0001:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity_delta": 6,
+      "quantity_before": 0,
+      "quantity_after": 6,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-0",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:ee8b87687ed55b92e0c124c9c0091be32d2c5d25465064b4465a2554a74054e9",
+      "created_at": "2026-09-21T02:43:04.313Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "2",
+      "id": "a6f85f76-a9a9-4cc9-8104-2ece6c51284e",
+      "event_key": "0002:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:wire",
+      "quality": "standard",
+      "quantity_delta": 2,
+      "quantity_before": 0,
+      "quantity_after": 2,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-0",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:ee8b87687ed55b92e0c124c9c0091be32d2c5d25465064b4465a2554a74054e9",
+      "created_at": "2026-09-21T02:43:04.313Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "3",
+      "id": "e91afd69-4aa7-4fba-bd3e-35fbc0eb9a95",
+      "event_key": "0003:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:salvage_parts",
+      "quality": "standard",
+      "quantity_delta": 2,
+      "quantity_before": 0,
+      "quantity_after": 2,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-0",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:ee8b87687ed55b92e0c124c9c0091be32d2c5d25465064b4465a2554a74054e9",
+      "created_at": "2026-09-21T02:43:04.313Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "4",
+      "id": "b051d421-7400-46c2-9598-5ea9be7a202d",
+      "event_key": "0001:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity_delta": 6,
+      "quantity_before": 0,
+      "quantity_after": 6,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-1",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:47adc7b851b6690229176a8a50c26c905ea688dec69c03aebf660dd1f7c5617e",
+      "created_at": "2026-09-21T02:43:04.381Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "5",
+      "id": "5cac6da8-2807-402b-b5a5-db0fccab6563",
+      "event_key": "0002:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:wire",
+      "quality": "standard",
+      "quantity_delta": 2,
+      "quantity_before": 0,
+      "quantity_after": 2,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-1",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:47adc7b851b6690229176a8a50c26c905ea688dec69c03aebf660dd1f7c5617e",
+      "created_at": "2026-09-21T02:43:04.381Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "6",
+      "id": "f5fd7193-c265-426e-bcaa-617a9edaf369",
+      "event_key": "0003:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:salvage_parts",
+      "quality": "standard",
+      "quantity_delta": 2,
+      "quantity_before": 0,
+      "quantity_after": 2,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-1",
+      "reason": "recipe:car_salvage_basic output",
+      "idempotency_key": "worldgraph:http:v1:47adc7b851b6690229176a8a50c26c905ea688dec69c03aebf660dd1f7c5617e",
+      "created_at": "2026-09-21T02:43:04.381Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "7",
+      "id": "51fe709f-fd01-4c6f-ae8f-60a666e60d2d",
+      "event_key": "0001:consume_stack",
+      "event_kind": "stack_consumed",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity_delta": -4,
+      "quantity_before": 6,
+      "quantity_after": 2,
+      "from_owner_scope": "account",
+      "from_owner_id": "resource-actor-0",
+      "to_owner_scope": null,
+      "to_owner_id": null,
+      "reason": "craft recipe:hardened_steel input",
+      "idempotency_key": "worldgraph:http:v1:7ffdd9fb72901db50d680f0c5b5c1ce9348057936f4f18bda81e9fd50a99e4fc",
+      "created_at": "2026-09-21T02:43:04.440Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "8",
+      "id": "c2205729-33d4-449d-9d3f-3ab400abbe36",
+      "event_key": "0002:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:hardened_steel",
+      "quality": "standard",
+      "quantity_delta": 1,
+      "quantity_before": 0,
+      "quantity_after": 1,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-0",
+      "reason": "recipe:hardened_steel output",
+      "idempotency_key": "worldgraph:http:v1:7ffdd9fb72901db50d680f0c5b5c1ce9348057936f4f18bda81e9fd50a99e4fc",
+      "created_at": "2026-09-21T02:43:04.440Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "10",
+      "id": "abeeb4af-38de-4e91-908e-818e06112694",
+      "event_key": "0001:consume_stack",
+      "event_kind": "stack_consumed",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:scrap_steel",
+      "quality": "standard",
+      "quantity_delta": -4,
+      "quantity_before": 6,
+      "quantity_after": 2,
+      "from_owner_scope": "account",
+      "from_owner_id": "resource-actor-1",
+      "to_owner_scope": null,
+      "to_owner_id": null,
+      "reason": "craft recipe:hardened_steel input",
+      "idempotency_key": "worldgraph:http:v1:c45f0d15c2aed3a5a9281584b37eda0d9e7244504e9f01e04f75f021f88b6aad",
+      "created_at": "2026-09-21T02:43:04.950Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    },
+    {
+      "sequence": "11",
+      "id": "54867227-14a0-41a4-bf86-dd019854940b",
+      "event_key": "0002:grant_stack",
+      "event_kind": "stack_granted",
+      "provenance_kind": null,
+      "item_id": null,
+      "template_id": "mat:hardened_steel",
+      "quality": "standard",
+      "quantity_delta": 1,
+      "quantity_before": 0,
+      "quantity_after": 1,
+      "from_owner_scope": null,
+      "from_owner_id": null,
+      "to_owner_scope": "account",
+      "to_owner_id": "resource-actor-1",
+      "reason": "recipe:hardened_steel output",
+      "idempotency_key": "worldgraph:http:v1:c45f0d15c2aed3a5a9281584b37eda0d9e7244504e9f01e04f75f021f88b6aad",
+      "created_at": "2026-09-21T02:43:04.950Z",
+      "event_branch": "legacy",
+      "mutation_id": null,
+      "event_ordinal": null,
+      "lot_id": null,
+      "definition_hash": null,
+      "snapshot_json": null
+    }
+  ],
+  "guards": [
+    {
+      "idempotency_key": "worldgraph:http:v1:47adc7b851b6690229176a8a50c26c905ea688dec69c03aebf660dd1f7c5617e",
+      "mutation_kind": "salvage_car",
+      "result_json": "{\"ok\":true,\"kind\":\"salvage_car\",\"recipe\":{\"packageId\":\"automotive-salvage\",\"packageVersion\":1,\"recipeId\":\"recipe:car_salvage_basic\",\"recipeVersion\":1},\"cashCost\":0,\"cashAfter\":5015000,\"car\":{\"id\":\"resource-actor-1-car\",\"modelId\":\"junker\",\"trimId\":\"stock\",\"damage\":20},\"inputs\":[{\"assetType\":\"car\",\"quantity\":1,\"id\":\"resource-actor-1-car\"}],\"outputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-1\"},\"templateId\":\"mat:scrap_steel\",\"quality\":\"standard\",\"qty\":6,\"delta\":6},{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-1\"},\"templateId\":\"mat:wire\",\"quality\":\"standard\",\"qty\":2,\"delta\":2},{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-1\"},\"templateId\":\"mat:salvage_parts\",\"quality\":\"standard\",\"qty\":2,\"delta\":2}]}"
+    },
+    {
+      "idempotency_key": "worldgraph:http:v1:7ffdd9fb72901db50d680f0c5b5c1ce9348057936f4f18bda81e9fd50a99e4fc",
+      "mutation_kind": "craft",
+      "result_json": "{\"ok\":true,\"kind\":\"craft\",\"recipe\":{\"packageId\":\"automotive-salvage\",\"packageVersion\":1,\"recipeId\":\"recipe:hardened_steel\",\"recipeVersion\":1},\"cashCost\":300,\"cashAfter\":5009700,\"inputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-0\"},\"templateId\":\"mat:scrap_steel\",\"quality\":\"standard\",\"qty\":2,\"delta\":-4}],\"outputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-0\"},\"templateId\":\"mat:hardened_steel\",\"quality\":\"standard\",\"qty\":1,\"delta\":1}]}"
+    },
+    {
+      "idempotency_key": "worldgraph:http:v1:c45f0d15c2aed3a5a9281584b37eda0d9e7244504e9f01e04f75f021f88b6aad",
+      "mutation_kind": "craft",
+      "result_json": "{\"ok\":true,\"kind\":\"craft\",\"recipe\":{\"packageId\":\"automotive-salvage\",\"packageVersion\":1,\"recipeId\":\"recipe:hardened_steel\",\"recipeVersion\":1},\"cashCost\":300,\"cashAfter\":5014700,\"inputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-1\"},\"templateId\":\"mat:scrap_steel\",\"quality\":\"standard\",\"qty\":2,\"delta\":-4}],\"outputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-1\"},\"templateId\":\"mat:hardened_steel\",\"quality\":\"standard\",\"qty\":1,\"delta\":1}]}"
+    },
+    {
+      "idempotency_key": "worldgraph:http:v1:ee8b87687ed55b92e0c124c9c0091be32d2c5d25465064b4465a2554a74054e9",
+      "mutation_kind": "salvage_car",
+      "result_json": "{\"ok\":true,\"kind\":\"salvage_car\",\"recipe\":{\"packageId\":\"automotive-salvage\",\"packageVersion\":1,\"recipeId\":\"recipe:car_salvage_basic\",\"recipeVersion\":1},\"cashCost\":0,\"cashAfter\":5010000,\"car\":{\"id\":\"resource-actor-0-car\",\"modelId\":\"junker\",\"trimId\":\"stock\",\"damage\":20},\"inputs\":[{\"assetType\":\"car\",\"quantity\":1,\"id\":\"resource-actor-0-car\"}],\"outputs\":[{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-0\"},\"templateId\":\"mat:scrap_steel\",\"quality\":\"standard\",\"qty\":6,\"delta\":6},{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-0\"},\"templateId\":\"mat:wire\",\"quality\":\"standard\",\"qty\":2,\"delta\":2},{\"owner\":{\"scope\":\"account\",\"id\":\"resource-actor-0\"},\"templateId\":\"mat:salvage_parts\",\"quality\":\"standard\",\"qty\":2,\"delta\":2}]}"
+    }
+  ],
+  "cars": [
+    {
+      "id": "resource-rarity-car",
+      "character_id": "resource-actor-2-character",
+      "model_id": "junker",
+      "rarity": "rare",
+      "minted_onchain": false
+    }
+  ],
+  "families": [
+    {
+      "id": "resource-family",
+      "treasury": "1000",
+      "omr_reserve": "200",
+      "ammo_bank": 0
+    }
+  ],
+  "desk": [
+    {
+      "id": 1,
+      "balance": "150",
+      "lifetime_in": "150",
+      "lifetime_sold": "0",
+      "lifetime_bought": "0"
+    }
+  ],
+  "loans": [
+    {
+      "id": "c107313d-7765-4a6a-8cb6-1da7b9885ccb",
+      "lender_character": "resource-actor-2-character",
+      "borrower_character": null,
+      "principal": "50000",
+      "rate": "0.1",
+      "hours": 24,
+      "status": "cancelled",
+      "offered_at": "2026-09-21T02:43:01.892Z",
+      "due_at": null,
+      "offered_to": "resource-actor-3-character",
+      "collateral_min": "0",
+      "collateral_car": null,
+      "for_sale": null,
+      "collateral_omr": "500"
+    },
+    {
+      "id": "ecf166d9-0ef7-4756-b7f2-4c9cdaf734a0",
+      "lender_character": "resource-actor-2-character",
+      "borrower_character": "resource-actor-3-character",
+      "principal": "50000",
+      "rate": "0.1",
+      "hours": 24,
+      "status": "repaid",
+      "offered_at": "2026-09-21T02:43:02.418Z",
+      "due_at": "2026-09-22T02:43:02.624Z",
+      "offered_to": "resource-actor-3-character",
+      "collateral_min": "0",
+      "collateral_car": null,
+      "for_sale": null,
+      "collateral_omr": "500"
+    }
+  ],
+  "streetTax": [
+    {
+      "id": 1,
+      "pool": "1375"
+    }
+  ],
+  "loanHouse": [
+    {
+      "id": 1,
+      "pool": "1375"
+    }
+  ],
+  "shipmentDays": [
+    {
+      "day": 20717,
+      "district": "foundry",
+      "taken": 48,
+      "cap": 48,
+      "pop": 18
+    }
+  ],
+  "shipmentTakes": [
+    {
+      "day": 20717,
+      "character_id": "resource-actor-10-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-11-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-12-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-13-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-2-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-3-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-4-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-5-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-6-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-7-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-8-character",
+      "n": 4
+    },
+    {
+      "day": 20717,
+      "character_id": "resource-actor-9-character",
+      "n": 4
+    }
+  ],
+  "pieces": [
+    {
+      "account_id": "resource-actor-2",
+      "commission_id": "case",
+      "serial": 1,
+      "holder_name": "Resource Actor 2",
+      "made_at": "2026-09-21T02:43:06.740Z"
+    }
+  ],
+  "serials": [
+    {
+      "commission_id": "case",
+      "minted": 1
+    }
+  ],
+  "campaigns": [
+    {
+      "character_id": "resource-actor-0-character",
+      "campaign_id": "doc_oath",
+      "step": 3,
+      "done": 0,
+      "branch": "save",
+      "completed": true,
+      "claimed": true,
+      "started_at": "2026-09-21T02:43:00.156Z"
+    },
+    {
+      "character_id": "resource-actor-1-character",
+      "campaign_id": "doc_oath",
+      "step": 3,
+      "done": 0,
+      "branch": "walk",
+      "completed": true,
+      "claimed": true,
+      "started_at": "2026-09-21T02:43:00.158Z"
+    }
+  ],
+  "databaseBoundary": "34643:34643:"
+}

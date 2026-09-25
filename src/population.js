@@ -459,7 +459,7 @@ async function runPopulationInner(pool) {
     const pickable = (await pool.query(
       `SELECT id FROM characters WHERE alive AND is_npc
          AND (jail_until IS NULL OR jail_until < now())
-         AND (hosp_until IS NULL OR hosp_until < now()) LIMIT 24`)).rows;
+         AND (hosp_until IS NULL OR hosp_until < now()) ORDER BY id LIMIT 24`)).rows;
     if (!pickable.length) break;
     const pick = pickable[Math.floor(Math.random() * pickable.length)];
     const sentenceS = jb.MIN_S + Math.floor(Math.random() * (jb.MAX_S - jb.MIN_S + 1));
@@ -793,33 +793,76 @@ export async function residentAct(client, r) {
  */
 export async function runResidentBehaviour(pool) {
   const out = { acted: 0, actions: {} };
-  // NOTE: shuffled in JS, not `ORDER BY random()` — pg-mem has no random() (the two-flat-queries
-  // precedent). Picking whose turn it is doesn't need to be cryptographic.
-  const eligible = (await pool.query(
-    `SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters
-      WHERE alive AND is_npc
-        AND (jail_until IS NULL OR jail_until < now())
-        AND (hosp_until IS NULL OR hosp_until < now())
-        AND (safe_until IS NULL OR safe_until < now())
-        ${NOT_ON_A_JOB}
-      ORDER BY id`)).rows;
-  const pick_ = eligible
-    .map((r) => ({ r, k: Math.random() })).sort((a, b) => a.k - b.k)
-    .slice(0, POPULATION.BEHAVIOUR.ACT_PER_TICK).map((x) => x.r);
-  for (const r of pick_) {
+  const selection = await pool.connect();
+  let turn;
+  try {
+    await selection.query('BEGIN');
+    const state = (await selection.query('SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE')).rows[0];
+    const now = (await selection.query('SELECT now() AS at')).rows[0].at;
+    const hour = Math.floor(new Date(now).getTime() / 3600000);
+    turn = state.behaviour_turn;
+    // Finish an interrupted selection before starting another. A completed hour consumes no RNG
+    // on restart; the saved pending IDs keep partial progress from duplicating or losing effects.
+    if (!turn?.pending.length && turn?.hour >= hour) {
+      await selection.query('COMMIT');
+      return out;
+    }
+    if (!turn?.pending.length) {
+      // Shuffle in JS as before; pg-mem has no random(). Select only once per persisted hour.
+      const eligible = (await selection.query(
+        `SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters
+          WHERE alive AND is_npc
+            AND (jail_until IS NULL OR jail_until < now())
+            AND (hosp_until IS NULL OR hosp_until < now())
+            AND (safe_until IS NULL OR safe_until < now())
+            ${NOT_ON_A_JOB}
+          ORDER BY id`)).rows;
+      const pick_ = eligible
+        .map((r) => ({ r, k: Math.random() })).sort((a, b) => a.k - b.k)
+        .slice(0, POPULATION.BEHAVIOUR.ACT_PER_TICK).map((x) => x.r);
+      turn = { hour, pending: pick_.map(r => r.id) };
+      await selection.query('UPDATE population_state SET behaviour_turn=$1 WHERE id=1', [JSON.stringify(turn)]);
+    }
+    await selection.query('COMMIT');
+  } catch (error) {
+    await selection.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally { selection.release(); }
+  for (const id of turn.pending) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      // re-read under the row lock — a player may have jumped/robbed them since the pick
+      // Population retirement takes the character lock before population_state too.
       const live = (await client.query(
         'SELECT id, cash, loc, npc_seed, guard_price, fade_limit, duel_limit FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE',
-        [r.id])).rows[0];
+        [id])).rows[0];
+      const current = (await client.query('SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE')).rows[0].behaviour_turn;
+      if (current.hour !== turn.hour || !current.pending.includes(id)) {
+        await client.query('COMMIT');
+        continue;
+      }
       const did = live ? await residentAct(client, live) : null;
+      await client.query('UPDATE population_state SET behaviour_turn=$1 WHERE id=1',
+        [JSON.stringify({ hour: current.hour, pending: current.pending.filter(candidate => candidate !== id) })]);
       await client.query('COMMIT');
       if (did) { out.acted++; out.actions[did] = (out.actions[did] || 0) + 1; }
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
-      console.error('[population] resident action failed', r.id, e.message);
+      // A caught failed turn still costs only this resident its action, as before. Retaining a
+      // poison row as pending forever would prevent every later hourly selection. A process
+      // interruption before this acknowledgement leaves the ID pending for crash recovery.
+      try {
+        await client.query('BEGIN');
+        const current = (await client.query('SELECT behaviour_turn FROM population_state WHERE id=1 FOR UPDATE')).rows[0].behaviour_turn;
+        if (current.hour === turn.hour && current.pending.includes(id))
+          await client.query('UPDATE population_state SET behaviour_turn=$1 WHERE id=1',
+            [JSON.stringify({ hour: current.hour, pending: current.pending.filter(candidate => candidate !== id) })]);
+        await client.query('COMMIT');
+      } catch (acknowledgementError) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw acknowledgementError;
+      }
+      console.error('[population] resident action failed', id, e.message);
     } finally { client.release(); }
   }
   return out;

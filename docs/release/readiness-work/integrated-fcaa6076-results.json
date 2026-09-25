@@ -1,0 +1,469 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "releaseReady": false,
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-aggression",
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:aggression:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:35:08.015Z",
+      "endedAt": "2026-09-21T06:38:55.841Z",
+      "durationMs": 227824,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Bounded public-view jumps, retaliation, recovery and exact retry; no complete high-aggression archetype or matrix qualification"
+      ],
+      "log": "gates/rc1-aggression/output.txt",
+      "logSha256": "c40ededcf8d2823a156659fce12cf49e3fe88af135d7d1e5fa0bcf23dad8d741",
+      "resultSha256": "5c8a6cde1c9a119c915bf98565e359e9ee07c5f2a31b540a29a2f8df731c4f1e"
+    },
+    {
+      "format": 1,
+      "id": "rc1-churn",
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:churn:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:36:56.959Z",
+      "endedAt": "2026-09-21T06:37:41.559Z",
+      "durationMs": 44599,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "One declared weekly boundary and ordinary entrants preserve retired escrow; no elapsed seven-day activity, original escrow expiry or full churn archetype"
+      ],
+      "log": "gates/rc1-churn/output.txt",
+      "logSha256": "95d2597d3b5305769a41aabde7c9b45b916873352278fcf8c0306439036e8acb",
+      "resultSha256": "b4c3b41fe519d3d639d1ea75c3c7c26a584cc79782795c30859d63c91b627e83"
+    },
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:35:07.525Z",
+      "endedAt": "2026-09-21T06:35:24.137Z",
+      "durationMs": 16611,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "2e3a37f4ad57c47b2fdf2aba0d4700e22fe227c7a40cdc710c2e1531b4d52a2d",
+      "resultSha256": "c59dfce554792de9c7b620888bedc2aea163b3f1dfdc85902c93a1e5fe3925b7"
+    },
+    {
+      "format": 1,
+      "id": "rc1-loans",
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:loans:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:35:07.792Z",
+      "endedAt": "2026-09-21T06:36:20.573Z",
+      "durationMs": 72780,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "77 logical hours with original callbacks and explicit protected NPC/funding fixtures; no natural survival, OMR grace, HTTP, concurrency or complete escrow qualification"
+      ],
+      "log": "gates/rc1-loans/output.txt",
+      "logSha256": "1fb37da95036828164c94403bb86bcc15d75e304135dc97d261408c69784fd73",
+      "resultSha256": "2ea6704b6e2d39f84b7d28f4f39f219f62de3d6bd93f5bc75a879c54b546d972"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:35:35.274Z",
+      "endedAt": "2026-09-21T06:36:46.801Z",
+      "durationMs": 71525,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "dc9e2bcc7d1844a88782fc7d9cccf41819f59e2926175b29c67c73a356339bc1",
+      "resultSha256": "1257cb38e5ea6458165603a06e17b3a2f7fe022be8095b072ea262414e9c55f0"
+    }
+  ],
+  "seasonalRepairGates": [
+    {
+      "format": 1,
+      "id": "rc1-season-recovery",
+      "source": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:46:02.904Z",
+      "endedAt": "2026-09-21T06:46:48.128Z",
+      "durationMs": 45223,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native seasonal status interruption, concurrent claim and lost commit response; explicit season boundary, no elapsed28-day worker or full resource matrix proof"
+      ],
+      "log": "gates/rc1-season-recovery/output.txt",
+      "logSha256": "7ece7784b7e0d849e2b8a68c3db478209622b7e38f95e73b27841f98662f6c3d",
+      "resultSha256": "e0abd7f27491ed731e49fdc354753240d287592bc34ea136571936334639c647"
+    },
+    {
+      "format": 1,
+      "id": "rc1-world-resource-smoke",
+      "source": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:world:resources:smoke:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T06:46:03.152Z",
+      "endedAt": "2026-09-21T06:47:11.025Z",
+      "durationMs": 67872,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Two-hour serial commit observer with explicit unsupported resource lineage; no complete thirteen-resource taxonomy or qualifying matrix cell"
+      ],
+      "log": "gates/rc1-world-resource-smoke/output.txt",
+      "logSha256": "2528991b845b92e11d99214acf395eaeb49525f410f68b11d4b07673cb9d906f",
+      "resultSha256": "337845d77dc9bc1d258d5b7e26bf496374625629d78a629d5e2ae7c166ac5815"
+    }
+  ],
+  "seasonFinding": {
+    "id": "RC1-SEASON-01",
+    "before": {
+      "source": {
+        "revision": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+        "gitTree": "575ececa3291cd8df024ea15cde58ffc15489b83",
+        "checkoutSha256": "6df44c1a9a3d9e59747c91e62127de97bb24d777ebe39f65ab517cabce473604",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "FAIL",
+      "configurationSha256": "107546a75a3945633174da18f83fcfc6d2ffe4df4a4be53709712fdb555b5da3",
+      "startedAt": "2026-09-21T06:38:26.756Z",
+      "endedAt": "2026-09-21T06:38:44.738Z",
+      "result": {
+        "status": "FAIL",
+        "expectedCrowns": 1,
+        "actualCrowns": 0,
+        "replay": null,
+        "crownedLatch": true,
+        "championMatches": true,
+        "classification": "Reproduced canonical status loss: retry cannot apply crown after interrupted claim"
+      },
+      "runSha256": "d978057074a25f79649def5a1f3c84ac369be81683426bf5ca2cff29ee096b8b",
+      "artifactsVerified": 4
+    },
+    "after": {
+      "source": {
+        "revision": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707",
+        "gitTree": "a5462f2d6b982a858bd23cbf2c7b1a9b23716472",
+        "checkoutSha256": "dced83a9ad7f4d925e3d8ce22a39b3221df67817918addef9abf530ac3197cfd",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "status": "PASS_SCOPED",
+      "configurationSha256": "243a51fa1b3eb0159e7c8aba102472208c2eeb4307774ce377bec52c60e8bc8b",
+      "startedAt": "2026-09-21T06:46:13.692Z",
+      "endedAt": "2026-09-21T06:46:37.641Z",
+      "result": {
+        "status": "PASS_SCOPED",
+        "cases": [
+          "record insert rollback preserves original standings and retry",
+          "crown rollback and worker retry after character conversion",
+          "notification rollback and worker retry after character conversion",
+          "two concurrent claims award once",
+          "lost native COMMIT response and exact retry"
+        ],
+        "expectedCrowns": 5,
+        "actualCrowns": 5,
+        "crownNotifications": 5,
+        "invariantChecks": 55,
+        "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+        "matrixQualifying": false
+      },
+      "runSha256": "441e811a3f40b570ad8d36332736717c13998525d6c848110acc0b682bb44442",
+      "artifactsVerified": 11
+    },
+    "review": "season-lock-review-summary.json",
+    "limitation": "Local repaired source only; affected hosted, source-pair and full original-lifetime world reruns remain required"
+  },
+  "heir": {
+    "source": {
+      "revision": "59884376867efae5f1e61979fb68dd05c97cf150",
+      "gitTree": "a209ab61671928a0cc37c583a7112842a5d7d5be",
+      "checkoutSha256": "37eec0f355590680e225a97beec29543a98383a4f5a90d96394c0558de2841f8",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "status": "PASS_SCOPED",
+    "configurationSha256": "1c6d0698b0bf025fc18968cdfd63e11bf5c34688c464d6472830368d40304f89",
+    "startedAt": "2026-09-21T06:42:24.292Z",
+    "endedAt": "2026-09-21T06:42:56.434Z",
+    "result": {
+      "status": "PASS_SCOPED",
+      "searchLogicalMs": 10800000,
+      "elapsedWallTimeClaim": false,
+      "timerCounts": {
+        "directorTick": 36,
+        "guardedTick": 3,
+        "guardedSeasonTick": 3,
+        "health-boundary": 36
+      },
+      "invariantChecks": 55,
+      "invariantBoundaries": 131,
+      "resourceBoundaries": 137,
+      "unsupportedResourceClassifications": 52,
+      "qualifyingFullResourcePass": false,
+      "canonicalDeaths": 1,
+      "canonicalHeirs": 1,
+      "heirGeneration": 2,
+      "sameAccount": true,
+      "exactFireRetries": 1,
+      "originalEscrow": 2000,
+      "heirLegacyCash": 1000,
+      "heirCrimeOutcomes": [
+        {
+          "success": true,
+          "take": 52,
+          "rep": 2
+        }
+      ],
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "finalStateSha256": "ee2cee492f5b2c993c7ee1815bc965f4f40ae6ccd1be99ac5a5e98080ac3baa0",
+      "matrixQualifying": false,
+      "exclusions": [
+        "Full high-aggression selection policy for search/fire",
+        "70% mixed-choice proof",
+        "naturally earned initial progression and weapon",
+        "full13resource lineage",
+        "same-seed world replay",
+        "all death/ownership branches",
+        "90days/225runs",
+        "production and real-player qualification"
+      ]
+    },
+    "runSha256": "caeda1acdcb100d9b749919c59fa04fe3ef4e11afe264252d0ccd9514de9c203",
+    "artifactsVerified": 148
+  },
+  "aggressionLifecycle": {
+    "source": {
+      "revision": "24088c3242f846deb0f87b4e95f53654b54d4077",
+      "gitTree": "81a823d22e97a603b36e89ca51738e2c9d98e222",
+      "checkoutSha256": "213818652a39870656621713065c3fb0fdce39774cb1d28117ac8e6a630daf55",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "status": "PASS_SCOPED",
+    "configurationSha256": "69a5e426ffacc5994e25a2cf315be190d85d91003a4ef044db1e2b959339dd90",
+    "startedAt": "2026-09-21T06:54:44.189Z",
+    "endedAt": "2026-09-21T06:55:38.646Z",
+    "result": {
+      "status": "PASS_SCOPED",
+      "policy": {
+        "choices": 20,
+        "fresh": 20,
+        "freshConflict": 14,
+        "mixedFresh": 20,
+        "mixedConflict": 14,
+        "forcedConflict": 0,
+        "forcedOther": 0,
+        "denials": 0,
+        "unresolvedReplays": 0,
+        "wins": 9,
+        "losses": 4,
+        "retaliationAttempts": 4,
+        "retaliationCompletions": 4,
+        "searches": 1,
+        "shots": 1,
+        "kills": 1,
+        "knownReplays": 1,
+        "replacements": 0,
+        "completedByType": {
+          "mystery.start": 2,
+          "legacy.search": 1,
+          "legacy.jump": 12,
+          "discovery.start": 4,
+          "legacy.fire": 1
+        },
+        "actualConflictFraction": 0.7,
+        "mixedConflictFraction": 0.7,
+        "incompleteBlockChoices": 0,
+        "matrixQualifying": false
+      },
+      "victimPolicy": {
+        "choices": 2,
+        "fresh": 2,
+        "freshConflict": 1,
+        "mixedFresh": 2,
+        "mixedConflict": 1,
+        "forcedConflict": 0,
+        "forcedOther": 0,
+        "denials": 0,
+        "unresolvedReplays": 0,
+        "wins": 1,
+        "losses": 0,
+        "retaliationAttempts": 1,
+        "retaliationCompletions": 1,
+        "searches": 0,
+        "shots": 0,
+        "kills": 0,
+        "knownReplays": 0,
+        "replacements": 1,
+        "completedByType": {
+          "mystery.start": 1,
+          "legacy.jump": 1
+        },
+        "actualConflictFraction": 0.5,
+        "mixedConflictFraction": 0.5,
+        "incompleteBlockChoices": 2,
+        "matrixQualifying": false
+      },
+      "elapsedLogicalMs": 17100000,
+      "elapsedWallTimeClaim": false,
+      "timerCounts": {
+        "directorTick": 57,
+        "guardedTick": 4,
+        "guardedSeasonTick": 4,
+        "health-boundary": 57
+      },
+      "invariantChecks": 55,
+      "invariantBoundaries": 252,
+      "resourceBoundaries": 338,
+      "unsupportedResourceClassifications": 129,
+      "qualifyingFullResourcePass": false,
+      "sameAccountHeirObserved": true,
+      "exactFireRetries": 1,
+      "originalEscrow": 2000,
+      "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "finalStateSha256": "31849fcb68c42f55b9e51a06a0dc2fa66888da0ce78ed57003bcf37e5a1e56ec",
+      "matrixQualifying": false,
+      "exclusions": [
+        "All conflict authorities and all actor behavior",
+        "naturally earned initial progression and weapon",
+        "full13resource lineage",
+        "same-seed world replay",
+        "all death/ownership branches",
+        "90days/225runs",
+        "production and real-player qualification"
+      ]
+    },
+    "runSha256": "30a3d89c5322ba86e33a73c37b25c03e0db6360507abb21ca304b19092e334ef",
+    "artifactsVerified": 392
+  },
+  "capital": {
+    "file": "resource-capital-lifecycle-summary.json",
+    "sha256": "9cbba05d462a979ef12b1031b9d571dfcdd8d0a80b3567fc270cb0f54ffb91ca"
+  },
+  "phoneFailure": {
+    "source": "fcaa60765aa816daa18ef6c2484e15e46d06ac63",
+    "run": 35569159408,
+    "job": 106236932943,
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/35569159408",
+    "logSha256": "cabaac93beaf98da05ed57c9700aaa54d3852ea156aed071c714275184961e55",
+    "failureSha256": "f90f304cd3554b12b37f494d74378a727c01b481302da3889a04986ddfca4f77",
+    "screenshotSha256": "8eab2c5ac103f9be059b807c6321342239db320fcbffa48ac9f124de01c1dc0d",
+    "diagnosis": "Native diagnostic reproduced the generic status wait returning on the pending A move needs checking notice. Controlled rendered refresh proves the subsequent whole-tab receipt assertion can fail before the completed receipt arrives. Hosted exact interleaving is inferred, not directly recorded.",
+    "nativeDiagnosticLogSha256": "411e64ed5baf4cea41c18e51974de4727c39f89ccb3daa052a53a612a83d672c",
+    "controlledLifecycleLogSha256": "7996d043672d54d61224f9c29229ede0b9134367b3a1764005a691f25e77372b",
+    "otherRetainedFailure": "Diagnostic1 also failed the exact44px threshold during finite entrance motion:43.9998779296875px. Controlled translation reproduced the same value in both DOM and protocol geometry, disproving a protocol-only hypothesis. Test now reaches/stabilizes the control before applying unchanged44px criterion.",
+    "geometryControlSha256": "b55b9aec8348071f09ddcfdf814b556773398cf9cf3c5aa2bd914a9e0e0a4bd7",
+    "retest": "Repair-source native phone and hosted runs pending; no automatic clearance from the screenshot or diagnostic fixture"
+  },
+  "scope": "Every result retains its actual source. No qualifying matrix, full resource, soak, deployed recovery, physical-device or real-cohort pass."
+}

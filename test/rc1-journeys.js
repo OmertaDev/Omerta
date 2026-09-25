@@ -4,6 +4,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { canonicalBytes } from '../src/content/canonical.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createCampaignNetworkDefinitions } from '../src/director/campaign-network.js';
@@ -100,8 +102,12 @@ for (const scenario of scenarios) {
     console.log(`PASS ${scenario.action}: ${scenario.state}, issued command/replay, visible consequence, custody/kernel invariants; downstream selections=${entry.downstreamSelections.length}`);
   } finally { await f.cleanup(); }
 }
-fs.mkdirSync('docs/release/evidence/player', { recursive: true });
-fs.writeFileSync(`docs/release/evidence/player/rc1-branches${process.argv.includes('--postgres') ? '-postgres' : ''}.json`, JSON.stringify({
+// A test run must not rewrite a sealed report or dirty the measured checkout.
+const output = process.env.RC1_JOURNEY_EVIDENCE || fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-rc1-journeys-'));
+fs.mkdirSync(output, { recursive: true });
+const artifact = path.join(output, `rc1-branches${process.argv.includes('--postgres') ? '-postgres' : ''}.json`);
+fs.writeFileSync(artifact, JSON.stringify({
   database: process.argv.includes('--postgres') ? 'PostgreSQL with private schema per story' : 'pg-mem',
   scope: 'Complementary domain journeys, not new-account browser journeys; initial stats and bounded outcome selection are fixtures', results,
-}, null, 2));
+}, null, 2), { flag: 'wx', mode: 0o600 });
+console.log(JSON.stringify({ artifact, scope: 'complementary fixture-assisted domain journeys' }));

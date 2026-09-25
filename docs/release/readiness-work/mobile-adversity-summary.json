@@ -1,0 +1,156 @@
+{
+  "format": 1,
+  "findingId": "RC1-MOBILE-BLOCKERS-01",
+  "status": "REPAIRED_AND_SCOPED_NATIVE_RETEST_PASS",
+  "attempts": [
+    {
+      "directory": "mobile-adversity-f2d77f02-2",
+      "source": {
+        "revision": "f2d77f02f2693721ba4bdc8d4c21e8d9059446ed",
+        "gitTree": "46d8afcf4f0db5b552d8e16b43ee89e33ea2397c",
+        "checkoutSha256": "9220b94bc9e6b01dc227ae7b7dfb158ad6b35f92bc3cc2f10eee35ab5ba74645",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "9968d61f1d2ae1d0ff75f8fa12f43655ad5a84c0e3360d0e560c8721eec32abe",
+      "startedAt": "2026-09-21T08:12:13.314Z",
+      "endedAt": "2026-09-21T08:14:31.639Z",
+      "status": "FAIL",
+      "runSha256": "50cdb620f1decd3c02ce5a2210230c80fdd10c417d86dc259a531fcf309ce200",
+      "artifactsVerified": 22,
+      "browserAssetsVerified": 64,
+      "widths": [
+        {
+          "width": 320,
+          "status": "FAIL"
+        },
+        {
+          "width": 360,
+          "status": "FAIL"
+        },
+        {
+          "width": 390,
+          "status": "FAIL"
+        },
+        {
+          "width": 430,
+          "status": "FAIL"
+        }
+      ]
+    },
+    {
+      "directory": "mobile-adversity-5166fb53-1",
+      "source": {
+        "revision": "5166fb535284402298c15e6eeaacb4e394f2b326",
+        "gitTree": "032cb308f89904e5f90aeda09de347b07b01d2b4",
+        "checkoutSha256": "731bf357dd8a47e56c420c35569001b2a4dee1881f95ff3d4eb866c294b47ffa",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1b24ae37f8388b580d2bc54000135a9adfc193e4c26ccd8ab51de57a13db9300",
+      "startedAt": "2026-09-21T08:16:54.812Z",
+      "endedAt": "2026-09-21T08:19:16.832Z",
+      "status": "FAIL",
+      "runSha256": "961af98a00712f5d6fbcbb368d1d32cd5c50972ef93683992089a2ab595fe166",
+      "artifactsVerified": 22,
+      "browserAssetsVerified": 64,
+      "widths": [
+        {
+          "width": 320,
+          "status": "FAIL"
+        },
+        {
+          "width": 360,
+          "status": "FAIL"
+        },
+        {
+          "width": 390,
+          "status": "FAIL"
+        },
+        {
+          "width": 430,
+          "status": "FAIL"
+        }
+      ]
+    },
+    {
+      "directory": "mobile-adversity-f86d51ec-1",
+      "source": {
+        "revision": "f86d51ec52985c4e1dec93ef3202f2ed3baac627",
+        "gitTree": "2ba4fa4c260f2d27fe5be2f8d242fab1320c5992",
+        "checkoutSha256": "0ecaba5ffb56d25146ec7775ab096a7a6b885b9185c97270391b698448f06b23",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configurationSha256": "1b24ae37f8388b580d2bc54000135a9adfc193e4c26ccd8ab51de57a13db9300",
+      "startedAt": "2026-09-21T08:22:12.604Z",
+      "endedAt": "2026-09-21T08:24:30.595Z",
+      "status": "PASS_SCOPED",
+      "runSha256": "e2cfa0c5e7202e29ed3aa5c773ea3ec9f7cff910fb573c9dd8f23da37f185049",
+      "artifactsVerified": 22,
+      "browserAssetsVerified": 56,
+      "widths": [
+        {
+          "width": 320,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 802
+          }
+        },
+        {
+          "width": 360,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 804
+          }
+        },
+        {
+          "width": 390,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 808
+          }
+        },
+        {
+          "width": 430,
+          "status": "PASS_SCOPED",
+          "controls": 8,
+          "commandRequests": 8,
+          "delayedResponse": {
+            "requestedMs": 800,
+            "actualMs": 812
+          }
+        }
+      ]
+    }
+  ],
+  "preflight": {
+    "directory": "mobile-adversity-f2d77f02-1.log",
+    "status": "UNSEALED_SOURCE_GUARD_FAILURE",
+    "reason": "Equivalent mixed checkout line endings; strict guard preserved"
+  },
+  "scope": "Automated native newcomer recovery and preparation through the visible Family/Crew gate; no collective solo execution, physical devices, human comprehension or full mobile clearance",
+  "matrixQualifying": false,
+  "releaseReady": false,
+  "integratedSourceRetest": "Required",
+  "failedGate": "Native four-width mobile adversity at5166fb53",
+  "changedSource": [
+    "public/index.html"
+  ],
+  "affectedReruns": [
+    "Known/hidden blocker negative controls",
+    "Existing client regression",
+    "Native adversity at320/360/390/430",
+    "Four-width connected golden journey",
+    "Hosted native browser checks"
+  ]
+}

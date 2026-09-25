@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_REPRODUCTION",
+  "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+  "workflowSource": "9d36a0502115a8ea831e7742edcc942ba26940e5",
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35590753664",
+  "node": "22.23.2",
+  "postgres": "18.4",
+  "platform": "linux",
+  "matchedComparisonFields": 18,
+  "resourceBoundaries": 13476,
+  "unsupportedOccurrencesPerRun": 204,
+  "independentlyVerifiedArtifacts": 372,
+  "completeCanonicalState": {
+    "tables": 369,
+    "sequences": 3,
+    "sha256": "13aeac51e41ae757ac597e6a74f6be7563eb9dd03a0d64cec7ed30372af0d867"
+  },
+  "resourceJournalSha256": "d678e2ced9d6ffd4326cbede3ac7ea384e4ce0f170e4b9939516ea43f117fe0a",
+  "manifests": {
+    "observation": "03b9d7d74e5148f40183201a264503325e6e53eece4f9f0e864af118a85ed851",
+    "replay": "547bc12a01af48ec70e32dd15d21f504388bf21826559962ef6b4cddbaf8c19f"
+  },
+  "auditSha256": "e789639ca8f5b08d9ee1dea29479446b9108960479b8a6978d97cb1b80531afe",
+  "custodySha256": "0c6df1ac644e4e7f90d23c25c9ee0247d36ed6ae282634c342b3fd2940003b23",
+  "exclusions": [
+    "Original35586586182 failed replay remains failed with unresolved missing diagnostic artifacts",
+    "No source pass inheritance, complete resource coverage, matrix, deployed recovery or human qualification"
+  ],
+  "releaseReady": false
+}

@@ -1790,30 +1790,36 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   let inflightM = null, requestOutcomeM = null, holderTook2 = null, holderResult2 = null;
   let fixtureErrorM = null, raced2 = null;
   let holderPidM = null, waiterPidM = null;
+  let refundBoundaryM = null;
   try {
     await holderM.query('BEGIN');
+    // RC1 gate repair: schedule the same real cycle as §9e. Observing an
+    // already-waiting refund can miss its one-shot detector on a busy host.
+    await holderM.query("SET LOCAL deadlock_timeout = '1min'");
     // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
     await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
     const identityM = (await holderM.query(
       'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
     holderPidM = Number(identityM.pid);
-    // the seller takes the listing, then blocks reaching the bidder to refund them.
+    // Pause before the refund starts its detector; establish the reverse wait first.
+    refundBoundaryM = pausePlayerRefundBeforeSend(bidder.id);
     let requestSettledM = false;
     inflightM = observePromiseOutcome(
       call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token }),
       () => { requestSettledM = true; },
     );
-    waiterPidM = await waitForPlayerRefundBlockedBy({
-      holderPid: holderPidM, startedAfter: identityM.started_after,
-      requestSettled: () => requestSettledM, label: 'section 9f market refund',
-    });
+    waiterPidM = await refundBoundaryM.reached(() => requestSettledM);
     // close the cycle: we hold the bidder and now want the listing the player is holding.
-    holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
+    const listingSql = 'SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE';
+    holderTook2 = holderM.query(listingSql, [listingId])
       .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    await waitForHolderBlockedByPlayer(holderPidM, waiterPidM, listingSql);
+    refundBoundaryM.resume();
     [requestOutcomeM, holderResult2] = await Promise.all([inflightM, holderTook2]);
   } catch (error) {
     fixtureErrorM = error;
   } finally {
+    refundBoundaryM?.restore();
     // If readiness itself failed, release the held character before draining the blocked request.
     if (!holderTook2) await holderM.query('ROLLBACK').catch(() => {});
     await Promise.allSettled([inflightM, holderTook2].filter(Boolean));
@@ -2041,6 +2047,120 @@ console.log('\n9z. LAUNCH INVITATIONS — real transaction rollback and simultan
   }
   process.env.INVITE_MODE = 'off';
 }
+// POSTCOMMIT_POOL_CHECK_START — also runnable in isolation when diagnosing pool exhaustion.
+console.log('\n9h. POST-COMMIT HOOKS release their transaction connection');
+{
+  const { Pool } = await import('pg');
+  const { withCharacter, withTwoCharacters, GameError } = await import('../src/game.js');
+  const { M4 } = await import('../src/rules.js');
+  const { spawnResident } = await import('../src/population.js');
+  // A single real connection makes a nested checkout deterministic, without timing a large burst.
+  // Its short acquisition timeout bounds the regression; no production timeout is changed.
+  const single = new Pool({ connectionString: process.env.DATABASE_URL, max: 1,
+    connectionTimeoutMillis: 500, options: '-c statement_timeout=5000' });
+  let held = 0, acquired = 0, released = 0, nested = 0, afterRelease = 0, failHooks = false;
+  const statements = [], hookErrors = [];
+  const bounded = {
+    async query(sql, params) {
+      if (held) nested++;
+      if (failHooks) throw new Error('injected post-commit hook failure');
+      return single.query(sql, params);
+    },
+    async connect() {
+      if (held) nested++;
+      const client = await single.connect();
+      held++; acquired++;
+      let returned = false;
+      return {
+        async query(sql, params) {
+          if (returned) afterRelease++;
+          statements.push(sql);
+          return client.query(sql, params);
+        },
+        release() { returned = true; held--; released++; client.release(); },
+      };
+    },
+  };
+  const make = async () => {
+    const guest = await call('POST', '/v1/auth/guest');
+    const token = guest.body.token;
+    const created = await call('POST', '/v1/character', { token,
+      body: { name: `Pool ${crypto.randomBytes(4).toString('hex')}` } });
+    if (created.code !== 200) throw new Error(`pool fixture creation failed: ${created.code}`);
+    const account = app.jwt.verify(token).sub;
+    const id = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [account])).rows[0].id;
+    return { account, id };
+  };
+  const originalError = console.error;
+  try {
+    await spawnResident(pool, { band: { id: 'corner', lvl: [1, 2], seed: [200, 400], stat: [1, 3] } });
+    for (const pair of [false, true]) {
+      const label = pair ? 'two-character' : 'single-character';
+      const grand = await make(), parent = await make(), actor = await make();
+      // Qualification fixtures, after the absolute-ledger leg: all hook payments themselves use
+      // the original handlers/ledger. Future accrual timestamps isolate the transaction under test.
+      await pool.query("UPDATE characters SET respect=100000, cash=$2, lc_crime=$3, last_accrued_at=now()+interval '1 day' WHERE id=$1",
+        [actor.id, M4.REF_GATES.netWorth, M4.REF_GATES.jobs]);
+      await pool.query("UPDATE characters SET last_accrued_at=now()+interval '1 day' WHERE id=$1", [parent.id]);
+      await pool.query('UPDATE account_persistent SET referred_by=$2, ref_paid=true WHERE account_id=$1', [parent.account, grand.account]);
+      await pool.query('UPDATE account_persistent SET referred_by=$2, checkins_lifetime=$3 WHERE account_id=$1',
+        [actor.account, parent.account, M4.REF_GATES.checkins]);
+      await pool.query('INSERT INTO referrals(recruit_account,recruiter_account) VALUES($1,$2)', [actor.account, parent.account]);
+      const invoke = (fn) => pair
+        ? withTwoCharacters(bounded, actor.account, parent.id, (ch, victim, client, h) => fn(ch, client, h, victim))
+        : withCharacter(bounded, actor.account, fn);
+      const action = async (ch) => { ch.heat = Number(ch.heat) + 1; return { committed: true }; };
+      console.error = (...args) => {
+        if (String(args[0]).includes('post-commit, non-fatal')) hookErrors.push(String(args[0]));
+        else originalError(...args);
+      };
+      const startErrors = hookErrors.length, startNested = nested;
+      const result = await invoke(action);
+      const flags = (await pool.query('SELECT ref_spark,ref_paid,ref_l2_paid FROM account_persistent WHERE account_id=$1', [actor.account])).rows[0];
+      const assigned = (await pool.query('SELECT aha_stage FROM characters WHERE id=$1', [actor.id])).rows[0];
+      check(result.committed && hookErrors.length === startErrors && nested === startNested,
+        `${label}: real pool=1 action and post-commit hooks finish without nested checkout`,
+        `hook errors=${hookErrors.length - startErrors}, nested=${nested - startNested}`);
+      check(flags.ref_spark && flags.ref_paid && flags.ref_l2_paid && Number(assigned.aha_stage) === 1,
+        `${label}: spark, qualification, tier-2 and first blood actually commit`);
+      const payments = async () => (await pool.query("SELECT id FROM transactions WHERE character_id IN ($1,$2,$3) AND reason LIKE 'referral:%' ORDER BY id", [actor.id, parent.id, grand.id])).rows;
+      const paid = JSON.stringify(await payments());
+      await invoke(action);
+      check(JSON.stringify(await payments()) === paid, `${label}: repeated action does not repay referrals`);
+      for (const code of ['refused', '40P01']) {
+        const before = (await pool.query('SELECT heat FROM characters WHERE id=$1', [actor.id])).rows[0].heat;
+        const offset = statements.length;
+        let error;
+        try {
+          await invoke(async (ch, client) => {
+            await client.query('UPDATE characters SET heat=99 WHERE id=$1', [ch.id]);
+            if (code === 'refused') throw new GameError('refused', 'test refusal');
+            await client.query("DO $$ BEGIN RAISE EXCEPTION 'test retry' USING ERRCODE='40P01'; END $$");
+          });
+        } catch (e) { error = e; }
+        const after = (await pool.query('SELECT heat FROM characters WHERE id=$1', [actor.id])).rows[0].heat;
+        check(error?.code === (code === 'refused' ? 'refused' : 'contention') && Number(after) === Number(before)
+          && statements.slice(offset).filter((sql) => sql === 'ROLLBACK').length === 1,
+        `${label}: ${code} rolls back once and keeps its error classification`);
+        check((await invoke(action)).committed, `${label}: action can retry after ${code}`);
+      }
+      await pool.query('UPDATE account_persistent SET ref_paid=false WHERE account_id=$1', [actor.account]);
+      // Only the post-commit pool calls fail; the phase-one probe must still reach PostgreSQL.
+      const errorsBefore = hookErrors.length, offset = statements.length;
+      const committed = await invoke(async (ch) => { const out = await action(ch); failHooks = true; return out; });
+      failHooks = false;
+      check(committed.committed && hookErrors.length - errorsBefore === 4
+        && !statements.slice(offset).includes('ROLLBACK'), `${label}: all four hook failures preserve committed success`);
+      check(held === 0 && acquired === released && afterRelease === 0,
+        `${label}: every checkout released once, no query after release`);
+      console.error = originalError;
+    }
+  } finally {
+    console.error = originalError;
+    await single.end();
+  }
+}
+// POSTCOMMIT_POOL_CHECK_END
 console.log('\n10. NO node-pg DEPRECATIONS');
 await app.close();
 await new Promise((r) => setTimeout(r, 200));                // let any late warning land

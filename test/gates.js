@@ -3325,6 +3325,38 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/rc1-resident-restart.js':
+      'Requires the retained private alliance hour-24 dump, policy and RNG tape selected with --retained. '
+      + 'A newly seeded CI database cannot reproduce the recorded interruption. The bounded native '
+      + 'proof retains its exact source and full state; population behavior and deterministic runtime controls run in CI.',
+    'test/rc1-worker-restart-equivalence.js':
+      'Requires both the original restricted alliance checkpoint and the source-bound resident proof checkpoint. '
+      + 'Those inputs contain private actors and are not distributed to generic hosted CI. It replays the exact '
+      + 'saved request and all original startup callbacks; its retained output is the existing restart gate evidence.',
+    'test/rc1-family-cash-ammo-retained.js':
+      'Reclassifies three specific historical native runs from the private RC1_RETAINED_ROOT; '
+      + 'it requires their original restricted actor snapshots, requests and artifact hashes, '
+      + 'which are not distributed to hosted CI. The current-source Family custody native '
+      + 'suite and pure journal controls are independently invoked by rc1-recovery.yml.',
+    'test/rc1-world-resource-retained-classes.js':
+      'Requires the private RC1_RETAINED_COMPONENTS and RC1_RETAINED_EXPIRY historical roots, '
+      + 'including a hash-pinned command-admission record and its original restricted changed-row artifacts. '
+      + 'A newly seeded database cannot reproduce those recorded bytes. Current-source resource '
+      + 'native suites run in rc1-recovery.yml; pure journal controls run in test:rc1:harness.',
+    'test/rc1-world-resource-retained-family.js':
+      'Requires RC1_RETAINED_FAMILY to select one of two hash-pinned historical native manifests '
+      + 'with private actor entry records and restricted membership/cooldown deltas. Generic hosted '
+      + 'CI lacks those immutable inputs. Current-source Family native suites run in rc1-recovery.yml; '
+      + 'pure worker transition controls run in test:rc1:harness.',
+    'test/rc1-native-proof-gzip-benchmark.js':
+      'Requires an explicit immutable restricted historical history file and a fresh private output directory. '
+      + 'It measures and verifies every original byte without rerunning gameplay; generic CI lacks that input. '
+      + 'Current gzip transport unit controls and original-worker observation/replay are independently workflow-wired.',
+    'test/rc1-native-failure-reduction-postgres.js':
+      'Requires explicit --recorded-run and --world-failure restricted historical directories, '
+      + 'a selected standing sequence and source-tree/schema/lock equality with that recording. '
+      + 'Generic hosted CI has neither private input and must not substitute a different source. '
+      + 'The pure reducer controls run in test:rc1:harness; native trials retain separate evidence.',
     'test/contextplus.js':
       'Windows-only by construction: it spawns %SystemRoot%\\System32\\...\\powershell.exe to drive '
       + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '
@@ -3395,8 +3427,12 @@ scopedSocialContext = async function(db) {
 
   assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
     'the `suites` job identity changed');
-  assert.match(pgcheck, /^    name: real Postgres\s*$/m,
-    'the `pgcheck` job identity changed');
+  assert.match(pgcheck, /^    name: real Postgres \(\$\{\{ matrix\.postgres \}\}\)\s*$/m,
+    'the `pgcheck` job must identify each required PostgreSQL major');
+  assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
+    'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
+  assert.match(pgcheck, /^        image: postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
+    'each native lane must run its declared PostgreSQL server');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [60],
@@ -3469,6 +3505,7 @@ scopedSocialContext = async function(db) {
           continue;
         }
         if (!command || command.startsWith('#') || command === 'npm ci') continue;
+        if (command === "bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'") continue;
         if (command === 'node -e "') { nodeBody = true; continue; }
         const npm = /^npm run ([a-zA-Z0-9:_-]+)$/.exec(command);
         assert(npm, `unsupported pgcheck command shape: \`${command}\``);
@@ -3479,7 +3516,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'pgcheck', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'pgcheck', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

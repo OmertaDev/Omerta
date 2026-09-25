@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "id": "RC1-TOOL-59",
+  "source": "18449905d6aa0bf86386c3bb2d6e81791b27c631",
+  "firstFailure": {
+    "command": "node test/rc1-world-car-melt-witness.js",
+    "exitCode": 1,
+    "reason": "Expected source-bound runner block digest changed when the election callback was composed",
+    "log": {
+      "file": "candidate19-composition-development-1.log",
+      "bytes": 945,
+      "sha256": "1dab15bde5ed0adee668e08464b0ca4894ccad0b58ada5e8c38faf739956c9f9"
+    }
+  },
+  "changes": [
+    "Preserve car arg2 and NPC Family arg3, adding optional election provenance to the same classifier call",
+    "Keep acquired election provenance in first-resource-failure artifact if reconciliation rejects the candidate",
+    "Review/rebind exact block guard and retain17 existing controls plus4 election forwarding, replay/digest, failure retention and isolation controls"
+  ],
+  "retest": {
+    "result": "PASS_DEVELOPMENT",
+    "controls": 21,
+    "sourceBoundBlockSha256": "7d9a5f98990f2e673b8bd5122d2e35919cc9009b69b716c7edb2210ebc6f27ee",
+    "log": {
+      "file": "candidate19-composition-development-2.log",
+      "bytes": 1127,
+      "sha256": "9f56b8aca135a67e31b8d32677866218e7f3373398008ead122bae341d1c4127"
+    }
+  },
+  "exclusions": [
+    "Synthetic integration control is not native authority proof",
+    "No runtime change",
+    "Fresh frozen integrated native/hosted runs required"
+  ],
+  "releaseReady": false,
+  "laterBoatComposition": {
+    "sourceParent": "00c0f7f003cc8219ce9e68eb48e876923f59a2c0",
+    "workingTree": "Development only; package/inventory/report preparation not frozen",
+    "sourceBoundBlockSha256": "436bcd993e481fb710246ed950f07662a52d65d740884d00b45f8ef8b6e2d2f1",
+    "preservation": "One existing transaction collector; car/boat namespace shares arg2, NPC Family remains arg3, and election provenance is a separate classifier option. Existing21 composition controls and37 boat controls pass.",
+    "checks": [
+      {
+        "command": "npm run test:rc1:harness",
+        "status": "PASS_DEVELOPMENT",
+        "log": {
+          "file": "candidate19-harness-development-1.log",
+          "bytes": 30982,
+          "sha256": "b1f23a6fb058043eaa4db12de77f48c827e09f56ef35bd89775bff6bd12ff02e"
+        },
+        "scope": "Election and Knowledge composition before boat merge"
+      },
+      {
+        "command": "npm run test:rc1:harness",
+        "status": "PASS_DEVELOPMENT",
+        "log": {
+          "file": "candidate19-harness-development-2.log",
+          "bytes": 31224,
+          "sha256": "34bb0b861772da893db77251b2d290376e3038e24dccad3eb485601ee340cc47"
+        },
+        "scope": "Combined election/boat composition; synthetic and existing harness controls"
+      },
+      {
+        "command": "node test/rc1-qualification.js",
+        "status": "PASS_DEVELOPMENT",
+        "controls": 70,
+        "log": {
+          "file": "candidate19-qualification-development-2.log",
+          "bytes": 371,
+          "sha256": "9b41ce389d4dd5dc6a596875c9d301abc0a57210a0b62ddcd23d6b1fb3af33c9"
+        }
+      }
+    ],
+    "excluded": "Integrated native gameplay, replay and hosted qualification remain pending. Historical600a12h boat fault component still fails its later-positive target."
+  }
+}

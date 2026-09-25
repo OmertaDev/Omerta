@@ -1,0 +1,759 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_INDEPENDENT_AUDIT",
+  "source": {
+    "revision": "56e28fce29b30e8a6ebcb814c0d6e7a2836152c2",
+    "gitTree": "b6757b7761f24139efeb2510db7a3c662de3fb70",
+    "checkoutSha256": "8eccfd124c60cf191a9122bf42c00bc24d92fc28e2ebc4b5fd7dd7e490e56e68",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "owner": "Codex/native_harness",
+  "scope": "Read-only source-probed original cold zero-standing individual season election, no core Family holder; recorded order retained. No production change.",
+  "priorEvidence": {
+    "guide": "harness-season-crown-observer.md",
+    "index": "harness-season-crown-index.json",
+    "source": "e1caae3783c808015c2da84bddd2682fa1b83584",
+    "limitation": "The prior initial season selection remained unsupported; this later source does not rewrite or upgrade that prior result."
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "postgres": "18.4",
+    "platform": "win32",
+    "productionEquivalent": false
+  },
+  "pure": {
+    "rejected": 24,
+    "explicitUnsupported": 4,
+    "tiedOrdersPreserved": 2
+  },
+  "focused": {
+    "focused": {
+      "source": "56e28fce29b30e8a6ebcb814c0d6e7a2836152c2",
+      "manifestSha256": "364637d08623f429b2e79d8b34fbdbd40101812ef779e259de2ee2842ef82c2a",
+      "artifacts": 15,
+      "historyEvents": 40,
+      "boundaries": 9,
+      "equations": 143,
+      "elections": 1,
+      "crowns": 1,
+      "outcomes": {
+        "AUTOCOMMITTED": 7,
+        "COMMITTED": 2
+      },
+      "unsupported": {},
+      "resourceJournalSha256": "25a62ad0454efecb3552bfa483fa3d0df5811108ba32b633958e99be4a7265fe",
+      "nativeCandidateTables": 5,
+      "resourceTables": 59,
+      "summary": {
+        "status": "PASS_SCOPED",
+        "originalNativeElection": true,
+        "eligibleZeroStandingActors": 3,
+        "preservedActualTiedOrder": true,
+        "positiveCrown": 1,
+        "warmCacheExplicitlyUnsupported": true,
+        "freshProcessRecomputedActors": 4,
+        "fullStateExactRetry": true,
+        "nativeEvidenceCorruptionsRejected": 5,
+        "boundaries": 9,
+        "initialStateSha256": "87df06c3ab7665ebd19c5c60f1db825ccb6db58fa7d046c50a383e0f50f29b54",
+        "firstElectionStateSha256": "f6fec626086001b0335a993828327a8b1da3becf6103697b13a26734264d21f2",
+        "invariantChecks": 55,
+        "matrixQualifying": false
+      }
+    },
+    "focused/restart": {
+      "source": "56e28fce29b30e8a6ebcb814c0d6e7a2836152c2",
+      "manifestSha256": "c8fd9c16d4969e1b4705ba1aaa2b529b1464010a33336091cdd5a93f679bb5c0",
+      "artifacts": 8,
+      "historyEvents": 14,
+      "boundaries": 5,
+      "equations": 90,
+      "elections": 0,
+      "crowns": 0,
+      "outcomes": {
+        "AUTOCOMMITTED": 4,
+        "COMMITTED": 1
+      },
+      "unsupported": {},
+      "resourceJournalSha256": "5b1d836d5e5a4fcc7af8433585cf0d11f1eb5b313425c950c7fd46a956d738ce",
+      "nativeCandidateTables": 5,
+      "resourceTables": 59,
+      "summary": {
+        "status": "PASS_SCOPED",
+        "cache": "Fresh process recomputed all four entrants",
+        "fullStateExactRetry": true,
+        "appliedElections": 0,
+        "boundaries": 5,
+        "matrixQualifying": false
+      }
+    }
+  },
+  "world": {
+    "population": 25,
+    "actualActiveActors": 2,
+    "hours": 2,
+    "seed": "rc1-alpha",
+    "resourceTables": 59,
+    "comparedFields": [
+      "hours",
+      "population",
+      "seed",
+      "actorPolicy",
+      "initialStateSha256",
+      "finalStateSha256",
+      "workerScheduleSha256",
+      "jobOutcomesSha256",
+      "deterministicRandomTapeSha256",
+      "actorTapeSha256",
+      "policyStateSha256",
+      "semanticMetricsSha256",
+      "worldDiagnosticsSemanticSha256",
+      "mysteryPolicySummarySha256",
+      "knowledgeDiagnosticsSha256",
+      "resourceObservationEnabled",
+      "resourceJournalCount",
+      "resourceJournalSha256"
+    ],
+    "exactResourceEntriesCompared": 1085,
+    "completeInitialFinalTablesAndSequencesEqual": true,
+    "resourceJournalSha256": "544fd5c1c440d156f4c50b266ea61bb63ac9d25d35144a70af4965f69942729f",
+    "equationsPerLane": 139795,
+    "coldElectionsPerLane": 1,
+    "candidateCount": 25,
+    "positivePlayerCrownsPerLane": 1,
+    "positiveNpcPrestigeConversionsPerLane": 4,
+    "totalNpcPrestigePerLane": 24,
+    "playerZeroGainRecapsPerLane": 25,
+    "unsupportedPerLane": {
+      "car-acquisition-identity-provenance": 6,
+      "family-npc-formation": 2,
+      "receipt-reason": 2,
+      "family-lineage": 2,
+      "observed-table-change": 2
+    },
+    "observationManifestSha256": "9b2dfaa7f1436a47c03de704fd871b5698bdfba048bd4d140c83a722193c8c03",
+    "replayManifestSha256": "b1fec59480c07ebac53cdd89fdf6597f4fb9b5cc42cc96f84cdc695e409df8ef",
+    "ownedDatabasesAbsent": true
+  },
+  "finiteGuards": {
+    "worldWallMs": 1200000,
+    "externalWatchdogMs": 1500000,
+    "worldOutputBytes": 536870912,
+    "minFreeBytes": 536870912,
+    "historyDecodedBytes": 536870912,
+    "historyStoredBytes": 134217728,
+    "historyLineBytes": 8388608,
+    "historyOutstandingInvocations": 64,
+    "historyPendingRecords": 64,
+    "eachElectionWitnessBytes": 8388608,
+    "eachElectionQueries": 64
+  },
+  "limitations": [
+    "Cold all-zero/no-core-Family only; no warm memo/shared-flight/imported-state/nonzero/general Family election classification",
+    "Direct authority restart control covers memo recomputation and saved-intent retry, not worker/makeDb checkpoint restart",
+    "World has 25 synthetic schema-default actors; two participated in quiet sessions; focused entrants used ordinary HTTP",
+    "World executes a rollover callback at a bootstrap seasonal conversion; two logical hours do not prove an applicable 28-day season or two rollovers",
+    "Full-resource, matrix, concurrency, hosted and final integrated-source qualification remain open"
+  ],
+  "restrictedRootAlias": "rc1-readiness-private-20260921",
+  "files": [
+    {
+      "path": "season-election-56e28fce-1/audit.mjs",
+      "bytes": 11931,
+      "sha256": "5389ac49ea85e8abf8f6d7d4b62f51e65bcb6bcf34c6952d14eaea53a1d7e8ba"
+    },
+    {
+      "path": "season-election-56e28fce-1/independent-audit.json",
+      "bytes": 20212,
+      "sha256": "0dcfc0ce1ec4227ad69157201edb2bbb85ca1b4e9f508294eef30823c2ea0b84"
+    },
+    {
+      "path": "season-election-56e28fce-1/index.cjs",
+      "bytes": 4297,
+      "sha256": "d05e4679c317804b9578139af087b9f07cf875e4a040333e315c2e50120c362a"
+    },
+    {
+      "path": "season-election-56e28fce-1/launch.cjs",
+      "bytes": 3651,
+      "sha256": "49319b40a2ffe5a20f1a14ecf71517d7accac13051f4660fb51c8eb738beb912"
+    },
+    {
+      "path": "season-election-56e28fce-1/launch.json",
+      "bytes": 2702,
+      "sha256": "2da0a1eaea982a5b5809a2f4f4a18c9b181e5f2cbd7fd049873610d5b5a523e4"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe-launch-result.json",
+      "bytes": 199,
+      "sha256": "4c455fd1cd42c28b752db3c391488079395985ed6c57b2f4b122635bb9de0cb5"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe-output.txt",
+      "bytes": 500,
+      "sha256": "b8ae1178268e061e864ff3cae374393011530b7eed834b4950c2ae78c7c96aee"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/actor-policy-final.json",
+      "bytes": 13107,
+      "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/actor-policy-initial.json",
+      "bytes": 2572,
+      "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/actor-tape.json",
+      "bytes": 24034,
+      "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/day-0.json",
+      "bytes": 519317,
+      "sha256": "6b9bd31166e4725369a7b161f3a26bf34f64a7fae4a359b6adc399becf0dd764"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/final-checkpoint.json",
+      "bytes": 735,
+      "sha256": "a6c4e0e477253a5bc88081137af127908d10f8d2b6e218f3c687daa5ecc04b4a"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/final.dump",
+      "bytes": 960732,
+      "sha256": "b88aeb0876572a0418665c2569c9b4dbd2299fccf4506d6353b81bf7c5fbfe94"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/final.json",
+      "bytes": 562723,
+      "sha256": "f599be5ea9bc82c76a4e9a3901c140dd7c41d102696a2c345ea54d184fe32aa7"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/history.jsonl.gz",
+      "bytes": 4478869,
+      "sha256": "b12b7d833e1ec0e5dfef2780e6141a09e13ef2be2ec851d17f996c9841330e94"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/initial-checkpoint.json",
+      "bytes": 735,
+      "sha256": "9041840bec6c118e5df187cfa3b1993535bc653d05e4d23809f307fa8f072723"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/initial.dump",
+      "bytes": 929832,
+      "sha256": "5c81528a939cebab197f9346e6191e1d6076e17cac96401d1de59d9b339dad2f"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/initial.json",
+      "bytes": 121031,
+      "sha256": "ddc98e3b2310955b54e794d60b72ae79e7ef314c744fdb3a329273fba465e516"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/knowledge-boundaries.json",
+      "bytes": 681,
+      "sha256": "e82b207f3cefd9b1be6ca0afc48896f7da45811c180971f34b6c776d72844eba"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/knowledge-day-0.json",
+      "bytes": 5542,
+      "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/knowledge-final.json",
+      "bytes": 5542,
+      "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/operational-guardrails.json",
+      "bytes": 177,
+      "sha256": "fb978a3fbb49f75cb16b94e1c1846f87957101dc84f63b5df7080039aa555a0f"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/player-metrics.json",
+      "bytes": 3353,
+      "sha256": "0f55971e7e2ad92658257c959c751384ee41725ae5a2b328d25eed7e9cebe743"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/query-order.json",
+      "bytes": 119706,
+      "sha256": "0edd6eec4747b34f06294f271a407bb24a58218c11da9d71e022d0de6541f400"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/query-tape-00001.json",
+      "bytes": 258135,
+      "sha256": "b7c9275caf424624838fc563d5be7ef70a841f52b39a716dfe9ee43a78a9281f"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/random-tape.json",
+      "bytes": 48639,
+      "sha256": "68791e9add12f1ba67f8d92aa0369dac27c30985241718f6a3b0b9baa072352b"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/resource-observer-final.json",
+      "bytes": 963,
+      "sha256": "1fe4b0d99b2ccbbaf7c6da952fdf188d5644c212ba538fcb8081e3c1441462b3"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/resource-observer.json",
+      "bytes": 417,
+      "sha256": "fab0790faa65e73e24735a95df0cdf5b560269484ad8bb94df239a7cfcee3b32"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/resource-worker-bootstrap.json",
+      "bytes": 304370,
+      "sha256": "499c1ad1936a730ebd964f467b3d641224b63c7c98bec334c67b9b6c42d9d8e9"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0000083.json",
+      "bytes": 10474,
+      "sha256": "223b1a495ad6289972db77d01b8d7396c00352341f5b209029255d03bb790cbb"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0000351.json",
+      "bytes": 10477,
+      "sha256": "868d0a8298a3eb3dbb17a74547f8f1689fae6fd28b8f32ade8cd66990dacbca9"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0000353.json",
+      "bytes": 10475,
+      "sha256": "ba6c2830a910b78ee8625b01bcbe878e237f9cf7fb307bf73b9d1fd8248fcf9b"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0000354.json",
+      "bytes": 10468,
+      "sha256": "8ccefd5097c7fb3c456dc0803cb7514adefad4d6c46aabb9eecc9946142d17e4"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0000361.json",
+      "bytes": 11582,
+      "sha256": "7527093745778f1a1ec32a666d15d6396e88e3079bfd8ee69a7b65446178a68f"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0001003.json",
+      "bytes": 10475,
+      "sha256": "8d9d91a0d7c73b857d57e777af378ab32009b4e805b0bcc72560c45b66414801"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0001004.json",
+      "bytes": 10477,
+      "sha256": "925e0ab52690c1362943a929bb28f281d16dfe7e17cf6be21bf73dc6673bc5d1"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-resource-change-0001012.json",
+      "bytes": 11545,
+      "sha256": "a592b17927aac4ecdae951f7dccde5b11e4f17fb0bac4000eb225a6fccd35edd"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/restricted-season-election-0000835.json",
+      "bytes": 519659,
+      "sha256": "53513b51b8b791ea8be9033e1526d0023558f2ce5d7b8dded7f491a43b16c02f"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/run-reserved.json",
+      "bytes": 882,
+      "sha256": "bf4afd2d7e8226e17c504306171cb223af74b483d5afd7061e657d7aca3c7126"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/run.json",
+      "bytes": 24561,
+      "sha256": "9b2dfaa7f1436a47c03de704fd871b5698bdfba048bd4d140c83a722193c8c03"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/season-election-observer-final.json",
+      "bytes": 38288,
+      "sha256": "efb8f7cde4eef4089820ab27f448eee5570869524d447e105b3ad348d3910a42"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/worker-schedule.json",
+      "bytes": 515381,
+      "sha256": "56493ba5b0845a1e9f33e27ba76cea3e4f965006254b7c77ef170b4ac38e3804"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/world-diagnostics-day-0.json",
+      "bytes": 68113,
+      "sha256": "97d0c62b966edfe84437b9542239b2155e92b8dd95e15e51e9d83ba65408f469"
+    },
+    {
+      "path": "season-election-56e28fce-1/observe/world-diagnostics-final.json",
+      "bytes": 70518,
+      "sha256": "9945e2d334b07fe8320ce5d63844ddeeea507d978a10106dc3c1e5fd9a1b6da4"
+    },
+    {
+      "path": "season-election-56e28fce-1/pair-launch-result.json",
+      "bytes": 571,
+      "sha256": "21e530c3b9549ddc7337089c684efcaf51e2c6c8e7cc68a474d5a447518de578"
+    },
+    {
+      "path": "season-election-56e28fce-1/pure-conversion.txt",
+      "bytes": 148,
+      "sha256": "1cf779224ba47931140ee11899427993254b029bae6c90d53064b77d39dbfe5a"
+    },
+    {
+      "path": "season-election-56e28fce-1/pure-crown.txt",
+      "bytes": 229,
+      "sha256": "6a4ea98ba497b8ebdd220d724d7bd2719612cabdbca147b3910d8a2dd222ef00"
+    },
+    {
+      "path": "season-election-56e28fce-1/pure-election.txt",
+      "bytes": 222,
+      "sha256": "4d25b256a2a85260f36d424fefe1851ebc57278ea8f5295b1117c6fb6d637bf6"
+    },
+    {
+      "path": "season-election-56e28fce-1/pure-observer.txt",
+      "bytes": 123,
+      "sha256": "8de68d6ef27465fc3832a8965797cddb0c5aae8b335dcdc4408313b8024b1738"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay-launch-result.json",
+      "bytes": 191,
+      "sha256": "ffb941816bd3e2b3406123b8bf2e507738181983b1eb08692e5b52d88e1fdf60"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay-output.txt",
+      "bytes": 500,
+      "sha256": "b8ae1178268e061e864ff3cae374393011530b7eed834b4950c2ae78c7c96aee"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/actor-policy-final.json",
+      "bytes": 13107,
+      "sha256": "7a19f9ae0d40109125308d1ddd4c775a333f109eec0059a5e9881ff3c003e554"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/actor-policy-initial.json",
+      "bytes": 2572,
+      "sha256": "6c61926e5ba0a1e39395044730408361a1910a804d32f4f9fd43f3371db5a723"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/actor-tape.json",
+      "bytes": 24034,
+      "sha256": "15b375ea8cf127ed9c20cef2d5dbecc7633fa15ad9d5de70042565e95c776142"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/day-0.json",
+      "bytes": 519317,
+      "sha256": "c04d9980b145b875775aef0966e73d9a15915ce274aedab344c1f1ad1094c525"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/final-checkpoint.json",
+      "bytes": 735,
+      "sha256": "dd4d7f448e855baaa6433e8e7dfdc30fb1e3a2cc8527cd05dc6af39cdf477b43"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/final.dump",
+      "bytes": 960725,
+      "sha256": "9e3d0f60768c29007e98a2139e48e8b288d8f5132579735ff12c6b375065ba79"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/final.json",
+      "bytes": 562723,
+      "sha256": "f28f434b74f49c4ffbd8adeb24b7e21945b38e21d5371a1a78ce10b0a998bd6a"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/history.jsonl.gz",
+      "bytes": 4479262,
+      "sha256": "14bd45137dfbf01076f0e61001b71427314be944d32f686e15e9906f259a6cb4"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/initial-checkpoint.json",
+      "bytes": 735,
+      "sha256": "06452083bc38e56053bdbf8028354f1279fd6f5cf0b683b7247ac6242495934c"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/initial.dump",
+      "bytes": 929831,
+      "sha256": "8c0d795d31087f907e44a844fc9b57cf82672d30b494d0b6ce17d8e0883edaf5"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/initial.json",
+      "bytes": 121031,
+      "sha256": "0a2e3e41aca758cec633c21f50cf26237ee31d3cc2ae183cee4b83e3552f0f9f"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/knowledge-boundaries.json",
+      "bytes": 681,
+      "sha256": "e82b207f3cefd9b1be6ca0afc48896f7da45811c180971f34b6c776d72844eba"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/knowledge-day-0.json",
+      "bytes": 5542,
+      "sha256": "8985c44794e19a3a480033058337d3502586f70d10d4845961b0167bb00496f9"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/knowledge-final.json",
+      "bytes": 5542,
+      "sha256": "de981a71357ff2b7c588fbb84e59c2e0f00bd8fb2abf06e2123358f8890297c5"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/operational-guardrails.json",
+      "bytes": 177,
+      "sha256": "d766222a78b483b4dde47b2a43305a187cfe8f00659d0789814938c01030b321"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/player-metrics.json",
+      "bytes": 3354,
+      "sha256": "7456ada19df9323f772f0222e39760157ebc0113ff261465773d8bb6853a1f66"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/query-order.json",
+      "bytes": 119734,
+      "sha256": "0e7fcccb1a3231989d76729bb67c0d133c8f22c9ab2d979cda8b413992f4c059"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/query-tape-00001.json",
+      "bytes": 258135,
+      "sha256": "90a1c1f61bc6d5fb3bf5cc0c7c8cba9af9ff7a7caea21181d90915edac862f04"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/random-tape.json",
+      "bytes": 48639,
+      "sha256": "68791e9add12f1ba67f8d92aa0369dac27c30985241718f6a3b0b9baa072352b"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/resource-observer-final.json",
+      "bytes": 963,
+      "sha256": "feb1d555d6392cd1fde5238fce07598f1668ae459ad3bb80b02cd9bf6a6fb5d4"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/resource-observer.json",
+      "bytes": 417,
+      "sha256": "fab0790faa65e73e24735a95df0cdf5b560269484ad8bb94df239a7cfcee3b32"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/resource-worker-bootstrap.json",
+      "bytes": 304363,
+      "sha256": "5a53a8f01978d5de629d3d0cca63bc27525ab060f929ba32a350672e73b7dcb5"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0000083.json",
+      "bytes": 10474,
+      "sha256": "223b1a495ad6289972db77d01b8d7396c00352341f5b209029255d03bb790cbb"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0000351.json",
+      "bytes": 10477,
+      "sha256": "868d0a8298a3eb3dbb17a74547f8f1689fae6fd28b8f32ade8cd66990dacbca9"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0000353.json",
+      "bytes": 10475,
+      "sha256": "ba6c2830a910b78ee8625b01bcbe878e237f9cf7fb307bf73b9d1fd8248fcf9b"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0000354.json",
+      "bytes": 10468,
+      "sha256": "8ccefd5097c7fb3c456dc0803cb7514adefad4d6c46aabb9eecc9946142d17e4"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0000361.json",
+      "bytes": 11582,
+      "sha256": "7527093745778f1a1ec32a666d15d6396e88e3079bfd8ee69a7b65446178a68f"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0001003.json",
+      "bytes": 10475,
+      "sha256": "8d9d91a0d7c73b857d57e777af378ab32009b4e805b0bcc72560c45b66414801"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0001004.json",
+      "bytes": 10477,
+      "sha256": "925e0ab52690c1362943a929bb28f281d16dfe7e17cf6be21bf73dc6673bc5d1"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-resource-change-0001012.json",
+      "bytes": 11545,
+      "sha256": "a592b17927aac4ecdae951f7dccde5b11e4f17fb0bac4000eb225a6fccd35edd"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/restricted-season-election-0000835.json",
+      "bytes": 519659,
+      "sha256": "53513b51b8b791ea8be9033e1526d0023558f2ce5d7b8dded7f491a43b16c02f"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/run-reserved.json",
+      "bytes": 881,
+      "sha256": "e67706f7b10e8ca8cbf2fe15b1164c5711072f29d164e84a21fcb61e210835ca"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/run.json",
+      "bytes": 25986,
+      "sha256": "b1fec59480c07ebac53cdd89fdf6597f4fb9b5cc42cc96f84cdc695e409df8ef"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/season-election-observer-final.json",
+      "bytes": 38288,
+      "sha256": "efb8f7cde4eef4089820ab27f448eee5570869524d447e105b3ad348d3910a42"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/worker-schedule.json",
+      "bytes": 515364,
+      "sha256": "3417f839019cb2bcec10f60e0ea8615fa017cb9b355ed77d52781f22534b296e"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/world-diagnostics-day-0.json",
+      "bytes": 68113,
+      "sha256": "44da813d7f632348d88cf29a68edc42f54fb7ef4e62485bf699cbf1309b86b79"
+    },
+    {
+      "path": "season-election-56e28fce-1/replay/world-diagnostics-final.json",
+      "bytes": 70518,
+      "sha256": "2f148cfbb3bfec94b9dbe3f3acb8b847d20fada6b9ff430f451b4d9449902f23"
+    },
+    {
+      "path": "season-election-first-1/audit.mjs",
+      "bytes": 5587,
+      "sha256": "5b0ff936d1519c42e953e08499a9ba5ae72e71ff44d63caafda48e5f8f6d4cdb"
+    },
+    {
+      "path": "season-election-first-1/focused-output.txt",
+      "bytes": 1227,
+      "sha256": "bd809d3448a89419490963b618dab90433e9a1bc849b8bad697636313991e40f"
+    },
+    {
+      "path": "season-election-first-1/focused/commit-observer-final.json",
+      "bytes": 107,
+      "sha256": "bab01ce76c3f7bb9f31a50c36dbac8f6953e3e2b458e95dd901ac27041023e38"
+    },
+    {
+      "path": "season-election-first-1/focused/election-after-1.json",
+      "bytes": 22055,
+      "sha256": "c2cc660270a130c759fcd5b5ec84fb389e6590f14c24e6687178d7192894e20b"
+    },
+    {
+      "path": "season-election-first-1/focused/election-after-2.json",
+      "bytes": 28206,
+      "sha256": "017f3f4742be2902afc982bc477a3ce48a1986ab1ecd2dca4b46cd164a44d148"
+    },
+    {
+      "path": "season-election-first-1/focused/election-before-1.json",
+      "bytes": 21645,
+      "sha256": "9b25884463cbd8583458abfe978302550e2cbbc6f38a5f52fa886ad231dca59a"
+    },
+    {
+      "path": "season-election-first-1/focused/election-before-2.json",
+      "bytes": 28206,
+      "sha256": "017f3f4742be2902afc982bc477a3ce48a1986ab1ecd2dca4b46cd164a44d148"
+    },
+    {
+      "path": "season-election-first-1/focused/election-probe-final.json",
+      "bytes": 38288,
+      "sha256": "6b3403d17aaacd4f6203a83c0531b2865ec82470c85dfd7f59f2d05354efff6b"
+    },
+    {
+      "path": "season-election-first-1/focused/election-witness-1.json",
+      "bytes": 92630,
+      "sha256": "eb57799435ed12c968ea5df44fd73c9678b6acccf8e1d20219d0a19f3ce5bbf8"
+    },
+    {
+      "path": "season-election-first-1/focused/election-witness-2.json",
+      "bytes": 96622,
+      "sha256": "29d4895d7a7ed945b750bc37ea0d7249ae6898111fb0bad27b6e2421dd917d24"
+    },
+    {
+      "path": "season-election-first-1/focused/first-election.json",
+      "bytes": 32047,
+      "sha256": "9cc72a27a4f1be0e06e53a1124e219caf09e6708b49598b2330e3b34773c1ed5"
+    },
+    {
+      "path": "season-election-first-1/focused/history.jsonl",
+      "bytes": 113542,
+      "sha256": "594779e5e5917879775877c42c49606d978da7a5f9d87921e68072ccdca9c51d"
+    },
+    {
+      "path": "season-election-first-1/focused/initial.json",
+      "bytes": 31420,
+      "sha256": "ac2d709be13a8cfb912e4f22420cd48450f4fe453026a6db8d17a5342b439e20"
+    },
+    {
+      "path": "season-election-first-1/focused/native-corruption-controls.json",
+      "bytes": 225,
+      "sha256": "731da516aaa4469d03b43d986b6dcade046256f1ce5ea242e11bbf44645d1dad"
+    },
+    {
+      "path": "season-election-first-1/focused/restart-link.json",
+      "bytes": 4474,
+      "sha256": "710955b7c39fcc28003e664309267b8cf2ab6113782a7922ceb5a4bfbc98cbb8"
+    },
+    {
+      "path": "season-election-first-1/focused/restart-output.txt",
+      "bytes": 166,
+      "sha256": "0c30fd6537e452a45efa48d3b0e47d118941f32f406942ec46d7f46cb254c9df"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/commit-observer-final.json",
+      "bytes": 106,
+      "sha256": "4606c4c98a1fb409342a875e2e63de1e1d2be3b6845b0541b6490600eee43935"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/election-after-1.json",
+      "bytes": 28206,
+      "sha256": "017f3f4742be2902afc982bc477a3ce48a1986ab1ecd2dca4b46cd164a44d148"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/election-before-1.json",
+      "bytes": 28206,
+      "sha256": "017f3f4742be2902afc982bc477a3ce48a1986ab1ecd2dca4b46cd164a44d148"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/election-probe-final.json",
+      "bytes": 38288,
+      "sha256": "efb8f7cde4eef4089820ab27f448eee5570869524d447e105b3ad348d3910a42"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/election-witness-1.json",
+      "bytes": 107594,
+      "sha256": "1b794ec98405a92cf7cbbd35f14971d020aa8462284c3040d39f4e674a74867c"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/final.json",
+      "bytes": 36964,
+      "sha256": "676e00a8748295097a36205e8c7f315931c04b2a14470465713071e92e93e1fc"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/history.jsonl",
+      "bytes": 60522,
+      "sha256": "f09bb196618c34ff829e74a35034f2af32579ebf2e4ca5bf1eaadf8d4f3ba706"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/initial.json",
+      "bytes": 36964,
+      "sha256": "7a71d8dfb575a983376942a5784249805e5c5610649bd137e97cb033c5ec4b3d"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/run-reserved.json",
+      "bytes": 401,
+      "sha256": "463e327edbe999daf526ec2dcdf2d6b7dabd29c0a9155b1488d8d9626272c156"
+    },
+    {
+      "path": "season-election-first-1/focused/restart/run.json",
+      "bytes": 3742,
+      "sha256": "c8fd9c16d4969e1b4705ba1aaa2b529b1464010a33336091cdd5a93f679bb5c0"
+    },
+    {
+      "path": "season-election-first-1/focused/run-reserved.json",
+      "bytes": 393,
+      "sha256": "d68ca651d502d4f670651c35f0932966aa1d1cb7b27692695dacbedf2f644042"
+    },
+    {
+      "path": "season-election-first-1/focused/run.json",
+      "bytes": 5658,
+      "sha256": "364637d08623f429b2e79d8b34fbdbd40101812ef779e259de2ee2842ef82c2a"
+    },
+    {
+      "path": "season-election-first-1/focused/warm-after.json",
+      "bytes": 36964,
+      "sha256": "ec31dc0a4cc43604adc10f3d1e00ee9a01a9cf7545e1e2231abba9d1d768b844"
+    },
+    {
+      "path": "season-election-first-1/focused/warm-before.json",
+      "bytes": 36964,
+      "sha256": "b8d6b5ca0cfbdac870287e08298d525d87a019aacf37c8a108c7927f66a49bbc"
+    },
+    {
+      "path": "season-election-first-1/independent-audit.json",
+      "bytes": 2470,
+      "sha256": "11ae97dc6571a76ac8ab90035b6aaa009cabc3c0ec654729884e394f405c8df5"
+    }
+  ],
+  "totalFiles": 119,
+  "totalBytes": 20356353
+}

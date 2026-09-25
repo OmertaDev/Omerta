@@ -4,17 +4,209 @@ on:
   push:
     branches: [codex/rc1-release-validation]
   workflow_dispatch:
+    inputs:
+      replay_source:
+        description: 'Optional exact source SHA for diagnostic PostgreSQL18.4 alliance replay only'
+        required: false
+        type: string
+      repair_only:
+        description: 'Retest candidate19 recovery fixes, interrupted lifecycle and residual authority coverage'
+        required: false
+        type: boolean
+        default: false
+      phone_only:
+        description: 'Run only the retained phone expiry reproduction and affected 430px journey'
+        required: false
+        type: boolean
+        default: false
+      phone_postgres:
+        description: 'PostgreSQL version for the focused phone recovery proof'
+        type: choice
+        default: '16'
+        options: ['16', '18.4']
+
+env:
+  RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
 
 permissions:
   contents: read
 
 jobs:
-  linux-sigterm:
+  retention-controls:
+    name: Authenticated evidence transport controls
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node test/rc1-ci-envelope.js
+
+  focused-closure:
+    needs: retention-controls
+    if: ${{ inputs.repair_only && !inputs.phone_only && !inputs.replay_source }}
+    name: Candidate19 affected recovery gates (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_recovery
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_recovery
+      RC1_CI_POSTGRES: ${{ matrix.postgres }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Ordinary market contention and original order expiry
+        env:
+          RC1_MARKET_OUTPUT: ${{ runner.temp }}/rc1-market-policy
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:market:postgres 2>&1 | tee "$RUNNER_TEMP/rc1-market-policy.log"
+      - name: Check out the observed Render rollback predecessor
+        if: '!cancelled()'
+        uses: actions/checkout@v4
+        with:
+          ref: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          path: tmp/rc1-predecessor
+          fetch-depth: 0
+      - name: Install predecessor dependencies from its own lockfile
+        if: '!cancelled()'
+        run: npm ci --prefix tmp/rc1-predecessor
+      - name: Upgrade, rollback and replay against the pinned predecessor
+        if: '!cancelled()'
+        env:
+          RC1_PAIR_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_PAIR_PREDECESSOR_DIRECTORY: ${{ github.workspace }}/tmp/rc1-predecessor
+          RC1_PAIR_PREDECESSOR_SHA: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          RC1_PAIR_OUTPUT: ${{ runner.temp }}/rc1-source-pair
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:rollback:postgres 2>&1 | tee "$RUNNER_TEMP/rc1-source-pair.log"
+      - name: Complete the interrupted PostgreSQL16 aggression lifecycle proof
+        if: ${{ !cancelled() && matrix.postgres == '16' }}
+        env:
+          RC1_AGGRESSION_LIFECYCLE_OUTPUT: ${{ runner.temp }}/rc1-aggression-lifecycle
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:aggression-lifecycle:postgres 2>&1 | tee "$RUNNER_TEMP/rc1-aggression-lifecycle.log"
+      - name: Native residual legacy authority and exact replay
+        if: '!cancelled()'
+        env:
+          RC1_AUTHORITY_RESIDUAL_OUTPUT: ${{ runner.temp }}/rc1-authority-residual
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-authority-residual-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-authority-residual.log"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-focused-closure-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  focused-phone:
+    needs: retention-controls
+    if: ${{ inputs.phone_only && !inputs.replay_source && !inputs.repair_only }}
+    name: Focused phone recovery (PostgreSQL ${{ inputs.phone_postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:${{ inputs.phone_postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_phone
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_phone
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Deterministic refresh followed by command expiry
+        env:
+          RC1_PHONE_EXPIRY_OUTPUT: ${{ runner.temp }}/rc1-phone-expiry
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-phone-command-expiry-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-phone-expiry.log"
+      - name: Retained failing phone journey at 430px
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-golden-browser
+          RC1_GOLDEN_BROWSER_WIDTH: '430'
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-golden-browser-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-golden-browser.log"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ inputs.phone_postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-phone-pg${{ inputs.phone_postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  linux-sigterm:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Linux recovery (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -34,14 +226,1074 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
       - run: npm ci
+      - name: Record exact candidate and runtime
+        run: |
+          mkdir -p "$RC1_SHUTDOWN_EVIDENCE"
+          git rev-parse HEAD | tee "$RC1_SHUTDOWN_EVIDENCE/source-sha.txt"
+          node --version | tee "$RC1_SHUTDOWN_EVIDENCE/node-version.txt"
+          psql "$COORDINATION_TEST_DATABASE_URL" -Atc 'SELECT version()' | tee "$RC1_SHUTDOWN_EVIDENCE/postgres-version.txt"
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: PostgreSQL partial migration failure and retry
+        run: |
+          set -o pipefail
+          npm run test:db-migration:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/migration-failure.log"
+      - name: RC1 command tampering and concurrent replay on PostgreSQL
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+        run: |
+          set -o pipefail
+          npm run test:rc1:security:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/command-redteam.log"
+      - name: Install Chromium for the real PostgreSQL phone journey
+        run: npx playwright-core install --with-deps chromium
+      - name: Native item, recipe, world and situation authority probes
+        env:
+          RC1_COMMAND_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-command-family
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:command-family:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/command-family.log"
+      - name: Native residual legacy authority and exact replay
+        if: '!cancelled()'
+        env:
+          RC1_AUTHORITY_RESIDUAL_OUTPUT: ${{ runner.temp }}/rc1-authority-residual
+        run: |
+          set -o pipefail
+          umask 077
+          node test/rc1-authority-residual-postgres.js 2>&1 | tee "$RUNNER_TEMP/rc1-authority-residual.log"
+      - name: RC1 newcomer phone journey on PostgreSQL
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_MOBILE_EVIDENCE: ${{ github.workspace }}/tmp/rc1-linux-sigterm/mobile
+        run: |
+          set -o pipefail
+          npm run test:rc1:mobile:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/mobile.log"
+      - name: Native backup, private file permissions and restore on Linux
+        if: '!cancelled()'
+        env:
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_recovery
+        run: |
+          set -o pipefail
+          npm run backup:selftest 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/backup-selftest.log"
+      - name: Crew draft and adjacent Send survive pending canonical reads
+        if: '!cancelled()'
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-crew-focus
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:crew-focus:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/crew-focus.log"
+      - name: Connected social, investigation and conflict phone journeys
+        env:
+          RC1_GOLDEN_BROWSER_OUTPUT: ${{ runner.temp }}/rc1-golden-browser
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:golden:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/golden-browser.log"
       - name: Nine production-process termination barriers
         run: node tools/rc1-shutdown.js
-      - name: Retain exact-revision process logs and verdict
+      - name: Native checkpoint restore, receipt replay and deliberate corruption detection
+        if: '!cancelled()'
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:proof:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/checkpoint-proof.log"
+      - name: Same-seed serial replay with complete canonical state
+        if: '!cancelled()'
+        env:
+          RC1_SERIAL_OUTPUT: ${{ runner.temp }}/rc1-serial-replay
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:serial:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/serial-replay.log"
+      - name: Recorded PostgreSQL contention and fault schedule replay
+        if: '!cancelled()'
+        env:
+          RC1_CONCURRENT_OUTPUT: ${{ runner.temp }}/rc1-concurrent-replay
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:concurrent:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/concurrent-replay.log"
+      - name: Check out the observed Render rollback predecessor
+        uses: actions/checkout@v4
+        with:
+          ref: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          path: tmp/rc1-predecessor
+          fetch-depth: 0
+      - name: Install predecessor dependencies from its own lockfile
+        run: npm ci --prefix tmp/rc1-predecessor
+      - name: Upgrade, rollback and replay against the pinned predecessor
+        env:
+          RC1_PAIR_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_PAIR_PREDECESSOR_DIRECTORY: ${{ github.workspace }}/tmp/rc1-predecessor
+          RC1_PAIR_PREDECESSOR_SHA: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          RC1_PAIR_OUTPUT: ${{ runner.temp }}/rc1-source-pair
+        run: |
+          set -o pipefail
+          umask 077
+          npm run test:rc1:rollback:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/source-pair.log"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc1-linux-sigterm-${{ github.sha }}
-          path: tmp/rc1-linux-sigterm/
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  isolated-world-smoke:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Isolated two-hour world smoke (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_world_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Native advisory-lock database isolation control
+        env:
+          RC1_DATABASE_OUTPUT: ${{ runner.temp }}/rc1-database-isolation
+        run: |
+          umask 077
+          npm run test:rc1:database:postgres
+      - name: City worker session release under native query failures
+        if: '!cancelled()'
+        env:
+          RC1_CITY_LOCK_OUTPUT: ${{ runner.temp }}/rc1-city-lock-release
+        run: |
+          umask 077
+          npm run test:rc1:city-lock:postgres
+      - name: Two-hour authorized-player and original-worker smoke
+        if: '!cancelled()'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-world-smoke
+        run: |
+          umask 077
+          npm run test:rc1:world:smoke:postgres
+      - name: Native seasonal and market query-order causal controls
+        if: '!cancelled()'
+        env:
+          RC1_QUERY_ORDER_OUTPUT: ${{ runner.temp }}/rc1-query-order
+        run: |
+          umask 077
+          npm run test:rc1:query-order:postgres
+      - name: Canonical Knowledge distribution and pagination
+        if: '!cancelled()'
+        env:
+          RC1_KNOWLEDGE_OUTPUT: ${{ runner.temp }}/rc1-knowledge
+        run: |
+          umask 077
+          npm run test:rc1:knowledge:postgres
+      - name: Bounded mystery participation policy exercise
+        if: '!cancelled()'
+        env:
+          RC1_MYSTERY_POLICY_OUTPUT: ${{ runner.temp }}/rc1-mystery-policies
+        run: |
+          umask 077
+          npm run test:rc1:mystery-policies:postgres
+      - name: Two-hour actual commit-boundary resource observations
+        if: '!cancelled()'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-world-resources-smoke
+        run: |
+          umask 077
+          npm run test:rc1:world:resources:smoke:postgres
+      - name: Optional compressed proof with original worker callbacks
+        id: gzip_observation
+        if: '!cancelled()'
+        run: |
+          umask 077
+          node test/rc1-native-proof-gzip-worker.js --output="$RUNNER_TEMP/rc1-gzip-worker-observe"
+      - name: Replay complete compressed worker proof
+        if: steps.gzip_observation.outcome == 'success'
+        run: |
+          umask 077
+          node test/rc1-native-proof-gzip-worker.js --output="$RUNNER_TEMP/rc1-gzip-worker-replay" --replay="$RUNNER_TEMP/rc1-gzip-worker-observe"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  legacy-authority:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Legacy authority (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # Separate native matrix preserves the pre-existing recovery job budget.
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_authority
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_authority
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Native pre-parser moderator authentication and rate limiting
+        env:
+          RC1_MOD_INGRESS_OUTPUT: ${{ runner.temp }}/rc1-mod-ingress
+        run: |
+          umask 077
+          npm run test:rc1:mod-ingress:postgres
+      - name: Native moderator perimeter and direct ownership authority
+        if: '!cancelled()'
+        env:
+          RC1_LEGACY_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-legacy-authority
+        run: |
+          umask 077
+          npm run test:rc1:legacy-authority:postgres
+      - name: Separate native reviewer credential perimeter
+        if: '!cancelled()'
+        env:
+          RC1_REVIEWER_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-reviewer-authority
+        run: |
+          umask 077
+          npm run test:rc1:reviewer-authority:postgres
+      - name: Native Crew roles revocation and persistent retries
+        if: '!cancelled()'
+        env:
+          RC1_CREW_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-crew-authority
+        run: |
+          umask 077
+          npm run test:rc1:crew-authority:postgres
+      - name: Native Family roles privacy and persistent retries
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-family-authority
+        run: |
+          umask 077
+          npm run test:rc1:family-authority:postgres
+      - name: Native Knowledge revoke authority and persistent replay
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_KNOWLEDGE_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-knowledge-authority
+        run: |
+          umask 077
+          npm run test:rc1:knowledge-authority:postgres
+      - name: Native irreversible mystery choice confirmation
+        if: '!cancelled()'
+        env:
+          RC1_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_KNOWLEDGE_AUTHORITY_OUTPUT: ${{ runner.temp }}/rc1-choice-confirmation
+        run: |
+          umask 077
+          npm run test:rc1:choice-confirmation:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  policy-and-loan-lifecycles:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Policy and loan lifecycles (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_policy_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_policy_control
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Authorized conflict, retaliation and original hospital recovery
+        env:
+          RC1_AGGRESSION_OUTPUT: ${{ runner.temp }}/rc1-aggression
+        run: |
+          umask 077
+          npm run test:rc1:aggression:postgres
+      - name: Original loan offer, grace and funded Wanted lifecycles
+        if: '!cancelled()'
+        env:
+          RC1_LOAN_OUTPUT: ${{ runner.temp }}/rc1-loans
+        run: |
+          umask 077
+          npm run test:rc1:loans:postgres
+      - name: Ordinary entrant replacement preserves retired custody
+        if: '!cancelled()'
+        env:
+          RC1_CHURN_OUTPUT: ${{ runner.temp }}/rc1-churn
+        run: |
+          umask 077
+          npm run test:rc1:churn:postgres
+      - name: Seasonal status interruption and durable retry
+        if: '!cancelled()'
+        env:
+          RC1_SEASON_OUTPUT: ${{ runner.temp }}/rc1-season-recovery
+        run: |
+          umask 077
+          npm run test:rc1:season:postgres
+      - name: Original seasonal boundaries and complete status journals
+        if: '!cancelled()'
+        env:
+          RC1_SEASON_JOURNAL_OUTPUT: ${{ runner.temp }}/rc1-season-journal
+        run: |
+          umask 077
+          npm run test:rc1:season-journal:postgres
+      - name: Stored season crown and notification attribution with rollback
+        if: '!cancelled()'
+        env:
+          RC1_CROWN_OUTPUT: ${{ runner.temp }}/rc1-season-crown
+        run: |
+          umask 077
+          npm run test:rc1:season-crown:postgres
+      - name: Original cold season election provenance and retry
+        if: '!cancelled()'
+        env:
+          RC1_ELECTION_OUTPUT: ${{ runner.temp }}/rc1-season-election
+        run: |
+          umask 077
+          npm run test:rc1:season-election:postgres
+      - name: Ordinary market contention and original order expiry
+        if: '!cancelled()'
+        env:
+          RC1_MARKET_OUTPUT: ${{ runner.temp }}/rc1-market-policy
+        run: |
+          umask 077
+          npm run test:rc1:market:postgres
+      - name: Natural indictment, plea and original detention recovery
+        if: '!cancelled()'
+        env:
+          RC1_LAW_OUTPUT: ${{ runner.temp }}/rc1-law-policy
+        run: |
+          umask 077
+          npm run test:rc1:law:postgres
+      - name: Ordinary outsiders under a declared Family monopoly
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-family-monopoly
+        run: |
+          umask 077
+          npm run test:rc1:family-monopoly:postgres
+      - name: Ordinary outsiders among ten fragmented Families
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-family-fragmented
+        run: |
+          umask 077
+          npm run test:rc1:family-fragmented:postgres
+      - name: Original operation capital expiry and replacement disposition
+        if: '!cancelled()'
+        env:
+          RC1_CAPITAL_LIFECYCLE_OUTPUT: ${{ runner.temp }}/rc1-capital-lifecycles
+        run: |
+          umask 077
+          npm run test:rc1:capital-lifecycles:postgres
+      - name: Canonical death and heir recovery after original search
+        if: '!cancelled()'
+        env:
+          RC1_HEIR_OUTPUT: ${{ runner.temp }}/rc1-heir
+        run: |
+          umask 077
+          npm run test:rc1:heir:postgres
+      - name: Twenty genuine mixed aggression choices and heir policy continuation
+        if: '!cancelled()'
+        env:
+          RC1_AGGRESSION_LIFECYCLE_OUTPUT: ${{ runner.temp }}/rc1-aggression-lifecycle
+        run: |
+          umask 077
+          npm run test:rc1:aggression-lifecycle:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  original-escrow-timers:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Original escrow lifetimes (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # This new lane includes original one-hour timers. Existing budgets stay intact.
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_escrow_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Native escrow with unchanged one-hour market and loan lifetimes
+        env:
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-escrow-original
+        run: |
+          umask 077
+          npm run test:rc1:escrow:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  original-resource-timers:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Original resource timers (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # A new lane with an original 30-minute war lifecycle; existing job budgets stay intact.
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_resources
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_resources
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Original Family war and turf lifetimes with treasury reconciliation
+        env:
+          RC1_RESOURCE_OUTPUT: ${{ runner.temp }}/rc1-family-original
+        run: |
+          umask 077
+          npm run test:rc1:family:postgres
+      - name: Two midnight shipment boundaries with aligned application and database clocks
+        env:
+          RC1_SHIPMENT_OUTPUT: ${{ runner.temp }}/rc1-shipment-midnight
+        run: |
+          umask 077
+          npm run test:rc1:shipment:postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  bounded-custody-and-mobile:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Bounded custody and mobile (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_custody_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_custody_control
+      RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Install Chromium for native adversity
+        run: npx playwright-core install --with-deps chromium
+      - name: Exact Family cash and ammo custody with late abort
+        if: '!cancelled()'
+        env:
+          RC1_FAMILY_CUSTODY_OUTPUT: ${{ runner.temp }}/rc1-family-custody
+        run: |
+          umask 077
+          npm run test:rc1:family-custody:postgres
+      - name: Exact OMR custody and original six-hour unbond
+        if: '!cancelled()'
+        env:
+          RC1_OMR_OUTPUT: ${{ runner.temp }}/rc1-omr
+        run: |
+          umask 077
+          npm run test:rc1:omr:postgres
+      - name: Exact OMR redemption and historical balance boundaries
+        if: '!cancelled()'
+        env:
+          RC1_OMR_WINDOW_OUTPUT: ${{ runner.temp }}/rc1-omr-window
+        run: |
+          umask 077
+          npm run test:rc1:omr-window:postgres
+      - name: Canonical alliance pacts and explicit Knowledge grants
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_OUTPUT: ${{ runner.temp }}/rc1-alliance
+        run: |
+          umask 077
+          npm run test:rc1:alliance:postgres
+      - name: Native newcomer response loss reload and duplicate gesture
+        if: '!cancelled()'
+        env:
+          RC1_MOBILE_ADVERSITY_OUTPUT: ${{ runner.temp }}/rc1-mobile-adversity
+        run: |
+          umask 077
+          npm run test:rc1:mobile-adversity:postgres
+      - name: Three Family stakes and original turf settlement
+        if: '!cancelled()'
+        env:
+          RC1_TURF_OUTPUT: ${{ runner.temp }}/rc1-turf-contention
+        run: |
+          umask 077
+          npm run test:rc1:turf-contention:postgres
+      - name: Native shipment midnight contention loot and commission terminals
+        if: '!cancelled()'
+        env:
+          RC1_SHIPMENT_TERMINAL_OUTPUT: ${{ runner.temp }}/rc1-shipment-terminals
+        run: |
+          umask 077
+          npm run test:rc1:shipment-terminals:postgres
+      - name: Exact OMR loan collateral inheritance seizure and original grace expiry
+        if: '!cancelled()'
+        env:
+          RC1_OMR_LOAN_OUTPUT: ${{ runner.temp }}/rc1-omr-loan-terminals
+        run: |
+          umask 077
+          npm run test:rc1:omr-loan-terminals:postgres
+      - name: Exact car salvage and listing custody with corruption controls
+        if: '!cancelled()'
+        env:
+          RC1_CAR_OUTPUT: ${{ runner.temp }}/rc1-car-journal
+        run: |
+          umask 077
+          npm run test:rc1:car-journal:postgres
+      - name: Neutral solo car melt with native transaction provenance
+        if: '!cancelled()'
+        env:
+          RC1_CAR_MELT_OUTPUT: ${{ runner.temp }}/rc1-car-melt
+        run: |
+          umask 077
+          npm run test:rc1:car-melt:postgres
+      - name: Original NPC Family formation provenance and rollback
+        if: '!cancelled()'
+        env:
+          RC1_NPC_FAMILY_OUTPUT: ${{ runner.temp }}/rc1-npc-family-lineage
+        run: |
+          umask 077
+          npm run test:rc1:npc-family-lineage:postgres
+      - name: Existing NPC boat recovery provenance
+        if: '!cancelled()'
+        env:
+          RC1_NPC_BOAT_OUTPUT: ${{ runner.temp }}/rc1-npc-boat-lineage
+        run: |
+          umask 077
+          node test/rc1-native-npc-boat-lineage.js --postgres
+      - name: Existing NPC market rollback and same-owner retry
+        if: '!cancelled()'
+        env:
+          RC1_NPC_MARKET_OUTPUT: ${{ runner.temp }}/rc1-npc-market-controls
+        run: |
+          umask 077
+          node test/rc1-native-npc-market-controls.js --postgres
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  bounded-resource-pressure:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Bounded resource pressure and response barriers (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_pressure_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_pressure_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Original activity response hook completion
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_BARRIER_OUTPUT: ${{ runner.temp }}/rc1-alliance-response
+        run: |
+          umask 077
+          npm run test:rc1:alliance-response:postgres
+      - name: Original post-response membership query completion
+        if: '!cancelled()'
+        env:
+          RC1_ALLIANCE_BARRIER_OUTPUT: ${{ runner.temp }}/rc1-alliance-membership-response
+        run: |
+          umask 077
+          npm run test:rc1:alliance-membership-response:postgres
+      - name: Bounded scarcity and exact finite ammo custody
+        if: '!cancelled()'
+        env:
+          RC1_PRESSURE_OUTPUT: ${{ runner.temp }}/rc1-resource-scarcity
+        run: |
+          umask 077
+          npm run test:rc1:resource-scarcity:postgres
+          node test/rc1-world-ammo-escrow.js --evidence="$RC1_PRESSURE_OUTPUT"
+          node test/rc1-world-pressure-cash.js --evidence="$RC1_PRESSURE_OUTPUT"
+      - name: Bounded abundance and canonical replenishment
+        if: '!cancelled()'
+        env:
+          RC1_PRESSURE_OUTPUT: ${{ runner.temp }}/rc1-resource-abundance
+        run: |
+          umask 077
+          npm run test:rc1:resource-abundance:postgres
+          node test/rc1-world-ammo-escrow.js --evidence="$RC1_PRESSURE_OUTPUT"
+          node test/rc1-world-pressure-cash.js --evidence="$RC1_PRESSURE_OUTPUT"
+      - name: Exact Family OMR custody and original hourly yield
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_OMR_OUTPUT: ${{ runner.temp }}/rc1-family-omr
+        run: |
+          umask 077
+          npm run test:rc1:family-omr:postgres
+      - name: Exact Family backing and native high-scale precision
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_YIELD_PRECISION_OUTPUT: ${{ runner.temp }}/rc1-family-yield-precision
+        run: |
+          umask 077
+          npm run test:rc1:family-yield-precision:postgres
+      - name: Exact Family formation and cash or OMR tribute
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_ENTRY_OUTPUT: ${{ runner.temp }}/rc1-family-entry
+        run: |
+          umask 077
+          npm run test:rc1:family-entry:postgres
+      - name: Exact voluntary Family dissolution dispositions
+        if: '!cancelled()'
+        env:
+          RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
+          RC1_FAMILY_DISSOLUTION_OUTPUT: ${{ runner.temp }}/rc1-family-dissolution
+        run: |
+          umask 077
+          npm run test:rc1:family-dissolution:postgres
+          node test/rc1-world-family-dissolution.js --evidence="$RC1_FAMILY_DISSOLUTION_OUTPUT"
+      - name: Original hourly turf disposition rollback and repeated sweep
+        if: '!cancelled()'
+        env:
+          RC1_TURF_TERMINAL_OUTPUT: ${{ runner.temp }}/rc1-turf-terminal
+        run: |
+          umask 077
+          npm run test:rc1:turf-terminal:postgres
+          node test/rc1-world-turf-terminal.js --evidence="$RC1_TURF_TERMINAL_OUTPUT"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  alliance-world-replay:
+    needs: retention-controls
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    name: Scoped48-hour alliance world replay (PostgreSQL ${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_alliance_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_alliance_world_control
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+      - name: Observe48 hours of original callbacks and25 authorized actors
+        id: observation
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-observe
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres
+      - name: Replay complete canonical state and resource history
+        if: steps.observation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres -- --replay=${{ runner.temp }}/rc1-alliance-world-observe
+      - name: Encrypt restricted execution evidence
+        if: always()
+        env:
+          RC1_CI_POSTGRES: ${{ matrix.postgres }}
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-${{ github.job }}-pg${{ matrix.postgres }}-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  retained-alliance-reproduction:
+    needs: retention-controls
+    name: Retained exact-source alliance reproduction (PostgreSQL18.4)
+    if: ${{ inputs.replay_source != '' && !inputs.repair_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_alliance_world_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_alliance_world_control
+      RC1_REPLAY_SOURCE: ${{ inputs.replay_source }}
+      RC1_CI_POSTGRES: '18.4'
+    steps:
+      - name: Validate immutable diagnostic source and recipient
+        run: |
+          [[ "$RC1_REPLAY_SOURCE" =~ ^[a-f0-9]{40}$ ]]
+          test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - name: Check out this retention workflow's tools
+        uses: actions/checkout@v4
+      - name: Preserve retention tools outside the tested checkout
+        run: |
+          umask 077
+          mkdir "$RUNNER_TEMP/rc1-retention-tools"
+          cp tools/rc1-ci-envelope.js tools/rc1-ci-retain.mjs "$RUNNER_TEMP/rc1-retention-tools/"
+      - name: Check out the exact failed source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.replay_source }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '18.4'
+      - name: Observe original48-hour workload with private diagnostics
+        id: observation
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-observe
+        run: |
+          umask 077
+          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
+          mkdir "$RUNNER_TEMP/rc1-alliance-world-logs"
+          npm run test:rc1:alliance-world:postgres > "$RUNNER_TEMP/rc1-alliance-world-logs/observation.log" 2>&1
+      - name: Replay original48-hour workload with private diagnostics
+        if: steps.observation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-alliance-world-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres -- --replay="$RUNNER_TEMP/rc1-alliance-world-observe" > "$RUNNER_TEMP/rc1-alliance-world-logs/replay.log" 2>&1
+      - name: Encrypt restricted execution evidence
+        if: always()
+        run: node "$RUNNER_TEMP/rc1-retention-tools/rc1-ci-retain.mjs"
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-reproduction-pg18.4-${{ inputs.replay_source }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30
+
+  alliance-checkpoint-continuation:
+    needs: retention-controls
+    name: Checkpoint continuation and exact replay (PostgreSQL18.4)
+    if: ${{ !inputs.replay_source && !inputs.phone_only && !inputs.repair_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rc1_continuation_control
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_continuation_control
+      RC1_CI_POSTGRES: '18.4'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Require restricted evidence recipient
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - run: npm ci
+      - name: Install matching PostgreSQL checkpoint tools
+        run: bash tools/rc1-postgres-client.sh '18.4'
+      - name: Observe48 hours with actual hour24 checkpoint
+        id: reference
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-reference
+        run: |
+          umask 077
+          npm run test:rc1:alliance-world:postgres
+      - name: Resume remaining24 hours including original startup jobs
+        id: continuation
+        if: steps.reference.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-observe
+        run: |
+          umask 077
+          npm run test:rc1:alliance-continuation:postgres -- --resume="$RUNNER_TEMP/rc1-continuation-reference" --compare-uninterrupted="$RUNNER_TEMP/rc1-continuation-reference"
+      - name: Replay continuation from the identical native checkpoint
+        id: replay
+        if: steps.continuation.outcome == 'success'
+        env:
+          RC1_WORLD_OUTPUT: ${{ runner.temp }}/rc1-continuation-replay
+        run: |
+          umask 077
+          npm run test:rc1:alliance-continuation:postgres -- --resume="$RUNNER_TEMP/rc1-continuation-reference" --compare-uninterrupted="$RUNNER_TEMP/rc1-continuation-reference" --replay="$RUNNER_TEMP/rc1-continuation-observe"
+      - name: Verify complete prefix lineage and all continuation artifacts
+        if: steps.replay.outcome == 'success'
+        run: |
+          umask 077
+          node test/rc1-alliance-continuation-native-audit.js --reference="$RUNNER_TEMP/rc1-continuation-reference" --continued="$RUNNER_TEMP/rc1-continuation-observe" --replay="$RUNNER_TEMP/rc1-continuation-replay" --output="$RUNNER_TEMP/rc1-continuation-audit.json"
+      - name: Encrypt restricted execution evidence
+        if: always()
+        run: node tools/rc1-ci-retain.mjs
+      - name: Retain authenticated encrypted evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc1-private-continuation-pg18.4-${{ github.sha }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
           if-no-files-found: error
           retention-days: 30

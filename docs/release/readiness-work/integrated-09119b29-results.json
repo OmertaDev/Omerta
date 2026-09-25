@@ -1,0 +1,238 @@
+{
+  "format": 1,
+  "state": "SCOPED_DEVELOPMENT_RESULTS",
+  "releaseReady": false,
+  "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+  "integratedGates": [
+    {
+      "format": 1,
+      "id": "rc1-mobile-postgres",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:mobile:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:12:54.720Z",
+      "endedAt": "2026-09-21T07:13:54.308Z",
+      "durationMs": 59587,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Four emulated phone widths with ordinary native entrants; no physical device, wallet or real-human comprehension qualification"
+      ],
+      "log": "gates/rc1-mobile-postgres/output.txt",
+      "logSha256": "83a2362d744a03c297ddd2e2331964d674b4f89956d0d1f31a3c1cc78f5f0f64",
+      "resultSha256": "67597bea704d662a6dffff65ace5861805ae29edbc8998c92ccb669b083cf117"
+    },
+    {
+      "format": 1,
+      "id": "rc1-aggression-lifecycle",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:aggression-lifecycle:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:14:04.745Z",
+      "endedAt": "2026-09-21T07:15:27.261Z",
+      "durationMs": 82515,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "20 mixed canonical choices at70% conflict preference including search preparation; progression/weapon fixtures, incomplete resource taxonomy, no full world matrix"
+      ],
+      "log": "gates/rc1-aggression-lifecycle/output.txt",
+      "logSha256": "42f8e38ddf05ff9353c16500adcd057493f9cdd8ca8811ce1d9026ac0219e535",
+      "resultSha256": "8ab8834e88d2128fca0a12aaa12490dcc34f28c6022c1b89554e4faa278707c0"
+    },
+    {
+      "format": 1,
+      "id": "rc1-capital-lifecycles",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:capital-lifecycles:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:15:37.645Z",
+      "endedAt": "2026-09-21T07:16:26.816Z",
+      "durationMs": 49170,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Original24-hour canonical operation expiry with declared social roster; no HTTP, natural entry, material/spend re-execution or complete matrix"
+      ],
+      "log": "gates/rc1-capital-lifecycles/output.txt",
+      "logSha256": "de3a0af168b84670960e8e3b8be639a4d497a513f0ea0fb25652dc037da15663",
+      "resultSha256": "f8efcd76ff26b1420186b04653cfce908cdcbeb529d9f3df067e33516eb8c054"
+    },
+    {
+      "format": 1,
+      "id": "rc1-heir",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:heir:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:16:37.332Z",
+      "endedAt": "2026-09-21T07:17:27.797Z",
+      "durationMs": 50464,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Original3-hour logical search/fire/estate and heir recovery; declared progression/weapon fixtures, incomplete resource taxonomy, no full aggression quota or matrix"
+      ],
+      "log": "gates/rc1-heir/output.txt",
+      "logSha256": "2ee64ff23c4bc5e6aa8f190cbf6125fc5b7b2bd5fa32d6f856e6c271026174a7",
+      "resultSha256": "0546ac9475a78c4abfce100946f2f89abfb99b1af0c090d95861766a5482805d"
+    },
+    {
+      "format": 1,
+      "id": "rc1-season-recovery",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:season:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:17:38.178Z",
+      "endedAt": "2026-09-21T07:18:20.676Z",
+      "durationMs": 42496,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Native seasonal status interruption, concurrent claim and lost commit response; explicit season boundary, no elapsed28-day worker or full resource matrix proof"
+      ],
+      "log": "gates/rc1-season-recovery/output.txt",
+      "logSha256": "7ece7784b7e0d849e2b8a68c3db478209622b7e38f95e73b27841f98662f6c3d",
+      "resultSha256": "b0cb673930fc3b8d3e869dcb94a0720a3e231f9ada3eaf50a3d6d091790d9240"
+    },
+    {
+      "format": 1,
+      "id": "rc1-harness-units",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:harness"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:18:30.583Z",
+      "endedAt": "2026-09-21T07:18:46.026Z",
+      "durationMs": 15442,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Harness controls alone do not execute a full native world"
+      ],
+      "log": "gates/rc1-harness-units/output.txt",
+      "logSha256": "c0cefbf9f00d67f79e81128481c3dd25ef4f31ae66b5a24d68d84d7485e7b6c8",
+      "resultSha256": "b7346221bda44382c8a0abc5b71a35554c9180e322c7ab6f6845475763e3ee43"
+    },
+    {
+      "format": 1,
+      "id": "rc1-source-pair",
+      "source": "09119b2921514f3c76bbd65c0613f926cf700400",
+      "configurationSha256": "7385c1c9125288a1d654a0cb164b2839e96f5c149c890f8ff8ffbb5fa2489a5b",
+      "command": [
+        "npm",
+        "run",
+        "test:rc1:rollback:postgres"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-09-21T07:14:14.967Z",
+      "endedAt": "2026-09-21T07:15:43.333Z",
+      "durationMs": 88365,
+      "node": "v24.19.0",
+      "platform": "win32",
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "launchError": null,
+      "sourceUnchanged": true,
+      "sourceError": null,
+      "status": "PASS",
+      "scope": "regression",
+      "coverageExclusions": [
+        "Local source pair, two fixture accounts; not deployed recovery or all command families"
+      ],
+      "log": "gates/rc1-source-pair/output.txt",
+      "logSha256": "034425b0b3656d64746773899bb539a1b2555c602accc548b0dc0195122d455c",
+      "resultSha256": "d5e6b7aef8bde255a8b09479185fb49d410a131e1b62fcd219238738b216ca73"
+    }
+  ],
+  "knowledge": {
+    "status": "PASS",
+    "generatedSource": "89d4d6b3",
+    "generatedOnlyCommit": "09119b2921514f3c76bbd65c0613f926cf700400",
+    "logSha256": "2ec87fefad071cd0ac45ef4ea7aacda740aa1867508b9aa65ea5e3c087949138",
+    "scope": "Clean-source regeneration and unchanged consistency gate; full hosted suite rerun required"
+  },
+  "seasonalJournal": {
+    "file": "season-journal-summary.json",
+    "sha256": "1c947ed5d791e6ec0c110f7eed1511859e09839702dae280e44dd9d7a610bd9f",
+    "scope": "Independent bfa51a3f source, original673-hour worker proof; root integration does not inherit its pass"
+  },
+  "scope": "Local PostgreSQL18.4 and Chromium. No qualifying matrix, complete resource, deployed recovery, physical-device or real-cohort pass."
+}

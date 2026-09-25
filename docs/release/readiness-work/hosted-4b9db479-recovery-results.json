@@ -1,0 +1,112 @@
+{
+  "format": 1,
+  "status": "FAIL",
+  "source": "4b9db47901c143f94bd31d9d3159f33695d729c0",
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/35586586182",
+  "jobs": [
+    {
+      "name": "Original resource timers (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Original resource timers (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bounded custody and mobile (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Legacy authority (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Original escrow lifetimes (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Linux recovery (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Isolated two-hour world smoke (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Policy and loan lifecycles (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Linux recovery (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Policy and loan lifecycles (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Isolated two-hour world smoke (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bounded resource pressure and response barriers (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Legacy authority (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Original escrow lifetimes (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bounded resource pressure and response barriers (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Bounded custody and mobile (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Scoped48-hour alliance world replay (PostgreSQL 18.4)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "name": "Scoped48-hour alliance world replay (PostgreSQL 16)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "failure": {
+    "job": 106291241951,
+    "scope": "PostgreSQL18.4 original48h alliance replay",
+    "cause": "UNRESOLVED: original private comparison/history/run artifacts were not uploaded",
+    "finding": "RC1-TOOL-38"
+  },
+  "metadataSha256": "bb23cf7a5145d91dccefb454a04c6d2c62b5d6d88176e9d04ced00980d1e3fb9",
+  "logArchiveSha256": "100381764677aa8b25cafe06da40250c582b852caa6224bf3650b7c27f153e0f",
+  "exclusions": [
+    "Later passing reproduction does not change this failed run or recover its missing artifacts",
+    "No source pass inheritance",
+    "No deployed recovery or full resource qualification"
+  ],
+  "releaseReady": false
+}

@@ -982,7 +982,9 @@ export async function buildServer() {
     const a = Buffer.from(given), b = Buffer.from(key);
     return a.length === b.length && crypto.timingSafeEqual(a, b);
   };
+  const moderatorAuthenticated = Symbol('moderatorAuthenticated');
   const modAuth = async (req, reply) => {
+    if (req[moderatorAuthenticated]) return;
     // BLUE-TEAM M2: bound a flood at the god-mode perimeter. The MOD_KEY is high-entropy (generateValue),
     // so this is not brute-force protection (a rate limit can't gate a 20+ char key) — it stops a
     // mistyped automation or a probe from hammering the mod surface. A separate `mod:` bucket namespace so
@@ -993,6 +995,7 @@ export async function buildServer() {
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
     if (!modKeyOk(req.headers['x-mod-key'])) return reply.code(401).send({ error: 'mod_auth' });
+    req[moderatorAuthenticated] = true;
     // BLUE-TEAM M2: audit every god-mode MUTATION (ban/mod-kill/confiscate/mint-invites/fund/revoke/comp).
     // A leaked or misused key was otherwise unlogged. GETs are dashboard reads — not actions — so skip them
     // (they'd bury the real actions under the /admin poll traffic). Best-effort: an audit-write failure
@@ -1002,6 +1005,15 @@ export async function buildServer() {
         [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
+  // Moderator uploads can have a larger parser budget (the drop dataset is
+  // 48 MiB). Authenticate and rate-limit before reading/parsing those bytes.
+  // Keep the named preHandler for route metadata and defense in depth; the
+  // private request marker makes its second invocation a no-op.
+  app.addHook('onRequest', async (req, reply) => {
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)
+      && routeRegistry.some((route) => route.method === req.method
+        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);
+  });
   registerRwa(app, {
     pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
   });

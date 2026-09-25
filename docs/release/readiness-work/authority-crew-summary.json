@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED",
+  "source": {
+    "revision": "64c3245a716912d99a2b42c29b2d91ab6cf9277d",
+    "gitTree": "40c2f33312fa0fb30929b6810ecd7120611af27d",
+    "checkoutSha256": "04b6fb9e96d7fbc9ca136c3e4346faff588bb20223b61a68e9e7e4cc5af6a5c3",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "configurationSha256": "d31754848b0f15de7ef3a521d26ce5f32ccee4babd0c10964a5698a9eac04585",
+  "runSha256": "8713f8303945e07635d0837ce336e6314974f3c98f897949cf48b9c8c4f765b5",
+  "startedAt": "2026-09-21T11:27:12.386Z",
+  "endedAt": "2026-09-21T11:28:37.890Z",
+  "node": "v24.19.0",
+  "postgres": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+  "routes": [
+    "DELETE /v1/crew/member/:characterId",
+    "DELETE /v1/crew/request/:characterId",
+    "DELETE /v1/crew/target",
+    "POST /v1/crew",
+    "POST /v1/crew/accept/:crewId",
+    "POST /v1/crew/chat",
+    "POST /v1/crew/decline/:crewId",
+    "POST /v1/crew/invite",
+    "POST /v1/crew/leave",
+    "POST /v1/crew/objective/claim",
+    "POST /v1/crew/recruiting",
+    "POST /v1/crew/request/:characterId/accept",
+    "POST /v1/crew/request/:crewId",
+    "POST /v1/crew/target"
+  ],
+  "denials": 53,
+  "replayComparisons": 13,
+  "concurrentFreshEffects": 1,
+  "comparedTables": 368,
+  "retainedSnapshots": 9,
+  "artifactFiles": 67,
+  "historyChainsVerified": 3,
+  "restart": {
+    "canonicalStateEqual": false,
+    "independentlyVerifiedOnlyChange": [
+      {
+        "table": "schema_meta",
+        "field": "applied_at",
+        "rows": 1
+      }
+    ],
+    "allOtherRowsUnchanged": true
+  },
+  "setup": "Seven funded level-eligible living players and one account without character; initial last_accrued_at one hour ahead isolates separately committed accrual. All Crew memberships, invites, requests, targets and chat use canonical HTTP.",
+  "exclusions": [
+    "Complete global authority matrix",
+    "Natural progression",
+    "Objective reward success or expiry",
+    "Websocket delivery",
+    "Client rendering/XSS execution",
+    "Native worker/deployment/physical-device behavior",
+    "Arbitrary concurrent leave/kick/use schedules",
+    "HTTP receipt expiration"
+  ],
+  "cleanup": {
+    "allCrewAuthoritySchemasAbsent": true
+  },
+  "retainedFailures": [
+    {
+      "name": "crew-authority-first-native-1",
+      "source": "547d70e3e5103ef9294360fa6b992bd7efd8d303",
+      "status": "FAIL",
+      "artifacts": 4,
+      "runSha256": "6d0dd49e1de28d6bd192b582608373532e58f8340e9a9ea046f6f7db8f9d385d",
+      "historySha256": "1d1f71a6111bae354cd8339e9cd3a40dd606969a170fd0f217930ef884d00bb9",
+      "error": "The expression evaluated to a falsy value:\n\n  assert(/^[a-z0-9-]+\\.json$/.test(name))\n"
+    },
+    {
+      "name": "crew-authority-flat-native-1",
+      "source": "dd75db510ba2997aafe8e9b62b59d40b41721669",
+      "status": "FAIL",
+      "artifacts": 7,
+      "runSha256": "8b20d4847f03bed436815561e8e729f89bb86e60291349cc18b88a0a041d0892",
+      "historySha256": "52484af9424591edb185febc46362984b976a6ec02fe9f012619481c26aa4e37",
+      "error": "DELETE /v1/crew/member/:characterId:no-character\n+ actual - expected\n\n+ 'no_crew'\n- 'no_character'\n       ^\n"
+    }
+  ],
+  "completedReview": "All14 Crew mutation routes have anonymous and no-character denials. Selected member/leader/outsider/cross-Crew/private-chat/revocation and persistent replay branches executed; global role/route crossproduct remains OPEN.",
+  "sourceMethods": {
+    "pashov": "c577eb7799c349de0acb187ba00ca98e14e436fd access-control-agent caller/target/role trace adapted to HTTP",
+    "plamen": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69 outcome-determinism multi-actor ordering and role change replay",
+    "trailofbits": "d3323cefbcf645678b8dc481de204b02ad3d02dc audit-context-building compact separate existing-agent context pass; not full upstream orchestration"
+  },
+  "contextSha256": "f041d697f4ab9d168e604dce8b3faa0467bc45693191f89eb85e3b9bff0fa158",
+  "fullAuthorityCoverage": false,
+  "releaseReady": false
+}

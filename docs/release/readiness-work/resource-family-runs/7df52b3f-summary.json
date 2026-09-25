@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "gate": "C02-FAMILY-TREASURY",
+  "status": "OPEN_REQUIRED_PROOF",
+  "owner": "Codex/resource_proof",
+  "runs": [
+    {
+      "runId": "resource-family-7df52b3f35c5-37a1972128",
+      "source": "7df52b3f35c516215427a8b88040628446837175",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:04:03.969Z",
+      "endedAt": "2026-09-21T04:05:16.460Z",
+      "command": "node tools/rc1-resource-family.js",
+      "arguments": [
+        "--terminal-fixtures"
+      ],
+      "node": "v24.19.0",
+      "platform": "win32",
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerMode": "Initial scored-war/open-contest fixtures expire after 60 real seconds",
+      "productionTimers": {
+        "warMs": 1800000,
+        "contestMs": 1800000,
+        "currentSeasonContestMultiplier": 0.5
+      },
+      "deadlines": {
+        "war": "2026-09-21T04:05:11.521Z",
+        "contests": [
+          {
+            "district": "brick",
+            "until": "2026-09-21T04:05:11.521Z"
+          },
+          {
+            "district": "foundry",
+            "until": "2026-09-21T04:05:11.521Z"
+          }
+        ]
+      },
+      "boundaries": 40,
+      "executedScenarios": [
+        "tribute:cash-ledger-rollback",
+        "tribute:cash:a",
+        "tribute:cash-exact-replay",
+        "tribute:cash:b",
+        "tribute:cash:c",
+        "tribute:cash:d",
+        "turf:stake:foundry:a",
+        "turf:stake:foundry:b",
+        "turf:stake:foundry:c",
+        "turf:stake:brick:a",
+        "turf:stake:brick:b",
+        "turf:stake-exact-replay",
+        "turf:lower-stake-denial",
+        "turf:stake-ledger-rollback",
+        "turf:stake-retry-after-rollback",
+        "tribute:omr-ledger-rollback",
+        "tribute:omr-concurrent-duplicate",
+        "tribute:omr-exact-replay",
+        "reserve:unauthorized-seal",
+        "reserve:seal-ledger-rollback",
+        "reserve:seal-spend",
+        "reserve:seal-exact-replay",
+        "armory:canonical-melt-tithe",
+        "armory:melt-exact-replay",
+        "dissolution:bidder-leaves-before-settlement",
+        "dissolution:first-member-leave",
+        "dissolution:late-ammo-ledger-rollback",
+        "dissolution:canonical-rejoin",
+        "dissolution:concurrent-last-members",
+        "dissolution:exact-replay",
+        "war:spoils-credit-rollback",
+        "war:concurrent-terminal-resolution",
+        "war:terminal-replay",
+        "turf:settlement-refund-rollback",
+        "turf:concurrent-challenger-and-dead-bidder-settlement",
+        "turf:defender-tie-settlement",
+        "turf:terminal-replay",
+        "dissolution:server-reopen-replay",
+        "war:server-reopen-replay",
+        "turf:server-reopen-replay"
+      ],
+      "nonzeroDispositions": {
+        "warCashTransferred": "88000",
+        "turfCashRefunded": "100000",
+        "turfCashDestroyed": "480000",
+        "dissolutionCashDestroyed": "81180",
+        "dissolutionAmmoDestroyed": "6",
+        "dissolutionOmrTransferredToDesk": "350",
+        "sealOmrTransferredToDesk": "150"
+      },
+      "resultSha256": "8d5cd518d26ed6f6743fb7b6086e44c190c73d0543743a28366552b7c81a6753",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "26e0f9a20c999f65b13ef42211727c2308650b462494fab642c6704f424e4641"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "c04269bca58398540c4f6f3c0307802922c07822063b2c516ee0f57c8ae92c66"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "54d02438106cf4d71110a0a46dcaba5ac60da3a520e905a9dcb28e1239b6fbcc"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "72da357f9263d064f7c987a90896cbbf52cccc93a3a9b6981acdb7351ed54d41"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "c38420b2ffb214fedd194828df6a737d171ae615028a7c666fbce07dbca1fc94"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and Family formation; baseline grants are disclosed",
+        "Full-resource simulation and deployed-environment attestation",
+        "Crash/backup restore; server reopen only",
+        "Other Family resource systems outside tribute/reserve, war, turf and dissolution",
+        "Canonical war declaration/scoring and full production contest/war lifetime"
+      ]
+    },
+    {
+      "runId": "resource-family-7df52b3f35c5-57afbc1852",
+      "source": "7df52b3f35c516215427a8b88040628446837175",
+      "outcome": "SCOPED_PASS",
+      "evidenceClass": "NATIVE_FIXTURE_ASSISTED",
+      "sourceClean": true,
+      "sourceImmutable": true,
+      "startedAt": "2026-09-21T04:04:03.969Z",
+      "endedAt": "2026-09-21T04:34:27.350Z",
+      "command": "node tools/rc1-resource-family.js",
+      "arguments": [],
+      "node": "v24.19.0",
+      "platform": "win32",
+      "databaseVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "timerMode": "Canonical declaration/scoring and new contests use original production lifetimes",
+      "productionTimers": {
+        "warMs": 1800000,
+        "contestMs": 1800000,
+        "currentSeasonContestMultiplier": 0.5
+      },
+      "deadlines": {
+        "war": "2026-09-21T04:34:12.848Z",
+        "contests": [
+          {
+            "district": "brick",
+            "until": "2026-09-21T04:19:13.683Z"
+          },
+          {
+            "district": "foundry",
+            "until": "2026-09-21T04:19:13.460Z"
+          }
+        ]
+      },
+      "boundaries": 45,
+      "executedScenarios": [
+        "tribute:cash-ledger-rollback",
+        "tribute:cash:a",
+        "tribute:cash-exact-replay",
+        "tribute:cash:b",
+        "tribute:cash:c",
+        "tribute:cash:d",
+        "war:canonical-declaration",
+        "war:declaration-exact-replay",
+        "war:canonical-score",
+        "turf:canonical-seize:foundry",
+        "turf:canonical-seize:brick",
+        "turf:stake:foundry:a",
+        "turf:stake:foundry:b",
+        "turf:stake:foundry:c",
+        "turf:stake:brick:a",
+        "turf:stake:brick:b",
+        "turf:stake-exact-replay",
+        "turf:lower-stake-denial",
+        "turf:stake-ledger-rollback",
+        "turf:stake-retry-after-rollback",
+        "tribute:omr-ledger-rollback",
+        "tribute:omr-concurrent-duplicate",
+        "tribute:omr-exact-replay",
+        "reserve:unauthorized-seal",
+        "reserve:seal-ledger-rollback",
+        "reserve:seal-spend",
+        "reserve:seal-exact-replay",
+        "armory:canonical-melt-tithe",
+        "armory:melt-exact-replay",
+        "dissolution:bidder-leaves-before-settlement",
+        "dissolution:first-member-leave",
+        "dissolution:late-ammo-ledger-rollback",
+        "dissolution:canonical-rejoin",
+        "dissolution:concurrent-last-members",
+        "dissolution:exact-replay",
+        "war:spoils-credit-rollback",
+        "war:concurrent-terminal-resolution",
+        "war:terminal-replay",
+        "turf:settlement-refund-rollback",
+        "turf:concurrent-challenger-and-dead-bidder-settlement",
+        "turf:defender-tie-settlement",
+        "turf:terminal-replay",
+        "dissolution:server-reopen-replay",
+        "war:server-reopen-replay",
+        "turf:server-reopen-replay"
+      ],
+      "nonzeroDispositions": {
+        "warCashTransferred": "88000",
+        "turfCashRefunded": "100000",
+        "turfCashDestroyed": "480000",
+        "dissolutionCashDestroyed": "81180",
+        "dissolutionAmmoDestroyed": "6",
+        "dissolutionOmrTransferredToDesk": "350",
+        "sealOmrTransferredToDesk": "150"
+      },
+      "resultSha256": "b3d100a1d614f716f10d85d73d849a7c6276cbef1cb4cd29fe730f34cb597398",
+      "artifacts": [
+        {
+          "file": "coverage-summary.json",
+          "sha256": "5992e6a446b0ee1b079978199220d936e7008e902592cb22cc7258955b5139b0"
+        },
+        {
+          "file": "final-state.json",
+          "sha256": "70232d19eae189f0f2cbaaa895cb296ba51d0776b0b4562373e64e6fd1e08a2e"
+        },
+        {
+          "file": "initial-state.json",
+          "sha256": "d3e9ccf414e6ae27752637a338ee1e8262070e0da582b0b1bfa633704f7c95a2"
+        },
+        {
+          "file": "movements.ndjson",
+          "sha256": "85d8ed8b116cc70aabfdbbaa9947909d7606fd1b1e856239c5443fe1e6bf22f5"
+        },
+        {
+          "file": "requests.json",
+          "sha256": "3ec8b2f82e636953eec841d6cf67d0a8d439a55c022fad2416aed03af9702f00"
+        }
+      ],
+      "exclusions": [
+        "Natural account progression and Family formation; baseline grants are disclosed",
+        "Full-resource simulation and deployed-environment attestation",
+        "Crash/backup restore; server reopen only",
+        "Other Family resource systems outside tribute/reserve, war, turf and dissolution"
+      ]
+    }
+  ],
+  "developmentFailures": [
+    {
+      "runId": "resource-family-a9b74a32b3d7-90d9fee2e9",
+      "evidenceClass": "DEVELOPMENT_DIAGNOSTIC",
+      "outcome": "FAIL",
+      "cause": "Fixture MARKET_SEED did not meet existing preflight strength requirements",
+      "repair": "Lengthened the local fixture seed; no gameplay source changed",
+      "qualification": "Uncommitted prototype; not release evidence"
+    },
+    {
+      "runId": "resource-family-a9b74a32b3d7-c5d035dc41",
+      "evidenceClass": "DEVELOPMENT_DIAGNOSTIC",
+      "outcome": "FAIL",
+      "cause": "Observer expected reserve seal receipts to sum negative; canonical OMR sink has an equal desk recycling credit",
+      "repair": "Added desk snapshot/equation and classified seal/dissolution OMR as transfers; selected the exact debit receipt",
+      "qualification": "Uncommitted prototype; no demonstrated gameplay defect"
+    },
+    {
+      "runId": "resource-family-a9b74a32b3d7-39963ae864",
+      "evidenceClass": "DEVELOPMENT_DIAGNOSTIC",
+      "outcome": "SCOPED_PASS",
+      "qualification": "Diagnostic retest only"
+    }
+  ],
+  "privacy": "Public summary contains no tokens, connection strings, raw requests, private actor identities or private filesystem paths. Raw journals, snapshots, requests and failures retained privately.",
+  "remaining": [
+    "Full native resource simulation exercise for every required branch",
+    "Natural account progression and Family formation",
+    "Deployed source/configuration/dependency attestation and runtime alarms",
+    "Crash/backup restore; executed reopening proves durable replay only",
+    "Broader Family and charter variants outside this exact branch group"
+  ],
+  "dependencyCaveat": "These executions bind exactly source7df52b3f35c516215427a8b88040628446837175 and recorded source bytes. Installed dependency bytes and later integrated sources require their own attestation/reruns.",
+  "reruns": {
+    "backend": "node tools/rc1-resource-family.js; node tools/rc1-resource-family.js --terminal-fixtures",
+    "simulation": "Full resource matrix including every recorded terminal branch",
+    "releaseOperator": "Attest integrated source, configuration, installed dependencies and deployed PostgreSQL runtime"
+  }
+}

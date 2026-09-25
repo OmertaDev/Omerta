@@ -1,0 +1,620 @@
+{
+  "format": 1,
+  "status": "SCOPED_WORLD_PAIR_PASS_COMPONENT_POSITIVE_COVERAGE_FAIL",
+  "testedSource": {
+    "revision": "600a825e8e4f8b1f58e40393a02648ad6515c733",
+    "gitTree": "e06ba0bbda18d5aff70aa47cf8583361d14bbd33",
+    "checkoutSha256": "1d9981f7f16aafca4ea5507a18e50981e65bdd0760464f00ecabf784e16114c6",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "baseRevision": "15393a86f863b2dedf8d119b40bb05393561b763",
+  "runtimeChanges": false,
+  "workload": {
+    "logicalHours": 8,
+    "population": 25,
+    "policy": "quiet_world",
+    "seed": "rc1-alpha",
+    "postgres": "18.4",
+    "node": "24.19.0",
+    "serialOnly": true,
+    "originalCallbacksAndDeadlines": true,
+    "forcedActions": false,
+    "limits": {
+      "wallMs": 1200000,
+      "outputBytes": 536870912,
+      "minimumFreeBytes": 536870912,
+      "historyDecodedBytes": 536870912,
+      "historyStoredBytes": 134217728,
+      "historyLineBytes": 8388608,
+      "outstandingInvocations": 64,
+      "pendingRecords": 64,
+      "externalWatchdogMs": 1500000
+    }
+  },
+  "independentAudit": {
+    "status": "PASS_SCOPED_INDEPENDENT_AUDIT",
+    "comparedFields": [
+      "hours",
+      "population",
+      "seed",
+      "actorPolicy",
+      "initialStateSha256",
+      "finalStateSha256",
+      "workerScheduleSha256",
+      "jobOutcomesSha256",
+      "deterministicRandomTapeSha256",
+      "actorTapeSha256",
+      "policyStateSha256",
+      "semanticMetricsSha256",
+      "worldDiagnosticsSemanticSha256",
+      "mysteryPolicySummarySha256",
+      "knowledgeDiagnosticsSha256",
+      "resourceObservationEnabled",
+      "resourceJournalCount",
+      "resourceJournalSha256"
+    ],
+    "exactResourceEntriesCompared": 2207,
+    "completeInitialFinalTablesAndSequencesEqual": true,
+    "everyIndexedArtifactAndHistoryVerified": true,
+    "canonicalResourceBytesIncludingLfEqual": true,
+    "candidateBinding": "Witness boundary equals artifact event and exact enclosing history resource event; candidate full before/after and hashes independently reconciled",
+    "boatRandomBinding": "Both consecutive eligibility/rarity Math.random entries and the boat UUID entry independently match seed/counter values and complete original run tape at exact recorded indices",
+    "nativeInputCorruptionControls": 74,
+    "sourceUnchanged": true,
+    "auditScriptSha256": "3258ad183067611e6302f84e4a5cd3102f035c30c4ef9f3b43cba4ced53effea",
+    "auditResultSha256": "da02b8a5f733784695dacc0f33254fbb318de82caf33ae08425959e845c40c41"
+  },
+  "runs": {
+    "observe": {
+      "status": "PASS_SCOPED",
+      "source": {
+        "revision": "600a825e8e4f8b1f58e40393a02648ad6515c733",
+        "gitTree": "e06ba0bbda18d5aff70aa47cf8583361d14bbd33",
+        "checkoutSha256": "1d9981f7f16aafca4ea5507a18e50981e65bdd0760464f00ecabf784e16114c6",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "manifestSha256": "9e75b836b0c0c44598cd1e22fe233a4f7dff9732b3f45e9e40e6f6901cb3b613",
+      "indexedArtifacts": 59,
+      "history": {
+        "path": "history.jsonl.gz",
+        "sha256": "a10de00359c31f2d386ebae91d90ea9698d32f9a13dc2c66b76a17f6b81f1773",
+        "bytes": 11463072,
+        "decoded": {
+          "path": "history.jsonl",
+          "encoding": "gzip",
+          "framing": "event-members-v1",
+          "bytes": 133722231,
+          "sha256": "b6002ce1d7bb3b3e7c0fc232025ea954c11a3594c402d0c534b0b8a18cf9010e"
+        }
+      },
+      "historyEvents": 2418,
+      "resourceBoundaries": 2207,
+      "boundaryOutcomes": {
+        "COMMITTED": 493,
+        "AUTOCOMMITTED": 1592,
+        "ROLLED_BACK": 122
+      },
+      "exactEquations": 361113,
+      "nonzeroEquations": {
+        "ammo": 72,
+        "cash": 59,
+        "cars": 13,
+        "cash-pocket": 3,
+        "cb": 1,
+        "season-crowns": 1,
+        "prestige": 4,
+        "boats": 2
+      },
+      "resourceJournalSha256": "5d2babca191ec76377d3f8b021e95fc4073ada68bf0a9fb414d2c6d95d1a3899",
+      "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+      "finalStateSha256": "ee7c619c65b165943ca86d8dba4e98244c784c729a4604f6a9d3ac09cdf955e8",
+      "candidateReclassifications": {
+        "boundaries": 17,
+        "artifacts": 18,
+        "carAcquisitions": 13,
+        "carMelts": 0,
+        "npcFamilies": 3,
+        "npcBoats": 2
+      },
+      "boatSummary": {
+        "retainedCandidateWitnesses": 2,
+        "exactAcquisitions": 2,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "carSummary": {
+        "retainedCandidateWitnesses": 13,
+        "exactAcquisitions": 13,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "familySummary": {
+        "retainedCandidateWitnesses": 3,
+        "exactFormations": 3,
+        "rolledBackCandidates": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "season": {
+        "positiveNpcConversions": 4,
+        "prestigeUnits": 24,
+        "zeroGainPlayerStatusOnly": 25
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 4,
+          "mystery.start": 3,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 42
+      },
+      "recordedActorAndSelectionReplay": false,
+      "resourceTables": 59,
+      "completeWorldTables": 369,
+      "completeSequences": 3,
+      "ownedDatabaseAbsent": true
+    },
+    "replay": {
+      "status": "PASS_SCOPED",
+      "source": {
+        "revision": "600a825e8e4f8b1f58e40393a02648ad6515c733",
+        "gitTree": "e06ba0bbda18d5aff70aa47cf8583361d14bbd33",
+        "checkoutSha256": "1d9981f7f16aafca4ea5507a18e50981e65bdd0760464f00ecabf784e16114c6",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "manifestSha256": "25ed76990110932e6fa9148fcc4aa350dafdd9ea241894ba9d97a9548d3dd64c",
+      "indexedArtifacts": 59,
+      "history": {
+        "path": "history.jsonl.gz",
+        "sha256": "e3c436b46ec04b5978daaaa537bb3b94685ed7c03952d0ad2cf65b27c3a09924",
+        "bytes": 11463660,
+        "decoded": {
+          "path": "history.jsonl",
+          "encoding": "gzip",
+          "framing": "event-members-v1",
+          "bytes": 133723463,
+          "sha256": "6504bbe5c3f00323ecc9aed16d8074077057b03857986d5a17641dd589d09762"
+        }
+      },
+      "historyEvents": 2418,
+      "resourceBoundaries": 2207,
+      "boundaryOutcomes": {
+        "COMMITTED": 493,
+        "AUTOCOMMITTED": 1592,
+        "ROLLED_BACK": 122
+      },
+      "exactEquations": 361113,
+      "nonzeroEquations": {
+        "ammo": 72,
+        "cash": 59,
+        "cars": 13,
+        "cash-pocket": 3,
+        "cb": 1,
+        "season-crowns": 1,
+        "prestige": 4,
+        "boats": 2
+      },
+      "resourceJournalSha256": "5d2babca191ec76377d3f8b021e95fc4073ada68bf0a9fb414d2c6d95d1a3899",
+      "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+      "finalStateSha256": "ee7c619c65b165943ca86d8dba4e98244c784c729a4604f6a9d3ac09cdf955e8",
+      "candidateReclassifications": {
+        "boundaries": 17,
+        "artifacts": 18,
+        "carAcquisitions": 13,
+        "carMelts": 0,
+        "npcFamilies": 3,
+        "npcBoats": 2
+      },
+      "boatSummary": {
+        "retainedCandidateWitnesses": 2,
+        "exactAcquisitions": 2,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "carSummary": {
+        "retainedCandidateWitnesses": 13,
+        "exactAcquisitions": 13,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "familySummary": {
+        "retainedCandidateWitnesses": 3,
+        "exactFormations": 3,
+        "rolledBackCandidates": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "season": {
+        "positiveNpcConversions": 4,
+        "prestigeUnits": 24,
+        "zeroGainPlayerStatusOnly": 25
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 4,
+          "mystery.start": 3,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 42
+      },
+      "recordedActorAndSelectionReplay": true,
+      "resourceTables": 59,
+      "completeWorldTables": 369,
+      "completeSequences": 3,
+      "ownedDatabaseAbsent": true
+    }
+  },
+  "actualBoatGrantsPerLane": [
+    {
+      "artifact": "restricted-npc-boat-witness-0001190.json",
+      "bytes": 570061,
+      "sha256": "8f722037cb8172c293c68dd8f7be3e4c3111862832e35f0d73d123224740bfd9",
+      "nativeSequence": 10754,
+      "transactionId": 341,
+      "logicalAtUtc": "2026-09-24T02:00:00.000Z",
+      "authority": "original-worker",
+      "outcome": "COMMITTED",
+      "boatKind": "dinghy",
+      "rarity": "common",
+      "ownerCategory": "New canonical NPC",
+      "countDelta": 1,
+      "scope": "Exact full birth/asset custody and source/query/RNG/UUID evidence; no authored grant receipt exists"
+    },
+    {
+      "artifact": "restricted-npc-boat-witness-0001563.json",
+      "bytes": 704262,
+      "sha256": "795ea62eb8f89c8166bf70566ddb8b344549b7c4eddca17aca97f4a054581cde",
+      "nativeSequence": 13173,
+      "transactionId": 437,
+      "logicalAtUtc": "2026-09-24T04:00:00.000Z",
+      "authority": "original-worker",
+      "outcome": "COMMITTED",
+      "boatKind": "dinghy",
+      "rarity": "rare",
+      "ownerCategory": "New canonical NPC",
+      "countDelta": 1,
+      "scope": "Exact full birth/asset custody and source/query/RNG/UUID evidence; no authored grant receipt exists"
+    }
+  ],
+  "remainingUnknowns": [
+    {
+      "kind": "season-standing-selection",
+      "table": "season_records",
+      "reason": null,
+      "countPerLane": 1,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 984,
+          "nativeSequence": 8251,
+          "outcome": "AUTOCOMMITTED",
+          "logicalAt": "2026-09-24T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "receipt-reason",
+      "table": null,
+      "reason": "market:order",
+      "countPerLane": 6,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1353,
+          "nativeSequence": 10806,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T02:00:00.000Z"
+        },
+        {
+          "historySequence": 1542,
+          "nativeSequence": 12016,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T03:00:00.000Z"
+        },
+        {
+          "historySequence": 1731,
+          "nativeSequence": 13230,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T04:00:00.000Z"
+        },
+        {
+          "historySequence": 1920,
+          "nativeSequence": 14424,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T05:00:00.000Z"
+        },
+        {
+          "historySequence": 2106,
+          "nativeSequence": 15598,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T06:00:00.000Z"
+        },
+        {
+          "historySequence": 2296,
+          "nativeSequence": 16797,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "receipt-reason",
+      "table": null,
+      "reason": "market:list",
+      "countPerLane": 6,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1353,
+          "nativeSequence": 10806,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T02:00:00.000Z"
+        },
+        {
+          "historySequence": 1542,
+          "nativeSequence": 12016,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T03:00:00.000Z"
+        },
+        {
+          "historySequence": 1731,
+          "nativeSequence": 13230,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T04:00:00.000Z"
+        },
+        {
+          "historySequence": 1920,
+          "nativeSequence": 14424,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T05:00:00.000Z"
+        },
+        {
+          "historySequence": 2106,
+          "nativeSequence": 15598,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T06:00:00.000Z"
+        },
+        {
+          "historySequence": 2296,
+          "nativeSequence": 16797,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "observed-table-change",
+      "table": "market_listings",
+      "reason": null,
+      "countPerLane": 6,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1353,
+          "nativeSequence": 10806,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T02:00:00.000Z"
+        },
+        {
+          "historySequence": 1542,
+          "nativeSequence": 12016,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T03:00:00.000Z"
+        },
+        {
+          "historySequence": 1731,
+          "nativeSequence": 13230,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T04:00:00.000Z"
+        },
+        {
+          "historySequence": 1920,
+          "nativeSequence": 14424,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T05:00:00.000Z"
+        },
+        {
+          "historySequence": 2106,
+          "nativeSequence": 15598,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T06:00:00.000Z"
+        },
+        {
+          "historySequence": 2296,
+          "nativeSequence": 16797,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T07:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "observed-table-change",
+      "table": "gang_members",
+      "reason": null,
+      "countPerLane": 3,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1536,
+          "nativeSequence": 11990,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T03:00:00.000Z"
+        },
+        {
+          "historySequence": 1724,
+          "nativeSequence": 13189,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T04:00:00.000Z"
+        },
+        {
+          "historySequence": 1913,
+          "nativeSequence": 14392,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T05:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "receipt-reason",
+      "table": null,
+      "reason": "goods:buy:cigars",
+      "countPerLane": 1,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1544,
+          "nativeSequence": 12037,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T03:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "kind": "receipt-reason",
+      "table": null,
+      "reason": "goods:buy:coffee",
+      "countPerLane": 1,
+      "authorities": [
+        "original-worker"
+      ],
+      "events": [
+        {
+          "historySequence": 1729,
+          "nativeSequence": 13213,
+          "outcome": "COMMITTED",
+          "logicalAt": "2026-09-24T04:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "faultComponent": {
+    "status": "FAIL",
+    "source": {
+      "revision": "600a825e8e4f8b1f58e40393a02648ad6515c733",
+      "gitTree": "e06ba0bbda18d5aff70aa47cf8583361d14bbd33",
+      "checkoutSha256": "1d9981f7f16aafca4ea5507a18e50981e65bdd0760464f00ecabf784e16114c6",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "seed": "rc1-alpha",
+    "maximumLogicalHours": 12,
+    "actualLogicalHours": 12,
+    "scope": "Declared first late abort then two later successful original-worker grants",
+    "requiredLaterGrants": 2,
+    "actualLaterGrants": 0,
+    "observedSubcases": {
+      "lateAfterInsertRollback": 1,
+      "logicalAtUtc": "2026-09-24T10:00:00.000Z",
+      "fullResourceBeforeAfterEqual": true,
+      "nativeErrorCode": "RNB01",
+      "canonicalChecks": 17215,
+      "workerFailures": 0
+    },
+    "historyEvents": 3089,
+    "resourceBoundaries": 2771,
+    "indexedArtifacts": 6,
+    "manifestSha256": "bc8b9628c485134748a03fd14671665e7ab7a875994d894344e02f8dd738362b",
+    "artifacts": [
+      {
+        "path": "initialization.json",
+        "bytes": 2024,
+        "sha256": "4fc774649a1d27b26ca564059ba922c69cc3e6d293eab7217274564008b7354f"
+      },
+      {
+        "path": "initial.json",
+        "bytes": 122303,
+        "sha256": "296adc69c1ad3805d088e8135e860cff1285180d65eabf4f2a01024f7bcde9f3"
+      },
+      {
+        "path": "boat-rollback-1.json",
+        "bytes": 936332,
+        "sha256": "da65ed2f143fbab9e5916f606ef24c202eed295ddcf55be4facd9c8af3b79013"
+      },
+      {
+        "path": "failure-worker-schedule.json",
+        "bytes": 1098252,
+        "sha256": "3c16e711be32a898fc6f0f41355a8a66a79d7b4f801fadc5db45f116fa57f602"
+      },
+      {
+        "path": "failure-commit-observer.json",
+        "bytes": 250,
+        "sha256": "5821cfd076fed8996083b51d268e1ceeb7a2100d63ff71d10499861b0367eed3"
+      },
+      {
+        "path": "history.jsonl",
+        "bytes": 211957356,
+        "sha256": "1f87d94ce56526cc101b52283d22aef6ce8be303eda93d040a1d99a1d556dcc6"
+      }
+    ],
+    "ownedDatabaseAbsent": true,
+    "runtimeDefectClaim": false,
+    "successfulPostFaultRetry": "OPEN",
+    "limitation": "Verified rollback is one observed subcase; neither separate positive world grants nor the corrected read-only audit turn this failed component into a passing gate"
+  },
+  "retainedEarlierEvidence": {
+    "originalBoat": {
+      "source": "22cca6279c37fbe328e943ae2838d4acae1ab4d5",
+      "historySequence": 881,
+      "nativeSequence": 19582,
+      "transactionId": 228,
+      "logicalAtUtc": "2026-09-24T03:00:00.000Z",
+      "status": "STATE_ONLY_UNSUPPORTED",
+      "extractedBoundarySha256": "6ffaac8868a73a300f2411f28ef28374bfe6bac5c49f79af335e691338e11e0f"
+    },
+    "preCaptureFailures": [
+      "Mixed LF/CRLF source bytes correctly rejected by sourceIdentity before database creation; actual bytes and hashes retained",
+      "Following launch refused while Git index still reported changed files; no database or seal created"
+    ],
+    "readOnlyAuditFailure": "First failed-component audit used a premature break on a second verified history iterator; its complete-consumption guard correctly rejected. Original helper/error retained; corrected audit collects creation during the complete first traversal."
+  },
+  "custody": {
+    "files": 258,
+    "path": "public-custody.json",
+    "sha256": "3c6bfbec5a3a09ae6952d4dbc35de636556521fef30a81f000d0e33cdf228c0d"
+  },
+  "fullResourceCoverage": false,
+  "matrixQualifying": false,
+  "releaseReady": false,
+  "open": [
+    "Successful canonical post-fault retry in the same fault scenario",
+    "Boat retirement, sale, estate, NFT, cargo and compound dispositions",
+    "All unrelated remaining observed unknowns and unexecuted taxonomy/matrix branches",
+    "Concurrency ordering, production RNG fairness, HTTP/human entry and external backing"
+  ],
+  "statement": "Serial diagnostic authority only; no authored boat receipt, mint, reward or balancing adjustment was invented",
+  "publicSafety": {
+    "rawStateIncluded": false,
+    "actorIdentifiersIncluded": false,
+    "credentialsIncluded": false,
+    "exactPrivateValuesChecked": 328
+  }
+}

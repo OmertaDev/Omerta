@@ -1,0 +1,1042 @@
+[
+  {
+    "ordinal": 1,
+    "scenario": "expiry",
+    "operationId": null,
+    "account": "capital-organizer",
+    "action": "create",
+    "input": {
+      "definitionId": "operation:recover_foundry_archive.rc1-expiry"
+    },
+    "key": "rc1-capital-expiry-create",
+    "startedAt": "2026-09-21T03:17:12.388Z",
+    "completedOrdinal": 1,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "draft",
+      "revision": 1
+    }
+  },
+  {
+    "ordinal": 2,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-organizer",
+    "action": "publish",
+    "input": {},
+    "key": "rc1-capital-expiry-2",
+    "startedAt": "2026-09-21T03:17:12.462Z",
+    "completedOrdinal": 2,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "recruiting",
+      "revision": 2
+    }
+  },
+  {
+    "ordinal": 3,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-organizer",
+    "action": "join",
+    "input": {
+      "roleId": "organizer"
+    },
+    "key": "rc1-capital-expiry-3",
+    "startedAt": "2026-09-21T03:17:12.527Z",
+    "completedOrdinal": 3,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "recruiting",
+      "revision": 3
+    }
+  },
+  {
+    "ordinal": 4,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-expiry-4",
+    "startedAt": "2026-09-21T03:17:12.601Z",
+    "completedOrdinal": 4,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "recruiting",
+      "revision": 4
+    }
+  },
+  {
+    "ordinal": 5,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-expiry-deposit",
+    "startedAt": "2026-09-21T03:17:12.669Z",
+    "completedOrdinal": 5,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 6,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-researcher",
+    "action": "expire",
+    "input": {},
+    "key": "rc1-capital-expiry-6",
+    "startedAt": "2026-09-21T03:17:12.740Z",
+    "completedOrdinal": 6,
+    "error": {
+      "code": "coordination_operation_forbidden",
+      "message": "The operation request could not complete."
+    }
+  },
+  {
+    "ordinal": 7,
+    "scenario": "withdrawal",
+    "operationId": null,
+    "account": "capital-organizer",
+    "action": "create",
+    "input": {
+      "definitionId": "operation:recover_foundry_archive.rc1-withdrawal"
+    },
+    "key": "rc1-capital-withdrawal-create",
+    "startedAt": "2026-09-21T03:17:12.803Z",
+    "completedOrdinal": 7,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "draft",
+      "revision": 1
+    }
+  },
+  {
+    "ordinal": 8,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "publish",
+    "input": {},
+    "key": "rc1-capital-withdrawal-8",
+    "startedAt": "2026-09-21T03:17:12.858Z",
+    "completedOrdinal": 8,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 2
+    }
+  },
+  {
+    "ordinal": 9,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "join",
+    "input": {
+      "roleId": "organizer"
+    },
+    "key": "rc1-capital-withdrawal-9",
+    "startedAt": "2026-09-21T03:17:12.917Z",
+    "completedOrdinal": 9,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 3
+    }
+  },
+  {
+    "ordinal": 10,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-10",
+    "startedAt": "2026-09-21T03:17:12.980Z",
+    "completedOrdinal": 10,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 4
+    }
+  },
+  {
+    "ordinal": 11,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-deposit",
+    "startedAt": "2026-09-21T03:17:13.054Z",
+    "completedOrdinal": 11,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 12,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-deposit",
+    "startedAt": "2026-09-21T03:17:13.117Z",
+    "completedOrdinal": 12,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 13,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-deposit",
+    "startedAt": "2026-09-21T03:17:13.118Z",
+    "completedOrdinal": 13,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 14,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-deposit",
+    "startedAt": "2026-09-21T03:17:13.412Z",
+    "completedOrdinal": 14,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 15,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-researcher",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-15",
+    "startedAt": "2026-09-21T03:17:13.471Z",
+    "completedOrdinal": 15,
+    "error": {
+      "code": "coordination_operation_role",
+      "message": "The operation request could not complete."
+    }
+  },
+  {
+    "ordinal": 16,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "withdraw",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-refund",
+    "startedAt": "2026-09-21T03:17:13.546Z",
+    "completedOrdinal": 16,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 17,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "withdraw",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-refund",
+    "startedAt": "2026-09-21T03:17:13.609Z",
+    "completedOrdinal": 17,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 18,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "withdraw",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-withdrawal-refund",
+    "startedAt": "2026-09-21T03:17:13.678Z",
+    "completedOrdinal": 18,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "recruiting",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 19,
+    "scenario": "withdrawal",
+    "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-withdrawal-19",
+    "startedAt": "2026-09-21T03:17:13.731Z",
+    "completedOrdinal": 19,
+    "result": {
+      "operationId": "a81b0771-82c3-48e0-b162-0b09a1c3675c",
+      "status": "canceled",
+      "revision": 7
+    }
+  },
+  {
+    "ordinal": 20,
+    "scenario": "cancellation",
+    "operationId": null,
+    "account": "capital-organizer",
+    "action": "create",
+    "input": {
+      "definitionId": "operation:recover_foundry_archive.rc1-cancellation"
+    },
+    "key": "rc1-capital-cancellation-create",
+    "startedAt": "2026-09-21T03:17:13.788Z",
+    "completedOrdinal": 20,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "draft",
+      "revision": 1
+    }
+  },
+  {
+    "ordinal": 21,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "publish",
+    "input": {},
+    "key": "rc1-capital-cancellation-21",
+    "startedAt": "2026-09-21T03:17:13.843Z",
+    "completedOrdinal": 21,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "recruiting",
+      "revision": 2
+    }
+  },
+  {
+    "ordinal": 22,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "join",
+    "input": {
+      "roleId": "organizer"
+    },
+    "key": "rc1-capital-cancellation-22",
+    "startedAt": "2026-09-21T03:17:13.903Z",
+    "completedOrdinal": 22,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "recruiting",
+      "revision": 3
+    }
+  },
+  {
+    "ordinal": 23,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-cancellation-23",
+    "startedAt": "2026-09-21T03:17:13.968Z",
+    "completedOrdinal": 23,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "recruiting",
+      "revision": 4
+    }
+  },
+  {
+    "ordinal": 24,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-cancellation-deposit",
+    "startedAt": "2026-09-21T03:17:14.029Z",
+    "completedOrdinal": 24,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 25,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-cancellation-cancel",
+    "startedAt": "2026-09-21T03:17:14.095Z",
+    "completedOrdinal": 25,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 26,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-cancellation-cancel",
+    "startedAt": "2026-09-21T03:17:14.156Z",
+    "completedOrdinal": 26,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "canceled",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 27,
+    "scenario": "cancellation",
+    "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-cancellation-cancel",
+    "startedAt": "2026-09-21T03:17:14.218Z",
+    "completedOrdinal": 27,
+    "result": {
+      "operationId": "f91d5861-c277-4ade-9dee-18b935195cab",
+      "status": "canceled",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 28,
+    "scenario": "spending",
+    "operationId": null,
+    "account": "capital-organizer",
+    "action": "create",
+    "input": {
+      "definitionId": "operation:recover_foundry_archive.rc1-spending"
+    },
+    "key": "rc1-capital-spending-create",
+    "startedAt": "2026-09-21T03:17:14.983Z",
+    "completedOrdinal": 28,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "draft",
+      "revision": 1
+    }
+  },
+  {
+    "ordinal": 29,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "publish",
+    "input": {},
+    "key": "rc1-capital-spending-29",
+    "startedAt": "2026-09-21T03:17:15.039Z",
+    "completedOrdinal": 29,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 2
+    }
+  },
+  {
+    "ordinal": 30,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "join",
+    "input": {
+      "roleId": "organizer"
+    },
+    "key": "rc1-capital-spending-30",
+    "startedAt": "2026-09-21T03:17:15.100Z",
+    "completedOrdinal": 30,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 3
+    }
+  },
+  {
+    "ordinal": 31,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-spending-31",
+    "startedAt": "2026-09-21T03:17:15.159Z",
+    "completedOrdinal": 31,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 4
+    }
+  },
+  {
+    "ordinal": 32,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-spending-deposit",
+    "startedAt": "2026-09-21T03:17:15.227Z",
+    "completedOrdinal": 32,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 33,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-locksmith",
+    "action": "join",
+    "input": {
+      "roleId": "locksmith"
+    },
+    "key": "rc1-capital-spending-33",
+    "startedAt": "2026-09-21T03:17:15.296Z",
+    "completedOrdinal": 33,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 34,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-supplier",
+    "action": "join",
+    "input": {
+      "roleId": "supplier"
+    },
+    "key": "rc1-capital-spending-34",
+    "startedAt": "2026-09-21T03:17:15.362Z",
+    "completedOrdinal": 34,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 7
+    }
+  },
+  {
+    "ordinal": 35,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-researcher",
+    "action": "join",
+    "input": {
+      "roleId": "researcher"
+    },
+    "key": "rc1-capital-spending-35",
+    "startedAt": "2026-09-21T03:17:15.429Z",
+    "completedOrdinal": 35,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 8
+    }
+  },
+  {
+    "ordinal": 36,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "presence"
+    },
+    "key": "rc1-capital-spending-36",
+    "startedAt": "2026-09-21T03:17:15.500Z",
+    "completedOrdinal": 36,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 9
+    }
+  },
+  {
+    "ordinal": 37,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "presence"
+    },
+    "key": "rc1-capital-spending-37",
+    "startedAt": "2026-09-21T03:17:15.575Z",
+    "completedOrdinal": 37,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 10
+    }
+  },
+  {
+    "ordinal": 38,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-locksmith",
+    "action": "commit",
+    "input": {
+      "requirementId": "archive_key"
+    },
+    "key": "rc1-capital-spending-38",
+    "startedAt": "2026-09-21T03:17:15.644Z",
+    "completedOrdinal": 38,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 11
+    }
+  },
+  {
+    "ordinal": 39,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-locksmith",
+    "action": "contribute",
+    "input": {
+      "requirementId": "archive_key",
+      "itemId": "280e09ad-9ecf-4091-840f-b30269dc3a73"
+    },
+    "key": "rc1-capital-spending-39",
+    "startedAt": "2026-09-21T03:17:15.711Z",
+    "completedOrdinal": 39,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 12
+    }
+  },
+  {
+    "ordinal": 40,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-supplier",
+    "action": "commit",
+    "input": {
+      "requirementId": "wire"
+    },
+    "key": "rc1-capital-spending-40",
+    "startedAt": "2026-09-21T03:17:15.783Z",
+    "completedOrdinal": 40,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 13
+    }
+  },
+  {
+    "ordinal": 41,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-supplier",
+    "action": "contribute",
+    "input": {
+      "requirementId": "wire"
+    },
+    "key": "rc1-capital-spending-41",
+    "startedAt": "2026-09-21T03:17:15.849Z",
+    "completedOrdinal": 41,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "recruiting",
+      "revision": 14
+    }
+  },
+  {
+    "ordinal": 42,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-researcher",
+    "action": "commit",
+    "input": {
+      "requirementId": "ledger"
+    },
+    "key": "rc1-capital-spending-42",
+    "startedAt": "2026-09-21T03:17:15.922Z",
+    "completedOrdinal": 42,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "committed",
+      "revision": 15
+    }
+  },
+  {
+    "ordinal": 43,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-researcher",
+    "action": "contribute",
+    "input": {
+      "requirementId": "ledger"
+    },
+    "key": "rc1-capital-spending-43",
+    "startedAt": "2026-09-21T03:17:15.993Z",
+    "completedOrdinal": 43,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "committed",
+      "revision": 16
+    }
+  },
+  {
+    "ordinal": 44,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "approve",
+    "input": {},
+    "key": "rc1-capital-spending-44",
+    "startedAt": "2026-09-21T03:17:16.065Z",
+    "completedOrdinal": 44,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "ready",
+      "revision": 17
+    }
+  },
+  {
+    "ordinal": 45,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "execute",
+    "input": {},
+    "key": "rc1-capital-spending-execute",
+    "startedAt": "2026-09-21T03:17:16.154Z",
+    "completedOrdinal": 45,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 46,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "execute",
+    "input": {},
+    "key": "rc1-capital-spending-execute",
+    "startedAt": "2026-09-21T03:17:16.249Z",
+    "completedOrdinal": 46,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "completed",
+      "revision": 18,
+      "world": {
+        "objectId": "facility:foundry_archive.rc1-spending",
+        "state": "open",
+        "revision": 1,
+        "eventId": "0d0eab2d-38d5-452e-8e76-8fa03515e2c5"
+      }
+    }
+  },
+  {
+    "ordinal": 47,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "execute",
+    "input": {},
+    "key": "rc1-capital-spending-execute",
+    "startedAt": "2026-09-21T03:17:16.340Z",
+    "completedOrdinal": 47,
+    "result": {
+      "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+      "status": "completed",
+      "revision": 18,
+      "world": {
+        "objectId": "facility:foundry_archive.rc1-spending",
+        "state": "open",
+        "revision": 1,
+        "eventId": "0d0eab2d-38d5-452e-8e76-8fa03515e2c5"
+      }
+    }
+  },
+  {
+    "ordinal": 48,
+    "scenario": "spending",
+    "operationId": "e55804a9-5c74-43bf-b586-599322eb3bd6",
+    "account": "capital-organizer",
+    "action": "execute",
+    "input": {},
+    "key": "rc1-capital-spending-48",
+    "startedAt": "2026-09-21T03:17:16.401Z",
+    "completedOrdinal": 48,
+    "error": {
+      "code": "coordination_operation_closed",
+      "message": "The operation request could not complete."
+    }
+  },
+  {
+    "ordinal": 49,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-researcher",
+    "action": "expire",
+    "input": {},
+    "key": "rc1-capital-expiry-expire",
+    "startedAt": "2026-09-21T03:18:12.576Z",
+    "completedOrdinal": 49,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 50,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-researcher",
+    "action": "expire",
+    "input": {},
+    "key": "rc1-capital-expiry-expire",
+    "startedAt": "2026-09-21T03:18:12.776Z",
+    "completedOrdinal": 50,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "expired",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 51,
+    "scenario": "expiry",
+    "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+    "account": "capital-researcher",
+    "action": "expire",
+    "input": {},
+    "key": "rc1-capital-expiry-expire",
+    "startedAt": "2026-09-21T03:18:12.855Z",
+    "completedOrdinal": 51,
+    "result": {
+      "operationId": "5e54aece-037a-4a1c-a37a-f57c16f11a7e",
+      "status": "expired",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 52,
+    "scenario": "death",
+    "operationId": null,
+    "account": "capital-organizer",
+    "action": "create",
+    "input": {
+      "definitionId": "operation:recover_foundry_archive.rc1-death"
+    },
+    "key": "rc1-capital-death-create",
+    "startedAt": "2026-09-21T03:18:12.927Z",
+    "completedOrdinal": 52,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "draft",
+      "revision": 1
+    }
+  },
+  {
+    "ordinal": 53,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "publish",
+    "input": {},
+    "key": "rc1-capital-death-53",
+    "startedAt": "2026-09-21T03:18:12.996Z",
+    "completedOrdinal": 53,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "recruiting",
+      "revision": 2
+    }
+  },
+  {
+    "ordinal": 54,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "join",
+    "input": {
+      "roleId": "organizer"
+    },
+    "key": "rc1-capital-death-54",
+    "startedAt": "2026-09-21T03:18:13.069Z",
+    "completedOrdinal": 54,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "recruiting",
+      "revision": 3
+    }
+  },
+  {
+    "ordinal": 55,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "commit",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-death-55",
+    "startedAt": "2026-09-21T03:18:13.172Z",
+    "completedOrdinal": 55,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "recruiting",
+      "revision": 4
+    }
+  },
+  {
+    "ordinal": 56,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "contribute",
+    "input": {
+      "requirementId": "funding"
+    },
+    "key": "rc1-capital-death-deposit",
+    "startedAt": "2026-09-21T03:18:13.250Z",
+    "completedOrdinal": 56,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "recruiting",
+      "revision": 5
+    }
+  },
+  {
+    "ordinal": 57,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-death-cancel",
+    "startedAt": "2026-09-21T03:18:13.570Z",
+    "completedOrdinal": 57,
+    "error": {
+      "code": "P0001",
+      "message": "rc1 deliberate capital failure"
+    }
+  },
+  {
+    "ordinal": 58,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-death-cancel",
+    "startedAt": "2026-09-21T03:18:13.644Z",
+    "completedOrdinal": 58,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "canceled",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 59,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-death-cancel",
+    "startedAt": "2026-09-21T03:18:13.720Z",
+    "completedOrdinal": 59,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "canceled",
+      "revision": 6
+    }
+  },
+  {
+    "ordinal": 60,
+    "scenario": "death",
+    "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+    "account": "capital-organizer",
+    "action": "cancel",
+    "input": {},
+    "key": "rc1-capital-death-cancel",
+    "startedAt": "2026-09-21T03:18:14.791Z",
+    "completedOrdinal": 60,
+    "result": {
+      "operationId": "731a6b51-c4a2-4341-91c6-9f97a934353f",
+      "status": "canceled",
+      "revision": 6
+    }
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "format": 1,
+  "scope": "Ordinary Family formation and cash/OMR tribute shared observer",
+  "status": "PASS_SCOPED",
+  "source": {
+    "revision": "361efd9079837d4ac2bcff796b0c7c7cffeb6b7e",
+    "gitTree": "95fa6e7a8444e024d93232159051a6d250b00984",
+    "checkoutSha256": "0dd779c3a7ea9a91738af70daee6f8ffe38c92f7b3f03a64b0097aa892b15eb8",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "base": "4b9db479 plus queued ammo/cash observer equivalent commits ending 57233484",
+  "integrationCommits": [
+    "d92a9198237424ca07db6c49ce97f40735a826e9",
+    "361efd9079837d4ac2bcff796b0c7c7cffeb6b7e"
+  ],
+  "native": {
+    "boundaries": 34,
+    "movements": {
+      "family-formation-sink": 2,
+      "family-cash-tribute": 5,
+      "family-omr-tribute": 4
+    },
+    "negativeControls": 33,
+    "canonicalInvariantCheckpoints": 3,
+    "originalWorkerMinutes": 15,
+    "originalTimerCounts": {
+      "directorTick": 3,
+      "guardedTick": 0,
+      "guardedSeasonTick": 0,
+      "health-boundary": 3
+    },
+    "remainingObservedUnknowns": {
+      "observed-table-change:gang_members": 1
+    },
+    "lateCanonicalRollbacks": [
+      "cash tribute after Family credit before ledger",
+      "OMR tribute after Family credit before ledger"
+    ],
+    "retries": "Same-key completed retries return the durable response with zero new movement; failed attempts retry once successfully",
+    "concurrency": "Two same-key cash tribute invocations; one fresh success and exactly one transfer; observed completion order only",
+    "initialization": "Declared prebaseline eligibility and OMR/till allocation; canonical prebaseline window funding receipts retained",
+    "nativeCommandAuthorization": "Completed route/body/account/key/requested floor and response verified against durable idempotency; separate from shared receipt custody classifier",
+    "databaseCleanupVerified": true
+  },
+  "observerRegression": {
+    "status": "SCOPED_PASS",
+    "canonicalBoundaries": 11,
+    "parityChecks": 77,
+    "observedTables": 57,
+    "exactBatchSequentialHashEquality": true,
+    "unexplainedCommittedCashControl": {
+      "outcome": "REJECTED_WITH_RETAINED_BEFORE_AFTER",
+      "quantity": "0.000000001"
+    },
+    "databaseRetention": "Existing generic observer test retains its isolated database by design"
+  },
+  "retainedFailure": {
+    "source": "d92a9198237424ca07db6c49ce97f40735a826e9",
+    "status": "FAIL",
+    "directory": "family-entry-d92a9198-native-1",
+    "cause": "Diagnostic verifier omitted uniqueness of historical durable account/key rows; duplicate control escaped. Fixed in second commit.",
+    "completedBoundariesBeforeFailure": 34,
+    "completedMovementsBeforeFailure": 11,
+    "doesNotCountAsPassingGate": true,
+    "databaseCleanupVerified": true
+  },
+  "pureControls": 36,
+  "priorAmmoPureControls": 16,
+  "priorCashPureControls": 25,
+  "artifactVerification": {
+    "verifiedFiles": 124,
+    "passingManifestSha256": "62f191b7d277bd5efc78d8534e92843b5bcacb7708960bf4dc666ed3488b34f6",
+    "failedManifestSha256": "95b904247c24ed3306d1c395304805b0df564f767f223bca2af790750707db4a",
+    "observerReportSha256": "61d46fdaf0968c82cb73b44543a88ee0bce6635b1bdc888b40982496dac66024",
+    "fullHistoryChains": 2,
+    "positiveBoundariesRerun": 34,
+    "negativeInputsRerun": 33
+  },
+  "open": [
+    "C02-FAMILY-TREASURY remains OPEN: war/turf/dissolution/weekly/seasonal and other Family transitions are incomplete",
+    "No personal ammo-tribute endpoint exists; ammo unchanged checks are not nonzero ammo coverage; car-melt funding remains outside scope",
+    "Canonical join is retained as unsupported membership lineage",
+    "Shared observer does not reconstruct HTTP authorization from transaction rows alone",
+    "Compound receipts, unknown Family columns/fields, other membership and remaining OMR owner movements remain unsupported",
+    "Natural progression, real-chain/provider backing, deployed state, full simulation matrix and all-resource completeness unproven"
+  ],
+  "reruns": [
+    "Parent integrated clean-source Family entry component and pure controls",
+    "Shared observer native regression",
+    "Affected integrated pressure/world observer and hosted source gates"
+  ],
+  "owner": "Codex/resource_proof; parent owns integrated release gates",
+  "fullResourceCoverage": false,
+  "releaseReady": false,
+  "publicSafe": {
+    "rawTokens": false,
+    "privateActorIdentifiers": false,
+    "privateBalances": false,
+    "rawRequests": false
+  }
+}

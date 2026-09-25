@@ -1113,6 +1113,7 @@ async function settleIfDue(pool, accountId) {
 export async function withCharacter(pool, accountId, fn, lockHooks = null) {
   await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
   const client = await pool.connect();
+  let committed = false;
   try {
     await client.query('BEGIN');
     const prelockState = lockHooks?.beforeCharacterLock
@@ -1171,6 +1172,10 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     await persistKitchen(client, ch, owned);
     await persistAccount(client, accountId, acct);
     await client.query('COMMIT');
+    // Hooks below use the pool themselves. Return this connection first: a saturated pool must
+    // not wait for a second checkout while every committed action still holds its first one.
+    committed = true;
+    client.release();
     // §7.13 — qualification is re-checked after any action by a referred, unpaid account; it runs
     // in its OWN transaction so its two-party locks stay sorted. It is a POST-COMMIT side effect,
     // so it must NEVER fail the request (audit M1): if it threw here — a 40P01 on street_tax under
@@ -1201,8 +1206,8 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
     return { character, ...result };
-  } catch (e) { await client.query('ROLLBACK'); throw deadlockToRetry(e); }
-  finally { client.release(); }
+  } catch (e) { if (!committed) await client.query('ROLLBACK'); throw deadlockToRetry(e); }
+  finally { if (!committed) client.release(); }
 }
 
 // A pure-read GET does not need the write lock — but it cannot simply skip accrual either, because
@@ -1378,6 +1383,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
   const tgt = await pool.query('SELECT account_id FROM characters WHERE id = $1 AND alive', [targetCharacterId]);
   if (tgt.rows.length && tgt.rows[0].account_id !== accountId) await settleIfDue(pool, tgt.rows[0].account_id);
   const client = await pool.connect();
+  let committed = false;
   try {
     await client.query('BEGIN');
     const mine = await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId]);
@@ -1424,6 +1430,9 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     }
     for (const [accId, a] of Object.entries(accts)) await persistAccount(client, accId, a);
     await client.query('COMMIT');
+    // Same ownership boundary as withCharacter: post-commit hooks acquire their own connections.
+    committed = true;
+    client.release();
     if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
       try { await maybeSparkReferral(pool, accountId); } catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       // post-commit + non-fatal: a throw here (a 40P01 on the char/street_tax locks under load, any
@@ -1443,8 +1452,8 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
     return { character, ...result };
-  } catch (e) { await client.query('ROLLBACK'); throw deadlockToRetry(e); }
-  finally { client.release(); }
+  } catch (e) { if (!committed) await client.query('ROLLBACK'); throw deadlockToRetry(e); }
+  finally { if (!committed) client.release(); }
 }
 
 async function persistCharacter(client, ch) {

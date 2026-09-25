@@ -1,0 +1,327 @@
+{
+  "format": 1,
+  "owner": "Codex/native_harness",
+  "gateId": "RC1-01-SCOPED-SERIAL-REPLAY",
+  "status": "PASS_SCOPED_SERIAL_REPLAY",
+  "source": "57bbecb54cbb602c2752efbfa0045ac10d070301",
+  "command": "COORDINATION_TEST_DATABASE_URL=<isolated-loopback-PostgreSQL-URL> RC1_PG_BIN=<PostgreSQL-bin-directory> node test/rc1-native-serial-replay.js --postgres --output=<exclusive-restricted-directory-outside-checkout>",
+  "exitCode": 0,
+  "population": 25,
+  "seed": "rc1-alpha",
+  "logicalEpoch": "2026-09-20T12:00:00.000Z",
+  "databaseSettings": {
+    "timeZone": "America/New_York",
+    "lcTime": "C",
+    "serverVersion": "18.4",
+    "dateStyle": "ISO, MDY"
+  },
+  "completeCanonicalStateSha256": "55d4176b96b03fbdf4a9c8e5898de03f379aa0e122bba39f86e7321de14a5079",
+  "equalCompleteCanonicalState": true,
+  "fieldExclusions": [],
+  "clockAssertions": [
+    "transaction time retained across savepoint rollback",
+    "statement clock advances",
+    "next transaction sees new logical time",
+    "uncontrolled SQL clock rejected"
+  ],
+  "semanticMutationAssertions": [
+    "characters.cash",
+    "coordination_claim_grants.active",
+    "world_kernel_objects.state",
+    "world_operations.status"
+  ],
+  "seams": {
+    "version": 1,
+    "applicationClock": "Date.now and zero-argument new Date use the declared logical clock; dated constructors retain their argument.",
+    "databaseClock": "Isolated-schema now/transaction_timestamp use the logical time at BEGIN; clock_timestamp/statement_timestamp use logical statement time.",
+    "randomness": "SHA256(seed, stream, counter) generates test UUID/randomBytes/Math.random decisions. Canonical fixture boost overrides remain explicitly declared.",
+    "ordering": "Serial actor requests and serial exact duplicate retry. No claim about concurrent scheduling.",
+    "normalization": "No fields excluded; all IDs, timestamps, balances, visibility, state, outcomes, receipts and sequences retained.",
+    "workers": "Only explicitly invoked canonical Director work runs. Logical-time control does not imply full worker interval coverage."
+  },
+  "runs": [
+    {
+      "evidenceId": "serial-clock-retest-1/serial-a/run.json",
+      "runRecordSha256": "f9c3f53f5451b7b4550502db076860f4c9bcb2700e2150289f4f216843ef5b51",
+      "source": {
+        "revision": "57bbecb54cbb602c2752efbfa0045ac10d070301",
+        "gitTree": "4f029ca4fcd7f3bac41733c9af9d5166a41e44b0",
+        "checkoutSha256": "d090ae25796bb14b37ef3bf47d5b95889775fdce45ccb558a08d505756cd01aa",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configuration": {
+        "serial": true,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "replicate": 0,
+        "rounds": 1,
+        "epoch": "2026-09-20T12:00:00Z",
+        "seams": {
+          "version": 1,
+          "applicationClock": "Date.now and zero-argument new Date use the declared logical clock; dated constructors retain their argument.",
+          "databaseClock": "Isolated-schema now/transaction_timestamp use the logical time at BEGIN; clock_timestamp/statement_timestamp use logical statement time.",
+          "randomness": "SHA256(seed, stream, counter) generates test UUID/randomBytes/Math.random decisions. Canonical fixture boost overrides remain explicitly declared.",
+          "ordering": "Serial actor requests and serial exact duplicate retry. No claim about concurrent scheduling.",
+          "normalization": "No fields excluded; all IDs, timestamps, balances, visibility, state, outcomes, receipts and sequences retained.",
+          "workers": "Only explicitly invoked canonical Director work runs. Logical-time control does not imply full worker interval coverage."
+        }
+      },
+      "configurationSha256": "66db57bcc8951cd865d29285dc292a02babdcce91032482412875521ed3c1c64",
+      "startedAt": "2026-09-21T03:15:51.08Z",
+      "endedAt": "2026-09-21T03:16:28.707Z",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "metrics": {
+        "snapshots": 161,
+        "commandsIssuedAvailable": 3370,
+        "commandsExecuted": 94,
+        "commandReplays": 5,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 1
+        },
+        "opportunityCardsShown": 5425,
+        "opportunityCardsUniquePerActor": 553,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 1,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 19,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 0,
+        "serialOperationExecuteRetries": 1
+      },
+      "logicalDurationMs": 94802001,
+      "logicalClockScope": "Controlled test application and isolated-schema SQL clocks; only explicitly scheduled work is covered",
+      "artifacts": [
+        {
+          "path": "initial-state.json",
+          "sha256": "704d53162ff637477987b026af97f192906eefed325f804146d57f172187f0dd",
+          "bytes": 131334
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "00cad4caeaa1072fb5e3b5da29e301d6d368cafe432f41854f3053a398d7801b",
+          "bytes": 985096
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "3038f0a8df8e8344c7a05437eed45bf792c469c7631f1ad61bc77981bb66f051",
+          "bytes": 747
+        },
+        {
+          "path": "final-state.json",
+          "sha256": "c46713dc3ce1d3c449662aac056f7a4045a3ca352167f87896803df1538a57ef",
+          "bytes": 8019817
+        },
+        {
+          "path": "final.dump",
+          "sha256": "98981bdf4eaeef8f4bfec84005f4aab50136812ed627d636047523a7d7ff2385",
+          "bytes": 1484725
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "c12549805dcd820f17e62f4306e468c7530eee199382cee314eab5ecaefdd991",
+          "bytes": 748
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "53b842ecf3f5aa16b202208a2a00104856742ca9656599653ebddb175ab9b798",
+          "bytes": 24603769
+        }
+      ]
+    },
+    {
+      "evidenceId": "serial-clock-retest-1/serial-b/run.json",
+      "runRecordSha256": "8f98e50ac157670baf9a2890c3f17fc064b19de8feaae8c5d82c3e1c2bd97385",
+      "source": {
+        "revision": "57bbecb54cbb602c2752efbfa0045ac10d070301",
+        "gitTree": "4f029ca4fcd7f3bac41733c9af9d5166a41e44b0",
+        "checkoutSha256": "d090ae25796bb14b37ef3bf47d5b95889775fdce45ccb558a08d505756cd01aa",
+        "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+        "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+      },
+      "configuration": {
+        "serial": true,
+        "population": 25,
+        "seed": "rc1-alpha",
+        "replicate": 0,
+        "rounds": 1,
+        "epoch": "2026-09-20T12:00:00Z",
+        "seams": {
+          "version": 1,
+          "applicationClock": "Date.now and zero-argument new Date use the declared logical clock; dated constructors retain their argument.",
+          "databaseClock": "Isolated-schema now/transaction_timestamp use the logical time at BEGIN; clock_timestamp/statement_timestamp use logical statement time.",
+          "randomness": "SHA256(seed, stream, counter) generates test UUID/randomBytes/Math.random decisions. Canonical fixture boost overrides remain explicitly declared.",
+          "ordering": "Serial actor requests and serial exact duplicate retry. No claim about concurrent scheduling.",
+          "normalization": "No fields excluded; all IDs, timestamps, balances, visibility, state, outcomes, receipts and sequences retained.",
+          "workers": "Only explicitly invoked canonical Director work runs. Logical-time control does not imply full worker interval coverage."
+        }
+      },
+      "configurationSha256": "66db57bcc8951cd865d29285dc292a02babdcce91032482412875521ed3c1c64",
+      "startedAt": "2026-09-21T03:16:29.409Z",
+      "endedAt": "2026-09-21T03:17:06.886Z",
+      "status": "PASS_SCOPED",
+      "exitCode": 0,
+      "runtime": {
+        "node": "v24.19.0",
+        "platform": "win32",
+        "architecture": "x64",
+        "cpuCount": 16,
+        "totalMemoryBytes": 17081044992,
+        "availableParallelism": 16,
+        "productionEquivalent": false,
+        "hardwareLimits": "Local machine; no enforced process CPU/RAM quota."
+      },
+      "metrics": {
+        "snapshots": 161,
+        "commandsIssuedAvailable": 3370,
+        "commandsExecuted": 94,
+        "commandReplays": 5,
+        "rejectedCommands": {
+          "command_unavailable": 3,
+          "command_stale": 1
+        },
+        "opportunityCardsShown": 5425,
+        "opportunityCardsUniquePerActor": 553,
+        "visitsWithoutAvailableOpportunity": 0,
+        "truncatedOpportunityVisits": 0,
+        "maximumCardsPerVisit": 63,
+        "knowledgePrivacyProbes": 24,
+        "unauthorizedKnowledgeDisclosures": 0,
+        "foreignCommandProbes": 3,
+        "staleCommandProbes": 1,
+        "replayStateChecks": 4,
+        "disappearedBeforeCommand": 2,
+        "directorTicks": 2,
+        "directorSelections": 2,
+        "directorTransitions": 2,
+        "completedOpportunityCommandLinks": 19,
+        "knowledgeShares": 4,
+        "authorizedKnowledgeReads": 4,
+        "abandonedOperationsRecovered": 1,
+        "concurrentOperationExecuteBursts": 0,
+        "serialOperationExecuteRetries": 1
+      },
+      "logicalDurationMs": 94802001,
+      "logicalClockScope": "Controlled test application and isolated-schema SQL clocks; only explicitly scheduled work is covered",
+      "artifacts": [
+        {
+          "path": "initial-state.json",
+          "sha256": "704d53162ff637477987b026af97f192906eefed325f804146d57f172187f0dd",
+          "bytes": 131334
+        },
+        {
+          "path": "initial.dump",
+          "sha256": "f7576b17f7d111328b6cf6f472460373569ac813a34690ef9625dd4cedac37c0",
+          "bytes": 985096
+        },
+        {
+          "path": "initial-checkpoint.json",
+          "sha256": "82161730e7e1b6624d3b2180740f06e5bfcedc003f58f4225778452b63b5bca2",
+          "bytes": 747
+        },
+        {
+          "path": "final-state.json",
+          "sha256": "c46713dc3ce1d3c449662aac056f7a4045a3ca352167f87896803df1538a57ef",
+          "bytes": 8019817
+        },
+        {
+          "path": "final.dump",
+          "sha256": "da69caf2278981f08a77ba15bab5c7ff0cd18d8ee379537c7cd3e78ff06df874",
+          "bytes": 1484725
+        },
+        {
+          "path": "final-checkpoint.json",
+          "sha256": "ba1866633ee2f7d945c802098ebac5e575938df551e079a4403d6d9015d2ef01",
+          "bytes": 748
+        },
+        {
+          "path": "history.jsonl",
+          "sha256": "10ea1fcd47ed2e2d998adc5665a7a7b42dfb3c167f83b94d0d9daeaa98994627",
+          "bytes": 24603769
+        }
+      ]
+    }
+  ],
+  "beforeDiagnostic": {
+    "evidenceId": "serial-replay-before-diagnostics.json",
+    "sha256": "e787e48cd9d02f6a972011210413ed3aea740cc086e1da311536cd8ded3f533f",
+    "source": "1b12efb2d4bc1bec53e368737efc1b90dddb81c0",
+    "finding": "Same-seed full states differed in energy, nerve, accrual credits, IDs and timestamps; issued-board counts were137 versus135. Semantic accrual values were not eligible normalization exclusions."
+  },
+  "repair": {
+    "gateId": "RC1-01-SERIAL-STATE",
+    "commits": [
+      "d0ed861729dacd5903392756090fd2dee4ae3dee",
+      "57bbecb54cbb602c2752efbfa0045ac10d070301"
+    ],
+    "productionSourceChanged": false,
+    "changedSource": [
+      "tools/rc1-native-determinism.js",
+      "test/rc1-native-serial-replay.js",
+      "tools/rc1-sim.js",
+      "tools/rc1-native-proof.js",
+      "test/lib/player-command-support.js",
+      "test/lib/director-support.js",
+      "test/lib/campaign-network-support.js"
+    ],
+    "affectedReruns": [
+      "native same-seed serial replay",
+      "native checkpoint/receipt replay",
+      "Player Command PostgreSQL regressions",
+      "campaign/director fixture tests"
+    ]
+  },
+  "clockDefectRetest": {
+    "class": "D tooling defect",
+    "failedSource": "d0ed861729dacd5903392756090fd2dee4ae3dee",
+    "failure": "Test clock reset transaction timestamp after ROLLBACK TO SAVEPOINT",
+    "evidenceId": "clock-savepoint-before.json",
+    "sha256": "1e259f6933ffc10051ccc6b8abc07af9465a594da0a311cd2d44799e83bef188",
+    "beforeExitCode": 1,
+    "retestedSource": "57bbecb54cbb602c2752efbfa0045ac10d070301",
+    "afterExitCode": 0,
+    "result": "Transaction timestamp survives savepoint rollback; statement clock advances; next transaction uses the new logical time."
+  },
+  "defaultFixtureRegression": {
+    "source": "d0ed861729dacd5903392756090fd2dee4ae3dee",
+    "command": "node test/player-commands.js --postgres",
+    "exitCode": 0,
+    "groupsPassed": 17,
+    "evidenceId": "d0ed-player-commands.log",
+    "sha256": "b342ead39fd95ce35576ea9361494e6f1b964ab37d7f363d81458cd79b3a2040"
+  },
+  "matrixQualifying": false,
+  "qualifyingMatrixRuns": 0,
+  "exclusions": [
+    "Deterministic concurrent commit-schedule replay",
+    "Full production worker interval coverage",
+    "All225long-term matrix runs",
+    "Thirteen-resource transition completeness",
+    "12hourproduction-envelope soak",
+    "Natural-entry and real-player evidence"
+  ],
+  "access": "Raw snapshots,dumps,command histories and RNG tapes remain in external user/SYSTEM-only restricted storage. Earlier source identities are preserved."
+}

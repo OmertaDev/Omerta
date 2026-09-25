@@ -1,0 +1,184 @@
+{
+  "format": 1,
+  "source": "6368339e82965679c1d1aae91ecea657489a6414",
+  "status": "PASS_SCOPED_WORKFLOWS",
+  "workflows": [
+    {
+      "id": 35593265550,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35593265550",
+      "status": "completed",
+      "conclusion": "success",
+      "source": "6368339e82965679c1d1aae91ecea657489a6414",
+      "jobs": [
+        {
+          "name": "forge",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install Foundry",
+              "conclusion": "success"
+            },
+            {
+              "name": "forge --version (what actually ran)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Fetch dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "forge build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Market V2 artifact contracts and keeper orchestration",
+              "conclusion": "success"
+            },
+            {
+              "name": "forge test (unit + fuzz)",
+              "conclusion": "success"
+            },
+            {
+              "name": "v4 encodings on a real pool (dexbot-e2e)",
+              "conclusion": "success"
+            },
+            {
+              "name": "the stock rail on a real chain (stock-e2e)",
+              "conclusion": "success"
+            },
+            {
+              "name": "unsigned liquidity deployment plan and actual keeper flow",
+              "conclusion": "success"
+            },
+            {
+              "name": "forge build --sizes (EIP-170)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Install Foundry",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "metadataSha256": "67ffd6300d590e792563ddcc4dbdcea5a70cc42869611353d3e54c4fe24aa135",
+      "logArchiveSha256": "08cf9761106b476d106034a7cd5612a84d5e1018c5f92ddfd6030f3cf80176b0"
+    },
+    {
+      "id": 35593268588,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/35593268588",
+      "status": "completed",
+      "conclusion": "success",
+      "source": "6368339e82965679c1d1aae91ecea657489a6414",
+      "jobs": [
+        {
+          "name": "recovery",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v6",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "create dedicated disposable databases",
+              "conclusion": "success"
+            },
+            {
+              "name": "durable nonce and cross-process transaction recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "exact custody-backed books",
+              "conclusion": "success"
+            },
+            {
+              "name": "canonical indexer and existing queue recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "concurrent daily policy and expired observations",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@v6",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "metadataSha256": "1904619a831e18a1c8bf0b4e3f96f9423c05b7790838cf5cf01df91a0520520c",
+      "logArchiveSha256": "6bf13fe1d5216f8c714ddfe81648ec28b3b8e9125045becc421eabffca8cfdd7"
+    }
+  ],
+  "foundry": {
+    "version": "1.7.1",
+    "suites": 82,
+    "passed": 1247,
+    "failed": 0,
+    "skipped": 0,
+    "reportedWallSeconds": 1981.57
+  },
+  "liquidity": {
+    "postgres": true,
+    "rpc": "deterministic fixtures",
+    "signer": "public synthetic fixture only"
+  },
+  "exclusions": [
+    "No candidate17 pass inheritance",
+    "No deployed chain code/backing or enabled-rail attestation",
+    "Other required release proofs remain open"
+  ],
+  "releaseReady": false
+}

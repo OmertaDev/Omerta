@@ -1,0 +1,367 @@
+{
+  "format": 1,
+  "status": "PASS_SCOPED_INDEPENDENT_AUDIT",
+  "testedSource": {
+    "revision": "94a1a6cda2491747dee2690a597f8b4ec9a0c71c",
+    "gitTree": "c08234f5651e049a8dc334b6f0047981b57b035b",
+    "checkoutSha256": "80e7a888c060f6fc48a600fe4c698774c9faeb94b0e1e55904402eba5b21679d",
+    "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+    "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+  },
+  "baseRevision": "b5c80a4ed921e58792e78f8c4b51de5635182b74",
+  "productionChanges": false,
+  "workload": {
+    "hours": 2,
+    "population": 25,
+    "policy": "quiet_world",
+    "seed": "rc1-alpha",
+    "postgres": "18.4",
+    "node": "24.19.0",
+    "serialOnly": true,
+    "runtimeCallbacks": "Original worker callbacks and deadlines",
+    "forcedCoverageActions": false,
+    "limits": {
+      "wallMs": 1200000,
+      "outputBytes": 536870912,
+      "freeBytesFloor": 536870912,
+      "historyDecodedBytes": 536870912,
+      "historyStoredBytes": 134217728,
+      "historyLineBytes": 8388608,
+      "outstandingInvocations": 64,
+      "pendingRecords": 64,
+      "externalWatchdogMs": 1500000
+    }
+  },
+  "independentVerification": {
+    "comparedFields": [
+      "hours",
+      "population",
+      "seed",
+      "actorPolicy",
+      "initialStateSha256",
+      "finalStateSha256",
+      "workerScheduleSha256",
+      "jobOutcomesSha256",
+      "deterministicRandomTapeSha256",
+      "actorTapeSha256",
+      "policyStateSha256",
+      "semanticMetricsSha256",
+      "worldDiagnosticsSemanticSha256",
+      "mysteryPolicySummarySha256",
+      "knowledgeDiagnosticsSha256",
+      "resourceObservationEnabled",
+      "resourceJournalCount",
+      "resourceJournalSha256"
+    ],
+    "exactResourceEntriesCompared": 1085,
+    "completeInitialFinalTablesAndSequencesEqual": true,
+    "canonicalResourceStringsIncludingLfEqual": true,
+    "everyIndexedArtifactAndCompleteHistoryVerified": true,
+    "candidateSnapshotsReclassified": true,
+    "candidateBinding": "Each witness boundary equals its artifact event and exact enclosing history resource event; witness digest equals journal reference",
+    "sourceUnchangedBeforeAndAfterAudit": true,
+    "auditScriptSha256": "3655c10a3208b37651ca157a3ced7e2ef72da9b25a4e130ac20b6a2d7f232b44",
+    "auditResultSha256": "89949dab629fd91b4b50d67b1db504e627e9faa58899ad8ae4ae47078a01ab1e"
+  },
+  "integrationControls": {
+    "status": "PASS",
+    "count": 17,
+    "sourceBoundBlockSha256": "7938cd870c9ece7913e15b71266453cbf5de89f53a5a0af9b093f4aae546f14c",
+    "staleBoundaryControlScope": "Independent artifact-audit helper/control; not a new substituted-car-witness rejection inside the composed callback",
+    "stackCapture": "Synchronous 40-frame diagnostic capture; original ambient limit restored on success and formatter failure"
+  },
+  "runs": {
+    "observe": {
+      "status": "PASS_SCOPED",
+      "manifestSha256": "264a3720631c024da7fb7846395815998d80f8b4d3a5edefa0f8cd45bc759fef",
+      "indexedArtifacts": 38,
+      "historyEvents": 1290,
+      "history": {
+        "path": "history.jsonl.gz",
+        "sha256": "596c9f4beb1cc6f5ca00931070af2c4876e47f2f1129ea967a37feb8064e1aab",
+        "bytes": 4231729,
+        "decoded": {
+          "path": "history.jsonl",
+          "encoding": "gzip",
+          "framing": "event-members-v1",
+          "bytes": 51465210,
+          "sha256": "126856fc6daa8f59a60159c39a4135c49e7b3dd6c36ac7e0a189faad6312dbd7"
+        }
+      },
+      "resourceBoundaries": 1085,
+      "boundaryOutcomes": {
+        "COMMITTED": 295,
+        "AUTOCOMMITTED": 752,
+        "ROLLED_BACK": 38
+      },
+      "resourceJournalSha256": "04f675fe4b431ccd0e59d4530555636e28eef274ca973eb4c94c9dc5007637ff",
+      "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+      "finalStateSha256": "a913b658b9396dc29a330b43cc9e84d07d28ea4cd12895992b66900c117f1628",
+      "carMeltWitnesses": {
+        "committedWitnesses": 295,
+        "retainedCandidateWitnesses": 0,
+        "collectorUnsupportedWitnesses": 0,
+        "exactMeltTransitions": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "carAcquisitions": {
+        "retainedCandidateWitnesses": 6,
+        "exactAcquisitions": 6,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "npcFamilies": {
+        "retainedCandidateWitnesses": 2,
+        "exactFormations": 2,
+        "rolledBackCandidates": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "candidateReclassifications": {
+        "boundaries": 8,
+        "artifacts": 8,
+        "carAcquisitions": 6,
+        "carMelts": 0,
+        "npcFamilies": 2
+      },
+      "nonzeroEquations": {
+        "ammo": 24,
+        "cash": 22,
+        "cars": 6,
+        "cash-pocket": 2,
+        "cb": 1,
+        "prestige": 4
+      },
+      "prestige": {
+        "positiveNpcConversions": 4,
+        "exactPrestigeGranted": 24,
+        "zeroGainPlayerStatusOnly": 25
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 4,
+          "mystery.start": 3,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 42
+      },
+      "recordedActorAndSelectionReplay": false,
+      "retainedResourceTables": 58,
+      "completeWorldTables": 369,
+      "completeSequences": 3,
+      "ownedDatabaseAbsent": true
+    },
+    "replay": {
+      "status": "PASS_SCOPED",
+      "manifestSha256": "8979a3797cac26a8ae264e3b2867626b7c62a975d64e4f89e59835fa38f2dd5a",
+      "indexedArtifacts": 38,
+      "historyEvents": 1290,
+      "history": {
+        "path": "history.jsonl.gz",
+        "sha256": "4ab9c37c73d5d880b636c677e483e08f17dc17521426ac4aaa5976031ac625aa",
+        "bytes": 4232248,
+        "decoded": {
+          "path": "history.jsonl",
+          "encoding": "gzip",
+          "framing": "event-members-v1",
+          "bytes": 51466390,
+          "sha256": "63ced275798dd1cdd540aaec333345e555f68fad02f4f0b4bbeb9dcd30a03a4f"
+        }
+      },
+      "resourceBoundaries": 1085,
+      "boundaryOutcomes": {
+        "COMMITTED": 295,
+        "AUTOCOMMITTED": 752,
+        "ROLLED_BACK": 38
+      },
+      "resourceJournalSha256": "04f675fe4b431ccd0e59d4530555636e28eef274ca973eb4c94c9dc5007637ff",
+      "initialStateSha256": "4e2854266b63d0c6b667afd82997e8ca45ad3cf41757287d2ef36c148f9b7fed",
+      "finalStateSha256": "a913b658b9396dc29a330b43cc9e84d07d28ea4cd12895992b66900c117f1628",
+      "carMeltWitnesses": {
+        "committedWitnesses": 295,
+        "retainedCandidateWitnesses": 0,
+        "collectorUnsupportedWitnesses": 0,
+        "exactMeltTransitions": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "carAcquisitions": {
+        "retainedCandidateWitnesses": 6,
+        "exactAcquisitions": 6,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "npcFamilies": {
+        "retainedCandidateWitnesses": 2,
+        "exactFormations": 2,
+        "rolledBackCandidates": 0,
+        "unclassifiedCandidateBoundaries": 0
+      },
+      "candidateReclassifications": {
+        "boundaries": 8,
+        "artifacts": 8,
+        "carAcquisitions": 6,
+        "carMelts": 0,
+        "npcFamilies": 2
+      },
+      "nonzeroEquations": {
+        "ammo": 24,
+        "cash": 22,
+        "cars": 6,
+        "cash-pocket": 2,
+        "cb": 1,
+        "prestige": 4
+      },
+      "prestige": {
+        "positiveNpcConversions": 4,
+        "exactPrestigeGranted": 24,
+        "zeroGainPlayerStatusOnly": 25
+      },
+      "metrics": {
+        "playerSnapshots": 8,
+        "ownCharacterReads": 2,
+        "freshPlayerCommands": 8,
+        "legacyCrimeAttempts": 2,
+        "crimeSuccesses": 2,
+        "crimeLosses": 0,
+        "exactReplays": 0,
+        "denials": {},
+        "sessionWaits": 0,
+        "sessions": 2,
+        "commandTypes": {
+          "discovery.start": 4,
+          "mystery.start": 3,
+          "discovery.act": 1
+        },
+        "observedAuthorizedOpportunities": 42
+      },
+      "recordedActorAndSelectionReplay": true,
+      "retainedResourceTables": 58,
+      "completeWorldTables": 369,
+      "completeSequences": 3,
+      "ownedDatabaseAbsent": true
+    }
+  },
+  "remainingUnknowns": [
+    {
+      "kind": "observed-table-change",
+      "table": "season_records",
+      "countPerLane": 1,
+      "historySequence": 984,
+      "nativeSequence": 8251,
+      "transactionId": null,
+      "authority": "original-worker",
+      "logicalAt": 1790208000000,
+      "logicalAtUtc": "2026-09-24T00:00:00.000Z",
+      "outcome": "AUTOCOMMITTED",
+      "command": "INSERT",
+      "sqlSha256": "517aa8e119ebc4cdab7dc4704dc633f1db69c6e0cd599bbf29087a4d5d0c46e9",
+      "restrictedArtifact": "restricted-resource-change-0000835.json",
+      "restrictedChangesSha256": "4c439db9d74d3486fba55a14071c011823783658ce6d7e8e66b9be6d4e832c85",
+      "observedState": "One initial season record inserted with crowned=false",
+      "sourceAuthority": "src/worker.js runSeasonRollover -> src/season.js recordReckoning (source review; no new query witness for these unsupported boundaries)",
+      "status": "UNSUPPORTED",
+      "remaining": "Initial election and immutable standings selection lineage"
+    },
+    {
+      "kind": "observed-table-change",
+      "table": "season_records",
+      "countPerLane": 1,
+      "historySequence": 985,
+      "nativeSequence": 8257,
+      "transactionId": 226,
+      "authority": "original-worker",
+      "logicalAt": 1790208000000,
+      "logicalAtUtc": "2026-09-24T00:00:00.000Z",
+      "outcome": "COMMITTED",
+      "command": "COMMIT",
+      "sqlSha256": "79663c1d3b43ceaf9ee728e501c64b57ae2e4d6cb36ff5c65eddcda1de27342f",
+      "restrictedArtifact": "restricted-resource-change-0000836.json",
+      "restrictedChangesSha256": "c5b34f5440d7c7bbbf9e630e3c50480da1aeae2e4d8e7ae2241b67220c44385d",
+      "observedState": "Stored record crowned false to true and one account season_crowns 0 to 1",
+      "sourceAuthority": "src/worker.js runSeasonRollover -> src/season.js recordReckoning (source review; no new query witness for these unsupported boundaries)",
+      "status": "UNSUPPORTED",
+      "remaining": "Stored crown, owner, exactly-once latch/account update and notification linkage; separate crown work not included"
+    }
+  ],
+  "priorFailure": {
+    "finding": "RC1-TOOL-56",
+    "source": {
+      "revision": "65ee96b88c18d50e4741c1ff158571a8d653592a",
+      "gitTree": "f64bfc473f16e03dec684aad6d03053e794424ab",
+      "checkoutSha256": "3b0653ba23746f8b28748cfdf8046853586d977c45d0c09ad0c5d72378f4ae52",
+      "lockfileSha256": "a89bb293312294946e2abb9b21afb88405a788fc69efdf03c74813824d438551",
+      "schemaSha256": "da89a90b235b0b464479a9a8b6ca97117eca0327a97d88805f1f4286ee45fce4"
+    },
+    "status": "FAILED_UNSEALED_PREFIX_VERIFIED_DATABASE_ALREADY_ABSENT",
+    "reason": "Missing original population caller; default stack depth10 truncated ledger ancestry in composed native chain",
+    "secondaryFailure": {
+      "message": "Observed transaction ended without an observed BEGIN",
+      "code": "RC1_COMMIT_OBSERVER_UNSUPPORTED"
+    },
+    "firstResourceFailure": {
+      "bytes": 458132,
+      "sha256": "1efc2924ef7802d40571cd9e429e638a79cf4c343c1dd88f85adcfc93b3a4edc"
+    },
+    "history": {
+      "path": "history.jsonl.gz",
+      "sha256": "4e124dcc3f7ff69e16730493ec14d23004a89236ea41df1b82ba3b7f5f199562",
+      "bytes": 1200017,
+      "decoded": {
+        "path": "history.jsonl",
+        "encoding": "gzip",
+        "framing": "event-members-v1",
+        "bytes": 14910275,
+        "sha256": "434e4b874406e7f85e9c27cd33f26c79b6118d7aca3e1364ed9d2c437ea1d472"
+      }
+    },
+    "prefix": {
+      "semantics": "sequential-invocations-v1",
+      "events": 364,
+      "invocations": 0,
+      "finalHash": "a1a890a4ce8b01a808b137e38b6315577f854d72b30af9e23cea14a3e738aec4"
+    },
+    "resourceBoundaries": 360,
+    "indexedArtifacts": 19,
+    "sealed": false,
+    "replayLaunched": false,
+    "ownedDatabaseAlreadyAbsent": true,
+    "auditDumpOrDropExecuted": false,
+    "pureControlFailure": {
+      "source": "ebfc52eed268a7ff3f39ee1880d8cb26cd7c71fe",
+      "path": "stack-control-ebfc52ee-failure.txt",
+      "sha256": "94cdd14e32643dc49b19c75cfbac81f4abe1bab87544ebd4e6920a3d9f936cef",
+      "reason": "Overbroad throwing formatter in control poisoned Node assertion rendering; corrected control throws only inside capture depth40"
+    }
+  },
+  "custody": {
+    "files": 145,
+    "sha256": "2c5cfdf7799183bfe4ebd80a10a9e706281d036baf3651d0b389ffd4306d4925",
+    "path": "public-custody.json"
+  },
+  "qualifyingFullResourcePass": false,
+  "matrixQualifying": false,
+  "releaseReady": false,
+  "limitations": [
+    "Serial-only native query and observer boundaries; the Family collector last-query handoff is not a concurrency-order proof",
+    "Two logical hours and one seed/policy are not the matrix, applicable long-lifecycle proof, production soak, deployment or human/HTTP entry",
+    "No car melt or Family rollback candidate occurred in this quiet workload; historical focused controls remain separately scoped",
+    "The 295 committed car-collector witnesses are not 295 car actions",
+    "War pool is nonmonetary standing; positive prestige grants are exact units but zero-gain recaps are status only",
+    "Remaining unknowns count only actual observed changes; unexecuted categories and wider ownership/backing branches remain unproven",
+    "Notifications are not among this source's 58 resource tables; full world equality retains all 369 tables",
+    "Separate crown classifier work is excluded from this tested source"
+  ],
+  "publicSafety": {
+    "rawStateIncluded": false,
+    "rawActorIdentifiersIncluded": false,
+    "credentialsIncluded": false,
+    "exactPrivateIdentifierValuesChecked": 100
+  }
+}
