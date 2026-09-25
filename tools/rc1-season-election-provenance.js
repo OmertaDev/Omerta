@@ -14,7 +14,7 @@ export const ELECTION_SOURCE_PINS = Object.freeze({
   'src/season.js': '20898d156c93a84e8f969e79339e5af00f75ddce9aadc1ebd5ae50bd49c20907',
   'src/standing.js': 'e86fdd2ee3a24a01f37c28714bc79466edfe31a1b1d39d3af6a35c7f899b164b',
   'src/memo.js': 'c96b4ab21d5bd2e73a093a86bea85c4fb483427bcd441ae1f7845d35c0feab62',
-  'src/rules.js': 'c22a72398a46a4f0076a64692dd31ddb2555ed94e9afa0da538f3f3a773f7c24',
+  'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
 });
 const copy = value => JSON.parse(JSON.stringify(value));
 const candidateTables = ['accounts', 'account_persistent', 'characters', 'districts', 'gangs'];
