@@ -12,7 +12,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': 'c22a72398a46a4f0076a64692dd31ddb2555ed94e9afa0da538f3f3a773f7c24',
   'src/rules.generated.js': 'ddce8118bd79f56af022a6a4e33da09d41f89829bd3b59a2e906c6e19af73ec9',
   'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
-  'src/server.js': 'd76c0830e06c796e9d29382f8a75202641e0a0038b36d1ef3827cbf8b80685ce',
+  'src/server.js': '3d5f86d5b5db4a410a757d3c3385d14ee6b6174cde003ca52662241ca3ec0bd4',
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
   'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
