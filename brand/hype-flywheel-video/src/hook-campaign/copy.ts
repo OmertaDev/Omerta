@@ -13,13 +13,13 @@ export const films: Film[] = [
   {
     id: 'Hook-TheCut', title: 'Every cut has a job', art: 'city',
     shots: [
-      {kind: 'hero', tag: '01 / THE HOOK', title: 'EVERY CUT\nHAS A JOB.', detail: 'Meet the new ETH / OMR market design.', note: 'Uniswap v4 · Market V2'},
+      {kind: 'hero', tag: '01 / THE HOOK', title: 'EVERY CUT\nHAS A JOB.', detail: 'Meet the new ETH / OMR market design.', note: 'Uniswap v4 · Market'},
       {kind: 'ledger', tag: 'SELL FEE / BASE', title: '9%.\nFOUR ORDERS.', detail: 'The canonical pool’s base sell fee.', items: ['2% → Developer', '1.6% → RWA recipient', '2.4% → Community', '3% → Protocol liquidity'], note: 'LP fees are additional. Other pools have their own policies.'},
       {kind: 'flow', tag: 'SELL PRESSURE', title: 'PRESSURE\nLEAVES A TRACE.', detail: 'An extra 0–1% sell charge goes to stability.', items: ['Tick pressure builds', 'Pressure decays over time', 'Buys cannot instantly reset it'], note: 'Surge is a hook charge, separate from LP fees.'},
       {kind: 'flow', tag: 'OPENING PROTECTION', title: 'THE OPENING\nHAS LIMITS.', detail: 'A fixed opening window with a bounded buy fee and optional quote-size cap.', items: ['Set at deployment', 'Window cannot be extended', 'No hook buy tax afterward'], note: 'Per-swap controls; splitting trades remains possible.'},
       {kind: 'ledger', tag: 'MARKET OBSERVATIONS', title: 'READ\nTHE ROOM.', detail: 'Completed epochs record the market’s behavior.', items: ['Mean tick + dispersion', 'ETH turnover + imbalance', 'Minimum active liquidity', 'Liquidity × elapsed time'], note: 'Historical pool measurements; not external fair value.'},
       {kind: 'flow', tag: 'SETTLEMENT', title: 'KEEP\nTHE LINE MOVING.', detail: 'Fees use actual settlement, including partial fills.', items: ['ETH / OMR tracked separately', 'Fixed recipients claim independently', 'Failed recipient ≠ blocked swaps'], note: 'Base rates, recipients and maximum surge are immutable.'},
-      {kind: 'hero', tag: 'OMERTÀ / MARKET V2', title: 'THE CITY\nKEEPS ACCOUNTS.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
+      {kind: 'hero', tag: 'OMERTÀ / MARKET', title: 'THE CITY\nKEEPS ACCOUNTS.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
     ],
   },
   {
@@ -31,7 +31,7 @@ export const films: Film[] = [
       {kind: 'flow', tag: 'BOUNDED RESPONSE', title: 'NO\nBOTTOMLESS VAULT.', detail: 'Finite capacity and cooldowns bound deployment.', items: ['Stress thresholds govern response', 'Spot + liquidity checked', 'Lifetime limits remain consumed'], note: 'A reserve mechanism cannot guarantee a price floor.'},
       {kind: 'flow', tag: 'RECOVERY', title: 'RECOVERY\nMUST BE FUNDED.', detail: 'Spaced healthy observations unlock partial regeneration.', items: ['X healthy samples within Y', 'Idle War Chest assets move', 'Only configured capacity returns'], note: 'A price recovery does not create ETH reserves.'},
       {kind: 'ledger', tag: 'FUNDING + UPKEEP', title: 'PUT FUNDS\nTO WORK.', detail: 'Actual receipts flow into fixed compartments.', items: ['3% POL bucket → Core', 'Surge + bond proceeds → War Chest', 'Arbitrage reserve share → War Chest', 'Keeper simulates bounded jobs'], note: 'At most one new transaction per keeper invocation; gas budgeted.'},
-      {kind: 'hero', tag: 'OMERTÀ / MARKET V2', title: 'THE CITY\nHAS A TREASURY.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
+      {kind: 'hero', tag: 'OMERTÀ / MARKET', title: 'THE CITY\nHAS A TREASURY.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
     ],
   },
   {
@@ -43,7 +43,7 @@ export const films: Film[] = [
       {kind: 'ledger', tag: 'ARBITRAGE ACCOUNTING', title: 'COUNT\nTHE ACTUAL CUT.', detail: 'A fixed share of realized trading profit funds the reserve.', items: ['Trading profit is after swap fees', 'Gas is budgeted separately', 'Collateral returns through claims'], note: 'No exclusive arbitrage or MEV-immunity claim.'},
       {kind: 'flow', tag: 'PLAYER COMMITMENTS', title: 'COMMIT\nREAL LIQUIDITY.', detail: 'The vault holds an actual canonical position NFT for a finite term.', items: ['Canonical pool positions only', 'Custody enforces the commitment', 'Independent maturity withdrawal'], note: 'Maturity exit does not require a healthy oracle or reward claim.'},
       {kind: 'flow', tag: 'USEFUL DEPTH', title: 'DEPTH\nHAS TO QUALIFY.', detail: 'Two fresh epochs sample useful liquidity around the reference band.', items: ['Smaller adjacent sample counts', 'Invalid samples break accrual', 'Campaign rewards are prefunded'], note: 'Fixed limits; first-come funds at checkpoint. No promised yield.'},
-      {kind: 'hero', tag: 'OMERTÀ / MARKET V2', title: 'READ\nTHE TERMS.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
+      {kind: 'hero', tag: 'OMERTÀ / MARKET', title: 'READ\nTHE TERMS.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
     ],
   },
   {
@@ -55,7 +55,7 @@ export const films: Film[] = [
       {kind: 'flow', tag: 'SIEGES', title: 'CONTEST\nTHE NEXT CHAPTER.', detail: 'Sieges use funded fee escrow and frozen treasury addresses.', items: ['Bounded duration + victory allocation', 'Typed game settlement', 'Replay + revision checks'], note: 'Combat adjudication remains a server responsibility.'},
       {kind: 'flow', tag: 'HISTORICAL OWNERSHIP', title: 'THE OLD CUT\nSTAYS ACCOUNTED.', detail: 'Fees are collected and forwarded before control transitions.', items: ['Ownership changes checkpoint', 'Sieges checkpoint', 'Treasury changes checkpoint'], note: 'Atomic accounting preserves the prior fee entitlement.'},
       {kind: 'ledger', tag: 'CITY STATUS', title: 'BUILD\nYOUR CONNECTIONS.', detail: 'Corridors connect touching ranges with matching owners.', items: ['Corridor status', 'Loyalty status', 'Fortification status'], note: 'Game status does not multiply monetary claims.'},
-      {kind: 'hero', tag: 'OMERTÀ / MARKET V2', title: 'CONTROL\nTHE NEXT CHAPTER.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
+      {kind: 'hero', tag: 'OMERTÀ / MARKET', title: 'CONTROL\nTHE NEXT CHAPTER.', detail: 'Explore Omertà. Follow the build.', note: 'omerta.fun · @OmertaOnRH'},
     ],
   },
 ];
@@ -97,7 +97,7 @@ films.unshift({
     {kind: 'hero', tag: 'OMERTÀ / THE NEXT CHAPTER', title: 'THE CITY\nIS CONNECTED.', detail: 'The Hook. The World Graph. The Coordination Engine.', note: 'Three systems. One evolving noir world.'},
     fromFilm(0, 1),
     fromFilm(1, 3),
-    {kind: 'ledger', tag: 'MARKET V2 / CAPITAL', title: 'CAPITAL\nHAS TERMS.', detail: 'Funded mechanisms around the canonical market.', items: ['Inventory bonds vest existing OMR', 'Solver-funded arbitrage shares profit', 'NFT commitments measure useful depth'], note: 'Finite inventory and prefunded rewards. No promised yield.', status: 'IMPLEMENTATION CANDIDATE\nV2 is not deployed or funded.'},
+    {kind: 'ledger', tag: 'MARKET / CAPITAL', title: 'CAPITAL\nHAS TERMS.', detail: 'Funded mechanisms around the canonical market.', items: ['Inventory bonds vest existing OMR', 'Solver-funded arbitrage shares profit', 'NFT commitments measure useful depth'], note: 'Finite inventory and prefunded rewards. No promised yield.', status: 'IMPLEMENTATION CANDIDATE\nV2 is not deployed or funded.'},
     fromFilm(3, 1),
     fromFilm(4, 1),
     fromFilm(4, 2),

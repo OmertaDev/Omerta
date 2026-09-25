@@ -22,7 +22,8 @@ npm run content:build:crafting-exchange
 
 `content:check` validates both Sixth Chair source packs, all six district storylets, all seven Don
 Cases, all six Path Cases, the first two-seat organization case, the first production seasonal case,
-and all four versions of the first production authored workshop, then prints their SHA-256 identities.
+and the restoration, apprenticeship, Press Room, and Material Exchange workshop packs, then prints
+their SHA-256 identities.
 `content:build` writes the current runtime-ready bundle to `content/dist/sixth-chair-v2.json`;
 `npm run content:build:storylets` writes the six independently versioned district bundles;
 `npm run content:build:don-cases` writes the seven independently versioned late-game bundles;
@@ -38,13 +39,13 @@ and all four versions of the first production authored workshop, then prints the
 `content/dist/bellini-lockbox-v3.json` artifact;
 `npm run content:build:crafting-exchange` writes its **Material Exchange** extension to the immutable
 `content/dist/bellini-lockbox-v4.json` artifact;
-`npm run content:build:v1` retains the original compiler specimen build. Build commands never activate
+`npm run content:build:v1` builds the compiler validation fixture. Build commands never activate
 content: an operator must still promote the exact artifact and hash. Rebuilding identical input
 is byte-for-byte idempotent, and changing an existing output version is refused. Author a new version
 instead of overwriting a promoted one.
 
-[`packs/sixth-chair/pack.json`](packs/sixth-chair/pack.json) is the unchanged v1 compiler specimen.
-[`packs/sixth-chair-v2/pack.json`](packs/sixth-chair-v2/pack.json) is the first runtime-ready story:
+The [Sixth Chair compiler fixture](packs/sixth-chair/pack.json) tests compilation.
+The [playable Sixth Chair pack](packs/sixth-chair-v2/pack.json) is the runtime-ready story:
 a four-role Crew or Extended Family mystery with three normalized-answer puzzles, one
 consent-required human witness choice, shared evidence, a world fact, and value-neutral status and
 collectible awards. Builds never activate a pack. An operator promotes the exact compiled artifact
@@ -119,15 +120,15 @@ an operator activates that exact compiled bundle hash.
 The first production authored workshop is **The Bellini Restoration**
 (`omerta.workshop.bellini-lockbox`). At the Old Foundry, two globally finite daily salvage sources
 issue exact-hash Ledger Plate and Charred Binding lots once per account per source and epoch. The
-v2 apprenticeship consumes those inputs at the start of server-timed work orders, produces inert
+apprenticeship consumes those inputs at the start of server-timed work orders, produces inert
 stackable workpieces at collection, and awards exact-hash Bellini Restoration XP at compiled
-thresholds. The v3 Press Room adds a compiled location facility and one non-tradeable, exact-hash
+thresholds. The Press Room adds a compiled location facility and one non-tradeable, exact-hash
 Bellini Restoration Press whose only power is satisfying declared authored-crafting requirements.
 The press wears when a requiring work order or recipe starts and repairs to its compiled maximum
 only by consuming compiled same-hash materials at that facility. One account may have only one active
 work order in this namespace. The final recipe
 requires skill level 2 and consumes the workpieces FIFO to create one non-stackable Restored Bellini
-Lockbox. The v4 Material Exchange makes only Ledger Plates and Charred Bindings tradeable through a
+Lockbox. The Material Exchange makes only Ledger Plates and Charred Bindings tradeable through a
 cashless, same-hash, whole-lot barter board. The compiled exchange manifest fixes its item allowlist,
 24-hour offer lifetime, and five-open-offer account cap. Tools, workpieces, and the Lockbox remain
 non-tradeable; every item remains account-owned and outside rare-item export.

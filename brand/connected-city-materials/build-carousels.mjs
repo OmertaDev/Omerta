@@ -6,8 +6,8 @@ const here=path.dirname(fileURLToPath(import.meta.url));
 const dir=path.join(here,'carousels');
 fs.mkdirSync(dir,{recursive:true});
 const sets=[
- {id:'hook',name:'Every cut has a job',status:'MARKET V2 CANDIDATE · NOT DEPLOYED OR FUNDED',post:'Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market V2. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.',slides:[
-  {title:['EVERY CUT','HAS A JOB.'],sub:'Follow the canonical market’s fee flow.',kind:'hero',items:['9% BASE SELL FEE','FOUR FIXED DESTINATIONS'],note:'ETH / OMR · Uniswap v4 · Market V2'},
+ {id:'hook',name:'Every cut has a job',status:'MARKET CANDIDATE · NOT DEPLOYED OR FUNDED',post:'Every cut has a job. Explore the 9% base sell-fee split, bounded surge and finite reserve design in Omertà Market. Implementation candidate; not deployed or funded. LP fees are additional. Follow @OmertaOnRH.',slides:[
+  {title:['EVERY CUT','HAS A JOB.'],sub:'Follow the canonical market’s fee flow.',kind:'hero',items:['9% BASE SELL FEE','FOUR FIXED DESTINATIONS'],note:'ETH / OMR · Uniswap v4 · Market'},
   {title:['FOUR ORDERS.','ONE BASE FEE.'],sub:'9% is the total base sell fee.',kind:'fee',items:['2% Developer','1.6% RWA recipient','2.4% Community','3% Protocol liquidity'],note:'LP fees are additional. Other pools have their own policies.'},
   {title:['PRESSURE','LEAVES A TRACE.'],sub:'Extra sell pressure can add a bounded charge.',kind:'steps',items:['Tick pressure accumulates','Surge adds 0–1%','Surge receipts go to stability'],note:'Pressure decays over time. Buys cannot instantly reset it.'},
   {title:['FUNDING','HAS A DESTINATION.'],sub:'Actual receipts enter defined compartments.',kind:'steps',items:['3% POL bucket → Core','Surge + bonds → War Chest','Arbitrage reserve share → War Chest'],note:'Funding does not reset lifetime deployment limits.'},

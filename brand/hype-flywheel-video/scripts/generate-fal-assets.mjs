@@ -155,7 +155,7 @@ fs.mkdirSync(outputDir, { recursive: true });
 let manifest = fs.existsSync(manifestPath)
   ? JSON.parse(fs.readFileSync(manifestPath, "utf8"))
   : {
-      campaign: "OMERTA hype flywheel v3",
+      campaign: "OMERTA hype flywheel",
       sourceRevision: null,
       videoModel,
       ttsModel,
@@ -235,7 +235,7 @@ if (estimatedPassSpend > capUsd + 0.0001) {
 }
 
 console.log(
-  `flywheel v3: ${missingVideos.length} video plate(s), ${missingVoice.length} voice segment(s) missing; ` +
+  `flywheel: ${missingVideos.length} video plate(s), ${missingVoice.length} voice segment(s) missing; ` +
     `estimated new spend $${estimatedPassSpend.toFixed(2)} / $${capUsd.toFixed(2)} cap`,
 );
 
@@ -470,4 +470,4 @@ for (let index = 0; index < missingVideos.length; index += 3) {
 
 await Promise.all(jobs.map((job) => waitForVideo(job)));
 saveManifest();
-console.log("flywheel v3 fal assets are complete");
+console.log("flywheel fal assets are complete");

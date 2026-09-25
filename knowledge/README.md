@@ -41,8 +41,8 @@ OMERTÀ has a large documentary history. A statement’s authority depends on it
    `CHAIN-DEPLOY.md` and the active environment.
 4. **Current syntheses** — this knowledge base, `SPEC.md`, `README.md`, `BALANCE.md` and
    `SIGN-OFF.md`. Generated counts here outrank hand-maintained counts elsewhere.
-5. **Design documents** — intended behavior and rationale. A design is not proof that the feature
-   shipped unchanged.
+5. **Current design documents** — intended behavior and rationale. A design is not proof that the
+   feature shipped unchanged. Scrapped designs are removed from the working tree.
 6. **Audit reports and chronological logs** — point-in-time evidence. They are invaluable for
    precedent and failure history, but a finding may later be fixed, accepted or superseded.
 7. **GitHub discussions and PR descriptions** — change rationale and review record, not runtime
@@ -50,6 +50,10 @@ OMERTÀ has a large documentary history. A statement’s authority depends on it
 
 When two sources disagree, inspect the current implementation and its tests, then record the
 disagreement rather than averaging the claims.
+
+Keep dated security reports and retest evidence under
+[the security review policy](../omerta-contracts/SECURITY-REVIEW-POLICY.md). Git commit lineage preserves
+replaced designs; current guidance should describe the present implementation and approved work.
 
 ## What the generated plane covers
 

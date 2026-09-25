@@ -682,7 +682,7 @@ in official copy; never distribute anything by chance; the projected-payoff-date
 5. **RevenueSplitter** — staker + OMR-buy legs live; NFT leg at zero pending its launch-checklist row.
    *(The OMR-buy leg's OFF-CHAIN half is BUILT — §4.4. What remains on-chain is the splitter itself
    and the market-buy bot; `recordBankBuy` is already the ingest they report to.)*
-6. **Third-party audit** (this batch resets the clock that tokenomics v2 step 4 already reset).
+6. **Third-party audit** (this batch resets the clock that economy step 4 already reset).
 7. **LP staking + auto-compounding** (§2.8) — no oracle, no borrow, no liquidation; it
    compounds toward the POL depth §2.7(1) requires, so it is early rather than late.
 8. **$OMR collateral** — only against §2.7's five conditions, with its own audit. **The

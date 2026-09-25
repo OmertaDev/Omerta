@@ -91,7 +91,7 @@ axis).
 — the skillMult class, off the locked list, display twins updated — and at level 50 a permanent
 TRAIT CHOICE (one of two per track, the Fable moment; `character_traits`, dies with the street).
 
-**Step 3 — PATHS v2**: prototype re-extract 3 → 6 paths (ids/names/descs in the generated half;
+**Step 3 — PATHS**: prototype re-extract 3 → 6 paths (ids/names/descs in the generated half;
 the car-catalog precedent) + a hand-written `PATH_FX` matrix in the tail; the 7 inline path
 ternaries convert to read PATH_FX byte-identically for the 3 originals; each path names home/rival
 tracks (`xpMult` ~1.5 home / ~0.6 rival, applied inside bumpMastery); one signature perk + one

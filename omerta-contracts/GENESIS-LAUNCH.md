@@ -259,8 +259,7 @@ observer, initially disallowed quotes, and ERC-165 support for both `IInitialize
 `IOmrV4ObservationSource` (`0xa4f7792a`). Verify every splitter immutable and confirm the pool is
 uninitialized.
 
-Robinhood testnet currently has no reviewed official launcher/LBP stack matching mainnet. The old
-`Deploy-TestnetHook.ps1` is intentionally retired because it pins the obsolete three-argument hook.
+Robinhood testnet currently has no reviewed official launcher/LBP stack matching mainnet.
 Use a mainnet fork for exact-stack rehearsal. A testnet broadcast requires first deploying and
 reviewing the complete launcher/CCA/LBP stack, then mining a new hook for that testnet strategy.
 

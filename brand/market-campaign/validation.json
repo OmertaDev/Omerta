@@ -1,0 +1,164 @@
+{
+  "checks": {
+    "postsWithin280": true,
+    "numberingIncluded": true,
+    "noUrlOrEmojiWeightAmbiguity": true,
+    "attachmentsExist": true,
+    "attachmentAltTextPresent": true,
+    "pngHeadersVerified": true
+  },
+  "postCount": 30,
+  "maxWeightedLength": 256,
+  "posts": [
+    {
+      "group": "01-city-treasury",
+      "position": 1,
+      "weightedLength": 213
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 2,
+      "weightedLength": 220
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 3,
+      "weightedLength": 196
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 4,
+      "weightedLength": 232
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 5,
+      "weightedLength": 217
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 6,
+      "weightedLength": 225
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 7,
+      "weightedLength": 221
+    },
+    {
+      "group": "01-city-treasury",
+      "position": 8,
+      "weightedLength": 246
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 1,
+      "weightedLength": 217
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 2,
+      "weightedLength": 208
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 3,
+      "weightedLength": 228
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 4,
+      "weightedLength": 229
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 5,
+      "weightedLength": 209
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 6,
+      "weightedLength": 229
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 7,
+      "weightedLength": 248
+    },
+    {
+      "group": "02-reserve-desk",
+      "position": 8,
+      "weightedLength": 250
+    },
+    {
+      "group": "03-turf-city",
+      "position": 1,
+      "weightedLength": 214
+    },
+    {
+      "group": "03-turf-city",
+      "position": 2,
+      "weightedLength": 236
+    },
+    {
+      "group": "03-turf-city",
+      "position": 3,
+      "weightedLength": 221
+    },
+    {
+      "group": "03-turf-city",
+      "position": 4,
+      "weightedLength": 230
+    },
+    {
+      "group": "03-turf-city",
+      "position": 5,
+      "weightedLength": 240
+    },
+    {
+      "group": "03-turf-city",
+      "position": 6,
+      "weightedLength": 218
+    },
+    {
+      "group": "03-turf-city",
+      "position": 7,
+      "weightedLength": 240
+    },
+    {
+      "group": "03-turf-city",
+      "position": 8,
+      "weightedLength": 256
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 206
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 224
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 212
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 227
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 216
+    },
+    {
+      "group": "standalone",
+      "position": 1,
+      "weightedLength": 238
+    }
+  ]
+}

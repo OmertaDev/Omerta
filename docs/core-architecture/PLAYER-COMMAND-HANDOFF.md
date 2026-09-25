@@ -76,7 +76,7 @@ The retained command-by-command ledger is `output/player-command-engine/final-ve
 | Production browser / mobile harness | PASS, 10 / 175 checks |
 | Repository suites / property budget / supplemental CI checks | Final per-command ledger records all 224 required lifecycle commands and retests; the full 100-seed / 25,000-action property budget passes |
 | Static, documentation, generated knowledge | Repository gates, documentation census and changed JavaScript syntax checks pass; final ledger records generated-knowledge checks at the committed source checkpoint |
-| Foundry artifact build and Market V2 suites | PASS, real local build; 15 deployment checks plus keeper and solver |
+| Foundry artifact build and Market suites | PASS, real local build; 15 deployment checks plus keeper and solver |
 | Economy simulation / scale / invite flows | PASS, including 18 players over two days, all nine driven markets, 55 unchanged ledger checks and real invite browser controls |
 | Native load and concurrency | PASS, 3,473 operations across eight players with zero 5xx/pool failures and unchanged ledger checks; exact idempotency, escrow and deadlock handling remain passing |
 | Native chaos | Worker interruption, terminated database backends, full PostgreSQL outage/recovery and interrupted transfers pass with unchanged ledgers. Graceful deploy drain remains BLOCKED on Windows |

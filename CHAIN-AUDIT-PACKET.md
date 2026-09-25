@@ -92,7 +92,7 @@ interfaces. It is no longer complete; the banner above names what has landed sin
 ## 2. THE WALLS — what each one CLAIMS, so a reviewer can attack the claim rather than the code
 
 ### 2.1 The mint: four walls, and the claim is that 3 and 4 COMPOSE rather than substitute
-Tokenomics v2 step 4 **deleted the property every prior review of this suite rested on** — "nothing
+economy step 4 **deleted the property every prior review of this suite rested on** — "nothing
 mints" — and replaced it with walls. That is the freshest reason this gate exists.
 
 1. **`OMR.mint` is callable only by a single `minter`**, owner-set, evented, shipping UNSET. There is

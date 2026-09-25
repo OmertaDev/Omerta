@@ -1,6 +1,6 @@
 // THE RULES — the game's numbers, in two halves that are deliberately separate files.
 //
-//   rules.generated.js  MACHINE-OWNED. Only the prototype's data tables. `tools/extract-rules.js`
+//   rules.generated.js  MACHINE-OWNED. Tables from data/rules.js. `tools/extract-rules.js`
 //                       overwrites it wholesale, so there is nothing hand-written in it to lose.
 //   rules.tail.js       HAND-WRITTEN. Every helper, catalog, ladder and founder-signed lever.
 //                       The extractor never touches it.

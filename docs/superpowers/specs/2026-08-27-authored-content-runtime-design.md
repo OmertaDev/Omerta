@@ -211,7 +211,7 @@ Operator activation uses `modAuth`. Because mod routes are outside player idempo
 
 All player routes are authenticated. The live route registry remains the source of OpenAPI truth, with strict content schemas added to `agentgateway.js`. The mod activation route remains excluded from public OpenAPI.
 
-## Sixth Chair v2 playable content
+## Sixth Chair playable content
 
 The v2 pack preserves the noir premise and adds:
 

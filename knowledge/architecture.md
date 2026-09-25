@@ -25,6 +25,7 @@ flowchart LR
 |---|---|---|
 | API process | `src/server.js`, `src/routes/`, `src/auth.js`, `src/ratelimit.js` | Serves the web surfaces and JSON API; authenticates, throttles and records routes; owns WebSocket presence and the in-process event bus. |
 | Domain layer | `src/*.js`, `src/social/*.js` | Implements gameplay, economy, social state and reads of public/private boards. |
+| Rule tables | `data/rules.js`, `tools/extract-rules.js`, `src/rules.generated.js`, `src/rules.tail.js` | Current table definitions regenerate the runtime data file; helpers and additional constants remain in the separate handwritten file. |
 | Phase 1 world graph | `src/content/phase1.js`, `src/content/phase1-policy.js`, `src/content/phase1-validation.js`, `src/worldgraph*.js`, `src/items.js`, `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js` | Boot-validates one canonical immutable manifest and its closed executable/economy policy; conserves exact-quality stacks, cars, and full unique-item custody; executes direct-only version-pinned mystery and Crew-operation graphs. |
 | Transaction spine | `src/game.js`, `src/accrual.js` | Locks actors in a stable order, applies lazy accrual, persists state, writes ledger/audit records and fires post-commit notifications. |
 | Database | `schema.sql`, `src/db.js` | PostgreSQL is production truth; `pg-mem` provides zero-infrastructure local tests and is explicitly not trusted for PostgreSQL-only behavior. |
@@ -81,16 +82,17 @@ The database is the measured scaling dial in the current architecture. See `rend
 The backend and contracts communicate through explicit parity surfaces: SIWE wallet linking,
 on-chain fee events, persisted watcher cursors, EIP-712 withdrawal/gear vouchers and reserve
 accounting. Shared finalized-observation code pins event consumers to an exact block/hash and
-backfills after downtime. `StockTokenRegistryV2` and the standalone `SettlementGasPool` are reviewed
-dormant foundations. `AcquisitionVault` currently contains only the independently approved O1
-Safe/operator authority kernel; A1 accounting/ingress/budget and all later purchase, reconciliation
-and outflow integration remain pending.
+backfills after downtime. The registry and `SettlementGasPool` have separate source and review
+boundaries. The acquisition constellation includes `AcquisitionAuthority`, `AcquisitionVaultCore`,
+`AcquisitionConstellationFactory`, and `PreVoteBudgetBook` for authority, assembly, ingress accounting,
+and fixed pre-vote budgets. `AcquisitionIntentExecution` implements topology and deterministic identity
+derivation; `AcquisitionReconciliation` implements topology only. Purchase execution and reconciliation
+are not complete, and `AcquisitionAuthority.unpause` deliberately reverts.
 
-Production chain activation is deliberately dormant until configuration and external gates are
-cleared. The game can operate off-chain without those variables. `CHAIN-DEPLOY.md` is the current
-operational inventory authority. `CHAIN-AUDIT-PACKET.md` is a superseded 2026-08-21 pre-O1 snapshot;
-it preserves historical attack-surface analysis but must be regenerated at the exact release head
-before an external engagement.
+Source availability does not establish production activation. The game can operate off-chain without
+chain configuration. `CHAIN-DEPLOY.md` is the operational inventory authority; release reviews follow
+`omerta-contracts/SECURITY-REVIEW-POLICY.md` and apply to their recorded scope and revision. Retained,
+dated security evidence does not establish readiness for contracts added or changed afterward.
 
 ## Architectural invariants
 

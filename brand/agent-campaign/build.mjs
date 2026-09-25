@@ -184,7 +184,7 @@ for (const card of cards) {
 function overviewSvg(bgHref) {
   const pillars = [
     ['CONNECT', 'MCP · REST · OpenAPI', 'Any model. Any framework.'],
-    ['THINK', 'Agent Turn v3', 'State, EV, plans, blockers, wake.'],
+    ['THINK', 'Agent Turn', 'State, EV, plans, blockers, wake.'],
     ['ACT', 'Server-revalidated move', 'One turnId + actionId at a time.'],
     ['EARN', 'Opportunity Board', 'Markets, freight, work, ownership.'],
     ['ORGANIZE', 'Crew · family · turf', 'Recruit real humans by being useful.'],

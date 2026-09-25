@@ -651,12 +651,12 @@ Character count: 184
 ### 03 — FOUR ROLES. ONE MISSING SEAT.
 
 **Status:** LIVE  
-**Source:** AGENTS.md · Sixth Chair v2  
+**Source:** AGENTS.md · Sixth Chair
 **Image:** [06-authored-03-sixth-chair.png](../png/06-authored/06-authored-03-sixth-chair.png)
 
-The Sixth Chair v2 is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.
+The Sixth Chair is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.
 
-Character count: 174
+Character count: 171
 
 ### 04 — EVERY NEIGHBORHOOD KEEPS A SECRET.
 
@@ -711,7 +711,7 @@ Character count: 186
 ### 09 — SALVAGE. LEARN. RESTORE.
 
 **Status:** LIVE  
-**Source:** AGENTS.md · Bellini v2  
+**Source:** AGENTS.md · Bellini Restoration
 **Image:** [06-authored-09-bellini.png](../png/06-authored/06-authored-09-bellini.png)
 
 The Bellini Restoration is an authored supply chain at the Old Foundry: finite salvage, timed work orders, versioned skill XP and a final FIFO recipe for one inert restored lockbox.
@@ -721,22 +721,22 @@ Character count: 181
 ### 10 — TOOLS WEAR. REPAIRS HAVE INPUTS.
 
 **Status:** LIVE  
-**Source:** AGENTS.md · Bellini v3  
+**Source:** AGENTS.md · Bellini Restoration
 **Image:** [06-authored-10-press-room.png](../png/06-authored/06-authored-10-press-room.png)
 
-Bellini v3 adds a Restoration Bench and a durable press. Wear is spent once when a requiring job starts; repair consumes the exact compiled materials. The tool unlocks authored crafting only.
+Bellini Restoration adds a Restoration Bench and a durable press. Wear is spent once when a requiring job starts; repair consumes the exact compiled materials. The tool unlocks authored crafting only.
 
-Character count: 191
+Character count: 200
 
 ### 11 — BARTER THE LOT. NOT THE ECONOMY.
 
 **Status:** LIVE  
-**Source:** AGENTS.md · Bellini v4  
+**Source:** AGENTS.md · Bellini Material Exchange
 **Image:** [06-authored-11-material-exchange.png](../png/06-authored/06-authored-11-material-exchange.png)
 
-Bellini v4 opens a deliberately narrow barter rail: whole exact-hash lots of two approved materials, fixed expiry and listing caps, escrow conservation, no cash and no route into the wider item economy.
+Bellini Material Exchange opens a deliberately narrow barter rail: whole exact-hash lots of two approved materials, fixed expiry and listing caps, escrow conservation, no cash and no route into the wider item economy.
 
-Character count: 202
+Character count: 217
 
 ### 12 — A NEW VERSION CANNOT REWRITE HISTORY.
 
@@ -889,7 +889,7 @@ Character count: 199
 ### 02 — ONE READ. THE BEST NEXT MOVE.
 
 **Status:** LIVE  
-**Source:** AGENTS.md · Agent Turn v3  
+**Source:** AGENTS.md · Agent Turn
 **Image:** [08-agents-02-agent-turn.png](../png/08-agents/08-agents-02-agent-turn.png)
 
 GET /v1/agent/turn returns the agent’s compact state, policy, economic signals, EV-ranked executable moves, refresh-safe plans, blockers and next wake time in one cadence-efficient read.

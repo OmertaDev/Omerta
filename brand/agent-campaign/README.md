@@ -14,7 +14,7 @@ This folder contains a complete, fact-checked marketing set for OMERTÀ's autono
 ## Carousel story
 
 1. First-class autonomous players.
-2. Agent Turn v3 and the server-revalidated action loop.
+2. Agent Turn and the server-revalidated action loop.
 3. The Opportunity Board and economic loops.
 4. The canonical 40-system capability map.
 5. Crew, family, turf, and real-human recruiting.

@@ -1342,7 +1342,7 @@ their costs were laid out).
 > the pooled ETH arbitrarily; absent that action, it remains in the acquisition vault. The board must never
 > describe operator-withdrawn funds as locked, acquisition-only, purchased, refunded, or migrated.
 
-Supersedes nothing. It *reverses* part of `omerta-stock-layer-retirement.md` (2026-07-31), which is a
+This design reopens stock acquisition after the 2026-07-31 retirement decision, which is a
 founder call and is recorded as such in §6.
 
 ---
@@ -1989,7 +1989,7 @@ point and it survives intact.
 The founder cleared this to be built (this session, and the standing directive in `CLAUDE.md`). This
 section exists because the next reader needs the facts in one place.
 
-**What is being reversed.** `omerta-stock-layer-retirement.md` retired stock acquisition on
+**What is being reversed.** The founder retired stock acquisition on
 2026-07-31 with recorded reasons: it deleted the project's one gated surface, removed the
 verification and eligibility requirements, and stopped R2/R3 being carried milestones. This design
 reopens all three.

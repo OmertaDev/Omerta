@@ -91,12 +91,7 @@ compound, the collection, who owed whom blood — and your heir walks out into a
 | **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. All cash. Never $OMR — that line is deliberate. |
 | **Going legit** | The Vault, the compound, the Dynasty, the estate. Where a made man puts money he intends to keep. |
 
-**Scale, re-measured 2026-08-29 (the figures `SPEC.md`'s size table carries, which `test/docs.js`
-holds to the tree):** 187 backend source files, 153 test files, 317 database tables, 32 top-level
-Solidity files, and 844 declared Foundry test functions across 37 suites. This is not a prototype
-with a whitepaper attached. Source presence is not a production-live claim; the chain remains
-audit-gated — and quote the *declared* test count, not a passing one, unless you have just run the
-suite yourself (the release gate re-measures what passes).
+**Implementation scale:** the current source, test, schema, and contract census is in `SPEC.md` and is checked against the tree by `test/docs.js`. Source presence is not a production activation claim. Chain release evidence applies to its recorded scope and revision; the release gate measures the selected suite again.
 
 ---
 

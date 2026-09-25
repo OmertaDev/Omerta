@@ -1,32 +1,21 @@
 // THE GENERATED/HAND-WRITTEN SEAM.
 //
-// Ground rule #2 says src/rules.js is generated and never edited. For a long time that was a promise
-// rather than a fact, because one file held both halves: tools/extract-rules.js re-emitted the
-// prototype's tables and then re-appended everything from `export const CONSTANTS` onward, so
-// anything living in the gap between the last table and CONSTANTS was silently destroyed by a
-// regeneration — and the tables themselves were silently restored to whatever the prototype said.
-// Both directions had actually bitten:
-//
-//   * recruitRankOf (used by the recruiters leaderboard) sat in that gap and would have been deleted.
-//   * the retired "Star the repo" onboarding task would have been resurrected into ONBOARD_TASKS,
-//     undoing a founder decision with no diff to notice.
-//
-// The seam is now a FILE boundary, and this file is what keeps it one. The assertions below are the
-// deal: the generated file is machine-owned data only, the hand-written file is never machine-touched,
-// and the facade exposes both without ambiguity.
+// Current tables live in data/rules.js. Regeneration must preserve every declaration, including the
+// eligibility predicates embedded in tables, and leave hand-written helpers untouched. The facade
+// exposes both files without ambiguous exports.
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 import { TABLES } from '../tools/extract-rules.js';
 
-const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
+const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const source = read('../data/rules.js');
 const gen = read('../src/rules.generated.js');
 const tail = read('../src/rules.tail.js');
 const facade = read('../src/rules.js');
 
 // ── the generated file holds ONLY the tables ────────────────────────────────────────────────────
 // Anything else in here is code that the next `node tools/extract-rules.js` run will delete without
-// warning. Stated as an allowlist of exported names so that legitimately changing a TABLE (from a
-// v25 prototype, say) passes, while hand-adding a helper fails.
+// warning. An allowlist of exported names permits table changes while rejecting hand-added helpers.
 const genExports = [...gen.matchAll(/^export\s+(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/gm)].map((m) => m[1]);
 assert.deepEqual(genExports.slice().sort(), TABLES.slice().sort(),
   'src/rules.generated.js must export exactly the extractor\'s tables and nothing else — anything\n'
@@ -42,20 +31,34 @@ for (const t of TABLES)
 assert.equal(/^\s*import\s/m.test(gen), false,
   'src/rules.generated.js must not import anything — it is data, and the extractor would drop the import anyway');
 
+// The current source has the same data boundary and must survive regeneration exactly. Comparing
+// declarations also covers function-valued eligibility predicates, which JSON would silently omit.
+const sourceExports = [...source.matchAll(/^export\s+(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/gm)].map((m) => m[1]);
+assert.deepEqual(sourceExports.slice().sort(), TABLES.slice().sort(),
+  'data/rules.js must export exactly the current rule tables');
+assert.equal(/^\s*import\s/m.test(source), false, 'data/rules.js must not import application logic');
+for (const t of TABLES)
+  assert.match(source, new RegExp(`^export const ${t} = \\[`, 'm'), `${t} must be a plain array literal in the rule source`);
+const declarations = (text) => text.slice(text.indexOf('export const '));
+assert.equal(declarations(gen), declarations(source),
+  'generated rule declarations must match data/rules.js exactly; run node tools/extract-rules.js');
+
 // ── the hand-written file is never machine-touched ──────────────────────────────────────────────
 // Asserted on the paths the extractor ADDRESSES, not on any mention of the name — its own header
 // explains this rule and its success message names the file it left alone, and a tripwire that fires
 // on its own documentation is a tripwire nobody keeps.
 const extractor = read('../tools/extract-rules.js');
 const addressed = [...extractor.matchAll(/new URL\('([^']+)'/g)].map((m) => m[1]);
-assert.deepEqual(addressed, ['../src/rules.generated.js'],
-  'tools/extract-rules.js may address exactly one file, src/rules.generated.js — the hand-written half\n'
+assert.deepEqual(addressed, ['../data/rules.js', '../src/rules.generated.js'],
+  'tools/extract-rules.js may address only the current source and generated tables — the hand-written half\n'
   + `is off limits. It addresses: ${addressed.join(', ')}`);
 assert.equal((extractor.match(/writeFileSync/g) || []).length, 1, 'the extractor writes exactly one file');
 assert.match(extractor, /writeFileSync\(new URL\('\.\.\/src\/rules\.generated\.js'/,
   'the one file the extractor writes must be src/rules.generated.js');
-// …and it reads only the prototype path handed to it on the command line.
-assert.match(extractor, /readFileSync\(protoPath/, 'the extractor reads only the prototype it was given');
+// …and it reads only the source path, defaulting to the checked-in current tables.
+assert.match(extractor, /readFileSync\(sourcePath/, 'the extractor reads only the selected rule source');
+assert.match(extractor, /process\.argv\[2\] \|\| fileURLToPath\(new URL\('\.\.\/data\/rules\.js'/,
+  'the extractor defaults to the checked-in current rule tables');
 
 // ── the facade is unambiguous ───────────────────────────────────────────────────────────────────
 // `export *` from two modules that both export the same name does not throw at boot: the name is
@@ -77,13 +80,12 @@ assert.equal(typeof R.levelOf(1444), 'number', 'levelOf (tail) reads PACING (tai
 assert.equal(R.recruitRankOf(5), 'The Talent Scout', 'recruitRankOf (tail) reads RECRUIT_MILESTONES (generated)');
 assert.equal(R.crimeOf ? typeof R.crimeOf('pick') : 'object', 'object', 'a table lookup helper resolves');
 
-// ── the founder decision that the old extractor would have undone ───────────────────────────────
+// ── the current onboarding policy survives regeneration ────────────────────────────────────────
 assert.equal(R.ONBOARD_TASKS.some((t) => t.id === 'ob_repo'), false,
-  'the retired "Star the repo" First-Week task must stay retired — it was removed from the PROTOTYPE, '
-  + 'so a regeneration keeps it out; removing it only from the generated file would not have survived');
+  'the removed "Star the repo" First-Week task must stay absent from the current rule source');
 
 console.log(`✅ rules seam test passed — the generated half holds exactly the ${TABLES.length} extractor tables `
-  + 'and imports nothing, the extractor writes only that file and never opens the hand-written half, the two '
+  + 'and matches the current source, the extractor writes only that file and never opens the hand-written half, the two '
   + 'halves share no export name (so no star re-export silently resolves to undefined), every table reaches '
   + 'callers through the facade, a tail helper reading a generated table proves the seam is live, and the '
   + 'retired "Star the repo" task stays retired across a regeneration.');

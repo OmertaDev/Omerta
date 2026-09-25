@@ -12,8 +12,8 @@ this document accepts them. Rows marked **DECIDE** need your call (ranked list a
 After any change, re-run `node tools/sim.js` (it exits non-zero if money leaks) and `npm test`.
 
 Two classes of number:
-- **PROTOTYPE** — extracted from the sim-audited v24 prototype (ground rule #1: locked unless you
-  explicitly override). Listed only where they interact with a new lever.
+- **BASELINE RULES** — the source tables live in `data/rules.js` and are regenerated with
+  `node tools/extract-rules.js`. Change signed values only with the corresponding sign-off and checks.
 - **PROPOSED** — every number added since the pivot. These are what this document signs.
 
 Measurements: `tools/sim.js` (honest-money simulation, §10.4 drift-0 on every run) — latest run
@@ -45,7 +45,7 @@ Measurements: `tools/sim.js` (honest-money simulation, §10.4 drift-0 on every r
 | `GEAR_LOOT_CHANCE` | 0.15 | On-chain-minted gear exempt (the extract-or-risk tradeoff). | **KEEP** |
 | `BANK_CLEAR_MS` | 2h | The timed-hit window; sim confirmed the deposit is looted inside it. Stacked deposits reset the clock. | **KEEP** |
 | `UNSTAKE_CD_MS` | 6h | The stake→extract exposure window; principal always releases whole. | **KEEP** |
-| Ammo price / btk | PROTOTYPE | ~$40/round × btk 1670–9700 = $67k–$390k per kill — the dominant kill cost. | **D1** |
+| Ammo price / btk | BASELINE RULES | ~$40/round × btk 1670–9700 = $67k–$390k per kill — the dominant kill cost. | **D1** |
 | `FIRE_HEAT` | 20 | Wet work heats the shooter like a deal. | **KEEP** |
 | `WAR_KILL_POINTS` | 3 (vs jump 1) | Kills decide wars, jumps grind them. | **KEEP** |
 | `DIRECTED_MIN` / `DIRECTED_MAX_H` | $10k / 24h | Squat-resistant with kill-pays-any-killer. | **KEEP** |
@@ -58,7 +58,7 @@ Measurements: `tools/sim.js` (honest-money simulation, §10.4 drift-0 on every r
 | `SAFEHOUSE_COST` floor | $25k | Poor players' shield intact (sim: fresh heir quotes $25k). | **KEEP** |
 | `SAFEHOUSE_NW_BPS` | 100 (1%/4h) | Rich grinder quoted $45k/4h ≈ 6%/day of wealth. Passive COLLECTION from inside is still legal — cost scales with wealth, not income. | **KEEP**, but read **D2** |
 | `BODYGUARD_MIN_PRICE` / `_MS` / `_HOSP_MS` | $10k / 24h / 4h | One bullet absorbed; 2% house take closed the free-transfer hole. | **KEEP** |
-| Respawn token (0.10 ETH) | PROTOTYPE §11 | Consumed after bodyguard; mods bypass. | **KEEP** |
+| Respawn token (0.10 ETH) | BASELINE RULES §11 | Consumed after bodyguard; mods bypass. | **KEEP** |
 
 ## 4. Extraction & laundering
 
@@ -78,8 +78,8 @@ Measurements: `tools/sim.js` (honest-money simulation, §10.4 drift-0 on every r
 | BUSINESSES catalog (5 kinds × 3 tiers) | laundromat $250k/$12k-hr → casino $40M/$1.5M-hr | t1 payback 20.8h — 0.91× a racket per dollar (ON-curve), but ADDITIVE to the racket/asset bucket. | **KEEP** curve; **D2** for additivity |
 | `BUSINESS_CAP_MS` | 24h | Uncollected income can't hoard; raids seize pending. | **KEEP** |
 | `SHAKEDOWN_RATE` / `CD_MS` / `ENERGY` / `HEAT` | 30% / 8h / 15 / 10 | Sim: $86k stolen from a 24h-idle t1 front — an AFK tax; collect cadence is the defense. | **KEEP** |
-| RACKETS / ASSETS incomes, 12h bucket | PROTOTYPE | The baseline curve (laundro 18.9h payback measured). | locked |
-| Bank interest 2%/12h, 12h/day bucket | PROTOTYPE + B2 cap | Still ~2%/day compounding on banked wealth, PvP-untouchable after clearing. The game's only exponential. | **D5** |
+| RACKETS / ASSETS incomes, 12h bucket | BASELINE RULES | The baseline curve (laundro 18.9h payback measured). | locked |
+| Bank interest 2%/12h, 12h/day bucket | BASELINE RULES + B2 cap | Still ~2%/day compounding on banked wealth, PvP-untouchable after clearing. The game's only exponential. | **D5** |
 
 ## 6. Territory & war
 
@@ -88,14 +88,14 @@ Measurements: `tools/sim.js` (honest-money simulation, §10.4 drift-0 on every r
 | `TERRITORY_RACKETS` ladder | $50k/$250k/$1M | Marginal ROI 192% → 115% → 106%/day (tapered; entry tier is the hook). Sim: $96k/24h at t1. | **KEEP** |
 | `TERRITORY_SEIZE_BPS` | 50% of build cost | Seizing a maxed front ≈ $650k+garrison vs $45k before. | **KEEP** |
 | `TERRITORY_CAP_MS` | 24h | Collect before you lose the turf. | **KEEP** |
-| WAR_COST / SEIZE_BASE / spoils | PROTOTYPE M3 | Cheap wars remain the entry point; the premium prices the takeover. | **KEEP** |
+| WAR_COST / SEIZE_BASE / spoils | BASELINE RULES M3 | Cheap wars remain the entry point; the premium prices the takeover. | **KEEP** |
 
 ## 7. Kitchen
 
 | Lever | Value | Measured / analysis | Rec |
 |---|---|---|---|
 | `KITCHEN_ONRAMP_BONUS` | +50% at rank 0 | Entry cycle $243 → $327 measured (+premium on top). Phases out at rank 1. | **KEEP**, watch **D6** |
-| Deal/cook/raid formulas | PROTOTYPE §7.10 | Untouched. | locked |
+| Deal/cook/raid formulas | BASELINE RULES §7.10 | Untouched. | locked |
 
 ## 8. $OMR & emission
 
@@ -360,7 +360,7 @@ decree needs a MAJORITY of the top-5 families and lasts one week, abuse is self-
 ## Appendix — the original DECIDE list (for the record)
 
 - **D1 — Should killing pay against mid-tier marks?** Today a kill costs $67k–$390k in ammo
-  (PROTOTYPE prices), so only marks worth ≥ ~$344k liquid are +EV prey. This reads as "assassins
+  (BASELINE RULES prices), so only marks worth ≥ ~$344k liquid are +EV prey. This reads as "assassins
   hunt whales", which fits Risk-to-Earn — but street-level killing stays a costs-money sport. To
   broaden the prey pool WITHOUT touching prototype ammo: raise `CASH_LOOT_RATE` 0.25 → 0.35
   (break-even drops to ~$246k) and/or let loot take a small % of CLEARED bank on kills between
@@ -378,7 +378,7 @@ decree needs a MAJORITY of the top-5 families and lasts one week, abuse is self-
   be the best rail, not the only sane one.
 - **D4 — NPC-hit per-target cooldown** (flagged twice by audits): one rival can be repeat-reset
   every 6h by a whale. My rec: add `NPC_HIT_TARGET_CD_MS` = 24h per (payer, target). Small change.
-- **D5 — Bank interest** (PROTOTYPE 2%/12h): with B2's 12h/day cap it's ~2%/day compounding,
+- **D5 — Bank interest** (BASELINE RULES 2%/12h): with B2's 12h/day cap it's ~2%/day compounding,
   untouchable after clearing. It out-scales everything eventually. Options: interest taper above a
   threshold ($10M?), or accept until live data. My rec: taper — but it's a prototype value, so
   explicitly yours.
@@ -1125,7 +1125,7 @@ wall), and there is **no APY / price-appreciation marketing** until the founder 
 A recurring petty-cash faucet to grow organic word-of-mouth + referral volume. NUMBERS ARE SIGN-OFF LEVERS.
 - `SOCIAL_TASKS.CASH` **$300**/task, `ALL_BONUS` **$500** (all three in a day). 3 tasks → **max $1,400/day**.
 - Petty by design: a rounding error for a whale (self-targets newer/engaged players), yet a real nudge for
-  a low-level street. CASH ONLY (v24 rule) → farmed cash must clear heat + the $2.6M/day wash cap to become
+  a low-level street. CASH ONLY (cash-only reward rule) → farmed cash must clear heat + the $2.6M/day wash cap to become
   extractable $OMR, so the faucet's real value is bounded. Once per (account, day); agent-flagged excluded;
   gated behind `SOCIAL_VERIFY_MODE!=='off'` (alpha `trust`, so it's live with the First-Week socials).
 - Anti-abuse posture (flagged): "post a tweet" is inherently unverifiable, so this is a TRUST faucet with a
@@ -1141,7 +1141,7 @@ Grows the organic/referral loop with a STEPPED payout, a share-a-win brag prompt
 NUMBERS ARE SIGN-OFF LEVERS.
 - **The spark** (`M4.REF_SPARK`): a recruiter earns an EARLY partial reward the moment their recruit reaches
   `level` **3** + `jobs` **10** (real playtime, well before the full §7.13 qualify gate at L8/40 jobs/3
-  check-ins/$25k). Pays `recruiterCash` **$2,500** / `recruitCash` **$1,500** — CASH ONLY (v24 rule),
+  check-ins/$25k). Pays `recruiterCash` **$2,500** / `recruitCash` **$1,500** — CASH ONLY (cash-only reward rule),
   ledgered `referral:spark` (rides the existing `referral:` cash vocabulary, no invariant change).
   Fires ONCE ever per recruit (`account_persistent.ref_spark` flag), agent-excluded, in the same sorted
   two-party lock as `maybeQualifyReferral` (post-commit non-fatal in both game.js hooks). The full qualify
@@ -1160,7 +1160,7 @@ NUMBERS ARE SIGN-OFF LEVERS.
   in the alpha, the dial is the spark gate/amount; the full-qualify gate is the harder backstop.
 
 ## Referral drive + tier-2 "family tree" (founder green-lit 2026-07-20; numbers are sign-off levers)
-Two additions on the §7.13 loop. Both CASH ONLY (v24 rule), agent-excluded, Sybil-bounded by real
+Two additions on the §7.13 loop. Both CASH ONLY (cash-only reward rule), agent-excluded, Sybil-bounded by real
 qualified recruits (each needs L8/40 jobs/3 check-ins/$25k of real playtime).
 - **The recruitment DRIVE ("the push")** — a mod-started, time-boxed window (`REF_PUSH_MAX_HOURS` 336 /
   `REF_PUSH_MAX_MULT` 5 caps) that MULTIPLIES every referral CASH payout (spark + full recruiter/recruit +
@@ -1575,11 +1575,11 @@ elapsed-since-collect so a raid can't hand fresh headroom. Not patched per groun
 
 ---
 
-## Addendum — THE STREET WAGE (**RETIRED 2026-08-01** — economy v3 step 1: kill the faucet)
+## Addendum — THE STREET WAGE (**RETIRED 2026-08-01** — economy step 1: kill the faucet)
 
 > **This section is HISTORY.** The wage is gone: `emission.js` is a tombstone, the rules block and its
 > five levers are deleted, and `invariants.js` now asserts that no NEW `emission:%` row appears
-> (`emission faucet retired`). It went because v3's first wall is **no faucet** — zero mint reasons
+> (`emission faucet retired`). It went because the no-faucet wall is **no faucet** — zero mint reasons
 > that pay a player, which makes "extraction ≤ inflow" an identity the ledger exhibits rather than a
 > constraint the reserve queue enforces — and because the measured Sybil economics below never came
 > good. The numbers are kept for the record; none of them is a live lever.
@@ -1596,7 +1596,7 @@ elapsed-since-collect so a raid can't hand fresh headroom. Not patched per groun
 *(Historical note, kept because it explains the retirement: the wage was the ONLY scheduled mint and
 `emission within endowment` was its hard wall. The launch-messaging question it raised — re-deriving
 "what a day's grind pays" in real money before any copy mentions earning — is now moot on this axis,
-since there is nothing to earn from the protocol. It still applies to anything v3 pays out.)*
+since there is nothing to earn from the protocol. It still applies to any funded payout.)*
 
 | `WITHDRAW_TAX_BPS` (env, per-call) | 200 (2%) | the Exit Toll on every $OMR withdrawal — gross debited, net signed |
 | `TAX.DEV_BPS` | 5000 (50%) | the dev share of the toll; the rest → stake_pool (the buyback/yield pool) |
@@ -2210,9 +2210,9 @@ duelling ladder now needs a resident holding ≥ ~$11.1k, so it draws from the m
 
 ---
 
-## TOKENOMICS v2 — THE EXCHANGE + THE FAMILY YIELD (built 2026-07-27, founder-directed)
+## economy — THE EXCHANGE + THE FAMILY YIELD (built 2026-07-27, founder-directed)
 
-Design: `omerta-tokenomics-v2-design.md`. Step 1 of the sequencing. All numbers are founder sign-off
+Recorded implementation: the first Exchange and Family Yield step. All numbers are founder sign-off
 levers. **Nothing signed was retuned in this drop** — the two new carves both default to no-op:
 
 | lever | value | what it does | status |
@@ -2233,11 +2233,11 @@ inflation — the `runVigInvariants` shape. Sim drift-0.
 "by construction" is true only once cash → $OMR is gone. Until then a fixed-rate window is a money
 pump whenever AMM spot sits below `RATE`. That is why `OPEN` is false and why the interlock is a test.
 
-## TOKENOMICS v2 STEP 2 — the two signed levers that moved (2026-07-28)
+## economy STEP 2 — the two signed levers that moved (2026-07-28)
 
 `test/levers.js` pins every founder-signed number and fails the suite when one moves without
 being re-pinned in the same commit. Two moved here, both deliberately, both part of the same
-interlocked change (design `omerta-tokenomics-v2-design.md` §2 and §7.2):
+interlocked change recorded below:
 
 | lever | was | now | why |
 |---|---|---|---|
@@ -2254,7 +2254,7 @@ now a purely internal number. That is the real prize of the pivot and it has NOT
 
 ---
 
-## TOKENOMICS v2 STEP 3 — the float's four-way bond split (2026-07-28)
+## economy STEP 3 — the float's four-way bond split (2026-07-28)
 
 Step 3 points `rwa_revenue` — the pot the stock-buy bot draws on — at the two sources design §6
 names: the DEX sell tax's 4-point slice and a new slice of bond ETH. The tax slice needed no signed
@@ -2273,7 +2273,7 @@ sentence directly beneath that table names `BONDS.POL/VIG/DEV_BPS` — so the au
 slice existed and still produced a table without it, which reads as an oversight rather than a
 decision. And taking it literally would DEFUND the withdrawal reserve: `vig_revenue` →
 `runVigBuyback` → `fundReserve` → the full-reserve queue is the chain a player's $OMR withdrawal
-travels, and in v2 that is the only real-value exit anyone has. The asymmetry decided it — shipping
+travels, and after the cash-conversion retirement that is the only real-value exit anyone has. The asymmetry decided it — shipping
 a slightly thinner LP than designed is recoverable; shipping a withdrawal queue that cannot sign is
 a product failure players feel immediately.
 
@@ -2289,7 +2289,7 @@ a full re-sourcing cycle leaves the ledger row count unchanged.
 
 ---
 
-## TOKENOMICS v2 STEP 4 — the contracts, and the three numbers that now bound supply (2026-07-29)
+## economy STEP 4 — the contracts, and the three numbers that now bound supply (2026-07-29)
 
 Step 4 is the on-chain half. It moves no in-game faucet and writes no `transactions` row — but it
 introduces the three most consequential numbers in the system, because they are what replaced a
@@ -2326,7 +2326,7 @@ buy-side policy expects to sign. Until then they are "set them small" rather tha
 
 ---
 
-## TOKENOMICS v2 STEP 5 — THE RE-SIM (2026-07-29)
+## economy STEP 5 — THE RE-SIM (2026-07-29)
 
 The design's step 5: *"the entire cash economy was balanced against an extraction threat model that no
 longer exists. Every 'sim + sign-off' faucet flag needs re-reading in that light."* Done — measured by
@@ -2453,7 +2453,7 @@ knowing before anyone proposes lowering it.
 Every number here scales with **pool depth**. Thin liquidity is what makes an oracle cheap to move and a
 cap expensive to raise. The strongest available action for these walls is not a setting — it is **POL**.
 
-## THE MIGRATION SWEEP — dangling ends of tokenomics v2, closed (2026-07-29)
+## THE MIGRATION SWEEP — dangling ends of economy, closed (2026-07-29)
 
 A reader sweep over all 379 signed levers (alias-resolved, comments stripped — the method is now
 `test/levers.js` check 4) found the migration's leftovers. The moved lever and the flags:
@@ -2477,7 +2477,7 @@ Founder-directed ("expand the trait and stat system significantly... RuneScape-l
 `omerta-mastery-design.md`. Step one is a PURE STATUS axis — ten use-XP tracks fed at 24 existing hook
 sites through `bumpMastery` (the bumpStanding twin), zero `transactions` rows, zero gameplay power —
 so it sits entirely outside §10.4 and the sim-audited balance (the hitman-rep argument). Every lever
-below becomes LOAD-BEARING in later steps (milestone perks / paths v2 / stat drip), which is why they
+below becomes LOAD-BEARING in later steps (milestone perks / paths / stat drip), which is why they
 are recorded now:
 
 | lever | value | note |
@@ -2521,9 +2521,9 @@ odds → deepens the net sink).
 DYNAST echoes **`MASTERY.TRAIT_HEIR_BPS` (5000 = 50%)** of that ONE trade to the heir instead of the
 25% — a death-softening dial on top of HEIR_KEEP_BPS (the standing flag class; 2500 reverts it).
 
-## THE TRADES step three — PATHS v2 (six careers with teeth, 2026-07-29)
+## THE TRADES step three — PATHS (six careers with teeth, 2026-07-29)
 
-The catalog went 3→6 through the machine-owned seam (prototype edit + re-extract — the car-catalog
+The catalog went 3→6 through the machine-owned seam (`data/rules.js` edit + regeneration — the car-catalog
 precedent); the hand-written `PATH_FX` matrix is the teeth. Founder-chosen axis: **progression
 speed** — home trades school ×`PATH_XP_HOME` (1.5), rival trades ×`PATH_XP_RIVAL` (0.6, fractional
 XP so the penalty never rounds away) — plus ONE signature perk and ONE handicap per path, every
@@ -2545,7 +2545,7 @@ Ledger player (dial: the fx entry). (2) The search clock now stacks FOUR deep (e
 × wetwork-perk × Shadow = **0.46** fully built — the deepest stack in the game). (3) The switch
 cooldown `PATH_SWITCH_CD_MS` (7d) exists because home/rival XP rates make career-hopping between
 activities a rate arbitrage the 25 $OMR burn alone doesn't price; the first pick starts the same
-clock. The three ORIGINAL paths' pre-v2 numbers are byte-identical through the ternary→matrix
+clock. The three ORIGINAL paths' original numbers are byte-identical through the ternary→matrix
 conversion (asserted in test/mastery.js).
 
 ## THE TRADES step four — stats by use (the founder-signed fork, 2026-07-29)
@@ -2690,7 +2690,7 @@ Founder-directed ("Once you complete The First Week there should be another list
 progression … receive bonuses upon completion … that takes them throughout the game"). Five ranks —
 Associate → Soldier → Made Man → Capo → The Don — six once-ever tasks each, every task a
 SERVER-VERIFIED signal (ownership, an account legend, mastery XP; nothing client-claimed). Rewards
-are CASH ONLY (the v24 rule) and latch once per ACCOUNT (`career_claims` PK, survives death — the
+are CASH ONLY (the cash-only reward rule) and latch once per ACCOUNT (`career_claims` PK, survives death — the
 heir keeps the climb and cannot re-farm), so the whole faucet is a FIXED lifetime total:
 tier-1 tasks pay $1,000 (+$3,000 capstone), then $2,500/+$7,500, $5,000/+$15,000, $10,000/+$30,000,
 $20,000/+$60,000 — **$346,500 lifetime max per account**, spread across a climb whose later ranks
@@ -2703,8 +2703,8 @@ cash is the excuse); task cash values + `CAREER.NEED` are founder sign-off lever
 
 ## THE BUREAU RETURNS — income-sourced front scrutiny (the dark-risk-layer resolution, 2026-07-30)
 
-Founder-directed option (b) from the tokenomics-v2 migration sweep: business scrutiny's only feed
-(laundering) was retired by v2 step 2, leaving the Bureau-raid layer wired up but unreachable — no
+Founder-directed option (b) from the cash-conversion retirement sweep: business scrutiny's only feed
+(laundering) was retired with the cash-to-OMR conversion, leaving the Bureau-raid layer wired up but unreachable — no
 personal front could ever be raided, so the passive stack was strictly safer than the L1a/L1b curve
 was balanced against. A front now HEATS BY EARNING.
 
@@ -2940,7 +2940,7 @@ ceiling is unchanged (it is bounded by the seed pool, not by how well they know 
 
 ## THE STOCK LAYER RETIRED — the vault is backed with ETH (founder-directed 2026-07-31)
 
-Design: `omerta-stock-layer-retirement.md`. **No lever moved.** This is recorded here because it changes
+Recorded stock-retirement decision. **No lever moved.** This is recorded here because it changes
 what four signed bps are FOR, and a reader of this file should not have to find that out from a diff.
 
 > "Instead of buying back RWA stock the treasury can hold ETH instead." → **the stock layer goes away.**
@@ -3370,7 +3370,7 @@ Founder direction: *"More breadth inside missions and crimes."* The level-gate m
 levels between 17 and 31 that delivered nothing at all** — no job, no mission, no system — which the
 progression harness puts at hours 2.5 to 7 of play, exactly where a player commits or drifts.
 
-Both catalogs are MACHINE-OWNED, so this went through the seam: edit `reference-prototype-v24.jsx`,
+Both catalogs are MACHINE-OWNED, so this went through the seam: edit `data/rules.js`,
 re-extract (the car-catalog precedent). The re-extract diff was **exactly 22 inserted lines and
 nothing else**, which is the seam doing its job.
 
@@ -3438,8 +3438,8 @@ yet" — which is the real shape of "17–30 has no reasons": there is nothing t
   $166M/day + assets $94M/day if fully bought (both permanent, so a long-lived street accumulates
   all of it), against a top-tier crime grind of $13.8M/day.
 
-**NOT retuned at the time (ground rule #1).** The levers are the per-rung income (prototype tables,
-machine-owned — a re-extract), the 12h `RACKET_DAILY_CAP_MS` meter, and a level gate on the Legit
+**NOT retuned at the time (ground rule #1).** The levers are the per-rung income (`data/rules.js` tables,
+regenerated through `tools/extract-rules.js`), the 12h `RACKET_DAILY_CAP_MS` meter, and a level gate on the Legit
 Fronts ladder. **Retuned 2026-08-03 — see the next section.**
 
 ## THE ASSET LADDER RE-CURVED — the ROI now tapers (founder-directed 2026-08-03)
@@ -3453,8 +3453,8 @@ where *"Balance the economy"* carried the same weight).
 so the taper never became a decision. A permanent, energy-free income asset that pays for itself in
 under a day is not a purchase, it is a formality.
 
-**The fix went through the machine-owned seam** (ground rule #2 — edit `reference-prototype-v24.jsx`,
-run `node tools/extract-rules.js`; the car-catalog / PATHS v2 precedent). The regenerated diff was
+**The fix went through the machine-owned seam** (ground rule #2 — edit `data/rules.js`,
+run `node tools/extract-rules.js`; the car-catalog / PATHS precedent). The regenerated diff was
 **exactly 62 lines — 31 income values across two files and nothing else**, which is the seam doing its
 job. Each rung's income is now derived from a target payback that rises with the rung:
 
@@ -3768,7 +3768,7 @@ result. It is closed-form now.
 
 ### The options, ranked — with what each costs an honest small player
 
-**SUPERSEDED 2026-08-01 — none of these options was taken; the wage itself was retired** (economy v3
+**SUPERSEDED 2026-08-01 — none of these options was taken; the wage itself was retired** (economy
 step 1). The ranking is kept because it is the reasoning that led there: every lever taxed the farm
 without making it unprofitable, which is what a faucet with a per-account cap does. `EMISSION.*` no
 longer exists.
@@ -3793,7 +3793,7 @@ reports active accounts — that figure crossing 100 is the trigger to decide.
 
 ---
 
-## THE DESK OPENS — the daily Dutch auction (economy v3 step 3, founder-directed 2026-08-01)
+## THE DESK OPENS — the daily Dutch auction (economy step 3, founder-directed 2026-08-01)
 
 Step 2 taught the desk to COLLECT (a $OMR sink hands the token over instead of destroying it). This
 is the outbound half — and it closes an honest gap step 2's own header named out loud: *a desk that
@@ -3861,7 +3861,7 @@ An unreachable guard is worth keeping; an untested one that reads as tested is n
 
 ---
 
-## THE BAND'S BUY SIDE — the POL-fee buyback (economy v3 step 4, founder-directed 2026-08-01)
+## THE BAND'S BUY SIDE — the POL-fee buyback (economy step 4, founder-directed 2026-08-01)
 
 Step 3 opened the sell side. This is the other edge: below the band's `LOWER` the desk **restocks
 from the open market**, because buying inventory back is sometimes cheaper than waiting for the sinks
@@ -3917,9 +3917,9 @@ structural, and both are asserted.
 
 ---
 
-## THE FLOAT — the tiered loot rate, THE MADE MAN, the access stake (economy v3 step 5, founder-directed 2026-08-01)
+## THE FLOAT — the tiered loot rate, THE MADE MAN, the access stake (economy step 5, founder-directed 2026-08-01)
 
-Design `omerta-economy-v3-design.md` §5, §11.1, §11.2, §11.5. The step exists to answer one sentence:
+This dated implementation step exists to answer one sentence:
 **a consumable you should never HOLD cannot be the loot that makes killing worth it.** If the rational
 play is buy-and-spend-instantly, nobody carries a balance, there is nothing on the body, and the only
 extraction path is empty. Forcing a float is therefore the central mechanic, not a detail.
@@ -4004,7 +4004,7 @@ existing `staked` bucket, so no new schema and no new §10.4 surface.
 
 ---
 
-## THE RARITY NFTs (economy v3 step 7, 2026-08-02) — SIGN-OFF LEVERS
+## THE RARITY NFTs (economy step 7, 2026-08-02) — SIGN-OFF LEVERS
 
 Cars and boats carry a rarity rolled when they are EARNED, and an owned one can be extracted on-chain
 as a tradeable ERC-1155. Two levers, both new, both founder sign-off (pinned in `test/levers.js`).
@@ -4102,7 +4102,7 @@ anything and killing a made man worth the ammo.
 
 `MADE_LADDER.MADE_RUNGS` = **1** — dues climb the ladder by a rung and CLAMP at the top. **A shortcut,
 never a gate**, and that is a deliberate deviation from the shape first proposed, driven by a
-measurement: $OMR has had no faucet since v3 step 1, so a free player's lifetime supply is the mission
+measurement: $OMR has had no faucet since the wage retirement, so a free player's lifetime supply is the mission
 ladder. Requiring both a 20/month burn AND a held stake would put the ladder out of a free player's
 reach entirely and break bound 1.
 
@@ -4619,13 +4619,13 @@ solo-reachable on demand is an emission change); NPC-held turf on the OCCUPATION
 free-seize one; and residents paying tribute — which would give them standing, and therefore re-open
 the two exclusions above.
 
-## RE-SIM + EARLY-GAME HARNESS PASS (2026-08-03) — tokenomics-v2 severance measured, early game re-measured
+## RE-SIM + EARLY-GAME HARNESS PASS (2026-08-03) — cash-conversion retirement measured, early game re-measured
 
-Two harnesses run against HEAD (`af04b7f`) after the tokenomics-v2 migration and the early-game
+Two harnesses run against HEAD (`af04b7f`) after the cash-conversion retirement and the early-game
 content drops, since neither had been re-measured against the current tree. Both green; no lever
 retuned (ground rule #1) — this is measurement, not a change.
 
-### The re-sim (`npm run sim`) — §10.4 drift-0, and the v2 properties hold analytically
+### The re-sim (`npm run sim`) — §10.4 drift-0, and the conversion-boundary properties hold analytically
 
 The sim carries dedicated `re-sim` probe rows that assert the severance directly, and they held:
 
@@ -4633,7 +4633,7 @@ The sim carries dedicated `re-sim` probe rows that assert the severance directly
 |---|---|---|
 | §10.4 conservation | drift-0 over an entirely earned economy | the full P10 sweep passes; the run exits non-zero on any drift |
 | a cash faucet can no longer move the token price | confirmed | the AMM sell side is retired; the only cash exit is the Exchange window ($OMR in, cash out, bounded by a sink-filled till). A bigger cash faucet now costs game balance, never token holders |
-| $OMR emission | 0/day — bonds are the only mint | with cash severed AND the wage retired (v3 step 1), in-game $OMR can never exceed what was deposited. No cash back-door, no printer |
+| $OMR emission | 0/day — bonds are the only mint | with cash severed AND the wage retired (the wage-retirement decision), in-game $OMR can never exceed what was deposited. No cash back-door, no printer |
 
 **Verdict: the largest open item is CLEAN.** The severance lowered the stakes on the internal-balance
 flags (the passive stack at 2.3× the active grind, the apex world/boxing/racing purses, the port sale
@@ -4976,7 +4976,7 @@ Their pins left `test/levers.js` with the levers. What this does to the economy,
 - **A deep $OMR sink is gone.** `rwa:invest` was an uncapped deflationary burn (85% of every invest)
   plus a family-yield feed (15%). The desk-era sinks (dues, rarity upgrades, the vanity till, the
   estate/auction pair) are the burn surface now, and every one recycles to the desk rather than
-  destroying supply — so this removal is consistent with v3's "revenue over deflation" choice, not a
+  destroying supply — so this removal is consistent with the "revenue over deflation" choice, not a
   quiet loosening.
 - **The family yield loses its per-invest feed.** It keeps the Window's 5% cut (`yield:window`) and
   the legacy-pool drain; the retired `rwa_family_dividend_pool` was drained into it at cutover so
@@ -5183,7 +5183,7 @@ materialize), so a bigger crew has a bigger job. When the target is cracked, EVE
 §10.4: ONE bounded cash faucet `crew:objective` (character_id'd → the per-character cash check reconciles;
 in the vocabulary). The faucet is bounded HARD — once per week per member, only on completion, only for a
 member who actually contributed (a progress row) — so the ceiling is `REWARD × MAX_MEMBERS` per crew per
-WEEK (petty vs the passive stack; v24: social/collective rewards are cash, never $OMR). Crew-keyed
+WEEK (petty vs the passive stack; the reward policy: social/collective rewards are cash, never $OMR). Crew-keyed
 (survives death like the crew; outside the estate wipe + migrate DISPOSITION guard by construction). The
 per-member contribution list is the "what your crew did this week" texture. `CREW.OBJECTIVE.REWARD` is the
 faucet dial (`0` disables the cash; the goal + the ping still work as a pure coordination hook); the KIND
@@ -5202,7 +5202,7 @@ the work). What is left is genuinely a design choice, because all three fixes do
 raise the target when the roster grows (the bar moves under people mid-week, and it would break a seeded
 target); cap claimants at the drawn headcount (an honest fourth member who worked gets nothing); or scale
 the payout `drawn/current` (docks the honest late joiner and the originals alike). Magnitude is small and
-non-extractable — ~$15,000 per crew per week in cash, which since tokenomics v2 cannot become $OMR — so it
+non-extractable — ~$15,000 per crew per week in cash, which since economy cannot become $OMR — so it
 is recorded rather than guessed at. The dial if it bites: `CREW.OBJECTIVE.REWARD`, or re-reading the
 headcount at claim.
 
@@ -5308,7 +5308,7 @@ collect it any faster than a real recruit who levelled to 8, pulled 40 jobs and 
 fires ONCE ever per recruit (the `ref_paid` latch). Ceiling: **$22,500 per qualified crewmate** —
 petty vs the ~$21.6M/day passive stack, and on top of the crew co-membership check. §10.4:
 `crew:bringone` is a character_id'd cash faucet in the vocabulary; the per-character check reconciles
-it. v24: social rewards are cash, never $OMR. Both figures are founder sign-off levers (pinned in
+it. The reward policy: social rewards are cash, never $OMR. Both figures are founder sign-off levers (pinned in
 `test/levers.js`).
 
 ## THE AHA MOMENT (first blood) — the guaranteed early-conflict beat
@@ -5448,7 +5448,7 @@ reconciles.
 superseding the paragraph above, which had argued the respawn should stay.** That argument was wrong, and it
 is worth recording *why* rather than just reversing it, because the mistake was defending a mechanism on a
 justification that had expired. PLEX was sold as *"ETH payers fund the pool, $OMR payers **burn** supply —
-both support the token"*. That was true when sinks destroyed the token. **Since economy v3 step 2 they do
+both support the token"*. That was true when sinks destroyed the token. **Since economy step 2 they do
 not**: `plex:%` is in `DESK.SINK_REASONS`, so a PLEX purchase RECYCLES the $OMR onto the desk shelf, which
 sells it for ETH at the daily auction. So the real comparison was never "immediate ETH versus deflation" —
 it was **immediate certain ETH versus deferred uncertain ETH, minus the deflation that justified the trade**.
@@ -5493,7 +5493,7 @@ so "pay your rent in ISK" applies to them exactly as it always did.
 The argument that retired them does not survive being read back. It was that a PLEX purchase RECYCLES to
 the desk rather than burning, so the trade is *"immediate certain ETH versus deferred uncertain ETH"*. Both
 halves overstate the case: the desk is not a lottery ticket, it is the machinery this economy is now built
-on (every sink since v3 step 2 routes through it), and a purchase that puts $OMR on the shelf creates the
+on (every sink since Desk recycling was introduced routes through it), and a purchase that puts $OMR on the shelf creates the
 supply the daily auction sells for ETH — which is the revenue model, not a leak from it. What the sweep
 actually removed was the only thing a player could do with $OMR that felt like *winning something back*.
 
@@ -5550,7 +5550,7 @@ than asserted in a comment.
 
 **So a player who completes every $OMR mission in the game can buy nothing on the rail**, and the
 daily bonus takes a further **1,207 days** to close the gap to the cheapest item — **7,796 days** for
-a respawn. $OMR has had no faucet since v3 step 1, so the rail is reached by **predation** (a
+a respawn. $OMR has had no faucet since the wage retirement, so the rail is reached by **predation** (a
 `whack:loot` fire-kill takes 20–50% of a victim's liquid *and staked* $OMR) or **purchase** (the desk
 auction, for ETH). Not by playing well.
 
@@ -5560,8 +5560,8 @@ that the two are different, and the restore invoked the EVE framing. This is a *
 defect**: accept the predator framing (and stop describing it as ISK-rent, which the design docs now
 do), or move a dial. The dials, cheapest first: `M4.DAILY_ALL_OMR` (3/day, event-fund bounded),
 `STORE.PLEX_PREMIUM_BPS` (1.2 → 1.0 makes every rail price 17% cheaper — **TAKEN 2026-08-11**), or
-the mission ladder's `omr` column — which is MACHINE-OWNED, so it moves through the prototype and a
-re-extract.
+the mission ladder's `omr` column — which is MACHINE-OWNED, so it moves through `data/rules.js` and
+`node tools/extract-rules.js`.
 
 **SIGNED 2026-08-11 — accept the predator framing; no lever moved.** The rail stays where it is and
 the COPY changes to match, which is the honest half of the decision rather than the cheap half. What
@@ -5644,7 +5644,7 @@ directly, because the cap is the claim the whole shape rests on; raising it is a
 retune). Execution is BY HAND at each boundary and is now ONE Safe `setFees` transaction, since
 there is no second rail to move; preflight warns on an off-schedule fee, and the admin chain panel's
 tier line flags OFF SCHEDULE. §10.4: zero surface (the ETH rail is out-of-band; the $OMR rail rides
-the existing `plex:%` sink, which RECYCLES to the desk — the v3 revenue decision, kept).
+the existing `plex:%` sink, which RECYCLES to the desk — the Desk-recycling decision, kept).
 Launch checklist: adopting the schedule re-opened the published-forward-escalation question;
 the copy rules (founding-era frame, no countdown/"N remaining" counters, the banned lexicon) are
 part of the fact pattern the launch review covers. **The ceiling strengthens that position rather than
@@ -6012,7 +6012,7 @@ rehearsal, and its lessons are the steps):
    figure, and thresholds on non-$OMR scales). The ×6 pass's enumeration is the template; the fourth
    class it found by FAILING (a level number wearing an $OMR name) is why this is a hand
    classification, never a sweep.
-2. **Machine-owned tables go through the seam** (ground rule #2 — edit the prototype, re-extract;
+2. **Machine-owned tables go through the seam** (edit `data/rules.js`, run `node tools/extract-rules.js`;
    the mission `omr` column is the big one).
 3. **The verification is old-vs-new, not spot checks:** load the prior rules from git and assert
    every $OMR path moved by ITS classified factor — the ×6 pass proved a spot-check reads as a clean
@@ -6529,7 +6529,7 @@ worth one sim probe; arbitrage cleared a 2.3× margin on penicillin and then die
 | `CAST` (in the file) | 57 agents | The population mix; the hunter share is the tempo dial. |
 
 Nothing here is a lever of the game — the arena moves no signed number. It is the measurement that
-`omerta-risk-to-earn-design.md`'s "spenders fund earners" model never had: a month with everyone
+the "spenders fund earners" model previously lacked: a month with everyone
 optimizing at once.
 
 ## THE DEFENDED MONTH — arena step two: the toolkit, the adaptive seats, and the den's noise (2026-09-02)

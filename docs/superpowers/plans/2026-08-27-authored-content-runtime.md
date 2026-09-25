@@ -2,7 +2,7 @@
 
 > **Execution discipline:** test-driven, sub-agent parallelized by non-overlapping ownership, integrated and verified by the primary agent.
 
-**Goal:** Ship a capability-gated, hash-pinned authored-content runtime and a playable, value-neutral The Sixth Chair v2 narrative spine.
+**Goal:** Ship a capability-gated, hash-pinned authored-content runtime and a playable, value-neutral The Sixth Chair narrative spine.
 
 **Architecture:** Immutable bundle registry and activation pointer; relational account-level party instances; revision-checked server-issued actions; deterministic graph cascade; exact-once per-member reward claims. Player mutations reuse `withCharacter`; operator activation uses `modAuth` and database semantic idempotency.
 
@@ -269,7 +269,7 @@ Run ContextPlus `run_static_analysis` on all changed runtime/compiler/route file
 
 ## Sub-agent ownership
 
-- **Content-contract agent:** compiler runtime validator, runtime fixture, Sixth Chair v2, compiler tests.
+- **Content-contract agent:** compiler runtime validator, runtime fixture, Sixth Chair, compiler tests.
 - **Runtime-core agent:** additive schema, runtime service, core lifecycle/graph/claim tests.
 - **API-contract agent:** route registrar, OpenAPI contracts, API assertions.
 - **Primary agent:** design/plan docs, server integration, package/spec merge, cross-track review, ContextPlus blast/static analysis, and final verification.

@@ -1,0 +1,70 @@
+{
+  "campaign": "The city has a treasury.",
+  "created": "2026-09-13",
+  "release": "Built and tested locally; not deployed or funded.",
+  "assets": [
+    {
+      "id": "04-tax-map",
+      "title": "Every cut has a job.",
+      "category": "Sell-fee allocation",
+      "description": "The canonical 9% base sell fee, its four destinations and the additional reserve surge.",
+      "file": "png/04-tax-map.png",
+      "svg": "svg/04-tax-map.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 109267,
+      "sha256": "5fbdcafce84e96d882acddc8b897f526a1378c3273ff22f5429da53f07efb470"
+    },
+    {
+      "id": "05-seven-compartments",
+      "title": "Seven ledgers. One city.",
+      "category": "Capital architecture",
+      "description": "How Core, the two cushions, Garrison, Desk, War Chest and Turf fit together.",
+      "file": "png/05-seven-compartments.png",
+      "svg": "svg/05-seven-compartments.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 116033,
+      "sha256": "49929831ba197cb7bd6e5417b7aed656d84903b5fbfe09d6e1521cd5dc1b463b"
+    },
+    {
+      "id": "06-inventory-bonds",
+      "title": "Inventory before promises.",
+      "category": "Inventory bonds",
+      "description": "Already funded OMR becomes a reserved entitlement with linear vesting.",
+      "file": "png/06-inventory-bonds.png",
+      "svg": "svg/06-inventory-bonds.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 124297,
+      "sha256": "10a54ac5171576b6aa6d2794ca332c9a688cd279bc578832c814485494ebd573"
+    },
+    {
+      "id": "07-arbitrage",
+      "title": "The machines work the spread.",
+      "category": "Solver arbitrage",
+      "description": "A solver-funded atomic cycle with a fixed reserve share of realized trading profit.",
+      "file": "png/07-arbitrage.png",
+      "svg": "svg/07-arbitrage.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 127181,
+      "sha256": "0ee3339fcc78ac7310efb32b9cf825d2334c348fc446ad71169344dcd8d38dba"
+    },
+    {
+      "id": "08-fee-rights",
+      "title": "The family gets the fees.",
+      "category": "Principal and fees",
+      "description": "Family fee rights and protocol principal follow separate custody rules.",
+      "file": "png/08-fee-rights.png",
+      "svg": "svg/08-fee-rights.svg",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 106211,
+      "sha256": "3b9375d2d5e26c27bfa0de8a49d76b949999dbbd1f36768e05c3e40c062dc465"
+    }
+  ],
+  "threads": 3,
+  "threadPosts": 24,
+  "standalonePosts": 6
+}

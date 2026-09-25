@@ -510,7 +510,7 @@ over, i.e. by OUR claim rail, not by the token (§5).
   sell-tax 400, Store 2000, gameplay-fee 1000); the v4 `OmertaHook` already **accrues** its RWA
   slice in ETH with a permissionless `sweep` to Safe-set recipients; the Commission has weekly
   vote machinery (`commission_votes`, seats recomputed live); the retired float
-  (`omerta-rwa-float-design.md` + `src/rwa.js` at pre-retirement history) had the reserve
+  (the historical `src/rwa.js` implementation) had the reserve
   bookkeeping, the `allocated ≤ held` invariant, the anti-fabrication txHash gate, and the
   oracle-priced burn-to-claim rail; and `VoucherClaim` is a battle-tested server-signed EIP-712
   claim contract. **Almost every part of this machine exists; the new work is one keeper, one

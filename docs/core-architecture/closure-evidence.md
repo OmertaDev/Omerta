@@ -68,7 +68,7 @@ Continuing the real gate uncovered architecture-attributable integration omissio
 These are corrected rather than classified as baseline. No gate assertion, anti-vacuity floor,
 authorization check, SQL ceiling, or production limit was weakened.
 
-The three dormant Market V2 suites require real Foundry build artifacts. They now have
+The three dormant Market suites require real Foundry build artifacts. They now have
 `npm run test:market-v2` in the existing Forge workflow after its build, with source/test/script
 path triggers. The existing all-workflow suite census recognizes that invocation. They are
 not exempted or silently skipped in the memory suite. Initial local missing-artifact errors
@@ -163,7 +163,7 @@ port, content crafting jobs/tools and current copy. `test/routes.js` and the com
 `test/gates.js` both pass after the corrections above. The parent milestone retains the
 full pretest/main-chain execution and command security/vertical-slice results separately.
 
-The three Market V2 suites now pass against a real local Foundry build: 15 deployment-plan
+The three Market suites now pass against a real local Foundry build: 15 deployment-plan
 checks plus keeper and solver suites (`closure-market-v2-contained-retest.log/.exit`). The
 first build used identical dependency files through a junction; the artifact verifier correctly
 rejected sources resolving outside the contracts root. Copying those same dependency files
