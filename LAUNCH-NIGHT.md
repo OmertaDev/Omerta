@@ -1,5 +1,9 @@
 # LAUNCH NIGHT — the ops runbook
 
+**Market scope:** use the [current market runbook](omerta-contracts/docs/market/RUNBOOK.md) for
+market deployment, funding and activation. The operational examples below must be matched to the
+verified target and do not establish current token terms or a funded market.
+
 **Written 2026-08-13 for the first live weekend.** `LAUNCH-READINESS.md` says what must be true
 before the doors open; this says **what a person does on the night, and the morning after.** It is
 written so the founder can run it alone, phone in hand, without a developer awake.

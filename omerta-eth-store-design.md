@@ -23,28 +23,17 @@ $OMR, gear, or any sim-audited power. Consequences:
    never stock, never RWA-by-chance. The gated surface stays confined to the one gated
    withdrawal boundary that already exists.
 
-## The three-way revenue split (the founder lever)
+## Revenue routing
 
-Every Store payment's ETH went to the **dev wallet on-chain** (the `OmertaFees` tollbooth forwards it
-in the same tx — the backend never custodies ETH). The Store records the *accounting* of how that ETH
-is earmarked, via one env-configurable split:
+Store receipts follow source-specific payment routing and backend accounting in `src/store.js`.
+Verify the selected `OmertaFees` recipient/router and runtime split together: a ledger earmark is
+not custody of ETH in another wallet. Community, Vig and treasury allocations require actual funds
+and their own acquisition or distribution authority. Character creation has a separate 100%
+developer-revenue policy; do not apply a Store split to it.
 
-    REVENUE_SPLIT_BPS = { founder, buyback, rwa }   // default 4000 / 4000 / 2000 (must sum to 10000)
-
-- **founder** (40%) — profit. Recorded on the payment row; no further action.
-- **buyback** (40%) — routed into the EXISTING Vig flywheel: a `vig_revenue` row (source `store`) so
-  `runVigBuyback` buys hard $OMR → funds the withdrawal reserve + the season prize pool. **This is how
-  "spenders fund earners":** the buyback share flows through the already-built prize rail to skilled
-  players as $OMR prizes, and the `extraction ≤ inflow` invariant (`runVigInvariants`) absorbs it
-  unchanged — Store revenue is just more Vig revenue.
-- **rwa** (20%) — routed into a new `rwa_revenue` bucket. **Dormant (R2):** R2 (a real RWA reserve
-  backing the Dynasty Fund shares) is launch-gated and unbuilt, so this bucket is *recorded only, never
-  spent* — it's the accounting seat R2 will draw on. A light invariant asserts nothing has drained it.
-
-The existing **mint/respawn gameplay fees keep their legacy `VIG_BPS` posture** (`recordFeePayment` →
-`recordVigRevenue`, 60% Vig / 40% dev) — they're gameplay fees, not Store SKUs. The Store is the new,
-explicit three-way rail. The founder can later unify them; kept separate here so the signed, tested
-Vig/chain behaviour is untouched.
+The canonical market's sell fees, inventory-bond proceeds and Turf fees have their own routing in
+the [market design](omerta-contracts/docs/market/DESIGN.md). Store checkout does not change those
+allocations or authorize new token issuance.
 
 ## The packages (`STORE.PACKAGES`, rules.js tail — all sign-off levers)
 
@@ -60,10 +49,9 @@ Vig/chain behaviour is untouched.
 All grants are entitlements / access windows / status → §10.4-neutral. `pass_until` + `patron` live on
 `account_persistent` (survive death — a real-money purchase carries to the heir, the mint precedent).
 `wire_until` is the existing character column. Consumables (`respawn_tokens`, `mint_credits`) already
-exist. **NB the anti-p2w line:** the Season Pass deliberately grants NO cash/$OMR stipend in v1 (a
-per-buyer prize-pool draw would complicate the backed prize accounting — deferred as a design call).
-The pass's value is status + consumables + access; the *earner* reward is the prize pool the buyback
-share funds (already built).
+exist. Store checkout grants no cash/OMR directly. The separate implemented pass track in
+`src/pass.js` includes specified OMR reward tiers: claims accrue an entitlement and settle only
+as its backing pool funds. Pass access is not an unconditional stipend or guaranteed return.
 
 ## The mechanism (the `fees.js` twin, `src/store.js`)
 

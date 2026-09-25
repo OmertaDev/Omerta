@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c5b9128dedcea192a61f335acb52dc410d1e31b8",
+  "sourceRevision": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 9184,
-    "edges": 37835,
+    "nodes": 9190,
+    "edges": 37994,
     "byNodeType": {
-      "Artifact": 3688,
+      "Artifact": 3690,
       "Command": 177,
-      "Commit": 1997,
+      "Commit": 1999,
       "Contract": 79,
-      "Document": 666,
+      "Document": 668,
       "Domain": 13,
       "ExternalDependency": 28,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2776,
-      "CHANGED": 14799,
-      "CONTAINS": 3709,
+      "CHANGED": 14838,
+      "CONTAINS": 3711,
       "DECLARES": 177,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 602,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1997,
+      "HAS_COMMIT": 1999,
       "IMPLEMENTS": 124,
       "IMPORTS": 3904,
       "INHERITS": 17,
-      "REFERENCES": 2938,
-      "REPRESENTS": 1472,
+      "REFERENCES": 3052,
+      "REPRESENTS": 1474,
       "TESTS": 1347,
       "TRACKS": 126,
       "USES_TABLE": 1824
@@ -7751,20 +7751,20 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 39798,
-      "lines": 650,
-      "version": "dff2aa35491df01c",
+      "bytes": 39914,
+      "lines": 651,
+      "version": "1dff775da83bd31a",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "dff2aa35491df01c"
+          "version": "1dff775da83bd31a"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:AGENTS.override.md",
@@ -7774,20 +7774,20 @@
       "path": "AGENTS.override.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1733,
-      "lines": 27,
-      "version": "1922bcc8222f969e",
+      "bytes": 2129,
+      "lines": 32,
+      "version": "cb8781a032babfa5",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.override.md",
           "line": 1,
-          "version": "1922bcc8222f969e"
+          "version": "cb8781a032babfa5"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:art/art-prompts.json",
@@ -10074,20 +10074,20 @@
       "path": "BALANCE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 555607,
-      "lines": 6855,
-      "version": "b58054e6265c4726",
+      "bytes": 556002,
+      "lines": 6860,
+      "version": "47c9c84dc367c058",
       "text": true,
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "b58054e6265c4726"
+          "version": "47c9c84dc367c058"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:brand/agent-campaign/art/dormant-vault.png",
@@ -23138,20 +23138,20 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 209815,
+      "bytes": 209829,
       "lines": 2029,
-      "version": "6fb67db9fc85ae92",
+      "version": "fd86982fd1d69adc",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "6fb67db9fc85ae92"
+          "version": "fd86982fd1d69adc"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:CLAUDE.md",
@@ -23161,20 +23161,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3813,
-      "lines": 50,
-      "version": "0bcdbf8206ccdf75",
+      "bytes": 4038,
+      "lines": 52,
+      "version": "f9f541937585dda7",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "0bcdbf8206ccdf75"
+          "version": "f9f541937585dda7"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -26581,6 +26581,52 @@
       "lastChangedCommit": "09056e246860d879bb40e3595b2a785c5a17eba7"
     },
     {
+      "key": "Artifact:docs/investors/01-plain-language.md",
+      "type": "Artifact",
+      "id": "docs/investors/01-plain-language.md",
+      "label": "01-plain-language.md",
+      "path": "docs/investors/01-plain-language.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 18730,
+      "lines": 140,
+      "version": "ca4e7b7deef0fae4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/investors/01-plain-language.md",
+          "line": 1,
+          "version": "ca4e7b7deef0fae4"
+        }
+      ],
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+    },
+    {
+      "key": "Artifact:docs/investors/02-technical-detail.md",
+      "type": "Artifact",
+      "id": "docs/investors/02-technical-detail.md",
+      "label": "02-technical-detail.md",
+      "path": "docs/investors/02-technical-detail.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 62590,
+      "lines": 434,
+      "version": "14bf7b5307074710",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/investors/02-technical-detail.md",
+          "line": 1,
+          "version": "14bf7b5307074710"
+        }
+      ],
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+    },
+    {
       "key": "Artifact:docs/LAUNCH-TWEETS.md",
       "type": "Artifact",
       "id": "docs/LAUNCH-TWEETS.md",
@@ -27370,20 +27416,20 @@
       "path": "docs/OMR-MACHINE-CAMPAIGN.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 12392,
-      "lines": 249,
-      "version": "9522e273c67ca68c",
+      "bytes": 7154,
+      "lines": 96,
+      "version": "ac278e57bb5cd35b",
       "text": true,
       "provenance": [
         {
           "file": "docs/OMR-MACHINE-CAMPAIGN.md",
           "line": 1,
-          "version": "9522e273c67ca68c"
+          "version": "ac278e57bb5cd35b"
         }
       ],
-      "lastChangedAt": "2026-08-26T15:59:36.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:docs/OMR-MARKETING-PACK.md",
@@ -27393,20 +27439,20 @@
       "path": "docs/OMR-MARKETING-PACK.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 21772,
-      "lines": 346,
-      "version": "73a3152e009089a4",
+      "bytes": 12538,
+      "lines": 156,
+      "version": "a266ce63aa5dc6f5",
       "text": true,
       "provenance": [
         {
           "file": "docs/OMR-MARKETING-PACK.md",
           "line": 1,
-          "version": "73a3152e009089a4"
+          "version": "a266ce63aa5dc6f5"
         }
       ],
-      "lastChangedAt": "2026-08-24T18:49:55.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:docs/rc1-alliance-continuation.md",
@@ -39767,20 +39813,20 @@
       "path": "docs/WIKI.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 226753,
-      "lines": 2781,
-      "version": "03c0d1cd7ac19881",
+      "bytes": 226836,
+      "lines": 2783,
+      "version": "25cc25ef17df296c",
       "text": true,
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "03c0d1cd7ac19881"
+          "version": "25cc25ef17df296c"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:FINAL_LAUNCH_LEDGER.md",
@@ -39859,20 +39905,20 @@
       "path": "GTM.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 20317,
+      "bytes": 20292,
       "lines": 295,
-      "version": "f8da4bd719d50627",
+      "version": "8af45b5aa584d937",
       "text": true,
       "provenance": [
         {
           "file": "GTM.md",
           "line": 1,
-          "version": "f8da4bd719d50627"
+          "version": "8af45b5aa584d937"
         }
       ],
-      "lastChangedAt": "2026-08-13T12:48:16.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:HYPE.md",
@@ -40158,20 +40204,20 @@
       "path": "LAUNCH-NIGHT.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 7588,
-      "lines": 112,
-      "version": "303e5fdabf74dad5",
+      "bytes": 7859,
+      "lines": 116,
+      "version": "d1d31f499302f2a2",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH-NIGHT.md",
           "line": 1,
-          "version": "303e5fdabf74dad5"
+          "version": "d1d31f499302f2a2"
         }
       ],
-      "lastChangedAt": "2026-08-20T20:35:54.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0e02724224334c3bc0e8ad778340741d3cfe63fa"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:LAUNCH-READINESS.md",
@@ -40181,20 +40227,20 @@
       "path": "LAUNCH-READINESS.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 19511,
-      "lines": 292,
-      "version": "81db2ce49a55879f",
+      "bytes": 19868,
+      "lines": 297,
+      "version": "31cf358c16fec783",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "81db2ce49a55879f"
+          "version": "31cf358c16fec783"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:LAUNCH.md",
@@ -40204,20 +40250,20 @@
       "path": "LAUNCH.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 15849,
-      "lines": 232,
-      "version": "b9e9e52d611b373e",
+      "bytes": 16204,
+      "lines": 237,
+      "version": "d87694cb19b92c18",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH.md",
           "line": 1,
-          "version": "b9e9e52d611b373e"
+          "version": "d87694cb19b92c18"
         }
       ],
-      "lastChangedAt": "2026-08-27T13:58:07.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:MARKETING-COPY.md",
@@ -40227,20 +40273,20 @@
       "path": "MARKETING-COPY.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 25903,
-      "lines": 432,
-      "version": "5f37769171780315",
+      "bytes": 25976,
+      "lines": 431,
+      "version": "91c5d71d55963827",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-COPY.md",
           "line": 1,
-          "version": "5f37769171780315"
+          "version": "91c5d71d55963827"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:MARKETING-POSTS.md",
@@ -40273,20 +40319,20 @@
       "path": "MARKETING.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 21563,
-      "lines": 363,
-      "version": "f4e14525e33d6925",
+      "bytes": 21443,
+      "lines": 350,
+      "version": "330e5441e5e2a08a",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "f4e14525e33d6925"
+          "version": "330e5441e5e2a08a"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:OMERTA_LAUNCH_STATUS.md",
@@ -40342,20 +40388,20 @@
       "path": "omerta-bank-protocol-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 45811,
+      "bytes": 45805,
       "lines": 694,
-      "version": "9d51f374e8e2a4b5",
+      "version": "effadbd5d70d336a",
       "text": true,
       "provenance": [
         {
           "file": "omerta-bank-protocol-design.md",
           "line": 1,
-          "version": "9d51f374e8e2a4b5"
+          "version": "effadbd5d70d336a"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-broadcast-design.md",
@@ -40388,20 +40434,20 @@
       "path": "omerta-brokers-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 179929,
+      "bytes": 179947,
       "lines": 2026,
-      "version": "da0cabb4a41124a9",
+      "version": "309947dc1ea2ff20",
       "text": true,
       "provenance": [
         {
           "file": "omerta-brokers-design.md",
           "line": 1,
-          "version": "da0cabb4a41124a9"
+          "version": "309947dc1ea2ff20"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-business-empire-design.md",
@@ -42596,20 +42642,20 @@
       "path": "omerta-contracts/README.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 6301,
-      "lines": 90,
-      "version": "eee0a456bc607150",
+      "bytes": 6419,
+      "lines": 92,
+      "version": "d2b359a4f3db0d83",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/README.md",
           "line": 1,
-          "version": "eee0a456bc607150"
+          "version": "d2b359a4f3db0d83"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-contracts/review-evidence/oracle-bootstrap-source-horizon/compiled-source-hashes.json",
@@ -47604,20 +47650,20 @@
       "path": "omerta-dynasty-machine-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 49794,
+      "bytes": 49739,
       "lines": 632,
-      "version": "5700262537d877b8",
+      "version": "a80c96b93350105c",
       "text": true,
       "provenance": [
         {
           "file": "omerta-dynasty-machine-design.md",
           "line": 1,
-          "version": "5700262537d877b8"
+          "version": "a80c96b93350105c"
         }
       ],
-      "lastChangedAt": "2026-08-13T01:32:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-early-game-design.md",
@@ -47719,20 +47765,20 @@
       "path": "omerta-eth-store-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 9212,
-      "lines": 127,
-      "version": "1d6be3907c8edd30",
+      "bytes": 8260,
+      "lines": 115,
+      "version": "9ae33e310dac4776",
       "text": true,
       "provenance": [
         {
           "file": "omerta-eth-store-design.md",
           "line": 1,
-          "version": "1d6be3907c8edd30"
+          "version": "9ae33e310dac4776"
         }
       ],
-      "lastChangedAt": "2026-08-13T01:32:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-fight-circuit-design.md",
@@ -47765,20 +47811,20 @@
       "path": "omerta-first-contact-and-events-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 6174,
+      "bytes": 6169,
       "lines": 85,
-      "version": "cb34fd683b309a17",
+      "version": "40b2a0a75be4f2ee",
       "text": true,
       "provenance": [
         {
           "file": "omerta-first-contact-and-events-design.md",
           "line": 1,
-          "version": "cb34fd683b309a17"
+          "version": "40b2a0a75be4f2ee"
         }
       ],
-      "lastChangedAt": "2026-08-07T01:17:38.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "4cb06b2ace406a8e5b2ff9e489832c48fa6f3070"
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-five-pillars-design.md",
@@ -47811,20 +47857,20 @@
       "path": "omerta-gambling-den-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 10906,
-      "lines": 145,
-      "version": "705d7b13a90f94d7",
+      "bytes": 10874,
+      "lines": 144,
+      "version": "b94f8a86b9fe199f",
       "text": true,
       "provenance": [
         {
           "file": "omerta-gambling-den-design.md",
           "line": 1,
-          "version": "705d7b13a90f94d7"
+          "version": "b94f8a86b9fe199f"
         }
       ],
-      "lastChangedAt": "2026-08-13T01:32:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-hitman-contracts-design.md",
@@ -47972,20 +48018,20 @@
       "path": "omerta-law-rico-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 15608,
+      "bytes": 15603,
       "lines": 205,
-      "version": "f4c6de511c89b9c8",
+      "version": "c8cd154f663fbbb0",
       "text": true,
       "provenance": [
         {
           "file": "omerta-law-rico-design.md",
           "line": 1,
-          "version": "f4c6de511c89b9c8"
+          "version": "c8cd154f663fbbb0"
         }
       ],
-      "lastChangedAt": "2026-07-17T23:03:00.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "eb578445865e84ef25be624d719bb132b661b47b"
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-living-world-design.md",
@@ -48455,20 +48501,20 @@
       "path": "omerta-reserve-bond-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 11479,
-      "lines": 140,
-      "version": "5d58716b7877f008",
+      "bytes": 3946,
+      "lines": 34,
+      "version": "f821e35dc7efab60",
       "text": true,
       "provenance": [
         {
           "file": "omerta-reserve-bond-design.md",
           "line": 1,
-          "version": "5d58716b7877f008"
+          "version": "f821e35dc7efab60"
         }
       ],
-      "lastChangedAt": "2026-08-13T01:32:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-residents-in-crews-design.md",
@@ -48501,20 +48547,20 @@
       "path": "omerta-rwa-stock-machine-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 66470,
+      "bytes": 66488,
       "lines": 682,
-      "version": "d29d19ecc3e0e34a",
+      "version": "9978941e1fdb115b",
       "text": true,
       "provenance": [
         {
           "file": "omerta-rwa-stock-machine-design.md",
           "line": 1,
-          "version": "d29d19ecc3e0e34a"
+          "version": "9978941e1fdb115b"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-scarcity-design.md",
@@ -48869,20 +48915,20 @@
       "path": "omerta-treasury-to-family-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 13826,
-      "lines": 209,
-      "version": "70be86d532785ebf",
+      "bytes": 4176,
+      "lines": 32,
+      "version": "e91ccbb7b4418faf",
       "text": true,
       "provenance": [
         {
           "file": "omerta-treasury-to-family-design.md",
           "line": 1,
-          "version": "70be86d532785ebf"
+          "version": "e91ccbb7b4418faf"
         }
       ],
-      "lastChangedAt": "2026-08-15T22:52:33.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0404ff400bf48571ba370c6aa828cae5d6367e00"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-underworld-design.md",
@@ -48915,20 +48961,20 @@
       "path": "omerta-v4-hook-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 3291,
-      "lines": 34,
-      "version": "2d69c0279b0bfc6a",
+      "bytes": 2727,
+      "lines": 24,
+      "version": "184efa7d1692efc5",
       "text": true,
       "provenance": [
         {
           "file": "omerta-v4-hook-design.md",
           "line": 1,
-          "version": "2d69c0279b0bfc6a"
+          "version": "184efa7d1692efc5"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:omerta-vendetta-design.md",
@@ -49122,20 +49168,20 @@
       "path": "public/admin.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 100921,
+      "bytes": 100922,
       "lines": 1164,
-      "version": "cd1da813568c3e70",
+      "version": "12d90acbe24d7408",
       "text": true,
       "provenance": [
         {
           "file": "public/admin.html",
           "line": 1,
-          "version": "cd1da813568c3e70"
+          "version": "12d90acbe24d7408"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:37:29.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dfd2f6ed3d0fef00beb28a7401e090e0351ad2e7"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:public/apple-touch-icon.png",
@@ -63635,20 +63681,20 @@
       "path": "public/fee-flows.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 37019,
-      "lines": 557,
-      "version": "2bcfe6ae2bd45139",
+      "bytes": 36861,
+      "lines": 553,
+      "version": "80070b2e7de12cef",
       "text": true,
       "provenance": [
         {
           "file": "public/fee-flows.html",
           "line": 1,
-          "version": "2bcfe6ae2bd45139"
+          "version": "80070b2e7de12cef"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:public/icon-192.png",
@@ -63727,20 +63773,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1302530,
+      "bytes": 1302771,
       "lines": 13422,
-      "version": "d60eb1c8b64ea1f3",
+      "version": "6511bc728aed61a9",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "d60eb1c8b64ea1f3"
+          "version": "6511bc728aed61a9"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -63865,20 +63911,20 @@
       "path": "public/wiki.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 227174,
-      "lines": 2220,
-      "version": "f27c816d82fef5a2",
+      "bytes": 227436,
+      "lines": 2223,
+      "version": "8e3bd2eab97e2cc4",
       "text": true,
       "provenance": [
         {
           "file": "public/wiki.html",
           "line": 1,
-          "version": "f27c816d82fef5a2"
+          "version": "8e3bd2eab97e2cc4"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:RC1_ACCEPTANCE_MATRIX.csv",
@@ -63911,20 +63957,20 @@
       "path": "README.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3780,
-      "lines": 67,
-      "version": "fb33be8bea07517a",
+      "bytes": 4021,
+      "lines": 70,
+      "version": "a7c69569453a0d56",
       "text": true,
       "provenance": [
         {
           "file": "README.md",
           "line": 1,
-          "version": "fb33be8bea07517a"
+          "version": "a7c69569453a0d56"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:render.yaml",
@@ -64026,20 +64072,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 54617,
-      "lines": 732,
-      "version": "bdceb98ae5efba6d",
+      "bytes": 55093,
+      "lines": 739,
+      "version": "d421032f61451271",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bdceb98ae5efba6d"
+          "version": "d421032f61451271"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:src/access.js",
@@ -72306,20 +72352,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 311432,
+      "bytes": 311433,
       "lines": 4197,
-      "version": "0169e93e645df05c",
+      "version": "5adac8e2d8124636",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "0169e93e645df05c"
+          "version": "5adac8e2d8124636"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-09-25T05:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -113492,6 +113538,22 @@
       ]
     },
     {
+      "key": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "type": "Commit",
+      "id": "cf13f527cb03a5f6d520e008e20483099953ab04",
+      "label": "chore(knowledge): refresh generated artifacts for c5b9128d",
+      "title": "chore(knowledge): refresh generated artifacts for c5b9128d",
+      "date": "2026-09-25T05:13:00.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cf13f527cb03a5f6d520e008e20483099953ab04",
+      "provenance": [
+        {
+          "commit": "cf13f527cb03a5f6d520e008e20483099953ab04",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cf13f527cb03a5f6d520e008e20483099953ab04"
+        }
+      ]
+    },
+    {
       "key": "Commit:cf2607f0491fbf16e1b33c76d567c99a7da43311",
       "type": "Commit",
       "id": "cf2607f0491fbf16e1b33c76d567c99a7da43311",
@@ -118820,6 +118882,22 @@
       ]
     },
     {
+      "key": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "type": "Commit",
+      "id": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "label": "Align game and investor docs with current market economics",
+      "title": "Align game and investor docs with current market economics",
+      "date": "2026-09-25T05:32:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "provenance": [
+        {
+          "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+        }
+      ]
+    },
+    {
       "key": "Commit:fd3cb549f4321ee6fa1b0c116f5fe0f1ee86f484",
       "type": "Commit",
       "id": "fd3cb549f4321ee6fa1b0c116f5fe0f1ee86f484",
@@ -123846,13 +123924,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 650,
-      "version": "dff2aa35491df01c",
+      "lines": 651,
+      "version": "1dff775da83bd31a",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "dff2aa35491df01c"
+          "version": "1dff775da83bd31a"
         }
       ]
     },
@@ -123862,13 +123940,13 @@
       "id": "AGENTS.override.md",
       "label": "AGENTS.override.md",
       "documentType": "documentation",
-      "lines": 27,
-      "version": "1922bcc8222f969e",
+      "lines": 32,
+      "version": "cb8781a032babfa5",
       "provenance": [
         {
           "file": "AGENTS.override.md",
           "line": 1,
-          "version": "1922bcc8222f969e"
+          "version": "cb8781a032babfa5"
         }
       ]
     },
@@ -125446,13 +125524,13 @@
       "id": "BALANCE.md",
       "label": "BALANCE.md",
       "documentType": "documentation",
-      "lines": 6855,
-      "version": "b58054e6265c4726",
+      "lines": 6860,
+      "version": "47c9c84dc367c058",
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "b58054e6265c4726"
+          "version": "47c9c84dc367c058"
         }
       ]
     },
@@ -125863,12 +125941,12 @@
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
       "lines": 2029,
-      "version": "6fb67db9fc85ae92",
+      "version": "fd86982fd1d69adc",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "6fb67db9fc85ae92"
+          "version": "fd86982fd1d69adc"
         }
       ]
     },
@@ -125878,13 +125956,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 50,
-      "version": "0bcdbf8206ccdf75",
+      "lines": 52,
+      "version": "f9f541937585dda7",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "0bcdbf8206ccdf75"
+          "version": "f9f541937585dda7"
         }
       ]
     },
@@ -126641,6 +126719,38 @@
       ]
     },
     {
+      "key": "Document:docs/investors/01-plain-language.md",
+      "type": "Document",
+      "id": "docs/investors/01-plain-language.md",
+      "label": "docs/investors/01-plain-language.md",
+      "documentType": "documentation",
+      "lines": 140,
+      "version": "ca4e7b7deef0fae4",
+      "provenance": [
+        {
+          "file": "docs/investors/01-plain-language.md",
+          "line": 1,
+          "version": "ca4e7b7deef0fae4"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/investors/02-technical-detail.md",
+      "type": "Document",
+      "id": "docs/investors/02-technical-detail.md",
+      "label": "docs/investors/02-technical-detail.md",
+      "documentType": "documentation",
+      "lines": 434,
+      "version": "14bf7b5307074710",
+      "provenance": [
+        {
+          "file": "docs/investors/02-technical-detail.md",
+          "line": 1,
+          "version": "14bf7b5307074710"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/LAUNCH-TWEETS.md",
       "type": "Document",
       "id": "docs/LAUNCH-TWEETS.md",
@@ -126742,13 +126852,13 @@
       "id": "docs/OMR-MACHINE-CAMPAIGN.md",
       "label": "docs/OMR-MACHINE-CAMPAIGN.md",
       "documentType": "documentation",
-      "lines": 249,
-      "version": "9522e273c67ca68c",
+      "lines": 96,
+      "version": "ac278e57bb5cd35b",
       "provenance": [
         {
           "file": "docs/OMR-MACHINE-CAMPAIGN.md",
           "line": 1,
-          "version": "9522e273c67ca68c"
+          "version": "ac278e57bb5cd35b"
         }
       ]
     },
@@ -126758,13 +126868,13 @@
       "id": "docs/OMR-MARKETING-PACK.md",
       "label": "docs/OMR-MARKETING-PACK.md",
       "documentType": "documentation",
-      "lines": 346,
-      "version": "73a3152e009089a4",
+      "lines": 156,
+      "version": "a266ce63aa5dc6f5",
       "provenance": [
         {
           "file": "docs/OMR-MARKETING-PACK.md",
           "line": 1,
-          "version": "73a3152e009089a4"
+          "version": "a266ce63aa5dc6f5"
         }
       ]
     },
@@ -128966,13 +129076,13 @@
       "id": "docs/WIKI.md",
       "label": "docs/WIKI.md",
       "documentType": "documentation",
-      "lines": 2781,
-      "version": "03c0d1cd7ac19881",
+      "lines": 2783,
+      "version": "25cc25ef17df296c",
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "03c0d1cd7ac19881"
+          "version": "25cc25ef17df296c"
         }
       ]
     },
@@ -129015,12 +129125,12 @@
       "label": "GTM.md",
       "documentType": "documentation",
       "lines": 295,
-      "version": "f8da4bd719d50627",
+      "version": "8af45b5aa584d937",
       "provenance": [
         {
           "file": "GTM.md",
           "line": 1,
-          "version": "f8da4bd719d50627"
+          "version": "8af45b5aa584d937"
         }
       ]
     },
@@ -129206,13 +129316,13 @@
       "id": "LAUNCH-NIGHT.md",
       "label": "LAUNCH-NIGHT.md",
       "documentType": "operations",
-      "lines": 112,
-      "version": "303e5fdabf74dad5",
+      "lines": 116,
+      "version": "d1d31f499302f2a2",
       "provenance": [
         {
           "file": "LAUNCH-NIGHT.md",
           "line": 1,
-          "version": "303e5fdabf74dad5"
+          "version": "d1d31f499302f2a2"
         }
       ]
     },
@@ -129222,13 +129332,13 @@
       "id": "LAUNCH-READINESS.md",
       "label": "LAUNCH-READINESS.md",
       "documentType": "operations",
-      "lines": 292,
-      "version": "81db2ce49a55879f",
+      "lines": 297,
+      "version": "31cf358c16fec783",
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "81db2ce49a55879f"
+          "version": "31cf358c16fec783"
         }
       ]
     },
@@ -129238,13 +129348,13 @@
       "id": "LAUNCH.md",
       "label": "LAUNCH.md",
       "documentType": "operations",
-      "lines": 232,
-      "version": "b9e9e52d611b373e",
+      "lines": 237,
+      "version": "d87694cb19b92c18",
       "provenance": [
         {
           "file": "LAUNCH.md",
           "line": 1,
-          "version": "b9e9e52d611b373e"
+          "version": "d87694cb19b92c18"
         }
       ]
     },
@@ -129254,13 +129364,13 @@
       "id": "MARKETING-COPY.md",
       "label": "MARKETING-COPY.md",
       "documentType": "documentation",
-      "lines": 432,
-      "version": "5f37769171780315",
+      "lines": 431,
+      "version": "91c5d71d55963827",
       "provenance": [
         {
           "file": "MARKETING-COPY.md",
           "line": 1,
-          "version": "5f37769171780315"
+          "version": "91c5d71d55963827"
         }
       ]
     },
@@ -129286,13 +129396,13 @@
       "id": "MARKETING.md",
       "label": "MARKETING.md",
       "documentType": "documentation",
-      "lines": 363,
-      "version": "f4e14525e33d6925",
+      "lines": 350,
+      "version": "330e5441e5e2a08a",
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "f4e14525e33d6925"
+          "version": "330e5441e5e2a08a"
         }
       ]
     },
@@ -129335,12 +129445,12 @@
       "label": "omerta-bank-protocol-design.md",
       "documentType": "design",
       "lines": 694,
-      "version": "9d51f374e8e2a4b5",
+      "version": "effadbd5d70d336a",
       "provenance": [
         {
           "file": "omerta-bank-protocol-design.md",
           "line": 1,
-          "version": "9d51f374e8e2a4b5"
+          "version": "effadbd5d70d336a"
         }
       ]
     },
@@ -129367,12 +129477,12 @@
       "label": "omerta-brokers-design.md",
       "documentType": "design",
       "lines": 2026,
-      "version": "da0cabb4a41124a9",
+      "version": "309947dc1ea2ff20",
       "provenance": [
         {
           "file": "omerta-brokers-design.md",
           "line": 1,
-          "version": "da0cabb4a41124a9"
+          "version": "309947dc1ea2ff20"
         }
       ]
     },
@@ -129894,13 +130004,13 @@
       "id": "omerta-contracts/README.md",
       "label": "omerta-contracts/README.md",
       "documentType": "contract-project",
-      "lines": 90,
-      "version": "eee0a456bc607150",
+      "lines": 92,
+      "version": "d2b359a4f3db0d83",
       "provenance": [
         {
           "file": "omerta-contracts/README.md",
           "line": 1,
-          "version": "eee0a456bc607150"
+          "version": "d2b359a4f3db0d83"
         }
       ]
     },
@@ -130087,12 +130197,12 @@
       "label": "omerta-dynasty-machine-design.md",
       "documentType": "design",
       "lines": 632,
-      "version": "5700262537d877b8",
+      "version": "a80c96b93350105c",
       "provenance": [
         {
           "file": "omerta-dynasty-machine-design.md",
           "line": 1,
-          "version": "5700262537d877b8"
+          "version": "a80c96b93350105c"
         }
       ]
     },
@@ -130166,13 +130276,13 @@
       "id": "omerta-eth-store-design.md",
       "label": "omerta-eth-store-design.md",
       "documentType": "design",
-      "lines": 127,
-      "version": "1d6be3907c8edd30",
+      "lines": 115,
+      "version": "9ae33e310dac4776",
       "provenance": [
         {
           "file": "omerta-eth-store-design.md",
           "line": 1,
-          "version": "1d6be3907c8edd30"
+          "version": "9ae33e310dac4776"
         }
       ]
     },
@@ -130199,12 +130309,12 @@
       "label": "omerta-first-contact-and-events-design.md",
       "documentType": "design",
       "lines": 85,
-      "version": "cb34fd683b309a17",
+      "version": "40b2a0a75be4f2ee",
       "provenance": [
         {
           "file": "omerta-first-contact-and-events-design.md",
           "line": 1,
-          "version": "cb34fd683b309a17"
+          "version": "40b2a0a75be4f2ee"
         }
       ]
     },
@@ -130230,13 +130340,13 @@
       "id": "omerta-gambling-den-design.md",
       "label": "omerta-gambling-den-design.md",
       "documentType": "design",
-      "lines": 145,
-      "version": "705d7b13a90f94d7",
+      "lines": 144,
+      "version": "b94f8a86b9fe199f",
       "provenance": [
         {
           "file": "omerta-gambling-den-design.md",
           "line": 1,
-          "version": "705d7b13a90f94d7"
+          "version": "b94f8a86b9fe199f"
         }
       ]
     },
@@ -130343,12 +130453,12 @@
       "label": "omerta-law-rico-design.md",
       "documentType": "design",
       "lines": 205,
-      "version": "f4c6de511c89b9c8",
+      "version": "c8cd154f663fbbb0",
       "provenance": [
         {
           "file": "omerta-law-rico-design.md",
           "line": 1,
-          "version": "f4c6de511c89b9c8"
+          "version": "c8cd154f663fbbb0"
         }
       ]
     },
@@ -130630,13 +130740,13 @@
       "id": "omerta-reserve-bond-design.md",
       "label": "omerta-reserve-bond-design.md",
       "documentType": "design",
-      "lines": 140,
-      "version": "5d58716b7877f008",
+      "lines": 34,
+      "version": "f821e35dc7efab60",
       "provenance": [
         {
           "file": "omerta-reserve-bond-design.md",
           "line": 1,
-          "version": "5d58716b7877f008"
+          "version": "f821e35dc7efab60"
         }
       ]
     },
@@ -130663,12 +130773,12 @@
       "label": "omerta-rwa-stock-machine-design.md",
       "documentType": "design",
       "lines": 682,
-      "version": "d29d19ecc3e0e34a",
+      "version": "9978941e1fdb115b",
       "provenance": [
         {
           "file": "omerta-rwa-stock-machine-design.md",
           "line": 1,
-          "version": "d29d19ecc3e0e34a"
+          "version": "9978941e1fdb115b"
         }
       ]
     },
@@ -130918,13 +131028,13 @@
       "id": "omerta-treasury-to-family-design.md",
       "label": "omerta-treasury-to-family-design.md",
       "documentType": "design",
-      "lines": 209,
-      "version": "70be86d532785ebf",
+      "lines": 32,
+      "version": "e91ccbb7b4418faf",
       "provenance": [
         {
           "file": "omerta-treasury-to-family-design.md",
           "line": 1,
-          "version": "70be86d532785ebf"
+          "version": "e91ccbb7b4418faf"
         }
       ]
     },
@@ -130950,13 +131060,13 @@
       "id": "omerta-v4-hook-design.md",
       "label": "omerta-v4-hook-design.md",
       "documentType": "design",
-      "lines": 34,
-      "version": "2d69c0279b0bfc6a",
+      "lines": 24,
+      "version": "184efa7d1692efc5",
       "provenance": [
         {
           "file": "omerta-v4-hook-design.md",
           "line": 1,
-          "version": "2d69c0279b0bfc6a"
+          "version": "184efa7d1692efc5"
         }
       ]
     },
@@ -131078,13 +131188,13 @@
       "id": "README.md",
       "label": "README.md",
       "documentType": "documentation",
-      "lines": 67,
-      "version": "fb33be8bea07517a",
+      "lines": 70,
+      "version": "a7c69569453a0d56",
       "provenance": [
         {
           "file": "README.md",
           "line": 1,
-          "version": "fb33be8bea07517a"
+          "version": "a7c69569453a0d56"
         }
       ]
     },
@@ -131110,13 +131220,13 @@
       "id": "SPEC.md",
       "label": "SPEC.md",
       "documentType": "documentation",
-      "lines": 732,
-      "version": "bdceb98ae5efba6d",
+      "lines": 739,
+      "version": "d421032f61451271",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bdceb98ae5efba6d"
+          "version": "d421032f61451271"
         }
       ]
     },
@@ -138691,6 +138801,9 @@
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
+          "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+        },
+        {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
@@ -139468,6 +139581,9 @@
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
+          "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+        },
+        {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
@@ -140243,6 +140359,9 @@
         },
         {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+        },
+        {
+          "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
@@ -141236,6 +141355,9 @@
         },
         {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+        },
+        {
+          "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
         },
         {
           "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
@@ -149932,12 +150054,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c5b9128dedcea192a61f335acb52dc410d1e31b8",
-      "currentBranch": "main",
+      "revision": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "currentBranch": "codex/current-market-investor-docs",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 3688,
+      "currentArtifactCount": 3690,
       "provenance": [
         {
           "file": "README.md",
@@ -178660,12 +178782,12 @@
       "id": "test/docs.js",
       "label": "test/docs.js",
       "lines": 4197,
-      "version": "0169e93e645df05c",
+      "version": "5adac8e2d8124636",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "0169e93e645df05c"
+          "version": "5adac8e2d8124636"
         }
       ]
     },
@@ -304421,6 +304543,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:cf2607f0491fbf16e1b33c76d567c99a7da43311",
       "to": "Artifact:FINAL_LAUNCH_SHA",
       "provenance": {
@@ -326005,6 +326159,286 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:AGENTS.override.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:BALANCE.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:docs/investors/01-plain-language.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:docs/OMR-MARKETING-PACK.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:docs/WIKI.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:GTM.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:LAUNCH-NIGHT.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:LAUNCH-READINESS.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:LAUNCH.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:MARKETING-COPY.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:MARKETING.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-bank-protocol-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-brokers-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-contracts/README.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-dynasty-machine-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-eth-store-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-first-contact-and-events-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-gambling-den-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-law-rico-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-reserve-bond-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-rwa-stock-machine-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-treasury-to-family-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:omerta-v4-hook-design.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:public/admin.html",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:public/fee-flows.html",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:README.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:fd3cb549f4321ee6fa1b0c116f5fe0f1ee86f484",
       "to": "Artifact:docs/release/readiness-work/resource-proof.md",
       "provenance": {
@@ -336908,6 +337342,24 @@
       "to": "Artifact:docs/GAMEPLAY-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/GAMEPLAY-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/investors/01-plain-language.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
         "line": 1
       }
     },
@@ -399442,6 +399894,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:cf13f527cb03a5f6d520e008e20483099953ab04",
+      "provenance": {
+        "commit": "cf13f527cb03a5f6d520e008e20483099953ab04"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:cf2607f0491fbf16e1b33c76d567c99a7da43311",
       "provenance": {
         "commit": "cf2607f0491fbf16e1b33c76d567c99a7da43311"
@@ -402101,6 +402561,14 @@
       "to": "Commit:fcebd16e4e549ad050a614ffab38a91a18741451",
       "provenance": {
         "commit": "fcebd16e4e549ad050a614ffab38a91a18741451"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "provenance": {
+        "commit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
       }
     },
     {
@@ -441750,6 +442218,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:AGENTS.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "AGENTS.md",
+        "line": 458
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:AGENTS.md",
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.md",
@@ -441762,7 +442239,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 458
+        "line": 457
       }
     },
     {
@@ -441771,7 +442248,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 232
+        "line": 231
       }
     },
     {
@@ -441798,7 +442275,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.override.md",
-        "line": 21
+        "line": 26
       }
     },
     {
@@ -444354,7 +444831,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3249
+        "line": 3254
       }
     },
     {
@@ -444363,22 +444840,13 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5805
+        "line": 5810
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:BALANCE.md",
-      "to": "Artifact:public/wiki.html",
-      "provenance": {
-        "file": "BALANCE.md",
-        "line": 5805
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:BALANCE.md",
-      "to": "Artifact:SIGN-OFF.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "BALANCE.md",
         "line": 3
@@ -444387,10 +444855,37 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:BALANCE.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 4
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 5810
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
+      "to": "Artifact:SIGN-OFF.md",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 8
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
       "to": "Artifact:src/bank.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5870
+        "line": 5875
       }
     },
     {
@@ -444399,7 +444894,7 @@
       "to": "Artifact:src/explore.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5238
+        "line": 5243
       }
     },
     {
@@ -444408,7 +444903,7 @@
       "to": "Artifact:src/firstblood.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5318
+        "line": 5323
       }
     },
     {
@@ -444417,7 +444912,16 @@
       "to": "Artifact:src/npcwar.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4726
+        "line": 4731
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
+      "to": "Artifact:src/pass.js",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 868
       }
     },
     {
@@ -444426,7 +444930,7 @@
       "to": "Artifact:src/router.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5349
+        "line": 5354
       }
     },
     {
@@ -444435,7 +444939,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1984
+        "line": 1989
       }
     },
     {
@@ -444444,7 +444948,7 @@
       "to": "Artifact:src/tax.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1619
+        "line": 1624
       }
     },
     {
@@ -444453,7 +444957,7 @@
       "to": "Artifact:src/tokenhealth.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6039
+        "line": 6044
       }
     },
     {
@@ -444462,7 +444966,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2973
+        "line": 2978
       }
     },
     {
@@ -444471,7 +444975,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5897
+        "line": 5902
       }
     },
     {
@@ -444480,7 +444984,7 @@
       "to": "Artifact:test/boxing.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1016
+        "line": 1021
       }
     },
     {
@@ -444489,7 +444993,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2450
+        "line": 2455
       }
     },
     {
@@ -444498,7 +445002,7 @@
       "to": "Artifact:test/community.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5913
+        "line": 5918
       }
     },
     {
@@ -444507,7 +445011,7 @@
       "to": "Artifact:test/community.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5934
+        "line": 5939
       }
     },
     {
@@ -444516,7 +445020,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5808
+        "line": 5813
       }
     },
     {
@@ -444525,7 +445029,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3272
+        "line": 3277
       }
     },
     {
@@ -444534,7 +445038,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4052
+        "line": 4057
       }
     },
     {
@@ -444543,7 +445047,7 @@
       "to": "Artifact:test/expansion.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4402
+        "line": 4407
       }
     },
     {
@@ -444552,7 +445056,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5861
+        "line": 5866
       }
     },
     {
@@ -444561,7 +445065,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1232
+        "line": 1237
       }
     },
     {
@@ -444570,7 +445074,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3380
+        "line": 3385
       }
     },
     {
@@ -444579,7 +445083,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3700
+        "line": 3705
       }
     },
     {
@@ -444588,7 +445092,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3719
+        "line": 3724
       }
     },
     {
@@ -444597,7 +445101,7 @@
       "to": "Artifact:test/heists.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4707
+        "line": 4712
       }
     },
     {
@@ -444606,7 +445110,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2238
+        "line": 2243
       }
     },
     {
@@ -444615,7 +445119,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2459
+        "line": 2464
       }
     },
     {
@@ -444624,7 +445128,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3170
+        "line": 3175
       }
     },
     {
@@ -444633,7 +445137,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3174
+        "line": 3179
       }
     },
     {
@@ -444642,7 +445146,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3824
+        "line": 3829
       }
     },
     {
@@ -444651,7 +445155,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3902
+        "line": 3907
       }
     },
     {
@@ -444660,7 +445164,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4010
+        "line": 4015
       }
     },
     {
@@ -444669,7 +445173,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4396
+        "line": 4401
       }
     },
     {
@@ -444678,7 +445182,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4417
+        "line": 4422
       }
     },
     {
@@ -444687,7 +445191,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4974
+        "line": 4979
       }
     },
     {
@@ -444696,7 +445200,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5120
+        "line": 5125
       }
     },
     {
@@ -444705,7 +445209,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5149
+        "line": 5154
       }
     },
     {
@@ -444714,7 +445218,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5312
+        "line": 5317
       }
     },
     {
@@ -444723,7 +445227,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5332
+        "line": 5337
       }
     },
     {
@@ -444732,7 +445236,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5701
+        "line": 5706
       }
     },
     {
@@ -444741,7 +445245,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5916
+        "line": 5921
       }
     },
     {
@@ -444750,7 +445254,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6126
+        "line": 6131
       }
     },
     {
@@ -444759,7 +445263,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6203
+        "line": 6208
       }
     },
     {
@@ -444768,7 +445272,7 @@
       "to": "Artifact:test/made.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4077
+        "line": 4082
       }
     },
     {
@@ -444777,7 +445281,7 @@
       "to": "Artifact:test/made.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4131
+        "line": 4136
       }
     },
     {
@@ -444786,7 +445290,7 @@
       "to": "Artifact:test/made.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5628
+        "line": 5633
       }
     },
     {
@@ -444795,7 +445299,7 @@
       "to": "Artifact:test/mentor.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5153
+        "line": 5158
       }
     },
     {
@@ -444804,7 +445308,7 @@
       "to": "Artifact:test/nft.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4020
+        "line": 4025
       }
     },
     {
@@ -444813,7 +445317,7 @@
       "to": "Artifact:test/pen.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1345
+        "line": 1350
       }
     },
     {
@@ -444822,7 +445326,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5079
+        "line": 5084
       }
     },
     {
@@ -444831,7 +445335,7 @@
       "to": "Artifact:test/seasons.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4178
+        "line": 4183
       }
     },
     {
@@ -444840,7 +445344,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4480
+        "line": 4485
       }
     },
     {
@@ -444849,7 +445353,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6584
+        "line": 6589
       }
     },
     {
@@ -444858,7 +445362,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6692
+        "line": 6697
       }
     },
     {
@@ -444867,7 +445371,7 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1382
+        "line": 1387
       }
     },
     {
@@ -444876,7 +445380,7 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4131
+        "line": 4136
       }
     },
     {
@@ -444885,7 +445389,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2220
+        "line": 2225
       }
     },
     {
@@ -444894,7 +445398,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2244
+        "line": 2249
       }
     },
     {
@@ -444903,7 +445407,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2285
+        "line": 2290
       }
     },
     {
@@ -444912,7 +445416,7 @@
       "to": "Artifact:test/underworld.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4132
+        "line": 4137
       }
     },
     {
@@ -444921,7 +445425,7 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6454
+        "line": 6459
       }
     },
     {
@@ -444930,7 +445434,7 @@
       "to": "Artifact:test/world.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1285
+        "line": 1290
       }
     },
     {
@@ -444939,7 +445443,7 @@
       "to": "Artifact:test/world.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4416
+        "line": 4421
       }
     },
     {
@@ -444948,7 +445452,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6476
+        "line": 6481
       }
     },
     {
@@ -444957,7 +445461,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6762
+        "line": 6767
       }
     },
     {
@@ -444966,7 +445470,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6807
+        "line": 6812
       }
     },
     {
@@ -444975,7 +445479,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2384
+        "line": 2389
       }
     },
     {
@@ -444984,7 +445488,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5661
+        "line": 5666
       }
     },
     {
@@ -444993,7 +445497,7 @@
       "to": "Artifact:tools/extract-rules.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3442
+        "line": 3447
       }
     },
     {
@@ -445002,7 +445506,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2020
+        "line": 2025
       }
     },
     {
@@ -445011,7 +445515,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3054
+        "line": 3059
       }
     },
     {
@@ -445020,7 +445524,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3096
+        "line": 3101
       }
     },
     {
@@ -445029,7 +445533,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3176
+        "line": 3181
       }
     },
     {
@@ -445038,7 +445542,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3486
+        "line": 3491
       }
     },
     {
@@ -445047,7 +445551,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3564
+        "line": 3569
       }
     },
     {
@@ -445056,7 +445560,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3702
+        "line": 3707
       }
     },
     {
@@ -445065,7 +445569,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4701
+        "line": 4706
       }
     },
     {
@@ -445074,7 +445578,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 4998
+        "line": 5003
       }
     },
     {
@@ -445083,7 +445587,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6475
+        "line": 6480
       }
     },
     {
@@ -445092,7 +445596,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3090
+        "line": 3095
       }
     },
     {
@@ -445101,7 +445605,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1183
+        "line": 11
       }
     },
     {
@@ -445110,7 +445614,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1222
+        "line": 1188
       }
     },
     {
@@ -445119,7 +445623,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1445
+        "line": 1227
       }
     },
     {
@@ -445128,7 +445632,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1865
+        "line": 1450
       }
     },
     {
@@ -445137,7 +445641,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 19
+        "line": 1870
       }
     },
     {
@@ -445146,7 +445650,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 1967
+        "line": 1972
       }
     },
     {
@@ -445155,7 +445659,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2020
+        "line": 2025
       }
     },
     {
@@ -445164,7 +445668,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 2333
+        "line": 2338
       }
     },
     {
@@ -445173,7 +445677,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3137
+        "line": 24
       }
     },
     {
@@ -445182,7 +445686,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 3731
+        "line": 3142
       }
     },
     {
@@ -445191,7 +445695,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5065
+        "line": 3736
       }
     },
     {
@@ -445200,7 +445704,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 561
+        "line": 5070
       }
     },
     {
@@ -445209,7 +445713,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6
+        "line": 566
       }
     },
     {
@@ -445218,7 +445722,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6107
+        "line": 6112
       }
     },
     {
@@ -445227,7 +445731,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6475
+        "line": 6480
       }
     },
     {
@@ -445236,7 +445740,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 6599
+        "line": 6604
       }
     },
     {
@@ -445245,7 +445749,7 @@
       "to": "Artifact:tools/validate-fee-splits.js",
       "provenance": {
         "file": "BALANCE.md",
-        "line": 5986
+        "line": 5991
       }
     },
     {
@@ -447774,7 +448278,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 47
+        "line": 49
       }
     },
     {
@@ -447783,7 +448287,7 @@
       "to": "Artifact:docs/coordination-engine/README.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 36
+        "line": 38
       }
     },
     {
@@ -447792,7 +448296,7 @@
       "to": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 37
+        "line": 39
       }
     },
     {
@@ -447801,7 +448305,7 @@
       "to": "Artifact:docs/living-world-director/HANDOFF.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 38
+        "line": 40
       }
     },
     {
@@ -447810,7 +448314,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9
+        "line": 11
       }
     },
     {
@@ -447819,7 +448323,7 @@
       "to": "Artifact:knowledge/README.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -447828,7 +448332,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 40
+        "line": 42
       }
     },
     {
@@ -447837,7 +448341,7 @@
       "to": "Artifact:omerta-contracts/README.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -447846,7 +448350,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 33
+        "line": 35
       }
     },
     {
@@ -447855,7 +448359,7 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 32
+        "line": 34
       }
     },
     {
@@ -447864,7 +448368,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -447873,7 +448377,7 @@
       "to": "Artifact:src/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 34
+        "line": 36
       }
     },
     {
@@ -447882,7 +448386,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 33
+        "line": 35
       }
     },
     {
@@ -447891,7 +448395,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 34
+        "line": 36
       }
     },
     {
@@ -447900,7 +448404,7 @@
       "to": "Artifact:src/rules.generated.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18
+        "line": 20
       }
     },
     {
@@ -447909,7 +448413,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -447918,7 +448422,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18
+        "line": 20
       }
     },
     {
@@ -447927,7 +448431,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -447936,7 +448440,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18
+        "line": 20
       }
     },
     {
@@ -447945,7 +448449,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 34
+        "line": 36
       }
     },
     {
@@ -447954,7 +448458,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 32
+        "line": 34
       }
     },
     {
@@ -447963,7 +448467,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -451739,6 +452243,744 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 17
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 115
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 17
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 94
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 121
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/src/OmertaFees.sol",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 115
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:omerta-contracts/src/OMR.sol",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 121
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/01-plain-language.md",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 115
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 144
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 358
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 84
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:docs/investors/01-plain-language.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:knowledge/architecture.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 358
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:knowledge/data-economy.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 235
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 80
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 358
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 80
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionAuthority.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionIntentExecution.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/Alchemist.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/BankBufferVault.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/CollateralEscrow.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/Denari.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/DynastyNFT.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/FlashGuard.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/GearVault.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaArbitrageV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 283
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 223
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 223
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaMarketStateV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 283
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaMarketStateV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 235
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 283
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 76
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/OmertaFees.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 235
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/OMR.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 223
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/OMRStaking.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 283
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/RwaStockBuyer.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/StockTokenRegistryV2.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/StockVault.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/StreetDeed.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/Transmuter.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:omerta-contracts/src/VoucherClaim.sol",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 269
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 144
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/bank.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 313
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/chain.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 269
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/community.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 269
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 144
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/exchange.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 235
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/growth.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/growth.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/nft.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.generated.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.generated.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 144
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.generated.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 84
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 144
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 84
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/social/combat.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 211
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/stockdeliver.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/tax.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 269
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/treasury.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 269
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/treasury.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 339
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/investors/02-technical-detail.md",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
+        "line": 167
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/LAUNCH-TWEETS.md",
       "to": "Artifact:test/docs.js",
       "provenance": {
@@ -451839,16 +453081,7 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
-      "to": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
-      "provenance": {
-        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
-        "line": 4
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
-      "to": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "to": "Artifact:docs/OMR-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/OMR-MACHINE-CAMPAIGN.md",
         "line": 3
@@ -451856,119 +453089,119 @@
     },
     {
       "type": "REFERENCES",
-      "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:omerta-contracts/src/OmertaBond.sol",
+      "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
-        "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 321
+        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
+        "line": 83
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:omerta-contracts/src/OMR.sol",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 320
+        "line": 146
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:omerta-contracts/src/OMRStaking.sol",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 322
+        "line": 3
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/chain.js",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 327
+        "line": 115
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/community.js",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 326
+        "line": 147
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/desk.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaArbitrageV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 326
+        "line": 155
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/game.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 324
+        "line": 152
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/invariants.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 323
+        "line": 154
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/router.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaHookV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 325
+        "line": 148
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/rules.tail.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 324
+        "line": 151
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/stockdeliver.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 328
+        "line": 150
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/treasury.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 328
+        "line": 149
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
-      "to": "Artifact:src/vig.js",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaTurfV2.sol",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
-        "line": 326
+        "line": 153
       }
     },
     {
@@ -458763,7 +459996,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "docs/WIKI.md",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -458836,6 +460069,15 @@
       "provenance": {
         "file": "GRAPH.md",
         "line": 49
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:GTM.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "GTM.md",
+        "line": 100
       }
     },
     {
@@ -460209,10 +461451,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:LAUNCH-NIGHT.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "LAUNCH-NIGHT.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH-NIGHT.md",
       "to": "Artifact:tools/invites.md",
       "provenance": {
         "file": "LAUNCH-NIGHT.md",
-        "line": 30
+        "line": 34
       }
     },
     {
@@ -460221,7 +461472,25 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "LAUNCH-READINESS.md",
-        "line": 108
+        "line": 113
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH-READINESS.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "LAUNCH-READINESS.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH-READINESS.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "LAUNCH-READINESS.md",
+        "line": 4
       }
     },
     {
@@ -460230,7 +461499,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "LAUNCH-READINESS.md",
-        "line": 8
+        "line": 13
       }
     },
     {
@@ -460239,7 +461508,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "LAUNCH-READINESS.md",
-        "line": 109
+        "line": 114
       }
     },
     {
@@ -460248,7 +461517,25 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "LAUNCH.md",
-        "line": 155
+        "line": 160
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "LAUNCH.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "LAUNCH.md",
+        "line": 4
       }
     },
     {
@@ -460257,7 +461544,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "LAUNCH.md",
-        "line": 53
+        "line": 58
       }
     },
     {
@@ -460266,7 +461553,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "LAUNCH.md",
-        "line": 142
+        "line": 147
       }
     },
     {
@@ -460275,7 +461562,16 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "LAUNCH.md",
-        "line": 226
+        "line": 231
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING-COPY.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "MARKETING-COPY.md",
+        "line": 355
       }
     },
     {
@@ -460290,10 +461586,28 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:MARKETING.md",
-      "to": "Artifact:public/art/omr-vs-ohm.png",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 272
+        "line": 161
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:omerta-treasury-to-family-design.md",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 161
       }
     },
     {
@@ -460302,7 +461616,16 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 282
+        "line": 263
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:public/art/omr-vs-ohm.png",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 273
       }
     },
     {
@@ -460311,7 +461634,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 94
+        "line": 82
       }
     },
     {
@@ -462624,7 +463947,7 @@
       "to": "Artifact:omerta-contracts/audits/2026-09-08-comprehensive/report.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 84
+        "line": 86
       }
     },
     {
@@ -462633,7 +463956,7 @@
       "to": "Artifact:omerta-contracts/audits/2026-09-08-liquidity-automation/report.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 85
+        "line": 87
       }
     },
     {
@@ -462642,7 +463965,7 @@
       "to": "Artifact:omerta-contracts/audits/2026-09-08-mint-dev-allocation/report.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 86
+        "line": 88
       }
     },
     {
@@ -462651,7 +463974,7 @@
       "to": "Artifact:omerta-contracts/CHARACTER-NFT-LAUNCH.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 88
+        "line": 90
       }
     },
     {
@@ -462669,7 +463992,7 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 43
+        "line": 29
       }
     },
     {
@@ -462678,7 +464001,16 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 6
+        "line": 47
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/README.md",
+      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "provenance": {
+        "file": "omerta-contracts/README.md",
+        "line": 7
       }
     },
     {
@@ -462687,31 +464019,13 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 13
+        "line": 14
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-contracts/README.md",
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
-      "provenance": {
-        "file": "omerta-contracts/README.md",
-        "line": 4
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-contracts/README.md",
-      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
-      "provenance": {
-        "file": "omerta-contracts/README.md",
-        "line": 40
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-contracts/README.md",
-      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
         "line": 5
@@ -462720,19 +464034,37 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-contracts/README.md",
-      "to": "Artifact:omerta-contracts/GENESIS-LAUNCH.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 89
+        "line": 44
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-contracts/README.md",
-      "to": "Artifact:omerta-contracts/LIQUIDITY-AUTOMATION.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 20
+        "line": 6
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/README.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "omerta-contracts/README.md",
+        "line": 75
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/README.md",
+      "to": "Artifact:omerta-contracts/GENESIS-LAUNCH.md",
+      "provenance": {
+        "file": "omerta-contracts/README.md",
+        "line": 91
       }
     },
     {
@@ -462741,16 +464073,16 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 80
+        "line": 82
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-contracts/README.md",
-      "to": "Artifact:src/bonds.js",
+      "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 70
+        "line": 77
       }
     },
     {
@@ -463089,10 +464421,28 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-eth-store-design.md",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
+      "provenance": {
+        "file": "omerta-eth-store-design.md",
+        "line": 35
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-eth-store-design.md",
       "to": "Artifact:src/pass.js",
       "provenance": {
         "file": "omerta-eth-store-design.md",
-        "line": 121
+        "line": 109
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-eth-store-design.md",
+      "to": "Artifact:src/pass.js",
+      "provenance": {
+        "file": "omerta-eth-store-design.md",
+        "line": 53
       }
     },
     {
@@ -463101,7 +464451,16 @@
       "to": "Artifact:src/store.js",
       "provenance": {
         "file": "omerta-eth-store-design.md",
-        "line": 68
+        "line": 28
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-eth-store-design.md",
+      "to": "Artifact:src/store.js",
+      "provenance": {
+        "file": "omerta-eth-store-design.md",
+        "line": 56
       }
     },
     {
@@ -463110,7 +464469,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "omerta-eth-store-design.md",
-        "line": 94
+        "line": 82
       }
     },
     {
@@ -463638,19 +464997,64 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-reserve-bond-design.md",
-      "to": "Artifact:omerta-contracts/src/OmertaBond.sol",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "omerta-reserve-bond-design.md",
-        "line": 101
+        "line": 3
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-reserve-bond-design.md",
-      "to": "Artifact:tools/compile-contracts.js",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "omerta-reserve-bond-design.md",
-        "line": 108
+        "line": 31
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-reserve-bond-design.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "omerta-reserve-bond-design.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-reserve-bond-design.md",
+      "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "provenance": {
+        "file": "omerta-reserve-bond-design.md",
+        "line": 33
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-reserve-bond-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "provenance": {
+        "file": "omerta-reserve-bond-design.md",
+        "line": 19
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-reserve-bond-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+      "provenance": {
+        "file": "omerta-reserve-bond-design.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-reserve-bond-design.md",
+      "to": "Artifact:omerta-contracts/src/OMR.sol",
+      "provenance": {
+        "file": "omerta-reserve-bond-design.md",
+        "line": 29
       }
     },
     {
@@ -463980,10 +465384,73 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-treasury-to-family-design.md",
-      "to": "Artifact:public/fee-flows.html",
+      "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "omerta-treasury-to-family-design.md",
-        "line": 6
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 31
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 27
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 27
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+      "provenance": {
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 27
       }
     },
     {
@@ -463992,43 +465459,43 @@
       "to": "Artifact:src/community.js",
       "provenance": {
         "file": "omerta-treasury-to-family-design.md",
-        "line": 183
+        "line": 19
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-treasury-to-family-design.md",
-      "to": "Artifact:test/community.js",
+      "to": "Artifact:src/community.js",
       "provenance": {
         "file": "omerta-treasury-to-family-design.md",
-        "line": 183
+        "line": 3
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-treasury-to-family-design.md",
-      "to": "Artifact:tools/bond-dials.js",
+      "to": "Artifact:src/exchange.js",
       "provenance": {
         "file": "omerta-treasury-to-family-design.md",
-        "line": 62
+        "line": 19
       }
     },
     {
       "type": "REFERENCES",
-      "from": "Artifact:omerta-v4-hook-design.md",
-      "to": "Artifact:CHAIN-DEPLOY.md",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:src/exchange.js",
       "provenance": {
-        "file": "omerta-v4-hook-design.md",
-        "line": 9
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 3
       }
     },
     {
       "type": "REFERENCES",
-      "from": "Artifact:omerta-v4-hook-design.md",
-      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "from": "Artifact:omerta-treasury-to-family-design.md",
+      "to": "Artifact:src/invariants.js",
       "provenance": {
-        "file": "omerta-v4-hook-design.md",
-        "line": 9
+        "file": "omerta-treasury-to-family-design.md",
+        "line": 19
       }
     },
     {
@@ -464037,7 +465504,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "omerta-v4-hook-design.md",
-        "line": 5
+        "line": 3
       }
     },
     {
@@ -464046,16 +465513,16 @@
       "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "omerta-v4-hook-design.md",
-        "line": 5
+        "line": 21
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-v4-hook-design.md",
-      "to": "Artifact:omerta-contracts/GENESIS-LAUNCH.md",
+      "to": "Artifact:omerta-contracts/docs/market/RUNBOOK.md",
       "provenance": {
         "file": "omerta-v4-hook-design.md",
-        "line": 9
+        "line": 3
       }
     },
     {
@@ -464064,16 +465531,34 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "omerta-v4-hook-design.md",
-        "line": 11
+        "line": 23
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:omerta-v4-hook-design.md",
-      "to": "Artifact:omerta-contracts/src/OmertaHook.sol",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaHookV2.sol",
       "provenance": {
         "file": "omerta-v4-hook-design.md",
         "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-v4-hook-design.md",
+      "to": "Artifact:omerta-contracts/src/market-v2/OmertaMarketStateV2.sol",
+      "provenance": {
+        "file": "omerta-v4-hook-design.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-v4-hook-design.md",
+      "to": "Artifact:omerta-reserve-bond-design.md",
+      "provenance": {
+        "file": "omerta-v4-hook-design.md",
+        "line": 17
       }
     },
     {
@@ -464199,7 +465684,7 @@
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
         "file": "README.md",
-        "line": 22
+        "line": 25
       }
     },
     {
@@ -464217,7 +465702,7 @@
       "to": "Artifact:DEPLOY.md",
       "provenance": {
         "file": "README.md",
-        "line": 22
+        "line": 25
       }
     },
     {
@@ -464226,7 +465711,7 @@
       "to": "Artifact:DEPLOY.md",
       "provenance": {
         "file": "README.md",
-        "line": 51
+        "line": 54
       }
     },
     {
@@ -464235,7 +465720,7 @@
       "to": "Artifact:DESIGN.md",
       "provenance": {
         "file": "README.md",
-        "line": 53
+        "line": 56
       }
     },
     {
@@ -464244,7 +465729,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "README.md",
-        "line": 66
+        "line": 69
       }
     },
     {
@@ -464253,7 +465738,7 @@
       "to": "Artifact:docs/coordination-engine/README.md",
       "provenance": {
         "file": "README.md",
-        "line": 47
+        "line": 50
       }
     },
     {
@@ -464262,7 +465747,25 @@
       "to": "Artifact:docs/core-architecture/IMPLEMENTATION.md",
       "provenance": {
         "file": "README.md",
-        "line": 47
+        "line": 50
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:README.md",
+      "to": "Artifact:docs/investors/01-plain-language.md",
+      "provenance": {
+        "file": "README.md",
+        "line": 22
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:README.md",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "file": "README.md",
+        "line": 23
       }
     },
     {
@@ -464271,7 +465774,7 @@
       "to": "Artifact:docs/living-world-director/HANDOFF.md",
       "provenance": {
         "file": "README.md",
-        "line": 47
+        "line": 50
       }
     },
     {
@@ -464289,7 +465792,7 @@
       "to": "Artifact:knowledge/README.md",
       "provenance": {
         "file": "README.md",
-        "line": 24
+        "line": 27
       }
     },
     {
@@ -464307,7 +465810,7 @@
       "to": "Artifact:omerta-contracts/README.md",
       "provenance": {
         "file": "README.md",
-        "line": 23
+        "line": 26
       }
     },
     {
@@ -464316,7 +465819,7 @@
       "to": "Artifact:omerta-contracts/README.md",
       "provenance": {
         "file": "README.md",
-        "line": 53
+        "line": 56
       }
     },
     {
@@ -464343,7 +465846,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "README.md",
-        "line": 33
+        "line": 36
       }
     },
     {
@@ -464352,7 +465855,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "README.md",
-        "line": 40
+        "line": 43
       }
     },
     {
@@ -464361,7 +465864,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "README.md",
-        "line": 33
+        "line": 36
       }
     },
     {
@@ -464370,7 +465873,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "README.md",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -464379,7 +465882,7 @@
       "to": "Artifact:src/rules.generated.js",
       "provenance": {
         "file": "README.md",
-        "line": 35
+        "line": 38
       }
     },
     {
@@ -464388,7 +465891,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "README.md",
-        "line": 37
+        "line": 40
       }
     },
     {
@@ -464397,7 +465900,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "README.md",
-        "line": 36
+        "line": 39
       }
     },
     {
@@ -464406,7 +465909,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "README.md",
-        "line": 32
+        "line": 35
       }
     },
     {
@@ -464415,7 +465918,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "README.md",
-        "line": 39
+        "line": 42
       }
     },
     {
@@ -464424,7 +465927,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "README.md",
-        "line": 39
+        "line": 42
       }
     },
     {
@@ -464559,7 +466062,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 389
+        "line": 396
       }
     },
     {
@@ -464568,7 +466071,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 699
+        "line": 706
       }
     },
     {
@@ -464586,7 +466089,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 530
+        "line": 537
       }
     },
     {
@@ -464595,7 +466098,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 102
+        "line": 109
       }
     },
     {
@@ -464631,7 +466134,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 565
+        "line": 572
       }
     },
     {
@@ -464640,7 +466143,7 @@
       "to": "Artifact:src/rules.generated.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 476
+        "line": 483
       }
     },
     {
@@ -464649,7 +466152,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 477
+        "line": 484
       }
     },
     {
@@ -464658,7 +466161,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 477
+        "line": 484
       }
     },
     {
@@ -464667,7 +466170,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 526
+        "line": 533
       }
     },
     {
@@ -464676,7 +466179,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 577
+        "line": 584
       }
     },
     {
@@ -464685,7 +466188,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 704
+        "line": 711
       }
     },
     {
@@ -464694,7 +466197,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 336
+        "line": 343
       }
     },
     {
@@ -464703,7 +466206,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 338
+        "line": 345
       }
     },
     {
@@ -464712,7 +466215,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 361
+        "line": 368
       }
     },
     {
@@ -464721,7 +466224,7 @@
       "to": "Artifact:test/intrigue.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 374
+        "line": 381
       }
     },
     {
@@ -464730,7 +466233,7 @@
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 472
+        "line": 479
       }
     },
     {
@@ -464739,7 +466242,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 468
+        "line": 475
       }
     },
     {
@@ -464748,7 +466251,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 535
+        "line": 542
       }
     },
     {
@@ -464757,7 +466260,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 375
+        "line": 382
       }
     },
     {
@@ -464766,7 +466269,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 438
+        "line": 445
       }
     },
     {
@@ -464775,7 +466278,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 471
+        "line": 478
       }
     },
     {
@@ -464784,7 +466287,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 435
+        "line": 442
       }
     },
     {
@@ -464793,7 +466296,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 479
+        "line": 486
       }
     },
     {
@@ -464802,7 +466305,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 503
+        "line": 510
       }
     },
     {
@@ -464811,7 +466314,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 709
+        "line": 716
       }
     },
     {
@@ -464820,7 +466323,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 235
+        "line": 242
       }
     },
     {
@@ -464844,15 +466347,6 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:SPEC.md",
-      "to": "Artifact:tools/bond-dials.js",
-      "provenance": {
-        "file": "SPEC.md",
-        "line": 22
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:SPEC.md",
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "SPEC.md",
@@ -464865,7 +466359,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 554
+        "line": 561
       }
     },
     {
@@ -464883,7 +466377,7 @@
       "to": "Artifact:tools/extract-rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 478
+        "line": 485
       }
     },
     {
@@ -464910,7 +466404,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 510
+        "line": 517
       }
     },
     {
@@ -464937,7 +466431,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 389
+        "line": 396
       }
     },
     {
@@ -464973,7 +466467,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 416
+        "line": 423
       }
     },
     {
@@ -464982,7 +466476,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 606
+        "line": 613
       }
     },
     {
@@ -468447,6 +469941,24 @@
       "to": "Artifact:docs/GAMEPLAY-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/GAMEPLAY-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/investors/01-plain-language.md",
+      "to": "Artifact:docs/investors/01-plain-language.md",
+      "provenance": {
+        "file": "docs/investors/01-plain-language.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/investors/02-technical-detail.md",
+      "to": "Artifact:docs/investors/02-technical-detail.md",
+      "provenance": {
+        "file": "docs/investors/02-technical-detail.md",
         "line": 1
       }
     },

@@ -279,7 +279,7 @@
 > remain allowed—no non-upgradeable mandate—but proxy/implementation identities stay pinned. Safe-set per-tranche,
 > per-version rolling-24-hour, and global rolling-24-hour recovery caps have no operator Stock Token bypass while leaving
 > post-receipt operator ETH authority intact. Two fresh independent prices use the conservative floor and fail above
-> 500-bps divergence. V1 accepts conventional balance-delta ERC-20s only; adapters finish with zero attributable residue
+> 500-bps divergence. The acquisition path accepts conventional balance-delta ERC-20s only; adapters finish with zero attributable residue
 > and allowance, and forced dust receives no credit. APIs return unsigned calldata without gas sponsorship; canonical
 > history comes only from finalized pinned-contract events. Failed/duplicate/malformed spam may be throttled/alerted but
 > never auto-pauses, opens an incident, or writes canonical history. Activation also needs a bounty/disclosure channel,

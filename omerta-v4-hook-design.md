@@ -1,33 +1,23 @@
-# OMR core hook and oracle
+# OMERTÀ — market hook and observations
 
-`omerta-contracts/src/OmertaHook.sol` is the core hook used by the committed bootstrap deployment path. `OmrV4TwapOracle.sol` provides its bounded observation-based oracle. Both implementations and their tests exist; release validation must measure the selected revision rather than reuse an old test count.
+The canonical ETH/OMR market uses [`OmertaHookV2`](omerta-contracts/src/market-v2/OmertaHookV2.sol) and [`OmertaMarketStateV2`](omerta-contracts/src/market-v2/OmertaMarketStateV2.sol). The [market design](omerta-contracts/docs/market/DESIGN.md) defines their settlement boundaries; the [runbook](omerta-contracts/docs/market/RUNBOOK.md) defines deployment, funding, runtime checks and activation. Technical identifiers are retained for source and ABI compatibility.
 
-The current canonical market architecture is documented separately in [the market design](omerta-contracts/docs/market/DESIGN.md) and [runbook](omerta-contracts/docs/market/RUNBOOK.md). This document describes the core hook dependency and does not authorize replacing the deployed pool, enabling a keeper, or activating a game route.
+## Settlement and fees
+
+The hook charges a **9% base sell fee**: 2% developer, 1.6% RWA recipient, 2.4% community and 3% protocol liquidity. An additional pressure charge of **0–1%** goes to stability. Pool LP fees are additional. Fees follow actual settled deltas and may arrive in ETH or OMR; accounting must not assume ETH-only receipts.
+
+The separately configured opening window may charge buys and bound purchase size. Outside that finite window there is no hook buy fee. Rates, recipients and opening policy are immutable for a deployment. Fee buckets can be claimed independently, so one recipient's failure does not block swaps or another recipient.
+
+These rules apply to the canonical PoolKey, not every independent OMR venue. Keep the token's `ammPairs(PoolManager)` false for this market: transfer taxation of the singleton would also reach liquidity operations and could overlap the hook fee.
+
+## Observations and inventory
+
+The hook records finalized epochs with mean tick, dispersion, gross ETH turnover, volume imbalance, minimum active liquidity and liquidity-time integration. The market-state contract enforces observation validity. Controller and bond execution also check current liquidity and spot deviation. These are historical pool measurements, not an external fair-value oracle or a guaranteed floor.
+
+The [inventory bond](omerta-reserve-bond-design.md) reserves prefunded tokens, applies bounded discounts and limits, and preserves vested claims independently of sale readiness. Stability actions consume finite compartment inventory and capacity. A favorable market observation does not create new reserves.
 
 ## Deployment and review
 
-Use [GENESIS-LAUNCH.md](omerta-contracts/GENESIS-LAUNCH.md), [DEPLOYMENT.md](omerta-contracts/DEPLOYMENT.md), and [CHAIN-DEPLOY.md](CHAIN-DEPLOY.md) for chain selection, addresses, constructors, initialization, and funding. The target is Robinhood Chain; configuration and manifests determine the exact network.
+Use the [current runbook](omerta-contracts/docs/market/RUNBOOK.md) for constructor inputs, custody, bindings, funding, oracle readiness and activation. Verify the selected network, addresses and runtime code; source existence or a passing unit suite does not establish production activation.
 
-Security work follows [the repository review policy](omerta-contracts/SECURITY-REVIEW-POLICY.md). Evidence applies to its pinned source, dependencies, artifact hashes, scope, and release phase. Source existence or a passing unit suite alone does not establish production activation.
-
-## Settlement boundaries
-
-- The hook taxes supported sells inside the Uniswap v4 swap. Exact-input sells charge the quote output; exact-output sells charge the OMR input, according to the actual settled delta.
-- Pool initialization, permitted quotes, hook-address permissions, and the bootstrap strategy are checked by the contract and deployment plan.
-- Permanent buy taxation is not part of the approved core-hook policy. The bounded opening anti-snipe fee is a separate launch control.
-- Fee accrual, sweeping, recipient identity, and accounting must match the contract and its backend ingestion. Do not infer revenue from arbitrary pools or unconfirmed events.
-- Avoid enabling both the token transfer tax and the hook tax for the same canonical transfer path.
-
-## Oracle boundaries
-
-The core hook records observations; `OmrV4TwapOracle` applies its own bounded sampling and freshness policy. Fail-closed behavior and keeper cadence belong to the actual oracle configuration. Do not substitute an instantaneous quote for a required time-weighted observation or claim readiness before the warmup and release checks pass.
-
-## Bond discount guard
-
-For the core `OmertaBond` route, keep `BONDS.DISCOUNT_BPS` strictly below the applicable canonical sell tax and preserve the contract's oracle, cap, and signer checks. A pool-local fee cannot guarantee taxation at every venue, so this guard does not promise risk-free economics or a price floor.
-
-The canonical market inventory bond has its own funded-inventory policy and no mint authority. Use its market runbook rather than treating the core minting bond and inventory bond as interchangeable deployments.
-
-## Verification
-
-Run the scoped contract tests and deployment checks named in the current runbooks. Preserve compiled source, ABI, event, and typed-data identities unless a separately reviewed implementation change requires them. Retained dated audit reports describe their original revision, not an automatic clearance for a later one.
+Security work follows [the repository review policy](omerta-contracts/SECURITY-REVIEW-POLICY.md). Preserve exact source, ABI, event and typed-data identities. Review evidence applies only to its pinned dependencies, artifact hashes, scope and release phase.

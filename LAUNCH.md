@@ -1,5 +1,10 @@
 # OMERTÀ — the launch plan (founder's master guide)
 
+**Market scope:** use the [current market design](omerta-contracts/docs/market/DESIGN.md) and
+[runbook](omerta-contracts/docs/market/RUNBOOK.md) for token economics and market activation.
+Deployment examples below retain their specific operational context; they are not current market
+parameters or authorization to run against an unverified deployment.
+
 **Who this is for:** you, Jorge — the non-technical founder. This is the map from "it's built" to "it's live
 on the internet, and eventually on mainnet with real money." It sits *above* the two technical runbooks:
 `DEPLOY.md` (the game) and `CHAIN-DEPLOY.md` (the blockchain). You hand those to the people you hire; you read

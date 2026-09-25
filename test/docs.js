@@ -3816,7 +3816,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && admin.includes('design approved · implementation, audit, and funded migration pending')
     && admin.includes('Gameplay settlement health')
     && admin.includes('signer generation · mirror freshness · canonical submission · pending outcomes')
-    && admin.includes('Legacy stake backing report')
+    && admin.includes('Account stake backing report')
     && admin.includes('claims · deposited OMR · imports · unfunded liability')
     && admin.includes('Gameplay-vault controller binding')
     && admin.includes('account ID · verified wallet · recovery state · unattributed OMR')

@@ -19,8 +19,8 @@ Census refreshed from the current repository; these counts do not identify a dep
 | Client | **13421** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **39** top-level Solidity files, **11340** lines, **1048** declared top-level Foundry test functions; the release gate re-measures the passing suite |
-| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **679** markdown files, **130639** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
+| Design + audit docs | **681** markdown files, **130659** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **55** checks — **49** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **262,000 lines** of backend code, tests, schema and top-level contracts.
@@ -86,18 +86,25 @@ The §10.4 invariant job · token-bucket rate limits · idempotency keys · X/Pr
 season rollover · the closed-alpha invite gate · mod tools (ban, mod-kill, confiscate, audit) ·
 `preflight.js` env classification with a drift-detecting test.
 
-### 3.6 Chain (M6, mainnet-gated)
-`OMR` ERC-20 with an owner-armed DEX sell tax · `VoucherClaim` (EIP-712, replay-proof, daily-capped) ·
-`GearVault` ERC-1155 with per-id supply caps · legacy `OMRStaking` (not approved gameplay custody) ·
-approved-but-unimplemented upgradeable `OMRGameplayVault` replacement · `OmertaFees` (mint / respawn / reroll) ·
-`OmertaBond`. Backend: EIP-712 voucher signing in exact parity, the full-reserve withdrawal queue,
-SIWE wallet linking, a polled `getLogs` watcher over a persisted cursor, the exit toll, the early-exit
-surcharge.
+### 3.6 Chain (separately deployed and activated)
+The canonical market is implemented in `omerta-contracts/src/market-v2/`: `OmertaHookV2`
+enforces immutable base-fee routing and bounded surge; `OmertaStabilityControllerV2` separates
+Core, Lower Cushion, Garrison, Upper Cushion, Desk, War Chest and Turf inventory;
+`OmertaInventoryBondV2` sells prefunded OMR with linear vesting; `OmertaCommitmentVaultV2`
+holds actual LP-position NFTs against prefunded campaign rewards. `OmertaTurfV2` and its fee bridge
+allocate funded fees under typed game settlement, while `OmertaArbitrageV2` performs
+solver-funded arbitrage with a bounded reserve share. Source availability does not establish activation.
+
+Account settlement remains a separate integration: `OMR` ERC-20 · `VoucherClaim` (EIP-712,
+replay protection and daily caps) · `GearVault` ERC-1155 with per-id live-supply caps ·
+`OmertaFees` (mint / respawn / reroll) · SIWE wallet linking · a persisted `getLogs` watcher ·
+the funded withdrawal queue, exit toll and early-exit surcharge. On-chain gameplay custody
+has its own implementation and release requirements.
 
 ### 3.7 Economy
-Cash and OMR use separate, server-authoritative accounting. Cash-to-OMR swapping and laundering,
-the Street Wage, and personal staking yield are retired. The Window spends OMR for cash subject to
-its funded till and account caps. Stakes remain exposed to gameplay loss and a six-hour unbonding
+Cash and OMR use separate, server-authoritative accounting. Cash cannot be swapped or laundered
+into OMR. The Window spends OMR for cash subject to its funded till and account caps.
+Gameplay stakes pay no personal yield, remain exposed to loss and have a six-hour unbonding
 delay. The canonical market uses funded liquidity and inventory; it does not promise a price floor.
 See `omerta-economy-design.md` and `omerta-contracts/docs/market/DESIGN.md` for current boundaries,
 including the separate stock-acquisition and contract-activation gates.

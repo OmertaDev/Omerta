@@ -2,8 +2,7 @@
 
 **Status: DRAFT → building step one.** The genre's most glaring absence: we have a casino
 *business* but nobody can gamble. The Den adds player-vs-house games — the noir staples — as a
-**recurring, voluntary, entertainment-priced cash sink** that feeds the yield loop the economy
-already runs on.
+**recurring, voluntary, entertainment-priced cash sink** with bounded cash accounting.
 
 ## 1. Hard rules (non-negotiable guardrails)
 
@@ -16,9 +15,9 @@ already runs on.
 3. **Ledgered both ways.** Every stake is a §10.4 cash SINK (`casino:bet:<game>`), every payout a
    FAUCET (`casino:win:<game>`), both with `character_id` — the per-character cash check
    reconciles automatically; the house's margin is simply sink − faucet over volume.
-4. **The street gets its cut.** 1% of every stake routes to the street-tax pool via `takeHouse`
-   (the same transfer the AMM/exchange/bodyguard hires pay) — so gambling volume feeds the
-   buyback → staking-yield → LP-depth loop. The rest of the house edge burns (deflationary).
+4. **The street gets a funded cut.** `takeHouse` caps the street's cash allocation by realized
+   house profit net of open liabilities. Unallocated house profit is a game-cash sink. These cash
+   movements do not buy OMR, pay personal staking yield or create protocol liquidity.
 
 ## 2. The games (step one)
 

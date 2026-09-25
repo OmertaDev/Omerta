@@ -7,6 +7,11 @@ recruiting instructions apply to requested gameplay, not routine repository work
 
 - Make surgical changes that match existing style. Preserve unrelated work;
   avoid speculative features, abstractions, and cleanup.
+- Market V2 (`omerta-contracts/src/market-v2/`) is the sole current game and
+  tokenomics model. Use unversioned public wording for the current market; omit
+  superseded economic models and comparisons from game docs, investor material,
+  GitHub descriptions, and future work. Preserve exact technical identifiers and
+  source-pinned review evidence, and verify deployment/activation separately.
 - Inspect known files and symbols directly with focused searches and reads.
   For nontrivial work, identify success criteria and material assumptions.
 - Use ContextPlus for unfamiliar or cross-file investigations when it materially
