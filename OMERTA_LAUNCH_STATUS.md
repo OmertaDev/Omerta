@@ -20,7 +20,7 @@ Production: **NOT DEPLOYED** by this task. Latest read-only predecessor inspecti
 | Boat recovery | PASS — retained scoped proof |
 | Mobile automation | PASS — all nine Section11 areas at four widths on both database versions |
 | Authority | PASS — complete source-phase route/role/command review; deployed configuration remains separate |
-| Soak | FAIL — V4 replacement started00:35:36UTC Sep25;1000 ordinary entries then full12h still required; previous failed attempts retained |
+| Soak | FAIL — V4 admitted1000/1000 ordinary accounts; full12h measured interval01:02:00UTC–13:02:00UTC Sep25 is active, not yet qualified; previous failures retained |
 | Upgrade | PASS — joined API migration and actual worker startup rehearsal |
 | Rollback | PASS — API state/receipt preservation and predecessor worker on candidate-written state |
 | Evidence integrity | PASS — admitted artifacts verified; final qualification package pending |
@@ -44,4 +44,4 @@ The user approved the temporary isolated Render setup and account-wide API crede
 
 Candidate22 reconnect closure and fresh-run preparation are recorded in FINAL_LAUNCH_LEDGER.md. Original failure evidence remains unchanged. All technical qualification criteria except the explicitly waived225-cell matrix remain required.
 
-Candidate22 full CI and affected replay refresh pass. Its first Render attempt was cancelled after a failed worker runtime probe; all1000 admissions and partial measured traffic remain failed evidence. The private recorder held database read locks across worker boot. Unchanged startup fails at8s while the reader holds accounts and succeeds after reader release. The private recorder correction passed33 controller controls,2 custody checks and real55-invariant preflight; the V4 replacement is now active. The strict performance replay verifier passed24 controls.1000 ordinary entries followed by a new full12h measured interval remain required. See the current ledger for exact evidence identities.
+Candidate22 full CI and affected replay refresh pass. Its first Render attempt was cancelled after a failed worker runtime probe; all1000 admissions and partial measured traffic remain failed evidence. The private recorder held database read locks across worker boot. Unchanged startup fails at8s while the reader holds accounts and succeeds after reader release. The private recorder correction passed33 controller controls,2 custody checks and real55-invariant preflight; the V4 replacement is now active. The strict performance replay verifier passed24 controls.All1000 ordinary accounts and characters entered successfully; the full12h measured interval began2026-09-25T01:02:00.050Z. Earliest measured completion is13:02:00.050Z, followed by sealing and independent review. See the current ledger for exact evidence identities.
