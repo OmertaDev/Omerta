@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `35a4295ac387`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e4a6994bfee0`.
 
 ## Repository
 
@@ -9,38 +9,38 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1496 |
+| Commits in clone | 1498 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-24 — Merge pull request #184 from OmertaDev/codex/nft-paid-portrait-release |
+| Latest commit | 2026-09-25 — Remove superseded game artifacts and publish current documentation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 620 |
+| OmertaDev | 621 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 31 |
+| github-actions[bot] | 32 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 514 | yes |
-| [public/index.html](../../public/index.html) | 418 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 515 | yes |
+| [public/index.html](../../public/index.html) | 419 | yes |
 | [src/server.js](../../src/server.js) | 365 | yes |
-| [SPEC.md](../../SPEC.md) | 324 | yes |
+| [SPEC.md](../../SPEC.md) | 325 | yes |
 | [schema.sql](../../schema.sql) | 297 | yes |
-| [BALANCE.md](../../BALANCE.md) | 254 | yes |
-| knowledge/generated/github-history.md | 221 | historical |
-| knowledge/generated/graph-summary.md | 221 | historical |
-| knowledge/generated/graph.json | 221 | historical |
-| knowledge/generated/inventory.md | 221 | historical |
-| [src/rules.js](../../src/rules.js) | 188 | yes |
+| [BALANCE.md](../../BALANCE.md) | 255 | yes |
+| knowledge/generated/github-history.md | 222 | historical |
+| knowledge/generated/graph-summary.md | 222 | historical |
+| knowledge/generated/graph.json | 222 | historical |
+| knowledge/generated/inventory.md | 222 | historical |
+| [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 177 | yes |
 | [package.json](../../package.json) | 172 | yes |
 | [src/worker.js](../../src/worker.js) | 125 | yes |
@@ -50,22 +50,22 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
 | knowledge/generated/documents.md | 99 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [public/wiki.html](../../public/wiki.html) | 85 | yes |
+| [public/wiki.html](../../public/wiki.html) | 86 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | knowledge/generated/modules.md | 83 | historical |
 | [test/growth.js](../../test/growth.js) | 80 | yes |
 | [test/gates.js](../../test/gates.js) | 77 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 73 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 74 | yes |
 | [test/hardening.js](../../test/hardening.js) | 66 | yes |
 | [src/preflight.js](../../src/preflight.js) | 61 | yes |
+| [README.md](../../README.md) | 59 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
-| [README.md](../../README.md) | 58 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 56 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 57 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | knowledge/generated/graph.mmd | 51 | historical |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [src/economy.js](../../src/economy.js) | 50 | yes |
-| [test/docs.js](../../test/docs.js) | 47 | yes |
+| [test/docs.js](../../test/docs.js) | 48 | yes |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [test/migrate.js](../../test/migrate.js) | 44 | yes |
