@@ -276,7 +276,7 @@
 | `rwa_health_overlay_runtime_v2` | [L5748](../../schema.sql#L5748) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
 | `rwa_health_pages_v2` | [L5625](../../schema.sql#L5625) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
 | `rwa_health_private_provider_evidence_v2` | [L5610](../../schema.sql#L5610) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_reviewer_actions_v2` | [L6147](../../schema.sql#L6147) | [rwahealthreview.js](../../src/rwahealthreview.js) |
+| `rwa_health_reviewer_actions_v2` | [L6147](../../schema.sql#L6147) | [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
 | `rwa_health_runtime_v2` | [L5537](../../schema.sql#L5537) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
 | `rwa_nomination_endorsements_v2` | [L4157](../../schema.sql#L4157) | [rwanominations.js](../../src/rwanominations.js) |
 | `rwa_nomination_events_v2` | [L4167](../../schema.sql#L4167) | [rwanominations.js](../../src/rwanominations.js) |
@@ -316,15 +316,15 @@
 | `stakes_state` | [L1026](../../schema.sql#L1026) | [stable.js](../../src/stable.js) |
 | `stash` | [L577](../../schema.sql#L577) | [accrual.js](../../src/accrual.js), [game.js](../../src/game.js), [heists.js](../../src/heists.js), [kitchen.js](../../src/kitchen.js), [rules.tail.js](../../src/rules.tail.js), [secrets.js](../../src/secrets.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js) |
 | `stock_allocations` | [L2476](../../schema.sql#L2476) | [brokers.js](../../src/brokers.js), [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
-| `stock_asset_active_heads_v2` | [L3733](../../schema.sql#L3733) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_asset_versions_v2` | [L3715](../../schema.sql#L3715) | [commission.js](../../src/commission.js), [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_asset_active_heads_v2` | [L3733](../../schema.sql#L3733) | [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_asset_versions_v2` | [L3715](../../schema.sql#L3715) | [commission.js](../../src/commission.js), [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
 | `stock_buys` | [L2443](../../schema.sql#L2443) | [brokers.js](../../src/brokers.js), [treasury.js](../../src/treasury.js) |
-| `stock_catalog_evidence_v2` | [L3765](../../schema.sql#L3765) | — |
-| `stock_catalog_getter_checkpoint_v2` | [L3675](../../schema.sql#L3675) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_evidence_v2` | [L3765](../../schema.sql#L3765) | [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `stock_catalog_getter_checkpoint_v2` | [L3675](../../schema.sql#L3675) | [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
 | `stock_catalog_getter_inbox_v2` | [L3697](../../schema.sql#L3697) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
 | `stock_catalog_sync_lock_v2` | [L3644](../../schema.sql#L3644) | [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_sync_runs_v2` | [L3741](../../schema.sql#L3741) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_sync_state_v2` | [L3648](../../schema.sql#L3648) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_sync_runs_v2` | [L3741](../../schema.sql#L3741) | [rwahealthsweep.js](../../src/rwahealthsweep.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_sync_state_v2` | [L3648](../../schema.sql#L3648) | [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
 | `stock_deliveries` | [L2511](../../schema.sql#L2511) | [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
 | `stock_token_catalog` | [L3630](../../schema.sql#L3630) | [rwastockkeeper.js](../../src/rwastockkeeper.js), [stockcatalog.js](../../src/stockcatalog.js) |
 | `stock_token_catalog_state` | [L3624](../../schema.sql#L3624) | [stockcatalog.js](../../src/stockcatalog.js) |
