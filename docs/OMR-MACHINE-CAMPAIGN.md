@@ -1,248 +1,95 @@
-# THE $OMR MACHINE — campaign copy
+# The OMR market — campaign copy
 
-**Companion asset:** `public/art/omr-06-the-omr-machine-1080x1350.png`
-**Editable source:** `docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw`
-
-This copy is intentionally explicit about launch state. The founder-signed go-live waterfall is published
-in `deploy/fee-splits.json`, but it is not armed while production chain rails remain dormant. The extraction
-and Stock Machine contracts are built and tested; production delivery waits on the audit and launch gates.
-
----
+This campaign describes the current canonical market. Verify deployed contracts, funding, offer terms and activation before publishing a launch claim. The [marketing pack](OMR-MARKETING-PACK.md) provides the complete copy and contract sources.
 
 ## Long-form explainer
 
-The simplest way to think about **$OMR**:
+Omertà is a mafia RPG where character progression, family competition and OMR meet a market built around funded inventory.
 
-OMERTÀ is a full mafia RPG with a token the game cannot farm into existence—and an economic machine designed
-to make the same token come home as revenue more than once.
+The canonical ETH/OMR pool charges a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A sell-pressure surge adds at most 1% for stability. LP fees are additional, and actual swap settlement determines whether a receipt is ETH or OMR.
 
-It is **not** a reserve-currency share. There is no claimed $1 floor, no NAV, and no inflationary rebasing APY.
+After the immutable opening window, buys have no hook buy tax. Opening terms can set a temporary buy fee and an actual quote-size limit per swap. Other venues have their own rules; the canonical hook does not control every OMR trade.
 
-Two rules sit at the center:
+### Liquidity with limits
 
-1. **Street cash can never become $OMR.** The game’s cash economy and token economy are deliberately severed.
-2. **The extraction rail cannot sign more $OMR than real revenue has already bought and placed in reserve.**
+Core holds two-sided liquidity. Lower Cushion and Garrison use funded ETH to acquire OMR during weakness. Upper Cushion and Desk use funded OMR to supply buying demand. War Chest holds assets for permitted recovery, and Turf assigns a seasonal range its own fee destination.
 
-That distinction matters. A reserve fund tries to defend the value of every token with a balance sheet. OMERTÀ
-does something different: it keeps the game from printing sell pressure, then uses real activity to buy tokens,
-recycle sinks, deepen liquidity, fund family competition, and—after the launch gates clear—buy tokenized stocks
-for the people who actually played.
+Each compartment has finite inventory and action, episode and lifetime limits. Market observations, cooldowns and depth checks constrain deployment. Qualifying recovery moves actual War Chest assets; it does not create capital or reset lifetime spending authority.
 
-Here is how the machine works.
+Price can reverse a range's inventory before liquidity is removed. The Safe can exit positions and retire idle protocol capital. This support carries market risk and creates no token-holder redemption price.
 
-### 1. No time-based token faucet
+### Bonds from existing inventory
 
-Nothing you grind on a clock mints $OMR into existence. There is no wage, no drip, and no in-game staking yield.
-The on-chain staking contract, if funded, can only redistribute a pre-loaded reward pool; it cannot mint rewards.
+Inventory bonds accept ETH for OMR the contract already holds. The entire future payout is reserved immediately and vests linearly. Immutable terms bound the discount, vesting period, price and sales in both assets.
 
-The game ledger has a small, enumerated surface: finite career awards, a tiny daily completion award, player-to-player
-payments, loot, and payouts from pools that were funded first. A nightly conservation sweep checks that nothing else
-appeared.
+The discount ceiling is 10%; vesting can be configured from one to 365 days. Those are limits, not a specific offer. Vested claims remain available during purchase pauses or oracle outages. The contract cannot mint OMR, and selling vested tokens still faces applicable market fees.
 
-The only ERC-20 mint path is the **Reserve Bond**. Deposit ETH; receive discounted $OMR that vests over five days.
-That mint is bounded by an on-chain daily cap, a compile-time 20% maximum discount, a fail-closed TWAP, an absolute
-post-discount rate ceiling, and Safe controls. A bad rate or stale oracle does not “use the last good price.” It reverts.
+### Commit useful liquidity
 
-So the system can sell a bounded amount of new supply for real ETH. The game itself cannot farm supply against hype.
+Players can place an actual canonical LP position NFT into a finite commitment. Campaigns pay prefunded ETH against useful depth sampled across distinct qualifying observations, subject to position limits and remaining campaign funds.
 
-### 2. Real value enters through declared pipes
+Rewards depend on the terms, samples and available budget. They are not a guaranteed APY. The original depositor can recover the NFT at maturity independently of the oracle, strategy pause or reward balance. Earned LP fees remain attached to it.
 
-OMERTÀ publishes where each dollar goes. The founder-signed **go-live configuration**—published now, armed only when
-the production chain gates clear—is:
+### Compete for funded family fees
 
-- **Gameplay fees and Store receipts:** 25% Vig, 10% treasury, 15% community, 50% operations.
-- **Reserve Bond principal:** 75% protocol-owned liquidity, 5% Vig, 5% treasury, 15% operations.
-- **Every DEX sell:** a 9% sell-only tax, split as 2% operations, 1.6% treasury, 2.4% community, and 3% liquidity.
-  Buys and ordinary wallet transfers are not taxed.
-- **POL trading fees:** 75% funds the Desk’s below-band buyback; 25% is diverted to the Vig.
-- **Desk auction ETH:** 50% protocol-owned liquidity, 50% operations.
+Family Turf grants future funded fee credits from seasonal ranges. It does not grant ownership of protocol liquidity principal. Up to four families can share a syndicate with explicit percentages.
 
-Those are not marketing percentages typed into a graphic. They are the signed deployment artifact translated into
-the backend and contract arguments, with a validator that refuses a split that does not reconcile.
+Sieges escrow actual fees and freeze participant wallets. The authoritative game's typed settlement assigns the result, while the contracts check revisions, replay protection and available funds. Checkpointing preserves fees earned before an ownership change.
 
-### 3. The Vig buys backing before the exit
+### Profits that can fund reserves
 
-The Vig spends only ETH that actually arrived. Its root invariant is simple:
+Solver-funded arbitrage compares the canonical pool with an unhooked alternative pool. An atomic cycle must meet a positive minimum realized profit after trading fees. A fixed share of that profit funds the reserve recipient; the solver receives collateral and the remainder through claims.
 
-**buyback spend ≤ recorded real revenue**
+The solver bears gas and competition risk. Commit/reveal binds a plan, not an exclusive trading opportunity.
 
-The bought $OMR then splits **50/50**:
+### What supports the investment case
 
-- 50% funds the withdrawal reserve.
-- 50% funds the prize pool.
+OMR needs durable player interest, actual spending and useful market participation. Funded liquidity, explicit fee routes and bounded claims make the mechanics inspectable; they cannot make demand appear.
 
-A comp or QA call can record what was attempted, but it books zero spendable revenue and zero reserve credit. A
-buyback price must be positive and remain inside continuity walls. The nightly monitor reconciles arrived ETH,
-buyback spend, $OMR purchased, the reserve, prize payments, and the withdrawal queue.
+A passive holder does not automatically receive campaign rewards, family fees, treasury capital or stock tokens. Each participating product has separate eligibility and custody. RWA acquisition and extraction also require their own verified configuration and activation.
 
-When production extraction opens, a withdrawal pays a flat **2% toll**. Fresh $OMR also pays an early-exit surcharge:
-**50% at hour zero, declining linearly to 0% at hour 48**. The server signs only when the reserve can back the net
-amount. If the reserve is thin, the request queues. It does not become an unsecured IOU.
+Assess actual reserves, executable liquidity, fee income, inventory sales, governance and retention. The price remains a market outcome.
 
-That is the actual backing claim: not “one token equals one dollar,” but **one signed exit never exceeds arrived reserve**.
+## Social thread
 
-### 4. Sinks recycle instead of disappearing
+**1/** OMR connects a mafia RPG to funded liquidity, vested inventory bonds, player LP commitments and family Turf.
 
-Most token systems treat a burn as the end of the story. OMERTÀ treats an in-game sink as inventory returning to the
-house.
+**2/** Canonical sells: 9% base = 2% developer + 1.6% RWA + 2.4% community + 3% POL. Sell pressure can add up to 1% for stability. LP fees are additional.
 
-Made dues, the Wire, Broker activation, estates, vanity, auctions, jury payments, the Window, and the rest of the
-enumerated $OMR sink vocabulary send tokens to **the Desk’s shelf**. Chain withdrawal is the one deliberate exception;
-recycling a withdrawn token would count it twice.
+**3/** Normal buys have no hook buy tax after the immutable opening window. Opening terms are bounded and must be published for the actual deployment.
 
-Once a day, the Desk offers returned inventory in a six-hour descending auction. It opens at **1.5×** the 30-day
-anchor and falls to the sell edge at **1.0×**. The ordinary lot cannot exceed the tokens that returned, the shelf
-balance, or **1% of player float**. A formulaic upper leg can expand the clip in genuine premium conditions, but a
-hard wall stops it at **3% of float**.
+**4/** Core, cushions, Garrison, Desk, War Chest and Turf have separate inventory and budgets. Funding a compartment does not reset its lifetime authority.
 
-Below **0.8×** the anchor, the other side of the Desk activates: POL trading fees buy $OMR from the open market and
-restock the shelf. No POL fees, no buyback. No usable price, no trade. The Desk never mints inventory.
+**5/** Inventory bonds reserve OMR already held when ETH arrives. Fixed terms govern vesting and a discount capped at 10%. The bond contract cannot mint.
 
-That makes the KPI **return velocity**: how many times the same token can be bought, used, returned, and sold again.
-A one-time burn can create one economic event. A recycled sink can create a permanent revenue loop.
+**6/** LP commitments custody genuine position NFTs. Rewards use prefunded ETH and sampled useful depth. The NFT comes back at maturity independently of reward availability.
 
-### 5. Holding is commitment, not yield
+**7/** Family Turf earns funded fee credits. Sieges contest future ownership and actual escrow; families cannot remove protocol principal.
 
-In-game staking pays no yield. It changes the risk and utility of the balance.
+**8/** Arbitrage uses solver collateral and measured profit. A fixed reserve share can strengthen funded inventory. Failed competition can still cost gas.
 
-An idle or unbonding balance is highly exposed: a successful killer can take **50%**. A staked balance is still
-lootable, but at **20%**. A player can also commit stake for **7, 30, or 90 days**, making it count **×1.25, ×1.5,
-or ×2** toward the Made Ladder while the principal remains locked and loot-exposed.
+**9/** OMR ownership alone is no treasury share, stock dividend or guaranteed yield. Specific rewards require participation and funded entitlement.
 
-The reward is access, capacity, status, and cheaper exposure—not newly printed tokens.
-
-### 6. Activity can build a real stock book
-
-The treasury share is separate from the withdrawal reserve. At go-live, its signed inputs are **10% of gameplay
-fees, 10% of Store receipts, 5% of bond principal, and 1.6% of DEX sell gross**.
-
-The Commission chooses one approved Robinhood Stock Token each day. The ballot cannot type an arbitrary contract
-address: candidates come from a Safe-owned on-chain registry. After the day closes, the keeper buys the exact
-committed asset. It cannot silently substitute another ticker. A stale, halted, inactive, or price-discontinuous
-asset causes a named skip and the ETH remains bounded in treasury.
-
-Distribution is deterministic and play-weighted:
-
-- Broker activation lasts 30 days and costs 150 / 450 / 1,200 / 3,000 / 9,000 $OMR for ×1 / ×1.5 / ×2 / ×2.5 /
-  ×3 weight.
-- The allocation epoch is seven days.
-- A human account must play across at least three distinct activity tracks and score at least 25.
-- After that gate, activity weight is linear and uncapped. An idler receives zero. Agent and NPC accounts are excluded.
-- Bought units are allocated only after the purchase exists, checked per ticker with `allocated ≤ held`.
-- Delivery waits for an extracted Street Deed, then lands in that deed’s ERC-6551 vault. The allocation does not expire.
-
-The Stock Machine is built, but its production purchase and delivery legs remain off until the audit, launch, venue,
-reserve, Safe, and legal-review gates clear. OMERTÀ does not claim stock delivery is live before it is.
-
-### Takeaway
-
-Most tokens run one reflexive loop:
-
-**attention → price → more attention**
-
-$OMR adds a game and a set of hard boundaries underneath it:
-
-- Play cannot schedule-mint the token.
-- Cash cannot convert into the token.
-- Real revenue funds buybacks.
-- In-game sinks become recurring Desk inventory.
-- POL fees buy below the band.
-- Treasury activity can buy approved tokenized stocks for active human players.
-- Extraction cannot outrun the reserve that arrived first.
-
-No price target. No floor promise. No yield promise. The demand is the game; the defense is code-bounded recycling.
-
-**Play. Pay. Buy back. Recycle. Build the book. Repeat.**
-
-NFA. DYOR. The production chain rails are not live yet.
-
----
-
-## X / Farcaster thread version
-
-**1/** The simplest way to think about $OMR:
-
-A mafia RPG token the game cannot farm into existence.
-
-No $1 floor. No NAV. No emission APY. Revenue buys it back, sinks send it home, and extraction cannot outrun arrived reserve.
-
-**2/** Rule one: street cash can never become $OMR.
-
-There is no swap, laundering rail, or farm→convert→dump pipe. Grind makes you rich in the city; it does not print token sell pressure.
-
-**3/** The only ERC-20 mint is the Reserve Bond: ETH in, discounted $OMR out over a five-day vest.
-
-Daily cap. 20% max discount. Fail-closed TWAP. Absolute rate wall. Bad quote or stale oracle = revert.
-
-**4/** Signed go-live routing:
-
-- Fees + Store: 25% Vig / 10% treasury / 15% community / 50% ops
-- Bonds: 75% POL / 5% Vig / 5% treasury / 15% ops
-- Sells: 9% total = 2% ops / 1.6% treasury / 2.4% community / 3% LP
-
-Published. Not armed while production chain rails are dormant.
-
-**5/** The Vig can spend only arrived real revenue.
-
-Bought $OMR splits 50/50: withdrawal reserve and prize pool. If the reserve cannot back an exit, the request queues. The server does not sign an unsecured promise.
-
-**6/** In-game $OMR sinks do not disappear. They return to the Desk.
-
-Daily six-hour Dutch auction. Base lot ≤ returned tokens, shelf inventory, and 1% of float. Genuine premium can scale it, but never beyond 3% of float.
-
-**7/** Below 0.8× the 30-day anchor, POL trading fees buy $OMR and restock the shelf.
-
-No earned fees, no buyback. No fresh price, no trade. No inventory mint.
-
-The KPI is return velocity, not burn count.
-
-**8/** Staking is commitment, not yield.
-
-7/30/90-day commitments count ×1.25/×1.5/×2 toward the Made Ladder. Staked balances are still lootable: 20% versus 50% idle. In-game staking yield: 0; the contract cannot mint staking rewards.
-
-**9/** The Stock Machine converts a separate treasury slice into approved Robinhood Stock Tokens.
-
-Families vote daily. Active humans qualify through ≥3 activity tracks and score ≥25. Weight is linear and uncapped. Units follow the player into an extracted Street Deed vault.
-
-**10/** Honest status:
-
-Extraction and stock purchase/delivery are built but production-dormant until audit and launch gates clear.
-
-No price promise. No floor promise. No yield promise.
-
-Demand is the game. Defense is code-bounded recycling.
-
----
+**10/** Verify the game, product terms, contract deployment, reserves and activation. Market mechanics bound actions; player demand and prices remain uncertain.
 
 ## Short variants
 
 ### Single post
 
-$OMR is not a reserve-currency share. No $1 floor, no NAV, no emission APY.
+OMR connects Omertà's mafia RPG to a market with funded liquidity, vested inventory bonds, LP commitments and family Turf. Trading fees have named destinations; rewards have funded limits. Verify active products and actual reserves. Token appreciation is not guaranteed.
 
-It is the currency of a mafia RPG where cash cannot buy the token, play cannot schedule-mint it, real revenue funds buybacks, in-game sinks return to a daily Desk auction, and extraction cannot exceed the reserve already bought.
+### Community post
 
-Demand is the game. Defense is code-bounded recycling. Production chain rails remain audit- and launch-gated.
-
-### Telegram / Discord
-
-The $OMR machine in one sentence: **play cannot print it, cash cannot convert into it, revenue buys it back,
-sinks recycle it, and the exit cannot outrun arrived reserve.**
-
-At go-live, the signed router sends fees and Store ETH 25% to the Vig, 10% to treasury, 15% to community,
-and 50% to operations; bonds stay POL-heavy at 75%; every sell pays 9% across operations, treasury,
-community, and LP depth. Bought $OMR funds reserve + prizes 50/50. Treasury can buy approved Stock Tokens
-for active humans; Desk inventory can return repeatedly instead of burning once.
-
-The production extraction and stock-delivery rails are built but not live until the audit and launch gates clear.
+The OMR market uses seven separate liquidity and reserve compartments. Bonds sell existing OMR inventory. LP campaigns pay prefunded ETH, and family Turf receives earned fee credits. Every product has its own custody, limits and claims. Check the [market design](../omerta-contracts/docs/market/DESIGN.md) and verified launch status before participating.
 
 ### Graphic caption
 
-**THE $OMR MACHINE**
+**THE OMR MARKET**
 
-No $1 floor. No NAV. No emission APY.
+Funded liquidity. Inventory bonds. LP commitments. Family Turf.
 
-Cash never becomes $OMR. Real revenue buys it back. Sinks go to the Desk. Active play can build the Stock
-Machine’s book. Extraction signs only against arrived reserve.
+Play for standing. Read the terms. Verify the reserves.
 
-Open the code-anchored map: **omerta.fun/wiki#economy**
+## Artwork and publication
+
+Use artwork that matches these mechanisms and rates. Verify previously prepared assets before pairing them with this copy. Preserve exact contract identifiers in technical citations; use unversioned market names in public prose. State deployment and activation from current evidence, independently of the implementation description.

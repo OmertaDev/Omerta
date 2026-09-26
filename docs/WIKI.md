@@ -203,9 +203,9 @@ with raids, a small garrison is enough.
 
 ### The Canonical Market
 
-**Status: implementation candidate · production inactive.**
+**Status: verify deployment, funding and activation separately.**
 
-The canonical ETH/OMR market is an implementation candidate. Production market operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.
+The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.
 
 The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.
 
@@ -2090,8 +2090,9 @@ Information as a $OMR resource that you can spend. `GET /v1/wire`.
 **The Store** (`GET /v1/store` [public]) — real-money (ETH) packages that grant **only non-currency items**
 (this prevents pay-to-win: entitlements, access windows, cosmetics, and status — never cash, $OMR, gear, or
 power). Packages: revive bundles, a 30-day Street Wire, the Season Pass, the Patron's
-Ring badge, and decor styles. The revenue divides 40% to the founder, 40% to the buyback (the Vig, which funds
-withdrawals and prizes), and 20% to the treasury (the ETH that backs the Vault).
+Ring badge, and decor styles. The reviewed non-mint payment router sends 50% to operations, 25% to
+the Vig, 10% to treasury and 15% to community. Verify the deployed router before treating that
+configuration as active. Character creation is a separate payment: 100% goes to DEV_WALLET.
 
 **Most real-money prices have two rails — but getting Made has one.** PLEX lets you pay in earned $OMR
 instead of ETH: the respawn token and every Store package are payable either way, because none of them
@@ -2129,8 +2130,9 @@ Going legit includes what your **earned $OMR** does:
 
 - **Stake it** (`/v1/stake`) — the game-ledger position climbs the Made Ladder and supports commitment locks, while remaining exposed to gameplay loss and six-hour unbonding. Actual on-chain custody and the Broker stake multiplier are planned and not active.
 - **Redeem it** at the Window for cash (below).
-- **Claim backed ETH** at the Vault (`GET /v1/vault`) — real ETH the treasury holds, never more than
-  it holds. This production rail remains gated by launch requirements and actual backing; big moves draw the Bureau's eye and are blocked from a safehouse.
+- **Record an ETH allocation** at the Vault (`GET /v1/vault`) — spend game OMR to earmark a bounded
+  amount from recorded available treasury ETH. This implements no ETH payout or token redemption;
+  big moves draw the Bureau's eye and are blocked from a safehouse.
 - **Get Made** (`/v1/made`) for current game benefits. On-chain extraction (`/v1/withdraw`) remains gated by production launch requirements.
 - **Landmarks** (`/v1/landmarks/:districtId`) — one plaque in each district still bears a name that
   survives death.
@@ -2229,20 +2231,18 @@ any route that would convert cash into $OMR says so plainly if you try it. What 
 - **The Window** (`GET /v1/window`, `/v1/window/redeem`) — spend $OMR, take in-game cash at a published
   rate, from a till that the street take fills. It runs **one way only**: cash never becomes $OMR again.
   The till can run dry, and a short window refuses and **takes nothing** — it is a claim on what was
-  funded, never a promise. There is a daily limit per account. It is **open**, which it could not be
-  while cash still bought $OMR: the two together would be a money pump, and the game refuses to run both.
+  funded, never a promise. There is a daily limit per account. Cash cannot be exchanged back into $OMR.
 - **The Family Yield** (`GET /v1/yield`) — the top families by this season's standing split a pot of $OMR
   into their reserve. The pot is fed by **the family's cut of every redemption at the Window** — a small
   share of what a player spends goes to the families rather than to the house, so the yield scales with
-  real redemption volume. It is what staking rewards and personal dividends become: standing stops being
-  only a badge and starts paying, so tribute, wars and the Commission are worth real money to a family.
-- **The Vault** (`GET /v1/vault`) — four streams of real ETH (the DEX sell tax, treasury bonds, the
-  store, game fees) fund the protocol: liquidity, the withdrawal reserve, the founder, and a treasury.
-  Burn earned $OMR and you claim a share of what that treasury actually holds. It is **backed by ETH,
-  not by stock** and remains separate from The Brokers. The rule is the same one it always had and is
-  now unbreakable: **the house never owes more than it holds**, and with ETH on both sides no price move
-  can change that. The board publishes what came in and from where, so you can check the claim yourself.
-  Allocation only — nothing is delivered, no sell, no cash-out.
+  real redemption volume. Eligibility follows the family's seasonal standing; any payment depends on
+  the funded pot.
+- **The Vault** (`GET /v1/vault`) — configured treasury revenue funds its separate ETH allocation ledger.
+  Spend game OMR to record a bounded internal ETH allocation, subject to recorded available funding,
+  account caps and the quoted rate. Spent OMR recycles to the Desk; it does not burn blockchain tokens.
+  The board publishes funding and allocation records. **No ETH payout, withdrawal or on-chain delivery
+  is implemented.** This is separate from The Brokers and the canonical market, and is not an OMR
+  redemption floor.
 
 ---
 
@@ -2254,7 +2254,7 @@ show **trophies** that come from your real holdings (rarest car, guns, book valu
 only. `POST /v1/estate/upgrade`, `/feature/:id`, `/name`.
 
 **The Auction House** (`GET /v1/auction` [public]) — a competitive weekly $OMR cost: 3 unique numbered prestige
-items each week. The highest **$OMR bid wins**, and **the winning bid is sunk** — it leaves you for good and goes to the house, which sells it back at the daily auction. Bids go
+items each week. The highest **$OMR bid wins**, and **the winning bid is sunk** — it leaves you and is recorded as house inventory. Bids go
 into escrow. An outbid bidder gets a refund immediately. Won items are account-level and survive death.
 `POST /v1/auction/:lotId/bid`.
 
@@ -2262,13 +2262,14 @@ into escrow. An outbid bidder gets a refund immediately. Won items are account-l
 
 ## 29. The chain
 
-OMERTÀ settles on Robinhood Chain (an EVM L2). The blockchain layer is built but **not active until mainnet**
-(behind the launch checklist and audit). The design: the off-chain game is authoritative; the blockchain settles
-withdrawals and ownership proofs. The ONE place new $OMR is created on-chain is bonds — minted at
-bond time inside hard walls (a daily cap, a discount ceiling, a rate ceiling).
+OMERTÀ's contracts target Robinhood Chain (an EVM L2). Verify deployment, funding and activation for
+each product against its launch evidence. The off-chain game is authoritative; contracts settle
+authorized withdrawals, ownership proofs and the canonical market's funded claims. Inventory bonds
+reserve and transfer existing OMR; the bond contract has no mint authority.
 
-- **Withdraw $OMR** (`/v1/withdraw`) — this burns your $OMR (a legal burn) and signs an EIP-712 voucher **only
-  if the reserve can back it** (the full-reserve queue; if not, it waits in a queue). Every withdrawal pays a
+- **Withdraw $OMR** (`/v1/withdraw`) — debits your game balance and signs an EIP-712 voucher to deliver
+  existing chain OMR **only if the reserve can back it**; otherwise it queues unsigned. Cancellation of
+  an unsigned request returns the net amount, not the already-paid toll. Every withdrawal pays a
   **2% exit toll** (steeper on tokens younger than 48 hours — the early-exit tax). **Only a minted account
   can extract.**
 - **Gear withdrawal** (`/gear/:id/withdraw`) — mints your in-game gear as an ERC-1155 NFT (it leaves the game,
@@ -2288,13 +2289,14 @@ bond time inside hard walls (a daily cap, a discount ceiling, a rate ceiling).
   price follows a published schedule (five waves, 0.01 ETH at the founding wave, never above 0.05); the
   Store shows the current one. You can also earn a mint credit outright off the mission ladder. Revive
   insurance is a 0.10 ETH fee.
-- **Bonds** (`GET /v1/bonds` [public], `/bonds/:id/claim`) — the Reserve Bond (Protocol-Owned Liquidity):
-  deposit ETH to receive **discounted $OMR that vests over time**. The ETH deepens the OMR-ETH pool
-  and feeds the Vig. Bonds are the ONE mint — new $OMR is issued at bond time inside hard on-chain
-  walls (a daily cap, a discount ceiling, a rate ceiling).
+- **Inventory bonds** — deposit ETH to receive **funded OMR that vests over time**. The contract
+  reserves the complete payout at purchase. Immutable terms bound the discount to at most 10%,
+  vesting to one–365 days, and purchases by price, depth and per-purchase, epoch and lifetime limits.
+  Proceeds go to the fixed reserve recipient. Vested claims remain available during purchase pauses
+  or oracle outages. Offer terms and game/API activation must be verified for the deployed product.
 
-The **Vig** is the real-revenue engine: fee, store, and bond revenue buys hard $OMR that backs withdrawals and
-funds the prize pools.
+The **Vig** uses its own configured, arrived revenue to buy OMR for the withdrawal reserve and prize
+pools. These obligations and their activation are separate from the market controller's liquidity inventory.
 
 ---
 
@@ -2701,15 +2703,15 @@ a lever moves, this page moves with it (a test enforces that).
 - **Thin launch liquidity.** When the token market opens, it starts SMALL by design. Ordinary trades can move the
   price, and a round trip pays the sell tax plus slippage. Do not treat the pool as an exit for
   size.
-- **Selling is taxed.** Once the chain market is live, **9% comes off the top** of every DEX sell (split between the founder, the
-  treasury and the pool's own depth). On top of that, $OMR younger than 48 hours pays an early-exit
-  surcharge — up to an extra 50% that fades to zero over the window. Fresh tokens are expensive to
-  flip; that is the design, not a bug.
+- **Canonical-pool selling is taxed.** On exact-input sells, 9% comes off the top of ETH output as the immutable base hook fee, plus a bounded **0–1% surge**.
+  Exact-output sells charge an OMR-input surcharge instead. LP fees are additional; other venues have their own policies.
+  The separate game-withdrawal surcharge applies to balances younger than 48 hours, charging
+  up to an extra 50% that fades to zero across that window; it does not apply to ordinary wallet holding.
 - **Withdrawing will pay a toll and can queue.** Once production extraction opens, every on-chain withdrawal pays a flat 2% toll, and the
   rail is FULL-RESERVE: the server signs only what the reserve already holds, funded by real
   revenue. If the reserve is thin your withdrawal QUEUES — debited, safe, and signed when revenue
   funds it. No timing is promised.
-- **Nothing you hold is safe from the game.** Unstaked principal unbonds for 6 hours and is
+- **Game-held balances remain exposed.** Unstaked principal unbonds for 6 hours and is
   lootable the whole time. A killer takes up to 50% of a loose balance and 20% of a staked one.
   When your street falls, the estate burns 25% of the liquid $OMR your heir inherits. Committing a
   balance makes it cheaper to hold, never safe.
@@ -2721,8 +2723,8 @@ a lever moves, this page moves with it (a test enforces that).
 - **The house edge is real.** Every den game is negative expected value for the player and says so
   on its own card. Gambling here is entertainment priced as entertainment; the expected outcome of
   a long session is loss.
-- **Extraction is not open yet.** The withdrawal rail is built and devnet-proven, and it opens only
-  when the third-party audit and the launch review clear. Until then $OMR is an in-game balance.
+- **Verify extraction availability.** Funding, signing services, scoped security review and launch
+  approval must cover the exact deployment. A game balance alone is not a delivered wallet token.
 - **The root of trust is a Safe.** The game is server-authoritative and its chain levers are held
   by a Safe. That is a disclosed trust assumption, not an apology — the invariants that watch it
   run nightly, and their alarms reach a human.

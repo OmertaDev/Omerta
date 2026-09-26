@@ -20,7 +20,7 @@ one-tap jump. `cityEventBoard(client)` runs a handful of cheap queries — each 
 `{ kind, title, subtitle, closesSeconds | progress, tab }`. **§10.4-FREE by construction** — reads only, no
 ledger vocabulary; the test proves it by counting zero rows.
 
-**Sources (v1):** boxing main events (`boxing_bouts status='booked'`), the poker tournament
+**Sources:** boxing main events (`boxing_bouts status='booked'`), the poker tournament
 (`poker_tournaments status='open'`), the grand prix (`grand_prix status='open'`), the stakes
 (`stakes_races status='open'`), the futurity (`futurities status='open'`), and the megaproject
 (`megaprojects status='building'`, surfaced as a progress %). Each carries its pool/pot so a player sees the

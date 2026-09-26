@@ -1,5 +1,10 @@
 # OMERTÀ — Balance Sign-off (all economy levers, measured, one document)
 
+Current market behavior is defined by the [market design](omerta-contracts/docs/market/DESIGN.md)
+and its [runbook](omerta-contracts/docs/market/RUNBOOK.md). The dated measurements, decisions and
+review excerpts below retain their original scope; they are not current market parameters or
+deployment clearance. Use current source and selected configuration when setting a live lever.
+
 > **➤ For the founder-facing, ranked, plain-English decision sheet, see [`SIGN-OFF.md`](./SIGN-OFF.md)** —
 > it gathers every open lever below (and every audit's flagged residual) into one page with a SHIP/CHANGE/
 > WATCH recommendation on each. This file (`BALANCE.md`) is the technical detail behind those rows. The
@@ -856,13 +861,13 @@ not a lever.
 | `revive_3` | 0.25 | +3 respawn tokens | bundle vs 0.10 ea (~17% off) |
 | `revive_5` | 0.40 | +5 respawn tokens | deeper bulk (20% off) |
 | `wire_month` | 0.03 | +30d Street Wire | ETH convenience vs the 7d $OMR sub |
-| `season_pass` | 0.05 | +30d pass + 2 revives + patron badge | recurring monthly; status + consumables (no cash/$OMR stipend in v1 — deferred) |
+| `season_pass` | 0.05 | +30d pass + 2 revives + patron badge | recurring access; checkout grants no direct cash/OMR, while the pass track separately supports funded rewards |
 | `patron` | 0.10 | permanent patron badge | the pure Vanity flex; survives death |
 
 **Notes / watch-items (not patched — sign-off):**
-- The Season Pass deliberately grants NO cash/$OMR stipend in v1 (a per-buyer prize-pool draw would
-  complicate the backed prize accounting — deferred). The pass's value is status + consumables + access;
-  the *earner* reward is the prize pool the buyback share already funds.
+- Store checkout grants pass access and consumables. The implemented reward track in `src/pass.js`
+  separately accrues OMR entitlements at specified tiers and settles them only as its backing pool
+  funds; access does not promise an unconditional daily payout.
 - `pass_until` + `patron` survive death (account-level, the `minted` precedent) — a real-money purchase
   carries to the heir.
 - The Store's real payment path is the on-chain paywall (dormant, mainnet-gated); today's live path is the

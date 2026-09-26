@@ -734,7 +734,7 @@ their costs were laid out).
 > and implementation identities remain pinned and rechecked. Safe-set hard limits cap each tranche, each exact version
 > over rolling 24 hours, and all recovery over rolling 24 hours, with no operator bypass over Stock Token recovery;
 > this does not reduce the main operator's separate authority over ETH after receipt. Two independent fresh price sources
-> set the more conservative floor and divergence above 500 basis points fails closed. V1 supports only conventional
+> set the more conservative floor and divergence above 500 basis points fails closed. The acquisition path supports only conventional
 > balance-delta ERC-20 behavior; every exceptional token waits for a separately reviewed adapter. A successful adapter
 > ends with zero attributable token/ETH residue and zero allowance; forced unsolicited dust is excluded from recovery
 > credit and quarantined. Public APIs return unsigned calldata and never sponsor or relay anonymous gas, while canonical

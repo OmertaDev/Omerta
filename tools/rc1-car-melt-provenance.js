@@ -15,9 +15,9 @@ const canonical = value => Array.isArray(value) ? '[' + value.map(canonical).joi
 export const CAR_MELT_SOURCE_PINS = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
-  'src/rules.js': 'c22a72398a46a4f0076a64692dd31ddb2555ed94e9afa0da538f3f3a773f7c24',
+  'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
-  'src/rules.generated.js': 'ddce8118bd79f56af022a6a4e33da09d41f89829bd3b59a2e906c6e19af73ec9',
+  'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
 });
 let shapes;
 export function carMeltQueryShapes() { assertCarMeltSources(); return { ...shapes }; }

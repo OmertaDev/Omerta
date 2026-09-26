@@ -1440,7 +1440,7 @@
     <p class="omr-thesis">Humans and agents share a server-authoritative city. Cash funds the streets. $OMR funds named game benefits without raising the combat ceiling. The Window converts $OMR into cash from a funded till; cash cannot buy $OMR.</p>
     <div class="omr-state"><span class="is-live">GAME + AGENT API</span><span class="is-gated">PRODUCTION CHAIN RAILS GATED</span></div>
     <div class="omr-pillars">
-      <article class="omr-pillar"><span class="omr-pillar__label">implementation candidate · production inactive</span><h3>The Canonical Market</h3><p>The canonical ETH/OMR market is an implementation candidate. Production market operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p><a href="/wiki#canonical-market">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">current market · verify activation</span><h3>The Canonical Market</h3><p>The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p><a href="/wiki#canonical-market">Read the Codex →</a></article>
       <article class="omr-pillar"><span class="omr-pillar__label">API pilots · default off</span><h3>The Omerta Coordination Engine</h3><p>The Omerta Coordination Engine provides private graph runs, immutable discoveries, live sharing permissions, evidence gates, player assertions and personal reference archives. Its implemented API pilots are value-neutral and default off; they award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p><a href="/wiki#coordination">Read the Codex →</a></article>
       <article class="omr-pillar"><span class="omr-pillar__label">conserved items · direct API play</span><h3>The World Graph</h3><p>The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><a href="/wiki#worldgraph">Read the Codex →</a></article>
       <article class="omr-pillar"><span class="omr-pillar__label">Current gameplay · planned custody</span><h3>Know what is at stake</h3><p>Gameplay staking reduces kill exposure from 50% of loose or unbonding $OMR to 20% of staked $OMR. Remaining principal unbonds for six hours; losses reduce what returns. The stake itself pays no personal APY.</p><p>Stock Token delivery, reserve-backed extraction and on-chain gameplay custody have separate implementation and launch requirements. They are not active production benefits.</p><a href="/wiki#economy">Read the economy →</a> · <a href="/wiki#grillv2">Read custody and Stock Token status →</a></article>
@@ -1656,7 +1656,7 @@
     <dt>Cash vs. the Bank vs. $OMR</dt><dd>Pocket cash can be looted when you're killed. Banked cash is safer (but takes time to clear). $OMR is the premium currency, redeemable for cash at the Window one way; its on-chain extraction rail is dormant until launch gates clear.</dd>
     <dt>Omertà</dt><dd>The code of silence — your family won't hunt you, and you can't contract a made brother… unless they turn rat.</dd>
     <dt>The Kitchen / Deal</dt><dd>Cook product, hire a crew, and move weight — the deepest cash engine. Watch the heat and the nut (crew wages).</dd>
-    <dt>Going Legit</dt><dd>What your earned $OMR does: stake it for real power (the ladder), redeem it for cash at the Window, claim backed ETH at the Vault — or get Made and take it out on-chain. The endgame.</dd>
+    <dt>Going Legit</dt><dd>Use earned $OMR for the holding ladder, game cash at the funded Window, or a bounded internal ETH allocation at the Vault. The allocation does not deliver ETH. On-chain extraction has separate account, funding and launch requirements.</dd>
     <dt>Prestige / The Heir</dt><dd>Death ends the street, not the account. Your heir keeps the remaining $OMR after the game's loot and death rules, prestige, the estate, deeds, and other named account-level records. Pocket and bank cash, stats, skills, and businesses do not survive.</dd>
     <dt>Safehouse</dt><dd>Pay to go to ground — untouchable by hits for a few hours. A shield, not a bunker: you can't run offense or move money from inside. Cost scales with your wealth.</dd>
     <dt>Wanted / Welsher</dt><dd>Stiff a loan and you're a <b>welsher</b> — nobody lends to you again (square your name at the Shylock). Default under pursuit and you're <b>wanted</b>: even your own family can hunt you, and NPC guns come looking.</dd>
@@ -11825,9 +11825,9 @@
       prepare: 'Contracts, allocations and one-shot approvals are being verified before the first bid can land.',
       auction: 'The initial on-chain auction is active. This bar tracks launch milestones, not money raised; live fill remains chain-authoritative.',
       migration: 'The auction has closed and proceeds are moving into the canonical liquidity position.',
-      oracle_warmup: 'Liquidity is in place. Normal Desk and reserve-bond operations wait for the canonical oracle to become trustworthy.',
-      live: 'Canonical liquidity and its oracle are live. Normal Desk auctions and reserve bonds may operate again.',
-      failed: 'The launch is halted. The Desk and reserve-bond rails stay fail-closed until an operator resolves the incident.',
+      oracle_warmup: 'The launch service reports liquidity in place and is waiting for its oracle checks. Market funding and action availability are verified separately.',
+      live: 'The launch service reports its milestones complete. Check the current market deployment and each funded action before submitting a transaction.',
+      failed: 'The launch service is halted. Affected actions remain closed until the operator resolves the incident.',
     })[genesis.phase] || (genesis.note || 'No launch status is available.');
     const launchStateClass = genesis.phase === 'live' ? 'capital-state--live'
       : genesis.phase === 'failed' ? 'capital-state--failed' : 'capital-state--closed';
@@ -11865,7 +11865,7 @@
           <div>
             <span class="capital-desk__eyebrow">$OMR / capital operations</span>
             <h2 class="capital-desk__title" id="capital-title">The Capital Desk</h2>
-            <p class="capital-desk__lede">One ledger for launch, The Desk, staking, reserve bonds, treasury programs, wallet custody and the extraction rail.</p>
+            <p class="capital-desk__lede">Account records for The Desk, game stakes, bonds, treasury programs, wallet custody and extraction. Read the current market terms before committing capital.</p>
           </div>
           <span class="capital-state ${launchStateClass}">${esc(phaseLabel)}</span>
         </header>
@@ -11902,8 +11902,8 @@
         </div>
         <div class="capital-markets" aria-label="Live capital rails">
           <div class="capital-market">
-            <span class="capital-market__name">Genesis auction</span>
-            <span class="capital-market__body">Seven-day Genesis auction with no per-wallet bid cap. Bid fills and clearing are determined on-chain.</span>
+            <span class="capital-market__name">Launch status</span>
+            <span class="capital-market__body">Reported launch milestones. Auction terms, contract identity, funding and market activation require their own verified release record.</span>
             <span class="capital-market__value ${genesis.phase === 'auction' || genesis.phase === 'live' ? 'is-live' : 'is-closed'}">${esc(phaseLabel)}</span>
           </div>
           <div class="capital-market">
@@ -11912,18 +11912,18 @@
             <span class="capital-market__value ${deskAuction ? 'is-live' : 'is-closed'}">${deskAuction ? `${Math.round(deskFilledPct)}% sold` : esc(deskClosedCopy)}</span>
           </div>
           <div class="capital-market">
-            <span class="capital-market__name">Reserve bonds</span>
-            <span class="capital-market__body">${bondUnlimited ? `No daily purchase limit · ${bondCapacityKnown ? `${fmt(Math.max(0, bondTranche))} $OMR available for new quotes` : 'available supply is not reported'}` : bondDaily ? `${fmt(bondBuyable)} $OMR is executable now, bounded by today’s post and the funded tranche` : 'No daily reserve-bond offering has been posted.'}</span>
+            <span class="capital-market__name">Bond account records</span>
+            <span class="capital-market__body">${bondUnlimited ? `No daily account quota · ${bondCapacityKnown ? `${fmt(Math.max(0, bondTranche))} $OMR of reported quote capacity` : 'quote capacity is not reported'}` : bondDaily ? `${fmt(bondBuyable)} $OMR of reported quote capacity within today’s account limit` : 'No account bond offering has been posted.'}</span>
             <span class="capital-market__value ${bondBuyable > 0 ? 'is-live' : 'is-closed'}">${bondUnlimited ? (bondBuyable > 0 ? 'open' : 'quotes unavailable') : bondDaily ? `${Math.round(bondFilledPct)}% filled` : 'closed'}</span>
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Price oracle</span>
-            <span class="capital-market__body">Reserve-bond quotes and Desk bands fail closed until a trusted $OMR / ETH market price is available.</span>
+            <span class="capital-market__body">The account service reports this $OMR / ETH reference. Canonical-market execution separately checks its own fresh observations and liquidity.</span>
             <span class="capital-market__value ${bd.oracle ? 'is-live' : 'is-closed'}">${bd.oracle ? `${fmt(bd.oracle)} $OMR / ETH` : 'no trusted print'}</span>
           </div>
           <div class="capital-market">
-            <span class="capital-market__name">Protocol capital</span>
-            <span class="capital-market__body">Bond proceeds already booked across protocol-owned liquidity, the RWA treasury and the full-reserve withdrawal bucket.</span>
+            <span class="capital-market__name">Capital accounting</span>
+            <span class="capital-market__body">Amounts recorded by the account service. The current market separately accounts for funded liquidity compartments and War Chest receipts on-chain.</span>
             <span class="capital-market__value">POL ${fmt(bd.reserve?.polEth || 0)} ETH · RWA ${fmt(bd.reserve?.rwaEth || 0)} ETH</span>
           </div>
           <div class="capital-market">
@@ -12106,7 +12106,7 @@
       <h2 class="capital-anchor" id="capital-chain" style="margin-top:12px">Extraction <span class="d" style="font-size:11px">(mint your identity, then withdraw your $OMR on-chain to your own wallet — a small exit toll applies, steeper on fresh tokens)</span></h2>
       <div class="card">
         <div class="d">Minted identity: ${me.minted
-          ? '<b style="color:var(--ok)">✓ minted</b> — extraction is unlocked'
+          ? '<b style="color:var(--ok)">✓ minted</b> — account eligibility met; the withdrawal rail must also be open and funded'
           : (me.mintCredits > 0
             ? '<b style="color:var(--neon)">a mint credit is in hand</b> — mint your identity to unlock extraction'
             : 'a free trial street plays fully, but only a <b>minted</b> account can extract $OMR / gear on-chain. (Paying the Made Man dues is status — it does not open the chain; this does.) <b>The free road:</b> the mission ladder&rsquo;s <i>Dockside Heist</i> hands you a mint credit outright. Otherwise the identity is bought with <b>ETH</b> at the published wave price, on-chain, when that checkout opens at launch. It is the one thing $OMR cannot buy: minting is what gates extraction, so it has a single price in real money.')}</div>
@@ -12115,20 +12115,20 @@
         <div style="margin-top:8px" class="d">Withdraw $OMR to ${me.wallet ? `<span class="chip good">${me.wallet.slice(0,6)}…${me.wallet.slice(-4)}</span>` : 'your wallet'} — a 2% exit toll applies; fresh (&lt;48h) $OMR also pays the early-exit tax.</div>
         ${me.wallet
           ? `<input id="wd-amt" placeholder="$OMR amount" size="10"> <button class="act" id="withdraw-go">extract to my wallet →</button>
-             <div class="d" style="font-size:11px;color:var(--dim)">the on-chain rail is dormant until launch — a withdrawal debits + signs a voucher that queues until the reserve is funded.</div>`
+             <div class="d" style="font-size:11px;color:var(--dim)">A withdrawal requires an active, configured rail. It debits the game balance and queues unsigned if the reserve cannot yet back the voucher.</div>`
           : '<div class="d">link your wallet above first (the proven 0x address is where $OMR lands).</div>'}` : ''}
         ${(wd.vouchers || []).length ? `
         <div class="d" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:6px"><b>Your vouchers at the window</b>
-          — a QUEUED one is debited but unsigned (the reserve hasn't funded it yet); cancel it and the $OMR comes straight back.</div>
+          — a QUEUED one is debited but unsigned (the reserve hasn't funded it yet); cancellation returns the net amount, while the toll stays paid.</div>
         ${wd.vouchers.slice(0, 8).map((v) => `
           <div class="row"><span class="k">${v.kind === 'gear' ? `gear #${esc(String(v.gearId || ''))}` : `${fmt(v.amount)} $OMR`} · nonce ${v.nonce}</span>
             <span><span class="chip${v.status === 'queued' ? ' cold' : v.claimed ? ' good' : ''}">${esc(v.status)}${v.claimed ? ' · claimed' : ''}</span>
             ${v.status === 'queued' ? `<button class="act" data-wdcancel="${v.id}" style="padding:2px 8px;font-size:11px">cancel — take it back</button>` : ''}</span></div>`).join('')}` : ''}
       </div>
 
-      <h2 style="margin-top:12px">The Exchange <span class="d" style="font-size:11px">(closed for good)</span></h2>
+      <h2 style="margin-top:12px">Cash &amp; $OMR <span class="d" style="font-size:11px">(separate balances)</span></h2>
       <div class="card"><div class="d">pocket $${fmt(me.cash)} · $OMR on hand ${fmt(Math.floor(me.omr || 0))}</div>
-        <div class="d" style="margin-top:4px;color:var(--dim)">Cash and $OMR do not trade in either direction, at any price. Cash is the city's own money and it stays here; $OMR comes in from the outside, and goes out through the window below.</div></div>
+        <div class="d" style="margin-top:4px;color:var(--dim)">Cash is the city's own money and cannot buy $OMR. The funded Window below runs one way: spend $OMR for game cash, subject to its available till and account limit.</div></div>
 
       ${win.rate ? `
       <h2 class="capital-anchor" id="capital-window" style="margin-top:12px">The Window <span class="d" style="font-size:11px">(one way: spend $OMR, take cash — cash never runs back the other way)</span></h2>
@@ -12147,13 +12147,13 @@
         ${yld.families.map((f) => `<tr><td>${f.rank}</td><td>${esc(f.name)} <span class="chip">${esc(f.tag)}</span></td><td>${(f.shareBps / 100).toFixed(0)}%</td><td>${fmt(f.nextPayout)}</td></tr>`).join('')}</table>
         <div class="d" style="font-size:11px;color:var(--dim)">${esc(yld.note)}</div></div>` : ''}
 
-      <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(cheaper cover, not a safe harbour — a killer takes 20% of a staked balance against 50% of a loose or unbonding one, so committing drops the take from half to a fifth without ever making you safe. Your principal always returns whole; yield pays the FAMILIES, not the staker; unstaking pulls it ALL and unbonds 6h — at the higher loose rate — before it's liquid)</span></h2>
+      <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(gameplay stake — a killer takes 20% of a staked balance against 50% of a loose or unbonding one. Losses reduce your remaining principal. The stake pays no personal yield; unstaking pulls the remaining balance and unbonds for six hours at the higher loose exposure before it is liquid)</span></h2>
       <div class="card"><div class="d">staked ${fmt(Math.floor(me.staked || 0))} $OMR${me.unbonding ? ` · unbonding ${fmt(Math.floor(me.unbonding))} (${mins(me.unbondSeconds || 0)})` : ''}</div>
         <input id="stake-amt" placeholder="$OMR" size="8">
         <button class="act" id="stake-in">stake</button>
         <button class="act" id="stake-out">unstake it all</button></div>
 
-      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">The Bond Desk <span class="d" style="font-size:11px">${bd.daily?.unlimited === true ? '(the house sells $OMR below market for ETH, with no daily purchase limit)' : '(the house sells $OMR below market for ETH — and only as much as it opened the window for that day)'}</span></h2>
+      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">Bond account quotes <span class="d" style="font-size:11px">(reported account terms — verify the settlement contract, funded inventory and current market availability before paying)</span></h2>
       ${(() => {
         const dl = bd.daily, off = bd.offering || {};
         const unlimited = dl?.unlimited === true;
@@ -12175,7 +12175,7 @@
           <div class="bar" style="margin-top:4px"><i style="width:${pct}%"></i></div>
           <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">When it's gone it's gone until the house posts the next one. There is no queue and no reservation.</div>`
         : (dl
-          ? `<div class="d">A window was posted for today, but the tranche behind the desk is empty — so there is nothing to sell and no quote can be signed. It reopens when the house funds it.</div>`
+          ? `<div class="d">An account offering was posted for today, but its quote budget has no remaining capacity. No new quote is available.</div>`
           : `<div class="d">No offering was posted. The house opens the window day by day and it is shut until it does — nothing is bought or sold here today.</div>`)}
       </div>
       <div class="card">
@@ -12184,15 +12184,15 @@
           <tr><th>what you pay</th><td>ETH, on-chain, minimum ${off.minEth ?? '—'}</td></tr>
           <tr><th>what you get</th><td>$OMR at <b>${off.discountBps != null ? (off.discountBps / 100) + '%' : '—'}</b> below the market price${bd.quote ? ` — about <b>${fmt(bd.quote.payoutOmr)}</b> per ETH right now` : ''}</td></tr>
           <tr><th>when</th><td>released steadily over <b>${off.vestHours ?? '—'}h</b>, not all at once</td></tr>
-          <tr><th>where your ETH goes</th><td>the pool, the treasury and the withdrawal reserve — split by a published rule, none of it to a promise</td></tr>
+          <tr><th>settlement terms</th><td>verify the exact contract and recipient before paying. Canonical-market inventory bonds reserve already funded OMR and route proceeds to the configured War Chest.</td></tr>
         </table>
         <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${unlimited ? `${bd.quote ? '' : 'A quote is unavailable while the desk is closed. '}${capacityKnown ? `${fmt(left)} $OMR remains available after accounting for outstanding signed quotes.` : 'Available supply is not reported.'}` : `${bd.quote ? '' : 'No market price has printed yet, so no quote can be signed. '}${tranche > 0
-          ? `The tranche behind the desk holds ${fmt(tranche)} $OMR in total — the daily window is a slice of it, never the whole thing.`
-          : 'The tranche behind the desk is empty, so nothing can be sold today whatever window is posted.'}`}</div>
+          ? `The account service reports ${fmt(tranche)} $OMR of remaining quote capacity. This figure alone does not prove on-chain inventory or purchase availability.`
+          : 'The account quote budget has no remaining capacity.'}`}</div>
       </div>
       <div class="card">
         <span class="t">Take the Deal</span>
-        <div class="d">You ask the house for a signed quote, then your own wallet sends the ETH. Nothing is taken from you here — the quote is bound to your linked address and expires.</div>
+        <div class="d">This form reads the account quote service. Check its contract and terms before authorizing ETH; a returned quote does not establish canonical-market activation. Canonical-market inventory bonds use prefunded inventory, bounded purchases and linear vesting.</div>
         <div style="margin-top:6px"><input id="bond-eth" placeholder="ETH" size="6"> <button class="act" id="bond-quote"${open ? '' : ' disabled'}>${open ? 'request a signed quote' : unlimited ? 'quotes unavailable' : 'the window is shut'}</button>
           <button class="act" id="bond-submit" style="display:none;border-color:var(--neon)">submit on-chain with wallet</button>
           <div class="d" style="font-size:11px;color:var(--dim)">${me.wallet ? '' : '<b>Link your wallet above first</b> — a quote is bound to a proven address. '}${unlimited ? (open ? 'The desk is ready for on-chain purchases.' : 'New on-chain purchases are currently unavailable.') : 'The on-chain desk is <b>dormant until launch</b>.'}</div>
@@ -12222,7 +12222,7 @@
         <div id="uw-lbout"></div></div>`,
         bd.yourStanding.score > 0) : ''}
 
-      <h2 style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(BACKED — real ETH the treasury holds, funded by the city's four ETH streams; burn earned $OMR to claim your share of it)</span></h2>
+      <h2 style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(spend game $OMR to record a bounded internal ETH allocation; no blockchain token burn, ETH payout or redemption is implemented)</span></h2>
       <div class="card">
         <div class="d">the house never owes ETH it doesn't hold · claims ${vault.claimMin ?? 150}–${fmt(vault.claimDailyOmr ?? 12000)} $OMR/day per house · big moves draw the Bureau's eye</div>
         ${vault.availableEth > 0 ? `
@@ -12233,7 +12233,7 @@
         ${vault.mine?.eth > 0 ? `<div class="d" style="margin-top:6px">your vault: <b>${vault.mine.eth} ETH</b> (${fmt(vault.mine.costOmr)} $OMR burned) <span class="chip good">BACKED</span></div>` : ''}
         ${vault.funding ? `<div class="d" style="font-size:11px;margin-top:6px">WHAT'S BEHIND IT — ${
           Object.entries(vault.funding.bySource || {}).map(([k, v]) =>
-            `${({ tax: 'the DEX sell tax', bond: 'treasury bonds', store: 'the store', fee: 'game fees' })[k] || k} ${v} ETH`).join(' · ')
+            `${({ tax: 'recorded sell-tax receipts', bond: 'recorded bond receipts', store: 'the store', fee: 'game fees' })[k] || k} ${v} ETH`).join(' · ')
             || 'nothing yet'}</div>` : ''}
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">${esc(vault.note || '')}</div></div>
 

@@ -88,11 +88,11 @@ in-transit (Make-Risk-Pay), the FEDS take the bank.
   Law reaches the absent man specifically. One roll, `P = clamp(bustP(exposure) × retainerDiscount ×
   crackdownMult, MIN, MAX)`, rng-audited.
 - **Forfeiture (the §10.4 heart).** On a landed bust the state seizes `FORFEIT_RATE` of
-  **pocket + bank** (NOT staked $OMR — staking is the sim-audited safe harbour, and NOT on-chain-minted
+   **pocket + bank** (not staked OMR, which remains subject to separate PvP loss rules, and not on-chain-minted
   gear — it's already extracted, the Phase-3 gear-loot precedent), ledgered as a SINK to the
   confiscation buffer using the **exact `mod/confiscate` pattern already in the code**
   (`server.js:704` clamps to pocket and ledgers `mod:confiscate` → `street_tax.pool`). Forfeiture is a
-  §10.4-clean sink: value moves to the tax pool (→ buyback → staking yield / protocol liquidity), it
+   §10.4-clean cash transfer: value moves to the tax pool under its funded spending rules; it
   is never destroyed unaccounted. New reason `law:forfeit` (cash) reaches pocket THEN bank (the raid-fine
   precedent in `business.js`). A bust also jails the character (`jail_until`, the existing lockup) and
   zeroes exposure (the case is spent) — you can be busted again, but the sheet resets.

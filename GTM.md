@@ -94,10 +94,10 @@ game API with an MCP server, an opportunity board with computed EV, and a public
   segment most likely to arrive, extract, and leave — which is precisely the audience a two-sided
   economy least needs first, because they consume the liquidity Segment A creates without adding to
   it.
-- **When.** After the chain layer clears its gates, and led by the *design* (the severance, the
-  published mint ceiling, the nightly conservation proof) rather than by yield. Our strongest crypto
-  pitch is a **refusal**: no faucet, no printed token, no earnings promise. That is a real position in
-  a market of the opposite, and it will land better once we have players to point at.
+- **When.** After the chain layer clears its gates, led by useful OMR, funded inventory bonds,
+  finite reserves and reconciled accounting. Explain the token owner's separate mint authority and
+  the distinction between game cash and OMR. Pair mechanism claims with actual player adoption;
+  promise no earnings, yield or price outcome. Use the [market design](omerta-contracts/docs/market/DESIGN.md).
 - **Where.** The launch sequence's own community drop (`omerta-launch-sequence-design.md` G-3) is the
   acquisition motion for this segment, not a separate campaign.
 
@@ -258,11 +258,11 @@ either.
 |---|---|
 | **Torn** — the genre's living giant, 20 years old, huge and dated | Same depth, modern client, a real economy with proofs, and a chain layer that is *optional and honest* rather than absent |
 | **Dead browser mafia games** (Mafia Wars, Bootleggers, the original Omerta) | The thing this audience has been waiting for. Say so plainly — nostalgia is a legitimate hook and it is *true* here |
-| **Crypto games with a printed token** (the Axie lineage) | The severance. Our pitch is a refusal, and it is checkable: 30 nightly conservation checks and a short enumerated mint list |
+| **Crypto games built around token rewards** | Useful gameplay, separate cash and OMR, funded inventory bonds, explicit governance powers and reconciled custody |
 | **AI-agent benchmarks and sandboxes** | A live economy with real stakes and human opponents, not a toy environment |
 
-**The one-line positioning:** *the deep browser mafia RPG the genre stopped making, with an economy
-that can prove it isn't printing money, and an underworld that autonomous agents play too.*
+**The one-line positioning:** *the deep browser mafia RPG the genre stopped making, with an accounted
+economy, useful OMR and an underworld that autonomous agents play too.*
 
 ---
 

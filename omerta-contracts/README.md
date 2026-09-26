@@ -1,7 +1,8 @@
 # OMERTÀ contracts
 
-The Solidity suite contains the game's token, payments, assets, Bank and market contracts.
-Start with the [current market design](docs/market/DESIGN.md) and
+The canonical ETH/OMR market uses funded inventory bonds, immutable Hook fee policy,
+seven separately budgeted liquidity compartments, LP commitments, Family Turf and solver-funded
+arbitrage. Start with the [current market design](docs/market/DESIGN.md) and
 [market deployment runbook](docs/market/RUNBOOK.md) for the canonical ETH/OMR market.
 The [core deployment runbook](DEPLOYMENT.md) identifies the separate deployment and activation
 requirements for other rails. Source availability does not mean a contract is deployed or funded.
@@ -13,17 +14,20 @@ requirements for other rails. Source availability does not mean a contract is de
 | Canonical market | `src/market-v2/`: hook settlement and tax buckets, finalized observations, finite stability reserves, funded inventory bonds, arbitrage, seasonal Turf and player liquidity commitments. See the [market design](docs/market/DESIGN.md). |
 | Token | `OMR.sol`: ERC-20 with permit, a founding supply of `100_000_000e18`, one owner-selected minter and a capped transfer-tax path. Leave `ammPairs(PoolManager)` false for the canonical hooked market to avoid taxing settlement twice. |
 | Withdrawals and gear | `VoucherClaim.sol` transfers prefunded OMR or requests bounded gear minting. `GearVault.sol` enforces its own per-class live-supply caps. Voucher replay protection, deadlines, daily limits and funding remain required. |
-| Staking | `OMRStaking.sol` pays rewards from a prefunded pool and preserves principal withdrawals. |
+| Liquidity commitments | `OmertaCommitmentVaultV2` holds actual canonical LP-position NFTs for fixed campaigns. Rewards are prefunded; maturity withdrawals do not depend on reward availability. Gameplay stake has separate custody and loss rules. |
 | Payments | `OmertaFees.sol` forwards character mint fees entirely to `feeRecipient` (`DEV_WALLET`). Non-mint payments use their configured dev/Vig split or reviewed `FeeRevenueRouter` binding. |
 | Character and street assets | `DynastyNFT.sol` and `StreetDeed.sol` use deployment-scoped signed authorizations, replay protection and issuance limits. |
 | Bank | `Denari.sol`, `Alchemist.sol`, `CollateralEscrow.sol`, `Transmuter.sol` and `BankBufferVault.sol` provide denomination-matched debt, individual collateral custody and bounded redemption. Activation requires reviewed dependencies and actual reserves. |
-| Revenue and liquidity operations | `ProtocolLiquidityVault.sol`, `LiquidityBuybackExecutor.sol`, `FeeRevenueRouter.sol`, `KeeperGasVault.sol` and `GenesisLifecycleController.sol` have separate custody and operating bounds. See [liquidity automation](LIQUIDITY-AUTOMATION.md). |
-| Existing bond and oracle rail | `OmertaBond.sol`, `GenesisOracle.sol`, `OmrTwapOracle.sol`, `OmrV4TwapOracle.sol` and `OmertaHook.sol` remain dependencies of the core/genesis scripts and backend. Their obligations and permissions are separate from the inventory-funded market bonds. |
+| Market funding and fees | `OmertaReserveFundingV2` forwards received assets to a fixed controller compartment. Base POL fees fund Core; surge, inventory-bond proceeds and the arbitrage reserve share fund the War Chest. Turf fee credits remain separate from LP principal. |
 | Stock and acquisition modules | Registry, custody, health, settlement-gas and acquisition components retain the readiness and activation gates described in [deployment](DEPLOYMENT.md). Incomplete acquisition outflow paths must not be funded. |
 
 Source, ABI, environment and typed-data identifiers are exact integration names. Their suffixes do
 not name separate editions of the game. External protocol names such as Uniswap v4 identify actual
 protocol dependencies.
+
+Core deployment dependencies, existing account-service contracts and their outstanding obligations
+are inventoried in [DEPLOYMENT.md](DEPLOYMENT.md) and their source-pinned deployment records.
+Preserve those addresses, ABIs, signing domains and claim obligations when integrating the market.
 
 ## Build and test
 
@@ -67,13 +71,11 @@ Read the chain ID from the intended chain and use that deployment's verifying co
 server-unique `vouchers.nonce` and `signed_payload`; confirmed `Claimed` events reconcile the claim.
 Typed-data domain versions are replay-protection inputs and must match the deployed contract.
 
-`src/bonds.js` signs `BondQuote` values under domain `OmertaBond` / `1`. Match the deployed immutable
-split, discount and rate bounds. The quote fields are `payer`, `principal`, `priceOmrPerEth`,
-`discountBps`, `vestSeconds`, `nonce` and `deadline`, all `uint256` except the address `payer`.
-The complete event is
-`Bonded(bondId,payer,nonce,principal,payout,toPol,toDev,toRwa,toVig)`.
-Committed OMR remains reserved for claims. A fresh oracle cannot override `maxOmrPerEth`; a
-manipulated oracle can loosen its own price bound only up to that independently checked ceiling.
+Market inventory bonds reserve prefunded OMR under the deployed `OmertaInventoryBondV2`
+purchase terms; they do not grant a mint role. Use the [market runbook](docs/market/RUNBOOK.md)
+for current execution and the exact contract ABI for purchase limits, epochs and claims.
+Account-service signing schemas in `src/chain.js` remain deployment-specific compatibility
+boundaries; their presence does not activate a canonical-market purchase route.
 
 ## Release evidence
 

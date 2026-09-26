@@ -1251,7 +1251,7 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       implementation identities. Enforce Safe-set hard per-tranche, per-version rolling-24-hour, and global
       rolling-24-hour caps with no operator bypass over Stock Token recovery; preserve the operator's separate ETH
       authority after canonical receipt. Require two fresh independent price sources, use the more conservative output
-      floor, and fail closed above 500-bps divergence. Limit v1 to conventional balance-delta ERC-20s; require zero
+      floor, and fail closed above 500-bps divergence. Limit supported assets to conventional balance-delta ERC-20s; require zero
       attributable post-execution adapter token/ETH residue and allowance, excluding/quarantining forced dust without
       recovery credit. Return unsigned calldata only and never sponsor/relay anonymous gas. Derive canonical history
       only from finalized events of pinned contracts. Throttle/alert failed, duplicate, or malformed spam operationally
