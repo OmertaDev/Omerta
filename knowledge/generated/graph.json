@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
+  "sourceRevision": "7f8b9174b787b02682f916ef26b9422aff0dc96d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9192,
-    "edges": 38005,
+    "nodes": 9194,
+    "edges": 38011,
     "byNodeType": {
       "Artifact": 3690,
       "Command": 177,
-      "Commit": 2001,
+      "Commit": 2003,
       "Contract": 79,
       "Document": 668,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2776,
-      "CHANGED": 14847,
+      "CHANGED": 14851,
       "CONTAINS": 3711,
       "DECLARES": 177,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 602,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 2001,
+      "HAS_COMMIT": 2003,
       "IMPLEMENTS": 124,
       "IMPORTS": 3904,
       "INHERITS": 17,
@@ -100706,6 +100706,22 @@
       ]
     },
     {
+      "key": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "type": "Commit",
+      "id": "68a5467d37ac649a6210bac0984897a6a35b5831",
+      "label": "Refresh knowledge after proof pin update",
+      "title": "Refresh knowledge after proof pin update",
+      "date": "2026-09-26T21:51:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/68a5467d37ac649a6210bac0984897a6a35b5831",
+      "provenance": [
+        {
+          "commit": "68a5467d37ac649a6210bac0984897a6a35b5831",
+          "url": "https://github.com/OmertaDev/Omerta/commit/68a5467d37ac649a6210bac0984897a6a35b5831"
+        }
+      ]
+    },
+    {
       "key": "Commit:6958056bef545f8eb13eb29be5162b31ee229815",
       "type": "Commit",
       "id": "6958056bef545f8eb13eb29be5162b31ee229815",
@@ -103502,6 +103518,22 @@
         {
           "commit": "7f62bcc3fe62d2b6dd630128724ae56827480eb4",
           "url": "https://github.com/OmertaDev/Omerta/commit/7f62bcc3fe62d2b6dd630128724ae56827480eb4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7f8b9174b787b02682f916ef26b9422aff0dc96d",
+      "type": "Commit",
+      "id": "7f8b9174b787b02682f916ef26b9422aff0dc96d",
+      "label": "Merge pull request #188 from OmertaDev/codex/current-market-investor-docs",
+      "title": "Merge pull request #188 from OmertaDev/codex/current-market-investor-docs",
+      "date": "2026-09-26T21:53:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7f8b9174b787b02682f916ef26b9422aff0dc96d",
+      "provenance": [
+        {
+          "commit": "7f8b9174b787b02682f916ef26b9422aff0dc96d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7f8b9174b787b02682f916ef26b9422aff0dc96d"
         }
       ]
     },
@@ -138530,6 +138562,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+        },
+        {
           "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
         },
         {
@@ -139313,6 +139348,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+        },
+        {
           "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
         },
         {
@@ -140094,6 +140132,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
         },
         {
           "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
@@ -141093,6 +141134,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
         },
         {
           "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
@@ -150101,8 +150145,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
-      "currentBranch": "codex/current-market-investor-docs",
+      "revision": "7f8b9174b787b02682f916ef26b9422aff0dc96d",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -259642,6 +259686,38 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "6899d584304f52a9d2237daccf53300b54e0e1ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
       }
     },
     {
@@ -393597,6 +393673,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:68a5467d37ac649a6210bac0984897a6a35b5831",
+      "provenance": {
+        "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6958056bef545f8eb13eb29be5162b31ee229815",
       "provenance": {
         "commit": "6958056bef545f8eb13eb29be5162b31ee229815"
@@ -394992,6 +395076,14 @@
       "to": "Commit:7f62bcc3fe62d2b6dd630128724ae56827480eb4",
       "provenance": {
         "commit": "7f62bcc3fe62d2b6dd630128724ae56827480eb4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7f8b9174b787b02682f916ef26b9422aff0dc96d",
+      "provenance": {
+        "commit": "7f8b9174b787b02682f916ef26b9422aff0dc96d"
       }
     },
     {

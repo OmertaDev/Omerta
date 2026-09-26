@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `83e529f8acf1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7f8b9174b787`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2001 |
+| Commits in clone | 2003 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-25 — Refresh proof source pins after comment-only rules cleanup |
+| Latest commit | 2026-09-26 — Merge pull request #188 from OmertaDev/codex/current-market-investor-docs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1121 |
+| OmertaDev | 1123 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 366 | yes |
 | [SPEC.md](../../SPEC.md) | 352 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 258 | historical |
-| knowledge/generated/graph-summary.md | 258 | historical |
-| knowledge/generated/graph.json | 258 | historical |
-| knowledge/generated/inventory.md | 258 | historical |
+| knowledge/generated/github-history.md | 259 | historical |
+| knowledge/generated/graph-summary.md | 259 | historical |
+| knowledge/generated/graph.json | 259 | historical |
+| knowledge/generated/inventory.md | 259 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 223 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
