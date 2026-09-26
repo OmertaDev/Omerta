@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+  "sourceRevision": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9190,
-    "edges": 37994,
+    "nodes": 9192,
+    "edges": 38005,
     "byNodeType": {
       "Artifact": 3690,
       "Command": 177,
-      "Commit": 1999,
+      "Commit": 2001,
       "Contract": 79,
       "Document": 668,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2776,
-      "CHANGED": 14838,
+      "CHANGED": 14847,
       "CONTAINS": 3711,
       "DECLARES": 177,
       "DEFINED_IN": 1250,
       "DEPENDS_ON": 65,
       "EXECUTES": 602,
       "HANDLED_BY": 708,
-      "HAS_COMMIT": 1999,
+      "HAS_COMMIT": 2001,
       "IMPLEMENTS": 124,
       "IMPORTS": 3904,
       "INHERITS": 17,
@@ -82359,18 +82359,18 @@
       "extension": ".js",
       "bytes": 17205,
       "lines": 224,
-      "version": "4e56837e014ca7db",
+      "version": "bc3f57be5f55cf99",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-car-melt-provenance.js",
           "line": 1,
-          "version": "4e56837e014ca7db"
+          "version": "bc3f57be5f55cf99"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:49:40.000Z",
+      "lastChangedAt": "2026-09-25T06:02:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+      "lastChangedCommit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
     },
     {
       "key": "Artifact:tools/rc1-checkpoint-recovery-review.js",
@@ -83348,18 +83348,18 @@
       "extension": ".js",
       "bytes": 8603,
       "lines": 126,
-      "version": "3b49b802030e7348",
+      "version": "e9035b004a5fb88c",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-npc-family-provenance.js",
           "line": 1,
-          "version": "3b49b802030e7348"
+          "version": "e9035b004a5fb88c"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:49:40.000Z",
+      "lastChangedAt": "2026-09-25T06:02:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+      "lastChangedCommit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
     },
     {
       "key": "Artifact:tools/rc1-npc-family-recruitment.js",
@@ -83900,18 +83900,18 @@
       "extension": ".js",
       "bytes": 19161,
       "lines": 237,
-      "version": "5751b5b79d2e8936",
+      "version": "034201755cb42f46",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-season-election-provenance.js",
           "line": 1,
-          "version": "5751b5b79d2e8936"
+          "version": "034201755cb42f46"
         }
       ],
-      "lastChangedAt": "2026-09-24T15:39:37.000Z",
+      "lastChangedAt": "2026-09-25T06:02:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5c20a24a3ffea1e78f01d597e3924e6a705fbe86"
+      "lastChangedCommit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
     },
     {
       "key": "Artifact:tools/rc1-season-journal.js",
@@ -84429,18 +84429,18 @@
       "extension": ".js",
       "bytes": 28119,
       "lines": 318,
-      "version": "303d2d6d1afcaa44",
+      "version": "a770e02a91c87132",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-qualification.js",
           "line": 1,
-          "version": "303d2d6d1afcaa44"
+          "version": "a770e02a91c87132"
         }
       ],
-      "lastChangedAt": "2026-09-25T02:33:16.000Z",
+      "lastChangedAt": "2026-09-25T06:02:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b5b55217fb1f8e56186a9c0cd82125f5cd821b6e"
+      "lastChangedCommit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
     },
     {
       "key": "Artifact:tools/rc1-world-resource-observer.js",
@@ -92462,6 +92462,22 @@
         {
           "commit": "2aa56887b09dbae60eac16de295077cf2f085319",
           "url": "https://github.com/OmertaDev/Omerta/commit/2aa56887b09dbae60eac16de295077cf2f085319"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "type": "Commit",
+      "id": "2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "label": "Refresh indexes for current market documentation",
+      "title": "Refresh indexes for current market documentation",
+      "date": "2026-09-25T05:34:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "provenance": [
+        {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         }
       ]
     },
@@ -104126,6 +104142,22 @@
         {
           "commit": "83e11fbc48ab75c946709fc5092103f0ac2b47d3",
           "url": "https://github.com/OmertaDev/Omerta/commit/83e11fbc48ab75c946709fc5092103f0ac2b47d3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "type": "Commit",
+      "id": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "label": "Refresh proof source pins after comment-only rules cleanup",
+      "title": "Refresh proof source pins after comment-only rules cleanup",
+      "date": "2026-09-25T06:02:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "provenance": [
+        {
+          "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
+          "url": "https://github.com/OmertaDev/Omerta/commit/83e529f8acf1d140b69b285d6222c19dc7801ffe"
         }
       ]
     },
@@ -137844,6 +137876,9 @@
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+        },
+        {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
         },
         {
@@ -138295,6 +138330,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
@@ -139077,6 +139115,9 @@
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+        },
+        {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
         },
         {
@@ -139855,6 +139896,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
@@ -140851,6 +140895,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
           "commit": "2b3f17df9ac44573c23654a19d5be62a6ff5a461"
@@ -150054,7 +150101,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8",
+      "revision": "83e529f8acf1d140b69b285d6222c19dc7801ffe",
       "currentBranch": "codex/current-market-investor-docs",
       "defaultBranch": "main",
       "visibility": "public",
@@ -228991,6 +229038,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2ad1f085719c8f14e45f18b986ef1aa0193c104e",
       "to": "Artifact:AUDIT-red-team-nine.md",
       "provenance": {
@@ -272931,6 +273018,38 @@
       "to": "Artifact:test/rwaroutes.js",
       "provenance": {
         "commit": "83e11fbc48ab75c946709fc5092103f0ac2b47d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "to": "Artifact:tools/rc1-npc-family-provenance.js",
+      "provenance": {
+        "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "to": "Artifact:tools/rc1-season-election-provenance.js",
+      "provenance": {
+        "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
       }
     },
     {
@@ -389358,6 +389477,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2aad951460b9d22d2df8636c9b9745b3394ba3c2",
+      "provenance": {
+        "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2ad1f085719c8f14e45f18b986ef1aa0193c104e",
       "provenance": {
         "commit": "2ad1f085719c8f14e45f18b986ef1aa0193c104e"
@@ -395185,6 +395312,14 @@
       "to": "Commit:83e11fbc48ab75c946709fc5092103f0ac2b47d3",
       "provenance": {
         "commit": "83e11fbc48ab75c946709fc5092103f0ac2b47d3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:83e529f8acf1d140b69b285d6222c19dc7801ffe",
+      "provenance": {
+        "commit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
       }
     },
     {
