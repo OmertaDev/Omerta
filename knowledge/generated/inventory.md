@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `0587d3d3ff79`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `0d2187d665ba`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,098 |
-| Text lines | 1,468,182 |
-| Repository bytes inventoried | 800,201,536 |
+| Current artifacts | 4,110 |
+| Text lines | 1,476,596 |
+| Repository bytes inventoried | 804,202,997 |
 | Backend/route modules | 276 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
 | Solidity declarations | 120 |
-| Git commits | 2,008 |
+| Git commits | 2,011 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,669 / 39,714 |
+| Graph nodes / edges | 9,855 / 40,123 |
 
 ## Artifact kinds
 
@@ -24,7 +24,7 @@
 |---|---:|
 | media-asset | 1,194 |
 | artifact | 657 |
-| contract-project | 505 |
+| contract-project | 517 |
 | test-suite | 426 |
 | documentation | 408 |
 | backend-module | 248 |
@@ -49,9 +49,9 @@
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
-| [omerta-contracts/audits/2026-10-01-red-team/static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage.json) | 46,106 | contract-project | 2026-10-02 |
+| [omerta-contracts/audits/2026-10-01-red-team/static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage.json) | 46,122 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json) | 46,071 | contract-project | 2026-10-02 |
-| [omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json) | 44,791 | contract-project | 2026-10-02 |
+| [omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json) | 44,807 | contract-project | 2026-10-02 |
 | [docs/release/evidence/simulation/quality/projection-samples.json](../../docs/release/evidence/simulation/quality/projection-samples.json) | 33,646 | artifact | 2026-09-19 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json) | 22,972 | artifact | 2026-09-21 |
 | [docs/release/readiness-work/authority-inventory.json](../../docs/release/readiness-work/authority-inventory.json) | 20,579 | artifact | 2026-09-21 |

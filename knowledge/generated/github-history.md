@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0587d3d3ff79`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0d2187d665ba`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2008 |
+| Commits in clone | 2011 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-02 — Bind launch inventory and audit scope to the reviewed genesis closure |
+| Latest commit | 2026-10-02 — chore(audit): retain raw scan variants in lossless archive |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1127 |
+| OmertaDev | 1130 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -33,19 +33,19 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 423 | yes |
 | [src/server.js](../../src/server.js) | 366 | yes |
-| [SPEC.md](../../SPEC.md) | 353 | yes |
+| [SPEC.md](../../SPEC.md) | 354 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 261 | historical |
-| knowledge/generated/graph-summary.md | 261 | historical |
-| knowledge/generated/graph.json | 261 | historical |
-| knowledge/generated/inventory.md | 261 | historical |
+| knowledge/generated/github-history.md | 262 | historical |
+| knowledge/generated/graph-summary.md | 262 | historical |
+| knowledge/generated/graph.json | 262 | historical |
+| knowledge/generated/inventory.md | 262 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 223 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | [src/worker.js](../../src/worker.js) | 126 | yes |
+| knowledge/generated/documents.md | 125 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/documents.md | 124 | historical |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 118 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
