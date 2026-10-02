@@ -313,9 +313,9 @@
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6860 | 2026-09-25 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 416 | 2026-09-25 |
+| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 427 | 2026-10-02 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2029 | 2026-09-25 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-02 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 52 | 2026-09-25 |
 | [content/README.md](../../content/README.md) | documentation | 282 | 2026-09-25 |
 | [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
@@ -606,5 +606,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 739 | 2026-09-25 |
+| [SPEC.md](../../SPEC.md) | documentation | 739 | 2026-10-02 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
