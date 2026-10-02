@@ -1,0 +1,11 @@
+
+Detector: timestamp
+DynastyNFT.claim(DynastyNFT.MintVoucher,bytes) (src/DynastyNFT.sol#146-163) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= v.deadline,DN: expired) (src/DynastyNFT.sol#147)
+	- require(bool,string)(v.deadline <= block.timestamp + MAX_VOUCHER_TTL,DN: deadline too far) (src/DynastyNFT.sol#148)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+src\DynastyNFT.sol analyzed (30 contracts with 102 detectors), 1 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\DynastyNFT.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

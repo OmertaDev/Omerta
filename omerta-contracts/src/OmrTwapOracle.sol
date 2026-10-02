@@ -74,6 +74,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     uint224 public priceAverage;
     uint256 public lastUpdate; // unix seconds the current average closed (full width)
     uint256 private _baselineTimestamp;
+    uint32 private _baselinePairElapsed;
 
     event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
     /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
@@ -130,17 +131,18 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
 
         // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
         // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.
-        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
+        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
         priceCumulativeLast = omrIsToken1 ? p0 : p1;
         blockTimestampLast = ts;
         _baselineTimestamp = block.timestamp;
+        _baselinePairElapsed = pairElapsed;
     }
 
     /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design —
     ///         gating it on a keeper role would mean a lost key freezes the price feed, and through
     ///         it the bond product. Anyone may poke; nobody can poke it early.
     function update() external {
-        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
+        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
         uint32 timeElapsed;
         unchecked {
             timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
@@ -163,10 +165,13 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         // honest window closes. Fail-closed, and recovery is one PERIOD.
         // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
         uint256 fullElapsed = block.timestamp - _baselineTimestamp;
-        if (fullElapsed > PERIOD * MAX_WINDOW_MULT) {
+        // A quiet pair's counterfactual accumulator resets after its uint32 age wraps.
+        // Discard that ambiguous interval even when this oracle's own window is short.
+        if (fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32) {
             priceCumulativeLast = cumulative;
             blockTimestampLast = ts;
             _baselineTimestamp = block.timestamp;
+            _baselinePairElapsed = pairElapsed;
             priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
             lastUpdate = 0;
             // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
@@ -185,6 +190,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         priceCumulativeLast = cumulative;
         blockTimestampLast = ts;
         _baselineTimestamp = block.timestamp;
+        _baselinePairElapsed = pairElapsed;
         lastUpdate = block.timestamp;
 
         emit Updated(priceAverage, _decode(priceAverage), timeElapsed);
@@ -212,16 +218,19 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     function _currentCumulativePrices()
         private
         view
-        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp)
+        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp, uint32 pairElapsed)
     {
         blockTimestamp = uint32(block.timestamp % 2 ** 32);
         price0Cumulative = pair.price0CumulativeLast();
         price1Cumulative = pair.price1CumulativeLast();
         (uint112 reserve0, uint112 reserve1, uint32 tsLast) = pair.getReserves();
         if (reserve0 == 0 || reserve1 == 0) revert NoReserves();
+        unchecked {
+            pairElapsed = blockTimestamp - tsLast;
+        }
         if (tsLast != blockTimestamp) {
             unchecked {
-                uint32 timeElapsed = blockTimestamp - tsLast; // wrapping, per V2
+                uint32 timeElapsed = pairElapsed; // wrapping, per V2
                 price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed;
                 price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed;
             }

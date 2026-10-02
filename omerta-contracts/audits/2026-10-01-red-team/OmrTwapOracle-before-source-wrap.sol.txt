@@ -1,0 +1,230 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
+
+import {IOmrOracle} from "./IOmrOracle.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+
+interface IUniswapV2Factory {
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+}
+
+interface IUniswapV2Pair {
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+    function price0CumulativeLast() external view returns (uint256);
+    function price1CumulativeLast() external view returns (uint256);
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+}
+
+/// @title OmrTwapOracle — a Uniswap V2 cumulative-price TWAP for the OMR/WETH pool.
+/// @notice Feeds OmertaBond's accretion wall (v2 §4). A TWAP and not a spot read, because this
+///         number sits on a MINT path: a spot price can be moved and restored inside one block by
+///         anyone with a flash loan, so a spot-priced mint wall is not a wall.
+///
+///         HOW IT WORKS. A V2 pair accumulates `price*CumulativeLast` — the integral of price over
+///         time. Two snapshots give the exact time-weighted average across the interval, with no
+///         storage on the pair's side and no trust in whoever reads it. `update()` closes an
+///         interval and is permissionless: anyone may poke it, and the worst a hostile poker can do
+///         is close the window at a moment of their choosing — which is exactly why `PERIOD` is a
+///         MINIMUM. Manipulating a TWAP means holding the price away from the market for the whole
+///         window, in public, against arbitrageurs, and the cost scales with the window.
+///
+///         OPERATIONAL REQUIREMENT — THIS IS NOT SELF-DRIVING. `update()` must be poked by a keeper
+///         at least once per `maxOracleAge` (the bond's staleness bound), or the reading goes stale
+///         and bonding stops. That failure direction is deliberate: a dead keeper must halt the mint,
+///         never open it. See CHAIN-DEPLOY.md.
+///
+///         FEE-ON-TRANSFER IS FINE HERE. OMR taxes transfers INTO the pair, so a seller delivers
+///         less than they sent — that moves the price a TRADER receives, not the pool's own reserve
+///         ratio, which is what the cumulative price integrates. The TWAP reads the pool price
+///         correctly with the tax armed. (It is also why canonical liquidity must be V2 and not V3.)
+///
+///         WHAT THIS DOES NOT PROMISE. A TWAP is manipulation-RESISTANT, not manipulation-PROOF: a
+///         sufficiently funded adversary can push a thin pool for a full window. That is why the
+///         wall above composes this with `OmertaBond.maxOmrPerEth`, an absolute Safe-set ceiling the
+///         oracle cannot raise. The oracle can only ever make the mint wall TIGHTER. Read
+///         OmertaBond's header for why that composition, and not the oracle alone, is the guarantee.
+contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+    /// @notice Minimum interval an `update()` may close. A shorter window is a cheaper window to
+    ///         manipulate, so this is a floor and not a target — poking late is safe, poking early
+    ///         reverts.
+    uint32 public immutable PERIOD;
+    /// @notice Floor on PERIOD at construction. Deploying a 30-second "TWAP" would be a spot price
+    ///         wearing a TWAP's name, and this contract exists to prevent exactly that.
+    uint32 public constant MIN_PERIOD = 10 minutes;
+    /// @notice CEILING on the window a single `update()` may close, as a multiple of PERIOD. An
+    ///         interval longer than this is DISCARDED rather than averaged — see `update()` for the
+    ///         attack this closes. 4x PERIOD is three consecutive missed pokes, by which point the
+    ///         reading is already stale to the consumer and bonding has halted anyway.
+    uint32 public constant MAX_WINDOW_MULT = 4;
+
+    IUniswapV2Pair public immutable pair;
+    IUniswapV2Factory public immutable factory;
+    address public immutable omr;
+    address public immutable weth;
+    /// @dev True when OMR is the pair's token1, i.e. price0 (= token1 per token0) is OMR per WETH.
+    bool public immutable omrIsToken1;
+
+    uint256 public priceCumulativeLast; // the OMR-per-WETH cumulative, whichever side that is
+    uint32 public blockTimestampLast; // when the last snapshot was taken (mod 2^32, V2 convention)
+    /// @notice The TWAP, as UQ112x112. Zero until the first `update()` closes a full PERIOD, which
+    ///         is what makes a freshly-deployed oracle read as unavailable rather than as zero-price.
+    uint224 public priceAverage;
+    uint256 public lastUpdate; // unix seconds the current average closed (full width)
+    uint256 private _baselineTimestamp;
+
+    event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
+    /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
+    ///         rather than silent because it means the feed just went unavailable and somebody's
+    ///         keeper needs looking at.
+    event Rebaselined(uint32 discardedWindow);
+
+    error PeriodTooShort();
+    error PeriodTooLong();
+    error ZeroAddress();
+    error SameToken();
+    error NotOmrPair();
+    error PairNotCanonical();
+    error UnsupportedTokenDecimals(address token, uint8 decimals);
+    error NoReserves();
+    error PeriodNotElapsed(uint32 elapsed, uint32 required);
+
+    /// @param factory_ the reviewed V2 factory that must attest `pair_` as its OMR/WETH market
+    /// @param pair_ the canonical OMR/WETH Uniswap V2-compatible pair
+    /// @param omr_  the OMR token, so the constructor can work out which side of the pair it is
+    ///              rather than trusting a caller-supplied flag
+    /// @param weth_ the reviewed wrapped native token; the other side may not be an arbitrary asset
+    constructor(
+        address owner_,
+        IUniswapV2Factory factory_,
+        IUniswapV2Pair pair_,
+        address omr_,
+        address weth_,
+        uint32 period_
+    ) Ownable(owner_) {
+        if (
+            address(factory_) == address(0) || address(pair_) == address(0) || omr_ == address(0) || weth_ == address(0)
+        ) revert ZeroAddress();
+        if (omr_ == weth_) revert SameToken();
+        if (period_ < MIN_PERIOD) revert PeriodTooShort();
+        if (period_ > type(uint32).max / MAX_WINDOW_MULT) revert PeriodTooLong();
+        factory = factory_;
+        pair = pair_;
+        omr = omr_;
+        weth = weth_;
+        PERIOD = period_;
+
+        address t0 = pair_.token0();
+        address t1 = pair_.token1();
+        if (!((t0 == weth_ && t1 == omr_) || (t0 == omr_ && t1 == weth_))) revert NotOmrPair();
+        if (factory_.getPair(omr_, weth_) != address(pair_)) revert PairNotCanonical();
+        uint8 omrDecimals = IERC20Metadata(omr_).decimals();
+        if (omrDecimals != 18) revert UnsupportedTokenDecimals(omr_, omrDecimals);
+        uint8 wethDecimals = IERC20Metadata(weth_).decimals();
+        if (wethDecimals != 18) revert UnsupportedTokenDecimals(weth_, wethDecimals);
+        // price0Cumulative is token1-per-token0. We want OMR per WETH, so we want the cumulative
+        // whose NUMERATOR is OMR: price0 when OMR is token1, price1 when OMR is token0.
+        omrIsToken1 = (t1 == omr_);
+
+        // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
+        // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.
+        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
+        priceCumulativeLast = omrIsToken1 ? p0 : p1;
+        blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
+    }
+
+    /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design —
+    ///         gating it on a keeper role would mean a lost key freezes the price feed, and through
+    ///         it the bond product. Anyone may poke; nobody can poke it early.
+    function update() external {
+        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
+        uint32 timeElapsed;
+        unchecked {
+            timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
+        }
+        uint256 cumulative = omrIsToken1 ? p0 : p1;
+
+        // ── THE WINDOW IS BOUNDED ON BOTH SIDES (red-team F2) ──────────────────────────────────
+        // Too SHORT is obvious and handled above. Too LONG is the subtle one and it was a real hole:
+        // closing a multi-day interval publishes an average of prices that are LONG GONE, and stamps
+        // it `lastUpdate = now` — so the consumer's staleness check cannot see it, because that check
+        // measures when the average was COMPUTED, not what period it COVERS. Measured on the real
+        // contract: after a nine-day keeper outage spanning a bull run that then crashed, this
+        // reported 19,998 while spot was 5,000. Four times over, stamped fresh.
+        //
+        // What made it exploitable rather than merely wrong: `update()` is permissionless, so whoever
+        // pokes CHOOSES when the window closes — and after an outage the interval can contain a high
+        // price nobody had to pay to create. Ordinary market volatility does the attacker's work.
+        //
+        // So a too-long interval is DISCARDED, not averaged: re-baseline and report nothing until an
+        // honest window closes. Fail-closed, and recovery is one PERIOD.
+        // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
+        uint256 fullElapsed = block.timestamp - _baselineTimestamp;
+        if (fullElapsed > PERIOD * MAX_WINDOW_MULT) {
+            priceCumulativeLast = cumulative;
+            blockTimestampLast = ts;
+            _baselineTimestamp = block.timestamp;
+            priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
+            lastUpdate = 0;
+            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+            emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
+            return;
+        }
+
+        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
+
+        unchecked {
+            // The subtraction is deliberately wrapping: V2's cumulatives are allowed to overflow and
+            // the DIFFERENCE stays correct across the wrap. This is the one place unchecked maths is
+            // load-bearing rather than an optimisation.
+            priceAverage = uint224((cumulative - priceCumulativeLast) / timeElapsed);
+        }
+        priceCumulativeLast = cumulative;
+        blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
+        lastUpdate = block.timestamp;
+
+        emit Updated(priceAverage, _decode(priceAverage), timeElapsed);
+    }
+
+    /// @inheritdoc IOmrOracle
+    function consult() external view returns (uint256 omrPerEth, uint256 updatedAt) {
+        // Reports 0 before the first closed window — the interface's "no usable reading" signal,
+        // which OmertaBond turns into a revert. Never a free pass.
+        return (_decode(priceAverage), lastUpdate);
+    }
+
+    /// @dev UQ112x112 → OMR-wei per 1e18 ETH-wei. `mulDiv` for the 512-bit intermediate: the naive
+    ///      `priceAverage * 1e18` overflows uint256 for large averages (2^224 * 10^18 > 2^256), which
+    ///      would silently corrupt the exact reading the mint wall depends on.
+    function _decode(uint224 avg) private pure returns (uint256) {
+        if (avg == 0) return 0;
+        return Math.mulDiv(uint256(avg), 1e18, uint256(1) << 112);
+    }
+
+    /// @dev The pair's cumulatives brought forward to NOW. A pair only writes its cumulative on a
+    ///      touch (mint/burn/swap/sync), so on a quiet pool the stored value lags; V2's own periphery
+    ///      does this same counterfactual accrual, and skipping it would silently shorten every
+    ///      window by however long the pool sat idle.
+    function _currentCumulativePrices()
+        private
+        view
+        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp)
+    {
+        blockTimestamp = uint32(block.timestamp % 2 ** 32);
+        price0Cumulative = pair.price0CumulativeLast();
+        price1Cumulative = pair.price1CumulativeLast();
+        (uint112 reserve0, uint112 reserve1, uint32 tsLast) = pair.getReserves();
+        if (reserve0 == 0 || reserve1 == 0) revert NoReserves();
+        if (tsLast != blockTimestamp) {
+            unchecked {
+                uint32 timeElapsed = blockTimestamp - tsLast; // wrapping, per V2
+                price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed;
+                price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed;
+            }
+        }
+    }
+}

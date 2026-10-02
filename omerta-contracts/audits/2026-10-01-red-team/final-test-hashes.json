@@ -125,7 +125,7 @@
   },
   {
     "path": "omerta-contracts/test/OmrTwapOracle.t.sol",
-    "sha256": "235ce4e17771024279e77a3486241b95b1e1882e2021cbbbcabd7063e83b8a3b"
+    "sha256": "bda554a647044b8e64c16b2ae7e6c2400fc385d5573f42478264ca6fb9807aa2"
   },
   {
     "path": "omerta-contracts/test/OmrV4TwapOracle.t.sol",

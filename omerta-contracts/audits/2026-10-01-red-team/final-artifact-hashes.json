@@ -787,21 +787,21 @@
   },
   {
     "path": "omerta-contracts/out/OmrTwapOracle.sol/IUniswapV2Factory.json",
-    "sha256": "47cc9937979b9aefd35e11e9d99b8358aee2fc315b77843efa9fcdbd1fe7c8a2",
+    "sha256": "d3ef1b6cc11f1ef44d884a92cd97de37f557cf362dca9799593332c44888f2b9",
     "runtimeBytes": 0,
     "creationBytes": 0
   },
   {
     "path": "omerta-contracts/out/OmrTwapOracle.sol/IUniswapV2Pair.json",
-    "sha256": "295c45bd731a200672bb19a28c12902a2d70d7c080eccbc45af23fc959f8ad2f",
+    "sha256": "90d4b30348a9f1167ba7447a98d4eebcb49b530f69a4bb05670a6ef45ef8b68a",
     "runtimeBytes": 0,
     "creationBytes": 0
   },
   {
     "path": "omerta-contracts/out/OmrTwapOracle.sol/OmrTwapOracle.json",
-    "sha256": "7ef03a64ae1d71bf988f7f7216dff160bc4d0a86e076912e75fd9c104e047bf1",
-    "runtimeBytes": 3163,
-    "creationBytes": 5629
+    "sha256": "6db15c91cfcaab09e97e6a359950b2fbf2be792ff24be4eb89b82a452b871c08",
+    "runtimeBytes": 3268,
+    "creationBytes": 5754
   },
   {
     "path": "omerta-contracts/out/OmrV4TwapOracle.sol/OmrV4TwapOracle.json",

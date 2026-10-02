@@ -1,0 +1,57 @@
+
+Detector: incorrect-equality
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses a dangerous strict equality:
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#302)
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses a dangerous strict equality:
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#303)
+OmertaTurfV2.expireSiege(uint64,uint32) (src/market-v2/OmertaTurfV2.sol#207-213) uses a dangerous strict equality:
+	- deadline == 0 || block.timestamp < deadline (src/market-v2/OmertaTurfV2.sol#210)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: uninitialized-local
+OmertaTurfV2.settleStatus(uint64,uint32,uint64,uint8,uint16,uint64,uint64,bytes32).allowed (src/market-v2/OmertaTurfV2.sol#168) is a local variable never initialized
+OmertaTurfV2._recipients(OmertaTurfV2.Split).total (src/market-v2/OmertaTurfV2.sol#282) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: timestamp
+OmertaTurfV2.bindFeeSource(address,uint64,uint32) (src/market-v2/OmertaTurfV2.sol#99-106) uses timestamp for comparisons
+	Dangerous comparisons:
+	- source.code.length == 0 || feeSources[source].bound || seasons[seasonId].endsAt == 0 || turfId >= seasons[seasonId].turfCount || block.timestamp >= seasons[seasonId].startsAt || laneSource[seasonId][turfId] != address(0) (src/market-v2/OmertaTurfV2.sol#100-102)
+OmertaTurfV2.createSeason(uint64,uint64) (src/market-v2/OmertaTurfV2.sol#118-124) uses timestamp for comparisons
+	Dangerous comparisons:
+	- startsAt < block.timestamp || endsAt <= startsAt || endsAt - startsAt > 31536000 || (seasonCount != 0 && startsAt < seasons[seasonCount].endsAt) (src/market-v2/OmertaTurfV2.sol#119-120)
+OmertaTurfV2.createTurf(uint64,int24,int24,OmertaTurfV2.Split) (src/market-v2/OmertaTurfV2.sol#127-143) uses timestamp for comparisons
+	Dangerous comparisons:
+	- s.endsAt == 0 || block.timestamp >= s.startsAt || s.turfCount == MAX_TURFS (src/market-v2/OmertaTurfV2.sol#131)
+OmertaTurfV2.startSiege(uint64,uint32,OmertaTurfV2.Split,uint32,uint16,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#179-194) uses timestamp for comparisons
+	Dangerous comparisons:
+	- duration < MIN_SIEGE || duration > MAX_SIEGE || block.timestamp + duration > seasons[seasonId].endsAt || attackerVictoryBps > BPS || attackerVictoryBps == 0 || keccak256(bytes)(abi.encode(attacker)) == keccak256(bytes)(abi.encode(t.owners)) (src/market-v2/OmertaTurfV2.sol#185-187)
+OmertaTurfV2.resolveSiege(uint64,uint32,bool,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#196-203) uses timestamp for comparisons
+	Dangerous comparisons:
+	- s.expiresAt == 0 || block.timestamp >= s.expiresAt (src/market-v2/OmertaTurfV2.sol#201)
+OmertaTurfV2.expireSiege(uint64,uint32) (src/market-v2/OmertaTurfV2.sol#207-213) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deadline == 0 || block.timestamp < deadline (src/market-v2/OmertaTurfV2.sol#210)
+OmertaTurfV2.depositFees(uint64,uint32,uint256) (src/market-v2/OmertaTurfV2.sol#217-244) uses timestamp for comparisons
+	Dangerous comparisons:
+	- season.endsAt == 0 || block.timestamp < season.startsAt || turfId >= season.turfCount (src/market-v2/OmertaTurfV2.sol#222)
+	- s.expiresAt != 0 && block.timestamp >= s.expiresAt (src/market-v2/OmertaTurfV2.sol#230)
+OmertaTurfV2._settlement(uint64,uint32,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#261-278) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < s.startsAt || block.timestamp >= s.endsAt || turfId >= s.turfCount (src/market-v2/OmertaTurfV2.sol#266)
+	- ! observation.valid || epoch != observation.epoch || epoch < t.lastEpoch || observation.observedAt > block.timestamp || block.timestamp - observation.observedAt > maxObservationAge (src/market-v2/OmertaTurfV2.sol#272-273)
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < r.count (src/market-v2/OmertaTurfV2.sol#301)
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#302)
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#303)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in OmertaTurfV2.claim(address) (src/market-v2/OmertaTurfV2.sol#246-259):
+	- (ok,None) = recipient.call{value: c.nativeAmount}() (src/market-v2/OmertaTurfV2.sol#255)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\market-v2\OmertaTurfV2.sol analyzed (11 contracts with 102 detectors), 15 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\market-v2\OmertaTurfV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

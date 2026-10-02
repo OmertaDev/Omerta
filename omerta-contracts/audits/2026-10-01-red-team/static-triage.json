@@ -300,7 +300,7 @@
     },
     {
       "path": "omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmrTwapOracle.json",
-      "sha256": "eec05f07273ddd372380f5832d8e8b10b7b78bc7cadacd3ece9fdbf12e4f88f8",
+      "sha256": "3366168c56217818bca69333140062fd1a00921c830901532d60a0708745de62",
       "success": true,
       "error": null,
       "count": 8
@@ -914,7 +914,7 @@
     },
     {
       "path": "omerta-contracts/src/OmrTwapOracle.sol",
-      "sha256": "59870a27f2426b3dbe2d14026fcecd92a421674b4c7ddde25efa7492ed5b2b83"
+      "sha256": "1d3ccbf534d720005f41d54aef0fe466a9a804a570e9204d2bb563caba5a941f"
     },
     {
       "path": "omerta-contracts/src/OmrV4TwapOracle.sol",
@@ -1009,7 +1009,7 @@
       "prerequisite": "Deploy generic ContinuousClearingAuction with a nonzero controller returning a protocol fee larger than currencyRaised; auction graduated and checkpointed at END_BLOCK.",
       "trace": "getProtocolFeeAmount returns controller-supplied uint256 unchanged. lbpInitializationParams computes checked currencyRaised-protocolFeeAmount; setting response to currencyRaised+1 produces arithmetic Panic(0x11). sweepCurrency clamps fee to currencyRaised before subtracting, so the two getters/settlement paths disagree.",
       "impact": "Generic CCA initialization-parameter read and integrations depending on it cannot progress with oversized fee response. Current OmertaGuardedAuction hardcodes controller address(0), and ProtocolFeeLib returns zero in that case, making this defect unreachable there.",
-      "disposition": "The initialization read now clamps the fee to currencyRaised, matching sweepCurrency. The retained pre-fix regression failed with Panic(0x11); the final complete suite passed 1290 tests across 89 suites with zero failures or skips (seed 0x20261002, fuzz512, invariant128x128). Current guarded zero-controller behavior is covered separately. Upstream pin/hash is preserved alongside the local patch provenance.",
+      "disposition": "The initialization read now clamps the fee to currencyRaised, matching sweepCurrency. The retained pre-fix regression failed with Panic(0x11); the final complete suite passed 1293 tests across 89 suites with zero failures or skips (seed 0x20261003, fuzz512, invariant128x128). Current guarded zero-controller behavior is covered separately. Upstream pin/hash is preserved alongside the local patch provenance.",
       "evidence": "daybreak-crosscheck.md plus direct callee/source review"
     }
   ],
@@ -42778,23 +42778,17 @@
       "scope": "project-source"
     },
     {
-      "id": "24d8fa677487f05e988f65885c844424648f2dd5cee09ca09177bd607b6f358d",
+      "id": "b5cc2799c8de980ea9b62b3d38a95bfaac8bacd02b85f9b76e4c9fcbed638174",
       "check": "weak-prng",
       "impact": "High",
       "confidence": "Medium",
-      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#212-229) uses a weak PRNG: \"blockTimestamp = uint32(block.timestamp % 2 ** 32) (src/OmrTwapOracle.sol#217)\" \n",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#218-238) uses a weak PRNG: \"blockTimestamp = uint32(block.timestamp % 2 ** 32) (src/OmrTwapOracle.sol#223)\" \n",
       "locations": [
         {
           "kind": "function",
           "name": "_currentCumulativePrices",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
             218,
             219,
             220,
@@ -42806,7 +42800,16 @@
             226,
             227,
             228,
-            229
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238
           ]
         },
         {
@@ -42814,7 +42817,7 @@
           "name": "blockTimestamp = uint32(block.timestamp % 2 ** 32)",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            217
+            223
           ]
         }
       ],
@@ -42826,27 +42829,21 @@
       ],
       "previousTriage": null,
       "status": "false-positive",
-      "rationale": "OmrTwapOracle uses timestamp modulo 2**32 solely for canonical Uniswap V2 cumulative wrap arithmetic, not random outcomes. src/OmrTwapOracle.sol:212-229.",
+      "rationale": "OmrTwapOracle uses timestamp modulo 2**32 solely for canonical Uniswap V2 cumulative wrap arithmetic, not random outcomes. update independently rejects full oracle elapsed beyond its window and baseline pair age plus full elapsed >=2**32 before publishing; modulo source age cannot masquerade as a fresh short price window. src/OmrTwapOracle.sol:218-238.",
       "scope": "project-source"
     },
     {
-      "id": "a0df9b84248590fa900c30fb6809c615f0feabd09aa046d533f6794b01cf4a9f",
+      "id": "69ccf96bcc8ea1917ecbc2d36a59d957549f9b4a3debc4287fe4a556c6b4fa37",
       "check": "divide-before-multiply",
       "impact": "Medium",
       "confidence": "Medium",
-      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#212-229) performs a multiplication on the result of a division:\n\t- price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed (src/OmrTwapOracle.sol#226)\n",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#218-238) performs a multiplication on the result of a division:\n\t- price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed (src/OmrTwapOracle.sol#235)\n",
       "locations": [
         {
           "kind": "function",
           "name": "_currentCumulativePrices",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
             218,
             219,
             220,
@@ -42858,7 +42855,16 @@
             226,
             227,
             228,
-            229
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238
           ]
         },
         {
@@ -42866,7 +42872,7 @@
           "name": "price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            226
+            235
           ]
         }
       ],
@@ -42878,27 +42884,21 @@
       ],
       "previousTriage": null,
       "status": "intentional-fixed-point-rounding",
-      "rationale": "Reserve ratio encoded as canonical Uniswap V2 UQ112x112 integer first, then multiplied by elapsed seconds into cumulative price. The loss is defined fractional fixed-point precision; no random outcome or token-balance multiplication is involved. src/OmrTwapOracle.sol:212-229 (scan span; refreshed source may shift).",
+      "rationale": "Reserve ratio encoded as canonical Uniswap V2 UQ112x112 integer first, then multiplied by elapsed seconds into cumulative price. The loss is defined fractional fixed-point precision; no random outcome or token-balance multiplication is involved. src/OmrTwapOracle.sol:218-238 (scan span; refreshed source may shift).",
       "scope": "project-source"
     },
     {
-      "id": "efe2845adeb0d46d4906902e21014ce15e1358805ee385810d2a039f0738971b",
+      "id": "721ee6b2a8dc604004d375cd67262403e0d60d336fe16e8238fafdd84f7237d3",
       "check": "divide-before-multiply",
       "impact": "Medium",
       "confidence": "Medium",
-      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#212-229) performs a multiplication on the result of a division:\n\t- price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed (src/OmrTwapOracle.sol#225)\n",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#218-238) performs a multiplication on the result of a division:\n\t- price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed (src/OmrTwapOracle.sol#234)\n",
       "locations": [
         {
           "kind": "function",
           "name": "_currentCumulativePrices",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
             218,
             219,
             220,
@@ -42910,7 +42910,16 @@
             226,
             227,
             228,
-            229
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238
           ]
         },
         {
@@ -42918,7 +42927,7 @@
           "name": "price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            225
+            234
           ]
         }
       ],
@@ -42930,25 +42939,25 @@
       ],
       "previousTriage": null,
       "status": "intentional-fixed-point-rounding",
-      "rationale": "Reserve ratio encoded as canonical Uniswap V2 UQ112x112 integer first, then multiplied by elapsed seconds into cumulative price. The loss is defined fractional fixed-point precision; no random outcome or token-balance multiplication is involved. src/OmrTwapOracle.sol:212-229 (scan span; refreshed source may shift).",
+      "rationale": "Reserve ratio encoded as canonical Uniswap V2 UQ112x112 integer first, then multiplied by elapsed seconds into cumulative price. The loss is defined fractional fixed-point precision; no random outcome or token-balance multiplication is involved. src/OmrTwapOracle.sol:218-238 (scan span; refreshed source may shift).",
       "scope": "project-source"
     },
     {
-      "id": "3a9e7782d53bf5d94f48dcb0de3cb060e0d8fbf215debe7fae5338aa08b50cf6",
+      "id": "b3e7dacf5d81c78d880b3bf5c3fcf90df38df3937e88b9157e806962786e3ad5",
       "check": "incorrect-equality",
       "impact": "Medium",
       "confidence": "High",
-      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#203-206) uses a dangerous strict equality:\n\t- avg == 0 (src/OmrTwapOracle.sol#204)\n",
+      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#209-212) uses a dangerous strict equality:\n\t- avg == 0 (src/OmrTwapOracle.sol#210)\n",
       "locations": [
         {
           "kind": "function",
           "name": "_decode",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            203,
-            204,
-            205,
-            206
+            209,
+            210,
+            211,
+            212
           ]
         },
         {
@@ -42956,7 +42965,7 @@
           "name": "avg == 0",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            204
+            210
           ]
         }
       ],
@@ -42972,21 +42981,21 @@
       "scope": "project-source"
     },
     {
-      "id": "6aae46d1dde673d6299600b2ea9029cc7926e0c0d913642efc450d51634ac0b8",
+      "id": "589dbd0d7dd79080df3684c84e970b491393f58a3983c42c2bf711d791e9ee0e",
       "check": "timestamp",
       "impact": "Low",
       "confidence": "Medium",
-      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#203-206) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- avg == 0 (src/OmrTwapOracle.sol#204)\n",
+      "description": "OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#209-212) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- avg == 0 (src/OmrTwapOracle.sol#210)\n",
       "locations": [
         {
           "kind": "function",
           "name": "_decode",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            203,
-            204,
-            205,
-            206
+            209,
+            210,
+            211,
+            212
           ]
         },
         {
@@ -42994,7 +43003,7 @@
           "name": "avg == 0",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            204
+            210
           ]
         }
       ],
@@ -43010,19 +43019,72 @@
       "scope": "project-source"
     },
     {
-      "id": "9dbfdb8008cd14b0dc782f7458154862baaa27639622e887e621af9e8b0714d4",
+      "id": "da791be8978d9a3d2495e5edb5ad0e383a5e92ceb3f05acde344b226e8c8f8d4",
       "check": "timestamp",
       "impact": "Low",
       "confidence": "Medium",
-      "description": "OmrTwapOracle.update() (src/OmrTwapOracle.sol#142-191) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- fullElapsed > PERIOD * MAX_WINDOW_MULT (src/OmrTwapOracle.sol#166)\n\t- timeElapsed < PERIOD (src/OmrTwapOracle.sol#177)\n\t- fullElapsed > type()(uint32).max (src/OmrTwapOracle.sol#173)\n",
+      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#218-238) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- tsLast != blockTimestamp (src/OmrTwapOracle.sol#231)\n",
+      "locations": [
+        {
+          "kind": "function",
+          "name": "_currentCumulativePrices",
+          "file": "src/OmrTwapOracle.sol",
+          "lines": [
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238
+          ]
+        },
+        {
+          "kind": "node",
+          "name": "tsLast != blockTimestamp",
+          "file": "src/OmrTwapOracle.sol",
+          "lines": [
+            231
+          ]
+        }
+      ],
+      "occurrences": [
+        {
+          "file": "omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmrTwapOracle.json",
+          "index": 5
+        }
+      ],
+      "previousTriage": null,
+      "status": "expected-time-boundary",
+      "rationale": "Reported comparison uses explicit deadline, finalized epoch freshness, campaign/vesting/UTC caps or cooldown. No random selection inferred; timestamp/sequencer availability and boundary handling remain external assumptions. Exact predicate and location retained.",
+      "scope": "project-source"
+    },
+    {
+      "id": "ea1cce512f8d8b0cb80a0a4757ca762616ce07eb9d4911ea9d90013449e84302",
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "OmrTwapOracle.update() (src/OmrTwapOracle.sol#144-197) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32 (src/OmrTwapOracle.sol#170)\n\t- timeElapsed < PERIOD (src/OmrTwapOracle.sol#182)\n\t- fullElapsed > type()(uint32).max (src/OmrTwapOracle.sol#178)\n",
       "locations": [
         {
           "kind": "function",
           "name": "update",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            142,
-            143,
             144,
             145,
             146,
@@ -43070,15 +43132,21 @@
             188,
             189,
             190,
-            191
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197
           ]
         },
         {
           "kind": "node",
-          "name": "fullElapsed > PERIOD * MAX_WINDOW_MULT",
+          "name": "fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            166
+            170
           ]
         },
         {
@@ -43086,7 +43154,7 @@
           "name": "timeElapsed < PERIOD",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            177
+            182
           ]
         },
         {
@@ -43094,59 +43162,7 @@
           "name": "fullElapsed > type()(uint32).max",
           "file": "src/OmrTwapOracle.sol",
           "lines": [
-            173
-          ]
-        }
-      ],
-      "occurrences": [
-        {
-          "file": "omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmrTwapOracle.json",
-          "index": 5
-        }
-      ],
-      "previousTriage": null,
-      "status": "expected-time-boundary",
-      "rationale": "Reported comparison uses explicit deadline, finalized epoch freshness, campaign/vesting/UTC caps or cooldown. No random selection inferred; timestamp/sequencer availability and boundary handling remain external assumptions. Exact predicate and location retained.",
-      "scope": "project-source"
-    },
-    {
-      "id": "fc42348e39f14736cd9b08f7d615d3997acb184abfd5d2865e2953ad8403b99e",
-      "check": "timestamp",
-      "impact": "Low",
-      "confidence": "Medium",
-      "description": "OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#212-229) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- tsLast != blockTimestamp (src/OmrTwapOracle.sol#222)\n",
-      "locations": [
-        {
-          "kind": "function",
-          "name": "_currentCumulativePrices",
-          "file": "src/OmrTwapOracle.sol",
-          "lines": [
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
-            218,
-            219,
-            220,
-            221,
-            222,
-            223,
-            224,
-            225,
-            226,
-            227,
-            228,
-            229
-          ]
-        },
-        {
-          "kind": "node",
-          "name": "tsLast != blockTimestamp",
-          "file": "src/OmrTwapOracle.sol",
-          "lines": [
-            222
+            178
           ]
         }
       ],

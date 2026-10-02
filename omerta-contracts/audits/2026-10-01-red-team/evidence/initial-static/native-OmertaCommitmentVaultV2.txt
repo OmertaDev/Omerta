@@ -1,0 +1,83 @@
+
+Detector: reentrancy-no-eth
+Reentrancy in OmertaCommitmentVaultV2.commit(uint256,uint64,uint32) (src/market-v2/OmertaCommitmentVaultV2.sol#137-160):
+	External calls:
+	- positionManager.safeTransferFrom(msg.sender,address(this),tokenId) (src/market-v2/OmertaCommitmentVaultV2.sol#154)
+	State variables written after the call(s):
+	- _checkpoint(tokenId,p) (src/market-v2/OmertaCommitmentVaultV2.sol#158)
+		- c.available -= reward (src/market-v2/OmertaCommitmentVaultV2.sol#254)
+		- c.paidOrOwed += reward (src/market-v2/OmertaCommitmentVaultV2.sol#255)
+	OmertaCommitmentVaultV2._campaigns (src/market-v2/OmertaCommitmentVaultV2.sol#69) can be used in cross function reentrancies:
+	- OmertaCommitmentVaultV2.campaign(uint64) (src/market-v2/OmertaCommitmentVaultV2.sol#108)
+	- OmertaCommitmentVaultV2.createCampaign(OmertaCommitmentVaultV2.CampaignTerms) (src/market-v2/OmertaCommitmentVaultV2.sol#111-122)
+	- OmertaCommitmentVaultV2.fundCampaign(uint64) (src/market-v2/OmertaCommitmentVaultV2.sol#124-130)
+	- _checkpoint(tokenId,p) (src/market-v2/OmertaCommitmentVaultV2.sol#158)
+		- p.lastObservedAt = 0 (src/market-v2/OmertaCommitmentVaultV2.sol#268)
+		- p.lastDepth = 0 (src/market-v2/OmertaCommitmentVaultV2.sol#269)
+		- p.generation = pauseGeneration (src/market-v2/OmertaCommitmentVaultV2.sol#270)
+		- p.usefulDepthSeconds += depthSeconds (src/market-v2/OmertaCommitmentVaultV2.sol#248)
+		- p.rewardCredited += reward (src/market-v2/OmertaCommitmentVaultV2.sol#253)
+		- p.lastEpoch = s.epoch (src/market-v2/OmertaCommitmentVaultV2.sol#260)
+		- p.lastObservedAt = s.observedAt (src/market-v2/OmertaCommitmentVaultV2.sol#261)
+		- p.lastDepth = depth (src/market-v2/OmertaCommitmentVaultV2.sol#262)
+		- p.generation = pauseGeneration (src/market-v2/OmertaCommitmentVaultV2.sol#263)
+	OmertaCommitmentVaultV2.commitments (src/market-v2/OmertaCommitmentVaultV2.sol#70) can be used in cross function reentrancies:
+	- OmertaCommitmentVaultV2.commitment(uint256) (src/market-v2/OmertaCommitmentVaultV2.sol#109)
+	- OmertaCommitmentVaultV2.commitments (src/market-v2/OmertaCommitmentVaultV2.sol#70)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+
+Detector: uninitialized-local
+OmertaCommitmentVaultV2._checkpoint(uint256,OmertaCommitmentVaultV2.Commitment).reward (src/market-v2/OmertaCommitmentVaultV2.sol#242) is a local variable never initialized
+OmertaCommitmentVaultV2._checkpoint(uint256,OmertaCommitmentVaultV2.Commitment).depthSeconds (src/market-v2/OmertaCommitmentVaultV2.sol#241) is a local variable never initialized
+OmertaCommitmentVaultV2._checkpoint(uint256,OmertaCommitmentVaultV2.Commitment).s (src/market-v2/OmertaCommitmentVaultV2.sol#231) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: unused-return
+OmertaCommitmentVaultV2.usefulDepth(uint256,IOmertaMarketStateV2.Snapshot,uint24) (src/market-v2/OmertaCommitmentVaultV2.sol#212-228) ignores return value by (None,info) = positionManager.getPoolAndPositionInfo(tokenId) (src/market-v2/OmertaCommitmentVaultV2.sol#215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: reentrancy-benign
+Reentrancy in OmertaCommitmentVaultV2.commit(uint256,uint64,uint32) (src/market-v2/OmertaCommitmentVaultV2.sol#137-160):
+	External calls:
+	- positionManager.safeTransferFrom(msg.sender,address(this),tokenId) (src/market-v2/OmertaCommitmentVaultV2.sol#154)
+	State variables written after the call(s):
+	- _acceptingFrom = address(0) (src/market-v2/OmertaCommitmentVaultV2.sol#155)
+	- _checkpoint(tokenId,p) (src/market-v2/OmertaCommitmentVaultV2.sol#158)
+		- availableBudget -= reward (src/market-v2/OmertaCommitmentVaultV2.sol#256)
+	- _checkpoint(tokenId,p) (src/market-v2/OmertaCommitmentVaultV2.sol#158)
+		- rewardLiability += reward (src/market-v2/OmertaCommitmentVaultV2.sol#257)
+	- _checkpoint(tokenId,p) (src/market-v2/OmertaCommitmentVaultV2.sol#158)
+		- rewards[p.depositor] += reward (src/market-v2/OmertaCommitmentVaultV2.sol#258)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+OmertaCommitmentVaultV2.createCampaign(OmertaCommitmentVaultV2.CampaignTerms) (src/market-v2/OmertaCommitmentVaultV2.sol#111-122) uses timestamp for comparisons
+	Dangerous comparisons:
+	- terms.startsAt < block.timestamp || terms.endsAt <= terms.startsAt || terms.endsAt - terms.startsAt > 31536000 || terms.minLock < 3600 || terms.maxLock < terms.minLock || terms.maxLock > 31536000 || terms.maxObservationGap == 0 || terms.maxObservationGap > 86400 || terms.referenceHalfWidth == 0 || terms.referenceHalfWidth > 50_000 || terms.maxDepthWei == 0 || terms.maxRewardPerPosition == 0 || terms.rewardWeiPerEthDay == 0 || msg.value == 0 (src/market-v2/OmertaCommitmentVaultV2.sol#112-117)
+OmertaCommitmentVaultV2.fundCampaign(uint64) (src/market-v2/OmertaCommitmentVaultV2.sol#124-130) uses timestamp for comparisons
+	Dangerous comparisons:
+	- c.terms.endsAt == 0 || block.timestamp >= c.terms.endsAt || msg.value == 0 (src/market-v2/OmertaCommitmentVaultV2.sol#126)
+OmertaCommitmentVaultV2.commit(uint256,uint64,uint32) (src/market-v2/OmertaCommitmentVaultV2.sol#137-160) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < t.startsAt || block.timestamp >= t.endsAt || duration < t.minLock || duration > t.maxLock || block.timestamp + duration > t.endsAt (src/market-v2/OmertaCommitmentVaultV2.sol#140-141)
+OmertaCommitmentVaultV2.withdraw(uint256,address) (src/market-v2/OmertaCommitmentVaultV2.sol#178-186) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < p.maturesAt (src/market-v2/OmertaCommitmentVaultV2.sol#181)
+OmertaCommitmentVaultV2.recoverUnusedBudget(uint64,address) (src/market-v2/OmertaCommitmentVaultV2.sol#200-210) uses timestamp for comparisons
+	Dangerous comparisons:
+	- c.terms.endsAt == 0 || block.timestamp <= uint256(c.terms.endsAt) + maxObservationAge || recipient == address(0) || recipient == address(this) (src/market-v2/OmertaCommitmentVaultV2.sol#202-203)
+OmertaCommitmentVaultV2._checkpoint(uint256,OmertaCommitmentVaultV2.Commitment) (src/market-v2/OmertaCommitmentVaultV2.sol#230-265) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! s.valid || s.epoch == 0 || s.minLiquidity < minimumMarketLiquidity || s.omrPerEth == 0 || s.observedAt > block.timestamp || block.timestamp - s.observedAt > maxObservationAge || s.observedAt < p.depositedAt (src/market-v2/OmertaCommitmentVaultV2.sol#234-236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in OmertaCommitmentVaultV2.claimReward(address) (src/market-v2/OmertaCommitmentVaultV2.sol#188-196):
+	- (ok,None) = recipient.call{value: amount}() (src/market-v2/OmertaCommitmentVaultV2.sol#193)
+Low level call in OmertaCommitmentVaultV2.recoverUnusedBudget(uint64,address) (src/market-v2/OmertaCommitmentVaultV2.sol#200-210):
+	- (ok,None) = recipient.call{value: amount}() (src/market-v2/OmertaCommitmentVaultV2.sol#207)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\market-v2\OmertaCommitmentVaultV2.sol analyzed (41 contracts with 102 detectors), 14 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\market-v2\OmertaCommitmentVaultV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

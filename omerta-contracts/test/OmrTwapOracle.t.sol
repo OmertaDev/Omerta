@@ -315,6 +315,23 @@ contract OmrTwapOracleTest is Test {
         assertGt(price, 0);
     }
 
+    function test_idle_pair_counterfactual_wrap_discards_and_recovers() public {
+        vm.warp(block.timestamp + (uint256(1) << 32) - 100);
+        OmrTwapOracle fresh = new OmrTwapOracle(
+            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+        );
+        vm.warp(block.timestamp + PERIOD);
+        fresh.update();
+        (uint256 price, uint256 updatedAt) = fresh.consult();
+        assertEq(price, 0, "discard a counterfactual source timestamp wrap");
+        assertEq(updatedAt, 0);
+        vm.warp(block.timestamp + PERIOD);
+        fresh.update();
+        (price, updatedAt) = fresh.consult();
+        assertApproxEqRel(price, 5000e18, 1e15);
+        assertEq(updatedAt, block.timestamp);
+    }
+
     function test_empty_reserves_revert_rather_than_divide_by_zero() public {
         MockPair empty = new MockPair(weth, omr, 0, 0);
         factory.register(omr, weth, address(empty));

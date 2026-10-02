@@ -149,18 +149,18 @@
       "seed": "0x20261001"
     },
     "finalRemediationSuite": {
-      "failed": 0,
-      "passed": 1290,
       "suites": 89,
-      "seed": "0x20261002",
-      "status": "completed",
-      "fuzzRuns": 512,
-      "output": "evidence/forge-final-verified.txt",
-      "exit": 0,
-      "invariantDepth": 128,
-      "skipped": 0,
+      "output": "evidence/forge-source-wrap-final.txt",
       "invariantRuns": 128,
-      "seconds": 92.17
+      "seconds": 86.53,
+      "status": "completed after V2 pair-source-age refinement",
+      "failed": 0,
+      "exit": 0,
+      "fuzzRuns": 512,
+      "skipped": 0,
+      "passed": 1293,
+      "invariantDepth": 128,
+      "seed": "0x20261003"
     },
     "focusedRemediation": {
       "failed": 0,
@@ -182,6 +182,20 @@
       "scripts": 5,
       "tests": 252,
       "openLeads": 0
+    },
+    "priorSeed02RemediationSuite": {
+      "failed": 0,
+      "passed": 1290,
+      "suites": 89,
+      "seed": "0x20261002",
+      "status": "completed",
+      "fuzzRuns": 512,
+      "output": "evidence/forge-final-verified.txt",
+      "exit": 0,
+      "invariantDepth": 128,
+      "skipped": 0,
+      "invariantRuns": 128,
+      "seconds": 92.17
     }
   },
   "daybreakHighCrosscheck": {
@@ -205,7 +219,14 @@
     ],
     "preFixEvidence": "Original failing proofs and intermediate integration failures retained under distinct filenames",
     "sourcePins": "final-source-hashes.json",
-    "status": "local remediation and verification complete; remote CI/merge recorded separately"
+    "status": "local remediation and verification complete; remote CI/merge recorded separately",
+    "timestampRefinement": {
+      "output": "evidence/forge-source-wrap-final.txt",
+      "preFixEvidence": "retained bad-price witness and pre-pair-age source/pin snapshots",
+      "finalCombinedStatus": "complete; seed03 full suite and final source/artifact pins refreshed",
+      "change": "V2 oracle private baseline pair-source age guard; wrapped source-age interval discarded",
+      "focusedPassed": 27
+    }
   },
   "daybreakRemediationReview": {
     "model": "gpt-daybreak-blue-latest",
@@ -231,5 +252,13 @@
     "conclusion": "No confirmed new patch correctness or compatibility bug; source-only"
   },
   "releaseSourcePins": "release-source-hashes.json",
-  "releaseSourceComparison": "97 Git blobs match reviewed source after newline normalization"
+  "releaseSourceComparison": "97 Git blobs match reviewed source after newline normalization",
+  "daybreakPairSourceAgeReview": {
+    "status": "completed scoped fourth review; no concrete defect",
+    "model": "gpt-daybreak-blue-latest",
+    "report": "daybreak-v2-source-age.md",
+    "ownForge": "failed detecting home directory; not counted",
+    "mechanicalEvidence": "parent final source-pinned 1293-test run"
+  },
+  "finalArtifactCount": 180
 }

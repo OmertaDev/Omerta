@@ -178,7 +178,7 @@
   "src/market-v2/OmertaReserveFundingV2.sol": "0x7a9ed8999915c161e70916d392a20db9ae93d3e6ee7c782838578fe2919071fc",
   "src/OMR.sol": "0x0b77d889d45c61c40a420914a3a6f765da5656b4bcbf9279443c861e5d343282",
   "src/OMRStaking.sol": "0xde5fc569680bbfd487f760c2744fd29868026b58c426e11d55d7aaf15c77b973",
-  "src/OmrTwapOracle.sol": "0x5e3452b4afed6e7083b9eaae8b4d69b1ec501801534bbd0f146802f812881704",
+  "src/OmrTwapOracle.sol": "0x5e04276ac664860d7b5213706c554cc3a0dda151ae6c1c4e2ec82b9d72667dae",
   "src/OmrV4TwapOracle.sol": "0xe789920931917009d2566da67dc88c9ba9f1858e776c2a0a21f4bd76899c0192",
   "src/PreVoteBudgetBook.sol": "0x4cf119d131a1378bccff4872bdf159f4fe2a0b2d5f7aa9d06d98abee39b7d2df",
   "src/ProtocolLiquidityVault.sol": "0x9628e95fef56a178d85104f602eddabbea5f1187baf2608dd9d7ea12805972e0",

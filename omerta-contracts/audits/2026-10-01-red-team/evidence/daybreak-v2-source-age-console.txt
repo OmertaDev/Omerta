@@ -1,0 +1,2268 @@
+Reading additional input from stdin...
+2026-10-02T17:31:50.380650Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/alexandria/0.3.0/.codex-plugin/plugin.json
+2026-10-02T17:31:50.384263Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/alexandria/0.3.0/.codex-plugin/plugin.json
+2026-10-02T17:31:50.408432Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/hexaemeron/1.6.5/.codex-plugin/plugin.json
+2026-10-02T17:31:50.432890Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/hexaemeron/1.6.5/.codex-plugin/plugin.json
+2026-10-02T17:31:50.493593Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-10-02T17:31:50.493626Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-10-02T17:31:50.494951Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/tabularium/0.3.1/.codex-plugin/plugin.json
+2026-10-02T17:31:50.497131Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/tabularium/0.3.1/.codex-plugin/plugin.json
+2026-10-02T17:31:50.506783Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.159.2
+--------
+workdir: C:\Users\Jorge\Documents\Omerta
+model: gpt-daybreak-blue-latest
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 01a0fdac-1ce7-74f0-822e-83c47f66356a
+--------
+user
+Review only the local OmrTwapOracle source-age rollover remediation in omerta-contracts/src/OmrTwapOracle.sol and regression test_idle_pair_counterfactual_wrap_discards_and_recovers in omerta-contracts/test/OmrTwapOracle.t.sol. This is our authorized defensive code review. Check arithmetic correctness, fail-closed recovery and public ABI preservation. Do not edit files or run long tests. Report concrete remaining issues or uncertainty. Prior bad-price evidence is v2-source-wrap-before.txt in the red-team audit directory.
+2026-10-02T17:31:51.017968Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/alexandria/0.3.0/.codex-plugin/plugin.json
+2026-10-02T17:31:51.020076Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/alexandria/0.3.0/.codex-plugin/plugin.json
+2026-10-02T17:31:51.035348Z  WARN codex_mcp::rmcp_client: MCP server startup failed server_name="contextplus" error=handshaking with MCP server failed: connection closed: initialize response: connection closed: initialize response
+2026-10-02T17:31:51.059234Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/hexaemeron/1.6.5/.codex-plugin/plugin.json
+2026-10-02T17:31:51.079363Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/hexaemeron/1.6.5/.codex-plugin/plugin.json
+2026-10-02T17:31:51.133447Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-10-02T17:31:51.133476Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-10-02T17:31:51.147492Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/tabularium/0.3.1/.codex-plugin/plugin.json
+2026-10-02T17:31:51.148898Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/tabularium/0.3.1/.codex-plugin/plugin.json
+2026-10-02T17:31:51.281525Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/.tmp/marketplaces/wildcat-labs/plugins/hexaemeron/.codex-plugin/plugin.json
+2026-10-02T17:31:51.283657Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/.tmp/marketplaces/wildcat-labs/plugins/tabularium/.codex-plugin/plugin.json
+2026-10-02T17:31:51.283934Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/.tmp/marketplaces/wildcat-labs/plugins/alexandria/.codex-plugin/plugin.json
+2026-10-02T17:31:51.459453Z  WARN codex_mcp::rmcp_client: MCP server startup failed server_name="contextplus" error=handshaking with MCP server failed: connection closed: initialize response: connection closed: initialize response
+warning: Exceeded skills context budget. All skill descriptions were removed and 92 additional skills were not included in the model-visible skills list.
+codex
+I’ll review the two named code areas and the pinned prior evidence, then run only focused, non-mutating checks if they’re quick. I’m using the repository’s security-review policy because this is an authorized defensive review.
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content -Raw -LiteralPath 'C:\\Users\\Jorge\\.codex\\plugins\\cache\\wildcat-labs\\hexaemeron\\1.6.5\\skills\\solidity-auditor\\SKILL.md'" in C:\Users\Jorge\Documents\Omerta
+ succeeded in 540ms:
+---
+name: solidity-auditor
+description: Security audit of Solidity code while you develop. Trigger on "audit", "check this contract", "review for security". Modes - default (full repo) or a specific filename.
+---
+
+# Smart Contract Security Audit
+
+You are the orchestrator of a parallelized smart contract security audit.
+
+## Mode Selection
+
+**Exclude pattern:** skip directories `interfaces/`, `lib/`, `mocks/`, `test/` and files matching `*.t.sol`, `*Test*.sol` or `*Mock*.sol`.
+
+- **Default** (no arguments): scan all `.sol` files using the exclude pattern. Use Bash `find` (not Glob).
+- **`$filename ...`**: scan the specified file(s) only.
+
+**Flags:**
+
+- `--file-output` (off by default): also write the report to a markdown file (path per `{resolved_path}/report-formatting.md`). Never write a report file unless explicitly passed.
+## Orchestration
+
+**Turn 1 - Discover.** Print the banner, then make these parallel tool calls in one message:
+
+a. Bash `find` for in-scope `.sol` files per mode selection
+b. Glob for `**/references/hacking-agents/shared-rules.md` - extract the `references/` directory (two levels up) as `{resolved_path}`
+c. ToolSearch `select:Agent`
+d. Read the local `VERSION` file from the same directory as this skill
+e. Bash `curl -sf https://raw.githubusercontent.com/pashov/skills/main/solidity-auditor/VERSION`
+f. Bash `mktemp -d ./.audit-XXXXXX`  store as `{bundle_dir}`
+
+If the remote VERSION fetch succeeds and differs from local, print `?? You are not using the latest version. Please upgrade for best security coverage. See https://github.com/pashov/skills`. If it fails, skip silently.
+
+**Turn 1b - Model selection (Claude Code only).** This turn applies ONLY when both `AskUserQuestion` and the `Agent` tool (with a `model` parameter) are available in your runtime - i.e., Claude Code. On Codex, Gemini, Cursor's native agent, or any runtime without these, SKIP this turn entirely, leave `{agent_model}` unset, and proceed to Turn 2. Do NOT emit the question as prose. Do NOT substitute any other mechanism.
+
+On Claude Code:
+
+1. Read your system prompt to detect your own model **family** (Opus, Sonnet, or Haiku). Ignore the version digits - the Agent tool's `model` parameter takes the family name (`"opus"` / `"sonnet"` / `"haiku"`), and the runtime resolves to the latest version in that family.
+2. Call `AskUserQuestion` with:
+   - Question: `"Which Claude model should the 12 audit agents use?"`
+   - Three single-select options. Mark the orchestrator's own family as `(Recommended)` and place it first.
+   - On each option, set the `description` field to `latest`.
+   - On each option, set the `preview` field verbatim (preserve all whitespace exactly - the box widths must stay equal across all three):
+
+   Opus preview:
+
+   ```
+   ����������������������������������������������������������Ŀ
+   �  opus  �  highest reasoning  �  most expensive           �
+   ������������������������������������������������������������
+   ```
+
+   Sonnet preview:
+
+   ```
+   ����������������������������������������������������������Ŀ
+   �  sonnet  �  balanced reasoning  �  mid cost              �
+   ������������������������������������������������������������
+   ```
+
+   Haiku preview:
+
+   ```
+   ����������������������������������������������������������Ŀ
+   �  haiku  �  lowest reasoning  �  cheapest                 �
+   ������������������������������������������������������������
+   ```
+3. Store the runner's choice as `{agent_model}`. If no answer, default to the orchestrator's own model.
+
+**Turn 2 - Prepare.** In one message, make parallel tool calls: (a) Read `{resolved_path}/report-formatting.md`, (b) Read `{resolved_path}/judging.md`.
+
+Then build all bundles in a single Bash command using `cat` (not shell variables or heredocs):
+
+1. `{bundle_dir}/source.md` - ALL in-scope `.sol` files, each with a `### path` header and fenced code block.
+2. Agent bundles = `source.md` + agent-specific files:
+
+| Bundle                | Appended files (relative to `{resolved_path}`)                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent-1-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/math-precision-agent.md` + `hacking-agents/shared-rules.md`                            |
+| `agent-2-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/access-control-agent.md` + `hacking-agents/shared-rules.md`                            |
+| `agent-3-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/economic-security-agent.md` + `hacking-agents/shared-rules.md`                         |
+| `agent-4-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/execution-trace-agent.md` + `hacking-agents/shared-rules.md`                           |
+| `agent-5-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/invariant-agent.md` + `hacking-agents/shared-rules.md`                                 |
+| `agent-6-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/periphery-agent.md` + `hacking-agents/shared-rules.md`                                 |
+| `agent-7-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/first-principles-agent.md` + `hacking-agents/shared-rules.md`                          |
+| `agent-8-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/asymmetry-agent.md` + `hacking-agents/shared-rules.md`                                 |
+| `agent-9-bundle.md`   | `source.md` + `senior-auditor-sop.md` + `hacking-agents/boundary-agent.md` + `hacking-agents/shared-rules.md`                                  |
+| `agent-10-bundle.md`  | `source.md` + `senior-auditor-sop.md` + `hacking-agents/numerical-gap-agent.md` + `hacking-agents/shared-rules.md`                             |
+| `agent-11-bundle.md`  | `source.md` + `senior-auditor-sop.md` + `hacking-agents/trust-gap-agent.md` + `hacking-agents/shared-rules.md`                                 |
+| `agent-12-bundle.md`  | `source.md` + `senior-auditor-sop.md` + `hacking-agents/flow-gap-agent.md` + `hacking-agents/shared-rules.md`                                  |
+
+Each bundle = source.md + SOP + specialty + shared-rules. Agents read the bundle; no Read/Grep needed for the initial scan. Targeted Read/Grep allowed for cross-file investigation.
+
+Print line counts for every bundle and `source.md`. Do NOT inline source code into the Agent call prompt itself.
+
+**Turn 3a - Spawn all 12 agents.** In one message, spawn all 12 agents as **parallel BACKGROUND Agent calls** (`run_in_background=true`). If Turn 1b set `{agent_model}`, pass `model={agent_model}` on every Agent call. If `{agent_model}` is unset (Turn 1b skipped - Codex, Gemini, others), omit the `model` parameter entirely - do NOT substitute any default. The orchestrator will receive a notification when each agent completes - do NOT poll or sleep. Single phase, no later spawns. Proceed to Turn 3b only after all 12 have notified completion.
+
+Agents 1-9 use the **single-specialty prompt** (Turn 3a-i). Agents 10-12 use the **gap-hunter prompt** (Turn 3a-ii).
+
+**Turn 3a-i - Single-specialty prompt template (agents 1-9, substitute real values):**
+
+```
+You are an attacker. Your specialty, mindset, source, and output rules
+are in your bundle. Read it fully before producing findings.
+
+Read first:
+- {bundle_dir}/agent-N-bundle.md (XXXX lines) - source + SOP + specialty + shared rules.
+
+The bundle contains all in-scope source. Do NOT re-read in-scope files
+for the initial scan. Use Read/Grep only for cross-file searches or
+out-of-scope context (interfaces/, lib/, mocks/, test/).
+
+What a finding looks like:
+- file, function
+- root cause - the one-sentence code-level defect
+- minimal fix - the smallest change that eliminates the defect
+- proof - concrete numbers, a trace, or quoted code
+
+Without concrete proof, it's a LEAD, not a finding. Leads are honest
+about what you couldn't verify - they're not failures, they're
+calibration. Emit them.
+
+Don't skim. Don't trust your first read. Trust your discomfort.
+
+Output format: see shared-rules.md inside your bundle.
+```
+
+**Turn 3a-ii - Gap-hunter prompt template (agents 10-12, substitute real values):**
+
+```
+You are an attacker. Your gap-hunter specialty, mindset, source, and
+output rules are in your bundle. Read it fully before producing findings.
+
+Read first:
+- {bundle_dir}/agent-N-bundle.md (XXXX lines) - source + SOP + gap-hunter specialty + shared rules.
+
+The bundle contains all in-scope source. Do NOT re-read in-scope files
+for the initial scan. Use Read/Grep only for cross-file searches or
+out-of-scope context (interfaces/, lib/, mocks/, test/).
+
+What a finding looks like:
+- file, function
+- seam - which two or three lenses combine
+- root cause - the one-sentence code-level defect that lives at the seam
+- minimal fix - the smallest change that eliminates the defect
+- proof - concrete numbers, a trace, or quoted code showing the seam
+
+Without concrete proof of the seam, it's a LEAD, not a finding.
+Leads are honest about what you couldn't verify - they're not failures,
+they're calibration. Emit them.
+
+Don't skim. Don't trust your first read. Trust your discomfort.
+
+Output format: see shared-rules.md inside your bundle (gap-hunter-specific
+output fields are in your specialty file).
+```
+
+**Turn 3b - Wait for all 12 agents to complete.** Once every one of the 12 spawned agents has notified completion, proceed to Turn 4. Do NOT proceed to dedup until every agent has finished - let them run to natural completion. Do NOT poll or sleep; act only on completion notifications.
+
+**Turn 4 - Deduplicate, validate & output.** Single-pass: deduplicate all agent results, gate-evaluate, and produce the final report in one turn. Do NOT print an intermediate dedup list - go straight to the report.
+
+1. **Dedup.** Parse every FINDING and LEAD from the 12 agents. Group by `group_key` (Contract | function | bug-class). Exact-match first; merge synonymous bug_class within same (Contract, function). Keep best per group, number sequentially, annotate `[agents: N]`.
+
+   **MANDATORY - Wide-description (group_key).** Merged group with distinct mechanisms (different `fix:`, code-level cause, or attack path) MUST list every mechanism. No dropping. Same function can have multiple coexisting bugs at the same group_key - all MUST appear.
+
+   **MANDATORY - Function-level second pass (after group_key dedup).** Run at (Contract, function), ignoring bug_class. Agents often label coexisting bugs with different bug_class tags but reference multiple mechanisms in the body. For every (Contract, function) with multiple final findings: scan body (description, path, proof, fix) of every constituent for distinct mechanisms across bug_class boundaries. Every mechanism in any constituent body MUST appear in �1 final finding.
+
+   **MANDATORY - Function isolation (HARD).** NEVER merge across different `function:` fields. Dedup only within (Contract, function). Different function = different bug. Second pass above stays WITHIN (Contract, function), never across.
+
+   **MANDATORY - Fix preservation (HARD GATE).** Before writing merged `fix:` on a multi-finding (Contract, function):
+   1. Collect every raw `fix:` from agents flagging the tuple.
+   2. Group by ADD-lines (`+` lines, or equivalent require/assignment).
+   3. Distinct if ADD-lines differ in: called function/expression (e.g., `require(msg.value == amount)` vs `require(zrc20 != _ETH_ADDRESS_)`), check direction (validate/restrict/ban), or checked parameter.
+   4. �2 distinct  present as Option A, B, . - one block per distinct fix, verbatim from agent text (no paraphrase).
+   5. Label intuitively: validate / restrict / allow-and-handle / ban-path.
+
+   **Output format when 2+ distinct fixes exist:**
+
+   ```
+   **Fix (Option A - <label>)**:
+
+   ```diff
+   <verbatim diff from raw agent N1's fix>
+   ```
+
+   **Fix (Option B - <label>)**:
+
+   ```diff
+   <verbatim diff from raw agent N2's fix>
+   ```
+   ```
+
+   **Inline check before printing**: count distinct fixes from raw for this (Contract, function). �2 distinct but merged shows 1  violation, add alternatives.
+
+   **MANDATORY - Completeness (HARD GATE).** Before print: list every unique (Contract, function, bug-class) in any raw FINDING/LEAD across the 12 agents. Every unique (Contract, function) MUST have �1 item in final. Zero = silent drop, fix it. Multiple bug-class within same (Contract, function) MAY collapse to one item (wide-description), but the (Contract, function) MUST survive. Print inline before report: `Completeness: N unique (Contract, function) in raw, N covered in final.`
+
+   Composite chains: if A's output feeds B's precondition AND combined impact > either alone, add `Chain: [A] + [B]` at conf = min(A, B). Most audits: 0-2.
+
+2. **Gate.** Run each deduped finding through the four gates in `judging.md` (no skip, no reorder, no revisit after verdict).
+
+   **Single-pass:** every relevant code path ONCE in fixed order (constructor  setters  swap  mint  burn  liquidate). One-line verdict: `BLOCKS` / `ALLOWS` / `IRRELEVANT` / `UNCERTAIN`. `UNCERTAIN = ALLOWS`. Commit, no re-examination.
+
+3. **Lead promotion / rejection.**
+   - LEAD  FINDING (conf 75) if: full exploit chain in source, OR `[agents: 2+]` demoted (not rejected) same issue.
+   - `[agents: 2+]` does NOT override a code path that interrupts attack before harm - demote to LEAD if execution uncertain.
+   - No deployer-intent reasoning - what code allows, not how deployer might use it.
+
+4. **Format/print** per `report-formatting.md`. Exclude rejected. If `--file-output`: also write to file. Do NOT re-read source to "verify the most critical claim" - agents did that, dedup filtered. Re-verification costs ~5min, rarely changes verdicts. Skip.
+
+5. **Auto-clean.** After print (and `--file-output` write): `rm -rf {bundle_dir}`. Bundle dir = transient build state, not an artifact. Don't skip. For debugging: copy bundle elsewhere before re-running.
+
+
+## Banner
+
+Before doing anything else, print this exactly:
+
+```
+
+�����ۻ  ����ۻ ������ۻ�ۻ  �ۻ �����ۻ �ۻ   �ۻ     ������ۻ�ۻ  �ۻ�ۻ�ۻ     �ۻ     ������ۻ
+������ۻ������ۻ������ͼ�ۺ  �ۺ�������ۻ�ۺ   �ۺ     ������ͼ�ۺ ��ɼ�ۺ�ۺ     �ۺ     ������ͼ
+������ɼ������ۺ������ۻ������ۺ�ۺ   �ۺ�ۺ   �ۺ     ������ۻ�����ɼ �ۺ�ۺ     �ۺ     ������ۻ
+�����ͼ ������ۺ������ۺ������ۺ�ۺ   �ۺ��ۻ ��ɼ     ������ۺ�����ۻ �ۺ�ۺ     �ۺ     ������ۺ
+�ۺ     �ۺ  �ۺ������ۺ�ۺ  �ۺ�������ɼ �����ɼ      ������ۺ�ۺ  �ۻ�ۺ������ۻ������ۻ������ۺ
+�ͼ     �ͼ  �ͼ������ͼ�ͼ  �ͼ �����ͼ   ���ͼ       ������ͼ�ͼ  �ͼ�ͼ������ͼ������ͼ������ͼ
+
+```
+
+
+codex
+The Solidity-auditor workflow expects writable temporary bundles and 12 simultaneous agents; this workspace is read-only and has four total slots, so that workflow cannot run as written. I’m falling back to a focused manual review of exactly the requested contract, regression, policy, and prior evidence.
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "rg --files | rg 'v2-source-wrap-before\\.txt"'$|red-team|audit'"'" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content -Raw -LiteralPath 'omerta-contracts\\SECURITY-REVIEW-POLICY.md'" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "git status --short -- 'omerta-contracts/src/OmrTwapOracle.sol' 'omerta-contracts/test/OmrTwapOracle.t.sol'; git diff -- 'omerta-contracts/src/OmrTwapOracle.sol' 'omerta-contracts/test/OmrTwapOracle.t.sol'; git rev-parse HEAD" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content -Raw -LiteralPath 'omerta-contracts\\src\\OmrTwapOracle.sol'" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "rg -n -C 35 \"test_idle_pair_counterfactual_wrap_discards_and_recovers\" 'omerta-contracts/test/OmrTwapOracle.t.sol'" in C:\Users\Jorge\Documents\Omerta
+ succeeded in 179ms:
+283-            IUniswapV2Factory(address(localFactory)),
+284-            IUniswapV2Pair(address(misScaled)),
+285-            address(realOmr),
+286-            address(sixDecimalWeth),
+287-            PERIOD
+288-        );
+289-    }
+290-
+291-    function test_constructor_rejects_OMR_as_its_own_counterasset() public {
+292-        MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+293-        MockPair nonsensical = new MockPair(address(realOmr), address(realOmr), 1_000e18, 5_000_000e18);
+294-        MockV2Factory localFactory = new MockV2Factory();
+295-        localFactory.register(address(realOmr), address(realOmr), address(nonsensical));
+296-
+297-        vm.expectRevert();
+298-        new OmrTwapOracle(
+299-            safe,
+300-            IUniswapV2Factory(address(localFactory)),
+301-            IUniswapV2Pair(address(nonsensical)),
+302-            address(realOmr),
+303-            address(realOmr),
+304-            PERIOD
+305-        );
+306-    }
+307-
+308-    function test_update_is_permissionless() public {
+309-        // Gating the poke on a keeper role would mean a lost key freezes the feed and, through it,
+310-        // the whole bond product. Anyone may poke; nobody can poke early.
+311-        vm.warp(block.timestamp + PERIOD + 1);
+312-        vm.prank(makeAddr("a passing stranger"));
+313-        oracle.update();
+314-        (uint256 price,) = oracle.consult();
+315-        assertGt(price, 0);
+316-    }
+317-
+318:    function test_idle_pair_counterfactual_wrap_discards_and_recovers() public {
+319-        vm.warp(block.timestamp + (uint256(1) << 32) - 100);
+320-        OmrTwapOracle fresh = new OmrTwapOracle(
+321-            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+322-        );
+323-        vm.warp(block.timestamp + PERIOD);
+324-        fresh.update();
+325-        (uint256 price, uint256 updatedAt) = fresh.consult();
+326-        assertEq(price, 0, "discard a counterfactual source timestamp wrap");
+327-        assertEq(updatedAt, 0);
+328-        vm.warp(block.timestamp + PERIOD);
+329-        fresh.update();
+330-        (price, updatedAt) = fresh.consult();
+331-        assertApproxEqRel(price, 5000e18, 1e15);
+332-        assertEq(updatedAt, block.timestamp);
+333-    }
+334-
+335-    function test_empty_reserves_revert_rather_than_divide_by_zero() public {
+336-        MockPair empty = new MockPair(weth, omr, 0, 0);
+337-        factory.register(omr, weth, address(empty));
+338-        vm.expectRevert(OmrTwapOracle.NoReserves.selector);
+339-        new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(empty)), omr, weth, PERIOD);
+340-    }
+341-
+342-    /// The decode must not overflow. `priceAverage * 1e18` overflows uint256 for large averages,
+343-    /// which is why the implementation uses a 512-bit mulDiv — fuzzed across the whole plausible
+344-    /// price range because a silent overflow here corrupts the exact number the mint wall trusts.
+345-    function testFuzz_price_decode_survives_extremes(uint112 reserveOmr) public {
+346-        reserveOmr = uint112(bound(uint256(reserveOmr), 1e12, type(uint112).max / 2));
+347-        MockPair p = new MockPair(weth, omr, 1_000e18, reserveOmr);
+348-        factory.register(omr, weth, address(p));
+349-        OmrTwapOracle o =
+350-            new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(p)), omr, weth, PERIOD);
+351-        vm.warp(block.timestamp + PERIOD + 1);
+352-        o.update();
+353-        (uint256 price,) = o.consult();
+
+ succeeded in 209ms:
+AUDIT-red-team-nine.md
+AUDIT-red-team-four.md
+AUDIT-red-team-five.md
+AUDIT-full-red-team.md
+AUDIT-red-team-eight.md
+AUDIT-red-team-two.md
+AUDIT-red-team-three.md
+AUDIT-red-team-ten.md
+AUDIT-red-team-six.md
+AUDIT-red-team-seven.md
+test\audit\mint-dev-allocation.js
+test\audit\deed-reimport-order.js
+brand\market-v2-soul\prepare-auditions.mjs
+brand\market-v2-soul\generation-requests\auditions.json
+brand\market-v2-soul\build-auditions.mjs
+brand\market-v2-soul\audition-server.mjs
+omerta-contracts\test\audit\TransmuterFundingRedTeam.t.sol
+omerta-contracts\test\audit\RwaStockMachineRedTeam.t.sol
+omerta-contracts\test\audit\PlayerSaleCapDomain.t.sol
+omerta-contracts\test\audit\OmertaHookObserverDoS.t.sol
+omerta-contracts\test\audit\GenesisOracleBootstrap.t.sol
+omerta-contracts\test\audit\ComprehensiveMarketAudit.t.sol
+omerta-contracts\test\audit\ComprehensiveCoreAudit.t.sol
+omerta-contracts\test\audit\ComprehensiveAcquisitionAudit.t.sol
+omerta-contracts\test\audit\AlchemistRedTeam.t.sol
+omerta-contracts\audits\character-nft-2026-09-08.md
+omerta-contracts\audits\character-nft-2026-09-08.json
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\static-triage.json
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\source-manifest.json
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\report.md
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\evidence-manifest.json
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\capture-evidence.mjs
+omerta-contracts\audits\2026-09-08-mint-dev-allocation\artifact.json
+omerta-contracts\audits\2026-09-09-genesis-bootstrap\validation.json
+omerta-contracts\audits\2026-09-09-genesis-bootstrap\source-manifest.json
+omerta-contracts\audits\2026-09-09-genesis-bootstrap\report.md
+omerta-contracts\audits\2026-09-09-genesis-bootstrap\capture-evidence.mjs
+omerta-contracts\audits\2026-09-09-genesis-bootstrap\artifact-manifest.json
+omerta-contracts\audits\2026-09-08-liquidity-automation\source-manifest.json
+omerta-contracts\audits\2026-09-08-liquidity-automation\run-static.ps1
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-revenue-gas-static.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-pol-vault.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-keeper.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-genesis-controller.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-buyback-bond.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-bank-buffer.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\review-accounting-indexer.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\report.md
+omerta-contracts\audits\2026-09-08-liquidity-automation\package-manifest.json
+omerta-contracts\audits\2026-09-08-liquidity-automation\evidence-manifest.json
+omerta-contracts\audits\2026-09-08-liquidity-automation\capture-evidence.mjs
+omerta-contracts\audits\2026-09-08-liquidity-automation\build-static-triage.mjs
+omerta-contracts\audits\2026-09-08-liquidity-automation\artifact-manifest.json
+omerta-contracts\audits\2026-10-01-player-genesis\source-hashes.json
+omerta-contracts\audits\2026-10-01-player-genesis\REVIEW-MANIFEST.json
+omerta-contracts\audits\2026-10-01-player-genesis\report.md
+omerta-contracts\audits\2026-10-01-player-genesis\evidence\player-genesis-market-regressions.txt
+omerta-contracts\audits\2026-10-01-player-genesis\evidence\player-genesis-integration-tests.txt
+omerta-contracts\audits\2026-10-01-player-genesis\evidence\guarded-auction-tests.txt
+omerta-contracts\audits\2026-10-01-player-genesis\evidence\genesis-player-sale-tests.txt
+omerta-contracts\audits\2026-10-01-player-genesis\evidence\genesis-player-sale-invariants.txt
+omerta-contracts\audits\2026-10-01-player-genesis\artifact-hashes.json
+omerta-contracts\audits\2026-09-08-comprehensive\triage-shared.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\triage-market.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\triage-hook-retest.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\triage-forge-lint.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\triage-core.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\triage-acquisition.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\static-run-selection.json
+omerta-contracts\audits\2026-09-08-comprehensive\source-manifest.json
+omerta-contracts\audits\2026-09-08-comprehensive\source-before.json
+omerta-contracts\audits\2026-09-08-comprehensive\shared-static-triage.json
+omerta-contracts\audits\2026-09-08-comprehensive\shared-dependencies.md
+omerta-contracts\audits\2026-09-08-comprehensive\seal-evidence.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\run-static.ps1
+omerta-contracts\audits\2026-09-08-comprehensive\run-hook-retest-static.ps1
+omerta-contracts\audits\2026-09-08-comprehensive\report.md
+omerta-contracts\audits\2026-09-08-comprehensive\remediation-delta.json
+omerta-contracts\audits\2026-09-08-comprehensive\package-manifest.json
+omerta-contracts\audits\2026-09-08-comprehensive\market-static-triage.json
+omerta-contracts\audits\2026-09-08-comprehensive\market-review.md
+omerta-contracts\audits\2026-09-08-comprehensive\make-coverage.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\launcher-source-manifest.json
+omerta-contracts\audits\2026-09-08-comprehensive\hook-retest-static.json
+omerta-contracts\audits\2026-09-08-comprehensive\forge-lint-triage.md
+omerta-contracts\audits\2026-09-08-comprehensive\forge-lint-triage.json
+omerta-contracts\audits\2026-09-08-comprehensive\fee-routing.md
+omerta-contracts\audits\2026-09-08-comprehensive\external-integration-source-hashes.json
+omerta-contracts\audits\2026-09-08-comprehensive\external-integration-review.md
+omerta-contracts\audits\2026-09-08-comprehensive\evidence-manifest.json
+omerta-contracts\audits\2026-09-08-comprehensive\evidence-consistency.md
+omerta-contracts\audits\2026-09-08-comprehensive\entry-inventory.json
+omerta-contracts\audits\2026-09-08-comprehensive\coverage.md
+omerta-contracts\audits\2026-09-08-comprehensive\core-static-triage.json
+omerta-contracts\audits\2026-09-08-comprehensive\core-source-hashes.json
+omerta-contracts\audits\2026-09-08-comprehensive\core-review.md
+omerta-contracts\audits\2026-09-08-comprehensive\check-bitmath-model.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\capture-manifest.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\capture-artifacts.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\bundle-evidence.mjs
+omerta-contracts\audits\2026-09-08-comprehensive\bitmath-model-result.json
+omerta-contracts\audits\2026-09-08-comprehensive\artifact-manifest.json
+omerta-contracts\audits\2026-09-08-comprehensive\acquisition-static-triage.json
+omerta-contracts\audits\2026-09-08-comprehensive\acquisition-review.md
+omerta-contracts\audits\2026-09-08-comprehensive\acquisition-inventory.json
+omerta-contracts\audits\2026-10-01-red-team\artifact-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\build-static-triage.mjs
+omerta-contracts\audits\2026-10-01-red-team\daybreak-remediation.md
+omerta-contracts\audits\2026-10-01-red-team\daybreak-crosscheck.md
+omerta-contracts\audits\2026-10-01-red-team\core-review.md
+omerta-contracts\audits\2026-10-01-red-team\context.md
+omerta-contracts\audits\2026-10-01-red-team\context-entrypoints.md
+omerta-contracts\audits\2026-10-01-red-team\compiler-settings.json
+omerta-contracts\audits\2026-10-01-red-team\daybreak-report.md
+omerta-contracts\audits\2026-10-01-red-team\dependency-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\final-artifact-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\evidence-manifest.json
+omerta-contracts\audits\2026-10-01-red-team\final-compiler-settings.json
+omerta-contracts\audits\2026-10-01-red-team\final-source-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\final-dependency-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\final-test-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\finalize-report.mjs
+omerta-contracts\audits\2026-10-01-red-team\initial-forge-lint-triage.json
+omerta-contracts\audits\2026-10-01-red-team\forge-source-wrap-final.txt
+omerta-contracts\audits\2026-10-01-red-team\forge-lint-triage.md
+omerta-contracts\audits\2026-10-01-red-team\forge-lint-triage.json
+omerta-contracts\audits\2026-10-01-red-team\market-review.md
+omerta-contracts\audits\2026-10-01-red-team\initial-static-triage.md
+omerta-contracts\audits\2026-10-01-red-team\initial-static-triage.json
+omerta-contracts\audits\2026-10-01-red-team\OmrTwapOracle-before-source-wrap.sol.txt
+omerta-contracts\audits\2026-10-01-red-team\mythril-triage.json
+omerta-contracts\audits\2026-10-01-red-team\pin-final.mjs
+omerta-contracts\audits\2026-10-01-red-team\raw-static-evidence.zip
+omerta-contracts\audits\2026-10-01-red-team\release-source-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\v2-source-wrap-before.txt
+omerta-contracts\audits\2026-10-01-red-team\v2-source-wrap-after.txt
+omerta-contracts\audits\2026-10-01-red-team\triage-forge-lint.mjs
+omerta-contracts\audits\2026-10-01-red-team\test-inventory.json
+omerta-contracts\audits\2026-10-01-red-team\static-triage.md
+omerta-contracts\audits\2026-10-01-red-team\static-triage.json
+omerta-contracts\audits\2026-10-01-red-team\static-triage-draft.json
+omerta-contracts\audits\2026-10-01-red-team\source-hashes.json
+omerta-contracts\audits\2026-10-01-red-team\run-final-static.ps1
+omerta-contracts\audits\2026-10-01-red-team\REVIEW-MANIFEST.json
+omerta-contracts\audits\2026-10-01-red-team\report.md
+omerta-contracts\audits\2026-10-01-red-team\evidence\current-market-full-cycle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\CCA-patched-source.sol.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\CCA-before-source.sol.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\cca-before-fix.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\cca-before-fix-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\authority-storage.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\daybreak-remediation-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\daybreak-crosscheck-run.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\current-market-full-cycle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\daybreak-remediation-run.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\daybreak-run.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\deed-before-fix-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\deed-before-fix.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e-verified-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e-final.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e-final-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dex-dependencies-install.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dex-dependencies-install-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\deed-prefixed-regression.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionConstellationFactory.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\dexbot-e2e-verified.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionReconciliation.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionIntentExecution.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GenesisWalletCap.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaHookV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GenesisProceedsSplitter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GenesisPlayerSale.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaHook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GenesisOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaGuardedAuction.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GenesisLifecycleController.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-GearVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaArbitrageV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaGameSettlementV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-FlashGuard.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-LiquidityBuybackExecutor.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaFees.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-FeeRevenueRouter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-ledger.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaCommitmentVaultV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-DynastyNFT.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-KeeperGasVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaBond.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-IOmrOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-Denari.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-CollateralEscrow.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-IOmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-BankBufferVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-Alchemist.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaReserveFundingV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaInventoryBondV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaTurfV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaStabilityControllerV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-StreetDeed.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-StockVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmertaTurfFeeBridgeV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-StockTokenRegistryV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OMRStaking.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OMR.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-StockTokenRegistry.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-SettlementGasPool.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-RwaStockBuyer.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-VoucherClaim.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-OmrV4TwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-focused-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-Transmuter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\direct-PreVoteBudgetBook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-config.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\fixed-seed-invariants.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\final-contract-test-status.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-patched.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-patched-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-verified-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-focused.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-final-verified.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-OmertaGenesisCoordinatorV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-OmertaGenesisCoordinatorV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionVaultCore.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionVaultCore-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionAuthority.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-AcquisitionAuthority-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-CollateralEscrow.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-BankBufferVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-BankBufferVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Alchemist.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Alchemist.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionReconciliation.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionReconciliation.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionIntentExecution.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionIntentExecution.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionConstellationFactory.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionConstellationFactory.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-provenance.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-RwaHealthOverlay.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-postgres-stop.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-ProtocolLiquidityVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-postgres-start.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-BankBufferVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-postgres-start-error.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-OmertaGenesisCoordinatorV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-missing-permit2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-BankBufferVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisWalletCap.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisProceedsSplitter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-AcquisitionVaultCore.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisProceedsSplitter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisPlayerSale.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\ir-AcquisitionAuthority.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisPlayerSale.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-contract-status.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-missing-permit2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-sizes.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisLifecycleController.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-sizes-initial.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-sizes-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisLifecycleController.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-provenance.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GearVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-full.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-postgres-stop.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-full-bounded.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GearVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-postgres-start.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-FlashGuard.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\forge-full-bounded-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-postgres-initdb.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-FlashGuard.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-initial-unavailable.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-FeeRevenueRouter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-BankBufferVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-bootstrap-clock-failure.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-FeeRevenueRouter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-DynastyNFT.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-bootstrap-clock-failure-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-initial-unavailable-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-DynastyNFT.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Alchemist.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-deployment-plan.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Denari.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-deployment-plan-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Alchemist.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-report.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Denari.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Alchemist-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-RwaHealthOverlay.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-provenance.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-CollateralEscrow.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-RwaHealthOverlay-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionVaultCore-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-postgres-stop.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-ProtocolLiquidityVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaArbitrageV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-postgres-start.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-LiquidityBuybackExecutor.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\ir-ProtocolLiquidityVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-LiquidityBuybackExecutor.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-ledger.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-KeeperGasVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-KeeperGasVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionReconciliation.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-final-postgres-start-error.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-IOmrOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionReconciliation.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-IOmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-IOmrOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionReconciliation-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-GenesisWalletCap.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-IOmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionIntentExecution.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionIntentExecution.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaBond.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaFees.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionIntentExecution-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaArbitrageV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionConstellationFactory.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaFees.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionConstellationFactory.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaCommitmentVaultV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionConstellationFactory-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaCommitmentVaultV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaGameSettlementV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisProceedsSplitter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaBond.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-AcquisitionAuthority-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaGameSettlementV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisProceedsSplitter-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\mythril-version.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisPlayerSale.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\mythril-player-sale.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaGuardedAuction.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisPlayerSale.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaGuardedAuction.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FlashGuard.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FlashGuard-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisPlayerSale-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-warmup-clock-failure.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FeeRevenueRouter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-warmup-clock-failure-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FeeRevenueRouter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisLifecycleController-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-stale-bond-expectation-failure.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FeeRevenueRouter-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisOracle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GearVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-stale-bond-expectation-failure-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-DynastyNFT.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisLifecycleController.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GearVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GearVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-FlashGuard.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisLifecycleController.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-DynastyNFT.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-report.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-DynastyNFT-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaHook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\liquidity-e2e-release-report.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Denari.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaHook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Denari.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-CollateralEscrow.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Denari-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-CollateralEscrow-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-CollateralEscrow.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-KeeperGasVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-KeeperGasVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-LiquidityBuybackExecutor.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-KeeperGasVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmrOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaCommitmentVaultV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-LiquidityBuybackExecutor.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmrOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-ledger.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaBond.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-LiquidityBuybackExecutor-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmrOracle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaBond.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaBond-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisWalletCap.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaFees.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaArbitrageV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisWalletCap.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-IOmertaMarketStateV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaFees-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaArbitrageV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisWalletCap-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-GenesisProceedsSplitter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaCommitmentVaultV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaHookV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaArbitrageV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaCommitmentVaultV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGameSettlementV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaFees.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGameSettlementV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGameSettlementV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-VoucherClaim.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-VoucherClaim.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Transmuter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-Transmuter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StreetDeed.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StreetDeed.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockTokenRegistryV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockTokenRegistryV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockTokenRegistry.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-StockTokenRegistry.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-SettlementGasPool.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-SettlementGasPool.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-RwaStockBuyer.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-RwaStockBuyer.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-PreVoteBudgetBook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-PreVoteBudgetBook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmrV4TwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmrV4TwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmrTwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OMRStaking.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OMRStaking.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OMR.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OMR.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaTurfV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaTurfV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaTurfFeeBridgeV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaTurfFeeBridgeV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaStabilityControllerV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaStabilityControllerV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaReserveFundingV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaReserveFundingV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaInventoryBondV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaInventoryBondV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\initial-static\native-OmertaHookV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaStabilityControllerV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaReserveFundingV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaReserveFundingV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaReserveFundingV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaMarketStateV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaInventoryBondV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaInventoryBondV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaInventoryBondV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHookV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHookV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHookV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaHook-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGuardedAuction.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGuardedAuction.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGuardedAuction-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaGenesisCoordinatorV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMR.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMR.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMR-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfFeeBridgeV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfFeeBridgeV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaTurfFeeBridgeV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaStabilityControllerV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmertaStabilityControllerV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrTwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrTwapOracle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMRStaking.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMRStaking.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OMRStaking-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrV4TwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrV4TwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-OmrV4TwapOracle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-PreVoteBudgetBook-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-PreVoteBudgetBook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-PreVoteBudgetBook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\StreetDeed-before-test.sol.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\StreetDeed-before-source.sol.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\stock-e2e.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\stock-e2e-verified.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\stock-e2e-verified-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\stock-e2e-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\static-summary.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\solady-inverse-seed-model.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-VoucherClaim.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-version.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-Transmuter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-StreetDeed.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-StockVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-StockTokenRegistryV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-StockTokenRegistry.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-SettlementGasPool.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-RwaStockBuyer.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-PreVoteBudgetBook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmrV4TwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OMRStaking.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OMR.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaTurfV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaTurfFeeBridgeV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaStabilityControllerV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaReserveFundingV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaInventoryBondV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaHookV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaHook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaGuardedAuction.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaGameSettlementV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaFees.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaCommitmentVaultV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaBond.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-OmertaArbitrageV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-LiquidityBuybackExecutor.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-ledger.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-KeeperGasVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-IOmrOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-IOmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GenesisWalletCap.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GenesisProceedsSplitter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GenesisPlayerSale.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GenesisOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GenesisLifecycleController.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-GearVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-full.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-FlashGuard.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-FeeRevenueRouter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-DynastyNFT.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-Denari.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-CollateralEscrow.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-BankBufferVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-Alchemist.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionReconciliation.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionIntentExecution.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionConstellationFactory.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\slither-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistryV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistryV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-ProtocolLiquidityVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-SettlementGasPool.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistryV2-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistry.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-SettlementGasPool-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistry.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-RwaStockBuyer-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-RwaStockBuyer.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-RwaStockBuyer.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockTokenRegistry-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Transmuter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-SettlementGasPool.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Transmuter-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-RwaHealthOverlay-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StreetDeed.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-VoucherClaim.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pending-suites.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\player-sale-runtime.hex
+omerta-contracts\audits\2026-10-01-red-team\evidence\player-cap-domain.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StreetDeed.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-VoucherClaim.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StockVault-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-VoucherClaim-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-StreetDeed-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\native-Transmuter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-pair-age-fix\static-triage.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-pair-age-fix\native-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-pair-age-fix\native-OmrTwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-pair-age-fix\native-OmrTwapOracle-exit.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-pair-age-fix\forge-lint-triage.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-RwaHealthOverlay.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-ProtocolLiquidityVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-OmertaGenesisCoordinatorV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-AcquisitionVaultCore.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\ir-AcquisitionAuthority.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionIntentExecution.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionIntentExecution.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionConstellationFactory.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionConstellationFactory.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionAuthority.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionReconciliation.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionReconciliation.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-KeeperGasVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-IOmrOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-IOmrOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-IOmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-IOmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisWalletCap.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisWalletCap.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisProceedsSplitter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisProceedsSplitter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisPlayerSale.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisPlayerSale.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisLifecycleController.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GenesisLifecycleController.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GearVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaHook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-GearVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaGuardedAuction.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-FlashGuard.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaGuardedAuction.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-FlashGuard.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaGenesisCoordinatorV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaGameSettlementV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-FeeRevenueRouter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaGameSettlementV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaFees.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-FeeRevenueRouter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Denari.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaFees.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-DynastyNFT.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-CollateralEscrow.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaCommitmentVaultV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-DynastyNFT.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-CollateralEscrow.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaInventoryBondV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaArbitrageV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-BankBufferVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaCommitmentVaultV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-BankBufferVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaArbitrageV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaHookV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaReserveFundingV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaBond.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Denari.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Alchemist.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-LiquidityBuybackExecutor.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaHookV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Alchemist.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaReserveFundingV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaBond.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaMarketStateV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-AcquisitionVaultCore.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaHook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-LiquidityBuybackExecutor.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-ledger.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaMarketStateV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OMR.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-KeeperGasVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaTurfV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaInventoryBondV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaTurfV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaStabilityControllerV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaTurfFeeBridgeV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaStabilityControllerV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OMR.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmertaTurfFeeBridgeV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-VoucherClaim.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-VoucherClaim.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Transmuter.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-Transmuter.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StreetDeed.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StreetDeed.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockVault.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockTokenRegistryV2.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockTokenRegistryV2.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockTokenRegistry.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-StockTokenRegistry.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-SettlementGasPool.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-SettlementGasPool.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-RwaStockBuyer.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-RwaStockBuyer.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-RwaHealthOverlay.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-ProtocolLiquidityVault.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-PreVoteBudgetBook.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-PreVoteBudgetBook.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmrV4TwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmrV4TwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmrTwapOracle.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OmrTwapOracle.json
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OMRStaking.txt
+omerta-contracts\audits\2026-10-01-red-team\evidence\pre-remediation-static\native-OMRStaking.json
+
+ succeeded in 278ms:
+# OMERTA security review policy
+
+**Owner decision - 2026-09-08.** Security reviews are performed by agents using the evidence requirements
+below. This is the current policy for new work, release reviews, and material changes to previously
+reviewed code. It supersedes older runbook statements about who must perform a security review.
+
+The owner has authorized this review workflow. Agents proceed with code inspection, isolated proofs,
+tests, fuzzing, invariant checks, static analysis, remediation, and verification within the requested
+scope. A completed review is evidence for its exact scope and revision; it is not a blanket audit of
+OMERTA, an assertion that no defects remain, or authorization to activate another rail.
+
+## Pinned methods
+
+Use the relevant methods from all three repositories. The 2026-09-08 method baseline was verified with
+`git rev-parse HEAD` in the local checkouts under `output/audit-methods/`:
+
+| Source | Pinned commit | Application |
+| --- | --- | --- |
+| [pashov/skills](https://github.com/pashov/skills/tree/c577eb7799c349de0acb187ba00ca98e14e436fd) | `c577eb7799c349de0acb187ba00ca98e14e436fd` | Adversarial passes over access control, execution traces, invariants, economic assumptions, boundaries, and periphery; a concrete trace or proof distinguishes a finding from a lead. |
+| [PlamenTSV/plamen](https://github.com/PlamenTSV/plamen/tree/795962b96e254f2e423a2635fe7f8cb8ea1e6d69) | `795962b96e254f2e423a2635fe7f8cb8ea1e6d69` | Protocol-specific breadth and depth, state/accounting transitions, callback and transfer behavior, and verified exploit hypotheses. |
+| [trailofbits/skills](https://github.com/trailofbits/skills/tree/d3323cefbcf645678b8dc481de204b02ad3d02dc) | `d3323cefbcf645678b8dc481de204b02ad3d02dc` | Build context and trust-boundary maps first; apply specification comparison, property/invariant testing, static-analysis triage, and false-positive checks where relevant. |
+
+These are method sources, not evidence that a tool or a whole upstream orchestration ran. Record the
+exact skills/passes actually used. Keep adaptations explicit: available agent slots, native toolchain,
+language, dependency setup, and applicable scope may differ from upstream examples. Do not silently
+replace a pin with a moving branch; record a new pin and the reason when adopting an update.
+
+## Review package
+
+Every release review retains a cohesive package containing:
+
+1. **Source and scope.** Full source commit, dirty/clean state, hashes for reviewed working-tree files
+   when applicable, file/function inventory, included dependencies, excluded surfaces, release phase,
+   and the behavior/properties being claimed. Pin contract compiler, optimizer/EVM settings, dependency
+   versions, artifact/runtime hashes, chain, addresses and deployment parameters when applicable.
+2. **System model.** Entry points and callers, assets/liabilities, storage and event authority, replay
+   domains, privilege boundaries, external calls, off-chain signer/indexer assumptions, and failure
+   behavior. Follow callees; do not treat a helper's name as proof that it validates its input.
+3. **Adversarial review.** Separate passes over the material trust boundaries, followed by cross-checking
+   their findings. Include malicious recipients/adapters, reentrancy, replay, rounding, configuration
+   drift, stale reads, cross-system state changes and recovery where they apply. Mark checklist items
+   that do not apply and explain why; do not manufacture coverage for unrelated mechanisms.
+4. **Executed evidence.** Commands, tool versions, run date, input/seed/run budget, exit status, and
+   retained outputs for meaningful unit/integration regressions, executable exploit proofs, stateful
+   fuzzing and invariants. Exercise persistence/concurrency against PostgreSQL where correctness
+   depends on its locks or transactions; an in-memory test does not prove those properties. Use real
+   supported contract compilers and include all in-scope suites. Record a missing or failed run plainly.
+5. **Static-analysis triage.** Retain the raw diagnostics and disposition by finding/rule. Verify each
+   actionable result against reachable code and invariants; document false positives, exclusions and
+   tool failures. A successful tool invocation is not equivalent to a clean analysis.
+6. **Findings and remediation.** Stable IDs, severity and rationale, prerequisites, affected source
+   references, reproducible trace/proof, actual impact, correction, and retest evidence. Keep leads
+   distinct from confirmed defects. Preserve resolved findings and invalidated hypotheses with their
+   reasoning; do not erase the record when code is fixed.
+7. **Scope-specific conclusion.** State what is ready, what remains open or unverified, accepted residual
+   risks, and precisely which revision/phase the conclusion covers. Link the evidence package from the
+   release manifest and retain its content hash.
+
+For code where a category is inapplicable, retain an explicit rationale instead of an empty claim of
+coverage. For example, a documentation-only change does not require Solidity fuzzing; a fee-to-NFT
+release does require its payment, authorization, callback, indexing and recovery paths to be exercised.
+
+## Completion and change control
+
+- An in-scope critical or high finding must be fixed and retested before the affected release is ready.
+  Record the disposition and rationale for every other finding, including any accepted residual risk.
+  A lead or a failed/unavailable test remains visible and limits the conclusion accordingly.
+- Conclusions apply to the exact reviewed source and configuration. Material changes to contracts,
+  signers, authorization, accounting, replay domains, adapters/oracles, persistence or write routes
+  reopen the affected review. Reassess shared dependencies and rerun the checks impacted by the change.
+- Historic reports and test totals remain point-in-time evidence. Preserve them with their dates and
+  hashes; do not present them as proof for changed source or rewrite them to imply a newer review.
+- A report hash field is a reference, not a verifier. Check that it resolves to the retained package
+  and that the package's scope/source match the release. Existing deployment wrapper field names such
+  as `CORE_AUDIT_REPORT_SHA256` and `CORE_SIGNER_AUDIT_INCLUDED` retain their operational meaning under
+  this policy: the hash identifies the scoped review package and the signer must actually be included.
+
+## Deployment remains a separate operation
+
+Review completion does not broadcast, fund, upgrade, configure, or enable a contract. Keep the
+deployment runbook's exact source/bytecode verification, Safe owner/threshold and signer separation,
+transaction simulation, caps, recipients, metadata routing, chain/database isolation, confirmation
+policy, monitoring and recovery requirements. Owner launch acceptance and any applicable platform
+routing approval remain separate from security evidence. A character NFT review does not clear token
+issuance, liquidity, bonds, RWA delivery, THE BANK, or withdrawals outside its declared scope.
+
+Canonical entry points: [contract deployment](DEPLOYMENT.md), [chain activation](../CHAIN-DEPLOY.md),
+[launch readiness](../LAUNCH-READINESS.md), and [character NFT activation](CHARACTER-NFT-LAUNCH.md).
+
+
+ succeeded in 274ms:
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
+
+import {IOmrOracle} from "./IOmrOracle.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+
+interface IUniswapV2Factory {
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+}
+
+interface IUniswapV2Pair {
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+    function price0CumulativeLast() external view returns (uint256);
+    function price1CumulativeLast() external view returns (uint256);
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+}
+
+/// @title OmrTwapOracle - a Uniswap V2 cumulative-price TWAP for the OMR/WETH pool.
+/// @notice Feeds OmertaBond's accretion wall (v2 4). A TWAP and not a spot read, because this
+///         number sits on a MINT path: a spot price can be moved and restored inside one block by
+///         anyone with a flash loan, so a spot-priced mint wall is not a wall.
+///
+///         HOW IT WORKS. A V2 pair accumulates `price*CumulativeLast` - the integral of price over
+///         time. Two snapshots give the exact time-weighted average across the interval, with no
+///         storage on the pair's side and no trust in whoever reads it. `update()` closes an
+///         interval and is permissionless: anyone may poke it, and the worst a hostile poker can do
+///         is close the window at a moment of their choosing - which is exactly why `PERIOD` is a
+///         MINIMUM. Manipulating a TWAP means holding the price away from the market for the whole
+///         window, in public, against arbitrageurs, and the cost scales with the window.
+///
+///         OPERATIONAL REQUIREMENT - THIS IS NOT SELF-DRIVING. `update()` must be poked by a keeper
+///         at least once per `maxOracleAge` (the bond's staleness bound), or the reading goes stale
+///         and bonding stops. That failure direction is deliberate: a dead keeper must halt the mint,
+///         never open it. See CHAIN-DEPLOY.md.
+///
+///         FEE-ON-TRANSFER IS FINE HERE. OMR taxes transfers INTO the pair, so a seller delivers
+///         less than they sent - that moves the price a TRADER receives, not the pool's own reserve
+///         ratio, which is what the cumulative price integrates. The TWAP reads the pool price
+///         correctly with the tax armed. (It is also why canonical liquidity must be V2 and not V3.)
+///
+///         WHAT THIS DOES NOT PROMISE. A TWAP is manipulation-RESISTANT, not manipulation-PROOF: a
+///         sufficiently funded adversary can push a thin pool for a full window. That is why the
+///         wall above composes this with `OmertaBond.maxOmrPerEth`, an absolute Safe-set ceiling the
+///         oracle cannot raise. The oracle can only ever make the mint wall TIGHTER. Read
+///         OmertaBond's header for why that composition, and not the oracle alone, is the guarantee.
+contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+    /// @notice Minimum interval an `update()` may close. A shorter window is a cheaper window to
+    ///         manipulate, so this is a floor and not a target - poking late is safe, poking early
+    ///         reverts.
+    uint32 public immutable PERIOD;
+    /// @notice Floor on PERIOD at construction. Deploying a 30-second "TWAP" would be a spot price
+    ///         wearing a TWAP's name, and this contract exists to prevent exactly that.
+    uint32 public constant MIN_PERIOD = 10 minutes;
+    /// @notice CEILING on the window a single `update()` may close, as a multiple of PERIOD. An
+    ///         interval longer than this is DISCARDED rather than averaged - see `update()` for the
+    ///         attack this closes. 4x PERIOD is three consecutive missed pokes, by which point the
+    ///         reading is already stale to the consumer and bonding has halted anyway.
+    uint32 public constant MAX_WINDOW_MULT = 4;
+
+    IUniswapV2Pair public immutable pair;
+    IUniswapV2Factory public immutable factory;
+    address public immutable omr;
+    address public immutable weth;
+    /// @dev True when OMR is the pair's token1, i.e. price0 (= token1 per token0) is OMR per WETH.
+    bool public immutable omrIsToken1;
+
+    uint256 public priceCumulativeLast; // the OMR-per-WETH cumulative, whichever side that is
+    uint32 public blockTimestampLast; // when the last snapshot was taken (mod 2^32, V2 convention)
+    /// @notice The TWAP, as UQ112x112. Zero until the first `update()` closes a full PERIOD, which
+    ///         is what makes a freshly-deployed oracle read as unavailable rather than as zero-price.
+    uint224 public priceAverage;
+    uint256 public lastUpdate; // unix seconds the current average closed (full width)
+    uint256 private _baselineTimestamp;
+    uint32 private _baselinePairElapsed;
+
+    event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
+    /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
+    ///         rather than silent because it means the feed just went unavailable and somebody's
+    ///         keeper needs looking at.
+    event Rebaselined(uint32 discardedWindow);
+
+    error PeriodTooShort();
+    error PeriodTooLong();
+    error ZeroAddress();
+    error SameToken();
+    error NotOmrPair();
+    error PairNotCanonical();
+    error UnsupportedTokenDecimals(address token, uint8 decimals);
+    error NoReserves();
+    error PeriodNotElapsed(uint32 elapsed, uint32 required);
+
+    /// @param factory_ the reviewed V2 factory that must attest `pair_` as its OMR/WETH market
+    /// @param pair_ the canonical OMR/WETH Uniswap V2-compatible pair
+    /// @param omr_  the OMR token, so the constructor can work out which side of the pair it is
+    ///              rather than trusting a caller-supplied flag
+    /// @param weth_ the reviewed wrapped native token; the other side may not be an arbitrary asset
+    constructor(
+        address owner_,
+        IUniswapV2Factory factory_,
+        IUniswapV2Pair pair_,
+        address omr_,
+        address weth_,
+        uint32 period_
+    ) Ownable(owner_) {
+        if (
+            address(factory_) == address(0) || address(pair_) == address(0) || omr_ == address(0) || weth_ == address(0)
+        ) revert ZeroAddress();
+        if (omr_ == weth_) revert SameToken();
+        if (period_ < MIN_PERIOD) revert PeriodTooShort();
+        if (period_ > type(uint32).max / MAX_WINDOW_MULT) revert PeriodTooLong();
+        factory = factory_;
+        pair = pair_;
+        omr = omr_;
+        weth = weth_;
+        PERIOD = period_;
+
+        address t0 = pair_.token0();
+        address t1 = pair_.token1();
+        if (!((t0 == weth_ && t1 == omr_) || (t0 == omr_ && t1 == weth_))) revert NotOmrPair();
+        if (factory_.getPair(omr_, weth_) != address(pair_)) revert PairNotCanonical();
+        uint8 omrDecimals = IERC20Metadata(omr_).decimals();
+        if (omrDecimals != 18) revert UnsupportedTokenDecimals(omr_, omrDecimals);
+        uint8 wethDecimals = IERC20Metadata(weth_).decimals();
+        if (wethDecimals != 18) revert UnsupportedTokenDecimals(weth_, wethDecimals);
+        // price0Cumulative is token1-per-token0. We want OMR per WETH, so we want the cumulative
+        // whose NUMERATOR is OMR: price0 when OMR is token1, price1 when OMR is token0.
+        omrIsToken1 = (t1 == omr_);
+
+        // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
+        // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.
+        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+        priceCumulativeLast = omrIsToken1 ? p0 : p1;
+        blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
+        _baselinePairElapsed = pairElapsed;
+    }
+
+    /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design -
+    ///         gating it on a keeper role would mean a lost key freezes the price feed, and through
+    ///         it the bond product. Anyone may poke; nobody can poke it early.
+    function update() external {
+        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+        uint32 timeElapsed;
+        unchecked {
+            timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
+        }
+        uint256 cumulative = omrIsToken1 ? p0 : p1;
+
+        // �� THE WINDOW IS BOUNDED ON BOTH SIDES (red-team F2) ����������������������������������
+        // Too SHORT is obvious and handled above. Too LONG is the subtle one and it was a real hole:
+        // closing a multi-day interval publishes an average of prices that are LONG GONE, and stamps
+        // it `lastUpdate = now` - so the consumer's staleness check cannot see it, because that check
+        // measures when the average was COMPUTED, not what period it COVERS. Measured on the real
+        // contract: after a nine-day keeper outage spanning a bull run that then crashed, this
+        // reported 19,998 while spot was 5,000. Four times over, stamped fresh.
+        //
+        // What made it exploitable rather than merely wrong: `update()` is permissionless, so whoever
+        // pokes CHOOSES when the window closes - and after an outage the interval can contain a high
+        // price nobody had to pay to create. Ordinary market volatility does the attacker's work.
+        //
+        // So a too-long interval is DISCARDED, not averaged: re-baseline and report nothing until an
+        // honest window closes. Fail-closed, and recovery is one PERIOD.
+        // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
+        uint256 fullElapsed = block.timestamp - _baselineTimestamp;
+        // A quiet pair's counterfactual accumulator resets after its uint32 age wraps.
+        // Discard that ambiguous interval even when this oracle's own window is short.
+        if (fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32) {
+            priceCumulativeLast = cumulative;
+            blockTimestampLast = ts;
+            _baselineTimestamp = block.timestamp;
+            _baselinePairElapsed = pairElapsed;
+            priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
+            lastUpdate = 0;
+            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+            emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
+            return;
+        }
+
+        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
+
+        unchecked {
+            // The subtraction is deliberately wrapping: V2's cumulatives are allowed to overflow and
+            // the DIFFERENCE stays correct across the wrap. This is the one place unchecked maths is
+            // load-bearing rather than an optimisation.
+            priceAverage = uint224((cumulative - priceCumulativeLast) / timeElapsed);
+        }
+        priceCumulativeLast = cumulative;
+        blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
+        _baselinePairElapsed = pairElapsed;
+        lastUpdate = block.timestamp;
+
+        emit Updated(priceAverage, _decode(priceAverage), timeElapsed);
+    }
+
+    /// @inheritdoc IOmrOracle
+    function consult() external view returns (uint256 omrPerEth, uint256 updatedAt) {
+        // Reports 0 before the first closed window - the interface's "no usable reading" signal,
+        // which OmertaBond turns into a revert. Never a free pass.
+        return (_decode(priceAverage), lastUpdate);
+    }
+
+    /// @dev UQ112x112  OMR-wei per 1e18 ETH-wei. `mulDiv` for the 512-bit intermediate: the naive
+    ///      `priceAverage * 1e18` overflows uint256 for large averages (2^224 * 10^18 > 2^256), which
+    ///      would silently corrupt the exact reading the mint wall depends on.
+    function _decode(uint224 avg) private pure returns (uint256) {
+        if (avg == 0) return 0;
+        return Math.mulDiv(uint256(avg), 1e18, uint256(1) << 112);
+    }
+
+    /// @dev The pair's cumulatives brought forward to NOW. A pair only writes its cumulative on a
+    ///      touch (mint/burn/swap/sync), so on a quiet pool the stored value lags; V2's own periphery
+    ///      does this same counterfactual accrual, and skipping it would silently shorten every
+    ///      window by however long the pool sat idle.
+    function _currentCumulativePrices()
+        private
+        view
+        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp, uint32 pairElapsed)
+    {
+        blockTimestamp = uint32(block.timestamp % 2 ** 32);
+        price0Cumulative = pair.price0CumulativeLast();
+        price1Cumulative = pair.price1CumulativeLast();
+        (uint112 reserve0, uint112 reserve1, uint32 tsLast) = pair.getReserves();
+        if (reserve0 == 0 || reserve1 == 0) revert NoReserves();
+        unchecked {
+            pairElapsed = blockTimestamp - tsLast;
+        }
+        if (tsLast != blockTimestamp) {
+            unchecked {
+                uint32 timeElapsed = pairElapsed; // wrapping, per V2
+                price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed;
+                price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed;
+            }
+        }
+    }
+}
+
+
+ succeeded in 291ms:
+ M omerta-contracts/src/OmrTwapOracle.sol
+ M omerta-contracts/test/OmrTwapOracle.t.sol
+warning: in the working copy of 'omerta-contracts/src/OmrTwapOracle.sol', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'omerta-contracts/test/OmrTwapOracle.t.sol', LF will be replaced by CRLF the next time Git touches it
+diff --git a/omerta-contracts/src/OmrTwapOracle.sol b/omerta-contracts/src/OmrTwapOracle.sol
+index 3d884088..c813ce54 100644
+--- a/omerta-contracts/src/OmrTwapOracle.sol
++++ b/omerta-contracts/src/OmrTwapOracle.sol
+@@ -73,6 +73,8 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+     ///         is what makes a freshly-deployed oracle read as unavailable rather than as zero-price.
+     uint224 public priceAverage;
+     uint256 public lastUpdate; // unix seconds the current average closed (full width)
++    uint256 private _baselineTimestamp;
++    uint32 private _baselinePairElapsed;
+ 
+     event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
+     /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
+@@ -81,6 +83,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+     event Rebaselined(uint32 discardedWindow);
+ 
+     error PeriodTooShort();
++    error PeriodTooLong();
+     error ZeroAddress();
+     error SameToken();
+     error NotOmrPair();
+@@ -107,6 +110,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+         ) revert ZeroAddress();
+         if (omr_ == weth_) revert SameToken();
+         if (period_ < MIN_PERIOD) revert PeriodTooShort();
++        if (period_ > type(uint32).max / MAX_WINDOW_MULT) revert PeriodTooLong();
+         factory = factory_;
+         pair = pair_;
+         omr = omr_;
+@@ -127,22 +131,22 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+ 
+         // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
+         // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.
+-        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
++        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+         priceCumulativeLast = omrIsToken1 ? p0 : p1;
+         blockTimestampLast = ts;
++        _baselineTimestamp = block.timestamp;
++        _baselinePairElapsed = pairElapsed;
+     }
+ 
+     /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design —
+     ///         gating it on a keeper role would mean a lost key freezes the price feed, and through
+     ///         it the bond product. Anyone may poke; nobody can poke it early.
+     function update() external {
+-        (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
++        (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+         uint32 timeElapsed;
+         unchecked {
+             timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
+         }
+-        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
+-
+         uint256 cumulative = omrIsToken1 ? p0 : p1;
+ 
+         // ── THE WINDOW IS BOUNDED ON BOTH SIDES (red-team F2) ──────────────────────────────────
+@@ -159,15 +163,24 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+         //
+         // So a too-long interval is DISCARDED, not averaged: re-baseline and report nothing until an
+         // honest window closes. Fail-closed, and recovery is one PERIOD.
+-        if (timeElapsed > PERIOD * MAX_WINDOW_MULT) {
++        // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
++        uint256 fullElapsed = block.timestamp - _baselineTimestamp;
++        // A quiet pair's counterfactual accumulator resets after its uint32 age wraps.
++        // Discard that ambiguous interval even when this oracle's own window is short.
++        if (fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32) {
+             priceCumulativeLast = cumulative;
+             blockTimestampLast = ts;
++            _baselineTimestamp = block.timestamp;
++            _baselinePairElapsed = pairElapsed;
+             priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
+             lastUpdate = 0;
+-            emit Rebaselined(timeElapsed);
++            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
++            emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
+             return;
+         }
+ 
++        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
++
+         unchecked {
+             // The subtraction is deliberately wrapping: V2's cumulatives are allowed to overflow and
+             // the DIFFERENCE stays correct across the wrap. This is the one place unchecked maths is
+@@ -176,6 +189,8 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+         }
+         priceCumulativeLast = cumulative;
+         blockTimestampLast = ts;
++        _baselineTimestamp = block.timestamp;
++        _baselinePairElapsed = pairElapsed;
+         lastUpdate = block.timestamp;
+ 
+         emit Updated(priceAverage, _decode(priceAverage), timeElapsed);
+@@ -203,16 +218,19 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
+     function _currentCumulativePrices()
+         private
+         view
+-        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp)
++        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp, uint32 pairElapsed)
+     {
+         blockTimestamp = uint32(block.timestamp % 2 ** 32);
+         price0Cumulative = pair.price0CumulativeLast();
+         price1Cumulative = pair.price1CumulativeLast();
+         (uint112 reserve0, uint112 reserve1, uint32 tsLast) = pair.getReserves();
+         if (reserve0 == 0 || reserve1 == 0) revert NoReserves();
++        unchecked {
++            pairElapsed = blockTimestamp - tsLast;
++        }
+         if (tsLast != blockTimestamp) {
+             unchecked {
+-                uint32 timeElapsed = blockTimestamp - tsLast; // wrapping, per V2
++                uint32 timeElapsed = pairElapsed; // wrapping, per V2
+                 price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed;
+                 price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed;
+             }
+diff --git a/omerta-contracts/test/OmrTwapOracle.t.sol b/omerta-contracts/test/OmrTwapOracle.t.sol
+index 0587371c..35ea0a0c 100644
+--- a/omerta-contracts/test/OmrTwapOracle.t.sol
++++ b/omerta-contracts/test/OmrTwapOracle.t.sol
+@@ -95,6 +95,52 @@ contract OmrTwapOracleTest is Test {
+         assertTrue(oracle.omrIsToken1(), "OMR is token1 here, so price0 (token1/token0) is OMR per WETH");
+     }
+ 
++    function test_full_keeper_gap_cannot_alias_a_fresh_window() public {
++        vm.warp(block.timestamp + (uint256(1) << 32) + PERIOD);
++        oracle.update();
++        (uint256 price, uint256 updatedAt) = oracle.consult();
++        assertEq(price, 0);
++        assertEq(updatedAt, 0);
++        vm.warp(block.timestamp + PERIOD);
++        oracle.update();
++        (price, updatedAt) = oracle.consult();
++        assertApproxEqRel(price, 5000e18, 1e15);
++        assertEq(updatedAt, block.timestamp);
++    }
++
++    function test_exact_full_timestamp_wrap_discards_the_window_before_early_check() public {
++        vm.warp(block.timestamp + (uint256(1) << 32));
++        oracle.update();
++        (uint256 price, uint256 updatedAt) = oracle.consult();
++        assertEq(price, 0);
++        assertEq(updatedAt, 0);
++        vm.warp(block.timestamp + PERIOD);
++        oracle.update();
++        (price,) = oracle.consult();
++        assertApproxEqRel(price, 5000e18, 1e15);
++    }
++
++    function test_maximum_period_closes_a_window_without_overflow() public {
++        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
++        OmrTwapOracle longest = new OmrTwapOracle(safe, factory, pair, omr, weth, maximum);
++        vm.warp(block.timestamp + maximum);
++        longest.update();
++        (uint256 price, uint256 updatedAt) = longest.consult();
++        assertApproxEqRel(price, 5000e18, 1e15);
++        assertEq(updatedAt, block.timestamp);
++    }
++
++    function test_period_above_window_arithmetic_limit_reverts() public {
++        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
++        vm.expectRevert(OmrTwapOracle.PeriodTooLong.selector);
++        new OmrTwapOracle(safe, factory, pair, omr, weth, maximum + 1);
++    }
++
++    function test_uint32_maximum_period_reverts() public {
++        vm.expectRevert(OmrTwapOracle.PeriodTooLong.selector);
++        new OmrTwapOracle(safe, factory, pair, omr, weth, type(uint32).max);
++    }
++
+     function test_reversed_pair_ordering_is_detected_not_trusted() public {
+         // Pair ordering is decided by address sort, not by us. Getting this backwards would invert
+         // every price the mint wall reads, so the constructor works it out rather than being told.
+@@ -269,6 +315,23 @@ contract OmrTwapOracleTest is Test {
+         assertGt(price, 0);
+     }
+ 
++    function test_idle_pair_counterfactual_wrap_discards_and_recovers() public {
++        vm.warp(block.timestamp + (uint256(1) << 32) - 100);
++        OmrTwapOracle fresh = new OmrTwapOracle(
++            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
++        );
++        vm.warp(block.timestamp + PERIOD);
++        fresh.update();
++        (uint256 price, uint256 updatedAt) = fresh.consult();
++        assertEq(price, 0, "discard a counterfactual source timestamp wrap");
++        assertEq(updatedAt, 0);
++        vm.warp(block.timestamp + PERIOD);
++        fresh.update();
++        (price, updatedAt) = fresh.consult();
++        assertApproxEqRel(price, 5000e18, 1e15);
++        assertEq(updatedAt, block.timestamp);
++    }
++
+     function test_empty_reserves_revert_rather_than_divide_by_zero() public {
+         MockPair empty = new MockPair(weth, omr, 0, 0);
+         factory.register(omr, weth, address(empty));
+e56cf576065c5f1bbb9bb55115f5961267f7d654
+
+2026-10-02T17:32:35.948717Z  WARN codex_core_plugins::manager: failed to auto-upgrade configured marketplace marketplace="wildcat-labs" error=git clone marketplace source timed out after 30s: Cloning into 'C:\Users\Jorge\.codex\.tmp/marketplaces\.staging\marketplace-upgrade-phc5tK'...
+Updating files:  31% (1755/5638)
+Updating files:  32% (1805/5638)
+Updating files:  33% (1861/5638)
+Updating files:  34% (1917/5638)
+Updating files:  35% (1974/5638)
+Updating files:  36% (2030/5638)
+Updating files:  37% (2087/5638)
+Updating files:  38% (2143/5638)
+Updating files:  39% (2199/5638)
+Updating files:  40% (2256/5638)
+Updating files:  41% (2312/5638)
+Updating files:  42% (2368/5638)
+Updating files:  43% (2425/5638)
+Updating files:  44% (2481/5638)
+Updating files:  45% (2538/5638)
+Updating files:  46% (2594/5638)
+Updating files:  47% (2650/5638)
+Updating files:  48% (2707/5638)
+Updating files:  49% (2763/5638)
+Updating files:  50% (2819/5638)
+Updating files:  51% (2876/5638)
+Updating files:  52% (2932/5638)
+Updating files:  53% (2989/5638)
+Updating files:  54% (3045/5638)
+Updating files:  55% (3101/5638)
+Updating files:  56% (3158/5638)
+Updating files:  57% (3214/5638)
+Updating files:  58% (3271/5638)
+Updating files:  59% (3327/5638)
+Updating files:  60% (3383/5638)
+Updating files:  61% (3440/5638)
+Updating files:  62% (3496/5638)
+Updating files:  63% (3552/5638)
+Updating files:  64% (3609/5638)
+Updating files:  65% (3665/5638)
+Updating files:  66% (3722/5638)
+Updating files:  67% (3778/5638)
+Updating files:  67% (3794/5638)
+Updating files:  68% (3834/5638)
+Updating files:  69% (3891/5638)
+Updating files:  70% (3947/5638)
+Updating files:  71% (4003/5638)
+Updating files:  72% (4060/5638)
+Updating files:  73% (4116/5638)
+Updating files:  74% (4173/5638)
+Updating files:  75% (4229/5638)
+Updating files:  76% (4285/5638)
+Updating files:  77% (4342/5638)
+Updating files:  78% (4398/5638)
+Updating files:  79% (4455/5638)
+Updating files:  80% (4511/5638)
+Updating files:  81% (4567/5638)
+Updating files:  82% (4624/5638)
+Updating files:  83% (4680/5638)
+Updating files:  84% (4736/5638)
+Updating files:  85% (4793/5638)
+Updating files:  86% (4849/5638)
+Updating files:  87% (4906/5638)
+Updating files:  88% (4962/5638)
+Updating files:  89% (5018/5638)
+Updating files:  90% (5075/5638)
+Updating files:  91% (5131/5638)
+Updating files:  92% (5187/5638)
+Updating files:  93% (5244/5638)
+Updating files:  94% (5300/5638)
+Updating files:  95% (5357/5638)
+Updating files:  96% (5413/5638)
+Updating files:  97% (5469/5638)
+Updating files:  98% (5526/5638)
+Updating files:  99% (5582/5638)
+Updating files:  99% (5612/5638)
+Updating files: 100% (5638/5638)
+Updating files: 100% (5638/5638), done.
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-ChildItem -Path 'omerta-contracts\\audits' -Recurse -File -Filter 'v2-source-wrap-before.txt' | Select-Object -ExpandProperty FullName" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-FileHash -Algorithm SHA256 'omerta-contracts\\src\\OmrTwapOracle.sol','omerta-contracts\\test\\OmrTwapOracle.t.sol' | Select-Object Path,Hash | Format-Table -AutoSize" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$p='"'omerta-contracts\\src\\OmrTwapOracle.sol'; "'$lines=Get-Content -LiteralPath $p; for($i=115;$i -le [Math]::Min(255,$lines.Count);$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$p='"'omerta-contracts\\test\\OmrTwapOracle.t.sol'; "'$lines=Get-Content -LiteralPath $p; for($i=1;$i -le 110;$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }; for($i=285;$i -le [Math]::Min(350,$lines.Count);$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "git show HEAD:omerta-contracts/src/OmrTwapOracle.sol | Select-String -Pattern 'function |event |error |public|external|constructor' | ForEach-Object { "'$_.Line }; Write-Output '"'---WORKTREE---'; Get-Content 'omerta-contracts\\src\\OmrTwapOracle.sol' | Select-String -Pattern 'function |event |error |public|external|constructor' | ForEach-Object { "'$_.Line }' in C:\Users\Jorge\Documents\Omerta
+ succeeded in 278ms:
+
+Path                                                                      Hash
+----                                                                      ----
+C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\OmrTwapOracle.sol    1D3CCBF534D720005F41D54AEF0FE466A9A804A570E9.
+C:\Users\Jorge\Documents\Omerta\omerta-contracts\test\OmrTwapOracle.t.sol BDA554A647044B8E64C16B2AE7E6C2400FC385D5573F.
+
+
+ succeeded in 318ms:
+C:\Users\Jorge\Documents\Omerta\omerta-contracts\audits\2026-10-01-red-team\v2-source-wrap-before.txt
+
+ succeeded in 353ms:
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+    function price0CumulativeLast() external view returns (uint256);
+    function price1CumulativeLast() external view returns (uint256);
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+///         window, in public, against arbitrageurs, and the cost scales with the window.
+    uint32 public immutable PERIOD;
+    ///         wearing a TWAP's name, and this contract exists to prevent exactly that.
+    uint32 public constant MIN_PERIOD = 10 minutes;
+    uint32 public constant MAX_WINDOW_MULT = 4;
+    IUniswapV2Pair public immutable pair;
+    IUniswapV2Factory public immutable factory;
+    address public immutable omr;
+    address public immutable weth;
+    bool public immutable omrIsToken1;
+    uint256 public priceCumulativeLast; // the OMR-per-WETH cumulative, whichever side that is
+    uint32 public blockTimestampLast; // when the last snapshot was taken (mod 2^32, V2 convention)
+    uint224 public priceAverage;
+    uint256 public lastUpdate; // unix seconds the current average closed (full width)
+    event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
+    event Rebaselined(uint32 discardedWindow);
+    error PeriodTooShort();
+    error ZeroAddress();
+    error SameToken();
+    error NotOmrPair();
+    error PairNotCanonical();
+    error UnsupportedTokenDecimals(address token, uint8 decimals);
+    error NoReserves();
+    error PeriodNotElapsed(uint32 elapsed, uint32 required);
+    /// @param omr_  the OMR token, so the constructor can work out which side of the pair it is
+    constructor(
+    function update() external {
+    function consult() external view returns (uint256 omrPerEth, uint256 updatedAt) {
+    function _decode(uint224 avg) private pure returns (uint256) {
+    function _currentCumulativePrices()
+---WORKTREE---
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+    function price0CumulativeLast() external view returns (uint256);
+    function price1CumulativeLast() external view returns (uint256);
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+///         window, in public, against arbitrageurs, and the cost scales with the window.
+    uint32 public immutable PERIOD;
+    ///         wearing a TWAP's name, and this contract exists to prevent exactly that.
+    uint32 public constant MIN_PERIOD = 10 minutes;
+    uint32 public constant MAX_WINDOW_MULT = 4;
+    IUniswapV2Pair public immutable pair;
+    IUniswapV2Factory public immutable factory;
+    address public immutable omr;
+    address public immutable weth;
+    bool public immutable omrIsToken1;
+    uint256 public priceCumulativeLast; // the OMR-per-WETH cumulative, whichever side that is
+    uint32 public blockTimestampLast; // when the last snapshot was taken (mod 2^32, V2 convention)
+    uint224 public priceAverage;
+    uint256 public lastUpdate; // unix seconds the current average closed (full width)
+    event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
+    event Rebaselined(uint32 discardedWindow);
+    error PeriodTooShort();
+    error PeriodTooLong();
+    error ZeroAddress();
+    error SameToken();
+    error NotOmrPair();
+    error PairNotCanonical();
+    error UnsupportedTokenDecimals(address token, uint8 decimals);
+    error NoReserves();
+    error PeriodNotElapsed(uint32 elapsed, uint32 required);
+    /// @param omr_  the OMR token, so the constructor can work out which side of the pair it is
+    constructor(
+    function update() external {
+            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+    function consult() external view returns (uint256 omrPerEth, uint256 updatedAt) {
+    function _decode(uint224 avg) private pure returns (uint256) {
+    function _currentCumulativePrices()
+
+ exited 1 in 369ms:
+InvalidOperation: 
+Line |
+   2 |  . teralPath $p; for($i=115;$i -le [Math]::Min(255,$lines.Count);$i++){  .
+     |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot invoke method. Method invocation is supported only on core types in this language mode.
+
+ exited 1 in 376ms:
+   1: // SPDX-License-Identifier: MIT
+   2: pragma solidity 0.8.26;
+   3: 
+   4: import {Test} from "forge-std/Test.sol";
+   5: import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+   6: import {OmrTwapOracle, IUniswapV2Factory, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";
+   7: 
+   8: contract MockTwapToken is ERC20 {
+   9:     uint8 private immutable _tokenDecimals;
+  10: 
+  11:     constructor(string memory symbol_, uint8 decimals_) ERC20(symbol_, symbol_) {
+  12:         _tokenDecimals = decimals_;
+  13:     }
+  14: 
+  15:     function decimals() public view override returns (uint8) {
+  16:         return _tokenDecimals;
+  17:     }
+  18: }
+  19: 
+  20: contract MockV2Factory is IUniswapV2Factory {
+  21:     mapping(address => mapping(address => address)) public getPair;
+  22: 
+  23:     function register(address tokenA, address tokenB, address pair) external {
+  24:         getPair[tokenA][tokenB] = pair;
+  25:         getPair[tokenB][tokenA] = pair;
+  26:     }
+  27: }
+  28: 
+  29: /// A Uniswap V2 pair, faithful to the ONE behaviour this oracle depends on: `price*CumulativeLast`
+  30: /// is only written when the pair is TOUCHED, and it accumulates price x elapsed-time in UQ112x112.
+  31: /// Everything else about a real pair is irrelevant here and deliberately absent.
+  32: contract MockPair is IUniswapV2Pair {
+  33:     address public token0;
+  34:     address public token1;
+  35:     uint112 private r0;
+  36:     uint112 private r1;
+  37:     uint32 private tsLast;
+  38:     uint256 public price0CumulativeLast;
+  39:     uint256 public price1CumulativeLast;
+  40: 
+  41:     constructor(address t0, address t1, uint112 reserve0, uint112 reserve1) {
+  42:         token0 = t0;
+  43:         token1 = t1;
+  44:         r0 = reserve0;
+  45:         r1 = reserve1;
+  46:         tsLast = uint32(block.timestamp % 2 ** 32);
+  47:     }
+  48: 
+  49:     function getReserves() external view returns (uint112, uint112, uint32) {
+  50:         return (r0, r1, tsLast);
+  51:     }
+  52: 
+  53:     /// Move the price, accruing the cumulative for the elapsed period FIRST - exactly what
+  54:     /// `_update` does inside a real pair on every swap/mint/burn/sync.
+  55:     function setReserves(uint112 reserve0, uint112 reserve1) external {
+  56:         uint32 ts = uint32(block.timestamp % 2 ** 32);
+  57:         unchecked {
+  58:             uint32 elapsed = ts - tsLast;
+  59:             if (elapsed > 0 && r0 != 0 && r1 != 0) {
+  60:                 price0CumulativeLast += ((uint256(r1) << 112) / r0) * elapsed;
+  61:                 price1CumulativeLast += ((uint256(r0) << 112) / r1) * elapsed;
+  62:             }
+  63:         }
+  64:         r0 = reserve0;
+  65:         r1 = reserve1;
+  66:         tsLast = ts;
+  67:     }
+  68: }
+  69: 
+  70: contract OmrTwapOracleTest is Test {
+  71:     address weth;
+  72:     address omr;
+  73:     address safe = makeAddr("safe");
+  74: 
+  75:     uint32 constant PERIOD = 30 minutes;
+  76: 
+  77:     MockPair pair;
+  78:     MockV2Factory factory;
+  79:     OmrTwapOracle oracle;
+  80: 
+  81:     function setUp() public {
+  82:         vm.warp(1_000_000);
+  83:         weth = address(new MockTwapToken("WETH", 18));
+  84:         omr = address(new MockTwapToken("OMR", 18));
+  85:         // OMR is token1: 1 WETH reserve vs 5000 OMR reserve  5000 OMR per ETH
+  86:         pair = new MockPair(weth, omr, 1_000e18, 5_000_000e18);
+  87:         factory = new MockV2Factory();
+  88:         factory.register(omr, weth, address(pair));
+  89:         oracle = new OmrTwapOracle(
+  90:             safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+  91:         );
+  92:     }
+  93: 
+  94:     function test_reads_the_right_side_of_the_pair() public view {
+  95:         assertTrue(oracle.omrIsToken1(), "OMR is token1 here, so price0 (token1/token0) is OMR per WETH");
+  96:     }
+  97: 
+  98:     function test_full_keeper_gap_cannot_alias_a_fresh_window() public {
+  99:         vm.warp(block.timestamp + (uint256(1) << 32) + PERIOD);
+ 100:         oracle.update();
+ 101:         (uint256 price, uint256 updatedAt) = oracle.consult();
+ 102:         assertEq(price, 0);
+ 103:         assertEq(updatedAt, 0);
+ 104:         vm.warp(block.timestamp + PERIOD);
+ 105:         oracle.update();
+ 106:         (price, updatedAt) = oracle.consult();
+ 107:         assertApproxEqRel(price, 5000e18, 1e15);
+ 108:         assertEq(updatedAt, block.timestamp);
+ 109:     }
+ 110: 
+InvalidOperation: 
+Line |
+   2 |  . ines[$i-1] }; for($i=285;$i -le [Math]::Min(350,$lines.Count);$i++){  .
+     |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot invoke method. Method invocation is supported only on core types in this language mode.
+
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-FileHash -Algorithm SHA256 -LiteralPath 'omerta-contracts\\src\\OmrTwapOracle.sol','omerta-contracts\\test\\OmrTwapOracle.t.sol' | ForEach-Object { "'$_.Path + '"' ' + "'$_.Hash }' in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content -Raw -LiteralPath 'omerta-contracts\\audits\\2026-10-01-red-team\\v2-source-wrap-before.txt'" in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$p='"'omerta-contracts\\src\\OmrTwapOracle.sol'; "'$lines=Get-Content -LiteralPath $p; $end=255; if($lines.Count -lt $end){$end=$lines.Count}; for($i=115;$i -le $end;$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in C:\Users\Jorge\Documents\Omerta
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$p='"'omerta-contracts\\test\\OmrTwapOracle.t.sol'; "'$lines=Get-Content -LiteralPath $p; $end=350; if($lines.Count -lt $end){$end=$lines.Count}; for($i=285;$i -le $end;$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in C:\Users\Jorge\Documents\Omerta
+ succeeded in 232ms:
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 7.22s
+Compiler run successful!
+
+Ran 1 test for test/OmrTwapOracle.t.sol:OmrTwapOracleTest
+[FAIL: discard a counterfactual source timestamp wrap: 4892297484486148698882055721961001564444444444444444 != 0] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 835158)
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 2.08ms (1.21ms CPU time)
+
+Ran 1 test suite in 12.36ms (2.08ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/OmrTwapOracle.t.sol:OmrTwapOracleTest
+[FAIL: discard a counterfactual source timestamp wrap: 4892297484486148698882055721961001564444444444444444 != 0] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 835158)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test
+
+
+ succeeded in 258ms:
+C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\OmrTwapOracle.sol 1D3CCBF534D720005F41D54AEF0FE466A9A804A570E9204D2BB563CABA5A941F
+C:\Users\Jorge\Documents\Omerta\omerta-contracts\test\OmrTwapOracle.t.sol BDA554A647044B8E64C16B2AE7E6C2400FC385D5573F42478264CA6FB9807AA2
+
+ succeeded in 244ms:
+ 285:             address(realOmr),
+ 286:             address(sixDecimalWeth),
+ 287:             PERIOD
+ 288:         );
+ 289:     }
+ 290: 
+ 291:     function test_constructor_rejects_OMR_as_its_own_counterasset() public {
+ 292:         MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+ 293:         MockPair nonsensical = new MockPair(address(realOmr), address(realOmr), 1_000e18, 5_000_000e18);
+ 294:         MockV2Factory localFactory = new MockV2Factory();
+ 295:         localFactory.register(address(realOmr), address(realOmr), address(nonsensical));
+ 296: 
+ 297:         vm.expectRevert();
+ 298:         new OmrTwapOracle(
+ 299:             safe,
+ 300:             IUniswapV2Factory(address(localFactory)),
+ 301:             IUniswapV2Pair(address(nonsensical)),
+ 302:             address(realOmr),
+ 303:             address(realOmr),
+ 304:             PERIOD
+ 305:         );
+ 306:     }
+ 307: 
+ 308:     function test_update_is_permissionless() public {
+ 309:         // Gating the poke on a keeper role would mean a lost key freezes the feed and, through it,
+ 310:         // the whole bond product. Anyone may poke; nobody can poke early.
+ 311:         vm.warp(block.timestamp + PERIOD + 1);
+ 312:         vm.prank(makeAddr("a passing stranger"));
+ 313:         oracle.update();
+ 314:         (uint256 price,) = oracle.consult();
+ 315:         assertGt(price, 0);
+ 316:     }
+ 317: 
+ 318:     function test_idle_pair_counterfactual_wrap_discards_and_recovers() public {
+ 319:         vm.warp(block.timestamp + (uint256(1) << 32) - 100);
+ 320:         OmrTwapOracle fresh = new OmrTwapOracle(
+ 321:             safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+ 322:         );
+ 323:         vm.warp(block.timestamp + PERIOD);
+ 324:         fresh.update();
+ 325:         (uint256 price, uint256 updatedAt) = fresh.consult();
+ 326:         assertEq(price, 0, "discard a counterfactual source timestamp wrap");
+ 327:         assertEq(updatedAt, 0);
+ 328:         vm.warp(block.timestamp + PERIOD);
+ 329:         fresh.update();
+ 330:         (price, updatedAt) = fresh.consult();
+ 331:         assertApproxEqRel(price, 5000e18, 1e15);
+ 332:         assertEq(updatedAt, block.timestamp);
+ 333:     }
+ 334: 
+ 335:     function test_empty_reserves_revert_rather_than_divide_by_zero() public {
+ 336:         MockPair empty = new MockPair(weth, omr, 0, 0);
+ 337:         factory.register(omr, weth, address(empty));
+ 338:         vm.expectRevert(OmrTwapOracle.NoReserves.selector);
+ 339:         new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(empty)), omr, weth, PERIOD);
+ 340:     }
+ 341: 
+ 342:     /// The decode must not overflow. `priceAverage * 1e18` overflows uint256 for large averages,
+ 343:     /// which is why the implementation uses a 512-bit mulDiv - fuzzed across the whole plausible
+ 344:     /// price range because a silent overflow here corrupts the exact number the mint wall trusts.
+ 345:     function testFuzz_price_decode_survives_extremes(uint112 reserveOmr) public {
+ 346:         reserveOmr = uint112(bound(uint256(reserveOmr), 1e12, type(uint112).max / 2));
+ 347:         MockPair p = new MockPair(weth, omr, 1_000e18, reserveOmr);
+ 348:         factory.register(omr, weth, address(p));
+ 349:         OmrTwapOracle o =
+ 350:             new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(p)), omr, weth, PERIOD);
+
+ succeeded in 276ms:
+ 115:         pair = pair_;
+ 116:         omr = omr_;
+ 117:         weth = weth_;
+ 118:         PERIOD = period_;
+ 119: 
+ 120:         address t0 = pair_.token0();
+ 121:         address t1 = pair_.token1();
+ 122:         if (!((t0 == weth_ && t1 == omr_) || (t0 == omr_ && t1 == weth_))) revert NotOmrPair();
+ 123:         if (factory_.getPair(omr_, weth_) != address(pair_)) revert PairNotCanonical();
+ 124:         uint8 omrDecimals = IERC20Metadata(omr_).decimals();
+ 125:         if (omrDecimals != 18) revert UnsupportedTokenDecimals(omr_, omrDecimals);
+ 126:         uint8 wethDecimals = IERC20Metadata(weth_).decimals();
+ 127:         if (wethDecimals != 18) revert UnsupportedTokenDecimals(weth_, wethDecimals);
+ 128:         // price0Cumulative is token1-per-token0. We want OMR per WETH, so we want the cumulative
+ 129:         // whose NUMERATOR is OMR: price0 when OMR is token1, price1 when OMR is token0.
+ 130:         omrIsToken1 = (t1 == omr_);
+ 131: 
+ 132:         // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
+ 133:         // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.
+ 134:         (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+ 135:         priceCumulativeLast = omrIsToken1 ? p0 : p1;
+ 136:         blockTimestampLast = ts;
+ 137:         _baselineTimestamp = block.timestamp;
+ 138:         _baselinePairElapsed = pairElapsed;
+ 139:     }
+ 140: 
+ 141:     /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design -
+ 142:     ///         gating it on a keeper role would mean a lost key freezes the price feed, and through
+ 143:     ///         it the bond product. Anyone may poke; nobody can poke it early.
+ 144:     function update() external {
+ 145:         (uint256 p0, uint256 p1, uint32 ts, uint32 pairElapsed) = _currentCumulativePrices();
+ 146:         uint32 timeElapsed;
+ 147:         unchecked {
+ 148:             timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
+ 149:         }
+ 150:         uint256 cumulative = omrIsToken1 ? p0 : p1;
+ 151: 
+ 152:         // �� THE WINDOW IS BOUNDED ON BOTH SIDES (red-team F2) ����������������������������������
+ 153:         // Too SHORT is obvious and handled above. Too LONG is the subtle one and it was a real hole:
+ 154:         // closing a multi-day interval publishes an average of prices that are LONG GONE, and stamps
+ 155:         // it `lastUpdate = now` - so the consumer's staleness check cannot see it, because that check
+ 156:         // measures when the average was COMPUTED, not what period it COVERS. Measured on the real
+ 157:         // contract: after a nine-day keeper outage spanning a bull run that then crashed, this
+ 158:         // reported 19,998 while spot was 5,000. Four times over, stamped fresh.
+ 159:         //
+ 160:         // What made it exploitable rather than merely wrong: `update()` is permissionless, so whoever
+ 161:         // pokes CHOOSES when the window closes - and after an outage the interval can contain a high
+ 162:         // price nobody had to pay to create. Ordinary market volatility does the attacker's work.
+ 163:         //
+ 164:         // So a too-long interval is DISCARDED, not averaged: re-baseline and report nothing until an
+ 165:         // honest window closes. Fail-closed, and recovery is one PERIOD.
+ 166:         // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
+ 167:         uint256 fullElapsed = block.timestamp - _baselineTimestamp;
+ 168:         // A quiet pair's counterfactual accumulator resets after its uint32 age wraps.
+ 169:         // Discard that ambiguous interval even when this oracle's own window is short.
+ 170:         if (fullElapsed > PERIOD * MAX_WINDOW_MULT || uint256(_baselinePairElapsed) + fullElapsed >= 2 ** 32) {
+ 171:             priceCumulativeLast = cumulative;
+ 172:             blockTimestampLast = ts;
+ 173:             _baselineTimestamp = block.timestamp;
+ 174:             _baselinePairElapsed = pairElapsed;
+ 175:             priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
+ 176:             lastUpdate = 0;
+ 177:             // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+ 178:             emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
+ 179:             return;
+ 180:         }
+ 181: 
+ 182:         if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
+ 183: 
+ 184:         unchecked {
+ 185:             // The subtraction is deliberately wrapping: V2's cumulatives are allowed to overflow and
+ 186:             // the DIFFERENCE stays correct across the wrap. This is the one place unchecked maths is
+ 187:             // load-bearing rather than an optimisation.
+ 188:             priceAverage = uint224((cumulative - priceCumulativeLast) / timeElapsed);
+ 189:         }
+ 190:         priceCumulativeLast = cumulative;
+ 191:         blockTimestampLast = ts;
+ 192:         _baselineTimestamp = block.timestamp;
+ 193:         _baselinePairElapsed = pairElapsed;
+ 194:         lastUpdate = block.timestamp;
+ 195: 
+ 196:         emit Updated(priceAverage, _decode(priceAverage), timeElapsed);
+ 197:     }
+ 198: 
+ 199:     /// @inheritdoc IOmrOracle
+ 200:     function consult() external view returns (uint256 omrPerEth, uint256 updatedAt) {
+ 201:         // Reports 0 before the first closed window - the interface's "no usable reading" signal,
+ 202:         // which OmertaBond turns into a revert. Never a free pass.
+ 203:         return (_decode(priceAverage), lastUpdate);
+ 204:     }
+ 205: 
+ 206:     /// @dev UQ112x112  OMR-wei per 1e18 ETH-wei. `mulDiv` for the 512-bit intermediate: the naive
+ 207:     ///      `priceAverage * 1e18` overflows uint256 for large averages (2^224 * 10^18 > 2^256), which
+ 208:     ///      would silently corrupt the exact reading the mint wall depends on.
+ 209:     function _decode(uint224 avg) private pure returns (uint256) {
+ 210:         if (avg == 0) return 0;
+ 211:         return Math.mulDiv(uint256(avg), 1e18, uint256(1) << 112);
+ 212:     }
+ 213: 
+ 214:     /// @dev The pair's cumulatives brought forward to NOW. A pair only writes its cumulative on a
+ 215:     ///      touch (mint/burn/swap/sync), so on a quiet pool the stored value lags; V2's own periphery
+ 216:     ///      does this same counterfactual accrual, and skipping it would silently shorten every
+ 217:     ///      window by however long the pool sat idle.
+ 218:     function _currentCumulativePrices()
+ 219:         private
+ 220:         view
+ 221:         returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp, uint32 pairElapsed)
+ 222:     {
+ 223:         blockTimestamp = uint32(block.timestamp % 2 ** 32);
+ 224:         price0Cumulative = pair.price0CumulativeLast();
+ 225:         price1Cumulative = pair.price1CumulativeLast();
+ 226:         (uint112 reserve0, uint112 reserve1, uint32 tsLast) = pair.getReserves();
+ 227:         if (reserve0 == 0 || reserve1 == 0) revert NoReserves();
+ 228:         unchecked {
+ 229:             pairElapsed = blockTimestamp - tsLast;
+ 230:         }
+ 231:         if (tsLast != blockTimestamp) {
+ 232:             unchecked {
+ 233:                 uint32 timeElapsed = pairElapsed; // wrapping, per V2
+ 234:                 price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed;
+ 235:                 price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed;
+ 236:             }
+ 237:         }
+ 238:     }
+ 239: }
+
+codex
+The remediation’s core invariant is clear: track both full-width oracle elapsed time and the pair’s modulo-`uint32` source age, discard if either could have crossed a rollover, then reset both baselines. I’m checking the exact boundary cases and the single regression now.
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command 'forge test --match-contract OmrTwapOracleTest --match-test test_idle_pair_counterfactual_wrap_discards_and_recovers -vv' in C:\Users\Jorge\Documents\Omerta\omerta-contracts
+ exited 1 in 180ms:
+forge: 
+Line |
+   2 |  forge test --match-contract OmrTwapOracleTest --match-test test_idle_ .
+     |  ~~~~~
+     | The term 'forge' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$candidates=@('"'C:\\Users\\Jorge\\.foundry\\bin\\forge.exe','C:\\Users\\Jorge\\.cargo\\bin\\forge.exe'); foreach("'$p in $candidates){ if(Test-Path -LiteralPath $p){ $p } }; git diff --check -- '"'omerta-contracts/src/OmrTwapOracle.sol' 'omerta-contracts/test/OmrTwapOracle.t.sol'" in C:\Users\Jorge\Documents\Omerta
+ succeeded in 165ms:
+C:\Users\Jorge\.foundry\bin\forge.exe
+warning: in the working copy of 'omerta-contracts/src/OmrTwapOracle.sol', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'omerta-contracts/test/OmrTwapOracle.t.sol', LF will be replaced by CRLF the next time Git touches it
+
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "& 'C:\\Users\\Jorge\\.foundry\\bin\\forge.exe' test --match-contract OmrTwapOracleTest --match-test test_idle_pair_counterfactual_wrap_discards_and_recovers -vv" in C:\Users\Jorge\Documents\Omerta\omerta-contracts
+ exited 1 in 373ms:
+The application panicked (crashed).
+Message:  could not detect user home directory
+Location: C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\svm-rs-0.5.25\src\paths.rs:59
+
+This is a bug. Consider reporting it at https://github.com/foundry-rs/foundry
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ BACKTRACE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   1: aws_lc_0_40_0_jent_entropy_switch_notime_impl<unknown>
+      at <unknown source file>:<unknown line>
+   2: aws_lc_0_40_0_jent_entropy_switch_notime_impl<unknown>
+      at <unknown source file>:<unknown line>
+   3: aws_lc_0_40_0_jent_entropy_switch_notime_impl<unknown>
+      at <unknown source file>:<unknown line>
+   4: aws_lc_0_40_0_jent_entropy_switch_notime_impl<unknown>
+      at <unknown source file>:<unknown line>
+   5: aws_lc_0_40_0_jent_entropy_switch_notime_impl<unknown>
+      at <unknown source file>:<unknown line>
+   6: BaseThreadInitThunk<unknown>
+      at <unknown source file>:<unknown line>
+   7: RtlUserThreadStart<unknown>
+      at <unknown source file>:<unknown line>
+
+Run with COLORBT_SHOW_HIDDEN=1 environment variable to disable frame filtering.
+Run with RUST_BACKTRACE=full to include source snippets.
+
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "rg -n -g '*.txt' -g '*.md' \"test_idle_pair_counterfactual_wrap_discards_and_recovers|counterfactual source timestamp wrap\" 'omerta-contracts/audits/2026-10-01-red-team'" in C:\Users\Jorge\Documents\Omerta
+ succeeded in 155ms:
+omerta-contracts/audits/2026-10-01-red-team\forge-source-wrap-final.txt:1477:[PASS] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 886820)
+omerta-contracts/audits/2026-10-01-red-team\v2-source-wrap-after.txt:26:[PASS] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 886820)
+omerta-contracts/audits/2026-10-01-red-team\v2-source-wrap-before.txt:6:[FAIL: discard a counterfactual source timestamp wrap: 4892297484486148698882055721961001564444444444444444 != 0] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 835158)
+omerta-contracts/audits/2026-10-01-red-team\v2-source-wrap-before.txt:13:[FAIL: discard a counterfactual source timestamp wrap: 4892297484486148698882055721961001564444444444444444 != 0] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 835158)
+
+exec
+"C:\\Users\\Jorge\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content -Raw -LiteralPath 'omerta-contracts\\audits\\2026-10-01-red-team\\v2-source-wrap-after.txt'" in C:\Users\Jorge\Documents\Omerta
+ succeeded in 131ms:
+Compiling 2 files with Solc 0.8.26
+Solc 0.8.26 finished in 7.17s
+Compiler run successful!
+
+Ran 27 tests for test/OmrTwapOracle.t.sol:OmrTwapOracleTest
+[PASS] testFuzz_price_decode_survives_extremes(uint112) (runs: 512, �: 1164107, ~: 1164362)
+Logs:
+  Bound result 3584681462053739800734342715061
+
+[PASS] test_F2_a_past_spike_can_no_longer_contaminate_a_long_window() (gas: 137943)
+[PASS] test_F2_recovery_is_one_honest_window() (gas: 109590)
+[PASS] test_F2_the_boundary_is_inclusive_so_a_normal_late_poke_still_works() (gas: 109277)
+[PASS] test_F2_the_very_first_poke_is_bounded_too() (gas: 85695)
+[PASS] test_a_spike_inside_the_window_is_averaged_not_adopted() (gas: 157173)
+[PASS] test_a_sustained_move_IS_adopted() (gas: 170974)
+[PASS] test_closes_a_window_and_reports_the_average() (gas: 101638)
+[PASS] test_constructor_rejects_OMR_as_its_own_counterasset() (gas: 936647)
+[PASS] test_constructor_rejects_a_pair_that_is_not_an_OMR_pair() (gas: 359102)
+[PASS] test_constructor_rejects_a_pair_the_expected_factory_did_not_create() (gas: 1359488)
+[PASS] test_constructor_rejects_an_OMR_pair_against_the_wrong_counterasset() (gas: 1842957)
+[PASS] test_constructor_rejects_non_18_decimal_market_assets() (gas: 1404276)
+[PASS] test_counterfactual_accrual_covers_an_idle_pool() (gas: 100973)
+[PASS] test_empty_reserves_revert_rather_than_divide_by_zero() (gas: 385802)
+[PASS] test_exact_full_timestamp_wrap_discards_the_window_before_early_check() (gas: 108654)
+[PASS] test_full_keeper_gap_cannot_alias_a_fresh_window() (gas: 109314)
+[PASS] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 886820)
+[PASS] test_maximum_period_closes_a_window_without_overflow() (gas: 883119)
+[PASS] test_period_above_window_arithmetic_limit_reverts() (gas: 80170)
+[PASS] test_period_floor_is_enforced_at_construction() (gas: 74602)
+[PASS] test_reads_the_right_side_of_the_pair() (gas: 8683)
+[PASS] test_reversed_pair_ordering_is_detected_not_trusted() (gas: 1160976)
+[PASS] test_uint32_maximum_period_reverts() (gas: 74730)
+[PASS] test_unavailable_before_the_first_closed_window() (gas: 13165)
+[PASS] test_update_is_permissionless() (gas: 102360)
+[PASS] test_update_refuses_before_the_period_elapses() (gas: 26837)
+Suite result: ok. 27 passed; 0 failed; 0 skipped; finished in 31.25ms (57.36ms CPU time)
+
+Ran 1 test suite in 32.38ms (31.25ms CPU time): 27 tests passed, 0 failed, 0 skipped (27 total tests)
+
+
+codex
+No concrete arithmetic or fail-closed defect remains in the scoped remediation.
+
+- At [OmrTwapOracle.sol:167](/C:/Users/Jorge/Documents/Omerta/omerta-contracts/src/OmrTwapOracle.sol:167), the regression reaches `baselinePairElapsed + fullElapsed = 2^32 + 1700`, so the ambiguous accumulator is discarded before subtraction. State is cleared, re-baselined, and the following 1,800-second window recovers correctly.
+- The constructor bound prevents overflow of `PERIOD * MAX_WINDOW_MULT`.
+- Existing constructor, function, getter, and event signatures are preserved. Strict ABI JSON is not identical because `PeriodTooLong()` is a new additive custom-error entry.
+
+Uncertainty: retained `v2-source-wrap-after.txt` reports all 27 tests passing, including the regression, but lacks a source hash. My focused rerun could not execute because Forge crashed detecting its home directory. Current source hash: `1D3CCB…A5A941F`; test hash: `BDA554…9807AA2`; HEAD `e56cf57`, dirty. Deployment/activation was not reviewed.
+2026-10-02T17:36:08.106612Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: handshaking with MCP server failed: connection closed: initialize response: connection closed: initialize response
+tokens used
+53,433
+No concrete arithmetic or fail-closed defect remains in the scoped remediation.
+
+- At [OmrTwapOracle.sol:167](/C:/Users/Jorge/Documents/Omerta/omerta-contracts/src/OmrTwapOracle.sol:167), the regression reaches `baselinePairElapsed + fullElapsed = 2^32 + 1700`, so the ambiguous accumulator is discarded before subtraction. State is cleared, re-baselined, and the following 1,800-second window recovers correctly.
+- The constructor bound prevents overflow of `PERIOD * MAX_WINDOW_MULT`.
+- Existing constructor, function, getter, and event signatures are preserved. Strict ABI JSON is not identical because `PeriodTooLong()` is a new additive custom-error entry.
+
+Uncertainty: retained `v2-source-wrap-after.txt` reports all 27 tests passing, including the regression, but lacks a source hash. My focused rerun could not execute because Forge crashed detecting its home directory. Current source hash: `1D3CCB…A5A941F`; test hash: `BDA554…9807AA2`; HEAD `e56cf57`, dirty. Deployment/activation was not reviewed.
