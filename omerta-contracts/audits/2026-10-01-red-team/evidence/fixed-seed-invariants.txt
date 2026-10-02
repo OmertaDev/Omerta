@@ -1,0 +1,1095 @@
+No files changed, compilation skipped
+
+Ran 1 test for test/audit/GenesisOracleBootstrap.t.sol:GenesisOracleBootstrapInvariantTest
+[PASS] invariant_only_initialized_complete_bounded_windows_publish() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------+------------+-------+---------+----------╮
+| Contract                      | Selector   | Calls | Reverts | Discards |
++=========================================================================+
+| GenesisOracleBootstrapHandler | changeTick | 1035  | 0       | 0        |
+|-------------------------------+------------+-------+---------+----------|
+| GenesisOracleBootstrapHandler | elapse     | 1040  | 0       | 0        |
+|-------------------------------+------------+-------+---------+----------|
+| GenesisOracleBootstrapHandler | initialize | 1049  | 0       | 0        |
+|-------------------------------+------------+-------+---------+----------|
+| GenesisOracleBootstrapHandler | poke       | 972   | 0       | 0        |
+╰-------------------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 0
+  Bound result 600
+  Bound result 2401
+  Bound result 1926
+  Bound result 2177
+  Bound result 17683
+  Bound result 89
+  Bound result 8138
+  Bound result 254
+  Bound result 2307
+  Bound result 15672
+  Bound result 5781
+  Bound result 6445
+  Bound result -40823
+  Bound result 18
+  Bound result 495
+  Bound result -18
+  Bound result 2887
+  Bound result 8058
+  Bound result 1713
+  Bound result 7
+  Bound result 11
+  Bound result -1
+  Bound result 12761
+  Bound result 62659
+  Bound result -58510
+  Bound result -123
+  Bound result 0
+  Bound result 1278
+  Bound result 1
+  Bound result 2714
+  Bound result 581
+  Bound result -48806
+  Bound result 11434
+  Bound result 2
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 1.99s (1.99s CPU time)
+
+Ran 1 test for test/BankBufferVault.t.sol:BankBufferVaultInvariantTest
+[PASS] invariant_backingConservationNoUnmeteredSpendOrStandingApproval() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------+---------------+-------+---------+----------╮
+| Contract          | Selector      | Calls | Reverts | Discards |
++================================================================+
+| BankBufferHandler | advance       | 866   | 0       | 0        |
+|-------------------+---------------+-------+---------+----------|
+| BankBufferHandler | fund          | 791   | 0       | 0        |
+|-------------------+---------------+-------+---------+----------|
+| BankBufferHandler | issueTestDebt | 794   | 0       | 0        |
+|-------------------+---------------+-------+---------+----------|
+| BankBufferHandler | prefund       | 811   | 0       | 0        |
+|-------------------+---------------+-------+---------+----------|
+| BankBufferHandler | redeem        | 834   | 0       | 0        |
+╰-------------------+---------------+-------+---------+----------╯
+
+Logs:
+  Bound result 78
+  Bound result 156563
+  Bound result 1746
+  Bound result 12536
+  Bound result 4
+  Bound result 206
+  Bound result 923
+  Bound result 164140
+  Bound result 2072
+  Bound result 1083
+  Bound result 0
+  Bound result 375344076
+  Bound result 310037406
+  Bound result 18446744073709551614
+  Bound result 10763286
+  Bound result 5552
+  Bound result 542156487
+  Bound result 1
+  Bound result 9
+  Bound result 82428
+  Bound result 47713270939047102
+  Bound result 8155405201280644253
+  Bound result 86322675682425
+  Bound result 837
+  Bound result 1
+  Bound result 8323864
+  Bound result 171238
+  Bound result 3630
+  Bound result 362
+  Bound result 2789940
+  Bound result 4100
+  Bound result 3909974
+  Bound result 3955
+  Bound result 48
+  Bound result 262807560
+  Bound result 0
+  Bound result 5860
+  Bound result 21
+  Bound result 1
+  Bound result 544582
+  Bound result 86218
+  Bound result 223691840
+  Bound result 629641985
+  Bound result 286279
+  Bound result 14507
+  Bound result 175
+  Bound result 172800
+  Bound result 367116787
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.21s (2.21s CPU time)
+
+Ran 1 test for test/LiquidityRevenueAutomation.t.sol:KeeperGasInvariantTest
+[PASS] invariant_refillsRespectGlobalBudgetCooldownAndConserveOperationsFunding() (runs: 64, calls: 4096, reverts: 0)
+
+╭------------------+-----------+-------+---------+----------╮
+| Contract         | Selector  | Calls | Reverts | Discards |
++===========================================================+
+| KeeperGasHandler | advance   | 533   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | configure | 609   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | fund      | 625   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | pause     | 580   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | recover   | 577   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | refill    | 573   | 0       | 0        |
+|------------------+-----------+-------+---------+----------|
+| KeeperGasHandler | spend     | 599   | 0       | 0        |
+╰------------------+-----------+-------+---------+----------╯
+
+Logs:
+  Bound result 177
+  Bound result 1156867828
+  Bound result 108243735268184
+  Bound result 369689530676
+  Bound result 3918
+  Bound result 3770164
+  Bound result 2386
+  Bound result 429
+  Bound result 6
+  Bound result 22
+  Bound result 291
+  Bound result 115763
+  Bound result 4678
+  Bound result 31
+  Bound result 12
+  Bound result 7377650984632971
+  Bound result 1866
+  Bound result 107019301
+  Bound result 208990063038664664
+  Bound result 2060180555772681613
+  Bound result 213177540
+  Bound result 3140
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.26s (2.26s CPU time)
+
+Ran 1 test for test/AcquisitionConstellationTask4BudgetBook.t.sol:AcquisitionConstellationTask4BudgetBookTest
+[PASS] invariant_task4_oneImmutableRecordPerDayAndNoCoreOrFundMovement() (runs: 64, calls: 4096, reverts: 0)
+
+╭-----------------------+-----------+-------+---------+----------╮
+| Contract              | Selector  | Calls | Reverts | Discards |
++================================================================+
+| Task4InvariantHandler | authorize | 4096  | 0       | 0        |
+╰-----------------------+-----------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.63s (2.62s CPU time)
+
+Ran 1 test for test/CharacterLaunchAudit.t.sol:CharacterLaunchFeesInvariantTest
+[PASS] invariant_feeReceiptsConserveGrossAndForcedFundsNeverBecomePayments() (runs: 64, calls: 4096, reverts: 0)
+
+╭---------------------------+--------------------+-------+---------+----------╮
+| Contract                  | Selector           | Calls | Reverts | Discards |
++=============================================================================+
+| CharacterAuditFeesHandler | changePrices       | 854   | 0       | 0        |
+|---------------------------+--------------------+-------+---------+----------|
+| CharacterAuditFeesHandler | forceAndMaybeSweep | 816   | 0       | 0        |
+|---------------------------+--------------------+-------+---------+----------|
+| CharacterAuditFeesHandler | payment            | 763   | 0       | 0        |
+|---------------------------+--------------------+-------+---------+----------|
+| CharacterAuditFeesHandler | rejectRecipient    | 819   | 0       | 0        |
+|---------------------------+--------------------+-------+---------+----------|
+| CharacterAuditFeesHandler | rotateRecipients   | 844   | 0       | 0        |
+╰---------------------------+--------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 22909372
+  Bound result 289757327511978166
+  Bound result 2778
+  Bound result 879
+  Bound result 131204046494386462
+  Bound result 1
+  Bound result 839878487550195455
+  Bound result 4211
+  Bound result 1690
+  Bound result 5053
+  Bound result 5917
+  Bound result 4630
+  Bound result 908228694133465910
+  Bound result 58180221003893933
+  Bound result 876
+  Bound result 4209
+  Bound result 1
+  Bound result 7467
+  Bound result 839878487550195456
+  Bound result 530250473788929759
+  Bound result 425561052281945488
+  Bound result 45909966
+  Bound result 457
+  Bound result 31
+  Bound result 8524
+  Bound result 448791439632998695
+  Bound result 815770434638538797
+  Bound result 4441
+  Bound result 584
+  Bound result 320370451411909320
+  Bound result 39673878
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.65s (2.65s CPU time)
+
+Ran 1 test for test/GenesisWalletCap.t.sol:GenesisWalletCapInvariantTest
+[PASS] invariantEveryWalletBoundedAndAggregateConserved() (runs: 64, calls: 4096, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| CapHandler | attempt  | 4096  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+Logs:
+  Bound result 7682576732212243
+  Bound result 444101346488984
+  Bound result 661
+  Bound result 777
+  Bound result 572514390490039720
+  Bound result 1480727164310111680
+  Bound result 1060
+  Bound result 1653
+  Bound result 63
+  Bound result 174296
+  Bound result 3853745245
+  Bound result 1192064576830690134
+  Bound result 1182094744705674862
+  Bound result 573
+  Bound result 33550087591978
+  Bound result 1
+  Bound result 389658080227235739
+  Bound result 549849435415983044
+  Bound result 1280
+  Bound result 486
+  Bound result 200000
+  Bound result 832691789803205910
+  Bound result 509
+  Bound result 13581281
+  Bound result 3124842407
+  Bound result 259
+  Bound result 12062269515798126
+  Bound result 1374607431768211455
+  Bound result 3
+  Bound result 380209
+  Bound result 12648430
+  Bound result 488140226478326827
+  Bound result 910928879203549707
+  Bound result 966
+  Bound result 5454189906668
+  Bound result 6074956651680605
+  Bound result 1
+  Bound result 1622385075468672638
+  Bound result 1
+  Bound result 684706197636159540
+  Bound result 600000000000000000
+  Bound result 950000000
+  Bound result 1469334734565453182
+  Bound result 29
+  Bound result 11289835403722111
+  Bound result 900
+  Bound result 895251625229037832
+  Bound result 3803
+  Bound result 15134374679704730
+  Bound result 1651
+  Bound result 383626750807513331
+  Bound result 1374607431768211454
+  Bound result 1345235126078513331
+  Bound result 710221914
+  Bound result 255
+  Bound result 1374607431768211455
+  Bound result 6074956651680605
+  Bound result 3477
+  Bound result 517440283
+  Bound result 32
+  Bound result 516
+  Bound result 1309455
+  Bound result 438082300014765
+  Bound result 1466470939267297291
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.81s (2.80s CPU time)
+
+Ran 1 test for test/LiquidityRevenueAutomation.t.sol:LiquidityRevenueInvariantTest
+[PASS] invariant_eachDestinationMatchesFeeKindAndModeWithAtomicNonceAccounting() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------+-----------------+-------+---------+----------╮
+| Contract                | Selector        | Calls | Reverts | Discards |
++========================================================================+
+| LiquidityRevenueHandler | configureRouter | 1319  | 0       | 0        |
+|-------------------------+-----------------+-------+---------+----------|
+| LiquidityRevenueHandler | pay             | 1382  | 0       | 0        |
+|-------------------------+-----------------+-------+---------+----------|
+| LiquidityRevenueHandler | reject          | 1395  | 0       | 0        |
+╰-------------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 101
+  Bound result 101
+  Bound result 101
+  Bound result 101
+  Bound result 596
+  Bound result 751964866891144300
+  Bound result 443
+  Bound result 5973
+  Bound result 1887574539840136346
+  Bound result 1858767074614
+  Bound result 2127
+  Bound result 5828319709610145576
+  Bound result 220731314438123
+  Bound result 6615
+  Bound result 5118
+  Bound result 1927
+  Bound result 1744
+  Bound result 53112011973
+  Bound result 2715721694953879032
+  Bound result 1
+  Bound result 7822916
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.33s (3.33s CPU time)
+
+Ran 1 test for test/market-v2/TurfV2.t.sol:TurfV2InvariantTest
+[PASS] invariant_all_funded_fees_are_paid_or_back_exact_historical_credits_and_escrow() (runs: 64, calls: 4096, reverts: 0)
+
+╭---------------------------+----------------+-------+---------+----------╮
+| Contract                  | Selector       | Calls | Reverts | Discards |
++=========================================================================+
+| TurfConservationHandlerV2 | advance        | 724   | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | claim          | 627   | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | conquer        | 700   | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | fund           | 686   | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | rotateTreasury | 673   | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | siegeStep      | 686   | 0       | 0        |
+╰---------------------------+----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 384
+  Bound result 36827113952
+  Bound result 6221
+  Bound result 8548
+  Bound result 2858
+  Bound result 2956
+  Bound result 337593543950332
+  Bound result 1501268549718
+  Bound result 161
+  Bound result 9
+  Bound result 88
+  Bound result 1726
+  Bound result 2956
+  Bound result 220
+  Bound result 30892
+  Bound result 145264
+  Bound result 86400
+  Bound result 1415
+  Bound result 271027976242724
+  Bound result 297305792695524
+  Bound result 37
+  Bound result 172800
+  Bound result 2783
+  Bound result 6778
+  Bound result 337593543950335
+  Bound result 98
+  Bound result 47308
+  Bound result 80185
+  Bound result 247235422
+  Bound result 13988
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.85s (3.85s CPU time)
+
+Ran 1 test for test/RwaHealthOverlayInvariant.t.sol:RwaHealthOverlayInvariantTest
+[PASS] invariant_generationLatestAndUsedIdsAreMonotone() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------+--------------+-------+---------+----------╮
+| Contract                | Selector     | Calls | Reverts | Discards |
++=====================================================================+
+| RwaHealthOverlayHandler | record       | 1417  | 0       | 0        |
+|-------------------------+--------------+-------+---------+----------|
+| RwaHealthOverlayHandler | replay       | 1353  | 0       | 0        |
+|-------------------------+--------------+-------+---------+----------|
+| RwaHealthOverlayHandler | unauthorized | 1326  | 0       | 0        |
+╰-------------------------+--------------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 4.10s (4.10s CPU time)
+
+Ran 1 test for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2InvariantTest
+[PASS] invariant_liabilitiesRemainExactlyFundedInBothCurrencies() (runs: 64, calls: 4096, reverts: 0)
+
+╭------------------------------+------------+-------+---------+----------╮
+| Contract                     | Selector   | Calls | Reverts | Discards |
++========================================================================+
+| OmertaHookV2InvariantHandler | checkpoint | 1378  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | sweep      | 1327  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | trade      | 1391  | 0       | 0        |
+╰------------------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 877923409281
+  Bound result 66933
+  Bound result 4924
+  Bound result 9512
+  Bound result 1
+  Bound result 99999999000248942
+  Bound result 1501
+  Bound result 356
+  Bound result 32914
+  Bound result 1
+  Bound result 27472136303671008
+  Bound result 99999999107529684
+  Bound result 1
+  Bound result 1
+  Bound result 387132293800129
+  Bound result 4075
+  Bound result 1568363944774139
+  Bound result 1
+  Bound result 816
+  Bound result 184
+  Bound result 3
+  Bound result 99999999000000145
+  Bound result 99999999344327954
+  Bound result 16970
+  Bound result 3
+  Bound result 1
+  Bound result 3
+  Bound result 60315
+  Bound result 99999999000016261
+  Bound result 2
+  Bound result 130
+  Bound result 1
+  Bound result 3
+  Bound result 1
+  Bound result 61451
+  Bound result 99999999000000130
+  Bound result 99999999033540520
+  Bound result 3400
+  Bound result 99999999002505601
+  Bound result 6323
+  Bound result 1383840918
+  Bound result 4
+  Bound result 3739484553
+  Bound result 99999999002592001
+  Bound result 4
+  Bound result 99999999613426939
+  Bound result 2
+  Bound result 0
+  Bound result 4
+  Bound result 3
+  Bound result 99999999000014993
+  Bound result 99999999000002845
+  Bound result 75136
+  Bound result 576
+  Bound result 99999999000016317
+  Bound result 70142
+  Bound result 10039
+  Bound result 1
+  Bound result 1782907355
+  Bound result 2
+  Bound result 19633538711560871
+  Bound result 19
+  Bound result 99999999000000245
+  Bound result 1
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 4.51s (4.51s CPU time)
+
+Ran 6 tests for test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest
+[PASS] invariant_balance_always_backs_outstanding_credits() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+[PASS] invariant_known_credit_sum_equals_outstanding() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+[PASS] invariant_outstanding_equals_recorded_minus_withdrawn() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+[PASS] invariant_recorded_ghost_conserves_live_and_withdrawn_credits() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+[PASS] invariant_unreserved_is_exact_balance_minus_liability() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+[PASS] invariant_withdrawal_ghost_matches_cumulative_withdrawals() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+------------------+-------+---------+----------╮
+| Contract                 | Selector         | Calls | Reverts | Discards |
++==========================================================================+
+| SettlementGasPoolHandler | contribute       | 694   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | pause            | 719   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | recordSettlement | 689   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | reduceCaps       | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | unpause          | 667   | 0       | 0        |
+|--------------------------+------------------+-------+---------+----------|
+| SettlementGasPoolHandler | withdraw         | 660   | 0       | 0        |
+╰--------------------------+------------------+-------+---------+----------╯
+
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 4.73s (9.99s CPU time)
+
+Ran 3 tests for test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest
+[PASS] invariantCapsAndSettlementAccounting() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 685   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 671   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 681   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 705   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 683   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 671   | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 867655320873362323
+  Bound result 311
+  Bound result 1427118427212919756
+  Bound result 3782
+  Bound result 1962377554661603
+  Bound result 200
+
+[PASS] invariantETHReservesAlwaysCoverLiabilities() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 685   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 671   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 681   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 705   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 683   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 671   | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 867655320873362323
+  Bound result 311
+  Bound result 1427118427212919756
+  Bound result 3568
+  Bound result 1962377554661603
+  Bound result 200
+
+[PASS] invariantTokenCustodyCoversUnclaimedAllocations() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 685   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 671   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 681   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 705   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 683   | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 671   | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 867655320873362323
+  Bound result 311
+  Bound result 1427118427212919756
+  Bound result 3569
+  Bound result 1962377554661603
+  Bound result 200
+
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 4.73s (6.29s CPU time)
+
+Ran 2 tests for test/market-v2/StabilityV2Invariant.t.sol:StabilityV2InvariantTest
+[PASS] invariantCompartmentAndFeeLiabilitiesEqualHeldAssets() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------+-----------------+-------+---------+----------╮
+| Contract           | Selector        | Calls | Reverts | Discards |
++===================================================================+
+| StabilityV2Handler | claim           | 545   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | collect         | 529   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | nextObservation | 489   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | pause           | 490   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | place           | 533   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | recovery        | 490   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | remove          | 516   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | trade           | 504   | 0       | 0        |
+╰--------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 249999000000017948
+  Bound result 88146288860302579
+  Bound result 1780752367051
+  Bound result 249999000000000916
+  Bound result 249999005573906182
+  Bound result 182049276630032623
+  Bound result 249999288161664091
+  Bound result 249999000013438291
+  Bound result 1000000000001
+  Bound result 78236999014378922
+
+[PASS] invariantOwnedLiquidityMatchesRealManagerPositions() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------+-----------------+-------+---------+----------╮
+| Contract           | Selector        | Calls | Reverts | Discards |
++===================================================================+
+| StabilityV2Handler | claim           | 545   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | collect         | 529   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | nextObservation | 489   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | pause           | 490   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | place           | 533   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | recovery        | 490   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | remove          | 516   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | trade           | 504   | 0       | 0        |
+╰--------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 249999000000017948
+  Bound result 88146288860302579
+  Bound result 1780752367051
+  Bound result 249999001221104786
+  Bound result 249999005573906182
+  Bound result 249999000000006099
+  Bound result 249999288161664091
+  Bound result 249999000013438291
+  Bound result 1000000000001
+  Bound result 78236999014378922
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 5.03s (7.34s CPU time)
+
+Ran 3 tests for test/ProtocolLiquidityVault.t.sol:ProtocolLiquidityVaultInvariantTest
+[PASS] invariant_balances_and_fee_routes_conserve_each_currency() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------+---------------------+-------+---------+----------╮
+| Contract                      | Selector            | Calls | Reverts | Discards |
++==================================================================================+
+| ProtocolLiquidityVaultHandler | add                 | 495   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | attemptUnauthorized | 498   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | collect             | 502   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | donate              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | elapse              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | fund                | 540   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | pauseResume         | 554   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | swap                | 509   | 0       | 0        |
+╰-------------------------------+---------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000
+  Bound result 19650
+  Bound result 6103
+  Bound result 9999999900002704
+  Bound result 100000001
+  Bound result 20098
+  Bound result 9999999900087730
+  Bound result 2
+  Bound result 28006229
+  Bound result 1075
+  Bound result 1575
+  Bound result 9999999900009276
+  Bound result 18018803219
+  Bound result 9999999900609140
+  Bound result 0
+  Bound result 16864911137568
+  Bound result 1641395902257358
+  Bound result 3
+  Bound result 4999999000001759032
+  Bound result 4999999003595712123
+  Bound result 4999999000000000909
+  Bound result 4999999000000005951
+  Bound result 9999999900000458
+  Bound result 124821
+  Bound result 8569
+  Bound result 1659545764273129046
+  Bound result 4999999000000021105
+  Bound result 5851943626906796
+  Bound result 100000000
+  Bound result 1761676133114491526
+  Bound result 4900008577698314663
+  Bound result 1310
+  Bound result 4999999000000122709
+  Bound result 4912156290710707382
+  Bound result 7099
+  Bound result 28368
+  Bound result 1607927899
+  Bound result 14767
+  Bound result 9999999900009762
+  Bound result 69321
+  Bound result 4264337593543950335
+  Bound result 9999999900177060
+  Bound result 4999999000000006609
+  Bound result 4999999000000008609
+  Bound result 100000003
+  Bound result 9999999900019240
+  Bound result 1930829302570846638
+  Bound result 40972927567386364
+  Bound result 2023
+  Bound result 14752
+  Bound result 2
+  Bound result 26
+  Bound result 100000000
+  Bound result 19614629162616917
+  Bound result 2182798290524338
+  Bound result 80244903802056566
+  Bound result 47846153552127111
+  Bound result 1000000000001
+  Bound result 4979202254313030223
+  Bound result 52004980
+
+[PASS] invariant_paused_and_warming_custody_cannot_report_healthy() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------+---------------------+-------+---------+----------╮
+| Contract                      | Selector            | Calls | Reverts | Discards |
++==================================================================================+
+| ProtocolLiquidityVaultHandler | add                 | 495   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | attemptUnauthorized | 498   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | collect             | 502   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | donate              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | elapse              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | fund                | 540   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | pauseResume         | 554   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | swap                | 509   | 0       | 0        |
+╰-------------------------------+---------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000
+  Bound result 19650
+  Bound result 6103
+  Bound result 9999999900002649
+  Bound result 100000001
+  Bound result 20039
+  Bound result 9999999900087730
+  Bound result 2
+  Bound result 28006229
+  Bound result 1075
+  Bound result 1477
+  Bound result 9999999900009260
+  Bound result 18018803219
+  Bound result 9999999900609140
+  Bound result 0
+  Bound result 16864911137568
+  Bound result 1641395902257358
+  Bound result 3
+  Bound result 4999999000001759032
+  Bound result 4999999003595712123
+  Bound result 4999999000000000909
+  Bound result 4999999000000003781
+  Bound result 9999999900000457
+  Bound result 124821
+  Bound result 8104
+  Bound result 1659545764273129047
+  Bound result 4999999000000021143
+  Bound result 9999999900001920
+  Bound result 100000000
+  Bound result 1761676133114491526
+  Bound result 4900008577698314663
+  Bound result 7948
+  Bound result 4999999000000122709
+  Bound result 4912156290710707382
+  Bound result 7099
+  Bound result 28368
+  Bound result 7846
+  Bound result 14354
+  Bound result 9999999900009890
+  Bound result 69321
+  Bound result 4264337593543950335
+  Bound result 9999999900177060
+  Bound result 4999999000000006634
+  Bound result 4999999000000000248
+  Bound result 100000003
+  Bound result 9999999900019240
+  Bound result 1930829302570846638
+  Bound result 40972927567386364
+  Bound result 5766
+  Bound result 147
+  Bound result 2
+  Bound result 26
+  Bound result 100000000
+  Bound result 19614629162616917
+  Bound result 2182798290524338
+  Bound result 80244903802056566
+  Bound result 47846153552127111
+  Bound result 1000000000001
+  Bound result 4979202254313030223
+  Bound result 52004980
+
+[PASS] invariant_principal_custody_and_liquidity_are_monotonic() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------+---------------------+-------+---------+----------╮
+| Contract                      | Selector            | Calls | Reverts | Discards |
++==================================================================================+
+| ProtocolLiquidityVaultHandler | add                 | 495   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | attemptUnauthorized | 498   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | collect             | 502   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | donate              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | elapse              | 499   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | fund                | 540   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | pauseResume         | 554   | 0       | 0        |
+|-------------------------------+---------------------+-------+---------+----------|
+| ProtocolLiquidityVaultHandler | swap                | 509   | 0       | 0        |
+╰-------------------------------+---------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000000
+  Bound result 1000000000000000
+  Bound result 19650
+  Bound result 6103
+  Bound result 9999999900002649
+  Bound result 100000001
+  Bound result 20039
+  Bound result 9999999900087730
+  Bound result 2
+  Bound result 28006229
+  Bound result 1075
+  Bound result 1477
+  Bound result 9999999900009260
+  Bound result 18018803219
+  Bound result 9999999900609140
+  Bound result 0
+  Bound result 16864911137568
+  Bound result 1641395902257358
+  Bound result 3
+  Bound result 4999999000001759032
+  Bound result 4999999003595712123
+  Bound result 4999999000000000909
+  Bound result 4999999000000003781
+  Bound result 9999999900000457
+  Bound result 124821
+  Bound result 8104
+  Bound result 1659545764273129047
+  Bound result 4999999000000021143
+  Bound result 9999999900001920
+  Bound result 100000000
+  Bound result 1761676133114491526
+  Bound result 4900008577698314663
+  Bound result 7948
+  Bound result 4999999000000122709
+  Bound result 4912156290710707382
+  Bound result 7099
+  Bound result 28368
+  Bound result 7846
+  Bound result 14354
+  Bound result 9999999900009890
+  Bound result 69321
+  Bound result 4264337593543950335
+  Bound result 9999999900177060
+  Bound result 4999999000000006634
+  Bound result 4999999000000000248
+  Bound result 100000003
+  Bound result 9999999900019240
+  Bound result 1930829302570846638
+  Bound result 40972927567386364
+  Bound result 5766
+  Bound result 147
+  Bound result 2
+  Bound result 26
+  Bound result 100000000
+  Bound result 19614629162616917
+  Bound result 2182798290524338
+  Bound result 80244903802056566
+  Bound result 47846153552127111
+  Bound result 1000000000001
+  Bound result 4979202254313030223
+  Bound result 52004980
+
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.44s (7.57s CPU time)
+
+Ran 1 test for test/CharacterLaunchAudit.t.sol:CharacterLaunchNftInvariantTest
+[PASS] invariant_nftOwnershipNoncesSupplyAndDailyAccountingMatchModel() (runs: 64, calls: 4096, reverts: 0)
+
+╭--------------------------+--------------+-------+---------+----------╮
+| Contract                 | Selector     | Calls | Reverts | Discards |
++======================================================================+
+| CharacterAuditNftHandler | changeCap    | 658   | 0       | 0        |
+|--------------------------+--------------+-------+---------+----------|
+| CharacterAuditNftHandler | changeTime   | 680   | 0       | 0        |
+|--------------------------+--------------+-------+---------+----------|
+| CharacterAuditNftHandler | claim        | 710   | 0       | 0        |
+|--------------------------+--------------+-------+---------+----------|
+| CharacterAuditNftHandler | rotateSigner | 677   | 0       | 0        |
+|--------------------------+--------------+-------+---------+----------|
+| CharacterAuditNftHandler | togglePause  | 679   | 0       | 0        |
+|--------------------------+--------------+-------+---------+----------|
+| CharacterAuditNftHandler | transfer     | 692   | 0       | 0        |
+╰--------------------------+--------------+-------+---------+----------╯
+
+Logs:
+  Bound result 155459
+  Bound result 5313
+  Bound result 13
+  Bound result 127885
+  Bound result 130176
+  Bound result 151084
+  Bound result 110144
+  Bound result 61353
+  Bound result 1
+  Bound result 3504
+  Bound result 54
+  Bound result 400
+  Bound result 86400
+  Bound result 36690
+  Bound result 2785
+  Bound result 2500
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 7.19s (7.19s CPU time)
+
+Ran 1 test for test/StockTokenRegistryV2Invariant.t.sol:StockTokenRegistryV2InvariantTest
+[PASS] invariant_reverseHeadsHistoryCatalogAndBallotsRemainHonest() (runs: 64, calls: 4096, reverts: 0)
+
+╭-----------------------------+------------+-------+---------+----------╮
+| Contract                    | Selector   | Calls | Reverts | Discards |
++=======================================================================+
+| StockTokenRegistryV2Handler | activate   | 977   | 0       | 0        |
+|-----------------------------+------------+-------+---------+----------|
+| StockTokenRegistryV2Handler | deactivate | 1050  | 0       | 0        |
+|-----------------------------+------------+-------+---------+----------|
+| StockTokenRegistryV2Handler | publish    | 1025  | 0       | 0        |
+|-----------------------------+------------+-------+---------+----------|
+| StockTokenRegistryV2Handler | reactivate | 1044  | 0       | 0        |
+╰-----------------------------+------------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 23.02s (23.01s CPU time)
+
+Ran 16 test suites in 23.03s (80.48s CPU time): 26 tests passed, 0 failed, 0 skipped (26 total tests)

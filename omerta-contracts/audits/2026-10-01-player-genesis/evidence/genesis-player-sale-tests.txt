@@ -1,0 +1,24 @@
+Compiling 2 files with Solc 0.8.26
+Compiling 4 files with Solc 0.8.26
+Solc 0.8.26 finished in 3.16s
+Solc 0.8.26 finished in 7.12s
+Compiler run successful!
+
+Ran 10 tests for test/GenesisPlayerSale.t.sol:GenesisPlayerSaleTest
+[PASS] testChainReplayRejected() (gas: 30541)
+[PASS] testFuzzRoundingAtArbitraryPrice(uint128,uint128,uint128) (runs: 512, μ: 1907, ~: 1907)
+[PASS] testFuzzSettlementSolvency(uint128,uint128) (runs: 512, μ: 479038, ~: 476032)
+Logs:
+  Bound result 4501
+  Bound result 659918
+
+[PASS] testMigrationFailureRollsBackAndTimeoutRefundsPrincipal() (gas: 537315)
+[PASS] testProportionalRefundAndDelayedClaims() (gas: 560082)
+[PASS] testRefundReentrancyCannotDrainOtherPrincipal() (gas: 291185)
+[PASS] testTiersAndCumulativeCap() (gas: 133949)
+[PASS] testUnsettledWalletBlocksReleaseAndAnyoneCanSettle() (gas: 416138)
+[PASS] testWindowClosesExactlyAt48Hours() (gas: 32812)
+[PASS] testWrongTierProofRejected() (gas: 33381)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 27.80ms (49.00ms CPU time)
+
+Ran 1 test suite in 28.73ms (27.80ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)

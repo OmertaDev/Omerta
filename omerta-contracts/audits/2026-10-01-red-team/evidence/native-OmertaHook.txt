@@ -1,0 +1,56 @@
+
+Detector: divide-before-multiply
+OmertaHook._sellRate(uint160) (src/OmertaHook.sol#638-660) performs a multiplication on the result of a division:
+	- impactBps = (diff * 10000) / pre (src/OmertaHook.sol#657)
+	- base + ((ceil - base) * impactBps) / surgeFullBps (src/OmertaHook.sol#659)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: incorrect-equality
+OmertaHook._guardOpening(PoolKey,SwapParams) (src/OmertaHook.sol#509-531) uses a dangerous strict equality:
+	- opened == 0 || block.number >= deadline (src/OmertaHook.sol#515)
+OmertaHook._openingBuyRate(PoolKey) (src/OmertaHook.sol#664-669) uses a dangerous strict equality:
+	- opened == 0 || block.number >= openingEndsAt[id] (src/OmertaHook.sol#667)
+OmertaHook.pokeObserver(PoolKey) (src/OmertaHook.sol#707-714) uses a dangerous strict equality:
+	- address(key.hooks) != address(this) || openedAt[id] == 0 (src/OmertaHook.sol#709)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: uninitialized-local
+OmertaHook._accrue(address,PoolKey,Currency,uint256).community (src/OmertaHook.sol#685) is a local variable never initialized
+OmertaHook._accrue(address,PoolKey,Currency,uint256).dev (src/OmertaHook.sol#683) is a local variable never initialized
+OmertaHook._accrue(address,PoolKey,Currency,uint256).rwa (src/OmertaHook.sol#684) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: unused-return
+OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#487-504) ignores return value by (sqrtPriceX96,None,None,None) = StateLibrary.getSlot0(poolManager,key.toId()) (src/OmertaHook.sol#497)
+OmertaHook._writeTickAccumulator(PoolId) (src/OmertaHook.sol#578-592) ignores return value by (sqrtPriceX96,tick,None,None) = StateLibrary.getSlot0(poolManager,id) (src/OmertaHook.sol#590)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: assembly
+OmertaHook.beforeSwap(address,PoolKey,SwapParams,bytes) (src/OmertaHook.sol#487-504) uses assembly
+	- INLINE ASM (src/OmertaHook.sol#499-501)
+OmertaHook._sellRate(uint160) (src/OmertaHook.sol#638-660) uses assembly
+	- INLINE ASM (src/OmertaHook.sol#645-647)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Detector: unindexed-event-address
+Event OmertaHook.RecipientsSet(address,address,address,address) (src/OmertaHook.sol#252) has address parameters but no indexed parameters
+Event OmertaHook.ObserverSet(address) (src/OmertaHook.sol#254) has address parameters but no indexed parameters
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unindexed-event-address-parameters
+src\OmertaHook.sol analyzed (29 contracts with 102 detectors), 13 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\OmertaHook.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running
+Compilation warnings/errors on src\OmertaHook.sol:
+Warning: Transient storage as defined by EIP-1153 can break the composability of smart contracts: Since transient storage is cleared only at the end of the transaction and not at the end of the outermost call frame to the contract within a transaction, your contract may unintentionally misbehave when invoked multiple times in a complex transaction. To avoid this, be sure to clear all transient storage at the end of any call to your contract. The use of transient storage for reentrancy guards that are cleared at the end of the call is safe.
+
+   --> src/OmertaHook.sol:500:17:
+
+    |
+
+500 |                 tstore(slot, sqrtPriceX96)
+
+    |                 ^^^^^^
+
+
+
+

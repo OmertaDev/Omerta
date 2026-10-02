@@ -73,6 +73,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     ///         is what makes a freshly-deployed oracle read as unavailable rather than as zero-price.
     uint224 public priceAverage;
     uint256 public lastUpdate; // unix seconds the current average closed (full width)
+    uint256 private _baselineTimestamp;
 
     event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
     /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
@@ -81,6 +82,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     event Rebaselined(uint32 discardedWindow);
 
     error PeriodTooShort();
+    error PeriodTooLong();
     error ZeroAddress();
     error SameToken();
     error NotOmrPair();
@@ -107,6 +109,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         ) revert ZeroAddress();
         if (omr_ == weth_) revert SameToken();
         if (period_ < MIN_PERIOD) revert PeriodTooShort();
+        if (period_ > type(uint32).max / MAX_WINDOW_MULT) revert PeriodTooLong();
         factory = factory_;
         pair = pair_;
         omr = omr_;
@@ -130,6 +133,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
         priceCumulativeLast = omrIsToken1 ? p0 : p1;
         blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
     }
 
     /// @notice Close the current window and roll the average forward. PERMISSIONLESS by design —
@@ -141,8 +145,6 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         unchecked {
             timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
         }
-        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
-
         uint256 cumulative = omrIsToken1 ? p0 : p1;
 
         // ── THE WINDOW IS BOUNDED ON BOTH SIDES (red-team F2) ──────────────────────────────────
@@ -159,14 +161,20 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         //
         // So a too-long interval is DISCARDED, not averaged: re-baseline and report nothing until an
         // honest window closes. Fail-closed, and recovery is one PERIOD.
-        if (timeElapsed > PERIOD * MAX_WINDOW_MULT) {
+        // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
+        uint256 fullElapsed = block.timestamp - _baselineTimestamp;
+        if (fullElapsed > PERIOD * MAX_WINDOW_MULT) {
             priceCumulativeLast = cumulative;
             blockTimestampLast = ts;
+            _baselineTimestamp = block.timestamp;
             priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
             lastUpdate = 0;
-            emit Rebaselined(timeElapsed);
+            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+            emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
             return;
         }
+
+        if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
 
         unchecked {
             // The subtraction is deliberately wrapping: V2's cumulatives are allowed to overflow and
@@ -176,6 +184,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         }
         priceCumulativeLast = cumulative;
         blockTimestampLast = ts;
+        _baselineTimestamp = block.timestamp;
         lastUpdate = block.timestamp;
 
         emit Updated(priceAverage, _decode(priceAverage), timeElapsed);

@@ -1,0 +1,10 @@
+[
+  {
+    "suite": "test/StockTokenRegistryV2Invariant.t.sol:StockTokenRegistryV2InvariantTest",
+    "tests": 1
+  },
+  {
+    "suite": "test/audit/PlayerSaleCapDomain.t.sol:PlayerSaleCapDomainTest",
+    "tests": 1
+  }
+]

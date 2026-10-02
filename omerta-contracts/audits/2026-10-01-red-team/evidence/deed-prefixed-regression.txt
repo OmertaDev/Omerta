@@ -1,0 +1,10 @@
+    function test_remint_cannot_change_the_immutable_district() public {
+        uint256 id = _mintTo(alice, "Identity Street", 915);
+        vm.prank(alice);
+        deed.redeem(id);
+        StreetDeed.DeedVoucher memory changed = _voucher(bob, "Identity Street", "The Foundry", 916);
+        deed.claim(changed, _sign(changed));
+        assertEq(deed.deedDistrict(id), "The Docks", "burn/remint must preserve street identity");
+    }
+
+    // ── pause: stops extractions, never redemptions ──

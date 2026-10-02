@@ -1,0 +1,17 @@
+Compiling 5 files with Solc 0.8.26
+Solc 0.8.26 finished in 23.27s
+Compiler run successful!
+
+Ran 1 test for test/StreetDeed.t.sol:StreetDeedTest
+[FAIL: burn/remint must preserve street identity: The Foundry != The Docks] test_remint_cannot_change_the_immutable_district() (gas: 331708)
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 37.80ms (15.77ms CPU time)
+
+Ran 1 test suite in 55.35ms (37.80ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/StreetDeed.t.sol:StreetDeedTest
+[FAIL: burn/remint must preserve street identity: The Foundry != The Docks] test_remint_cannot_change_the_immutable_district() (gas: 331708)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

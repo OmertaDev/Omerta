@@ -1,0 +1,21 @@
+  ✔ anvil up — chain 4663 on http://127.0.0.1:8549
+  ✔ the real ERC-6551 registry deployed — 0x5FbDB231… impl 0xe7f1725E…
+  ✔ StreetDeed + StockVault + approved stock registry deployed — vault keeper 0x54821F1f…
+  ✔ the vault pre-funded and capped — 10000 units held, 1000/day cap
+  ✔ StreetDeed.claim accepted a server-signed voucher — "Vermilion Row" → 0xccACE8d4…
+  ✔ the backend derives the contract's own tokenId — keccak("Vermilion Row")
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✔ the Safe-owned stock registry mirrored into Postgres — TSLA active on chain 4663
+  ✔ the backend's TBA is the registry's TBA — 0x4d22A0BD8E83…
+  ✔ the account at that address is bound to the deed — token(4663, StreetDeed, Vermilion Row)
+  ✔ StockVault.deliver landed the units in the deed's vault — 25 TSLA
+  ✔ delivery does not require the account to exist first — the address is counterfactual; the balance is not
+  ✔ the keeper sends but never settles — the allocation is still owed until the log lands
+  ✔ the Delivered log confirmed it — 0x944b7025fc…
+  ✔ a settled delivery is never re-sent — the deterministic id holds across runs
+  ✔ the walls hold over a real delivery; §10.4 untouched — 7 checks, 0 ledger rows
+
+✅ stock-e2e passed — 15 asserted steps. The stock rail is real:
+   the deed minted from a server-signed voucher, the backend computed the same token-bound account
+   the canonical registry does, StockVault delivered into it, and only the log settled it.
+

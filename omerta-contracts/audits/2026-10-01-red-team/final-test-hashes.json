@@ -1,0 +1,418 @@
+[
+  {
+    "path": "omerta-contracts/test/AcquisitionAuthoritySnapshotTask2.t.sol",
+    "sha256": "d3542dec34bb9b5ddb73d3884a0591b179c2ebc0adc4bd48ca6178491aaa8152"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionAuthorityTask2.t.sol",
+    "sha256": "0ee8c75917237497d4aa171556565930518c15efc76950af8564e676ca33188e"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationCrosswalk.t.sol",
+    "sha256": "fa96e3213876e37b323043abd7fc7ed98fe3586c5d15a9a2d371af9fd89b7263"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationTask1.t.sol",
+    "sha256": "383e7c8be379e46571093dd1ee07cdd5d16f941007c10bb6b1919f50ca94589a"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationTask3A.t.sol",
+    "sha256": "1d6f5318f1165ac97740fb16bb34b1c10d4bd246d3a4a5b4f11042a47aa00b09"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationTask3B.t.sol",
+    "sha256": "0b8a2105140b2eee3e174b45321c3799dc00dbed9961d24f04de7b594368154f"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationTask4BudgetBook.t.sol",
+    "sha256": "3c7a6b07d54a5d0510c9ca65683f1fc955d01e0ee20b1dfb60f85d84fc4ae422"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionConstellationTask5IntentIdentity.t.sol",
+    "sha256": "51a3b14b2a8c02f753ac88a76b9466cbdc77d9198bdccf4783687ed0785c3653"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionVaultAccounting.t.sol",
+    "sha256": "7a14850782674fe034bd311f44f3ec5406b3d1b266f1f81c2173001a56a8e609"
+  },
+  {
+    "path": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+    "sha256": "fd7478cda112238ced82c69c66a274cd423aacbd62a206f00f2faf22e7eec7b2"
+  },
+  {
+    "path": "omerta-contracts/test/Bank.t.sol",
+    "sha256": "5414bc45d8d39edc4e5353daaea3995090d6924a2689b885e2227e2359ea3d9b"
+  },
+  {
+    "path": "omerta-contracts/test/BankBufferVault.t.sol",
+    "sha256": "df10b528a0481d2b4bff73df91c64e7fa26d9241f13dbbee351ec43bf1d4e530"
+  },
+  {
+    "path": "omerta-contracts/test/BondLiquidityHealth.t.sol",
+    "sha256": "38b48a9c74a04a661df7ab6a2e32f9d6d97ab63601e485f882a04dbb8f99e5c6"
+  },
+  {
+    "path": "omerta-contracts/test/CharacterLaunchAudit.t.sol",
+    "sha256": "039816e8af8315552a9ded444f1af1157808e3c25a4c6cc5692cdf51450095c0"
+  },
+  {
+    "path": "omerta-contracts/test/ContinuousClearingAuctionFeeQuote.t.sol",
+    "sha256": "839752f80a53506e78f3c4cf8c3c2e3ac46bf3fc093230cb2c7193ec98257148"
+  },
+  {
+    "path": "omerta-contracts/test/DynastyNFT.t.sol",
+    "sha256": "2fa97b683d1727013fcdd71512474b702ff520adf2cb11d2b9cbf4a9be056ec0"
+  },
+  {
+    "path": "omerta-contracts/test/FlashGuard.t.sol",
+    "sha256": "acca090c5600a1d28285504f330636e47ba787c2f764a0362a97971627d206a9"
+  },
+  {
+    "path": "omerta-contracts/test/GearVault.t.sol",
+    "sha256": "8ced2c282bd1d0f86e457ca252e06929783eaf38d89d89ba89678b3f09caee5d"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisLifecycleController.t.sol",
+    "sha256": "8824063a0d01b88da74a3322ed9ef0fbab0a1948b77f912de0d998b9912281a3"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisOracle.t.sol",
+    "sha256": "e909f5845e2a19d1ad00d4bbddc7afd410762e051e6cc34044cb876f71ff03e8"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisPlayerSale.t.sol",
+    "sha256": "d69232e2dc9a1217c4cd6ace6d3374b68db273692214d58ed20e7927118588a4"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisPlayerSaleInvariant.t.sol",
+    "sha256": "7c6339bf6b41677b049072e0e0286d3a6a480d145204738254a9ee7331c6607a"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisProceedsSplitter.t.sol",
+    "sha256": "85868d38322b4301def7a9b106194f535a96bf393fa5984fe81f95599a9b5be7"
+  },
+  {
+    "path": "omerta-contracts/test/GenesisWalletCap.t.sol",
+    "sha256": "0783be6584114471f4b5f673bc329677fdf93154d471794277f098000ad868e9"
+  },
+  {
+    "path": "omerta-contracts/test/LiquidityBuybackExecutor.t.sol",
+    "sha256": "34aec7f6c1788eecfe182615eb0d626ffef997465051eb362a5e311961414ff6"
+  },
+  {
+    "path": "omerta-contracts/test/LiquidityRevenueAutomation.t.sol",
+    "sha256": "db89bf782d43024388825f1c975b41198112cfbac0d9167b683634e2877901c2"
+  },
+  {
+    "path": "omerta-contracts/test/OMRTax.t.sol",
+    "sha256": "94878625773dce17253825927136d2753301b8c9a31c9d8f5467938164123c44"
+  },
+  {
+    "path": "omerta-contracts/test/Omerta.t.sol",
+    "sha256": "04525754cd274be456dc2977eb8de2a6e9cee656c46db925faa19e948840fd1c"
+  },
+  {
+    "path": "omerta-contracts/test/OmertaBond.t.sol",
+    "sha256": "4c4c8ebb26c31459a06a400c741b87b417c3bf02a09ee91e48bf50d937ea5cff"
+  },
+  {
+    "path": "omerta-contracts/test/OmertaGuardedAuction.t.sol",
+    "sha256": "0f4701bf4dcbaa84d1f9a48b1bcd6e55ff774bd53084eb0c3399a50712acf1f0"
+  },
+  {
+    "path": "omerta-contracts/test/OmertaHook.t.sol",
+    "sha256": "092a8184134ea694a7452e24472056225c3430da161be39c15bf06013fbc9741"
+  },
+  {
+    "path": "omerta-contracts/test/OmrTwapOracle.t.sol",
+    "sha256": "235ce4e17771024279e77a3486241b95b1e1882e2021cbbbcabd7063e83b8a3b"
+  },
+  {
+    "path": "omerta-contracts/test/OmrV4TwapOracle.t.sol",
+    "sha256": "cd30db3bc3a449e3864b1b99f924e0e21073672c53d18e4f33b7561fc891d147"
+  },
+  {
+    "path": "omerta-contracts/test/ProtocolLiquidityVault.t.sol",
+    "sha256": "34d5aa40bcd0d1c2ce79afca915541dd6c1a5a859fa71668a780cb44d268354f"
+  },
+  {
+    "path": "omerta-contracts/test/RwaHealthIdentityVectors.t.sol",
+    "sha256": "349ed197239b7dd0bb8687c22f007eb523ef7dbaa17bf33fe1f77283fb00e490"
+  },
+  {
+    "path": "omerta-contracts/test/RwaHealthOverlay.t.sol",
+    "sha256": "ec6c0b6651c075f77f724629c38622ece0499cef8befe6d80f29a715420d2749"
+  },
+  {
+    "path": "omerta-contracts/test/RwaHealthOverlayFuzz.t.sol",
+    "sha256": "ca4de2c05cdffa155bf364068a58a8691b7dd5c6a98cbfbf5af5325c48b40b65"
+  },
+  {
+    "path": "omerta-contracts/test/RwaHealthOverlayInvariant.t.sol",
+    "sha256": "a9384c63448a9746c7adb261fabb8ea80670305454a1337172d8f8d363f93276"
+  },
+  {
+    "path": "omerta-contracts/test/RwaStockMachine.t.sol",
+    "sha256": "a776e1f3fb38a377b0fc01f970691eaddb039efa3b5dbce2fdf4277734c6104a"
+  },
+  {
+    "path": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+    "sha256": "c5d70e8e3cd52247949f9e972a3d547ef3cbea6dbfc22c77d877f07cf238beac"
+  },
+  {
+    "path": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+    "sha256": "636637830799463ab1f3cf8c960095aec46eec92ce9aafda67bf4d7972f1a33c"
+  },
+  {
+    "path": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+    "sha256": "1cf66f967e74c9781cd7abc15d36367ac7689065ca616dbe6e8fe534a2e64168"
+  },
+  {
+    "path": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+    "sha256": "3636d735fbc00ba42d1dd454fdf77693263c79c5ef6135acb506c8dd0800d446"
+  },
+  {
+    "path": "omerta-contracts/test/StockTokenRegistryV2.t.sol",
+    "sha256": "72135a3a551fec3588aa162171b33ab05efca5f025859188eaf60c870c634604"
+  },
+  {
+    "path": "omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
+    "sha256": "f18a52e6b0e54f960e97fabb704b7d561aba93b1df6f6d6d922472dab3b87e65"
+  },
+  {
+    "path": "omerta-contracts/test/StockVault.t.sol",
+    "sha256": "6b5a7825775cc461604dbb506adfeffb64d9492486944dfc62112c47b992cb36"
+  },
+  {
+    "path": "omerta-contracts/test/StreetDeed.t.sol",
+    "sha256": "0ff93049a0f7d2c7dffcc7c49f6557025a43d55c36428993eef74f6009cfe9ea"
+  },
+  {
+    "path": "omerta-contracts/test/TestnetBankDependencies.t.sol",
+    "sha256": "38f6691e2225ff16ee265fe1b9c558c1c1b83d0007cf40002e7fea896175e702"
+  },
+  {
+    "path": "omerta-contracts/test/TestnetTwapDependencies.t.sol",
+    "sha256": "9f9ed86165dcc96eacb27db7b7d0be7f9b0d1e0b3839ebd4da95ab49e30b6459"
+  },
+  {
+    "path": "omerta-contracts/test/audit/AlchemistRedTeam.t.sol",
+    "sha256": "cc0974214c1dae8fdd0e04d66bbf3defa2dcd1acabba6d1778a9b2f58bbd11cd"
+  },
+  {
+    "path": "omerta-contracts/test/audit/ComprehensiveAcquisitionAudit.t.sol",
+    "sha256": "82c4f11dbb4cbf91ed7d469a0ad34a64cc7fb8f690a70514a0cf18a7c78058fe"
+  },
+  {
+    "path": "omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol",
+    "sha256": "8fce0f30138e714698f0ef1f27a2e0d6e8948e858b2796ed5022d53f3ecbd527"
+  },
+  {
+    "path": "omerta-contracts/test/audit/ComprehensiveMarketAudit.t.sol",
+    "sha256": "795b8defcc29a6cb763bc36e84822624c1bd0c8009165abe9aa92d861850e99b"
+  },
+  {
+    "path": "omerta-contracts/test/audit/GenesisOracleBootstrap.t.sol",
+    "sha256": "166e06e715cdc9ab8e65ae65ca0810f753a33bfb938fac822fab93f189b41cc5"
+  },
+  {
+    "path": "omerta-contracts/test/audit/OmertaHookObserverDoS.t.sol",
+    "sha256": "26a82ca8652651d04869b1500613c95bd7601f94d6e88677763c12c0c3fd113f"
+  },
+  {
+    "path": "omerta-contracts/test/audit/PlayerSaleCapDomain.t.sol",
+    "sha256": "82ee5879b732670db424e1b4d20693446bc3a540c8d47f3b8a13a27d7d1b3330"
+  },
+  {
+    "path": "omerta-contracts/test/audit/RwaStockMachineRedTeam.t.sol",
+    "sha256": "642fa5d1191a743851089be389b9e8903266cdc6a251742c77d0b56bb5cd9d54"
+  },
+  {
+    "path": "omerta-contracts/test/audit/TransmuterFundingRedTeam.t.sol",
+    "sha256": "ff14f8f603f4888f3a23a033efc1012b5a09af6c6fcf1d047dd4e2840f2e7b19"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/Actor.sol",
+    "sha256": "18e1ae2aec3738a3f7941fcea37f3b7b80ff53191d1942c40285dfce0dadf141"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/Base.sol",
+    "sha256": "a25c6f70be54b01dc443194b9536aefd2c87fd22c50ecc16f8bf1330ce039552"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/FoundryTester.sol",
+    "sha256": "284d396302bc28eec4d04ecb05d94dd5079f735c620a402c768eec85f08be3c3"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/FuzzTester.sol",
+    "sha256": "16c75da7aa8547919bb9bbe219f185313a9d0091792b2e8176c4fa6132dcd966"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/Properties.sol",
+    "sha256": "63e36e35eea18aa5b54537720846bc6385208ea887abf9c57c8b4c398ef355ff"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/Snapshots.sol",
+    "sha256": "c43eef2be2e1e3868cc450652799d8caef8ff11344049dfa1947f9a17fc8d50c"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/AlchemistHandler.sol",
+    "sha256": "6a6e9ff9f64c00e5fd98d8cbeb829937590dc3b79b01b551064a4386a16e09a0"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/DenariHandler.sol",
+    "sha256": "3d737b76832b2cadc004c37f8329fa57d0750ef7e20894edd6699d8db81b2523"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/GearVaultHandler.sol",
+    "sha256": "59a076aba25bcf0696fa9a09630bc3c6d9af6a7961e99924665eaebb593eea28"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/Handlers.sol",
+    "sha256": "4d9db08347f4034220247cf63bbb06b3659ce9102a46b2ed7846467a7c9b04f3"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/OMRHandler.sol",
+    "sha256": "7babcf12d1d26c297198a9bd734b68705faa20bab3e614fe69cb626ad7fe3e18"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/OMRStakingHandler.sol",
+    "sha256": "410f2ee6aeeaff04cb685993e9f17f1924db8016047214590f7a7c82fdf2a6ed"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/OmertaHookHandler.sol",
+    "sha256": "0628247407d8bf9d01daf9b29ee0ea29b2c0d0b7c7a71e638720fddad090333c"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/OmrTwapOracleHandler.sol",
+    "sha256": "1e88b168d2fe755d87393eb0410f77568434dd5af3c44b7bcb9a8021af0449dc"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/StockVaultHandler.sol",
+    "sha256": "5bb1a151c2572db1c1f6762ce07405f1b3dc711417a53ce55d9d11f80c0ea2d0"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/handlers/TransmuterHandler.sol",
+    "sha256": "c6dad9247d7cf3d22b2e8d667c437cc9c24c4c2c8cde6c1bfdb8cd059a0f5148"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/Clamp.sol",
+    "sha256": "cfd050e7377cfb4d30267b72e7ba87135ee7db462d2ca1906313d88c5580001f"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/DecimalPrinter.sol",
+    "sha256": "5d0bc6fa0fff797e64f27544c2c874f4296d361fbf2bf75bb458ee57c19acf51"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/Deployer.sol",
+    "sha256": "d27bb4f4ab3fa06309af169af75703823ea537ae12227ce6c191353764b4b827"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/EnumerableSet.sol",
+    "sha256": "753089609e3995e6755c30029b1d696f98ba1bc127d155c2e268d29037554d53"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/FuzzMocks.sol",
+    "sha256": "63f4f39f943439cd3028c27b79d82fb8bd7f1a134c00f3ce5a0fbf6499f5c8a5"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/Hevm.sol",
+    "sha256": "0ade72fa520d556c8ccef1212ca45303ad6ec827c57a41d7789ac8bd173f1d70"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/Logger.sol",
+    "sha256": "ae5406c39ce9cfee3fb4b1387939ec935a6d7e8ecbf5e920cd632302ac16b94d"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/Math.sol",
+    "sha256": "9424ca128c8ca923abb2af2440d86b0130cfb2accff9a76f615092808e629e11"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/MockERC20.sol",
+    "sha256": "6c0e29f3701e19730d7519c48af6b29f346e49ebcd66c9eef713cd763049b519"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/PropertiesAsserts.sol",
+    "sha256": "4e125edbe57217df97ffd1596264239eabada0346d402fd15c8e2bd2a523a32f"
+  },
+  {
+    "path": "omerta-contracts/test/fizz/utils/StringUtils.sol",
+    "sha256": "711704f3495ff078d529c3e6f3ab2f7098fb60ff726d0a373e8ad963f21c6b23"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/ArbitrageV2.t.sol",
+    "sha256": "347673a909b34f013930724a8b2466380ceea74c2e698f77a4a7f1b0ab6fd905"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/CommitmentV2.t.sol",
+    "sha256": "c37ee0227705e1959133dab635924b3331ff7a3affa03d8ce927b28604872251"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/FundingIntegrationV2.t.sol",
+    "sha256": "6b417ff23477b4d04b9556450fba38b7d0a34c3eec1c5af4ed8be69db876c67f"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/GameFixtureV2.sol",
+    "sha256": "e2f0540db970aae46c4199bb435fecd76cbfe973a7c3131f0428f16e2a6efd0a"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/GenesisCoordinatorV2.t.sol",
+    "sha256": "c8812b32f1d0abe3e86b8e9f794d19f8e09301619a4eecf44e79cad3a7e6c4ed"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/IntegrationV2.t.sol",
+    "sha256": "30ef16197c1637043c2cb2af43bc65db0a63814f3302d130d5dd7708c64f6ff7"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/InventoryBondV2.t.sol",
+    "sha256": "6ed5ec0bef6a740798ef72c484d602e0315956d097c67ea6b959626a661d1292"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/MarketStateV2.t.sol",
+    "sha256": "fc46f31c2e11628414ad1402232903386658575981e638f573d573eba4db7666"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/OmertaHookV2.t.sol",
+    "sha256": "0d3d0d2e6398b6d59815404f78c1bc3b8c8d019e936416566db5201b39e9763c"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/PlayerGenesisIntegrationV2.t.sol",
+    "sha256": "f8bbf4c8c9013cc593cb9e1e66cf2dccfe58b0c6cc0c83ba78e5503439e94bbc"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/ReserveFundingV2.t.sol",
+    "sha256": "75d5747b840ea5426f3e1a63c79d9c20dd3cfbc8aeefe5648585a6afe8d83ac3"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/SolverHashV2.t.sol",
+    "sha256": "0c72b6a58c227e1e732fbed8ac0072edc5289cc7bb4afc576061f34a47ab34d9"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/StabilityV2.t.sol",
+    "sha256": "c90c6ebc33e3f383592b8867a4dae6808343688385dd5442dafa63996c5c2847"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/StabilityV2Invariant.t.sol",
+    "sha256": "c649937ff4d367d751d199e78412e33cb2b1e5b0048ccfde0af9d0d54b815cd6"
+  },
+  {
+    "path": "omerta-contracts/test/market-v2/TurfV2.t.sol",
+    "sha256": "ce0e81265fcb3b7681662354d3729df632ce9571846cb777997b4f2a3523cb60"
+  },
+  {
+    "path": "omerta-contracts/test/utils/RwaHealthOverlayTestBase.sol",
+    "sha256": "993da2b837ef93e3f6a2e293cf7e66643b9723e29a235b93bc25a4ea9ca1e413"
+  },
+  {
+    "path": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+    "sha256": "c03e8ae082dbe6480dd73bb71fa755bcad463dc60aad5d63054c1716963db0cc"
+  },
+  {
+    "path": "omerta-contracts/test/vendor/ERC6551Account.sol",
+    "sha256": "d8bc302195d0779dcfc3301ec762843bd8c80ebbb8a4d6c4609720bdc2661289"
+  },
+  {
+    "path": "omerta-contracts/test/vendor/ERC6551Registry.sol",
+    "sha256": "1b74bdd3769e88f9801f59a92f1c6ff465324698029606afe7e310cfd7f066a2"
+  }
+]

@@ -1,0 +1,119 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 12.44s
+Compiler run successful!
+
+Ran 3 tests for test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest
+[PASS] invariantCapsAndSettlementAccounting() (runs: 128, calls: 8192, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 1439  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 1358  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 1351  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 1345  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 1400  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 1299  | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 178662
+  Bound result 96
+  Bound result 14161497837921275
+  Bound result 4709740746924399195
+  Bound result 5127602305674606417
+  Bound result 3115710480450618184
+  Bound result 31
+  Bound result 1703039033891243597
+  Bound result 3464962751045501587
+  Bound result 1374607431768211452
+  Bound result 3060993529217627250
+  Bound result 5726063491286577406
+  Bound result 750000000000000000
+
+[PASS] invariantETHReservesAlwaysCoverLiabilities() (runs: 128, calls: 8192, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 1439  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 1358  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 1351  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 1345  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 1400  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 1299  | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 178662
+  Bound result 96
+  Bound result 14161497837921275
+  Bound result 4709740746924399195
+  Bound result 5127602305674606417
+  Bound result 3115710480450618184
+  Bound result 31
+  Bound result 1703039033891243597
+  Bound result 3464962751045501587
+  Bound result 1374607431768211452
+  Bound result 3060993529217627250
+  Bound result 5726063491286577406
+  Bound result 750000000000000000
+
+[PASS] invariantTokenCustodyCoversUnclaimedAllocations() (runs: 128, calls: 8192, reverts: 0)
+
+╭-------------------+------------+-------+---------+----------╮
+| Contract          | Selector   | Calls | Reverts | Discards |
++=============================================================+
+| PlayerSaleHandler | claim      | 1439  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | contribute | 1358  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | refund     | 1351  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | release    | 1345  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | settle     | 1400  | 0       | 0        |
+|-------------------+------------+-------+---------+----------|
+| PlayerSaleHandler | timeout    | 1299  | 0       | 0        |
+╰-------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 178662
+  Bound result 96
+  Bound result 14161497837921275
+  Bound result 4709740746924399195
+  Bound result 5127602305674606417
+  Bound result 3115710480450618184
+  Bound result 31
+  Bound result 1703039033891243597
+  Bound result 3464962751045501587
+  Bound result 1374607431768211452
+  Bound result 3060993529217627250
+  Bound result 5726063491286577406
+  Bound result 750000000000000000
+
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 3.76s (7.01s CPU time)
+
+Ran 1 test suite in 3.76s (3.76s CPU time): 3 tests passed, 0 failed, 0 skipped (3 total tests)

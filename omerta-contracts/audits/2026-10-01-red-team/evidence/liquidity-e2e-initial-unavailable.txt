@@ -1,0 +1,16 @@
+C:\Users\Jorge\Documents\Omerta\node_modules\pg-pool\index.js:45
+    Error.captureStackTrace(err)
+          ^
+
+Error: connect ECONNREFUSED 127.0.0.1:55439
+    at C:\Users\Jorge\Documents\Omerta\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/Jorge/Documents/Omerta/tools/liquidity-e2e.js:24:22 {
+  errno: -4078,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 55439
+}
+
+Node.js v24.19.0

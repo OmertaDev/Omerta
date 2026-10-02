@@ -1,0 +1,29 @@
+  ✔ anvil up — chain 31337 on http://127.0.0.1:8547
+  ✔ Permit2 etched at its canonical address
+  ✔ real v4 deployed — PoolManager 0x5FbDB231… PositionManager 0xCf7Ed3Ac… UniversalRouter 0xDc64a140…
+  ✔ OmertaHook mined + deployed — 0xF5cCCA1245820D073e117b723777f0F56ec230CC (flags 0x30cc, 50729 tries)
+  ✔ OMR/ETH pool initialized behind the hook — ~1000 OMR per ETH
+  ✔ pool seeded with real liquidity — 948.68 ETH in the PoolManager
+  ✔ GenesisOracle wired into OmertaBond — the bots resolve it through bond.oracle()
+  ✔ bot wallet funded + approved — 0xe6B5E780… 50 ETH / 500k OMR
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✔ V4_SWAP executed on the real pool — 1 ETH → 995.95 OMR @ 995.953323
+  ✔ the achieved price cleared the slippage floor — 995.953323 vs oracle 1000
+  ✔ the fill booked through runVigBuyback — 995.953323 OMR credited
+  ✔ MINT_POSITION executed on the real pool — 1 ETH + 1000 OMR
+  ✔ the position is owned by the Safe — the bot key holds none
+  ✔ no ETH stranded after a balanced pairing — the remainder came back
+  ✔ no ETH stranded when the oracle lags spot — the remainder came back from the binding-OMR case too
+  ✔ the books record what the position consumed — 0.851788 ETH booked, 1.851788 ETH paired lifetime
+  ✔ POL pairing settled from the bot wallet — 1.8524 ETH out (incl. gas)
+  ✔ invariants hold over real fills; §10.4 untouched — 4 checks, 0 ledger rows
+  ✔ the reader prices the real POL positions — 1.8518 ETH vs 1.851788 ETH consumed
+  ✔ un-tokenized pool liquidity credits nobody — 1 wallet(s) with a position
+  ✔ depth is priced by tokens, not liquidity — 34× the L, 1.0000 ETH credited
+  ✔ depth-time accrues off the real read — 2.000 ETH-days over two days
+  ✔ the league moved no value — §10.4 untouched
+
+✅ dexbot-e2e passed — 23 asserted steps. The v4 encodings are real:
+   the Universal Router accepted V4_SWAP and filled on the canonical pool, PositionManager accepted
+   MINT_POSITION and minted POL to the Safe, and no ETH was left behind in either.
+

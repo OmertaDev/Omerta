@@ -1,0 +1,21 @@
+[db] Postgres ready — column migration ran 2876 ADD COLUMN IF NOT EXISTS statements.
+PASS actual v4 full-range foundation held by the fixed vault; approvals reset
+PASS mint pays 100% DEV; actual non-mint routing is 50/25/10/15; ledger excludes mint
+PASS typed keeper gas
+PASS typed keeper vig-buy
+PASS typed keeper community-buy
+PASS confirmed purchases deliver real OMR; reserve and prize claims remain physically backed
+PASS typed keeper hook-native
+PASS typed keeper hook-omr
+PASS typed keeper pol-collect
+PASS typed keeper vig-token
+PASS typed keeper desk-token
+PASS actual exact-input and exact-output sells; both Hook currencies and 75/25 LP fees delivered
+PASS typed keeper pol-fund
+PASS typed keeper pol-buy
+PASS typed keeper pol-increase
+PASS prefunded POL inventory purchased and reinvested into the same protected NFT
+PASS all keeper nonces are signed, durable and settled; public-log recovery does not double-book
+PASS live worker cycle catches up, keeps claims dormant, persists health and remains idle without duplicate accounting
+PASS actual same-block recipient rotation and restoration is held before accounting by keeper and indexer
+PASS 19 E2E assertions; 11 actual keeper transactions

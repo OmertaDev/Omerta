@@ -147,6 +147,7 @@ try {
   step('mint pays 100% DEV; actual non-mint routing is 50/25/10/15; ledger excludes mint');
   await deploy('KeeperGasVault',[SAFE,E,parseEther('0.2'),parseEther('0.5'),3600n]);
   await send('KeeperGasVault','setKeeperAllowed',[account.address,true]);await transferNative(addresses.KeeperGasVault,E);
+  await sleep(Number(await read('ProtocolLiquidityVault','warmup'))*1000+100);
   await currentClock();assert.equal(await read('ProtocolLiquidityVault','healthy'),true);
   const names={omr:'OMR',poolManager:'PoolManager',oracle:'GenesisOracle',polVault:'ProtocolLiquidityVault',claim:'VoucherClaim',hook:'OmertaHook',gasVault:'KeeperGasVault',vig:'vigExecutor',desk:'deskExecutor',community:'communityExecutor',pol:'polExecutor'};
   const contracts=Object.fromEntries(await Promise.all(Object.entries(names).map(async([name,key])=>[name,{address:addresses[key],runtimeHash:keccak256(await publicClient.getCode({address:addresses[key]}))}])));

@@ -1,0 +1,39 @@
+
+Detector: incorrect-equality
+PreVoteBudgetBook.getPreVoteBudget(uint256) (src/PreVoteBudgetBook.sol#161-168) uses a dangerous strict equality:
+	- authorization.budgetId == 0 (src/PreVoteBudgetBook.sol#167)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: timestamp
+PreVoteBudgetBook.authorizePreVoteBudget(PreVoteBudgetBook.PreVoteBudgetInput,bytes32) (src/PreVoteBudgetBook.sol#116-159) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _preVoteBudgets[input.ballotDay].budgetId != 0 (src/PreVoteBudgetBook.sol#121)
+	- block.timestamp > type()(uint64).max (src/PreVoteBudgetBook.sol#127)
+	- input.ballotDay < block.timestamp / 86400 (src/PreVoteBudgetBook.sol#129)
+PreVoteBudgetBook.getPreVoteBudget(uint256) (src/PreVoteBudgetBook.sol#161-168) uses timestamp for comparisons
+	Dangerous comparisons:
+	- authorization.budgetId == 0 (src/PreVoteBudgetBook.sol#167)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: assembly
+PreVoteBudgetBook._authorityState() (src/PreVoteBudgetBook.sol#170-220) uses assembly
+	- INLINE ASM (src/PreVoteBudgetBook.sol#176-180)
+PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) uses assembly
+	- INLINE ASM (src/PreVoteBudgetBook.sol#228-232)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Detector: cyclomatic-complexity
+PreVoteBudgetBook.constructor(address,bytes32,address,address,address) (src/PreVoteBudgetBook.sol#82-102) has a high cyclomatic complexity (12).
+PreVoteBudgetBook.authorizePreVoteBudget(PreVoteBudgetBook.PreVoteBudgetInput,bytes32) (src/PreVoteBudgetBook.sol#116-159) has a high cyclomatic complexity (13).
+PreVoteBudgetBook._authorityState() (src/PreVoteBudgetBook.sol#170-220) has a high cyclomatic complexity (21).
+PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) has a high cyclomatic complexity (14).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+
+Detector: too-many-digits
+PreVoteBudgetBook._accounting() (src/PreVoteBudgetBook.sol#222-251) uses literals with too many digits:
+	- ok = staticcall(uint256,uint256,uint256,uint256,uint256,uint256)(100000,target,0,4,w,352) (src/PreVoteBudgetBook.sol#230)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits
+src\PreVoteBudgetBook.sol analyzed (1 contracts with 102 detectors), 10 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\PreVoteBudgetBook.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

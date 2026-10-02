@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Scripts\slither.exe\__main__.py", line 6, in <module>
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 815, in main
+    main_impl(all_detector_classes=detectors, all_printer_classes=printers)
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 936, in main_impl
+    ) = process_all(filename, args, detector_classes, printer_classes)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\slither\__main__.py", line 100, in process_all
+    compilations = compile_all(target, **vars(args))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\crytic_compile.py", line 870, in compile_all
+    compilations.append(CryticCompile(target, **kwargs))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\crytic_compile.py", line 279, in __init__
+    self._compile(**kwargs)
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\crytic_compile.py", line 725, in _compile
+    self._platform.compile(self, **kwargs)
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\platform\foundry.py", line 145, in compile
+    hardhat_like_parsing(
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\platform\hardhat.py", line 77, in hardhat_like_parsing
+    targets_json = get_targets_json(loaded_json, build_directory, uniq_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jorge\AppData\Local\OmertaSecurityTools\slither-0.11.6\Lib\site-packages\crytic_compile\platform\hardhat.py", line 187, in get_targets_json
+    with open(output_file, encoding="utf8") as file_desc_output:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\build-info\\0cb8e952a004ca61.output.json'
+--ignore-compile used, if something goes wrong, consider removing the ignore compile flag

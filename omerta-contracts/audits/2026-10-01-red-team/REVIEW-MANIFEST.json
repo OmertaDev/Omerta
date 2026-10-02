@@ -1,0 +1,235 @@
+{
+  "date": "2026-10-01",
+  "head": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "phase": "source review and verified local remediation; production deployment/activation not cleared",
+  "sourceFiles": 97,
+  "dirtyWorkingTree": true,
+  "forge": "1.7.1 (4072e48705af9d93e3c0f6e29e93b5e9a40caed8)",
+  "solc": "0.8.26",
+  "optimizerRuns": 800,
+  "evm": "cancun",
+  "slither": "0.11.6",
+  "mythril": "0.24.8",
+  "daybreakModel": "gpt-daybreak-blue-latest",
+  "methods": {
+    "plamen": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69",
+    "trailofbits": "d3323cefbcf645678b8dc481de204b02ad3d02dc",
+    "pashov": "c577eb7799c349de0acb187ba00ca98e14e436fd"
+  },
+  "commands": {
+    "full": "forge test -vv",
+    "daybreak": "codex exec --ephemeral -m gpt-daybreak-blue-latest -s read-only; exact prompt and output in evidence/daybreak-run.txt",
+    "mythril": "myth analyze -f evidence/player-sale-runtime.hex --bin-runtime --execution-timeout 60 --solver-timeout 2000 --max-depth 32 -t 2 -o json",
+    "static": "per-target direct-solc commands retained in evidence/native-*.txt and evidence/ir-*.txt",
+    "fixed": "FOUNDRY_FUZZ_SEED=0x20261001 FOUNDRY_INVARIANT_RUNS=64 FOUNDRY_INVARIANT_DEPTH=64 forge test --offline --match-test ^invariant -vv",
+    "cap": "forge test --offline --match-path test/audit/PlayerSaleCapDomain.t.sol -vv",
+    "boundedFull": "FOUNDRY_FUZZ_SEED=0x20261001 FOUNDRY_INVARIANT_RUNS=128 FOUNDRY_INVARIANT_DEPTH=128 forge test --offline -vv"
+  },
+  "limits": [
+    "No production deployment address/state verified",
+    "Native Slither scans are source detector evidence, not canonical per-file IR bytecode equivalence",
+    "Mythril runtime-only 60-second bounded scan has unconstrained storage; not exhaustive symbolic proof",
+    "Full default campaign random seed not recorded by console; fixed second campaign seed retained",
+    "Third-party implementation semantics require configuration-specific validation",
+    "No backend signer/indexer/PostgreSQL implementation review in this smart-contract-only scope"
+  ],
+  "daybreakReasoningEffort": "low (CLI configured default; verified in retained header)",
+  "addedRegression": {
+    "path": "omerta-contracts/test/audit/PlayerSaleCapDomain.t.sol",
+    "sha256": "82EE5879B732670DB424E1B4D20693446BC3A540C8D47F3B8A13A27D7D1B3330",
+    "exit": 0,
+    "cases": 256
+  },
+  "verification": {
+    "completeSuite": {
+      "passed": 1275,
+      "seconds": 83.84,
+      "skipped": 0,
+      "output": "evidence/forge-full-bounded.txt",
+      "seed": "0x20261001",
+      "invariantRuns": 128,
+      "suites": 88,
+      "invariantDepth": 128,
+      "exit": 0,
+      "failed": 0,
+      "fuzzRuns": 512,
+      "evidencePhase": "pre-remediation baseline; not final validation"
+    },
+    "defaultCampaign": {
+      "observedFailures": 0,
+      "output": "evidence/forge-full.txt",
+      "runs": 512,
+      "notCompletePass": true,
+      "passedBeforeInterruption": 1273,
+      "depth": 500,
+      "status": "intentionally interrupted before final registry invariant completed"
+    },
+    "static": {
+      "successfulScans": 53,
+      "allDispositioned": true,
+      "uniqueIDs": 690,
+      "occurrences": 838,
+      "openLeads": 0,
+      "status": "final refresh complete; Stability range and guarded batch-loop rationales corrected; baseline outputs retained separately"
+    },
+    "mythril": {
+      "issues": 8,
+      "disposition": "3 cap optimizer false positives checked exhaustively; 5 intentional phase/environment predicates",
+      "maxDepth": 32,
+      "seconds": 60,
+      "exit": 1,
+      "transactions": 2,
+      "success": true
+    },
+    "additionalChecks": {
+      "sizeGate": {
+        "exit": 0,
+        "command": "forge build --offline --sizes --skip FuzzTester",
+        "output": "evidence/forge-sizes.txt",
+        "maxSourceRuntime": 23220,
+        "maxSourceCreation": 26573,
+        "constructorArgumentsIncluded": false
+      },
+      "stockIntegration": {
+        "exit": 0,
+        "target": "loopback Anvil only",
+        "command": "ANVIL_BIN=C:/Users/Jorge/.foundry/bin/anvil.exe node tools/stock-e2e.js",
+        "assertedSteps": 15,
+        "output": "evidence/stock-e2e-verified.txt",
+        "evidencePhase": "post-remediation verified"
+      },
+      "unsignedPlan": {
+        "exit": 0,
+        "checks": 19,
+        "command": "node test/liquidity-deployment-plan.js",
+        "target": "deterministic mocks, no network writes"
+      },
+      "postgresIntegration": {
+        "exit": 0,
+        "status": "resolved isolated PostgreSQL/Anvil integration; intermediate failures retained",
+        "command": "LIQUIDITY_E2E_DATABASE_URL=postgres://omerta_audit@127.0.0.1:55439/omerta_liquidity_red_team_e2e_test node tools/liquidity-e2e.js",
+        "initialAttempt": {
+          "output": "evidence/liquidity-e2e-initial-unavailable.txt",
+          "status": "isolated loopback database unavailable",
+          "exit": 1
+        },
+        "assertedSteps": 19,
+        "keeperTransactions": 11,
+        "output": "evidence/liquidity-e2e.txt",
+        "finalRerun": {
+          "status": "passed exact release tool",
+          "exit": 0,
+          "assertions": 20,
+          "keeperTransactions": 11,
+          "output": "evidence/liquidity-e2e-release.txt"
+        }
+      },
+      "dexIntegration": {
+        "exit": 0,
+        "status": "resolved local real-router/PositionManager integration",
+        "command": "node tools/dexbot-e2e.js",
+        "initialAttempt": {
+          "output": "evidence/dexbot-e2e.txt",
+          "status": "missing external v4 dependencies",
+          "exit": 1
+        },
+        "assertedSteps": 23,
+        "output": "evidence/dexbot-e2e-verified.txt",
+        "evidencePhase": "post-remediation verified"
+      }
+    },
+    "sameSeedInvariants": {
+      "failed": 0,
+      "passed": 26,
+      "depth": 64,
+      "runs": 64,
+      "suites": 16,
+      "output": "evidence/fixed-seed-invariants.txt",
+      "exit": 0,
+      "seed": "0x20261001"
+    },
+    "finalRemediationSuite": {
+      "failed": 0,
+      "passed": 1290,
+      "suites": 89,
+      "seed": "0x20261002",
+      "status": "completed",
+      "fuzzRuns": 512,
+      "output": "evidence/forge-final-verified.txt",
+      "exit": 0,
+      "invariantDepth": 128,
+      "skipped": 0,
+      "invariantRuns": 128,
+      "seconds": 92.17
+    },
+    "focusedRemediation": {
+      "failed": 0,
+      "passed": 136,
+      "exit": 0,
+      "output": "evidence/forge-final-focused.txt"
+    },
+    "currentMarketCycleRegressions": {
+      "passed": 2,
+      "failed": 0,
+      "exit": 0,
+      "output": "evidence/current-market-full-cycle.txt",
+      "productionChanges": false
+    },
+    "forgeLint": {
+      "warnings": 464,
+      "production": 188,
+      "vendor": 19,
+      "scripts": 5,
+      "tests": 252,
+      "openLeads": 0
+    }
+  },
+  "daybreakHighCrosscheck": {
+    "model": "gpt-daybreak-blue-latest",
+    "reasoningEffort": "high",
+    "status": "completed; three overlooked defect classes and evidence corrections identified",
+    "transcript": "evidence/daybreak-crosscheck-run.txt",
+    "report": "daybreak-crosscheck.md"
+  },
+  "remediation": {
+    "pushOrMergeClaimed": false,
+    "classes": [
+      "StreetDeed immutable district through burn/remint",
+      "Both oracle constructor maximum periods",
+      "Generic vendored CCA initialization fee quote clamp",
+      "Full wall-time Hook accumulation and oracle baseline windows"
+    ],
+    "phaseBlockers": [
+      "RT-M02 unsupported zero-liquidity legacy feed remains conditional/open",
+      "RT-P01 acquisition staged custody has incomplete execution/outflow"
+    ],
+    "preFixEvidence": "Original failing proofs and intermediate integration failures retained under distinct filenames",
+    "sourcePins": "final-source-hashes.json",
+    "status": "local remediation and verification complete; remote CI/merge recorded separately"
+  },
+  "daybreakRemediationReview": {
+    "model": "gpt-daybreak-blue-latest",
+    "reasoningEffort": "high",
+    "exit": 0,
+    "report": "daybreak-remediation.md",
+    "transcript": "evidence/daybreak-remediation-run.txt",
+    "conclusion": "No confirmed new patch correctness or compatibility bug; source-only",
+    "status": "completed"
+  },
+  "completedLocalDate": "2026-10-02",
+  "finalSourcePins": "final-source-hashes.json",
+  "finalArtifacts": "final-artifact-hashes.json",
+  "finalTests": "final-test-hashes.json",
+  "evidenceBinding": "evidence-manifest.json",
+  "releaseBase": "32808173",
+  "daybreakRemediation": {
+    "model": "gpt-daybreak-blue-latest",
+    "reasoningEffort": "high",
+    "exit": 0,
+    "report": "daybreak-remediation.md",
+    "transcript": "evidence/daybreak-remediation-run.txt",
+    "conclusion": "No confirmed new patch correctness or compatibility bug; source-only"
+  },
+  "releaseSourcePins": "release-source-hashes.json",
+  "releaseSourceComparison": "97 Git blobs match reviewed source after newline normalization"
+}

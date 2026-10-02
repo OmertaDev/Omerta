@@ -40,6 +40,20 @@ contract MarketStateV2Test is OmertaHookV2Fixture {
         assertEq(market.snapshot().observedAt, 3780);
     }
 
+    function test_fullUint32IdleCycleCannotAliasSnapshotFreshness() public {
+        vm.warp(3660);
+        IOmertaMarketStateV2.Snapshot memory initial = market.refresh();
+        assertTrue(initial.valid);
+        vm.warp(block.timestamp + uint256(type(uint32).max) + 1);
+        assertFalse(market.snapshot().valid);
+        IOmertaMarketStateV2.Snapshot memory current = market.refresh();
+        assertTrue(current.valid);
+        assertGt(current.epoch, initial.epoch);
+        assertEq(current.observedAt, block.timestamp / 60 * 60);
+        assertEq(current.meanTick, initial.meanTick);
+        assertEq(current.minLiquidity, INITIAL_L);
+    }
+
     function test_zeroLiquidityIntervalInvalidatesAndRecoveryNeedsFullHealthyEpoch() public {
         vm.warp(3630);
         lpRouter.modifyLiquidity(key, ModifyLiquidityParams(-887220, 887220, -int256(uint256(INITIAL_L)), bytes32(0)), "");

@@ -258,6 +258,24 @@ contract StreetDeedTest is Test {
         assertEq(deed.ownerOf(id), bob, "re-extracted to the same tokenId");
     }
 
+    function test_remint_cannot_change_the_immutable_district() public {
+        uint256 id = _mintTo(alice, "Identity Street", 915);
+        vm.prank(alice);
+        deed.redeem(id);
+        StreetDeed.DeedVoucher memory changed = _voucher(bob, "Identity Street", "The Foundry", 916);
+        bytes memory sig = _sign(changed);
+        uint256 beforeMints = deed.mintedOnDay(block.timestamp / 1 days);
+        vm.expectRevert(bytes("SD: identity changed"));
+        deed.claim(changed, sig);
+        assertEq(deed.deedDistrict(id), "The Docks", "burn/remint must preserve street identity");
+        assertFalse(deed.usedNonce(916), "rejected identity cannot consume the nonce");
+        assertEq(deed.mintedOnDay(block.timestamp / 1 days), beforeMints);
+        StreetDeed.DeedVoucher memory same = _voucher(bob, "Identity Street", "The Docks", 916);
+        deed.claim(same, _sign(same));
+        assertEq(deed.ownerOf(id), bob);
+        assertEq(deed.deedDistrict(id), "The Docks");
+    }
+
     // ── pause: stops extractions, never redemptions ──
     function test_pause_blocks_claim_but_not_redeem() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "The Strip", "Neon Mile", 1);

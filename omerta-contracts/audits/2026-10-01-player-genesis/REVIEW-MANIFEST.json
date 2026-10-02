@@ -1,0 +1,69 @@
+{
+  "reviewDate": "2026-10-01",
+  "phase": "predeployment implementation",
+  "sourceHead": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty",
+  "reportPath": "report.md",
+  "reportSha256": "3abef42f5fa4070868185df9963e02d2e2a1aa9dc67a7bf1763dc49e49352d9b",
+  "confirmedFindings": [
+    {
+      "id": "PG-01",
+      "severity": "high",
+      "disposition": "resolved"
+    }
+  ],
+  "focusedTestsPassed": 29,
+  "marketRegressionTestsPassed": 124,
+  "seed": "0x20261001",
+  "fuzzRuns": 512,
+  "invariantRuns": 128,
+  "invariantDepth": 64,
+  "staticAnalysis": "Slither failed: incomplete Foundry build-info output",
+  "productionActivationVerified": false,
+  "files": [
+    {
+      "path": "artifact-hashes.json",
+      "sha256": "7ae4df07920942dffeab101b9edfa2d1ad72081326683ee4ad6d584b4d477c02"
+    },
+    {
+      "path": "evidence/genesis-player-sale-invariants.txt",
+      "sha256": "6ba7325ce9f297710598fae810a772b112ac2b0217d748d6872224646234e658"
+    },
+    {
+      "path": "evidence/genesis-player-sale-tests.txt",
+      "sha256": "85d40cb9078129407e97b0324c470db908536a5fe521ce517f5349c57abc0cdd"
+    },
+    {
+      "path": "evidence/guarded-auction-tests.txt",
+      "sha256": "aad2f3e2ac7fbb1a7725637e4b48d720c7eed0aef8ab2e88c0b72494d14cec1f"
+    },
+    {
+      "path": "evidence/player-genesis-integration-tests.txt",
+      "sha256": "a4949b4ae59611e1cfd21e87af04389199ec87d6d0ce2efe136570855973ce64"
+    },
+    {
+      "path": "evidence/player-genesis-market-regressions.txt",
+      "sha256": "cb334843ca41482bbbbdcb5519d4202be987032052db934c84b4878d88e96cce"
+    },
+    {
+      "path": "market-regressions.log",
+      "sha256": "20ec034334cb03bbcd88003773eddc3113acbd9a24b13575597b19b925064db8"
+    },
+    {
+      "path": "report.md",
+      "sha256": "3abef42f5fa4070868185df9963e02d2e2a1aa9dc67a7bf1763dc49e49352d9b"
+    },
+    {
+      "path": "slither.log",
+      "sha256": "6c8a50ee818e56c6d5c4a3a469d6860c011a0d33210bed1494b6bb02395232da"
+    },
+    {
+      "path": "source-hashes.json",
+      "sha256": "27bb4502eaa4cc4387051fe259443f40b15319bdbacab6e3a88f2768a1714c88"
+    },
+    {
+      "path": "tests.log",
+      "sha256": "702149480f808fb8cf522904d2a9abe5467d52c32a89a17837ececde82928e58"
+    }
+  ]
+}

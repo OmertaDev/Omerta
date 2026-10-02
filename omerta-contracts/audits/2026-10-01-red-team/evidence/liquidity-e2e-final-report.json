@@ -1,0 +1,595 @@
+{
+  "scope": "local actual-contract E2E; no production transactions",
+  "chainId": 4663,
+  "steps": [
+    {
+      "name": "actual v4 full-range foundation held by the fixed vault; approvals reset",
+      "positionId": "1"
+    },
+    {
+      "name": "mint pays 100% DEV; actual non-mint routing is 50/25/10/15; ledger excludes mint"
+    },
+    {
+      "name": "typed keeper gas",
+      "transactionHash": "0xa8b5b3e2caf0d7fd3f657d92b9108ce96290000f72696957f1ba0666565b37d7"
+    },
+    {
+      "name": "typed keeper vig-buy",
+      "transactionHash": "0x0e8b76080d3af279fc05d6c8906cbfa6b735d4d68ae8570586084702cd34bce1"
+    },
+    {
+      "name": "typed keeper community-buy",
+      "transactionHash": "0x1f3eb5b008afacaab52cb70d97720100111a48ef210b5a9d8cb48df507e8e052"
+    },
+    {
+      "name": "confirmed purchases deliver real OMR; reserve and prize claims remain physically backed"
+    },
+    {
+      "name": "typed keeper hook-native",
+      "transactionHash": "0x871c878b4e69d7c3b5013aeef6a879d1bb85d206f65206553b6c6bc47931c705"
+    },
+    {
+      "name": "typed keeper hook-omr",
+      "transactionHash": "0x0d1682d05cc9ac7f743f4ed95aaec2d4989b750ab51c25c3825e18358a8c9107"
+    },
+    {
+      "name": "typed keeper pol-collect",
+      "transactionHash": "0x8ee211546d046aafb8c4414099853f65578f297db54a8bef905354a7bd7d9805"
+    },
+    {
+      "name": "typed keeper vig-token",
+      "transactionHash": "0x640665e48be9235751d271f55295b6121b8476055791377fc70360894b207862"
+    },
+    {
+      "name": "typed keeper desk-token",
+      "transactionHash": "0xbc2ada13a856450bd588a89f06ebe48cf62145a4992be79b8ab4036a518780bf"
+    },
+    {
+      "name": "actual exact-input and exact-output sells; both Hook currencies and 75/25 LP fees delivered"
+    },
+    {
+      "name": "typed keeper pol-fund",
+      "transactionHash": "0xe63b136bf8b95ba9729a6b250215b1894d38fd7f3bbab7cc78c18ec9a6755fdd"
+    },
+    {
+      "name": "typed keeper pol-buy",
+      "transactionHash": "0xbc77ef539022200e4d975a2e90c8625c9e20dc499cd0cb9713b257c05149654a"
+    },
+    {
+      "name": "typed keeper pol-increase",
+      "transactionHash": "0x3a99847430ef49a2b09581c8441b9dcedc5a6e1731873d2c2d559d0b253b37a9"
+    },
+    {
+      "name": "prefunded POL inventory purchased and reinvested into the same protected NFT"
+    },
+    {
+      "name": "all keeper nonces are signed, durable and settled; public-log recovery does not double-book"
+    },
+    {
+      "name": "live worker cycle catches up, keeps claims dormant, persists health and remains idle without duplicate accounting",
+      "state": "idle",
+      "indexed": {
+        "synced": false,
+        "caughtUp": true,
+        "reason": "caught_up",
+        "nextBlock": "61",
+        "confirmedHead": "60"
+      },
+      "queue": {
+        "enabled": false,
+        "signed": 0,
+        "reason": "voucher_signing_dormant"
+      },
+      "offering": {
+        "created": false,
+        "reason": "liquidity_unavailable"
+      },
+      "heartbeat": {
+        "phase": "live",
+        "ready": true,
+        "block_number": "60",
+        "block_hash": "0xd2692064e6e45c0415569422e71b8899fbf0d04bd07e7567d5174773b9505c94",
+        "observed_at": "2026-10-02T15:24:23.306Z",
+        "expires_at": "2026-10-02T15:25:53.306Z",
+        "bond_ready": false,
+        "bond_daily_cap_wei": "0"
+      }
+    },
+    {
+      "name": "actual same-block recipient rotation and restoration is held before accounting by keeper and indexer",
+      "heldTransaction": "0x2437bc421c76029393f126432e0d57fa1cf2f127816774c8daabf3c78e65ca43"
+    }
+  ],
+  "transactions": [
+    {
+      "name": "deploy PoolManager",
+      "hash": "0x5ae7bca32270ea3e5e1a43061d21e2ff2c48915a62ed62163e770c51bc6dc32e"
+    },
+    {
+      "name": "deploy OMR",
+      "hash": "0xefff79471e730b05d9814e3bab4dc51e642f53ea929bfcf50997ca374a525c95"
+    },
+    {
+      "name": "deploy PositionManager",
+      "hash": "0x994d371eb4a3a62d5f261cec0e1360fa46ced849ae75f08795c49c1849ef370b"
+    },
+    {
+      "name": "deploy PoolSwapTest",
+      "hash": "0xbb24fffc6b53b46b2ad3467bc35761a7cbc99fb15a23e5c652c3699b9b5ae689"
+    },
+    {
+      "name": "deploy GenesisOracle",
+      "hash": "0x22c4215962b1f19ea0960705be911ae75372bb8a95bb12840495cc8b83a6f46b"
+    },
+    {
+      "name": "deploy VoucherClaim",
+      "hash": "0x8808185b13d7c6cf4419414209b42c8579dc5553d2dda9249dbf83ef064d1b57"
+    },
+    {
+      "name": "deploy OmertaHook",
+      "hash": "0xd938108ef4daac994a0a1dbddb2a2ce234e39b57cc917f40e7c068fa0180837c"
+    },
+    {
+      "name": "OmertaHook.setAllowedQuote",
+      "hash": "0x569fb7947fb976818d7987d2bb48961ebc6d5865ffa9c08803c01f1168625093"
+    },
+    {
+      "name": "PoolManager.initialize",
+      "hash": "0xe07be48d00bfe1c3e86e554e8a1297869c9b67a844b63ffb954baa7d5d89725e"
+    },
+    {
+      "name": "deploy ProtocolLiquidityVault",
+      "hash": "0x492c499478b2cdd30f7c89758a68c59cfb053c7b9c54d6db9007a101aa3d0c2f"
+    },
+    {
+      "name": "deploy LiquidityBuybackExecutor",
+      "hash": "0x2ff0a63fb9eae5deab2d2cf1ee8f644ca977b85400ec3eb12d0a53444115e972"
+    },
+    {
+      "name": "deploy LiquidityBuybackExecutor",
+      "hash": "0x57915115b9c1db844a6c6c0cb4388e732a9db2aac751f7bcec64b119d364fba8"
+    },
+    {
+      "name": "deploy LiquidityBuybackExecutor",
+      "hash": "0xd394e753038793aa5fb874418435bc45207addae7d9fa5390137b2435d37b416"
+    },
+    {
+      "name": "deploy LiquidityBuybackExecutor",
+      "hash": "0xeb4a4405c00931984ebd7f19a8a04de890b878a5817f83afb58bffa280291170"
+    },
+    {
+      "name": "LiquidityBuybackExecutor.setKeeper",
+      "hash": "0x30f76d73a45d30f94967bd46f0b9644758c5b8c8e760504577e7d56425c4e95a"
+    },
+    {
+      "name": "LiquidityBuybackExecutor.setKeeper",
+      "hash": "0x62b04d0534df29f4d4262826ff5b1963c1d1e63162117573f2ab1fb18148934a"
+    },
+    {
+      "name": "LiquidityBuybackExecutor.setKeeper",
+      "hash": "0x9c61f11c9a4785e897ef6e3c0dca0199371f45e96c8390c83d3245c9759ed9f9"
+    },
+    {
+      "name": "LiquidityBuybackExecutor.setKeeper",
+      "hash": "0x3efc93a8b5bfdd6f98a1fd35927ed8eeda1604b1ae3f50bd2a8565b1785ba9dd"
+    },
+    {
+      "name": "ProtocolLiquidityVault.setInventoryExecutor",
+      "hash": "0xf5ac3154cf1dd208d6594e632dc88652627093bbed245071f6c8800e2b07a3bf"
+    },
+    {
+      "name": "OmertaHook.setRecipients",
+      "hash": "0xe346d38bd52eef45e3d5320c11e9e949655aec869c3ba614ffefcb9bbeba1bb8"
+    },
+    {
+      "name": "OmertaHook.setSellTax",
+      "hash": "0xb843f015488e9909234e9f0c9072f982d60c25c39d66800225209d6410a9392c"
+    },
+    {
+      "name": "OMR.transfer",
+      "hash": "0xeed91953af93e168f7886e5b7fb8b7b1caa054cec7749c53faa4ecb477b522ce"
+    },
+    {
+      "name": "ProtocolLiquidityVault.mintFoundation",
+      "hash": "0x5c07800fbca9543866cddbdaf51c600621df3106f2a496bf1f6b09ad94532b3f"
+    },
+    {
+      "name": "deploy OmertaFees",
+      "hash": "0x792a8004bf559d7b774ac34aff66b07bd91d031e1f88d710a1a36233bc9b1dd7"
+    },
+    {
+      "name": "deploy FeeRevenueRouter",
+      "hash": "0xf0bfe9007a9a6aac16deab1ff2b374ed5bfaaa694bcf9c6da174b4ac0ac26b2e"
+    },
+    {
+      "name": "OmertaFees.setNonMintRouter",
+      "hash": "0xaf1abe5664c88341d5cc114b3e797adc50cfc132cfc132916a6ff78a737bc649"
+    },
+    {
+      "name": "OmertaFees.payMintFee",
+      "hash": "0xff571dab723fb7f2e6cbb2bd1fde73512ffdca1e6e01d5f507addce0f317959b"
+    },
+    {
+      "name": "OmertaFees.payRespawnFee",
+      "hash": "0x011628be38ec546d41769824aef007c929a71225efd61d7b480b2b32d11689fd"
+    },
+    {
+      "name": "deploy KeeperGasVault",
+      "hash": "0x16581f08cbeb67bcb37214517c1e6181e6d6340927ece09c0be5b5d9af71f583"
+    },
+    {
+      "name": "KeeperGasVault.setKeeperAllowed",
+      "hash": "0x2a6c93419493fa4f80f5f51e2ecb7ae639970028db25166d17877e0a660f6e87"
+    },
+    {
+      "name": "OMR.approve",
+      "hash": "0x1c98fe0f932e47f21f42e95bb53e6e7a43ce5da76dbdf54f8b0c62c757957824"
+    },
+    {
+      "name": "PoolSwapTest.swap",
+      "hash": "0x3c1153817e710e5415270570bea456b964ea1c3c1dbf681b5cd54217f5e01f27"
+    },
+    {
+      "name": "PoolSwapTest.swap",
+      "hash": "0xd1fd64e907664d742262982b8786959ff8e340e57de5f70e3168529ecef3a125"
+    },
+    {
+      "name": "PoolSwapTest.swap",
+      "hash": "0x2344a5114451b438448a4e81717c760c4e1d59763d75e1defd0a364e348fef79"
+    }
+  ],
+  "keeperTransactions": [
+    {
+      "nonce": "0",
+      "status": "settled",
+      "tx_hash": "0xa8b5b3e2caf0d7fd3f657d92b9108ce96290000f72696957f1ba0666565b37d7"
+    },
+    {
+      "nonce": "1",
+      "status": "settled",
+      "tx_hash": "0x0e8b76080d3af279fc05d6c8906cbfa6b735d4d68ae8570586084702cd34bce1"
+    },
+    {
+      "nonce": "2",
+      "status": "settled",
+      "tx_hash": "0x1f3eb5b008afacaab52cb70d97720100111a48ef210b5a9d8cb48df507e8e052"
+    },
+    {
+      "nonce": "3",
+      "status": "settled",
+      "tx_hash": "0x871c878b4e69d7c3b5013aeef6a879d1bb85d206f65206553b6c6bc47931c705"
+    },
+    {
+      "nonce": "4",
+      "status": "settled",
+      "tx_hash": "0x0d1682d05cc9ac7f743f4ed95aaec2d4989b750ab51c25c3825e18358a8c9107"
+    },
+    {
+      "nonce": "5",
+      "status": "settled",
+      "tx_hash": "0x8ee211546d046aafb8c4414099853f65578f297db54a8bef905354a7bd7d9805"
+    },
+    {
+      "nonce": "6",
+      "status": "settled",
+      "tx_hash": "0x640665e48be9235751d271f55295b6121b8476055791377fc70360894b207862"
+    },
+    {
+      "nonce": "7",
+      "status": "settled",
+      "tx_hash": "0xbc2ada13a856450bd588a89f06ebe48cf62145a4992be79b8ab4036a518780bf"
+    },
+    {
+      "nonce": "8",
+      "status": "settled",
+      "tx_hash": "0xe63b136bf8b95ba9729a6b250215b1894d38fd7f3bbab7cc78c18ec9a6755fdd"
+    },
+    {
+      "nonce": "9",
+      "status": "settled",
+      "tx_hash": "0xbc77ef539022200e4d975a2e90c8625c9e20dc499cd0cb9713b257c05149654a"
+    },
+    {
+      "nonce": "10",
+      "status": "settled",
+      "tx_hash": "0x3a99847430ef49a2b09581c8441b9dcedc5a6e1731873d2c2d559d0b253b37a9"
+    }
+  ],
+  "automationCycle": {
+    "state": "idle",
+    "alert": false,
+    "plan": {
+      "chainId": 4663,
+      "blockNumber": "60",
+      "blockHash": "0xd2692064e6e45c0415569422e71b8899fbf0d04bd07e7567d5174773b9505c94",
+      "timestamp": "1790954660",
+      "health": true,
+      "actions": [],
+      "blocked": [
+        {
+          "jobId": "gas",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "vig-buy",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "community-buy",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "pol-buy",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "hook-native",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "hook-omr",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "pol-collect",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "vig-token",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "desk-token",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "pol-fund",
+          "reason": "interval_already_attempted"
+        },
+        {
+          "jobId": "pol-increase",
+          "reason": "interval_already_attempted"
+        }
+      ]
+    },
+    "indexed": {
+      "synced": false,
+      "caughtUp": true,
+      "reason": "caught_up",
+      "nextBlock": "61",
+      "confirmedHead": "60"
+    },
+    "queue": {
+      "enabled": false,
+      "signed": 0,
+      "reason": "voucher_signing_dormant"
+    },
+    "offering": {
+      "created": false,
+      "reason": "liquidity_unavailable"
+    }
+  },
+  "heldHookTransaction": {
+    "status": "confirmed",
+    "tx_hash": "0x2437bc421c76029393f126432e0d57fa1cf2f127816774c8daabf3c78e65ca43",
+    "broadcast_attempts": 1
+  },
+  "ledger": {
+    "settlements": "5",
+    "flows": "7",
+    "reserve": "0.056416"
+  },
+  "manifest": {
+    "schemaVersion": 1,
+    "chainId": 4663,
+    "governanceSafe": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "keeper": "0x3d6be4d4709b3fe50bd3137f8558efa4712adec9",
+    "poolId": "0x9a9a10f4cf81ff1bb9bf1c094a6a8178fa296d56f6b4fd2c7ec727b363aad8e7",
+    "contracts": {
+      "omr": {
+        "address": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+        "runtimeHash": "0xa8e2c5555b3e87282ca1e51cf5718a0ff1613f57648c73a040dacc77125ff6af"
+      },
+      "poolManager": {
+        "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "runtimeHash": "0xcbf41f72091b0c41336ac1f803ab25d509efef7d7bc5346384c8362a68911f7f"
+      },
+      "oracle": {
+        "address": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+        "runtimeHash": "0x84b1e15c39ae8cb0ed6ab3532282839960cbcad73a90477d97c8c4aa6ce14870"
+      },
+      "polVault": {
+        "address": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6",
+        "runtimeHash": "0xb6ed42b81c07901d0266263a0c535f72f75cee9c12a55211b15e672213a09f4e"
+      },
+      "claim": {
+        "address": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "runtimeHash": "0x65be826c379c13c382e04a33b7eb58514a076be24284c2aa6dbfede2c8b51b26"
+      },
+      "hook": {
+        "address": "0x9e27bb3fcd649c85e30168001b5054070ba870cc",
+        "runtimeHash": "0x5b8926dd418158ecd91d417452ee21d49b64ef9bead18b86fe5770310c7b1097"
+      },
+      "gasVault": {
+        "address": "0xc5a5c42992decbae36851359345fe25997f5c42d",
+        "runtimeHash": "0x3121bb3f9197854e7b040893cb53d2bc8f1a0b6d21700d671c8fc5b3aa814fbe"
+      },
+      "vig": {
+        "address": "0x8a791620dd6260079bf849dc5567adc3f2fdc318",
+        "runtimeHash": "0xd3efebc4c910913a7f4ffa7cb98b5c5480bff09cacdb3b73de1c87fe42723899"
+      },
+      "desk": {
+        "address": "0x610178da211fef7d417bc0e6fed39f05609ad788",
+        "runtimeHash": "0xb68de2208505878993b2d05698a263e8a84428fec66eefe3a3cfdbea957899dd"
+      },
+      "community": {
+        "address": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
+        "runtimeHash": "0x48f826c255213c69689b8f7fb770396022a611e87a66c3ee8eb27f613a8a7833"
+      },
+      "pol": {
+        "address": "0xa51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0",
+        "runtimeHash": "0x15b37bd74539a79c62f8473e38db109da71cfbc6a56b4f647cbbc34c06b07800"
+      }
+    },
+    "indexing": {
+      "startL2Block": "34",
+      "maxBlocks": 2000
+    },
+    "gas": {
+      "maxGas": "2000000",
+      "maxFeePerGas": "10000000",
+      "maxPriorityFeePerGas": "1000000",
+      "dailyBudget": "10000000000000000",
+      "confirmations": 1,
+      "maxSnapshotAgeSeconds": 300
+    },
+    "jobs": [
+      {
+        "id": "gas",
+        "kind": "gas_topup",
+        "target": "gasVault",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "recipient": "0x3d6be4d4709b3fe50bd3137f8558efa4712adec9",
+        "maxAmount": "200000000000000000",
+        "dailyBudget": "1000000000000000000"
+      },
+      {
+        "id": "vig-buy",
+        "kind": "buyback",
+        "target": "vig",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "stream": 0,
+        "primaryRecipient": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "secondaryRecipient": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "maxAmount": "100000000000000000",
+        "dailyBudget": "1000000000000000000"
+      },
+      {
+        "id": "community-buy",
+        "kind": "buyback",
+        "target": "community",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "stream": 2,
+        "primaryRecipient": "0xbb4933768e5010fc61111725002f4b6ee2a7eea4",
+        "secondaryRecipient": "0x0000000000000000000000000000000000000000",
+        "maxAmount": "100000000000000000",
+        "dailyBudget": "1000000000000000000"
+      },
+      {
+        "id": "pol-buy",
+        "kind": "buyback",
+        "target": "pol",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "stream": 3,
+        "primaryRecipient": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6",
+        "secondaryRecipient": "0x0000000000000000000000000000000000000000",
+        "maxAmount": "100000000000000000",
+        "dailyBudget": "1000000000000000000"
+      },
+      {
+        "id": "hook-native",
+        "kind": "hook_sweep",
+        "target": "hook",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "asset": "native",
+        "recipients": {
+          "dev": "0xa725ab452240a7905c601ec5cc609587815e9608",
+          "rwa": "0x445cdfa618696c4fbeb0f352da6e7c4f92bcc12c",
+          "community": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
+          "lp": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6"
+        }
+      },
+      {
+        "id": "hook-omr",
+        "kind": "hook_sweep",
+        "target": "hook",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "asset": "omr",
+        "recipients": {
+          "dev": "0xa725ab452240a7905c601ec5cc609587815e9608",
+          "rwa": "0x445cdfa618696c4fbeb0f352da6e7c4f92bcc12c",
+          "community": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
+          "lp": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6"
+        }
+      },
+      {
+        "id": "pol-collect",
+        "kind": "pol_collect",
+        "target": "polVault",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "deskRecipient": "0x610178da211fef7d417bc0e6fed39f05609ad788",
+        "vigRecipient": "0x8a791620dd6260079bf849dc5567adc3f2fdc318"
+      },
+      {
+        "id": "vig-token",
+        "kind": "token_revenue",
+        "target": "vig",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "stream": 0,
+        "primaryRecipient": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "secondaryRecipient": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707"
+      },
+      {
+        "id": "desk-token",
+        "kind": "token_revenue",
+        "target": "desk",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "stream": 1,
+        "primaryRecipient": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "secondaryRecipient": "0x0000000000000000000000000000000000000000"
+      },
+      {
+        "id": "pol-fund",
+        "kind": "pol_fund_inventory",
+        "target": "polVault",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "executor": "pol",
+        "maxNative": "1000000000000000000",
+        "dailyNativeBudget": "2000000000000000000"
+      },
+      {
+        "id": "pol-increase",
+        "kind": "pol_increase",
+        "target": "polVault",
+        "intervalSeconds": 7185,
+        "minNativeValue": "30000000000000",
+        "maxNative": "1000000000000000000",
+        "maxOmr": "1000000000000000000",
+        "dailyNativeBudget": "2000000000000000000",
+        "dailyOmrBudget": "2000000000000000000",
+        "slippageBps": 100
+      }
+    ]
+  },
+  "boundaries": [
+    "GenesisOracle administered price",
+    "EOA governance stand-in",
+    "Permit2 upstream runtime etched on disposable Anvil",
+    "Fresh loopback PostgreSQL database",
+    "No LBP/GenesisController, Bank or daily offering integration in this script"
+  ],
+  "artifacts": {
+    "PoolManager": "c788c85935568f704c2e82d3fb3cad2a031af42fcd28863920a83fb38599338a",
+    "OMR": "7444e88fc34e798ddfbe22b6e3117712d65e9be3f93ea164c3cf0b96fbe51f3f",
+    "PositionManager": "c84997e91fb4513c41940ba4cbfa9af4154c864c28d1cec534a7b4970de3d1dd",
+    "PoolSwapTest": "fa72c99852eab74da1db8c87c09ef3ba7731988a8e6db4528b630385a1ad8169",
+    "GenesisOracle": "7c432bec7b90163899b6eab004277254d611d62feb2c455ad1073c2c477832c9",
+    "VoucherClaim": "a840536f18cb466ebeb92c78378b51d1934926b28014c08fa4c7bc5c3f3dcd4f",
+    "OmertaHook": "ff5f0006a815b17e7c053fbb32e48be1301c2bf155d8293dc767761a3107339d",
+    "ProtocolLiquidityVault": "c56b32dc1d97c9446828ede2f82d3cbde654e71aca961ac6f9d3714a3d628732",
+    "LiquidityBuybackExecutor": "40b465126e292ea0bf1095a7d7905ac9b8284e8a9e1fd0cf541515ca46ee347a",
+    "OmertaFees": "750682fca7d4f1d7729d34c13b81be8cfde2b4aa175bf0e7ca99feb440423549",
+    "FeeRevenueRouter": "8d766bd20d85625c1e179a3ea34f18311f6d08e4fa6a50e6daaaf43ec23ba0a7",
+    "KeeperGasVault": "df4574576930a4920b812e624200107b7383f30eda7345a2e748d166133ee302"
+  }
+}
