@@ -1,0 +1,45 @@
+{
+  "method": "all eight odd four-bit denominator representatives; modular inverse seed only, not full mulDiv proof",
+  "cases": [
+    {
+      "d": "1",
+      "seed": "1",
+      "productModulo16": "1"
+    },
+    {
+      "d": "3",
+      "seed": "11",
+      "productModulo16": "1"
+    },
+    {
+      "d": "5",
+      "seed": "13",
+      "productModulo16": "1"
+    },
+    {
+      "d": "7",
+      "seed": "23",
+      "productModulo16": "1"
+    },
+    {
+      "d": "9",
+      "seed": "25",
+      "productModulo16": "1"
+    },
+    {
+      "d": "11",
+      "seed": "35",
+      "productModulo16": "1"
+    },
+    {
+      "d": "13",
+      "seed": "37",
+      "productModulo16": "1"
+    },
+    {
+      "d": "15",
+      "seed": "47",
+      "productModulo16": "1"
+    }
+  ]
+}

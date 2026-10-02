@@ -1,0 +1,647 @@
+[
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionAuthority.sol\\AcquisitionAuthority.json",
+    "sha256": "9D71ABB4C7EC0E0241A23E6828493F1F8F1D95A4D03956AF134B4A6ADD92B092",
+    "runtimeBytes": 16300
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionConstellationFactory.sol\\AcquisitionConstellationFactory.json",
+    "sha256": "17515829E281F723A2EAE05C8111E25C005AFB06BB98369EE45DAA879D31C3E2",
+    "runtimeBytes": 6258
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionIntentExecution.sol\\AcquisitionIntentExecution.json",
+    "sha256": "C4DC515322C3103535C3C94B84F1A611EB6AD33BF5252239CE757CDA3EAFA317",
+    "runtimeBytes": 847
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionReconciliation.sol\\AcquisitionReconciliation.json",
+    "sha256": "B40DE3034CE69B6DD6F96E409ACE13760EF316774C2C3E904D0EFB6D62F2931B",
+    "runtimeBytes": 473
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionVault.sol\\AcquisitionVault.json",
+    "sha256": "4BA06B3E3C27A0FDE6EBBA702B2CA2A43282947ED4FE04129A122606F54C6096",
+    "runtimeBytes": 23212
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AcquisitionVaultCore.sol\\AcquisitionVaultCore.json",
+    "sha256": "F133C742D15D1549C464A0152F559E763F192B9DD72D2E1C451D18C95C03B9B3",
+    "runtimeBytes": 9988
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\Alchemist.sol\\Alchemist.json",
+    "sha256": "3EFF5239D65C76FE87F94073B7CABB6F56E9B374ED732A4E603CCEDCF131BFE8",
+    "runtimeBytes": 11408
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\BankBufferVault.sol\\BankBufferVault.json",
+    "sha256": "10C1AF287ECE263F8E294BFC614AA012689D3024862A913C871B58266EA8A053",
+    "runtimeBytes": 6008
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\CollateralEscrow.sol\\CollateralEscrow.json",
+    "sha256": "58556B71EC2F6C44FA0AAE8358AE25BF126F024A9A005D20B30EB9494725658A",
+    "runtimeBytes": 2395
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\Denari.sol\\Denari.json",
+    "sha256": "B17C03487CBE3F0369BBA3BCB6B0390E80F67C9903452E92A4B7FD4243386D76",
+    "runtimeBytes": 4909
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\DynastyNFT.sol\\DynastyNFT.json",
+    "sha256": "E4E14B6F21A576442003224EE7C3FEBC0F65C376CCF22610A4BA8292F9E9F0E3",
+    "runtimeBytes": 9599
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\FeeRevenueRouter.sol\\FeeRevenueRouter.json",
+    "sha256": "8D766BD20D85625C1E179A3EA34F18311F6D08E4FA6A50E6DAAAF43EC23BA0A7",
+    "runtimeBytes": 2247
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\FeeRevenueRouter.sol\\IFeeRevenueRouter.json",
+    "sha256": "DAC7B48966DC238C81CDA58392A992B66B2267B36F7AEF124F065760CFD6BEC9",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\FlashGuard.sol\\FlashGuard.json",
+    "sha256": "749E04A61689C8FFB1DE3DBE94CF992114F3373D1BABA51C79E2DE83EE726723",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GearVault.sol\\GearVault.json",
+    "sha256": "919FC39989A9BA5AA1A755C9F3BF15C9404A6AFEBD0F4F32D715460B071F6CDD",
+    "runtimeBytes": 10999
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisLifecycleController.sol\\GenesisLifecycleController.json",
+    "sha256": "4F610260614EBD9E326D5007E8CE462E6905906DB4DFC25597BA75548A84DCCC",
+    "runtimeBytes": 11146
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisLifecycleController.sol\\IGenesisArbSys.json",
+    "sha256": "6320BD21B56073DE2B3D3E01142BAB76B884ED1E1912B1C97A0132065009AB65",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisLifecycleController.sol\\IGenesisAuction.json",
+    "sha256": "2BEEBC3CA45553ACC2823F56DE32BC4256C92AA2723D8937DB8633450B396D7C",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisLifecycleController.sol\\IGenesisFoundation.json",
+    "sha256": "99B8E4096D9DBE792D711AC161C5D7E2EA9F2E7861B9751E11DEF2FA473BE47B",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisLifecycleController.sol\\IGenesisStrategy.json",
+    "sha256": "9B9B2A34CA276F1FF34AE6961E1EA9E8466E4796CB499526CB0E4DD99CBD3815",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisOracle.sol\\GenesisOracle.json",
+    "sha256": "7C432BEC7B90163899B6EAB004277254D611D62FEB2C455AD1073C2C477832C9",
+    "runtimeBytes": 1020
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisPlayerSale.sol\\GenesisPlayerSale.constellation-via-ir.json",
+    "sha256": "78D40FE44E7CFCE967C21519C9A1CE0AD4740404A5B12A880A4FD7CEC49477E7",
+    "runtimeBytes": 6809
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisPlayerSale.sol\\GenesisPlayerSale.json",
+    "sha256": "679FFE188603AC7DFD91934A134F721121478A48078C8E85BFCC0FDE042688D0",
+    "runtimeBytes": 7436
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisPlayerSale.sol\\IGenesisPlayerIntegration.constellation-via-ir.json",
+    "sha256": "568ED2FDE64846FFA0F982F1BC997BCE8886613C91A7BC3A2C4639F30CCFEB3A",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisPlayerSale.sol\\IGenesisPlayerIntegration.json",
+    "sha256": "F71C54A682796726A4E16A88C3E5B97B87CC406A865BBE2614FF91D1AD2EE81C",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisProceedsSplitter.sol\\GenesisProceedsSplitter.json",
+    "sha256": "275F14A3482969426CDA2714A8BE2EB82BBAD3404F653F46D803E3110AB042FB",
+    "runtimeBytes": 2712
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisWalletCap.sol\\GenesisWalletCap.json",
+    "sha256": "AF683AA4BAB5C385749A1342B277F0C597E40B9D334CEFE9ECE744FC71205F5E",
+    "runtimeBytes": 1771
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisWalletCap.sol\\IGenesisBidValidation.json",
+    "sha256": "924E306A3BC75E60764D71289C35DD07D945112DF57ED1F9A42C0D0121C86A38",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\GenesisWalletCap.sol\\IGenesisCapController.json",
+    "sha256": "F09CD66D7B69A7918A32F2EEA45F031D4F733B1980B12FE4CDAED1B6E66377C7",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IOmrOracle.sol\\IOmrOracle.constellation-via-ir.json",
+    "sha256": "F8E1EAE741256438DDF477373F2777E2BAAA04206F871FF2216D2DE3630F04C7",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IOmrOracle.sol\\IOmrOracle.json",
+    "sha256": "B237BA528D9355696769A8FD30B51A80AFC9FFF643C1647524D9DF2DF7BF3511",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\KeeperGasVault.sol\\KeeperGasVault.json",
+    "sha256": "DF4574576930A4920B812E624200107B7383F30EDA7345A2E748D166133EE302",
+    "runtimeBytes": 3620
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\LiquidityBuybackExecutor.sol\\LiquidityBuybackExecutor.json",
+    "sha256": "40B465126E292EA0BF1095A7D7905AC9B8284E8A9E1FD0CF541515CA46EE347A",
+    "runtimeBytes": 9076
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaBond.sol\\IOMRMintable.json",
+    "sha256": "2F98A7D5641F70B91AFCAFCCC06A9BD8ECF4CFE01282A47F0B06266A3C5DA522",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaBond.sol\\OmertaBond.json",
+    "sha256": "D0DDFDFBB7456D6D779E1C849CAA9B762E41A47ABE8CB520E6D830CA0A74AEB8",
+    "runtimeBytes": 10624
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaFees.sol\\OmertaFees.json",
+    "sha256": "750682FCA7D4F1D7729D34C13B81BE8CFDE2B4AA175BF0E7CA99FEB440423549",
+    "runtimeBytes": 5599
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaHook.sol\\IOmrHookObserver.json",
+    "sha256": "0092990234CAD4244013FFAC444169382A7748C1E8917C0396040A47F21572DA",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaHook.sol\\OmertaHook.json",
+    "sha256": "86C68885E17AB5458BC7536FDD3E17B2066B36A6557DAC6387F602D092484605",
+    "runtimeBytes": 11061
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OMR.sol\\OMR.constellation-via-ir.json",
+    "sha256": "BF78F2766ECB6FC2869C15900A0B4F488F2B1E93C7989F2F5BCCD3BA960377DC",
+    "runtimeBytes": 6385
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OMR.sol\\OMR.json",
+    "sha256": "7444E88FC34E798DDFBE22B6E3117712D65E9BE3F93EA164C3CF0B96FBE51F3F",
+    "runtimeBytes": 6838
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OMRStaking.sol\\OMRStaking.json",
+    "sha256": "AA04B24AAF6C742EB8A89AEBB9144F466889D7460B6A30960741F1CA320B8584",
+    "runtimeBytes": 3791
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmrTwapOracle.sol\\IUniswapV2Factory.json",
+    "sha256": "D2B778188D8691A3D6C639C3CBDDEC5B20ABC3C3AE8F851B3DE513D0FD37A3AB",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmrTwapOracle.sol\\IUniswapV2Pair.json",
+    "sha256": "A4B8DF08436E07BA069067FF713CB6E95D88B12457B3B0697FDD97A73FFB15BF",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmrTwapOracle.sol\\OmrTwapOracle.json",
+    "sha256": "A0D612802E016F7AC871208433E7B16C25FA195905202A34C6271E07C066C264",
+    "runtimeBytes": 3087
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmrV4TwapOracle.sol\\OmrV4TwapOracle.json",
+    "sha256": "0BB504DEEB08E7971576363488A5350BA40DFA78E6CE7FB741CF4ADD44D568AA",
+    "runtimeBytes": 3773
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\PreVoteBudgetBook.sol\\PreVoteBudgetBook.json",
+    "sha256": "ED3F5F84007912D7F2B1C53ADA80DE901DFDBD0874A791A74DEDEE44F8A85721",
+    "runtimeBytes": 3582
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ProtocolLiquidityVault.sol\\IProtocolGenesisController.json",
+    "sha256": "A373ED358853192197CBF2DAB1FE1D26C3C0ABA8B08BD8E420BCAF82727742BD",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ProtocolLiquidityVault.sol\\IProtocolInventoryExecutor.json",
+    "sha256": "79EB5A22687339AB9FDAAA84C2184A1ECD3679099953305E2BD826CFE4D9DC95",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ProtocolLiquidityVault.sol\\IProtocolPositionManager.json",
+    "sha256": "D1A2A5FCEE683BF7E272F0120380E1C60684074985434238D695A447B41B29F3",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ProtocolLiquidityVault.sol\\ProtocolLiquidityVault.json",
+    "sha256": "C56B32DC1D97C9446828EDE2F82D3CBDE654E71ACA961AC6F9D3714A3D628732",
+    "runtimeBytes": 23220
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\RwaHealthOverlay.sol\\RwaHealthOverlay.json",
+    "sha256": "A070292B616EDBA68DCED6936D2674D34F8DA540645623807DA863193031AEF9",
+    "runtimeBytes": 3825
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\RwaStockBuyer.sol\\IStockQuoteOracle.json",
+    "sha256": "B87B71667AA60E8FFE6D9A327969BAD3D2CE4964253ACECBAA68A095D155FFEF",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\RwaStockBuyer.sol\\IStockSwapAdapter.json",
+    "sha256": "7C3A8F6C92F28CDECA24709A576D234FB27ACB3B3CE1F43A986F2BA1CC1DA972",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\RwaStockBuyer.sol\\IStockTokenRegistry.json",
+    "sha256": "C461911B1B1555EDA9D535DC418BBB9FF645624D58C0A10C73BF4F05C8F98D9C",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\RwaStockBuyer.sol\\RwaStockBuyer.json",
+    "sha256": "CCBF1C8F63EB5881D1E07A0A75787DE7CA1580DE8F10E7D5571B462CBA347278",
+    "runtimeBytes": 6021
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\SettlementGasPool.sol\\ISettlementGasPoolMigrationCandidate.json",
+    "sha256": "A9CE9466F97DA7D07E18D62EEA217FD6106D427F3461E2FAB8F1FA11ADD4AEC3",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\SettlementGasPool.sol\\SettlementGasPool.json",
+    "sha256": "4D5F6A40357F5131AB73E443052A7D4C28844EB5A6B6E3E3C50B076683384581",
+    "runtimeBytes": 14458
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StockTokenRegistry.sol\\StockTokenRegistry.json",
+    "sha256": "53E6341719AED5FC08160BA0A0812012FC7F72047FE67AA55E71A3ACF1CE636B",
+    "runtimeBytes": 5045
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StockTokenRegistryV2.sol\\StockTokenRegistryV2.json",
+    "sha256": "2F965FA8E6BC4314037617CF917940B3DF3BA6BCC6305C9C4096A3CE02A1E6CE",
+    "runtimeBytes": 8535
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StockVault.sol\\StockVault.json",
+    "sha256": "867FFDBBD98CADC024FD7D238823A89F24902057E1772F8CE87AF02BFC0C7FF9",
+    "runtimeBytes": 7294
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StreetDeed.sol\\StreetDeed.json",
+    "sha256": "CBD142A37987673FEDB655C1DA05B3A850D3B5A17F944A58803B3F7EF0AF6E32",
+    "runtimeBytes": 12690
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\Transmuter.sol\\Transmuter.json",
+    "sha256": "337A34D792FC3D5951432FEAA18B9AFA210DBE3D7185A5CF86393E6FC306C462",
+    "runtimeBytes": 4108
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\VoucherClaim.sol\\IGearVault.json",
+    "sha256": "BB22A6CB492EB454DF5F38B464EE7EF0233C4BC351FE7945B0DE2D3A3377A4F0",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\VoucherClaim.sol\\VoucherClaim.json",
+    "sha256": "A840536F18CB466EBEB92C78378B51D1934926B28014C08FA4C7BC5C3F3DCD4F",
+    "runtimeBytes": 6369
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGuardedAuction.sol\\IOmertaGenesisClaimGate.json",
+    "sha256": "25128A526FC7AAD9F560AF47C8BCC98073386000EEDFAAF048A177A13F113807",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGuardedAuction.sol\\OmertaGuardedAuction.json",
+    "sha256": "2DC68893A93F67B9418CBC7B05D47C9A26AF250FCF0BC3F6774EB3ADC49472B5",
+    "runtimeBytes": 16935
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\BlockNumberish.sol\\BlockNumberish.json",
+    "sha256": "C59FE7C3F00BAC3A944F79668D85AD8D0D53C8A7CF56458C2D8EA5FED95D6B7F",
+    "runtimeBytes": 62
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\AuctionStorage.sol\\AuctionStorage.json",
+    "sha256": "23801750E5665F433526957D12F74ABCF644DCBAF7D1F7A036630647A6BF0167",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\BidStorage.sol\\BidStorage.json",
+    "sha256": "9F7FD558DFCCFE35E9AE26E77A04E23EE796105444DD38F481CD28D48CE8850F",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\CheckpointStorage.sol\\CheckpointStorage.json",
+    "sha256": "8F5F952BF967923B0DEFBA0F42D4E2151AF0A4DE3FEC78C4F31BBC93082CFC65",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ContinuousClearingAuction.sol\\ContinuousClearingAuction.json",
+    "sha256": "ABFF9CD63B8DAE08649F95C33202CF1268B52AA68D02EB4F95074B6541B8EA69",
+    "runtimeBytes": 16282
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StepStorage.sol\\StepStorage.json",
+    "sha256": "4DF27EAAAEA6A8ECF15DC498C91C3EEAF0DC3376150E1AF424AC0E8B091787BE",
+    "runtimeBytes": 343
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\TickStorage.sol\\TickStorage.json",
+    "sha256": "93B01470C7AB4A2C99B3274667073161748ED938A4E3E342C5F0D5D776F0CC53",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IAuctionStorage.sol\\IAuctionStorage.json",
+    "sha256": "3140D7F354145E90F14E98EC5F5BB14AF934DF2CD3A898027128174F3AFA9603",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IBidStorage.sol\\IBidStorage.json",
+    "sha256": "A80BEBD18613586D76AD2AD8A5A40855E3AD3E440D169FA369D77360852BA052",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ICheckpointStorage.sol\\ICheckpointStorage.json",
+    "sha256": "BA1BDFFACA7E9D9EF9557E926E0A880FA3DA1B62EB73AE224FAD0B750F474A12",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IContinuousClearingAuction.sol\\IContinuousClearingAuction.json",
+    "sha256": "35C55017389F3494D1EB5E530974C7B6A3CC73619BF76354A885F1D7AEE1D2BB",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IStepStorage.sol\\IStepStorage.json",
+    "sha256": "DABA5F15D40CD4A7EF9D04CEB81FA3C9803AEBFED848FF717538818D2DE7EF0D",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ITickStorage.sol\\ITickStorage.json",
+    "sha256": "D8047445BEB0BD6F9E63948BCAE72942247418DCCDF6FB045E124EA4D656D9C1",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IValidationHook.sol\\IValidationHook.json",
+    "sha256": "F3BB15EA9143154903D37A386A5FC8DFC2241BB21E07A51779A3E19E62BF425C",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IERC20Minimal.sol\\IERC20Minimal.constellation-via-ir.json",
+    "sha256": "C98689168CAC426964173D0C4D1111C811B7FE57D749596D988CF7DF874D15A0",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IERC20Minimal.sol\\IERC20Minimal.default.json",
+    "sha256": "3371430D9B96FA7938BEEF1B1F9758DA95FB6949BE56A7F43CBBA5EB81436073",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IERC20Minimal.sol\\IERC20Minimal.json",
+    "sha256": "1F2D05F02925CBCCB2196290C6FE6554CB96DAE2BE1E0E7ACFB0E84655FAE74F",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\BidLib.sol\\BidLib.json",
+    "sha256": "5177BEDE23BD04BB700D0210B2F83B9AF37B0571FFF00EE85D26C14E307C6EC9",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\CheckpointAccountingLib.sol\\CheckpointAccountingLib.json",
+    "sha256": "0511CA33A4078A454B0CFC7464C76ED1AA8EE8E94DD1FC59CAC9A3122A5015BB",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\CheckpointLib.sol\\CheckpointLib.json",
+    "sha256": "C67784100AA39A28DA178774CECA3EB5FBD4965E87DEB909E78661BAD933240B",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ConstantsLib.sol\\ConstantsLib.json",
+    "sha256": "85B20E054832A921B2D2094A19E142F9F7AF8810F89E1F28D3A2E0FFD02C0626",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\CurrencyLibrary.sol\\CurrencyLibrary.json",
+    "sha256": "15908B2B7FA253C339899C836B503764B281ECE85E69DE11F76BAF6CE0D131D0",
+    "runtimeBytes": 155
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\DemandLib.sol\\DemandLib.json",
+    "sha256": "DFDAEFFDC179354255083DAC7C82D2A66205DD48A82339416152F19E4260B231",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\FixedPoint96.sol\\FixedPoint96.json",
+    "sha256": "8EE46745623A210EC6DE0A30C18FF225A0711511EDA49D9CAED5B6031DD8DDDE",
+    "runtimeBytes": 57
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\MaxBidPriceLib.sol\\MaxBidPriceLib.json",
+    "sha256": "4DD16CE37D01C0697E7F97957C689C2C4F04F7728F14E21AF270DE46A5601981",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\PriceLib.sol\\PriceLib.json",
+    "sha256": "A3B49493431184672CB6F6C6284A9FA22B5D6B43942E498AF8492D0F60568DA5",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\StepLib.sol\\StepLib.json",
+    "sha256": "BA9F0E567B77E13A2273CD1001A9DB0D82349F92D9425AF11C79691F7FD21AAB",
+    "runtimeBytes": 133
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ValidationHookLib.sol\\ValidationHookLib.json",
+    "sha256": "DF018D2C02023E254A3419E66E120E3FCFB2D58996CDC14C4FFF74A5FE420194",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IDistributor.sol\\IDistributor.json",
+    "sha256": "F50733ACA1989FAB929F368C48943AD9070E599BAF75AC3BEFB3AEBFC08522D7",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ILBPInitializer.sol\\ILBPInitializer.json",
+    "sha256": "5D12F3DDAFCBAB3796107EA00ED7C6DFE249976ABDCC5EEB98DDE41D57E60C8D",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IProtocolFeeController.sol\\IProtocolFeeController.json",
+    "sha256": "DA5A8077CF83C804968EC9C6AF69990E6E9F364E6DC69E44F3F6004935EDF8DB",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ProtocolFeeLib.sol\\ProtocolFeeLib.json",
+    "sha256": "C3F3E559838D3144B193AAB7323EB2307FCD54B9FC620ADB8A55A944E5B229C5",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\FixedPointMathLib.sol\\FixedPointMathLib.json",
+    "sha256": "F65D99DC14B632FCEC29C73D3731BB831BA28A083802D904EDB957196CF3929F",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ReentrancyGuardTransient.sol\\ReentrancyGuardTransient.json",
+    "sha256": "F534FC81EEC6E7E232E601A5AD78C1520CCC0274779D1A0CFF620A550EF92C64",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\SafeTransferLib.sol\\SafeTransferLib.json",
+    "sha256": "AA6B53675CDB8DA5B8C83F5AFA3B62F187226067D56E6428834150B57C05D409",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\SSTORE2.sol\\SSTORE2.json",
+    "sha256": "35595D5EFCC468F5C3194607F8C2BDB2900F261C57AA151BB951D7ADE5BBCC6D",
+    "runtimeBytes": 85
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IAcquisitionAuthorityV2.sol\\IAcquisitionAuthorityV2.json",
+    "sha256": "53F64625496B9A2CD0B33DE6B977B29FAC234A74E56ACBFA310FCCF9253C6737",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IAcquisitionIntentExecutionV2.sol\\IAcquisitionIntentExecutionV2.json",
+    "sha256": "14352126A10B9C654F5C78E1AA942122FA7AAD11932DFAB17D5AC7E2E9421A91",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IAcquisitionVaultV1.sol\\IAcquisitionVaultV1.json",
+    "sha256": "9BDEC86E5584D6A2038967A77D252674BFF6878E5BA06353D561AA44B79B6567",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IInitializerHook.sol\\IInitializerHook.constellation-via-ir.json",
+    "sha256": "DFD464AF3A37233A64B9E086A7277662618B78241A78E21CF915007B63B4BA6A",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IInitializerHook.sol\\IInitializerHook.json",
+    "sha256": "0158D96CB4EA5085874D3E5AB629AAA8D8E807D58E4220DF2EEE2B30CA712ECE",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ILiquidityHealth.sol\\ILiquidityHealth.json",
+    "sha256": "421DAB67C722F3F975B24BC15BE9E658AB98F62C6A6A00DBA429A244EABB2BF3",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IOmrV4ObservationSource.sol\\IOmrV4ObservationSource.constellation-via-ir.json",
+    "sha256": "210DB3C81839A9EC095C7F0686F26A68C812D628B6CAE41E37E00B3ADB36BB73",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IOmrV4ObservationSource.sol\\IOmrV4ObservationSource.json",
+    "sha256": "1E87D60F8B4D1524C5DA92A33778193C2A3AA384C4F04043CF154DC47B33CD40",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IRwaHealthOverlay.sol\\IRwaHealthOverlay.json",
+    "sha256": "4F9A1093D34D82B3672BCF290BD0CD65C6311F5F9C9DD0581C4DEA024063CEC4",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\ISettlementDataFeeSource.sol\\ISettlementDataFeeSource.json",
+    "sha256": "9CE93A809309CCA4C4C27D882E34961A96BFCBF045AB9CAC024BD18DD916E6CA",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IStockTokenRegistryV2.sol\\IStockTokenRegistryV2.constellation-via-ir.json",
+    "sha256": "0D8EF97939492E45ADDB4C7A75F9814DD4DA472DFE0C42B225EDAF3450924290",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IStockTokenRegistryV2.sol\\IStockTokenRegistryV2.json",
+    "sha256": "04F5418A8A5BDA9EFFED07BB1C8249987F12353E253F9EBDD727B28AEB32CE98",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\IOmertaMarketStateV2.sol\\IOmertaMarketStateV2.json",
+    "sha256": "3D6CB47CD3D219829EAA361A56D802754ACC18CF21A76358B912517A530EC654",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaArbitrageV2.sol\\OmertaArbitrageV2.json",
+    "sha256": "7E604C55E746E00AFD7A7F6AA51AFF53B3EB3C51C017AB8E080FB8CFD6B1B35A",
+    "runtimeBytes": 5341
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaCommitmentVaultV2.sol\\ICommitmentPositionManagerV2.json",
+    "sha256": "371ABEF5A47575D76A89F0713E863FE7B8F50A996310A06A67DA2493235C4587",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaCommitmentVaultV2.sol\\OmertaCommitmentVaultV2.json",
+    "sha256": "209744C652299880763632B9CD891FAC57C41B5041DA753247269B20C18F650C",
+    "runtimeBytes": 12156
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGameSettlementV2.sol\\OmertaGameSettlementV2.json",
+    "sha256": "EC2F0F479EB1BCAFAA3036383B38A586DED383A4B97CF68CCD2DE44DE1D968B8",
+    "runtimeBytes": 6498
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGenesisCoordinatorV2.sol\\IGenesisGatedAuction.json",
+    "sha256": "B38131DFB64C5DADB03A81D6A863D573A6735DDCDD134ABEB88D55BEC92BFC66",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGenesisCoordinatorV2.sol\\IGenesisMarketHook.json",
+    "sha256": "A8E742CBDBE8C603561963288B2DB6734B473651C5B461BF6EA4C585007C408F",
+    "runtimeBytes": 0
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaGenesisCoordinatorV2.sol\\OmertaGenesisCoordinatorV2.json",
+    "sha256": "BC96F0236E2E3AFAFCBAC9380B6538E3AB913587D20D367F31E950A13ACFA1A5",
+    "runtimeBytes": 17655
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaHookV2.sol\\OmertaHookV2.json",
+    "sha256": "1593E823837A9F7B48EFDCD1F9D1DBCA2FBCBC920A93674386ED214EDA481F70",
+    "runtimeBytes": 11511
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaInventoryBondV2.sol\\OmertaInventoryBondV2.json",
+    "sha256": "A66A169CFF975B82B2C39A566F6827A272775747B93E78E9C0F452CD3554901B",
+    "runtimeBytes": 7949
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaMarketStateV2.sol\\OmertaMarketStateV2.json",
+    "sha256": "7C1699EFCCAA6495BF9F401640CF8F9F0CFC720D36593200731862314ED7E262",
+    "runtimeBytes": 4895
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaReserveFundingV2.sol\\OmertaReserveFundingV2.json",
+    "sha256": "DCAD915F072B1681866A365A30D2F0F732D149711ECC59A2EFB51A6FCA5CD760",
+    "runtimeBytes": 2162
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaStabilityControllerV2.sol\\OmertaStabilityControllerV2.json",
+    "sha256": "6ACE7C41A697E7BD788EAEAB1C953BC486FCD93C688BEF150E506EDE037491D6",
+    "runtimeBytes": 17686
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaTurfFeeBridgeV2.sol\\OmertaTurfFeeBridgeV2.json",
+    "sha256": "DF00BDBD8DC9F52A9DF197303C44ED9D9BE17787CF96C407EA5599A82B703666",
+    "runtimeBytes": 6516
+  },
+  {
+    "path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\out\\OmertaTurfV2.sol\\OmertaTurfV2.json",
+    "sha256": "EAB2AFD291070F631DA1DD13D856100898BED95E38F3F73A0C30D36001C37888",
+    "runtimeBytes": 14630
+  }
+]

@@ -1,0 +1,208 @@
+{
+  "localPatches": [
+    {
+      "path": "cca/ContinuousClearingAuction.sol",
+      "date": "2026-10-01",
+      "change": "Clamp lbpInitializationParams protocol fee to currencyRaised, matching sweepCurrency; original upstreamSha256 remains provenance."
+    }
+  ],
+  "packages": {
+    "cca": {
+      "root": "output/comprehensive-audit/external/continuous-clearing-auction/src",
+      "prefix": "cca",
+      "pin": "a56d42231e7bf048136d9d88fa61e8518c10c5ff"
+    },
+    "launcher": {
+      "root": "output/player-genesis-deps/liquidity-launcher",
+      "prefix": "launcher",
+      "pin": "3a3103543f50a13a0ae52a253bb98a925d72146f"
+    },
+    "blocknumberish": {
+      "root": "output/player-genesis-deps/blocknumberish",
+      "prefix": "blocknumberish",
+      "pin": "38fe20bc0341d5bc2780d41f90dadb70e10f8cea"
+    },
+    "solady": {
+      "root": "output/player-genesis-deps/solady/src",
+      "prefix": "solady",
+      "pin": "2af06408b6a204824c2ecb245779ed400b535fb5"
+    }
+  },
+  "files": [
+    {
+      "package": "cca",
+      "path": "ContinuousClearingAuction.sol",
+      "upstreamSha256": "e52cdf1e6194a10b5f92daa78d055780e75b40e08bc087f66b5cd78d31c97fbb"
+    },
+    {
+      "package": "cca",
+      "path": "AuctionStorage.sol",
+      "upstreamSha256": "cb187d3139df99369f1289bed72bce6f157c709b27adb976ba61bfd8a5dbedaa"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/IAuctionStorage.sol",
+      "upstreamSha256": "4541975ea71b6239e917f97436ade81f10e75e9e02a14043d3d4d968d8763c33"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/ValueX7Lib.sol",
+      "upstreamSha256": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/external/IERC20Minimal.sol",
+      "upstreamSha256": "e2a2de288d95e31c66f6b33c120d597b47fc4dd57e78717b607d2bde3f55dcbd"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/ConstantsLib.sol",
+      "upstreamSha256": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/CurrencyLibrary.sol",
+      "upstreamSha256": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/FixedPoint96.sol",
+      "upstreamSha256": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1"
+    },
+    {
+      "package": "launcher",
+      "path": "src/interfaces/IProtocolFeeController.sol",
+      "upstreamSha256": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd"
+    },
+    {
+      "package": "cca",
+      "path": "BidStorage.sol",
+      "upstreamSha256": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/IBidStorage.sol",
+      "upstreamSha256": "3996822f663de5e4d4a8920b1863a7f03c3ecb3886c6a1e968e256cf689ddcd3"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/BidLib.sol",
+      "upstreamSha256": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5"
+    },
+    {
+      "package": "cca",
+      "path": "CheckpointStorage.sol",
+      "upstreamSha256": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/ICheckpointStorage.sol",
+      "upstreamSha256": "22568a4e5419c8ca1b788f56ec5b3cc42ec9d0df5751228799aadbbef98e6764"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/CheckpointLib.sol",
+      "upstreamSha256": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a"
+    },
+    {
+      "package": "cca",
+      "path": "StepStorage.sol",
+      "upstreamSha256": "3c7765201e324ebcc3692b1b980ab477b58714dad6ab7b09c01e6c0d1c30301a"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/IStepStorage.sol",
+      "upstreamSha256": "20207a10a2aec05bb583fd43ec040b4997aea9a166886de8ad6b935a7acc1e00"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/StepLib.sol",
+      "upstreamSha256": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100"
+    },
+    {
+      "package": "blocknumberish",
+      "path": "src/BlockNumberish.sol",
+      "upstreamSha256": "d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a"
+    },
+    {
+      "package": "solady",
+      "path": "utils/FixedPointMathLib.sol",
+      "upstreamSha256": "e7c2eaac3899e9bbbecf0795b95f131ae17c369b3b2436304dd9d548c8ce03f4"
+    },
+    {
+      "package": "solady",
+      "path": "utils/SSTORE2.sol",
+      "upstreamSha256": "0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57"
+    },
+    {
+      "package": "cca",
+      "path": "TickStorage.sol",
+      "upstreamSha256": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/ITickStorage.sol",
+      "upstreamSha256": "ee53cccb09d87f4dae11680766168fe103acac56f122ba40d6bb18875c67fcde"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/IContinuousClearingAuction.sol",
+      "upstreamSha256": "8a232bb24aa43b7d42612ab3684099c8d124ed706b395f165b74dbc8f00e31ec"
+    },
+    {
+      "package": "cca",
+      "path": "interfaces/IValidationHook.sol",
+      "upstreamSha256": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf"
+    },
+    {
+      "package": "launcher",
+      "path": "src/interfaces/ILBPInitializer.sol",
+      "upstreamSha256": "381116c5bc872c8eb666c5fcec6ca9dfc5ec45c1ced6b00be4c2b1b299254bb5"
+    },
+    {
+      "package": "launcher",
+      "path": "src/interfaces/IDistributor.sol",
+      "upstreamSha256": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/CheckpointAccountingLib.sol",
+      "upstreamSha256": "dd31c9c62d5d5e13c027276c0afbff4d8b37684cabbdc3dacefa33b647085230"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/DemandLib.sol",
+      "upstreamSha256": "489591a54cfa65e40f394313c66ce6ca4548319db400179d5dc453f5e30028c9"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/PriceLib.sol",
+      "upstreamSha256": "995a9988b2924148c7e9611a9b31fe1c42cee5cd148b0290a0503fefa3898c82"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/MaxBidPriceLib.sol",
+      "upstreamSha256": "4c5e05d6dd61b6b507576cb3b06b7212efa2ddeab0f4068da27f1fdb565ecb18"
+    },
+    {
+      "package": "cca",
+      "path": "libraries/ValidationHookLib.sol",
+      "upstreamSha256": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31"
+    },
+    {
+      "package": "launcher",
+      "path": "src/libraries/ProtocolFeeLib.sol",
+      "upstreamSha256": "287226a4f6f2cf9b1a487dedcb893fccdd6b88d9ffd5696c8ba50649b27a5225"
+    },
+    {
+      "package": "solady",
+      "path": "utils/ReentrancyGuardTransient.sol",
+      "upstreamSha256": "30a4cdd1813a65e2c76cd5476c9ee8a44b9cac56dd4d930ef3caafb3d6c3600d"
+    },
+    {
+      "package": "solady",
+      "path": "utils/SafeTransferLib.sol",
+      "upstreamSha256": "6a1cca4abb040289cfe5fa4b70fd84ed470d152d0265b8ffce1ef0af9bb93e59"
+    }
+  ]
+}

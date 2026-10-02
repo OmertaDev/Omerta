@@ -1,0 +1,538 @@
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/AcquisitionVaultCore.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --via-ir --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running
+Compilation warnings/errors on src/AcquisitionVaultCore.sol:
+Warning: This declaration has the same name as another declaration.
+
+   --> src/AcquisitionVaultCore.sol:170:9:
+
+    |
+
+170 |         uint256 globalLifetimeCanonicalDepositCapWei
+
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The other declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:205:5:
+
+    |
+
+205 |     function globalLifetimeCanonicalDepositCapWei() external view returns (uint256) {
+
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+
+Warning: This declaration has the same name as another declaration.
+
+   --> src/AcquisitionVaultCore.sol:363:13:
+
+    |
+
+363 |             uint256 globalLifetimeCanonicalDepositCapWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The other declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:205:5:
+
+    |
+
+205 |     function globalLifetimeCanonicalDepositCapWei() external view returns (uint256) {
+
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:364:13:
+
+    |
+
+364 |             uint256 availableWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:146:5:
+
+    |
+
+146 |     uint256 public availableWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:365:13:
+
+    |
+
+365 |             uint256 unattributedWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:147:5:
+
+    |
+
+147 |     uint256 public unattributedWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:366:13:
+
+    |
+
+366 |             uint256 ordinaryReservedWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:148:5:
+
+    |
+
+148 |     uint256 public ordinaryReservedWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:367:13:
+
+    |
+
+367 |             uint256 reconciliationLiabilityWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:149:5:
+
+    |
+
+149 |     uint256 public reconciliationLiabilityWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:368:13:
+
+    |
+
+368 |             uint256 reconciliationBackingWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:150:5:
+
+    |
+
+150 |     uint256 public reconciliationBackingWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:369:13:
+
+    |
+
+369 |             uint256 accountingSequence,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:151:5:
+
+    |
+
+151 |     uint256 public accountingSequence;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:370:13:
+
+    |
+
+370 |             uint256 lastObservedBalanceDeficitWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:152:5:
+
+    |
+
+152 |     uint256 public lastObservedBalanceDeficitWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: This declaration shadows an existing declaration.
+
+   --> src/AcquisitionVaultCore.sol:371:13:
+
+    |
+
+371 |             uint256 globalLifetimeCanonicalDepositedWei
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Note: The shadowed declaration is here:
+
+   --> src/AcquisitionVaultCore.sol:153:5:
+
+    |
+
+153 |     uint256 public globalLifetimeCanonicalDepositedWei;
+
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:354:13:
+
+    |
+
+354 |             uint256 schemaVersion,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:355:13:
+
+    |
+
+355 |             address factory,
+
+    |             ^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:356:13:
+
+    |
+
+356 |             bytes32 manifestHash,
+
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:357:13:
+
+    |
+
+357 |             address authority,
+
+    |             ^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:358:13:
+
+    |
+
+358 |             address registry,
+
+    |             ^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:359:13:
+
+    |
+
+359 |             address budgetBook,
+
+    |             ^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:360:13:
+
+    |
+
+360 |             address intentExecution,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:361:13:
+
+    |
+
+361 |             address reconciliation,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:362:13:
+
+    |
+
+362 |             bool finalized,
+
+    |             ^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:363:13:
+
+    |
+
+363 |             uint256 globalLifetimeCanonicalDepositCapWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:364:13:
+
+    |
+
+364 |             uint256 availableWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:365:13:
+
+    |
+
+365 |             uint256 unattributedWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:366:13:
+
+    |
+
+366 |             uint256 ordinaryReservedWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:367:13:
+
+    |
+
+367 |             uint256 reconciliationLiabilityWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:368:13:
+
+    |
+
+368 |             uint256 reconciliationBackingWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:369:13:
+
+    |
+
+369 |             uint256 accountingSequence,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:370:13:
+
+    |
+
+370 |             uint256 lastObservedBalanceDeficitWei,
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> src/AcquisitionVaultCore.sol:371:13:
+
+    |
+
+371 |             uint256 globalLifetimeCanonicalDepositedWei
+
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+
+Detector: uninitialized-state
+AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) is never initialized. It is used in:
+	- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)
+	- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)
+	- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)
+AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) is never initialized. It is used in:
+	- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)
+	- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)
+	- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)
+AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) is never initialized. It is used in:
+	- AcquisitionVaultCore._coreSnapshotWords() (src/AcquisitionVaultCore.sol#378-397)
+	- AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413)
+	- AcquisitionVaultCore._totals(uint256) (src/AcquisitionVaultCore.sol#415-427)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables
+
+Detector: incorrect-equality
+AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) uses a dangerous strict equality:
+	- credit == 0 (src/AcquisitionVaultCore.sol#328)
+AcquisitionVaultCore.getDeposit(bytes32) (src/AcquisitionVaultCore.sol#213-216) uses a dangerous strict equality:
+	- record.depositId == 0 (src/AcquisitionVaultCore.sol#215)
+AcquisitionVaultCore.syncBalance() (src/AcquisitionVaultCore.sol#218-232) uses a dangerous strict equality:
+	- pre.forcedSurplusWei == 0 && ! changed (src/AcquisitionVaultCore.sol#221)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: locked-ether
+Contract locking ether found:
+	Contract AcquisitionVaultCore (src/AcquisitionVaultCore.sol#5-542) has payable functions:
+	 - AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether
+
+Detector: uninitialized-local
+AcquisitionVaultCore.syncBalance().i (src/AcquisitionVaultCore.sol#229) is a local variable never initialized
+AcquisitionVaultCore.depositCanonical(bytes32).i (src/AcquisitionVaultCore.sol#329) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: shadowing-local
+AcquisitionVaultCore.constructor(address,bytes32,address,address,address,address,address,uint256).globalLifetimeCanonicalDepositCapWei (src/AcquisitionVaultCore.sol#170) shadows:
+	- AcquisitionVaultCore.globalLifetimeCanonicalDepositCapWei() (src/AcquisitionVaultCore.sol#205-207) (function)
+AcquisitionVaultCore.coreSnapshot().globalLifetimeCanonicalDepositCapWei (src/AcquisitionVaultCore.sol#363) shadows:
+	- AcquisitionVaultCore.globalLifetimeCanonicalDepositCapWei() (src/AcquisitionVaultCore.sol#205-207) (function)
+AcquisitionVaultCore.coreSnapshot().availableWei (src/AcquisitionVaultCore.sol#364) shadows:
+	- AcquisitionVaultCore.availableWei (src/AcquisitionVaultCore.sol#146) (state variable)
+AcquisitionVaultCore.coreSnapshot().unattributedWei (src/AcquisitionVaultCore.sol#365) shadows:
+	- AcquisitionVaultCore.unattributedWei (src/AcquisitionVaultCore.sol#147) (state variable)
+AcquisitionVaultCore.coreSnapshot().ordinaryReservedWei (src/AcquisitionVaultCore.sol#366) shadows:
+	- AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) (state variable)
+AcquisitionVaultCore.coreSnapshot().reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#367) shadows:
+	- AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) (state variable)
+AcquisitionVaultCore.coreSnapshot().reconciliationBackingWei (src/AcquisitionVaultCore.sol#368) shadows:
+	- AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) (state variable)
+AcquisitionVaultCore.coreSnapshot().accountingSequence (src/AcquisitionVaultCore.sol#369) shadows:
+	- AcquisitionVaultCore.accountingSequence (src/AcquisitionVaultCore.sol#151) (state variable)
+AcquisitionVaultCore.coreSnapshot().lastObservedBalanceDeficitWei (src/AcquisitionVaultCore.sol#370) shadows:
+	- AcquisitionVaultCore.lastObservedBalanceDeficitWei (src/AcquisitionVaultCore.sol#152) (state variable)
+AcquisitionVaultCore.coreSnapshot().globalLifetimeCanonicalDepositedWei (src/AcquisitionVaultCore.sol#371) shadows:
+	- AcquisitionVaultCore.globalLifetimeCanonicalDepositedWei (src/AcquisitionVaultCore.sol#153) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing
+
+Detector: timestamp
+AcquisitionVaultCore.getDeposit(bytes32) (src/AcquisitionVaultCore.sol#213-216) uses timestamp for comparisons
+	Dangerous comparisons:
+	- record.depositId == 0 (src/AcquisitionVaultCore.sol#215)
+AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > type()(uint64).max (src/AcquisitionVaultCore.sol#276)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: assembly
+AcquisitionVaultCore.coreSnapshot() (src/AcquisitionVaultCore.sol#350-376) uses assembly
+	- INLINE ASM (src/AcquisitionVaultCore.sol#375)
+AcquisitionVaultCore._snapshot() (src/AcquisitionVaultCore.sol#448-496) uses assembly
+	- INLINE ASM (src/AcquisitionVaultCore.sol#454-458)
+AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) uses assembly
+	- INLINE ASM (src/AcquisitionVaultCore.sol#504-509)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Detector: cyclomatic-complexity
+AcquisitionVaultCore.constructor(address,bytes32,address,address,address,address,address,uint256) (src/AcquisitionVaultCore.sol#162-199) has a high cyclomatic complexity (12).
+AcquisitionVaultCore.depositCanonical(bytes32) (src/AcquisitionVaultCore.sol#259-344) has a high cyclomatic complexity (14).
+AcquisitionVaultCore.finalizeCore(bytes32) (src/AcquisitionVaultCore.sol#399-413) has a high cyclomatic complexity (12).
+AcquisitionVaultCore._snapshot() (src/AcquisitionVaultCore.sol#448-496) has a high cyclomatic complexity (19).
+AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) has a high cyclomatic complexity (12).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+
+Detector: too-many-digits
+AcquisitionVaultCore._ingress(uint256,address,bytes32) (src/AcquisitionVaultCore.sol#498-525) uses literals with too many digits:
+	- ok = staticcall(uint256,uint256,uint256,uint256,uint256,uint256)(100000,target,0,36,w,256) (src/AcquisitionVaultCore.sol#507)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits
+
+Detector: constable-states
+AcquisitionVaultCore.ordinaryReservedWei (src/AcquisitionVaultCore.sol#148) should be constant 
+AcquisitionVaultCore.reconciliationBackingWei (src/AcquisitionVaultCore.sol#150) should be constant 
+AcquisitionVaultCore.reconciliationLiabilityWei (src/AcquisitionVaultCore.sol#149) should be constant 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
+src/AcquisitionVaultCore.sol analyzed (3 contracts with 102 detectors), 33 result(s) found

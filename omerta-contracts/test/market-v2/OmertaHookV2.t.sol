@@ -252,6 +252,29 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         assertEq(cumulative, int256(tick) * int256(365 days));
     }
 
+    function test_fullUint32IdleCyclePreservesCounterfactualAndWrittenCumulative() public {
+        _swap(false, -int256(1 ether));
+        int24 tick = hook.lastTick();
+        uint256 startedAt = block.timestamp;
+        uint256 elapsed = uint256(type(uint32).max) + 1 + 600;
+        vm.warp(startedAt + elapsed);
+        (int56 beforeWrite, uint32 timestamp, bool ready) = hook.currentTickCumulative(key.toId());
+        assertTrue(ready);
+        assertEq(timestamp, uint32(block.timestamp));
+        assertEq(beforeWrite, int56(int256(tick) * int256(elapsed)));
+        hook.checkpoint();
+        (int56 afterWrite,,) = hook.currentTickCumulative(key.toId());
+        assertEq(afterWrite, beforeWrite);
+        assertEq(hook.lastTimestamp(), block.timestamp);
+        OmertaHookV2.Epoch memory e = hook.latestEpoch();
+        assertEq(e.observedSeconds, 60);
+        assertEq(e.tickSeconds, int256(tick) * 60);
+        assertEq(e.buyQuote + e.sellQuote, 0);
+        vm.warp(block.timestamp + 600);
+        (int56 later,,) = hook.currentTickCumulative(key.toId());
+        assertEq(later, int56(int256(tick) * int256(elapsed + 600)));
+    }
+
     function testFuzz_allFeesAreCoveredAndNeverExceedTenPercent(uint96 amountSeed, bool exactOutput) public {
         uint256 amount = bound(uint256(amountSeed), 1e9, 50 ether);
         BalanceDelta result = _swap(false, exactOutput ? int256(amount) : -int256(amount));

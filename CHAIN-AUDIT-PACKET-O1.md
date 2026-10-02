@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory measured 2026-09-14 in the working tree.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-02; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -52,11 +52,15 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 48 contracts + 11 interfaces, current source inventory
+## 1. SCOPE — 51 contracts + 11 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-`omerta-contracts/src` working tree — 59 Solidity files, 48 contracts and 11 interfaces.
+owned `omerta-contracts/src` modules — 62 Solidity files, 51 contracts and 11 interfaces.
+The additional 35 vendored Solidity files are included through the complete pinned
+[dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
+including its declared local CCA patch. Together these identify all 97 source files; libraries
+and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
 this inventory update does not extend the liquidity review to them or authorize chain activation.
@@ -124,6 +128,13 @@ retain their original scopes and conclusions.
 | 57 | `OmertaStabilityControllerV2` | market implementation candidate; independent review and launch gates apply | `test/market-v2/` |
 | 58 | `OmertaTurfFeeBridgeV2` | market implementation candidate; independent review and launch gates apply | `test/market-v2/` |
 | 59 | `OmertaTurfV2` | market implementation candidate; independent review and launch gates apply | `test/market-v2/` |
+| 60 | `GenesisPlayerSale` | signed eligibility, inventory caps, settlement and cancellation | `test/GenesisPlayerSale.t.sol`, `test/GenesisPlayerSaleInvariant.t.sol` |
+| 61 | `OmertaGuardedAuction` | public auction custody, safe batch claims and guarded initialization | `test/OmertaGuardedAuction.t.sol` |
+| 62 | `OmertaGenesisCoordinatorV2` | exact auction binding, inventory allocation and real liquidity execution | `test/market-v2/GenesisCoordinatorV2.t.sol`, `test/market-v2/PlayerGenesisIntegrationV2.t.sol` |
+
+The [current red-team package](omerta-contracts/audits/2026-10-01-red-team/report.md) binds the
+complete source closure and remediation evidence. Its excluded activation paths and chain-specific
+preflight requirements remain in force; this inventory refresh grants no deployment authority.
 
 **Historical baseline: 896 Foundry tests across 43 suites, green** under **forge v1.7.1** at head `b0a214ca`, including
 **19 parameterised 512-run fuzz** properties and **9 `invariant_` properties** across token, bond,

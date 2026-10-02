@@ -1,0 +1,17 @@
+Compiling 36 files with Solc 0.8.26
+Solc 0.8.26 finished in 43.41s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:174:5:
+    |
+174 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 3 tests for test/market-v2/PlayerGenesisIntegrationV2.t.sol:PlayerGenesisIntegrationV2Test
+[PASS] testRealAuctionAndPoolSettleBeforeBothClaims() (gas: 1109186)
+[PASS] testRealAuctionFailedPoolFundingRetainsPrincipalAndCanRetry() (gas: 1101805)
+[PASS] testRealAuctionPlayerTimeoutRefundsAndPublicMigrationRecovers() (gas: 871572)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 4.30ms (2.16ms CPU time)
+
+Ran 1 test suite in 11.71ms (4.30ms CPU time): 3 tests passed, 0 failed, 0 skipped (3 total tests)

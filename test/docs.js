@@ -1376,7 +1376,20 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const srcDir = 'omerta-contracts/src';
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory()
     ? walk(`${d}/${e.name}`) : (e.name.endsWith('.sol') ? [`${d}/${e.name}`] : [])));
-  const files = walk(srcDir).sort();
+  const allFiles = walk(srcDir).sort();
+  const vendorRoot = `${srcDir}/genesis-auction/vendor`;
+  const vendorFiles = allFiles.filter((f) => f.startsWith(`${vendorRoot}/`));
+  const vendorManifest = JSON.parse(read(`${vendorRoot}/SOURCE-MANIFEST.json`));
+  const vendorPins = vendorManifest.files.map((entry) =>
+    `${vendorRoot}/${vendorManifest.packages[entry.package].prefix}/${entry.path}`).sort();
+  assert.deepEqual(vendorPins, vendorFiles,
+    'every vendored Solidity file must appear exactly once in the pinned dependency scope');
+  const vendorCount = /(\d+) vendored Solidity files/.exec(pkt);
+  assert(vendorCount && Number(vendorCount[1]) === vendorFiles.length,
+    'the packet must state the complete vendored Solidity closure separately from owned modules');
+  assert(pkt.includes('genesis-auction/vendor/SOURCE-MANIFEST.json'),
+    'the packet must link the exact vendored source manifest');
+  const files = allFiles.filter((f) => !f.startsWith(`${vendorRoot}/`));
   const treeContracts = [];
   const treeIfaces = [];
   for (const f of files) {

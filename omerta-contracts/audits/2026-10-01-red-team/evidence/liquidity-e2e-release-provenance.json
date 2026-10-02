@@ -1,0 +1,34 @@
+{
+  "scope": "Local disposable PostgreSQL and Anvil rehearsal; no production transactions",
+  "recordedUtc": "2026-10-02T15:29:14.5559933Z",
+  "postgresqlVersion": "postgres (PostgreSQL) 18.4",
+  "database": "omerta_liquidity_red_team_e2e_test",
+  "role": "omerta_audit",
+  "bind": "127.0.0.1",
+  "port": 55439,
+  "cluster": "output/red-team-postgres/data",
+  "command": "LIQUIDITY_E2E_DATABASE_URL=postgres://omerta_audit@127.0.0.1:55439/omerta_liquidity_red_team_e2e_test node tools/liquidity-e2e.js",
+  "exitCode": 0,
+  "assertions": 20,
+  "actualKeeperTransactions": 11,
+  "cleanup": "pg_ctl -D output/red-team-postgres/data -w stop succeeded; no port55439 listener",
+  "files": [
+    {
+      "path": "output/contract-red-team-release/tools/liquidity-e2e.js",
+      "sha256": "99bdecf47629265a727a17c74a5adf7efe5bbb47aeea73968e7aa8c1d122f6be"
+    },
+    {
+      "path": "output/contract-red-team-release/src/liquiditypolicy.js",
+      "sha256": "f87f6add14812fe6a19f313822e515a09dc6bd7896cffcb9692658bf4558a611"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-01-red-team/evidence/liquidity-e2e-release.txt",
+      "sha256": "0c3d47ec9ea552133b5b00751c516e2e696f4e2f766cfec6ba9899529306e77a"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-01-red-team/evidence/liquidity-e2e-release-report.json",
+      "sha256": "7f6fb7ba930e4cdd56bf37b77ab6ad01039f221b02e0efeb37eece5013349377"
+    }
+  ],
+  "worktree": "output/contract-red-team-release"
+}

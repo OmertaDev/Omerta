@@ -1,0 +1,38 @@
+Compiling 2 files with Solc 0.8.26
+Solc 0.8.26 finished in 7.17s
+Compiler run successful!
+
+Ran 27 tests for test/OmrTwapOracle.t.sol:OmrTwapOracleTest
+[PASS] testFuzz_price_decode_survives_extremes(uint112) (runs: 512, μ: 1164107, ~: 1164362)
+Logs:
+  Bound result 3584681462053739800734342715061
+
+[PASS] test_F2_a_past_spike_can_no_longer_contaminate_a_long_window() (gas: 137943)
+[PASS] test_F2_recovery_is_one_honest_window() (gas: 109590)
+[PASS] test_F2_the_boundary_is_inclusive_so_a_normal_late_poke_still_works() (gas: 109277)
+[PASS] test_F2_the_very_first_poke_is_bounded_too() (gas: 85695)
+[PASS] test_a_spike_inside_the_window_is_averaged_not_adopted() (gas: 157173)
+[PASS] test_a_sustained_move_IS_adopted() (gas: 170974)
+[PASS] test_closes_a_window_and_reports_the_average() (gas: 101638)
+[PASS] test_constructor_rejects_OMR_as_its_own_counterasset() (gas: 936647)
+[PASS] test_constructor_rejects_a_pair_that_is_not_an_OMR_pair() (gas: 359102)
+[PASS] test_constructor_rejects_a_pair_the_expected_factory_did_not_create() (gas: 1359488)
+[PASS] test_constructor_rejects_an_OMR_pair_against_the_wrong_counterasset() (gas: 1842957)
+[PASS] test_constructor_rejects_non_18_decimal_market_assets() (gas: 1404276)
+[PASS] test_counterfactual_accrual_covers_an_idle_pool() (gas: 100973)
+[PASS] test_empty_reserves_revert_rather_than_divide_by_zero() (gas: 385802)
+[PASS] test_exact_full_timestamp_wrap_discards_the_window_before_early_check() (gas: 108654)
+[PASS] test_full_keeper_gap_cannot_alias_a_fresh_window() (gas: 109314)
+[PASS] test_idle_pair_counterfactual_wrap_discards_and_recovers() (gas: 886820)
+[PASS] test_maximum_period_closes_a_window_without_overflow() (gas: 883119)
+[PASS] test_period_above_window_arithmetic_limit_reverts() (gas: 80170)
+[PASS] test_period_floor_is_enforced_at_construction() (gas: 74602)
+[PASS] test_reads_the_right_side_of_the_pair() (gas: 8683)
+[PASS] test_reversed_pair_ordering_is_detected_not_trusted() (gas: 1160976)
+[PASS] test_uint32_maximum_period_reverts() (gas: 74730)
+[PASS] test_unavailable_before_the_first_closed_window() (gas: 13165)
+[PASS] test_update_is_permissionless() (gas: 102360)
+[PASS] test_update_refuses_before_the_period_elapses() (gas: 26837)
+Suite result: ok. 27 passed; 0 failed; 0 skipped; finished in 31.25ms (57.36ms CPU time)
+
+Ran 1 test suite in 32.38ms (31.25ms CPU time): 27 tests passed, 0 failed, 0 skipped (27 total tests)

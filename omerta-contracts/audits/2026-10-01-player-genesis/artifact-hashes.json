@@ -1,0 +1,26 @@
+[
+  {
+    "path": "omerta-contracts/out/GenesisPlayerSale.sol/GenesisPlayerSale.json",
+    "artifactSha256": "679ffe188603ac7dfd91934a134f721121478a48078c8e85bfcc0fde042688d0",
+    "runtimeTemplateSha256": "2c8ac052d63c77829a95e7e15c699f488a1c5174b3dea822b181058ea09068a7",
+    "runtimeTemplateBytes": 7436
+  },
+  {
+    "path": "omerta-contracts/out/GenesisPlayerSale.sol/GenesisPlayerSale.constellation-via-ir.json",
+    "artifactSha256": "78d40fe44e7cfce967c21519c9a1ce0ad4740404a5b12a880a4fd7cec49477e7",
+    "runtimeTemplateSha256": "28f5957aad0837a7e8f559b569089e0c4acd0b4fe30be2e6d36c40bb2636c896",
+    "runtimeTemplateBytes": 6809
+  },
+  {
+    "path": "omerta-contracts/out/OmertaGenesisCoordinatorV2.sol/OmertaGenesisCoordinatorV2.json",
+    "artifactSha256": "bc96f0236e2e3afafcbac9380b6538e3ab913587d20d367f31e950a13acfa1a5",
+    "runtimeTemplateSha256": "bc8c5cb92667eec95569b9020a95ed67a3a83446d1c65d390ee07ecf41b5144c",
+    "runtimeTemplateBytes": 17655
+  },
+  {
+    "path": "omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json",
+    "artifactSha256": "2dc68893a93f67b9418cbc7b05d47c9a26af250fcf0bc3f6774eb3adc49472b5",
+    "runtimeTemplateSha256": "a0b38e0a6326c5aba02fdebfe214ffbc2b0c3b3cadf985f1f61fad6907f300d8",
+    "runtimeTemplateBytes": 16935
+  }
+]

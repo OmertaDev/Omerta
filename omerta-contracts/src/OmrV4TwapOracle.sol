@@ -65,6 +65,7 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
 
     uint256 public priceAverage;
     uint256 public lastUpdate;
+    uint256 private _baselineTimestamp;
 
     event Updated(int24 arithmeticMeanTick, uint256 omrPerEth, uint32 timeElapsed);
     event Rebaselined(uint32 discardedWindow);
@@ -72,6 +73,7 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
     event BaselineInitialized(int56 tickCumulative, uint32 blockTimestamp);
 
     error PeriodTooShort();
+    error PeriodTooLong();
     error PeriodNotElapsed(uint32 elapsed, uint32 required);
     error ZeroAddress();
     error ContractRequired(address target);
@@ -91,6 +93,7 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
         if (address(source_).code.length == 0) revert ContractRequired(address(source_));
         if (omr_.code.length == 0) revert ContractRequired(omr_);
         if (period_ < MIN_PERIOD) revert PeriodTooShort();
+        if (period_ > type(uint32).max / MAX_WINDOW_MULT) revert PeriodTooLong();
         if (!IERC165(address(source_)).supportsInterface(type(IOmrV4ObservationSource).interfaceId)) {
             revert UnsupportedObservationSource();
         }
@@ -159,17 +162,20 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
         unchecked {
             timeElapsed = timestamp - blockTimestampLast;
         }
-        if (timeElapsed < PERIOD) {
-            if (revertIfEarly) revert PeriodNotElapsed(timeElapsed, PERIOD);
-            return;
-        }
-
-        if (timeElapsed > PERIOD * MAX_WINDOW_MULT) {
+        // A whole uint32 timestamp cycle must not masquerade as a short, fresh window.
+        uint256 fullElapsed = block.timestamp - _baselineTimestamp;
+        if (fullElapsed > PERIOD * MAX_WINDOW_MULT) {
             _setBaseline(cumulative, timestamp);
             arithmeticMeanTick = 0;
             priceAverage = 0;
             lastUpdate = 0;
-            emit Rebaselined(timeElapsed);
+            // Preserve the event ABI; very long discarded durations saturate at uint32 maximum.
+            emit Rebaselined(fullElapsed > type(uint32).max ? type(uint32).max : uint32(fullElapsed));
+            return;
+        }
+
+        if (timeElapsed < PERIOD) {
+            if (revertIfEarly) revert PeriodNotElapsed(timeElapsed, PERIOD);
             return;
         }
 
@@ -204,6 +210,7 @@ contract OmrV4TwapOracle is IOmrOracle, IOmrHookObserver {
     function _setBaseline(int56 cumulative, uint32 timestamp) private {
         tickCumulativeLast = cumulative;
         blockTimestampLast = timestamp;
+        _baselineTimestamp = block.timestamp;
         if (!baselineInitialized) {
             baselineInitialized = true;
             emit BaselineInitialized(cumulative, timestamp);

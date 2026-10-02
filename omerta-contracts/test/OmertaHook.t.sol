@@ -622,6 +622,32 @@ contract OmertaHookTest is Test {
         assertFalse(initialized);
     }
 
+    function test_tick_accumulator_preserves_full_idle_time_across_counterfactual_wrap() public {
+        _sellExactIn(100e18);
+        PoolId id = key.toId();
+        (, int24 tick,,) = StateLibrary.getSlot0(manager, id);
+        (int56 start,,) = hook.currentTickCumulative(id);
+        uint256 initialAt = block.timestamp;
+        vm.warp(initialAt + type(uint32).max);
+        (int56 beforeWrap,,) = hook.currentTickCumulative(id);
+        assertEq(beforeWrap, start + int56(int256(tick) * int256(uint256(type(uint32).max))));
+        OmrV4TwapOracle delayed =
+            new OmrV4TwapOracle(IOmrV4ObservationSource(address(hook)), address(omr), key.fee, key.tickSpacing, 600);
+        vm.warp(block.timestamp + 600);
+        delayed.update();
+        assertEq(delayed.arithmeticMeanTick(), tick, "counterfactual elapsed wrap corrupted a fresh window");
+        (uint256 price, uint256 updatedAt) = delayed.consult();
+        assertGt(price, 0);
+        assertEq(updatedAt, block.timestamp);
+
+        (int56 beforeWrite,,) = hook.currentTickCumulative(id);
+        assertEq(beforeWrite, start + int56(int256(tick) * int256(block.timestamp - initialAt)));
+        _sellExactIn(1e18);
+        (int56 afterWrite, uint32 timestamp,) = hook.currentTickCumulative(id);
+        assertEq(afterWrite, beforeWrite, "writing after a full idle interval lost cumulative history");
+        assertEq(timestamp, uint32(block.timestamp));
+    }
+
     function test_real_hook_and_oracle_close_a_window_without_a_poke_after_every_swap() public {
         uint32 period = 10 minutes;
         OmrV4TwapOracle oracle =

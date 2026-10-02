@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `7f8b9174b787`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `0d2187d665ba`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 3,690 |
-| Text lines | 1,207,053 |
-| Repository bytes inventoried | 777,623,855 |
+| Current artifacts | 4,110 |
+| Text lines | 1,476,596 |
+| Repository bytes inventoried | 804,202,997 |
 | Backend/route modules | 276 |
 | HTTP route registrations / unique routes | 802 / 802 |
 | Database tables | 369 |
-| Solidity declarations | 79 |
-| Git commits | 2,003 |
+| Solidity declarations | 120 |
+| Git commits | 2,011 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,194 / 38,011 |
+| Graph nodes / edges | 9,855 / 40,123 |
 
 ## Artifact kinds
 
@@ -24,15 +24,15 @@
 |---|---:|
 | media-asset | 1,194 |
 | artifact | 657 |
+| contract-project | 517 |
 | test-suite | 426 |
 | documentation | 408 |
 | backend-module | 248 |
 | engineering-harness | 193 |
-| contract-project | 148 |
+| contract-test | 105 |
+| contract-source | 103 |
 | audit | 98 |
-| contract-test | 98 |
 | design | 82 |
-| contract-source | 59 |
 | route-module | 28 |
 | web-surface | 15 |
 | operations | 11 |
@@ -49,17 +49,22 @@
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
+| [omerta-contracts/audits/2026-10-01-red-team/static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage.json) | 46,122 | contract-project | 2026-10-02 |
+| [omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json) | 46,071 | contract-project | 2026-10-02 |
+| [omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json) | 44,807 | contract-project | 2026-10-02 |
 | [docs/release/evidence/simulation/quality/projection-samples.json](../../docs/release/evidence/simulation/quality/projection-samples.json) | 33,646 | artifact | 2026-09-19 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json) | 22,972 | artifact | 2026-09-21 |
 | [docs/release/readiness-work/authority-inventory.json](../../docs/release/readiness-work/authority-inventory.json) | 20,579 | artifact | 2026-09-21 |
 | [docs/release/evidence/gates/fresh-forge-linux.txt](../../docs/release/evidence/gates/fresh-forge-linux.txt) | 18,797 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [public/index.html](../../public/index.html) | 13,422 | web-surface | 2026-09-25 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
 | [test/client.js](../../test/client.js) | 9,441 | test-suite | 2026-09-25 |
@@ -71,11 +76,6 @@
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/artifact-manifest.json) | 7,385 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,380 | data-schema | 2026-09-24 |
-| [BALANCE.md](../../BALANCE.md) | 6,860 | documentation | 2026-09-25 |
-| [docs/release/evidence/freeze/definitions.json](../../docs/release/evidence/freeze/definitions.json) | 6,847 | artifact | 2026-09-19 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json](../../omerta-contracts/audits/2026-09-08-comprehensive/package-manifest.json) | 6,609 | contract-project | 2026-09-09 |
-| [omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/forge-lint-triage.json) | 6,203 | contract-project | 2026-09-09 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,145 | backend-module | 2026-09-02 |
 
 ## Media estate
 

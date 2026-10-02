@@ -37,6 +37,7 @@ contract MockV4ObservationSource is IOmrV4ObservationSource, IERC165 {
     int56 private _tickCumulative;
     int24 private _tick;
     uint32 private _blockTimestamp;
+    uint256 private _fullTimestamp;
     bool private _initialized;
 
     constructor(IPoolManager poolManager_) {
@@ -51,6 +52,7 @@ contract MockV4ObservationSource is IOmrV4ObservationSource, IERC165 {
         _poolId = poolId_;
         _tick = tick_;
         _blockTimestamp = uint32(block.timestamp);
+        _fullTimestamp = block.timestamp;
         _initialized = true;
     }
 
@@ -66,22 +68,21 @@ contract MockV4ObservationSource is IOmrV4ObservationSource, IERC165 {
     {
         if (!_initialized || PoolId.unwrap(poolId_) != PoolId.unwrap(_poolId)) return (0, 0, false);
         blockTimestamp = uint32(block.timestamp);
-        uint32 elapsed;
+        uint256 elapsed = block.timestamp - _fullTimestamp;
         unchecked {
-            elapsed = blockTimestamp - _blockTimestamp;
-            tickCumulative = _tickCumulative + int56(_tick) * int56(uint56(elapsed));
+            tickCumulative = _tickCumulative + int56(int256(_tick) * int256(elapsed));
         }
         initialized = true;
     }
 
     function _accrue() private {
         uint32 timestamp = uint32(block.timestamp);
-        uint32 elapsed;
+        uint256 elapsed = block.timestamp - _fullTimestamp;
         unchecked {
-            elapsed = timestamp - _blockTimestamp;
-            _tickCumulative += int56(_tick) * int56(uint56(elapsed));
+            _tickCumulative += int56(int256(_tick) * int256(elapsed));
         }
         _blockTimestamp = timestamp;
+        _fullTimestamp = block.timestamp;
     }
 }
 
@@ -138,6 +139,27 @@ contract OmrV4TwapOracleTest is Test {
         vm.warp(block.timestamp + PERIOD - 1);
         vm.expectRevert(abi.encodeWithSelector(OmrV4TwapOracle.PeriodNotElapsed.selector, PERIOD - 1, PERIOD));
         oracle.update();
+    }
+
+    function test_maximum_period_closes_a_window_without_overflow() public {
+        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
+        OmrV4TwapOracle longest = new OmrV4TwapOracle(source, address(omr), FEE, TICK_SPACING, maximum);
+        vm.warp(block.timestamp + maximum);
+        longest.update();
+        (uint256 price, uint256 updatedAt) = longest.consult();
+        assertEq(price, 1e18);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_period_above_window_arithmetic_limit_reverts() public {
+        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
+        vm.expectRevert(OmrV4TwapOracle.PeriodTooLong.selector);
+        new OmrV4TwapOracle(source, address(omr), FEE, TICK_SPACING, maximum + 1);
+    }
+
+    function test_uint32_maximum_period_reverts() public {
+        vm.expectRevert(OmrV4TwapOracle.PeriodTooLong.selector);
+        new OmrV4TwapOracle(source, address(omr), FEE, TICK_SPACING, type(uint32).max);
     }
 
     function test_bootstrap_deploys_before_pool_initialization_and_has_no_quote() public {
@@ -292,16 +314,8 @@ contract OmrV4TwapOracleTest is Test {
         (MockV4ObservationSource unopenedSource, PoolKey memory unopenedKey, OmrV4TwapOracle bootstrap) = _bootstrap();
         vm.warp(block.timestamp + delay);
         unopenedSource.initialize(unopenedKey.toId(), tick);
-        // Persist the full arbitrary initialized history, as same-tick hook swaps do.
-        // Each interval fits uint32 elapsed even when the full delay exceeds one wrap.
-        // Leaving the source idle across a full wrap is a separate source-horizon limitation.
-        uint256 firstCheckpoint = uint256(delay) / 2;
-        vm.warp(block.timestamp + firstCheckpoint);
-        unopenedSource.setTick(tick);
-        vm.warp(block.timestamp + uint256(delay) - firstCheckpoint);
-        unopenedSource.setTick(tick);
-        (int56 discardedCumulative,,) = unopenedSource.currentTickCumulative(unopenedKey.toId());
-        assertEq(discardedCumulative, int56(tick) * int56(uint56(delay)));
+        // The same arbitrary delay exercises initialized history that must be discarded at seeding.
+        vm.warp(block.timestamp + delay);
         if (observe) {
             vm.prank(address(unopenedSource));
             bootstrap.observe(unopenedKey);
@@ -310,7 +324,6 @@ contract OmrV4TwapOracleTest is Test {
         }
         uint256 seedAt = block.timestamp;
         assertTrue(bootstrap.baselineInitialized());
-        assertEq(bootstrap.tickCumulativeLast(), discardedCumulative);
         _assertUnavailable(bootstrap);
         vm.warp(seedAt + early);
         vm.prank(address(unopenedSource));
@@ -326,12 +339,29 @@ contract OmrV4TwapOracleTest is Test {
         assertEq(updatedAt, block.timestamp);
     }
 
-    function test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_observe() public {
-        testFuzz_no_prepool_or_prebaseline_time_qualifies(4_294_967_295, 17_160, 25, true);
+    function test_regression_full_idle_timestamp_wrap_does_not_contaminate_baseline() public {
+        testFuzz_no_prepool_or_prebaseline_time_qualifies(4_294_967_295, 18_299, 10_599, true);
     }
 
-    function test_bootstrap_discards_checkpointed_history_at_source_elapsed_wrap_update() public {
-        testFuzz_no_prepool_or_prebaseline_time_qualifies(4_294_967_295, 17_160, 25, false);
+    function test_full_keeper_gap_cannot_alias_a_fresh_window() public {
+        vm.warp(block.timestamp + (uint256(1) << 32) + PERIOD);
+        oracle.update();
+        _assertUnavailable(oracle);
+        vm.warp(block.timestamp + PERIOD);
+        oracle.update();
+        (uint256 price, uint256 updatedAt) = oracle.consult();
+        assertEq(price, 1e18);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_exact_full_timestamp_wrap_discards_the_window_before_early_check() public {
+        vm.warp(block.timestamp + (uint256(1) << 32));
+        oracle.update();
+        _assertUnavailable(oracle);
+        vm.warp(block.timestamp + PERIOD);
+        oracle.update();
+        (uint256 price,) = oracle.consult();
+        assertEq(price, 1e18);
     }
 
     function test_tick_zero_closes_at_one_omr_per_eth() public {

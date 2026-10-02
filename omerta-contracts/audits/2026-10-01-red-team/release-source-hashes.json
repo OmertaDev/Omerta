@@ -1,0 +1,584 @@
+[
+  {
+    "path": "omerta-contracts/src/AcquisitionAuthority.sol",
+    "sha256": "2a9a2bd80451f31349787f27c6adc5a6e017207b04dadd560680576ee0c8470a",
+    "reviewedPhysicalSha256": "4dcf23d3003be8a4d867d6ddb051e2fc1367387aca70682255f1a6d2b892a9ba",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/AcquisitionConstellationFactory.sol",
+    "sha256": "3729617fb007712f1f3c3be1560b67402e23d956507ee2f0913661335d79bf23",
+    "reviewedPhysicalSha256": "bc2581c8f45906749e9b9c84ba9f58de81c87911a9622bf5fde982694b861431",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/AcquisitionIntentExecution.sol",
+    "sha256": "2b9547caa35d20ad61d080e3e4bed4ec1051a58c0fd810805a3399111aa7fa98",
+    "reviewedPhysicalSha256": "cec00cd816d1539ccc0bd620d779bbde53667105ed5ce907416d802a34ca92c1",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/AcquisitionReconciliation.sol",
+    "sha256": "e110c010c5773c83bb83d8f1485dbdd303e61da35dc394ec5c53294c92844f6f",
+    "reviewedPhysicalSha256": "1d0c6391fbaeb4f30c98646627ca11d7487a6720b9f34ebc97e9c6f5b40aec78",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/AcquisitionVault.sol",
+    "sha256": "593fd3ed114154c9834831ee760666e51a10e6009abab3aed7a589fb2a0f3205",
+    "reviewedPhysicalSha256": "a7301148771bbf4aa57e2e49d65c885179373fe73d5a6c5ad06f1122ea0db52d",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/AcquisitionVaultCore.sol",
+    "sha256": "0901178290ac59cc383dcf5d0b6ac28e2132a3bd2acb9f0079e95189807e3321",
+    "reviewedPhysicalSha256": "62a603ed3d502e00877cdcbdfe66444f24c4460bb4abfc980e8a33d159c9b186",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/Alchemist.sol",
+    "sha256": "58857bd22a2f460ef092a0628a3c66dbacead0e0d185c10737d6593ed5e9da63",
+    "reviewedPhysicalSha256": "58857bd22a2f460ef092a0628a3c66dbacead0e0d185c10737d6593ed5e9da63",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/BankBufferVault.sol",
+    "sha256": "cb164cca28e567371a25dc1933cd1f1ce3f400514dcc5b1357ad9b9d8c08a4be",
+    "reviewedPhysicalSha256": "cb164cca28e567371a25dc1933cd1f1ce3f400514dcc5b1357ad9b9d8c08a4be",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/CollateralEscrow.sol",
+    "sha256": "aea024853522f827e665445a91cd9ac6260d456a7c3f6ceaba268312d063b6ac",
+    "reviewedPhysicalSha256": "aea024853522f827e665445a91cd9ac6260d456a7c3f6ceaba268312d063b6ac",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/Denari.sol",
+    "sha256": "f1ac4f24d2491d9b4c576670447526be4d3c08449427801619fdf570293b08fe",
+    "reviewedPhysicalSha256": "f1ac4f24d2491d9b4c576670447526be4d3c08449427801619fdf570293b08fe",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/DynastyNFT.sol",
+    "sha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+    "reviewedPhysicalSha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/FeeRevenueRouter.sol",
+    "sha256": "9c8839cdf09973e1f2469c508430d65e4d6ddeecd1eddb64ad7d807005b222a9",
+    "reviewedPhysicalSha256": "9c8839cdf09973e1f2469c508430d65e4d6ddeecd1eddb64ad7d807005b222a9",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/FlashGuard.sol",
+    "sha256": "e27d500d90a9266ee1429f16cddd2f9e4ae74c463d95fcaeb09cc1d12d8083ce",
+    "reviewedPhysicalSha256": "e27d500d90a9266ee1429f16cddd2f9e4ae74c463d95fcaeb09cc1d12d8083ce",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GearVault.sol",
+    "sha256": "364ae51294f6f2b8d5ad9864cba79cb06f4f9e66df4e117a21907f7f4c0ed4a9",
+    "reviewedPhysicalSha256": "364ae51294f6f2b8d5ad9864cba79cb06f4f9e66df4e117a21907f7f4c0ed4a9",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GenesisLifecycleController.sol",
+    "sha256": "de24da542644dd904ce9b3ccee2d2ad4b0864b432a35bd3a2aa0f023ac19945a",
+    "reviewedPhysicalSha256": "de24da542644dd904ce9b3ccee2d2ad4b0864b432a35bd3a2aa0f023ac19945a",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GenesisOracle.sol",
+    "sha256": "1af72fe4006f8983a3307e215a73e363fb957838e14449b1a8861191ebfabb31",
+    "reviewedPhysicalSha256": "1af72fe4006f8983a3307e215a73e363fb957838e14449b1a8861191ebfabb31",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GenesisPlayerSale.sol",
+    "sha256": "565de887db17c875ca628fea3d3a07be5b806e671d21ddcb9906cc7a868efdaf",
+    "reviewedPhysicalSha256": "565de887db17c875ca628fea3d3a07be5b806e671d21ddcb9906cc7a868efdaf",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GenesisProceedsSplitter.sol",
+    "sha256": "e1530a96908d359935e46f3f9a201a62950b74ba0b5fde6bdb19c15af004bc32",
+    "reviewedPhysicalSha256": "e1530a96908d359935e46f3f9a201a62950b74ba0b5fde6bdb19c15af004bc32",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/GenesisWalletCap.sol",
+    "sha256": "7c059fe0f3fe662b6d6da7a7b69ede1099eab2a7ccc31ce3b679d32a6da2b057",
+    "reviewedPhysicalSha256": "7c059fe0f3fe662b6d6da7a7b69ede1099eab2a7ccc31ce3b679d32a6da2b057",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/IOmrOracle.sol",
+    "sha256": "f14793abcb93aafb7e1ab8d47373709e0f93897536efae541b478576743b5d84",
+    "reviewedPhysicalSha256": "f14793abcb93aafb7e1ab8d47373709e0f93897536efae541b478576743b5d84",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/KeeperGasVault.sol",
+    "sha256": "343038aa0304a5ceee695b72f66b3160f71677b87e7f32c8b88917c4626b5722",
+    "reviewedPhysicalSha256": "343038aa0304a5ceee695b72f66b3160f71677b87e7f32c8b88917c4626b5722",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/LiquidityBuybackExecutor.sol",
+    "sha256": "ff24f0ff41713554bededc993c05208b93835f4a78be3bb117740c3f88163473",
+    "reviewedPhysicalSha256": "ff24f0ff41713554bededc993c05208b93835f4a78be3bb117740c3f88163473",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OmertaBond.sol",
+    "sha256": "6e6a9fd871464222b764a5e618dd9d06d10aad37b085967161688e8cea287d9b",
+    "reviewedPhysicalSha256": "6e6a9fd871464222b764a5e618dd9d06d10aad37b085967161688e8cea287d9b",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OmertaFees.sol",
+    "sha256": "c08fa731db192a1af41ce3b68fe19c2a3575066c6f22a8ea2a836168701f1480",
+    "reviewedPhysicalSha256": "c08fa731db192a1af41ce3b68fe19c2a3575066c6f22a8ea2a836168701f1480",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OmertaHook.sol",
+    "sha256": "95563000dd26f9709ad57ba89d09076fb6e5fcfe0516e9c06532d7aeb3cb3ece",
+    "reviewedPhysicalSha256": "95563000dd26f9709ad57ba89d09076fb6e5fcfe0516e9c06532d7aeb3cb3ece",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OMR.sol",
+    "sha256": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7",
+    "reviewedPhysicalSha256": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OMRStaking.sol",
+    "sha256": "04f36419e57109b56202272b7d9ebec462e0e5b7d0125abd1cb73e17ef466f09",
+    "reviewedPhysicalSha256": "04f36419e57109b56202272b7d9ebec462e0e5b7d0125abd1cb73e17ef466f09",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OmrTwapOracle.sol",
+    "sha256": "1d3ccbf534d720005f41d54aef0fe466a9a804a570e9204d2bb563caba5a941f",
+    "reviewedPhysicalSha256": "1d3ccbf534d720005f41d54aef0fe466a9a804a570e9204d2bb563caba5a941f",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/OmrV4TwapOracle.sol",
+    "sha256": "a594dce616070d9c1384676db8979cce59788fb203a06fade22bdd8eba8a2b94",
+    "reviewedPhysicalSha256": "a594dce616070d9c1384676db8979cce59788fb203a06fade22bdd8eba8a2b94",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/PreVoteBudgetBook.sol",
+    "sha256": "6d09cd40c3d14b735f5c979d8c4e5943d428171e9340b4d3d2df53f70a5c49f6",
+    "reviewedPhysicalSha256": "0b78eb0e1242a43871048e9a59496acfff8b3291f634d753e04ae5cd81ae7153",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/ProtocolLiquidityVault.sol",
+    "sha256": "a769361fbd3926f4a360ae726722d5f830a30251e932fe01f2f01f60dfa276e0",
+    "reviewedPhysicalSha256": "a769361fbd3926f4a360ae726722d5f830a30251e932fe01f2f01f60dfa276e0",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/RwaHealthOverlay.sol",
+    "sha256": "3238fc90b0b5f484bcbe1706f071fceebb2e7c169b3ab8278c0933f58f88c522",
+    "reviewedPhysicalSha256": "9048c311b6c7051776d5cdacecd56145530f5c307447f9dfb7c06b6526af4d23",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/RwaStockBuyer.sol",
+    "sha256": "2a8725f20b8d1bf1ceff2ec9a567c6a2b16869229b372f0bbed7955a5edc7de1",
+    "reviewedPhysicalSha256": "2a8725f20b8d1bf1ceff2ec9a567c6a2b16869229b372f0bbed7955a5edc7de1",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/SettlementGasPool.sol",
+    "sha256": "8ec50b2c5975726ae0ea7ff6d28dcc1152c8f02fbfcd8527da3948ed7fd81a33",
+    "reviewedPhysicalSha256": "d2f479a6fb780aff31ee53ffee12c02ebc92cd460b865bb40ba20faebb59e3ff",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/StockTokenRegistry.sol",
+    "sha256": "3be8a3c7d798e5c8f3f6956c600819b5cd3373f7b8ba953c521b6ca4bdc74784",
+    "reviewedPhysicalSha256": "3be8a3c7d798e5c8f3f6956c600819b5cd3373f7b8ba953c521b6ca4bdc74784",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/StockTokenRegistryV2.sol",
+    "sha256": "5ccad03db12930a5020e83eb4688bf98d639fdebdaf7a9f55362d4dea9f22546",
+    "reviewedPhysicalSha256": "ed14f5e07ef8b90105947de60e90b417642db9ecfa878fecc850ea2f4d313efb",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/StockVault.sol",
+    "sha256": "11a8b3a56bc64286419728ca4e414ad51eaffa25d9864a55091420a718182150",
+    "reviewedPhysicalSha256": "11a8b3a56bc64286419728ca4e414ad51eaffa25d9864a55091420a718182150",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/StreetDeed.sol",
+    "sha256": "1650fe290773e4732874f53a3917e8ec70a88238ee34b564ab3c13033506c026",
+    "reviewedPhysicalSha256": "1650fe290773e4732874f53a3917e8ec70a88238ee34b564ab3c13033506c026",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/Transmuter.sol",
+    "sha256": "21264df1c5a45f90658a3e09e6abb8ff7e75dd66bb4b5e2211b3f4166b871540",
+    "reviewedPhysicalSha256": "21264df1c5a45f90658a3e09e6abb8ff7e75dd66bb4b5e2211b3f4166b871540",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/VoucherClaim.sol",
+    "sha256": "5bdea68e473429ae39f3286b3fa7da8de335035929cc3f7665f5e824ad608573",
+    "reviewedPhysicalSha256": "5bdea68e473429ae39f3286b3fa7da8de335035929cc3f7665f5e824ad608573",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+    "sha256": "e0b6a895b4f6e22998dd6979abd4c6acda9bbf7a25b973025610da41e8159470",
+    "reviewedPhysicalSha256": "e0b6a895b4f6e22998dd6979abd4c6acda9bbf7a25b973025610da41e8159470",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/blocknumberish/src/BlockNumberish.sol",
+    "sha256": "199200adf6482e85e401f16c2301d785a754f29dfb1281c424c012f43ebf0fad",
+    "reviewedPhysicalSha256": "d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/AuctionStorage.sol",
+    "sha256": "64183c8964baab4101838f75c59828e93b892ef3d49e88912c6f5bc6f37366c9",
+    "reviewedPhysicalSha256": "2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/BidStorage.sol",
+    "sha256": "f6366aeb20edc5eef66bd7d3fbf3388f1365a336beeeb4b7492042057ebd6617",
+    "reviewedPhysicalSha256": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/CheckpointStorage.sol",
+    "sha256": "72deb6939b369874719071524b7d9dfc0f1e52b844da4650d76bc49c3cf227a6",
+    "reviewedPhysicalSha256": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/ContinuousClearingAuction.sol",
+    "sha256": "5ee4e4510ddd9ff414e42ae11cfd449b5a8a02654485d3c617200b2c1ac8fb6b",
+    "reviewedPhysicalSha256": "2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/StepStorage.sol",
+    "sha256": "685f47f540b05f00e2b73de48ad845d47dd1b500d68e4032d56ceca6c28ea1f6",
+    "reviewedPhysicalSha256": "cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/TickStorage.sol",
+    "sha256": "fbeb9abff604ac3a1a12d4abe0967556d4e2bbb32b22a4770e61dbb576079332",
+    "reviewedPhysicalSha256": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IAuctionStorage.sol",
+    "sha256": "6d289eca851a710c3e92da369ae38e47f31ab6d3daba9718df549aa969df7697",
+    "reviewedPhysicalSha256": "4541975ea71b6239e917f97436ade81f10e75e9e02a14043d3d4d968d8763c33",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IBidStorage.sol",
+    "sha256": "9c80645a459d155e3fde39ea9705c1c1ef7ff11207ae90a62fe49636c60bbad6",
+    "reviewedPhysicalSha256": "3996822f663de5e4d4a8920b1863a7f03c3ecb3886c6a1e968e256cf689ddcd3",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/ICheckpointStorage.sol",
+    "sha256": "a112e8eb372686087a69e1c6375a315c21e59bee0391ec4e5141b551d07f81c4",
+    "reviewedPhysicalSha256": "22568a4e5419c8ca1b788f56ec5b3cc42ec9d0df5751228799aadbbef98e6764",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol",
+    "sha256": "bde12da5d770337cb6363b63851b25ba826a9137e118711401b474480d5a1197",
+    "reviewedPhysicalSha256": "e218f9ace315cc01577c79b159f78687aab3e93f0d3f19f0e4fed12e0b15ba8e",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol",
+    "sha256": "2e1237b5fe69665069ae02764b582da1655a1e57c9374275109d00d475f2f92f",
+    "reviewedPhysicalSha256": "20207a10a2aec05bb583fd43ec040b4997aea9a166886de8ad6b935a7acc1e00",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol",
+    "sha256": "767d813fff1ede39a555a628c09c8b50babc851e72008ce92d441e5897016ef3",
+    "reviewedPhysicalSha256": "ee53cccb09d87f4dae11680766168fe103acac56f122ba40d6bb18875c67fcde",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol",
+    "sha256": "6be3d469664190a2868052ecae2eed2c933c258483ff673096e69f41cabb68dc",
+    "reviewedPhysicalSha256": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol",
+    "sha256": "592bb25be6c8e0bef6d0c4e9b64552d9853f612e526478404c1a652652b8d0c2",
+    "reviewedPhysicalSha256": "e2a2de288d95e31c66f6b33c120d597b47fc4dd57e78717b607d2bde3f55dcbd",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/BidLib.sol",
+    "sha256": "67bc188999b1fe8e6d83d6432ae76582761a7e4fdec6aa18d14afdca2cd6996a",
+    "reviewedPhysicalSha256": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/CheckpointAccountingLib.sol",
+    "sha256": "f976724bf2fdeaa33bf3c369fa5daa35d84a31f8abd31792351ed8a6d955fc48",
+    "reviewedPhysicalSha256": "e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/CheckpointLib.sol",
+    "sha256": "9f70d1f8dacb6797ee277153888c56e00a50864ae2e3e979d25d124093071469",
+    "reviewedPhysicalSha256": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/ConstantsLib.sol",
+    "sha256": "7e88997b9aed17b8e11c82a823036d52e54436c3d7c1d808775acee412c328fd",
+    "reviewedPhysicalSha256": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol",
+    "sha256": "48c305c6f9d80fa032d79025c8868115edc2645e3747855e2eeb3a97935bb0d1",
+    "reviewedPhysicalSha256": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/DemandLib.sol",
+    "sha256": "00b31ce5373317312fd4b272c14ad721b158420e1d8aecbb19ec2f30632b9b43",
+    "reviewedPhysicalSha256": "a20dd5704bb0a50916bec523db699f2ad500a107ae2dad52cab9363596a4519a",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol",
+    "sha256": "d9ac61dd0c86aa61eef6e44e6baf8c2f9c24acc0ebf0c3df89d939dadb8945cb",
+    "reviewedPhysicalSha256": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol",
+    "sha256": "27eb5d0800c2e2c0e14fd6270f223931e79372241990ec7ac3f9170243c8921e",
+    "reviewedPhysicalSha256": "da0cc6d54474fe6bf04e9c9a34c680e57f2253ac1ccdf1c773087dbaa1264376",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/PriceLib.sol",
+    "sha256": "e1cf9a10db42f458d11059539ccd13cf333b9676377b6b51ea74f8e556e4198b",
+    "reviewedPhysicalSha256": "b4394400f97ec45f0001f5dcc626d9e0c7e842ee80fbef2eb82d985ac4a2d7d1",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/StepLib.sol",
+    "sha256": "3b5055eca1055004d9e7a1b10b8085324d94ece88e3c80cacca27d31f3d9586f",
+    "reviewedPhysicalSha256": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/ValidationHookLib.sol",
+    "sha256": "fa82ed44237cb044d40609d0fedd698ae2a718258a188468c1d34bcc0f579ef8",
+    "reviewedPhysicalSha256": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/ValueX7Lib.sol",
+    "sha256": "4062674061e51778a31b94e2de65befc83a94c3e12cfd79485ebbdbab282e38d",
+    "reviewedPhysicalSha256": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol",
+    "sha256": "1db52ee96c1c82040ff3f6d54fe611247081c19f4501fe1d10d41483fbd32ae0",
+    "reviewedPhysicalSha256": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol",
+    "sha256": "c091d5557cc2317af8e255c1968b4ca047f3e5a95c483a7fb30b319d8e831123",
+    "reviewedPhysicalSha256": "cf4d3000e63970f5d8369b47dbcb70b67fe993e3e43b250be82f18e589bde45c",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IProtocolFeeController.sol",
+    "sha256": "08e68283956bafdbc124ca4650deebb1b2df5a423e837e2d6d57304bf4c4a25a",
+    "reviewedPhysicalSha256": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/launcher/src/libraries/ProtocolFeeLib.sol",
+    "sha256": "22a9a6b1b620d593924794dacab27dab7d2e7dcd56b77fc49daac56978e757d6",
+    "reviewedPhysicalSha256": "d73d70856b8fba64cc42f11dadcbcd6a3e0342bef0f6916091d2164e91598353",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol",
+    "sha256": "460f1732735bb1d6ecbf74ac69ee986605aa98fbb9962f0a2a7c0168e5f0a670",
+    "reviewedPhysicalSha256": "e7c2eaac3899e9bbbecf0795b95f131ae17c369b3b2436304dd9d548c8ce03f4",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/solady/utils/ReentrancyGuardTransient.sol",
+    "sha256": "2b93c6839a60b5e261cbaec24a8ca93441138e3220537466566bfe25bd3bad0d",
+    "reviewedPhysicalSha256": "30a4cdd1813a65e2c76cd5476c9ee8a44b9cac56dd4d930ef3caafb3d6c3600d",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/solady/utils/SafeTransferLib.sol",
+    "sha256": "19c3c514eb3516d6d7cfcb7a5a4414401e362b7bc0dc5d1e116f1672c8a7f21b",
+    "reviewedPhysicalSha256": "6a1cca4abb040289cfe5fa4b70fd84ed470d152d0265b8ffce1ef0af9bb93e59",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/genesis-auction/vendor/solady/utils/SSTORE2.sol",
+    "sha256": "23011882e5f3d548971ca9b0554d3bdd182eb46762d02864d5009823e73716a3",
+    "reviewedPhysicalSha256": "0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol",
+    "sha256": "6a27cd58ad1ed93fee5c6f7a5b76418d8f363b083a258fc3ea4a5c8e6023a55e",
+    "reviewedPhysicalSha256": "9795a81eb15ad715a6fd0ec5fc2e4c0d3e3043e88a6e0bbb0e9e161373cc2a32",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IAcquisitionIntentExecutionV2.sol",
+    "sha256": "16960c5452a6b15433e9c59272f504015e819ccc16cdfa913538a1adb875ac0a",
+    "reviewedPhysicalSha256": "86f0173c5775603fca516fb152448ee657d0999b8ff1eba8c48c71bf7fc55e04",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+    "sha256": "c16c95f74be31eeae373b18ca57726d47be1dfcb6e0e2f321a993be97707a6c0",
+    "reviewedPhysicalSha256": "3a79f24ee81eded0891a63d73abdb6672a23322b9fa898ab3b3e721de66f4c38",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IInitializerHook.sol",
+    "sha256": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+    "reviewedPhysicalSha256": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/ILiquidityHealth.sol",
+    "sha256": "a46298162aa57c61afd75af2722220ec38a8654b4d7a070364afff3bfe3cecd2",
+    "reviewedPhysicalSha256": "a46298162aa57c61afd75af2722220ec38a8654b4d7a070364afff3bfe3cecd2",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IOmrV4ObservationSource.sol",
+    "sha256": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+    "reviewedPhysicalSha256": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IRwaHealthOverlay.sol",
+    "sha256": "f96ea8223089b29ad09fa15e63cb44f221cba7975b8cf185b8dd0f5fe66bdfd7",
+    "reviewedPhysicalSha256": "59931c0a23c51d38e21a1a4651e0d09381dc531b33615120ef9522fbfe0cab40",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+    "sha256": "78162a91debc5d58b2daaea9140b81f677adfbddbc1db7fab782b1853c627022",
+    "reviewedPhysicalSha256": "e59a4fefb9edbbb27211d7d6f00016cd674aed0765ed4d8a6d54b05fc2bf1bed",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol",
+    "sha256": "2de452e3ecf7975090ee630dfb5190262a44adc3666564302f8a0317ab241cb1",
+    "reviewedPhysicalSha256": "b1791c05f784c84cde8f3740920a94750c48f8b6c353e331e6c435863bdbd979",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/IOmertaMarketStateV2.sol",
+    "sha256": "43eae996d281f96af635c31b18dfbf75fd611cfa02e9e0b3dfb2a8d7dc70ad4c",
+    "reviewedPhysicalSha256": "43eae996d281f96af635c31b18dfbf75fd611cfa02e9e0b3dfb2a8d7dc70ad4c",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaArbitrageV2.sol",
+    "sha256": "b928d3978e5eebe34e295c21be933bbc4e2ae07df6e89e30d054a83bbb7200f8",
+    "reviewedPhysicalSha256": "b928d3978e5eebe34e295c21be933bbc4e2ae07df6e89e30d054a83bbb7200f8",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+    "sha256": "605e24016bad0f6b58e7c872d0eed72885d7a65639a5cd3b19a0fb3dd79f1b04",
+    "reviewedPhysicalSha256": "605e24016bad0f6b58e7c872d0eed72885d7a65639a5cd3b19a0fb3dd79f1b04",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+    "sha256": "f9deb4e087904a2796619a317acbd64fef32e35e3b67f434561b4b14e813888f",
+    "reviewedPhysicalSha256": "f9deb4e087904a2796619a317acbd64fef32e35e3b67f434561b4b14e813888f",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol",
+    "sha256": "f50ac719568484483298529623b97492da501c397100965a18e7073bcd7b73c1",
+    "reviewedPhysicalSha256": "f50ac719568484483298529623b97492da501c397100965a18e7073bcd7b73c1",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+    "sha256": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+    "reviewedPhysicalSha256": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+    "sha256": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f",
+    "reviewedPhysicalSha256": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaMarketStateV2.sol",
+    "sha256": "7fe8895ef9640ceb0c14652184f2e8f301973ce50eda9d6cbb6b00609a64f193",
+    "reviewedPhysicalSha256": "7fe8895ef9640ceb0c14652184f2e8f301973ce50eda9d6cbb6b00609a64f193",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
+    "sha256": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+    "reviewedPhysicalSha256": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+    "sha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+    "reviewedPhysicalSha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol",
+    "sha256": "01f8e299708d3f1b07c928633cb5b9af5c86daeb43c136d957be8b0d1ebc07c2",
+    "reviewedPhysicalSha256": "01f8e299708d3f1b07c928633cb5b9af5c86daeb43c136d957be8b0d1ebc07c2",
+    "lineEndingsNormalizedByGit": true
+  },
+  {
+    "path": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+    "sha256": "6c08e149aef906db41cddef80250e0327d1906ecacae74158a7a5d2b2a47aeb1",
+    "reviewedPhysicalSha256": "6c08e149aef906db41cddef80250e0327d1906ecacae74158a7a5d2b2a47aeb1",
+    "lineEndingsNormalizedByGit": true
+  }
+]

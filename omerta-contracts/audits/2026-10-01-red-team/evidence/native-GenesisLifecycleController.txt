@@ -1,0 +1,45 @@
+
+Detector: incorrect-equality
+GenesisProceedsSplitter._send(address,uint256) (src/GenesisProceedsSplitter.sol#116-120) uses a dangerous strict equality:
+	- amount == 0 (src/GenesisProceedsSplitter.sol#117)
+GenesisProceedsSplitter.distributeResidual() (src/GenesisProceedsSplitter.sol#80-93) uses a dangerous strict equality:
+	- total == 0 (src/GenesisProceedsSplitter.sol#83)
+GenesisProceedsSplitter.recoverFailedLaunch() (src/GenesisProceedsSplitter.sol#98-104) uses a dangerous strict equality:
+	- amount == 0 (src/GenesisProceedsSplitter.sol#101)
+GenesisProceedsSplitter.recoverToken(IERC20) (src/GenesisProceedsSplitter.sol#108-114) uses a dangerous strict equality:
+	- amount == 0 (src/GenesisProceedsSplitter.sol#111)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: reentrancy-no-eth
+Reentrancy in GenesisLifecycleController.migrate() (src/GenesisLifecycleController.sol#182-192):
+	External calls:
+	- strategy.migrate(address(auction)) (src/GenesisLifecycleController.sol#185)
+	State variables written after the call(s):
+	- failed = ! success (src/GenesisLifecycleController.sol#190)
+	GenesisLifecycleController.failed (src/GenesisLifecycleController.sol#82) can be used in cross function reentrancies:
+	- GenesisLifecycleController.failed (src/GenesisLifecycleController.sol#82)
+	- GenesisLifecycleController.phase() (src/GenesisLifecycleController.sol#163-175)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+
+Detector: unused-return
+GenesisProceedsSplitter.canonicalPoolInitialized() (src/GenesisProceedsSplitter.sol#74-77) ignores return value by (sqrtPriceX96,None,None,None) = poolManager.getSlot0(canonicalPoolId) (src/GenesisProceedsSplitter.sol#75)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: timestamp
+GenesisLifecycleController.phase() (src/GenesisLifecycleController.sol#163-175) uses timestamp for comparisons
+	Dangerous comparisons:
+	- price == 0 || updatedAt > block.timestamp || block.timestamp - updatedAt > maxOracleAge || updatedAt < foundation.activationTimestamp() + foundation.warmup() (src/GenesisLifecycleController.sol#171-172)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in GenesisLifecycleController.constructor(address,IGenesisStrategy,GenesisProceedsSplitter,IGenesisFoundation,IOmrOracle,IERC20,address,uint256) (src/GenesisLifecycleController.sol#92-115):
+	- (ok,data) = address(100).staticcall(abi.encodeCall(IGenesisArbSys.arbBlockNumber,())) (src/GenesisLifecycleController.sol#113)
+Low level call in GenesisLifecycleController._clock() (src/GenesisLifecycleController.sol#146-154):
+	- (ok,data) = address(100).staticcall(abi.encodeCall(IGenesisArbSys.arbBlockNumber,())) (src/GenesisLifecycleController.sol#149)
+Low level call in GenesisProceedsSplitter._send(address,uint256) (src/GenesisProceedsSplitter.sol#116-120):
+	- (ok,None) = recipient.call{value: amount}() (src/GenesisProceedsSplitter.sol#118)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\GenesisLifecycleController.sol analyzed (34 contracts with 102 detectors), 10 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\GenesisLifecycleController.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

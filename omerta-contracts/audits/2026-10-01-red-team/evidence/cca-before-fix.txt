@@ -1,0 +1,17 @@
+Compiling 4 files with Solc 0.8.26
+Solc 0.8.26 finished in 19.42s
+Compiler run successful!
+
+Ran 1 test for test/ContinuousClearingAuctionFeeQuote.t.sol:ContinuousClearingAuctionFeeQuoteTest
+[FAIL: panic: arithmetic underflow or overflow (0x11)] testExcessiveFeeDoesNotBlockInitializationAndMatchesSweep() (gas: 4541722)
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 24.76ms (10.29ms CPU time)
+
+Ran 1 test suite in 46.55ms (24.76ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/ContinuousClearingAuctionFeeQuote.t.sol:ContinuousClearingAuctionFeeQuoteTest
+[FAIL: panic: arithmetic underflow or overflow (0x11)] testExcessiveFeeDoesNotBlockInitializationAndMatchesSweep() (gas: 4541722)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

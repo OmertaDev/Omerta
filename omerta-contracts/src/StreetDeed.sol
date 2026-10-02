@@ -162,9 +162,9 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     }
 
     /// @notice Mint (extract) the deed named `v.name` to `v.to`, on a server signature. tokenId is
-    ///         derived from the name, so a name is minted at most once (a duplicate reverts in
-    ///         `_safeMint`). The extraction entitlement (`minted`) and the rent/turf control stay in
-    ///         the game — this only issues the collectible.
+    ///         derived from the name, so only one live deed exists per name. After a burn, a fresh
+    ///         voucher may re-extract the same immutable identity. The extraction entitlement
+    ///         (`minted`) and the rent/turf control stay in the game — this only issues the collectible.
     function claim(DeedVoucher calldata v, bytes calldata sig) external nonReentrant whenNotPaused {
         require(block.timestamp <= v.deadline, "SD: expired");
         require(v.deadline <= block.timestamp + MAX_VOUCHER_TTL, "SD: deadline too far");
@@ -180,9 +180,13 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         mintedOnDay[day] = newTotal;
 
         uint256 id = tokenIdFor(v.name);
-        deedName[id] = v.name;
-        deedDistrict[id] = v.district;
-        _safeMint(v.to, id); // reverts if the name (tokenId) already exists — one deed per name, ever
+        if (bytes(deedName[id]).length == 0) {
+            deedName[id] = v.name;
+            deedDistrict[id] = v.district;
+        } else {
+            require(keccak256(bytes(deedDistrict[id])) == keccak256(bytes(v.district)), "SD: identity changed");
+        }
+        _safeMint(v.to, id); // reverts if the name (tokenId) already exists — one live deed per name
 
         emit Extracted(v.nonce, v.to, id, v.name, v.district);
     }
@@ -203,8 +207,7 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     function redeem(uint256 tokenId) external {
         require(ownerOf(tokenId) == msg.sender, "SD: not owner"); // reverts if nonexistent — clean
         _burn(tokenId);
-        // Keep the name/district for a possible re-extraction's metadata; they are immutable and
-        // re-derive identically from the same name anyway, so leaving them is harmless and cheaper.
+        // Keep the immutable name/district for a possible re-extraction of the same identity.
         emit Redeemed(msg.sender, tokenId);
     }
 

@@ -95,6 +95,52 @@ contract OmrTwapOracleTest is Test {
         assertTrue(oracle.omrIsToken1(), "OMR is token1 here, so price0 (token1/token0) is OMR per WETH");
     }
 
+    function test_full_keeper_gap_cannot_alias_a_fresh_window() public {
+        vm.warp(block.timestamp + (uint256(1) << 32) + PERIOD);
+        oracle.update();
+        (uint256 price, uint256 updatedAt) = oracle.consult();
+        assertEq(price, 0);
+        assertEq(updatedAt, 0);
+        vm.warp(block.timestamp + PERIOD);
+        oracle.update();
+        (price, updatedAt) = oracle.consult();
+        assertApproxEqRel(price, 5000e18, 1e15);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_exact_full_timestamp_wrap_discards_the_window_before_early_check() public {
+        vm.warp(block.timestamp + (uint256(1) << 32));
+        oracle.update();
+        (uint256 price, uint256 updatedAt) = oracle.consult();
+        assertEq(price, 0);
+        assertEq(updatedAt, 0);
+        vm.warp(block.timestamp + PERIOD);
+        oracle.update();
+        (price,) = oracle.consult();
+        assertApproxEqRel(price, 5000e18, 1e15);
+    }
+
+    function test_maximum_period_closes_a_window_without_overflow() public {
+        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
+        OmrTwapOracle longest = new OmrTwapOracle(safe, factory, pair, omr, weth, maximum);
+        vm.warp(block.timestamp + maximum);
+        longest.update();
+        (uint256 price, uint256 updatedAt) = longest.consult();
+        assertApproxEqRel(price, 5000e18, 1e15);
+        assertEq(updatedAt, block.timestamp);
+    }
+
+    function test_period_above_window_arithmetic_limit_reverts() public {
+        uint32 maximum = type(uint32).max / oracle.MAX_WINDOW_MULT();
+        vm.expectRevert(OmrTwapOracle.PeriodTooLong.selector);
+        new OmrTwapOracle(safe, factory, pair, omr, weth, maximum + 1);
+    }
+
+    function test_uint32_maximum_period_reverts() public {
+        vm.expectRevert(OmrTwapOracle.PeriodTooLong.selector);
+        new OmrTwapOracle(safe, factory, pair, omr, weth, type(uint32).max);
+    }
+
     function test_reversed_pair_ordering_is_detected_not_trusted() public {
         // Pair ordering is decided by address sort, not by us. Getting this backwards would invert
         // every price the mint wall reads, so the constructor works it out rather than being told.
@@ -267,6 +313,23 @@ contract OmrTwapOracleTest is Test {
         oracle.update();
         (uint256 price,) = oracle.consult();
         assertGt(price, 0);
+    }
+
+    function test_idle_pair_counterfactual_wrap_discards_and_recovers() public {
+        vm.warp(block.timestamp + (uint256(1) << 32) - 100);
+        OmrTwapOracle fresh = new OmrTwapOracle(
+            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+        );
+        vm.warp(block.timestamp + PERIOD);
+        fresh.update();
+        (uint256 price, uint256 updatedAt) = fresh.consult();
+        assertEq(price, 0, "discard a counterfactual source timestamp wrap");
+        assertEq(updatedAt, 0);
+        vm.warp(block.timestamp + PERIOD);
+        fresh.update();
+        (price, updatedAt) = fresh.consult();
+        assertApproxEqRel(price, 5000e18, 1e15);
+        assertEq(updatedAt, block.timestamp);
     }
 
     function test_empty_reserves_revert_rather_than_divide_by_zero() public {

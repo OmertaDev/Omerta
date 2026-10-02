@@ -1,0 +1,447 @@
+{
+  "storage": [
+    {
+      "astId": 44687,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_nameFallback",
+      "offset": 0,
+      "slot": "0",
+      "type": "t_string_storage"
+    },
+    {
+      "astId": 44689,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_versionFallback",
+      "offset": 0,
+      "slot": "1",
+      "type": "t_string_storage"
+    },
+    {
+      "astId": 39409,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_owner",
+      "offset": 0,
+      "slot": "2",
+      "type": "t_address"
+    },
+    {
+      "astId": 39557,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_pendingOwner",
+      "offset": 0,
+      "slot": "3",
+      "type": "t_address"
+    },
+    {
+      "astId": 42128,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_paused",
+      "offset": 20,
+      "slot": "3",
+      "type": "t_bool"
+    },
+    {
+      "astId": 56513,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "mainOperator",
+      "offset": 0,
+      "slot": "4",
+      "type": "t_address"
+    },
+    {
+      "astId": 56515,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_finalized",
+      "offset": 20,
+      "slot": "4",
+      "type": "t_bool"
+    },
+    {
+      "astId": 56517,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "operatorGeneration",
+      "offset": 0,
+      "slot": "5",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56519,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_sharedO2Nonce",
+      "offset": 0,
+      "slot": "6",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56521,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_cancelNonce",
+      "offset": 0,
+      "slot": "7",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56523,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "nominationNonce",
+      "offset": 0,
+      "slot": "8",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56526,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_pendingMainOperatorNomination",
+      "offset": 0,
+      "slot": "9",
+      "type": "t_struct(PendingOperatorNomination)71174_storage"
+    },
+    {
+      "astId": 56528,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "ingressProposalNonce",
+      "offset": 0,
+      "slot": "15",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56530,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "ingressGeneration",
+      "offset": 0,
+      "slot": "16",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56532,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "activeIngressGeneration",
+      "offset": 0,
+      "slot": "17",
+      "type": "t_uint256"
+    },
+    {
+      "astId": 56535,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_pendingIngressProposal",
+      "offset": 0,
+      "slot": "18",
+      "type": "t_struct(PendingIngressProposal)71241_storage"
+    },
+    {
+      "astId": 56540,
+      "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+      "label": "_ingressRecords",
+      "offset": 0,
+      "slot": "29",
+      "type": "t_mapping(t_uint256,t_struct(IngressRecord)71258_storage)"
+    }
+  ],
+  "types": {
+    "t_address": {
+      "encoding": "inplace",
+      "label": "address",
+      "numberOfBytes": "20"
+    },
+    "t_bool": {
+      "encoding": "inplace",
+      "label": "bool",
+      "numberOfBytes": "1"
+    },
+    "t_bytes32": {
+      "encoding": "inplace",
+      "label": "bytes32",
+      "numberOfBytes": "32"
+    },
+    "t_mapping(t_uint256,t_struct(IngressRecord)71258_storage)": {
+      "encoding": "mapping",
+      "key": "t_uint256",
+      "label": "mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)",
+      "numberOfBytes": "32",
+      "value": "t_struct(IngressRecord)71258_storage"
+    },
+    "t_string_storage": {
+      "encoding": "bytes",
+      "label": "string",
+      "numberOfBytes": "32"
+    },
+    "t_struct(IngressConfig)71221_storage": {
+      "encoding": "inplace",
+      "label": "struct IAcquisitionAuthorityV2.IngressConfig",
+      "numberOfBytes": "160",
+      "members": [
+        {
+          "astId": 71212,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "ingress",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_address"
+        },
+        {
+          "astId": 71214,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "runtimeCodeHash",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_bytes32"
+        },
+        {
+          "astId": 71216,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "perDepositCapWei",
+          "offset": 0,
+          "slot": "2",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71218,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "epochDepositCapWei",
+          "offset": 0,
+          "slot": "3",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71220,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "lifetimeDepositCapWei",
+          "offset": 0,
+          "slot": "4",
+          "type": "t_uint256"
+        }
+      ]
+    },
+    "t_struct(IngressRecord)71258_storage": {
+      "encoding": "inplace",
+      "label": "struct IAcquisitionAuthorityV2.IngressRecord",
+      "numberOfBytes": "224",
+      "members": [
+        {
+          "astId": 71243,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "generation",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71245,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "ingress",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_address"
+        },
+        {
+          "astId": 71247,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "runtimeCodeHash",
+          "offset": 0,
+          "slot": "2",
+          "type": "t_bytes32"
+        },
+        {
+          "astId": 71249,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "perDepositCapWei",
+          "offset": 0,
+          "slot": "3",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71251,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "epochDepositCapWei",
+          "offset": 0,
+          "slot": "4",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71253,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "lifetimeDepositCapWei",
+          "offset": 0,
+          "slot": "5",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71255,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "activatedAt",
+          "offset": 0,
+          "slot": "6",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71257,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "disabledAt",
+          "offset": 8,
+          "slot": "6",
+          "type": "t_uint64"
+        }
+      ]
+    },
+    "t_struct(PendingIngressProposal)71241_storage": {
+      "encoding": "inplace",
+      "label": "struct IAcquisitionAuthorityV2.PendingIngressProposal",
+      "numberOfBytes": "352",
+      "members": [
+        {
+          "astId": 71223,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposalId",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_bytes32"
+        },
+        {
+          "astId": 71225,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposalNumber",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71227,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposedBy",
+          "offset": 0,
+          "slot": "2",
+          "type": "t_address"
+        },
+        {
+          "astId": 71230,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "config",
+          "offset": 0,
+          "slot": "3",
+          "type": "t_struct(IngressConfig)71221_storage"
+        },
+        {
+          "astId": 71232,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "configHash",
+          "offset": 0,
+          "slot": "8",
+          "type": "t_bytes32"
+        },
+        {
+          "astId": 71234,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposedAt",
+          "offset": 0,
+          "slot": "9",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71236,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "validAfter",
+          "offset": 8,
+          "slot": "9",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71238,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "expiresAt",
+          "offset": 16,
+          "slot": "9",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71240,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "detailsHash",
+          "offset": 0,
+          "slot": "10",
+          "type": "t_bytes32"
+        }
+      ]
+    },
+    "t_struct(PendingOperatorNomination)71174_storage": {
+      "encoding": "inplace",
+      "label": "struct IAcquisitionAuthorityV2.PendingOperatorNomination",
+      "numberOfBytes": "192",
+      "members": [
+        {
+          "astId": 71159,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposalId",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_bytes32"
+        },
+        {
+          "astId": 71161,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposalNumber",
+          "offset": 0,
+          "slot": "1",
+          "type": "t_uint256"
+        },
+        {
+          "astId": 71163,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "nominee",
+          "offset": 0,
+          "slot": "2",
+          "type": "t_address"
+        },
+        {
+          "astId": 71165,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposedBy",
+          "offset": 0,
+          "slot": "3",
+          "type": "t_address"
+        },
+        {
+          "astId": 71167,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "proposedAt",
+          "offset": 20,
+          "slot": "3",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71169,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "validAfter",
+          "offset": 0,
+          "slot": "4",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71171,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "expiresAt",
+          "offset": 8,
+          "slot": "4",
+          "type": "t_uint64"
+        },
+        {
+          "astId": 71173,
+          "contract": "src/AcquisitionAuthority.sol:AcquisitionAuthority",
+          "label": "detailsHash",
+          "offset": 0,
+          "slot": "5",
+          "type": "t_bytes32"
+        }
+      ]
+    },
+    "t_uint256": {
+      "encoding": "inplace",
+      "label": "uint256",
+      "numberOfBytes": "32"
+    },
+    "t_uint64": {
+      "encoding": "inplace",
+      "label": "uint64",
+      "numberOfBytes": "8"
+    }
+  }
+}

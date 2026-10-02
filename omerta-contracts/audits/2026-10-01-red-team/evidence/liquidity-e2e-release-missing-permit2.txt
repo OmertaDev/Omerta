@@ -1,0 +1,17 @@
+[db] Postgres ready — column migration ran 2956 ADD COLUMN IF NOT EXISTS statements.
+node:fs:484
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open 'C:\Users\Jorge\Documents\Omerta\output\contract-red-team-release\omerta-contracts\lib\permit2\test\utils\DeployPermit2.sol'
+    at Object.readFileSync (node:fs:484:20)
+    at file:///C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/liquidity-e2e.js:87:25
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Jorge\\Documents\\Omerta\\output\\contract-red-team-release\\omerta-contracts\\lib\\permit2\\test\\utils\\DeployPermit2.sol'
+}
+
+Node.js v24.19.0
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94

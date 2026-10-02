@@ -1,0 +1,17 @@
+  ✔ anvil up — chain 31337 on http://127.0.0.1:8547
+node:fs:484
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open 'C:\tmp\v4deps\node_modules\@uniswap\v4-periphery\lib\permit2\test\utils\DeployPermit2.sol'
+    at Object.readFileSync (node:fs:484:20)
+    at permit2Runtime (file:///C:/Users/Jorge/Documents/Omerta/tools/dexbot-e2e.js:78:18)
+    at file:///C:/Users/Jorge/Documents/Omerta/tools/dexbot-e2e.js:143:38
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\tmp\\v4deps\\node_modules\\@uniswap\\v4-periphery\\lib\\permit2\\test\\utils\\DeployPermit2.sol'
+}
+
+Node.js v24.19.0

@@ -1,0 +1,404 @@
+No files changed, compilation skipped
+
+Ran 1 test for test/market-v2/SolverHashV2.t.sol:SolverHashV2Test
+[PASS] test_javascript_reveal_hash_matches_actual_solidity_plan_domain() (gas: 1190583)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.11ms (517.10µs CPU time)
+
+Ran 3 tests for test/market-v2/ReserveFundingV2.t.sol:ReserveFundingV2Test
+[PASS] testFundingBindingIsOwnerOnlyOneTimeAndChecksSafe() (gas: 5176212)
+[PASS] testFundingCanAccumulateBeforeBindingAndFlushWhileStrategyPaused() (gas: 925561)
+[PASS] testReserveFlushConservesActualAssetsAndCannotResetCapacity() (gas: 456299)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 9.03ms (3.04ms CPU time)
+
+Ran 2 tests for test/market-v2/IntegrationV2.t.sol:MarketIntegrationV2Test
+[PASS] testRealFinalizedHookObservationFundsControllerAndStaleReadStopsNewRisk() (gas: 6443322)
+[PASS] testRealV2CanonicalSellArbitragePaysTaxAndOnlySharesRealizedProfit() (gas: 1882228)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 9.29ms (3.23ms CPU time)
+
+Ran 3 tests for test/market-v2/FundingIntegrationV2.t.sol:FundingIntegrationV2Test
+[PASS] testActualHookBasePOLAndSeparateSurgeFundOnlyTheirOwnCompartment() (gas: 853205)
+[PASS] testExactOutputSellOMRFeesRemainOMRWhenFundingCoreAndReserve() (gas: 1036269)
+[PASS] testSolverProfitClaimForAndFlushFundReserveWithoutTreasuryCollateral() (gas: 2295613)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 11.78ms (4.90ms CPU time)
+
+Ran 3 tests for test/market-v2/PlayerGenesisIntegrationV2.t.sol:PlayerGenesisIntegrationV2Test
+[PASS] testRealAuctionAndPoolSettleBeforeBothClaims() (gas: 1109186)
+[PASS] testRealAuctionFailedPoolFundingRetainsPrincipalAndCanRetry() (gas: 1101805)
+[PASS] testRealAuctionPlayerTimeoutRefundsAndPublicMigrationRecovers() (gas: 871572)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 20.57ms (13.08ms CPU time)
+
+Ran 8 tests for test/market-v2/IntegrationV2.t.sol:TurfIntegrationV2Test
+[PASS] testAdjudicatorCannotBeBypassedOrWithdrawPrincipal() (gas: 346245)
+[PASS] testEarlyPermissionlessClaimAndTokenDonationsCannotChangeFeeAuthority() (gas: 1037208)
+[PASS] testExpiredSiegeCannotRedirectFrozenEarningsToReplacementWallet() (gas: 1878481)
+[PASS] testRejectedSettlementRevertsFeeCheckpointAsWell() (gas: 1284914)
+[PASS] testSeasonExpirySettlesFeesAndPrincipalEvenWithBrokenOracleAndPause() (gas: 1212754)
+[PASS] testSiegeEscrowsOnlyFeesEarnedAfterAtomicStart() (gas: 1511178)
+[PASS] testTakeoverAtomicallyPaysPreviousFamilyThenFutureOwner() (gas: 1243684)
+[PASS] testWalletRotationCheckpointsAccruedFeesBeforeChangingTreasury() (gas: 1186442)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 22.57ms (15.74ms CPU time)
+
+Ran 12 tests for test/market-v2/InventoryBondV2.t.sol:InventoryBondV2Test
+[PASS] testBondAggregateEpochAndLifetimeCapsAcrossAccounts() (gas: 442291)
+[PASS] testBondClaimsCannotBeRetiredOrRedirected() (gas: 341536)
+[PASS] testBondDuplicateNonceCannotReserveTwice() (gas: 297041)
+[PASS] testBondEpochNumberCannotRefreshBudgetAtSameObservationTime() (gas: 380514)
+[PASS] testBondLinearVestingSurvivesPauseAndOracleOutage() (gas: 386512)
+[PASS] testBondMinimumOutAndExpectedEpochAreBinding() (gas: 108054)
+[PASS] testBondNativeProceedsFixedRecipientAndIndependentClaims() (gas: 297740)
+[PASS] testBondPauseOnlyStopsNewPurchases() (gas: 352810)
+[PASS] testBondRefusesUnfundedPurchaseAndExcessOracleRate() (gas: 167140)
+[PASS] testBondRejectsStaleDataAndCurrentSpotManipulation() (gas: 544101)
+[PASS] testBondReservesFundedInventoryWithoutMinting() (gas: 288391)
+[PASS] testFuzzBondVestingNeverExceedsFundedClaims(uint32,uint96) (runs: 512, μ: 340214, ~: 343756)
+Logs:
+  Bound result 1900000000000016828
+  Bound result 10350
+
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 195.48ms (167.28ms CPU time)
+
+Ran 14 tests for test/market-v2/TurfV2.t.sol:TurfV2Test
+[PASS] testFuzz_syndicate_and_siege_rounding_conserve_all_assets(uint96,uint96,uint16) (runs: 512, μ: 791465, ~: 798203)
+Logs:
+  Bound result 10828068836998242
+  Bound result 3247473019
+  Bound result 1
+
+[PASS] test_adapter_expiry_ignores_failed_oracle_and_direct_bypass_is_rejected() (gas: 561952)
+[PASS] test_conquest_preserves_historical_earned_fees() (gas: 422787)
+[PASS] test_corridors_require_touching_matching_ownership_and_status_is_bounded() (gas: 169341)
+[PASS] test_duplicate_source_and_post_start_binding_are_rejected() (gas: 535659)
+[PASS] test_expired_siege_final_batch_uses_frozen_treasury_then_future_batch_uses_rotation() (gas: 563088)
+[PASS] test_failed_recipient_reverts_claim_without_losing_entitlement() (gas: 343796)
+[PASS] test_late_deposit_expires_siege_without_stranding_escrow() (gas: 490844)
+[PASS] test_owner_cannot_override_season_ranges_after_start() (gas: 43913)
+[PASS] test_replayed_settlement_rejected_even_with_fresh_revision() (gas: 96223)
+[PASS] test_siege_freezes_recipient_and_victory_split_then_assigns_future_fees() (gas: 603345)
+[PASS] test_source_lane_cannot_relabel_other_turf_or_season() (gas: 72035)
+[PASS] test_treasury_change_is_prospective_and_nonce_checked() (gas: 348799)
+[PASS] test_wrong_epoch_future_time_and_stale_observation_rejected() (gas: 99025)
+Suite result: ok. 14 passed; 0 failed; 0 skipped; finished in 195.14ms (198.84ms CPU time)
+
+Ran 8 tests for test/market-v2/MarketStateV2.t.sol:MarketStateV2Test
+[PASS] testFuzz_idleCheckpointsCannotChangeObservedPrice(uint32,uint8) (runs: 512, μ: 309444, ~: 296151)
+Logs:
+  Bound result 10251
+
+[PASS] test_dustSellCannotDeclareFullMarketStress() (gas: 511434)
+[PASS] test_negativeFractionalMeanRoundsTowardNegativeInfinity() (gas: 427391)
+[PASS] test_requiresCompleteEpochAndCannotRefreshSpamNewEpochs() (gas: 432794)
+[PASS] test_snapshotFailsClosedWhenStaleWithoutNeedingRefresh() (gas: 273121)
+[PASS] test_swapAtBoundaryCannotRewritePriorEpochPriceOrVolume() (gas: 601855)
+[PASS] test_timeWeightedVarianceUsesElapsedPriceNotSwapCount() (gas: 585686)
+[PASS] test_zeroLiquidityIntervalInvalidatesAndRecoveryNeedsFullHealthyEpoch() (gas: 450103)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 303.30ms (302.60ms CPU time)
+
+Ran 8 tests for test/market-v2/ArbitrageV2.t.sol:ArbitrageV2Test
+[PASS] testCanonicalSellStillPaysExistingFundingTax() (gas: 649572)
+[PASS] testCopiedCommitmentCannotClaimAnotherSolversCycle() (gas: 136272)
+[PASS] testForgedCallbackRejected() (gas: 18648)
+[PASS] testFuzzProfitCreditsConserveNative(uint96) (runs: 512, μ: 285054, ~: 285157)
+Logs:
+  Bound result 8999991078381071175
+
+[PASS] testPermissionlessClaimForCannotRedirectAnotherBeneficiary() (gas: 299508)
+[PASS] testRealTwoPoolCycleSharesOnlyRealizedProfitAndReturnsCollateral() (gas: 312827)
+[PASS] testSameBlockRevealRejected() (gas: 84125)
+[PASS] testUnprofitableOrBelowMinimumCycleRevertsBothSwapsAndKeepsCommitment() (gas: 229677)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 302.63ms (297.03ms CPU time)
+
+Ran 16 tests for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2Test
+[PASS] testFuzz_allFeesAreCoveredAndNeverExceedTenPercent(uint96,bool) (runs: 512, μ: 369604, ~: 363477)
+Logs:
+  Bound result 256306213395
+
+[PASS] test_buyCannotEraseRecentSellPressure() (gas: 681283)
+[PASS] test_callbacksRequireManager() (gas: 16592)
+[PASS] test_exactOutputSellPaysOMRBasedOnActualInput() (gas: 403405)
+[PASS] test_idleGapSynthesizesNewestFullEpochWithoutRepeatingOldVolume() (gas: 463312)
+[PASS] test_liquidityChangesAccrueOldDepthBeforeAdoptingNewDepth() (gas: 244231)
+[PASS] test_onlyRecipientCanRedirectOwnClaim() (gas: 385864)
+[PASS] test_openingCapUsesFilledQuoteNotRequestedInput() (gas: 286625)
+[PASS] test_openingExpiresWithoutAnAdminCall() (gas: 365401)
+[PASS] test_openingSupportsExactOutputAndCapsActualQuoteIncludingFee() (gas: 508892)
+[PASS] test_partialFillTaxUsesActualAmountsForBothSellModes() (gas: 642785)
+[PASS] test_permissionsContainOnlyImplementedCallbacks() (gas: 12564)
+[PASS] test_poolIdentityIsPinned() (gas: 22306)
+[PASS] test_postOpeningBuysAreFreeInBothModes() (gas: 300142)
+[PASS] test_recipientFailureCannotBlockSwapsOrOtherPayments() (gas: 483652)
+[PASS] test_sellsKeepBaseAllocationAndIsolateSurge() (gas: 370139)
+Suite result: ok. 16 passed; 0 failed; 0 skipped; finished in 317.16ms (321.50ms CPU time)
+
+Ran 6 tests for test/market-v2/GenesisCoordinatorV2.t.sol:GenesisCoordinatorV2Test
+[PASS] testCancelledPlayersRefundAndPublicSaleStillMigrates() (gas: 883337)
+[PASS] testCannotRebindOrSpoofPlayerCallback() (gas: 19859)
+[PASS] testFuzzBothLegsFundLiquidityAndResiduals(uint96) (runs: 512, μ: 1010588, ~: 1010520)
+Logs:
+  Bound result 1078381071174
+
+[PASS] testInsufficientMatchingInventoryRollsBackAllLegs() (gas: 419632)
+[PASS] testNoEarlyMigration() (gas: 61426)
+[PASS] testRealPositionCombinesBothLegsAndClaimsWaitForCliff() (gas: 1081946)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 393.86ms (389.00ms CPU time)
+
+Ran 15 tests for test/market-v2/CommitmentV2.t.sol:CommitmentV2Test
+[PASS] testFuzz_budget_conservation_and_repeat_epoch_no_double_credit(uint128,uint16) (runs: 512, μ: 726353, ~: 726285)
+Logs:
+  Bound result 99000000000000009156
+  Bound result 2457
+
+[PASS] test_budget_exhaustion_is_funded_cap_not_unbacked_entitlement() (gas: 812904)
+[PASS] test_depth_disappearing_at_next_epoch_zeroes_interval_reward() (gas: 758539)
+[PASS] test_future_timestamp_low_depth_and_invalid_snapshot_do_not_pay() (gas: 569050)
+[PASS] test_maturity_withdrawal_succeeds_while_paused_and_oracle_reverts() (gas: 661355)
+[PASS] test_max_reward_is_per_position_across_repeated_samples() (gas: 832499)
+[PASS] test_no_admin_nft_recovery_or_old_owner_approval_can_steal_custody() (gas: 589599)
+[PASS] test_noncanonical_pool_rejected_and_unsolicited_safe_transfer_rejected() (gas: 796363)
+[PASS] test_one_sided_and_tiny_range_positions_earn_no_bounty_despite_large_L() (gas: 871129)
+[PASS] test_oracle_gap_is_not_backfilled() (gas: 729028)
+[PASS] test_paused_interval_is_never_retroactively_rewarded() (gas: 756879)
+[PASS] test_real_nft_custody_and_single_sample_never_pays() (gas: 595792)
+[PASS] test_reverting_and_stale_oracle_break_anchor_without_grant() (gas: 772345)
+[PASS] test_two_epochs_credit_original_depositor_by_depth_time_and_claim_once() (gas: 730370)
+[PASS] test_unused_budget_recovery_excludes_earned_claims_and_NFT() (gas: 776024)
+Suite result: ok. 15 passed; 0 failed; 0 skipped; finished in 443.21ms (450.38ms CPU time)
+
+Ran 20 tests for test/market-v2/StabilityV2.t.sol:StabilityV2Test
+[PASS] testAcceptedLargeRecoveryIntervalDoesNotOverflowOnSecondObservation() (gas: 4785785)
+[PASS] testCannotFinalizeUnconvertedOrCorePosition() (gas: 723496)
+[PASS] testCannotReuseObservationOrBypassCooldown() (gas: 492884)
+[PASS] testCorrectDownsideAndUpsideRawTickOrientation() (gas: 1047197)
+[PASS] testFeeBeneficiaryCannotDrainPrincipalOrOtherCompartment() (gas: 1158498)
+[PASS] testFeeRecipientFailureCannotBlockLiquidityExit() (gas: 5483344)
+[PASS] testFundingNeverResurrectsEpisodeCapacity() (gas: 837385)
+[PASS] testFuzzPrincipalConservationAcrossRealPricePaths(uint96,bool) (runs: 512, μ: 1325267, ~: 1375591)
+Logs:
+  Bound result 1999999990032140678
+
+[PASS] testHysteresisUsesSeparateActivationAndRecoveryThresholds() (gas: 1134357)
+[PASS] testInventoryReversesBeforeActualSettlement() (gas: 1185828)
+[PASS] testNoArbitraryUnlockCallbackOrNativeTransfer() (gas: 39890)
+[PASS] testPauseAndBrokenOracleDoNotLockExitCollectClaimOrRetire() (gas: 1217795)
+[PASS] testPermissionlessFinalizeActuallySettlesConvertedPrincipalAndEarnedFees() (gas: 1047254)
+[PASS] testRealPoolManagerCorePositionAndExactCustodyConservation() (gas: 742658)
+[PASS] testRecoveryGapResetsWindowAndEmptyWarChestCannotRegenerate() (gas: 575844)
+[PASS] testRecoveryRequiresThreeDistinctSpacedObservationsThenFundedPartialRefill() (gas: 767966)
+[PASS] testRejectsShallowObservationAndManipulatedSpot() (gas: 396654)
+[PASS] testRejectsStaleFutureWrongEpochAndInvalidObservation() (gas: 111535)
+[PASS] testTurfExpiryIsPermissionlessAndIndependentOfPausedBrokenOracle() (gas: 849242)
+[PASS] testTurfRangeIsFixedGeographyAndSeasonOnlyStopsNewPlacement() (gas: 874788)
+Suite result: ok. 20 passed; 0 failed; 0 skipped; finished in 443.73ms (450.16ms CPU time)
+
+Ran 1 test for test/market-v2/TurfV2.t.sol:TurfV2InvariantTest
+[PASS] invariant_all_funded_fees_are_paid_or_back_exact_historical_credits_and_escrow() (runs: 128, calls: 8192, reverts: 0)
+
+╭---------------------------+----------------+-------+---------+----------╮
+| Contract                  | Selector       | Calls | Reverts | Discards |
++=========================================================================+
+| TurfConservationHandlerV2 | advance        | 1424  | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | claim          | 1272  | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | conquer        | 1436  | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | fund           | 1330  | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | rotateTreasury | 1332  | 0       | 0        |
+|---------------------------+----------------+-------+---------+----------|
+| TurfConservationHandlerV2 | siegeStep      | 1398  | 0       | 0        |
+╰---------------------------+----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 4602
+  Bound result 18383
+  Bound result 996967565
+  Bound result 2989
+  Bound result 33
+  Bound result 49
+  Bound result 5825
+  Bound result 11052
+  Bound result 650636268932816
+  Bound result 41524205721323
+  Bound result 10
+  Bound result 1424
+  Bound result 83377
+  Bound result 67522
+  Bound result 10527
+  Bound result 28
+  Bound result 172800
+  Bound result 102664
+  Bound result 286815038616175
+  Bound result 7
+  Bound result 7272
+  Bound result 169
+  Bound result 1946
+  Bound result 738577001857589
+  Bound result 1940426
+  Bound result 4484
+  Bound result 140514
+  Bound result 123060
+  Bound result 112723663773288
+  Bound result 1160
+  Bound result 6337
+  Bound result 230494176176936
+  Bound result 418316105474588
+  Bound result 984631722264442
+  Bound result 3045
+  Bound result 130274
+  Bound result 8620
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.94s (3.93s CPU time)
+
+Ran 1 test for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2InvariantTest
+[PASS] invariant_liabilitiesRemainExactlyFundedInBothCurrencies() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------------------------+------------+-------+---------+----------╮
+| Contract                     | Selector   | Calls | Reverts | Discards |
++========================================================================+
+| OmertaHookV2InvariantHandler | checkpoint | 2827  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | sweep      | 2624  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | trade      | 2741  | 0       | 0        |
+╰------------------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1
+  Bound result 50000001999999998
+  Bound result 3628
+  Bound result 1
+  Bound result 1
+  Bound result 67861
+  Bound result 2
+  Bound result 99999999048429385
+  Bound result 2141931110
+  Bound result 42
+  Bound result 1
+  Bound result 207
+  Bound result 10000000000000
+  Bound result 1000000002
+  Bound result 63
+  Bound result 184970424767791
+  Bound result 1
+  Bound result 81948
+  Bound result 210
+  Bound result 4
+  Bound result 99999999000009988
+  Bound result 84406
+  Bound result 3
+  Bound result 0
+  Bound result 3
+  Bound result 15665306398801299
+  Bound result 99999999001389228
+  Bound result 110257674027
+  Bound result 3
+  Bound result 25939
+  Bound result 1000000000
+  Bound result 99999999000017739
+  Bound result 50361974328
+  Bound result 99999999000000832
+  Bound result 3000
+  Bound result 3144
+  Bound result 46744257709551431
+  Bound result 3410
+  Bound result 1000000003
+  Bound result 59984
+  Bound result 14726138567193175
+  Bound result 29
+  Bound result 2
+  Bound result 10000
+  Bound result 27747
+  Bound result 99999999259974292
+  Bound result 1
+  Bound result 4
+  Bound result 2235
+  Bound result 2
+  Bound result 378
+  Bound result 86035
+  Bound result 1
+  Bound result 2
+  Bound result 7200
+  Bound result 99999999000008021
+  Bound result 59913
+  Bound result 21624
+  Bound result 99999999000003070
+  Bound result 5952
+  Bound result 99999999000138505
+  Bound result 3
+  Bound result 53734
+  Bound result 75196
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 4.43s (4.42s CPU time)
+
+Ran 2 tests for test/market-v2/StabilityV2Invariant.t.sol:StabilityV2InvariantTest
+[PASS] invariantCompartmentAndFeeLiabilitiesEqualHeldAssets() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------------+-----------------+-------+---------+----------╮
+| Contract           | Selector        | Calls | Reverts | Discards |
++===================================================================+
+| StabilityV2Handler | claim           | 1041  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | collect         | 1068  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | nextObservation | 1007  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | pause           | 970   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | place           | 1052  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | recovery        | 991   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | remove          | 1009  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | trade           | 1054  | 0       | 0        |
+╰--------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 249999000000011370
+  Bound result 249999000000001160
+  Bound result 249999000000002118
+  Bound result 249999000000374053
+  Bound result 243259507239872516
+  Bound result 249999000000000160
+  Bound result 182049276630032620
+  Bound result 163392303923382653
+  Bound result 249999000232899619
+  Bound result 25505575301491022
+
+[PASS] invariantOwnedLiquidityMatchesRealManagerPositions() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------------+-----------------+-------+---------+----------╮
+| Contract           | Selector        | Calls | Reverts | Discards |
++===================================================================+
+| StabilityV2Handler | claim           | 1041  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | collect         | 1068  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | nextObservation | 1007  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | pause           | 970   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | place           | 1052  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | recovery        | 991   | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | remove          | 1009  | 0       | 0        |
+|--------------------+-----------------+-------+---------+----------|
+| StabilityV2Handler | trade           | 1054  | 0       | 0        |
+╰--------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 249999000000011370
+  Bound result 249999000000003196
+  Bound result 249999000000002118
+  Bound result 249999000000374053
+  Bound result 249999000000002250
+  Bound result 249999000000000160
+  Bound result 182049276630032620
+  Bound result 163392303923382653
+  Bound result 249999000232899619
+  Bound result 25505575301491022
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 5.52s (8.62s CPU time)
+
+Ran 17 test suites in 5.52s (16.56s CPU time): 123 tests passed, 0 failed, 0 skipped (123 total tests)

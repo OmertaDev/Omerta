@@ -1,0 +1,58 @@
+[
+  {
+    "pc": 1913,
+    "function": "_function_0x1858fe58",
+    "reportedSeverity": "High",
+    "swc": "101",
+    "disposition": "False positive: optimizer branch arithmetic in cap(uint8); exhaustive 0..255 deployed Solidity test confirms all valid tiers match published caps and all invalid tiers revert InvalidEligibility."
+  },
+  {
+    "pc": 1939,
+    "function": "_function_0x1858fe58",
+    "reportedSeverity": "High",
+    "swc": "101",
+    "disposition": "False positive: optimizer branch arithmetic in cap(uint8); exhaustive 0..255 deployed Solidity test confirms all valid tiers match published caps and all invalid tiers revert InvalidEligibility."
+  },
+  {
+    "pc": 1965,
+    "function": "_function_0x1858fe58",
+    "reportedSeverity": "High",
+    "swc": "101",
+    "disposition": "False positive: optimizer branch arithmetic in cap(uint8); exhaustive 0..255 deployed Solidity test confirms all valid tiers match published caps and all invalid tiers revert InvalidEligibility."
+  },
+  {
+    "pc": 5303,
+    "function": "cancel()",
+    "reportedSeverity": "Low",
+    "swc": "116",
+    "disposition": "Intentional phase/deadline/codehash predicate; no randomness. Runtime-only symbolic initialization is unconstrained, so not valid deployment-state evidence."
+  },
+  {
+    "pc": 5464,
+    "function": "open()",
+    "reportedSeverity": "Low",
+    "swc": "116",
+    "disposition": "Intentional phase/deadline/codehash predicate; no randomness. Runtime-only symbolic initialization is unconstrained, so not valid deployment-state evidence."
+  },
+  {
+    "pc": 5507,
+    "function": "open()",
+    "reportedSeverity": "Low",
+    "swc": "116",
+    "disposition": "Intentional phase/deadline/codehash predicate; no randomness. Runtime-only symbolic initialization is unconstrained, so not valid deployment-state evidence."
+  },
+  {
+    "pc": 5592,
+    "function": "open()",
+    "reportedSeverity": "Low",
+    "swc": "116",
+    "disposition": "Intentional phase/deadline/codehash predicate; no randomness. Runtime-only symbolic initialization is unconstrained, so not valid deployment-state evidence."
+  },
+  {
+    "pc": 5768,
+    "function": "open()",
+    "reportedSeverity": "Low",
+    "swc": "116",
+    "disposition": "Intentional phase/deadline/codehash predicate; no randomness. Runtime-only symbolic initialization is unconstrained, so not valid deployment-state evidence."
+  }
+]

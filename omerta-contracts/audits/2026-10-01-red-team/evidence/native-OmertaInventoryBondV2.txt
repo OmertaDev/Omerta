@@ -1,0 +1,34 @@
+
+Detector: incorrect-equality
+OmertaInventoryBondV2.claim(bytes32) (src/market-v2/OmertaInventoryBondV2.sol#212-220) uses a dangerous strict equality:
+	- amount == 0 (src/market-v2/OmertaInventoryBondV2.sol#215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: unused-return
+OmertaInventoryBondV2._observation(uint64) (src/market-v2/OmertaInventoryBondV2.sol#255-266) ignores return value by (spot,tick,None,None) = manager.getSlot0(poolId) (src/market-v2/OmertaInventoryBondV2.sol#262)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: timestamp
+OmertaInventoryBondV2.purchase(uint64,uint256,uint64,bytes32) (src/market-v2/OmertaInventoryBondV2.sol#162-203) uses timestamp for comparisons
+	Dangerous comparisons:
+	- nonce == bytes32(0) || deadline < block.timestamp || deadline > block.timestamp + 300 || msg.value < minNativePurchase || msg.value > maxNativePurchase || minimumOmr == 0 (src/market-v2/OmertaInventoryBondV2.sol#170-171)
+OmertaInventoryBondV2.claim(bytes32) (src/market-v2/OmertaInventoryBondV2.sol#212-220) uses timestamp for comparisons
+	Dangerous comparisons:
+	- amount == 0 (src/market-v2/OmertaInventoryBondV2.sol#215)
+OmertaInventoryBondV2.claimable(bytes32) (src/market-v2/OmertaInventoryBondV2.sol#222-228) uses timestamp for comparisons
+	Dangerous comparisons:
+	- n.beneficiary == address(0) || block.timestamp <= n.start (src/market-v2/OmertaInventoryBondV2.sol#224)
+	- block.timestamp >= n.end (src/market-v2/OmertaInventoryBondV2.sol#225-226)
+OmertaInventoryBondV2._observation(uint64) (src/market-v2/OmertaInventoryBondV2.sol#255-266) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! s.valid || s.epoch == 0 || s.epoch != epoch || s.observedAt == 0 || s.observedAt > block.timestamp || block.timestamp - s.observedAt > maxObservationAge || s.omrPerEth == 0 || s.omrPerEth > maxOmrPerEth || s.minLiquidity < minLiquidity || manager.getLiquidity(poolId) < minLiquidity (src/market-v2/OmertaInventoryBondV2.sol#258-260)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in OmertaInventoryBondV2.claimProceeds() (src/market-v2/OmertaInventoryBondV2.sol#230-238):
+	- (ok,None) = proceedsRecipient.call{value: amount}() (src/market-v2/OmertaInventoryBondV2.sol#234)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\market-v2\OmertaInventoryBondV2.sol analyzed (29 contracts with 102 detectors), 7 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\market-v2\OmertaInventoryBondV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

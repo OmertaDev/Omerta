@@ -1,0 +1,166 @@
+
+Detector: reentrancy-eth
+Reentrancy in OmertaTurfFeeBridgeV2.close() (src/market-v2/OmertaTurfFeeBridgeV2.sol#75-81):
+	External calls:
+	- _checkpoint() (src/market-v2/OmertaTurfFeeBridgeV2.sol#78)
+		- source.expireTurf() (src/market-v2/OmertaTurfFeeBridgeV2.sol#91)
+		- source.collect(tranche) (src/market-v2/OmertaTurfFeeBridgeV2.sol#92)
+		- source.claimFees(tranche) (src/market-v2/OmertaTurfFeeBridgeV2.sol#95)
+		- registry.depositFees{value: nativeAmount}(seasonId,turfId,omrAmount) (src/market-v2/OmertaTurfFeeBridgeV2.sol#108)
+	External calls sending eth:
+	- _checkpoint() (src/market-v2/OmertaTurfFeeBridgeV2.sol#78)
+		- registry.depositFees{value: nativeAmount}(seasonId,turfId,omrAmount) (src/market-v2/OmertaTurfFeeBridgeV2.sol#108)
+	State variables written after the call(s):
+	- closed = true (src/market-v2/OmertaTurfFeeBridgeV2.sol#79)
+	OmertaTurfFeeBridgeV2.closed (src/market-v2/OmertaTurfFeeBridgeV2.sol#23) can be used in cross function reentrancies:
+	- OmertaTurfFeeBridgeV2.closed (src/market-v2/OmertaTurfFeeBridgeV2.sol#23)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+
+Detector: divide-before-multiply
+OmertaStabilityControllerV2._range(OmertaStabilityControllerV2.Tranche,IOmertaMarketStateV2.Snapshot) (src/market-v2/OmertaStabilityControllerV2.sol#486-518) performs a multiplication on the result of a division:
+	- anchor = int256(s.meanTick) / spacing (src/market-v2/OmertaStabilityControllerV2.sol#489)
+	- anchor *= spacing (src/market-v2/OmertaStabilityControllerV2.sol#491)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: incorrect-equality
+OmertaStabilityControllerV2.positionInventory(OmertaStabilityControllerV2.Tranche) (src/market-v2/OmertaStabilityControllerV2.sol#440-452) uses a dangerous strict equality:
+	- p.liquidity == 0 (src/market-v2/OmertaStabilityControllerV2.sol#442)
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses a dangerous strict equality:
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#302)
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses a dangerous strict equality:
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#303)
+OmertaTurfV2.expireSiege(uint64,uint32) (src/market-v2/OmertaTurfV2.sol#207-213) uses a dangerous strict equality:
+	- deadline == 0 || block.timestamp < deadline (src/market-v2/OmertaTurfV2.sol#210)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: reentrancy-no-eth
+Reentrancy in OmertaStabilityControllerV2.deploy(OmertaStabilityControllerV2.Tranche,uint64) (src/market-v2/OmertaStabilityControllerV2.sol#275-312):
+	External calls:
+	- _modify(t,Operation.Add,liquidity,budget0,budget1) (src/market-v2/OmertaStabilityControllerV2.sol#309)
+		- manager.unlock(data) (src/market-v2/OmertaStabilityControllerV2.sol#523)
+	State variables written after the call(s):
+	- p.liquidity = liquidity (src/market-v2/OmertaStabilityControllerV2.sol#310)
+	OmertaStabilityControllerV2._positions (src/market-v2/OmertaStabilityControllerV2.sol#161) can be used in cross function reentrancies:
+	- OmertaStabilityControllerV2.position(OmertaStabilityControllerV2.Tranche) (src/market-v2/OmertaStabilityControllerV2.sol#248-250)
+	- OmertaStabilityControllerV2.positionInventory(OmertaStabilityControllerV2.Tranche) (src/market-v2/OmertaStabilityControllerV2.sol#440-452)
+	- OmertaStabilityControllerV2.unlockCallback(bytes) (src/market-v2/OmertaStabilityControllerV2.sol#527-582)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+
+Detector: uninitialized-local
+OmertaTurfV2.settleStatus(uint64,uint32,uint64,uint8,uint16,uint64,uint64,bytes32).allowed (src/market-v2/OmertaTurfV2.sol#168) is a local variable never initialized
+OmertaTurfV2._recipients(OmertaTurfV2.Split).total (src/market-v2/OmertaTurfV2.sol#282) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: unused-return
+OmertaStabilityControllerV2.deploy(OmertaStabilityControllerV2.Tranche,uint64) (src/market-v2/OmertaStabilityControllerV2.sol#275-312) ignores return value by (sqrtPrice,None,None,None) = manager.getSlot0(poolId) (src/market-v2/OmertaStabilityControllerV2.sol#291)
+OmertaStabilityControllerV2.finalize(OmertaStabilityControllerV2.Tranche) (src/market-v2/OmertaStabilityControllerV2.sol#335-342) ignores return value by (spot,None,None,None) = manager.getSlot0(poolId) (src/market-v2/OmertaStabilityControllerV2.sol#337)
+OmertaStabilityControllerV2.positionInventory(OmertaStabilityControllerV2.Tranche) (src/market-v2/OmertaStabilityControllerV2.sol#440-452) ignores return value by (spot,None,None,None) = manager.getSlot0(poolId) (src/market-v2/OmertaStabilityControllerV2.sol#443)
+OmertaStabilityControllerV2._observation(uint64) (src/market-v2/OmertaStabilityControllerV2.sol#459-472) ignores return value by (spot,tick,None,None) = manager.getSlot0(poolId) (src/market-v2/OmertaStabilityControllerV2.sol#467)
+OmertaStabilityControllerV2._modify(OmertaStabilityControllerV2.Tranche,OmertaStabilityControllerV2.Operation,uint128,uint256,uint256) (src/market-v2/OmertaStabilityControllerV2.sol#520-525) ignores return value by manager.unlock(data) (src/market-v2/OmertaStabilityControllerV2.sol#523)
+OmertaTurfFeeBridgeV2.bindSource(OmertaStabilityControllerV2) (src/market-v2/OmertaTurfFeeBridgeV2.sol#47-64) ignores return value by (startsAt,endsAt,None) = registry.seasons(seasonId) (src/market-v2/OmertaTurfFeeBridgeV2.sol#51)
+OmertaTurfFeeBridgeV2.close() (src/market-v2/OmertaTurfFeeBridgeV2.sol#75-81) ignores return value by (None,endsAt,None) = registry.seasons(seasonId) (src/market-v2/OmertaTurfFeeBridgeV2.sol#76)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: reentrancy-benign
+Reentrancy in OmertaTurfFeeBridgeV2._checkpoint() (src/market-v2/OmertaTurfFeeBridgeV2.sol#83-111):
+	External calls:
+	- source.expireTurf() (src/market-v2/OmertaTurfFeeBridgeV2.sol#91)
+	- source.collect(tranche) (src/market-v2/OmertaTurfFeeBridgeV2.sol#92)
+	- source.claimFees(tranche) (src/market-v2/OmertaTurfFeeBridgeV2.sol#95)
+	State variables written after the call(s):
+	- forwardedNative = nativeTotal (src/market-v2/OmertaTurfFeeBridgeV2.sol#105)
+	- forwardedOmr = omrTotal (src/market-v2/OmertaTurfFeeBridgeV2.sol#106)
+Reentrancy in OmertaStabilityControllerV2.unlockCallback(bytes) (src/market-v2/OmertaStabilityControllerV2.sol#527-582):
+	External calls:
+	- (delta,fees) = manager.modifyLiquidity(_key,ModifyLiquidityParams(p.lower,p.upper,change,keccak256(bytes)(abi.encode(t,p.nonce))),) (src/market-v2/OmertaStabilityControllerV2.sol#538-540)
+	State variables written after the call(s):
+	- a.idleNative -= amount0 (src/market-v2/OmertaStabilityControllerV2.sol#551)
+	- a.idleOmr -= amount1 (src/market-v2/OmertaStabilityControllerV2.sol#552)
+	- a.nativeCapacity -= uint128(amount0) (src/market-v2/OmertaStabilityControllerV2.sol#555)
+	- a.omrCapacity -= uint128(amount1) (src/market-v2/OmertaStabilityControllerV2.sol#556)
+	- a.nativeDeployed += amount0 (src/market-v2/OmertaStabilityControllerV2.sol#557)
+	- a.omrDeployed += amount1 (src/market-v2/OmertaStabilityControllerV2.sol#558)
+	- a.idleNative += uint256(principal0) (src/market-v2/OmertaStabilityControllerV2.sol#564)
+	- a.idleOmr += uint256(principal1) (src/market-v2/OmertaStabilityControllerV2.sol#565)
+	- a.nativeReturned += uint256(principal0) (src/market-v2/OmertaStabilityControllerV2.sol#568)
+	- a.omrReturned += uint256(principal1) (src/market-v2/OmertaStabilityControllerV2.sol#569)
+	- a.nativeFees += fee0 (src/market-v2/OmertaStabilityControllerV2.sol#574)
+	- a.omrFees += fee1 (src/market-v2/OmertaStabilityControllerV2.sol#575)
+	- totalIdleNative -= amount0 (src/market-v2/OmertaStabilityControllerV2.sol#553)
+	- totalIdleNative += uint256(principal0) (src/market-v2/OmertaStabilityControllerV2.sol#566)
+	- totalIdleOmr -= amount1 (src/market-v2/OmertaStabilityControllerV2.sol#554)
+	- totalIdleOmr += uint256(principal1) (src/market-v2/OmertaStabilityControllerV2.sol#567)
+	- totalNativeFees += fee0 (src/market-v2/OmertaStabilityControllerV2.sol#576)
+	- totalOmrFees += fee1 (src/market-v2/OmertaStabilityControllerV2.sol#577)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: reentrancy-events
+Reentrancy in OmertaStabilityControllerV2.unlockCallback(bytes) (src/market-v2/OmertaStabilityControllerV2.sol#527-582):
+	External calls:
+	- (delta,fees) = manager.modifyLiquidity(_key,ModifyLiquidityParams(p.lower,p.upper,change,keccak256(bytes)(abi.encode(t,p.nonce))),) (src/market-v2/OmertaStabilityControllerV2.sol#538-540)
+	Event emitted after the call(s):
+	- FeesCollected(t,fee0,fee1) (src/market-v2/OmertaStabilityControllerV2.sol#578)
+	- PrincipalMoved(t,true,amount0,amount1) (src/market-v2/OmertaStabilityControllerV2.sol#559)
+	- PrincipalMoved(t,false,uint256(principal0),uint256(principal1)) (src/market-v2/OmertaStabilityControllerV2.sol#570)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+
+Detector: timestamp
+OmertaStabilityControllerV2.deploy(OmertaStabilityControllerV2.Tranche,uint64) (src/market-v2/OmertaStabilityControllerV2.sol#275-312) uses timestamp for comparisons
+	Dangerous comparisons:
+	- t == Tranche.Turf && (block.timestamp < turfSeasonStart || block.timestamp >= turfSeasonEnd) (src/market-v2/OmertaStabilityControllerV2.sol#278)
+	- s.epoch <= a.lastDeploymentEpoch || block.timestamp < uint256(a.lastDeploymentAt) + cooldown (src/market-v2/OmertaStabilityControllerV2.sol#288)
+OmertaStabilityControllerV2.expireTurf() (src/market-v2/OmertaStabilityControllerV2.sol#328-331) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < turfSeasonEnd (src/market-v2/OmertaStabilityControllerV2.sol#329)
+OmertaStabilityControllerV2._observation(uint64) (src/market-v2/OmertaStabilityControllerV2.sol#459-472) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! s.valid || s.epoch == 0 || s.epoch != epoch || s.observedAt == 0 || s.observedAt > block.timestamp || block.timestamp - s.observedAt > maxObservationAge || s.omrPerEth == 0 || s.stressBps > 10000 || s.sellImbalanceBps > 10000 (src/market-v2/OmertaStabilityControllerV2.sol#462-464)
+OmertaTurfFeeBridgeV2.close() (src/market-v2/OmertaTurfFeeBridgeV2.sol#75-81) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < endsAt (src/market-v2/OmertaTurfFeeBridgeV2.sol#77)
+OmertaTurfFeeBridgeV2._checkpoint() (src/market-v2/OmertaTurfFeeBridgeV2.sol#83-111) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= source.turfSeasonEnd() (src/market-v2/OmertaTurfFeeBridgeV2.sol#91)
+OmertaTurfV2.bindFeeSource(address,uint64,uint32) (src/market-v2/OmertaTurfV2.sol#99-106) uses timestamp for comparisons
+	Dangerous comparisons:
+	- source.code.length == 0 || feeSources[source].bound || seasons[seasonId].endsAt == 0 || turfId >= seasons[seasonId].turfCount || block.timestamp >= seasons[seasonId].startsAt || laneSource[seasonId][turfId] != address(0) (src/market-v2/OmertaTurfV2.sol#100-102)
+OmertaTurfV2.createSeason(uint64,uint64) (src/market-v2/OmertaTurfV2.sol#118-124) uses timestamp for comparisons
+	Dangerous comparisons:
+	- startsAt < block.timestamp || endsAt <= startsAt || endsAt - startsAt > 31536000 || (seasonCount != 0 && startsAt < seasons[seasonCount].endsAt) (src/market-v2/OmertaTurfV2.sol#119-120)
+OmertaTurfV2.createTurf(uint64,int24,int24,OmertaTurfV2.Split) (src/market-v2/OmertaTurfV2.sol#127-143) uses timestamp for comparisons
+	Dangerous comparisons:
+	- s.endsAt == 0 || block.timestamp >= s.startsAt || s.turfCount == MAX_TURFS (src/market-v2/OmertaTurfV2.sol#131)
+OmertaTurfV2.startSiege(uint64,uint32,OmertaTurfV2.Split,uint32,uint16,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#179-194) uses timestamp for comparisons
+	Dangerous comparisons:
+	- duration < MIN_SIEGE || duration > MAX_SIEGE || block.timestamp + duration > seasons[seasonId].endsAt || attackerVictoryBps > BPS || attackerVictoryBps == 0 || keccak256(bytes)(abi.encode(attacker)) == keccak256(bytes)(abi.encode(t.owners)) (src/market-v2/OmertaTurfV2.sol#185-187)
+OmertaTurfV2.resolveSiege(uint64,uint32,bool,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#196-203) uses timestamp for comparisons
+	Dangerous comparisons:
+	- s.expiresAt == 0 || block.timestamp >= s.expiresAt (src/market-v2/OmertaTurfV2.sol#201)
+OmertaTurfV2.expireSiege(uint64,uint32) (src/market-v2/OmertaTurfV2.sol#207-213) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deadline == 0 || block.timestamp < deadline (src/market-v2/OmertaTurfV2.sol#210)
+OmertaTurfV2.depositFees(uint64,uint32,uint256) (src/market-v2/OmertaTurfV2.sol#217-244) uses timestamp for comparisons
+	Dangerous comparisons:
+	- season.endsAt == 0 || block.timestamp < season.startsAt || turfId >= season.turfCount (src/market-v2/OmertaTurfV2.sol#222)
+	- s.expiresAt != 0 && block.timestamp >= s.expiresAt (src/market-v2/OmertaTurfV2.sol#230)
+OmertaTurfV2._settlement(uint64,uint32,uint64,uint64,bytes32) (src/market-v2/OmertaTurfV2.sol#261-278) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < s.startsAt || block.timestamp >= s.endsAt || turfId >= s.turfCount (src/market-v2/OmertaTurfV2.sol#266)
+	- ! observation.valid || epoch != observation.epoch || epoch < t.lastEpoch || observation.observedAt > block.timestamp || block.timestamp - observation.observedAt > maxObservationAge (src/market-v2/OmertaTurfV2.sol#272-273)
+OmertaTurfV2._credit(OmertaTurfV2.Recipients,uint256,uint256) (src/market-v2/OmertaTurfV2.sol#298-309) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < r.count (src/market-v2/OmertaTurfV2.sol#301)
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#302)
+	- i + 1 == r.count (src/market-v2/OmertaTurfV2.sol#303)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in OmertaStabilityControllerV2._send(address,uint256,uint256) (src/market-v2/OmertaStabilityControllerV2.sol#601-607):
+	- (ok,None) = to.call{value: amount0}() (src/market-v2/OmertaStabilityControllerV2.sol#603)
+Low level call in OmertaTurfV2.claim(address) (src/market-v2/OmertaTurfV2.sol#246-259):
+	- (ok,None) = recipient.call{value: c.nativeAmount}() (src/market-v2/OmertaTurfV2.sol#255)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\market-v2\OmertaTurfFeeBridgeV2.sol analyzed (41 contracts with 102 detectors), 35 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\market-v2\OmertaTurfFeeBridgeV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

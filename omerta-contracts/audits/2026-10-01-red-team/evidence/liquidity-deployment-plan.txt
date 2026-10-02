@@ -1,0 +1,20 @@
+PASS deterministic EOA CREATE nonces, bytecode and immutable future recipients
+PASS constructor dependencies are available in order and all administrative owners are Safe
+PASS fresh POL vault binds the selected keeper in creation calldata without a paused-only setter
+PASS mint remains 100% DEV and non-mint shares stay 50/25/10/15
+PASS Vig has fixed claim custody for both halves and hook ratios are never rewritten
+PASS Safe calldata decodes to documented exact functions and arguments
+PASS existing fee router detaches only inside ordered atomic batch and existing bond pause is retained
+PASS optional contracts neither consume nonces nor receive configuration authority when absent
+PASS explicit zero bond daily cap encodes unlimited issuance without removing other guards
+PASS bond daily cap requires an explicit unsigned decimal value even when zero is allowed
+PASS required positive budgets reject missing, zero, unlimited and inconsistent values
+PASS wrong chain, wrong snapshot domain, reused operational roles and altered mint recipient reject
+PASS missing artifact, changed metadata source hash and invalid compiler settings refuse generation
+PASS template has null financial inputs and CLI requires a concrete input file
+PASS startup verifies the complete reserved CREATE interval and immutable future Vig target at one canonical block
+PASS a prerequisite factory call, reverted transaction or pending collision prevents bundle startup without rebasing
+PASS any populated creation address, missing prerequisite runtime, or code-bearing deployer fails startup
+PASS startup rejects stale, future, reorged or wrong-chain observations and a nonce race during reads
+PASS startup requires the approved plan hash and checks every immutable genesis splitter binding
+19 unsigned liquidity deployment-plan checks passed. Startup RPC reads used deterministic mocks only; no network, signer, key, broadcast or funding used.

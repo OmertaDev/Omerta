@@ -1,0 +1,16 @@
+Compiling 1 files with Solc 0.8.26
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 3.90s
+Solc 0.8.26 finished in 12.31s
+Compiler run successful!
+
+Ran 6 tests for test/OmertaGuardedAuction.t.sol:OmertaGuardedAuctionTest
+[PASS] testBatchClaimCannotBypassGate() (gas: 568282)
+[PASS] testGateRuntimeAndChainArePinned() (gas: 543000)
+[PASS] testRejectWrongGateConfiguration() (gas: 210514)
+[PASS] testSingleClaimBlockedUntilGateAndCliff() (gas: 566750)
+[PASS] testSweepRequiresCoordinatorAndWorksBeforeClaims() (gas: 558134)
+[PASS] testUngradulatedAuctionRefundUnaffectedByClaimGate() (gas: 4129527)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 1.53ms (3.89ms CPU time)
+
+Ran 1 test suite in 11.67ms (1.53ms CPU time): 6 tests passed, 0 failed, 0 skipped (6 total tests)

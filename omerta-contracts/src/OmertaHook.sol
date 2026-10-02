@@ -220,12 +220,15 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
     ///      seconds, matching the v3 oracle convention. It is updated before replacing `tick` with
     ///      each swap's post-swap tick, so every interval is charged to the price that actually
     ///      prevailed during it. The uint32 timestamp and int56 cumulative deliberately use v3's
-    ///      wrapping arithmetic; differences remain correct across the uint32 timestamp rollover.
+    ///      wrapping arithmetic. A full last-write time keeps counterfactual accumulation continuous
+    ///      even when an idle interval spans the whole uint32 timestamp range.
     struct TickAccumulator {
         int56 tickCumulative;
         int24 tick;
         uint32 blockTimestamp;
         bool initialized;
+        // Fits the existing packed slot; the externally returned timestamp remains uint32.
+        uint64 fullTimestamp;
     }
 
     mapping(PoolId => TickAccumulator) private _tickAccumulators;
@@ -462,7 +465,8 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
         openedAt[id] = block.number;
         openingEndsAt[id] = block.number + antiSnipeBlocks;
         _tickAccumulators[id] = TickAccumulator({
-            tickCumulative: 0, tick: tick, blockTimestamp: uint32(block.timestamp), initialized: true
+            tickCumulative: 0, tick: tick, blockTimestamp: uint32(block.timestamp), initialized: true,
+            fullTimestamp: uint64(block.timestamp)
         });
         emit PoolOpened(id, block.number);
         emit ObservationRequested(id);
@@ -561,10 +565,9 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
         if (!accumulator.initialized) return (0, 0, false);
 
         blockTimestamp = uint32(block.timestamp);
-        uint32 elapsed;
+        uint256 elapsed = block.timestamp - accumulator.fullTimestamp;
         unchecked {
-            elapsed = blockTimestamp - accumulator.blockTimestamp;
-            tickCumulative = accumulator.tickCumulative + int56(accumulator.tick) * int56(uint56(elapsed));
+            tickCumulative = accumulator.tickCumulative + int56(int256(accumulator.tick) * int256(elapsed));
         }
         initialized = true;
     }
@@ -577,12 +580,12 @@ contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownabl
         if (!accumulator.initialized) return 0;
 
         uint32 blockTimestamp = uint32(block.timestamp);
-        uint32 elapsed;
+        uint256 elapsed = block.timestamp - accumulator.fullTimestamp;
         unchecked {
-            elapsed = blockTimestamp - accumulator.blockTimestamp;
-            accumulator.tickCumulative += int56(accumulator.tick) * int56(uint56(elapsed));
+            accumulator.tickCumulative += int56(int256(accumulator.tick) * int256(elapsed));
         }
         accumulator.blockTimestamp = blockTimestamp;
+        accumulator.fullTimestamp = uint64(block.timestamp);
         int24 tick;
         (sqrtPriceX96, tick,,) = StateLibrary.getSlot0(poolManager, id);
         accumulator.tick = tick;

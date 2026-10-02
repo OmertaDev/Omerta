@@ -1,0 +1,214 @@
+[
+  {
+    "target": "src\\AcquisitionAuthority.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\AcquisitionConstellationFactory.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\AcquisitionIntentExecution.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\AcquisitionReconciliation.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\AcquisitionVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\AcquisitionVaultCore.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\Alchemist.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\BankBufferVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\CollateralEscrow.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\Denari.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\DynastyNFT.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\FeeRevenueRouter.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\FlashGuard.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GearVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GenesisLifecycleController.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GenesisOracle.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GenesisPlayerSale.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GenesisProceedsSplitter.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\GenesisWalletCap.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\IOmrOracle.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\KeeperGasVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\LiquidityBuybackExecutor.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OmertaBond.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OmertaFees.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OmertaHook.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OMR.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OMRStaking.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OmrTwapOracle.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\OmrV4TwapOracle.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\PreVoteBudgetBook.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\ProtocolLiquidityVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\RwaHealthOverlay.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\RwaStockBuyer.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\SettlementGasPool.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\StockTokenRegistry.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\StockTokenRegistryV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\StockVault.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\StreetDeed.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\Transmuter.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\VoucherClaim.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\genesis-auction\\OmertaGuardedAuction.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\IOmertaMarketStateV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaArbitrageV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaCommitmentVaultV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaGameSettlementV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaGenesisCoordinatorV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaHookV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaInventoryBondV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaMarketStateV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaReserveFundingV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaStabilityControllerV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaTurfFeeBridgeV2.sol",
+    "exit": 1
+  },
+  {
+    "target": "src\\market-v2\\OmertaTurfV2.sol",
+    "exit": 1
+  }
+]
