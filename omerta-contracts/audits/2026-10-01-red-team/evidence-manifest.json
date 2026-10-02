@@ -1,6 +1,8 @@
 {
+  "archiveEntries": 451,
+  "scope": "Audit package; original archive entries preserved byte-for-byte; differing reintroduced Git-normalized variants retained under evidence/reintroduced-static",
+  "unpackedRecords": 358,
   "algorithm": "SHA-256",
-  "scope": "Audit package; packed original entries retained losslessly, extract raw-static-evidence.zip to restore raw scans",
   "files": [
     {
       "path": ".gitattributes",
@@ -639,28 +641,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/ir-AcquisitionAuthority.json",
-      "sha256": "0ea9a2924fee0963598bc141f319dac048d36d32b2140729158de35046d7cd89",
-      "bytes": 4401809,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/ir-AcquisitionAuthority.txt",
       "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
       "bytes": 15291,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/ir-AcquisitionAuthority.txt",
-      "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
-      "bytes": 15291,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/ir-AcquisitionVaultCore.json",
-      "sha256": "69bc6288e313a9accb78c3eb0d602a9b45474f808f3e406d7bcc7dee42da5e35",
-      "bytes": 1072635,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/ir-AcquisitionVaultCore.json",
@@ -675,40 +659,16 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/ir-AcquisitionVaultCore.txt",
-      "sha256": "269edff4ae308995e54777b98e4f4f427be7daec02004e0109a3657d047379c3",
-      "bytes": 17941,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/ir-OmertaGenesisCoordinatorV2.json",
       "sha256": "72702429630a5b8359b4c4436af9116b3e281665cb130a78adbab183260da5f0",
       "bytes": 552520,
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/ir-OmertaGenesisCoordinatorV2.json",
-      "sha256": "72702429630a5b8359b4c4436af9116b3e281665cb130a78adbab183260da5f0",
-      "bytes": 552520,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/ir-OmertaGenesisCoordinatorV2.txt",
       "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de",
       "bytes": 12115,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/ir-OmertaGenesisCoordinatorV2.txt",
-      "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de",
-      "bytes": 12115,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/ir-ProtocolLiquidityVault.json",
-      "sha256": "d85218181ec5f384bbd8da4f0c3797c219e8db7ce7b1b308b88dd439eee47309",
-      "bytes": 2691717,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/ir-ProtocolLiquidityVault.json",
@@ -720,31 +680,13 @@
       "path": "evidence/initial-static/ir-ProtocolLiquidityVault.txt",
       "sha256": "3978a97d1828a082183ad34bba848ab2bd8d5460924e387708da9bec7e301464",
       "bytes": 18932,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/ir-ProtocolLiquidityVault.txt",
-      "sha256": "3978a97d1828a082183ad34bba848ab2bd8d5460924e387708da9bec7e301464",
-      "bytes": 18932,
       "packedIn": "raw-static-evidence.zip"
     },
     {
       "path": "evidence/initial-static/ir-RwaHealthOverlay.json",
       "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79",
       "bytes": 61499,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/ir-RwaHealthOverlay.json",
-      "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79",
-      "bytes": 61499,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/ir-RwaHealthOverlay.txt",
-      "sha256": "a58aa21be29e75ff84d20b4b338c1685c2d33714adfaed0423e551193fc568f4",
-      "bytes": 2513,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/ir-RwaHealthOverlay.txt",
@@ -759,18 +701,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-AcquisitionAuthority.txt",
-      "sha256": "5eb0f56263c61af19da78bd182faa11bfbfb3c7ca4725e7beb3b351c4868f4f4",
-      "bytes": 4350,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionConstellationFactory.json",
-      "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262",
-      "bytes": 260278,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-AcquisitionConstellationFactory.json",
       "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262",
       "bytes": 260278,
@@ -783,28 +713,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-AcquisitionConstellationFactory.txt",
-      "sha256": "b228c8fbdb8d5df267d29407b3dcd0bec57b6ed4d8a440a06aa869e0f8caf900",
-      "bytes": 2996,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-AcquisitionIntentExecution.json",
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionIntentExecution.json",
-      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
-      "bytes": 59,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionIntentExecution.txt",
-      "sha256": "a0509924c2b8a43dbb9283b328c75f74be104a3bcd63fbbe2c0de686f0bc5960",
-      "bytes": 1027,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-AcquisitionIntentExecution.txt",
@@ -816,31 +728,13 @@
       "path": "evidence/initial-static/native-AcquisitionReconciliation.json",
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionReconciliation.json",
-      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
-      "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
     },
     {
       "path": "evidence/initial-static/native-AcquisitionReconciliation.txt",
       "sha256": "34f6988a0f9c709a5947412e1fef429c7a5f13848c50e255802ed0ad21cde984",
       "bytes": 1025,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionReconciliation.txt",
-      "sha256": "34f6988a0f9c709a5947412e1fef429c7a5f13848c50e255802ed0ad21cde984",
-      "bytes": 1025,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionVault.json",
-      "sha256": "909a8220906eb1ab7ba73ad32a5131a4f66e960db26c71182e5f77e309c8d5d2",
-      "bytes": 3361841,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-AcquisitionVault.json",
@@ -855,18 +749,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-AcquisitionVault.txt",
-      "sha256": "199f911f67d4332469fa2e5b46ec09d18baab370cb12ef4b704e948b122b077f",
-      "bytes": 16721,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-AcquisitionVaultCore.txt",
-      "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
-      "bytes": 4350,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-AcquisitionVaultCore.txt",
       "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
       "bytes": 4350,
@@ -879,28 +761,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-Alchemist.json",
-      "sha256": "21d07189a844bfb91adf3df302bc0e1f0849e81b3ee7d3b54b439939843a71b2",
-      "bytes": 383747,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-Alchemist.txt",
       "sha256": "7d57d38b851dbe8c13178c74090fa3c196b2322ef56a1119cd2da23e55305a1e",
       "bytes": 5067,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-Alchemist.txt",
-      "sha256": "7d57d38b851dbe8c13178c74090fa3c196b2322ef56a1119cd2da23e55305a1e",
-      "bytes": 5067,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-BankBufferVault.json",
-      "sha256": "e44459e97fdcb5417e9d06d2762ea806eccf9230b4c6a8e92a0802e769f8c165",
-      "bytes": 119289,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-BankBufferVault.json",
@@ -915,40 +779,16 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-BankBufferVault.txt",
-      "sha256": "9347393ff6527b14d81156bcec6828e28841aa27d25d0c4afe19f1703153ab06",
-      "bytes": 4411,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-CollateralEscrow.json",
       "sha256": "a93e8a87152db3b056098433e067d4a04ddd999d1b4f1e228d80b62adb3df581",
       "bytes": 33389,
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-CollateralEscrow.json",
-      "sha256": "a93e8a87152db3b056098433e067d4a04ddd999d1b4f1e228d80b62adb3df581",
-      "bytes": 33389,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-CollateralEscrow.txt",
       "sha256": "dca51a83b97188d194e353d125b1eb581f831fc71d9a309d9bfb240c81e9806d",
       "bytes": 2047,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-CollateralEscrow.txt",
-      "sha256": "dca51a83b97188d194e353d125b1eb581f831fc71d9a309d9bfb240c81e9806d",
-      "bytes": 2047,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-Denari.json",
-      "sha256": "dad8f6f27676e24a7e7bdca8c9fa5baf1d23c9c391dfce847319ff5fdaba0d67",
-      "bytes": 15657,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-Denari.json",
@@ -963,28 +803,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-Denari.txt",
-      "sha256": "63bce87577786ebae0cfc96a31a2cc5173a69887b04de9ae12c6480576a23590",
-      "bytes": 1344,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-DynastyNFT.json",
-      "sha256": "2f4633855bae5d7b63ce2950a46c75740e869c3c615601bb80a4084b79d68c87",
-      "bytes": 19101,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-DynastyNFT.json",
       "sha256": "2f4633855bae5d7b63ce2950a46c75740e869c3c615601bb80a4084b79d68c87",
       "bytes": 19101,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-DynastyNFT.txt",
-      "sha256": "61ef86e9da0cec19b58028fcc63937afb867f0f24fede0cdbf4c70543ebe97a2",
-      "bytes": 1455,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-DynastyNFT.txt",
@@ -996,19 +818,7 @@
       "path": "evidence/initial-static/native-FeeRevenueRouter.json",
       "sha256": "04b921669f1ca5d2af732c9486858f562ba542ba4bd40c141fa09f8154d9c0d3",
       "bytes": 69926,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-FeeRevenueRouter.json",
-      "sha256": "04b921669f1ca5d2af732c9486858f562ba542ba4bd40c141fa09f8154d9c0d3",
-      "bytes": 69926,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-FeeRevenueRouter.txt",
-      "sha256": "a3d6af32d4af009a1d67727c2328ae640e3882719adde9ec20a165ea216820f3",
-      "bytes": 2652,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-FeeRevenueRouter.txt",
@@ -1023,40 +833,16 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-FlashGuard.json",
-      "sha256": "bac07e3343743ecc31f9cd02e6edd52c449900e0ef9cf8e008ae46e354450a7b",
-      "bytes": 33491,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-FlashGuard.txt",
       "sha256": "199cd22cb8e54f93db0e3677b97cd8b77606128d202446742bb5f3032e511b6b",
       "bytes": 2177,
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-FlashGuard.txt",
-      "sha256": "199cd22cb8e54f93db0e3677b97cd8b77606128d202446742bb5f3032e511b6b",
-      "bytes": 2177,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-GearVault.json",
       "sha256": "5c360d1579d32bb3b1b2f39d52a72112f82b4749cedcfb38b0c21c43e49c274b",
       "bytes": 55768,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-GearVault.json",
-      "sha256": "5c360d1579d32bb3b1b2f39d52a72112f82b4749cedcfb38b0c21c43e49c274b",
-      "bytes": 55768,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GearVault.txt",
-      "sha256": "88940a932e9ae88a9aedd462bd98ef58b45aa68fb8f283b97ef43d833b641775",
-      "bytes": 1428,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-GearVault.txt",
@@ -1068,19 +854,7 @@
       "path": "evidence/initial-static/native-GenesisLifecycleController.json",
       "sha256": "6224fd39aa5dc710564987dc70fd92287d031b6b8c95d60e8840d7b51fde5264",
       "bytes": 127646,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisLifecycleController.json",
-      "sha256": "6224fd39aa5dc710564987dc70fd92287d031b6b8c95d60e8840d7b51fde5264",
-      "bytes": 127646,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisLifecycleController.txt",
-      "sha256": "17ef40bba360af298ce9868314e437ab11905452391d4e2da5a207078cfd2bfb",
-      "bytes": 4264,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-GenesisLifecycleController.txt",
@@ -1092,31 +866,13 @@
       "path": "evidence/initial-static/native-GenesisOracle.json",
       "sha256": "743ca8bbb42053cd11193b561dc2fdca85ff61ccdad698ebb9f9acf136f20082",
       "bytes": 21124,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisOracle.json",
-      "sha256": "743ca8bbb42053cd11193b561dc2fdca85ff61ccdad698ebb9f9acf136f20082",
-      "bytes": 21124,
       "packedIn": "raw-static-evidence.zip"
     },
     {
       "path": "evidence/initial-static/native-GenesisOracle.txt",
       "sha256": "84b3475a22f7c5a6d83622f4a680cd85063d624f181948008a6725559aecf7f4",
       "bytes": 1718,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisOracle.txt",
-      "sha256": "84b3475a22f7c5a6d83622f4a680cd85063d624f181948008a6725559aecf7f4",
-      "bytes": 1718,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisPlayerSale.json",
-      "sha256": "5aaa02a4f613c99389f1af03700ecd5891e195203722e9f3884301e88699602e",
-      "bytes": 98163,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-GenesisPlayerSale.json",
@@ -1131,28 +887,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-GenesisPlayerSale.txt",
-      "sha256": "8baac50a5ef05d4369f39e78b808bd2bbbc594c243698105a184eee3abe080ad",
-      "bytes": 3932,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-GenesisProceedsSplitter.json",
       "sha256": "c617fc3bce5a5fb5cf18699d0422fe21e99fbf9303826eebc9de897f8839cc5a",
       "bytes": 60208,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisProceedsSplitter.json",
-      "sha256": "c617fc3bce5a5fb5cf18699d0422fe21e99fbf9303826eebc9de897f8839cc5a",
-      "bytes": 60208,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisProceedsSplitter.txt",
-      "sha256": "d477da03b47aa589c871d004d465a0978142e57ec72090fe9ce274f82b76c9ad",
-      "bytes": 2510,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-GenesisProceedsSplitter.txt",
@@ -1164,19 +902,7 @@
       "path": "evidence/initial-static/native-GenesisWalletCap.json",
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisWalletCap.json",
-      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
-      "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-GenesisWalletCap.txt",
-      "sha256": "72faaa37857fd257b38af6c1aec7107734f147062cc818e9e680554e0f10e325",
-      "bytes": 1007,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-GenesisWalletCap.txt",
@@ -1191,18 +917,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-IOmertaMarketStateV2.json",
-      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
-      "bytes": 59,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-IOmertaMarketStateV2.txt",
-      "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
-      "bytes": 1045,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-IOmertaMarketStateV2.txt",
       "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
       "bytes": 1045,
@@ -1215,22 +929,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-IOmrOracle.json",
-      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
-      "bytes": 59,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-IOmrOracle.txt",
       "sha256": "e13d269d23857135531a40183f24c05672ef4f9d46d207eb8f09a363773bb3c3",
       "bytes": 995,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-IOmrOracle.txt",
-      "sha256": "e13d269d23857135531a40183f24c05672ef4f9d46d207eb8f09a363773bb3c3",
-      "bytes": 995,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-KeeperGasVault.json",
@@ -1239,22 +941,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-KeeperGasVault.json",
-      "sha256": "345737575fd7b88b868bae5835ab2433d932a2f4f9a7b297b8135f2647747d0a",
-      "bytes": 56080,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-KeeperGasVault.txt",
       "sha256": "3780b43b239dcf19665deb8790b4b765edbe9bbc193ec4fa73d1f224c0cd071f",
       "bytes": 2632,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-KeeperGasVault.txt",
-      "sha256": "3780b43b239dcf19665deb8790b4b765edbe9bbc193ec4fa73d1f224c0cd071f",
-      "bytes": 2632,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-ledger.json",
@@ -1263,22 +953,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-ledger.json",
-      "sha256": "ac9a983da590cfcbeda56ce8b83c034cf69a37dd6928bb576f82afb3d68c2dc0",
-      "bytes": 3871,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-LiquidityBuybackExecutor.json",
       "sha256": "01e523f1c75ab749d6c43dd59c8829afe62c7965ba6c5d0614b9ec3792d38995",
       "bytes": 248049,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-LiquidityBuybackExecutor.json",
-      "sha256": "01e523f1c75ab749d6c43dd59c8829afe62c7965ba6c5d0614b9ec3792d38995",
-      "bytes": 248049,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-LiquidityBuybackExecutor.txt",
@@ -1287,28 +965,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-LiquidityBuybackExecutor.txt",
-      "sha256": "bba0d37dcfb40be64f504dfd4bd9086eb10a7919294ae0c14e08e3d57f518087",
-      "bytes": 5965,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaArbitrageV2.json",
       "sha256": "61b955f3807e4e52fb6f29b7f6bd7996326a36552d513fce96bba9193435e517",
       "bytes": 82428,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaArbitrageV2.json",
-      "sha256": "61b955f3807e4e52fb6f29b7f6bd7996326a36552d513fce96bba9193435e517",
-      "bytes": 82428,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaArbitrageV2.txt",
-      "sha256": "e2d39ffb1a6d70604e3bcc294801b63fdfa7d76b66cc29dd1a65ddbba0d774bf",
-      "bytes": 2885,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaArbitrageV2.txt",
@@ -1323,22 +983,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaBond.json",
-      "sha256": "2994b855b038e5dd6a6b6959fcb2edd25517e264d128ccc4d7493c8d9f15a662",
-      "bytes": 490582,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaBond.txt",
       "sha256": "cf13e28894fdddec0e3c1397088d3050e26ba3a8d896466adde1832b8be60ef7",
       "bytes": 4361,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaBond.txt",
-      "sha256": "cf13e28894fdddec0e3c1397088d3050e26ba3a8d896466adde1832b8be60ef7",
-      "bytes": 4361,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaCommitmentVaultV2.json",
@@ -1347,22 +995,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaCommitmentVaultV2.json",
-      "sha256": "bb56cd1663b7f765c15919ec1af42f2b3c43c63da8f46e3d14fe12e9c4753a57",
-      "bytes": 474657,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaCommitmentVaultV2.txt",
       "sha256": "3191cdfa83fc5e3dacd893f45ee4bb556d199e59b7d8b3d56ce44a9d4caf62d2",
       "bytes": 8376,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaCommitmentVaultV2.txt",
-      "sha256": "3191cdfa83fc5e3dacd893f45ee4bb556d199e59b7d8b3d56ce44a9d4caf62d2",
-      "bytes": 8376,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaFees.json",
@@ -1371,28 +1007,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaFees.json",
-      "sha256": "327385da41fab402d73d8ff6e762d0fa58041dbf3d2a5fdc877d7f07da5e2bb7",
-      "bytes": 112827,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaFees.txt",
       "sha256": "0ec9862efb349a14fc484b57202e4116de5c845ae5e8f669afcbd302498a82e9",
       "bytes": 3032,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaFees.txt",
-      "sha256": "0ec9862efb349a14fc484b57202e4116de5c845ae5e8f669afcbd302498a82e9",
-      "bytes": 3032,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaGameSettlementV2.json",
-      "sha256": "506d7705b083c1a553a77b80fbb956eb7de22e50186663952e248749e64576f9",
-      "bytes": 1742964,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaGameSettlementV2.json",
@@ -1404,19 +1022,7 @@
       "path": "evidence/initial-static/native-OmertaGameSettlementV2.txt",
       "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
       "bytes": 18076,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaGameSettlementV2.txt",
-      "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
-      "bytes": 18076,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaGenesisCoordinatorV2.txt",
-      "sha256": "9c60de3934092dcdaf92ec0af8779831ba6f17f6285a3630fe23327835af397d",
-      "bytes": 4722,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaGenesisCoordinatorV2.txt",
@@ -1428,19 +1034,7 @@
       "path": "evidence/initial-static/native-OmertaGuardedAuction.json",
       "sha256": "b3490abc8e92df3d4b11310f794a0b79da68de037faf9bdc660dfe357144e713",
       "bytes": 14626299,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaGuardedAuction.json",
-      "sha256": "b3490abc8e92df3d4b11310f794a0b79da68de037faf9bdc660dfe357144e713",
-      "bytes": 14626299,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaGuardedAuction.txt",
-      "sha256": "40a85b3ffe5063cd588c40e66b1af6d1e3cbb71c815304443576a70ea890747f",
-      "bytes": 67114,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaGuardedAuction.txt",
@@ -1455,18 +1049,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaHook.json",
-      "sha256": "b0f2b5c1962117bb3f7708d2788f5952bac6825e531f96d918dba5972c700e1b",
-      "bytes": 459136,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaHook.txt",
-      "sha256": "90b3cf4154fff00b0be23f2c4bd9fe44c6298e6d8e2cd1caeb9a4fc4c6fe3335",
-      "bytes": 4591,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaHook.txt",
       "sha256": "90b3cf4154fff00b0be23f2c4bd9fe44c6298e6d8e2cd1caeb9a4fc4c6fe3335",
       "bytes": 4591,
@@ -1479,28 +1061,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaHookV2.json",
-      "sha256": "d5f2e8c3da28d8b1e31279dc71d269facc729c5cc7aad453c814bda980f5fc9a",
-      "bytes": 471332,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaHookV2.txt",
       "sha256": "f41fce33b7649f506f04880f3ff454dbfa12b84b1dd2b7d83b7e1db8d1cdb952",
       "bytes": 5939,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaHookV2.txt",
-      "sha256": "f41fce33b7649f506f04880f3ff454dbfa12b84b1dd2b7d83b7e1db8d1cdb952",
-      "bytes": 5939,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaInventoryBondV2.json",
-      "sha256": "6da8efe394a2dc806d3529841f23abc8d1a1eb692f755b45796e11fca18c7899",
-      "bytes": 145604,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaInventoryBondV2.json",
@@ -1512,19 +1076,7 @@
       "path": "evidence/initial-static/native-OmertaInventoryBondV2.txt",
       "sha256": "9d64e621e75bbe8bc04efda3758c1d852697bd5b38351391a76ee0c972a1e466",
       "bytes": 3560,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaInventoryBondV2.txt",
-      "sha256": "9d64e621e75bbe8bc04efda3758c1d852697bd5b38351391a76ee0c972a1e466",
-      "bytes": 3560,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaMarketStateV2.json",
-      "sha256": "34854c1ce8026e1f14653069cb0b64f79254c2c840a019f04a264b872a6c893b",
-      "bytes": 541922,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaMarketStateV2.json",
@@ -1536,19 +1088,7 @@
       "path": "evidence/initial-static/native-OmertaMarketStateV2.txt",
       "sha256": "23096852adf1ed503112f243f9dad91d4408ba42fbefe49eb6ef3dbaa28e8c3e",
       "bytes": 7881,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaMarketStateV2.txt",
-      "sha256": "23096852adf1ed503112f243f9dad91d4408ba42fbefe49eb6ef3dbaa28e8c3e",
-      "bytes": 7881,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaReserveFundingV2.json",
-      "sha256": "ef7402c7926b5fe58d6af7ac1a4eed74b49e2976d13cbdf54ae90cad968e117c",
-      "bytes": 1149119,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaReserveFundingV2.json",
@@ -1560,19 +1100,7 @@
       "path": "evidence/initial-static/native-OmertaReserveFundingV2.txt",
       "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
       "bytes": 9585,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaReserveFundingV2.txt",
-      "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
-      "bytes": 9585,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaStabilityControllerV2.json",
-      "sha256": "0c0ff00d95515cf18a7d8472b90361f67149f7550179fca27746b283ab95c185",
-      "bytes": 1133096,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaStabilityControllerV2.json",
@@ -1584,19 +1112,7 @@
       "path": "evidence/initial-static/native-OmertaStabilityControllerV2.txt",
       "sha256": "ef421f33e3534b0a5865faa5f509ce5ae861fe731575157d8455ac1c4543cd26",
       "bytes": 9002,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaStabilityControllerV2.txt",
-      "sha256": "ef421f33e3534b0a5865faa5f509ce5ae861fe731575157d8455ac1c4543cd26",
-      "bytes": 9002,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaTurfFeeBridgeV2.json",
-      "sha256": "a356867a47456adfd83bcc9c617bd4eeb02f026176bc9f105311f37b6f276d1c",
-      "bytes": 1661485,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmertaTurfFeeBridgeV2.json",
@@ -1611,40 +1127,16 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaTurfFeeBridgeV2.txt",
-      "sha256": "9eec8b61da64129dc047bb43365d0f157b364635926b89136127b1793dd244d2",
-      "bytes": 15950,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaTurfV2.json",
       "sha256": "31841faee15487e12f19d5b15a5155ec274ef9003a8a291993a54ad68bebc73b",
       "bytes": 375338,
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OmertaTurfV2.json",
-      "sha256": "31841faee15487e12f19d5b15a5155ec274ef9003a8a291993a54ad68bebc73b",
-      "bytes": 375338,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmertaTurfV2.txt",
-      "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
-      "bytes": 5787,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OmertaTurfV2.txt",
       "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
       "bytes": 5787,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OMR.json",
-      "sha256": "56512a4fb402967a01a1e2e884f27f30aa9961d9f7aa5646daf9b5dd44dd4eb5",
-      "bytes": 72497,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OMR.json",
@@ -1659,28 +1151,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-OMR.txt",
-      "sha256": "675597bbba89cc96f2e95185f22abfac6740d69ad4174a03f492d5177a27a6f3",
-      "bytes": 2060,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OMRStaking.json",
-      "sha256": "a34634486bb5329f79705c716146435db359ff55d5fa069392018fb1f46e7713",
-      "bytes": 37539,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-OMRStaking.json",
       "sha256": "a34634486bb5329f79705c716146435db359ff55d5fa069392018fb1f46e7713",
       "bytes": 37539,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OMRStaking.txt",
-      "sha256": "4a5aaaa9d61ab36928f2e33fec7eb8aa0c53873984f6e405d8f868a950460a55",
-      "bytes": 1685,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OMRStaking.txt",
@@ -1692,19 +1166,7 @@
       "path": "evidence/initial-static/native-OmrTwapOracle.json",
       "sha256": "48d5159fa39b73bbfba83ab2e98836c7e8c1eaee765dbd1c1e36a63e8baae283",
       "bytes": 119147,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmrTwapOracle.json",
-      "sha256": "48d5159fa39b73bbfba83ab2e98836c7e8c1eaee765dbd1c1e36a63e8baae283",
-      "bytes": 119147,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmrTwapOracle.txt",
-      "sha256": "68e264f76cbba606da5557e4522ab518957e1302b9774a2701a59852d14ec44c",
-      "bytes": 3082,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmrTwapOracle.txt",
@@ -1716,19 +1178,7 @@
       "path": "evidence/initial-static/native-OmrV4TwapOracle.json",
       "sha256": "0805545253ffa19d420e90fea2b0797b667d378d96598084b24117327a55eaf3",
       "bytes": 465775,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-OmrV4TwapOracle.json",
-      "sha256": "0805545253ffa19d420e90fea2b0797b667d378d96598084b24117327a55eaf3",
-      "bytes": 465775,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-OmrV4TwapOracle.txt",
-      "sha256": "5fa32d2e138cfae4f6da1ea5778d04339c7360254f5f25672b7553d52889215e",
-      "bytes": 4836,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-OmrV4TwapOracle.txt",
@@ -1740,31 +1190,13 @@
       "path": "evidence/initial-static/native-PreVoteBudgetBook.json",
       "sha256": "434a0f2f2ea431a48c97572dceea53e29f530fe049d01dadde997d6243d0e101",
       "bytes": 193020,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-PreVoteBudgetBook.json",
-      "sha256": "434a0f2f2ea431a48c97572dceea53e29f530fe049d01dadde997d6243d0e101",
-      "bytes": 193020,
       "packedIn": "raw-static-evidence.zip"
     },
     {
       "path": "evidence/initial-static/native-PreVoteBudgetBook.txt",
       "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
       "bytes": 3444,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-PreVoteBudgetBook.txt",
-      "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
-      "bytes": 3444,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-ProtocolLiquidityVault.txt",
-      "sha256": "523dbb55acbb3d9d5bba3e7b322e5969fe34fef2b895de72686373b799eceee5",
-      "bytes": 4784,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-ProtocolLiquidityVault.txt",
@@ -1779,18 +1211,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-RwaHealthOverlay.txt",
-      "sha256": "11631a4d269eff2d98bff80cd8cd0181ff121f701678e35a3ae08c9ad5bea9f6",
-      "bytes": 4588,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-RwaStockBuyer.json",
-      "sha256": "c367fff9ac82da5579c24520c2086c622a5fa266361b139162119c897e34aea1",
-      "bytes": 175992,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-RwaStockBuyer.json",
       "sha256": "c367fff9ac82da5579c24520c2086c622a5fa266361b139162119c897e34aea1",
       "bytes": 175992,
@@ -1801,18 +1221,6 @@
       "sha256": "a703d8bb553d75de14e7e8ce31841565d46826b23b9a6f9972d088d9ec903cec",
       "bytes": 4154,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-RwaStockBuyer.txt",
-      "sha256": "a703d8bb553d75de14e7e8ce31841565d46826b23b9a6f9972d088d9ec903cec",
-      "bytes": 4154,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-SettlementGasPool.json",
-      "sha256": "8895e10afefc7ba685326d620cfdd3af51a952d8da77ad8c1805491eed255395",
-      "bytes": 391979,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-SettlementGasPool.json",
@@ -1827,22 +1235,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-SettlementGasPool.txt",
-      "sha256": "79adc77e52bfd873411e52096ed2ccfb1d99ea61cc5a87ed5f05fb0b45af2df0",
-      "bytes": 2992,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-StockTokenRegistry.json",
       "sha256": "6e0045eb5af077353a45cefa2f587d92b681ab74ad9b5c795caec6d3f71fe08e",
       "bytes": 73764,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-StockTokenRegistry.json",
-      "sha256": "6e0045eb5af077353a45cefa2f587d92b681ab74ad9b5c795caec6d3f71fe08e",
-      "bytes": 73764,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-StockTokenRegistry.txt",
@@ -1851,22 +1247,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-StockTokenRegistry.txt",
-      "sha256": "1ab50edeeeae41bed97ea63abf674d9d1cd3f7716ce64db4ddfb1cf02da9f0c4",
-      "bytes": 2335,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-StockTokenRegistryV2.json",
       "sha256": "85a2176eed528efc56fc9e0428ebb108b07cbb7dcab5db855389e615d4ede835",
       "bytes": 319655,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-StockTokenRegistryV2.json",
-      "sha256": "85a2176eed528efc56fc9e0428ebb108b07cbb7dcab5db855389e615d4ede835",
-      "bytes": 319655,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-StockTokenRegistryV2.txt",
@@ -1875,28 +1259,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/initial-static/native-StockTokenRegistryV2.txt",
-      "sha256": "ceb130651d5afece809915732792815c4639fe6e29407ae4b0ff4f90253a85c1",
-      "bytes": 5374,
-      "packedIn": null
-    },
-    {
       "path": "evidence/initial-static/native-StockVault.json",
       "sha256": "eda9425e7cc5e15df31e0cff5c37bb8e34d48f76fae6cb1d7471b21c9c5b998a",
       "bytes": 69064,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-StockVault.json",
-      "sha256": "eda9425e7cc5e15df31e0cff5c37bb8e34d48f76fae6cb1d7471b21c9c5b998a",
-      "bytes": 69064,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-StockVault.txt",
-      "sha256": "f4ab04bee8a052f49e509374c7c0a7508cae827016343da04602bcc3d3be3304",
-      "bytes": 1943,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-StockVault.txt",
@@ -1908,19 +1274,7 @@
       "path": "evidence/initial-static/native-StreetDeed.json",
       "sha256": "aa3e67aa5381bc88bd877a54bca28051e021e1371d671a08f0ad4d974c6b746b",
       "bytes": 29441,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-StreetDeed.json",
-      "sha256": "aa3e67aa5381bc88bd877a54bca28051e021e1371d671a08f0ad4d974c6b746b",
-      "bytes": 29441,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-StreetDeed.txt",
-      "sha256": "9a9ef2fc995bd719b80f17ee72ff070e26382ac12ea49e08eec430e9b6b04ed3",
-      "bytes": 1455,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-StreetDeed.txt",
@@ -1932,19 +1286,7 @@
       "path": "evidence/initial-static/native-Transmuter.json",
       "sha256": "608fc8daac44aa3007078e90efa7518f0d7b0e837b0e146dd895bedf5742d810",
       "bytes": 39955,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-Transmuter.json",
-      "sha256": "608fc8daac44aa3007078e90efa7518f0d7b0e837b0e146dd895bedf5742d810",
-      "bytes": 39955,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-Transmuter.txt",
-      "sha256": "969cc25b1a0d64886359dc0293f7a0c60452ab8563913ef621ffff93277a0c14",
-      "bytes": 2181,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-Transmuter.txt",
@@ -1956,19 +1298,7 @@
       "path": "evidence/initial-static/native-VoucherClaim.json",
       "sha256": "c0c7435ae767117399188b4cbef873882acdda3f6a1b4938410972aeb7f40fa5",
       "bytes": 21185,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/initial-static/native-VoucherClaim.json",
-      "sha256": "c0c7435ae767117399188b4cbef873882acdda3f6a1b4938410972aeb7f40fa5",
-      "bytes": 21185,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/initial-static/native-VoucherClaim.txt",
-      "sha256": "238242c2d0914ea0c3e142b6c482cb896fd673c7d921da0c3ca0cbc37c6f3a98",
-      "bytes": 1465,
-      "packedIn": null
     },
     {
       "path": "evidence/initial-static/native-VoucherClaim.txt",
@@ -3264,12 +2594,6 @@
       "path": "evidence/pre-remediation-static/ir-AcquisitionAuthority.txt",
       "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
       "bytes": 15291,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/ir-AcquisitionAuthority.txt",
-      "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
-      "bytes": 15291,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3277,12 +2601,6 @@
       "sha256": "69bc6288e313a9accb78c3eb0d602a9b45474f808f3e406d7bcc7dee42da5e35",
       "bytes": 1072635,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/ir-AcquisitionVaultCore.txt",
-      "sha256": "269edff4ae308995e54777b98e4f4f427be7daec02004e0109a3657d047379c3",
-      "bytes": 17941,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/ir-AcquisitionVaultCore.txt",
@@ -3303,12 +2621,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/ir-OmertaGenesisCoordinatorV2.txt",
-      "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de",
-      "bytes": 12115,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/ir-ProtocolLiquidityVault.json",
       "sha256": "d85218181ec5f384bbd8da4f0c3797c219e8db7ce7b1b308b88dd439eee47309",
       "bytes": 2691717,
@@ -3321,12 +2633,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/ir-ProtocolLiquidityVault.txt",
-      "sha256": "3978a97d1828a082183ad34bba848ab2bd8d5460924e387708da9bec7e301464",
-      "bytes": 18932,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/ir-RwaHealthOverlay.json",
       "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79",
       "bytes": 61499,
@@ -3336,12 +2642,6 @@
       "path": "evidence/pre-remediation-static/ir-RwaHealthOverlay.txt",
       "sha256": "a58aa21be29e75ff84d20b4b338c1685c2d33714adfaed0423e551193fc568f4",
       "bytes": 2513,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/ir-RwaHealthOverlay.txt",
-      "sha256": "a58aa21be29e75ff84d20b4b338c1685c2d33714adfaed0423e551193fc568f4",
-      "bytes": 2513,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3349,24 +2649,12 @@
       "sha256": "5eb0f56263c61af19da78bd182faa11bfbfb3c7ca4725e7beb3b351c4868f4f4",
       "bytes": 4350,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-AcquisitionAuthority.txt",
-      "sha256": "5eb0f56263c61af19da78bd182faa11bfbfb3c7ca4725e7beb3b351c4868f4f4",
-      "bytes": 4350,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-AcquisitionConstellationFactory.json",
       "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262",
       "bytes": 260278,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-AcquisitionConstellationFactory.txt",
-      "sha256": "b228c8fbdb8d5df267d29407b3dcd0bec57b6ed4d8a440a06aa869e0f8caf900",
-      "bytes": 2996,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-AcquisitionConstellationFactory.txt",
@@ -3384,12 +2672,6 @@
       "path": "evidence/pre-remediation-static/native-AcquisitionIntentExecution.txt",
       "sha256": "a0509924c2b8a43dbb9283b328c75f74be104a3bcd63fbbe2c0de686f0bc5960",
       "bytes": 1027,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-AcquisitionIntentExecution.txt",
-      "sha256": "a0509924c2b8a43dbb9283b328c75f74be104a3bcd63fbbe2c0de686f0bc5960",
-      "bytes": 1027,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3397,12 +2679,6 @@
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-AcquisitionReconciliation.txt",
-      "sha256": "34f6988a0f9c709a5947412e1fef429c7a5f13848c50e255802ed0ad21cde984",
-      "bytes": 1025,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-AcquisitionReconciliation.txt",
@@ -3423,34 +2699,16 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-AcquisitionVault.txt",
-      "sha256": "199f911f67d4332469fa2e5b46ec09d18baab370cb12ef4b704e948b122b077f",
-      "bytes": 16721,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-AcquisitionVaultCore.txt",
       "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
       "bytes": 4350,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-AcquisitionVaultCore.txt",
-      "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
-      "bytes": 4350,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-Alchemist.json",
       "sha256": "21d07189a844bfb91adf3df302bc0e1f0849e81b3ee7d3b54b439939843a71b2",
       "bytes": 383747,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-Alchemist.txt",
-      "sha256": "7d57d38b851dbe8c13178c74090fa3c196b2322ef56a1119cd2da23e55305a1e",
-      "bytes": 5067,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-Alchemist.txt",
@@ -3471,22 +2729,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-BankBufferVault.txt",
-      "sha256": "9347393ff6527b14d81156bcec6828e28841aa27d25d0c4afe19f1703153ab06",
-      "bytes": 4411,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-CollateralEscrow.json",
       "sha256": "a93e8a87152db3b056098433e067d4a04ddd999d1b4f1e228d80b62adb3df581",
       "bytes": 33389,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-CollateralEscrow.txt",
-      "sha256": "dca51a83b97188d194e353d125b1eb581f831fc71d9a309d9bfb240c81e9806d",
-      "bytes": 2047,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-CollateralEscrow.txt",
@@ -3504,12 +2750,6 @@
       "path": "evidence/pre-remediation-static/native-Denari.txt",
       "sha256": "63bce87577786ebae0cfc96a31a2cc5173a69887b04de9ae12c6480576a23590",
       "bytes": 1344,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-Denari.txt",
-      "sha256": "63bce87577786ebae0cfc96a31a2cc5173a69887b04de9ae12c6480576a23590",
-      "bytes": 1344,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3522,12 +2762,6 @@
       "path": "evidence/pre-remediation-static/native-DynastyNFT.txt",
       "sha256": "61ef86e9da0cec19b58028fcc63937afb867f0f24fede0cdbf4c70543ebe97a2",
       "bytes": 1455,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-DynastyNFT.txt",
-      "sha256": "61ef86e9da0cec19b58028fcc63937afb867f0f24fede0cdbf4c70543ebe97a2",
-      "bytes": 1455,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3535,12 +2769,6 @@
       "sha256": "04b921669f1ca5d2af732c9486858f562ba542ba4bd40c141fa09f8154d9c0d3",
       "bytes": 69926,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-FeeRevenueRouter.txt",
-      "sha256": "a3d6af32d4af009a1d67727c2328ae640e3882719adde9ec20a165ea216820f3",
-      "bytes": 2652,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-FeeRevenueRouter.txt",
@@ -3561,22 +2789,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-FlashGuard.txt",
-      "sha256": "199cd22cb8e54f93db0e3677b97cd8b77606128d202446742bb5f3032e511b6b",
-      "bytes": 2177,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-GearVault.json",
       "sha256": "5c360d1579d32bb3b1b2f39d52a72112f82b4749cedcfb38b0c21c43e49c274b",
       "bytes": 55768,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-GearVault.txt",
-      "sha256": "88940a932e9ae88a9aedd462bd98ef58b45aa68fb8f283b97ef43d833b641775",
-      "bytes": 1428,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-GearVault.txt",
@@ -3594,12 +2810,6 @@
       "path": "evidence/pre-remediation-static/native-GenesisLifecycleController.txt",
       "sha256": "17ef40bba360af298ce9868314e437ab11905452391d4e2da5a207078cfd2bfb",
       "bytes": 4264,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-GenesisLifecycleController.txt",
-      "sha256": "17ef40bba360af298ce9868314e437ab11905452391d4e2da5a207078cfd2bfb",
-      "bytes": 4264,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3607,12 +2817,6 @@
       "sha256": "743ca8bbb42053cd11193b561dc2fdca85ff61ccdad698ebb9f9acf136f20082",
       "bytes": 21124,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-GenesisOracle.txt",
-      "sha256": "84b3475a22f7c5a6d83622f4a680cd85063d624f181948008a6725559aecf7f4",
-      "bytes": 1718,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-GenesisOracle.txt",
@@ -3633,12 +2837,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-GenesisPlayerSale.txt",
-      "sha256": "8baac50a5ef05d4369f39e78b808bd2bbbc594c243698105a184eee3abe080ad",
-      "bytes": 3932,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-GenesisProceedsSplitter.json",
       "sha256": "c617fc3bce5a5fb5cf18699d0422fe21e99fbf9303826eebc9de897f8839cc5a",
       "bytes": 60208,
@@ -3651,22 +2849,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-GenesisProceedsSplitter.txt",
-      "sha256": "d477da03b47aa589c871d004d465a0978142e57ec72090fe9ce274f82b76c9ad",
-      "bytes": 2510,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-GenesisWalletCap.json",
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-GenesisWalletCap.txt",
-      "sha256": "72faaa37857fd257b38af6c1aec7107734f147062cc818e9e680554e0f10e325",
-      "bytes": 1007,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-GenesisWalletCap.txt",
@@ -3684,12 +2870,6 @@
       "path": "evidence/pre-remediation-static/native-IOmertaMarketStateV2.txt",
       "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
       "bytes": 1045,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-IOmertaMarketStateV2.txt",
-      "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
-      "bytes": 1045,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3697,12 +2877,6 @@
       "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
       "bytes": 59,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-IOmrOracle.txt",
-      "sha256": "e13d269d23857135531a40183f24c05672ef4f9d46d207eb8f09a363773bb3c3",
-      "bytes": 995,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-IOmrOracle.txt",
@@ -3723,12 +2897,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-KeeperGasVault.txt",
-      "sha256": "3780b43b239dcf19665deb8790b4b765edbe9bbc193ec4fa73d1f224c0cd071f",
-      "bytes": 2632,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-ledger.json",
       "sha256": "ac9a983da590cfcbeda56ce8b83c034cf69a37dd6928bb576f82afb3d68c2dc0",
       "bytes": 3871,
@@ -3747,12 +2915,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-LiquidityBuybackExecutor.txt",
-      "sha256": "bba0d37dcfb40be64f504dfd4bd9086eb10a7919294ae0c14e08e3d57f518087",
-      "bytes": 5965,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmertaArbitrageV2.json",
       "sha256": "61b955f3807e4e52fb6f29b7f6bd7996326a36552d513fce96bba9193435e517",
       "bytes": 82428,
@@ -3763,12 +2925,6 @@
       "sha256": "e2d39ffb1a6d70604e3bcc294801b63fdfa7d76b66cc29dd1a65ddbba0d774bf",
       "bytes": 2885,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaArbitrageV2.txt",
-      "sha256": "e2d39ffb1a6d70604e3bcc294801b63fdfa7d76b66cc29dd1a65ddbba0d774bf",
-      "bytes": 2885,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaBond.json",
@@ -3783,12 +2939,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-OmertaBond.txt",
-      "sha256": "cf13e28894fdddec0e3c1397088d3050e26ba3a8d896466adde1832b8be60ef7",
-      "bytes": 4361,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmertaCommitmentVaultV2.json",
       "sha256": "bb56cd1663b7f765c15919ec1af42f2b3c43c63da8f46e3d14fe12e9c4753a57",
       "bytes": 474657,
@@ -3801,22 +2951,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-OmertaCommitmentVaultV2.txt",
-      "sha256": "3191cdfa83fc5e3dacd893f45ee4bb556d199e59b7d8b3d56ce44a9d4caf62d2",
-      "bytes": 8376,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmertaFees.json",
       "sha256": "327385da41fab402d73d8ff6e762d0fa58041dbf3d2a5fdc877d7f07da5e2bb7",
       "bytes": 112827,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaFees.txt",
-      "sha256": "0ec9862efb349a14fc484b57202e4116de5c845ae5e8f669afcbd302498a82e9",
-      "bytes": 3032,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaFees.txt",
@@ -3834,19 +2972,7 @@
       "path": "evidence/pre-remediation-static/native-OmertaGameSettlementV2.txt",
       "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
       "bytes": 18076,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaGameSettlementV2.txt",
-      "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
-      "bytes": 18076,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaGenesisCoordinatorV2.txt",
-      "sha256": "9c60de3934092dcdaf92ec0af8779831ba6f17f6285a3630fe23327835af397d",
-      "bytes": 4722,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaGenesisCoordinatorV2.txt",
@@ -3859,12 +2985,6 @@
       "sha256": "aa01bf972fcd1be7f1ed1001685265885066fbbc3bc58bafe573c8a52e2dbe6e",
       "bytes": 14631341,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaGuardedAuction.txt",
-      "sha256": "ecc43be5e615e53fe930f3e789dda7868c3b7e63321a2b1c7847321bf372b83a",
-      "bytes": 67114,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaGuardedAuction.txt",
@@ -3885,22 +3005,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-OmertaHook.txt",
-      "sha256": "90b3cf4154fff00b0be23f2c4bd9fe44c6298e6d8e2cd1caeb9a4fc4c6fe3335",
-      "bytes": 4591,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmertaHookV2.json",
       "sha256": "d5f2e8c3da28d8b1e31279dc71d269facc729c5cc7aad453c814bda980f5fc9a",
       "bytes": 471332,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaHookV2.txt",
-      "sha256": "f41fce33b7649f506f04880f3ff454dbfa12b84b1dd2b7d83b7e1db8d1cdb952",
-      "bytes": 5939,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaHookV2.txt",
@@ -3921,22 +3029,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-OmertaInventoryBondV2.txt",
-      "sha256": "9d64e621e75bbe8bc04efda3758c1d852697bd5b38351391a76ee0c972a1e466",
-      "bytes": 3560,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmertaMarketStateV2.json",
       "sha256": "34854c1ce8026e1f14653069cb0b64f79254c2c840a019f04a264b872a6c893b",
       "bytes": 541922,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaMarketStateV2.txt",
-      "sha256": "23096852adf1ed503112f243f9dad91d4408ba42fbefe49eb6ef3dbaa28e8c3e",
-      "bytes": 7881,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaMarketStateV2.txt",
@@ -3954,12 +3050,6 @@
       "path": "evidence/pre-remediation-static/native-OmertaReserveFundingV2.txt",
       "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
       "bytes": 9585,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaReserveFundingV2.txt",
-      "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
-      "bytes": 9585,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -3967,12 +3057,6 @@
       "sha256": "0c0ff00d95515cf18a7d8472b90361f67149f7550179fca27746b283ab95c185",
       "bytes": 1133096,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaStabilityControllerV2.txt",
-      "sha256": "ef421f33e3534b0a5865faa5f509ce5ae861fe731575157d8455ac1c4543cd26",
-      "bytes": 9002,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmertaStabilityControllerV2.txt",
@@ -3990,12 +3074,6 @@
       "path": "evidence/pre-remediation-static/native-OmertaTurfFeeBridgeV2.txt",
       "sha256": "9eec8b61da64129dc047bb43365d0f157b364635926b89136127b1793dd244d2",
       "bytes": 15950,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaTurfFeeBridgeV2.txt",
-      "sha256": "9eec8b61da64129dc047bb43365d0f157b364635926b89136127b1793dd244d2",
-      "bytes": 15950,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -4008,12 +3086,6 @@
       "path": "evidence/pre-remediation-static/native-OmertaTurfV2.txt",
       "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
       "bytes": 5787,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmertaTurfV2.txt",
-      "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
-      "bytes": 5787,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -4021,12 +3093,6 @@
       "sha256": "56512a4fb402967a01a1e2e884f27f30aa9961d9f7aa5646daf9b5dd44dd4eb5",
       "bytes": 72497,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OMR.txt",
-      "sha256": "675597bbba89cc96f2e95185f22abfac6740d69ad4174a03f492d5177a27a6f3",
-      "bytes": 2060,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OMR.txt",
@@ -4047,22 +3113,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-OMRStaking.txt",
-      "sha256": "4a5aaaa9d61ab36928f2e33fec7eb8aa0c53873984f6e405d8f868a950460a55",
-      "bytes": 1685,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-OmrTwapOracle.json",
       "sha256": "2edfd8b3480d3986444ecb1ffad953d6cf872efd4b59bac6da13227f61fc450b",
       "bytes": 120043,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmrTwapOracle.txt",
-      "sha256": "fad67efec82814ece8a197eae1f6af7ffab1632a95214fa5ee4190e766b8bd2f",
-      "bytes": 3082,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-OmrTwapOracle.txt",
@@ -4080,12 +3134,6 @@
       "path": "evidence/pre-remediation-static/native-OmrV4TwapOracle.txt",
       "sha256": "5886edc33a0f687f133c89d419fff8c89da75bcdca5279eb5f53e97bf2a6f880",
       "bytes": 4836,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-OmrV4TwapOracle.txt",
-      "sha256": "5886edc33a0f687f133c89d419fff8c89da75bcdca5279eb5f53e97bf2a6f880",
-      "bytes": 4836,
       "packedIn": "raw-static-evidence.zip"
     },
     {
@@ -4098,31 +3146,13 @@
       "path": "evidence/pre-remediation-static/native-PreVoteBudgetBook.txt",
       "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
       "bytes": 3444,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-PreVoteBudgetBook.txt",
-      "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
-      "bytes": 3444,
       "packedIn": "raw-static-evidence.zip"
     },
     {
       "path": "evidence/pre-remediation-static/native-ProtocolLiquidityVault.txt",
       "sha256": "523dbb55acbb3d9d5bba3e7b322e5969fe34fef2b895de72686373b799eceee5",
       "bytes": 4784,
-      "packedIn": null
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-ProtocolLiquidityVault.txt",
-      "sha256": "523dbb55acbb3d9d5bba3e7b322e5969fe34fef2b895de72686373b799eceee5",
-      "bytes": 4784,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-RwaHealthOverlay.txt",
-      "sha256": "11631a4d269eff2d98bff80cd8cd0181ff121f701678e35a3ae08c9ad5bea9f6",
-      "bytes": 4588,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-RwaHealthOverlay.txt",
@@ -4143,12 +3173,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-RwaStockBuyer.txt",
-      "sha256": "a703d8bb553d75de14e7e8ce31841565d46826b23b9a6f9972d088d9ec903cec",
-      "bytes": 4154,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-SettlementGasPool.json",
       "sha256": "8895e10afefc7ba685326d620cfdd3af51a952d8da77ad8c1805491eed255395",
       "bytes": 391979,
@@ -4159,12 +3183,6 @@
       "sha256": "79adc77e52bfd873411e52096ed2ccfb1d99ea61cc5a87ed5f05fb0b45af2df0",
       "bytes": 2992,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-SettlementGasPool.txt",
-      "sha256": "79adc77e52bfd873411e52096ed2ccfb1d99ea61cc5a87ed5f05fb0b45af2df0",
-      "bytes": 2992,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-StockTokenRegistry.json",
@@ -4179,22 +3197,10 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-StockTokenRegistry.txt",
-      "sha256": "1ab50edeeeae41bed97ea63abf674d9d1cd3f7716ce64db4ddfb1cf02da9f0c4",
-      "bytes": 2335,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-StockTokenRegistryV2.json",
       "sha256": "85a2176eed528efc56fc9e0428ebb108b07cbb7dcab5db855389e615d4ede835",
       "bytes": 319655,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-StockTokenRegistryV2.txt",
-      "sha256": "ceb130651d5afece809915732792815c4639fe6e29407ae4b0ff4f90253a85c1",
-      "bytes": 5374,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-StockTokenRegistryV2.txt",
@@ -4215,12 +3221,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-StockVault.txt",
-      "sha256": "f4ab04bee8a052f49e509374c7c0a7508cae827016343da04602bcc3d3be3304",
-      "bytes": 1943,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-StreetDeed.json",
       "sha256": "87bbe90c00fdc6acecd78a6eaa523233944ecf228df842aefc147e2fbb41951d",
       "bytes": 29995,
@@ -4231,12 +3231,6 @@
       "sha256": "7edfb5deb4219bc2f0d2b969aca588f1a4fce78caeb7b699e03463bde0aa41a3",
       "bytes": 1455,
       "packedIn": "raw-static-evidence.zip"
-    },
-    {
-      "path": "evidence/pre-remediation-static/native-StreetDeed.txt",
-      "sha256": "7edfb5deb4219bc2f0d2b969aca588f1a4fce78caeb7b699e03463bde0aa41a3",
-      "bytes": 1455,
-      "packedIn": null
     },
     {
       "path": "evidence/pre-remediation-static/native-Transmuter.json",
@@ -4251,12 +3245,6 @@
       "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-Transmuter.txt",
-      "sha256": "969cc25b1a0d64886359dc0293f7a0c60452ab8563913ef621ffff93277a0c14",
-      "bytes": 2181,
-      "packedIn": null
-    },
-    {
       "path": "evidence/pre-remediation-static/native-VoucherClaim.json",
       "sha256": "c0c7435ae767117399188b4cbef873882acdda3f6a1b4938410972aeb7f40fa5",
       "bytes": 21185,
@@ -4266,10 +3254,1024 @@
       "path": "evidence/pre-remediation-static/native-VoucherClaim.txt",
       "sha256": "238242c2d0914ea0c3e142b6c482cb896fd673c7d921da0c3ca0cbc37c6f3a98",
       "bytes": 1465,
-      "packedIn": null
+      "packedIn": "raw-static-evidence.zip"
     },
     {
-      "path": "evidence/pre-remediation-static/native-VoucherClaim.txt",
+      "path": "evidence/reintroduced-static/initial-static/ir-AcquisitionAuthority.json",
+      "sha256": "0ea9a2924fee0963598bc141f319dac048d36d32b2140729158de35046d7cd89",
+      "bytes": 4401809,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-AcquisitionAuthority.txt",
+      "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
+      "bytes": 15291,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-AcquisitionVaultCore.json",
+      "sha256": "69bc6288e313a9accb78c3eb0d602a9b45474f808f3e406d7bcc7dee42da5e35",
+      "bytes": 1072635,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-AcquisitionVaultCore.txt",
+      "sha256": "269edff4ae308995e54777b98e4f4f427be7daec02004e0109a3657d047379c3",
+      "bytes": 17941,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-OmertaGenesisCoordinatorV2.json",
+      "sha256": "72702429630a5b8359b4c4436af9116b3e281665cb130a78adbab183260da5f0",
+      "bytes": 552520,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-OmertaGenesisCoordinatorV2.txt",
+      "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de",
+      "bytes": 12115,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-ProtocolLiquidityVault.json",
+      "sha256": "d85218181ec5f384bbd8da4f0c3797c219e8db7ce7b1b308b88dd439eee47309",
+      "bytes": 2691717,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-ProtocolLiquidityVault.txt",
+      "sha256": "3978a97d1828a082183ad34bba848ab2bd8d5460924e387708da9bec7e301464",
+      "bytes": 18932,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-RwaHealthOverlay.json",
+      "sha256": "f54777958dd2761bfdf36b18ecbfbfdcea8dd5e1137a9a1218acc5df3e456a79",
+      "bytes": 61499,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/ir-RwaHealthOverlay.txt",
+      "sha256": "a58aa21be29e75ff84d20b4b338c1685c2d33714adfaed0423e551193fc568f4",
+      "bytes": 2513,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionAuthority.txt",
+      "sha256": "5eb0f56263c61af19da78bd182faa11bfbfb3c7ca4725e7beb3b351c4868f4f4",
+      "bytes": 4350,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionConstellationFactory.json",
+      "sha256": "dc230de31e3eca4be7000cb5cac2cedb7991dfa48b226415e2b059bb82485262",
+      "bytes": 260278,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionConstellationFactory.txt",
+      "sha256": "b228c8fbdb8d5df267d29407b3dcd0bec57b6ed4d8a440a06aa869e0f8caf900",
+      "bytes": 2996,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionIntentExecution.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "bytes": 59,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionIntentExecution.txt",
+      "sha256": "a0509924c2b8a43dbb9283b328c75f74be104a3bcd63fbbe2c0de686f0bc5960",
+      "bytes": 1027,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionReconciliation.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "bytes": 59,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionReconciliation.txt",
+      "sha256": "34f6988a0f9c709a5947412e1fef429c7a5f13848c50e255802ed0ad21cde984",
+      "bytes": 1025,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionVault.json",
+      "sha256": "909a8220906eb1ab7ba73ad32a5131a4f66e960db26c71182e5f77e309c8d5d2",
+      "bytes": 3361841,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionVault.txt",
+      "sha256": "199f911f67d4332469fa2e5b46ec09d18baab370cb12ef4b704e948b122b077f",
+      "bytes": 16721,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-AcquisitionVaultCore.txt",
+      "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
+      "bytes": 4350,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Alchemist.json",
+      "sha256": "21d07189a844bfb91adf3df302bc0e1f0849e81b3ee7d3b54b439939843a71b2",
+      "bytes": 383747,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Alchemist.txt",
+      "sha256": "7d57d38b851dbe8c13178c74090fa3c196b2322ef56a1119cd2da23e55305a1e",
+      "bytes": 5067,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-BankBufferVault.json",
+      "sha256": "e44459e97fdcb5417e9d06d2762ea806eccf9230b4c6a8e92a0802e769f8c165",
+      "bytes": 119289,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-BankBufferVault.txt",
+      "sha256": "9347393ff6527b14d81156bcec6828e28841aa27d25d0c4afe19f1703153ab06",
+      "bytes": 4411,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-CollateralEscrow.json",
+      "sha256": "a93e8a87152db3b056098433e067d4a04ddd999d1b4f1e228d80b62adb3df581",
+      "bytes": 33389,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-CollateralEscrow.txt",
+      "sha256": "dca51a83b97188d194e353d125b1eb581f831fc71d9a309d9bfb240c81e9806d",
+      "bytes": 2047,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Denari.json",
+      "sha256": "dad8f6f27676e24a7e7bdca8c9fa5baf1d23c9c391dfce847319ff5fdaba0d67",
+      "bytes": 15657,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Denari.txt",
+      "sha256": "63bce87577786ebae0cfc96a31a2cc5173a69887b04de9ae12c6480576a23590",
+      "bytes": 1344,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-DynastyNFT.json",
+      "sha256": "2f4633855bae5d7b63ce2950a46c75740e869c3c615601bb80a4084b79d68c87",
+      "bytes": 19101,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-DynastyNFT.txt",
+      "sha256": "61ef86e9da0cec19b58028fcc63937afb867f0f24fede0cdbf4c70543ebe97a2",
+      "bytes": 1455,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-FeeRevenueRouter.json",
+      "sha256": "04b921669f1ca5d2af732c9486858f562ba542ba4bd40c141fa09f8154d9c0d3",
+      "bytes": 69926,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-FeeRevenueRouter.txt",
+      "sha256": "a3d6af32d4af009a1d67727c2328ae640e3882719adde9ec20a165ea216820f3",
+      "bytes": 2652,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-FlashGuard.json",
+      "sha256": "bac07e3343743ecc31f9cd02e6edd52c449900e0ef9cf8e008ae46e354450a7b",
+      "bytes": 33491,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-FlashGuard.txt",
+      "sha256": "199cd22cb8e54f93db0e3677b97cd8b77606128d202446742bb5f3032e511b6b",
+      "bytes": 2177,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GearVault.json",
+      "sha256": "5c360d1579d32bb3b1b2f39d52a72112f82b4749cedcfb38b0c21c43e49c274b",
+      "bytes": 55768,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GearVault.txt",
+      "sha256": "88940a932e9ae88a9aedd462bd98ef58b45aa68fb8f283b97ef43d833b641775",
+      "bytes": 1428,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisLifecycleController.json",
+      "sha256": "6224fd39aa5dc710564987dc70fd92287d031b6b8c95d60e8840d7b51fde5264",
+      "bytes": 127646,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisLifecycleController.txt",
+      "sha256": "17ef40bba360af298ce9868314e437ab11905452391d4e2da5a207078cfd2bfb",
+      "bytes": 4264,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisOracle.json",
+      "sha256": "743ca8bbb42053cd11193b561dc2fdca85ff61ccdad698ebb9f9acf136f20082",
+      "bytes": 21124,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisOracle.txt",
+      "sha256": "84b3475a22f7c5a6d83622f4a680cd85063d624f181948008a6725559aecf7f4",
+      "bytes": 1718,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisPlayerSale.json",
+      "sha256": "5aaa02a4f613c99389f1af03700ecd5891e195203722e9f3884301e88699602e",
+      "bytes": 98163,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisPlayerSale.txt",
+      "sha256": "8baac50a5ef05d4369f39e78b808bd2bbbc594c243698105a184eee3abe080ad",
+      "bytes": 3932,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisProceedsSplitter.json",
+      "sha256": "c617fc3bce5a5fb5cf18699d0422fe21e99fbf9303826eebc9de897f8839cc5a",
+      "bytes": 60208,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisProceedsSplitter.txt",
+      "sha256": "d477da03b47aa589c871d004d465a0978142e57ec72090fe9ce274f82b76c9ad",
+      "bytes": 2510,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisWalletCap.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "bytes": 59,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-GenesisWalletCap.txt",
+      "sha256": "72faaa37857fd257b38af6c1aec7107734f147062cc818e9e680554e0f10e325",
+      "bytes": 1007,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-IOmertaMarketStateV2.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "bytes": 59,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-IOmertaMarketStateV2.txt",
+      "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
+      "bytes": 1045,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-IOmrOracle.json",
+      "sha256": "58221e443233e71b0b8e76df489b483221faff4c83fb0d5e8e4b6b1631c484da",
+      "bytes": 59,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-IOmrOracle.txt",
+      "sha256": "e13d269d23857135531a40183f24c05672ef4f9d46d207eb8f09a363773bb3c3",
+      "bytes": 995,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-KeeperGasVault.json",
+      "sha256": "345737575fd7b88b868bae5835ab2433d932a2f4f9a7b297b8135f2647747d0a",
+      "bytes": 56080,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-KeeperGasVault.txt",
+      "sha256": "3780b43b239dcf19665deb8790b4b765edbe9bbc193ec4fa73d1f224c0cd071f",
+      "bytes": 2632,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-ledger.json",
+      "sha256": "ac9a983da590cfcbeda56ce8b83c034cf69a37dd6928bb576f82afb3d68c2dc0",
+      "bytes": 3871,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-LiquidityBuybackExecutor.json",
+      "sha256": "01e523f1c75ab749d6c43dd59c8829afe62c7965ba6c5d0614b9ec3792d38995",
+      "bytes": 248049,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-LiquidityBuybackExecutor.txt",
+      "sha256": "bba0d37dcfb40be64f504dfd4bd9086eb10a7919294ae0c14e08e3d57f518087",
+      "bytes": 5965,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaArbitrageV2.json",
+      "sha256": "61b955f3807e4e52fb6f29b7f6bd7996326a36552d513fce96bba9193435e517",
+      "bytes": 82428,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaArbitrageV2.txt",
+      "sha256": "e2d39ffb1a6d70604e3bcc294801b63fdfa7d76b66cc29dd1a65ddbba0d774bf",
+      "bytes": 2885,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaBond.json",
+      "sha256": "2994b855b038e5dd6a6b6959fcb2edd25517e264d128ccc4d7493c8d9f15a662",
+      "bytes": 490582,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaBond.txt",
+      "sha256": "cf13e28894fdddec0e3c1397088d3050e26ba3a8d896466adde1832b8be60ef7",
+      "bytes": 4361,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaCommitmentVaultV2.json",
+      "sha256": "bb56cd1663b7f765c15919ec1af42f2b3c43c63da8f46e3d14fe12e9c4753a57",
+      "bytes": 474657,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaCommitmentVaultV2.txt",
+      "sha256": "3191cdfa83fc5e3dacd893f45ee4bb556d199e59b7d8b3d56ce44a9d4caf62d2",
+      "bytes": 8376,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaFees.json",
+      "sha256": "327385da41fab402d73d8ff6e762d0fa58041dbf3d2a5fdc877d7f07da5e2bb7",
+      "bytes": 112827,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaFees.txt",
+      "sha256": "0ec9862efb349a14fc484b57202e4116de5c845ae5e8f669afcbd302498a82e9",
+      "bytes": 3032,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaGameSettlementV2.json",
+      "sha256": "506d7705b083c1a553a77b80fbb956eb7de22e50186663952e248749e64576f9",
+      "bytes": 1742964,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaGameSettlementV2.txt",
+      "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
+      "bytes": 18076,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaGenesisCoordinatorV2.txt",
+      "sha256": "9c60de3934092dcdaf92ec0af8779831ba6f17f6285a3630fe23327835af397d",
+      "bytes": 4722,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaGuardedAuction.json",
+      "sha256": "b3490abc8e92df3d4b11310f794a0b79da68de037faf9bdc660dfe357144e713",
+      "bytes": 14626299,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaGuardedAuction.txt",
+      "sha256": "40a85b3ffe5063cd588c40e66b1af6d1e3cbb71c815304443576a70ea890747f",
+      "bytes": 67114,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaHook.json",
+      "sha256": "b0f2b5c1962117bb3f7708d2788f5952bac6825e531f96d918dba5972c700e1b",
+      "bytes": 459136,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaHook.txt",
+      "sha256": "90b3cf4154fff00b0be23f2c4bd9fe44c6298e6d8e2cd1caeb9a4fc4c6fe3335",
+      "bytes": 4591,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaHookV2.json",
+      "sha256": "d5f2e8c3da28d8b1e31279dc71d269facc729c5cc7aad453c814bda980f5fc9a",
+      "bytes": 471332,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaHookV2.txt",
+      "sha256": "f41fce33b7649f506f04880f3ff454dbfa12b84b1dd2b7d83b7e1db8d1cdb952",
+      "bytes": 5939,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaInventoryBondV2.json",
+      "sha256": "6da8efe394a2dc806d3529841f23abc8d1a1eb692f755b45796e11fca18c7899",
+      "bytes": 145604,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaInventoryBondV2.txt",
+      "sha256": "9d64e621e75bbe8bc04efda3758c1d852697bd5b38351391a76ee0c972a1e466",
+      "bytes": 3560,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaMarketStateV2.json",
+      "sha256": "34854c1ce8026e1f14653069cb0b64f79254c2c840a019f04a264b872a6c893b",
+      "bytes": 541922,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaMarketStateV2.txt",
+      "sha256": "23096852adf1ed503112f243f9dad91d4408ba42fbefe49eb6ef3dbaa28e8c3e",
+      "bytes": 7881,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaReserveFundingV2.json",
+      "sha256": "ef7402c7926b5fe58d6af7ac1a4eed74b49e2976d13cbdf54ae90cad968e117c",
+      "bytes": 1149119,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaReserveFundingV2.txt",
+      "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
+      "bytes": 9585,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaStabilityControllerV2.json",
+      "sha256": "0c0ff00d95515cf18a7d8472b90361f67149f7550179fca27746b283ab95c185",
+      "bytes": 1133096,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaStabilityControllerV2.txt",
+      "sha256": "ef421f33e3534b0a5865faa5f509ce5ae861fe731575157d8455ac1c4543cd26",
+      "bytes": 9002,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaTurfFeeBridgeV2.json",
+      "sha256": "a356867a47456adfd83bcc9c617bd4eeb02f026176bc9f105311f37b6f276d1c",
+      "bytes": 1661485,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaTurfFeeBridgeV2.txt",
+      "sha256": "9eec8b61da64129dc047bb43365d0f157b364635926b89136127b1793dd244d2",
+      "bytes": 15950,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaTurfV2.json",
+      "sha256": "31841faee15487e12f19d5b15a5155ec274ef9003a8a291993a54ad68bebc73b",
+      "bytes": 375338,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmertaTurfV2.txt",
+      "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
+      "bytes": 5787,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OMR.json",
+      "sha256": "56512a4fb402967a01a1e2e884f27f30aa9961d9f7aa5646daf9b5dd44dd4eb5",
+      "bytes": 72497,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OMR.txt",
+      "sha256": "675597bbba89cc96f2e95185f22abfac6740d69ad4174a03f492d5177a27a6f3",
+      "bytes": 2060,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OMRStaking.json",
+      "sha256": "a34634486bb5329f79705c716146435db359ff55d5fa069392018fb1f46e7713",
+      "bytes": 37539,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OMRStaking.txt",
+      "sha256": "4a5aaaa9d61ab36928f2e33fec7eb8aa0c53873984f6e405d8f868a950460a55",
+      "bytes": 1685,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmrTwapOracle.json",
+      "sha256": "48d5159fa39b73bbfba83ab2e98836c7e8c1eaee765dbd1c1e36a63e8baae283",
+      "bytes": 119147,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmrTwapOracle.txt",
+      "sha256": "68e264f76cbba606da5557e4522ab518957e1302b9774a2701a59852d14ec44c",
+      "bytes": 3082,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmrV4TwapOracle.json",
+      "sha256": "0805545253ffa19d420e90fea2b0797b667d378d96598084b24117327a55eaf3",
+      "bytes": 465775,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-OmrV4TwapOracle.txt",
+      "sha256": "5fa32d2e138cfae4f6da1ea5778d04339c7360254f5f25672b7553d52889215e",
+      "bytes": 4836,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-PreVoteBudgetBook.json",
+      "sha256": "434a0f2f2ea431a48c97572dceea53e29f530fe049d01dadde997d6243d0e101",
+      "bytes": 193020,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-PreVoteBudgetBook.txt",
+      "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
+      "bytes": 3444,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-ProtocolLiquidityVault.txt",
+      "sha256": "523dbb55acbb3d9d5bba3e7b322e5969fe34fef2b895de72686373b799eceee5",
+      "bytes": 4784,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-RwaHealthOverlay.txt",
+      "sha256": "11631a4d269eff2d98bff80cd8cd0181ff121f701678e35a3ae08c9ad5bea9f6",
+      "bytes": 4588,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-RwaStockBuyer.json",
+      "sha256": "c367fff9ac82da5579c24520c2086c622a5fa266361b139162119c897e34aea1",
+      "bytes": 175992,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-RwaStockBuyer.txt",
+      "sha256": "a703d8bb553d75de14e7e8ce31841565d46826b23b9a6f9972d088d9ec903cec",
+      "bytes": 4154,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-SettlementGasPool.json",
+      "sha256": "8895e10afefc7ba685326d620cfdd3af51a952d8da77ad8c1805491eed255395",
+      "bytes": 391979,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-SettlementGasPool.txt",
+      "sha256": "79adc77e52bfd873411e52096ed2ccfb1d99ea61cc5a87ed5f05fb0b45af2df0",
+      "bytes": 2992,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockTokenRegistry.json",
+      "sha256": "6e0045eb5af077353a45cefa2f587d92b681ab74ad9b5c795caec6d3f71fe08e",
+      "bytes": 73764,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockTokenRegistry.txt",
+      "sha256": "1ab50edeeeae41bed97ea63abf674d9d1cd3f7716ce64db4ddfb1cf02da9f0c4",
+      "bytes": 2335,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockTokenRegistryV2.json",
+      "sha256": "85a2176eed528efc56fc9e0428ebb108b07cbb7dcab5db855389e615d4ede835",
+      "bytes": 319655,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockTokenRegistryV2.txt",
+      "sha256": "ceb130651d5afece809915732792815c4639fe6e29407ae4b0ff4f90253a85c1",
+      "bytes": 5374,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockVault.json",
+      "sha256": "eda9425e7cc5e15df31e0cff5c37bb8e34d48f76fae6cb1d7471b21c9c5b998a",
+      "bytes": 69064,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StockVault.txt",
+      "sha256": "f4ab04bee8a052f49e509374c7c0a7508cae827016343da04602bcc3d3be3304",
+      "bytes": 1943,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StreetDeed.json",
+      "sha256": "aa3e67aa5381bc88bd877a54bca28051e021e1371d671a08f0ad4d974c6b746b",
+      "bytes": 29441,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-StreetDeed.txt",
+      "sha256": "9a9ef2fc995bd719b80f17ee72ff070e26382ac12ea49e08eec430e9b6b04ed3",
+      "bytes": 1455,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Transmuter.json",
+      "sha256": "608fc8daac44aa3007078e90efa7518f0d7b0e837b0e146dd895bedf5742d810",
+      "bytes": 39955,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-Transmuter.txt",
+      "sha256": "969cc25b1a0d64886359dc0293f7a0c60452ab8563913ef621ffff93277a0c14",
+      "bytes": 2181,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-VoucherClaim.json",
+      "sha256": "c0c7435ae767117399188b4cbef873882acdda3f6a1b4938410972aeb7f40fa5",
+      "bytes": 21185,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/initial-static/native-VoucherClaim.txt",
+      "sha256": "238242c2d0914ea0c3e142b6c482cb896fd673c7d921da0c3ca0cbc37c6f3a98",
+      "bytes": 1465,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/ir-AcquisitionAuthority.txt",
+      "sha256": "48ae7f77b5fb8aac320c5d3ecffebaa61a3cea0e8e27ebfd0d19ab20a5f1d5bf",
+      "bytes": 15291,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/ir-AcquisitionVaultCore.txt",
+      "sha256": "269edff4ae308995e54777b98e4f4f427be7daec02004e0109a3657d047379c3",
+      "bytes": 17941,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/ir-OmertaGenesisCoordinatorV2.txt",
+      "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de",
+      "bytes": 12115,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/ir-ProtocolLiquidityVault.txt",
+      "sha256": "3978a97d1828a082183ad34bba848ab2bd8d5460924e387708da9bec7e301464",
+      "bytes": 18932,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/ir-RwaHealthOverlay.txt",
+      "sha256": "a58aa21be29e75ff84d20b4b338c1685c2d33714adfaed0423e551193fc568f4",
+      "bytes": 2513,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionAuthority.txt",
+      "sha256": "5eb0f56263c61af19da78bd182faa11bfbfb3c7ca4725e7beb3b351c4868f4f4",
+      "bytes": 4350,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionConstellationFactory.txt",
+      "sha256": "b228c8fbdb8d5df267d29407b3dcd0bec57b6ed4d8a440a06aa869e0f8caf900",
+      "bytes": 2996,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionIntentExecution.txt",
+      "sha256": "a0509924c2b8a43dbb9283b328c75f74be104a3bcd63fbbe2c0de686f0bc5960",
+      "bytes": 1027,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionReconciliation.txt",
+      "sha256": "34f6988a0f9c709a5947412e1fef429c7a5f13848c50e255802ed0ad21cde984",
+      "bytes": 1025,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionVault.txt",
+      "sha256": "199f911f67d4332469fa2e5b46ec09d18baab370cb12ef4b704e948b122b077f",
+      "bytes": 16721,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-AcquisitionVaultCore.txt",
+      "sha256": "2f36be0b873eb4ff989e7a9f94091ea314f85309e5cae7521d87e2e886aadc5a",
+      "bytes": 4350,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-Alchemist.txt",
+      "sha256": "7d57d38b851dbe8c13178c74090fa3c196b2322ef56a1119cd2da23e55305a1e",
+      "bytes": 5067,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-BankBufferVault.txt",
+      "sha256": "9347393ff6527b14d81156bcec6828e28841aa27d25d0c4afe19f1703153ab06",
+      "bytes": 4411,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-CollateralEscrow.txt",
+      "sha256": "dca51a83b97188d194e353d125b1eb581f831fc71d9a309d9bfb240c81e9806d",
+      "bytes": 2047,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-Denari.txt",
+      "sha256": "63bce87577786ebae0cfc96a31a2cc5173a69887b04de9ae12c6480576a23590",
+      "bytes": 1344,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-DynastyNFT.txt",
+      "sha256": "61ef86e9da0cec19b58028fcc63937afb867f0f24fede0cdbf4c70543ebe97a2",
+      "bytes": 1455,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-FeeRevenueRouter.txt",
+      "sha256": "a3d6af32d4af009a1d67727c2328ae640e3882719adde9ec20a165ea216820f3",
+      "bytes": 2652,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-FlashGuard.txt",
+      "sha256": "199cd22cb8e54f93db0e3677b97cd8b77606128d202446742bb5f3032e511b6b",
+      "bytes": 2177,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GearVault.txt",
+      "sha256": "88940a932e9ae88a9aedd462bd98ef58b45aa68fb8f283b97ef43d833b641775",
+      "bytes": 1428,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GenesisLifecycleController.txt",
+      "sha256": "17ef40bba360af298ce9868314e437ab11905452391d4e2da5a207078cfd2bfb",
+      "bytes": 4264,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GenesisOracle.txt",
+      "sha256": "84b3475a22f7c5a6d83622f4a680cd85063d624f181948008a6725559aecf7f4",
+      "bytes": 1718,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GenesisPlayerSale.txt",
+      "sha256": "8baac50a5ef05d4369f39e78b808bd2bbbc594c243698105a184eee3abe080ad",
+      "bytes": 3932,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GenesisProceedsSplitter.txt",
+      "sha256": "d477da03b47aa589c871d004d465a0978142e57ec72090fe9ce274f82b76c9ad",
+      "bytes": 2510,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-GenesisWalletCap.txt",
+      "sha256": "72faaa37857fd257b38af6c1aec7107734f147062cc818e9e680554e0f10e325",
+      "bytes": 1007,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-IOmertaMarketStateV2.txt",
+      "sha256": "5c3986e987348aa93acb30c229dc77165ff04d8dadfb3346862e0aa1913ef5c0",
+      "bytes": 1045,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-IOmrOracle.txt",
+      "sha256": "e13d269d23857135531a40183f24c05672ef4f9d46d207eb8f09a363773bb3c3",
+      "bytes": 995,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-KeeperGasVault.txt",
+      "sha256": "3780b43b239dcf19665deb8790b4b765edbe9bbc193ec4fa73d1f224c0cd071f",
+      "bytes": 2632,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-LiquidityBuybackExecutor.txt",
+      "sha256": "bba0d37dcfb40be64f504dfd4bd9086eb10a7919294ae0c14e08e3d57f518087",
+      "bytes": 5965,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaArbitrageV2.txt",
+      "sha256": "e2d39ffb1a6d70604e3bcc294801b63fdfa7d76b66cc29dd1a65ddbba0d774bf",
+      "bytes": 2885,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaBond.txt",
+      "sha256": "cf13e28894fdddec0e3c1397088d3050e26ba3a8d896466adde1832b8be60ef7",
+      "bytes": 4361,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaCommitmentVaultV2.txt",
+      "sha256": "3191cdfa83fc5e3dacd893f45ee4bb556d199e59b7d8b3d56ce44a9d4caf62d2",
+      "bytes": 8376,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaFees.txt",
+      "sha256": "0ec9862efb349a14fc484b57202e4116de5c845ae5e8f669afcbd302498a82e9",
+      "bytes": 3032,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaGameSettlementV2.txt",
+      "sha256": "cbba479ae2f3a4034770127ea6d8aa144a79568a807c540b07e5e9d4e952ec5a",
+      "bytes": 18076,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaGenesisCoordinatorV2.txt",
+      "sha256": "9c60de3934092dcdaf92ec0af8779831ba6f17f6285a3630fe23327835af397d",
+      "bytes": 4722,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaGuardedAuction.txt",
+      "sha256": "ecc43be5e615e53fe930f3e789dda7868c3b7e63321a2b1c7847321bf372b83a",
+      "bytes": 67114,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaHook.txt",
+      "sha256": "90b3cf4154fff00b0be23f2c4bd9fe44c6298e6d8e2cd1caeb9a4fc4c6fe3335",
+      "bytes": 4591,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaHookV2.txt",
+      "sha256": "f41fce33b7649f506f04880f3ff454dbfa12b84b1dd2b7d83b7e1db8d1cdb952",
+      "bytes": 5939,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaInventoryBondV2.txt",
+      "sha256": "9d64e621e75bbe8bc04efda3758c1d852697bd5b38351391a76ee0c972a1e466",
+      "bytes": 3560,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaMarketStateV2.txt",
+      "sha256": "23096852adf1ed503112f243f9dad91d4408ba42fbefe49eb6ef3dbaa28e8c3e",
+      "bytes": 7881,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaReserveFundingV2.txt",
+      "sha256": "df4951bf620e6d4083e6d69f32118b509137b0205cd10fe1973a5106a9ac6ee4",
+      "bytes": 9585,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaStabilityControllerV2.txt",
+      "sha256": "ef421f33e3534b0a5865faa5f509ce5ae861fe731575157d8455ac1c4543cd26",
+      "bytes": 9002,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaTurfFeeBridgeV2.txt",
+      "sha256": "9eec8b61da64129dc047bb43365d0f157b364635926b89136127b1793dd244d2",
+      "bytes": 15950,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmertaTurfV2.txt",
+      "sha256": "9371e4b458d8e2d6e9cec6755e197bafbb5c9c1e2bd7c7d55dc7efeab9566e7e",
+      "bytes": 5787,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OMR.txt",
+      "sha256": "675597bbba89cc96f2e95185f22abfac6740d69ad4174a03f492d5177a27a6f3",
+      "bytes": 2060,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OMRStaking.txt",
+      "sha256": "4a5aaaa9d61ab36928f2e33fec7eb8aa0c53873984f6e405d8f868a950460a55",
+      "bytes": 1685,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmrTwapOracle.txt",
+      "sha256": "fad67efec82814ece8a197eae1f6af7ffab1632a95214fa5ee4190e766b8bd2f",
+      "bytes": 3082,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-OmrV4TwapOracle.txt",
+      "sha256": "5886edc33a0f687f133c89d419fff8c89da75bcdca5279eb5f53e97bf2a6f880",
+      "bytes": 4836,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-PreVoteBudgetBook.txt",
+      "sha256": "58947ac9b1867d038b1720f66e884a4d51b61db0556a268071ffa8524255f4ce",
+      "bytes": 3444,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-ProtocolLiquidityVault.txt",
+      "sha256": "523dbb55acbb3d9d5bba3e7b322e5969fe34fef2b895de72686373b799eceee5",
+      "bytes": 4784,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-RwaHealthOverlay.txt",
+      "sha256": "11631a4d269eff2d98bff80cd8cd0181ff121f701678e35a3ae08c9ad5bea9f6",
+      "bytes": 4588,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-RwaStockBuyer.txt",
+      "sha256": "a703d8bb553d75de14e7e8ce31841565d46826b23b9a6f9972d088d9ec903cec",
+      "bytes": 4154,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-SettlementGasPool.txt",
+      "sha256": "79adc77e52bfd873411e52096ed2ccfb1d99ea61cc5a87ed5f05fb0b45af2df0",
+      "bytes": 2992,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-StockTokenRegistry.txt",
+      "sha256": "1ab50edeeeae41bed97ea63abf674d9d1cd3f7716ce64db4ddfb1cf02da9f0c4",
+      "bytes": 2335,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-StockTokenRegistryV2.txt",
+      "sha256": "ceb130651d5afece809915732792815c4639fe6e29407ae4b0ff4f90253a85c1",
+      "bytes": 5374,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-StockVault.txt",
+      "sha256": "f4ab04bee8a052f49e509374c7c0a7508cae827016343da04602bcc3d3be3304",
+      "bytes": 1943,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-StreetDeed.txt",
+      "sha256": "7edfb5deb4219bc2f0d2b969aca588f1a4fce78caeb7b699e03463bde0aa41a3",
+      "bytes": 1455,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-Transmuter.txt",
+      "sha256": "969cc25b1a0d64886359dc0293f7a0c60452ab8563913ef621ffff93277a0c14",
+      "bytes": 2181,
+      "packedIn": "raw-static-evidence.zip"
+    },
+    {
+      "path": "evidence/reintroduced-static/pre-remediation-static/native-VoucherClaim.txt",
       "sha256": "238242c2d0914ea0c3e142b6c482cb896fd673c7d921da0c3ca0cbc37c6f3a98",
       "bytes": 1465,
       "packedIn": "raw-static-evidence.zip"
@@ -4780,8 +4782,8 @@
     },
     {
       "path": "raw-static-evidence.zip",
-      "sha256": "ac9928d35c1c8e8f05ef334d77087804fa028bcb2fa036c693304b924e494f3d",
-      "bytes": 9761442,
+      "sha256": "5bc23c21ec6c86cc003be9df8a8fd1536eaeadaf0e98b273549b19a2b09671f2",
+      "bytes": 13071830,
       "packedIn": null
     },
     {
@@ -4856,7 +4858,5 @@
       "bytes": 941,
       "packedIn": null
     }
-  ],
-  "archiveEntries": 281,
-  "unpackedRecords": 528
+  ]
 }
