@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f2fb393a317b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3accb58859af`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2005 |
+| Commits in clone | 2008 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-02 — Fix contract integrity, oracle boundaries and auction fee quotes (#189) |
+| Latest commit | 2026-10-04 — audit(character): retain Daybreak review and checkout proofs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1124 |
+| OmertaDev | 1126 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 36 |
+| github-actions[bot] | 37 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -31,16 +31,16 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 423 | yes |
-| [src/server.js](../../src/server.js) | 366 | yes |
+| [public/index.html](../../public/index.html) | 424 | yes |
+| [src/server.js](../../src/server.js) | 367 | yes |
 | [SPEC.md](../../SPEC.md) | 353 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 261 | historical |
-| knowledge/generated/graph-summary.md | 261 | historical |
-| knowledge/generated/graph.json | 261 | historical |
-| knowledge/generated/inventory.md | 261 | historical |
+| knowledge/generated/github-history.md | 262 | historical |
+| knowledge/generated/graph-summary.md | 262 | historical |
+| knowledge/generated/graph.json | 262 | historical |
+| knowledge/generated/inventory.md | 262 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 223 | yes |
+| [package.json](../../package.json) | 224 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | [src/worker.js](../../src/worker.js) | 126 | yes |
