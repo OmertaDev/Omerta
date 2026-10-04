@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3accb58859af`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2cb05714ef62`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2008 |
+| Commits in clone | 2010 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-04 — audit(character): retain Daybreak review and checkout proofs |
+| Latest commit | 2026-10-04 — test(character): assert unconfigured checkout cold-start refusal |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1126 |
+| OmertaDev | 1128 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 367 | yes |
 | [SPEC.md](../../SPEC.md) | 353 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 262 | historical |
-| knowledge/generated/graph-summary.md | 262 | historical |
-| knowledge/generated/graph.json | 262 | historical |
-| knowledge/generated/inventory.md | 262 | historical |
+| knowledge/generated/github-history.md | 263 | historical |
+| knowledge/generated/graph-summary.md | 263 | historical |
+| knowledge/generated/graph.json | 263 | historical |
+| knowledge/generated/inventory.md | 263 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 224 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -49,14 +49,14 @@
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 118 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/modules.md | 105 | historical |
+| knowledge/generated/modules.md | 106 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 87 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/gates.js](../../test/gates.js) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 75 | yes |
-| knowledge/generated/graph.mmd | 69 | historical |
+| knowledge/generated/graph.mmd | 70 | historical |
 | [test/hardening.js](../../test/hardening.js) | 66 | yes |
 | [src/preflight.js](../../src/preflight.js) | 61 | yes |
 | [README.md](../../README.md) | 60 | yes |
@@ -67,9 +67,9 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [test/docs.js](../../test/docs.js) | 50 | yes |
 | [src/economy.js](../../src/economy.js) | 50 | yes |
+| knowledge/generated/schema.md | 46 | historical |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
-| knowledge/generated/schema.md | 45 | historical |
 
 ## Pull requests
 
