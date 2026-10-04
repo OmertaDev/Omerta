@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2cb05714ef62`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `33ffe017bf5f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2010 |
+| Commits in clone | 2012 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-04 — test(character): assert unconfigured checkout cold-start refusal |
+| Latest commit | 2026-10-04 — test(release): include character checkout in guarded inventories |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1128 |
+| OmertaDev | 1130 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
@@ -33,12 +33,12 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 424 | yes |
 | [src/server.js](../../src/server.js) | 367 | yes |
-| [SPEC.md](../../SPEC.md) | 353 | yes |
+| [SPEC.md](../../SPEC.md) | 354 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 263 | historical |
-| knowledge/generated/graph-summary.md | 263 | historical |
-| knowledge/generated/graph.json | 263 | historical |
-| knowledge/generated/inventory.md | 263 | historical |
+| knowledge/generated/github-history.md | 264 | historical |
+| knowledge/generated/graph-summary.md | 264 | historical |
+| knowledge/generated/graph.json | 264 | historical |
+| knowledge/generated/inventory.md | 264 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 224 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -52,8 +52,8 @@
 | knowledge/generated/modules.md | 106 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 87 | yes |
+| [test/gates.js](../../test/gates.js) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| [test/gates.js](../../test/gates.js) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 75 | yes |
 | knowledge/generated/graph.mmd | 70 | historical |

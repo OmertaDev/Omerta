@@ -530,7 +530,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-24 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-04 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 350 | 2026-09-25 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -606,5 +606,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 740 | 2026-10-02 |
+| [SPEC.md](../../SPEC.md) | documentation | 740 | 2026-10-04 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

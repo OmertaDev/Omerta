@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2cb05714ef6228b940becd20f757d596c5204f65",
+  "sourceRevision": "33ffe017bf5f65f8955b05be746f4459dd211ca0",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9716,
-    "edges": 39583,
+    "nodes": 9720,
+    "edges": 39600,
     "byNodeType": {
-      "Artifact": 4132,
+      "Artifact": 4134,
       "Command": 179,
-      "Commit": 2010,
+      "Commit": 2012,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3221,
-      "CHANGED": 15338,
-      "CONTAINS": 4153,
+      "BELONGS_TO": 3223,
+      "CHANGED": 15349,
+      "CONTAINS": 4155,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 609,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2010,
+      "HAS_COMMIT": 2012,
       "IMPLEMENTS": 124,
       "IMPORTS": 3921,
       "INHERITS": 39,
@@ -40298,18 +40298,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "ede27201c86ab875",
+      "version": "9e6e0449efa84b75",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "ede27201c86ab875"
+          "version": "9e6e0449efa84b75"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:06:46.000Z",
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -50800,6 +50800,52 @@
       "lastChangedCommit": "2cb05714ef6228b940becd20f757d596c5204f65"
     },
     {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "label": "docs-retest.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 4339,
+      "lines": 40,
+      "version": "7d346ebd52a67755",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+          "line": 1,
+          "version": "7d346ebd52a67755"
+        }
+      ],
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "label": "gates-retest.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 4256,
+      "lines": 40,
+      "version": "0e49ac3c636e5b86",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+          "line": 1,
+          "version": "0e49ac3c636e5b86"
+        }
+      ],
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+    },
+    {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/identity-checkout-api.txt",
       "type": "Artifact",
       "id": "omerta-contracts/audits/2026-10-04-character-checkout/identity-checkout-api.txt",
@@ -51014,20 +51060,20 @@
       "path": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 8140,
-      "lines": 103,
-      "version": "103cc27da20e689d",
+      "bytes": 8541,
+      "lines": 105,
+      "version": "96a15834847a2c0b",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
           "line": 1,
-          "version": "103cc27da20e689d"
+          "version": "96a15834847a2c0b"
         }
       ],
-      "lastChangedAt": "2026-10-04T23:12:26.000Z",
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2cb05714ef6228b940becd20f757d596c5204f65"
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
     },
     {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
@@ -51037,20 +51083,20 @@
       "path": "omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
       "kind": "contract-project",
       "extension": ".json",
-      "bytes": 466,
-      "lines": 18,
-      "version": "fcb2bae01698a3b6",
+      "bytes": 725,
+      "lines": 26,
+      "version": "59bfafddcc1e307b",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
           "line": 1,
-          "version": "fcb2bae01698a3b6"
+          "version": "59bfafddcc1e307b"
         }
       ],
-      "lastChangedAt": "2026-10-04T23:12:26.000Z",
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2cb05714ef6228b940becd20f757d596c5204f65"
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
     },
     {
       "key": "Artifact:omerta-contracts/audits/character-nft-2026-09-08.json",
@@ -74148,18 +74194,18 @@
       "extension": ".md",
       "bytes": 55094,
       "lines": 740,
-      "version": "2abba0c169057267",
+      "version": "4bb3658f9391555a",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2abba0c169057267"
+          "version": "4bb3658f9391555a"
         }
       ],
-      "lastChangedAt": "2026-10-02T19:20:27.000Z",
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f2fb393a317b2515e568fd5159d533893bc8307a"
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
     },
     {
       "key": "Artifact:src/access.js",
@@ -83139,20 +83185,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 283976,
+      "bytes": 284011,
       "lines": 4227,
-      "version": "7ab8bbb61c4727f0",
+      "version": "a58b00a64ebc1889",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "7ab8bbb61c4727f0"
+          "version": "a58b00a64ebc1889"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:06:46.000Z",
+      "lastChangedAt": "2026-10-04T23:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "61134d60e69b038895c8ee7286272f57097ce9ae"
+      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -101554,6 +101600,22 @@
       ]
     },
     {
+      "key": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "type": "Commit",
+      "id": "225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "label": "chore(knowledge): refresh checkout cold-start proof",
+      "title": "chore(knowledge): refresh checkout cold-start proof",
+      "date": "2026-10-04T23:14:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "provenance": [
+        {
+          "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362",
+          "url": "https://github.com/OmertaDev/Omerta/commit/225e1420dfd9ef72d27240ba6fc10aa461843362"
+        }
+      ]
+    },
+    {
       "key": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "type": "Commit",
       "id": "22d586788deba6c06fba940f88af499221af3908",
@@ -103998,6 +104060,22 @@
         {
           "commit": "33f070992db18a3729f446ff348a8e2c40df5fa8",
           "url": "https://github.com/OmertaDev/Omerta/commit/33f070992db18a3729f446ff348a8e2c40df5fa8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "type": "Commit",
+      "id": "33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "label": "test(release): include character checkout in guarded inventories",
+      "title": "test(release): include character checkout in guarded inventories",
+      "date": "2026-10-04T23:32:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "provenance": [
+        {
+          "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/33ffe017bf5f65f8955b05be746f4459dd211ca0"
         }
       ]
     },
@@ -140400,12 +140478,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "ede27201c86ab875",
+      "version": "9e6e0449efa84b75",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "ede27201c86ab875"
+          "version": "9e6e0449efa84b75"
         }
       ]
     },
@@ -141071,13 +141149,13 @@
       "id": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "label": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "documentType": "contract-project",
-      "lines": 103,
-      "version": "103cc27da20e689d",
+      "lines": 105,
+      "version": "96a15834847a2c0b",
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
           "line": 1,
-          "version": "103cc27da20e689d"
+          "version": "96a15834847a2c0b"
         }
       ]
     },
@@ -142496,12 +142574,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 740,
-      "version": "2abba0c169057267",
+      "version": "4bb3658f9391555a",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2abba0c169057267"
+          "version": "4bb3658f9391555a"
         }
       ]
     },
@@ -149589,6 +149667,9 @@
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
+          "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -150387,6 +150468,9 @@
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
+          "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -151183,6 +151267,9 @@
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
+        },
+        {
+          "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -152200,6 +152287,9 @@
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
+        },
+        {
+          "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -161469,12 +161559,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2cb05714ef6228b940becd20f757d596c5204f65",
+      "revision": "33ffe017bf5f65f8955b05be746f4459dd211ca0",
       "currentBranch": "codex/verify-character-prod",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4132,
+      "currentArtifactCount": 4134,
       "provenance": [
         {
           "file": "README.md",
@@ -190674,12 +190764,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4227,
-      "version": "7ab8bbb61c4727f0",
+      "version": "a58b00a64ebc1889",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "7ab8bbb61c4727f0"
+          "version": "a58b00a64ebc1889"
         }
       ]
     },
@@ -200732,6 +200822,24 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/coldstart-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
         "line": 1
       }
     },
@@ -239313,6 +239421,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -248189,6 +248329,62 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "commit": "33f070992db18a3729f446ff348a8e2c40df5fa8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/report.md",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
       }
     },
     {
@@ -353997,6 +354193,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/docs-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/gates-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/identity-checkout-api.txt",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/identity-checkout-api.txt",
@@ -412933,6 +413147,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
+      "provenance": {
+        "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "provenance": {
         "commit": "22d586788deba6c06fba940f88af499221af3908"
@@ -414152,6 +414374,14 @@
       "to": "Commit:33f070992db18a3729f446ff348a8e2c40df5fa8",
       "provenance": {
         "commit": "33f070992db18a3729f446ff348a8e2c40df5fa8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:33ffe017bf5f65f8955b05be746f4459dd211ca0",
+      "provenance": {
+        "commit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
       }
     },
     {
