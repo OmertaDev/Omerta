@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "788e672741e558210029683fed928a06934123f3",
+  "files": [
+    {
+      "file": "manifest.json",
+      "sha256": "d38f2eeda580fd16d7540c0ee91e34bdd617273fb63bf200c1b2fa22b9b1a206"
+    },
+    {
+      "file": "report.md",
+      "sha256": "83acde369cd9a153898f35ed8f98343b87ea00da92bdd021836b958e6ed3bc97"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-04T21:05:00Z",
+  "sourceBase": "7c5c874de76956f824d346311f60c5ce74fe042c",
+  "deployedBackend": "7f8b9174b787b02682f916ef26b9422aff0dc96d",
+  "chainId": 4663,
+  "dbSnapshot": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"cursor_streams\":0,\"nft_tokens\":0,\"nft_vouchers\":0,\"recorded_payments\":0}]"
+      }
+    ],
+    "isError": false
+  },
+  "signerSetting": "User confirms VOUCHER_SIGNER_PK present; derived address requires runtime verification",
+  "feeRecipient": "User confirms 0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD intended",
+  "userTest": "MetaMask and OMERTA access; linking and funding not yet confirmed",
+  "status": "Not end-to-end verified; checkout and claim UI being completed; payment indexer activation, passing CI and production rollout required before payment"
+}

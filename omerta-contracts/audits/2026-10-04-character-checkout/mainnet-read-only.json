@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-10-04T21:38:39.698Z",
+  "chainId": 4663,
+  "blockNumber": "80261940",
+  "blockHash": "0x692b52320e485c942cb3249245444a75f780d96d8bf51f0f37e234a1e89a3a76",
+  "contracts": [
+    {
+      "name": "OmertaFees",
+      "address": "0x69c037751e3F8c076089038d9F6988dDA0cf0bAA",
+      "recordedRuntimeMatch": true,
+      "deploymentBlock": "59891800"
+    },
+    {
+      "name": "DynastyNFT",
+      "address": "0x669C8878A2Db3C3d0f7A447f398dAA3178a0200B",
+      "recordedRuntimeMatch": true,
+      "deploymentBlock": "59892366"
+    }
+  ],
+  "fields": {
+    "OmertaFees.mintFee": "10000000000000000",
+    "OmertaFees.mintDevBps": "10000",
+    "OmertaFees.feeRecipient": "0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD",
+    "DynastyNFT.nextId": "1",
+    "DynastyNFT.dailyMintCap": "10",
+    "DynastyNFT.paused": false,
+    "DynastyNFT.signer": "0x304fEe13aDe06695cF719D37d69B518c21Fa5893",
+    "OmertaFees.nonce": "0",
+    "OmertaFees.vigBps": "2500",
+    "OmertaFees.owner": "0xBe225658718DCb3865902437887a11830E4a9b10",
+    "DynastyNFT.owner": "0xBe225658718DCb3865902437887a11830E4a9b10"
+  },
+  "metadata": {
+    "creationTemplateMatch": true,
+    "constructorBaseUri": "https://www.omerta.fun/v1/identity/",
+    "currentBaseUri": "https://www.omerta.fun/v1/identity/",
+    "expectedPublicRouteMatch": true
+  },
+  "governance": {
+    "safe": "0xBe225658718DCb3865902437887a11830E4a9b10",
+    "ownerCount": 3,
+    "threshold": "2",
+    "contractOwnersMatchSafe": true,
+    "nftSignerIsSafeOwner": false
+  },
+  "phase": "Read-only on-chain verification; production signer, payment indexing and real user mint remain separate requirements."
+}

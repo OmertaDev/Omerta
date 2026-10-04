@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  • Desktop landing, payload, and agent discovery
+    Cold landing: 602 KB / 768 KB transfer budget
+  • Path quiz, result cards, and downloadable proof
+  • 320px public layouts and deferred media
+  • Guest onboarding and operation receipts
+{"component":"player-command","phase":"request","correlationId":"3a301d7c-13d3-48b5-acc3-5a0957681e82"}
+{"component":"player-command","phase":"authorization","correlationId":"3a301d7c-13d3-48b5-acc3-5a0957681e82","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"3a301d7c-13d3-48b5-acc3-5a0957681e82","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"3a301d7c-13d3-48b5-acc3-5a0957681e82","statusCode":409,"elapsedMs":4}
+  • Keyboard navigation, modal focus, and accessible destinations
+  • Public keyboard entry and reduced-motion preferences
+
+✅ public UI contract passed in 23s — first paint, payload, Path quiz/results, truth register, Codex search, Arena empty state, operation receipts, keyboard navigation, modal focus, public landmarks, reduced motion, and chat labeling.
