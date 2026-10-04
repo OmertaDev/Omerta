@@ -7,11 +7,19 @@
     },
     {
       "file": "report.md",
-      "sha256": "d6a56372cb4d563187b97a32726b95f619a5b6848b3ca51a72548bb60dcb1fa9"
+      "sha256": "96a15834847a2c0b8cb978b2d3ef63bf1c6d2222190da46140daf2cc18d0e791"
     },
     {
       "file": "coldstart-retest.txt",
       "sha256": "80f5429eed393f46a17d8cfc9648bb166c1c2b5c739ff3f0ce1d9774efe24b20"
+    },
+    {
+      "file": "gates-retest.txt",
+      "sha256": "0e49ac3c636e5b86f35527732d43452a65e89a8c019610fe6b8eb4627735c787"
+    },
+    {
+      "file": "docs-retest.txt",
+      "sha256": "7d346ebd52a677550c6aedf068119eb45ad11c6cdd1924290869716a91cfbcd8"
     }
   ]
 }

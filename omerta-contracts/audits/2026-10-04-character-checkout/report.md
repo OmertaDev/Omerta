@@ -100,3 +100,5 @@ are separate evidence. This review makes no blanket assertion that no bugs or ex
 ## Release CI follow-up
 
 The first full CI run passed Forge and PostgreSQL 16/18.4, but cold-start catalog probing rejected the deliberately unconfigured NFT readiness response. The cold-start fixture now explicitly removes RPC configuration and asserts the exact 400 chain_unconfigured refusal. Production checkout code remains pinned to 788e6727. The focused cold-start retest passed all 176 available routes and 13 declared refusals; full CI is rerun on the final candidate.
+
+The unexecuted tail checks also required adding the new native PostgreSQL checkout lane to the strict CI inventory and updating machine-checked repository figures (277 backend modules, 429 test files, 805 routes and 242 executed suites). Gate inventory, documentation, chain-parameter and playthrough-truth checks passed after these test/documentation updates. No production checkout source changed.
