@@ -1462,6 +1462,8 @@
   <div class="encore"><button class="act cta" id="btn-guest2" data-i18n="e_bones">ENTER THE CITY →</button></div>
 
   <div class="signin">
+    <button class="act cta" id="btn-wallet-onboard" type="button">Sign up &amp; connect wallet</button>
+    <div class="d">Use the existing city sign-in first, then Connect wallet to prove your address. Mint your character NFT from Wallet &amp; on-chain.</div>
     <div id="xoauth-row" class="hidden" style="margin-bottom:10px">
       <button class="act cta" id="btn-xoauth">CONTINUE WITH 𝕏 →</button>
       <div class="sub" style="color:var(--dim);margin-top:4px">One click — you'll come right back, signed in.</div>
@@ -1532,6 +1534,8 @@
   <div id="top">
     <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
     <span id="whoami"></span>
+    <button class="act" id="btn-wallet" type="button" aria-label="Open wallet and character checkout">Connect wallet</button>
+    <button class="act" id="btn-character-nft" type="button">Mint your character NFT</button>
     <button class="act capital-trigger" id="btn-capital" type="button" aria-label="Open the $OMR finance dashboard" title="the capital desk — launch, staking, bonds, the Desk and the on-chain rail">
       <span class="capital-trigger__mark">$OMR</span><span class="capital-trigger__label">finance</span><span class="capital-trigger__balance" id="capital-balance">—</span>
     </button>
@@ -5605,6 +5609,116 @@
     } catch (e) { toast(e?.message ? 'bond: ' + e.message : 'bond submit cancelled', true); }
   }
 
+  const characterTransactionsInFlight = new Set();
+  async function switchCharacterChain(provider, chainId) {
+    try { await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] }); }
+    catch (error) {
+      if (error?.code !== 4902) throw error;
+      if (BigInt(chainId) !== 4663n) throw Error('Add the configured character network to your wallet manually, then retry.');
+      await provider.request({ method: 'wallet_addEthereumChain', params: [{ chainId: '0x1237', chainName: 'Robinhood Chain',
+        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+        rpcUrls: ['https://rpc.mainnet.chain.robinhood.com/'], blockExplorerUrls: ['https://robinhoodchain.blockscout.com/'] }] });
+      await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
+    }
+    if (BigInt(await provider.request({ method: 'eth_chainId' })) !== BigInt(chainId)) throw Error('Wallet network did not switch; review network settings.');
+  }
+  async function submitCharacterTransaction(kind) {
+    const provider = await pickProvider();
+    if (!provider) return;
+    const paying = kind !== 'claim';
+    const purpose = kind === 'reveal' ? 'reveal' : 'creation';
+    const path = paying ? '/v1/identity/checkout' : '/v1/identity/claim/calldata';
+    let inFlightKey;
+    try {
+      const response = await api('POST', path, paying ? { purpose } : {});
+      if (response.code !== 200) { toast(describe(response.body, response.code), true); return; }
+      const tx = response.body;
+      if (!/^0x[0-9a-f]{40}$/i.test(tx.from || '') || !/^0x[0-9a-f]{40}$/i.test(tx.to || '')
+        || !/^0x[0-9a-f]+$/i.test(tx.value || '') || !/^0x[0-9a-f]+$/i.test(tx.data || '')
+        || !/^0x[0-9a-f]+$/i.test(tx.chainIdHex || '')) throw Error('Invalid character transaction preview');
+      const pendingKey = `omerta-character-fee:${tx.accountId}:${tx.chainIdHex}:${tx.from.toLowerCase()}:${tx.to.toLowerCase()}`;
+      if (paying && (typeof navigator === 'undefined' || typeof navigator.locks?.request !== 'function'))
+        throw Error('Open OMERTÀ in a current browser with your wallet to pay safely.');
+      if (!paying && BigInt(tx.value) !== 0n) throw Error('Character trophy claims must not request an ETH payment.');
+      if (characterTransactionsInFlight.has(pendingKey)) throw Error('This character transaction is already being reviewed in your wallet.');
+      inFlightKey = pendingKey;
+      characterTransactionsInFlight.add(inFlightKey);
+      if (paying) {
+        localStorage.setItem(pendingKey + ':probe', '0x' + '0'.repeat(64));
+        localStorage.removeItem(pendingKey + ':probe');
+      }
+      const [from] = await provider.request({ method: 'eth_requestAccounts' });
+      if (from?.toLowerCase() !== tx.from.toLowerCase()) throw Error('Select the wallet linked to this account.');
+      await switchCharacterChain(provider, tx.chainIdHex);
+      if (paying) {
+        const pendingHash = localStorage.getItem(pendingKey);
+        if (pendingHash) {
+          if (pendingHash.startsWith('intent:')) throw Error('A character payment submission has an unknown outcome. Check your wallet transaction history or contact support; do not pay again.');
+          const receipt = await provider.request({ method: 'eth_getTransactionReceipt', params: [pendingHash] });
+          if (receipt?.status === '0x0') localStorage.removeItem(pendingKey);
+          else throw Error(`Your character payment ${pendingHash} is ${receipt ? 'on-chain and awaiting account confirmation' : 'pending'}. Do not pay again; use check confirmed payment & claim.`);
+        }
+      }
+      const wei = BigInt(tx.value), decimals = (wei % 1000000000000000000n).toString().padStart(18, '0').replace(/0+$/, '');
+      const value = `${wei / 1000000000000000000n}${decimals ? '.' + decimals : ''}`;
+      if (!confirm(`${paying ? (kind === 'reveal' ? 'Optionally pay to reveal character artwork (trophy claim is free)' : 'Pay the character creation fee') : 'Claim your character trophy'}?\nChain: ${tx.chainId}\nFrom: ${tx.from}\nContract: ${tx.to}\nValue: ${value} ETH + wallet gas${tx.feeRecipient ? '\nFee recipient: ' + tx.feeRecipient : ''}\n${paying ? 'Wait for confirmed payment before claiming. Never pay again for a pending confirmation.' : 'The trophy carries no gameplay entitlement.'}`)) return;
+      const [current] = await provider.request({ method: 'eth_accounts' });
+      if (current?.toLowerCase() !== tx.from.toLowerCase()
+        || BigInt(await provider.request({ method: 'eth_chainId' })) !== BigInt(tx.chainIdHex)) throw Error('Wallet account or chain changed; review again.');
+      const fresh = await api('POST', path, paying ? { purpose } : {});
+      if (fresh.code !== 200) throw Error(describe(fresh.body, fresh.code));
+      if (['accountId', 'from', 'to', 'value', 'data', 'chainIdHex', 'feeRecipient'].some((field) => String(fresh.body[field]).toLowerCase() !== String(tx[field]).toLowerCase()))
+        throw Error('Character transaction changed; review the current fee or voucher again.');
+      const send = async () => {
+        if (paying && localStorage.getItem(pendingKey)) throw Error('A character payment was submitted in another tab. Wait for confirmation.');
+        const [latestAccount] = await provider.request({ method: 'eth_accounts' });
+        if (latestAccount?.toLowerCase() !== tx.from.toLowerCase()
+          || BigInt(await provider.request({ method: 'eth_chainId' })) !== BigInt(tx.chainIdHex))
+          throw Error('Wallet account or chain changed during the final quote check; review again.');
+        if (paying) localStorage.setItem(pendingKey, `intent:${Date.now()}`);
+        let hash;
+        try { hash = await provider.request({ method: 'eth_sendTransaction', params: [{ from: tx.from, to: tx.to, value: tx.value, data: tx.data, chainId: tx.chainIdHex }] }); }
+        catch (error) {
+          if (paying && error?.code === 4001) localStorage.removeItem(pendingKey);
+          throw error;
+        }
+        if (!/^0x[0-9a-f]{64}$/i.test(String(hash))) throw Error('Character payment submission has an unknown outcome. Check your wallet before retrying.');
+        if (paying) localStorage.setItem(pendingKey, String(hash));
+        return hash;
+      };
+      const hash = paying && typeof navigator !== 'undefined' && navigator.locks
+        ? await navigator.locks.request(pendingKey, { ifAvailable: true }, (lock) => {
+          if (!lock) throw Error('Another tab is reviewing this character payment. Use that tab.');
+          return send();
+        }) : await send();
+      connectedProvider = provider;
+      toast(`${paying ? 'Character payment' : 'Trophy claim'} submitted: ${hash}. Wait for confirmed account status before retrying.`);
+    } catch (error) { toast(error?.message || 'Character checkout cancelled', true); }
+    finally { if (inFlightKey) characterTransactionsInFlight.delete(inFlightKey); }
+  }
+  document.addEventListener('click', (event) => {
+    if (event.target?.closest?.('[data-character-open]')) { $('#btn-wallet')?.click(); return; }
+    const button = event.target?.closest?.('[data-character-tx]');
+    if (!button || button.disabled) return;
+    button.disabled = true;
+    submitCharacterTransaction(button.dataset.characterTx).finally(() => { button.disabled = false; });
+  });
+  document.addEventListener('click', async (event) => {
+    const button = event.target?.closest?.('[data-character-pending]');
+    if (!button || button.disabled) return;
+    button.disabled = true;
+    try {
+      const provider = await pickProvider(); if (!provider) return;
+      await switchCharacterChain(provider, button.dataset.chain);
+      const hash = localStorage.getItem(button.dataset.characterPending);
+      if (hash?.startsWith('intent:')) throw Error('Submission outcome is unknown. Check wallet history or contact support before any further payment.');
+      const receipt = await provider.request({ method: 'eth_getTransactionReceipt', params: [hash] });
+      if (receipt?.status === '0x0') { localStorage.removeItem(button.dataset.characterPending); await renderPortfolio(); }
+      else toast(receipt ? 'Payment is on-chain. Wait for confirmed account credit, then claim; do not pay again.' : 'Payment is pending. Do not pay again.');
+    } catch (error) { toast(error.message || 'Unable to check payment', true); }
+    finally { button.disabled = false; }
+  });
+
   // ── screens ──
   const landingMenu = document.querySelector('#screen-auth .public-nav__menu');
   landingMenu?.addEventListener('click', (event) => {
@@ -6009,6 +6123,23 @@
         } else if (++attempts >= 50) clearInterval(landing);
       }, 100);
     }; }
+  $('#btn-wallet')?.addEventListener('click', () => {
+    setTab('portfolio');
+    let attempts = 0;
+    const landing = setInterval(() => {
+      const target = $('#capital-wallet');
+      if (target && $('#tab-portfolio')?.getAttribute('aria-busy') !== 'true') {
+        clearInterval(landing);
+        target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+      } else if (++attempts >= 100) clearInterval(landing);
+    }, 100);
+  });
+  $('#btn-character-nft')?.addEventListener('click', () => $('#btn-wallet')?.click());
+  $('#btn-wallet-onboard')?.addEventListener('click', () => {
+    sessionStorage.setItem('omerta-wallet-onboarding', '1');
+    const oauthVisible = !$('#xoauth-row')?.classList.contains('hidden');
+    $(oauthVisible ? '#btn-xoauth' : '#btn-guest2')?.click();
+  });
   $('#jump-close')?.addEventListener('click', closeJump);
   $('#jumpmodal')?.addEventListener('click', (e) => { if (e.target.id === 'jumpmodal') closeJump(); });
   $('#jump-q')?.addEventListener('input', (e) => paintJump(e.target.value));
@@ -6461,6 +6592,12 @@
     $('#whoami').innerHTML = `<b>${esc(me.name)}</b> · gen ${me.generation} · lvl ${me.level} · <button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>` +
       (me.gang ? ` · <span style="color:${me.gang.color || 'var(--dim)'}">${esc(me.gang.tag)}</span>` : '');
     const capitalBalance = $('#capital-balance');
+    const walletEntry = $('#btn-wallet');
+    if (walletEntry) walletEntry.textContent = me.wallet ? `Wallet ${me.wallet.slice(0, 6)}…${me.wallet.slice(-4)}` : 'Connect wallet';
+    if (sessionStorage.getItem('omerta-wallet-onboarding') === '1') {
+      sessionStorage.removeItem('omerta-wallet-onboarding');
+      toast('Welcome. Use Connect wallet above to link your address, then Mint your character NFT.');
+    }
     if (capitalBalance) capitalBalance.textContent = fmt(Math.floor(Number(me.omr) || 0));
     const gt = $('#go-travel'); if (gt) gt.onclick = openTravel;   // move from ANY screen
     const chips = [];
@@ -9262,8 +9399,8 @@
           <div class="d" style="margin-top:8px;line-height:1.5">Made men can take the portrait on-chain as a
           tradeable trophy — one per bloodline, ever. It carries <b>no power</b>: your standing stays with the
           account and never travels with the token.</div>
-          <button class="btn" style="margin-top:6px" data-do="POST /v1/identity/mint"
-            data-confirm="Take your bloodline's portrait on-chain? One per bloodline, ever. The token is a trophy — it carries no standing and no entitlement.">take it on-chain</button>
+          <button class="btn" style="margin-top:6px" data-character-open>Mint your character NFT</button>
+          <div class="d">Link your wallet first. Confirmed paid accounts claim without another fee. Payments and claims appear after chain confirmation.</div>
         </div>
         <div class="msp-h">General</div>
         <div class="msp-box" style="padding:0"><table class="msp-tbl">
@@ -11792,14 +11929,18 @@
     // response and the next request, and the keyless boards genuinely do run in parallel.
     // (D11 2026-08-05: the stock book retired — /v1/portfolio and its boards are tombstones now;
     // this screen is the REAL money arc: made → ladder → wallet → extraction → window → vault → bonds)
-    const [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR] = await Promise.all([
+    const [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, identityR] = await Promise.all([
       api('GET', '/v1/vault'), api('GET', '/v1/desk'), api('GET', '/v1/bonds'),
       api('GET', '/v1/window'), api('GET', '/v1/yield'),
       api('GET', '/v1/withdraw/status'), api('GET', '/v1/bank'),
       api('GET', '/v1/brokers'), api('GET', '/v1/drop'),
       api('GET', '/v1/provenance'),
+      api('GET', '/v1/identity/readiness'),
     ]);
     const fgR = await api('GET', '/v1/forge');
+    const identity = identityR.code === 200 && identityR.body?.ready ? identityR.body : null;
+    const characterPendingKey = identity && me.wallet ? `omerta-character-fee:${identity.accountId}:0x${identity.chainId.toString(16)}:${me.wallet.toLowerCase()}:${identity.feesContract.toLowerCase()}` : null;
+    const characterPendingHash = characterPendingKey ? localStorage.getItem(characterPendingKey) : null;
     const readFailureCount = [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, fgR]
       .filter((r) => Number(r?.code) >= 400).length;
     const fg = fgR.body || {};
@@ -12047,11 +12188,23 @@
           ${me.ladder?.lock ? `Your word is given: <b class="neon">×${me.ladder.lock.mult}</b> for another <b>${mins(me.ladder.lock.seconds)}</b> — ${fmt(me.ladder?.effective || 0)} effective on the rungs. It cannot come out until then, and a killer still loots it at the committed rate.` : `A locked stake cannot be unstaked until the window passes — and it is still looted at the committed rate when you die. Commitment buys rungs, not safety.`}</div>
         ${(me.ladder?.lockTiers || []).length && Number(me.ladder?.staked || 0) > 0 ? `<div class="row" style="margin-top:4px">
           ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${esc(t.name)} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
-      <h2 class="capital-anchor" id="capital-wallet" style="margin-top:12px">Your Wallet <span class="d" style="font-size:11px">(the proven 0x address gates every $OMR / gear extraction — and survives your death)</span></h2>
+      <h2 class="capital-anchor" id="capital-wallet" style="margin-top:12px">Wallet &amp; on-chain</h2>
       <div class="card">${me.wallet
-        ? `<span class="t">Linked <span class="chip good">${me.wallet.slice(0, 6)}…${me.wallet.slice(-4)}</span></span><div class="d">on-chain extraction is unlocked (mainnet rail is dormant until launch)</div>`
+        ? `<span class="t">Linked wallet <span class="chip good" style="overflow-wrap:anywhere;white-space:normal">${esc(me.wallet)}</span></span><div class="d">Your proven account wallet. Character checkout checks this address again before sending.</div><button class="act" id="wallet-link">connect linked wallet</button>`
         : `<span class="t">No wallet linked</span><div class="d">sign a one-time challenge to link it — MetaMask, Coinbase, Trust, Rabby, Phantom, Crypto.com, Robinhood Wallet or any other browser wallet${rules?.walletConnect ? ', or scan the QR with a wallet on your phone (WalletConnect)' : ''}. Nothing leaves your wallet; it just proves the address.</div>
            <button class="act" id="wallet-link" style="border-color:var(--neon)">connect &amp; sign</button>`}</div>
+      <div class="card"><span class="t">Mint your character NFT</span>
+        <div class="d" style="overflow-wrap:anywhere">${identityR.code === 200 && identityR.body?.ready
+          ? `Network: chain ${esc(String(identityR.body.chainId))} · character ${identityR.body.characterMinted ? 'made account' : identityR.body.creditReady ? 'credit ready' : 'creation fee required'} · fee ${esc(String(Number(identityR.body.feeWei) / 1e18))} ETH + gas.<br>Fee recipient: ${esc(identityR.body.feeRecipient)}<br>Artwork: ${identityR.body.hasPaidPortraitFee ? 'confirmed paid portrait' : 'sealed; free credits do not reveal artwork'}.`
+          : 'Character wallet checkout is currently unavailable. No payment will be requested.'}</div>
+        ${identityR.code === 200 && identityR.body?.ready && me.wallet ? `
+          ${!identityR.body.characterMinted && !identityR.body.creditReady && !characterPendingHash ? '<button class="act" data-character-tx="fee">pay character creation fee</button>' : ''}
+          ${(identityR.body.characterMinted || identityR.body.creditReady) && !identityR.body.hasPaidPortraitFee && !characterPendingHash ? '<button class="act" data-character-tx="reveal">optional: pay to reveal artwork</button><div class="d">Your trophy claim is free. This optional ETH payment reveals artwork only; it is not required to claim the NFT.</div>' : ''}
+          ${characterPendingHash && !identityR.body.hasPaidPortraitFee ? `<div class="d">Payment submitted: ${esc(characterPendingHash)}. Waiting for confirmed portrait payment; no second payment is offered.</div><button class="act" data-character-pending="${esc(characterPendingKey)}" data-chain="0x${identity.chainId.toString(16)}">check submitted payment</button>` : ''}
+          ${identityR.body.nftToken ? `<div class="d">NFT #${esc(identityR.body.nftToken.tokenId)} confirmed${identityR.body.nftToken.ownerAddress ? ' · owner ' + esc(identityR.body.nftToken.ownerAddress) : ''}.</div><a class="act" href="${esc(identityR.body.nftToken.portraitUrl)}" target="_blank" rel="noopener">view portrait</a><a class="act" href="https://robinhoodchain.blockscout.com/address/${encodeURIComponent(identity.nftContract)}" target="_blank" rel="noopener">view NFT contract</a>`
+            : `<button class="act" data-character-tx="claim">${identityR.body.characterMinted || identityR.body.creditReady ? 'claim character trophy' : 'check confirmed payment & claim'}</button>`}` : ''}
+        <div class="d">Already paid? Wait for confirmed credit, then claim without paying again. Open OMERTÀ in a current browser with your wallet to pay safely. The NFT is a trophy, with no gameplay power. OMR market, bonds and extraction remain subject to their own launch availability below.</div>
+      </div>
 
       ${fg.available ? `
       <h2 style="margin-top:12px">The Forge <span class="d" style="font-size:11px">(your wallet's history shapes the build — once per wallet, ever)</span></h2>

@@ -365,7 +365,7 @@ jobs:
             (async () => {
               const c = new Client({ connectionString: process.env.DATABASE_URL });
               await c.connect();
-              for (const db of ['omerta_audit_mint_dev', 'omerta_audit_deed_recovery']) {
+              for (const db of ['omerta_audit_mint_dev', 'omerta_audit_deed_recovery', 'omerta_identity_checkout_test']) {
                 await c.query('DROP DATABASE IF EXISTS ' + db);
                 await c.query('CREATE DATABASE ' + db);
               }
@@ -378,6 +378,12 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_audit_mint_dev
         run: npm run test:audit:mint-dev:postgres
+
+      - name: character wallet checkout and concurrent trophy claim (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_identity_checkout_test
+        run: npm run test:identity-checkout:postgres
 
       - name: deed event ordering and concurrent recovery (real PostgreSQL)
         if: '!cancelled()'
