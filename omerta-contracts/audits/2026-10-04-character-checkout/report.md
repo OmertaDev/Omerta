@@ -96,3 +96,7 @@ The NFT's existing daily cap and chain confirmation policy remain in place; avai
 not a reserved mint slot. Wallet/RPC mocks do not prove real broadcasts. Source review, passing
 CI, live service rollout, live indexing and an actual user payment/claim/metadata verification
 are separate evidence. This review makes no blanket assertion that no bugs or exploits remain.
+
+## Release CI follow-up
+
+The first full CI run passed Forge and PostgreSQL 16/18.4, but cold-start catalog probing rejected the deliberately unconfigured NFT readiness response. The cold-start fixture now explicitly removes RPC configuration and asserts the exact 400 chain_unconfigured refusal. Production checkout code remains pinned to 788e6727. The focused cold-start retest passed all 176 available routes and 13 declared refusals; full CI is rerun on the final candidate.

@@ -7,7 +7,11 @@
     },
     {
       "file": "report.md",
-      "sha256": "83acde369cd9a153898f35ed8f98343b87ea00da92bdd021836b958e6ed3bc97"
+      "sha256": "d6a56372cb4d563187b97a32726b95f619a5b6848b3ca51a72548bb60dcb1fa9"
+    },
+    {
+      "file": "coldstart-retest.txt",
+      "sha256": "80f5429eed393f46a17d8cfc9648bb166c1c2b5c739ff3f0ce1d9774efe24b20"
     }
   ]
 }
