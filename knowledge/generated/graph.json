@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "82da7143462bb193390128e0a363457e9f772a50",
+  "sourceRevision": "dec6e919081a4e15bdc5a25178cbc93ac333de1b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9748,
-    "edges": 39700,
+    "nodes": 9750,
+    "edges": 39707,
     "byNodeType": {
       "Artifact": 4154,
       "Command": 179,
-      "Commit": 2020,
+      "Commit": 2022,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3243,
-      "CHANGED": 15396,
+      "CHANGED": 15401,
       "CONTAINS": 4175,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 609,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2020,
+      "HAS_COMMIT": 2022,
       "IMPLEMENTS": 124,
       "IMPORTS": 3924,
       "INHERITS": 39,
@@ -82265,20 +82265,20 @@
       "path": "test/coordination-knowledge.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 16068,
-      "lines": 228,
-      "version": "f633a1ec49bb9bcc",
+      "bytes": 16283,
+      "lines": 231,
+      "version": "d20dcf22d3c548af",
       "text": true,
       "provenance": [
         {
           "file": "test/coordination-knowledge.js",
           "line": 1,
-          "version": "f633a1ec49bb9bcc"
+          "version": "d20dcf22d3c548af"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-10-05T02:02:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b"
     },
     {
       "key": "Artifact:test/coordination-materials.js",
@@ -114380,6 +114380,22 @@
       ]
     },
     {
+      "key": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "type": "Commit",
+      "id": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "label": "chore(knowledge): refresh generated artifacts for 82da7143",
+      "title": "chore(knowledge): refresh generated artifacts for 82da7143",
+      "date": "2026-10-05T01:52:37.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "provenance": [
+        {
+          "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+        }
+      ]
+    },
+    {
       "key": "Commit:7fd72757f2cbab7b0b41bc0593fce7fd4aefa697",
       "type": "Commit",
       "id": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697",
@@ -126200,6 +126216,22 @@
         {
           "commit": "dec59acb81be0acb2ea36d37260b4ddbdb2293ef",
           "url": "https://github.com/OmertaDev/Omerta/commit/dec59acb81be0acb2ea36d37260b4ddbdb2293ef"
+        }
+      ]
+    },
+    {
+      "key": "Commit:dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "type": "Commit",
+      "id": "dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "label": "Make knowledge target tampering fixture deterministic",
+      "title": "Make knowledge target tampering fixture deterministic",
+      "date": "2026-10-05T02:02:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "provenance": [
+        {
+          "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dec6e919081a4e15bdc5a25178cbc93ac333de1b"
         }
       ]
     },
@@ -150555,6 +150587,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+        },
+        {
           "commit": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697"
         },
         {
@@ -151365,6 +151400,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+        },
+        {
           "commit": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697"
         },
         {
@@ -152173,6 +152211,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
         },
         {
           "commit": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697"
@@ -153202,6 +153243,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
         },
         {
           "commit": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697"
@@ -162186,8 +162230,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "82da7143462bb193390128e0a363457e9f772a50",
-      "currentBranch": "main",
+      "revision": "dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "currentBranch": "codex/fix-knowledge-target-tamper-fixture",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -190640,13 +190684,13 @@
       "type": "TestSuite",
       "id": "test/coordination-knowledge.js",
       "label": "test/coordination-knowledge.js",
-      "lines": 228,
-      "version": "f633a1ec49bb9bcc",
+      "lines": 231,
+      "version": "d20dcf22d3c548af",
       "provenance": [
         {
           "file": "test/coordination-knowledge.js",
           "line": 1,
-          "version": "f633a1ec49bb9bcc"
+          "version": "d20dcf22d3c548af"
         }
       ]
     },
@@ -288108,6 +288152,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7fd72757f2cbab7b0b41bc0593fce7fd4aefa697",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -327832,6 +327908,14 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "commit": "dec59acb81be0acb2ea36d37260b4ddbdb2293ef"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "to": "Artifact:test/coordination-knowledge.js",
+      "provenance": {
+        "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b"
       }
     },
     {
@@ -420670,6 +420754,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7fb698846e49ed27a7af1aad0f3234c6145c4ca9",
+      "provenance": {
+        "commit": "7fb698846e49ed27a7af1aad0f3234c6145c4ca9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7fd72757f2cbab7b0b41bc0593fce7fd4aefa697",
       "provenance": {
         "commit": "7fd72757f2cbab7b0b41bc0593fce7fd4aefa697"
@@ -426577,6 +426669,14 @@
       "to": "Commit:dec59acb81be0acb2ea36d37260b4ddbdb2293ef",
       "provenance": {
         "commit": "dec59acb81be0acb2ea36d37260b4ddbdb2293ef"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:dec6e919081a4e15bdc5a25178cbc93ac333de1b",
+      "provenance": {
+        "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b"
       }
     },
     {

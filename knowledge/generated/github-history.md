@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `82da7143462b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `dec6e919081a`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2020 |
+| Commits in clone | 2022 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-05 — Merge pull request #190 from OmertaDev/codex/verify-character-prod |
+| Latest commit | 2026-10-05 — Make knowledge target tampering fixture deterministic |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1138 |
+| OmertaDev | 1139 |
 | crvydev | 647 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 37 |
+| github-actions[bot] | 38 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 367 | yes |
 | [SPEC.md](../../SPEC.md) | 354 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 267 | historical |
-| knowledge/generated/graph-summary.md | 267 | historical |
-| knowledge/generated/graph.json | 267 | historical |
-| knowledge/generated/inventory.md | 267 | historical |
+| knowledge/generated/github-history.md | 268 | historical |
+| knowledge/generated/graph-summary.md | 268 | historical |
+| knowledge/generated/graph.json | 268 | historical |
+| knowledge/generated/inventory.md | 268 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 224 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
