@@ -23,6 +23,7 @@ for (const definition of dockDefinitions.situations)
 assert.deepEqual(compiled.campaigns.find((entry) => entry.id === dockDefinitions.campaigns[0].id), dockDefinitions.campaigns[0]);
 
 const f = await campaignNetworkFixture('gold_network');
+const realNow = Date.now;
 let engine;
 const director = createLivingWorldDirector({ pool: f.pool, content: f.content,
   definitions: createCampaignNetworkDefinitions(f.content), mode: 'LIVE', clock: f.clock });
@@ -35,6 +36,9 @@ const select = async (definitionId) => {
   assert.fail(`Canonical consequence did not create ${definitionId}`);
 };
 try {
+  // Command boards and the director share one explicit clock. Database work must
+  // not push a freshly issued command across a wall-clock expiry bucket.
+  Date.now = f.clock;
   engine = createPlayerCommandEngine({ pool: f.pool, content: f.content, director,
     enabled: true, knowledgeEnabled: true, sharingEnabled: true });
   const earlyCatalog = await engine.snapshot(f.actors.outsider);
@@ -108,8 +112,12 @@ try {
   const restarted = createLivingWorldDirector({ pool: f.pool, content: f.content, definitions: createCampaignNetworkDefinitions(f.content), mode: 'LIVE', clock: f.clock });
   assert.equal((await restarted.tick()).replayed, true);
   assert.equal((await f.pool.query('SELECT count(*)::int AS n FROM world_kernel_events WHERE object_id=$1', [f.ids.object])).rows[0].n, 5);
+  const expiring = (await engine.snapshot(f.actors.outsider)).commands.find((command) => command.availability === 'AVAILABLE');
+  assert(expiring, 'Expiry check needs an unexecuted available command');
+  f.advance((new Date(expiring.expiresAt).getTime() - f.clock()) / 1000);
+  await assert.rejects(() => executeIssued(engine, f.actors.outsider, expiring), { code: 'command_expired' });
   console.log('campaign-network-journey: Dock v1 preserved; issued-command shipment → market → corroborated non-traitor Informant; private evidence, conserved custody, restart and replay PASS');
-} finally { await f.cleanup(); }
+} finally { Date.now = realNow; await f.cleanup(); }
 
 for (const branch of ['supply_market', 'restore_supply', 'seize_market']) {
   const g = await campaignNetworkFixture(`gold_${branch}`);

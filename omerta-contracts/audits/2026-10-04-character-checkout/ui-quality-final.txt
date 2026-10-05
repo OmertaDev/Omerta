@@ -1,0 +1,18 @@
+
+> omerta-backend@1.2.0 ui:quality
+> node tools/public-ui.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  • Desktop landing, payload, and agent discovery
+    Cold landing: 602 KB / 768 KB transfer budget
+  • Path quiz, result cards, and downloadable proof
+  • 320px public layouts and deferred media
+  • Guest onboarding and operation receipts
+{"component":"player-command","phase":"request","correlationId":"b5cba429-5027-4a07-b6ed-da3786df0c70"}
+{"component":"player-command","phase":"authorization","correlationId":"b5cba429-5027-4a07-b6ed-da3786df0c70","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"b5cba429-5027-4a07-b6ed-da3786df0c70","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"b5cba429-5027-4a07-b6ed-da3786df0c70","statusCode":409,"elapsedMs":2}
+  • Keyboard navigation, modal focus, and accessible destinations
+  • Public keyboard entry and reduced-motion preferences
+
+✅ public UI contract passed in 20s — first paint, payload, Path quiz/results, truth register, Codex search, Arena empty state, operation receipts, keyboard navigation, modal focus, public landmarks, reduced motion, and chat labeling.

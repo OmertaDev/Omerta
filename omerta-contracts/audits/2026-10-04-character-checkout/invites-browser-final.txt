@@ -1,0 +1,10 @@
+
+> omerta-backend@1.2.0 test:invites:browser
+> node test/launch-invites-browser.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"29a14d7d-28b5-4495-bae3-e20a421e1398"}
+{"component":"player-command","phase":"authorization","correlationId":"29a14d7d-28b5-4495-bae3-e20a421e1398","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"29a14d7d-28b5-4495-bae3-e20a421e1398","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"29a14d7d-28b5-4495-bae3-e20a421e1398","statusCode":409,"elapsedMs":2}
+PASS: desktop/mobile gate, private markup, referral preservation, invalid-code retry, real form redemption, durable login, and Crew invite control. Screenshots: C:\Users\Jorge\Documents\Omerta\output\contract-red-team-release\output\launch-invite-gate

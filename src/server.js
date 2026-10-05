@@ -42,6 +42,7 @@ import { cityEventBoard, resultsBoard } from './events.js';
 import { fairnessBoard } from './fairness.js';
 import * as A from './auth.js';
 import * as Chain from './chain.js';
+import { characterCheckout, characterClaim, characterReadiness } from './identity-checkout.js';
 import * as Fees from './fees.js';
 import * as Forge from './walletforge.js';
 import * as V from './vanity.js';
@@ -3401,6 +3402,9 @@ export async function buildServer() {
   // the `minted` entitlement stays account-bound and never travels with the token.
   app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>
     Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));
+  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));
+  app.get('/v1/identity/readiness', { preHandler: auth }, async (req) => characterReadiness(pool, req.user.sub));
+  app.post('/v1/identity/claim/calldata', { preHandler: auth }, async (req) => characterClaim(pool, req.user.sub));
   app.get('/v1/withdraw/status', { preHandler: auth }, async (req) => {
     const mine = (await pool.query(
       'SELECT id, kind, amount, gear_id, nonce, status, claimed_onchain, signed_payload FROM vouchers WHERE account_id=$1 ORDER BY created_at DESC LIMIT 50',

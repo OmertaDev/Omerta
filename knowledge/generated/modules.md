@@ -28,7 +28,7 @@
 | [src/cards.js](../../src/cards.js) | 283 | platform-core | 1 / 4 | 5 | 10 | 1 |
 | [src/career.js](../../src/career.js) | 133 | engagement-growth | 2 / 3 | 2 | 9 | 0 |
 | [src/casino.js](../../src/casino.js) | 1499 | vice-competition | 4 / 12 | 21 | 22 | 4 |
-| [src/chain.js](../../src/chain.js) | 1801 | chain-economy | 12 / 25 | 17 | 29 | 19 |
+| [src/chain.js](../../src/chain.js) | 1801 | chain-economy | 12 / 28 | 17 | 29 | 21 |
 | [src/chainparams.js](../../src/chainparams.js) | 354 | platform-core | 1 / 2 | 2 | 1 | 1 |
 | [src/circle.js](../../src/circle.js) | 91 | engagement-growth | 1 / 2 | 1 | 5 | 1 |
 | [src/citymap.js](../../src/citymap.js) | 123 | world-progression | 2 / 1 | 1 | 7 | 0 |
@@ -113,11 +113,11 @@
 | [src/explore.js](../../src/explore.js) | 830 | world-progression | 24 / 4 | 1 | 27 | 1 |
 | [src/fairness.js](../../src/fairness.js) | 92 | economy-ledger | 1 / 5 | 1 | 1 | 1 |
 | [src/favors.js](../../src/favors.js) | 331 | engagement-growth | 2 / 8 | 4 | 9 | 3 |
-| [src/fees.js](../../src/fees.js) | 227 | economy-ledger | 4 / 12 | 4 | 10 | 5 |
+| [src/fees.js](../../src/fees.js) | 227 | economy-ledger | 4 / 13 | 4 | 10 | 5 |
 | [src/finalizedobservation.js](../../src/finalizedobservation.js) | 874 | platform-core | 0 / 0 | 0 | 0 | 0 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
-| [src/game.js](../../src/game.js) | 2745 | platform-core | 10 / 199 | 30 | 62 | 42 |
+| [src/game.js](../../src/game.js) | 2745 | platform-core | 10 / 200 | 30 | 62 | 42 |
 | [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 6 | 0 | 0 | 2 |
 | [src/genesiscca.js](../../src/genesiscca.js) | 1093 | platform-core | 1 / 4 | 0 | 0 | 1 |
 | [src/genesiskeeper.js](../../src/genesiskeeper.js) | 133 | platform-core | 0 / 1 | 0 | 0 | 0 |
@@ -128,6 +128,7 @@
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
+| [src/identity-checkout.js](../../src/identity-checkout.js) | 135 | platform-core | 4 / 2 | 3 | 6 | 1 |
 | [src/invariants.js](../../src/invariants.js) | 1390 | economy-ledger | 9 / 138 | 1 | 52 | 126 |
 | [src/invites.js](../../src/invites.js) | 47 | platform-core | 1 / 7 | 2 | 3 | 1 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |
@@ -174,7 +175,7 @@
 | [src/population.js](../../src/population.js) | 870 | world-progression | 7 / 15 | 0 | 33 | 9 |
 | [src/port.js](../../src/port.js) | 501 | enterprise-logistics | 5 / 4 | 12 | 9 | 0 |
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
-| [src/portrait-access.js](../../src/portrait-access.js) | 34 | platform-core | 0 / 3 | 0 | 2 | 1 |
+| [src/portrait-access.js](../../src/portrait-access.js) | 34 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 341 | engagement-growth | 4 / 7 | 0 | 6 | 4 |
 | [src/preflight.js](../../src/preflight.js) | 486 | platform-core | 0 / 7 | 0 | 7 | 3 |
 | [src/primetime.js](../../src/primetime.js) | 292 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
@@ -232,7 +233,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 6 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 201 | law-intelligence | 3 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3648 | platform-core | 144 / 192 | 423 | 43 | 170 |
+| [src/server.js](../../src/server.js) | 3652 | platform-core | 145 / 193 | 426 | 43 | 171 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 3 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 26 | 44 | 3 | 18 |

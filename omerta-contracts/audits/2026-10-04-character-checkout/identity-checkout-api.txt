@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+character HTTP: authenticated readiness/payment/claim, live RPC fee, body overrides ignored, unpaid claim and repeat payment rejected, signer/network failclosed PASS

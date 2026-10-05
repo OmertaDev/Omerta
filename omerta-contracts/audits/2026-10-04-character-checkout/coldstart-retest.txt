@@ -1,0 +1,6 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"d2a66716-bef0-4d49-9e9e-c283dcf377ab"}
+{"component":"player-command","phase":"authorization","correlationId":"d2a66716-bef0-4d49-9e9e-c283dcf377ab","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"d2a66716-bef0-4d49-9e9e-c283dcf377ab","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"d2a66716-bef0-4d49-9e9e-c283dcf377ab","statusCode":409,"elapsedMs":2}
+✅ cold start passed — all 176 parameterless authed GET routes answer for the FIRST player on a world with no season, no monument, no event, no leaderboard and not even a resident to fill the boards; the 13 that refuse are declared tombstones, checked in both directions so a waiver cannot outlive the thing it waives.

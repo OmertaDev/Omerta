@@ -1,0 +1,59 @@
+{
+  "sourceCommit": "788e672741e558210029683fed928a06934123f3",
+  "expectedCommit": "788e672741e558210029683fed928a06934123f3",
+  "recordedAtUtc": "2026-10-04T21:42:47.6780923Z",
+  "postgresVersion": "postgres (PostgreSQL) 18.4",
+  "nodeVersion": "v24.19.0",
+  "command": "npm run test:identity-checkout:postgres",
+  "workingDirectory": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\contract-red-team-release",
+  "database": "omerta_liquidity_red_team_e2e_test",
+  "databaseHost": "127.0.0.1",
+  "databasePort": 55439,
+  "databaseUser": "omerta_audit",
+  "ownedCluster": "C:/Users/Jorge/Documents/Omerta/output/red-team-postgres/data",
+  "exitCode": 0,
+  "stopExitCode": 0,
+  "sourcePins": [
+    {
+      "path": "src/identity-checkout.js",
+      "sha256": "c0327b29415768e5fa8e8eaa06f30be658cd7886ae2321f6a204c45f7709b6e0",
+      "gitBlob": "b9c21fc92b94ff845ddca6a16837b6e377811781"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "86c2e67f3fbb4b5d436015e8f7a5471e0f1fc1a17e4f65b3cbc6b739ad11ace8",
+      "gitBlob": "fe09000648e073994a29165f9a26553a69818826"
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "78efb070676a76aaac0c1ad302357452e268a77f8491510a6068b3937b157685",
+      "gitBlob": "bae3c8e5fe8852a3914611ed906385b18f04f63a"
+    },
+    {
+      "path": "test/identity-checkout.js",
+      "sha256": "8956755c68f24bc7b8d5c8cb1b1ffc3a048fc8d8770265fa852b2698e6a4432d",
+      "gitBlob": "91a995664a67372917da602f6a7d43d02a08a468"
+    },
+    {
+      "path": "test/identity-checkout-client.js",
+      "sha256": "c24bc49ca74cf6c4e15f61770bc24a63fbb2c0663d51bd2f7ac6cf16840443df",
+      "gitBlob": "3efb5dfb6cfd7ce8e17f953f68b7328ae4c218e2"
+    },
+    {
+      "path": "test/identity-checkout-api.js",
+      "sha256": "28672b070b99b48d803d645b4e38773aad540c396521b385379b45c5338656bf",
+      "gitBlob": "b4f9b9f67a6f2d398962e5a7c7d2e3f391ff5e0e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "8f265c9c720112acc626480627e55857032fe1e0bb6a8b555896d20130016286",
+      "gitBlob": "5ec85c4b18520c4105948e79bf0209665d0f11c8"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "94dc334358640966668966ac3a5e3d3f7f2608bcbd1b21b9f6d933049d70fac4",
+      "gitBlob": "25847ce3f354100704a305275adf310550938bc6"
+    }
+  ],
+  "logSha256": "bc88b4df82a9e842c2fba3cb3ae9cd1fb9331a92dde6bc81cfec37bf808acb84"
+}

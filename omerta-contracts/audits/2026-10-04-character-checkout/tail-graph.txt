@@ -1,0 +1,9 @@
+✓ census: 3426 nodes / 9513 edges across 9 node and 8 edge types
+✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges
+✓ precedent lookup: "whack:loot precedent" resolves to 4 sites in 3 modules
+✓ reason coverage: mechanism fires on a synthetic hole; the real tree is clean
+✓ honesty rule: 43 unresolvable constructs counted and listed (interpolated-reason, computed-currency)
+✓ lever trace: declaration, readers, pins and deciding documents resolve for a real lever
+✓ open-findings: 38 register rows across three D-namespace registers, 37 flagged ambiguous, audit coverage stated as 81 of 96 reports
+✓ CLI boundary: direct queries execute and CRLF registers parse on this host
+✅ THE GRAPH PLANE test passed — the work-and-knowledge graph builds from the tree with 3426 nodes and 9513 edges, every node carries provenance + an authoring run + a content hash, every invariant check names what it reconciles, precedent lookup resolves a named pattern to its call sites, the §10.4 coverage query fires on a synthetic hole and reports the real tree clean, the lever trace answers the paper's tracing question end to end, and everything the extractor cannot read is counted and listed rather than skipped in silence

@@ -1,0 +1,53 @@
+Reviewed revision `7c5c874de76956f824d346311f60c5ce74fe042c` with a dirty working tree. No files, wallets, or services were modified.
+
+## Findings
+
+1. **Medium — payment can be duplicated after broadcast-response loss**
+
+   [public/index.html:5649](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/index.html:5649)
+
+   Sequence: wallet broadcasts `eth_sendTransaction` → page closes/provider response is lost before line 5650 stores the hash → refresh finds no pending key → checkout offers another payment. OmertaFees accepts both, producing two paid credits.
+
+   Correction: persist a pre-broadcast intent marker and require reconciliation or explicit cancellation before another payment; replace it with the hash when available. Backend pending-payment visibility would be stronger.
+
+2. **Medium — checkout is not pinned to Robinhood chain 4663**
+
+   [src/identity-checkout.js:14](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/identity-checkout.js:14), [src/identity-checkout.js:24](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/identity-checkout.js:24)
+
+   `CHAIN_ID` and RPC are checked against each other, but any configured chain is accepted. Setting both to `1`, for example, returns valid mainnet calldata contrary to the stated 4663-only boundary.
+
+   Correction: require `domain.chainId === 4663` in checkout context, independently of general chain configuration.
+
+3. **Low — signer rotation permanently strands an expired voucher through this endpoint**
+
+   [src/identity-checkout.js:105](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/identity-checkout.js:105), [src/identity-checkout.js:108](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/identity-checkout.js:108)
+
+   A voucher signed by the previous on-chain signer fails current-signer recovery before reaching confirmed-expiry replacement. Even after it is provably expired and unused, `characterClaim` never invokes the safe replacement logic in `requestDynastyMint`.
+
+   Correction: for signer mismatch, allow only the existing confirmed-expired-and-unused replacement path; continue rejecting live or uncertain vouchers.
+
+## Missing meaningful tests
+
+- Broadcast succeeded but provider promise rejected/page reloaded before hash persistence.
+- Configured RPC and `CHAIN_ID` both valid but not 4663.
+- Old-signer voucher after rotation, both before and after confirmed expiry.
+- PostgreSQL concurrency test covering simultaneous claim/credit consumption and voucher issuance.
+
+Focused tests and syntax checks passed, but do not cover these traces. Contract/domain replay, account-scoped auth, wallet matching, exact fee enforcement, confirmed indexing, credit locking, nonce replay, and transfer/non-entitlement separation otherwise appeared correctly bounded.
+
+## Reviewed SHA-256
+
+```text
+7ce9008d…ef887  src/identity-checkout.js
+a04f4a0f…f3062  src/server.js
+bcb091ef…4d6f8  public/index.html
+2ac2c3d4…2bfb3  test/identity-checkout.js
+93dcf927…a74c   test/identity-checkout-client.js
+52d283e7…a11e0  src/chain.js
+6d105f88…d13c9  src/fees.js
+68c538e3…54dcb  src/watcher.js
+c23e6a91…8deb6  DynastyNFT.sol
+c08fa731…1f1480 OmertaFees.sol
+```
+
+Daybreak’s documented read-only invocation was attempted but could not initialize because the managed shell exposes no home directory. I did not bypass that restriction or inspect authentication/configuration data; the reachable-trace analysis above was performed manually.

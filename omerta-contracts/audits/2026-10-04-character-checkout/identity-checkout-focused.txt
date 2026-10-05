@@ -1,0 +1,8 @@
+
+> omerta-backend@1.2.0 test:identity-checkout
+> node test/identity-checkout.js && node test/identity-checkout-client.js && node test/identity-checkout-api.js
+
+identity checkout: live fee, ABI, bound wallet/domain, signer/chain/pause failclosed, no duplicate fee, confirmed-credit gate and nonce checks PASS
+character wallet: account/chain changes, changed quote, cancellation, disabled storage, persistent pending/reload, failed receipt retry and navigation PASS
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+character HTTP: authenticated readiness/payment/claim, live RPC fee, body overrides ignored, unpaid claim and repeat payment rejected, signer/network failclosed PASS

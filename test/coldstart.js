@@ -20,6 +20,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.POPULATION_OFF = 'on';   // no residents: the emptiest world the game can be in
 process.env.WORLD_GRAPH_KERNEL = 'off';
 process.env.COORDINATION_OPERATIONS = 'off';
+process.env.CHAIN_RPC_URL = ''; // this fixture deliberately has no funded-chain configuration
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 
@@ -39,6 +40,7 @@ const j = async (method, url, token, payload) => {
 // route that refuses because the world is empty does not belong here — that is the bug this file
 // exists to find.
 const DECLARED = {
+  '/v1/identity/readiness': 'NFT checkout is dormant without chain configuration; readiness must refuse with chain_unconfigured rather than offer an unchecked payment',
   '/v1/wage': 'retired — the Street Wage faucet is gone (economy v3 step 1); the route stays mounted so a polling client learns that instead of 404-guessing',
   '/v1/portfolio': 'retired — D11 removed the stock layer; the tombstone tells a stale client why',
   '/v1/leaderboard/portfolio': 'retired with the portfolio (D11)',
@@ -97,6 +99,10 @@ for (const p of paths) {
   const r = await j('GET', p, token);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
+    if (p === '/v1/identity/readiness') {
+      assert.equal(r.code, 400, 'unconfigured NFT readiness must fail closed');
+      assert.equal(r.body?.error, 'chain_unconfigured', 'readiness must report the configuration refusal');
+    }
     if (defaultOff.has(p)) {
       assert.equal(r.code, p === '/v1/commands' ? 409 : 404, `${p} must fail closed for its disabled rollout`);
       assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);

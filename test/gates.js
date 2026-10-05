@@ -3520,7 +3520,7 @@ scopedSocialContext = async function(db) {
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
-    'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres',
+    'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres', 'test:identity-checkout:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
   ];
   const replacePgquery = (replacement) => {

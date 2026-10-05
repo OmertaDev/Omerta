@@ -1,0 +1,5 @@
+✓ 728 signed levers hold their signed values
+✓ register complete: every lever named in BALANCE.md/SIGN-OFF.md that resolves to a value is pinned
+✓ manifest is well-formed (no duplicate paths, no undefined pins)
+✅ THE SIGNED LEVERS test passed — 728 founder-signed numbers are pinned to the values BALANCE.md and SIGN-OFF.md sign off on, so a retune can no longer happen silently: changing one now requires editing the pin in the same commit. The register is also asserted COMPLETE, so a newly signed lever cannot skip the pin and quietly reopen the gap, and no pin dangles at a renamed constant.
+✓ readers: all 720 live levers are read by src/; 8 are inert with a stated reason

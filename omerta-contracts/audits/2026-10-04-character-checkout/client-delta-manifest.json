@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "0618174b0a33ac2eb2571e32249bd06b66672e59",
+  "recordedAt": "2026-10-05T00:22:12.391Z",
+  "phase": "Final client delta reviewed; hosted release CI, production rollout and real user paid mint pending",
+  "baselineManifest": "manifest.json",
+  "baselineCommit": "788e672741e558210029683fed928a06934123f3",
+  "review": "Actual gpt-daybreak-blue-latest CLI reviewed the four-file client/test delta from 7fd72757 to this commit; no evidenced findings remained",
+  "sourceFiles": [
+    {
+      "file": ".github/workflows/ci.yml",
+      "workingTreeSha256": "94dc334358640966668966ac3a5e3d3f7f2608bcbd1b21b9f6d933049d70fac4",
+      "gitBlobSha256": "f6bee215b0f27c67c09b5a295c8da3f195a217c598550f0fc95543d37d558a16"
+    },
+    {
+      "file": "package.json",
+      "workingTreeSha256": "8f265c9c720112acc626480627e55857032fe1e0bb6a8b555896d20130016286",
+      "gitBlobSha256": "5b42638622ecfe48d223c7d8f070267305afb52b54c3efdfe7d5a7aefeeec299"
+    },
+    {
+      "file": "public/index.html",
+      "workingTreeSha256": "194d13dc47cfc746251f84e2f93ffba5b2dff49bce828375cb1e13154a602ec1",
+      "gitBlobSha256": "66f7196d2ca6d8de0193a241bbe9c5b857a6caa93ff7bf0c4d16eaae91870d87"
+    },
+    {
+      "file": "src/identity-checkout.js",
+      "workingTreeSha256": "c0327b29415768e5fa8e8eaa06f30be658cd7886ae2321f6a204c45f7709b6e0",
+      "gitBlobSha256": "c0327b29415768e5fa8e8eaa06f30be658cd7886ae2321f6a204c45f7709b6e0"
+    },
+    {
+      "file": "src/server.js",
+      "workingTreeSha256": "86c2e67f3fbb4b5d436015e8f7a5471e0f1fc1a17e4f65b3cbc6b739ad11ace8",
+      "gitBlobSha256": "12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff"
+    },
+    {
+      "file": "test/campaign-network-journey.js",
+      "workingTreeSha256": "83ae22390ea6508663f309c386691c184f70fb99add8b50522b1df993652366b",
+      "gitBlobSha256": "2a704c9f2f04bcd575956a8eaaad49ce7259e25ba046f6f824d1dd89b04a2eab"
+    },
+    {
+      "file": "test/identity-checkout-api.js",
+      "workingTreeSha256": "b81642dc3b1f1c3d8bde0f9e38577406d5c7e1be8dccc7924f7095e3517e8c4b",
+      "gitBlobSha256": "b81642dc3b1f1c3d8bde0f9e38577406d5c7e1be8dccc7924f7095e3517e8c4b"
+    },
+    {
+      "file": "test/identity-checkout-client.js",
+      "workingTreeSha256": "f834dc90a0fc240e87b42b971e30f2c2f99d4eadf853f4b0922ea99282bb14ae",
+      "gitBlobSha256": "f834dc90a0fc240e87b42b971e30f2c2f99d4eadf853f4b0922ea99282bb14ae"
+    },
+    {
+      "file": "test/identity-checkout.js",
+      "workingTreeSha256": "8956755c68f24bc7b8d5c8cb1b1ffc3a048fc8d8770265fa852b2698e6a4432d",
+      "gitBlobSha256": "8956755c68f24bc7b8d5c8cb1b1ffc3a048fc8d8770265fa852b2698e6a4432d"
+    },
+    {
+      "file": "src/chain.js",
+      "workingTreeSha256": "52d283e7d2ca4fdbe768672cf51be33aa5d011f32e789d9ecbcee3c7749a11e0",
+      "gitBlobSha256": "ce26f5bdc6b9ac0a6f448b973bd47ad58b94675f58a3ba5576d7cf25a7532381"
+    },
+    {
+      "file": "src/fees.js",
+      "workingTreeSha256": "6d105f8857b29a43eb87158cd0d6780462931f248411b372f906a59e6c2d13c9",
+      "gitBlobSha256": "134e6c5862199bf90952f94043288621e13eeb7249ba871ebd290dbe716e413a"
+    },
+    {
+      "file": "src/watcher.js",
+      "workingTreeSha256": "68c538e3fb09b40168c4040612f32c0f2d66faffa4b431a65e2f0e6bae354dcb",
+      "gitBlobSha256": "408e90bd12f137b551ec29974bb1acfa9ea2545fbe7d3ab0de842fa5d3d90099"
+    },
+    {
+      "file": "src/portrait-access.js",
+      "workingTreeSha256": "984da0f200d6737be3839a4e1878d82866df36f8db47277a2870a75139f45ac5",
+      "gitBlobSha256": "fb8132b4521dd286a1087afc9325699c132bb68dba88a3fd6c8ebe3f59b3eb47"
+    },
+    {
+      "file": "omerta-contracts/src/DynastyNFT.sol",
+      "workingTreeSha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6",
+      "gitBlobSha256": "c23e6a910caae32b3ac0894861674cdafa91c5092f8191384e6215fb3688deb6"
+    },
+    {
+      "file": "omerta-contracts/src/OmertaFees.sol",
+      "workingTreeSha256": "c08fa731db192a1af41ce3b68fe19c2a3575066c6f22a8ea2a836168701f1480",
+      "gitBlobSha256": "c08fa731db192a1af41ce3b68fe19c2a3575066c6f22a8ea2a836168701f1480"
+    },
+    {
+      "file": "test/client.js",
+      "workingTreeSha256": "d09e62a4accbbafe680c8d37c4227997f4a186e461bfbac5168dcf91177dba2b",
+      "gitBlobSha256": "a1d2b5f0b1ec07512494c290ad06b70df434da724f81c5773dbfd75c71bb602c"
+    },
+    {
+      "file": "test/coldstart.js",
+      "workingTreeSha256": "f549f31d578b02d935ef1652fcb2aa3bbdf45d4a881f6a0e3f13f4dc9de12d5f",
+      "gitBlobSha256": "a572a9c42b08ed3f8fa596c250ab304ac0e23b6e614d914e9527d8fff2a0d8cd"
+    },
+    {
+      "file": "test/gates.js",
+      "workingTreeSha256": "b116b0380d38c885fb9af6b4e73302209ababe1eaac5e38d075ac0b0950e2bb6",
+      "gitBlobSha256": "a58b00a64ebc18891fb75f0ff4c533b92d9c2fca9fc9a67aa5b7f055a078b12e"
+    },
+    {
+      "file": "SPEC.md",
+      "workingTreeSha256": "e72368d1f96e71439ec92f814a6fd4349b65216a9f8a719e3d6433590641b747",
+      "gitBlobSha256": "4bb3658f9391555ab38a3ab44262597a7e3fe527d8f0c517c3a0fe1f5ce500de"
+    },
+    {
+      "file": "MARKETING-POSTS.md",
+      "workingTreeSha256": "794ffd9a279bd8e41f2299ff00c738434a4c1eacdea46acde0ff6e42406a4d04",
+      "gitBlobSha256": "9e6e0449efa84b7599f4e45b589c78fa20b1ba0f2cc6689dd26d551a92e8e2d7"
+    }
+  ],
+  "evidence": [
+    {
+      "file": "client-delta-daybreak.txt",
+      "sha256": "bcd824ababa3b1c5c171cb94a9e55c97e463089d19c945955ade6b486a92ae97"
+    },
+    {
+      "file": "client-delta-daybreak-console.txt",
+      "sha256": "2a5ddb2536245a5d577ee31ca1e9a6a3f50c0b12e6963f5bbc6460f0f2a5821e"
+    },
+    {
+      "file": "client-final.txt",
+      "sha256": "ef84aec839f38b7e14370c6c6f0ba3d98d94163c7cbd53fffc01a978d00ba861"
+    },
+    {
+      "file": "mobile-final.txt",
+      "sha256": "216f0e4f0dbb8777636e85c565a3109228b0802c4689827fc06eae22723b0df9"
+    },
+    {
+      "file": "ui-quality-final.txt",
+      "sha256": "393e34b2a3310697e427a9d6c9a40b1f70dc327ecc50134fc8e2c639bcb5cc2f"
+    },
+    {
+      "file": "invites-final.txt",
+      "sha256": "7bda27a0c45852c3468a38908e06e72dc93868cfd04e67f5d9be2a190c9eea24"
+    },
+    {
+      "file": "invites-browser-final.txt",
+      "sha256": "0dc35e446b9c932a5b9e62c3a168b6759e77d6fa2b863bc709205dce4004ca97"
+    },
+    {
+      "file": "tail-engagement.txt",
+      "sha256": "06d400a3168b220a612cdc8a133064814b689d1bde2092d1d600e8435a50d3c1"
+    },
+    {
+      "file": "tail-levers.txt",
+      "sha256": "2de02f881f697caa19daeff43f8f36baa99a335e12b28dd04ba9c94daf03757c"
+    },
+    {
+      "file": "tail-graph.txt",
+      "sha256": "10db542e1c415d3db908688d982b9d0b0716dfb8f66885f18ec6fe1dd456f362"
+    },
+    {
+      "file": "tail-gates.txt",
+      "sha256": "0e49ac3c636e5b86f35527732d43452a65e89a8c019610fe6b8eb4627735c787"
+    },
+    {
+      "file": "tail-chainparams.txt",
+      "sha256": "f6af562e73db5457c4eebf687be497b439386a4973bb7dabc3dbc818c5998020"
+    },
+    {
+      "file": "tail-docs.txt",
+      "sha256": "7d346ebd52a677550c6aedf068119eb45ad11c6cdd1924290869716a91cfbcd8"
+    },
+    {
+      "file": "tail-playthrough-truth.txt",
+      "sha256": "386a5380f9d9f412fc6b595b348a9c23ec7603ae85d558581bb04d59540a5b31"
+    }
+  ]
+}
