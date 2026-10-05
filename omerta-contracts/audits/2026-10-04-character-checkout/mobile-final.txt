@@ -1,0 +1,70 @@
+
+> omerta-backend@1.2.0 mobile
+> node tools/mobile.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+
+── 320x568  (small legacy phone — the hard floor)
+{"component":"player-command","phase":"request","correlationId":"3805e380-7fee-448e-aaf0-12146d1e5021"}
+{"component":"player-command","phase":"authorization","correlationId":"3805e380-7fee-448e-aaf0-12146d1e5021","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"3805e380-7fee-448e-aaf0-12146d1e5021","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"3805e380-7fee-448e-aaf0-12146d1e5021","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"9606debd-2548-4e2a-ad4f-cdf65553b82f"}
+{"component":"player-command","phase":"authorization","correlationId":"9606debd-2548-4e2a-ad4f-cdf65553b82f","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"9606debd-2548-4e2a-ad4f-cdf65553b82f","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"9606debd-2548-4e2a-ad4f-cdf65553b82f","statusCode":409,"elapsedMs":2}
+   45 screens checked so far, 0 failure(s)
+
+── 375x667  (iPhone SE / 8 — the tightest common phone)
+{"component":"player-command","phase":"request","correlationId":"b86d2b5f-fce3-4c82-bd2f-b3bd9b3e16c6"}
+{"component":"player-command","phase":"authorization","correlationId":"b86d2b5f-fce3-4c82-bd2f-b3bd9b3e16c6","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"b86d2b5f-fce3-4c82-bd2f-b3bd9b3e16c6","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"b86d2b5f-fce3-4c82-bd2f-b3bd9b3e16c6","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"9d5f7879-f244-4dc2-945a-40c0f1c8cb4b"}
+{"component":"player-command","phase":"authorization","correlationId":"9d5f7879-f244-4dc2-945a-40c0f1c8cb4b","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"9d5f7879-f244-4dc2-945a-40c0f1c8cb4b","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"9d5f7879-f244-4dc2-945a-40c0f1c8cb4b","statusCode":409,"elapsedMs":2}
+   90 screens checked so far, 0 failure(s)
+
+── 360x780  (small Android)
+{"component":"player-command","phase":"request","correlationId":"6e73d81c-53d0-4110-9bac-9c066f0ee5e2"}
+{"component":"player-command","phase":"authorization","correlationId":"6e73d81c-53d0-4110-9bac-9c066f0ee5e2","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"6e73d81c-53d0-4110-9bac-9c066f0ee5e2","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"6e73d81c-53d0-4110-9bac-9c066f0ee5e2","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"6eaaad97-3796-4bca-92b8-f14c8ff3ff73"}
+{"component":"player-command","phase":"authorization","correlationId":"6eaaad97-3796-4bca-92b8-f14c8ff3ff73","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"6eaaad97-3796-4bca-92b8-f14c8ff3ff73","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"6eaaad97-3796-4bca-92b8-f14c8ff3ff73","statusCode":409,"elapsedMs":2}
+   135 screens checked so far, 0 failure(s)
+{"component":"player-command","phase":"request","correlationId":"274483e0-4c7a-40c4-a0e8-5edfd7648653"}
+{"component":"player-command","phase":"authorization","correlationId":"274483e0-4c7a-40c4-a0e8-5edfd7648653","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"274483e0-4c7a-40c4-a0e8-5edfd7648653","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"274483e0-4c7a-40c4-a0e8-5edfd7648653","statusCode":409,"elapsedMs":2}
+   restart-window check done, 0 failure(s)
+   /admin check done (17 panels), 0 failure(s)
+{"component":"player-command","phase":"request","correlationId":"9b7e4d06-83de-4c82-8cf9-66e2b315fbac"}
+{"component":"player-command","phase":"authorization","correlationId":"9b7e4d06-83de-4c82-8cf9-66e2b315fbac","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"9b7e4d06-83de-4c82-8cf9-66e2b315fbac","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"9b7e4d06-83de-4c82-8cf9-66e2b315fbac","statusCode":409,"elapsedMs":1}
+   cooldown-freshness check done (quiet 0 → crossing 4), 0 failure(s)
+{"component":"player-command","phase":"request","correlationId":"840d5e0f-70c0-42f0-9017-02539d3b84e4"}
+{"component":"player-command","phase":"authorization","correlationId":"840d5e0f-70c0-42f0-9017-02539d3b84e4","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"840d5e0f-70c0-42f0-9017-02539d3b84e4","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"840d5e0f-70c0-42f0-9017-02539d3b84e4","statusCode":409,"elapsedMs":1}
+   deep-city integration check done, 0 failure(s)
+{"component":"player-command","phase":"request","correlationId":"980fe117-ba51-48b8-b06c-bf81ffbb76fb"}
+{"component":"player-command","phase":"authorization","correlationId":"980fe117-ba51-48b8-b06c-bf81ffbb76fb","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"980fe117-ba51-48b8-b06c-bf81ffbb76fb","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"980fe117-ba51-48b8-b06c-bf81ffbb76fb","statusCode":409,"elapsedMs":1}
+   lockup cold-load check done (landed on pen), 0 failure(s)
+{"component":"player-command","phase":"request","correlationId":"39254046-374c-408a-b79b-0258be2d0d59"}
+{"component":"player-command","phase":"authorization","correlationId":"39254046-374c-408a-b79b-0258be2d0d59","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"39254046-374c-408a-b79b-0258be2d0d59","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"39254046-374c-408a-b79b-0258be2d0d59","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"cab1d797-7e6c-43f5-953f-ff632062fa8a"}
+{"component":"player-command","phase":"authorization","correlationId":"cab1d797-7e6c-43f5-953f-ff632062fa8a","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"cab1d797-7e6c-43f5-953f-ff632062fa8a","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"cab1d797-7e6c-43f5-953f-ff632062fa8a","statusCode":409,"elapsedMs":1}
+   stored-XSS sweep done (4430 strings poisoned over 155 responses, marker rendered as text 781× on 34 screens), 0 failure(s)
+
+✅ mobile harness passed — 175 screen checks across 3 phone sizes: no screen scrolls sideways, every screen you pick opens above the fold, every primary nav target clears 44px, and no page threw. (Layout only — whether a screen reads WELL still needs a person.)

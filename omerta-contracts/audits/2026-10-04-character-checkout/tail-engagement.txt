@@ -1,0 +1,9 @@
+✓ catalog: all 163 track() events in src/ are claimed by exactly one of 40 systems (or declared non-engagement); no phantoms
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ live read: 8 humans, streets/crime shows 1 account(s) / 2 event(s)
+✓ dead list: 36 systems with zero distinct players; 0 untracked (no events declared)
+✓ adoption is distinct accounts, not event volume
+✓ retention: young accounts pending (not churned); an aged no-show reports a real 0% D1
+✓ agents counted separately — an agent returning says nothing about whether the game is fun
+✓ GET /v1/mod/engagement is mod-gated and serves the report
+✅ ENGAGEMENT test passed — the system catalog claims every one of 163 track() events in src/ exactly once (so a new system cannot silently read as dead, and a renamed event cannot leave a phantom), the report reads real telemetry through the public API, THE DEAD LIST names systems with zero distinct players while keeping untracked systems separate from unused ones, adoption counts distinct humans rather than event volume, retention reports young cohorts as pending instead of churned, agents and NPC residents are excluded from the human population, and the endpoint is mod-gated

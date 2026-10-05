@@ -1,25 +1,137 @@
 {
-  "sourceCommit": "788e672741e558210029683fed928a06934123f3",
+  "sourceCommit": "0618174b0a33ac2eb2571e32249bd06b66672e59",
   "files": [
     {
-      "file": "manifest.json",
-      "sha256": "d38f2eeda580fd16d7540c0ee91e34bdd617273fb63bf200c1b2fa22b9b1a206"
+      "file": "campaign-network-clock-test.txt",
+      "sha256": "dff7ddfa48472c691b9ec6ebe02594730819f7daaff6cb732910887623f1564d"
     },
     {
-      "file": "report.md",
-      "sha256": "96a15834847a2c0b8cb978b2d3ef63bf1c6d2222190da46140daf2cc18d0e791"
+      "file": "character-checkout-daybreak-console.txt",
+      "sha256": "eefa86f7d54687b117ea0b4f80c5a53f118946d69291ba3c5e5452ba7d86d316"
+    },
+    {
+      "file": "character-checkout-daybreak-retest-console.txt",
+      "sha256": "78d9ab5824b1adcff22d37f991f981c9c0bc8c82dcd605218ff0f966f63c608c"
+    },
+    {
+      "file": "character-checkout-daybreak-retest.txt",
+      "sha256": "70668c2bb304df12cec0ba8e27ef1f06bc83b64b2b80fdc5d828d3df53aa78dc"
+    },
+    {
+      "file": "character-checkout-daybreak-review.txt",
+      "sha256": "ca135ca0d81760b0a266da6d2e0a3d0c32f52ef2f2badf375a802f3ad4cfa4bf"
+    },
+    {
+      "file": "client-delta-daybreak-console.txt",
+      "sha256": "2a5ddb2536245a5d577ee31ca1e9a6a3f50c0b12e6963f5bbc6460f0f2a5821e"
+    },
+    {
+      "file": "client-delta-daybreak.txt",
+      "sha256": "bcd824ababa3b1c5c171cb94a9e55c97e463089d19c945955ade6b486a92ae97"
+    },
+    {
+      "file": "client-delta-manifest.json",
+      "sha256": "b5f7e381452cf4e25b2ca94d73ec8c7668ca64e730e2ceaff7d7e4b598359891"
+    },
+    {
+      "file": "client-final.txt",
+      "sha256": "ef84aec839f38b7e14370c6c6f0ba3d98d94163c7cbd53fffc01a978d00ba861"
     },
     {
       "file": "coldstart-retest.txt",
       "sha256": "80f5429eed393f46a17d8cfc9648bb166c1c2b5c739ff3f0ce1d9774efe24b20"
     },
     {
+      "file": "docs-retest.txt",
+      "sha256": "7d346ebd52a677550c6aedf068119eb45ad11c6cdd1924290869716a91cfbcd8"
+    },
+    {
       "file": "gates-retest.txt",
       "sha256": "0e49ac3c636e5b86f35527732d43452a65e89a8c019610fe6b8eb4627735c787"
     },
     {
-      "file": "docs-retest.txt",
+      "file": "identity-checkout-api.txt",
+      "sha256": "8c9faeae33378962e2c6bfe1ad037a9dcd0eec254560def8bc936ad81b39f9ce"
+    },
+    {
+      "file": "identity-checkout-focused.txt",
+      "sha256": "0e6639f0e4540f06301b8ba8fab34178deb1d2052e1428198194d5592e26c585"
+    },
+    {
+      "file": "identity-checkout-postgres-final-provenance.json",
+      "sha256": "86d5241ac3a524197e931447f7493fbc1ee00694a0800ce2509e4d5367d0d786"
+    },
+    {
+      "file": "identity-checkout-postgres-final.txt",
+      "sha256": "bc88b4df82a9e842c2fba3cb3ae9cd1fb9331a92dde6bc81cfec37bf808acb84"
+    },
+    {
+      "file": "identity-public-ui.txt",
+      "sha256": "f1405eceb0d5dca3a1fb5abb6ec2173cbd48d61d2a825d10a1326ece77c0e4cf"
+    },
+    {
+      "file": "invites-browser-final.txt",
+      "sha256": "0dc35e446b9c932a5b9e62c3a168b6759e77d6fa2b863bc709205dce4004ca97"
+    },
+    {
+      "file": "invites-final.txt",
+      "sha256": "7bda27a0c45852c3468a38908e06e72dc93868cfd04e67f5d9be2a190c9eea24"
+    },
+    {
+      "file": "mainnet-read-only.json",
+      "sha256": "ce859430428bf9c3af2723591b3ee1f4c0a7a0480e40754bac83f4a942426894"
+    },
+    {
+      "file": "manifest.json",
+      "sha256": "d38f2eeda580fd16d7540c0ee91e34bdd617273fb63bf200c1b2fa22b9b1a206"
+    },
+    {
+      "file": "mobile-final.txt",
+      "sha256": "216f0e4f0dbb8777636e85c565a3109228b0802c4689827fc06eae22723b0df9"
+    },
+    {
+      "file": "player-commands-clock-test.txt",
+      "sha256": "6f1a1b32c1e2f94a5e81eaa1d61392c14d8c8cb83f057a84f2135cf85830520a"
+    },
+    {
+      "file": "production-pre-test-status.json",
+      "sha256": "be26549572ddb95faf0b18613d4e41e0c1d3e55694cecd543b21f976cf51f5dc"
+    },
+    {
+      "file": "report.md",
+      "sha256": "8a641d10a36ce0a0a20d765a3b5f08ee7d06b57185acb815055cce8721ec1c73"
+    },
+    {
+      "file": "tail-chainparams.txt",
+      "sha256": "f6af562e73db5457c4eebf687be497b439386a4973bb7dabc3dbc818c5998020"
+    },
+    {
+      "file": "tail-docs.txt",
       "sha256": "7d346ebd52a677550c6aedf068119eb45ad11c6cdd1924290869716a91cfbcd8"
+    },
+    {
+      "file": "tail-engagement.txt",
+      "sha256": "06d400a3168b220a612cdc8a133064814b689d1bde2092d1d600e8435a50d3c1"
+    },
+    {
+      "file": "tail-gates.txt",
+      "sha256": "0e49ac3c636e5b86f35527732d43452a65e89a8c019610fe6b8eb4627735c787"
+    },
+    {
+      "file": "tail-graph.txt",
+      "sha256": "10db542e1c415d3db908688d982b9d0b0716dfb8f66885f18ec6fe1dd456f362"
+    },
+    {
+      "file": "tail-levers.txt",
+      "sha256": "2de02f881f697caa19daeff43f8f36baa99a335e12b28dd04ba9c94daf03757c"
+    },
+    {
+      "file": "tail-playthrough-truth.txt",
+      "sha256": "386a5380f9d9f412fc6b595b348a9c23ec7603ae85d558581bb04d59540a5b31"
+    },
+    {
+      "file": "ui-quality-final.txt",
+      "sha256": "393e34b2a3310697e427a9d6c9a40b1f70dc327ecc50134fc8e2c639bcb5cc2f"
     }
   ]
 }
