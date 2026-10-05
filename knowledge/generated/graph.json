@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6f6fee6e5f028e69881cfa477529d7547d09d26a",
+  "sourceRevision": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9738,
-    "edges": 39661,
+    "nodes": 9746,
+    "edges": 39694,
     "byNodeType": {
-      "Artifact": 4149,
+      "Artifact": 4154,
       "Command": 179,
-      "Commit": 2015,
+      "Commit": 2018,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -64,19 +64,19 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3238,
-      "CHANGED": 15376,
-      "CONTAINS": 4170,
+      "BELONGS_TO": 3243,
+      "CHANGED": 15392,
+      "CONTAINS": 4175,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 609,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2015,
+      "HAS_COMMIT": 2018,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3921,
+      "IMPORTS": 3924,
       "INHERITS": 39,
-      "REFERENCES": 3112,
+      "REFERENCES": 3113,
       "REPRESENTS": 1501,
       "TESTS": 1351,
       "TRACKS": 126,
@@ -51191,6 +51191,98 @@
       "lastChangedCommit": "3accb58859afb6b09bee83d088b89721e90570b7"
     },
     {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "label": "pr190-harness-repin.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 41757,
+      "lines": 101,
+      "version": "3ff2913e96fb8d0a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+          "line": 1,
+          "version": "3ff2913e96fb8d0a"
+        }
+      ],
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "label": "pr190-scale-final.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 5297,
+      "lines": 97,
+      "version": "4f96baf0e9422be0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+          "line": 1,
+          "version": "4f96baf0e9422be0"
+        }
+      ],
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "label": "pr190-sim-final.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 107746,
+      "lines": 587,
+      "version": "6a84cf6e3cd588ad",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+          "line": 1,
+          "version": "6a84cf6e3cd588ad"
+        }
+      ],
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "label": "pr190-world-repin-controls.txt",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 233,
+      "lines": 2,
+      "version": "98f0cc3839e7a0ef",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+          "line": 1,
+          "version": "98f0cc3839e7a0ef"
+        }
+      ],
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+    },
+    {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
       "type": "Artifact",
       "id": "omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
@@ -51214,6 +51306,29 @@
       "lastChangedCommit": "3accb58859afb6b09bee83d088b89721e90570b7"
     },
     {
+      "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "label": "recovery-transfer-manifest.json",
+      "path": "omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 2348,
+      "lines": 55,
+      "version": "f4ad2de888f356f8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+          "line": 1,
+          "version": "f4ad2de888f356f8"
+        }
+      ],
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+    },
+    {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "type": "Artifact",
       "id": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
@@ -51221,20 +51336,20 @@
       "path": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 9910,
-      "lines": 109,
-      "version": "8a641d10a36ce0a0",
+      "bytes": 10654,
+      "lines": 113,
+      "version": "8cdcfaa2ef1ca791",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
           "line": 1,
-          "version": "8a641d10a36ce0a0"
+          "version": "8cdcfaa2ef1ca791"
         }
       ],
-      "lastChangedAt": "2026-10-05T00:22:12.000Z",
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6f6fee6e5f028e69881cfa477529d7547d09d26a"
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
     },
     {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
@@ -51244,20 +51359,20 @@
       "path": "omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
       "kind": "contract-project",
       "extension": ".json",
-      "bytes": 4651,
-      "lines": 138,
-      "version": "f123932fb12e6618",
+      "bytes": 5345,
+      "lines": 158,
+      "version": "12578b8db40c8ee5",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
           "line": 1,
-          "version": "f123932fb12e6618"
+          "version": "12578b8db40c8ee5"
         }
       ],
-      "lastChangedAt": "2026-10-05T00:22:12.000Z",
+      "lastChangedAt": "2026-10-05T01:05:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6f6fee6e5f028e69881cfa477529d7547d09d26a"
+      "lastChangedCommit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
     },
     {
       "key": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/tail-chainparams.txt",
@@ -86290,20 +86405,20 @@
       "path": "test/rc1-checkpoint-recovery-review.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11729,
-      "lines": 130,
-      "version": "a9fcea679a014e17",
+      "bytes": 11802,
+      "lines": 131,
+      "version": "416b92a115885c9a",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-checkpoint-recovery-review.js",
           "line": 1,
-          "version": "a9fcea679a014e17"
+          "version": "416b92a115885c9a"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:24:20.000Z",
+      "lastChangedAt": "2026-10-05T01:04:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f43e9de10e86e54a6c7b8dc43aa555d4a78abbbe"
+      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
     },
     {
       "key": "Artifact:test/rc1-churn-policy.js",
@@ -86888,20 +87003,20 @@
       "path": "test/rc1-lifecycle-applicability.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5381,
-      "lines": 61,
-      "version": "41ef74785d5f19b7",
+      "bytes": 5454,
+      "lines": 62,
+      "version": "88f9827e8ee6313a",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-lifecycle-applicability.js",
           "line": 1,
-          "version": "41ef74785d5f19b7"
+          "version": "88f9827e8ee6313a"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:21:52.000Z",
+      "lastChangedAt": "2026-10-05T01:04:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fa3bf663ea2acec166f1054aa10899084bfed1ac"
+      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
     },
     {
       "key": "Artifact:test/rc1-loan-lifecycle-journal.js",
@@ -88889,20 +89004,20 @@
       "path": "test/rc1-world-checkpoint-series.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11920,
-      "lines": 120,
-      "version": "e93f42370b5d783b",
+      "bytes": 11993,
+      "lines": 121,
+      "version": "9bed6d207878b172",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-checkpoint-series.js",
           "line": 1,
-          "version": "e93f42370b5d783b"
+          "version": "9bed6d207878b172"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:55:11.000Z",
+      "lastChangedAt": "2026-10-05T01:04:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4e3354e726a0649c738486defb83b6d82bcb2666"
+      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
     },
     {
       "key": "Artifact:test/rc1-world-diagnostics.js",
@@ -89234,20 +89349,20 @@
       "path": "test/rc1-world-qualification.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11753,
+      "bytes": 11823,
       "lines": 143,
-      "version": "c0bc10379a03f409",
+      "version": "fe28214968b34a9a",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "c0bc10379a03f409"
+          "version": "fe28214968b34a9a"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:53:47.000Z",
+      "lastChangedAt": "2026-10-05T01:04:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "163eea394070287f66e7493537cc21c7ea9122f8"
+      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
     },
     {
       "key": "Artifact:test/rc1-world-resource-observer.js",
@@ -94984,20 +95099,20 @@
       "path": "tools/rc1-world-qualification.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 28119,
-      "lines": 318,
-      "version": "a770e02a91c87132",
+      "bytes": 28608,
+      "lines": 322,
+      "version": "6dd03c79fc4ee75a",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-qualification.js",
           "line": 1,
-          "version": "a770e02a91c87132"
+          "version": "6dd03c79fc4ee75a"
         }
       ],
-      "lastChangedAt": "2026-09-25T06:02:31.000Z",
+      "lastChangedAt": "2026-10-05T01:04:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "83e529f8acf1d140b69b285d6222c19dc7801ffe"
+      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
     },
     {
       "key": "Artifact:tools/rc1-world-resource-observer.js",
@@ -115001,6 +115116,22 @@
       ]
     },
     {
+      "key": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "type": "Commit",
+      "id": "84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "label": "chore(knowledge): refresh final client inspection evidence",
+      "title": "chore(knowledge): refresh final client inspection evidence",
+      "date": "2026-10-05T00:24:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "provenance": [
+        {
+          "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+        }
+      ]
+    },
+    {
       "key": "Commit:85081946fe55d33c6079a1218d222a31a78b23bb",
       "type": "Commit",
       "id": "85081946fe55d33c6079a1218d222a31a78b23bb",
@@ -115077,6 +115208,22 @@
         {
           "commit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d",
           "url": "https://github.com/OmertaDev/Omerta/commit/85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "type": "Commit",
+      "id": "85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "label": "Transfer recovery review to audited character server source",
+      "title": "Transfer recovery review to audited character server source",
+      "date": "2026-10-05T01:04:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "provenance": [
+        {
+          "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+          "url": "https://github.com/OmertaDev/Omerta/commit/85f090b8791ad83381aa9b66d62d7cb14f7f7613"
         }
       ]
     },
@@ -120901,6 +121048,22 @@
         {
           "commit": "b1accd443febc5c3620ed477da022457530aa876",
           "url": "https://github.com/OmertaDev/Omerta/commit/b1accd443febc5c3620ed477da022457530aa876"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "type": "Commit",
+      "id": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "label": "Retain recovery review transfer and complete release tail evidence",
+      "title": "Retain recovery review transfer and complete release tail evidence",
+      "date": "2026-10-05T01:05:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "provenance": [
+        {
+          "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
         }
       ]
     },
@@ -141542,13 +141705,13 @@
       "id": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "label": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "documentType": "contract-project",
-      "lines": 109,
-      "version": "8a641d10a36ce0a0",
+      "lines": 113,
+      "version": "8cdcfaa2ef1ca791",
       "provenance": [
         {
           "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
           "line": 1,
-          "version": "8a641d10a36ce0a0"
+          "version": "8cdcfaa2ef1ca791"
         }
       ]
     },
@@ -150375,6 +150538,9 @@
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
+          "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+        },
+        {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
@@ -151179,6 +151345,9 @@
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
+          "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+        },
+        {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
@@ -151981,6 +152150,9 @@
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
+        },
+        {
+          "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
@@ -153004,6 +153176,9 @@
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
+        },
+        {
+          "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
@@ -161967,12 +162142,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6f6fee6e5f028e69881cfa477529d7547d09d26a",
+      "revision": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
       "currentBranch": "codex/verify-character-prod",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4149,
+      "currentArtifactCount": 4154,
       "provenance": [
         {
           "file": "README.md",
@@ -192956,13 +193131,13 @@
       "type": "TestSuite",
       "id": "test/rc1-checkpoint-recovery-review.js",
       "label": "test/rc1-checkpoint-recovery-review.js",
-      "lines": 130,
-      "version": "a9fcea679a014e17",
+      "lines": 131,
+      "version": "416b92a115885c9a",
       "provenance": [
         {
           "file": "test/rc1-checkpoint-recovery-review.js",
           "line": 1,
-          "version": "a9fcea679a014e17"
+          "version": "416b92a115885c9a"
         }
       ]
     },
@@ -193346,13 +193521,13 @@
       "type": "TestSuite",
       "id": "test/rc1-lifecycle-applicability.js",
       "label": "test/rc1-lifecycle-applicability.js",
-      "lines": 61,
-      "version": "41ef74785d5f19b7",
+      "lines": 62,
+      "version": "88f9827e8ee6313a",
       "provenance": [
         {
           "file": "test/rc1-lifecycle-applicability.js",
           "line": 1,
-          "version": "41ef74785d5f19b7"
+          "version": "88f9827e8ee6313a"
         }
       ]
     },
@@ -194651,13 +194826,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-checkpoint-series.js",
       "label": "test/rc1-world-checkpoint-series.js",
-      "lines": 120,
-      "version": "e93f42370b5d783b",
+      "lines": 121,
+      "version": "9bed6d207878b172",
       "provenance": [
         {
           "file": "test/rc1-world-checkpoint-series.js",
           "line": 1,
-          "version": "e93f42370b5d783b"
+          "version": "9bed6d207878b172"
         }
       ]
     },
@@ -194877,12 +195052,12 @@
       "id": "test/rc1-world-qualification.js",
       "label": "test/rc1-world-qualification.js",
       "lines": 143,
-      "version": "c0bc10379a03f409",
+      "version": "fe28214968b34a9a",
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "c0bc10379a03f409"
+          "version": "fe28214968b34a9a"
         }
       ]
     },
@@ -201388,10 +201563,55 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
         "line": 1
       }
     },
@@ -290100,6 +290320,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:85081946fe55d33c6079a1218d222a31a78b23bb",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation-task2-authority.md",
       "provenance": {
@@ -290288,6 +290540,46 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "commit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "to": "Artifact:test/rc1-checkpoint-recovery-review.js",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "to": "Artifact:test/rc1-lifecycle-applicability.js",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "to": "Artifact:test/rc1-world-checkpoint-series.js",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "to": "Artifact:test/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
       }
     },
     {
@@ -307704,6 +307996,62 @@
       "to": "Artifact:tools/rc1-market-world-adapter.js",
       "provenance": {
         "commit": "b1accd443febc5c3620ed477da022457530aa876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/report.md",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/review-package-index.json",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
       }
     },
     {
@@ -355105,9 +355453,54 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-harness-repin.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-scale-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-sim-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/pr190-world-repin-controls.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/production-pre-test-status.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
         "line": 1
       }
     },
@@ -420569,6 +420962,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:84d779fa86e54a486e0509692f0fd08b4f6bafc3",
+      "provenance": {
+        "commit": "84d779fa86e54a486e0509692f0fd08b4f6bafc3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:85081946fe55d33c6079a1218d222a31a78b23bb",
       "provenance": {
         "commit": "85081946fe55d33c6079a1218d222a31a78b23bb"
@@ -420604,6 +421005,14 @@
       "to": "Commit:85bbc055d21c2f2fb039dd1451172e9e9e959d4d",
       "provenance": {
         "commit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+      "provenance": {
+        "commit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
       }
     },
     {
@@ -423516,6 +423925,14 @@
       "to": "Commit:b1accd443febc5c3620ed477da022457530aa876",
       "provenance": {
         "commit": "b1accd443febc5c3620ed477da022457530aa876"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7",
+      "provenance": {
+        "commit": "b1bc1a59f51ddf6ca19a89b30690b9b8bc4345c7"
       }
     },
     {
@@ -449899,7 +450316,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -449908,7 +450325,7 @@
       "to": "Artifact:tools/rc1-checkpoint-recovery-review.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -449917,7 +450334,16 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-checkpoint-recovery-review.js",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "file": "test/rc1-checkpoint-recovery-review.js",
+        "line": 1
       }
     },
     {
@@ -451060,7 +451486,7 @@
       "to": "Artifact:tools/rc1-lifecycle-applicability.js",
       "provenance": {
         "file": "test/rc1-lifecycle-applicability.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -451069,7 +451495,16 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-lifecycle-applicability.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-lifecycle-applicability.js",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "file": "test/rc1-lifecycle-applicability.js",
+        "line": 1
       }
     },
     {
@@ -455380,7 +455815,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
-        "line": 3
+        "line": 4
       }
     },
     {
@@ -455389,7 +455824,7 @@
       "to": "Artifact:tools/rc1-world-checkpoint-series.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -455398,7 +455833,7 @@
       "to": "Artifact:tools/rc1-world-diagnostics.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -455407,7 +455842,16 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
-        "line": 5
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-checkpoint-series.js",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "file": "test/rc1-world-checkpoint-series.js",
+        "line": 6
       }
     },
     {
@@ -489855,6 +490299,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/report.md",
+      "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/recovery-transfer-manifest.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
+        "line": 112
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:omerta-contracts/audits/character-nft-2026-09-08.md",
       "to": "Artifact:omerta-contracts/audits/character-nft-2026-09-08.json",
       "provenance": {
@@ -513727,7 +514180,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 5
+        "line": 6
       }
     },
     {
