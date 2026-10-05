@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "0618174b0a33ac2eb2571e32249bd06b66672e59",
+  "sourceCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613",
   "files": [
     {
       "file": "campaign-network-clock-test.txt",
@@ -94,12 +94,32 @@
       "sha256": "6f1a1b32c1e2f94a5e81eaa1d61392c14d8c8cb83f057a84f2135cf85830520a"
     },
     {
+      "file": "pr190-harness-repin.txt",
+      "sha256": "328d1af5ab483f481bd6866bf592dc63edd3114a43e8decbfd839ef4d57ef846"
+    },
+    {
+      "file": "pr190-scale-final.txt",
+      "sha256": "2954fa7167fda2f04bf0927ecb62ec63911f24ec4997b651bc322921f37ca6a8"
+    },
+    {
+      "file": "pr190-sim-final.txt",
+      "sha256": "40ebdeb5aaba587c85ad0c8031efa75038023cf308dc6388ea504c57a6bcb278"
+    },
+    {
+      "file": "pr190-world-repin-controls.txt",
+      "sha256": "80f3952adeb8a4489bbd3f7a9bd9ccf2c903527df2305ea6aa9253813fe47141"
+    },
+    {
       "file": "production-pre-test-status.json",
       "sha256": "be26549572ddb95faf0b18613d4e41e0c1d3e55694cecd543b21f976cf51f5dc"
     },
     {
+      "file": "recovery-transfer-manifest.json",
+      "sha256": "f4ad2de888f356f8597091ea00cb2b2554f398bf95b1f51414bbdbc8cd2704dc"
+    },
+    {
       "file": "report.md",
-      "sha256": "8a641d10a36ce0a0a20d765a3b5f08ee7d06b57185acb815055cce8721ec1c73"
+      "sha256": "8cdcfaa2ef1ca791170c2d87c54e8ab793a0901a7d2c2c100755e9d5825da3d0"
     },
     {
       "file": "tail-chainparams.txt",

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613",
+  "recordedAt": "2026-10-05T01:05:53.396Z",
+  "scope": "Observer-only recovery source review transfer; no application or Solidity changes",
+  "previousReviewedRevision": "92f09bb436d9e7cacb874adb60f7238c0b1d709d",
+  "reviewedServerRevision": "788e672741e558210029683fed928a06934123f3",
+  "review": "Independent reviewer and root confirmed all canonical recovery guards unchanged. The sole changed source pin covers previously reviewed paid portrait gates and three authenticated NFT endpoints. All other 13 pins, frozen assertions, rules and duration thresholds remain unchanged. Historical receipts remain byte-identical; fresh fixtures carry the actual reviewed source revision.",
+  "sourceFiles": [
+    {
+      "file": "tools/rc1-world-qualification.js",
+      "gitBlobSha256": "6dd03c79fc4ee75a2650c92708045696bcc128bc6a5337cc4aef2a3d62aad167"
+    },
+    {
+      "file": "test/rc1-world-qualification.js",
+      "gitBlobSha256": "fe28214968b34a9ae33f03747b40f5a6d6f3f5e2a0dd5c7a36622b4fd1c8ec0f"
+    },
+    {
+      "file": "test/rc1-checkpoint-recovery-review.js",
+      "gitBlobSha256": "416b92a115885c9a12f8ab1efa659f2b9c208241bd2a2ef02800979dd2d924b4"
+    },
+    {
+      "file": "test/rc1-lifecycle-applicability.js",
+      "gitBlobSha256": "88f9827e8ee6313a40cd5e73d9a8ca34dd71dfe63d8104de67f51f063a42d4d2"
+    },
+    {
+      "file": "test/rc1-world-checkpoint-series.js",
+      "gitBlobSha256": "9bed6d207878b172c317f4ccaacce33bb87122eb7629f429b007aabc1334c1fb"
+    }
+  ],
+  "evidence": [
+    {
+      "file": "pr190-harness-repin.txt",
+      "sha256": "328d1af5ab483f481bd6866bf592dc63edd3114a43e8decbfd839ef4d57ef846",
+      "exitCode": 0
+    },
+    {
+      "file": "pr190-world-repin-controls.txt",
+      "sha256": "80f3952adeb8a4489bbd3f7a9bd9ccf2c903527df2305ea6aa9253813fe47141",
+      "exitCode": 0
+    },
+    {
+      "file": "pr190-sim-final.txt",
+      "sha256": "40ebdeb5aaba587c85ad0c8031efa75038023cf308dc6388ea504c57a6bcb278",
+      "exitCode": 0
+    },
+    {
+      "file": "pr190-scale-final.txt",
+      "sha256": "2954fa7167fda2f04bf0927ecb62ec63911f24ec4997b651bc322921f37ca6a8",
+      "exitCode": 0
+    }
+  ],
+  "limits": "Local guard and simulation coverage only; hosted release CI and production/payment verification still pending."
+}
