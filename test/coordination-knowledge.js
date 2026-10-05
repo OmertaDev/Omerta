@@ -99,8 +99,11 @@ try {
   for (const privateId of ['knowledge-a', 'knowledge-b']) assert(!raw.includes(privateId), 'encrypted recipient/caller principals');
   const shareInput = args({ claimId: foreign.id, targetId: target.id, expectedAclRevision: 0 });
   await reject(use('knowledge-a', (client, ctx) => knowledge.share(client, ctx, shareInput)), 'knowledge_stale_target');
+  // Random authenticated tokens may already contain x here; always alter the encoded bytes.
+  const tamperedTarget = `${target.id.slice(0, 20)}${target.id[20] === 'x' ? 'y' : 'x'}${target.id.slice(21)}`;
+  assert.notEqual(tamperedTarget, target.id);
   await reject(use('knowledge-b', (client, ctx) => knowledge.share(client, ctx,
-    { ...shareInput, targetId: `${target.id.slice(0, 20)}x${target.id.slice(21)}` })), 'knowledge_stale_target');
+    { ...shareInput, targetId: tamperedTarget })), 'knowledge_stale_target');
   const beforeShare = await snapshot();
   for (let nth = 1; nth <= 3; nth++) {
     await reject(use('knowledge-b', (client, ctx) => knowledge.share(client, ctx, shareInput), faultPool(nth)), 'contention');
