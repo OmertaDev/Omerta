@@ -12,7 +12,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
-  'src/server.js': '3d5f86d5b5db4a410a757d3c3385d14ee6b6174cde003ca52662241ca3ec0bd4',
+  'src/server.js': '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff',
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
   'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
@@ -20,7 +20,11 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 1, reviewedRevision: '92f09bb436d9e7cacb874adb60f7238c0b1d709d', sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 2, reviewedRevision: '788e672741e558210029683fed928a06934123f3', sourceFiles,
+  sourceReviewTransfer: { previousReviewedRevision: '92f09bb436d9e7cacb874adb60f7238c0b1d709d',
+    previousServerSha256: '3d5f86d5b5db4a410a757d3c3385d14ee6b6174cde003ca52662241ca3ec0bd4',
+    evidence: 'omerta-contracts/audits/2026-10-04-character-checkout/manifest.json',
+    scope: 'Paid portrait access gates and three authenticated character NFT endpoints; canonical recovery guards and all other source pins unchanged. Historical receipts retain their original review bindings.' },
   durationThresholds: { minimumLogicalDays: 90, minimumApplicableSeasonalRollovers: 2, minimumLongestLifecycleExecutions: 2 },
   assertions: [
     'Eligible new/returning actor has a reachable meaningful path or a bounded legal wait',

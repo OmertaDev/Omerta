@@ -1,3 +1,4 @@
+import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
@@ -10,7 +11,7 @@ const previous = Object.fromEntries(Object.keys(flags).map(key => [key, process.
 Object.assign(process.env, flags); const catalog = recoveryCatalog(coreProgressionContent());
 for (const [key, value] of Object.entries(previous)) if (value === undefined) delete process.env[key]; else process.env[key] = value;
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value);
-const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: '92f09bb436d9e7cacb874adb60f7238c0b1d709d' });
+const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file), sourceRevision: source.sourceRevision }));
