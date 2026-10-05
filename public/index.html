@@ -5627,10 +5627,9 @@
     if (!provider) return;
     const paying = kind !== 'claim';
     const purpose = kind === 'reveal' ? 'reveal' : 'creation';
-    const path = paying ? '/v1/identity/checkout' : '/v1/identity/claim/calldata';
     let inFlightKey;
     try {
-      const response = await api('POST', path, paying ? { purpose } : {});
+      const response = await api('POST', paying ? '/v1/identity/checkout' : '/v1/identity/claim/calldata', paying ? { purpose } : {});
       if (response.code !== 200) { toast(describe(response.body, response.code), true); return; }
       const tx = response.body;
       if (!/^0x[0-9a-f]{40}$/i.test(tx.from || '') || !/^0x[0-9a-f]{40}$/i.test(tx.to || '')
@@ -5665,7 +5664,7 @@
       const [current] = await provider.request({ method: 'eth_accounts' });
       if (current?.toLowerCase() !== tx.from.toLowerCase()
         || BigInt(await provider.request({ method: 'eth_chainId' })) !== BigInt(tx.chainIdHex)) throw Error('Wallet account or chain changed; review again.');
-      const fresh = await api('POST', path, paying ? { purpose } : {});
+      const fresh = await api('POST', paying ? '/v1/identity/checkout' : '/v1/identity/claim/calldata', paying ? { purpose } : {});
       if (fresh.code !== 200) throw Error(describe(fresh.body, fresh.code));
       if (['accountId', 'from', 'to', 'value', 'data', 'chainIdHex', 'feeRecipient'].some((field) => String(fresh.body[field]).toLowerCase() !== String(tx[field]).toLowerCase()))
         throw Error('Character transaction changed; review the current fee or voucher again.');
@@ -11938,11 +11937,6 @@
       api('GET', '/v1/identity/readiness'),
     ]);
     const fgR = await api('GET', '/v1/forge');
-    const identity = identityR.code === 200 && identityR.body?.ready ? identityR.body : null;
-    const characterPendingKey = identity && me.wallet ? `omerta-character-fee:${identity.accountId}:0x${identity.chainId.toString(16)}:${me.wallet.toLowerCase()}:${identity.feesContract.toLowerCase()}` : null;
-    const characterPendingHash = characterPendingKey ? localStorage.getItem(characterPendingKey) : null;
-    const readFailureCount = [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, fgR]
-      .filter((r) => Number(r?.code) >= 400).length;
     const fg = fgR.body || {};
     const vault = vaultR.body || {}, desk = deskR.body || {}, bd = bdR.body || {};
     const win = winR.body || {}, yld = yldR.body || {};
@@ -11950,6 +11944,12 @@
     const bkr = bkrR.body || {};
     const dr = drR.body || {};
     const pv = pvR.body || {};
+    const identityBody = identityR.body || {};
+    const identity = identityR.code === 200 && identityBody?.ready ? identityBody : null;
+    const characterPendingKey = identity && me.wallet ? `omerta-character-fee:${identity.accountId}:0x${identity.chainId.toString(16)}:${me.wallet.toLowerCase()}:${identity.feesContract.toLowerCase()}` : null;
+    const characterPendingHash = characterPendingKey ? localStorage.getItem(characterPendingKey) : null;
+    const readFailureCount = [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, fgR]
+      .filter((r) => Number(r?.code) >= 400).length;
     const genesis = desk.genesis || bd.genesis || {};
     const launchSteps = [
       ['prepare', 'Prepare'], ['auction', 'Auction'], ['migration', 'Migrate'],
@@ -12194,15 +12194,15 @@
         : `<span class="t">No wallet linked</span><div class="d">sign a one-time challenge to link it — MetaMask, Coinbase, Trust, Rabby, Phantom, Crypto.com, Robinhood Wallet or any other browser wallet${rules?.walletConnect ? ', or scan the QR with a wallet on your phone (WalletConnect)' : ''}. Nothing leaves your wallet; it just proves the address.</div>
            <button class="act" id="wallet-link" style="border-color:var(--neon)">connect &amp; sign</button>`}</div>
       <div class="card"><span class="t">Mint your character NFT</span>
-        <div class="d" style="overflow-wrap:anywhere">${identityR.code === 200 && identityR.body?.ready
-          ? `Network: chain ${esc(String(identityR.body.chainId))} · character ${identityR.body.characterMinted ? 'made account' : identityR.body.creditReady ? 'credit ready' : 'creation fee required'} · fee ${esc(String(Number(identityR.body.feeWei) / 1e18))} ETH + gas.<br>Fee recipient: ${esc(identityR.body.feeRecipient)}<br>Artwork: ${identityR.body.hasPaidPortraitFee ? 'confirmed paid portrait' : 'sealed; free credits do not reveal artwork'}.`
+        <div class="d" style="overflow-wrap:anywhere">${identityR.code === 200 && identityBody?.ready
+          ? `Network: chain ${esc(String(identityBody.chainId))} · character ${identityBody.characterMinted ? 'made account' : identityBody.creditReady ? 'credit ready' : 'creation fee required'} · fee ${esc(String(Number(identityBody.feeWei) / 1e18))} ETH + gas.<br>Fee recipient: ${esc(identityBody.feeRecipient)}<br>Artwork: ${identityBody.hasPaidPortraitFee ? 'confirmed paid portrait' : 'sealed; free credits do not reveal artwork'}.`
           : 'Character wallet checkout is currently unavailable. No payment will be requested.'}</div>
-        ${identityR.code === 200 && identityR.body?.ready && me.wallet ? `
-          ${!identityR.body.characterMinted && !identityR.body.creditReady && !characterPendingHash ? '<button class="act" data-character-tx="fee">pay character creation fee</button>' : ''}
-          ${(identityR.body.characterMinted || identityR.body.creditReady) && !identityR.body.hasPaidPortraitFee && !characterPendingHash ? '<button class="act" data-character-tx="reveal">optional: pay to reveal artwork</button><div class="d">Your trophy claim is free. This optional ETH payment reveals artwork only; it is not required to claim the NFT.</div>' : ''}
-          ${characterPendingHash && !identityR.body.hasPaidPortraitFee ? `<div class="d">Payment submitted: ${esc(characterPendingHash)}. Waiting for confirmed portrait payment; no second payment is offered.</div><button class="act" data-character-pending="${esc(characterPendingKey)}" data-chain="0x${identity.chainId.toString(16)}">check submitted payment</button>` : ''}
-          ${identityR.body.nftToken ? `<div class="d">NFT #${esc(identityR.body.nftToken.tokenId)} confirmed${identityR.body.nftToken.ownerAddress ? ' · owner ' + esc(identityR.body.nftToken.ownerAddress) : ''}.</div><a class="act" href="${esc(identityR.body.nftToken.portraitUrl)}" target="_blank" rel="noopener">view portrait</a><a class="act" href="https://robinhoodchain.blockscout.com/address/${encodeURIComponent(identity.nftContract)}" target="_blank" rel="noopener">view NFT contract</a>`
-            : `<button class="act" data-character-tx="claim">${identityR.body.characterMinted || identityR.body.creditReady ? 'claim character trophy' : 'check confirmed payment & claim'}</button>`}` : ''}
+        ${identityR.code === 200 && identityBody?.ready && me.wallet ? `
+          ${!identityBody.characterMinted && !identityBody.creditReady && !characterPendingHash ? '<button class="act" data-character-tx="fee">pay character creation fee</button>' : ''}
+          ${(identityBody.characterMinted || identityBody.creditReady) && !identityBody.hasPaidPortraitFee && !characterPendingHash ? '<button class="act" data-character-tx="reveal">optional: pay to reveal artwork</button><div class="d">Your trophy claim is free. This optional ETH payment reveals artwork only; it is not required to claim the NFT.</div>' : ''}
+          ${characterPendingHash && !identityBody.hasPaidPortraitFee ? `<div class="d">Payment submitted: ${esc(characterPendingHash)}. Waiting for confirmed portrait payment; no second payment is offered.</div><button class="act" data-character-pending="${esc(characterPendingKey)}" data-chain="0x${identity.chainId.toString(16)}">check submitted payment</button>` : ''}
+          ${identityBody.nftToken ? `<div class="d">NFT #${esc(identityBody.nftToken.tokenId)} confirmed${identityBody.nftToken.ownerAddress ? ' · owner ' + esc(identityBody.nftToken.ownerAddress) : ''}.</div><a class="act" href="${esc(identityBody.nftToken.portraitUrl)}" target="_blank" rel="noopener">view portrait</a><a class="act" href="https://robinhoodchain.blockscout.com/address/${encodeURIComponent(identity.nftContract)}" target="_blank" rel="noopener">view NFT contract</a>`
+            : `<button class="act" data-character-tx="claim">${identityBody.characterMinted || identityBody.creditReady ? 'claim character trophy' : 'check confirmed payment & claim'}</button>`}` : ''}
         <div class="d">Already paid? Wait for confirmed credit, then claim without paying again. Open OMERTÀ in a current browser with your wallet to pay safely. The NFT is a trophy, with no gameplay power. OMR market, bonds and extraction remain subject to their own launch availability below.</div>
       </div>
 

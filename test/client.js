@@ -47,9 +47,11 @@ process.env.WORLD_UPRISING = 'none';
 // seed-drawn daily `toss` incident closes that shop and turns calendar state into a false failure.
 // Pin the client fixture; test/pen.js exercises every yard incident and owns that behaviour coverage.
 process.env.PEN_YARD_EVENT = 'quiet';
+process.env.CHAIN_RPC_URL = ''; // ordinary gameplay fixture has no external chain authority
 import assert from 'node:assert';
 import vm from 'node:vm';
 import { readFileSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
@@ -450,6 +452,7 @@ const NOT_API = new Set([
   'error',      // the client's own {error:'offline'} shape
   'inline',     // scrollIntoView({inline:'center'})
   'method',     // window.ethereum.request({method:'personal_sign'}) — EIP-1193, not our API
+  'chainId',    // wallet_switchEthereumChain / wallet_addEthereumChain — EIP-1193, checked by identity-checkout-client
   'saved',      // the language picker's localStorage value
   'fx',         // cineFor()'s own spec — which flash/shake to play, never sent anywhere
   'no',         // ask()'s decline-button label
@@ -1802,6 +1805,7 @@ const noteObligations = (where, key, have, fields) => {
 };
 const notReturned = [], unobservable = [], nestedMissing = [];
 let nestedChains = 0, nestedChecked = 0, nestedAbsent = 0;
+let characterReadinessFixture;
 for (const [key, fields] of reads) {
   const [rawPath, sub] = key.split('|');
   let path = rawPath;
@@ -1810,7 +1814,23 @@ for (const [key, fields] of reads) {
     assert(id, `the PARAM_FIXTURES entry for ${rawPath} produced no id — the fixture broke, not the client`);
     path = rawPath.replace(':p', id);
   }
-  const r = await inject('GET', path, token);
+  let r = await inject('GET', path, token);
+  if (path === '/v1/identity/readiness') {
+    assert.equal(r.code, 400, 'unconfigured gameplay fixture must not offer NFT checkout');
+    assert.equal(r.body?.error, 'chain_unconfigured');
+    if (!characterReadinessFixture) {
+      // Reuse the actual authenticated API/RPC fixture in an isolated process, so displayed
+      // fields are checked against a real configured response without inventing a schema.
+      const output = execFileSync(process.execPath, ['test/identity-checkout-api.js', '--print-readiness'],
+        { encoding: 'utf8', timeout: 60000, maxBuffer: 2000000 });
+      const snapshot = output.split(/\r?\n/).find((line) => line.startsWith('CHARACTER_READINESS_FIXTURE '));
+      assert(snapshot, 'authenticated checkout fixture must publish its actual response');
+      characterReadinessFixture = JSON.parse(snapshot.slice('CHARACTER_READINESS_FIXTURE '.length));
+      assert.equal(characterReadinessFixture.ready, true);
+      assert.equal(characterReadinessFixture.signerMatches, true);
+    }
+    r = { code: 200, body: characterReadinessFixture };
+  }
   assert(r.code < 400 && r.body, `${path} answered ${r.code} for the fixture character — check 4 cannot read a board it cannot fetch`);
   const obj = sub ? r.body[sub] : r.body;
   const target = Array.isArray(obj) ? obj[0] : obj;

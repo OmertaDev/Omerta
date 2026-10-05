@@ -8,12 +8,12 @@ const ast = parse(main, { ecmaVersion: 'latest' });
 let trophyExpression;
 function findTrophy(value) {
   if (!value || typeof value !== 'object') return;
-  if (value.type === 'ConditionalExpression' && main.slice(value.test.start, value.test.end) === 'identityR.body.nftToken') trophyExpression = value;
+  if (value.type === 'ConditionalExpression' && main.slice(value.test.start, value.test.end) === 'identityBody.nftToken') trophyExpression = value;
   for (const child of Object.values(value)) if (typeof child === 'object') findTrophy(child);
 }
 findTrophy(ast); assert(trophyExpression, 'Wallet panel renders confirmed NFT state');
 const renderTrophy = (nftToken) => vm.runInNewContext('(' + main.slice(trophyExpression.start, trophyExpression.end) + ')',
-  { identityR: { body: { nftToken, characterMinted: true } }, identity: { nftContract: `0x${'44'.repeat(20)}` }, esc: String, encodeURIComponent });
+  { identityBody: { nftToken, characterMinted: true }, identity: { nftContract: `0x${'44'.repeat(20)}` }, esc: String, encodeURIComponent });
 assert(renderTrophy(null).includes('data-character-tx="claim"'));
 const confirmedTrophy = renderTrophy({ tokenId: '42', ownerAddress: `0x${'22'.repeat(20)}`, portraitUrl: '/v1/identity/42/portrait.svg' });
 assert(confirmedTrophy.includes('NFT #42 confirmed')); assert(confirmedTrophy.includes('/v1/identity/42/portrait.svg'));

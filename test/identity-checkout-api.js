@@ -64,6 +64,7 @@ try {
   for (const [method, path] of [['GET', '/v1/identity/readiness'], ['POST', '/v1/identity/checkout'], ['POST', '/v1/identity/claim/calldata']])
     assert.equal((await call(method, path, false)).statusCode, 401, path);
   const ready = await call('GET', '/v1/identity/readiness'); assert.equal(ready.statusCode, 200, ready.body); assert.equal(ready.json().signerMatches, true);
+  if (process.argv.includes('--print-readiness')) console.log('CHARACTER_READINESS_FIXTURE ' + ready.body);
   const payment = await call('POST', '/v1/identity/checkout', true, { address: nft, value: '0x0', contract: nft });
   assert.equal(payment.statusCode, 200, payment.body); assert.equal(payment.json().from.toLowerCase(), wallet);
   assert.equal(payment.json().to.toLowerCase(), fees); assert.equal(payment.json().feeWei, '10000000000000000');
