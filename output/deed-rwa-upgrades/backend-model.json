@@ -1,0 +1,37 @@
+{
+  "baseCommit": "db54f824004c4d855778668081ce2adfac173c39",
+  "phase": "local implementation, no deployment or rail activation",
+  "fixedPool": 100,
+  "model": [
+    {
+      "participants": 2,
+      "baselineShare": 50,
+      "upgradedRelativeWeight": 1.25,
+      "upgradedShare": 55.55555555555556,
+      "otherShare": 44.44444444444444,
+      "additionalFunding": 0
+    },
+    {
+      "participants": 10,
+      "baselineShare": 10,
+      "upgradedRelativeWeight": 1.25,
+      "upgradedShare": 12.195121951219512,
+      "otherShare": 9.75609756097561,
+      "additionalFunding": 0
+    },
+    {
+      "participants": 100,
+      "baselineShare": 1,
+      "upgradedRelativeWeight": 1.25,
+      "upgradedShare": 1.2468827930174564,
+      "otherShare": 0.9975062344139651,
+      "additionalFunding": 0
+    }
+  ],
+  "properties": [
+    "Upgrade only changes prospective relative weight; available funded units remain fixed.",
+    "Breadth and score gameplay requirements remain mandatory.",
+    "Observed current linked NFT owner receives deed bonus, never stale extractor after observed transfer.",
+    "No mutable upgrade event write API exists. Administrator SQL remains privileged database authority."
+  ]
+}

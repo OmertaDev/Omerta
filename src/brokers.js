@@ -1,30 +1,10 @@
-// THE BROKERS — treasury-funded RWA rewards to NFT holders.
-// Design: `omerta-brokers-design.md`. Founder-directed 2026-08-10.
-//
-// ── WHAT IS HERE, AND WHAT DELIBERATELY IS NOT ───────────────────────────────────────────────────
-// Steps 3 and 4 of the design's order of work — the ACTIVATION sink and the EPOCH ALLOCATOR — plus,
-// since 2026-08-15, THE DISTRIBUTION (`distributeBuy`): the one link that turns a real buy's units
-// into `stock_allocations` rows pro-rata over an epoch's published weights. Activation is a
-// recurring $OMR sink the late game has wanted since the audits first flagged supply pooling into
-// staking; the allocator computes and publishes the weights; the distribution writes the OWED
-// ledger the delivery rail consumes.
-//
-// **NOTHING HERE ACQUIRES, HOLDS, OR DELIVERS A SECURITY.** No stock is bought (that is the keeper,
-// step 5), and nothing here moves stock on-chain: `distributeBuy` writes account-keyed BOOKKEEPING
-// (the vault-ledger shape — an allocation is a ledger row, not a stranded on-chain balance), and it
-// is dormant by construction pre-mainnet, because only a REAL buy's units exist to split and real
-// buys need a real DEX. Delivery — the act the launch checklist gates — is `src/stockdeliver.js`'s
-// keeper + the Delivered watcher, behind their own env walls.
-//
-// ── §10.4 ────────────────────────────────────────────────────────────────────────────────────────
-// The only value that moves is the activation burn: `brokers:activate`, an $OMR SINK through the
-// audited `spendOmr` till. It is in `DESK.SINK_REASONS`, so since economy v3 it RECYCLES to the desk
-// shelf like every other sink rather than being destroyed — the paired `desk:recycle` row means
-// conservation needs no new term. Nothing here mints.
+import { upgradeBoard, upgradeWeights } from './deed-upgrades.js';
+// Activity-qualified accounts participate in a fixed, funded RWA distribution pool.
+// Permanent deed upgrades affect future epoch weights; legacy paid windows retain
+// their quoted multiplier until expiry. Allocation and delivery remain separate.
 import { GameError } from './game.js';
-import { BROKERS, ACTIVITY, brokerTier, brokerActive, brokerWeight, activityScore, activityQualifies, dayOf }
+import { BROKERS, ACTIVITY, DEED_UPGRADES, brokerTier, brokerActive, activityScore, activityQualifies, dayOf }
   from './rules.js';
-import { spendOmr } from './vanity.js';
 import { allocateStock } from './treasury.js';
 import crypto from 'node:crypto';
 
@@ -38,6 +18,10 @@ export const brokerCatalog = () => ({
   tiers: BROKERS.TIERS.map((t) => ({ id: t.id, name: t.name, omr: t.omr, mult: t.mult })),
   windowDays: Math.round(BROKERS.ACTIVATION_MS / 86400000),
   epochDays: BROKERS.EPOCH_DAYS,
+  activationRequired: false,
+  upgradeRequired: false,
+  upgrades: DEED_UPGRADES.map(t => ({ ...t })),
+  maxBonusBps: 2500,
   // published so a client never re-derives the metric — the tradeRank precedent
   tags: ACTIVITY.TAGS,
   minTracks: ACTIVITY.MIN_TRACKS,
@@ -54,50 +38,9 @@ export async function gainsFor(client, accountId, fromDay, toDay) {
   return gains;
 }
 
-/// Buy or extend an activation window.
-///
-/// A tier is chosen, not climbed — it is a commitment level, not a ladder, so there is no "sequential
-/// only" rule here (unlike family seals or the estate). Re-activating at any tier extends the window
-/// from the later of now and the current end, which is the retainer/envelope/Street-Wire precedent.
+// Historical route retained for a clear retirement response; no new payments.
 export async function activate(ch, client, h, tierId) {
-  const t = brokerTier(tierId);
-  // The refusal ENUMERATES, off the live catalog — the `lockStake` sibling's shape, and for its
-  // reason: a caller who guessed the tier's NAME instead of its id has no way to learn that ids run
-  // 1..5 without a second round trip, and a retune that reprices a desk cannot leave this stale.
-  if (!t) throw new GameError('bad_tier', 'No such broker tier. The desks are: '
-    + BROKERS.TIERS.map((d) => `${d.id} — ${d.name} (${d.omr} $OMR, ×${d.mult})`).join(', ') + '.');
-
-  const cur = (await client.query(
-    'SELECT tier, until, spent_omr FROM broker_activations WHERE account_id=$1 FOR UPDATE',
-    [ch.account_id])).rows[0];
-
-  // A DOWNGRADE while a window is live is refused rather than silently taken: it would burn $OMR to
-  // make the holder's own weight smaller, which is never what anybody meant to click.
-  if (cur && brokerActive(cur.until) && Number(cur.tier) > t.id) {
-    throw new GameError('downgrade', `You are already activated at ${brokerTier(cur.tier).name}. Pick that tier or higher.`);
-  }
-
-  await spendOmr(client, h, t.omr, 'brokers:activate');
-
-  const base = cur && brokerActive(cur.until) ? new Date(cur.until).getTime() : Date.now();
-  const until = new Date(base + BROKERS.ACTIVATION_MS);
-  const spent = Number(cur?.spent_omr || 0) + t.omr;
-
-  const upd = await client.query(
-    'UPDATE broker_activations SET tier=$2, until=$3, spent_omr=$4 WHERE account_id=$1',
-    [ch.account_id, t.id, until, spent]);
-  if (!upd.rowCount) {
-    await client.query(
-      'INSERT INTO broker_activations (account_id, tier, until, spent_omr) VALUES ($1,$2,$3,$4)',
-      [ch.account_id, t.id, until, spent]);
-  }
-  // THE TERMS RIDE WITH THE PRICE. An activation is PAID and it LAPSES — the line named the tier and
-  // the multiplier and neither of those, which is the `made` subscription case one system over. The
-  // window is sent in SECONDS because that is the unit the client renders clocks in, and it is
-  // computed rather than restated: a re-activation EXTENDS from the current end (`base` above), so a
-  // holder renewing early keeps the remainder, and only the server knows what that leaves.
-  return { tier: t.id, name: t.name, omr: t.omr, mult: t.mult, until, spentOmr: spent,
-    activeSeconds: Math.max(0, Math.ceil((until.getTime() - Date.now()) / 1000)) };
+  throw new GameError('activation_retired', 'Broker activation and renewal are retired. Gameplay qualifies you for baseline participation; deed upgrades are optional.');
 }
 
 /// The holder's own view: where they stand, what they would weigh, and what is missing.
@@ -112,6 +55,11 @@ export async function brokerBoard(client, ch) {
   const score = activityScore(gains);
   const qualifies = activityQualifies(gains);
   const tierId = active ? Number(a.tier) : null;
+  const upgrade = await upgradeBoard(client, ch.account_id, { fromDay: from });
+  const effectiveBonusBps = (await upgradeWeights(client, from)).get(ch.account_id) || 0;
+  const acct = (await client.query('SELECT agent_flag, npc_flag FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
+  const baseEligible = qualifies && !(ACTIVITY.EXCLUDE_AGENTS && acct.agent_flag) && !(ACTIVITY.EXCLUDE_NPC && acct.npc_flag);
+  const mult = Math.max(active ? brokerTier(tierId).mult : 1, 1 + effectiveBonusBps / 10000);
 
   return {
     catalog: brokerCatalog(),
@@ -127,8 +75,10 @@ export async function brokerBoard(client, ch) {
     epoch: { fromDay: from, toDay: today, days: BROKERS.EPOCH_DAYS },
     activity: { gains, score, qualifies, tracks: Object.keys(gains).length },
     // the whole design in one number, and the two ways it can be zero
-    weight: active && qualifies ? brokerWeight(tierId, gains) : 0,
-    blocked: !active ? 'not_activated' : (!qualifies ? 'not_enough_play' : null),
+    participation: { baseEligible, activationRequired: false, upgradeRequired: false },
+    upgrade: { level: upgrade.level, bonusBps: upgrade.bonusBps, effectiveBonusBps, maxBonusBps: 2500, effectiveFromDay: upgrade.effectiveFromDay },
+    weight: baseEligible ? score * mult : 0,
+    blocked: !baseEligible ? 'not_enough_play' : null,
   };
 }
 
@@ -145,8 +95,8 @@ export async function allocateEpoch(pool, { endDay = dayOf() - 1, days = BROKERS
       'SELECT id FROM broker_epochs WHERE start_day=$1 AND end_day=$2', [startDay, endDay])).rows[0];
     if (existing) { await client.query('COMMIT'); return { epochId: existing.id, already: true }; }
 
-    // Every eligible account with a LIVE activation. Agent accounts participate on the same
-    // activity/activation terms as humans; only NPC residents are excluded when gameplay becomes
+    // Every activity-qualified eligible account participates. Agent accounts share the same
+    // gameplay terms as humans; only NPC residents are excluded when gameplay becomes
     // an ownership weight. Keep the queries flat/static — pg-mem parses neither a correlated
     // subquery nor `= ANY($1::text[])` (the /v1/gangs and MY PROFILE lessons), and pgquery can prepare
     // these exact statements against production Postgres.
@@ -167,17 +117,18 @@ export async function allocateEpoch(pool, { endDay = dayOf() - 1, days = BROKERS
       byAccount.get(r.account_id)[r.tag] = Number(r.n);
     }
 
+    const bonuses = await upgradeWeights(client, startDay);
+    const legacy = new Map(acts.map(a => [a.account_id, a.tier]));
     const epochId = crypto.randomUUID();
     let total = 0;
     const out = [];
-    for (const a of acts) {
+    for (const accountId of eligible) {
+      const a = { account_id: accountId, tier: legacy.get(accountId) || 0 };
       const gains = byAccount.get(a.account_id) || {};
-      // BOTH gates. Not activated is already excluded by the query; not enough play is excluded
-      // here — and the breadth gate is what makes a one-loop grinder score nothing, which is the
-      // anti-Sybil half of the metric rather than a difficulty knob.
+      // Score and breadth gates remain required even for an upgraded deed.
       if (!activityQualifies(gains)) continue;
       const score = activityScore(gains);
-      const weight = brokerWeight(a.tier, gains);
+      const weight = score * Math.max(a.tier ? brokerTier(a.tier).mult : 1, 1 + (bonuses.get(a.account_id) || 0) / 10000);
       if (!(weight >= BROKERS.MIN_WEIGHT)) continue;
       out.push({ accountId: a.account_id, tier: Number(a.tier), score, weight });
       total += weight;

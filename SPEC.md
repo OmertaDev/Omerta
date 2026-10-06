@@ -12,10 +12,10 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **277** files, **106840** lines (`src/`, including support modules) |
-| Test suites | **429** files, **136604** lines (`test/`, including support modules) |
+| Backend modules | **278** files, **106840** lines (`src/`, including support modules) |
+| Test suites | **431** files, **136604** lines (`test/`, including support modules) |
 | HTTP routes | **805** registrations (**805** unique) |
-| Database tables | **369** (`schema.sql`, 7379 lines) |
+| Database tables | **370** (`schema.sql`, 7379 lines) |
 | Client | **13574** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11520** lines, **1078** declared top-level Foundry test functions; the release gate re-measures the passing suite |
@@ -108,6 +108,8 @@ Gameplay stakes pay no personal yield, remain exposed to loss and have a six-hou
 delay. The canonical market uses funded liquidity and inventory; it does not promise a price floor.
 See `omerta-economy-design.md` and `omerta-contracts/docs/market/DESIGN.md` for current boundaries,
 including the separate stock-acquisition and contract-activation gates.
+
+Street Deeds are RWA delivery vaults: qualifying gameplay earns funded allocations without paid Broker activation. Optional sequential upgrades spend OMR for a capped 25% future reward-weight bonus; they never increase the funded pool or rewrite prior allocations. Delivery and launch gates remain separate. See `AGENTS.md` for current costs and requirements.
 
 ### 3.8 The pillars
 **Territory** — rackets with scale tiers and business types, the Bureau crackdown, fortification, rival

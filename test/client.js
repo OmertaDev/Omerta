@@ -513,7 +513,7 @@ const read = (rel) => readFileSync(new URL(`../${rel}`, import.meta.url), 'utf8'
 // unresolved is leaving the exact place this bug class hides. So follow the call: the alias map
 // comes off server.js's own imports, the function is located in that module, the argument POSITION
 // says which parameter the body lands in, and that parameter's reads are what the route accepts.
-const aliases = new Map([...read('src/server.js').matchAll(/import \* as (\w+) from '\.\/([\w.]+)'/g)]
+const aliases = new Map([...read('src/server.js').matchAll(/import \* as (\w+) from '\.\/([\w.-]+)'/g)]
   .map((m) => [m[1], `src/${m[2]}`]));
 const cache = new Map();
 const modSrc = (f) => { if (!cache.has(f)) { try { cache.set(f, read(f)); } catch { cache.set(f, null); } } return cache.get(f); };
@@ -2016,6 +2016,7 @@ const REVIEWED_NOT_ENFORCED = new Map([
   ['canSeek', 'action gate — "seek a mentor" control (renderDiscovery).'],
   ['canThrow', 'action gate — estate gala control; discloses the tier/Butler/square-book requirement when false.'],
   ['canClaim', 'action gate — Street Deeds claim control (renderDeeds), shown only when true (one deed per account).'],
+  ['canUpgrade', 'singleton deed upgrade gate — renderDeeds disables the control and explains unmet ownership, renown, gameplay or balance requirements; tools/public-ui.js drives both disabled and eligible states.'],
   ['canExtract', 'action gate — the Street Deed on-chain extract button (renderDeeds chainCard), shown only when true (made + wallet-linked + unlisted + chain configured); the reason is disclosed when false.'],
   // THE PAYROLL (/v1/payroll) — the one-page obligations surface. Its `owed`/`cold`/`coldSeconds`
   // ride the ENFORCED names; these three are its display companions:
@@ -6759,18 +6760,18 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   await app.pool.query(
     "UPDATE account_persistent SET omr=50000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)", [id65]);
 
-  // THE BROKER'S ACTIVATION is PAID and it LAPSES, and the line named the tier and the multiplier and
-  // neither of those — the `made` subscription case one system over. The window is the interesting
-  // half: a re-activation EXTENDS from the current end, so renewing early keeps the remainder, which
-  // is a term only the server can state.
-  const brok = await drive65('/v1/brokers/activate', { tier: 1 });
-  assert(brok.r.body.omr > 0 && brok.r.body.activeSeconds > 0,
-    'the activation must SEND both its price and its window — the client cannot compute either');
-  assert(new RegExp(String(brok.r.body.omr)).test(brok.line.replace(/,/g, '')) && /lapses/.test(brok.line),
-    `the DRIVEN broker line must name what it cost AND that it runs out: ${brok.line}`);
-  const brok2 = await drive65('/v1/brokers/activate', { tier: 2 });
-  assert(brok2.r.body.activeSeconds > brok.r.body.activeSeconds,
-    'renewing EXTENDS from the current end — the remainder is kept, which is why the figure is sent rather than restated');
+  // Baseline RWA participation no longer accepts an activation payment. Both old tier
+  // requests must return the retirement explanation without debiting the player's balance.
+  const brokerBalance = async () => Number((await app.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [id65])).rows[0].omr);
+  const brokerBefore = await brokerBalance();
+  for (const tier of [1, 2]) {
+    const retired = await inject('POST', '/v1/brokers/activate', t65, { tier });
+    assert.equal(retired.code, 400);
+    assert.equal(retired.body.error, 'activation_retired');
+    assert(/optional/.test(retired.body.message), 'the retired payment route must explain optional deed upgrades');
+  }
+  assert.equal(await brokerBalance(), brokerBefore, 'retired broker payments must leave OMR untouched');
 
   // THE PLEDGE reads like a deposit and is a one-way BURN buying a status score. No server field is
   // needed — the burn is structural — so this pins the SENTENCE, which is the whole defect.

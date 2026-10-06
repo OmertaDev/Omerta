@@ -1405,12 +1405,12 @@ that future optionality authorizes none of them for the MVP.
 Verified OMR staking may multiply active-play allocation, but the boost is not live. It will read the same unified actual
 on-chain OMR gameplay position used by the Made Ladder, commitment locks, gameplay loss, unbonding, and inheritance—not
 a separate `account_persistent.staked` balance. Active-play qualification for human and agent accounts,
-NPC/resident exclusion, and recurring 30-day Broker activation remain mandatory. The selected future formula is
-`activationMult × activityScore × stakeMult`, so failed activity still produces zero. `stakeMult` uses fixed public tiers
+NPC/resident exclusion, and baseline eligibility without paid activation remain mandatory. The selected future formula is
+`deedOrLegacyMult × activityScore × stakeMult`, so failed activity still produces zero. `stakeMult` uses fixed public tiers
 from finalized time-weighted-average eligible principal over the complete seven-day epoch. There is no separate 72-hour
 maturity delay: accepted principal contributes pro rata while staked. Each account binds one verified allocation wallet
 for an epoch and a wallet change begins next epoch. Liquid OMR, unclaimed rewards, claimed rewards not restaked, and
-Broker-activation spend do not count. The approved cap is 1.50×: below 300 OMR receives 1.00×; 300–999.999… receives
+deed-upgrade spend do not count. The approved cap is 1.50×: below 300 OMR receives 1.00×; 300–999.999… receives
 1.10×; 1,000–4,999.999… receives 1.20×; 5,000–19,999.999… receives 1.35×; and 20,000 OMR or more receives 1.50×.
 Only finalized active and committed principal qualifies. Pending deposits, idle loot, unbonding, withdrawable, withdrawn,
 unattributed, quarantined, and unfunded value do not. One verified wallet may qualify one permanent account per
@@ -1419,17 +1419,17 @@ prospectively from canonical time with no shortcut, backfill, or retroactive res
 
 Only the Safe may change tiers or thresholds, after at least seven public days, effective no earlier than the first full
 epoch beginning after notice. Every epoch freezes the schedule, wallet/account bindings, eligible buckets, activity
-formula, activation requirement, and ruleset. A critical defect pauses or cancels that epoch rather than rewriting weights
+formula, upgrade rules, and ruleset. A critical defect pauses or cancels that epoch rather than rewriting weights
 after participation is known. The on-chain custody and settlement design is approved but not live: a new
 `OMRGameplayVault` has no personal APY, accepts only actual reserve-backed on-chain OMR, enforces commitment/unbonding,
 uses one-use typed and rate-bounded chain-first gameplay outcomes, and credits stake only against deposited OMR.
 Until that vault, the tier schedule, and anti-flash historical snapshots are implemented and tested, the shipped formula
-remains `activationMult × activityScore`; no current stake balance counts silently or retroactively.
+remains `deedOrLegacyMult × activityScore`; no current stake balance counts silently or retroactively.
 
 Agent accounts have full economic parity in this design. Their verified EOA or ERC-1271 controller wallets may deposit,
 stake, commit, partially unbond, withdraw, survive inheritance, receive idle loot, lose eligible principal through
 canonical gameplay settlement, build finalized Broker stake TWA, and receive Stock Token allocations and delivery under
-the same activity, activation, wallet-uniqueness, consent, exposure, finality, solvency, and launch gates as human wallets.
+the same activity, upgrade, wallet-uniqueness, consent, exposure, finality, solvency, and launch gates as human wallets.
 The agent flag still excludes human-only faucets and status rewards; it never denies vault authorization, settlement,
 checkpoints, Broker weight, RWA allocation, or delivery.
 
@@ -2155,25 +2155,45 @@ principal, RWA inventory, or withdrawal reserves. The Safe controls registry cur
 the broad acquisition operator cannot move OMR, Stock Tokens, the gameplay vault, the gas pool, or upgrade
 authority.
 
+### Your deed is your RWA vault
+
+**Your deed is your RWA vault.** Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.
+
+No paid Broker activation or deed upgrade is required for baseline qualification. Successful server-authoritative play must still meet the seven-day epoch’s three-track and score-25 gate; spending alone never qualifies. Without a finalized on-chain deed delivery target, allocations wait without expiry.
+
+Optional permanent deed upgrades are sequential:
+
+| Level | Spend $OMR | Required renown | Reward-weight bonus |
+| --- | ---: | ---: | ---: |
+| 1 | 150 | 5 | 5% |
+| 2 | 450 | 20 | 10% |
+| 3 | 1,200 | 50 | 15% |
+| 4 | 3,000 | 80 | 20% |
+| 5 | 9,000 | 120 | 25% |
+
+Each upgrade also requires qualifying activity in the last seven days. Bonuses replace lower levels, cap at 25%, and apply only to future epochs whose entire activity window starts on or after the next UTC day. They redistribute shares of a fixed treasury-funded pool; they do not increase its budget or guarantee a payout. Spending $OMR uses the game sink and recycles inventory to the current market shelf; it does not destroy ERC-20 supply.
+
+Upgrade level follows the deed when sold. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Upgrading or selling cannot rewrite previously allocated rewards or their original qualifying account. Existing paid Broker commitments retain their multiplier until expiry; the larger eligible multiplier applies, without stacking it with the upgrade bonus. All existing asset, funding, chain-finality, delivery and launch gates remain in force; source availability does not establish live RWA payouts.
+
+Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.
+
 ### The Brokers — how active play qualifies
 
 The policy is **minimum breadth and score, then uncapped proportional activity**:
 
-1. **Activate** a Broker tier by spending earned $OMR. Activation is a recurring window and a
-   multiplier, not eligibility by itself. An activated idler receives zero.
+1. **Qualify through gameplay.** Baseline qualification requires no paid activation or upgrade. An idle account receives zero.
 2. During the seven-day epoch, successful server-authoritative actions write raw counts to the
    activity log. A player must clear at least **3 distinct activity tracks** and the published
    **minimum score of 25**. Failed attempts, page views, time-online, client telemetry, and granted XP
    do not count. Human and agent accounts qualify on identical economic terms; NPC/resident accounts are excluded.
-   An agent uses the ordinary authenticated routes to activate its Broker tier and claim a Street
+   An agent uses the ordinary authenticated routes to claim and optionally upgrade a Street
    Deed. The same agent account may control and collect the corner, trade the deed, extract or
    re-import it through its verified wallet, and receive allocated Stock Tokens in the deed's
    ERC-6551 account; `agent_flag` never blocks those ownership or value-delivery steps.
 3. After the gate, the full activity score remains linear and **has no cap**. Weight is
-   `activation multiplier × activity score`, so more genuine successful play earns a larger
+   `eligible deed/legacy multiplier × activity score`, so more genuine successful play earns a larger
    pro-rata share. There is no cliff beyond the qualifying floor and no equal split.
-   A future verified OMR-staking multiplier will preserve that activity gate and the recurring
-   activation requirement. Its chosen composition is `activation multiplier × activity score ×
+   A future verified OMR-staking multiplier will preserve that activity gate and free baseline eligibility. Its chosen composition is `eligible deed/legacy multiplier × activity score ×
    stake multiplier`, with fixed public stake tiers based on the finalized full-epoch time-weighted
    average. It is not live until the eligible source and tier ceiling/thresholds are resolved and
    anti-flash snapshot history is implemented.
@@ -2368,7 +2388,7 @@ least 3100 ms between action attempts, defaults to one action, and accepts a fin
 run a fleet, reset identities, perform autonomous PvP or borrowing, claim human faucets, or touch wallet, mint,
 withdrawal, identity-change, or arbitrary mutation flows.
 
-Agents use the same economic Street Deed, Broker activation, activity-weight, Stock Token allocation, and
+Agents use the same economic Street Deed, optional upgrades, activity-weight, Stock Token allocation, and
 token-bound delivery surfaces as humans. A recruiting agent may also receive one direct qualified-activation
 cash claim for a minted, human-eligible non-agent recruit while the approved acquisition reserve has capacity.
 Clicks, posts, raw signup, wallet linking, the early spark, human recruiter multipliers, downstream recruits,

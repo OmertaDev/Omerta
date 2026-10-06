@@ -122,7 +122,7 @@ const KNOWN_REASONS = {
     // ECONOMY v3 step 7 — `rarity:upgrade` is the deterministic one-tier NFT upgrade: a $OMR SINK
     // in DESK.SINK_REASONS, so it recycles to the shelf. No new bucket and no faucet — the item's
     // rarity is status, not currency.
-    'window:', 'yield:', 'desk:', 'made:', 'rarity:', 'brokers:',
+    'window:', 'yield:', 'desk:', 'made:', 'rarity:', 'brokers:', 'deed:upgrade',
     // THE COMMUNITY DROP (G-3): drop:claim is an enumerated MINT (the mission:% shape — backed by
     // the Safe's genesis reserve, reconciled by the 'drop claims ledgered' check below).
     'drop:'],

@@ -321,10 +321,12 @@ URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
 > Seasonal Turf fees reach entitled Families from actual collected lane fees. Separate game reward
 > programs need their own received funds; market activity does not create unlimited payouts.
 >
-> 6/ The RWA arc.
+> 6/ Your deed is your RWA vault.
 > The treasury stacks ETH. The families vote a daily stock ticker. A walled keeper buys tokenized
 > stock, split among the players who actually played — idle money takes nothing — and delivered
-> into your Street Deed's on-chain vault, so selling the street sells the book with it. Built and
+> into your Street Deed's on-chain vault. Baseline qualification needs gameplay, not paid activation.
+> Optional deed upgrades spend $OMR for a capped future share bonus within the same funded pool;
+> they do not guarantee payouts or rewrite prior allocations. Built and
 > devnet-proven; delivery opens after the audit and launch gates clear. We do not claim it is live
 > before it is.
 >

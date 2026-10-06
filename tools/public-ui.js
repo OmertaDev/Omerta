@@ -580,6 +580,35 @@ try {
       `Gym result did not leave its receipt and usable focus in the refreshed screen — ${JSON.stringify(trainedBoard)}`);
   }
 
+  reportStage('Deed RWA states, optional upgrade terms, and paid receipt');
+  const deedToken = await mobile.evaluate(() => localStorage.omerta_token);
+  const deedMe = (await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer ' + deedToken } })).json();
+  const deedAccount = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [deedMe.character.id])).rows[0].account_id;
+  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', district: 'docks' } });
+  check(claim.statusCode === 200, 'Browser deed fixture could not claim a street');
+  await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
+  await mobile.waitForSelector('#deed-upgrade', { state: 'visible' });
+  check(!await mobile.locator('#deed-upgrade').isEnabled(), 'Unqualified gameplay must disable the optional upgrade button');
+  await app.pool.query('UPDATE account_persistent SET omr=2000 WHERE account_id=$1', [deedAccount]);
+  await app.pool.query("INSERT INTO street_deed_history (account_id,kind,detail) VALUES ($1,'war','browser upgrade milestone')", [deedAccount]);
+  const deedDay = Math.floor(Date.now() / 86400000);
+  for (const [tag,n] of [['crime',20],['boost',20],['heist',5]]) await app.pool.query('INSERT INTO activity_log (account_id,day,tag,n) VALUES ($1,$2,$3,$4) ON CONFLICT (account_id,day,tag) DO UPDATE SET n=EXCLUDED.n', [deedAccount,deedDay,tag,n]);
+  await app.pool.query("INSERT INTO stock_allocations (epoch_id,account_id,ticker,units,delivered_units) VALUES ('browser-vault-proof',$1,'NVDA',1.25,0.5)", [deedAccount]);
+  await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
+  await mobile.waitForSelector('#deed-upgrade:not([disabled])', { state: 'visible' });
+  const distributionText = await mobile.locator('section[aria-labelledby="deed-reward-title"]').innerText();
+  check(/Allocated[\s\S]*1.25/.test(distributionText) && /Pending delivery[\s\S]*0.75/.test(distributionText) && /Received[\s\S]*0.5/.test(distributionText), 'Deed distribution states do not match the account ledger');
+  check(/without expiry/.test(distributionText) && /not the vault’s current balance/.test(distributionText), 'Deed copy confuses delivery records and current balances');
+  await mobile.click('#deed-upgrade');
+  const deedDialog = mobile.locator('.modal-bg[data-managed-dialog]');
+  await deedDialog.waitFor({ state: 'visible' });
+  check(/150/.test(await deedDialog.innerText()) && /future full windows/.test(await deedDialog.innerText()) && /market shelf/.test(await deedDialog.innerText()), 'Upgrade confirmation omits cost or prospective sink terms');
+  await deedDialog.getByRole('button', { name: 'Upgrade deed', exact: true }).click();
+  await mobile.waitForFunction(() => document.querySelector('#deed-upgrade')?.dataset.level === '1');
+  const deedBalance = Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [deedAccount])).rows[0].omr);
+  check(deedBalance === 1850, 'Browser upgrade did not spend exactly the displayed 150 OMR');
+  check(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Deed reward and upgrade cards overflow at phone size');
+
   reportStage('Keyboard navigation, modal focus, and accessible destinations');
   await checkDialogKeyboard(mobile, '#btn-jump', '#jumpmodal', 'Quick jump');
   await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation');

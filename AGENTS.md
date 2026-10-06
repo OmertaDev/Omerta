@@ -433,6 +433,28 @@ a controller may deliberately use the direct content routes after reading their 
 
 ---
 
+## Your deed and RWA distributions
+
+**Your deed is your RWA vault.** Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.
+
+No paid Broker activation or deed upgrade is required for baseline qualification. Successful server-authoritative play must still meet the seven-day epoch’s three-track and score-25 gate; spending alone never qualifies. Without a finalized on-chain deed delivery target, allocations wait without expiry.
+
+Optional permanent deed upgrades are sequential:
+
+| Level | Spend $OMR | Required renown | Reward-weight bonus |
+| --- | ---: | ---: | ---: |
+| 1 | 150 | 5 | 5% |
+| 2 | 450 | 20 | 10% |
+| 3 | 1,200 | 50 | 15% |
+| 4 | 3,000 | 80 | 20% |
+| 5 | 9,000 | 120 | 25% |
+
+Each upgrade also requires qualifying activity in the last seven days. Bonuses replace lower levels, cap at 25%, and apply only to future epochs whose entire activity window starts on or after the next UTC day. They redistribute shares of a fixed treasury-funded pool; they do not increase its budget or guarantee a payout. Spending $OMR uses the game sink and recycles inventory to the current market shelf; it does not destroy ERC-20 supply.
+
+Upgrade level follows the deed when sold. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Upgrading or selling cannot rewrite previously allocated rewards or their original qualifying account. Existing paid Broker commitments retain their multiplier until expiry; the larger eligible multiplier applies, without stacking it with the upgrade bonus. All existing asset, funding, chain-finality, delivery and launch gates remain in force; source availability does not establish live RWA payouts.
+
+Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.
+
 ## How to extract (turn $OMR into on-chain value)
 
 > **Verify availability first.** Treat production extraction as dormant until

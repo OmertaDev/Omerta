@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+deed upgrades: PASS (sequential costs, stale guard, milestones, future-only bonus, ownership transfer, fixed pool)

@@ -4,6 +4,23 @@
 retained Grill interview, its handoff attachment, the repository's dirty
 design amendments, and the verified implementation baseline.
 
+**Current deed-policy override — 2026-10-06:** Baseline RWA qualification requires
+successful gameplay, with no new paid Broker activation. Optional sequential deed
+upgrades spend 150 / 450 / 1,200 / 3,000 / 9,000 OMR, require renown
+5 / 20 / 50 / 80 / 120 and qualifying activity in the last seven days, and provide
+5% / 10% / 15% / 20% / 25% future reward-weight bonuses capped at 25%. Spending
+recycles OMR through the game sink; it does not destroy ERC-20 supply. The current
+and future staking formulas use `deedOrLegacyMult`, defaulting to 1x; unexpired
+paid commitments retain their larger multiplier until expiry without stacking.
+Upgrade, transfer, reimport and linked-wallet changes apply only to full reward
+windows beginning on or after the next UTC day. Upgrade level follows the deed;
+already earned allocations retain their original qualifying account. Bonuses
+redistribute a fixed funded pool without guaranteeing payouts or increasing its
+budget. Missing on-chain deed targets defer delivery without expiry. Existing
+chain, funding, asset and launch gates remain. This override updates binding
+implementation requirements; retained interview sources and dated evidence keep
+their original historical meaning.
+
 **Goal:** Implement every product and architecture decision that received an
 unambiguous founder answer in the Grill interview, preserve every explicit
 override, expose the resulting operations graphically, and finish with
@@ -595,7 +612,7 @@ success.
 - Distribution input is the exact canonical custody delta from one completed
   intent and the frozen Broker epoch rules; no later treasury balance is swept
   into the cohort.
-- Final weight is `activationMult * activityScore * stakeMult`. Ordinary capital
+- Final weight is `deedOrLegacyMult * activityScore * stakeMult`. Ordinary capital
   spend adds no weight. OMR stake multiplier is defined in B.
 - Convert the purchased token amount into exact token atomic units using the
   token's verified decimals. Allocate by floor, then assign remaining units by
@@ -733,9 +750,9 @@ success.
 
 ## B — Broker stake multiplier
 
-- Final Broker weight is `activationMult * activityScore * stakeMult`.
+- Final Broker weight is `deedOrLegacyMult * activityScore * stakeMult`.
 - Eligible principal is finalized active plus committed OMR only. Idle,
-  unbonding, liquid, reward, activation spend, database-only values, and
+  unbonding, liquid, reward, deed-upgrade spend, database-only values, and
   unattributed OMR do not count.
 - `stakeMult` uses finalized prospective seven-day time-weighted average:
   `<300 OMR = 1.00x`; `300-999.999... = 1.10x`;
