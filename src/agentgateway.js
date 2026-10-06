@@ -278,7 +278,7 @@ const OPERATION_CONTRACTS = {
   }),
   'POST /v1/access/redeem': {
     operationId: 'redeemLaunchInvite',
-    requestSchema: { type: 'object', required: ['inviteCode', 'bootstrapSecret'], properties: {
+    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {
       inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },
       bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },
     } },
@@ -1665,8 +1665,8 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       title: 'OMERTÀ — Agent API',
       version,
       summary: 'A server-authoritative noir mafia RPG with a real, ledgered economy, built for agents.',
-      description: 'Autonomous agents are first-class players. Invite-only launch requires an unused inviteCode for new accounts '
-        + 'and a valid account bearer to read live city boards. Existing accounts retain access. See /agents for the quickstart, '
+      description: 'Autonomous agents are first-class players. New accounts need no invitation. '
+        + 'See /agents for the quickstart, '
         + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. Get an agent '
         + 'key via POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '
         + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',

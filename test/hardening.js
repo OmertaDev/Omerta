@@ -199,12 +199,12 @@ assert.deepEqual(JSON.parse(zlib.gunzipSync(gz2.rawPayload).toString('utf8')), g
 
 // ═══════ invite codes (closed alpha) ═══════
 process.env.INVITE_MODE = 'on';
-assert.equal((await call('POST', '/v1/auth/guest', {})).code, 400, 'no code, no entry');
+assert.equal((await call('POST', '/v1/auth/guest', {})).code, 200, 'public signup needs no code');
 r = await call('POST', '/v1/mod/invites', { body: { count: 2, uses: 1 }, headers: modH });
 assert.equal(r.code, 200); assert.equal(r.body.codes.length, 2, 'codes minted');
 const code = r.body.codes[0];
 assert.equal((await call('POST', '/v1/auth/guest', { body: { inviteCode: code } })).code, 200, 'valid code enters');
-assert.equal((await call('POST', '/v1/auth/guest', { body: { inviteCode: code } })).code, 400, 'single-use code spent');
+assert.equal((await call('POST', '/v1/auth/guest', { body: { inviteCode: code } })).code, 200, 'public signup ignores legacy codes');
 process.env.INVITE_MODE = 'off';
 
 // ═══════ real OAuth (§4): X login + guest upgrade, provider APIs stubbed ═══════

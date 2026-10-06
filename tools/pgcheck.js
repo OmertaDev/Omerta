@@ -2010,8 +2010,8 @@ console.log('\n9z. LAUNCH INVITATIONS — real transaction rollback and simultan
   await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [code]);
   const contenders = await Promise.all(Array.from({ length: 8 }, () =>
     call('POST', '/v1/auth/guest', { body: { inviteCode: code } })));
-  check(contenders.filter((r) => r.code === 200).length === 1, 'one invite admits exactly one account under eight simultaneous signups');
-  check(contenders.filter((r) => r.body?.error === 'invite').length === 7, 'every losing signup receives invite refusal');
+  check(contenders.filter((r) => r.code === 200).length === 8, 'all eight concurrent public signups succeed');
+  check(contenders.filter((r) => r.body?.error === 'invite').length === 0, 'no public signup needs an invite');
   const admittedToken = contenders.find((r) => r.code === 200)?.body?.token;
 
   const rollbackCode = generateInviteCode();
@@ -2040,10 +2040,10 @@ console.log('\n9z. LAUNCH INVITATIONS — real transaction rollback and simultan
     const crew = await call('POST', '/v1/crew', { token: admittedToken, body: { name: `Invite Crew ${suffix}` } });
     check(crew.code === 200, 'invited character can found a Crew');
     const issued = await Promise.all(Array.from({ length: 8 }, () => call('POST', '/v1/invites', { token: admittedToken, body: {} })));
-    check(issued.filter((r) => r.code === 200).length === 3 && issued.filter((r) => r.body?.error === 'invite_limit').length === 5,
-      'eight simultaneous Crew issuance requests mint exactly three codes');
+    check(issued.every((r) => r.body?.error === 'invites_disabled'),
+      'legacy invitation issuance stays disabled');
     const board = await call('GET', '/v1/invites', { token: admittedToken });
-    check(board.body?.codes?.length === 3 && board.body.remaining === 0, 'durable allowance agrees with concurrent issuance');
+    check(board.body?.codes?.length === 0 && board.body.enabled === false, 'durable allowance agrees with concurrent issuance');
   }
   process.env.INVITE_MODE = 'off';
 }

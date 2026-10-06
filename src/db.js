@@ -556,8 +556,28 @@ export async function migrateSchemaUnderLock(
   }
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
+  await resetStartingLevels(boot);
   const stamp = await stampSchema(boot);
   return { migration, stamp };
+}
+
+// One-time player level reset. makeDb holds the schema advisory lock on Postgres.
+export async function resetStartingLevels(q) {
+  await q.query(`CREATE TABLE IF NOT EXISTS player_reset_migrations (
+    id TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`);
+  await q.query('BEGIN');
+  try {
+    const applied = await q.query("SELECT id FROM player_reset_migrations WHERE id='starting-levels-2026-10-06'");
+    if (!applied.rowCount) {
+      await q.query('UPDATE characters SET respect=0 WHERE alive=true AND is_npc=false');
+      await q.query("INSERT INTO player_reset_migrations (id) VALUES ('starting-levels-2026-10-06')");
+    }
+    await q.query('COMMIT');
+  } catch (error) {
+    await q.query('ROLLBACK');
+    throw error;
+  }
 }
 
 // Literal Phase 2 shape contract. CHECK definitions use PostgreSQL's canonical deparser form;

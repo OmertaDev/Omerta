@@ -3,10 +3,8 @@ import crypto from 'node:crypto';
 import { GameError } from './game.js';
 
 export const CREW_INVITE_LIMIT = 3;
-export function inviteModeEnabled(env = { INVITE_MODE: process.env.INVITE_MODE,
-  NODE_ENV: process.env.NODE_ENV, DATABASE_URL: process.env.DATABASE_URL }) {
-  if (env.INVITE_MODE !== undefined) return env.INVITE_MODE !== 'off';
-  return env.NODE_ENV === 'production' || !!env.DATABASE_URL;
+export function inviteModeEnabled() {
+  return false;
 }
 
 export function generateInviteCode() {

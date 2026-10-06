@@ -85,7 +85,7 @@
     "test:genesis": "node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
     "character:rehearsal": "node tools/character-nft-rehearsal.js",
     "character:preflight": "node tools/character-nft-preflight.js",
-    "test:invites": "node test/launch-invites.js",
+    "test:invites": "node test/public-start.js && node test/dailyreminder.js && node test/launch-invites.js",
     "test:invites:browser": "node test/launch-invites-browser.js",
     "test:audit:mint-dev:postgres": "node test/audit/mint-dev-allocation.js",
     "test:audit:deed-reimport:postgres": "node test/audit/deed-reimport-order.js",

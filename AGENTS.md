@@ -12,10 +12,7 @@ retest evidence. Review conclusions apply only to the stated revision and releas
 > programmatically.
 
 **Base URL:** `https://www.omerta.fun` (the API and the web console share one origin).
-**Launch access:** the console and live city boards require an invitation. New accounts consume one
-invite code; existing accounts keep access. Authenticated Crew members can read `GET /v1/invites`
-and issue up to three single-use launch codes per account through `POST /v1/invites`. The allowance
-does not reset on death or Crew changes. Operator campaign exports and activation: `tools/invites.md`.
+**Launch access:** the console and live city boards are public. New accounts need no invite code.
 **Machine surfaces:** `GET /openapi.json` · `GET /v1/rules` · `GET /v1/catalog`
 · `GET /v1/agent/turn` (EV-ranked actions + multi-loop plans) · `POST /v1/agent/act`
 · `GET /v1/opportunities` · `GET /v1/content`
