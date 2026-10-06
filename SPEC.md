@@ -20,7 +20,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11520** lines, **1078** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **697** markdown files, **134657** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **699** markdown files, **134657** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **55** checks — **49** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **262,000 lines** of backend code, tests, schema and top-level contracts.
