@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d9683e20e100adbbae3c0b1de981ed573c81e099",
+  "sourceRevision": "7a29485ca041e10b4f871b2bec3cdd60583a5c09",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9768,
-    "edges": 39804,
+    "nodes": 9770,
+    "edges": 39811,
     "byNodeType": {
       "Artifact": 4157,
       "Command": 179,
-      "Commit": 2034,
+      "Commit": 2036,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3246,
-      "CHANGED": 15454,
+      "CHANGED": 15459,
       "CONTAINS": 4178,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 611,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2034,
+      "HAS_COMMIT": 2036,
       "IMPLEMENTS": 124,
       "IMPORTS": 3935,
       "INHERITS": 39,
@@ -78677,20 +78677,20 @@
       "path": "src/preflight.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 35499,
+      "bytes": 35484,
       "lines": 486,
-      "version": "071b71c44ea46981",
+      "version": "489b0c414cd15661",
       "text": true,
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "071b71c44ea46981"
+          "version": "489b0c414cd15661"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-10-06T20:47:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "7a29485ca041e10b4f871b2bec3cdd60583a5c09"
     },
     {
       "key": "Artifact:src/primetime.js",
@@ -106849,6 +106849,22 @@
       ]
     },
     {
+      "key": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "type": "Commit",
+      "id": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "label": "chore(knowledge): refresh generated artifacts for d9683e20",
+      "title": "chore(knowledge): refresh generated artifacts for d9683e20",
+      "date": "2026-10-06T19:55:16.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "provenance": [
+        {
+          "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+          "url": "https://github.com/OmertaDev/Omerta/commit/41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+        }
+      ]
+    },
+    {
       "key": "Commit:41cfea04c15b94c79321067d0f957d6f1088e738",
       "type": "Commit",
       "id": "41cfea04c15b94c79321067d0f957d6f1088e738",
@@ -113821,6 +113837,22 @@
         {
           "commit": "7a18df110861af485818d7f84a87097ca4286951",
           "url": "https://github.com/OmertaDev/Omerta/commit/7a18df110861af485818d7f84a87097ca4286951"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+      "type": "Commit",
+      "id": "7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+      "label": "Remove retired invite mode from the environment inventory",
+      "title": "Remove retired invite mode from the environment inventory",
+      "date": "2026-10-06T20:47:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+      "provenance": [
+        {
+          "commit": "7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7a29485ca041e10b4f871b2bec3cdd60583a5c09"
         }
       ]
     },
@@ -150681,6 +150713,9 @@
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
+          "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+        },
+        {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
         },
         {
@@ -151512,6 +151547,9 @@
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
+          "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+        },
+        {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
         },
         {
@@ -152341,6 +152379,9 @@
         },
         {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+        },
+        {
+          "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
         },
         {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
@@ -153394,6 +153435,9 @@
         },
         {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+        },
+        {
+          "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
         },
         {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
@@ -157885,12 +157929,12 @@
       "id": "src/preflight.js",
       "label": "src/preflight.js",
       "lines": 486,
-      "version": "071b71c44ea46981",
+      "version": "489b0c414cd15661",
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "071b71c44ea46981"
+          "version": "489b0c414cd15661"
         }
       ]
     },
@@ -162594,7 +162638,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "revision": "7a29485ca041e10b4f871b2bec3cdd60583a5c09",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -258069,6 +258113,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:41cfea04c15b94c79321067d0f957d6f1088e738",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -287145,6 +287221,14 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask1.t.sol",
       "provenance": {
         "commit": "7a18df110861af485818d7f84a87097ca4286951"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "commit": "7a29485ca041e10b4f871b2bec3cdd60583a5c09"
       }
     },
     {
@@ -417844,6 +417928,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:41c44b2588e033ddfb4a9bc09e255d655a5e9fff",
+      "provenance": {
+        "commit": "41c44b2588e033ddfb4a9bc09e255d655a5e9fff"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:41cfea04c15b94c79321067d0f957d6f1088e738",
       "provenance": {
         "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
@@ -421327,6 +421419,14 @@
       "to": "Commit:7a18df110861af485818d7f84a87097ca4286951",
       "provenance": {
         "commit": "7a18df110861af485818d7f84a87097ca4286951"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
+      "provenance": {
+        "commit": "7a29485ca041e10b4f871b2bec3cdd60583a5c09"
       }
     },
     {
