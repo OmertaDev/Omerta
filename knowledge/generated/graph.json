@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+  "sourceRevision": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9754,
-    "edges": 39723,
+    "nodes": 9756,
+    "edges": 39730,
     "byNodeType": {
       "Artifact": 4154,
       "Command": 179,
-      "Commit": 2026,
+      "Commit": 2028,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3243,
-      "CHANGED": 15413,
+      "CHANGED": 15418,
       "CONTAINS": 4175,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 609,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2026,
+      "HAS_COMMIT": 2028,
       "IMPLEMENTS": 124,
       "IMPORTS": 3924,
       "INHERITS": 39,
@@ -74353,20 +74353,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1320248,
-      "lines": 13624,
-      "version": "642bd012b9906bdd",
+      "bytes": 1321674,
+      "lines": 13638,
+      "version": "88fbf4537278178c",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "642bd012b9906bdd"
+          "version": "88fbf4537278178c"
         }
       ],
-      "lastChangedAt": "2026-10-06T01:10:37.000Z",
+      "lastChangedAt": "2026-10-06T01:29:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
+      "lastChangedCommit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -108716,6 +108716,22 @@
       ]
     },
     {
+      "key": "Commit:515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "type": "Commit",
+      "id": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "label": "Prioritize character NFT and street deed minting in the player UI",
+      "title": "Prioritize character NFT and street deed minting in the player UI",
+      "date": "2026-10-06T01:29:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "provenance": [
+        {
+          "commit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/515ae46cf834ec0929c8b819d624bdc3bc14e91a"
+        }
+      ]
+    },
+    {
       "key": "Commit:515f4b41b3e21f7307333f1d2021765af2cf04d4",
       "type": "Commit",
       "id": "515f4b41b3e21f7307333f1d2021765af2cf04d4",
@@ -121192,6 +121208,22 @@
         {
           "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a",
           "url": "https://github.com/OmertaDev/Omerta/commit/b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "type": "Commit",
+      "id": "b2c3e8929565bb65c519032df228eda1a4235628",
+      "label": "Refresh knowledge for isolated character readiness",
+      "title": "Refresh knowledge for isolated character readiness",
+      "date": "2026-10-06T01:13:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b2c3e8929565bb65c519032df228eda1a4235628",
+      "provenance": [
+        {
+          "commit": "b2c3e8929565bb65c519032df228eda1a4235628",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b2c3e8929565bb65c519032df228eda1a4235628"
         }
       ]
     },
@@ -150822,6 +150854,9 @@
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
         },
         {
+          "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -151641,6 +151676,9 @@
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
         },
         {
+          "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -152458,6 +152496,9 @@
         },
         {
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
+        },
+        {
+          "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -153496,6 +153537,9 @@
         },
         {
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
+        },
+        {
+          "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -162318,8 +162362,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
-      "currentBranch": "codex/mint-wallet-feedback",
+      "revision": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -262856,6 +262900,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5198cbea3d57fecd9062a568cdaa1f7cc11241eb",
       "to": "Artifact:docs/release/readiness-work/harness-evidence-storage-proposal.md",
       "provenance": {
@@ -308396,6 +308448,38 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
       }
     },
     {
@@ -418106,6 +418190,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "provenance": {
+        "commit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:515f4b41b3e21f7307333f1d2021765af2cf04d4",
       "provenance": {
         "commit": "515f4b41b3e21f7307333f1d2021765af2cf04d4"
@@ -424341,6 +424433,14 @@
       "to": "Commit:b1f1e7259932339480022b4d3746f8a6ca36fd1a",
       "provenance": {
         "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
+      "provenance": {
+        "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
       }
     },
     {
