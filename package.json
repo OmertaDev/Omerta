@@ -185,7 +185,8 @@
     "test:rc1:season-election:postgres": "node test/rc1-native-season-election-controls.js --postgres",
     "test:rc1:knowledge-authority:postgres": "node test/rc1-knowledge-authority-postgres.js --knowledge",
     "test:rc1:choice-confirmation:postgres": "node test/rc1-knowledge-authority-postgres.js --confirmation",
-    "test:genesis-auction": "node test/genesis-auction-deployment-plan.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js"
+    "test:genesis-auction": "node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js",
+    "test:genesis-auction:deployment": "node test/genesis-auction-deployment-plan.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
