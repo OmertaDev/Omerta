@@ -100,7 +100,7 @@ export const OPERATIONAL_ENV = [
   // anything: a longer window is a later page, never a silent one.
   'WORKER_STALE_SEC', 'WORKER_WATCH_MS',
   // access posture
-  'INVITE_MODE', 'RATE_LIMIT', 'RATE_AUTH_BURST', 'RATE_AUTH_PER_SEC', 'RATE_HUMAN_BURST',
+  'RATE_LIMIT', 'RATE_AUTH_BURST', 'RATE_AUTH_PER_SEC', 'RATE_HUMAN_BURST',
   'RATE_HUMAN_PER_SEC', 'RATE_PUBLIC_BURST', 'RATE_PUBLIC_PER_SEC', 'RATE_READ_BURST',
   'RATE_READ_PER_SEC', 'WS_ALLOW_QUERY_TOKEN',
   // identity providers (dormant until configured)
