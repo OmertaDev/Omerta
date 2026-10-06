@@ -73,3 +73,16 @@ test/deed-upgrades.js B812F76B2288DE0A299153A861B78DD660608DA26F248F3FDCA44A1CB4
 ```
 
 Residual assumptions: chain owner data and wallet attribution reflect indexed state; no synchronous chain ownership proof is added. Database bonus CHECK bounds 500..2500; no unprivileged SQL writer found. The maximum 25% bonus remains enforced by catalog and persisted bounds. No open confirmed high/critical finding; final conclusion restricted to these pins and pre-release server scope.
+
+## Final implementation commit verification
+
+Local implementation commit: `d59f449969f9aac59f08658764c401ef869848f7`. Reinspected the final `src/deed-upgrades.js` balance gate and `src/brokers.js` catalog additions after the preceding source snapshot. The balance gate reads the authenticated account's OMR and rejects insufficient funds before mutation; the existing locked `spendOmr` check remains the authoritative debit guard. Catalog additions publish baseline eligibility, optional upgrades, the exact server ladder and 2500-bps maximum. No new security issue identified from these changes.
+
+Final two hashes replace their preceding remediation pins:
+
+```text
+src/deed-upgrades.js 0C5CDBC6FF7A7AF0BCF8506F9271493846D8F98DEB6A4BCC1E4F0E20C271C753
+src/brokers.js 7C7FBCDCEC9E22F88EDFF54132A20EEED40564B1F15A083B89F83AE5ABA2A33E
+```
+
+Targeted retest at this commit: `node test/deed-upgrades.js`, Node v24.19.0, exit 0, pg-mem PASS. Catalog additions are read-only metadata and did not warrant broadening the repeat run. Other scopes and PostgreSQL evidence limits remain as recorded above. The report itself is updated after the implementation commit; generated knowledge artifacts are outside this review's mutation scope.
