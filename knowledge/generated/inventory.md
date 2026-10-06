@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `515ae46cf834`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `3966a26f2b69`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,154 |
-| Text lines | 1,503,544 |
-| Repository bytes inventoried | 806,915,814 |
-| Backend/route modules | 277 |
+| Current artifacts | 4,157 |
+| Text lines | 1,503,601 |
+| Repository bytes inventoried | 806,916,466 |
+| Backend/route modules | 278 |
 | HTTP route registrations / unique routes | 805 / 805 |
 | Database tables | 369 |
 | Solidity declarations | 120 |
-| Git commits | 2,028 |
+| Git commits | 2,030 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,756 / 39,730 |
+| Graph nodes / edges | 9,764 / 39,786 |
 
 ## Artifact kinds
 
@@ -25,9 +25,9 @@
 | media-asset | 1,194 |
 | artifact | 657 |
 | contract-project | 557 |
-| test-suite | 429 |
+| test-suite | 431 |
 | documentation | 408 |
-| backend-module | 249 |
+| backend-module | 250 |
 | engineering-harness | 193 |
 | contract-test | 105 |
 | contract-source | 103 |
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 13,638 | web-surface | 2026-10-06 |
+| [public/index.html](../../public/index.html) | 13,649 | web-surface | 2026-10-06 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+  "sourceRevision": "3966a26f2b6903f8369e0f847a03da417ccc4280",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 9756,
-    "edges": 39730,
+    "nodes": 9764,
+    "edges": 39786,
     "byNodeType": {
-      "Artifact": 4154,
+      "Artifact": 4157,
       "Command": 179,
-      "Commit": 2028,
+      "Commit": 2030,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
       "ExternalDependency": 28,
       "HistoricalArtifact": 424,
-      "Module": 277,
+      "Module": 278,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 805,
       "Subsystem": 8,
       "Table": 369,
-      "TestSuite": 534,
+      "TestSuite": 536,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3243,
-      "CHANGED": 15418,
-      "CONTAINS": 4175,
+      "BELONGS_TO": 3246,
+      "CHANGED": 15440,
+      "CONTAINS": 4178,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
-      "EXECUTES": 609,
+      "EXECUTES": 611,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2028,
+      "HAS_COMMIT": 2030,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3924,
+      "IMPORTS": 3935,
       "INHERITS": 39,
-      "REFERENCES": 3113,
-      "REPRESENTS": 1501,
-      "TESTS": 1351,
+      "REFERENCES": 3112,
+      "REPRESENTS": 1504,
+      "TESTS": 1358,
       "TRACKS": 126,
-      "USES_TABLE": 1830
+      "USES_TABLE": 1834
     }
   },
   "nodes": [
@@ -7751,20 +7751,20 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 39914,
-      "lines": 651,
-      "version": "1dff775da83bd31a",
+      "bytes": 39611,
+      "lines": 648,
+      "version": "3f2f3ca5279931cd",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1dff775da83bd31a"
+          "version": "3f2f3ca5279931cd"
         }
       ],
-      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:AGENTS.override.md",
@@ -59656,20 +59656,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 31685,
+      "bytes": 31744,
       "lines": 208,
-      "version": "5b42638622ecfe48",
+      "version": "776f710845e39aa7",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "5b42638622ecfe48"
+          "version": "776f710845e39aa7"
         }
       ],
-      "lastChangedAt": "2026-10-04T21:36:15.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "788e672741e558210029683fed928a06934123f3"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:Procfile",
@@ -74353,20 +74353,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1321674,
-      "lines": 13638,
-      "version": "88fbf4537278178c",
+      "bytes": 1322074,
+      "lines": 13649,
+      "version": "025083a04cd411e3",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "88fbf4537278178c"
+          "version": "025083a04cd411e3"
         }
       ],
-      "lastChangedAt": "2026-10-06T01:29:56.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -74560,20 +74560,20 @@
       "path": "render.yaml",
       "kind": "operations",
       "extension": ".yaml",
-      "bytes": 20178,
-      "lines": 266,
-      "version": "26f9e8e4d9a2b26c",
+      "bytes": 19956,
+      "lines": 264,
+      "version": "384955ddf7e67d3c",
       "text": true,
       "provenance": [
         {
           "file": "render.yaml",
           "line": 1,
-          "version": "26f9e8e4d9a2b26c"
+          "version": "384955ddf7e67d3c"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:schema.sql",
@@ -74721,20 +74721,20 @@
       "path": "src/agentgateway.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 97771,
+      "bytes": 97638,
       "lines": 1747,
-      "version": "a1611c1f2fa556dc",
+      "version": "e1c18f98b85b20c2",
       "text": true,
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "a1611c1f2fa556dc"
+          "version": "e1c18f98b85b20c2"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:src/agentreferrals.js",
@@ -76462,6 +76462,29 @@
       "lastChangedCommit": "17a8853662a1bb3bc1093eefc3d783367b3379fa"
     },
     {
+      "key": "Artifact:src/dailyreminder.js",
+      "type": "Artifact",
+      "id": "src/dailyreminder.js",
+      "label": "dailyreminder.js",
+      "path": "src/dailyreminder.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 1289,
+      "lines": 23,
+      "version": "d8eb46ae41a5cabc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/dailyreminder.js",
+          "line": 1,
+          "version": "d8eb46ae41a5cabc"
+        }
+      ],
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+    },
+    {
       "key": "Artifact:src/day.js",
       "type": "Artifact",
       "id": "src/day.js",
@@ -76492,20 +76515,20 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 60748,
-      "lines": 965,
-      "version": "6033b850aa984370",
+      "bytes": 61542,
+      "lines": 985,
+      "version": "9e6360ea61c840bd",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "6033b850aa984370"
+          "version": "9e6360ea61c840bd"
         }
       ],
-      "lastChangedAt": "2026-09-21T02:36:23.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:src/dbhealth.js",
@@ -77573,20 +77596,20 @@
       "path": "src/invites.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2637,
-      "lines": 47,
-      "version": "1a3d79d5e9cb4113",
+      "bytes": 2400,
+      "lines": 45,
+      "version": "8f4483ae901f3a77",
       "text": true,
       "provenance": [
         {
           "file": "src/invites.js",
           "line": 1,
-          "version": "1a3d79d5e9cb4113"
+          "version": "8f4483ae901f3a77"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:src/item-lock-trace.js",
@@ -80770,20 +80793,20 @@
       "path": "src/worker.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 84018,
-      "lines": 1070,
-      "version": "7072264895a874fb",
+      "bytes": 84155,
+      "lines": 1072,
+      "version": "250bc98c4656ccf3",
       "text": true,
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "7072264895a874fb"
+          "version": "250bc98c4656ccf3"
         }
       ],
-      "lastChangedAt": "2026-09-21T06:44:21.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5ffc1c30ea01b5ff5336778a07ba72470b7ba707"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:src/world-consequences.js",
@@ -81069,20 +81092,20 @@
       "path": "test/agent-alpha.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 91874,
-      "lines": 2416,
-      "version": "a2989cf46000b373",
+      "bytes": 91698,
+      "lines": 2413,
+      "version": "f17a5b095ef2efb4",
       "text": true,
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "a2989cf46000b373"
+          "version": "f17a5b095ef2efb4"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:06:14.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "e70f3b09617414aadc2764ca6ce2e27d93dd1450"
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/agent-referral-cash.js",
@@ -81207,20 +81230,20 @@
       "path": "test/auth.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 26551,
-      "lines": 419,
-      "version": "daefc726dde3ae5f",
+      "bytes": 25412,
+      "lines": 406,
+      "version": "d6e0ca300ec619eb",
       "text": true,
       "provenance": [
         {
           "file": "test/auth.js",
           "line": 1,
-          "version": "daefc726dde3ae5f"
+          "version": "d6e0ca300ec619eb"
         }
       ],
-      "lastChangedAt": "2026-08-26T06:50:53.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "771d7741d84b2474755811f211b2b5c09f712138"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/avatar.js",
@@ -82486,6 +82509,29 @@
       "lastChangedAt": "2026-09-14T21:25:04.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+    },
+    {
+      "key": "Artifact:test/dailyreminder.js",
+      "type": "Artifact",
+      "id": "test/dailyreminder.js",
+      "label": "dailyreminder.js",
+      "path": "test/dailyreminder.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2183,
+      "lines": 40,
+      "version": "af6745898ea4f78f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/dailyreminder.js",
+          "line": 1,
+          "version": "af6745898ea4f78f"
+        }
+      ],
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/day.js",
@@ -83806,20 +83852,20 @@
       "path": "test/hardening.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 138498,
+      "bytes": 138521,
       "lines": 1806,
-      "version": "ece7644dee714ecc",
+      "version": "91696617b34bc8c8",
       "text": true,
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "ece7644dee714ecc"
+          "version": "91696617b34bc8c8"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:48:17.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/heists.js",
@@ -84036,20 +84082,20 @@
       "path": "test/launch-invites-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4393,
-      "lines": 60,
-      "version": "e4d91a87e8b94816",
+      "bytes": 3861,
+      "lines": 51,
+      "version": "eec2a50c868621e8",
       "text": true,
       "provenance": [
         {
           "file": "test/launch-invites-browser.js",
           "line": 1,
-          "version": "e4d91a87e8b94816"
+          "version": "eec2a50c868621e8"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/launch-invites.js",
@@ -84059,20 +84105,20 @@
       "path": "test/launch-invites.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10872,
-      "lines": 151,
-      "version": "3cf6e2fb1719bc26",
+      "bytes": 7560,
+      "lines": 108,
+      "version": "dede840d52249a5f",
       "text": true,
       "provenance": [
         {
           "file": "test/launch-invites.js",
           "line": 1,
-          "version": "3cf6e2fb1719bc26"
+          "version": "dede840d52249a5f"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/law.js",
@@ -85867,6 +85913,29 @@
       "lastChangedAt": "2026-09-19T00:08:05.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+    },
+    {
+      "key": "Artifact:test/public-start.js",
+      "type": "Artifact",
+      "id": "test/public-start.js",
+      "label": "public-start.js",
+      "path": "test/public-start.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 1939,
+      "lines": 36,
+      "version": "2443245fccaf4f69",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/public-start.js",
+          "line": 1,
+          "version": "2443245fccaf4f69"
+        }
+      ],
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/push.js",
@@ -90039,20 +90108,20 @@
       "path": "test/security.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 32422,
+      "bytes": 32428,
       "lines": 476,
-      "version": "5b0d78253f17c24c",
+      "version": "dfc189e2c13bf731",
       "text": true,
       "provenance": [
         {
           "file": "test/security.js",
           "line": 1,
-          "version": "5b0d78253f17c24c"
+          "version": "dfc189e2c13bf731"
         }
       ],
-      "lastChangedAt": "2026-08-17T02:36:07.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72102d1ace0a595ff5511434f7d051cbfba3e7a0"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:test/shields.js",
@@ -92684,20 +92753,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 141690,
+      "bytes": 141566,
       "lines": 2183,
-      "version": "c9c94f1e620f00f5",
+      "version": "63e2749f88c5b4ea",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "c9c94f1e620f00f5"
+          "version": "63e2749f88c5b4ea"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:43:22.000Z",
+      "lastChangedAt": "2026-10-06T19:13:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f2424a5eaa160507fe5884926c8cf600f5e0a20b"
+      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -96717,7 +96786,7 @@
       "type": "Command",
       "id": "npm:test:invites",
       "label": "npm run test:invites",
-      "command": "node test/launch-invites.js",
+      "command": "node test/public-start.js && node test/dailyreminder.js && node test/launch-invites.js",
       "provenance": [
         {
           "file": "package.json",
@@ -105256,6 +105325,22 @@
         {
           "commit": "39525c154a7c8138ea2b2f2c4c4aad18407093e0",
           "url": "https://github.com/OmertaDev/Omerta/commit/39525c154a7c8138ea2b2f2c4c4aad18407093e0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "type": "Commit",
+      "id": "3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "label": "Open public signup and promote daily sharing rewards",
+      "title": "Open public signup and promote daily sharing rewards",
+      "date": "2026-10-06T19:13:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "provenance": [
+        {
+          "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3966a26f2b6903f8369e0f847a03da417ccc4280"
         }
       ]
     },
@@ -126028,6 +126113,22 @@
       ]
     },
     {
+      "key": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "type": "Commit",
+      "id": "db54f824004c4d855778668081ce2adfac173c39",
+      "label": "chore(knowledge): refresh generated artifacts for 515ae46c",
+      "title": "chore(knowledge): refresh generated artifacts for 515ae46c",
+      "date": "2026-10-06T01:32:42.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/db54f824004c4d855778668081ce2adfac173c39",
+      "provenance": [
+        {
+          "commit": "db54f824004c4d855778668081ce2adfac173c39",
+          "url": "https://github.com/OmertaDev/Omerta/commit/db54f824004c4d855778668081ce2adfac173c39"
+        }
+      ]
+    },
+    {
       "key": "Commit:db5555f4c4dec3c955db35c72b7cb061c822d352",
       "type": "Commit",
       "id": "db5555f4c4dec3c955db35c72b7cb061c822d352",
@@ -135737,13 +135838,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 651,
-      "version": "1dff775da83bd31a",
+      "lines": 648,
+      "version": "3f2f3ca5279931cd",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1dff775da83bd31a"
+          "version": "3f2f3ca5279931cd"
         }
       ]
     },
@@ -143928,7 +144029,7 @@
         },
         {
           "file": "src/db.js",
-          "line": 836
+          "line": 856
         },
         {
           "file": "test/coordination-capital.js",
@@ -144304,7 +144405,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 954
+          "line": 974
         },
         {
           "file": "test/bondquoteexpiry.js",
@@ -144365,6 +144466,10 @@
         {
           "file": "test/projection-events.js",
           "line": 6
+        },
+        {
+          "file": "test/public-start.js",
+          "line": 4
         },
         {
           "file": "test/rc1-passive-projection.js",
@@ -150977,6 +151082,9 @@
           "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
         },
         {
+          "commit": "db54f824004c4d855778668081ce2adfac173c39"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -151799,6 +151907,9 @@
           "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
         },
         {
+          "commit": "db54f824004c4d855778668081ce2adfac173c39"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -152619,6 +152730,9 @@
         },
         {
           "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+        },
+        {
+          "commit": "db54f824004c4d855778668081ce2adfac173c39"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -153660,6 +153774,9 @@
         },
         {
           "commit": "da88c4b784b497697bfd9418e6153ddf2817ab91"
+        },
+        {
+          "commit": "db54f824004c4d855778668081ce2adfac173c39"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -155088,12 +155205,12 @@
       "id": "src/agentgateway.js",
       "label": "src/agentgateway.js",
       "lines": 1747,
-      "version": "a1611c1f2fa556dc",
+      "version": "e1c18f98b85b20c2",
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "a1611c1f2fa556dc"
+          "version": "e1c18f98b85b20c2"
         }
       ]
     },
@@ -156223,6 +156340,21 @@
       ]
     },
     {
+      "key": "Module:src/dailyreminder.js",
+      "type": "Module",
+      "id": "src/dailyreminder.js",
+      "label": "src/dailyreminder.js",
+      "lines": 23,
+      "version": "d8eb46ae41a5cabc",
+      "provenance": [
+        {
+          "file": "src/dailyreminder.js",
+          "line": 1,
+          "version": "d8eb46ae41a5cabc"
+        }
+      ]
+    },
+    {
       "key": "Module:src/day.js",
       "type": "Module",
       "id": "src/day.js",
@@ -156242,13 +156374,13 @@
       "type": "Module",
       "id": "src/db.js",
       "label": "src/db.js",
-      "lines": 965,
-      "version": "6033b850aa984370",
+      "lines": 985,
+      "version": "9e6360ea61c840bd",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "6033b850aa984370"
+          "version": "9e6360ea61c840bd"
         }
       ]
     },
@@ -156947,13 +157079,13 @@
       "type": "Module",
       "id": "src/invites.js",
       "label": "src/invites.js",
-      "lines": 47,
-      "version": "1a3d79d5e9cb4113",
+      "lines": 45,
+      "version": "8f4483ae901f3a77",
       "provenance": [
         {
           "file": "src/invites.js",
           "line": 1,
-          "version": "1a3d79d5e9cb4113"
+          "version": "8f4483ae901f3a77"
         }
       ]
     },
@@ -159032,13 +159164,13 @@
       "type": "Module",
       "id": "src/worker.js",
       "label": "src/worker.js",
-      "lines": 1070,
-      "version": "7072264895a874fb",
+      "lines": 1072,
+      "version": "250bc98c4656ccf3",
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "7072264895a874fb"
+          "version": "250bc98c4656ccf3"
         }
       ]
     },
@@ -162362,12 +162494,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "515ae46cf834ec0929c8b819d624bdc3bc14e91a",
+      "revision": "3966a26f2b6903f8369e0f847a03da417ccc4280",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4154,
+      "currentArtifactCount": 4157,
       "provenance": [
         {
           "file": "README.md",
@@ -190036,13 +190168,13 @@
       "type": "TestSuite",
       "id": "test/agent-alpha.js",
       "label": "test/agent-alpha.js",
-      "lines": 2416,
-      "version": "a2989cf46000b373",
+      "lines": 2413,
+      "version": "f17a5b095ef2efb4",
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "a2989cf46000b373"
+          "version": "f17a5b095ef2efb4"
         }
       ]
     },
@@ -190126,13 +190258,13 @@
       "type": "TestSuite",
       "id": "test/auth.js",
       "label": "test/auth.js",
-      "lines": 419,
-      "version": "daefc726dde3ae5f",
+      "lines": 406,
+      "version": "d6e0ca300ec619eb",
       "provenance": [
         {
           "file": "test/auth.js",
           "line": 1,
-          "version": "daefc726dde3ae5f"
+          "version": "d6e0ca300ec619eb"
         }
       ]
     },
@@ -190962,6 +191094,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/dailyreminder.js",
+      "type": "TestSuite",
+      "id": "test/dailyreminder.js",
+      "label": "test/dailyreminder.js",
+      "lines": 40,
+      "version": "af6745898ea4f78f",
+      "provenance": [
+        {
+          "file": "test/dailyreminder.js",
+          "line": 1,
+          "version": "af6745898ea4f78f"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/day.js",
       "type": "TestSuite",
       "id": "test/day.js",
@@ -191672,12 +191819,12 @@
       "id": "test/hardening.js",
       "label": "test/hardening.js",
       "lines": 1806,
-      "version": "ece7644dee714ecc",
+      "version": "91696617b34bc8c8",
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "ece7644dee714ecc"
+          "version": "91696617b34bc8c8"
         }
       ]
     },
@@ -191821,13 +191968,13 @@
       "type": "TestSuite",
       "id": "test/launch-invites-browser.js",
       "label": "test/launch-invites-browser.js",
-      "lines": 60,
-      "version": "e4d91a87e8b94816",
+      "lines": 51,
+      "version": "eec2a50c868621e8",
       "provenance": [
         {
           "file": "test/launch-invites-browser.js",
           "line": 1,
-          "version": "e4d91a87e8b94816"
+          "version": "eec2a50c868621e8"
         }
       ]
     },
@@ -191836,13 +191983,13 @@
       "type": "TestSuite",
       "id": "test/launch-invites.js",
       "label": "test/launch-invites.js",
-      "lines": 151,
-      "version": "3cf6e2fb1719bc26",
+      "lines": 108,
+      "version": "dede840d52249a5f",
       "provenance": [
         {
           "file": "test/launch-invites.js",
           "line": 1,
-          "version": "3cf6e2fb1719bc26"
+          "version": "dede840d52249a5f"
         }
       ]
     },
@@ -192998,6 +193145,21 @@
           "file": "test/projection-events.js",
           "line": 1,
           "version": "ca8fd28f85d78ba2"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/public-start.js",
+      "type": "TestSuite",
+      "id": "test/public-start.js",
+      "label": "test/public-start.js",
+      "lines": 36,
+      "version": "2443245fccaf4f69",
+      "provenance": [
+        {
+          "file": "test/public-start.js",
+          "line": 1,
+          "version": "2443245fccaf4f69"
         }
       ]
     },
@@ -195722,12 +195884,12 @@
       "id": "test/security.js",
       "label": "test/security.js",
       "lines": 476,
-      "version": "5b0d78253f17c24c",
+      "version": "dfc189e2c13bf731",
       "provenance": [
         {
           "file": "test/security.js",
           "line": 1,
-          "version": "5b0d78253f17c24c"
+          "version": "dfc189e2c13bf731"
         }
       ]
     },
@@ -210999,6 +211161,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/day.js",
       "to": "Domain:world-progression",
       "provenance": {
@@ -213357,6 +213528,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/day.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -214675,6 +214855,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/projection-events.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/public-start.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/public-start.js",
         "line": 1
       }
     },
@@ -250984,6 +251173,150 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
       "provenance": {
         "commit": "39525c154a7c8138ea2b2f2c4c4aad18407093e0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:render.yaml",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:src/agentgateway.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:src/invites.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/agent-alpha.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/auth.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/dailyreminder.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/hardening.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/launch-invites-browser.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/launch-invites.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/public-start.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:test/security.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
       }
     },
     {
@@ -327140,6 +327473,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "db54f824004c4d855778668081ce2adfac173c39"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "db54f824004c4d855778668081ce2adfac173c39"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "db54f824004c4d855778668081ce2adfac173c39"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "db54f824004c4d855778668081ce2adfac173c39"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:db5555f4c4dec3c955db35c72b7cb061c822d352",
       "to": "Artifact:omerta-contracts/foundry.toml",
       "provenance": {
@@ -349860,6 +350225,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/day.js",
       "provenance": {
         "file": "src/day.js",
@@ -370646,6 +371020,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/dailyreminder.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/day.js",
       "provenance": {
         "file": "test/day.js",
@@ -371864,6 +372247,15 @@
       "to": "Artifact:test/projection-events.js",
       "provenance": {
         "file": "test/projection-events.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/public-start.js",
+      "provenance": {
+        "file": "test/public-start.js",
         "line": 1
       }
     },
@@ -399892,7 +400284,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1064
+      "weight": 1071
     },
     {
       "type": "DEPENDS_ON",
@@ -403653,7 +404045,25 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:invites",
+      "to": "Artifact:test/dailyreminder.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:invites",
       "to": "Artifact:test/launch-invites.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:invites",
+      "to": "Artifact:test/public-start.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -416462,6 +416872,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "provenance": {
+        "commit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3970af90d1107c27dda3d42e680c6104719d19a3",
       "provenance": {
         "commit": "3970af90d1107c27dda3d42e680c6104719d19a3"
@@ -426846,6 +427264,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:db54f824004c4d855778668081ce2adfac173c39",
+      "provenance": {
+        "commit": "db54f824004c4d855778668081ce2adfac173c39"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:db5555f4c4dec3c955db35c72b7cb061c822d352",
       "provenance": {
         "commit": "db5555f4c4dec3c955db35c72b7cb061c822d352"
@@ -432829,6 +433255,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/day.js",
       "to": "Artifact:src/corner.js",
       "provenance": {
@@ -432887,7 +433331,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "src/db.js",
-        "line": 954
+        "line": 974
       }
     },
     {
@@ -432896,7 +433340,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "src/db.js",
-        "line": 836
+        "line": 856
       }
     },
     {
@@ -440411,7 +440855,7 @@
       "to": "Artifact:src/auction.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 57
+        "line": 58
       }
     },
     {
@@ -440438,7 +440882,7 @@
       "to": "Artifact:src/boxing.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 58
+        "line": 59
       }
     },
     {
@@ -440447,7 +440891,7 @@
       "to": "Artifact:src/brokers.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 66
+        "line": 67
       }
     },
     {
@@ -440456,7 +440900,7 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 59
+        "line": 60
       }
     },
     {
@@ -440510,7 +440954,7 @@
       "to": "Artifact:src/convoy.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 53
+        "line": 54
       }
     },
     {
@@ -440520,6 +440964,15 @@
       "provenance": {
         "file": "src/worker.js",
         "line": 48
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/worker.js",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "src/worker.js",
+        "line": 53
       }
     },
     {
@@ -440591,7 +441044,7 @@
       "to": "Artifact:src/fairness.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 60
+        "line": 61
       }
     },
     {
@@ -440654,7 +441107,7 @@
       "to": "Artifact:src/law.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 55
+        "line": 56
       }
     },
     {
@@ -440663,7 +441116,7 @@
       "to": "Artifact:src/liquidityautomation.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 73
+        "line": 74
       }
     },
     {
@@ -440672,7 +441125,7 @@
       "to": "Artifact:src/liquiditykeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 74
+        "line": 75
       }
     },
     {
@@ -440681,7 +441134,7 @@
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 56
+        "line": 57
       }
     },
     {
@@ -440735,7 +441188,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 54
+        "line": 55
       }
     },
     {
@@ -440771,7 +441224,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 62
+        "line": 63
       }
     },
     {
@@ -440780,7 +441233,7 @@
       "to": "Artifact:src/ring.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 61
+        "line": 62
       }
     },
     {
@@ -440816,7 +441269,7 @@
       "to": "Artifact:src/rwahealthsweep.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 69
+        "line": 70
       }
     },
     {
@@ -440825,7 +441278,7 @@
       "to": "Artifact:src/rwastockkeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 68
+        "line": 69
       }
     },
     {
@@ -440861,7 +441314,7 @@
       "to": "Artifact:src/stable.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 63
+        "line": 64
       }
     },
     {
@@ -440870,7 +441323,7 @@
       "to": "Artifact:src/stockcatalog.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 67
+        "line": 68
       }
     },
     {
@@ -440879,7 +441332,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 65
+        "line": 66
       }
     },
     {
@@ -440906,7 +441359,7 @@
       "to": "Artifact:src/v4oraclekeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 72
+        "line": 73
       }
     },
     {
@@ -440924,7 +441377,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 64
+        "line": 65
       }
     },
     {
@@ -443751,6 +444204,33 @@
       "provenance": {
         "file": "test/crew.js",
         "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 4
       }
     },
     {
@@ -449844,6 +450324,51 @@
       "provenance": {
         "file": "test/projection-events.js",
         "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/auth.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/invites.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 4
       }
     },
     {
@@ -468887,7 +469412,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 458
+        "line": 455
       }
     },
     {
@@ -468905,7 +469430,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 457
+        "line": 454
       }
     },
     {
@@ -468914,16 +469439,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 231
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:AGENTS.md",
-      "to": "Artifact:tools/invites.md",
-      "provenance": {
-        "file": "AGENTS.md",
-        "line": 18
+        "line": 228
       }
     },
     {
@@ -500563,6 +501079,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/dailyreminder.js",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/day.js",
       "to": "Artifact:src/day.js",
       "provenance": {
@@ -503866,6 +504391,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/dailyreminder.js",
+      "to": "Artifact:test/dailyreminder.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/day.js",
       "to": "Artifact:test/day.js",
       "provenance": {
@@ -505085,6 +505619,15 @@
       "to": "Artifact:test/projection-events.js",
       "provenance": {
         "file": "test/projection-events.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/public-start.js",
+      "to": "Artifact:test/public-start.js",
+      "provenance": {
+        "file": "test/public-start.js",
         "line": 1
       }
     },
@@ -509352,6 +509895,33 @@
       "provenance": {
         "file": "test/crew.js",
         "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 4
       }
     },
     {
@@ -514355,6 +514925,42 @@
       "to": "Artifact:src/projection-events.js",
       "provenance": {
         "file": "test/projection-events.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/auth.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/invites.js",
+      "provenance": {
+        "file": "test/public-start.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/public-start.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/public-start.js",
         "line": 7
       }
     },
@@ -523963,6 +524569,42 @@
     },
     {
       "type": "USES_TABLE",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Table:accounts",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Table:characters",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/dailyreminder.js",
+      "to": "Table:notifications",
+      "provenance": {
+        "file": "src/dailyreminder.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/db.js",
+      "to": "Table:characters",
+      "provenance": {
+        "file": "src/db.js",
+        "line": 573
+      }
+    },
+    {
+      "type": "USES_TABLE",
       "from": "Artifact:src/db.js",
       "to": "Table:commission_ticker_votes_v2",
       "provenance": {
@@ -523976,7 +524618,7 @@
       "to": "Table:content_activation_events",
       "provenance": {
         "file": "src/db.js",
-        "line": 681
+        "line": 701
       }
     },
     {
@@ -523985,7 +524627,7 @@
       "to": "Table:content_bundle_activations",
       "provenance": {
         "file": "src/db.js",
-        "line": 720
+        "line": 740
       }
     },
     {
@@ -523994,7 +524636,7 @@
       "to": "Table:content_bundle_artifacts",
       "provenance": {
         "file": "src/db.js",
-        "line": 567
+        "line": 587
       }
     },
     {
@@ -524003,7 +524645,7 @@
       "to": "Table:content_bundle_item_definitions",
       "provenance": {
         "file": "src/db.js",
-        "line": 661
+        "line": 681
       }
     },
     {
@@ -524012,7 +524654,7 @@
       "to": "Table:item_definition_activations",
       "provenance": {
         "file": "src/db.js",
-        "line": 740
+        "line": 760
       }
     },
     {
@@ -524021,7 +524663,7 @@
       "to": "Table:item_definition_versions",
       "provenance": {
         "file": "src/db.js",
-        "line": 618
+        "line": 638
       }
     },
     {
@@ -527558,7 +528200,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/invites.js",
-        "line": 14
+        "line": 12
       }
     },
     {
@@ -527567,7 +528209,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/invites.js",
-        "line": 29
+        "line": 27
       }
     },
     {
@@ -527576,7 +528218,7 @@
       "to": "Table:invite_codes",
       "provenance": {
         "file": "src/invites.js",
-        "line": 27
+        "line": 25
       }
     },
     {
@@ -535865,7 +536507,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/worker.js",
-        "line": 244
+        "line": 245
       }
     },
     {
@@ -535874,7 +536516,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 300
+        "line": 301
       }
     },
     {
@@ -535892,7 +536534,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/worker.js",
-        "line": 182
+        "line": 183
       }
     },
     {
@@ -535901,7 +536543,7 @@
       "to": "Table:chat_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 421
+        "line": 422
       }
     },
     {
@@ -535910,7 +536552,7 @@
       "to": "Table:coalitions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 463
+        "line": 464
       }
     },
     {
@@ -535928,7 +536570,7 @@
       "to": "Table:districts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 480
+        "line": 481
       }
     },
     {
@@ -535937,7 +536579,7 @@
       "to": "Table:dm_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 423
+        "line": 424
       }
     },
     {
@@ -535955,7 +536597,7 @@
       "to": "Table:event_results",
       "provenance": {
         "file": "src/worker.js",
-        "line": 425
+        "line": 426
       }
     },
     {
@@ -535964,7 +536606,7 @@
       "to": "Table:exchange_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 725
+        "line": 727
       }
     },
     {
@@ -535973,7 +536615,7 @@
       "to": "Table:family_aggro",
       "provenance": {
         "file": "src/worker.js",
-        "line": 510
+        "line": 512
       }
     },
     {
@@ -535982,7 +536624,7 @@
       "to": "Table:family_yield_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 149
+        "line": 150
       }
     },
     {
@@ -536000,7 +536642,7 @@
       "to": "Table:gala_guests",
       "provenance": {
         "file": "src/worker.js",
-        "line": 429
+        "line": 430
       }
     },
     {
@@ -536009,7 +536651,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/worker.js",
-        "line": 151
+        "line": 152
       }
     },
     {
@@ -536018,7 +536660,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/worker.js",
-        "line": 687
+        "line": 689
       }
     },
     {
@@ -536027,7 +536669,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/worker.js",
-        "line": 56
+        "line": 57
       }
     },
     {
@@ -536036,7 +536678,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/worker.js",
-        "line": 245
+        "line": 246
       }
     },
     {
@@ -536045,7 +536687,7 @@
       "to": "Table:oauth_states",
       "provenance": {
         "file": "src/worker.js",
-        "line": 434
+        "line": 435
       }
     },
     {
@@ -536054,7 +536696,7 @@
       "to": "Table:rwa_dividend_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 133
+        "line": 134
       }
     },
     {
@@ -536063,7 +536705,7 @@
       "to": "Table:season_recaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 239
+        "line": 240
       }
     },
     {
@@ -536072,7 +536714,7 @@
       "to": "Table:season_records",
       "provenance": {
         "file": "src/worker.js",
-        "line": 201
+        "line": 202
       }
     },
     {
@@ -536090,7 +536732,7 @@
       "to": "Table:stake_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 120
+        "line": 121
       }
     },
     {
@@ -536099,7 +536741,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/worker.js",
-        "line": 93
+        "line": 94
       }
     },
     {
@@ -536108,7 +536750,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/worker.js",
-        "line": 164
+        "line": 165
       }
     },
     {
@@ -536117,7 +536759,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 778
+        "line": 780
       }
     },
     {
@@ -536126,7 +536768,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/worker.js",
-        "line": 419
+        "line": 420
       }
     },
     {
@@ -536135,7 +536777,7 @@
       "to": "Table:vouchers",
       "provenance": {
         "file": "src/worker.js",
-        "line": 588
+        "line": 590
       }
     },
     {
@@ -536144,7 +536786,7 @@
       "to": "Table:wiretaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 570
+        "line": 572
       }
     },
     {
@@ -536153,7 +536795,7 @@
       "to": "Table:worker_heartbeat",
       "provenance": {
         "file": "src/worker.js",
-        "line": 353
+        "line": 354
       }
     },
     {
