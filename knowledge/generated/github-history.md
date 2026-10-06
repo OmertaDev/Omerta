@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7a29485ca041`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7f8adb347f8c`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2036 |
+| Commits in clone | 2038 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-06 — Remove retired invite mode from the environment inventory |
+| Latest commit | 2026-10-06 — Refresh release counts for daily reminder module and tests |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1149 |
+| OmertaDev | 1150 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 42 |
+| github-actions[bot] | 43 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -33,12 +33,12 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 429 | yes |
 | [src/server.js](../../src/server.js) | 367 | yes |
-| [SPEC.md](../../SPEC.md) | 354 | yes |
+| [SPEC.md](../../SPEC.md) | 355 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 275 | historical |
-| knowledge/generated/graph-summary.md | 275 | historical |
-| knowledge/generated/graph.json | 275 | historical |
-| knowledge/generated/inventory.md | 275 | historical |
+| knowledge/generated/github-history.md | 276 | historical |
+| knowledge/generated/graph-summary.md | 276 | historical |
+| knowledge/generated/graph.json | 276 | historical |
+| knowledge/generated/inventory.md | 276 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 225 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
