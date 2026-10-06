@@ -4724,8 +4724,7 @@
       && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
       projections.invalidate('player'); projections.invalidate('world');
     }
-    // Character readiness is read-only and need not wait for unrelated finance reads.
-    if (!authToken || (method === 'GET' && path === '/v1/identity/readiness')) return run();
+    if (!authToken) return run();
     const mine = _authQueue.then(run);
     // the chain must survive a rejection, or one failed call wedges every later one
     _authQueue = mine.catch(() => {});
@@ -5611,6 +5610,11 @@
   }
 
   const characterTransactionsInFlight = new Set();
+  async function readCharacterReadiness() {
+    const authToken = token;
+    const result = await apiNow('GET', '/v1/identity/readiness', undefined, { authToken });
+    return token === authToken ? result : { ignored: true, code: 499, body: { error: 'session_changed' } };
+  }
   function characterCheckoutStatus(message) {
     const status = $('#character-checkout-status');
     if (status) status.textContent = message;
@@ -11969,7 +11973,7 @@
     if (characterCheckoutOnly) {
       t.innerHTML = '<h2>Mint your character NFT</h2><p role="status">Checking your wallet and character checkout…</p>';
       try {
-        const identityR = await characterCheckoutStep(() => api('GET', '/v1/identity/readiness'), 'Checking your wallet and character checkout…');
+        const identityR = await characterCheckoutStep(() => readCharacterReadiness(), 'Checking your wallet and character checkout…');
         if (navigationRevision !== revision || !characterCheckoutOnly) return;
         t.innerHTML = characterWalletHtml(identityR.body || {}, identityR.code) + '<button class="act" id="character-finance">Open the full finance dashboard</button>';
         const wl = $('#wallet-link'); if (wl) wl.onclick = () => linkWallet();

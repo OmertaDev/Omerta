@@ -24,7 +24,7 @@ function functionSource(name) {
 const readyCalls = [], readyPanel = { innerHTML: '', setAttribute() {} };
 const quickView = vm.createContext({ characterCheckoutOnly: true, navigationRevision: 1,
   $: (selector) => selector === '#tab-portfolio' ? readyPanel : {},
-  api: async (method, path) => { readyCalls.push(path); return { code: 200, body: { ready: true } }; },
+  readCharacterReadiness: async () => { readyCalls.push('/v1/identity/readiness'); return { code: 200, body: { ready: true } }; },
   characterCheckoutStep: (action) => action(), characterWalletHtml: () => 'CHARACTER READY', linkWallet() {}, setTab() {}, esc: String,
   refresh: () => { throw Error('The focused view must not wait for finance refresh'); } });
 vm.runInContext(functionSource('renderPortfolio') + '\nthis.render = renderPortfolio;', quickView);
@@ -39,6 +39,7 @@ const racePanel = { innerHTML: '', setAttribute() {}, querySelector: () => null 
 const raceContext = vm.createContext({ characterCheckoutOnly: false, navigationRevision: 1,
   $: (selector) => selector === '#tab-portfolio' ? racePanel : {}, refresh: async () => {},
   api: async (method, path) => path === '/v1/vault' ? delayedFinance : { code: 200, body: {} },
+  readCharacterReadiness: async () => ({ code: 200, body: {} }),
   characterCheckoutStep: (action) => action(), characterWalletHtml: () => 'FOCUSED CHARACTER VIEW', linkWallet() {}, setTab() {}, esc: String });
 vm.runInContext(functionSource('renderPortfolio') + '\nthis.render = renderPortfolio;', raceContext);
 const oldFinanceRender = raceContext.render();
@@ -52,10 +53,16 @@ const immediateCalls = [];
 const queueContext = vm.createContext({ token: 'fixture', _authQueue: new Promise(() => {}),
   apiNow: async (method, path, body, options) => { assert.equal(options.authToken, 'fixture'); immediateCalls.push(path); return { code: 200 }; },
   projections: { invalidate() {} } });
-vm.runInContext(functionSource('api') + '\nthis.read = api;', queueContext);
-assert.equal((await queueContext.read('GET', '/v1/identity/readiness')).code, 200, 'Authenticated read-only readiness bypasses a blocked finance queue');
-queueContext.read('GET', '/v1/vault');
+vm.runInContext(functionSource('api') + functionSource('readCharacterReadiness') + '\nthis.read = readCharacterReadiness; this.queuedRead = api;', queueContext);
+assert.equal((await queueContext.read()).code, 200, 'Authenticated read-only readiness bypasses a blocked finance queue');
+queueContext.queuedRead('GET', '/v1/vault');
 assert.deepEqual(immediateCalls, ['/v1/identity/readiness'], 'Other authenticated reads retain their queue');
+let finishOldSessionRead;
+queueContext.apiNow = () => new Promise((resolve) => { finishOldSessionRead = resolve; });
+const oldSessionRead = queueContext.read(); queueContext.token = 'replacement-session';
+finishOldSessionRead({ code: 200, body: { privateAccountFixture: true } });
+const ignoredRead = await oldSessionRead;
+assert.equal(ignoredRead.code, 499); assert.equal(ignoredRead.body.privateAccountFixture, undefined, 'Direct readiness retains captured-session isolation');
 const renderTrophy = (nftToken) => vm.runInNewContext('(' + main.slice(trophyExpression.start, trophyExpression.end) + ')',
   { identityBody: { nftToken, characterMinted: true }, identity: { nftContract: `0x${'44'.repeat(20)}` }, esc: String, encodeURIComponent });
 assert(renderTrophy(null).includes('data-character-tx="claim"'));
