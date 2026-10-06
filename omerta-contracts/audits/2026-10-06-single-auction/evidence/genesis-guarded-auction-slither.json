@@ -1,0 +1,389 @@
+{
+  "success": true,
+  "error": null,
+  "results": {
+    "detectors": [
+      {
+        "elements": [
+          {
+            "type": "function",
+            "name": "_requireCharacter",
+            "source_mapping": {
+              "start": 845,
+              "length": 322,
+              "filename_relative": "src/genesis-auction/GenesisCharacterEligibility.sol",
+              "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+              "filename_short": "src/genesis-auction/GenesisCharacterEligibility.sol",
+              "is_dependency": false,
+              "lines": [
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29
+              ],
+              "starting_column": 5,
+              "ending_column": 6
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "contract",
+                "name": "GenesisCharacterEligibility",
+                "source_mapping": {
+                  "start": 304,
+                  "length": 865,
+                  "filename_relative": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "filename_short": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30
+                  ],
+                  "starting_column": 1,
+                  "ending_column": 2
+                }
+              },
+              "signature": "_requireCharacter(address)"
+            }
+          },
+          {
+            "type": "node",
+            "name": "block.chainid != eligibilityChainId || address(characterNft).codehash != characterNftCodeHash || recipient == address(0) || characterNft.balanceOf(recipient) == 0",
+            "source_mapping": {
+              "start": 919,
+              "length": 186,
+              "filename_relative": "src/genesis-auction/GenesisCharacterEligibility.sol",
+              "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+              "filename_short": "src/genesis-auction/GenesisCharacterEligibility.sol",
+              "is_dependency": false,
+              "lines": [
+                24,
+                25,
+                26
+              ],
+              "starting_column": 13,
+              "ending_column": 81
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "function",
+                "name": "_requireCharacter",
+                "source_mapping": {
+                  "start": 845,
+                  "length": 322,
+                  "filename_relative": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "filename_short": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29
+                  ],
+                  "starting_column": 5,
+                  "ending_column": 6
+                },
+                "type_specific_fields": {
+                  "parent": {
+                    "type": "contract",
+                    "name": "GenesisCharacterEligibility",
+                    "source_mapping": {
+                      "start": 304,
+                      "length": 865,
+                      "filename_relative": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                      "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+                      "filename_short": "src/genesis-auction/GenesisCharacterEligibility.sol",
+                      "is_dependency": false,
+                      "lines": [
+                        8,
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29,
+                        30
+                      ],
+                      "starting_column": 1,
+                      "ending_column": 2
+                    }
+                  },
+                  "signature": "_requireCharacter(address)"
+                }
+              }
+            }
+          }
+        ],
+        "description": "GenesisCharacterEligibility._requireCharacter(address) (src/genesis-auction/GenesisCharacterEligibility.sol#23-29) uses a dangerous strict equality:\n\t- block.chainid != eligibilityChainId || address(characterNft).codehash != characterNftCodeHash || recipient == address(0) || characterNft.balanceOf(recipient) == 0 (src/genesis-auction/GenesisCharacterEligibility.sol#24-26)\n",
+        "markdown": "[GenesisCharacterEligibility._requireCharacter(address)](src/genesis-auction/GenesisCharacterEligibility.sol#L23-L29) uses a dangerous strict equality:\n\t- [block.chainid != eligibilityChainId || address(characterNft).codehash != characterNftCodeHash || recipient == address(0) || characterNft.balanceOf(recipient) == 0](src/genesis-auction/GenesisCharacterEligibility.sol#L24-L26)\n",
+        "first_markdown_element": "src/genesis-auction/GenesisCharacterEligibility.sol#L23-L29",
+        "id": "350d2fbcbb0f326550517b84a6cf2e4e6f988e30b551cf7543f76adfd3de180c",
+        "check": "incorrect-equality",
+        "impact": "Medium",
+        "confidence": "High",
+        "reference": "https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities"
+      },
+      {
+        "elements": [
+          {
+            "type": "function",
+            "name": "_internalClaimTokens",
+            "source_mapping": {
+              "start": 2943,
+              "length": 351,
+              "filename_relative": "src/genesis-auction/OmertaGuardedAuction.sol",
+              "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+              "filename_short": "src/genesis-auction/OmertaGuardedAuction.sol",
+              "is_dependency": false,
+              "lines": [
+                59,
+                60,
+                61,
+                62,
+                63,
+                64,
+                65
+              ],
+              "starting_column": 5,
+              "ending_column": 6
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "contract",
+                "name": "OmertaGuardedAuction",
+                "source_mapping": {
+                  "start": 767,
+                  "length": 2529,
+                  "filename_relative": "src/genesis-auction/OmertaGuardedAuction.sol",
+                  "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+                  "filename_short": "src/genesis-auction/OmertaGuardedAuction.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                    34,
+                    35,
+                    36,
+                    37,
+                    38,
+                    39,
+                    40,
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    51,
+                    52,
+                    53,
+                    54,
+                    55,
+                    56,
+                    57,
+                    58,
+                    59,
+                    60,
+                    61,
+                    62,
+                    63,
+                    64,
+                    65,
+                    66
+                  ],
+                  "starting_column": 1,
+                  "ending_column": 2
+                }
+              },
+              "signature": "_internalClaimTokens(uint256)"
+            }
+          },
+          {
+            "type": "node",
+            "name": "block.chainid != launchChainId || address(launchGate).codehash != launchGateCodeHash || ! launchGate.playerClaimsOpen()",
+            "source_mapping": {
+              "start": 3078,
+              "length": 130,
+              "filename_relative": "src/genesis-auction/OmertaGuardedAuction.sol",
+              "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+              "filename_short": "src/genesis-auction/OmertaGuardedAuction.sol",
+              "is_dependency": false,
+              "lines": [
+                62,
+                63
+              ],
+              "starting_column": 13,
+              "ending_column": 46
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "function",
+                "name": "_internalClaimTokens",
+                "source_mapping": {
+                  "start": 2943,
+                  "length": 351,
+                  "filename_relative": "src/genesis-auction/OmertaGuardedAuction.sol",
+                  "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+                  "filename_short": "src/genesis-auction/OmertaGuardedAuction.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    59,
+                    60,
+                    61,
+                    62,
+                    63,
+                    64,
+                    65
+                  ],
+                  "starting_column": 5,
+                  "ending_column": 6
+                },
+                "type_specific_fields": {
+                  "parent": {
+                    "type": "contract",
+                    "name": "OmertaGuardedAuction",
+                    "source_mapping": {
+                      "start": 767,
+                      "length": 2529,
+                      "filename_relative": "src/genesis-auction/OmertaGuardedAuction.sol",
+                      "filename_absolute": "C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+                      "filename_short": "src/genesis-auction/OmertaGuardedAuction.sol",
+                      "is_dependency": false,
+                      "lines": [
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29,
+                        30,
+                        31,
+                        32,
+                        33,
+                        34,
+                        35,
+                        36,
+                        37,
+                        38,
+                        39,
+                        40,
+                        41,
+                        42,
+                        43,
+                        44,
+                        45,
+                        46,
+                        47,
+                        48,
+                        49,
+                        50,
+                        51,
+                        52,
+                        53,
+                        54,
+                        55,
+                        56,
+                        57,
+                        58,
+                        59,
+                        60,
+                        61,
+                        62,
+                        63,
+                        64,
+                        65,
+                        66
+                      ],
+                      "starting_column": 1,
+                      "ending_column": 2
+                    }
+                  },
+                  "signature": "_internalClaimTokens(uint256)"
+                }
+              }
+            }
+          }
+        ],
+        "description": "OmertaGuardedAuction._internalClaimTokens(uint256) (src/genesis-auction/OmertaGuardedAuction.sol#59-65) has external calls inside a loop: block.chainid != launchChainId || address(launchGate).codehash != launchGateCodeHash || ! launchGate.playerClaimsOpen() (src/genesis-auction/OmertaGuardedAuction.sol#62-63)\n\tCalls stack containing the loop:\n\t\tContinuousClearingAuction.claimTokensBatch(address,uint256[])\n",
+        "markdown": "[OmertaGuardedAuction._internalClaimTokens(uint256)](src/genesis-auction/OmertaGuardedAuction.sol#L59-L65) has external calls inside a loop: [block.chainid != launchChainId || address(launchGate).codehash != launchGateCodeHash || ! launchGate.playerClaimsOpen()](src/genesis-auction/OmertaGuardedAuction.sol#L62-L63)\n\tCalls stack containing the loop:\n\t\tContinuousClearingAuction.claimTokensBatch(address,uint256[])\n",
+        "first_markdown_element": "src/genesis-auction/OmertaGuardedAuction.sol#L59-L65",
+        "id": "2c809500ff8c4a383a192479199eb1c1e64ff9cc0fc4f62a75d6b7418c1cc2bf",
+        "check": "calls-loop",
+        "impact": "Low",
+        "confidence": "Medium",
+        "reference": "https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop"
+      }
+    ]
+  }
+}

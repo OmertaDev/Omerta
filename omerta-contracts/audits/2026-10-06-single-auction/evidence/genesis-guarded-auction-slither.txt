@@ -1,0 +1,29 @@
+
+Detector: incorrect-equality
+GenesisCharacterEligibility._requireCharacter(address) (src/genesis-auction/GenesisCharacterEligibility.sol#23-29) uses a dangerous strict equality:
+	- block.chainid != eligibilityChainId || address(characterNft).codehash != characterNftCodeHash || recipient == address(0) || characterNft.balanceOf(recipient) == 0 (src/genesis-auction/GenesisCharacterEligibility.sol#24-26)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: calls-loop
+OmertaGuardedAuction._internalClaimTokens(uint256) (src/genesis-auction/OmertaGuardedAuction.sol#59-65) has external calls inside a loop: block.chainid != launchChainId || address(launchGate).codehash != launchGateCodeHash || ! launchGate.playerClaimsOpen() (src/genesis-auction/OmertaGuardedAuction.sol#62-63)
+	Calls stack containing the loop:
+		ContinuousClearingAuction.claimTokensBatch(address,uint256[])
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop
+src/genesis-auction/OmertaGuardedAuction.sol analyzed (46 contracts with 102 detectors), 2 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/genesis-auction/OmertaGuardedAuction.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\output\contract-red-team-release\omerta-contracts\src\genesis-auction' running
+Compilation warnings/errors on src/genesis-auction/OmertaGuardedAuction.sol:
+Warning: Transient storage as defined by EIP-1153 can break the composability of smart contracts: Since transient storage is cleared only at the end of the transaction and not at the end of the outermost call frame to the contract within a transaction, your contract may unintentionally misbehave when invoked multiple times in a complex transaction. To avoid this, be sure to clear all transient storage at the end of any call to your contract. The use of transient storage for reentrancy guards that are cleared at the end of the call is safe.
+
+  --> src/genesis-auction/vendor/solady/utils/ReentrancyGuardTransient.sol:41:21:
+
+   |
+
+41 |                     tstore(s, address())
+
+   |                     ^^^^^^
+
+
+
+

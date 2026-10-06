@@ -1,0 +1,64 @@
+## Read-only adversarial review
+
+Pinned base: `db54f824004c4d855778668081ce2adfac173c39`, dirty working tree. Daybreak was unavailable, so the repository security policy plus adapted Solidity adversarial passes were used.
+
+### Findings
+
+1. **Medium — deployment planner permits the wrong production chain**
+
+   [genesis-auction-deployment-plan.js](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-auction-deployment-plan.js:113) accepts any positive `chainId`; lines 148, 206–216 propagate it. A non-rehearsal input with `chainId=1` produces the complete deployment/funding sequence for Ethereum rather than Robinhood chain 4663. The API rejects that manifest only after deployment.
+
+   Require `chainId === 4663`; permit 31337 only for explicit rehearsal.
+
+2. **Medium — migration dependency pins are optional for payment preparation**
+
+   [genesisauction.js](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/genesisauction.js:118) verifies PoolManager, PositionManager, Permit2 and hook only when `manifest.dependencies` exists. Lines 68–87 accept a manifest without it. An authenticated bid can therefore be prepared while migration dependencies remain unverified, risking delayed or failed migration and claims.
+
+   Make dependency pins mandatory for payment readiness; recovery may use a separately restricted policy.
+
+### Verified
+
+The reviewed route has:
+
+- Five sequential EOA transactions: two funding adapters, coordinator, CREATE2 factory hook call, auction.
+- Validator prediction at `CREATE(auction, nonce=1)`.
+- Exactly two OMR transfers, inventory registration, and one coordinator bind.
+- NFT ownership enforced on both bid overloads against the recipient; relayers cannot bypass it.
+- Exit/refund recovery independent of later NFT ownership.
+- Final checkpoint/graduation enforcement, atomic migration using accepted public proceeds, 37.5% ETH LP budget, inverse-price conversion, full-range liquidity and 99–100% spend bound.
+- Allowance cleanup, LP custody checks, pull-based residual credits and transactional rollback.
+- No migration claim-cliff gate. `playerClaimsOpen()` remains claim-ABI compatibility only.
+- Checkpoint-after-end before trusting graduation, bounded partial-exit traversal, authenticated routes, two quote checks, canonical receipt checked twice, exact transaction identity and local duplicate-payment protection.
+- No proof-root, gameplay-snapshot, 48-hour, player-sale or tranche requirement in this production route.
+
+### Actual execution
+
+- PASS: `test/genesisauction.js`
+- PASS: `test/genesis-auction-operations.js`
+- PASS: `test/player-genesis-client.js`
+- Blocked by read-only `mkdtemp` EPERM: deployment-plan and HTTP tests.
+- Solidity tests not executed: `forge` unavailable.
+- The prior 1,325-test result covers the obsolete two-leg revision only; no current full-suite pass is claimed.
+
+### SHA-256 pins
+
+```text
+ea759668...758a0  OmertaAuctionCoordinatorV2.sol
+f00cffb8...369e   OmertaGuardedAuction.sol
+072cc95a...4d26   GenesisCharacterEligibility.sol
+3d4219ba...e4c0b  genesis-auction-deployment-plan.js
+6bd76d03...4787   genesis-auction-operations.js
+f989eb0e...a369   src/genesisauction.js
+073e30f6...50e    src/routes/genesisauction.js
+726bdae7...8590   public/index.html
+40087df8...39ca   GenesisCharacterEligibility.t.sol
+e4abb9f8...9883   OmertaGuardedAuction.t.sol
+0e8b6e13...192c   AuctionCoordinatorV2.t.sol
+51fb7133...9ea    AuctionGenesisRobinhoodFork.t.sol
+a5714606...54c1   test/genesis-auction-deployment-plan.js
+fb2cf326...0b87   test/genesis-auction-http.js
+e1d46f4e...857    test/genesis-auction-operations.js
+ee09c7d4...18d8   test/genesisauction.js
+```
+
+Operationally unverified: live nonce/address vacancy, factory semantics/runtime, final runtime hashes, balances/funding, Safe approvers, final economics, production fork, deployment, and exact UTC boundaries. The 72-hour window remains native-clock calibration, not an exact UTC guarantee. Conclusions apply only to these pins and this pre-deployment phase; they are not a no-defects guarantee.

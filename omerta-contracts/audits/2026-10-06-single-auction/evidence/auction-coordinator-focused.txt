@@ -1,0 +1,28 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 38.13s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:174:5:
+    |
+174 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 11 tests for test/market-v2/AuctionCoordinatorV2.t.sol:AuctionCoordinatorV2Test
+[PASS] testAllPinnedRuntimeChangesRollBackBeforeSweep() (gas: 874495)
+[PASS] testBindingAtStartIsRejected() (gas: 28711)
+[PASS] testBindingWrongNftAndUntrustedCallerAndRebindingRejected() (gas: 4746265)
+[PASS] testDependenciesAndEligibilityIdentityFailClosed() (gas: 745359)
+[PASS] testFuzzProceedsBudgetCreditsAndCustody(uint96) (runs: 512, μ: 1433841, ~: 1433403)
+Logs:
+  Bound result 9000000004132794461
+
+[PASS] testInsufficientReserveRollsBackSweepPoolAndAllowanceThenRetries() (gas: 1485516)
+[PASS] testNoCheckpointOrEarlyCheckpointCannotMigrate() (gas: 280154)
+[PASS] testOneAuctionMigratesBeforeCliffAndClaimsAfterward() (gas: 1497628)
+[PASS] testResidualWithdrawAndTokenDustAreFixedRecipientAndSingleUse() (gas: 1449743)
+[PASS] testRevertingResidualRecipientCannotBlockMigrationOrOtherRecipients() (gas: 1422295)
+[PASS] testWrongHookPoolAndValidatorIdentityCannotBind() (gas: 130257)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 124.34ms (187.43ms CPU time)
+
+Ran 1 test suite in 127.01ms (124.34ms CPU time): 11 tests passed, 0 failed, 0 skipped (11 total tests)

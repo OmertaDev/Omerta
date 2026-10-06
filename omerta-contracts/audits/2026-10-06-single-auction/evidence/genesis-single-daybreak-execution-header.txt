@@ -1,0 +1,18 @@
+2026-10-06T23:18:23.515679Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/alexandria/0.3.0/.codex-plugin/plugin.json
+2026-10-06T23:18:23.549054Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/hexaemeron/1.6.5/.codex-plugin/plugin.json
+2026-10-06T23:18:23.629235Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-10-06T23:18:23.629271Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-10-06T23:18:23.630301Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=file:///C:/Users/Jorge/.codex/plugins/cache/wildcat-labs/tabularium/0.3.1/.codex-plugin/plugin.json
+2026-10-06T23:18:23.643882Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.160.0
+--------
+workdir: C:\Users\Jorge\Documents\Omerta\output\contract-red-team-release
+model: gpt-daybreak-blue-latest
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: low
+reasoning summaries: none
+session id: 01a11382-d412-7d53-b572-4597a335b7e8
+--------
+user

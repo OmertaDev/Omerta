@@ -1,0 +1,105 @@
+{
+  "sourceCommit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c",
+  "entries": [
+    {
+      "path": "evidence/auction-coordinator-focused.txt",
+      "sha256": "0e820b6151bd1ac6861d444186e710561c9671040b07653ddc031b9e0a837bf4"
+    },
+    {
+      "path": "evidence/auction-coordinator-initial-naming-failure.txt",
+      "sha256": "8ee27a1584b8dcbe0926b197ed48efc74a4bb71abba5f7b6ee4e8e066ccf6033"
+    },
+    {
+      "path": "evidence/auction-coordinator-provenance.json",
+      "sha256": "66c2708efc32840c7134a8b70dcbf19cd0748fd4f8ef23b9c5b452daf86f5238"
+    },
+    {
+      "path": "evidence/auction-genesis-robinhood-fork-exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "evidence/auction-genesis-robinhood-fork.txt",
+      "sha256": "86dcfbad28fea52d81b423caaac3ad3bd41cb0c9a5810ac5da25f6d1e925ae94"
+    },
+    {
+      "path": "evidence/genesis-guarded-auction-slither.json",
+      "sha256": "65f3d257c4465a46de0eab92ee8b01a6332479c484ae5f2c115ac6b9642100d5"
+    },
+    {
+      "path": "evidence/genesis-guarded-auction-slither.txt",
+      "sha256": "acea324e620c7c922c2ae3f4432da929d322d00177aa04530001060ca97bd094"
+    },
+    {
+      "path": "evidence/genesis-independent-periphery-review.txt",
+      "sha256": "5124252b4dc516d7c868c83c8e2cd5bc05eb44d95465091f5c3d0531940b21c5"
+    },
+    {
+      "path": "evidence/genesis-nft-full-forge.txt",
+      "sha256": "e349d7fa1d6198b0a3fb833c6135acc6b95db0647e08a0a9c25ed0cd982ee6bf"
+    },
+    {
+      "path": "evidence/genesis-single-artifact-inventory.json",
+      "sha256": "24ec49865e3c8cde13a38a5d03cd50f851ff8a42e5cdd9863c530047e0ac4fd7"
+    },
+    {
+      "path": "evidence/genesis-single-committed-focused-exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "evidence/genesis-single-committed-focused.txt",
+      "sha256": "9e8977cd3cc1d80fb20fbb367ab3446be0428485a7191609e36b77e909827d7b"
+    },
+    {
+      "path": "evidence/genesis-single-coordinator-slither-exit.txt",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "evidence/genesis-single-coordinator-slither.txt",
+      "sha256": "d3d81092bfe0e5cf6b01b07ae9c3e2c8815caea84a08ba6ecce8b598f0f10fc8"
+    },
+    {
+      "path": "evidence/genesis-single-daybreak-execution-header.txt",
+      "sha256": "3e3b0645d9042e298c7eed3a18624a4ea64a80e5c5dd0adf696416599f7f6a7e"
+    },
+    {
+      "path": "evidence/genesis-single-daybreak-retest-execution-header.txt",
+      "sha256": "ba7aa5a52db84427f6733301f124d1f5ee3225b0caa3d80a23cc9fda6eca8d9d"
+    },
+    {
+      "path": "evidence/genesis-single-daybreak-retest.txt",
+      "sha256": "ee6caa3ee27bbe6a734afbd88eb32dca074950b486029d6b82b7015a0dd61df4"
+    },
+    {
+      "path": "evidence/genesis-single-daybreak-review.txt",
+      "sha256": "18deaeeddbeca29ecb76dc29b112eaacdfeb204f79b9b364473eb5486e15a91b"
+    },
+    {
+      "path": "evidence/genesis-single-independent-ui.txt",
+      "sha256": "8b25921524596e18837d62b66d5030e5ce9bbecc1e06154396982f2a3b2f8aa4"
+    },
+    {
+      "path": "evidence/genesis-single-post-main-client-exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "evidence/genesis-single-post-main-client.txt",
+      "sha256": "2f9478b48711a3fd6443502f351105341cde9fdbc909e72ada5631c0f2e23040"
+    },
+    {
+      "path": "evidence/genesis-single-post-main-smoke-exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "evidence/genesis-single-post-main-smoke.txt",
+      "sha256": "6660ff1dde9af8b7ab20112db9cfd80c77b5c62bcaee2ea667f3a610daf1da8e"
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "762205871159e69c023413b432fffcc03b51988a4ab90c9761913bef3de13716"
+    },
+    {
+      "path": "report.md",
+      "sha256": "e024f107a85f813e638144543ee4af535d38ed361e294514c325f8853efb148c"
+    }
+  ]
+}

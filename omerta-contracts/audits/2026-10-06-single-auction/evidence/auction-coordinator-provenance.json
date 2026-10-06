@@ -1,0 +1,42 @@
+{
+  "baseCommit": "db54f824004c4d855778668081ce2adfac173c39",
+  "branch": "codex/genesis-nft-launch",
+  "dateUtc": "2026-10-06T23:21:12.1932637Z",
+  "files": [
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionCoordinatorV2.t.sol",
+      "sha256": "0e8b6e1306c544353718a360f6edbf1235c7e0cb31f6e241e30dea5102b6192c"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionGenesisRobinhoodFork.t.sol",
+      "sha256": "51fb71331f0446ddbc8a0cb5c205069f56b0b225fa4476a4eb48e0e24d5599ea"
+    }
+  ],
+  "compiler": "Solidity0.8.26",
+  "viaIr": true,
+  "optimizerRuns": 800,
+  "evmVersion": "cancun",
+  "foundryConfigurationChanged": false,
+  "runtimeTemplateBytes": 13517,
+  "focusedTests": 11,
+  "fuzzRuns": 512,
+  "focusedExitCode": 0,
+  "liveForkTests": 1,
+  "liveForkExitCode": 0,
+  "forkBlock": "82013317",
+  "forkTimestamp": "1791328828",
+  "forkLimitations": [
+    "ArbSys removed locally before construction; vm.roll uses vendor block.number fallback; NOT live native-clock rehearsal",
+    "Safe and NFT owner impersonated only on fork",
+    "new coordinator hook auction only deployed on fork; no signing or production activation"
+  ],
+  "logs": [
+    "output/auction-coordinator-focused.txt",
+    "output/auction-genesis-robinhood-fork.txt",
+    "output/auction-coordinator-initial-naming-failure.txt"
+  ]
+}

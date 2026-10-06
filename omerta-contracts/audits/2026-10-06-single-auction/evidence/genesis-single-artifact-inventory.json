@@ -1,0 +1,2115 @@
+{
+  "sourceRevision": "9e47d4a0a9ecc20adb55826fed0293b896ff434c",
+  "workingTreeMatchesRevision": true,
+  "artifactHashes": {
+    "OmertaAuctionCoordinatorV2": "0caf22710a01673ca4d31612c7667c42f32badb6fad4adeb8eb612679b8b1071",
+    "OmertaHookV2": "e50b1bbdd101c50314c703720411c4b843c8ba428dab4d7703178d9e962ecefc",
+    "OmertaGuardedAuction": "49c6f31562dc2bb79772819fcec0f08664da05e3af70640e92d9155e1ac26e70",
+    "GenesisCharacterBidValidation": "71ed126ce1acb7783caa719856d91cb2a09dbecbcef9172a6d83e0dde88f47f7",
+    "OmertaReserveFundingV2": "9b015987c1992749855c40cfb854552d09493d68cb17d7d577ed5e955d1364b5"
+  },
+  "sourceHashes": {
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+    "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+    "lib/openzeppelin-contracts/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+    "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+    "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+    "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+    "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "lib/permit2/src/interfaces/IAllowanceTransfer.sol": "5cf9ef1bb81dc1e226749781c7a6e57d031887d7809a031ea065ecac5ccb7999",
+    "lib/permit2/src/interfaces/IEIP712.sol": "bc6bf21f3ef5efd8cf0be404885797ef40e93040fa7485ececedc22826a8541f",
+    "lib/v4-core/src/interfaces/IExtsload.sol": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+    "lib/v4-core/src/interfaces/IExttload.sol": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+    "lib/v4-core/src/interfaces/IHooks.sol": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+    "lib/v4-core/src/interfaces/IPoolManager.sol": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+    "lib/v4-core/src/interfaces/IProtocolFees.sol": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+    "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+    "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+    "lib/v4-core/src/libraries/BitMath.sol": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+    "lib/v4-core/src/libraries/CustomRevert.sol": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+    "lib/v4-core/src/libraries/FixedPoint128.sol": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+    "lib/v4-core/src/libraries/FixedPoint96.sol": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+    "lib/v4-core/src/libraries/FullMath.sol": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+    "lib/v4-core/src/libraries/LiquidityMath.sol": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+    "lib/v4-core/src/libraries/Position.sol": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+    "lib/v4-core/src/libraries/SafeCast.sol": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+    "lib/v4-core/src/libraries/StateLibrary.sol": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+    "lib/v4-core/src/libraries/TickMath.sol": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+    "lib/v4-core/src/types/BalanceDelta.sol": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+    "lib/v4-core/src/types/BeforeSwapDelta.sol": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+    "lib/v4-core/src/types/Currency.sol": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+    "lib/v4-core/src/types/PoolId.sol": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+    "lib/v4-core/src/types/PoolKey.sol": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+    "lib/v4-core/src/types/PoolOperation.sol": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+    "lib/v4-periphery/src/interfaces/IEIP712_v4.sol": "c7dd9bb343b0f079cae8c861fbe13711e659b1cf74104cbb4cc4536efa01891f",
+    "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol": "f6987dbe451d1207ccc1322cf89c81f4a3ad06b2229e8c3be6f5abbc529e1026",
+    "lib/v4-periphery/src/interfaces/IImmutableState.sol": "c1eda88405c19dc061b37a304558ee54210124c7563110ad67ffcc4ed24d34b9",
+    "lib/v4-periphery/src/interfaces/IMulticall_v4.sol": "5e3fedcaf5c711fb564caf43a7dd33ac6cc985157d1339ebb36651015490245c",
+    "lib/v4-periphery/src/interfaces/INotifier.sol": "ed4aec42c8aed343a13a7111e1904dedb921733d80e87e58adce395cefc0d627",
+    "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol": "438fa4797fe51454c9f4780a6c694c6aad59ed7a258cf29b75a8f921c58ab359",
+    "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol": "5f00a2d13a4726ec4dd6ed4e52e75a85537cc5ae20a852576762f386da9de753",
+    "lib/v4-periphery/src/interfaces/IPositionManager.sol": "814910e65a48828c9e98115937a6e00d42cb5c5f9141865d00ed1b687be573f7",
+    "lib/v4-periphery/src/interfaces/ISubscriber.sol": "6ed5e7b45c87f04fb6f9f8a44b082099b06b99ee1e2f5427f8a31b0e24d4f238",
+    "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol": "c280271ffe32bc702a73fedbca5f250c77453f1c716e3cbfa53ab5cdb41f1b87",
+    "lib/v4-periphery/src/libraries/Actions.sol": "941f31b48e6f673427fff1ea839a0a0fdd43dc168e847664b9c832cbfc2586c0",
+    "lib/v4-periphery/src/libraries/LiquidityAmounts.sol": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2",
+    "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol": "aefbce0d0d1db8d996bd48148a6b261da5fe1496cc0034188c14a1f33f06ba0d",
+    "src/market-v2/OmertaAuctionCoordinatorV2.sol": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+    "lib/v4-core/src/libraries/Hooks.sol": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c",
+    "lib/v4-core/src/libraries/LPFeeLibrary.sol": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0",
+    "lib/v4-core/src/libraries/ParseBytes.sol": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8",
+    "src/interfaces/IInitializerHook.sol": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+    "src/interfaces/IOmrV4ObservationSource.sol": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+    "src/market-v2/OmertaHookV2.sol": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+    "src/genesis-auction/GenesisCharacterEligibility.sol": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26",
+    "src/genesis-auction/OmertaGuardedAuction.sol": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e",
+    "src/genesis-auction/vendor/blocknumberish/src/BlockNumberish.sol": "d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a",
+    "src/genesis-auction/vendor/cca/AuctionStorage.sol": "2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7",
+    "src/genesis-auction/vendor/cca/BidStorage.sol": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0",
+    "src/genesis-auction/vendor/cca/CheckpointStorage.sol": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca",
+    "src/genesis-auction/vendor/cca/ContinuousClearingAuction.sol": "2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861",
+    "src/genesis-auction/vendor/cca/StepStorage.sol": "cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c",
+    "src/genesis-auction/vendor/cca/TickStorage.sol": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279",
+    "src/genesis-auction/vendor/cca/interfaces/IAuctionStorage.sol": "4541975ea71b6239e917f97436ade81f10e75e9e02a14043d3d4d968d8763c33",
+    "src/genesis-auction/vendor/cca/interfaces/IBidStorage.sol": "3996822f663de5e4d4a8920b1863a7f03c3ecb3886c6a1e968e256cf689ddcd3",
+    "src/genesis-auction/vendor/cca/interfaces/ICheckpointStorage.sol": "22568a4e5419c8ca1b788f56ec5b3cc42ec9d0df5751228799aadbbef98e6764",
+    "src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol": "e218f9ace315cc01577c79b159f78687aab3e93f0d3f19f0e4fed12e0b15ba8e",
+    "src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol": "20207a10a2aec05bb583fd43ec040b4997aea9a166886de8ad6b935a7acc1e00",
+    "src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol": "ee53cccb09d87f4dae11680766168fe103acac56f122ba40d6bb18875c67fcde",
+    "src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf",
+    "src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol": "e2a2de288d95e31c66f6b33c120d597b47fc4dd57e78717b607d2bde3f55dcbd",
+    "src/genesis-auction/vendor/cca/libraries/BidLib.sol": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5",
+    "src/genesis-auction/vendor/cca/libraries/CheckpointAccountingLib.sol": "e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9",
+    "src/genesis-auction/vendor/cca/libraries/CheckpointLib.sol": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a",
+    "src/genesis-auction/vendor/cca/libraries/ConstantsLib.sol": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f",
+    "src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d",
+    "src/genesis-auction/vendor/cca/libraries/DemandLib.sol": "a20dd5704bb0a50916bec523db699f2ad500a107ae2dad52cab9363596a4519a",
+    "src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1",
+    "src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol": "da0cc6d54474fe6bf04e9c9a34c680e57f2253ac1ccdf1c773087dbaa1264376",
+    "src/genesis-auction/vendor/cca/libraries/PriceLib.sol": "b4394400f97ec45f0001f5dcc626d9e0c7e842ee80fbef2eb82d985ac4a2d7d1",
+    "src/genesis-auction/vendor/cca/libraries/StepLib.sol": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100",
+    "src/genesis-auction/vendor/cca/libraries/ValidationHookLib.sol": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31",
+    "src/genesis-auction/vendor/cca/libraries/ValueX7Lib.sol": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee",
+    "src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d",
+    "src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol": "cf4d3000e63970f5d8369b47dbcb70b67fe993e3e43b250be82f18e589bde45c",
+    "src/genesis-auction/vendor/launcher/src/interfaces/IProtocolFeeController.sol": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd",
+    "src/genesis-auction/vendor/launcher/src/libraries/ProtocolFeeLib.sol": "d73d70856b8fba64cc42f11dadcbcd6a3e0342bef0f6916091d2164e91598353",
+    "src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol": "e7c2eaac3899e9bbbecf0795b95f131ae17c369b3b2436304dd9d548c8ce03f4",
+    "src/genesis-auction/vendor/solady/utils/ReentrancyGuardTransient.sol": "30a4cdd1813a65e2c76cd5476c9ee8a44b9cac56dd4d930ef3caafb3d6c3600d",
+    "src/genesis-auction/vendor/solady/utils/SSTORE2.sol": "0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57",
+    "src/genesis-auction/vendor/solady/utils/SafeTransferLib.sol": "6a1cca4abb040289cfe5fa4b70fd84ed470d152d0265b8ffce1ef0af9bb93e59",
+    "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+    "lib/v4-core/src/libraries/SqrtPriceMath.sol": "42440c21bbab86c7eed4716b281ed5ca281cf14af8b5e06dc6dc3bc6864bcfdf",
+    "lib/v4-core/src/libraries/UnsafeMath.sol": "2de236e7ca0b9572a6b0184557565b6fd54e177224e202c727fe248785ede427",
+    "src/market-v2/IOmertaMarketStateV2.sol": "43eae996d281f96af635c31b18dfbf75fd611cfa02e9e0b3dfb2a8d7dc70ad4c",
+    "src/market-v2/OmertaReserveFundingV2.sol": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+    "src/market-v2/OmertaStabilityControllerV2.sol": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+    "foundry.toml": "93c40b8a45a3b820cef0b1b4dc858590fc924be71ac12cdc4d637eb84644da6f"
+  },
+  "artifacts": {
+    "OmertaAuctionCoordinatorV2": {
+      "contract": "OmertaAuctionCoordinatorV2",
+      "artifactSha256": "0caf22710a01673ca4d31612c7667c42f32badb6fad4adeb8eb612679b8b1071",
+      "abiSha256": "48498415e3ed0a1ac4566a0482f6a18f1a2331fc3588a5cafe39115d77598d82",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaAuctionCoordinatorV2.sol": "OmertaAuctionCoordinatorV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "sources": {
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+          "sha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+          "compilerInputKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
+          "rawKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+        },
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+          "sha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+          "compilerInputKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc",
+          "rawKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+        },
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+          "sha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+          "compilerInputKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
+          "rawKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+          "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+          "compilerInputKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
+          "rawKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+          "sha256": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+          "compilerInputKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098",
+          "rawKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+          "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+          "compilerInputKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f",
+          "rawKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/Panic.sol": {
+          "sha256": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+          "compilerInputKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a",
+          "rawKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": {
+          "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+          "compilerInputKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53",
+          "rawKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+          "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+          "compilerInputKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+          "rawKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+          "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+          "compilerInputKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+          "rawKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+          "sha256": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+          "compilerInputKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857",
+          "rawKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": {
+          "sha256": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+          "compilerInputKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083",
+          "rawKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+        },
+        "lib/permit2/src/interfaces/IAllowanceTransfer.sol": {
+          "sha256": "5cf9ef1bb81dc1e226749781c7a6e57d031887d7809a031ea065ecac5ccb7999",
+          "compilerInputKeccak256": "0x37f0ac203b6ef605c9533e1a739477e8e9dcea90710b40e645a367f8a21ace29",
+          "rawKeccak256": "0xeb7200ec49f3ea7e11b33794136c20ef2d891ccadaa71076f88e260c3598c018"
+        },
+        "lib/permit2/src/interfaces/IEIP712.sol": {
+          "sha256": "bc6bf21f3ef5efd8cf0be404885797ef40e93040fa7485ececedc22826a8541f",
+          "compilerInputKeccak256": "0xfdccf2b9639070803cd0e4198427fb0df3cc452ca59bd3b8a0d957a9a4254138",
+          "rawKeccak256": "0x4e636cd794e7d55aa94f4f41799ced22734f29a1299c77679dabe01fcdb9729b"
+        },
+        "lib/v4-core/src/interfaces/IExtsload.sol": {
+          "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+          "compilerInputKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43",
+          "rawKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        "lib/v4-core/src/interfaces/IExttload.sol": {
+          "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+          "compilerInputKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937",
+          "rawKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        "lib/v4-core/src/interfaces/IHooks.sol": {
+          "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+          "compilerInputKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d",
+          "rawKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        "lib/v4-core/src/interfaces/IPoolManager.sol": {
+          "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+          "compilerInputKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e",
+          "rawKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+          "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+          "compilerInputKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848",
+          "rawKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+          "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+          "compilerInputKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f",
+          "rawKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+          "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+          "compilerInputKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48",
+          "rawKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        "lib/v4-core/src/libraries/BitMath.sol": {
+          "sha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+          "compilerInputKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d",
+          "rawKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        "lib/v4-core/src/libraries/CustomRevert.sol": {
+          "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+          "compilerInputKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de",
+          "rawKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        "lib/v4-core/src/libraries/FixedPoint128.sol": {
+          "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+          "compilerInputKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542",
+          "rawKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        "lib/v4-core/src/libraries/FixedPoint96.sol": {
+          "sha256": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+          "compilerInputKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741",
+          "rawKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+        },
+        "lib/v4-core/src/libraries/FullMath.sol": {
+          "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+          "compilerInputKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2",
+          "rawKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        "lib/v4-core/src/libraries/LiquidityMath.sol": {
+          "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+          "compilerInputKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353",
+          "rawKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        "lib/v4-core/src/libraries/Position.sol": {
+          "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+          "compilerInputKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9",
+          "rawKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        "lib/v4-core/src/libraries/SafeCast.sol": {
+          "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+          "compilerInputKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86",
+          "rawKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        "lib/v4-core/src/libraries/StateLibrary.sol": {
+          "sha256": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+          "compilerInputKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952",
+          "rawKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        "lib/v4-core/src/libraries/TickMath.sol": {
+          "sha256": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+          "compilerInputKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8",
+          "rawKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        "lib/v4-core/src/types/BalanceDelta.sol": {
+          "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+          "compilerInputKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f",
+          "rawKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+          "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+          "compilerInputKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78",
+          "rawKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        "lib/v4-core/src/types/Currency.sol": {
+          "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+          "compilerInputKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93",
+          "rawKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        "lib/v4-core/src/types/PoolId.sol": {
+          "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+          "compilerInputKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af",
+          "rawKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        "lib/v4-core/src/types/PoolKey.sol": {
+          "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+          "compilerInputKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786",
+          "rawKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        "lib/v4-core/src/types/PoolOperation.sol": {
+          "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+          "compilerInputKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162",
+          "rawKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        "lib/v4-periphery/src/interfaces/IEIP712_v4.sol": {
+          "sha256": "c7dd9bb343b0f079cae8c861fbe13711e659b1cf74104cbb4cc4536efa01891f",
+          "compilerInputKeccak256": "0xd7f7115476e307a0bfc32a0f0a0f5434e9e5ca62a6c5af1e18b75e48161bb408",
+          "rawKeccak256": "0x30cb1576ff328c95e872ea6c55d2190d3d6ee37e5331f0410899b6b6dae56fee"
+        },
+        "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol": {
+          "sha256": "f6987dbe451d1207ccc1322cf89c81f4a3ad06b2229e8c3be6f5abbc529e1026",
+          "compilerInputKeccak256": "0x103adbba724ef536abc536fe8a4d7dc12880724c562109b69f2adce4a91fa017",
+          "rawKeccak256": "0xaccd5a61486a1453a290204f232fd225d6df4264d6bc3939c1950ea742e332dc"
+        },
+        "lib/v4-periphery/src/interfaces/IImmutableState.sol": {
+          "sha256": "c1eda88405c19dc061b37a304558ee54210124c7563110ad67ffcc4ed24d34b9",
+          "compilerInputKeccak256": "0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b",
+          "rawKeccak256": "0x71c56eec2bbf44954a21660751a4c535ef6525f1781689e057f104309b7568f0"
+        },
+        "lib/v4-periphery/src/interfaces/IMulticall_v4.sol": {
+          "sha256": "5e3fedcaf5c711fb564caf43a7dd33ac6cc985157d1339ebb36651015490245c",
+          "compilerInputKeccak256": "0x336bec303f7ff86497d2679464c5adad5040f412b3d0769ce5e1d2a42f7e2c08",
+          "rawKeccak256": "0x04afedf7276ac539695154b2c0e191f301532535058c73b39c3b71701db69ace"
+        },
+        "lib/v4-periphery/src/interfaces/INotifier.sol": {
+          "sha256": "ed4aec42c8aed343a13a7111e1904dedb921733d80e87e58adce395cefc0d627",
+          "compilerInputKeccak256": "0xfdc5187a98240a1691aae98b7dd2444d4c2bfb4746f3c34de9f3d18399c17c5e",
+          "rawKeccak256": "0xda27fbc8a1c2321726dc601d09fe9d60aa39b759ebdb79f5c289f0edffeeeba3"
+        },
+        "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol": {
+          "sha256": "438fa4797fe51454c9f4780a6c694c6aad59ed7a258cf29b75a8f921c58ab359",
+          "compilerInputKeccak256": "0xfad472937280e861125ff12aa6f9c2cf7440fbb20a2cc29485c24662ad4279c5",
+          "rawKeccak256": "0x35cfd329b2e80ae2a94baa2a75446a595bded43066b18637ebbeee4a3fc552a8"
+        },
+        "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol": {
+          "sha256": "5f00a2d13a4726ec4dd6ed4e52e75a85537cc5ae20a852576762f386da9de753",
+          "compilerInputKeccak256": "0x2e4feda94650a2642039e0309ffdec480ee050bc40864bf5e1dba42bb4dc9e98",
+          "rawKeccak256": "0x3f4299abd0ccdaf660c14bd1dc00eecd8300153791ea818fccbd9e3d7ba8c6b3"
+        },
+        "lib/v4-periphery/src/interfaces/IPositionManager.sol": {
+          "sha256": "814910e65a48828c9e98115937a6e00d42cb5c5f9141865d00ed1b687be573f7",
+          "compilerInputKeccak256": "0x62dfa0cbee8314ee7e6787db8bc1d364245c340f940875ac7ff11e89d074fc7e",
+          "rawKeccak256": "0x58505a0f6976ed6129b6536a148ecf5ddade51c2cf0d2e8802d216adb1ff08f1"
+        },
+        "lib/v4-periphery/src/interfaces/ISubscriber.sol": {
+          "sha256": "6ed5e7b45c87f04fb6f9f8a44b082099b06b99ee1e2f5427f8a31b0e24d4f238",
+          "compilerInputKeccak256": "0x34ceadec4a63019680e543fe73197f198a55c825d86e18f327840354760b57e7",
+          "rawKeccak256": "0xe1c2af7c64968093c12d75b83b4f37c475a196ce0e97b00e3fe5622298256950"
+        },
+        "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol": {
+          "sha256": "c280271ffe32bc702a73fedbca5f250c77453f1c716e3cbfa53ab5cdb41f1b87",
+          "compilerInputKeccak256": "0xd7f32fee74dc7d1a3b078ca1263961baccaa6bf434c79e8fe0e092e30c3e0ec3",
+          "rawKeccak256": "0x74855a2d31ba936e2df72a1f9eeea32dbb8aaa81fce4f5ae8011803c2f264f24"
+        },
+        "lib/v4-periphery/src/libraries/Actions.sol": {
+          "sha256": "941f31b48e6f673427fff1ea839a0a0fdd43dc168e847664b9c832cbfc2586c0",
+          "compilerInputKeccak256": "0x8efd4b8b289177ee27e557d9d0a5a9f973d66fe1eb1ef8959d316b11987ca830",
+          "rawKeccak256": "0x1100b2f03940d84ce08e9a3072db4531a7c84dd7a4c1e19632a591b916dba2b0"
+        },
+        "lib/v4-periphery/src/libraries/LiquidityAmounts.sol": {
+          "sha256": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2",
+          "compilerInputKeccak256": "0x8ea74b89831877ffe657f8461164a01a6f3c7e46f415410854fca8d28a8cab53",
+          "rawKeccak256": "0x8638b34a75b43de21226d16958c6a8a4d7de67ef71a9d3c4b4a21e4afad4da8d"
+        },
+        "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol": {
+          "sha256": "aefbce0d0d1db8d996bd48148a6b261da5fe1496cc0034188c14a1f33f06ba0d",
+          "compilerInputKeccak256": "0xc5ddf96bd088bc87ea50a20f907fc932fb28397a42682a301b268a11b7f34078",
+          "rawKeccak256": "0x4751b970f7ab2fe28b279c360b1d35cc6ea53c8655561e1778283af81ead5d31"
+        },
+        "src/market-v2/OmertaAuctionCoordinatorV2.sol": {
+          "sha256": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0",
+          "compilerInputKeccak256": "0x6f8a05cb732a146e0f2e7d4647ef2fce875d828d7c7cbd13aed5327ce91deb65",
+          "rawKeccak256": "0x6f8a05cb732a146e0f2e7d4647ef2fce875d828d7c7cbd13aed5327ce91deb65"
+        }
+      },
+      "runtimeTemplateBytes": 13517,
+      "runtimeTemplateKeccak256": "0x7ea2a35ba50c4fdcc1efd72b6b2fb2a861345364b7116dffcf6362587a25fe55",
+      "creationBytecodeKeccak256": "0xff22cceec97f67ebe38a24f3d1b6bc79a3525e13b9dc2744bd0f02d4afe2f73c",
+      "immutableReferences": {
+        "67451": [
+          {
+            "start": 528,
+            "length": 32
+          },
+          {
+            "start": 1717,
+            "length": 32
+          },
+          {
+            "start": 6492,
+            "length": 32
+          }
+        ],
+        "67454": [
+          {
+            "start": 77,
+            "length": 32
+          },
+          {
+            "start": 2144,
+            "length": 32
+          },
+          {
+            "start": 2836,
+            "length": 32
+          },
+          {
+            "start": 2970,
+            "length": 32
+          },
+          {
+            "start": 3245,
+            "length": 32
+          },
+          {
+            "start": 3342,
+            "length": 32
+          },
+          {
+            "start": 3506,
+            "length": 32
+          },
+          {
+            "start": 3745,
+            "length": 32
+          },
+          {
+            "start": 3851,
+            "length": 32
+          },
+          {
+            "start": 4642,
+            "length": 32
+          },
+          {
+            "start": 6408,
+            "length": 32
+          },
+          {
+            "start": 8975,
+            "length": 32
+          }
+        ],
+        "67457": [
+          {
+            "start": 2641,
+            "length": 32
+          },
+          {
+            "start": 2727,
+            "length": 32
+          },
+          {
+            "start": 2912,
+            "length": 32
+          },
+          {
+            "start": 3398,
+            "length": 32
+          },
+          {
+            "start": 3579,
+            "length": 32
+          },
+          {
+            "start": 3641,
+            "length": 32
+          },
+          {
+            "start": 4882,
+            "length": 32
+          },
+          {
+            "start": 4973,
+            "length": 32
+          },
+          {
+            "start": 5294,
+            "length": 32
+          },
+          {
+            "start": 5383,
+            "length": 32
+          },
+          {
+            "start": 6324,
+            "length": 32
+          },
+          {
+            "start": 10325,
+            "length": 32
+          }
+        ],
+        "67460": [
+          {
+            "start": 2675,
+            "length": 32
+          },
+          {
+            "start": 2789,
+            "length": 32
+          },
+          {
+            "start": 3039,
+            "length": 32
+          },
+          {
+            "start": 3459,
+            "length": 32
+          },
+          {
+            "start": 3675,
+            "length": 32
+          },
+          {
+            "start": 4416,
+            "length": 32
+          },
+          {
+            "start": 4916,
+            "length": 32
+          },
+          {
+            "start": 5007,
+            "length": 32
+          },
+          {
+            "start": 5070,
+            "length": 32
+          },
+          {
+            "start": 5328,
+            "length": 32
+          },
+          {
+            "start": 5417,
+            "length": 32
+          },
+          {
+            "start": 5479,
+            "length": 32
+          },
+          {
+            "start": 5960,
+            "length": 32
+          },
+          {
+            "start": 6240,
+            "length": 32
+          },
+          {
+            "start": 8308,
+            "length": 32
+          },
+          {
+            "start": 9338,
+            "length": 32
+          },
+          {
+            "start": 9729,
+            "length": 32
+          }
+        ],
+        "67462": [
+          {
+            "start": 6875,
+            "length": 32
+          },
+          {
+            "start": 10060,
+            "length": 32
+          }
+        ],
+        "67464": [
+          {
+            "start": 2405,
+            "length": 32
+          },
+          {
+            "start": 4712,
+            "length": 32
+          },
+          {
+            "start": 9405,
+            "length": 32
+          }
+        ],
+        "67466": [
+          {
+            "start": 4058,
+            "length": 32
+          },
+          {
+            "start": 9042,
+            "length": 32
+          },
+          {
+            "start": 9820,
+            "length": 32
+          }
+        ],
+        "67468": [
+          {
+            "start": 4136,
+            "length": 32
+          },
+          {
+            "start": 9137,
+            "length": 32
+          }
+        ],
+        "67470": [
+          {
+            "start": 4238,
+            "length": 32
+          },
+          {
+            "start": 9204,
+            "length": 32
+          }
+        ],
+        "67472": [
+          {
+            "start": 691,
+            "length": 32
+          },
+          {
+            "start": 1996,
+            "length": 32
+          },
+          {
+            "start": 6029,
+            "length": 32
+          }
+        ],
+        "67474": [
+          {
+            "start": 1164,
+            "length": 32
+          },
+          {
+            "start": 1241,
+            "length": 32
+          },
+          {
+            "start": 7470,
+            "length": 32
+          },
+          {
+            "start": 8847,
+            "length": 32
+          },
+          {
+            "start": 9635,
+            "length": 32
+          }
+        ],
+        "67476": [
+          {
+            "start": 6527,
+            "length": 32
+          }
+        ],
+        "67478": [
+          {
+            "start": 6443,
+            "length": 32
+          }
+        ],
+        "67480": [
+          {
+            "start": 6359,
+            "length": 32
+          }
+        ],
+        "67482": [
+          {
+            "start": 6275,
+            "length": 32
+          }
+        ],
+        "67487": [
+          {
+            "start": 6696,
+            "length": 32
+          },
+          {
+            "start": 7753,
+            "length": 32
+          },
+          {
+            "start": 8187,
+            "length": 32
+          },
+          {
+            "start": 8771,
+            "length": 32
+          },
+          {
+            "start": 9271,
+            "length": 32
+          }
+        ],
+        "67489": [
+          {
+            "start": 6731,
+            "length": 32
+          },
+          {
+            "start": 7607,
+            "length": 32
+          },
+          {
+            "start": 8806,
+            "length": 32
+          },
+          {
+            "start": 10259,
+            "length": 32
+          }
+        ]
+      }
+    },
+    "OmertaHookV2": {
+      "contract": "OmertaHookV2",
+      "artifactSha256": "e50b1bbdd101c50314c703720411c4b843c8ba428dab4d7703178d9e962ecefc",
+      "abiSha256": "52e63f43e146b47d7df07e0f20c1709a89b73308ecaa5c2958a9509a7ce2f3ab",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaHookV2.sol": "OmertaHookV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "sources": {
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+          "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+          "compilerInputKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
+          "rawKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+          "sha256": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+          "compilerInputKeccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f",
+          "rawKeccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": {
+          "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+          "compilerInputKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53",
+          "rawKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+          "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+          "compilerInputKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+          "rawKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+          "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+          "compilerInputKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+          "rawKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        "lib/v4-core/src/interfaces/IExtsload.sol": {
+          "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+          "compilerInputKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43",
+          "rawKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        "lib/v4-core/src/interfaces/IExttload.sol": {
+          "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+          "compilerInputKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937",
+          "rawKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        "lib/v4-core/src/interfaces/IHooks.sol": {
+          "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+          "compilerInputKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d",
+          "rawKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        "lib/v4-core/src/interfaces/IPoolManager.sol": {
+          "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+          "compilerInputKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e",
+          "rawKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+          "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+          "compilerInputKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848",
+          "rawKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+          "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+          "compilerInputKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f",
+          "rawKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+          "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+          "compilerInputKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48",
+          "rawKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        "lib/v4-core/src/libraries/CustomRevert.sol": {
+          "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+          "compilerInputKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de",
+          "rawKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        "lib/v4-core/src/libraries/FixedPoint128.sol": {
+          "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+          "compilerInputKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542",
+          "rawKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        "lib/v4-core/src/libraries/FullMath.sol": {
+          "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+          "compilerInputKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2",
+          "rawKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        "lib/v4-core/src/libraries/Hooks.sol": {
+          "sha256": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c",
+          "compilerInputKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa",
+          "rawKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        "lib/v4-core/src/libraries/LPFeeLibrary.sol": {
+          "sha256": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0",
+          "compilerInputKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b",
+          "rawKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        "lib/v4-core/src/libraries/LiquidityMath.sol": {
+          "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+          "compilerInputKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353",
+          "rawKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        "lib/v4-core/src/libraries/ParseBytes.sol": {
+          "sha256": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8",
+          "compilerInputKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15",
+          "rawKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        "lib/v4-core/src/libraries/Position.sol": {
+          "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+          "compilerInputKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9",
+          "rawKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        "lib/v4-core/src/libraries/SafeCast.sol": {
+          "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+          "compilerInputKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86",
+          "rawKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        "lib/v4-core/src/libraries/StateLibrary.sol": {
+          "sha256": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+          "compilerInputKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952",
+          "rawKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        "lib/v4-core/src/types/BalanceDelta.sol": {
+          "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+          "compilerInputKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f",
+          "rawKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+          "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+          "compilerInputKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78",
+          "rawKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        "lib/v4-core/src/types/Currency.sol": {
+          "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+          "compilerInputKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93",
+          "rawKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        "lib/v4-core/src/types/PoolId.sol": {
+          "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+          "compilerInputKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af",
+          "rawKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        "lib/v4-core/src/types/PoolKey.sol": {
+          "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+          "compilerInputKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786",
+          "rawKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        "lib/v4-core/src/types/PoolOperation.sol": {
+          "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+          "compilerInputKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162",
+          "rawKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        "src/interfaces/IInitializerHook.sol": {
+          "sha256": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+          "compilerInputKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3",
+          "rawKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3"
+        },
+        "src/interfaces/IOmrV4ObservationSource.sol": {
+          "sha256": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+          "compilerInputKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151",
+          "rawKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151"
+        },
+        "src/market-v2/OmertaHookV2.sol": {
+          "sha256": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+          "compilerInputKeccak256": "0xbabb10b2be19c53dc54b55d710296243ae01a4ca2ebf4893f83fec7717e279df",
+          "rawKeccak256": "0xbabb10b2be19c53dc54b55d710296243ae01a4ca2ebf4893f83fec7717e279df"
+        }
+      },
+      "runtimeTemplateBytes": 11511,
+      "runtimeTemplateKeccak256": "0xbea5a00dd30ae6fca561c3c7475026b1d1b2e54a1b3b22bb48827e02491b3409",
+      "creationBytecodeKeccak256": "0x7c4974a80e4f161628aab6ffc9e2b9ee4d95b586c1e093b3f6779a92ce0742cf",
+      "immutableReferences": {
+        "36604": [
+          {
+            "start": 36,
+            "length": 32
+          },
+          {
+            "start": 908,
+            "length": 32
+          },
+          {
+            "start": 1083,
+            "length": 32
+          },
+          {
+            "start": 1817,
+            "length": 32
+          },
+          {
+            "start": 2482,
+            "length": 32
+          },
+          {
+            "start": 3347,
+            "length": 32
+          },
+          {
+            "start": 4256,
+            "length": 32
+          },
+          {
+            "start": 4448,
+            "length": 32
+          },
+          {
+            "start": 9116,
+            "length": 32
+          },
+          {
+            "start": 10048,
+            "length": 32
+          }
+        ],
+        "36606": [
+          {
+            "start": 4879,
+            "length": 32
+          },
+          {
+            "start": 5940,
+            "length": 32
+          },
+          {
+            "start": 7080,
+            "length": 32
+          },
+          {
+            "start": 7368,
+            "length": 32
+          }
+        ],
+        "36608": [
+          {
+            "start": 965,
+            "length": 32
+          },
+          {
+            "start": 4750,
+            "length": 32
+          }
+        ],
+        "36610": [
+          {
+            "start": 5217,
+            "length": 32
+          },
+          {
+            "start": 5983,
+            "length": 32
+          },
+          {
+            "start": 7008,
+            "length": 32
+          },
+          {
+            "start": 7295,
+            "length": 32
+          }
+        ],
+        "36612": [
+          {
+            "start": 1248,
+            "length": 32
+          },
+          {
+            "start": 6022,
+            "length": 32
+          },
+          {
+            "start": 6944,
+            "length": 32
+          },
+          {
+            "start": 7227,
+            "length": 32
+          }
+        ],
+        "36614": [
+          {
+            "start": 3619,
+            "length": 32
+          },
+          {
+            "start": 4620,
+            "length": 32
+          },
+          {
+            "start": 7678,
+            "length": 32
+          },
+          {
+            "start": 8393,
+            "length": 32
+          }
+        ],
+        "36616": [
+          {
+            "start": 4683,
+            "length": 32
+          },
+          {
+            "start": 9635,
+            "length": 32
+          }
+        ],
+        "36618": [
+          {
+            "start": 690,
+            "length": 32
+          },
+          {
+            "start": 3459,
+            "length": 32
+          }
+        ],
+        "36620": [
+          {
+            "start": 756,
+            "length": 32
+          },
+          {
+            "start": 11083,
+            "length": 32
+          },
+          {
+            "start": 11158,
+            "length": 32
+          }
+        ],
+        "36622": [
+          {
+            "start": 2955,
+            "length": 32
+          },
+          {
+            "start": 11033,
+            "length": 32
+          }
+        ]
+      }
+    },
+    "OmertaGuardedAuction": {
+      "contract": "OmertaGuardedAuction",
+      "artifactSha256": "49c6f31562dc2bb79772819fcec0f08664da05e3af70640e92d9155e1ac26e70",
+      "abiSha256": "fcab3df850fbb827c1c702202ce23dfcfba01fd8a96d51e99ddb5041a118d649",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/genesis-auction/OmertaGuardedAuction.sol": "OmertaGuardedAuction"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ]
+      },
+      "sources": {
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+          "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+          "compilerInputKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f",
+          "rawKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/Panic.sol": {
+          "sha256": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+          "compilerInputKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a",
+          "rawKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+          "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+          "compilerInputKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+          "rawKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+          "sha256": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+          "compilerInputKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857",
+          "rawKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": {
+          "sha256": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+          "compilerInputKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083",
+          "rawKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+        },
+        "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+          "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+          "compilerInputKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f",
+          "rawKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        "lib/v4-core/src/libraries/CustomRevert.sol": {
+          "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+          "compilerInputKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de",
+          "rawKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        "lib/v4-core/src/types/Currency.sol": {
+          "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+          "compilerInputKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93",
+          "rawKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        "src/genesis-auction/GenesisCharacterEligibility.sol": {
+          "sha256": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26",
+          "compilerInputKeccak256": "0xe1c809acbe3b05f13f42e43fb74dbba914c754516f1ebdfbb4c956d6f36f35f4",
+          "rawKeccak256": "0xe1c809acbe3b05f13f42e43fb74dbba914c754516f1ebdfbb4c956d6f36f35f4"
+        },
+        "src/genesis-auction/OmertaGuardedAuction.sol": {
+          "sha256": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e",
+          "compilerInputKeccak256": "0x10cd1f12f8ed625e5b567c7a8d7044cd0269bf11da85143ab4496b009fd288be",
+          "rawKeccak256": "0x10cd1f12f8ed625e5b567c7a8d7044cd0269bf11da85143ab4496b009fd288be"
+        },
+        "src/genesis-auction/vendor/blocknumberish/src/BlockNumberish.sol": {
+          "sha256": "d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a",
+          "compilerInputKeccak256": "0x72c5f91189d1edee78f53714ba1d0e4d670ad88909034043ebdcc33fe84545f7",
+          "rawKeccak256": "0xbaf93b50f55914eae87b78c4c8a64fa4cacedb3edb3d2f2a6f475061fdb19d39"
+        },
+        "src/genesis-auction/vendor/cca/AuctionStorage.sol": {
+          "sha256": "2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7",
+          "compilerInputKeccak256": "0x14daf96f6e0be99d2924b4d00cbd623885d21091268f6ee71b65d65bde0e9b34",
+          "rawKeccak256": "0x032381e11548b469d4c6d0bd18b48239d1f5326ed1a215d7515100707224e166"
+        },
+        "src/genesis-auction/vendor/cca/BidStorage.sol": {
+          "sha256": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0",
+          "compilerInputKeccak256": "0x8a00e9ea489f86754553276cdb0336eb5d5e5f16e10fb86a032bee9692903c69",
+          "rawKeccak256": "0x8045c64786ddd85bdba371c1aed3d262587921a5d81ac880a3062d0d17d2764e"
+        },
+        "src/genesis-auction/vendor/cca/CheckpointStorage.sol": {
+          "sha256": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca",
+          "compilerInputKeccak256": "0x25b4c09fee7aca2d4e21a9b9bfec7d81ca46e2e3c33edb41727da856ce4fde22",
+          "rawKeccak256": "0x61768ebb164b4ba8f4991f08ce660bab14f6c843a3caaddcecb9d3f4e14b4977"
+        },
+        "src/genesis-auction/vendor/cca/ContinuousClearingAuction.sol": {
+          "sha256": "2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861",
+          "compilerInputKeccak256": "0xd97cd91f9134e59fc16e8e6acfd3013dcbe26ec60b26533cc3ac205ca8fd64ed",
+          "rawKeccak256": "0x72f1cfb7ce55408d28b0f956a179efe3eb66b69a538733b934f5ebc977eb2fce"
+        },
+        "src/genesis-auction/vendor/cca/StepStorage.sol": {
+          "sha256": "cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c",
+          "compilerInputKeccak256": "0x7583335577d8f370a217c80a1e3c7f13400cfda24943a7710d00f7b67692758e",
+          "rawKeccak256": "0x1504a5c2a22969a0a832b24785c91a16197e82c628fb6ff7787a0eeae712fa66"
+        },
+        "src/genesis-auction/vendor/cca/TickStorage.sol": {
+          "sha256": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279",
+          "compilerInputKeccak256": "0x85f80ac116919f820819dd05ccdba12c5f2d42002007543cf9a5f88614f7f490",
+          "rawKeccak256": "0xa09e8101c584ef56ce6003f3e3fd6ebebc4424a05886dffe2943cdb22ba7c356"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IAuctionStorage.sol": {
+          "sha256": "4541975ea71b6239e917f97436ade81f10e75e9e02a14043d3d4d968d8763c33",
+          "compilerInputKeccak256": "0x139f280eff6778f5ae06b9a1423e08016542e6d3b8828ac58e200ac6f8e38fcf",
+          "rawKeccak256": "0xd6cedc88b0454da80439d627016fe67ad2b0e27448aab627be97f2bde092e84e"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IBidStorage.sol": {
+          "sha256": "3996822f663de5e4d4a8920b1863a7f03c3ecb3886c6a1e968e256cf689ddcd3",
+          "compilerInputKeccak256": "0xaf0876e0796bb7426eccf4ab24baed2d16e2011962adefe72cc28d74dfab279f",
+          "rawKeccak256": "0xc19283c6d6f790cc93fc6a58f3e391ddf7b56ab7ab20742953c4f870c71e9415"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/ICheckpointStorage.sol": {
+          "sha256": "22568a4e5419c8ca1b788f56ec5b3cc42ec9d0df5751228799aadbbef98e6764",
+          "compilerInputKeccak256": "0xe9715bfe5da38a295fe07e755066c0d441bc3030c35cf6b1dc7f5e72daee5231",
+          "rawKeccak256": "0xfab17e86b6eac286ad7abd186e9b8ad4139108ef43aa54acf656e0386de3c572"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol": {
+          "sha256": "e218f9ace315cc01577c79b159f78687aab3e93f0d3f19f0e4fed12e0b15ba8e",
+          "compilerInputKeccak256": "0xb996850f70d1122219a28b512753a7b7f58000759e66c34590b1ca61608ba405",
+          "rawKeccak256": "0x2bc675076d6ea5e16bf9547743d01d1c6b7254fe29a43912ff8851d501548938"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol": {
+          "sha256": "20207a10a2aec05bb583fd43ec040b4997aea9a166886de8ad6b935a7acc1e00",
+          "compilerInputKeccak256": "0x9fe418b243d91526104ddbf201897ff09cc656f408da416768e79a8488fc3c0d",
+          "rawKeccak256": "0x74bb3637388edfcad26d0244eb639733aa4a8b4cf743668d22a31b9b5484b20d"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol": {
+          "sha256": "ee53cccb09d87f4dae11680766168fe103acac56f122ba40d6bb18875c67fcde",
+          "compilerInputKeccak256": "0xd45e1668d23efa40fabc56cc7bc6ba8bdd1f41453aebcae0c4130b03b84edeb7",
+          "rawKeccak256": "0xba4f095c07426d5548194be67a1397264a69b7520d1c701a2bcb0cbfc5ce7a9c"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol": {
+          "sha256": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf",
+          "compilerInputKeccak256": "0xc411033845de737ea260d8e385bd0aeee02787ec352730862221d11a90f41d9a",
+          "rawKeccak256": "0x7fe609df772ade1b2d03728e86da93be7a3fa550ecba7c41de1de7e3b41fe354"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol": {
+          "sha256": "e2a2de288d95e31c66f6b33c120d597b47fc4dd57e78717b607d2bde3f55dcbd",
+          "compilerInputKeccak256": "0x7e9c1cdc4c08fd17e08296a77f144fec1a8ce3b82c73bb8e62ff4b0ac01d61f2",
+          "rawKeccak256": "0x970e1ad84c177a99fd37c41108c841ddb2c861eb1e488fcbde0823ecfd29251c"
+        },
+        "src/genesis-auction/vendor/cca/libraries/BidLib.sol": {
+          "sha256": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5",
+          "compilerInputKeccak256": "0xf528f753314f5cc89a0fa789300c8774a402b9912dc983f4bc727e960b7ef0ed",
+          "rawKeccak256": "0x60c13c51379f7c0e8d5167550bac2824b36f47275af82b8a3419341056609083"
+        },
+        "src/genesis-auction/vendor/cca/libraries/CheckpointAccountingLib.sol": {
+          "sha256": "e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9",
+          "compilerInputKeccak256": "0xefebca23a46164621ecb7733e4e5c268b196d5d618d145a35a46669a9952756d",
+          "rawKeccak256": "0x4d5e33acd541e72233b71fdf49b65d37a9a45aab2109ad98d297b75cbe9ffd2b"
+        },
+        "src/genesis-auction/vendor/cca/libraries/CheckpointLib.sol": {
+          "sha256": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a",
+          "compilerInputKeccak256": "0xfa1bc7126fef0e1a50aa97b7e3e95ca57d7c02766329ed3ac8815a96014afd59",
+          "rawKeccak256": "0xfaca10f1476219dcd4d488995a94e1120eea6acb98a9c306d6c0c57a17b80404"
+        },
+        "src/genesis-auction/vendor/cca/libraries/ConstantsLib.sol": {
+          "sha256": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f",
+          "compilerInputKeccak256": "0x033e5250c17a118fa7014d893b97b3856f2d1e2422f010b878c406d1d1525a2c",
+          "rawKeccak256": "0x6e89a72e1c5ceaf0fc94c9d9540e2c4c350b0fa03fc7d5d464b215c3d74975cd"
+        },
+        "src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol": {
+          "sha256": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d",
+          "compilerInputKeccak256": "0xebd0ed7ce556d0b069d55b0af6ad91791892e235275b5d2302bade656abb65c9",
+          "rawKeccak256": "0x2963881065019e0929a59e447d6be9c8b65b5cc150949b44378abe2e0abd425c"
+        },
+        "src/genesis-auction/vendor/cca/libraries/DemandLib.sol": {
+          "sha256": "a20dd5704bb0a50916bec523db699f2ad500a107ae2dad52cab9363596a4519a",
+          "compilerInputKeccak256": "0x46767ee37c29fcd955b75274b14a89ab776915da663a71d00fd87e84e0d5fa29",
+          "rawKeccak256": "0x65fb046971d4d66b40ce6253d92f766ddb4609bdba00ca3ba8dd0a9fe9149974"
+        },
+        "src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol": {
+          "sha256": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1",
+          "compilerInputKeccak256": "0x56cbdbb001264e45bb8e4d53a55ad02f09b263105b3072dae14dbdcec4d38cfd",
+          "rawKeccak256": "0x3d6af6422393e07a4d93f2bcec689cd8c44624fe95a3ace1f213b5479a1638ee"
+        },
+        "src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol": {
+          "sha256": "da0cc6d54474fe6bf04e9c9a34c680e57f2253ac1ccdf1c773087dbaa1264376",
+          "compilerInputKeccak256": "0xb286e8fb8897fd098fed1198e8cbdd1165244d810035c08e8eb3c31da3d5fae0",
+          "rawKeccak256": "0xc008e2dbd386c787090641d92210e1568c118c94c1f322f969e1570a7b7d5b6e"
+        },
+        "src/genesis-auction/vendor/cca/libraries/PriceLib.sol": {
+          "sha256": "b4394400f97ec45f0001f5dcc626d9e0c7e842ee80fbef2eb82d985ac4a2d7d1",
+          "compilerInputKeccak256": "0x4593c7c67060fd26765d80982c2dacf8246130fcd30de55dc788b94cb33fa1f5",
+          "rawKeccak256": "0x8da5cc35f7a84049bd470fd230f92bad15c7662ce66e6b6d3a8805df0f6d5b4b"
+        },
+        "src/genesis-auction/vendor/cca/libraries/StepLib.sol": {
+          "sha256": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100",
+          "compilerInputKeccak256": "0x6080fcedd6559339dcb40310e3a07b77202416ea0506d865e512e9959c7c1c68",
+          "rawKeccak256": "0x8dfd84d737de1c65edd4c21b32e1b9fbd26d0447d2ccdd960d6425a0bf7e8ef0"
+        },
+        "src/genesis-auction/vendor/cca/libraries/ValidationHookLib.sol": {
+          "sha256": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31",
+          "compilerInputKeccak256": "0x9bc35a5540077316a5835ada593b4991f4d31133df0eb0f2b470f1b92579772a",
+          "rawKeccak256": "0xce7a29935b3fc0328b1cdfc4e309418ae0c3198c9b7523e2051872b756ceda90"
+        },
+        "src/genesis-auction/vendor/cca/libraries/ValueX7Lib.sol": {
+          "sha256": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee",
+          "compilerInputKeccak256": "0xb89cd3cf99c3f869758a51ff96398601ef6b2f1993eddb9769faaa4495f9100e",
+          "rawKeccak256": "0x2101530f035ab7ea12a9ae966b03381b494793dfbad0a5ac268fa0b87f1f0fa1"
+        },
+        "src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol": {
+          "sha256": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d",
+          "compilerInputKeccak256": "0xa92d4cbf63f472fedcfd759edbe5b7abfb8753e0b8a3da6ed17736cfdf33d368",
+          "rawKeccak256": "0x488d8735595ed9896b793ae89802db189eacf9aed30152af710ab54c57504e8a"
+        },
+        "src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol": {
+          "sha256": "cf4d3000e63970f5d8369b47dbcb70b67fe993e3e43b250be82f18e589bde45c",
+          "compilerInputKeccak256": "0x5a829e13119514038e8a32b91de6922a3862b112c718f87b11453d099b27638a",
+          "rawKeccak256": "0x2f718517fa923ea8db42b0e16ed87cca184d3680167a603a9c0563a3222fab29"
+        },
+        "src/genesis-auction/vendor/launcher/src/interfaces/IProtocolFeeController.sol": {
+          "sha256": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd",
+          "compilerInputKeccak256": "0x9c34db8f8569d1608c165ae5435adadb31ee35ec137c9ff3937944c6af91b994",
+          "rawKeccak256": "0x4b3626017d426ee599d5acbf0fa4048c13c8b388e0641fb2997df22ea5ae1d64"
+        },
+        "src/genesis-auction/vendor/launcher/src/libraries/ProtocolFeeLib.sol": {
+          "sha256": "d73d70856b8fba64cc42f11dadcbcd6a3e0342bef0f6916091d2164e91598353",
+          "compilerInputKeccak256": "0x95e5d78e4f4e7db154c021eb80eda83e0e1123eb8462293cdc84f40817c89038",
+          "rawKeccak256": "0x40c8c2e1ebd713586fa04ab427aa419f702537de8d37e4a1ea7979dc25310255"
+        },
+        "src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol": {
+          "sha256": "e7c2eaac3899e9bbbecf0795b95f131ae17c369b3b2436304dd9d548c8ce03f4",
+          "compilerInputKeccak256": "0x1ed875fc4a88beb012f15cbe111e69b402517adda61e5da88c55c73faf76a90f",
+          "rawKeccak256": "0x26645ad45e69c2375fe9452ac00c9ec506ddd0bd756b0d08faae489e42f850d4"
+        },
+        "src/genesis-auction/vendor/solady/utils/ReentrancyGuardTransient.sol": {
+          "sha256": "30a4cdd1813a65e2c76cd5476c9ee8a44b9cac56dd4d930ef3caafb3d6c3600d",
+          "compilerInputKeccak256": "0x21b2e5cba720b937bd97897bf355b889442494c8ad5932f8e5a11beb0dc1d7eb",
+          "rawKeccak256": "0x810e331a8419d9fdb996af72fa755ece8ea18227588876c63c5c2b489fcd881e"
+        },
+        "src/genesis-auction/vendor/solady/utils/SSTORE2.sol": {
+          "sha256": "0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57",
+          "compilerInputKeccak256": "0xaf89154cff97761154e29eccbcb666d1e6ce28f1d666f4afbfa4230c98048a46",
+          "rawKeccak256": "0x1b3e0820ae71c69394acfb4b23a4c35c96134e8c1fe212942f151479d7a69fe0"
+        },
+        "src/genesis-auction/vendor/solady/utils/SafeTransferLib.sol": {
+          "sha256": "6a1cca4abb040289cfe5fa4b70fd84ed470d152d0265b8ffce1ef0af9bb93e59",
+          "compilerInputKeccak256": "0x960d5b7ca568a090c4a7785ddfd88f6ce135ced94f5c79c34e5519a71772a817",
+          "rawKeccak256": "0x7162cc63bd6ac7c0d2956b36c8eee286480bf3a6c728bed6689d39633ad12baf"
+        }
+      },
+      "runtimeTemplateBytes": 17008,
+      "runtimeTemplateKeccak256": "0x1faf9c477e361b5790ce0e45f5759e7adfcdd23f9d87d06a05bb0c85aa443daa",
+      "creationBytecodeKeccak256": "0x7fd23922d085f552321d26055850e453dff9561f3e141c6c16de933ce91d72ec",
+      "immutableReferences": {
+        "86890": [
+          {
+            "start": 2613,
+            "length": 32
+          },
+          {
+            "start": 9731,
+            "length": 32
+          },
+          {
+            "start": 9783,
+            "length": 32
+          }
+        ],
+        "86892": [
+          {
+            "start": 1197,
+            "length": 32
+          },
+          {
+            "start": 9698,
+            "length": 32
+          }
+        ],
+        "86894": [
+          {
+            "start": 2949,
+            "length": 32
+          },
+          {
+            "start": 9656,
+            "length": 32
+          }
+        ],
+        "86897": [
+          {
+            "start": 1531,
+            "length": 32
+          }
+        ],
+        "87129": [
+          {
+            "start": 8682,
+            "length": 32
+          }
+        ],
+        "87201": [
+          {
+            "start": 2896,
+            "length": 32
+          },
+          {
+            "start": 6331,
+            "length": 32
+          },
+          {
+            "start": 6451,
+            "length": 32
+          },
+          {
+            "start": 7194,
+            "length": 32
+          },
+          {
+            "start": 7312,
+            "length": 32
+          },
+          {
+            "start": 8435,
+            "length": 32
+          },
+          {
+            "start": 9361,
+            "length": 32
+          },
+          {
+            "start": 10425,
+            "length": 32
+          }
+        ],
+        "87205": [
+          {
+            "start": 3017,
+            "length": 32
+          },
+          {
+            "start": 3735,
+            "length": 32
+          },
+          {
+            "start": 5295,
+            "length": 32
+          },
+          {
+            "start": 8014,
+            "length": 32
+          },
+          {
+            "start": 10227,
+            "length": 32
+          }
+        ],
+        "87208": [
+          {
+            "start": 1138,
+            "length": 32
+          },
+          {
+            "start": 3692,
+            "length": 32
+          },
+          {
+            "start": 3897,
+            "length": 32
+          },
+          {
+            "start": 5889,
+            "length": 32
+          }
+        ],
+        "87212": [
+          {
+            "start": 10131,
+            "length": 32
+          },
+          {
+            "start": 12287,
+            "length": 32
+          }
+        ],
+        "87215": [
+          {
+            "start": 3067,
+            "length": 32
+          },
+          {
+            "start": 5705,
+            "length": 32
+          },
+          {
+            "start": 5765,
+            "length": 32
+          },
+          {
+            "start": 10261,
+            "length": 32
+          },
+          {
+            "start": 10300,
+            "length": 32
+          }
+        ],
+        "87218": [
+          {
+            "start": 1478,
+            "length": 32
+          },
+          {
+            "start": 6106,
+            "length": 32
+          },
+          {
+            "start": 6166,
+            "length": 32
+          },
+          {
+            "start": 10459,
+            "length": 32
+          },
+          {
+            "start": 10498,
+            "length": 32
+          }
+        ],
+        "87222": [
+          {
+            "start": 9209,
+            "length": 32
+          }
+        ],
+        "87226": [
+          {
+            "start": 6298,
+            "length": 32
+          },
+          {
+            "start": 6418,
+            "length": 32
+          },
+          {
+            "start": 8402,
+            "length": 32
+          }
+        ],
+        "87899": [
+          {
+            "start": 2389,
+            "length": 32
+          },
+          {
+            "start": 11140,
+            "length": 32
+          },
+          {
+            "start": 11200,
+            "length": 32
+          }
+        ],
+        "87903": [
+          {
+            "start": 2037,
+            "length": 32
+          },
+          {
+            "start": 11280,
+            "length": 32
+          }
+        ],
+        "89793": [
+          {
+            "start": 1778,
+            "length": 32
+          },
+          {
+            "start": 8565,
+            "length": 32
+          },
+          {
+            "start": 15223,
+            "length": 32
+          }
+        ],
+        "89796": [
+          {
+            "start": 918,
+            "length": 32
+          },
+          {
+            "start": 4177,
+            "length": 32
+          },
+          {
+            "start": 4643,
+            "length": 32
+          },
+          {
+            "start": 5164,
+            "length": 32
+          },
+          {
+            "start": 5552,
+            "length": 32
+          },
+          {
+            "start": 5635,
+            "length": 32
+          },
+          {
+            "start": 5953,
+            "length": 32
+          },
+          {
+            "start": 6036,
+            "length": 32
+          },
+          {
+            "start": 6494,
+            "length": 32
+          },
+          {
+            "start": 7026,
+            "length": 32
+          },
+          {
+            "start": 7658,
+            "length": 32
+          },
+          {
+            "start": 8129,
+            "length": 32
+          },
+          {
+            "start": 8274,
+            "length": 32
+          },
+          {
+            "start": 10957,
+            "length": 32
+          },
+          {
+            "start": 14395,
+            "length": 32
+          }
+        ],
+        "89799": [
+          {
+            "start": 1428,
+            "length": 32
+          },
+          {
+            "start": 3603,
+            "length": 32
+          },
+          {
+            "start": 5080,
+            "length": 32
+          },
+          {
+            "start": 7574,
+            "length": 32
+          }
+        ],
+        "89802": [
+          {
+            "start": 15036,
+            "length": 32
+          }
+        ],
+        "89805": [
+          {
+            "start": 1265,
+            "length": 32
+          },
+          {
+            "start": 15130,
+            "length": 32
+          }
+        ],
+        "90213": [
+          {
+            "start": 2236,
+            "length": 32
+          },
+          {
+            "start": 3552,
+            "length": 32
+          }
+        ],
+        "90216": [
+          {
+            "start": 2540,
+            "length": 32
+          },
+          {
+            "start": 8771,
+            "length": 32
+          },
+          {
+            "start": 12124,
+            "length": 32
+          }
+        ]
+      }
+    },
+    "GenesisCharacterBidValidation": {
+      "contract": "GenesisCharacterBidValidation",
+      "artifactSha256": "71ed126ce1acb7783caa719856d91cb2a09dbecbcef9172a6d83e0dde88f47f7",
+      "abiSha256": "a1e0b9e98f019f0c7e67f183a3504517b091bb5589f726f027f72d7f25bd0dd9",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/genesis-auction/GenesisCharacterEligibility.sol": "GenesisCharacterBidValidation"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ]
+      },
+      "sources": {
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+          "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+          "compilerInputKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f",
+          "rawKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+          "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+          "compilerInputKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+          "rawKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        "src/genesis-auction/GenesisCharacterEligibility.sol": {
+          "sha256": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26",
+          "compilerInputKeccak256": "0xe1c809acbe3b05f13f42e43fb74dbba914c754516f1ebdfbb4c956d6f36f35f4",
+          "rawKeccak256": "0xe1c809acbe3b05f13f42e43fb74dbba914c754516f1ebdfbb4c956d6f36f35f4"
+        },
+        "src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol": {
+          "sha256": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf",
+          "compilerInputKeccak256": "0xc411033845de737ea260d8e385bd0aeee02787ec352730862221d11a90f41d9a",
+          "rawKeccak256": "0x7fe609df772ade1b2d03728e86da93be7a3fa550ecba7c41de1de7e3b41fe354"
+        }
+      },
+      "runtimeTemplateBytes": 886,
+      "runtimeTemplateKeccak256": "0xc41419122dbe9adbbaec9480e78ac1e5691c72039e4c34ce0f7601b83c82d454",
+      "creationBytecodeKeccak256": "0x54c7adea296457e0ec125431af66170d618fbc2685c938add76e4bffb404542f",
+      "immutableReferences": {
+        "86752": [
+          {
+            "start": 162,
+            "length": 32
+          },
+          {
+            "start": 353,
+            "length": 32
+          },
+          {
+            "start": 452,
+            "length": 32
+          }
+        ],
+        "86754": [
+          {
+            "start": 83,
+            "length": 32
+          },
+          {
+            "start": 320,
+            "length": 32
+          }
+        ],
+        "86756": [
+          {
+            "start": 225,
+            "length": 32
+          },
+          {
+            "start": 278,
+            "length": 32
+          }
+        ]
+      }
+    },
+    "OmertaReserveFundingV2": {
+      "contract": "OmertaReserveFundingV2",
+      "artifactSha256": "9b015987c1992749855c40cfb854552d09493d68cb17d7d577ed5e955d1364b5",
+      "abiSha256": "4ac418477fcf1b7d947a1a2d59635ce3c8e37c1a0605e6d0b200238362fc0600",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaReserveFundingV2.sol": "OmertaReserveFundingV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "sources": {
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+          "sha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+          "compilerInputKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
+          "rawKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+        },
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+          "sha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+          "compilerInputKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc",
+          "rawKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+        },
+        "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+          "sha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+          "compilerInputKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
+          "rawKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+          "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+          "compilerInputKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
+          "rawKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+          "sha256": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+          "compilerInputKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098",
+          "rawKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": {
+          "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+          "compilerInputKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53",
+          "rawKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+          "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+          "compilerInputKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+          "rawKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+          "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+          "compilerInputKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+          "rawKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        "lib/v4-core/src/interfaces/IExtsload.sol": {
+          "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+          "compilerInputKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43",
+          "rawKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        "lib/v4-core/src/interfaces/IExttload.sol": {
+          "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+          "compilerInputKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937",
+          "rawKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        "lib/v4-core/src/interfaces/IHooks.sol": {
+          "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+          "compilerInputKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d",
+          "rawKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        "lib/v4-core/src/interfaces/IPoolManager.sol": {
+          "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+          "compilerInputKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e",
+          "rawKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+          "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+          "compilerInputKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848",
+          "rawKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": {
+          "sha256": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+          "compilerInputKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719",
+          "rawKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+        },
+        "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+          "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+          "compilerInputKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f",
+          "rawKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+          "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+          "compilerInputKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48",
+          "rawKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        "lib/v4-core/src/libraries/BitMath.sol": {
+          "sha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+          "compilerInputKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d",
+          "rawKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        "lib/v4-core/src/libraries/CustomRevert.sol": {
+          "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+          "compilerInputKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de",
+          "rawKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        "lib/v4-core/src/libraries/FixedPoint128.sol": {
+          "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+          "compilerInputKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542",
+          "rawKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        "lib/v4-core/src/libraries/FixedPoint96.sol": {
+          "sha256": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+          "compilerInputKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741",
+          "rawKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+        },
+        "lib/v4-core/src/libraries/FullMath.sol": {
+          "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+          "compilerInputKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2",
+          "rawKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        "lib/v4-core/src/libraries/Hooks.sol": {
+          "sha256": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c",
+          "compilerInputKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa",
+          "rawKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        "lib/v4-core/src/libraries/LPFeeLibrary.sol": {
+          "sha256": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0",
+          "compilerInputKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b",
+          "rawKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        "lib/v4-core/src/libraries/LiquidityMath.sol": {
+          "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+          "compilerInputKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353",
+          "rawKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        "lib/v4-core/src/libraries/ParseBytes.sol": {
+          "sha256": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8",
+          "compilerInputKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15",
+          "rawKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        "lib/v4-core/src/libraries/Position.sol": {
+          "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+          "compilerInputKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9",
+          "rawKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        "lib/v4-core/src/libraries/SafeCast.sol": {
+          "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+          "compilerInputKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86",
+          "rawKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        "lib/v4-core/src/libraries/SqrtPriceMath.sol": {
+          "sha256": "42440c21bbab86c7eed4716b281ed5ca281cf14af8b5e06dc6dc3bc6864bcfdf",
+          "compilerInputKeccak256": "0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982",
+          "rawKeccak256": "0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982"
+        },
+        "lib/v4-core/src/libraries/StateLibrary.sol": {
+          "sha256": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+          "compilerInputKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952",
+          "rawKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        "lib/v4-core/src/libraries/TickMath.sol": {
+          "sha256": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+          "compilerInputKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8",
+          "rawKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        "lib/v4-core/src/libraries/UnsafeMath.sol": {
+          "sha256": "2de236e7ca0b9572a6b0184557565b6fd54e177224e202c727fe248785ede427",
+          "compilerInputKeccak256": "0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4",
+          "rawKeccak256": "0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4"
+        },
+        "lib/v4-core/src/types/BalanceDelta.sol": {
+          "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+          "compilerInputKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f",
+          "rawKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+          "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+          "compilerInputKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78",
+          "rawKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        "lib/v4-core/src/types/Currency.sol": {
+          "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+          "compilerInputKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93",
+          "rawKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        "lib/v4-core/src/types/PoolId.sol": {
+          "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+          "compilerInputKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af",
+          "rawKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        "lib/v4-core/src/types/PoolKey.sol": {
+          "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+          "compilerInputKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786",
+          "rawKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        "lib/v4-core/src/types/PoolOperation.sol": {
+          "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+          "compilerInputKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162",
+          "rawKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        "lib/v4-periphery/src/libraries/LiquidityAmounts.sol": {
+          "sha256": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2",
+          "compilerInputKeccak256": "0x8ea74b89831877ffe657f8461164a01a6f3c7e46f415410854fca8d28a8cab53",
+          "rawKeccak256": "0x8638b34a75b43de21226d16958c6a8a4d7de67ef71a9d3c4b4a21e4afad4da8d"
+        },
+        "src/market-v2/IOmertaMarketStateV2.sol": {
+          "sha256": "43eae996d281f96af635c31b18dfbf75fd611cfa02e9e0b3dfb2a8d7dc70ad4c",
+          "compilerInputKeccak256": "0x8b35324b6d85610e44e3b3b5e87f672f59d041b7cbb44b6173c3bf97475ac9d3",
+          "rawKeccak256": "0x8b35324b6d85610e44e3b3b5e87f672f59d041b7cbb44b6173c3bf97475ac9d3"
+        },
+        "src/market-v2/OmertaReserveFundingV2.sol": {
+          "sha256": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+          "compilerInputKeccak256": "0x7a9ed8999915c161e70916d392a20db9ae93d3e6ee7c782838578fe2919071fc",
+          "rawKeccak256": "0x7a9ed8999915c161e70916d392a20db9ae93d3e6ee7c782838578fe2919071fc"
+        },
+        "src/market-v2/OmertaStabilityControllerV2.sol": {
+          "sha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+          "compilerInputKeccak256": "0x3003e35f9e384597d55633900cb3dd5edb3f6f9887bacefa0b20eb20cc6ee5ac",
+          "rawKeccak256": "0x3003e35f9e384597d55633900cb3dd5edb3f6f9887bacefa0b20eb20cc6ee5ac"
+        }
+      },
+      "runtimeTemplateBytes": 2162,
+      "runtimeTemplateKeccak256": "0xdf640d744bb9ec47c34837b6722f6370047e9ba6ee694573d55f72e82edf5f7e",
+      "creationBytecodeKeccak256": "0xd09a2b98279ef22b2465f6fdd5a97284eb5b27570bca4d4d7a0199df7458078e",
+      "immutableReferences": {
+        "40278": [
+          {
+            "start": 544,
+            "length": 32
+          },
+          {
+            "start": 628,
+            "length": 32
+          }
+        ],
+        "40281": [
+          {
+            "start": 477,
+            "length": 32
+          },
+          {
+            "start": 850,
+            "length": 32
+          },
+          {
+            "start": 1267,
+            "length": 32
+          }
+        ],
+        "40284": [
+          {
+            "start": 254,
+            "length": 32
+          },
+          {
+            "start": 1455,
+            "length": 32
+          }
+        ]
+      }
+    }
+  }
+}

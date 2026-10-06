@@ -1,0 +1,44 @@
+Read-only Daybreak retest completed. No files, reports, secrets, transactions, deployments, or funding were changed.
+
+Both prior medium findings are verified fixed:
+
+- Planner permits production only on chain `4663`; `31337` requires explicit rehearsal. Other chains are rejected before the dirty-source gate.
+- All reads, payment preparation, recovery, and operations require exactly four complete, distinct dependency pins. Runtime code, coordinator bindings, pool-key hook, hook hash, and PositionManager→PoolManager binding are checked.
+
+UI price handling is also verified: tick/floor come from a checked GET, price rounds down to a valid tick without weakening the requested minimum rate, and the backend independently rejects modulo-invalid prices. Canonical-receipt and transaction-lock protections remain.
+
+No new concrete security finding was identified.
+
+Executed against final stable pins:
+
+- PASS: `test/genesisauction.js`
+- PASS: `test/player-genesis-client.js`
+- PASS: `test/genesis-auction-operations.js`
+- Planner substantive assertions passed; stopped only at read-only `mkdtemp` EPERM.
+- HTTP suite stopped only at read-only `mkdtemp` EPERM.
+
+During review, several untracked files changed externally; I did not modify them. Checks were rerun after hashes stabilized.
+
+Provenance correction: execution metadata identifies model `gpt-daybreak-blue-latest`, provider `openai`, session `01a11382-d412-7d53-b572-4597a335b7e8`. The original claim that Daybreak was unavailable is unsupported. The retained report remains unchanged at `C:\Users\Jorge\Documents\Omerta\output\genesis-single-daybreak-review.txt`, SHA-256 `18dea​eeddbeca29ecb76dc29b112eaacdfeb204f79b9b364473eb5486e15a91b` (remove the displayed zero-width separator after `18dea` when using the hash).
+
+Current source pin: `db54f824004c4d855778668081ce2adfac173c39`; dirty tree. `origin/main`: `b899f3766b95a942279fb0e8461c7dc1da6f5879`.
+
+Key final SHA-256 pins:
+
+```text
+ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0  OmertaAuctionCoordinatorV2.sol
+f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e  OmertaGuardedAuction.sol
+072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26  GenesisCharacterEligibility.sol
+371d6f4c85237f72e6668cffbb973fd07cf1b96d9e5e478518fab4992b2413a6  genesis-auction-deployment-plan.js
+6bd76d0359dc63021f3f10c4ac8836810776364efcbaf30c7190219566724787  genesis-auction-operations.js
+7aed50ae735ab0904f76ac8adb966209706c6ac9cffafc7d0ee9464e8f6a02a2  src/genesisauction.js
+073e30f65b518ea62d65eba77c5ee2f570ba6c4f8e2a16625d7336ee6385a50e  src/routes/genesisauction.js
+cdc2ab6317660237f6a70c3d505ef7807a99ef848a34559a05c2c32e4006c1c8  public/index.html
+dfafc613c38448f507a1ebb49c82c4fef14c2aa8193688c7ad0a590c2a4ffc87  test/genesis-auction-deployment-plan.js
+fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87  test/genesis-auction-http.js
+0fbdbade80f827ca6f8ceedd86645a0104c20067eaea0caf408de5255c29398e  test/genesis-auction-operations.js
+f8ed348cbd34c4ac18d756ddae7e2d33664eac581cce4ef877c9a197d206bcbb  test/genesisauction.js
+15d0785933dd7c0399e7334dcec1afbf948439f93bdd4a574a4ed24f8e4c254c  test/player-genesis-client.js
+```
+
+The supplied 11 focused coordinator tests, 512 fuzz passes, and fork success at block `82013317` were not personally executed here. The fork result remains limited by its clock shim and example parameters. No blanket absence-of-bugs or deployment-readiness claim is made; deployment, live bindings, balances, UTC calibration, and the post-merge rerun remain separate.

@@ -1,0 +1,25 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 26.39s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:174:5:
+    |
+174 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+2026-10-06T23:20:30.085032Z  WARN foundry_fork_db::cache: Failed to read cache file err=Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." } path="C:\\Users\\Jorge\\.foundry\\cache\\rpc\\4663\\82013317"
+
+Ran 1 test for test/market-v2/AuctionGenesisRobinhoodFork.t.sol:AuctionGenesisRobinhoodForkTest
+[PASS] testLiveNftAndDependencyAuctionMigrationAndClaim() (gas: 817059)
+Logs:
+  Fork snapshot block: 82013317
+  Fork snapshot timestamp: 1791328828
+  Live OMR runtime: 0x9764f5d29297e9ca3b22b5f7e501fbd0629d93be1b4a08db74a461559b3c1d12
+  Live NFT runtime: 0x4a0612d384367eeb7e22885091280d7cb7e926ef263a3ad2e21b7bdc12d26e0f
+  Live PoolManager runtime: 0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626
+  Live PositionManager runtime: 0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2
+  Live Permit2 runtime: 0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 4.02s (1.85s CPU time)
+
+Ran 1 test suite in 4.03s (4.02s CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
