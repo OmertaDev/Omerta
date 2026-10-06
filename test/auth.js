@@ -89,28 +89,15 @@ const pool = await makeDb();
   await pool.query("UPDATE accounts SET status='banned' WHERE id=$1", [a.accountId]);
   await assert.rejects(() => accountForIdentity(pool, { provider: 'privy', subject: 's1' }, ip, null), (e) => e.code === 'banned', 'a banned identity is refused');
 
-  // INVITE_MODE gate: a new identity needs a valid code
   process.env.INVITE_MODE = 'on';
-  await assert.rejects(() => accountForIdentity(pool, { provider: 'privy', subject: 's2' }, ip, 'nope'), (e) => e.code === 'invite', 'a bad invite code is refused under INVITE_MODE');
-  assert.equal((await pool.query("SELECT 1 FROM accounts WHERE auth_subject='s2'")).rowCount, 0, 'the failed create rolled back — no orphan account');
-  await pool.query("INSERT INTO invite_codes (code, uses_left) VALUES ('GOODONE', 1)");
-  const c = await accountForIdentity(pool, { provider: 'privy', subject: 's2' }, ip, 'GOODONE');
-  assert.equal(c.created, true, 'a valid code lets the new identity in');
-  assert.equal(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code='GOODONE'")).rows[0].uses_left), 0, 'the invite use was consumed atomically');
+  const c = await accountForIdentity(pool, { provider: 'privy', subject: 's2' }, ip, null);
+  assert.equal(c.created, true, 'new identities need no invitation');
+  await pool.query("INSERT INTO invite_codes (code, uses_left) VALUES ('UNUSED', 1)");
+  assert.equal(await consumeInvite(pool, 'UNUSED'), true);
+  assert.equal(await consumeInvite(pool, null), true);
+  assert.equal(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code='UNUSED'")).rows[0].uses_left), 1, 'public admission does not consume codes');
   process.env.INVITE_MODE = 'off';
-  console.log('✅ accountForIdentity: create/adopt, ban gate, and the atomic invite consume');
-}
-
-// ── consumeInvite: off is a pass, on burns exactly one use and refuses when exhausted ──
-{
-  assert.equal(await consumeInvite(pool, 'anything'), true, 'INVITE_MODE off is always a pass');
-  process.env.INVITE_MODE = 'on';
-  await pool.query("INSERT INTO invite_codes (code, uses_left) VALUES ('ONESHOT', 1)");
-  assert.equal(await consumeInvite(pool, 'ONESHOT'), true, 'a fresh code is consumed');
-  await assert.rejects(() => consumeInvite(pool, 'ONESHOT'), (e) => e.code === 'invite', 'the exhausted code is refused');
-  assert.equal(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code='ONESHOT'")).rows[0].uses_left), 0, 'uses_left never went negative');
-  process.env.INVITE_MODE = 'off';
-console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refuses without going negative');
+  console.log('✅ accountForIdentity: create/adopt, ban gate, public admission');
 }
 
 // ── Agent Alpha's bootstrap proof is a short recovery bridge, not another auth provider. Exercise

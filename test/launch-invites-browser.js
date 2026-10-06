@@ -16,21 +16,12 @@ try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage(), errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(origin + '/?ref=GateTester#invite=BROWSER-TEST-ONLY', { waitUntil: 'networkidle' });
-  assert.equal(await page.locator('#invite-code').inputValue(), 'BROWSER-TEST-ONLY');
-  assert(!page.url().includes('invite='), 'invite scrubbed from URL');
-  assert(page.url().includes('ref=GateTester'), 'referral preserved');
-  assert.equal(await page.locator('#screen-game').count(), 0, 'console withheld');
-  await page.screenshot({ path: path.join(output, 'desktop.png'), fullPage: true });
+  await page.goto(origin + '/?ref=GateTester', { waitUntil: 'networkidle' });
+  assert.equal(await page.locator('#invite-code').count(), 0, 'no invitation input');
+  assert.equal(await page.locator('#screen-main').count(), 1, 'public console is served');
   await page.setViewportSize({ width: 390, height: 844 });
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no mobile overflow');
-  await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
-  await page.locator('#invite-code').fill('INCORRECT');
-  await page.locator('#enter').click();
-  await page.waitForFunction(() => document.querySelector('#gate-status').classList.contains('error'));
-  assert.equal(await page.locator('#enter').isEnabled(), true, 'retry enabled after rejected code');
-  await page.locator('#invite-code').fill('BROWSER-TEST-ONLY');
-  await page.locator('#enter').click();
+  await page.locator('#btn-guest').click();
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 30000 });
   const token = await page.evaluate(() => localStorage.getItem('omerta_token'));
   assert(token, 'admission token saved durably before navigation');
@@ -45,15 +36,15 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
   // Use the real tab control, even if the first-week onboarding overlay is covering it.
   await page.locator('[data-tab="crew"]').evaluate((el) => el.click());
-  await page.waitForSelector('#launch-invite-generate', { state: 'attached' });
-  assert.equal(await page.locator('#launch-invite-generate').count(), 1);
-  await page.locator('#launch-invite-generate').evaluate((el) => el.click());
-  await page.waitForSelector('[data-launch-copy]', { state: 'attached' });
-  assert.equal(await page.locator('[data-launch-copy]').count(), 1, 'new invite visible in crew panel');
+  assert.equal(await page.locator('#launch-invite-generate').count(), 0, 'legacy invite issuance is hidden');
   const board = (await app.inject({ method: 'GET', url: '/v1/invites', headers: apiHeaders })).json();
-  assert.equal(board.remaining, 2);
+  assert.equal(board.enabled, false);
+  await page.locator('[data-tab="start"]').evaluate((el) => el.click());
+  await page.waitForFunction(() => document.querySelector('#tab-start')?.textContent.includes('Spread the Word'));
+  assert(await page.evaluate(() => document.querySelector('#tab-start').textContent.indexOf('Spread the Word') < document.querySelector('#tab-start').textContent.indexOf('Your character. Your deed.')), 'daily sharing leads the screen');
+  await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
   // Only the gate script must be free of execution errors; report any legacy console errors too.
   assert.deepEqual(errors, [], 'no uncaught browser script errors');
   await context.close();
-  console.log('PASS: desktop/mobile gate, private markup, referral preservation, invalid-code retry, real form redemption, durable login, and Crew invite control. Screenshots: ' + output);
+  console.log('PASS: public mobile signup, durable login, disabled invite issuance, and prominent daily tasks. Screenshots: ' + output);
 } finally { await browser.close(); await app.close(); }

@@ -157,9 +157,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: INVITE_MODE
-        value: "on"               # Launch: invite required to view the city or create an account.
-                                 # Existing accounts keep access. Import the private campaign batch
-                                 # with tools/invites.js before distributing codes (tools/invites.md).
+        value: "off"              # Public access; new accounts need no invite.
       - key: SOCIAL_VERIFY_MODE
         value: live               # REQUIRED in production or social/First-Week rewards pay nothing.
                                  # BUT `live` means "verify for real", and that needs a token to verify

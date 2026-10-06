@@ -235,7 +235,7 @@ const addsNoDrift = async (name, action, label) => {
   const code = mint.codes[0];
   const results = await Promise.all(Array.from({ length: 8 }, () => call('POST', '/v1/auth/guest', { body: { inviteCode: code } })));
   const ok = results.filter((r) => r.code === 200);
-  assert.equal(ok.length, 1, `exactly one signup consumed the 1-use code (got ${ok.length})`);
+  assert.equal(ok.length, 8, 'all concurrent public signups succeed without consuming invitations');
   assert(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code=$1", [code])).rows[0].uses_left) >= 0, 'uses_left never went negative');
   process.env.INVITE_MODE = 'off';
 }

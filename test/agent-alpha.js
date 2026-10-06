@@ -201,7 +201,7 @@ async function guestBootstrapServerRecoveryTest() {
     )).rows[0].n), 1, 'one bootstrap secret creates exactly one guest account');
     assert.equal(Number((await app.pool.query(
       'SELECT uses_left FROM invite_codes WHERE code=$1', [inviteCode],
-    )).rows[0].uses_left), 0, 'the closed-alpha invite is consumed exactly once');
+    )).rows[0].uses_left), 1, 'public signup preserves legacy invitations');
 
     const replay = await app.inject({
       method: 'POST',
@@ -224,13 +224,10 @@ async function guestBootstrapServerRecoveryTest() {
       url: '/v1/auth/guest',
       payload: { bootstrapSecret: crypto.randomBytes(32).toString('base64url') },
     });
-    assert.equal(unrelated.statusCode, 400,
-      'a different bootstrap identity cannot bypass a consumed closed-alpha invite');
-    assert.equal(unrelated.json().error, 'invite',
-      'closed-invite refusal keeps the existing stable error code');
+    assert.equal(unrelated.statusCode, 200, 'a different bootstrap identity can create a public account');
     assert.equal(Number((await app.pool.query(
       "SELECT COUNT(*) n FROM accounts WHERE auth_provider='guest'",
-    )).rows[0].n), 1, 'a refused bootstrap attempt leaves the single-account invariant intact');
+    )).rows[0].n), 2, 'different bootstrap identities create distinct accounts');
   } finally {
     if (priorInviteMode === undefined) delete process.env.INVITE_MODE;
     else process.env.INVITE_MODE = priorInviteMode;
@@ -334,7 +331,7 @@ async function initialGuestCrashRecoveryTest() {
     )).rows[0].n), 1, 'the server committed exactly one guest before the client hard crash');
     assert.equal(Number((await app.pool.query(
       'SELECT uses_left FROM invite_codes WHERE code=$1', [inviteCode],
-    )).rows[0].uses_left), 0, 'the guest commit consumed the closed-alpha invite once');
+    )).rows[0].uses_left), 1, 'public signup preserves legacy invitations');
 
     child.kill();
     const death = await waitFor(childExited, 'bootstrap child hard exit');
