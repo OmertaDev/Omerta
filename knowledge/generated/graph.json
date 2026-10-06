@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+  "sourceRevision": "d9683e20e100adbbae3c0b1de981ed573c81e099",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9766,
-    "edges": 39797,
+    "nodes": 9768,
+    "edges": 39804,
     "byNodeType": {
       "Artifact": 4157,
       "Command": 179,
-      "Commit": 2032,
+      "Commit": 2034,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3246,
-      "CHANGED": 15449,
+      "CHANGED": 15454,
       "CONTAINS": 4178,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 611,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2032,
+      "HAS_COMMIT": 2034,
       "IMPLEMENTS": 124,
       "IMPORTS": 3935,
       "INHERITS": 39,
@@ -82794,20 +82794,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9978,
-      "lines": 133,
-      "version": "9ccb54e8086483b4",
+      "bytes": 10328,
+      "lines": 136,
+      "version": "09918faed15a8f6a",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "9ccb54e8086483b4"
+          "version": "09918faed15a8f6a"
         }
       ],
-      "lastChangedAt": "2026-09-18T18:31:14.000Z",
+      "lastChangedAt": "2026-10-06T19:53:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      "lastChangedCommit": "d9683e20e100adbbae3c0b1de981ed573c81e099"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -120593,6 +120593,22 @@
       ]
     },
     {
+      "key": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "type": "Commit",
+      "id": "ac943493061c880e247a3ace69252db9cccb1a8e",
+      "label": "chore(knowledge): refresh generated artifacts for 3ebe28f2",
+      "title": "chore(knowledge): refresh generated artifacts for 3ebe28f2",
+      "date": "2026-10-06T19:39:19.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ac943493061c880e247a3ace69252db9cccb1a8e",
+      "provenance": [
+        {
+          "commit": "ac943493061c880e247a3ace69252db9cccb1a8e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ac943493061c880e247a3ace69252db9cccb1a8e"
+        }
+      ]
+    },
+    {
       "key": "Commit:ace6c37f2ee96b2161a286c2bca9aeb7e1e8b5d8",
       "type": "Commit",
       "id": "ace6c37f2ee96b2161a286c2bca9aeb7e1e8b5d8",
@@ -125933,6 +125949,22 @@
         {
           "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070",
           "url": "https://github.com/OmertaDev/Omerta/commit/d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "type": "Commit",
+      "id": "d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "label": "Verify the player reset constraint in director migration tests",
+      "title": "Verify the player reset constraint in director migration tests",
+      "date": "2026-10-06T19:53:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "provenance": [
+        {
+          "commit": "d9683e20e100adbbae3c0b1de981ed573c81e099",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d9683e20e100adbbae3c0b1de981ed573c81e099"
         }
       ]
     },
@@ -150982,6 +151014,9 @@
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
         },
         {
+          "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+        },
+        {
           "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
         },
         {
@@ -151810,6 +151845,9 @@
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
         },
         {
+          "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+        },
+        {
           "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
         },
         {
@@ -152636,6 +152674,9 @@
         },
         {
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
+        },
+        {
+          "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
         },
         {
           "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
@@ -153686,6 +153727,9 @@
         },
         {
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
+        },
+        {
+          "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
         },
         {
           "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
@@ -162550,7 +162594,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "revision": "d9683e20e100adbbae3c0b1de981ed573c81e099",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -191334,13 +191378,13 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 133,
-      "version": "9ccb54e8086483b4",
+      "lines": 136,
+      "version": "09918faed15a8f6a",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "9ccb54e8086483b4"
+          "version": "09918faed15a8f6a"
         }
       ]
     },
@@ -307297,6 +307341,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ace6c37f2ee96b2161a286c2bca9aeb7e1e8b5d8",
       "to": "Artifact:AUDIT-economy-and-code.md",
       "provenance": {
@@ -327077,6 +327153,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "d9683e20e100adbbae3c0b1de981ed573c81e099"
       }
     },
     {
@@ -424632,6 +424716,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
+      "provenance": {
+        "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ace6c37f2ee96b2161a286c2bca9aeb7e1e8b5d8",
       "provenance": {
         "commit": "ace6c37f2ee96b2161a286c2bca9aeb7e1e8b5d8"
@@ -427299,6 +427391,14 @@
       "to": "Commit:d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070",
       "provenance": {
         "commit": "d94e8e8afafe9b0baeeb33cb5cad9fb4c40ff070"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d9683e20e100adbbae3c0b1de981ed573c81e099",
+      "provenance": {
+        "commit": "d9683e20e100adbbae3c0b1de981ed573c81e099"
       }
     },
     {

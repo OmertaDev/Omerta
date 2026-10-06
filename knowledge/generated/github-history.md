@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3ebe28f2d949`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d9683e20e100`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2032 |
+| Commits in clone | 2034 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-06 — Account for the one-time player reset in migration catalog checks |
+| Latest commit | 2026-10-06 — Verify the player reset constraint in director migration tests |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1147 |
+| OmertaDev | 1148 |
 | crvydev | 647 |
 | Claude | 156 |
+| github-actions[bot] | 41 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 40 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 367 | yes |
 | [SPEC.md](../../SPEC.md) | 354 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 273 | historical |
-| knowledge/generated/graph-summary.md | 273 | historical |
-| knowledge/generated/graph.json | 273 | historical |
-| knowledge/generated/inventory.md | 273 | historical |
+| knowledge/generated/github-history.md | 274 | historical |
+| knowledge/generated/graph-summary.md | 274 | historical |
+| knowledge/generated/graph.json | 274 | historical |
+| knowledge/generated/inventory.md | 274 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 225 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
