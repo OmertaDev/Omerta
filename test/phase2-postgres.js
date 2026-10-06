@@ -250,6 +250,7 @@ const replacedUpgradeConstraints = [
 ];
 // Independent expected pg_get_constraintdef output: this is intentionally not parsed from schema.sql.
 const requiredUpgradeConstraints = [
+  constraintRow('player_reset_migrations','player_reset_migrations_pkey',`PRIMARY KEY (id)`),
   constraintRow('item_events','item_event_branch_ck',`CHECK (event_branch = 'legacy'::text AND mutation_id IS NULL AND event_ordinal IS NULL AND lot_id IS NULL AND definition_hash IS NULL AND snapshot_json IS NULL OR event_branch = 'lot'::text AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal >= 0 AND lot_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL OR (event_branch = ANY (ARRAY['unique'::text, 'observation'::text])) AND mutation_id IS NOT NULL AND event_ordinal IS NOT NULL AND event_ordinal >= 0 AND lot_id IS NULL AND item_id IS NOT NULL AND definition_hash IS NOT NULL AND snapshot_json IS NOT NULL)`),
   constraintRow('item_events','item_event_lot_fk',`FOREIGN KEY (lot_id, definition_hash) REFERENCES item_lots(lot_id, definition_hash)`),
   constraintRow('item_events','item_event_mutation_fk',`FOREIGN KEY (mutation_id) REFERENCES item_mutation_guards(mutation_id)`),
@@ -293,6 +294,7 @@ const requiredUpgradeConstraints = [
 ];
 // PostgreSQL 18 promotes NOT NULL metadata into pg_constraint; earlier supported backends do not.
 const upgradeNotNullColumns = {
+  player_reset_migrations: ['id','applied_at'],
   item_events: ['event_branch'],
   item_lots: ['created_at','definition_hash','logical_item_id','lot_id','mutation_id','original_quantity','output_ordinal','owner_id','owner_scope','provenance_class','provenance_coalescing_class','provenance_digest','remaining_quantity','state','trade_policy_hash','updated_at'],
   item_mutation_inputs: ['attachment_mutation_id','attachment_output_ordinal','attachment_quantity','definition_hash','event_branch','event_id','input_ordinal','mutation_id','quantity_after','quantity_before','removed_quantity','snapshot_json','transition_kind'],
