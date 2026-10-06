@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7f8adb347f8c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b6643306e8ec`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2038 |
+| Commits in clone | 2040 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-06 — Refresh release counts for daily reminder module and tests |
+| Latest commit | 2026-10-06 — Deliver daily inbox reminders through notification dispatch |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1150 |
+| OmertaDev | 1151 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 43 |
+| github-actions[bot] | 44 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -35,16 +35,16 @@
 | [src/server.js](../../src/server.js) | 367 | yes |
 | [SPEC.md](../../SPEC.md) | 355 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 276 | historical |
-| knowledge/generated/graph-summary.md | 276 | historical |
-| knowledge/generated/graph.json | 276 | historical |
-| knowledge/generated/inventory.md | 276 | historical |
+| knowledge/generated/github-history.md | 277 | historical |
+| knowledge/generated/graph-summary.md | 277 | historical |
+| knowledge/generated/graph.json | 277 | historical |
+| knowledge/generated/inventory.md | 277 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 225 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 127 | historical |
-| [src/worker.js](../../src/worker.js) | 127 | yes |
+| [src/worker.js](../../src/worker.js) | 128 | yes |
+| knowledge/generated/documents.md | 128 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 119 | yes |

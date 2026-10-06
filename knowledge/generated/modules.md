@@ -101,7 +101,7 @@
 | [src/director/selection.js](../../src/director/selection.js) | 52 | platform-core | 2 / 5 | 0 | 0 | 1 |
 | [src/director/storage.js](../../src/director/storage.js) | 80 | platform-core | 3 / 1 | 0 | 4 | 0 |
 | [src/discovery.js](../../src/discovery.js) | 148 | world-progression | 2 / 3 | 2 | 12 | 1 |
-| [src/dispatch.js](../../src/dispatch.js) | 292 | engagement-growth | 1 / 4 | 4 | 9 | 1 |
+| [src/dispatch.js](../../src/dispatch.js) | 299 | engagement-growth | 2 / 5 | 4 | 9 | 2 |
 | [src/drop.js](../../src/drop.js) | 349 | engagement-growth | 3 / 2 | 9 | 5 | 0 |
 | [src/duels.js](../../src/duels.js) | 213 | social-combat | 2 / 2 | 5 | 8 | 0 |
 | [src/dynasty.js](../../src/dynasty.js) | 249 | chain-economy | 3 / 4 | 7 | 10 | 1 |
@@ -270,7 +270,7 @@
 | [src/walletforge.js](../../src/walletforge.js) | 206 | chain-economy | 3 / 2 | 2 | 6 | 1 |
 | [src/watcher.js](../../src/watcher.js) | 512 | chain-economy | 7 / 7 | 0 | 5 | 9 |
 | [src/wire.js](../../src/wire.js) | 463 | law-intelligence | 4 / 7 | 11 | 18 | 2 |
-| [src/worker.js](../../src/worker.js) | 1072 | platform-core | 61 / 12 | 0 | 33 | 11 |
+| [src/worker.js](../../src/worker.js) | 1070 | platform-core | 60 / 12 | 0 | 33 | 11 |
 | [src/world-consequences.js](../../src/world-consequences.js) | 97 | platform-core | 3 / 2 | 0 | 1 | 1 |
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 16 | 0 | 5 | 13 |
 | [src/world-kernel-query.js](../../src/world-kernel-query.js) | 337 | platform-core | 6 / 8 | 0 | 20 | 5 |

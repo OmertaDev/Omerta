@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "7f8adb347f8cdca92f59d52ffee7874be29c48d3",
+  "sourceRevision": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9772,
-    "edges": 39818,
+    "nodes": 9774,
+    "edges": 39831,
     "byNodeType": {
       "Artifact": 4157,
       "Command": 179,
-      "Commit": 2038,
+      "Commit": 2040,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3246,
-      "CHANGED": 15464,
+      "CHANGED": 15473,
       "CONTAINS": 4178,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 611,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2038,
+      "HAS_COMMIT": 2040,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3935,
+      "IMPORTS": 3936,
       "INHERITS": 39,
       "REFERENCES": 3112,
       "REPRESENTS": 1504,
-      "TESTS": 1358,
+      "TESTS": 1359,
       "TRACKS": 126,
       "USES_TABLE": 1834
     }
@@ -76906,20 +76906,20 @@
       "path": "src/dispatch.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 19494,
-      "lines": 292,
-      "version": "44e575533f095b26",
+      "bytes": 19980,
+      "lines": 299,
+      "version": "60f07721454757eb",
       "text": true,
       "provenance": [
         {
           "file": "src/dispatch.js",
           "line": 1,
-          "version": "44e575533f095b26"
+          "version": "60f07721454757eb"
         }
       ],
-      "lastChangedAt": "2026-08-21T15:48:06.000Z",
+      "lastChangedAt": "2026-10-06T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "46c289cb24bf10cb88695073407eb9c35fc85441"
+      "lastChangedCommit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
     },
     {
       "key": "Artifact:src/drop.js",
@@ -80793,20 +80793,20 @@
       "path": "src/worker.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 84155,
-      "lines": 1072,
-      "version": "250bc98c4656ccf3",
+      "bytes": 84018,
+      "lines": 1070,
+      "version": "7072264895a874fb",
       "text": true,
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "250bc98c4656ccf3"
+          "version": "7072264895a874fb"
         }
       ],
-      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedAt": "2026-10-06T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      "lastChangedCommit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
     },
     {
       "key": "Artifact:src/world-consequences.js",
@@ -82518,20 +82518,20 @@
       "path": "test/dailyreminder.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 2183,
-      "lines": 40,
-      "version": "af6745898ea4f78f",
+      "bytes": 2628,
+      "lines": 51,
+      "version": "aaaefaced6bba322",
       "text": true,
       "provenance": [
         {
           "file": "test/dailyreminder.js",
           "line": 1,
-          "version": "af6745898ea4f78f"
+          "version": "aaaefaced6bba322"
         }
       ],
-      "lastChangedAt": "2026-10-06T19:13:42.000Z",
+      "lastChangedAt": "2026-10-06T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3966a26f2b6903f8369e0f847a03da417ccc4280"
+      "lastChangedCommit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
     },
     {
       "key": "Artifact:test/day.js",
@@ -93949,20 +93949,20 @@
       "path": "tools/rc1-native-worker.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 14845,
-      "lines": 225,
-      "version": "1ff06ee6ee8732fc",
+      "bytes": 15061,
+      "lines": 227,
+      "version": "896b3c6b5db7fce9",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-native-worker.js",
           "line": 1,
-          "version": "1ff06ee6ee8732fc"
+          "version": "896b3c6b5db7fce9"
         }
       ],
-      "lastChangedAt": "2026-09-24T17:19:56.000Z",
+      "lastChangedAt": "2026-10-06T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "489efa0caaf357fc67a761a724f76dea1545d622"
+      "lastChangedCommit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
     },
     {
       "key": "Artifact:tools/rc1-npc-boat-fault.js",
@@ -109041,6 +109041,22 @@
       ]
     },
     {
+      "key": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "type": "Commit",
+      "id": "5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "label": "chore(knowledge): refresh generated artifacts for 7f8adb34",
+      "title": "chore(knowledge): refresh generated artifacts for 7f8adb34",
+      "date": "2026-10-06T20:53:02.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "provenance": [
+        {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5375cc243ae2ddc3e0179806897f22c90f54a168"
+        }
+      ]
+    },
+    {
       "key": "Commit:539933a7b889b4ec6865f4dd4cb305d2736b97fc",
       "type": "Commit",
       "id": "539933a7b889b4ec6865f4dd4cb305d2736b97fc",
@@ -121757,6 +121773,22 @@
         {
           "commit": "b61d33e2e5303b79bb7c99ca98d17f596948dd43",
           "url": "https://github.com/OmertaDev/Omerta/commit/b61d33e2e5303b79bb7c99ca98d17f596948dd43"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "type": "Commit",
+      "id": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "label": "Deliver daily inbox reminders through notification dispatch",
+      "title": "Deliver daily inbox reminders through notification dispatch",
+      "date": "2026-10-06T21:12:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "provenance": [
+        {
+          "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
         }
       ]
     },
@@ -144493,7 +144525,7 @@
         },
         {
           "file": "tools/rc1-native-worker.js",
-          "line": 164
+          "line": 166
         },
         {
           "file": "tools/rc1-realtime-soak-local.js",
@@ -150256,6 +150288,9 @@
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
         },
         {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -150803,6 +150838,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
@@ -151642,6 +151680,9 @@
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+        },
+        {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
@@ -152477,6 +152518,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
@@ -153536,6 +153580,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
@@ -156817,13 +156864,13 @@
       "type": "Module",
       "id": "src/dispatch.js",
       "label": "src/dispatch.js",
-      "lines": 292,
-      "version": "44e575533f095b26",
+      "lines": 299,
+      "version": "60f07721454757eb",
       "provenance": [
         {
           "file": "src/dispatch.js",
           "line": 1,
-          "version": "44e575533f095b26"
+          "version": "60f07721454757eb"
         }
       ]
     },
@@ -159352,13 +159399,13 @@
       "type": "Module",
       "id": "src/worker.js",
       "label": "src/worker.js",
-      "lines": 1072,
-      "version": "250bc98c4656ccf3",
+      "lines": 1070,
+      "version": "7072264895a874fb",
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "250bc98c4656ccf3"
+          "version": "7072264895a874fb"
         }
       ]
     },
@@ -162682,7 +162729,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "7f8adb347f8cdca92f59d52ffee7874be29c48d3",
+      "revision": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -191286,13 +191333,13 @@
       "type": "TestSuite",
       "id": "test/dailyreminder.js",
       "label": "test/dailyreminder.js",
-      "lines": 40,
-      "version": "af6745898ea4f78f",
+      "lines": 51,
+      "version": "aaaefaced6bba322",
       "provenance": [
         {
           "file": "test/dailyreminder.js",
           "line": 1,
-          "version": "af6745898ea4f78f"
+          "version": "aaaefaced6bba322"
         }
       ]
     },
@@ -266349,6 +266396,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:539933a7b889b4ec6865f4dd4cb305d2736b97fc",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -310385,6 +310472,38 @@
       "to": "Artifact:tools/rc1-omr-loan-journal.js",
       "provenance": {
         "commit": "b61d33e2e5303b79bb7c99ca98d17f596948dd43"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "to": "Artifact:src/dispatch.js",
+      "provenance": {
+        "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "to": "Artifact:test/dailyreminder.js",
+      "provenance": {
+        "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
       }
     },
     {
@@ -400646,7 +400765,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:engagement-growth",
-      "weight": 36
+      "weight": 37
     },
     {
       "type": "DEPENDS_ON",
@@ -400742,7 +400861,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:engagement-growth",
       "to": "Domain:platform-core",
-      "weight": 34
+      "weight": 35
     },
     {
       "type": "DEPENDS_ON",
@@ -419108,6 +419227,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5375cc243ae2ddc3e0179806897f22c90f54a168",
+      "provenance": {
+        "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:539933a7b889b4ec6865f4dd4cb305d2736b97fc",
       "provenance": {
         "commit": "539933a7b889b4ec6865f4dd4cb305d2736b97fc"
@@ -425463,6 +425590,14 @@
       "to": "Commit:b61d33e2e5303b79bb7c99ca98d17f596948dd43",
       "provenance": {
         "commit": "b61d33e2e5303b79bb7c99ca98d17f596948dd43"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b6643306e8ecbd6d0894fb9e3d7c79960e8a0735",
+      "provenance": {
+        "commit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
       }
     },
     {
@@ -434312,10 +434447,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/dispatch.js",
+      "to": "Artifact:src/dailyreminder.js",
+      "provenance": {
+        "file": "src/dispatch.js",
+        "line": 18
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/dispatch.js",
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 15
+        "line": 17
       }
     },
     {
@@ -441299,7 +441443,7 @@
       "to": "Artifact:src/auction.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 58
+        "line": 57
       }
     },
     {
@@ -441326,7 +441470,7 @@
       "to": "Artifact:src/boxing.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 59
+        "line": 58
       }
     },
     {
@@ -441335,7 +441479,7 @@
       "to": "Artifact:src/brokers.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 67
+        "line": 66
       }
     },
     {
@@ -441344,7 +441488,7 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 60
+        "line": 59
       }
     },
     {
@@ -441398,7 +441542,7 @@
       "to": "Artifact:src/convoy.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 54
+        "line": 53
       }
     },
     {
@@ -441408,15 +441552,6 @@
       "provenance": {
         "file": "src/worker.js",
         "line": 48
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/worker.js",
-      "to": "Artifact:src/dailyreminder.js",
-      "provenance": {
-        "file": "src/worker.js",
-        "line": 53
       }
     },
     {
@@ -441488,7 +441623,7 @@
       "to": "Artifact:src/fairness.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 61
+        "line": 60
       }
     },
     {
@@ -441551,7 +441686,7 @@
       "to": "Artifact:src/law.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 56
+        "line": 55
       }
     },
     {
@@ -441560,7 +441695,7 @@
       "to": "Artifact:src/liquidityautomation.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 74
+        "line": 73
       }
     },
     {
@@ -441569,7 +441704,7 @@
       "to": "Artifact:src/liquiditykeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 75
+        "line": 74
       }
     },
     {
@@ -441578,7 +441713,7 @@
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 57
+        "line": 56
       }
     },
     {
@@ -441632,7 +441767,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 55
+        "line": 54
       }
     },
     {
@@ -441668,7 +441803,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 63
+        "line": 62
       }
     },
     {
@@ -441677,7 +441812,7 @@
       "to": "Artifact:src/ring.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 62
+        "line": 61
       }
     },
     {
@@ -441713,7 +441848,7 @@
       "to": "Artifact:src/rwahealthsweep.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 70
+        "line": 69
       }
     },
     {
@@ -441722,7 +441857,7 @@
       "to": "Artifact:src/rwastockkeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 69
+        "line": 68
       }
     },
     {
@@ -441758,7 +441893,7 @@
       "to": "Artifact:src/stable.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 64
+        "line": 63
       }
     },
     {
@@ -441767,7 +441902,7 @@
       "to": "Artifact:src/stockcatalog.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 68
+        "line": 67
       }
     },
     {
@@ -441776,7 +441911,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 66
+        "line": 65
       }
     },
     {
@@ -441803,7 +441938,7 @@
       "to": "Artifact:src/v4oraclekeeper.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 73
+        "line": 72
       }
     },
     {
@@ -441821,7 +441956,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "src/worker.js",
-        "line": 65
+        "line": 64
       }
     },
     {
@@ -444666,6 +444801,15 @@
       "provenance": {
         "file": "test/dailyreminder.js",
         "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/dispatch.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 5
       }
     },
     {
@@ -463844,7 +463988,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/rc1-native-worker.js",
-        "line": 164
+        "line": 166
       }
     },
     {
@@ -510362,6 +510506,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/dailyreminder.js",
+      "to": "Artifact:src/dispatch.js",
+      "provenance": {
+        "file": "test/dailyreminder.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/dailyreminder.js",
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/dailyreminder.js",
@@ -525935,7 +526088,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 75
+        "line": 78
       }
     },
     {
@@ -525944,7 +526097,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 61
+        "line": 64
       }
     },
     {
@@ -525953,7 +526106,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 257
+        "line": 264
       }
     },
     {
@@ -525962,7 +526115,7 @@
       "to": "Table:email_confirm_sent",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 66
+        "line": 69
       }
     },
     {
@@ -525971,7 +526124,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 266
+        "line": 273
       }
     },
     {
@@ -525980,7 +526133,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 170
+        "line": 173
       }
     },
     {
@@ -525989,7 +526142,7 @@
       "to": "Table:npc_aggression",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 192
+        "line": 195
       }
     },
     {
@@ -525998,7 +526151,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 265
+        "line": 272
       }
     },
     {
@@ -526007,7 +526160,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/dispatch.js",
-        "line": 173
+        "line": 176
       }
     },
     {
@@ -536951,7 +537104,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/worker.js",
-        "line": 245
+        "line": 244
       }
     },
     {
@@ -536960,7 +537113,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 301
+        "line": 300
       }
     },
     {
@@ -536978,7 +537131,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/worker.js",
-        "line": 183
+        "line": 182
       }
     },
     {
@@ -536987,7 +537140,7 @@
       "to": "Table:chat_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 422
+        "line": 421
       }
     },
     {
@@ -536996,7 +537149,7 @@
       "to": "Table:coalitions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 464
+        "line": 463
       }
     },
     {
@@ -537014,7 +537167,7 @@
       "to": "Table:districts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 481
+        "line": 480
       }
     },
     {
@@ -537023,7 +537176,7 @@
       "to": "Table:dm_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 424
+        "line": 423
       }
     },
     {
@@ -537041,7 +537194,7 @@
       "to": "Table:event_results",
       "provenance": {
         "file": "src/worker.js",
-        "line": 426
+        "line": 425
       }
     },
     {
@@ -537050,7 +537203,7 @@
       "to": "Table:exchange_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 727
+        "line": 725
       }
     },
     {
@@ -537059,7 +537212,7 @@
       "to": "Table:family_aggro",
       "provenance": {
         "file": "src/worker.js",
-        "line": 512
+        "line": 510
       }
     },
     {
@@ -537068,7 +537221,7 @@
       "to": "Table:family_yield_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 150
+        "line": 149
       }
     },
     {
@@ -537086,7 +537239,7 @@
       "to": "Table:gala_guests",
       "provenance": {
         "file": "src/worker.js",
-        "line": 430
+        "line": 429
       }
     },
     {
@@ -537095,7 +537248,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/worker.js",
-        "line": 152
+        "line": 151
       }
     },
     {
@@ -537104,7 +537257,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/worker.js",
-        "line": 689
+        "line": 687
       }
     },
     {
@@ -537113,7 +537266,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/worker.js",
-        "line": 57
+        "line": 56
       }
     },
     {
@@ -537122,7 +537275,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/worker.js",
-        "line": 246
+        "line": 245
       }
     },
     {
@@ -537131,7 +537284,7 @@
       "to": "Table:oauth_states",
       "provenance": {
         "file": "src/worker.js",
-        "line": 435
+        "line": 434
       }
     },
     {
@@ -537140,7 +537293,7 @@
       "to": "Table:rwa_dividend_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 134
+        "line": 133
       }
     },
     {
@@ -537149,7 +537302,7 @@
       "to": "Table:season_recaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 240
+        "line": 239
       }
     },
     {
@@ -537158,7 +537311,7 @@
       "to": "Table:season_records",
       "provenance": {
         "file": "src/worker.js",
-        "line": 202
+        "line": 201
       }
     },
     {
@@ -537176,7 +537329,7 @@
       "to": "Table:stake_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 121
+        "line": 120
       }
     },
     {
@@ -537185,7 +537338,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/worker.js",
-        "line": 94
+        "line": 93
       }
     },
     {
@@ -537194,7 +537347,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/worker.js",
-        "line": 165
+        "line": 164
       }
     },
     {
@@ -537203,7 +537356,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 780
+        "line": 778
       }
     },
     {
@@ -537212,7 +537365,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/worker.js",
-        "line": 420
+        "line": 419
       }
     },
     {
@@ -537221,7 +537374,7 @@
       "to": "Table:vouchers",
       "provenance": {
         "file": "src/worker.js",
-        "line": 590
+        "line": 588
       }
     },
     {
@@ -537230,7 +537383,7 @@
       "to": "Table:wiretaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 572
+        "line": 570
       }
     },
     {
@@ -537239,7 +537392,7 @@
       "to": "Table:worker_heartbeat",
       "provenance": {
         "file": "src/worker.js",
-        "line": 354
+        "line": 353
       }
     },
     {
