@@ -31,9 +31,11 @@
 | `FixedPointMathLib` | library | [omerta-contracts/src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol:7](../../omerta-contracts/src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol#L7) | — |
 | `FlashGuard` | abstract contract | [omerta-contracts/src/FlashGuard.sol:52](../../omerta-contracts/src/FlashGuard.sol#L52) | — |
 | `GearVault` | contract | [omerta-contracts/src/GearVault.sol:24](../../omerta-contracts/src/GearVault.sol#L24) | `ERC1155`, `Ownable2Step` |
+| `GenesisCharacterBidValidation` | contract | [omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol:33](../../omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol#L33) | `GenesisCharacterEligibility`, `IValidationHook` |
+| `GenesisCharacterEligibility` | abstract contract | [omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol:8](../../omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol#L8) | — |
 | `GenesisLifecycleController` | contract | [omerta-contracts/src/GenesisLifecycleController.sol:59](../../omerta-contracts/src/GenesisLifecycleController.sol#L59) | `Ownable2Step`, `ReentrancyGuard` |
 | `GenesisOracle` | contract | [omerta-contracts/src/GenesisOracle.sol:49](../../omerta-contracts/src/GenesisOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
-| `GenesisPlayerSale` | contract | [omerta-contracts/src/GenesisPlayerSale.sol:23](../../omerta-contracts/src/GenesisPlayerSale.sol#L23) | `ReentrancyGuard` |
+| `GenesisPlayerSale` | contract | [omerta-contracts/src/GenesisPlayerSale.sol:25](../../omerta-contracts/src/GenesisPlayerSale.sol#L25) | `ReentrancyGuard`, `GenesisCharacterEligibility` |
 | `GenesisProceedsSplitter` | contract | [omerta-contracts/src/GenesisProceedsSplitter.sol:28](../../omerta-contracts/src/GenesisProceedsSplitter.sol#L28) | `ReentrancyGuard` |
 | `GenesisWalletCap` | contract | [omerta-contracts/src/GenesisWalletCap.sol:19](../../omerta-contracts/src/GenesisWalletCap.sol#L19) | `IGenesisBidValidation` |
 | `IAcquisitionAuthorityV2` | interface | [omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol:3](../../omerta-contracts/src/interfaces/IAcquisitionAuthorityV2.sol#L3) | — |
@@ -54,13 +56,13 @@
 | `IGenesisCapController` | interface | [omerta-contracts/src/GenesisWalletCap.sol:3](../../omerta-contracts/src/GenesisWalletCap.sol#L3) | — |
 | `IGenesisFoundation` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:40](../../omerta-contracts/src/GenesisLifecycleController.sol#L40) | — |
 | `IGenesisGatedAuction` | interface | [omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol:21](../../omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol#L21) | — |
-| `IGenesisMarketHook` | interface | [omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol:34](../../omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol#L34) | — |
-| `IGenesisPlayerIntegration` | interface | [omerta-contracts/src/GenesisPlayerSale.sol:9](../../omerta-contracts/src/GenesisPlayerSale.sol#L9) | — |
+| `IGenesisMarketHook` | interface | [omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol:35](../../omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol#L35) | — |
+| `IGenesisPlayerIntegration` | interface | [omerta-contracts/src/GenesisPlayerSale.sol:11](../../omerta-contracts/src/GenesisPlayerSale.sol#L11) | — |
 | `IGenesisStrategy` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:35](../../omerta-contracts/src/GenesisLifecycleController.sol#L35) | — |
 | `IInitializerHook` | interface | [omerta-contracts/src/interfaces/IInitializerHook.sol:10](../../omerta-contracts/src/interfaces/IInitializerHook.sol#L10) | `IERC165` |
 | `ILBPInitializer` | interface | [omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol:20](../../omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol#L20) | `IDistributor`, `IERC165` |
 | `ILiquidityHealth` | interface | [omerta-contracts/src/interfaces/ILiquidityHealth.sol:5](../../omerta-contracts/src/interfaces/ILiquidityHealth.sol#L5) | — |
-| `IOmertaGenesisClaimGate` | interface | [omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol:6](../../omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol#L6) | — |
+| `IOmertaGenesisClaimGate` | interface | [omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol:8](../../omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol#L8) | — |
 | `IOmertaMarketStateV2` | interface | [omerta-contracts/src/market-v2/IOmertaMarketStateV2.sol:7](../../omerta-contracts/src/market-v2/IOmertaMarketStateV2.sol#L7) | — |
 | `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:24](../../omerta-contracts/src/OmertaHook.sol#L24) | — |
 | `IOMRMintable` | interface | [omerta-contracts/src/OmertaBond.sol:16](../../omerta-contracts/src/OmertaBond.sol#L16) | — |
@@ -73,6 +75,9 @@
 | `IRwaHealthOverlay` | interface | [omerta-contracts/src/interfaces/IRwaHealthOverlay.sol:5](../../omerta-contracts/src/interfaces/IRwaHealthOverlay.sol#L5) | — |
 | `ISettlementDataFeeSource` | interface | [omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol:3](../../omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol#L3) | — |
 | `ISettlementGasPoolMigrationCandidate` | interface | [omerta-contracts/src/SettlementGasPool.sol:9](../../omerta-contracts/src/SettlementGasPool.sol#L9) | — |
+| `ISingleGenesisAuction` | interface | [omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol:20](../../omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol#L20) | — |
+| `ISingleGenesisCharacterGate` | interface | [omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol:41](../../omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol#L41) | — |
+| `ISingleGenesisMarketHook` | interface | [omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol:36](../../omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol#L36) | — |
 | `IStepStorage` | interface | [omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol:7](../../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol#L7) | — |
 | `IStockQuoteOracle` | interface | [omerta-contracts/src/RwaStockBuyer.sol:28](../../omerta-contracts/src/RwaStockBuyer.sol#L28) | — |
 | `IStockSwapAdapter` | interface | [omerta-contracts/src/RwaStockBuyer.sol:20](../../omerta-contracts/src/RwaStockBuyer.sol#L20) | — |
@@ -86,12 +91,13 @@
 | `LiquidityBuybackExecutor` | contract | [omerta-contracts/src/LiquidityBuybackExecutor.sol:27](../../omerta-contracts/src/LiquidityBuybackExecutor.sol#L27) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `IUnlockCallback` |
 | `MaxBidPriceLib` | library | [omerta-contracts/src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol:9](../../omerta-contracts/src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol#L9) | — |
 | `OmertaArbitrageV2` | contract | [omerta-contracts/src/market-v2/OmertaArbitrageV2.sol:21](../../omerta-contracts/src/market-v2/OmertaArbitrageV2.sol#L21) | `IUnlockCallback`, `ReentrancyGuard` |
+| `OmertaAuctionCoordinatorV2` | contract | [omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol:50](../../omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol#L50) | `ReentrancyGuard` |
 | `OmertaBond` | contract | [omerta-contracts/src/OmertaBond.sol:74](../../omerta-contracts/src/OmertaBond.sol#L74) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `OmertaCommitmentVaultV2` | contract | [omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol:30](../../omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol#L30) | `Ownable2Step`, `ReentrancyGuard`, `IERC721Receiver` |
 | `OmertaFees` | contract | [omerta-contracts/src/OmertaFees.sol:21](../../omerta-contracts/src/OmertaFees.sol#L21) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmertaGameSettlementV2` | contract | [omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol:10](../../omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol#L10) | `ReentrancyGuard` |
-| `OmertaGenesisCoordinatorV2` | contract | [omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol:43](../../omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol#L43) | `IGenesisPlayerIntegration`, `ReentrancyGuard` |
-| `OmertaGuardedAuction` | contract | [omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol:14](../../omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol#L14) | `ContinuousClearingAuction` |
+| `OmertaGenesisCoordinatorV2` | contract | [omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol:44](../../omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol#L44) | `IGenesisPlayerIntegration`, `ReentrancyGuard` |
+| `OmertaGuardedAuction` | contract | [omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol:16](../../omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol#L16) | `ContinuousClearingAuction` |
 | `OmertaHook` | contract | [omerta-contracts/src/OmertaHook.sol:118](../../omerta-contracts/src/OmertaHook.sol#L118) | `IHooks`, `IInitializerHook`, `IOmrV4ObservationSource`, `Ownable2Step` |
 | `OmertaHookV2` | contract | [omerta-contracts/src/market-v2/OmertaHookV2.sol:27](../../omerta-contracts/src/market-v2/OmertaHookV2.sol#L27) | `IHooks`, `IInitializerHook`, `IOmrV4ObservationSource`, `ReentrancyGuard` |
 | `OmertaInventoryBondV2` | contract | [omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol:20](../../omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol#L20) | `ReentrancyGuard` |
