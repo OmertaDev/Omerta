@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3966a26f2b6903f8369e0f847a03da417ccc4280",
+  "sourceRevision": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9764,
-    "edges": 39786,
+    "nodes": 9766,
+    "edges": 39797,
     "byNodeType": {
       "Artifact": 4157,
       "Command": 179,
-      "Commit": 2030,
+      "Commit": 2032,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3246,
-      "CHANGED": 15440,
+      "CHANGED": 15449,
       "CONTAINS": 4178,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 611,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2030,
+      "HAS_COMMIT": 2032,
       "IMPLEMENTS": 124,
       "IMPORTS": 3935,
       "INHERITS": 39,
@@ -85485,20 +85485,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 69480,
-      "lines": 754,
-      "version": "76e597565da87309",
+      "bytes": 69622,
+      "lines": 756,
+      "version": "aa508995154b2e0c",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "76e597565da87309"
+          "version": "aa508995154b2e0c"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-10-06T19:37:35.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -102161,6 +102161,22 @@
       ]
     },
     {
+      "key": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "type": "Commit",
+      "id": "22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "label": "chore(knowledge): refresh generated artifacts for 3966a26f",
+      "title": "chore(knowledge): refresh generated artifacts for 3966a26f",
+      "date": "2026-10-06T19:25:02.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "provenance": [
+        {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        }
+      ]
+    },
+    {
       "key": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "type": "Commit",
       "id": "22d586788deba6c06fba940f88af499221af3908",
@@ -106301,6 +106317,22 @@
         {
           "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a",
           "url": "https://github.com/OmertaDev/Omerta/commit/3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "type": "Commit",
+      "id": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "label": "Account for the one-time player reset in migration catalog checks",
+      "title": "Account for the one-time player reset in migration catalog checks",
+      "date": "2026-10-06T19:37:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "provenance": [
+        {
+          "commit": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7"
         }
       ]
     },
@@ -150050,6 +150082,9 @@
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -150492,6 +150527,9 @@
         },
         {
           "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+        },
+        {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -151319,6 +151357,9 @@
           "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
         },
         {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -152144,6 +152185,9 @@
           "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
         },
         {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -152876,6 +152920,9 @@
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -153186,6 +153233,9 @@
         },
         {
           "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+        },
+        {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -153938,6 +153988,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
         },
         {
@@ -154356,6 +154409,9 @@
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+        },
+        {
+          "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -162494,7 +162550,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3966a26f2b6903f8369e0f847a03da417ccc4280",
+      "revision": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -192868,13 +192924,13 @@
       "type": "TestSuite",
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
-      "lines": 754,
-      "version": "76e597565da87309",
+      "lines": 756,
+      "version": "aa508995154b2e0c",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "76e597565da87309"
+          "version": "aa508995154b2e0c"
         }
       ]
     },
@@ -240657,6 +240713,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -255997,6 +256117,14 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7"
       }
     },
     {
@@ -415288,6 +415416,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:22a7e39fe4c8aff51081aba5e4584e65fd632caa",
+      "provenance": {
+        "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:22d586788deba6c06fba940f88af499221af3908",
       "provenance": {
         "commit": "22d586788deba6c06fba940f88af499221af3908"
@@ -417355,6 +417491,14 @@
       "to": "Commit:3ebaa016353640bba4787f4fdf3f2fe9d183b42a",
       "provenance": {
         "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7",
+      "provenance": {
+        "commit": "3ebe28f2d9497fc3f9cc9e7e2eb5731965a854a7"
       }
     },
     {
@@ -449441,7 +449585,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 415
+        "line": 417
       }
     },
     {
@@ -449459,7 +449603,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 413
+        "line": 415
       }
     },
     {
@@ -449468,7 +449612,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 467
+        "line": 469
       }
     },
     {
@@ -449477,7 +449621,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 412
+        "line": 414
       }
     },
     {
@@ -449486,7 +449630,7 @@
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 462
+        "line": 464
       }
     },
     {
@@ -449513,7 +449657,7 @@
       "to": "Artifact:test/lib/phase2-item-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 411
+        "line": 413
       }
     },
     {
@@ -449540,7 +449684,7 @@
       "to": "Artifact:test/phase2-lots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 414
+        "line": 416
       }
     },
     {
@@ -514205,7 +514349,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 415
+        "line": 417
       }
     },
     {
@@ -514223,7 +514367,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 413
+        "line": 415
       }
     },
     {
@@ -514232,7 +514376,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 467
+        "line": 469
       }
     },
     {
@@ -514241,7 +514385,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 412
+        "line": 414
       }
     },
     {
