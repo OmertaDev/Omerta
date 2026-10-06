@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "48b91818a3bdd8f6199bdfeca303cb18f7ac6290",
+  "sourceRevision": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9752,
-    "edges": 39715,
+    "nodes": 9754,
+    "edges": 39723,
     "byNodeType": {
       "Artifact": 4154,
       "Command": 179,
-      "Commit": 2024,
+      "Commit": 2026,
       "Contract": 120,
       "Document": 684,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3243,
-      "CHANGED": 15407,
+      "CHANGED": 15413,
       "CONTAINS": 4175,
       "DECLARES": 179,
       "DEFINED_IN": 1294,
       "DEPENDS_ON": 65,
       "EXECUTES": 609,
       "HANDLED_BY": 711,
-      "HAS_COMMIT": 2024,
+      "HAS_COMMIT": 2026,
       "IMPLEMENTS": 124,
       "IMPORTS": 3924,
       "INHERITS": 39,
@@ -74353,20 +74353,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1320129,
-      "lines": 13620,
-      "version": "43a786ae87792b08",
+      "bytes": 1320248,
+      "lines": 13624,
+      "version": "642bd012b9906bdd",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "43a786ae87792b08"
+          "version": "642bd012b9906bdd"
         }
       ],
-      "lastChangedAt": "2026-10-06T00:08:18.000Z",
+      "lastChangedAt": "2026-10-06T01:10:37.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "48b91818a3bdd8f6199bdfeca303cb18f7ac6290"
+      "lastChangedCommit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -83898,20 +83898,20 @@
       "path": "test/identity-checkout-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13840,
-      "lines": 169,
-      "version": "09417fd4c585d33f",
+      "bytes": 14472,
+      "lines": 176,
+      "version": "1cb5557af9179788",
       "text": true,
       "provenance": [
         {
           "file": "test/identity-checkout-client.js",
           "line": 1,
-          "version": "09417fd4c585d33f"
+          "version": "1cb5557af9179788"
         }
       ],
-      "lastChangedAt": "2026-10-06T00:08:18.000Z",
+      "lastChangedAt": "2026-10-06T01:10:37.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "48b91818a3bdd8f6199bdfeca303cb18f7ac6290"
+      "lastChangedCommit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
     },
     {
       "key": "Artifact:test/identity-checkout.js",
@@ -111116,6 +111116,22 @@
       ]
     },
     {
+      "key": "Commit:655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "type": "Commit",
+      "id": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "label": "Keep canonical request queue intact for focused NFT readiness",
+      "title": "Keep canonical request queue intact for focused NFT readiness",
+      "date": "2026-10-06T01:10:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "provenance": [
+        {
+          "commit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+          "url": "https://github.com/OmertaDev/Omerta/commit/655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
+        }
+      ]
+    },
+    {
       "key": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "type": "Commit",
       "id": "65b283debfa4be7bd3b927688882cd13215a0517",
@@ -129320,6 +129336,22 @@
         {
           "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684",
           "url": "https://github.com/OmertaDev/Omerta/commit/f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "type": "Commit",
+      "id": "f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "label": "Refresh knowledge for character wallet feedback",
+      "title": "Refresh knowledge for character wallet feedback",
+      "date": "2026-10-06T00:10:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "provenance": [
+        {
+          "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f77905c90eef4f3dba1b4930f89c4c85bcb90434"
         }
       ]
     },
@@ -151000,6 +151032,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
+        },
+        {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
@@ -151816,6 +151851,9 @@
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
         },
         {
+          "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
+        },
+        {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
@@ -152630,6 +152668,9 @@
         },
         {
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
+        },
+        {
+          "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
@@ -153665,6 +153706,9 @@
         },
         {
           "commit": "f711742fead91b6d1eaaaf0329ad08adcc8a9a15"
+        },
+        {
+          "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
@@ -162274,7 +162318,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "48b91818a3bdd8f6199bdfeca303cb18f7ac6290",
+      "revision": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
       "currentBranch": "codex/mint-wallet-feedback",
       "defaultBranch": "main",
       "visibility": "public",
@@ -191643,13 +191687,13 @@
       "type": "TestSuite",
       "id": "test/identity-checkout-client.js",
       "label": "test/identity-checkout-client.js",
-      "lines": 169,
-      "version": "09417fd4c585d33f",
+      "lines": 176,
+      "version": "1cb5557af9179788",
       "provenance": [
         {
           "file": "test/identity-checkout-client.js",
           "line": 1,
-          "version": "09417fd4c585d33f"
+          "version": "1cb5557af9179788"
         }
       ]
     },
@@ -275436,6 +275480,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "to": "Artifact:test/identity-checkout-client.js",
+      "provenance": {
+        "commit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -345240,6 +345300,38 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
       }
     },
     {
@@ -419214,6 +419306,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:655d800b3f2ca1887d6206c7cde4ab91cf4b7d32",
+      "provenance": {
+        "commit": "655d800b3f2ca1887d6206c7cde4ab91cf4b7d32"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "provenance": {
         "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
@@ -428313,6 +428413,14 @@
       "to": "Commit:f7584338d65a8f39a0ad0c56ffe4d5e23875c684",
       "provenance": {
         "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f77905c90eef4f3dba1b4930f89c4c85bcb90434",
+      "provenance": {
+        "commit": "f77905c90eef4f3dba1b4930f89c4c85bcb90434"
       }
     },
     {
