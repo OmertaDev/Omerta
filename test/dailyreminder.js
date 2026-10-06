@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { makeDb } from '../src/db.js';
 import { sendDailyCashReminders, DAILY_CASH_MESSAGE } from '../src/dailyreminder.js';
 import { bus } from '../src/game.js';
+import { sweepDispatch } from '../src/dispatch.js';
 
 delete process.env.DATABASE_URL;
 process.env.NODE_ENV = 'test';
@@ -17,7 +18,17 @@ try {
     await pool.query('INSERT INTO accounts (id,auth_provider,auth_subject,status) VALUES ($1,\'guest\',$1,$2)', [id, status]);
     await pool.query('INSERT INTO characters (id,account_id,name,season,alive,is_npc) VALUES ($1,$1,$1,1,$2,$3)', [id, alive, npc]);
   }
-  assert.equal((await sendDailyCashReminders(pool, now)).sent, 2);
+  const clock = Date.now, emailKey = process.env.EMAIL_API_KEY;
+  try {
+    Date.now = () => now;
+    delete process.env.EMAIL_API_KEY;
+    assert.equal(await sweepDispatch(pool), 0, 'daily inbox reminders run even when email is dormant');
+  } finally {
+    Date.now = clock;
+    if (emailKey === undefined) delete process.env.EMAIL_API_KEY;
+    else process.env.EMAIL_API_KEY = emailKey;
+  }
+  assert.equal((await sendDailyCashReminders(pool, now)).sent, 0);
   assert.equal(events, 1);
   let notes = (await pool.query('SELECT * FROM notifications')).rows;
   assert(notes.every(n => !n.delivered));

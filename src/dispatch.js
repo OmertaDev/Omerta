@@ -5,7 +5,9 @@
 // weeks ago. The content already exists (the Morning Paper: your empire's take, your rival's move, the
 // Bureau circling); this is the channel that carries it to a returning-nudge.
 //
-// DORMANT until an email provider key is set (the VAPID / chain precedent — nothing sends without
+// Daily inbox reminders also run on this sweep, independently of email settings.
+//
+// Email is DORMANT until an email provider key is set (the VAPID / chain precedent — nothing sends without
 // EMAIL_API_KEY). OPT-IN only (a player enters an address and turns it on) with a one-click unsubscribe in
 // every message (a stateless HMAC token — no click-tracking, no dark patterns). §10.4-FREE: a digest moves
 // no value and writes no ledger row; it READS the same notification + ledger data the Morning Paper does.
@@ -13,6 +15,7 @@
 // Deliberately careful copy: in-game figures are game currency, never a real-money/price/earnings claim.
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
+import { sendDailyCashReminders } from './dailyreminder.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const day = 24 * 3600 * 1000;
@@ -167,7 +170,7 @@ export async function unsubscribe(pool, accountId, token) {
 // last dispatch / last-active, capped — not the in-app paper_at marker). Reads only; moves nothing. ──
 async function digestFor(client, charId, since) {
   const headlines = (await client.query(
-    `SELECT type, COUNT(*) n FROM notifications WHERE character_id=$1 AND created_at > $2
+    `SELECT type, COUNT(*) n FROM notifications WHERE character_id=$1 AND created_at > $2 AND type <> 'daily_cash_reminder'
       GROUP BY type ORDER BY COUNT(*) DESC LIMIT 10`, [charId, since])).rows.map((r) => ({ type: r.type, n: Number(r.n) }));
   const rows = (await client.query(
     `SELECT reason, SUM(amount) s FROM transactions WHERE character_id=$1 AND at > $2 AND currency='cash'
@@ -243,6 +246,10 @@ export function __setSender(fn) { sender = fn; }   // test seam only
 // Lapsed = last activity between DIGEST_LAPSE_DAYS and DIGEST_MAX_LAPSE_DAYS ago (we stop nagging the long
 // gone). Dormant unless configured. §10.4-free. ──
 export async function sweepDispatch(pool) {
+  // In-app reminders use the existing worker delivery cadence, independently of email opt-in.
+  // A reminder failure stays isolated so the email digest can still run.
+  try { await sendDailyCashReminders(pool); }
+  catch (error) { console.error('daily cash reminders failed:', error.message); }
   if (!digestConfigured()) return 0;
   const now = Date.now();
   const cooldownBefore = new Date(now - cfg.cooldownDays() * day);
