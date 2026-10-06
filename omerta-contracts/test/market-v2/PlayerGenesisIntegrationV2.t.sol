@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {GenesisCharacterMock} from "../helpers/GenesisCharacterMock.sol";
 import {Test} from "forge-std/Test.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
@@ -21,6 +22,7 @@ import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces
 import {IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 
 contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
+    GenesisCharacterMock characterNft;
     using StateLibrary for IPoolManager;
     using PoolIdLibrary for *;
     uint256 constant Q96 = 1 << 96;
@@ -35,6 +37,8 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
     uint256 bid;
 
     function setUp() public {
+        characterNft = new GenesisCharacterMock();
+        characterNft.mint(alice); characterNft.mint(bob);
         vm.warp(3600); vm.roll(100); vm.deal(alice, 10 ether); vm.deal(bob, 10 ether);
         manager = IPoolManager(deployCode("PoolManager.sol:PoolManager", abi.encode(address(this))));
         token = new GenesisCoordinatorToken();
@@ -52,11 +56,11 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
         AuctionParameters memory p = AuctionParameters(address(0), address(0x11), address(coordinator),
             110,120,130,2,address(0),(Q96 / 1000) / 2 * 2,1,
             abi.encodePacked(uint24(1_000_000),uint40(10)));
-        auction = new OmertaGuardedAuction(address(token),1000 ether,p,IOmertaGenesisClaimGate(address(coordinator)));
+        auction = new OmertaGuardedAuction(address(token),1000 ether,p,IOmertaGenesisClaimGate(address(coordinator)),characterNft);
         address predicted = vm.computeCreateAddress(address(this),vm.getNonce(address(this)));
         bytes32 root = keccak256(bytes.concat(keccak256(abi.encode(block.chainid,predicted,alice,uint8(2)))));
         sale = new GenesisPlayerSale(token,coordinator,root,100 ether,block.timestamp + 1 days,
-            block.timestamp + 10 days,address(0x11));
+            block.timestamp + 10 days,address(0x11), characterNft);
         token.mint(address(auction),1000 ether); auction.onTokensReceived();
         token.mint(address(sale),100 ether); token.mint(address(coordinator),1000 ether);
         coordinator.bind(IGenesisGatedAuction(address(auction)),sale);

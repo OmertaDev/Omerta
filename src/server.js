@@ -92,6 +92,7 @@ import * as Desk from './desk.js';
 import * as Exchange from './exchange.js';
 import * as Bank from './bank.js';
 import { register as registerCasino } from './routes/casino.js';
+import { register as registerGenesisAuction } from './routes/genesisauction.js';
 import { register as registerPen } from './routes/pen.js';
 import { register as registerSpeakeasy } from './routes/speakeasy.js';
 import { register as registerPort } from './routes/port.js';
@@ -2325,6 +2326,7 @@ export async function buildServer() {
   registerHeists(app, { pool, auth });
 
   registerCasino(app, { pool, auth });
+  registerGenesisAuction(app, { auth });
 
   app.get('/v1/gangs', async () => {
     // two flat queries instead of a correlated subquery — identical response, and pg-mem

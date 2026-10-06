@@ -17,10 +17,11 @@ import {IAllowanceTransfer} from "permit2/src/interfaces/IAllowanceTransfer.sol"
 import {IPositionManager} from "../../lib/v4-periphery/src/interfaces/IPositionManager.sol";
 import {LiquidityAmounts} from "../../lib/v4-periphery/src/libraries/LiquidityAmounts.sol";
 import {Actions} from "../../lib/v4-periphery/src/libraries/Actions.sol";
-import {GenesisPlayerSale, IGenesisPlayerIntegration} from "../GenesisPlayerSale.sol";
 
-interface IGenesisGatedAuction {
+
+interface ISingleGenesisAuction {
     function characterNft() external view returns (IERC721);
+    function validationHook() external view returns (address);
     function checkpoint() external;
     function lbpInitializationParams() external view returns (uint256, uint256, uint256);
     function fundsRecipient() external view returns (address);
@@ -33,15 +34,20 @@ interface IGenesisGatedAuction {
     function sweepCurrency() external;
 }
 
-interface IGenesisMarketHook {
+interface ISingleGenesisMarketHook {
     function authorized() external view returns (address);
     function poolKey() external view returns (PoolKey memory);
 }
 
-/// @notice Atomically joins both Genesis sale legs into the current market's initial liquidity.
-/// @dev Requires the guarded auction, not the deployed CCA/LBP factory. No best-effort migration:
-/// initialization, position minting and player proceeds all roll back together on any failure.
-contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuard {
+interface ISingleGenesisCharacterGate {
+    function characterNft() external view returns (IERC721);
+    function characterNftCodeHash() external view returns (bytes32);
+    function eligibilityChainId() external view returns (uint256);
+}
+
+/// @notice Atomically migrates one NFT-gated public auction into the current market.
+/// @dev No player tranche, callback, secondary window or governance recovery of buyer principal.
+contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
@@ -61,35 +67,36 @@ contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuar
     bytes32 private immutable _permitHash;
     bytes32 private immutable _tokenHash;
     bytes32 public auctionCodeHash;
-    bytes32 public saleCodeHash;
+    IERC721 public immutable characterNft;
+    bytes32 public immutable characterNftCodeHash;
+    bytes32 public validatorCodeHash;
     bytes32 public hookCodeHash;
     PoolKey private _key;
-    IGenesisGatedAuction public auction;
-    GenesisPlayerSale public playerSale;
-    uint256 public override playerPriceX96;
-    bool public override playerMigrationSucceeded;
-    bool private _migrating;
+    ISingleGenesisAuction public auction;
+    uint256 public auctionPriceX96;
+    bool public migrationSucceeded;
     mapping(address => uint256) public residualCredit;
-    event Bound(address auction, address playerSale);
+    event Bound(address auction);
     event AuctionFinalized(uint256 priceX96);
-    event Migrated(uint256 positionId, uint128 liquidity, uint256 publicProceeds, uint256 playerProceeds);
+    event Migrated(uint256 positionId, uint128 liquidity, uint256 publicProceeds);
     error BadConfiguration();
     error WrongPhase();
     error SettlementMismatch();
 
     constructor(IPoolManager manager_, IPositionManager positions_, IAllowanceTransfer permit2_,
         IERC20 token_, IHooks hook_, uint24 fee_, int24 spacing_, uint128 reserve_,
-        address liquidityOwner_, address treasury_, address vig_, address founder_) {
+        address liquidityOwner_, address treasury_, address vig_, address founder_, IERC721 characterNft_) {
         if (address(manager_).code.length == 0 || address(positions_).code.length == 0
             || address(permit2_).code.length == 0 || address(token_).code.length == 0
-            || address(hook_) == address(0) || spacing_ <= 0 || reserve_ == 0
+            || address(hook_) == address(0) || address(characterNft_).code.length == 0 || spacing_ <= 0 || reserve_ == 0
             || reserve_ > uint128(type(int128).max) || liquidityOwner_ == address(0)
             || treasury_ == address(0) || vig_ == address(0) || founder_ == address(0)
             || address(positions_.poolManager()) != address(manager_)) revert BadConfiguration();
         poolManager = manager_; positionManager = positions_; permit2 = permit2_; omr = token_;
         configurator = msg.sender; liquidityOwner = liquidityOwner_; tokenReserve = reserve_;
         treasury = treasury_; vig = vig_; founder = founder_;
-        chainId = block.chainid;
+        chainId = block.chainid; characterNft = characterNft_;
+        characterNftCodeHash = address(characterNft_).codehash;
         _managerHash = address(manager_).codehash; _positionsHash = address(positions_).codehash;
         _permitHash = address(permit2_).codehash; _tokenHash = address(token_).codehash;
         _key = PoolKey(Currency.wrap(address(0)), Currency.wrap(address(token_)), fee_, spacing_, hook_);
@@ -97,71 +104,62 @@ contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuar
 
     function poolKey() external view returns (PoolKey memory) { return _key; }
 
-    /// @notice One-time deployment binding; addresses cannot be changed once the sale is configured.
-    function bind(IGenesisGatedAuction auction_, GenesisPlayerSale sale_) external {
+    /// @notice Bind the reviewed auction exactly once, before bidding starts.
+    function bind(ISingleGenesisAuction auction_) external {
         if (msg.sender != configurator || address(auction) != address(0)
-            || address(auction_).code.length == 0 || address(sale_).code.length == 0
-            || auction_.fundsRecipient() != address(this) || auction_.launchGate() != address(this)
-            || auction_.currency() != address(0) || auction_.token() != address(omr)
-            || address(auction_.characterNft()) != address(sale_.characterNft())
-            || auction_.blockNumberish() >= auction_.startBlock()
-            || address(_key.hooks).code.length == 0
-            || address(sale_.integration()) != address(this) || address(sale_.token()) != address(omr)) {
+            || block.chainid != chainId || address(characterNft).codehash != characterNftCodeHash
+            || address(auction_).code.length == 0 || auction_.fundsRecipient() != address(this)
+            || auction_.launchGate() != address(this) || auction_.currency() != address(0)
+            || auction_.token() != address(omr) || address(auction_.characterNft()) != address(characterNft)
+            || auction_.blockNumberish() >= auction_.startBlock() || address(_key.hooks).code.length == 0) {
             revert BadConfiguration();
         }
-        IGenesisMarketHook marketHook = IGenesisMarketHook(address(_key.hooks));
+        address validator = auction_.validationHook();
+        if (validator.code.length == 0
+            || address(ISingleGenesisCharacterGate(validator).characterNft()) != address(characterNft)
+            || ISingleGenesisCharacterGate(validator).characterNftCodeHash() != characterNftCodeHash
+            || ISingleGenesisCharacterGate(validator).eligibilityChainId() != chainId) revert BadConfiguration();
+        ISingleGenesisMarketHook marketHook = ISingleGenesisMarketHook(address(_key.hooks));
         if (marketHook.authorized() != address(this)
             || PoolId.unwrap(marketHook.poolKey().toId()) != PoolId.unwrap(_key.toId())) revert BadConfiguration();
-        auctionCodeHash = address(auction_).codehash; saleCodeHash = address(sale_).codehash;
-        hookCodeHash = address(_key.hooks).codehash;
-        auction = auction_; playerSale = sale_; emit Bound(address(auction_), address(sale_));
+        auctionCodeHash = address(auction_).codehash; hookCodeHash = address(_key.hooks).codehash;
+        validatorCodeHash = validator.codehash;
+        auction = auction_; emit Bound(address(auction_));
     }
 
     /// @notice Finality and graduation are enforced by the auction's initialization-parameter read.
     function checkpointAuction() external nonReentrant {
-        if (address(auction) == address(0) || playerPriceX96 != 0) revert WrongPhase();
+        if (address(auction) == address(0) || auctionPriceX96 != 0) revert WrongPhase();
         auction.checkpoint();
         (uint256 price,,) = auction.lbpInitializationParams();
         if (price == 0) revert SettlementMismatch();
-        playerPriceX96 = price; emit AuctionFinalized(price);
+        auctionPriceX96 = price; emit AuctionFinalized(price);
     }
 
-    function playerClaimsOpen() external view override returns (bool) {
-        return playerMigrationSucceeded && auction.claimsReady();
+    /// @notice Compatibility with the guarded auction's immutable claim-gate interface.
+    function playerClaimsOpen() external view returns (bool) {
+        return migrationSucceeded && block.chainid == chainId
+            && address(auction).codehash == auctionCodeHash && auction.claimsReady();
     }
 
     function migrate() external nonReentrant {
-        if (playerPriceX96 == 0 || playerMigrationSucceeded || _migrating) revert WrongPhase();
-        _migrating = true;
-        playerSale.releaseProceeds();
-        _migrating = false;
-        if (!playerMigrationSucceeded) revert SettlementMismatch();
+        if (auctionPriceX96 == 0 || migrationSucceeded) revert WrongPhase();
+        _initializeLiquidity();
     }
 
-    /// @dev Callback intentionally has no second reentrancy guard: migrate holds the outer guard.
-    function finalizePlayerProceeds() external payable override {
-        if (!_migrating || msg.sender != address(playerSale) || playerMigrationSucceeded
-            || !playerSale.released() || msg.value != playerSale.totalAccepted()) revert WrongPhase();
-        _initializeLiquidity(msg.value);
-    }
-
-    /// @notice A timed-out player tranche refunds its buyers without permanently locking public buyers.
-    function migratePublicAfterCancellation() external nonReentrant {
-        if (playerPriceX96 == 0 || playerMigrationSucceeded || !playerSale.cancelled()) revert WrongPhase();
-        _initializeLiquidity(0);
-    }
-
-    function _initializeLiquidity(uint256 playerProceeds) private {
+    function _initializeLiquidity() private {
         if (block.chainid != chainId || address(auction).codehash != auctionCodeHash
-            || address(playerSale).codehash != saleCodeHash || address(_key.hooks).codehash != hookCodeHash
+            || address(_key.hooks).codehash != hookCodeHash
+            || address(characterNft).codehash != characterNftCodeHash
+            || auction.validationHook().codehash != validatorCodeHash
             || address(poolManager).codehash != _managerHash || address(positionManager).codehash != _positionsHash
             || address(permit2).codehash != _permitHash || address(omr).codehash != _tokenHash) revert WrongPhase();
         uint256 beforeSweep = address(this).balance;
         (uint256 price,, uint256 publicProceeds) = auction.lbpInitializationParams();
-        if (price != playerPriceX96) revert SettlementMismatch();
+        if (price != auctionPriceX96) revert SettlementMismatch();
         auction.sweepCurrency();
         if (address(this).balance - beforeSweep != publicProceeds) revert SettlementMismatch();
-        uint256 total = publicProceeds + playerProceeds;
+        uint256 total = publicProceeds;
         uint256 nativeBudget = Math.mulDiv(total, 3750, 10_000);
         if (nativeBudget == 0 || nativeBudget > uint128(type(int128).max)
             || omr.balanceOf(address(this)) < tokenReserve) revert SettlementMismatch();
@@ -205,8 +203,8 @@ contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuar
         residualCredit[treasury] += Math.mulDiv(residual, 4000, 10_000);
         residualCredit[vig] += Math.mulDiv(residual, 3600, 10_000);
         residualCredit[founder] += residual - Math.mulDiv(residual, 4000, 10_000) - Math.mulDiv(residual, 3600, 10_000);
-        playerMigrationSucceeded = true;
-        emit Migrated(positionId, liquidity, publicProceeds, playerProceeds);
+        migrationSucceeded = true;
+        emit Migrated(positionId, liquidity, publicProceeds);
     }
 
     function withdrawResidual() external nonReentrant {
@@ -216,7 +214,7 @@ contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuar
     }
 
     function recoverTokenDust() external nonReentrant {
-        if (!playerMigrationSucceeded) revert WrongPhase();
+        if (!migrationSucceeded) revert WrongPhase();
         omr.safeTransfer(treasury, omr.balanceOf(address(this)));
     }
 

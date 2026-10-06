@@ -119,6 +119,7 @@ export const OPERATIONAL_ENV = [
   // Genesis lifecycle interlock. `legacy` preserves the pre-launch server; prepare/auction/migration/
   // oracle_warmup close the Desk and reserve bonds; only `live` reopens them after oracle sign-off.
   'GENESIS_LAUNCH_PHASE',
+  'GENESIS_AUCTION_MANIFEST_PATH', 'GENESIS_AUCTION_MANIFEST_SHA256',
   'DAILY_CAP_OMR', 'OMERTA_BOND_ADDRESS', 'OMERTA_FEES_ADDRESS',
   // THE v4 BOND-ORACLE KEEPER. The direct address exists because warmup deliberately precedes
   // OmertaBond.setOracle; after activation the watchdog cross-checks both. Its dedicated low-balance

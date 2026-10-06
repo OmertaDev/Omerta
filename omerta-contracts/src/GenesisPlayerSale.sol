@@ -6,6 +6,8 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {GenesisCharacterEligibility} from "./genesis-auction/GenesisCharacterEligibility.sol";
 
 interface IGenesisPlayerIntegration {
     /// @return Final, graduated native ETH auction price in Q96 wei per token base unit; zero before finality.
@@ -20,7 +22,7 @@ interface IGenesisPlayerIntegration {
 /// @notice Fixed snapshot player tranche. Off-chain gameplay determines the Merkle list, never this contract.
 /// @dev Exact per-wallet settlement avoids aggregate rounding releasing refundable ETH. Anyone may
 /// settle another wallet; all participants must settle before migration. No privileged refund override.
-contract GenesisPlayerSale is ReentrancyGuard {
+contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
     using SafeERC20 for IERC20;
     uint256 public constant Q96 = 1 << 96;
     uint256 public constant PURCHASE_WINDOW = 48 hours;
@@ -62,7 +64,8 @@ contract GenesisPlayerSale is ReentrancyGuard {
     error TransferFailed();
 
     constructor(IERC20 token_, IGenesisPlayerIntegration integration_, bytes32 root_, uint256 inventory_,
-        uint256 openDeadline_, uint256 migrationDeadline_, address unsoldRecipient_) {
+        uint256 openDeadline_, uint256 migrationDeadline_, address unsoldRecipient_, IERC721 characterNft_)
+        GenesisCharacterEligibility(characterNft_) {
         if (address(token_).code.length == 0 || address(integration_).code.length == 0 || root_ == bytes32(0)
             || inventory_ == 0 || openDeadline_ <= block.timestamp
             || migrationDeadline_ <= openDeadline_ + PURCHASE_WINDOW || unsoldRecipient_ == address(0)
@@ -94,6 +97,7 @@ contract GenesisPlayerSale is ReentrancyGuard {
     }
     function contribute(uint8 daysPlayed, bytes32[] calldata proof) external payable nonReentrant {
         if (cancelled || closesAt == 0 || block.timestamp >= closesAt || block.chainid != chainId) revert WrongPhase();
+        _requireCharacter(msg.sender);
         uint256 maximum = cap(daysPlayed);
         if (msg.value == 0 || requested[msg.sender] + msg.value > maximum
             || !MerkleProof.verifyCalldata(proof, merkleRoot, leaf(msg.sender, daysPlayed))) revert InvalidEligibility();

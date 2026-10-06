@@ -5605,6 +5605,172 @@
   }
 
   const characterTransactionsInFlight = new Set();
+  const genesisTransactionsInFlight = new Set();
+  function playerGenesisHtml() {
+    return `<h2>Genesis auction</h2><div class="card" id="player-genesis-card">
+      <p>Own a minted character NFT to participate. Both paid and free-credit mints qualify.</p>
+      <p class="d">One auction for every character NFT holder. Bid ETH for OMR during the 72-hour auction. Tokens become claimable after successful liquidity creation and the claim date. Check live status before paying.</p>
+      <button class="act" data-genesis-action="read">Check my wallet and sale status</button>
+      <div id="player-genesis-status" role="status" aria-live="polite">Deployment and funding must be verified before payments open.</div>
+      <div class="row" style="margin-top:8px"><input id="genesis-amount" inputmode="decimal" placeholder="ETH to bid" aria-label="ETH amount">
+      <input id="genesis-min-omr" inputmode="numeric" placeholder="Minimum OMR per ETH" aria-label="Minimum OMR per ETH">
+      <button class="act" data-genesis-action="bid">Review auction bid</button></div>
+      <p class="d">A bid's price limit protects the rate you accept; it does not guarantee a fill. Unspent bid ETH is refunded when you exit after the auction.</p>
+      <div class="row"><input id="genesis-bid-id" inputmode="numeric" placeholder="Your bid ID" aria-label="Your bid ID">
+      <button class="act" data-genesis-action="exitBid">Exit bid / collect refund</button>
+      <button class="act" data-genesis-action="claimBid">Claim auction tokens</button>
+      <button class="act" data-genesis-action="pending">Check pending transaction</button></div>
+      <details><summary>Advanced bid exit hints</summary><p class="d">Normally detected automatically. For a long checkpoint history, enter verified checkpoint blocks from the auction before exiting.</p>
+      <input id="genesis-last-full" inputmode="numeric" placeholder="Last fully filled checkpoint" aria-label="Last fully filled checkpoint">
+      <input id="genesis-outbid" inputmode="numeric" placeholder="Outbid checkpoint, or 0" aria-label="Outbid checkpoint"></details>
+      <p class="d">Keep your bid ID and transaction hash. Existing refunds and claims remain available after transferring your NFT.</p></div>`;
+  }
+  function playerGenesisStatus(message) {
+    const node = $('#player-genesis-status');
+    if (node) node.textContent = message;
+  }
+  async function playerGenesisAction(action) {
+    let key;
+    let inFlightAdded = false;
+    try {
+      if (!['read', 'pending', 'bid', 'exitBid', 'claimBid'].includes(action)) throw Error('Unsupported genesis action.');
+      playerGenesisStatus('Opening your wallet connection…');
+      const provider = await characterCheckoutStep(() => pickWalletProvider(), 'Open and unlock MetaMask to connect.');
+      if (!provider) throw Error('Choose your wallet to continue.');
+      const accounts = await characterCheckoutStep(() => provider.request({ method: 'eth_requestAccounts' }), 'Approve the account connection in your wallet.');
+      const from = accounts?.[0];
+      if (!/^0x[0-9a-f]{40}$/i.test(from || '')) throw Error('Connect a valid wallet.');
+      await characterCheckoutStep(() => switchCharacterChain(provider, '0x1237'), 'Switch your wallet to Robinhood Chain.');
+      key = 'omerta:genesis:4663:' + from.toLowerCase();
+      if (!$('#genesis-bid-id')?.value && localStorage.getItem(key + ':lastBidId')) $('#genesis-bid-id').value = localStorage.getItem(key + ':lastBidId');
+      if (action === 'pending') {
+        const stored = localStorage.getItem(key);
+        if (!stored) { playerGenesisStatus('No pending genesis transaction is recorded in this browser.'); return; }
+        const pending = JSON.parse(stored);
+        if (!pending.hash) throw Error('Your earlier wallet request has an unknown outcome. Check MetaMask activity before trying another transaction.');
+        const hashValid = value => typeof value === 'string' && /^0x[0-9a-f]{64}$/i.test(value);
+        const blockValid = value => typeof value === 'string' && /^0x(?:0|[1-9a-f][0-9a-f]*)$/i.test(value);
+        if (!hashValid(pending.hash)) throw Error('Recorded transaction hash is invalid. Check MetaMask activity before proceeding.');
+        const receipt = await characterCheckoutStep(() => provider.request({ method: 'eth_getTransactionReceipt', params: [pending.hash] }), 'Checking the pending transaction…');
+        if (!receipt?.blockNumber) throw Error('Transaction pending. Keep this hash and wait: ' + pending.hash);
+        if (!blockValid(receipt.blockNumber) || !hashValid(receipt.blockHash) || !hashValid(receipt.transactionHash)
+          || receipt.transactionHash.toLowerCase() !== pending.hash.toLowerCase() || !/^0x[01]$/i.test(receipt.status || ''))
+          throw Error('Receipt details are invalid. Keep the pending transaction and check again.');
+        const verifyCanonicalBlock = async () => {
+          const block = await characterCheckoutStep(() => provider.request({ method: 'eth_getBlockByNumber', params: [receipt.blockNumber, false] }), 'Checking that the transaction block is still canonical…');
+          if (!block || !blockValid(block.number) || BigInt(block.number) !== BigInt(receipt.blockNumber)
+            || !hashValid(block.hash) || block.hash.toLowerCase() !== receipt.blockHash.toLowerCase())
+            throw Error('Transaction block changed after a chain reorganization. Keep the pending transaction and check again.');
+        };
+        const head = BigInt(await characterCheckoutStep(() => provider.request({ method: 'eth_blockNumber' }), 'Checking confirmations…'));
+        if (head < BigInt(receipt.blockNumber) + 5n) throw Error('Waiting for five confirmations: ' + pending.hash);
+        await verifyCanonicalBlock();
+        const sent = await characterCheckoutStep(() => provider.request({ method: 'eth_getTransactionByHash', params: [pending.hash] }), 'Verifying the confirmed transaction…');
+        if (!sent || !hashValid(sent.hash) || sent.hash.toLowerCase() !== pending.hash.toLowerCase()
+          || !hashValid(sent.blockHash) || sent.blockHash.toLowerCase() !== receipt.blockHash.toLowerCase()
+          || !blockValid(sent.blockNumber) || BigInt(sent.blockNumber) !== BigInt(receipt.blockNumber)
+          || ['from', 'to', 'value'].some(k => String(sent[k]).toLowerCase() !== String(pending[k]).toLowerCase())
+          || String(sent.input || sent.data).toLowerCase() !== pending.data.toLowerCase()) throw Error('Recorded transaction details differ. Check wallet activity before proceeding.');
+        let confirmedBidId;
+        if (BigInt(receipt.status) === 1n && pending.action === 'bid') {
+          // The reviewed auction's BidSubmitted event has its bid ID and owner indexed.
+          const entry = receipt.logs?.find(log => log.address?.toLowerCase() === pending.to.toLowerCase()
+            && log.topics?.length === 3
+            && log.topics[0]?.toLowerCase() === '0x650baad5cd8ca09b8f580be220fa04ce2ba905a041f764b6a3fe2c848eb70540'
+            && log.topics[2]?.slice(-40).toLowerCase() === from.slice(2).toLowerCase());
+          if (entry && /^0x[0-9a-f]{64}$/i.test(entry.topics[1])) {
+            confirmedBidId = BigInt(entry.topics[1]).toString();
+          }
+        }
+        if (BigInt(await characterCheckoutStep(() => provider.request({ method: 'eth_chainId' }), 'Checking the confirmation network…')) !== 4663n
+          || (await characterCheckoutStep(() => provider.request({ method: 'eth_accounts' }), 'Checking the confirmation account…'))[0]?.toLowerCase() !== from.toLowerCase()) throw Error('Wallet changed while verifying the transaction. Switch back and check it again.');
+        const finalHead = BigInt(await characterCheckoutStep(() => provider.request({ method: 'eth_blockNumber' }), 'Rechecking transaction confirmations…'));
+        if (finalHead < BigInt(receipt.blockNumber) + 5n) throw Error('Waiting for five confirmations: ' + pending.hash);
+        await verifyCanonicalBlock();
+        if (localStorage.getItem(key) !== stored) throw Error('The pending transaction changed in another tab. Check the current transaction again.');
+        localStorage.removeItem(key);
+        if (confirmedBidId !== undefined) {
+          const node = $('#genesis-bid-id'); if (node) node.value = confirmedBidId;
+          localStorage.setItem(key + ':lastBidId', confirmedBidId);
+        }
+        playerGenesisStatus((BigInt(receipt.status) === 1n ? 'Transaction confirmed.' : 'Transaction reverted; no purchase completed.') + ' Keep this hash: ' + pending.hash);
+        return;
+      }
+      if (action === 'read') {
+        const bidId = $('#genesis-bid-id')?.value.trim();
+        const r = await characterCheckoutStep(() => api('GET', '/v1/genesis-auction?account=' + encodeURIComponent(from)
+          + (bidId ? '&bidId=' + encodeURIComponent(bidId) : '')), 'Checking live sale state and NFT ownership…');
+        if (r.code !== 200) throw Error(r.body?.message || 'Sale state is unavailable.');
+        playerGenesisStatus('Sale phase: ' + r.body.phase.replaceAll('_', ' ') + '. Character NFT: '
+          + (r.body.nftOwned ? 'owned.' : 'required for new bids.'));
+        return;
+      }
+      if (!navigator.locks) throw Error('Use a current browser with wallet transaction locking.');
+      if (genesisTransactionsInFlight.has(key)) throw Error('A genesis transaction is already being reviewed in this wallet.');
+      genesisTransactionsInFlight.add(key);
+      inFlightAdded = true;
+      const input = { account: from, action };
+      let reviewMinimum = '';
+      if (action === 'bid') input.amountEth = $('#genesis-amount')?.value.trim();
+      let expectedValue = 0n;
+      if (action === 'bid') {
+        if (!/^(0|[1-9][0-9]*)(\.[0-9]{1,18})?$/.test(input.amountEth || '') || input.amountEth.length > 98) throw Error('Enter an exact ETH amount with at most 18 decimals.');
+        const [whole, fraction = ''] = input.amountEth.split('.');
+        expectedValue = BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, '0'));
+        if (expectedValue === 0n) throw Error('Enter an ETH amount above zero.');
+      }
+      if (action === 'bid') {
+        const minimum = $('#genesis-min-omr')?.value.trim();
+        if (!/^[1-9][0-9]{0,30}$/.test(minimum || '')) throw Error('Enter your minimum whole OMR per ETH.');
+        const status = await characterCheckoutStep(() => api('GET', '/v1/genesis-auction?account=' + encodeURIComponent(from)), 'Checking the auction price increments…');
+        const tickText = status.body?.auction?.tickSpacingQ96, floorText = status.body?.auction?.floorPriceX96;
+        if (status.code !== 200 || !/^[1-9][0-9]{0,77}$/.test(tickText || '') || !/^[1-9][0-9]{0,77}$/.test(floorText || '')) throw Error('The auction price increments could not be verified. Refresh before bidding.');
+        const tick = BigInt(tickText), floor = BigInt(floorText);
+        if (tick < 2n || floor % tick !== 0n) throw Error('The auction price settings could not be verified.');
+        // Round the maximum ETH/OMR price down to a valid tick, preserving the user's minimum OMR rate.
+        const price = ((1n << 96n) / BigInt(minimum)) / tick * tick;
+        if (price <= floor) throw Error('Your minimum OMR rate exceeds the auction price limit. Check the sale price and enter another minimum.');
+        input.maxPriceX96 = price.toString();
+        reviewMinimum = minimum;
+      }
+      if (['exitBid', 'claimBid'].includes(action)) input.bidId = $('#genesis-bid-id')?.value.trim();
+      if (action === 'exitBid') {
+        const lastFull = $('#genesis-last-full')?.value.trim(), outbid = $('#genesis-outbid')?.value.trim();
+        if (lastFull || outbid) { input.lastFullyFilledCheckpointBlock = lastFull; input.outbidBlock = outbid; }
+      }
+      await navigator.locks.request(key, { ifAvailable: true }, async lock => {
+        if (!lock) throw Error('Another tab is reviewing a genesis transaction.');
+        if (localStorage.getItem(key)) throw Error('Check your pending genesis transaction before starting another.');
+        localStorage.setItem(key + ':probe', 'test'); localStorage.removeItem(key + ':probe');
+        const quote = await characterCheckoutStep(() => api('POST', '/v1/genesis-auction/tx', input), 'Verifying and simulating your transaction…');
+        if (quote.code !== 200) throw Error(quote.body?.message || 'This transaction is unavailable.');
+        const tx = quote.body;
+        if (tx.action !== action || tx.chainId !== 4663 || tx.chainIdHex !== '0x1237' || tx.from?.toLowerCase() !== from.toLowerCase()
+          || !/^0x[0-9a-f]{40}$/i.test(tx.to || '') || !/^0x[0-9a-f]*$/i.test(tx.data || '')
+          || !/^0x[0-9a-f]+$/i.test(tx.value || '') || !Number.isFinite(Date.parse(tx.validUntil))
+          || Date.parse(tx.validUntil) <= Date.now()) throw Error('Transaction verification failed.');
+        if (BigInt(tx.value) !== expectedValue) throw Error('The transaction value differs from the ETH amount you entered.');
+        if (!['bid', 'contribute'].includes(action) && BigInt(tx.value) !== 0n) throw Error('Refunds and claims must not request an ETH payment.');
+        if (!confirm(`Review ${action}\nWallet: ${from}\nContract: ${tx.to}\nETH: ${input.amountEth || '0'} plus wallet gas\n${action === 'bid' ? 'Minimum OMR per ETH: ' + reviewMinimum + '\n' : ''}${input.bidId ? 'Bid ID: ' + input.bidId + '\n' : ''}Approve or reject the transaction in MetaMask.`)) return;
+        const fresh = await characterCheckoutStep(() => api('POST', '/v1/genesis-auction/tx', input), 'Rechecking your transaction before MetaMask opens…');
+        if (fresh.code !== 200 || ['from', 'to', 'data', 'value', 'chainIdHex'].some(k => String(fresh.body[k]).toLowerCase() !== String(tx[k]).toLowerCase())) throw Error('Sale state or transaction changed. Review it again.');
+        const latest = await characterCheckoutStep(() => provider.request({ method: 'eth_accounts' }), 'Checking your final wallet account…');
+        const chain = await characterCheckoutStep(() => provider.request({ method: 'eth_chainId' }), 'Checking your final wallet network…');
+        if (latest[0]?.toLowerCase() !== from.toLowerCase() || BigInt(chain) !== 4663n
+          || !Number.isFinite(Date.parse(fresh.body.validUntil)) || Date.parse(fresh.body.validUntil) <= Date.now()) throw Error('Wallet or sale state changed. Review it again.');
+        const intent = { from, to: tx.to, value: tx.value, data: tx.data, action };
+        localStorage.setItem(key, JSON.stringify(intent));
+        playerGenesisStatus('Open MetaMask to approve or reject. Do not start another transaction while this request is pending.');
+        let hash;
+        try { hash = await provider.request({ method: 'eth_sendTransaction', params: [{ from, to: tx.to, value: tx.value, data: tx.data, chainId: tx.chainIdHex }] }); }
+        catch (error) { if (error?.code === 4001) localStorage.removeItem(key); throw error; }
+        if (!/^0x[0-9a-f]{64}$/i.test(hash || '')) throw Error('Unknown submission outcome. Check MetaMask activity before trying again.');
+        localStorage.setItem(key, JSON.stringify({ ...intent, hash }));
+        playerGenesisStatus('Transaction submitted: ' + hash + '. Use “Check pending transaction” for confirmation and your bid ID.');
+      });
+    } catch (error) { playerGenesisStatus(error?.message || 'Genesis action failed. No new transaction is available.'); toast(error?.message || 'Genesis action failed', true); }
+    finally { if (inFlightAdded) genesisTransactionsInFlight.delete(key); }
+  }
   async function readCharacterReadiness() {
     const authToken = token;
     const result = await apiNow('GET', '/v1/identity/readiness', undefined, { authToken });
@@ -5718,6 +5884,8 @@
   }
   document.addEventListener('click', (event) => {
     if (event.target?.closest?.('[data-character-open]')) { $('#btn-wallet')?.click(); return; }
+    const genesisAction = event.target?.closest?.('[data-genesis-action]')?.dataset?.genesisAction;
+    if (genesisAction) { playerGenesisAction(genesisAction); return; }
     const button = event.target?.closest?.('[data-character-tx]');
     if (!button || button.disabled) return;
     button.disabled = true;
@@ -12270,6 +12438,7 @@
         ${(me.ladder?.lockTiers || []).length && Number(me.ladder?.staked || 0) > 0 ? `<div class="row" style="margin-top:4px">
           ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${esc(t.name)} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
       ${characterWalletHtml(identityBody, identityR.code)}
+      ${playerGenesisHtml()}
 
       ${fg.available ? `
       <h2 style="margin-top:12px">The Forge <span class="d" style="font-size:11px">(your wallet's history shapes the build — once per wallet, ever)</span></h2>
