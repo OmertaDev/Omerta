@@ -2,7 +2,8 @@
   "sourceCommit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c",
   "baseCommit": "b899f3766b95a942279fb0e8461c7dc1da6f5879",
   "phase": "pre-deployment-single-auction",
-  "capturedUtc": "2026-10-06T23:29:48.161Z",
+  "capturedUtc": "2026-10-06T23:30:17.736Z",
+  "evidenceNormalization": "UTF-8 text with LF line endings for Git; unchanged original outputs retained outside checkout",
   "sources": [
     {
       "path": "omerta-contracts/GENESIS-AUCTION.md",
