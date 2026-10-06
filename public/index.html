@@ -8555,16 +8555,16 @@
       deed to whoever extracts it next, including a buyer if you sell in-game. Move what's yours out first.</div>`;
     const chainCard = () => {
       if (!deed || !chain.configured) return '';   // only when you hold a street + the deed chain is live
-      if (chain.extractPending) return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">On-Chain</span>
+      if (chain.extractPending) return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Mint your deed</span>
         <div class="d">Your street is being taken on-chain — submit the signed claim to your wallet to mint the NFT. It's <b>inert in-game</b> (no corner, no in-game sale) until you re-import it.</div>
         ${burnWarning}
         ${chain.tokenId ? `<div class="d" style="margin-top:3px"><a href="/deed/${esc(chain.tokenId)}" target="_blank">its NFT page →</a></div>` : ''}</div>`;
       let row = '';
-      if (chain.canExtract) row = `<button class="act" id="deed-extract">take your street on-chain (mint the NFT)</button>`;
-      else if (!chain.minted) row = `<div class="d" style="color:var(--dim)">Get made (the 0.01 ETH mint) to take your street on-chain.</div>`;
-      else if (!chain.walletLinked) row = `<div class="d" style="color:var(--dim)">Link a wallet (Going Legit) to take your street on-chain.</div>`;
+      if (chain.canExtract) row = `<button class="act" id="deed-extract">Mint your deed NFT</button>`;
+      else if (!chain.minted) row = `<div class="d" style="color:var(--dim)">Mint your character to unlock deed extraction. Review your mint credit or current checkout availability in the Capital Desk.</div>`;
+      else if (!chain.walletLinked) row = `<div class="d" style="color:var(--dim)">Link a wallet in the Capital Desk to mint your deed.</div>`;
       else row = `<div class="d" style="color:var(--dim)">Pull the street off the in-game market first to extract it.</div>`;
-      return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">On-Chain</span>
+      return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Mint your deed</span>
         <div class="d" style="font-size:11px;color:var(--dim);margin-bottom:3px">turn your street into a tradeable ERC-721 you own in your own wallet — it carries its whole legend and sells on any marketplace. While on-chain it's a collectible (inert in-game) until you or a buyer re-import it to play the corner game with it again. The deed transfers; your extraction entitlement doesn't.</div>
         ${row}${burnWarning}</div>`;
     };
@@ -8579,6 +8579,7 @@
         <div class="d" style="font-size:11px;margin-top:2px">Open: ${(n.open || []).map((x) => esc(x)).join(' · ') || '—'}${(n.coming || []).length ? ` <span style="color:var(--dim)">· opening: ${n.coming.map((x) => esc(x)).join(' · ')}</span>` : ''}</div>
         ${b.canClaim ? `<button class="act" data-claimdist="${d.id}">claim a street here</button>` : ''}</div>`; }).join('')}</div>`;
     t.innerHTML = `
+      ${chainCard()}
       ${deed ? `<h2>${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
         <div class="card" style="border-color:var(--gold)"><span class="t">The Deed</span>
           <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, on ${esc(deed.districtName)}${deed.neighborhood ? ' — ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. It's yours — nobody takes it off you, and it outlives your street: the heir inherits it.</div>
@@ -8593,7 +8594,6 @@
           <div style="margin-top:6px"><input id="deed-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"></div></div>`}
       ${cornerCard(b.corner)}
       ${marketCard(b.market)}
-      ${chainCard()}
       ${cityBanner}
       ${districtCards}
       <div class="d" style="margin-top:8px"><a href="#" id="streets-lb-link">the great streets of the city →</a></div>
@@ -9152,6 +9152,18 @@
     // rebuilt card would wipe the half-typed name. Carry the draft across the rebuild.
     const refDraft = t.querySelector('#ref-claim-name')?.value || '';
     t.innerHTML = `
+      <section aria-labelledby="mint-priorities-title" style="margin-bottom:16px">
+        <h2 id="mint-priorities-title">Your character. Your deed.</h2>
+        <div class="d" style="margin-bottom:8px">The two core crypto steps in OMERTÀ. Mint your character NFT, then take your street deed on-chain when the rail is available.</div>
+        <div class="grid">
+          <div class="card" style="border-color:var(--gold)"><span class="t">1 · Mint your character</span>
+            <div class="d">Link your wallet, review character NFT checkout, and confirm your mint status. Already paid? Check confirmed credit before paying again.</div>
+            <button class="act prime" data-character-open type="button" style="margin-top:8px">Mint your character NFT →</button></div>
+          <div class="card" style="border-color:var(--gold)"><span class="t">2 · Mint your deed</span>
+            <div class="d">Claim and name your street, then review its NFT mint requirements. An on-chain deed is a collectible; the corner becomes inactive until re-import.</div>
+            <button class="act prime" data-go-tab="deeds" type="button" style="margin-top:8px">Prepare your deed mint →</button></div>
+        </div>
+      </section>
       ${streakCard}
       ${dayCard}
       ${payrollCard}
@@ -12076,6 +12088,8 @@
           <span class="capital-state ${launchStateClass}">${esc(phaseLabel)}</span>
         </header>
         <nav class="capital-nav" aria-label="Capital Desk sections">
+          <a href="#capital-wallet">Mint your character</a>
+          <a href="#capital-overview" data-capital-tab="deeds">Mint your deed</a>
           <a href="#capital-overview">Overview</a>
           <a href="#capital-overview" data-capital-tab="store">Buy</a>
           <a href="#capital-desk-market">The Desk</a>
