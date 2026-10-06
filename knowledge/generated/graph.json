@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e6be6efa39483cfc6ba137c9a68b475e8587690a",
+  "sourceRevision": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9803,
-    "edges": 39971,
+    "nodes": 9806,
+    "edges": 39984,
     "byNodeType": {
-      "Artifact": 4171,
+      "Artifact": 4172,
       "Command": 181,
-      "Commit": 2046,
+      "Commit": 2048,
       "Contract": 120,
       "Document": 686,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3250,
-      "CHANGED": 15538,
-      "CONTAINS": 4192,
+      "CHANGED": 15548,
+      "CONTAINS": 4193,
       "DECLARES": 181,
       "DEFINED_IN": 1296,
       "DEPENDS_ON": 65,
       "EXECUTES": 616,
       "HANDLED_BY": 712,
-      "HAS_COMMIT": 2046,
+      "HAS_COMMIT": 2048,
       "IMPLEMENTS": 124,
       "IMPORTS": 3951,
       "INHERITS": 39,
@@ -59833,6 +59833,29 @@
       "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
     },
     {
+      "key": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "type": "Artifact",
+      "id": "output/deed-rwa-upgrades/release-catalog-fix.json",
+      "label": "release-catalog-fix.json",
+      "path": "output/deed-rwa-upgrades/release-catalog-fix.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 698,
+      "lines": 17,
+      "version": "7ddbb59f46130a1d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "output/deed-rwa-upgrades/release-catalog-fix.json",
+          "line": 1,
+          "version": "7ddbb59f46130a1d"
+        }
+      ],
+      "lastChangedAt": "2026-10-06T23:52:19.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+    },
+    {
       "key": "Artifact:output/deed-rwa-upgrades/review.md",
       "type": "Artifact",
       "id": "output/deed-rwa-upgrades/review.md",
@@ -84542,20 +84565,20 @@
       "path": "test/lib/phase2-architecture-upgrade-catalog.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 35185,
-      "lines": 1035,
-      "version": "96cc36471eecdbe8",
+      "bytes": 36127,
+      "lines": 1069,
+      "version": "3131a6553a385a71",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-architecture-upgrade-catalog.json",
           "line": 1,
-          "version": "96cc36471eecdbe8"
+          "version": "3131a6553a385a71"
         }
       ],
-      "lastChangedAt": "2026-09-18T04:25:45.000Z",
+      "lastChangedAt": "2026-10-06T23:52:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "553619b5a18854dfac416e364953436f5a902781"
+      "lastChangedCommit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
     },
     {
       "key": "Artifact:test/lib/phase2-definition-fixtures.js",
@@ -128061,6 +128084,22 @@
       ]
     },
     {
+      "key": "Commit:e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "type": "Commit",
+      "id": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "label": "Record deed upgrade constraints in exact migration catalog",
+      "title": "Record deed upgrade constraints in exact migration catalog",
+      "date": "2026-10-06T23:52:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "provenance": [
+        {
+          "commit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+        }
+      ]
+    },
+    {
       "key": "Commit:e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
       "type": "Commit",
       "id": "e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
@@ -128761,6 +128800,22 @@
         {
           "commit": "ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8",
           "url": "https://github.com/OmertaDev/Omerta/commit/ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "type": "Commit",
+      "id": "eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "label": "Refresh knowledge for integrated deed upgrade release",
+      "title": "Refresh knowledge for integrated deed upgrade release",
+      "date": "2026-10-06T23:37:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "provenance": [
+        {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         }
       ]
     },
@@ -150981,6 +151036,9 @@
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         },
         {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
@@ -151801,6 +151859,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         },
         {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
@@ -152649,6 +152710,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
         },
         {
@@ -153495,6 +153559,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
         },
         {
@@ -153754,6 +153821,9 @@
         },
         {
           "commit": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
+        },
+        {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         },
         {
           "commit": "f1dea2e9a5ebc29de20dc3e9c927d5c06d2107c8"
@@ -154569,6 +154639,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
         },
         {
@@ -154926,6 +154999,9 @@
           "commit": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
         },
         {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
         },
         {
@@ -155215,6 +155291,9 @@
         },
         {
           "commit": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
+        },
+        {
+          "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         },
         {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
@@ -163269,12 +163348,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e6be6efa39483cfc6ba137c9a68b475e8587690a",
+      "revision": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
       "currentBranch": "codex/deed-rwa-vault-upgrades",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4171,
+      "currentArtifactCount": 4172,
       "provenance": [
         {
           "file": "README.md",
@@ -337652,6 +337731,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "to": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "provenance": {
+        "commit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "to": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
+      "provenance": {
+        "commit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
       "to": "Artifact:MARKETING.md",
       "provenance": {
@@ -340576,6 +340671,70 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
       }
     },
     {
@@ -370980,6 +371139,15 @@
       "to": "Artifact:output/deed-rwa-upgrades/reimport.js.log",
       "provenance": {
         "file": "output/deed-rwa-upgrades/reimport.js.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "provenance": {
+        "file": "output/deed-rwa-upgrades/release-catalog-fix.json",
         "line": 1
       }
     },
@@ -429948,6 +430116,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "provenance": {
+        "commit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
       "provenance": {
         "commit": "e7a59f63f86e9a7f721c8e9259ae999da39a2d53"
@@ -430295,6 +430471,14 @@
       "to": "Commit:ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8",
       "provenance": {
         "commit": "ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+      "provenance": {
+        "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
       }
     },
     {
