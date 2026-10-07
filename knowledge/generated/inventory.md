@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `1dcc1d27223f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `03b413a80e2f`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,174 |
-| Text lines | 1,504,690 |
-| Repository bytes inventoried | 807,014,749 |
-| Backend/route modules | 279 |
-| HTTP route registrations / unique routes | 806 / 806 |
+| Current artifacts | 4,241 |
+| Text lines | 1,521,697 |
+| Repository bytes inventoried | 808,038,020 |
+| Backend/route modules | 281 |
+| HTTP route registrations / unique routes | 808 / 808 |
 | Database tables | 370 |
-| Solidity declarations | 120 |
-| Git commits | 2,056 |
+| Solidity declarations | 126 |
+| Git commits | 2,067 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 9,816 / 40,035 |
+| Graph nodes / edges | 9,925 / 40,406 |
 
 ## Artifact kinds
 
@@ -24,17 +24,17 @@
 |---|---:|
 | media-asset | 1,194 |
 | artifact | 668 |
-| contract-project | 557 |
-| test-suite | 433 |
+| contract-project | 594 |
+| test-suite | 440 |
 | documentation | 410 |
-| backend-module | 251 |
-| engineering-harness | 194 |
-| contract-test | 105 |
-| contract-source | 103 |
+| backend-module | 252 |
+| engineering-harness | 198 |
+| contract-test | 111 |
+| contract-source | 105 |
 | audit | 98 |
 | design | 82 |
-| route-module | 28 |
-| web-surface | 15 |
+| route-module | 29 |
+| web-surface | 24 |
 | operations | 11 |
 | knowledge-base | 11 |
 | workflow | 6 |
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 13,669 | web-surface | 2026-10-06 |
+| [public/index.html](../../public/index.html) | 13,841 | web-surface | 2026-10-07 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
