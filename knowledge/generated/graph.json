@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e534548f5ae25259c151cd3fc398ccb1dad78944",
+  "sourceRevision": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10035,
-    "edges": 40786,
+    "nodes": 10037,
+    "edges": 40792,
     "byNodeType": {
       "Artifact": 4299,
       "Command": 184,
-      "Commit": 2101,
+      "Commit": 2103,
       "Contract": 126,
       "Document": 693,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3389,
-      "CHANGED": 15893,
+      "CHANGED": 15897,
       "CONTAINS": 4320,
       "DECLARES": 184,
       "DEFINED_IN": 1316,
       "DEPENDS_ON": 66,
       "EXECUTES": 632,
       "HANDLED_BY": 720,
-      "HAS_COMMIT": 2101,
+      "HAS_COMMIT": 2103,
       "IMPLEMENTS": 124,
       "IMPORTS": 4000,
       "INHERITS": 42,
@@ -104644,6 +104644,22 @@
       ]
     },
     {
+      "key": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "type": "Commit",
+      "id": "1b52e4fecbe74426785965f4deff79a8a733877a",
+      "label": "Refresh release inventory for exact recovery source compatibility",
+      "title": "Refresh release inventory for exact recovery source compatibility",
+      "date": "2026-10-07T09:06:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1b52e4fecbe74426785965f4deff79a8a733877a",
+      "provenance": [
+        {
+          "commit": "1b52e4fecbe74426785965f4deff79a8a733877a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1b52e4fecbe74426785965f4deff79a8a733877a"
+        }
+      ]
+    },
+    {
       "key": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
       "type": "Commit",
       "id": "1b5d2c285816e9070f995c496647577a28cfcf1a",
@@ -133940,6 +133956,22 @@
       ]
     },
     {
+      "key": "Commit:f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "type": "Commit",
+      "id": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "label": "Merge pull request #191 from OmertaDev/codex/genesis-nft-launch",
+      "title": "Merge pull request #191 from OmertaDev/codex/genesis-nft-launch",
+      "date": "2026-10-07T09:58:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "provenance": [
+        {
+          "commit": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f78a71e7e3f83eb7598f844cb88be812f6fc7086"
+        }
+      ]
+    },
+    {
       "key": "Commit:f8137874c71a2127cb73a03641033a2123005228",
       "type": "Commit",
       "id": "f8137874c71a2127cb73a03641033a2123005228",
@@ -155283,6 +155315,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+        },
+        {
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
@@ -156186,6 +156221,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+        },
+        {
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
@@ -157087,6 +157125,9 @@
         },
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        },
+        {
+          "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
         },
         {
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
@@ -158233,6 +158274,9 @@
         },
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        },
+        {
+          "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
         },
         {
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
@@ -167754,8 +167798,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e534548f5ae25259c151cd3fc398ccb1dad78944",
-      "currentBranch": "codex/genesis-nft-launch",
+      "revision": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -245856,6 +245900,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
       }
     },
     {
@@ -427489,6 +427565,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1b52e4fecbe74426785965f4deff79a8a733877a",
+      "provenance": {
+        "commit": "1b52e4fecbe74426785965f4deff79a8a733877a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1b5d2c285816e9070f995c496647577a28cfcf1a",
       "provenance": {
         "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
@@ -442132,6 +442216,14 @@
       "to": "Commit:f786503763e94cada9b2dec38bbfc5c2611c03f4",
       "provenance": {
         "commit": "f786503763e94cada9b2dec38bbfc5c2611c03f4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "provenance": {
+        "commit": "f78a71e7e3f83eb7598f844cb88be812f6fc7086"
       }
     },
     {
