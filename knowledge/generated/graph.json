@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+  "sourceRevision": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9808,
-    "edges": 39992,
+    "nodes": 9810,
+    "edges": 40001,
     "byNodeType": {
       "Artifact": 4172,
       "Command": 181,
-      "Commit": 2050,
+      "Commit": 2052,
       "Contract": 120,
       "Document": 686,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3250,
-      "CHANGED": 15554,
+      "CHANGED": 15561,
       "CONTAINS": 4193,
       "DECLARES": 181,
       "DEFINED_IN": 1296,
       "DEPENDS_ON": 65,
       "EXECUTES": 616,
       "HANDLED_BY": 712,
-      "HAS_COMMIT": 2050,
+      "HAS_COMMIT": 2052,
       "IMPLEMENTS": 124,
       "IMPORTS": 3951,
       "INHERITS": 39,
@@ -7523,18 +7523,18 @@
       "extension": ".yml",
       "bytes": 25506,
       "lines": 493,
-      "version": "ab7c5c4f8c5d9aab",
+      "version": "96e8b89a1a9d23f0",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "ab7c5c4f8c5d9aab"
+          "version": "96e8b89a1a9d23f0"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-07T00:52:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -59840,20 +59840,20 @@
       "path": "output/deed-rwa-upgrades/release-catalog-fix.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 1157,
-      "lines": 28,
-      "version": "a94ef761e38b2388",
+      "bytes": 1884,
+      "lines": 41,
+      "version": "9229e9f1252e4025",
       "text": true,
       "provenance": [
         {
           "file": "output/deed-rwa-upgrades/release-catalog-fix.json",
           "line": 1,
-          "version": "a94ef761e38b2388"
+          "version": "9229e9f1252e4025"
         }
       ],
-      "lastChangedAt": "2026-10-07T00:11:57.000Z",
+      "lastChangedAt": "2026-10-07T00:52:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
+      "lastChangedCommit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
     },
     {
       "key": "Artifact:output/deed-rwa-upgrades/review.md",
@@ -84036,20 +84036,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 284011,
+      "bytes": 284042,
       "lines": 4227,
-      "version": "a58b00a64ebc1889",
+      "version": "0a2d04f96f49f1e9",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a58b00a64ebc1889"
+          "version": "0a2d04f96f49f1e9"
         }
       ],
-      "lastChangedAt": "2026-10-04T23:32:40.000Z",
+      "lastChangedAt": "2026-10-07T00:52:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "33ffe017bf5f65f8955b05be746f4459dd211ca0"
+      "lastChangedCommit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -108900,6 +108900,22 @@
       ]
     },
     {
+      "key": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "type": "Commit",
+      "id": "4e83019e9616b367906c1d3e454c23c5015308de",
+      "label": "Refresh knowledge after Director migration retest",
+      "title": "Refresh knowledge after Director migration retest",
+      "date": "2026-10-07T00:13:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4e83019e9616b367906c1d3e454c23c5015308de",
+      "provenance": [
+        {
+          "commit": "4e83019e9616b367906c1d3e454c23c5015308de",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4e83019e9616b367906c1d3e454c23c5015308de"
+        }
+      ]
+    },
+    {
       "key": "Commit:4e86bf539544e0e295939a559dad17ccc310d95e",
       "type": "Commit",
       "id": "4e86bf539544e0e295939a559dad17ccc310d95e",
@@ -125184,6 +125200,22 @@
         {
           "commit": "cdfd8736ea200127a216c5642fa8c9bbb334f0e4",
           "url": "https://github.com/OmertaDev/Omerta/commit/cdfd8736ea200127a216c5642fa8c9bbb334f0e4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "type": "Commit",
+      "id": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "label": "Include required deed PostgreSQL test in CI inventory safeguard",
+      "title": "Include required deed PostgreSQL test in CI inventory safeguard",
+      "date": "2026-10-07T00:52:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "provenance": [
+        {
+          "commit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
         }
       ]
     },
@@ -151410,6 +151442,9 @@
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
         },
         {
+          "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+        },
+        {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
@@ -152262,6 +152297,9 @@
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
         },
         {
+          "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+        },
+        {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
@@ -153112,6 +153150,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
         },
         {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
@@ -154195,6 +154236,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
         },
         {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
@@ -163392,7 +163436,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "revision": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
       "currentBranch": "codex/deed-rwa-vault-upgrades",
       "defaultBranch": "main",
       "visibility": "public",
@@ -192684,12 +192728,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4227,
-      "version": "a58b00a64ebc1889",
+      "version": "0a2d04f96f49f1e9",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "a58b00a64ebc1889"
+          "version": "0a2d04f96f49f1e9"
         }
       ]
     },
@@ -197589,12 +197633,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 493,
-      "version": "ab7c5c4f8c5d9aab",
+      "version": "96e8b89a1a9d23f0",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "ab7c5c4f8c5d9aab"
+          "version": "96e8b89a1a9d23f0"
         }
       ]
     },
@@ -263639,6 +263683,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4e86bf539544e0e295939a559dad17ccc310d95e",
       "to": "Artifact:test/gates.js",
       "provenance": {
@@ -323691,6 +323767,30 @@
       "to": "Artifact:DEPLOY.md",
       "provenance": {
         "commit": "cdfd8736ea200127a216c5642fa8c9bbb334f0e4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "to": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "provenance": {
+        "commit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
       }
     },
     {
@@ -420616,6 +420716,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
+      "provenance": {
+        "commit": "4e83019e9616b367906c1d3e454c23c5015308de"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4e86bf539544e0e295939a559dad17ccc310d95e",
       "provenance": {
         "commit": "4e86bf539544e0e295939a559dad17ccc310d95e"
@@ -428755,6 +428863,14 @@
       "to": "Commit:cdfd8736ea200127a216c5642fa8c9bbb334f0e4",
       "provenance": {
         "commit": "cdfd8736ea200127a216c5642fa8c9bbb334f0e4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "provenance": {
+        "commit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
       }
     },
     {
