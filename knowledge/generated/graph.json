@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "96b517973ed47445cab7308a9ee4ac26624ab294",
+  "sourceRevision": "e534548f5ae25259c151cd3fc398ccb1dad78944",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10033,
-    "edges": 40777,
+    "nodes": 10035,
+    "edges": 40786,
     "byNodeType": {
       "Artifact": 4299,
       "Command": 184,
-      "Commit": 2099,
+      "Commit": 2101,
       "Contract": 126,
       "Document": 693,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3389,
-      "CHANGED": 15886,
+      "CHANGED": 15893,
       "CONTAINS": 4320,
       "DECLARES": 184,
       "DEFINED_IN": 1316,
       "DEPENDS_ON": 66,
       "EXECUTES": 632,
       "HANDLED_BY": 720,
-      "HAS_COMMIT": 2099,
+      "HAS_COMMIT": 2101,
       "IMPLEMENTS": 124,
       "IMPORTS": 4000,
       "INHERITS": 42,
@@ -92546,20 +92546,20 @@
       "path": "test/rc1-world-qualification.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 15175,
-      "lines": 180,
-      "version": "072369e964437dfc",
+      "bytes": 16523,
+      "lines": 195,
+      "version": "a7d019f549e6f4a5",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "072369e964437dfc"
+          "version": "a7d019f549e6f4a5"
         }
       ],
-      "lastChangedAt": "2026-10-07T04:22:09.000Z",
+      "lastChangedAt": "2026-10-07T09:00:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "75e3645d083eafe203f9012c6d02cb19ca54c57e"
+      "lastChangedCommit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
     },
     {
       "key": "Artifact:test/rc1-world-resource-observer.js",
@@ -96479,20 +96479,20 @@
       "path": "tools/rc1-deed-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 10017,
-      "lines": 137,
-      "version": "d27d375bb9ee537d",
+      "bytes": 13146,
+      "lines": 180,
+      "version": "c1208c6ee9fef0c3",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-deed-source-compatibility.js",
           "line": 1,
-          "version": "d27d375bb9ee537d"
+          "version": "c1208c6ee9fef0c3"
         }
       ],
-      "lastChangedAt": "2026-10-07T04:22:09.000Z",
+      "lastChangedAt": "2026-10-07T09:00:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "75e3645d083eafe203f9012c6d02cb19ca54c57e"
+      "lastChangedCommit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
     },
     {
       "key": "Artifact:tools/rc1-duel-selection-provenance.js",
@@ -98434,20 +98434,20 @@
       "path": "tools/rc1-world-qualification.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 30284,
-      "lines": 340,
-      "version": "a411db966477901f",
+      "bytes": 30980,
+      "lines": 345,
+      "version": "3aeefc31e6a917da",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-qualification.js",
           "line": 1,
-          "version": "a411db966477901f"
+          "version": "3aeefc31e6a917da"
         }
       ],
-      "lastChangedAt": "2026-10-07T04:22:09.000Z",
+      "lastChangedAt": "2026-10-07T09:00:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "75e3645d083eafe203f9012c6d02cb19ca54c57e"
+      "lastChangedCommit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
     },
     {
       "key": "Artifact:tools/rc1-world-resource-observer.js",
@@ -102864,6 +102864,22 @@
         {
           "commit": "0e02724224334c3bc0e8ad778340741d3cfe63fa",
           "url": "https://github.com/OmertaDev/Omerta/commit/0e02724224334c3bc0e8ad778340741d3cfe63fa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "type": "Commit",
+      "id": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "label": "Refresh release inventory for complete genesis test discovery",
+      "title": "Refresh release inventory for complete genesis test discovery",
+      "date": "2026-10-07T08:03:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "provenance": [
+        {
+          "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         }
       ]
     },
@@ -131524,6 +131540,22 @@
       ]
     },
     {
+      "key": "Commit:e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "type": "Commit",
+      "id": "e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "label": "Reconcile exact genesis server wrappers with existing recovery source reviews",
+      "title": "Reconcile exact genesis server wrappers with existing recovery source reviews",
+      "date": "2026-10-07T09:00:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "provenance": [
+        {
+          "commit": "e534548f5ae25259c151cd3fc398ccb1dad78944",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e534548f5ae25259c151cd3fc398ccb1dad78944"
+        }
+      ]
+    },
+    {
       "key": "Commit:e53dcd5be08d3b845d4535d2f398ff11f8eaa067",
       "type": "Commit",
       "id": "e53dcd5be08d3b845d4535d2f398ff11f8eaa067",
@@ -155206,6 +155238,9 @@
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
+          "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+        },
+        {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
@@ -156106,6 +156141,9 @@
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
+          "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+        },
+        {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
@@ -157004,6 +157042,9 @@
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
+        },
+        {
+          "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
@@ -158147,6 +158188,9 @@
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
+        },
+        {
+          "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
@@ -167710,7 +167754,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "96b517973ed47445cab7308a9ee4ac26624ab294",
+      "revision": "e534548f5ae25259c151cd3fc398ccb1dad78944",
       "currentBranch": "codex/genesis-nft-launch",
       "defaultBranch": "main",
       "visibility": "public",
@@ -201297,13 +201341,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-qualification.js",
       "label": "test/rc1-world-qualification.js",
-      "lines": 180,
-      "version": "072369e964437dfc",
+      "lines": 195,
+      "version": "a7d019f549e6f4a5",
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "072369e964437dfc"
+          "version": "a7d019f549e6f4a5"
         }
       ]
     },
@@ -237524,6 +237568,38 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "commit": "0e02724224334c3bc0e8ad778340741d3cfe63fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
       }
     },
     {
@@ -345976,6 +346052,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "to": "Artifact:test/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "provenance": {
+        "commit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e53dcd5be08d3b845d4535d2f398ff11f8eaa067",
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
@@ -426501,6 +426601,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
+      "provenance": {
+        "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0e696a889caa1b9b6c53df6e8a3ebb6824ea3479",
       "provenance": {
         "commit": "0e696a889caa1b9b6c53df6e8a3ebb6824ea3479"
@@ -440824,6 +440932,14 @@
       "to": "Commit:e52e4cab8fe7ea652a12ccc015b194084a2fbe4d",
       "provenance": {
         "commit": "e52e4cab8fe7ea652a12ccc015b194084a2fbe4d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e534548f5ae25259c151cd3fc398ccb1dad78944",
+      "provenance": {
+        "commit": "e534548f5ae25259c151cd3fc398ccb1dad78944"
       }
     },
     {
@@ -470879,7 +470995,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 5
+        "line": 7
       }
     },
     {
