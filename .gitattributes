@@ -2,3 +2,11 @@ knowledge/generated/** text eol=lf
 # Preserve retained evidence bytes, including native line endings and raw logs.
 docs/release/evidence/** -text
 docs/release/readiness/** -text
+# Preserve exact reviewed genesis code and deployment asset bytes across checkouts.
+omerta-contracts/src/market-v2/OmertaHookV2.sol text eol=lf
+omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol text eol=lf
+omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol text eol=lf
+omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol text eol=lf
+omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol text eol=lf
+public/genesis-deploy-artifact.js text eol=lf
+public/genesis-deploy-vendor/** -text

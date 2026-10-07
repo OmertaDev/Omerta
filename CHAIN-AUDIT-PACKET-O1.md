@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-02; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-07; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -10,7 +10,7 @@
 The [2026-09-08 liquidity-automation review](omerta-contracts/audits/2026-09-08-liquidity-automation/report.md)
 is a local predeployment review of the new components and their stated integrations. Its final
 contract, PostgreSQL, local-EVM and full backend checks passed; its manifests identify the exact
-reviewed source and evidence. The inventory and historical
+reviewed source and evidence. The [approved genesis review package](omerta-contracts/audits/2026-10-06-approved-genesis/report.md) pins the new NFT gate, single-auction coordinator and delayed tax governance separately. Its review applies only to its stated revision and predeployment phase. The inventory and historical
 measurements below grant no production activation, funding or deployment authority. Hook routing
 approval remains a separate submission where required.
 
@@ -52,11 +52,11 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 51 contracts + 11 interfaces, current owned source inventory
+## 1. SCOPE — 53 contracts + 11 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-owned `omerta-contracts/src` modules — 62 Solidity files, 51 contracts and 11 interfaces.
+owned `omerta-contracts/src` modules — 64 Solidity files, 53 contracts and 11 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
 including its declared local CCA patch. Together these identify all 97 source files; libraries
@@ -131,6 +131,8 @@ retain their original scopes and conclusions.
 | 60 | `GenesisPlayerSale` | signed eligibility, inventory caps, settlement and cancellation | `test/GenesisPlayerSale.t.sol`, `test/GenesisPlayerSaleInvariant.t.sol` |
 | 61 | `OmertaGuardedAuction` | public auction custody, safe batch claims and guarded initialization | `test/OmertaGuardedAuction.t.sol` |
 | 62 | `OmertaGenesisCoordinatorV2` | exact auction binding, inventory allocation and real liquidity execution | `test/market-v2/GenesisCoordinatorV2.t.sol`, `test/market-v2/PlayerGenesisIntegrationV2.t.sol` |
+| 63 | `GenesisCharacterEligibility` | fixed NFT identity and supply-snapshot admission; includes the fixed bid validator from the same source file | `test/OmertaGuardedAuction.t.sol` |
+| 64 | `OmertaAuctionCoordinatorV2` | approved single-auction liquidity funding, Safe custody and reserved ETH recovery | `test/market-v2/AuctionCoordinatorV2.t.sol`, `test/market-v2/AuctionGenesisRobinhoodFork.t.sol` |
 
 The [current red-team package](omerta-contracts/audits/2026-10-01-red-team/report.md) binds the
 complete source closure and remediation evidence. Its excluded activation paths and chain-specific

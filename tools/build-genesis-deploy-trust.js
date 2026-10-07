@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { loadGenesisAuctionArtifact } from './genesis-auction-deployment-plan.js';
+import { compilerSourceSha256, trustedAssetDifference } from './genesis-deploy-trust-checks.js';
 
 const require = createRequire(import.meta.url);
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -14,6 +15,8 @@ const vendorRoot = path.join(publicRoot, 'genesis-deploy-vendor');
 const checkOnly = process.argv.slice(2).includes('--check');
 if (process.argv.slice(2).some(arg => arg !== '--check')) throw Error('Usage: node tools/build-genesis-deploy-trust.js [--check]');
 const sha = value => createHash('sha256').update(value).digest('hex');
+const sourceHashes = evidence => Object.fromEntries(Object.entries(evidence.sources).map(([file, pin]) =>
+  [file, compilerSourceSha256(fs.readFileSync(path.join(root, 'omerta-contracts', file)), pin.compilerInputKeccak256)]));
 const artifact = loadGenesisAuctionArtifact('OmertaHookV2');
 const constructor = artifact.abi.find(entry => entry.type === 'constructor');
 const schema = constructor?.inputs.map(input => input.type);
@@ -46,7 +49,7 @@ outputs.set(path.join(vendorRoot, 'provenance.json'), Buffer.from(JSON.stringify
 const trusted = { schemaVersion: 1, contract: 'OmertaHookV2', constructorSchema: schema,
   openingSchema: ['uint16', 'uint16', 'uint128'], constructorWords: 16,
   compiler: artifact.evidence.compiler, optimizerRuns: 800, viaIR: true, evmVersion: 'cancun',
-  sourceHashes: Object.fromEntries(Object.entries(artifact.evidence.sources).map(([file, pin]) => [file, pin.sha256])),
+  sourceHashEncoding: 'compiler-verified UTF-8 LF', sourceHashes: sourceHashes(artifact.evidence),
   abiSha256: artifact.evidence.abiSha256, creationBytecode: artifact.bytecode,
   creationBytecodeKeccak256: artifact.evidence.creationBytecodeKeccak256,
   creationBytecodeSha256: sha(Buffer.from(artifact.bytecode.slice(2), 'hex')),
@@ -67,7 +70,7 @@ for (const [name, pin] of Object.entries(reviewed)) {
     !== JSON.stringify(['address', 'address', 'address', 'uint64', 'uint64', 'uint64', 'uint256', 'address', 'uint256', 'uint128', 'bytes']))
     throw Error('Guarded auction dynamic tuple does not match the reviewed canonical schema.');
   creationDefinitions[name] = { contract: name, constructorAbi: ctor, compiler: a.evidence.compiler,
-    sourceHashes: Object.fromEntries(Object.entries(a.evidence.sources).map(([file, source]) => [file, source.sha256])),
+    sourceHashEncoding: 'compiler-verified UTF-8 LF', sourceHashes: sourceHashes(a.evidence),
     creationBytecode: a.bytecode, creationBytecodeKeccak256: a.evidence.creationBytecodeKeccak256,
     creationBytecodeSha256: sha(Buffer.from(a.bytecode.slice(2), 'hex')), creationBytecodeBytes: (a.bytecode.length - 2) / 2 };
 }
@@ -77,7 +80,13 @@ outputs.set(path.join(publicRoot, 'genesis-deploy-artifact.js'), Buffer.from(
   + 'export const TRUSTED_CREATIONS = Object.freeze(' + JSON.stringify(creationDefinitions, null, 2) + ');\n'));
 for (const [file, content] of outputs) {
   if (checkOnly) {
-    if (!fs.existsSync(file) || !fs.readFileSync(file).equals(content)) throw Error(`Trusted deployment asset is stale: ${path.relative(root, file)}`);
+    if (!fs.existsSync(file)) throw Error(`Trusted deployment asset is missing: ${path.relative(root, file)}`);
+    const actual = fs.readFileSync(file);
+    if (!actual.equals(content)) {
+      const detail = file.endsWith('genesis-deploy-artifact.js') ? trustedAssetDifference(actual, content)
+        : `stored SHA256=${sha(actual)} expected SHA256=${sha(content)}`;
+      throw Error(`Trusted deployment asset is stale: ${path.relative(root, file)}; ${detail}`);
+    }
   } else { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, content); }
 }
 console.log(`Trusted hook/compiler/source/constructor and local noble assets ${checkOnly ? 'CHECK PASS' : 'GENERATED'}; no RPC/signing.`);
