@@ -23,5 +23,18 @@
       "populatedBaseline": "44f48a743e549591bd125a1f678099b8382dd78f",
       "twoMigrations": true
     }
+  },
+  "ciInventoryFix": {
+    "failedCiRun": 37550879177,
+    "prefixSource": "4e83019e9616b367906c1d3e454c23c5015308de",
+    "prefixLogSha256": "df74c81bd57cfe2f350e8398443da8ff1821974c88de9897fe66de7df0258893",
+    "failure": "test/gates.js:3534 omitted the new PostgreSQL deed-upgrade command",
+    "change": "Include required deed PostgreSQL test after pgquery; preserve missing-pgquery causal assertion",
+    "applicationSourceUnchanged": true,
+    "localRetest": {
+      "command": "node test/gates.js",
+      "exitCode": 0
+    },
+    "resume": "Existing workflow_dispatch tail_only executes repaired gates, chainparams, docs, playthrough truth, knowledge checks and all remaining CI stages; both PostgreSQL jobs rerun"
   }
 }

@@ -203,11 +203,6 @@ jobs:
       # 500'd every authed request for hours while all 61 pg-mem suites stayed green. pgcheck caught
       # that one only because it happens to call /v1/me; this catches the class wherever it lives, and
       # it found two more live 500s (GET /v1/rivals, GET /v1/commission) on its first run.
-      - name: deed upgrades (real PostgreSQL concurrency)
-        env:
-          DEED_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
-        run: npm run test:deed-upgrades:postgres
-
       - name: pgquery (every SQL string parses on real Postgres)
         env:
           DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_query
@@ -223,6 +218,11 @@ jobs:
             })().catch((e) => { console.error(e); process.exit(1); });
           "
           npm run pgquery
+
+      - name: deed upgrades (real PostgreSQL concurrency)
+        env:
+          DEED_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:deed-upgrades:postgres
 
       - name: pgcheck (pooling, row locks, timeouts, migration, ledger)
         env:
