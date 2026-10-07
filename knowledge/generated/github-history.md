@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `14c20350ad5d`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `75e3645d083e`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2064 |
+| Commits in clone | 2066 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-07 — docs: refresh module and test census after receipt recovery |
+| Latest commit | 2026-10-07 — test: bind recovery source review to native receipt evidence |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1174 |
+| OmertaDev | 1176 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 45 |
@@ -35,15 +35,15 @@
 | [src/server.js](../../src/server.js) | 369 | yes |
 | [SPEC.md](../../SPEC.md) | 359 | yes |
 | [schema.sql](../../schema.sql) | 299 | yes |
-| knowledge/generated/github-history.md | 287 | historical |
-| knowledge/generated/graph-summary.md | 287 | historical |
-| knowledge/generated/graph.json | 287 | historical |
-| knowledge/generated/inventory.md | 287 | historical |
+| knowledge/generated/github-history.md | 288 | historical |
+| knowledge/generated/graph-summary.md | 288 | historical |
+| knowledge/generated/graph.json | 288 | historical |
+| knowledge/generated/inventory.md | 288 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 227 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 130 | historical |
+| knowledge/generated/documents.md | 131 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 125 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
