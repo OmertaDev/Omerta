@@ -1,0 +1,106 @@
+{
+  "recordedAtUtc": "2026-10-07T06:47:20.6638265Z",
+  "sourceCommit": "5b891b47198bfe006b68a619259231fd9d87ee6f",
+  "changedSourceFile": "omerta-contracts/foundry.toml",
+  "foundryTomlSha256": "8a65f452399bc8eb090aaf2b4c96aba17a9ac2168e55139db0817092cb186d71",
+  "autoDetectionBefore": true,
+  "autoDetectionAfter": false,
+  "remappingsBefore": [
+    "@openzeppelin/=lib/openzeppelin-contracts/",
+    "v4-core/=lib/v4-core/src/",
+    "@uniswap/v4-core/=lib/v4-core/",
+    "permit2/=lib/permit2/",
+    "solmate/=lib/v4-core/lib/solmate/",
+    "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+    "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+    "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+    "forge-std/=lib/forge-std/src/",
+    "hardhat/=lib/v4-core/node_modules/hardhat/",
+    "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+    "v4-periphery/=lib/v4-periphery/src/"
+  ],
+  "remappingsAfter": [
+    "@openzeppelin/=lib/openzeppelin-contracts/",
+    "v4-core/=lib/v4-core/src/",
+    "@uniswap/v4-core/=lib/v4-core/",
+    "permit2/=lib/permit2/",
+    "solmate/=lib/v4-core/lib/solmate/",
+    "forge-std/=lib/forge-std/src/",
+    "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+    "v4-periphery/=lib/v4-periphery/src/",
+    "@uniswap/v4-periphery/=lib/v4-periphery/"
+  ],
+  "solc": "0.8.26",
+  "optimizerRuns": 800,
+  "evmVersion": "cancun",
+  "viaIrRestrictionsUnchanged": true,
+  "forceBuildExit": 0,
+  "focused": {
+    "passed": 64,
+    "failed": 0,
+    "invariantRuns": 64,
+    "skipped": 0,
+    "fuzzRuns": 512,
+    "invariantDepth": 64
+  },
+  "fullWarm": {
+    "seconds": 12.69,
+    "seed": "0x20261007",
+    "failed": 0,
+    "fuzzRuns": 128,
+    "invariantDepth": 64,
+    "passed": 1357,
+    "invariantRuns": 32,
+    "skipped": 2,
+    "suites": 96
+  },
+  "sizesExit": 0,
+  "bytecodeConclusion": "All5compiler-sourcehashesunchanged;allruntimeexecutablebodiesequal;all4creationexactbyteschangedCBORmetadata;AuctioncreationembeddedvalidatorCBORalsodifferent;ALLCBORdiagnosticnormalizationequal",
+  "exactBytecodeChecksUnchanged": true,
+  "crossPlatformLinuxConfirmation": "PendingCIstrictassetcheck;Windows-onlyexecutiondoesnotproveLinuxidentity",
+  "backup": "output/canonical-remappings-before-artifacts/",
+  "comparison": "output/canonical-remappings-bytecode-comparison.json",
+  "contracts": [
+    {
+      "contract": "OmertaReserveFundingV2",
+      "creationSha256Before": "47ebff03806272688a63a088aa0df2f401165d05a937bcf5ffbe202ccb950c9d",
+      "creationSha256After": "478a94bb79a4a6d7f4653145bbb6e2dd49da5b11d7d3090ecd11c683e6720af2",
+      "runtimeTemplateSha256Before": "61a0180604eb984ff7f7cea240303c92f1cf4c822b2f49f3e17f01ea6cb2a70d",
+      "runtimeTemplateSha256After": "990868f7b85a1b423eaf1446cb688663dbdd159801c52e6a62bae5d0bd659b2b"
+    },
+    {
+      "contract": "OmertaHookV2",
+      "creationSha256Before": "461a1de39562575dabf4c308b9fbd357792e3f9e4696f749b3396abe29d02743",
+      "creationSha256After": "f5788d18ae65075c0125efba440510df1859d684726dfa9f47937e2170b7a422",
+      "runtimeTemplateSha256Before": "cd04de9630cfcef38687c7d50f42c4bb60aa9f9f68dcb5bbd093ccbfa6ef4fb3",
+      "runtimeTemplateSha256After": "1a78ecd4a0b1d5833633f6258b59d411f6f392d69d7b28b5373be0b0ca96317b"
+    },
+    {
+      "contract": "OmertaAuctionCoordinatorV2",
+      "creationSha256Before": "6d38fe856bbbfbf89acc313c89ea9d51584a0333857eb8fbab97f0fea69ca633",
+      "creationSha256After": "ae2162a772d9b1df4ed2c1ee449048c84f01a80ad5517045dcf1b4d3e1f35901",
+      "runtimeTemplateSha256Before": "f87eaa5ca26cf6cbbe7e9a412d08b77dda50f721198fb5de5defd0aa34a0d680",
+      "runtimeTemplateSha256After": "f43c86907382f5e2935c159dfe8f0f49064d7b3dce8d3797be9a9d8c412f3a58"
+    },
+    {
+      "contract": "OmertaGuardedAuction",
+      "creationSha256Before": "2a253c690feb61b7693a4477b78705501cfa2dfddec652bbbf957ae99166e4d6",
+      "creationSha256After": "2e4aae122d8541c11b21df51ef7b413797883e416c09f1be79e1e412d0e5d265",
+      "runtimeTemplateSha256Before": "451310d29dd6dcc67b31688a5107aacb9bd715d71f05c7bad73fb8b5fd0436d2",
+      "runtimeTemplateSha256After": "5c975760169187f1dd5dc295e5d4461f730cba969925b5f6fe621773bb3a58af"
+    },
+    {
+      "contract": "GenesisCharacterBidValidation",
+      "creationSha256Before": "92cb31f0ecdc0239f0632e1bbc187a6a9705cfcf5b1409d5160d7deaf5bf5dd6",
+      "creationSha256After": "e81be3891928cb0e95f5ae5b340e2bab1024c748296b6b8a8e06033d15b0e01a",
+      "runtimeTemplateSha256Before": "79ca8d7c3af64e73e0293c0ced2e060d51d2164eeb1c7a825e0cc9a026f0d674",
+      "runtimeTemplateSha256After": "be10c73e9b4e589247cff24e0bb5ef17fb1baa27e7f3ca8346d979efd34f3ccb"
+    }
+  ],
+  "logs": [
+    "output/canonical-remappings-force-build.txt",
+    "output/canonical-remappings-focused.txt",
+    "output/canonical-remappings-full-warm.txt",
+    "output/canonical-remappings-sizes.txt"
+  ]
+}

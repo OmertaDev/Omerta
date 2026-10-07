@@ -135,6 +135,86 @@
       "file": "genesis-approved-current-governance-robinhood-forks-provenance.json",
       "originalSha256": "c02eabd0d50b7290f858ad9e0568a325d5b5003a54667fed8bc9ff6acb0b95fb",
       "retainedSha256": "c6fa1a9702f2a38de35e7e0905a069ec311fd8d33a97dc6bbab23e8d047478f9"
+    },
+    {
+      "file": "canonical-remappings-bytecode-comparison.json",
+      "originalSha256": "1de9e63cbd353a0660524a5b20eece280c8d3328c8c9984e29d81e6c35227897",
+      "retainedSha256": "1de9e63cbd353a0660524a5b20eece280c8d3328c8c9984e29d81e6c35227897"
+    },
+    {
+      "file": "canonical-remappings-provenance.json",
+      "originalSha256": "db4c0de3122fc2ad01a1654bef8fb01e49bc5294075dc0284811bf0c88176265",
+      "retainedSha256": "56ce156a3afb8d2e67618cfb5b467cf136f0d03cb1e7f542b518f179b4060107"
+    },
+    {
+      "file": "canonical-remappings-focused.txt",
+      "originalSha256": "0fa4a6778af8a03fed9dd3a1822cd55de63856ff95cd428c8f63099ffd910b4b",
+      "retainedSha256": "6ff53f59676e8afd6f69a829f59dd7afb9a864165c44a57dfab6ec8b727607ce"
+    },
+    {
+      "file": "canonical-remappings-full-warm.txt",
+      "originalSha256": "25cdb0b778b312a6c6967a1ced132e14d7a06a90bbb2aad5790df791d60b62cd",
+      "retainedSha256": "1c640b75b1279214e4dcac99605ea556379248afc7d880d7f65fb8486dd9c9a8"
+    },
+    {
+      "file": "canonical-remappings-sizes.txt",
+      "originalSha256": "ff7f8400086f973eb60e56c578cf9be8c74ce00b131fe03288f4339ffd12270c",
+      "retainedSha256": "9b53c71d8e969a73455204387e720bc419da7157cd37178fd5bb65861e9bc03d"
+    },
+    {
+      "file": "canonical-genesis-complete-technical-preflight.json",
+      "originalSha256": "65489a9f4415660a54ce20e18aedcb25d0ad19ffcbd52b14771ac44d40a90d96",
+      "retainedSha256": "65489a9f4415660a54ce20e18aedcb25d0ad19ffcbd52b14771ac44d40a90d96"
+    },
+    {
+      "file": "canonical-genesis-dryfork-getter-queries.json",
+      "originalSha256": "137371d1e5ee47cb6f1220be4717e67259e91de58bfea2bcd77a459823f84d8f",
+      "retainedSha256": "137371d1e5ee47cb6f1220be4717e67259e91de58bfea2bcd77a459823f84d8f"
+    },
+    {
+      "file": "canonical-genesis-evidence-inventory.json",
+      "originalSha256": "762b828e2511c972f022e38c86d7dc588ae4c519195660c8d1fe40e43e979e33",
+      "retainedSha256": "762b828e2511c972f022e38c86d7dc588ae4c519195660c8d1fe40e43e979e33"
+    },
+    {
+      "file": "canonical-genesis-primary-preflight.json",
+      "originalSha256": "37e4b6aab59e46a8a62cfe92a2e9811270c3572424220e41d871226ace331666",
+      "retainedSha256": "37e4b6aab59e46a8a62cfe92a2e9811270c3572424220e41d871226ace331666"
+    },
+    {
+      "file": "canonical-genesis-public-candidate-evidence.json",
+      "originalSha256": "c110ba27f8a703dbaa5d1489c903d42634e65ccd93d87960044f0aeb95529a13",
+      "retainedSha256": "c110ba27f8a703dbaa5d1489c903d42634e65ccd93d87960044f0aeb95529a13"
+    },
+    {
+      "file": "canonical-genesis-public-candidate-input.json",
+      "originalSha256": "5cd39f9ffd83463170e19e52fc33af64911c9ed2f66922f47b636e14245291d3",
+      "retainedSha256": "5cd39f9ffd83463170e19e52fc33af64911c9ed2f66922f47b636e14245291d3"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-dryfork-proof.json",
+      "originalSha256": "177a1050715e9925ac885c70ceebd37852b681e3a73a071d64af7c59c4cc82d7",
+      "retainedSha256": "177a1050715e9925ac885c70ceebd37852b681e3a73a071d64af7c59c4cc82d7"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-dryfork-run.txt",
+      "originalSha256": "9da89d33b0522175bf029ef5fa1ff8ccbbdb3d8e3114c3cb67337b1de0630960",
+      "retainedSha256": "9da89d33b0522175bf029ef5fa1ff8ccbbdb3d8e3114c3cb67337b1de0630960"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-external-proof.json",
+      "originalSha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549",
+      "retainedSha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-getter-proof.json",
+      "originalSha256": "b7b99cbf60b311fca02fe90a6e7a949c57eef32d10d25a0cdd8a33044b751263",
+      "retainedSha256": "b7b99cbf60b311fca02fe90a6e7a949c57eef32d10d25a0cdd8a33044b751263"
+    },
+    {
+      "file": "canonical-genesis-validator-runtime-observation.json",
+      "originalSha256": "6f1b5c4019a1346582cdb55815dcdfe70602b2a4bf47c05090bfef98b17a64cd",
+      "retainedSha256": "6f1b5c4019a1346582cdb55815dcdfe70602b2a4bf47c05090bfef98b17a64cd"
     }
   ]
 }

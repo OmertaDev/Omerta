@@ -1,0 +1,76 @@
+{
+  "sourceRevision": "5b891b47198bfe006b68a619259231fd9d87ee6f",
+  "status": "LONG_SPAN_TECHNICAL_PROOFS_NOT_SIGNING_AUTHORIZATION",
+  "nativeDuration": "4180269",
+  "longSpanCalibration": {
+    "priorActualObservationPath": "C:/Users/Jorge/Documents/Omerta/output/genesis-precanonical-5b891b-evidence/genesis-approved-public-candidate-evidence.json",
+    "priorActualObservationSha256": "88c2d1746b271997f8274a5eecfab95e34796038e883b41427c55a22bdf52a9a",
+    "nativeDelta": "124692",
+    "elapsedMilliseconds": "12886000",
+    "meanMillisecondsPerBlockRational": {
+      "numerator": "12886000",
+      "denominator": "124692"
+    },
+    "timestampRoundingBounds": {
+      "lowerElapsedMilliseconds": "12885000",
+      "upperElapsedMilliseconds": "12887000",
+      "denominatorNativeBlocks": "124692",
+      "assumption": "Integer-second endpoint timestamps give less than one second uncertainty in their elapsed difference; bound widened by one second each direction."
+    },
+    "canonicalHeadersRechecked": true,
+    "notHistoricalNativeInference": true,
+    "projectionWarning": "Genuine observed native counts at both times; future cadence is not guaranteed."
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-public-candidate-evidence.json",
+      "sha256": "c110ba27f8a703dbaa5d1489c903d42634e65ccd93d87960044f0aeb95529a13",
+      "bytes": 155186
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-public-candidate-input.json",
+      "sha256": "5cd39f9ffd83463170e19e52fc33af64911c9ed2f66922f47b636e14245291d3",
+      "bytes": 182508
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-primary-preflight.json",
+      "sha256": "37e4b6aab59e46a8a62cfe92a2e9811270c3572424220e41d871226ace331666",
+      "bytes": 134347
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-validator-runtime-observation.json",
+      "sha256": "6f1b5c4019a1346582cdb55815dcdfe70602b2a4bf47c05090bfef98b17a64cd",
+      "bytes": 3961
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-seven-runtime-dryfork-proof.json",
+      "sha256": "177a1050715e9925ac885c70ceebd37852b681e3a73a071d64af7c59c4cc82d7",
+      "bytes": 109185
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-seven-runtime-getter-proof.json",
+      "sha256": "b7b99cbf60b311fca02fe90a6e7a949c57eef32d10d25a0cdd8a33044b751263",
+      "bytes": 17513
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-seven-runtime-external-proof.json",
+      "sha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549",
+      "bytes": 147554
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-seven-runtime-dryfork-run.txt",
+      "sha256": "9da89d33b0522175bf029ef5fa1ff8ccbbdb3d8e3114c3cb67337b1de0630960",
+      "bytes": 83
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-complete-technical-preflight.json",
+      "sha256": "65489a9f4415660a54ce20e18aedcb25d0ad19ffcbd52b14771ac44d40a90d96",
+      "bytes": 244908
+    },
+    {
+      "path": "C:\\Users\\Jorge\\Documents\\Omerta\\output\\canonical-genesis-dryfork-getter-queries.json",
+      "sha256": "137371d1e5ee47cb6f1220be4717e67259e91de58bfea2bcd77a459823f84d8f",
+      "bytes": 7304
+    }
+  ]
+}

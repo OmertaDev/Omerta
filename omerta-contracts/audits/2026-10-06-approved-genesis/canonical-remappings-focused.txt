@@ -1,0 +1,165 @@
+No files changed, compilation skipped
+
+Ran 7 tests for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceV2Test
+[PASS] testChainAndHookDomainsCannotReplay() (gas: 279478)
+[PASS] testExactOutputFounderValueAndBuyDoesNotAcquireSellTax() (gas: 596592)
+[PASS] testExactPayloadNonceCancelAndAppliedReplayRejected() (gas: 153505)
+[PASS] testFuzzFutureFeeConservationAndOpsValue(uint16,uint16,uint16,uint16,uint64) (runs: 512, μ: 530528, ~: 525171)
+Logs:
+  Bound result 2999999999000000051
+
+[PASS] testHardCapWideInputsAndFounderMinimum() (gas: 431511)
+[PASS] testOnlyFutureFeesChangeAndAllOldReceiverCreditsStayProtected() (gas: 740809)
+[PASS] testSafeOnlyQueueCancelExecuteAndExact48HourBoundary() (gas: 111449)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 239.64ms (213.03ms CPU time)
+
+Ran 18 tests for test/market-v2/AuctionCoordinatorV2.t.sol:AuctionCoordinatorV2Test
+[PASS] testAllPinnedRuntimeChangesRollBackBeforeSweep() (gas: 880875)
+[PASS] testApprovedUniformScheduleConstructorAndAllStepAdvance() (gas: 6279629)
+Logs:
+  Approved schedule auction constructor gas: 4471711
+  Approved schedule all-step advance gas: 1218582
+
+[PASS] testBindingAtStartIsRejected() (gas: 30357)
+[PASS] testBindingDelayedClaimsIsRejected() (gas: 3944490)
+[PASS] testBindingWrongNftAndUntrustedCallerAndRebindingRejected() (gas: 4811955)
+[PASS] testClaimsAtCloseBeforeMigrationAndFixedLpReservesPaired() (gas: 1571416)
+[PASS] testDependenciesAndEligibilityIdentityFailClosed() (gas: 749852)
+[PASS] testFundedPoolPriceBelowFinalClearingAfterLateDemand() (gas: 1633345)
+[PASS] testFuzzProceedsBudgetCreditsAndCustody(uint96) (runs: 512, μ: 1480355, ~: 1480731)
+Logs:
+  Bound result 74264337592663637419
+
+[PASS] testFuzzSurplusNeverSpendsOutstandingCredit(uint64) (runs: 512, μ: 1513148, ~: 1513109)
+Logs:
+  Bound result 29
+
+[PASS] testInsufficientReserveRollsBackSweepPoolAndAllowanceThenRetries() (gas: 1559384)
+[PASS] testNoCheckpointOrEarlyCheckpointCannotMigrate() (gas: 284125)
+[PASS] testPositionManagerDustIsSurplusNotAcceptedProceedsOrLpBudget() (gas: 1504735)
+[PASS] testResidualWithdrawAndTokenDustAreFixedRecipientAndSingleUse() (gas: 1468357)
+[PASS] testRevertingSafeCannotBlockMigrationAndWithdrawalRollbackRetainsCredit() (gas: 1441331)
+[PASS] testSafeOnlySurplusRecoveryBeforeAndAfterMigrationProtectsCredit() (gas: 1621803)
+[PASS] testSurplusRecipientRevertRetainsSurplusAndOutstandingCredit() (gas: 1516850)
+[PASS] testWrongHookPoolAndValidatorIdentityCannotBind() (gas: 147046)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 242.12ms (453.48ms CPU time)
+
+Ran 21 tests for test/GenesisCharacterEligibility.t.sol:CharacterAuctionAdmissionTest
+[PASS] testBatchClaimCannotBypassGate() (gas: 581000)
+[PASS] testBothOverloadsRejectRecipientWithoutNft() (gas: 344836)
+[PASS] testBurnDriftRejectsNewBid() (gas: 183852)
+[PASS] testCallerCannotInstallPermissiveHook() (gas: 53488)
+[PASS] testChangedChainRejectsBid() (gas: 171276)
+[PASS] testChangedNftCodeFailsClosed() (gas: 173475)
+[PASS] testExistingClaimSurvivesSupplyDrift() (gas: 583115)
+[PASS] testFuzzNoNonholderCanBid(address) (runs: 512, μ: 177092, ~: 177092)
+[PASS] testGateRuntimeAndChainArePinned() (gas: 558191)
+[PASS] testInvalidNftRejected() (gas: 40981)
+[PASS] testMintDriftRejectsBothDirectBidOverloads() (gas: 346495)
+[PASS] testRejectWrongGateConfiguration() (gas: 522046)
+[PASS] testRelayerCanFundNftOwner() (gas: 368581)
+[PASS] testRelayerCannotSubstituteOwnNftForRecipient() (gas: 176416)
+[PASS] testRuntimeDriftRejectsBothBidOverloads() (gas: 325638)
+[PASS] testSingleClaimBlockedUntilGateAndCliff() (gas: 579380)
+[PASS] testSweepRequiresCoordinatorAndWorksBeforeClaims() (gas: 570661)
+[PASS] testTransferDoesNotBlockExistingClaim() (gas: 606225)
+[PASS] testUngradulatedAuctionRefundUnaffectedByClaimGate() (gas: 4499408)
+[PASS] testUngradulatedRefundSurvivesSupplyDrift() (gas: 4476650)
+[PASS] testValidatorSnapshotGettersAndZeroSupplyRejected() (gas: 534618)
+Suite result: ok. 21 passed; 0 failed; 0 skipped; finished in 242.17ms (257.86ms CPU time)
+
+Ran 17 tests for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2Test
+[PASS] testFuzz_allFeesAreCoveredAndNeverExceedTenPercent(uint96,bool) (runs: 512, μ: 373654, ~: 368706)
+Logs:
+  Bound result 49999999999122641432
+
+[PASS] test_buyCannotEraseRecentSellPressure() (gas: 686312)
+[PASS] test_callbacksRequireManager() (gas: 16768)
+[PASS] test_exactOutputSellPaysOMRBasedOnActualInput() (gas: 409393)
+[PASS] test_fullUint32IdleCyclePreservesCounterfactualAndWrittenCumulative() (gas: 519358)
+[PASS] test_idleGapSynthesizesNewestFullEpochWithoutRepeatingOldVolume() (gas: 466913)
+[PASS] test_liquidityChangesAccrueOldDepthBeforeAdoptingNewDepth() (gas: 244671)
+[PASS] test_onlyRecipientCanRedirectOwnClaim() (gas: 390609)
+[PASS] test_openingCapUsesFilledQuoteNotRequestedInput() (gas: 290832)
+[PASS] test_openingExpiresWithoutAnAdminCall() (gas: 370612)
+[PASS] test_openingSupportsExactOutputAndCapsActualQuoteIncludingFee() (gas: 513714)
+[PASS] test_partialFillTaxUsesActualAmountsForBothSellModes() (gas: 652717)
+[PASS] test_permissionsContainOnlyImplementedCallbacks() (gas: 12784)
+[PASS] test_poolIdentityIsPinned() (gas: 22570)
+[PASS] test_postOpeningBuysAreFreeInBothModes() (gas: 305228)
+[PASS] test_recipientFailureCannotBlockSwapsOrOtherPayments() (gas: 489756)
+[PASS] test_sellsKeepBaseAllocationAndIsolateSurge() (gas: 376151)
+Suite result: ok. 17 passed; 0 failed; 0 skipped; finished in 242.15ms (233.98ms CPU time)
+
+Ran 1 test for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceInvariantTest
+[PASS] invariantProtectedOpsAndFundedLiabilitiesWithDelayedTaxChanges() (runs: 64, calls: 4096, reverts: 67)
+
+╭--------------------------+----------+-------+---------+----------╮
+| Contract                 | Selector | Calls | Reverts | Discards |
++==================================================================+
+| HookTaxGovernanceHandler | progress | 1098  | 67      | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | propose  | 982   | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | sweep    | 1018  | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | trade    | 998   | 0       | 0        |
+╰--------------------------+----------+-------+---------+----------╯
+
+Logs:
+  Bound result 1
+  Bound result 99999999000432001
+  Bound result 16287282065
+  Bound result 28609779368194
+  Bound result 3
+  Bound result 99999999000012709
+  Bound result 99999999003047477
+  Bound result 99999999000004933
+  Bound result 41451
+  Bound result 50486576879920053
+  Bound result 1
+  Bound result 99999999764307188
+  Bound result 99999999000000038
+  Bound result 122482
+  Bound result 17787
+  Bound result 6725
+  Bound result 1000000000
+  Bound result 4
+  Bound result 3660
+  Bound result 42
+  Bound result 3
+  Bound result 2108835614853054
+  Bound result 1
+  Bound result 10
+  Bound result 2
+  Bound result 119530
+  Bound result 60
+  Bound result 1
+  Bound result 1000000000
+  Bound result 99999999000000241
+  Bound result 3
+  Bound result 3
+  Bound result 2
+  Bound result 43896111713793381
+  Bound result 50486576879920053
+  Bound result 11225
+  Bound result 1
+  Bound result 96
+  Bound result 1000000000
+  Bound result 2
+  Bound result 1448019511143
+  Bound result 99999999000097392
+  Bound result 1
+  Bound result 236350
+  Bound result 6323
+  Bound result 3
+  Bound result 99999999000026727
+  Bound result 3
+  Bound result 60374709414571279
+  Bound result 1000000000
+  Bound result 1
+  Bound result 5080
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.87s (2.85s CPU time)
+
+Ran 5 test suites in 2.89s (3.84s CPU time): 64 tests passed, 0 failed, 0 skipped (64 total tests)
