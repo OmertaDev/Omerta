@@ -1,0 +1,10 @@
+{
+  "status": "TEST_ONLY_NOT_SIGNING_AUTHORIZATION",
+  "signingReady": false,
+  "sourceRevision": "6b54ffca251759fcc633e168454d743f4a9d3392",
+  "verifiedFullCreationPayloadCount": 5,
+  "actualDryforkRuntimeCount": 7,
+  "publication": false,
+  "broadcast": false,
+  "description": "In-memory wrapper uses actual planner data and actual rehearsal runtime evidence. No signing-ready packet was saved or published."
+}

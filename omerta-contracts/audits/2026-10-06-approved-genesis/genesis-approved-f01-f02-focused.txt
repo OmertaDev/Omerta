@@ -1,0 +1,60 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 36.39s
+Compiler run successful!
+
+Ran 18 tests for test/market-v2/AuctionCoordinatorV2.t.sol:AuctionCoordinatorV2Test
+[PASS] testAllPinnedRuntimeChangesRollBackBeforeSweep() (gas: 879238)
+[PASS] testApprovedUniformScheduleConstructorAndAllStepAdvance() (gas: 6279541)
+Logs:
+  Approved schedule auction constructor gas: 4471711
+  Approved schedule all-step advance gas: 1218582
+
+[PASS] testBindingAtStartIsRejected() (gas: 30357)
+[PASS] testBindingDelayedClaimsIsRejected() (gas: 3944490)
+[PASS] testBindingWrongNftAndUntrustedCallerAndRebindingRejected() (gas: 4811867)
+[PASS] testClaimsAtCloseBeforeMigrationAndFixedLpReservesPaired() (gas: 1570844)
+[PASS] testDependenciesAndEligibilityIdentityFailClosed() (gas: 749764)
+[PASS] testFundedPoolPriceBelowFinalClearingAfterLateDemand() (gas: 1632773)
+[PASS] testFuzzProceedsBudgetCreditsAndCustody(uint96) (runs: 512, μ: 1479821, ~: 1480174)
+Logs:
+  Bound result 90000000000000017241
+
+[PASS] testFuzzSurplusNeverSpendsOutstandingCredit(uint64) (runs: 512, μ: 1512573, ~: 1512537)
+Logs:
+  Bound result 8497706200521612
+
+[PASS] testInsufficientReserveRollsBackSweepPoolAndAllowanceThenRetries() (gas: 1558812)
+[PASS] testNoCheckpointOrEarlyCheckpointCannotMigrate() (gas: 284037)
+[PASS] testPositionManagerDustIsSurplusNotAcceptedProceedsOrLpBudget() (gas: 1504163)
+[PASS] testResidualWithdrawAndTokenDustAreFixedRecipientAndSingleUse() (gas: 1467785)
+[PASS] testRevertingSafeCannotBlockMigrationAndWithdrawalRollbackRetainsCredit() (gas: 1440759)
+[PASS] testSafeOnlySurplusRecoveryBeforeAndAfterMigrationProtectsCredit() (gas: 1621231)
+[PASS] testSurplusRecipientRevertRetainsSurplusAndOutstandingCredit() (gas: 1516278)
+[PASS] testWrongHookPoolAndValidatorIdentityCannotBind() (gas: 135787)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 124.87ms (264.85ms CPU time)
+
+Ran 21 tests for test/GenesisCharacterEligibility.t.sol:CharacterAuctionAdmissionTest
+[PASS] testBatchClaimCannotBypassGate() (gas: 581000)
+[PASS] testBothOverloadsRejectRecipientWithoutNft() (gas: 344836)
+[PASS] testBurnDriftRejectsNewBid() (gas: 183852)
+[PASS] testCallerCannotInstallPermissiveHook() (gas: 53488)
+[PASS] testChangedChainRejectsBid() (gas: 171276)
+[PASS] testChangedNftCodeFailsClosed() (gas: 173475)
+[PASS] testExistingClaimSurvivesSupplyDrift() (gas: 583115)
+[PASS] testFuzzNoNonholderCanBid(address) (runs: 512, μ: 177092, ~: 177092)
+[PASS] testGateRuntimeAndChainArePinned() (gas: 558191)
+[PASS] testInvalidNftRejected() (gas: 40981)
+[PASS] testMintDriftRejectsBothDirectBidOverloads() (gas: 346495)
+[PASS] testRejectWrongGateConfiguration() (gas: 522046)
+[PASS] testRelayerCanFundNftOwner() (gas: 368581)
+[PASS] testRelayerCannotSubstituteOwnNftForRecipient() (gas: 176416)
+[PASS] testRuntimeDriftRejectsBothBidOverloads() (gas: 325638)
+[PASS] testSingleClaimBlockedUntilGateAndCliff() (gas: 579380)
+[PASS] testSweepRequiresCoordinatorAndWorksBeforeClaims() (gas: 570661)
+[PASS] testTransferDoesNotBlockExistingClaim() (gas: 606225)
+[PASS] testUngradulatedAuctionRefundUnaffectedByClaimGate() (gas: 4499408)
+[PASS] testUngradulatedRefundSurvivesSupplyDrift() (gas: 4476650)
+[PASS] testValidatorSnapshotGettersAndZeroSupplyRejected() (gas: 534618)
+Suite result: ok. 21 passed; 0 failed; 0 skipped; finished in 124.91ms (153.24ms CPU time)
+
+Ran 2 test suites in 126.55ms (249.79ms CPU time): 39 tests passed, 0 failed, 0 skipped (39 total tests)

@@ -1,0 +1,25 @@
+No files changed, compilation skipped
+2026-10-07T02:30:53.140461Z  WARN foundry_fork_db::cache: Failed to read cache file err=Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." } path="C:\\Users\\Jorge\\.foundry\\cache\\rpc\\4663\\82124297"
+
+Ran 1 test for test/market-v2/AuctionGenesisRobinhoodFork.t.sol:AuctionGenesisRobinhoodForkTest
+[PASS] testLiveNftAndDependencyAuctionMigrationAndClaim() (gas: 915783)
+Logs:
+  Fork snapshot block: 82124297
+  Fork snapshot timestamp: 1791340251
+  Live OMR runtime: 0x9764f5d29297e9ca3b22b5f7e501fbd0629d93be1b4a08db74a461559b3c1d12
+  Live NFT runtime: 0x4a0612d384367eeb7e22885091280d7cb7e926ef263a3ad2e21b7bdc12d26e0f
+  Live PoolManager runtime: 0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626
+  Live PositionManager runtime: 0xc873e135dc9aaec88489cfbad146b4cb49d6a32e0d80326377784b7ba17670b2
+  Live Permit2 runtime: 0x5208783f52488f7d3493e5e38311ab707c1d75457fe472a19b0b4d57d66a7fca
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.62s (1.70s CPU time)
+
+Ran 1 test for test/market-v2/PlayerGenesisRobinhoodFork.t.sol:PlayerGenesisRobinhoodForkTest
+[PASS] testPinnedProductionDependenciesSettleMigrateAndClaim() (gas: 1046007)
+Logs:
+  Fork snapshot block: 82124297
+  Fork snapshot timestamp: 1791340251
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.62s (1.70s CPU time)
+
+Ran 2 test suites in 3.64s (7.24s CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

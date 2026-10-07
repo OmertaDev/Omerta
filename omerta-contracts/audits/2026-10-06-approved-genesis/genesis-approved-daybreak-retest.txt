@@ -1,0 +1,78 @@
+## FINAL Daybreak retest
+
+**Disposition: scoped PASS at the exact pins below.** F-01 and F-02 are fixed and retested. No remaining confirmed finding was identified in the pinned F01/F02 or deployment-client paths. This is not a blanket audit or deployment-readiness statement.
+
+### Original findings
+
+- **F-01 — FIXED/RETESTED.** The validator immutably records OMR, runtime hash, and a positive supply snapshot, checking code and live supply only during bid validation. Both nonvirtual CCA overloads converge on that hook. Claims, exits, and refunds do not. Backend recovery still verifies immutable validator pins but skips live supply and NFT balance. The backend requires the snapshot to equal 100M in all contexts.
+- **F-02 — FIXED/RETESTED.** Migration credits the Safe with `proceeds - actual LP spend` and records matching `totalOutstandingCredit`. Safe-only, nonreentrant recovery transfers only `balance - outstandingCredit`. Forced ETH and PositionManager dust remain outside proceeds, funded ratio, and LP budget. Reverting Safe calls roll back without changing credit.
+- **Principal-path proof.** CCA sweep remains recipient-only; the coordinator is that recipient and invokes it only inside private, atomic `_initializeLiquidity()` under `migrate()`’s reentrancy guard. Consequently, auction principal cannot exist as withdrawable surplus between sweep and credit creation.
+
+The original report was not modified: `5fa832a35cd95a71bb56b21a51166c924fb68cfaab172e5f8ebe81dd0961dfd5`.
+
+### Signing interface
+
+The final pinned client enforces the reviewed packet hash, `signingReady`, chain/account, five sequential zero-value EOA deployments, factory-only fourth transaction, policy, 13 runtime pins, deadlines and native clock checks.
+
+A LocalStorage-intent binding gap observed during review was fixed before the final pin. The final implementation derives the expected intent from the frozen verified packet before RPC access and rechecks all five parent plus two child runtimes at the final receipt block. Its tamper regression passes.
+
+No real wallet, signing, broadcast, funding, Safe, binding, deployment, or activation operation occurred.
+
+### Checks executed here
+
+- Deployment client fake-wallet suite: **PASS**
+- Genesis helper: **PASS**
+- Unsigned operations: **PASS**
+- Player client: **PASS**
+- Targeted forged LocalStorage intent: **rejected before transaction lookup**
+- `git diff --check`: **PASS**, CRLF warnings only
+- HTTP and artifact-planner tests: not completed; both hit sandbox `EPERM` creating `%TEMP%` directories.
+
+The 39 focused Solidity passes, 1,349-test/94-suite bounded run, fuzz/invariant budgets, and two block-82124297 forks were verified from retained evidence but were **supplied, not executed by me**. The forks use the clock shim, not native production-clock rehearsal.
+
+### Reviewed SHA-256 pins
+
+```text
+# Finance/contracts
+87eb43ba59e5c4306a033882f8195b173afcd6b272f9f3c9e83e4605a25065d4  GenesisCharacterEligibility.sol
+1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140  OmertaGuardedAuction.sol
+330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0  OmertaAuctionCoordinatorV2.sol
+2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861  ContinuousClearingAuction.sol
+2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7  AuctionStorage.sol
+cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c  StepStorage.sol
+e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9  CheckpointAccountingLib.sol
+7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31  ValidationHookLib.sol
+b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d  CurrencyLibrary.sol
+d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a  BlockNumberish.sol
+0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57  SSTORE2.sol
+f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7  OMR.sol
+fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea  OmertaHookV2.sol
+142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3  OmertaReserveFundingV2.sol
+
+# Backend/planner/callers
+6fa99091c153d3e897fd5fb87bce20602d4826595f3883d5ee1b0f019ff7dcf6  src/genesisauction.js
+14cdd382179c8911f86fb05b0894acffa59e7e3c26785720f00dad8c672c53ebe  src/routes/genesisauction.js
+2af141ef3aabfeffed3a9cc4b6f86782a22cb953547accdafbc4e731422252d3  tools/genesis-auction-deployment-plan.js
+0407af0e68f936a1c58ad969b0e32019430bab4bf6729a1e2ad5c8af8dea079e  tools/genesis-auction-operations.js
+303b372179c8911f86fb05b0894acffa59e7e3c26785720f00dad8c672c53ebe  public/index.html
+05750e6637ae70d953353b96a9b8e00f5c55a2014b20a55cf152d8ec75fcec92  package.json
+
+# Signing interface
+68afba0cd0b8affc3858f4b243f84fee378493edfc6ff7f38bb8a3fe827a954b  public/genesis-deploy.html
+6be64ea95ef4a91c18d8727e31d28ecc9ad6de46f1d672ab12648b0cb5c88ef5  public/genesis-deploy-client.js
+
+# Tests
+14f77b605a63ac24aed5ab0c20981fd9fce0c1f466304204c3ebe7ed1a7d93cd  test/genesis-deploy-client.js
+bb6d1fb1c3c9eebf58b7a9ce5ff3f0e2f722c5346441f3df2646b9b3d88c74cd  test/genesis-auction-deployment-plan.js
+e48237888d43a511bd9c489ed60400cccf1fb75f486ffd7d8c7078f3dfafde48  test/genesis-auction-operations.js
+ba0c20a4e634f9756e5fc858c0d46b4c277bde0c2fc5c8ea97daf3f056bed3b0  test/genesisauction.js
+fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87  test/genesis-auction-http.js
+cf2727765332d54ada5b8f6134f201ddda0cd1cc13dd3e974460e6a3042fa862  test/player-genesis-client.js
+f55ff02e8a54e2246475a301efe2e11ef0e3e7e6f4da5d56dab7ae8cc13eda03  GenesisCharacterEligibility.t.sol
+cadac079b1b1ad3caa8cd4003acf93c0b8075f47330b7a82d619ed485971ab55  OmertaGuardedAuction.t.sol
+84656675b13d7c648f8faf16bf28151707987baf432c82b93a7b019aa59f7859  AuctionCoordinatorV2.t.sol
+f328a254a883e2e9a22661038003f33ec23f1b9531485a894b9cce56c2fd02f1  PlayerGenesisIntegrationV2.t.sol
+4ccf878da95cd6638b36d5bdb64476ca8aa40ff65f341cdc55330c18bdd78778  AuctionGenesisRobinhoodFork.t.sol
+```
+
+Base remains `ead92ac404788a6792d2b7677fa2d8e6c96fc34b` with a dirty working tree. No final signing packet exists; fees, native-clock evidence, gas, nonce, full simulation/CI, live runtime verification, and two human Safe approvals/final stages remain outstanding.

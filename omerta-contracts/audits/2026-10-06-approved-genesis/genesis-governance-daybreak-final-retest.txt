@@ -1,0 +1,37 @@
+## Conclusion
+
+Not signing-ready overall. H01 and the hook-specific H02 are remediated, but one High-severity signer defect remains.
+
+### H-03 — Non-hook deployments remain packet-trusted
+
+[genesis-deploy-client.js](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/genesis-deploy-client.js:117) source-binds only deployment index 3—the hook. `polFunding`, `reserveFunding`, `coordinator`, and `auction` accept arbitrary nonempty initcode plus attacker-supplied runtime hashes.
+
+Executed proof:
+
+```text
+ACCEPTED_ARBITRARY_NONHOOK_INITCODE
+polFunding,reserveFunding,coordinator,auction
+0x63600060006000526004601cf3
+runtime SHA256 8610831f75a6b7da7c428c7c490db797438e90a401d6fa31ffa5fe8ac1470f84
+```
+
+The initcode returns runtime `0x60006000`. A self-hashed packet passed `verifyDeploymentPacket`. The existing client test also sends arbitrary non-hook fixture payloads through all stages.
+
+Impact: malicious funding recipients or coordinator code can occupy the approved deterministic addresses; the trusted hook then pays or authorizes those addresses.
+
+Fix: locally bind creation bytecode, exact constructor words, and expected runtime evidence for all four remaining deployments, as now done for the hook.
+
+### H01/H02 retest
+
+- **H01 resolved:** production planner enforces fee `3000`, spacing `60`, and opening `{0,0,"0"}` at [planner:241](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-auction-deployment-plan.js:241). Preflight invokes that production-chain validation and verifies live fork getters at [preflight:121](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-auction-preflight.js:121).
+- **H02 hook scope resolved:** trusted compiled prefix, exact 16 constructor words, approved authorities/settings, CREATE2 prediction, and hook permission bits are checked at [client:54](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/genesis-deploy-client.js:54).
+- Builder check passed. `@noble/hashes` 1.8.0 provenance and shipped hashes match.
+- Backend comparison: **70/70 contract target-selector pairs** exist in compiled `out` ABIs. `tickSpacing()` is `0xd0c93a7c`; `TICK_SPACING_Q96()` is absent.
+
+### Evidence
+
+Passed: deploy-client, preflight, backend, trust-builder `--check`, and `git diff --check`. Planner passed through its H01 negatives, then hit expected read-only `EPERM` at the temporary-filesystem tamper test.
+
+Pins: HEAD `cdb3bd3300b29c063e6a74e693060b4be22517cb` + dirty; planner `c945de79…d2d71`; preflight `acfdfedf…66dc`; builder `15415f0d…b74`; client `bb48c9de…c314`; trusted artifact `641938e4…2240`; backend `7fe75323…9b39e`; hook source `614b70bc…bf62`; hook compiler artifact `f6130795…fe01`.
+
+No live RPC/fork, broadcasts, deployments, private keys, or file edits.

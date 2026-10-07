@@ -1,0 +1,81 @@
+{
+  "dateUtc": "2026-10-07T02:36:02.5043854Z",
+  "baseCommit": "ead92ac404788a6792d2b7677fa2d8e6c96fc34b",
+  "branch": "codex/genesis-nft-launch",
+  "files": [
+    {
+      "path": "omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+      "sha256": "87eb43ba59e5c4306a033882f8195b173afcd6b272f9f3c9e83e4605a25065d4"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+      "sha256": "1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0"
+    },
+    {
+      "path": "omerta-contracts/test/GenesisCharacterEligibility.t.sol",
+      "sha256": "f55ff02e8a54e2246475a301efe2e11ef0e3e7e6f4da5d56dab7ae8cc13eda03"
+    },
+    {
+      "path": "omerta-contracts/test/OmertaGuardedAuction.t.sol",
+      "sha256": "cadac079b1b1ad3caa8cd4003acf93c0b8075f47330b7a82d619ed485971ab55"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionCoordinatorV2.t.sol",
+      "sha256": "84656675b13d7c648f8faf16bf28151707987baf432c82b93a7b019aa59f7859"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisIntegrationV2.t.sol",
+      "sha256": "f328a254a883e2e9a22661038003f33ec23f1b9531485a894b9cce56c2fd02f1"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionGenesisRobinhoodFork.t.sol",
+      "sha256": "4ccf878da95cd6638b36d5bdb64476ca8aa40ff65f341cdc55330c18bdd78778"
+    }
+  ],
+  "compiler": "0.8.26/optimizer800/Cancun",
+  "focused": {
+    "testsPassed": 39,
+    "skipped": 0,
+    "fuzzRuns": 512,
+    "failed": 0
+  },
+  "fullWarm": {
+    "skipped": 2,
+    "fuzzRuns": 128,
+    "invariantDepth": 64,
+    "failed": 0,
+    "seed": "0x20261007",
+    "seconds": 13.53,
+    "testsPassed": 1349,
+    "invariantRuns": 32,
+    "suites": 94
+  },
+  "explicitForks": {
+    "skipped": 0,
+    "block": "82124297",
+    "passed": 2,
+    "timestamp": "1791340251",
+    "failed": 0
+  },
+  "findings": {
+    "F01": "fixed-retested:newbidvalidatorpinsOMRruntimeandpositiveapprovedSupply;currentdriftfailsonlyadmission;pre-mint/transferfixtures",
+    "F02": "fixed-retested:totalOutstandingCreditSafeledger+Safe-onlynonReentrantbalance-minus-creditrecovery;forcedETH/PMdustexcludedfromR/budget"
+  },
+  "limitations": [
+    "Opt-inforksusetheexplicitArbSysremoval/block.numberclockshim,notnativeclock120hproof",
+    "Fullwarmbudgetbounded;notfull512x500invariantreleaseproof",
+    "AuthorretetsarenotindependentfinalDaybreakreview",
+    "No signing/deployment/activation;previous14-pass/oldbaselineevidencepreservedandnotclaimedascurrentproof"
+  ],
+  "logs": [
+    "output/genesis-approved-f01-f02-focused.txt",
+    "output/genesis-approved-f01-f02-initial-naming-failure.txt",
+    "output/genesis-approved-f01-f02-full-warm.txt",
+    "output/genesis-approved-f01-f02-robinhood-forks.txt",
+    "output/genesis-approved-validator-runtime-observation.json"
+  ]
+}

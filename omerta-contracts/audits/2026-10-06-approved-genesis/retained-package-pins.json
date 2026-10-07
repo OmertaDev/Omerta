@@ -1,0 +1,116 @@
+{
+  "files": [
+    {
+      "file": "actual-plan-signer-binding-proof.json",
+      "sha256": "ddc9ae89eab25db624c74278935f90dcaae4f8df3d080f31601ece9df66f10c1"
+    },
+    {
+      "file": "genesis-approved-complete-technical-preflight.json",
+      "sha256": "bc779f9782be5d97a1002cd83d65e3ce6ae3de9a791154a5fa9b883683a60cd0"
+    },
+    {
+      "file": "genesis-approved-daybreak-periphery-review.txt",
+      "sha256": "04b9892d059558a64a8dd0e1dc93e7ffa932a57883efad5b4d4c4383eb099d5e"
+    },
+    {
+      "file": "genesis-approved-daybreak-retest.txt",
+      "sha256": "dc779db42788bc5f856ba69f2985efd4cf980504c1989d9b90113fe58f459299"
+    },
+    {
+      "file": "genesis-approved-daybreak-review.txt",
+      "sha256": "5fa832a35cd95a71bb56b21a51166c924fb68cfaab172e5f8ebe81dd0961dfd5"
+    },
+    {
+      "file": "genesis-approved-f01-f02-focused.txt",
+      "sha256": "ea6169b739a0d6a1ac9659e268b3f175935855bba2b0f3b04dcd2deb4e1b70c0"
+    },
+    {
+      "file": "genesis-approved-f01-f02-full-warm.txt",
+      "sha256": "fdeb5c2bfcaf82e496b12fdd09a1fe88635396db804b6f6b13770fe59fdbcdcf"
+    },
+    {
+      "file": "genesis-approved-f01-f02-initial-naming-failure.txt",
+      "sha256": "9d77a7eeebcbd426e469be01f5cc78326fceb06b12c031272d26c1d252bdb61d"
+    },
+    {
+      "file": "genesis-approved-f01-f02-provenance.json",
+      "sha256": "bea0efa1b4767777f44302262e6b53a4bf7ed78ed9677609b3cec403a09e193f"
+    },
+    {
+      "file": "genesis-approved-f01-f02-robinhood-forks.txt",
+      "sha256": "0a67fd5a82202638579b8cd74ae9a9e01458f4ca27eac4c76ad175d4d1fc53c2"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-proof.json",
+      "sha256": "1e9ae40c6503f47e998217e2d9cfe5fde2b0af5f28a8186e36763a4edd74105f"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-run.txt",
+      "sha256": "0bfe842bdbad46e73e12ffa453b52b420f0182b6eb554752f4e5483dfc9d9d07"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-external-proof.json",
+      "sha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-getter-proof.json",
+      "sha256": "c1bab0fac4829e528afaa4ad721dd278d45f9d249d7e2c6e23f7426789868d0d"
+    },
+    {
+      "file": "genesis-approved-validator-runtime-observation.json",
+      "sha256": "dca3d0e319efc2174ce7ea112c57c9c89915fc29598d770f09812882d5c29257"
+    },
+    {
+      "file": "genesis-auction-constructor-encoding-proof.json",
+      "sha256": "e21e1906760fd567881357929768d0e0e80542ba3f46f894dbff7912a6578060"
+    },
+    {
+      "file": "genesis-governance-daybreak-final-retest.txt",
+      "sha256": "0d03ea29ed44c5f155e63585fbb3a34f35c238a4b00d44402a1381faee823cc6"
+    },
+    {
+      "file": "genesis-governance-daybreak-h03-retest.txt",
+      "sha256": "d31f8b1b4608db5e0350434f4711f8e14cf8f2351eb150e6575264b6f9f0a62c"
+    },
+    {
+      "file": "genesis-governance-daybreak-review.txt",
+      "sha256": "2b23fd06bdd7168aa6d376f81cea0d92a6987fb512a97675b53f53d86fd285ec"
+    },
+    {
+      "file": "hook-tax-domain-trace.txt",
+      "sha256": "99ae3003277078aee718cbbbffa454a5c4ecb014da0fdd2c03249ecd2a1b0c53"
+    },
+    {
+      "file": "hook-tax-governance-focused.txt",
+      "sha256": "dc094141499a63bb78c4d91f4483e1bc6ef1853b36c487c4a39ca34d97b32886"
+    },
+    {
+      "file": "hook-tax-governance-full-warm.txt",
+      "sha256": "90765491d7386f4ea3490605aeca3f584aa9e8b8195172c1f8f0cf1018d43e34"
+    },
+    {
+      "file": "hook-tax-governance-initial-domain-failure.txt",
+      "sha256": "f81caf8748a99165e7d2acf245352731dc8943c0b3ecf86d891a43a6264b1c76"
+    },
+    {
+      "file": "hook-tax-governance-provenance.json",
+      "sha256": "3c0e71413614c68f5b260208e1ae4f9171821d590f68091987fbac4c942703c4"
+    },
+    {
+      "file": "release-source-pins.json",
+      "sha256": "c90b996969fb5013dbcad38930056aab2f634460a27280c599be29e33e8df813"
+    },
+    {
+      "file": "report.md",
+      "sha256": "b176c0b808e8e9e41db5acdf23d66d570d4c9bb61b033c66dd1089b1cd6b286d"
+    },
+    {
+      "file": "retention-pins.json",
+      "sha256": "c93f8419a50c9646fa28403fa429d3683ff6ed267784495fb3b62e08bec9a450"
+    },
+    {
+      "file": "reviewer-invocation.json",
+      "sha256": "e8eb31c2cb072090f051d0f8c2b5fa555a6c54df851e9067c20413699ae6d474"
+    }
+  ]
+}

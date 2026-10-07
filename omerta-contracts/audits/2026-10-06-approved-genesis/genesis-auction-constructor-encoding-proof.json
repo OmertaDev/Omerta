@@ -1,0 +1,13 @@
+{
+  "proof": "Actual deployed constructor ABI encoded independently with viem equals complete trustedtemplate suffix",
+  "outerTupleOffsetBytes": "160",
+  "tupleBytesOffsetBytes": "352",
+  "payloadLengthBytes": "2048",
+  "argumentBytes": 2592,
+  "headWords": 5,
+  "tupleWords": 11,
+  "lengthWordIndex": 16,
+  "payloadStartByte": 544,
+  "allArgsCompare": true,
+  "creationArtifactSha": "2a85d18befa6df3790f7ff34289755666df6ff0bb8bc56908c5843cb3e2f9c66"
+}

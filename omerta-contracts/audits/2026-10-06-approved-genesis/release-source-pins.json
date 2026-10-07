@@ -1,0 +1,58 @@
+{
+  "phase": "predeployment",
+  "files": [
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "sha256": "614b70bcc6747310fdcb444427fba798fc6e273a7227bef9e4c61c26ae6cbf62"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol",
+      "sha256": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+      "sha256": "1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+      "sha256": "87eb43ba59e5c4306a033882f8195b173afcd6b272f9f3c9e83e4605a25065d4"
+    },
+    {
+      "path": "src/genesisauction.js",
+      "sha256": "7fe75323e9ce4e3e5047d653b858f440db13ffc4b4ad7f9f58f8b88988f9b39e"
+    },
+    {
+      "path": "src/routes/genesisauction.js",
+      "sha256": "14cdd382d56eb02f00d776ce56a797cc18ff8c04077d100a3e3dcefc31b4fef1"
+    },
+    {
+      "path": "tools/genesis-auction-deployment-plan.js",
+      "sha256": "c945de79de45c8a01951968f97c86108c40efff1369b225d03dcc8d2fbbd2d71"
+    },
+    {
+      "path": "tools/genesis-auction-preflight.js",
+      "sha256": "acfdfedff277aa9d1666366eb71af68c5a27180e7e6061967a50d4cb6aec66dc"
+    },
+    {
+      "path": "tools/build-genesis-deploy-trust.js",
+      "sha256": "6c8af0b720b1e35a7d86aa032d1a245d4512c5232b9894083e09a6c230fcb0d1"
+    },
+    {
+      "path": "public/genesis-deploy-client.js",
+      "sha256": "07e0bd7cddc622ab797a52b2bd5850943445aad1efeecc15deb73a8a4215adbb"
+    },
+    {
+      "path": "public/genesis-deploy-artifact.js",
+      "sha256": "8356a7475da97957e6c03c773ddc8cd9fc3d1c2a0d01ffff39043c3ff2177648"
+    },
+    {
+      "path": "test/genesis-deploy-client.js",
+      "sha256": "b7ba75d9b2db49fce92da60ec73b2f3ea920a047b27ccbc700a2700f14ed743d"
+    }
+  ],
+  "sourceRevision": "aca24128dd4205f78887c592e2155320721a2262"
+}

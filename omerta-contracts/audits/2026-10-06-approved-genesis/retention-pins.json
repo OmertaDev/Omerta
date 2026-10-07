@@ -1,0 +1,120 @@
+{
+  "normalization": "UTF-8 LF; original files retained outside release checkout",
+  "files": [
+    {
+      "file": "genesis-approved-f01-f02-provenance.json",
+      "originalSha256": "ceed72956ab1b3eb083cb5f7dfb972befbdd88b9596db68d532347798f6eaecc",
+      "retainedSha256": "bea0efa1b4767777f44302262e6b53a4bf7ed78ed9677609b3cec403a09e193f"
+    },
+    {
+      "file": "genesis-approved-f01-f02-focused.txt",
+      "originalSha256": "86775bbbb049129a2dc9111c7276f4af26aa00719823e399c6a36fbf54b369e3",
+      "retainedSha256": "ea6169b739a0d6a1ac9659e268b3f175935855bba2b0f3b04dcd2deb4e1b70c0"
+    },
+    {
+      "file": "genesis-approved-f01-f02-initial-naming-failure.txt",
+      "originalSha256": "7f9dba33bc0ed94a5060607dde47e6462e989acefbdc54fb3322b33df8f7cdc1",
+      "retainedSha256": "9d77a7eeebcbd426e469be01f5cc78326fceb06b12c031272d26c1d252bdb61d"
+    },
+    {
+      "file": "genesis-approved-f01-f02-full-warm.txt",
+      "originalSha256": "a7cc6159d6a88b0c85edf423f07eacd31aedda524077712045d7cc7cbdd6c165",
+      "retainedSha256": "fdeb5c2bfcaf82e496b12fdd09a1fe88635396db804b6f6b13770fe59fdbcdcf"
+    },
+    {
+      "file": "genesis-approved-f01-f02-robinhood-forks.txt",
+      "originalSha256": "e4b1906c1beee205ae76a4af86248cf965b0806ca5b2e2f640ea9b091184cf44",
+      "retainedSha256": "0a67fd5a82202638579b8cd74ae9a9e01458f4ca27eac4c76ad175d4d1fc53c2"
+    },
+    {
+      "file": "genesis-approved-validator-runtime-observation.json",
+      "originalSha256": "dca3d0e319efc2174ce7ea112c57c9c89915fc29598d770f09812882d5c29257",
+      "retainedSha256": "dca3d0e319efc2174ce7ea112c57c9c89915fc29598d770f09812882d5c29257"
+    },
+    {
+      "file": "genesis-approved-daybreak-review.txt",
+      "originalSha256": "5fa832a35cd95a71bb56b21a51166c924fb68cfaab172e5f8ebe81dd0961dfd5",
+      "retainedSha256": "5fa832a35cd95a71bb56b21a51166c924fb68cfaab172e5f8ebe81dd0961dfd5"
+    },
+    {
+      "file": "genesis-approved-daybreak-retest.txt",
+      "originalSha256": "dc779db42788bc5f856ba69f2985efd4cf980504c1989d9b90113fe58f459299",
+      "retainedSha256": "dc779db42788bc5f856ba69f2985efd4cf980504c1989d9b90113fe58f459299"
+    },
+    {
+      "file": "genesis-approved-daybreak-periphery-review.txt",
+      "originalSha256": "04b9892d059558a64a8dd0e1dc93e7ffa932a57883efad5b4d4c4383eb099d5e",
+      "retainedSha256": "04b9892d059558a64a8dd0e1dc93e7ffa932a57883efad5b4d4c4383eb099d5e"
+    },
+    {
+      "file": "hook-tax-governance-provenance.json",
+      "originalSha256": "60af88d741230b285cfc9d0fa0859cedd709bcd3a4338db70669ed732cc6a29e",
+      "retainedSha256": "3c0e71413614c68f5b260208e1ae4f9171821d590f68091987fbac4c942703c4"
+    },
+    {
+      "file": "hook-tax-governance-focused.txt",
+      "originalSha256": "6bc6c7611bb63e22d885bf86b9293c1638812e9d337d0795138c884b9efec83b",
+      "retainedSha256": "dc094141499a63bb78c4d91f4483e1bc6ef1853b36c487c4a39ca34d97b32886"
+    },
+    {
+      "file": "hook-tax-governance-full-warm.txt",
+      "originalSha256": "a998e6d8e6001da9b58430e375c938e86d624a691e81a81ceb7e8a372edccf8d",
+      "retainedSha256": "90765491d7386f4ea3490605aeca3f584aa9e8b8195172c1f8f0cf1018d43e34"
+    },
+    {
+      "file": "hook-tax-governance-initial-domain-failure.txt",
+      "originalSha256": "4a746121327fb896f47beb887d91413b715c6dda49cf55e0cdb7ac03bc425c69",
+      "retainedSha256": "f81caf8748a99165e7d2acf245352731dc8943c0b3ecf86d891a43a6264b1c76"
+    },
+    {
+      "file": "hook-tax-domain-trace.txt",
+      "originalSha256": "b7aa8962e25953d024eeb6624abdf16f2ddb972318edd18f29f14a510537d2d0",
+      "retainedSha256": "99ae3003277078aee718cbbbffa454a5c4ecb014da0fdd2c03249ecd2a1b0c53"
+    },
+    {
+      "file": "genesis-governance-daybreak-review.txt",
+      "originalSha256": "2b23fd06bdd7168aa6d376f81cea0d92a6987fb512a97675b53f53d86fd285ec",
+      "retainedSha256": "2b23fd06bdd7168aa6d376f81cea0d92a6987fb512a97675b53f53d86fd285ec"
+    },
+    {
+      "file": "genesis-approved-complete-technical-preflight.json",
+      "originalSha256": "bc779f9782be5d97a1002cd83d65e3ce6ae3de9a791154a5fa9b883683a60cd0",
+      "retainedSha256": "bc779f9782be5d97a1002cd83d65e3ce6ae3de9a791154a5fa9b883683a60cd0"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-proof.json",
+      "originalSha256": "1e9ae40c6503f47e998217e2d9cfe5fde2b0af5f28a8186e36763a4edd74105f",
+      "retainedSha256": "1e9ae40c6503f47e998217e2d9cfe5fde2b0af5f28a8186e36763a4edd74105f"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-getter-proof.json",
+      "originalSha256": "c1bab0fac4829e528afaa4ad721dd278d45f9d249d7e2c6e23f7426789868d0d",
+      "retainedSha256": "c1bab0fac4829e528afaa4ad721dd278d45f9d249d7e2c6e23f7426789868d0d"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-external-proof.json",
+      "originalSha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549",
+      "retainedSha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-run.txt",
+      "originalSha256": "0bfe842bdbad46e73e12ffa453b52b420f0182b6eb554752f4e5483dfc9d9d07",
+      "retainedSha256": "0bfe842bdbad46e73e12ffa453b52b420f0182b6eb554752f4e5483dfc9d9d07"
+    },
+    {
+      "file": "genesis-governance-daybreak-final-retest.txt",
+      "originalSha256": "0d03ea29ed44c5f155e63585fbb3a34f35c238a4b00d44402a1381faee823cc6",
+      "retainedSha256": "0d03ea29ed44c5f155e63585fbb3a34f35c238a4b00d44402a1381faee823cc6"
+    },
+    {
+      "file": "genesis-auction-constructor-encoding-proof.json",
+      "originalSha256": "e21e1906760fd567881357929768d0e0e80542ba3f46f894dbff7912a6578060",
+      "retainedSha256": "e21e1906760fd567881357929768d0e0e80542ba3f46f894dbff7912a6578060"
+    },
+    {
+      "file": "genesis-governance-daybreak-h03-retest.txt",
+      "originalSha256": "d31f8b1b4608db5e0350434f4711f8e14cf8f2351eb150e6575264b6f9f0a62c",
+      "retainedSha256": "d31f8b1b4608db5e0350434f4711f8e14cf8f2351eb150e6575264b6f9f0a62c"
+    }
+  ]
+}
