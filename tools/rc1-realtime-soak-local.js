@@ -279,6 +279,35 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   if (result.status !== 'PASS_SCOPED') process.exitCode = 1;
 }
 
+export function selectSoakContentionActors(actors, views, { minCash, maxBuyers }) {
+  assert.equal(actors.length, views.length);
+  assert(Number.isFinite(minCash) && minCash > 0);
+  assert(Number.isSafeInteger(maxBuyers) && maxBuyers >= 2);
+  const groups = new Map(), identities = new Set(), exclusions = {};
+  for (let index = 0; index < actors.length; index++) {
+    const character = views[index]?.character;
+    let reason = null;
+    if (!character?.id || typeof character.loc !== 'string' || !character.loc) reason = 'missing_character';
+    else if (identities.has(character.id)) reason = 'duplicate_character';
+    else if (character.id !== actors[index].characterId) reason = 'character_identity';
+    else if (character.jailSeconds !== 0) reason = 'jailed';
+    else if (!Number.isFinite(character.cash) || character.cash < minCash) reason = 'cash';
+    else if (!Number.isFinite(character.cargoCap) || !character.cargo
+      || Object.values(character.cargo).some(qty => !Number.isFinite(qty) || qty < 0)
+      || character.cargoCap - Object.values(character.cargo).reduce((sum, qty) => sum + qty, 0) < 1) reason = 'cargo';
+    if (character?.id) identities.add(character.id);
+    if (reason) { exclusions[reason] = (exclusions[reason] || 0) + 1; continue; }
+    if (!groups.has(character.loc)) groups.set(character.loc, []);
+    groups.get(character.loc).push(actors[index]);
+  }
+  const eligible = [...groups.values()].find(group => group.length >= 3);
+  assert(eligible, 'No eligible common-location group for shared-object contention');
+  const [seller, ...rest] = eligible, buyers = rest.slice(0, maxBuyers);
+  return { seller, buyers, observation: { location: views[actors.indexOf(seller)].character.loc,
+    sellerIndex: seller.actorIndex, buyerIndexes: buyers.map(actor => actor.actorIndex),
+    observedActors: actors.length, eligibleActors: [...groups.values()].reduce((sum, group) => sum + group.length, 0), exclusions } };
+}
+
 export function localSoakFaultPlan(environment, { schedule, pauseMs = 1000, reconnectActors = 100 }) {
   assert(schedule && faultKinds.every(kind => Number.isFinite(schedule[kind]) && schedule[kind] >= 0));
   assert(Number.isFinite(pauseMs) && pauseMs > 0); assert(Number.isSafeInteger(reconnectActors) && reconnectActors > 0);
@@ -305,11 +334,15 @@ export function localSoakFaultPlan(environment, { schedule, pauseMs = 1000, reco
       intervention = { stopped, pauseMs, restarted, apiHealth: await environment.health() };
     } else if (kind === 'database reconnect') intervention = await environment.disconnectDatabase();
     else {
-      assert(actors.length >= 3); const [seller, ...buyers] = actors.slice(0, Math.max(3, Math.min(actors.length, reconnectActors + 1)));
-      const views = await Promise.all([seller, ...buyers].map(actor => request(recorder, client, actor, { method: 'GET', path: '/v1/me' }).then(ok)));
+      assert(actors.length >= 3);
+      const board = ok(await request(recorder, client, actors[0], { method: 'GET', path: '/v1/market' }));
+      const views = await Promise.all(actors.map(actor => request(recorder, client, actor, { method: 'GET', path: '/v1/me' }).then(ok)));
+      // The market control uses two buyers; the 100-request burst and reconnect
+      // are separate controls, not a required market participant count.
+      const { seller, buyers, observation } = selectSoakContentionActors(actors, views,
+        { minCash: board.levers.minPrice, maxBuyers: 2 });
+      await recorder.record({ kind: 'soak-contention-selection', ...observation });
       const rules = ok(await request(recorder, client, seller, { method: 'GET', path: '/v1/rules' }));
-      const board = ok(await request(recorder, client, seller, { method: 'GET', path: '/v1/market' }));
-      assert(views.every(view => view.character.jailSeconds === 0 && view.character.loc === views[0].character.loc));
       const good = [...rules.goods].sort((a, b) => a.base - b.base)[0];
       ok(await request(recorder, client, seller, { method: 'POST', path: '/v1/goods/buy', body: { goodId: good.id, qty: 1 } }));
       const listing = ok(await request(recorder, client, seller, { method: 'POST', path: '/v1/market', body: { goodId: good.id, qty: 1, price: board.levers.minPrice, hours: 1 } }));

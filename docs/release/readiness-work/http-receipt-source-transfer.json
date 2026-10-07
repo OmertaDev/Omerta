@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "reviewedSource": "7da453e05036cc18bb60533aadcad8e7818020cc",
+  "sourceFiles": {
+    "src/server.js": "111d8de4b7a8aa96ed025d643e2c7831248302ae6eecee344a1d9e5eea3bfe88",
+    "src/http-idempotency.js": "2edeb237aa8c52c2655ac4821553d073fd6c90736600d0d34c092c4f567861fb",
+    "src/dbhealth.js": "2c8dfc3a56d98146d362e10a48f78b0e5858e004445ad4513e065decabca54e7",
+    "test/http-idempotency-recovery.js": "f8c69b01266bf9dc1f8b44b1542fd3c13edeff8811dcac6ce83045c23f7d1c8c",
+    "test/http-idempotency-http.js": "31a05f8aa1ba25d77e813c74dbd622726d0267bea63e05c3d1c3ebc118c7ad3d",
+    "test/security.js": "dfc189e2c13bf7315fd92218c520c97c8d4bd0a2eaa804519610a7b00d354989",
+    "test/coordination-http-receipts.js": "9278dde093c2362213796520c64b213f8ff6cbae65c7a5258a78fcc0bfd2a35e",
+    "test/hardening.js": "91696617b34bc8c81768a6bf57bab6bcbd19b7ab978c70b83ea20b1f91b5588b"
+  },
+  "historicalServer": "bbbeb137b8b1baeff09985331bc70a57670ddb723925057ffa858f840880e453",
+  "reconstruction": "Ten exact unique inverse literals reconstruct the complete prior server; existing deed inverse retains original12e8 baseline.",
+  "transferredDomains": [
+    "Unchanged check-in admission and payout rules",
+    "Unchanged ammunition purchase rules",
+    "Unchanged Family join/create/leave guards",
+    "Unchanged operation cancellation and recovery guards",
+    "Unchanged Knowledge authorization and propagation guards"
+  ],
+  "newBehavior": "Per-attempt transport reservation tokens, bounded connectivity retries and ownership CAS. Historical world evidence does not cover this new behavior.",
+  "executions": [
+    {
+      "name": "native-reservation",
+      "source": "7da453e05036cc18bb60533aadcad8e7818020cc",
+      "exitCode": 0,
+      "restrictedLog": "native-reservation.log",
+      "sha256": "76374570928a7d7d6dff79a2bc3aaf68ae98397a13a8f1b23b885eba4ae955c5"
+    },
+    {
+      "name": "native-http",
+      "source": "7da453e05036cc18bb60533aadcad8e7818020cc",
+      "exitCode": 0,
+      "restrictedLog": "native-http.log",
+      "sha256": "7c30f837f1b7482d5b043b706d7c7dd138e3698cc4a350b00a8a232591761c34"
+    },
+    {
+      "name": "security",
+      "source": "7da453e05036cc18bb60533aadcad8e7818020cc",
+      "exitCode": 0,
+      "restrictedLog": "security.log",
+      "sha256": "b04283168435368fa7bc3a49f7c17a5931bfd8df3b94792b782432eabb59853a"
+    },
+    {
+      "name": "coordination-receipts",
+      "source": "7da453e05036cc18bb60533aadcad8e7818020cc",
+      "exitCode": 0,
+      "restrictedLog": "coordination-receipts.log",
+      "sha256": "e01cc02569ce072b72d9e32c79fbdfaa736b07086c91678019c2ae2c738d577d"
+    },
+    {
+      "name": "hardening",
+      "source": "7da453e05036cc18bb60533aadcad8e7818020cc",
+      "exitCode": 0,
+      "restrictedLog": "hardening.log",
+      "sha256": "4513676343a00a4648607d5a598d9ed205828cdc38c36178c88cb4cfcc37a3da"
+    }
+  ],
+  "nativeControls": 9,
+  "limits": [
+    "Native component recovery and replay, security and hardening only",
+    "No new world, matrix, soak or deployment qualification",
+    "Historical source pins and attestations remain unchanged",
+    "Private raw logs retained outside repository; no actor or credential data copied"
+  ]
+}
