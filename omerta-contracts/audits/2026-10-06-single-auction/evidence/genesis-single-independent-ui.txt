@@ -1,0 +1,37 @@
+Independent UI review — single NFT-gated public auction
+Reviewed release checkout public/index.html and src/server.js on 2026-10-06.
+
+Finding: generated bid maximum prices could be off the CCA tick grid.
+The UI computed floor(2^96 / minimum whole OMR per ETH). The pinned vendor
+omerta-contracts/src/genesis-auction/vendor/cca/TickStorage.sol:42 rejects
+prices for which priceQ96 % TICK_SPACING_Q96 != 0. For example, a 5000 minimum
+with spacing 2 produces an odd reciprocal and fails simulation. No transaction
+is prepared by the backend when simulation fails, so the observed harm is
+unavailable bids rather than payment loss.
+
+Backend correction: verified one-block reads expose auction.tickSpacingQ96;
+bid preparation explicitly rejects off-grid prices before simulation. Test
+test/genesisauction.js verifies the pinned getter/output and rejects 1001 for
+spacing 2. Root owns the UI correction: retrieve verified spacing then round
+maximum price downward, preserving the user's minimum accepted OMR rate.
+
+Other reviewed controls: only bid/exitBid/claimBid transaction actions; exact
+decimal-to-wei parsing and equality against transaction value; repeated server
+simulation and calldata/from/to/value equality; final wallet/network check;
+cross-tab navigator lock and durable per-wallet pending intent; canonical receipt
+block verification before and after confirmation and final pending-record equality.
+The server registers the new genesis-auction route. No new confirmed payment
+loss or duplicate submission path was found in this source review.
+
+Verification performed: node test/genesisauction.js and
+node test/genesis-auction-http.js passed. No live wallet or signing interaction.
+Conclusion is source-only; final UI change and production activation remain
+separate verification steps.
+
+Fix disposition and independent tool review (2026-10-06)
+UI verified GET tick/floor, downward tick rounding, and floor rejection were independently re-read. The off-tick UI finding is corrected in reviewed source. Deployment planner uses five separate EOA nonces, Safe funding outside that nonce sequence, mined hook CREATE2 permission bits, committed/transitive artifact pins, and unfilled new runtime hashes with activationReady=false. Operations use zero-value staged calls, migration independent of claim cliff, NFT-balance-free recovery, one-block simulations and final block-hash/chain recheck. No new confirmed issue in these two tool reviews. Deployment inventory/cadence and matching reserve adequacy remain explicitly unverified execution gates.
+Planner and operations Node suites passed. Subsequent Daybreak dependency finding required all four dependency runtime pins; parent retains raw report. Backend now refuses missing, partial, duplicated or cross-contract-colliding dependency pins for status, bids and recovery; helper/HTTP regressions passed. Updated operations fixture verification is delegated to market_hunt.
+public/index.html SHA256 726bdae7916c138b421e6f4962d7133aeac0b8801a0c815819fca7d24b785590
+tools/genesis-auction-deployment-plan.js SHA256 371d6f4c85237f72e6668cffbb973fd07cf1b96d9e5e478518fab4992b2413a6
+tools/genesis-auction-operations.js SHA256 6bd76d0359dc63021f3f10c4ac8836810776364efcbaf30c7190219566724787
+src/genesisauction.js SHA256 7aed50ae735ab0904f76ac8adb966209706c6ac9cffafc7d0ee9464e8f6a02a2

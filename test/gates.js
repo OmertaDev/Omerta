@@ -1490,6 +1490,14 @@ const SCENERY_WAIVED = {
   // (the stale-waiver assert below), so a mark that stops matching fails loudly instead of leaving
   // a real pg site quietly waived.
   const SAFE_CONCURRENT_SITES = [
+    { file: 'src/genesisauction.js', mark: 'Object.values(c).map(async pin => {',
+      why: 'viem RPC only; configuration closes c to exactly five reviewed contract pins, getCode reads use the same block.number, and unchanged() rechecks that canonical block/chain before releasing status or calldata; no PostgreSQL handle or query' },
+    { file: 'src/genesisauction.js', mark: 'bindings.map(async ([name, fn, expected]) => {',
+      why: 'viem RPC only; a fixed immutable-binding table calls the local read closure, which invokes client.readContract at the single verified block.number; unchanged() rechecks canonical block/chain, with no shared SQL client' },
+    { file: 'src/genesisauction.js', mark: '.map(fn => read(hook, fn))',
+      why: 'viem RPC only; ten fixed hook governance/tax getters target the runtime-pinned hook at the same block.number through client.readContract; bounded rates and immutable authority are verified then canonical block/chain is rechecked, no database queries' },
+    { file: 'src/genesisauction.js', mark: 'requests.map(async ([name, fn, args = []]) => { state[fn] = await read(name, fn, args); })',
+      why: 'viem RPC only; sixteen fixed auction/coordinator state getters use client.readContract at the same verified block.number and unchanged() rejects block/chain changes before release; no PostgreSQL transaction or connection allocation' },
     { file: 'src/bank.js', mark: "'collateralOf', 'debtOf', 'maxDebtOf'",
       why: 'viem, five independent Alchemist market RPC reads' },
     { file: 'src/watcher.js', mark: 'event: mintEv, ...range(from, to)',

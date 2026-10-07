@@ -1,0 +1,208 @@
+{
+  "files": [
+    {
+      "file": "actual-plan-signer-binding-proof.json",
+      "sha256": "ddc9ae89eab25db624c74278935f90dcaae4f8df3d080f31601ece9df66f10c1"
+    },
+    {
+      "file": "canonical-genesis-complete-technical-preflight.json",
+      "sha256": "65489a9f4415660a54ce20e18aedcb25d0ad19ffcbd52b14771ac44d40a90d96"
+    },
+    {
+      "file": "canonical-genesis-dryfork-getter-queries.json",
+      "sha256": "137371d1e5ee47cb6f1220be4717e67259e91de58bfea2bcd77a459823f84d8f"
+    },
+    {
+      "file": "canonical-genesis-evidence-inventory.json",
+      "sha256": "762b828e2511c972f022e38c86d7dc588ae4c519195660c8d1fe40e43e979e33"
+    },
+    {
+      "file": "canonical-genesis-primary-preflight.json",
+      "sha256": "37e4b6aab59e46a8a62cfe92a2e9811270c3572424220e41d871226ace331666"
+    },
+    {
+      "file": "canonical-genesis-public-candidate-evidence.json",
+      "sha256": "c110ba27f8a703dbaa5d1489c903d42634e65ccd93d87960044f0aeb95529a13"
+    },
+    {
+      "file": "canonical-genesis-public-candidate-input.json",
+      "sha256": "5cd39f9ffd83463170e19e52fc33af64911c9ed2f66922f47b636e14245291d3"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-dryfork-proof.json",
+      "sha256": "177a1050715e9925ac885c70ceebd37852b681e3a73a071d64af7c59c4cc82d7"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-dryfork-run.txt",
+      "sha256": "9da89d33b0522175bf029ef5fa1ff8ccbbdb3d8e3114c3cb67337b1de0630960"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-external-proof.json",
+      "sha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549"
+    },
+    {
+      "file": "canonical-genesis-seven-runtime-getter-proof.json",
+      "sha256": "b7b99cbf60b311fca02fe90a6e7a949c57eef32d10d25a0cdd8a33044b751263"
+    },
+    {
+      "file": "canonical-genesis-validator-runtime-observation.json",
+      "sha256": "6f1b5c4019a1346582cdb55815dcdfe70602b2a4bf47c05090bfef98b17a64cd"
+    },
+    {
+      "file": "canonical-remappings-bytecode-comparison.json",
+      "sha256": "1de9e63cbd353a0660524a5b20eece280c8d3328c8c9984e29d81e6c35227897"
+    },
+    {
+      "file": "canonical-remappings-focused.txt",
+      "sha256": "6ff53f59676e8afd6f69a829f59dd7afb9a864165c44a57dfab6ec8b727607ce"
+    },
+    {
+      "file": "canonical-remappings-full-warm.txt",
+      "sha256": "1c640b75b1279214e4dcac99605ea556379248afc7d880d7f65fb8486dd9c9a8"
+    },
+    {
+      "file": "canonical-remappings-provenance.json",
+      "sha256": "56ce156a3afb8d2e67618cfb5b467cf136f0d03cb1e7f542b518f179b4060107"
+    },
+    {
+      "file": "canonical-remappings-sizes.txt",
+      "sha256": "9b53c71d8e969a73455204387e720bc419da7157cd37178fd5bb65861e9bc03d"
+    },
+    {
+      "file": "canonical-source-followup.json",
+      "sha256": "f4a956e0d699e87896c4ed1db6a2170f0a756a5ef1079767ff24984b71a6db96"
+    },
+    {
+      "file": "genesis-approved-complete-technical-preflight.json",
+      "sha256": "bc779f9782be5d97a1002cd83d65e3ce6ae3de9a791154a5fa9b883683a60cd0"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks-exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks-provenance.json",
+      "sha256": "c6fa1a9702f2a38de35e7e0905a069ec311fd8d33a97dc6bbab23e8d047478f9"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks.txt",
+      "sha256": "967bb62462dc809108f535fd0952a1c28aa77bcf4f2c69a734ba9425cdd95501"
+    },
+    {
+      "file": "genesis-approved-daybreak-periphery-review.txt",
+      "sha256": "04b9892d059558a64a8dd0e1dc93e7ffa932a57883efad5b4d4c4383eb099d5e"
+    },
+    {
+      "file": "genesis-approved-daybreak-retest.txt",
+      "sha256": "dc779db42788bc5f856ba69f2985efd4cf980504c1989d9b90113fe58f459299"
+    },
+    {
+      "file": "genesis-approved-daybreak-review.txt",
+      "sha256": "5fa832a35cd95a71bb56b21a51166c924fb68cfaab172e5f8ebe81dd0961dfd5"
+    },
+    {
+      "file": "genesis-approved-f01-f02-focused.txt",
+      "sha256": "ea6169b739a0d6a1ac9659e268b3f175935855bba2b0f3b04dcd2deb4e1b70c0"
+    },
+    {
+      "file": "genesis-approved-f01-f02-full-warm.txt",
+      "sha256": "fdeb5c2bfcaf82e496b12fdd09a1fe88635396db804b6f6b13770fe59fdbcdcf"
+    },
+    {
+      "file": "genesis-approved-f01-f02-initial-naming-failure.txt",
+      "sha256": "9d77a7eeebcbd426e469be01f5cc78326fceb06b12c031272d26c1d252bdb61d"
+    },
+    {
+      "file": "genesis-approved-f01-f02-provenance.json",
+      "sha256": "bea0efa1b4767777f44302262e6b53a4bf7ed78ed9677609b3cec403a09e193f"
+    },
+    {
+      "file": "genesis-approved-f01-f02-robinhood-forks.txt",
+      "sha256": "0a67fd5a82202638579b8cd74ae9a9e01458f4ca27eac4c76ad175d4d1fc53c2"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-proof.json",
+      "sha256": "1e9ae40c6503f47e998217e2d9cfe5fde2b0af5f28a8186e36763a4edd74105f"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-dryfork-run.txt",
+      "sha256": "0bfe842bdbad46e73e12ffa453b52b420f0182b6eb554752f4e5483dfc9d9d07"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-external-proof.json",
+      "sha256": "426003ac5e01fc152b82d65a00899fac657c9ef86dd6a96470eb7ab788bca549"
+    },
+    {
+      "file": "genesis-approved-seven-runtime-getter-proof.json",
+      "sha256": "c1bab0fac4829e528afaa4ad721dd278d45f9d249d7e2c6e23f7426789868d0d"
+    },
+    {
+      "file": "genesis-approved-validator-runtime-observation.json",
+      "sha256": "dca3d0e319efc2174ce7ea112c57c9c89915fc29598d770f09812882d5c29257"
+    },
+    {
+      "file": "genesis-auction-constructor-encoding-proof.json",
+      "sha256": "e21e1906760fd567881357929768d0e0e80542ba3f46f894dbff7912a6578060"
+    },
+    {
+      "file": "genesis-daybreak-canonical-source-retest.txt",
+      "sha256": "a145c0b764ae88a0afb383bf2e7ba25491a20893cb0ab99926a7f8528559aabe"
+    },
+    {
+      "file": "genesis-governance-daybreak-final-retest.txt",
+      "sha256": "0d03ea29ed44c5f155e63585fbb3a34f35c238a4b00d44402a1381faee823cc6"
+    },
+    {
+      "file": "genesis-governance-daybreak-h03-retest.txt",
+      "sha256": "d31f8b1b4608db5e0350434f4711f8e14cf8f2351eb150e6575264b6f9f0a62c"
+    },
+    {
+      "file": "genesis-governance-daybreak-review.txt",
+      "sha256": "2b23fd06bdd7168aa6d376f81cea0d92a6987fb512a97675b53f53d86fd285ec"
+    },
+    {
+      "file": "hook-tax-domain-trace.txt",
+      "sha256": "99ae3003277078aee718cbbbffa454a5c4ecb014da0fdd2c03249ecd2a1b0c53"
+    },
+    {
+      "file": "hook-tax-governance-focused.txt",
+      "sha256": "dc094141499a63bb78c4d91f4483e1bc6ef1853b36c487c4a39ca34d97b32886"
+    },
+    {
+      "file": "hook-tax-governance-full-warm.txt",
+      "sha256": "90765491d7386f4ea3490605aeca3f584aa9e8b8195172c1f8f0cf1018d43e34"
+    },
+    {
+      "file": "hook-tax-governance-initial-domain-failure.txt",
+      "sha256": "f81caf8748a99165e7d2acf245352731dc8943c0b3ecf86d891a43a6264b1c76"
+    },
+    {
+      "file": "hook-tax-governance-provenance.json",
+      "sha256": "3c0e71413614c68f5b260208e1ae4f9171821d590f68091987fbac4c942703c4"
+    },
+    {
+      "file": "release-source-pins.json",
+      "sha256": "c90b996969fb5013dbcad38930056aab2f634460a27280c599be29e33e8df813"
+    },
+    {
+      "file": "report.md",
+      "sha256": "b5f09b1c1b9df80dc2a241814462762206472e858d8b7ae065d2d6c337a36e81"
+    },
+    {
+      "file": "retention-pins.json",
+      "sha256": "e0ea56e9f9caebcb8f17a66d6f2281292bc56924170dfb794de889837d1795c4"
+    },
+    {
+      "file": "reviewer-invocation.json",
+      "sha256": "e8eb31c2cb072090f051d0f8c2b5fa555a6c54df851e9067c20413699ae6d474"
+    },
+    {
+      "file": "shared-planner-ci-followup.json",
+      "sha256": "7130a39d2df61619763d428d376371a733c626dfc9ac86fc3eb8d9f0c6f8e87a"
+    },
+    {
+      "file": "shared-planner-ci-initial-failure.txt",
+      "sha256": "55d970ab271694c37a4e2a0c540d83a246ab58a3ccf9e8ddcdb8b3e5af5684cd"
+    }
+  ]
+}

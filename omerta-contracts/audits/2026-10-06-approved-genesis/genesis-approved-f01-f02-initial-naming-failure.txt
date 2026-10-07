@@ -1,0 +1,447 @@
+Compiling 8 files with Solc 0.8.26
+Compiling 8 files with Solc 0.8.26
+Solc 0.8.26 finished in 45.74s
+Solc 0.8.26 finished in 70.30s
+Compiler run successful with warnings:
+Warning (5159): "selfdestruct" has been deprecated. Note that, starting from the Cancun hard fork, the underlying opcode no longer deletes the code and data associated with an account and only transfers its Ether to the beneficiary, unless executed in the same transaction in which the contract was created (see EIP-6780). Any use in newly deployed contracts is strongly discouraged even if the new behavior is taken into account. Future changes to the EVM might further reduce the functionality of the opcode.
+  --> test/market-v2/AuctionCoordinatorV2.t.sol:28:51:
+   |
+28 |     constructor(address payable target) payable { selfdestruct(target); }
+   |                                                   ^^^^^^^^^^^^
+
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:174:5:
+    |
+174 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 1 test for test/GenesisCharacterEligibility.t.sol:CharacterAuctionAdmissionTest
+[FAIL: `testFail*` has been removed. Consider changing to test_Revert[If|When]_Condition and expecting a revert] testFailedGraduationRefundSurvivesSupplyDrift() (gas: 0)
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 3.20ms (0.00ns CPU time)
+
+Ran 6 tests for test/OmertaGuardedAuction.t.sol:OmertaGuardedAuctionTest
+[PASS] testBatchClaimCannotBypassGate() (gas: 580754)
+[PASS] testGateRuntimeAndChainArePinned() (gas: 557848)
+[PASS] testRejectWrongGateConfiguration() (gas: 521980)
+[PASS] testSingleClaimBlockedUntilGateAndCliff() (gas: 579090)
+[PASS] testSweepRequiresCoordinatorAndWorksBeforeClaims() (gas: 570436)
+[PASS] testUngradulatedAuctionRefundUnaffectedByClaimGate() (gas: 4499215)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 3.86ms (3.75ms CPU time)
+
+Ran 1 test for test/audit/PlayerSaleCapDomain.t.sol:PlayerSaleCapDomainTest
+[PASS] test_allUint8TiersReturnPublishedCapOrEligibilityError() (gas: 3849924)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 4.68ms (3.88ms CPU time)
+
+Ran 3 tests for test/market-v2/PlayerGenesisIntegrationV2.t.sol:PlayerGenesisIntegrationV2Test
+[PASS] testRealAuctionAndPoolSettleBeforeBothClaims() (gas: 1109661)
+[PASS] testRealAuctionFailedPoolFundingRetainsPrincipalAndCanRetry() (gas: 1102311)
+[PASS] testRealAuctionPlayerTimeoutRefundsAndPublicMigrationRecovers() (gas: 871953)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 7.90ms (3.12ms CPU time)
+
+Ran 10 tests for test/GenesisPlayerSale.t.sol:GenesisPlayerSaleTest
+[PASS] testChainReplayRejected() (gas: 30533)
+[PASS] testFuzzRoundingAtArbitraryPrice(uint128,uint128,uint128) (runs: 512, μ: 1907, ~: 1907)
+[PASS] testFuzzSettlementSolvency(uint128,uint128) (runs: 512, μ: 488247, ~: 484780)
+Logs:
+  Bound result 273592129043653952
+  Bound result 617425405792142740
+
+[PASS] testMigrationFailureRollsBackAndTimeoutRefundsPrincipal() (gas: 545935)
+[PASS] testProportionalRefundAndDelayedClaims() (gas: 568749)
+[PASS] testRefundReentrancyCannotDrainOtherPrincipal() (gas: 300003)
+[PASS] testTiersAndCumulativeCap() (gas: 142221)
+[PASS] testUnsettledWalletBlocksReleaseAndAnyoneCanSettle() (gas: 425087)
+[PASS] testWindowClosesExactlyAt48Hours() (gas: 32687)
+[PASS] testWrongTierProofRejected() (gas: 39162)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 225.82ms (449.50ms CPU time)
+
+Ran 8 tests for test/market-v2/GenesisCoordinatorV2.t.sol:GenesisCoordinatorV2Test
+[PASS] testBindingRejectsDifferentCharacterNft() (gas: 6257109)
+[PASS] testBindingRejectsWrongHookPoolBeforeBidding() (gas: 5533244)
+[PASS] testCancelledPlayersRefundAndPublicSaleStillMigrates() (gas: 889529)
+[PASS] testCannotRebindOrSpoofPlayerCallback() (gas: 19964)
+[PASS] testFuzzBothLegsFundLiquidityAndResiduals(uint96) (runs: 512, μ: 1016698, ~: 1016633)
+Logs:
+  Bound result 227459874844394954
+
+[PASS] testInsufficientMatchingInventoryRollsBackAllLegs() (gas: 425777)
+[PASS] testNoEarlyMigration() (gas: 61508)
+[PASS] testRealPositionCombinesBothLegsAndClaimsWaitForCliff() (gas: 1088138)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 227.17ms (226.04ms CPU time)
+
+Ran 16 tests for test/GenesisCharacterEligibility.t.sol:CharacterPlayerAdmissionTest
+[PASS] testChainReplayRejected() (gas: 30600)
+[PASS] testChangedChainRejectsContribution() (gas: 33785)
+[PASS] testChangedNftCodeFailsClosed() (gas: 32871)
+[PASS] testEveryAdditionalContributionChecksOwnership() (gas: 137240)
+[PASS] testFuzzRoundingAtArbitraryPrice(uint128,uint128,uint128) (runs: 512, μ: 1907, ~: 1907)
+[PASS] testFuzzSettlementSolvency(uint128,uint128) (runs: 512, μ: 488223, ~: 484758)
+Logs:
+  Bound result 125164039004422807
+  Bound result 2419599598780213493
+
+[PASS] testMigrationFailureRollsBackAndTimeoutRefundsPrincipal() (gas: 545935)
+[PASS] testOwnershipRequiredDespiteValidProof() (gas: 58358)
+[PASS] testProportionalRefundAndDelayedClaims() (gas: 568814)
+[PASS] testRefundReentrancyCannotDrainOtherPrincipal() (gas: 300048)
+[PASS] testTiersAndCumulativeCap() (gas: 142266)
+[PASS] testTransferDoesNotBlockCancelledRefund() (gas: 178412)
+[PASS] testTransferDoesNotBlockSettlementClaimOrRefund() (gas: 413532)
+[PASS] testUnsettledWalletBlocksReleaseAndAnyoneCanSettle() (gas: 425065)
+[PASS] testWindowClosesExactlyAt48Hours() (gas: 32687)
+[PASS] testWrongTierProofRejected() (gas: 39207)
+Suite result: ok. 16 passed; 0 failed; 0 skipped; finished in 227.26ms (454.38ms CPU time)
+
+Ran 18 tests for test/market-v2/AuctionCoordinatorV2.t.sol:AuctionCoordinatorV2Test
+[PASS] testAllPinnedRuntimeChangesRollBackBeforeSweep() (gas: 879238)
+[PASS] testApprovedUniformScheduleConstructorAndAllStepAdvance() (gas: 6279541)
+Logs:
+  Approved schedule auction constructor gas: 4471711
+  Approved schedule all-step advance gas: 1218582
+
+[PASS] testBindingAtStartIsRejected() (gas: 30357)
+[PASS] testBindingDelayedClaimsIsRejected() (gas: 3944490)
+[PASS] testBindingWrongNftAndUntrustedCallerAndRebindingRejected() (gas: 4811867)
+[PASS] testClaimsAtCloseBeforeMigrationAndFixedLpReservesPaired() (gas: 1570844)
+[PASS] testDependenciesAndEligibilityIdentityFailClosed() (gas: 749764)
+[PASS] testFundedPoolPriceBelowFinalClearingAfterLateDemand() (gas: 1632773)
+[PASS] testFuzzProceedsBudgetCreditsAndCustody(uint96) (runs: 512, μ: 1479868, ~: 1480168)
+Logs:
+  Bound result 90010302451412744744
+
+[PASS] testFuzzSurplusNeverSpendsOutstandingCredit(uint64) (runs: 512, μ: 1512581, ~: 1512537)
+Logs:
+  Bound result 8720
+
+[PASS] testInsufficientReserveRollsBackSweepPoolAndAllowanceThenRetries() (gas: 1558812)
+[PASS] testNoCheckpointOrEarlyCheckpointCannotMigrate() (gas: 284037)
+[PASS] testPositionManagerDustIsSurplusNotAcceptedProceedsOrLpBudget() (gas: 1504163)
+[PASS] testResidualWithdrawAndTokenDustAreFixedRecipientAndSingleUse() (gas: 1467785)
+[PASS] testRevertingSafeCannotBlockMigrationAndWithdrawalRollbackRetainsCredit() (gas: 1440759)
+[PASS] testSafeOnlySurplusRecoveryBeforeAndAfterMigrationProtectsCredit() (gas: 1621231)
+[PASS] testSurplusRecipientRevertRetainsSurplusAndOutstandingCredit() (gas: 1516278)
+[PASS] testWrongHookPoolAndValidatorIdentityCannotBind() (gas: 135787)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 42.37s (466.81ms CPU time)
+
+Ran 3 tests for test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest
+[PASS] invariantCapsAndSettlementAccounting() (runs: 512, calls: 256000, reverts: 36572)
+
+╭-------------------+-------------------+-------+---------+----------╮
+| Contract          | Selector          | Calls | Reverts | Discards |
++====================================================================+
+| PlayerSaleHandler | claim             | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | contribute        | 36386 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | refund            | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | release           | 36996 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | settle            | 36664 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | timeout           | 36336 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | transferCharacter | 36572 | 36572   | 0        |
+╰-------------------+-------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 282964946706309104
+  Bound result 5839
+  Bound result 751023935670812157
+  Bound result 247
+  Bound result 750000000000000000
+  Bound result 1
+  Bound result 1319372
+  Bound result 110
+  Bound result 115
+  Bound result 5690469085908776056
+  Bound result 3686
+  Bound result 86400
+  Bound result 6917
+  Bound result 147
+  Bound result 870592363862383042
+  Bound result 3447
+  Bound result 5281502584559635393
+  Bound result 130
+  Bound result 4681243742974007121
+  Bound result 1660961811646332589
+  Bound result 3999999
+  Bound result 12757138660644152
+  Bound result 506447293192015063
+  Bound result 1374607431768211454
+  Bound result 1999119846931554820
+  Bound result 15000000
+  Bound result 4340490060100245202
+  Bound result 1291
+  Bound result 200
+  Bound result 8176421
+  Bound result 456102842951896953
+  Bound result 398892960508297
+  Bound result 5770228909156649751
+  Bound result 17
+  Bound result 490
+  Bound result 1755453155995697329
+  Bound result 5
+  Bound result 1033819715813439655
+  Bound result 4400531968818784741
+  Bound result 1374607431768211452
+  Bound result 4074883942215307504
+  Bound result 4000000000000000000
+  Bound result 9558
+  Bound result 19
+  Bound result 1028640897852079
+  Bound result 1676
+  Bound result 5513853427205097365
+  Bound result 513374727594920243
+  Bound result 4919724339137835845
+  Bound result 3607635402610
+  Bound result 5729878238108720114
+  Bound result 6798
+  Bound result 2264337593543950336
+  Bound result 3824364409368822471
+  Bound result 605
+  Bound result 1
+  Bound result 257125015784804
+  Bound result 299284157174056310
+  Bound result 3750
+  Bound result 19
+  Bound result 8656
+  Bound result 3423037090
+  Bound result 1089040837570254260
+  Bound result 57005
+  Bound result 2060710412189395334
+  Bound result 1852587276145301356
+  Bound result 9778
+  Bound result 3986092468
+  Bound result 3159690510
+  Bound result 17
+  Bound result 91572887
+  Bound result 2187
+  Bound result 1374607431768211453
+  Bound result 2746331933
+  Bound result 7068
+  Bound result 8314
+  Bound result 3299831676489489085
+
+[PASS] invariantETHReservesAlwaysCoverLiabilities() (runs: 512, calls: 256000, reverts: 36572)
+
+╭-------------------+-------------------+-------+---------+----------╮
+| Contract          | Selector          | Calls | Reverts | Discards |
++====================================================================+
+| PlayerSaleHandler | claim             | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | contribute        | 36386 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | refund            | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | release           | 36996 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | settle            | 36664 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | timeout           | 36336 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | transferCharacter | 36572 | 36572   | 0        |
+╰-------------------+-------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 282964946706309104
+  Bound result 5843
+  Bound result 751023935670812157
+  Bound result 203
+  Bound result 750000000000000000
+  Bound result 1
+  Bound result 1319372
+  Bound result 110
+  Bound result 115
+  Bound result 5690469085908776056
+  Bound result 3657
+  Bound result 86400
+  Bound result 411
+  Bound result 147
+  Bound result 870592363862383042
+  Bound result 3413
+  Bound result 5281502584559635393
+  Bound result 130
+  Bound result 4681243742974007121
+  Bound result 1660961811646332589
+  Bound result 3999999
+  Bound result 12757138660644152
+  Bound result 9536
+  Bound result 1374607431768211454
+  Bound result 1999119846931554820
+  Bound result 15000000
+  Bound result 4340490060100245202
+  Bound result 1260
+  Bound result 200
+  Bound result 8176421
+  Bound result 456102842951896953
+  Bound result 398892960508297
+  Bound result 5770228909156649751
+  Bound result 17
+  Bound result 490
+  Bound result 1755453155995697329
+  Bound result 5
+  Bound result 1033819715813439655
+  Bound result 4400531968818784741
+  Bound result 1374607431768211452
+  Bound result 4074883942215307504
+  Bound result 4000000000000000000
+  Bound result 9403
+  Bound result 19
+  Bound result 1028640897852079
+  Bound result 1676
+  Bound result 5513853427205097365
+  Bound result 513374727594920243
+  Bound result 4919724339137835845
+  Bound result 3607635402610
+  Bound result 5729878238108720114
+  Bound result 6798
+  Bound result 2264337593543950336
+  Bound result 3824364409368822471
+  Bound result 8277
+  Bound result 1
+  Bound result 257125015784804
+  Bound result 299284157174056310
+  Bound result 3750
+  Bound result 19
+  Bound result 8325
+  Bound result 3423037090
+  Bound result 1089040837570254260
+  Bound result 57005
+  Bound result 2060710412189395334
+  Bound result 1852587276145301356
+  Bound result 10213
+  Bound result 3208
+  Bound result 3159690510
+  Bound result 17
+  Bound result 10672
+  Bound result 4003
+  Bound result 1374607431768211453
+  Bound result 2746331933
+  Bound result 6381
+  Bound result 8440
+  Bound result 3299831676489489085
+
+[PASS] invariantTokenCustodyCoversUnclaimedAllocations() (runs: 512, calls: 256000, reverts: 36572)
+
+╭-------------------+-------------------+-------+---------+----------╮
+| Contract          | Selector          | Calls | Reverts | Discards |
++====================================================================+
+| PlayerSaleHandler | claim             | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | contribute        | 36386 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | refund            | 36523 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | release           | 36996 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | settle            | 36664 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | timeout           | 36336 | 0       | 0        |
+|-------------------+-------------------+-------+---------+----------|
+| PlayerSaleHandler | transferCharacter | 36572 | 36572   | 0        |
+╰-------------------+-------------------+-------+---------+----------╯
+
+Logs:
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 250000000000000000
+  Bound result 282964946706309104
+  Bound result 5844
+  Bound result 751023935670812157
+  Bound result 317
+  Bound result 750000000000000000
+  Bound result 1
+  Bound result 1319372
+  Bound result 110
+  Bound result 115
+  Bound result 5690469085908776056
+  Bound result 3639
+  Bound result 86400
+  Bound result 411
+  Bound result 147
+  Bound result 870592363862383042
+  Bound result 3413
+  Bound result 5281502584559635393
+  Bound result 130
+  Bound result 4681243742974007121
+  Bound result 1660961811646332589
+  Bound result 3999999
+  Bound result 12757138660644152
+  Bound result 9535
+  Bound result 1374607431768211454
+  Bound result 1999119846931554820
+  Bound result 15000000
+  Bound result 4340490060100245202
+  Bound result 1260
+  Bound result 200
+  Bound result 8176421
+  Bound result 456102842951896953
+  Bound result 398892960508297
+  Bound result 5770228909156649751
+  Bound result 17
+  Bound result 490
+  Bound result 1755453155995697329
+  Bound result 5
+  Bound result 1033819715813439655
+  Bound result 4400531968818784741
+  Bound result 1374607431768211452
+  Bound result 4074883942215307504
+  Bound result 4000000000000000000
+  Bound result 9318
+  Bound result 19
+  Bound result 1028640897852079
+  Bound result 1676
+  Bound result 5513853427205097365
+  Bound result 513374727594920243
+  Bound result 4919724339137835845
+  Bound result 3607635402610
+  Bound result 5729878238108720114
+  Bound result 6798
+  Bound result 2264337593543950336
+  Bound result 3824364409368822471
+  Bound result 8277
+  Bound result 1
+  Bound result 257125015784804
+  Bound result 299284157174056310
+  Bound result 3750
+  Bound result 19
+  Bound result 8325
+  Bound result 3423037090
+  Bound result 1089040837570254260
+  Bound result 57005
+  Bound result 2060710412189395334
+  Bound result 1852587276145301356
+  Bound result 10213
+  Bound result 3208
+  Bound result 3159690510
+  Bound result 17
+  Bound result 10672
+  Bound result 4003
+  Bound result 1374607431768211453
+  Bound result 2746331933
+  Bound result 645936500416533204
+  Bound result 8439
+  Bound result 3299831676489489085
+
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 89.32s (171.34s CPU time)
+
+Ran 9 test suites in 89.33s (132.39s CPU time): 65 tests passed, 1 failed, 0 skipped (66 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/GenesisCharacterEligibility.t.sol:CharacterAuctionAdmissionTest
+[FAIL: `testFail*` has been removed. Consider changing to test_Revert[If|When]_Condition and expecting a revert] testFailedGraduationRefundSurvivesSupplyDrift() (gas: 0)
+
+Encountered a total of 1 failing tests, 65 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

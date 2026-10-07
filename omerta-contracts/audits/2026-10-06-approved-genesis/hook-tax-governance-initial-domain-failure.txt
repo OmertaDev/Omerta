@@ -1,0 +1,99 @@
+Compiling 4 files with Solc 0.8.26
+Solc 0.8.26 finished in 31.84s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:254:5:
+    |
+254 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 7 tests for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceV2Test
+[FAIL: TaxProposalMismatch()] testChainAndHookDomainsCannotReplay() (gas: 319007)
+[PASS] testExactOutputFounderValueAndBuyDoesNotAcquireSellTax() (gas: 596592)
+[PASS] testExactPayloadNonceCancelAndAppliedReplayRejected() (gas: 153505)
+[PASS] testFuzzFutureFeeConservationAndOpsValue(uint16,uint16,uint16,uint16,uint64) (runs: 512, μ: 530168, ~: 525171)
+Logs:
+  Bound result 2999999999000000121
+
+[PASS] testHardCapWideInputsAndFounderMinimum() (gas: 431489)
+[PASS] testOnlyFutureFeesChangeAndAllOldReceiverCreditsStayProtected() (gas: 740809)
+[PASS] testSafeOnlyQueueCancelExecuteAndExact48HourBoundary() (gas: 111449)
+Suite result: FAILED. 6 passed; 1 failed; 0 skipped; finished in 108.86ms (99.93ms CPU time)
+
+Ran 1 test for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceInvariantTest
+[PASS] invariantProtectedOpsAndFundedLiabilitiesWithDelayedTaxChanges() (runs: 32, calls: 2048, reverts: 27)
+
+╭--------------------------+----------+-------+---------+----------╮
+| Contract                 | Selector | Calls | Reverts | Discards |
++==================================================================+
+| HookTaxGovernanceHandler | progress | 497   | 27      | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | propose  | 506   | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | sweep    | 504   | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | trade    | 541   | 0       | 0        |
+╰--------------------------+----------+-------+---------+----------╯
+
+Logs:
+  Bound result 8418432277
+  Bound result 4255575498215
+  Bound result 3
+  Bound result 10011401196297955
+  Bound result 240120
+  Bound result 3358
+  Bound result 1561
+  Bound result 206539175900979
+  Bound result 812
+  Bound result 1
+  Bound result 3843539006997
+  Bound result 46744257709551430
+  Bound result 100
+  Bound result 99999999000025210
+  Bound result 1000000002
+  Bound result 99999999000003631
+  Bound result 1
+  Bound result 3
+  Bound result 100390
+  Bound result 1000000000
+  Bound result 99999999000000021
+  Bound result 99999999343999525
+  Bound result 21029
+  Bound result 2
+  Bound result 99999999000001080
+  Bound result 2
+  Bound result 4
+  Bound result 99999999000007697
+  Bound result 99999999009765451
+  Bound result 3
+  Bound result 24331
+  Bound result 198
+  Bound result 99999999010810817
+  Bound result 2
+  Bound result 4
+  Bound result 3
+  Bound result 86398
+  Bound result 101
+  Bound result 3
+  Bound result 4
+  Bound result 1000000003
+  Bound result 99999999000259201
+  Bound result 48879
+  Bound result 32452
+  Bound result 4
+  Bound result 6723
+  Bound result 18117736919034170
+  Bound result 1
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 1.66s (1.62s CPU time)
+
+Ran 2 test suites in 1.67s (1.76s CPU time): 7 tests passed, 1 failed, 0 skipped (8 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceV2Test
+[FAIL: TaxProposalMismatch()] testChainAndHookDomainsCannotReplay() (gas: 319007)
+
+Encountered a total of 1 failing tests, 7 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

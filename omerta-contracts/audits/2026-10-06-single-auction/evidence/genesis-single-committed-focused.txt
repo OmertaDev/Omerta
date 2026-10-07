@@ -1,0 +1,9 @@
+
+> omerta-backend@1.2.0 test:genesis-auction
+> node test/genesis-auction-deployment-plan.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js
+
+Unsigned NFT-gated auction planner PASS: real artifacts, five nonces, all-public inventory, NFT coordinator/auction args, adapters/funding, 72h native schedule, 26 rejected manifests, source/ABI/compiler/size tampering. No eligibility roster, signing or broadcast.
+genesis auction: pinned deployment, exact unsigned calldata, NFT admission, complete bid recovery and bounded checkpoint hints PASS
+player genesis HTTP: authenticated perimeter, disabled payments, pinned manifest, fixed input allowlist PASS
+Player genesis real-function client PASS: precise ETH, NFT/service gates, two quotes, frozen minimum, canonical/reorg-safe confirmations and event IDs, persistent intents, locks/concurrency, stale pending responses and bounded late wallet requests.
+Single-auction unsigned operations PASS: staged checkpoint/migrate/dust, no NFT balance dependency, claim cliff independent, zero ETH exact calldata/simulation, immutable/runtime pins, stale/reorg/chain/simulation rejection.

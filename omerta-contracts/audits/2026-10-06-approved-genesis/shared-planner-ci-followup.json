@@ -1,0 +1,28 @@
+{
+  "sourceRevision": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+  "failedRun": 37568287796,
+  "failedJob": 112620937317,
+  "failure": "Old shared planner passed nine hook constructor arguments instead of ten.",
+  "fix": "Derive immutable tax governance from existing roles.safe; preserve full source hashes and constrain only the already approved Permit2 dependency mount.",
+  "files": [
+    {
+      "path": "tools/market-v2-deployment-plan.js",
+      "sha256": "f4885d93396c7f68d711d1b749026171005f87839930c1001f7b20650698c25b"
+    },
+    {
+      "path": "test/market-v2-deployment-plan.js",
+      "sha256": "e0b2af148280e1f93117d321f891f6a99d42e653b3a5e6471e8dcaac103d7c6d"
+    }
+  ],
+  "validation": {
+    "command": "npm run test:market-v2",
+    "exitCode": 0,
+    "plannerChecks": 15,
+    "keeper": true,
+    "solver": true
+  },
+  "financialAndSignerSourcesUnchanged": true,
+  "review": "Root inspected the complete seven-line diff; independent caller search found no further stale OmertaHookV2 JS deployment callers.",
+  "signingReady": false,
+  "broadcast": false
+}

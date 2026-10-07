@@ -1,0 +1,117 @@
+# Daybreak adversarial review
+
+Pinned to base `ead92ac404788a6792d2b7677fa2d8e6c96fc34b` plus the exact dirty working-tree hashes below. Read-only; no files, transactions, signatures, or deployment state changed.
+
+## Findings
+
+### F-01 — Medium, release-blocking: supply-drift admission can be bypassed on-chain
+
+The backend correctly rejects new bids when `OMR.totalSupply()` differs, while allowing recovery ([genesisauction.js](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/src/genesisauction.js:161)). That restriction is not enforced by the auction:
+
+1. OMR’s configured minter can change supply ([OMR.sol](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/OMR.sol:125)).
+2. The backend then blocks bid preparation.
+3. An NFT holder can call `submitBid` directly.
+4. The CCA invokes the validator, but the validator checks only chain, NFT code hash, recipient, and NFT balance ([GenesisCharacterEligibility.sol](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol:23)).
+5. The bid and ETH are accepted despite the required supply halt.
+
+Impact: an unprivileged bidder can continue the sale after supply drift, invalidating the approved live-supply 40/20/40 allocation. The prerequisite is a privileged mint, but the direct bidder is the concrete unprivileged amplifier.
+
+Fix: make the bid validator immutably bind OMR, its runtime hash, and the approved supply, and check `totalSupply()` only in `validate()`. Exit, refund, claim, and recovery paths do not invoke that hook and remain available.
+
+### F-02 — Low, release-blocking for the zero-residual requirement: forced/PositionManager ETH can remain trapped
+
+Migration correctly credits all accepted proceeds not spent on LP:
+
+```text
+residualCredit[Safe] += proceeds - spent
+```
+
+However, `_initializeLiquidity()` may also contain:
+
+- ETH forced into the coordinator before migration; and
+- preexisting PositionManager ETH swept to the coordinator.
+
+The spend calculation deliberately excludes those amounts, but the credit at [OmertaAuctionCoordinatorV2.sol](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol:206) includes only accepted proceeds. After the Safe withdraws its credit, extraneous ETH remains, with no native-dust recovery function.
+
+Accepted auction proceeds are not lost; the defect concerns forced/periphery residue. Fix by tracking and sweeping surplus over outstanding Safe credit, including residue forced after migration.
+
+## Confirmed properties
+
+I found no additional confirmed defect in the reviewed paths:
+
+- Claims open at closure independently of migration, while CCA graduation and exited-bid rules remain enforced.
+- Failed auctions cannot create claimable phantom tokens.
+- LP price uses 50% of actual accepted ETH and fixed 20M OMR—not final clearing price.
+- 10 ETH/full-sale floor is exactly `10 ETH`; upward alignment is 15 Q96 units, not a 10.1 ETH tick.
+- The 256-step schedule totals exactly 10M MPS; declared maximum drift is `8439/10,000,000`, under 0.1%, without a final cliff.
+- LP price quantization remains below `2.4×10⁻¹³` even at the signed-128 budget ceiling, inside the `10⁻¹²` reserve tolerance.
+- Allowances are atomically cleared; failure rolls back sweep, initialization, mint, and approvals.
+- LP NFT custody is the Safe.
+- Planner address accounting is five EOA deployment transactions plus validator nonce 1 and SSTORE2 nonce 2: seven created addresses.
+- Backend verifies exactly nine contract/dependency runtime pins and preserves refund/claim/recovery during backend supply drift.
+- UI retains down-rounded tick pricing, two quotes, account/chain/expiry checks, persistent locks, and twice-checked canonical receipts.
+- NFT transfer reuse remains intentional admission—not unique-person enforcement.
+
+## Evidence
+
+Executed here:
+
+- `test/genesisauction.js`: passed.
+- `test/genesis-auction-operations.js`: passed.
+- `test/player-genesis-client.js`: passed.
+- `git diff --check`: passed; only CRLF conversion warnings.
+- Planner math/schedule boundary probes: passed.
+
+Not fully executable in the read-only sandbox:
+
+- Planner reached its disposable tamper-tree phase, then failed `EPERM` creating `%TEMP%`.
+- HTTP test failed `EPERM` at its initial temporary manifest directory.
+- Foundry/fork suites were not rerun because compilation writes artifacts.
+
+Supplied—not executed by me:
+
+- 14 focused Solidity tests, fuzz 512: reported pass.
+- One 50 ETH Robinhood dependency fork: reported pass.
+- Their three provenance hashes exactly match the current files.
+- The fork removes ArbSys before construction and uses `vm.roll`; it is not production native-clock evidence.
+
+## Remaining limitations
+
+No signing packet is ready. Production still requires exact start/end blocks, genuine address-bound ArbSys/cadence evidence, final hook fees/recipients, fresh deployer nonce and gas, clean committed source/artifacts, pinned manifest, full rehearsal, two Safe approvals, hosted checks, and live verification. The planner currently validates allocation/cadence evidence hashes syntactically but does not resolve the referenced evidence; final packaging must perform that verification.
+
+The preceding 1,325-test, 37.5%, and 72-hour materials remain historical only. Bond, reward, withdrawal, signing, deployment, broadcast, and activation remain unauthorized.
+
+<details>
+<summary>Reviewed SHA-256 pins</summary>
+
+```text
+d31fe26748391b6ea2aa4eeb6876e16399335953fbfbbbcaf28e63c766def3f2  OmertaAuctionCoordinatorV2.sol
+50a22510f25d153527978e1b48c90f1b6d37185f93b57d168c70a0d50e9a6d22  OmertaGuardedAuction.sol
+072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26  GenesisCharacterEligibility.sol
+2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861  ContinuousClearingAuction.sol
+2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7  AuctionStorage.sol
+cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c  StepStorage.sol
+e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9  CheckpointAccountingLib.sol
+7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31  ValidationHookLib.sol
+b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d  CurrencyLibrary.sol
+d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a  BlockNumberish.sol
+0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57  SSTORE2.sol
+f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7  OMR.sol
+f7bb2ac28a55622293d1dd521f9443a6dd15476385ebaa018e14d85be9d825c3  tools/genesis-auction-deployment-plan.js
+b713545df8c146f9ab2a271d6eb8258c6eb6a63c99a4f4c4e1dc79d0bf137cd5  tools/genesis-auction-operations.js
+3a150bc5de9e99c98dea86d3f3a838d90d7ec263d9885b2cf7c1f68b711c88ff  src/genesisauction.js
+14cdd382d56eb02f00d776ce56a797cc18ff8c04077d100a3e3dcefc31b4fef1  src/routes/genesisauction.js
+303b372179c8911f86fb05b0894acffa59e7e3c26785720f00dad8c672c53ebe  public/index.html
+496b4f17607d79fd6c65a11ae21f9fd902c1f88324eaa833f7e2ab01b86e9e3c  test/genesis-auction-deployment-plan.js
+c1166660ecf5e2e88b04909ada9115f4d03f11a58daa8036cf2ca23c90e586d1  test/genesis-auction-operations.js
+e6dffe7f3705d4a253419d073abd0c533742452c64b2ec20d2f0dbab9a73a34e  test/genesisauction.js
+fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87  test/genesis-auction-http.js
+cf2727765332d54ada5b8f6134f201ddda0cd1cc13dd3e974460e6a3042fa862  test/player-genesis-client.js
+3517216f8e0692c226b461dd5ea32b37f3f41afd5ca4c6f92d5fa20a2774197a  AuctionCoordinatorV2.t.sol
+4ccf878da95cd6638b36d5bdb64476ca8aa40ff65f341cdc55330c18bdd78778  AuctionGenesisRobinhoodFork.t.sol
+7e1c192621a6fc5c7baf5884f1788dd83dce53549b78bce29b340580545b31b7  GENESIS-AUCTION.md
+afd9e94de06b40caa92b44a95aaba0d6345601f02f4aff6b25749973a1393f79  GENESIS-LAUNCH-STEPS.md
+17f5ba94bac86c073e90c0d79fdb604b08cac98c1c2fa5c213f21b40c0fde1d6  GENESIS-FOUNDER-TERMS.md
+```
+
+</details>

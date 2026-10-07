@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {GenesisCharacterMock} from "../helpers/GenesisCharacterMock.sol";
 import {Test} from "forge-std/Test.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
@@ -21,6 +22,7 @@ import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces
 import {IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 
 contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
+    GenesisCharacterMock characterNft;
     using StateLibrary for IPoolManager;
     using PoolIdLibrary for *;
     uint256 constant Q96 = 1 << 96;
@@ -35,9 +37,11 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
     uint256 bid;
 
     function setUp() public {
+        characterNft = new GenesisCharacterMock();
+        characterNft.mint(alice); characterNft.mint(bob);
         vm.warp(3600); vm.roll(100); vm.deal(alice, 10 ether); vm.deal(bob, 10 ether);
         manager = IPoolManager(deployCode("PoolManager.sol:PoolManager", abi.encode(address(this))));
-        token = new GenesisCoordinatorToken();
+        token = new GenesisCoordinatorToken(); token.mint(address(this),2100 ether);
         IAllowanceTransfer permit = IAllowanceTransfer(deployPermit2());
         positions = new PositionManager(manager, permit, 100_000, IPositionDescriptor(address(0)), IWETH9(address(0)));
         uint160 flags = uint160(Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_INITIALIZE_FLAG
@@ -48,17 +52,17 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
             3000, 60, 1000 ether, address(0xBEEF), address(0x11), address(0x12), address(0x13));
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60)), hook);
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60), address(this)), hook);
         AuctionParameters memory p = AuctionParameters(address(0), address(0x11), address(coordinator),
             110,120,130,2,address(0),(Q96 / 1000) / 2 * 2,1,
             abi.encodePacked(uint24(1_000_000),uint40(10)));
-        auction = new OmertaGuardedAuction(address(token),1000 ether,p,IOmertaGenesisClaimGate(address(coordinator)));
+        auction = new OmertaGuardedAuction(address(token),1000 ether,p,IOmertaGenesisClaimGate(address(coordinator)),characterNft);
         address predicted = vm.computeCreateAddress(address(this),vm.getNonce(address(this)));
         bytes32 root = keccak256(bytes.concat(keccak256(abi.encode(block.chainid,predicted,alice,uint8(2)))));
         sale = new GenesisPlayerSale(token,coordinator,root,100 ether,block.timestamp + 1 days,
-            block.timestamp + 10 days,address(0x11));
-        token.mint(address(auction),1000 ether); auction.onTokensReceived();
-        token.mint(address(sale),100 ether); token.mint(address(coordinator),1000 ether);
+            block.timestamp + 10 days,address(0x11), characterNft);
+        token.transfer(address(auction),1000 ether); auction.onTokensReceived();
+        token.transfer(address(sale),100 ether); token.transfer(address(coordinator),1000 ether);
         coordinator.bind(IGenesisGatedAuction(address(auction)),sale);
         vm.roll(110); vm.prank(bob);
         bid = auction.submitBid{value:2 ether}(Q96,uint128(2 ether),bob,bytes(""));

@@ -1,0 +1,41 @@
+Independent periphery review — initial findings
+Reviewed base: db54f824004c4d855778668081ce2adfac173c39, dirty codex/genesis-nft-launch worktree.
+Scope: src/routes/playergenesis.js, public/index.html genesis functions, tools/player-genesis-operations.js. Read only; no production/test edits.
+Initial SHA256:
+route 9b7d4da4fbc93ac03a0b162397c3ce0a2e4faa1d4fe58e9c8dbf21e9d42d52f8
+operations f6f94bbcf361d32d62cde50f648563343be3f254e2021f86ad1c321df5b4319b
+UI 24667dca957541440b35084c7ef3285bf2f8f2d14b3d7f8f9376358d662f00d5
+
+Finding 1 — pending receipt canonicality
+public/index.html5658 reads receipt,5660-61 only checks head height,5679 removes persistent financial intent. No canonical block hash lookup occurred.
+Executed proof: evaluated the unchanged actual-function VM harness test/player-genesis-client.js through node --input-type=module -e, substituting only its HTML file URL for eval context. Appended fixture receipt with blockHash0xeeee... and otherwise matching transaction/logs, then asserted pending intent absent and eth_getBlockByNumber never requested.
+Observed output (exit0):
+Player genesis real-function client PASS: precise ETH, NFT/service gates, two quotes, frozen minimum, confirmations/event IDs, persistent intents, locks/concurrency, stale pending responses and bounded late wallet requests.
+REVIEW PROOF: orphan/noncanonical receipt block hash is unchecked, pending intent cleared and confirmed bid ID adopted.
+Consequence: a receipt fetched just before reorg can release repeat-payment protection using an orphaned confirmation.
+
+Finding 2 — premature migration claim-cliff gate
+Operations76 and86 withhold migratePublicAfterCancellation/migrate until auction claim block. Coordinator133/149 permits migration based on final price and sale state; auction lbpInitializationParams134 and sweepCurrency667 require auction end/finality, not the claim cliff. Postmigration informational claim-cliff gate69 is appropriate.
+Executed proof: evaluated unchanged test/player-genesis-operations.js via node eval with absolute tool import. Appended closed/settled fixture nativeclock129, claim130, time2000 before migration deadline3000. Asserted zero transactions and native_claim_cliff gate. Advanced time to3000; asserted planner selected cancel.
+Observed output (exit0):
+player genesis operations: staged unsigned calls, deadlines, recovery, simulations and snapshot guards passed
+REVIEW PROOF: settled sale before deadline withheld by claim cliff; at deadline planner selects cancellation.
+Consequence: approved far-future claim cliff can cause avoidable player cancellation while contract migration was available earlier.
+
+No authentication bypass, arbitrary target/calldata, signing or sending issue found in reviewed HTTP route. Production server registers route with existing auth. Public wallet identity is intentional for unsigned on-chain preparation; body allowlist and runtime manifest verification fail closed.
+
+Operations remediation independent retest 2026-10-06T03:31:51.1692885Z
+SHA256 88aae7cd239e63f4d770b0b8ede8c9e4087187555241ef976b25dcb918fe70a6
+Command: node test/player-genesis-operations.js and same real fixture with appended pre-cliff normal/public-only migration assertions; exit 0
+player genesis operations: staged unsigned calls, deadlines, recovery, simulations and snapshot guards passed
+INDEPENDENT RETEST PASS: both normal and cancelled public-only migration offered before claim cliff and simulated at pinned snapshot.
+Disposition: Finding2 fixed-retested. Only informational postmigration claim-cliff remains. Originals retained above.
+
+UI canonical-receipt remediation independent retest 2026-10-06T03:32:35.5657942Z
+UI SHA256 7aad6991b01cfb61e48910b91f03a85c52aee768482485b8411a6652699db3d5
+Client test SHA256 49a237aec6c9c0c1927dbbbc7accc672c5221ef3e9f41b5f065e99de4c78d1c9
+Command: node test/player-genesis-client.js and actual-function VM harness with independent initial-orphan/final-validation-reorg assertions; exit 0
+Player genesis real-function client PASS: precise ETH, NFT/service gates, two quotes, frozen minimum, canonical/reorg-safe confirmations and event IDs, persistent intents, locks/concurrency, stale pending responses and bounded late wallet requests.
+INDEPENDENT RETEST PASS: initial orphan receipt and reorg during final validation both retain original intent, adopt no bid ID and send no transaction.
+Source recheck: receipt transaction hash/block hash/status validated; canonical receipt block checked before and immediately after transaction/account/network verification; matching confirmed transaction block hash/number checked; head confirmations rechecked; localStorage stale-response guard preserved.
+Disposition: Finding1 fixed-retested. Original proofs/hashes retained above. No production/test edits.

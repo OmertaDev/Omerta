@@ -1,0 +1,371 @@
+FOUNDER SETTINGS / UNSIGNED GENESIS PLANNER DISCREPANCY REVIEW
+Read-only source/contract/allocation review; no source, tests, parameters, deployments, activation, keys, or broadcasts changed.
+Scope phase: source planning, prior to any approved genesis deployment. Facts apply to source SHA pins below and the explicitly identified public chain block only.
+Checkout: C:\Users\Jorge\Documents\Omerta\output\contract-red-team-release
+HEAD: ead92ac404788a6792d2b7677fa2d8e6c96fc34b
+Selected-source worktree status: clean
+
+DIRECT FOUNDER TERMS PROVIDED BY ROOT
+One NFT-gated ETH public auction on Robinhood Chain; both paid/free-credit NFTs qualify; no individual economic purchase caps. Approximately Friday October 9 2026 noon America/New_York start, five days duration. Total OMR allocation: 40% auction /20% LP /40% bonds. Claims upon closure. Completed purchases are not refundable; unspent bid ETH is returned. No new floor, graduation threshold, proceeds routing, LP custody, or unsold recipient was approved.
+Calendar translation, NOT a deployment timestamp/block approval: October 9 noon New York =2026-10-09T16:00:00Z; five days later =2026-10-14T16:00:00Z (120h/432000sec). Need fresh native-clock evidence to map the approximate target to auction blocks; do not substitute RPC block numbers on an ArbSys clock.
+
+PRIMARY PUBLIC-CHAIN EVIDENCE (READS ONLY)
+{
+  "chainId": 4663,
+  "rpc": "https://rpc.mainnet.chain.robinhood.com/",
+  "omr": "0x2e82f8C1cFD5172612b3aF56088d7D68d920545D",
+  "blockNumber": "82087630",
+  "blockHash": "0x54b2f8f3a8786e3dc146f7ec2be54b8b8c5b964c24381755f9d4e7b39321fc1a",
+  "timestamp": "1791336476",
+  "totalSupplyBaseUnits": "100000000000000000000000000",
+  "decimals": 18,
+  "runtimeCodeHash": "0x9764f5d29297e9ca3b22b5f7e501fbd0629d93be1b4a08db74a461559b3c1d12",
+  "owner": "0xBe225658718DCb3865902437887a11830E4a9b10",
+  "ownerBalanceBaseUnits": "100000000000000000000000000",
+  "minter": "0x0000000000000000000000000000000000000000",
+  "canonicalBlockRecheck": true
+}
+The RPC chainId was checked before reads. totalSupply/decimals/runtime and owner/minter/owner balance were read at the same blockNumber. The block hash was re-read after those calls and matched. This proves current supply and current custody at that snapshot; it does NOT designate this owner as a newly approved deployment/funding/LP/bond recipient. OMR owner can later set a minter (OMR.sol:125,135); allocation denominator and zero minter must be reverified at the actual launch snapshot.
+
+CONFIRMED DISCREPANCIES
+1. Five-day schedule is incompatible with the current 72h planner/tests.
+   tools/genesis-auction-deployment-plan.js:198-200 targets72h within calibrated cadence bounds. Test assertion: test/genesis-auction-deployment-plan.js:54 expects259200sec. Existing tests passing means old72h behavior is preserved, not new120h founder-term conformance.
+   Meaningful read-only proof executed: extract real fixture initializer with Acorn/VM; keep its real artifact/source pins and issuance data; change measured cadence min=max43200ms with sample100 blocks/4320sec so its10000 native-block auction is exactly432000sec (120h). Actual buildGenesisAuctionDeploymentPlan rejected it with: 'Auction schedule must target 72 hours within measured native-clock cadence bounds'. No test/tool file was changed.
+2. 40/20/40 allocation is not a planner-enforced invariant.
+   Inputs auction.totalSupply and tokenReserve are independent explicit amounts, with integer/constructor bounds only. No approved totalSupply read/pin or allocation percentages bind them. tools/genesis-auction-deployment-plan.js:208 plans only auction and coordinator transfers; line224 totalSafeOmrRequired sums only these two quantities. There is no bond custody input, transfer, deployment, or available-inventory accounting.
+   At verified100M/18decimals: auction40000000 OMR=40000000000000000000000000 base units; LP-reserved20000000=20000000000000000000000000; bond40000000=40000000000000000000000000. Their sum is100000000 OMR, the entire measured supply. If only currenttwo transfers are funded at40M/20M, 40M remains at the funding custodian with no contract enforcement of the bond allocation.
+3. 20M transferred to the coordinator is an LP inventory ceiling, not proof20M was deposited into LP.
+   OmertaAuctionCoordinatorV2.sol:163 assigns nativeBudget=floor(37.5%*auction native proceeds). Lines175-178 choose full-range liquidity limited by that ETH budget and require tokenReserve sufficient to match it. Lines181-189 pass tokenReserve as a maximum token amount; they do not require consuming the full reserve. recoverTokenDust() at216 returns ALL remaining coordinator OMR to fixed treasury after migration; operations plans that call when dust>0. This can move unspent LP-labelled allocation into treasury after a successful migration.
+   Approximate illustration ONLY, excluding full-range endpoint corrections and integer rounding: if all40M auction tokens clear at a common price p, auction proceeds~40M*p; a37.5% ETH LP budget pairs with~15M OMR, leaving~5M of a20M coordinator funding envelope. Partial sale generally reduces that spend further. Exact amounts require floor/clearing-price and pool math simulation. No floor is newly approved, so this is not an asserted production witness or a reason to silently change ETH budget.
+   Consequently '20% reserved for LP' and '20% actually locked into the LP position' are different deliverables. Founder choice/approved ETH budget and unsold/dust handling are needed before implementation. Do not silently replace37.5% with50%, add external ETH, change residual routing, or move this5M to bonds.
+4. Claims at closure are not currently guaranteed by closing the auction alone.
+   playerClaimsOpen() atOmertaAuctionCoordinatorV2.sol:140 requires migrationSucceeded AND native claimsReady(), plus code/chain guards. Planner permits claimBlock>endBlock and tests explicitly accept a later cliff. Even claimBlock=endBlock still needs final checkpoint and successful pool migration. Unsigned operations correctly permit migration before the claim cliff, but human invocation/funding/LP success can delay claims. Reconcile 'upon closure' with preserving migration safety and timely checkpoint/migration execution; don't remove the guard or promise automatic immediate claim readiness.
+5. Bond holding/funding address and finite-inventory admission are missing.
+   The five deployment transactions create fee adapters, coordinator, hook, and auction. OmertaInventoryBondV2 is not one of them. POL/reserve fee adapters are not bond inventory escrow. Keeping40M at a Safe is a revocable treasury earmark, not an on-chain bonded-inventory commitment.
+   If the existing finite-inventory bond contract is ultimately selected and reviewed, transfer(bond,40M) alone is insufficient: fundInventory() atOmertaInventoryBondV2.sol:144-150 pulls exact tokens via allowance and increments availableInventory. The unsigned funding stage must use OMR.approve(bond,40M) then bond.fundInventory(40M), followed by verified balance/availableInventory, or a separately reviewed custody mechanism. Its deployment, address/runtime/config/Safe/proceeds recipient and pause/vesting/budget policy must be explicitly approved first. No bond address, numerical bond configuration, or alternative escrow is chosen here.
+
+UNSIGNED FUNDING SEQUENCE TO REVIEW (NOT READY CALLDATA)
+A. After chain/runtime/source/nonce/role verification and new-term-compatible constructor planning: OMR.transfer(auction,40000000e18).
+B. OMR.transfer(coordinator,20000000e18) only once the founder meaning of20%LP versus actual spend and unused reserve policy is resolved. Verify exact balances and simulate migration math at approved pricing bounds.
+C. Allocate40000000e18 to the missing reviewed bond custody mechanism. For finite-inventory bond funding: approve then fundInventory; for separate escrow, use its reviewed method. Address currently UNAPPROVED/MISSING, so this stage must remain incomplete.
+D. auction.onTokensReceived() after auction inventory funding; configurator/deployer coordinator.bind(auction) before native start. Binding caller remains deployer, not a fabricated Safe authority. Execute only after approved complete unsigned plan/simulation/authorizations; no production funding calldata was generated or sent in this review.
+E. Recheck conservation at each approved target and supply baseline. Later report actual LP token spend, dust destination, unsold auction inventory, bond available/reserved inventory and claims gating separately. A Safe spreadsheet balance is not escrow or proof of LP deposit.
+
+TERMS ALREADY COMPATIBLE / IMPORTANT BOUNDARIES
+- Single NFT ownership-gated auction; no gameplay snapshot/player tranche. No individual cap is imposed by the current bidder frontend/auction admission. Technical uint128 amount/MAX_BID_PRICE/issuance/liquidity bounds remain, not a founder-selected per-wallet economic cap.
+- Standard CCA bid exits return unspent ETH. Lack of graduation can return all ETH where no completed purchase settles; completed fills have no buyer sellback/refund facility. Do not describe unused-bid refunds as completed-purchase refunds.
+- Operations remain unsigned zero-ETH checkpoint/migrate/token-dust planning with runtime/interface/chain/canonical snapshot/simulation gates; claim cliff never blocks pool migration. No refund/claim policy or new floor/threshold is selected.
+- Planner outputs activationReady=false, strategiesReady=false, fundingAdaptersBound=false and incomplete deployed runtime pins. Those limitations must remain accurate; tests for the old terms must not be relabeled a founder-settings approval.
+
+PENDING FOUNDER/GOVERNANCE/REVIEW DECISIONS
+Approved floor/tick and graduation threshold; exact native start/duration/claim schedule; what20%LP guarantees and compatible ETH budget; ETH residual routes and LP position custody; unsold auction inventory and unspent LP reserve disposition; separate40% bond custodian/address/finite inventory funding and permissions; supply baseline/minter posture at funding; simulation and source-pinned retest after any change. This review chooses none of these values.
+
+SOURCE SHA256 PINS
+{
+  "tools/genesis-auction-deployment-plan.js": "371d6f4c85237f72e6668cffbb973fd07cf1b96d9e5e478518fab4992b2413a6",
+  "tools/genesis-auction-operations.js": "6bd76d0359dc63021f3f10c4ac8836810776364efcbaf30c7190219566724787",
+  "test/genesis-auction-deployment-plan.js": "dfafc613c38448f507a1ebb49c82c4fef14c2aa8193688c7ad0a590c2a4ffc87",
+  "test/genesis-auction-operations.js": "0fbdbade80f827ca6f8ceedd86645a0104c20067eaea0caf408de5255c29398e",
+  "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0",
+  "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f",
+  "omerta-contracts/src/OMR.sol": "f5c2001cbb8661e1ad67ffe3805c51388483e4f5b4d68e77e58661f02c938be7",
+  "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e",
+  "src/genesisauction.js": "7aed50ae735ab0904f76ac8adb966209706c6ac9cffafc7d0ee9464e8f6a02a2"
+}
+
+ARTIFACT / IMPORTED-SOURCE INVENTORY (CURRENT COMPILED BYTES VERIFIED AGAINST IMPORTED SOURCE METADATA)
+{
+  "sourceRevision": "ead92ac404788a6792d2b7677fa2d8e6c96fc34b",
+  "workingTreeMatchesRevision": true,
+  "artifactHashes": {
+    "OmertaAuctionCoordinatorV2": "0caf22710a01673ca4d31612c7667c42f32badb6fad4adeb8eb612679b8b1071",
+    "OmertaHookV2": "e50b1bbdd101c50314c703720411c4b843c8ba428dab4d7703178d9e962ecefc",
+    "OmertaGuardedAuction": "49c6f31562dc2bb79772819fcec0f08664da05e3af70640e92d9155e1ac26e70",
+    "GenesisCharacterBidValidation": "71ed126ce1acb7783caa719856d91cb2a09dbecbcef9172a6d83e0dde88f47f7",
+    "OmertaReserveFundingV2": "9b015987c1992749855c40cfb854552d09493d68cb17d7d577ed5e955d1364b5"
+  },
+  "artifacts": {
+    "OmertaAuctionCoordinatorV2": {
+      "abiSha256": "48498415e3ed0a1ac4566a0482f6a18f1a2331fc3588a5cafe39115d77598d82",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaAuctionCoordinatorV2.sol": "OmertaAuctionCoordinatorV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "creationBytecodeKeccak256": "0xff22cceec97f67ebe38a24f3d1b6bc79a3525e13b9dc2744bd0f02d4afe2f73c",
+      "runtimeTemplateKeccak256": "0x7ea2a35ba50c4fdcc1efd72b6b2fb2a861345364b7116dffcf6362587a25fe55",
+      "runtimeTemplateBytes": 13517
+    },
+    "OmertaHookV2": {
+      "abiSha256": "52e63f43e146b47d7df07e0f20c1709a89b73308ecaa5c2958a9509a7ce2f3ab",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaHookV2.sol": "OmertaHookV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "creationBytecodeKeccak256": "0x7c4974a80e4f161628aab6ffc9e2b9ee4d95b586c1e093b3f6779a92ce0742cf",
+      "runtimeTemplateKeccak256": "0xbea5a00dd30ae6fca561c3c7475026b1d1b2e54a1b3b22bb48827e02491b3409",
+      "runtimeTemplateBytes": 11511
+    },
+    "OmertaGuardedAuction": {
+      "abiSha256": "fcab3df850fbb827c1c702202ce23dfcfba01fd8a96d51e99ddb5041a118d649",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/genesis-auction/OmertaGuardedAuction.sol": "OmertaGuardedAuction"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ]
+      },
+      "creationBytecodeKeccak256": "0x7fd23922d085f552321d26055850e453dff9561f3e141c6c16de933ce91d72ec",
+      "runtimeTemplateKeccak256": "0x1faf9c477e361b5790ce0e45f5759e7adfcdd23f9d87d06a05bb0c85aa443daa",
+      "runtimeTemplateBytes": 17008
+    },
+    "GenesisCharacterBidValidation": {
+      "abiSha256": "a1e0b9e98f019f0c7e67f183a3504517b091bb5589f726f027f72d7f25bd0dd9",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/genesis-auction/GenesisCharacterEligibility.sol": "GenesisCharacterBidValidation"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ]
+      },
+      "creationBytecodeKeccak256": "0x54c7adea296457e0ec125431af66170d618fbc2685c938add76e4bffb404542f",
+      "runtimeTemplateKeccak256": "0xc41419122dbe9adbbaec9480e78ac1e5691c72039e4c34ce0f7601b83c82d454",
+      "runtimeTemplateBytes": 886
+    },
+    "OmertaReserveFundingV2": {
+      "abiSha256": "4ac418477fcf1b7d947a1a2d59635ce3c8e37c1a0605e6d0b200238362fc0600",
+      "compiler": "0.8.26+commit.8a97fa7a",
+      "settings": {
+        "compilationTarget": {
+          "src/market-v2/OmertaReserveFundingV2.sol": "OmertaReserveFundingV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "remappings": [
+          ":@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          ":@openzeppelin/=lib/openzeppelin-contracts/",
+          ":@uniswap/v4-core/=lib/v4-core/",
+          ":ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          ":erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          ":forge-std/=lib/forge-std/src/",
+          ":hardhat/=lib/v4-core/node_modules/hardhat/",
+          ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          ":permit2/=lib/permit2/",
+          ":solmate/=lib/v4-core/lib/solmate/",
+          ":v4-core/=lib/v4-core/src/",
+          ":v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "viaIR": true
+      },
+      "creationBytecodeKeccak256": "0xd09a2b98279ef22b2465f6fdd5a97284eb5b27570bca4d4d7a0199df7458078e",
+      "runtimeTemplateKeccak256": "0xdf640d744bb9ec47c34837b6722f6370047e9ba6ee694573d55f72e82edf5f7e",
+      "runtimeTemplateBytes": 2162
+    }
+  },
+  "sourceHashes": {
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+    "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+    "lib/openzeppelin-contracts/contracts/utils/Panic.sol": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+    "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+    "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+    "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+    "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+    "lib/permit2/src/interfaces/IAllowanceTransfer.sol": "5cf9ef1bb81dc1e226749781c7a6e57d031887d7809a031ea065ecac5ccb7999",
+    "lib/permit2/src/interfaces/IEIP712.sol": "bc6bf21f3ef5efd8cf0be404885797ef40e93040fa7485ececedc22826a8541f",
+    "lib/v4-core/src/interfaces/IExtsload.sol": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+    "lib/v4-core/src/interfaces/IExttload.sol": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+    "lib/v4-core/src/interfaces/IHooks.sol": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+    "lib/v4-core/src/interfaces/IPoolManager.sol": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+    "lib/v4-core/src/interfaces/IProtocolFees.sol": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+    "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+    "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+    "lib/v4-core/src/libraries/BitMath.sol": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+    "lib/v4-core/src/libraries/CustomRevert.sol": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+    "lib/v4-core/src/libraries/FixedPoint128.sol": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+    "lib/v4-core/src/libraries/FixedPoint96.sol": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+    "lib/v4-core/src/libraries/FullMath.sol": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+    "lib/v4-core/src/libraries/LiquidityMath.sol": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+    "lib/v4-core/src/libraries/Position.sol": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+    "lib/v4-core/src/libraries/SafeCast.sol": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+    "lib/v4-core/src/libraries/StateLibrary.sol": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+    "lib/v4-core/src/libraries/TickMath.sol": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+    "lib/v4-core/src/types/BalanceDelta.sol": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+    "lib/v4-core/src/types/BeforeSwapDelta.sol": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+    "lib/v4-core/src/types/Currency.sol": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+    "lib/v4-core/src/types/PoolId.sol": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+    "lib/v4-core/src/types/PoolKey.sol": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+    "lib/v4-core/src/types/PoolOperation.sol": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+    "lib/v4-periphery/src/interfaces/IEIP712_v4.sol": "c7dd9bb343b0f079cae8c861fbe13711e659b1cf74104cbb4cc4536efa01891f",
+    "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol": "f6987dbe451d1207ccc1322cf89c81f4a3ad06b2229e8c3be6f5abbc529e1026",
+    "lib/v4-periphery/src/interfaces/IImmutableState.sol": "c1eda88405c19dc061b37a304558ee54210124c7563110ad67ffcc4ed24d34b9",
+    "lib/v4-periphery/src/interfaces/IMulticall_v4.sol": "5e3fedcaf5c711fb564caf43a7dd33ac6cc985157d1339ebb36651015490245c",
+    "lib/v4-periphery/src/interfaces/INotifier.sol": "ed4aec42c8aed343a13a7111e1904dedb921733d80e87e58adce395cefc0d627",
+    "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol": "438fa4797fe51454c9f4780a6c694c6aad59ed7a258cf29b75a8f921c58ab359",
+    "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol": "5f00a2d13a4726ec4dd6ed4e52e75a85537cc5ae20a852576762f386da9de753",
+    "lib/v4-periphery/src/interfaces/IPositionManager.sol": "814910e65a48828c9e98115937a6e00d42cb5c5f9141865d00ed1b687be573f7",
+    "lib/v4-periphery/src/interfaces/ISubscriber.sol": "6ed5e7b45c87f04fb6f9f8a44b082099b06b99ee1e2f5427f8a31b0e24d4f238",
+    "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol": "c280271ffe32bc702a73fedbca5f250c77453f1c716e3cbfa53ab5cdb41f1b87",
+    "lib/v4-periphery/src/libraries/Actions.sol": "941f31b48e6f673427fff1ea839a0a0fdd43dc168e847664b9c832cbfc2586c0",
+    "lib/v4-periphery/src/libraries/LiquidityAmounts.sol": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2",
+    "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol": "aefbce0d0d1db8d996bd48148a6b261da5fe1496cc0034188c14a1f33f06ba0d",
+    "src/market-v2/OmertaAuctionCoordinatorV2.sol": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0",
+    "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+    "lib/v4-core/src/libraries/Hooks.sol": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c",
+    "lib/v4-core/src/libraries/LPFeeLibrary.sol": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0",
+    "lib/v4-core/src/libraries/ParseBytes.sol": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8",
+    "src/interfaces/IInitializerHook.sol": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a",
+    "src/interfaces/IOmrV4ObservationSource.sol": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e",
+    "src/market-v2/OmertaHookV2.sol": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+    "src/genesis-auction/GenesisCharacterEligibility.sol": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26",
+    "src/genesis-auction/OmertaGuardedAuction.sol": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e",
+    "src/genesis-auction/vendor/blocknumberish/src/BlockNumberish.sol": "d5c25ad6cbf504abf5cde9a53459c3d9371de82401ce41dca963e6d9087a1b4a",
+    "src/genesis-auction/vendor/cca/AuctionStorage.sol": "2b7056888e2ccc30afccf7242b854aa74aa0eea2a01d8cf94e91d6b819a76fd7",
+    "src/genesis-auction/vendor/cca/BidStorage.sol": "24c38d81ad14e3e2d943b65b39aae525007169f88bcdc4202af792594e9c91b0",
+    "src/genesis-auction/vendor/cca/CheckpointStorage.sol": "fa9def3d6211bc5806b3b503c6c02e1efec928ffd58bf83087603661ac73a2ca",
+    "src/genesis-auction/vendor/cca/ContinuousClearingAuction.sol": "2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861",
+    "src/genesis-auction/vendor/cca/StepStorage.sol": "cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c",
+    "src/genesis-auction/vendor/cca/TickStorage.sol": "4c42532b7ef1830bcfe9cc913441dcb0de7ccaaadc3c3b93afc9c5f0fc804279",
+    "src/genesis-auction/vendor/cca/interfaces/IAuctionStorage.sol": "4541975ea71b6239e917f97436ade81f10e75e9e02a14043d3d4d968d8763c33",
+    "src/genesis-auction/vendor/cca/interfaces/IBidStorage.sol": "3996822f663de5e4d4a8920b1863a7f03c3ecb3886c6a1e968e256cf689ddcd3",
+    "src/genesis-auction/vendor/cca/interfaces/ICheckpointStorage.sol": "22568a4e5419c8ca1b788f56ec5b3cc42ec9d0df5751228799aadbbef98e6764",
+    "src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol": "e218f9ace315cc01577c79b159f78687aab3e93f0d3f19f0e4fed12e0b15ba8e",
+    "src/genesis-auction/vendor/cca/interfaces/IStepStorage.sol": "20207a10a2aec05bb583fd43ec040b4997aea9a166886de8ad6b935a7acc1e00",
+    "src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol": "ee53cccb09d87f4dae11680766168fe103acac56f122ba40d6bb18875c67fcde",
+    "src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol": "22a0baf2626c109688a7837222228b752b26f0f61c2e548491cfeadea0b0ddaf",
+    "src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol": "e2a2de288d95e31c66f6b33c120d597b47fc4dd57e78717b607d2bde3f55dcbd",
+    "src/genesis-auction/vendor/cca/libraries/BidLib.sol": "38bad7097c57115c5e1f947da7b2eb77b8557fb01155beb9e66847bf2353b5f5",
+    "src/genesis-auction/vendor/cca/libraries/CheckpointAccountingLib.sol": "e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9",
+    "src/genesis-auction/vendor/cca/libraries/CheckpointLib.sol": "32d1baabe418fc5ad9ec464f68d54f28ba3fc946fea1ca6485ba2506f5fa319a",
+    "src/genesis-auction/vendor/cca/libraries/ConstantsLib.sol": "41f89f5dbf612615240b23f68ad7879eeca4b42399b8c7ea83f6996b6289874f",
+    "src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol": "b666341062fdd23cc58565a0f6ac92d40e5ad3756070fe17965def4889577a8d",
+    "src/genesis-auction/vendor/cca/libraries/DemandLib.sol": "a20dd5704bb0a50916bec523db699f2ad500a107ae2dad52cab9363596a4519a",
+    "src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol": "5a75bd597b8f708d42249d18c4a47d126eade37852107d4f07201e87820e8ab1",
+    "src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol": "da0cc6d54474fe6bf04e9c9a34c680e57f2253ac1ccdf1c773087dbaa1264376",
+    "src/genesis-auction/vendor/cca/libraries/PriceLib.sol": "b4394400f97ec45f0001f5dcc626d9e0c7e842ee80fbef2eb82d985ac4a2d7d1",
+    "src/genesis-auction/vendor/cca/libraries/StepLib.sol": "89002e921ec248bc08e6a4adb2b60c117d17b64bd4490ecb3031871d94d11100",
+    "src/genesis-auction/vendor/cca/libraries/ValidationHookLib.sol": "7140e1efa4ebb6ff45bae4bce2c342f6e054e7e5c3e2a9b7f6ceb90276e4ac31",
+    "src/genesis-auction/vendor/cca/libraries/ValueX7Lib.sol": "4d568e465a601cdc3f0896ad381bf8f257e5a78f9205cc615883a0b50f4a62ee",
+    "src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol": "0bba13700ffd78977f5f19861a3df32f78ec094dddad040eda63881316af939d",
+    "src/genesis-auction/vendor/launcher/src/interfaces/ILBPInitializer.sol": "cf4d3000e63970f5d8369b47dbcb70b67fe993e3e43b250be82f18e589bde45c",
+    "src/genesis-auction/vendor/launcher/src/interfaces/IProtocolFeeController.sol": "b5f3844eae2bbe3f5e89760e813286c97b9ed4f1f803aa6a66f1bc39bd7a9ecd",
+    "src/genesis-auction/vendor/launcher/src/libraries/ProtocolFeeLib.sol": "d73d70856b8fba64cc42f11dadcbcd6a3e0342bef0f6916091d2164e91598353",
+    "src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol": "e7c2eaac3899e9bbbecf0795b95f131ae17c369b3b2436304dd9d548c8ce03f4",
+    "src/genesis-auction/vendor/solady/utils/ReentrancyGuardTransient.sol": "30a4cdd1813a65e2c76cd5476c9ee8a44b9cac56dd4d930ef3caafb3d6c3600d",
+    "src/genesis-auction/vendor/solady/utils/SSTORE2.sol": "0395a80bc04f3c212cb82efbbd5b9d7b91e7d33b3c5dcff1624c7b95294e8c57",
+    "src/genesis-auction/vendor/solady/utils/SafeTransferLib.sol": "6a1cca4abb040289cfe5fa4b70fd84ed470d152d0265b8ffce1ef0af9bb93e59",
+    "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+    "lib/v4-core/src/libraries/SqrtPriceMath.sol": "42440c21bbab86c7eed4716b281ed5ca281cf14af8b5e06dc6dc3bc6864bcfdf",
+    "lib/v4-core/src/libraries/UnsafeMath.sol": "2de236e7ca0b9572a6b0184557565b6fd54e177224e202c727fe248785ede427",
+    "src/market-v2/IOmertaMarketStateV2.sol": "43eae996d281f96af635c31b18dfbf75fd611cfa02e9e0b3dfb2a8d7dc70ad4c",
+    "src/market-v2/OmertaReserveFundingV2.sol": "142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3",
+    "src/market-v2/OmertaStabilityControllerV2.sol": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+    "foundry.toml": "93c40b8a45a3b820cef0b1b4dc858590fc924be71ac12cdc4d637eb84644da6f"
+  }
+}

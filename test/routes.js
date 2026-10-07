@@ -431,6 +431,24 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   const GZ = { 'accept-encoding': 'gzip' };
   const ID = { 'accept-encoding': 'identity' };
   const get = (url, headers) => app.inject({ method: 'GET', url, headers });
+  for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {
+    const expected = readFileSync(new URL('../public/' + name + '.html', import.meta.url));
+    for (const path of ['/' + name, '/' + name + '.html']) {
+      const page = await get(path, ID);
+      assert.equal(page.statusCode, 200, 'Public crypto page must be reachable: ' + path);
+      assert.deepEqual(page.rawPayload, expected, 'Published page must match reviewed copy: ' + path);
+    }
+  }
+  for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',
+    'genesis-deploy-vendor/sha3.js', 'genesis-deploy-vendor/_u64.js',
+    'genesis-deploy-vendor/utils.js', 'genesis-deploy-vendor/crypto.js']) {
+    const script = await get('/' + name, ID);
+    assert.equal(script.statusCode, 200, 'Reviewed deployment dependency must be reachable: ' + name);
+    assert.match(script.headers['content-type'], /application\/javascript/);
+    assert.equal(script.headers['cache-control'], 'no-store');
+    assert.deepEqual(script.rawPayload, readFileSync(new URL('../public/' + name, import.meta.url)),
+      'Published deployment module must match reviewed bytes: ' + name);
+  }
 
   const gz = await get('/', GZ);
   const id = await get('/', ID);

@@ -1,0 +1,18 @@
+No new concrete security finding in the final periphery delta.
+
+- Final revision: `cdb3bd3300b29c063e6a74e693060b4be22517cb`
+- `src/genesisauction.js`: `e34c6af97bf4880e7d580e210172158e3697ce72462e410baf7b502f71ca5795`
+- `test/genesisauction.js`: `a334b1d20fd609fdd0f84427b4e7aaf0a2814877145213bc537e83ac20122c7c`
+- Original [genesis-single-daybreak-retest.txt](C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/omerta-contracts/audits/2026-10-06-single-auction/evidence/genesis-single-daybreak-retest.txt) preserved at `ee6caa3e…61df4`.
+
+Verified:
+
+- Claims projection requires time gate and graduation.
+- Non-graduated claims fail with exit/refund guidance.
+- Failed-auction exit produces zero-value calldata; full refund follows the unchanged Solidity `_processExit(bidId,0,0)` path.
+- Successful claims do not require LP migration.
+- Immutable-pin and supply-drift recovery regressions remain passing.
+
+All three requested Node tests passed twice on Node `v24.19.0`.
+
+The supplemental file could not be saved because the workspace is read-only. Earlier F01/F02/signer work was not reopened; fee proposals, native-clock validation, candidate proofs, and final release checks remain pending.

@@ -17,12 +17,13 @@ import {ModifyLiquidityParams, SwapParams} from "v4-core/types/PoolOperation.sol
 import {IInitializerHook} from "../interfaces/IInitializerHook.sol";
 import {IOmrV4ObservationSource} from "../interfaces/IOmrV4ObservationSource.sol";
 
-/// @notice Immutable canonical ETH/OMR market settlement and observation layer.
-/// @dev Sells retain the 9% base tax (2% dev, 1.6% RWA, 2.4% community, 3% POL).
+/// @notice Canonical ETH/OMR settlement with a permanently fixed 2% founder/ops slice.
+/// @dev Initial sell tax is 9% base plus at most 1% surge. Other slices may change only through
+///      a domain-bound Safe proposal and a 48-hour delay; rates can never exceed 10% in aggregate.
 ///      Additional sell-pressure surcharge is separately owed to stability, never funding slices.
 ///      Exact-input fees use actual output; exact-output fees use actual input, including partial fills.
 ///      No strategy, oracle, recipient, or game callback executes during a swap. No owner can pause,
-///      change taxes, extend the launch window, redirect accrued funds, or replace implementation.
+///      extend the launch window, redirect accrued funds, waive fees, or replace implementation.
 ///      Active liquidity is raw v4 L, not a claim of executable ETH depth or economic fair value.
 contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, ReentrancyGuard {
     uint160 public constant HOOK_FLAGS = uint160(
@@ -32,6 +33,9 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     );
     uint16 public constant BASE_SELL_BPS = 900;
     uint16 public constant MAX_SURGE_BPS = 100;
+    uint16 public constant OPS_SELL_BPS = 200;
+    uint256 public constant TAX_CONFIG_DELAY = 48 hours;
+    bool public constant TAX_EXECUTION_SAFE_ONLY = true;
     uint16 public constant MAX_HOOK_BPS = 1000;
     uint16 public constant MAX_OPENING_BLOCKS = 200;
     uint32 public constant PRESSURE_DECAY_SECONDS = 60;
@@ -45,6 +49,12 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         uint16 blocks;
         uint16 buyBps;
         uint128 maxBuyQuote;
+    }
+    struct TaxConfig {
+        uint16 rwaBps;
+        uint16 communityBps;
+        uint16 polBps;
+        uint16 surgeMaxBps;
     }
 
     /// @dev Integral fields cover `observedSeconds`, which can be short only in the genesis epoch.
@@ -66,6 +76,8 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     IPoolManager public immutable poolManager;
     address public immutable omr;
     address public immutable authorized;
+    address public immutable governanceSafe;
+    address public immutable opsRecipient;
     uint24 public immutable poolFee;
     int24 public immutable tickSpacing;
     uint32 public immutable epochDuration;
@@ -76,6 +88,13 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     address[5] public recipients;
     mapping(Currency => mapping(uint8 => uint256)) public owed;
     mapping(Currency => uint256) public totalOwed;
+    TaxConfig public taxConfig;
+    bytes32 public queuedTaxHash;
+    uint64 public queuedTaxExecuteAfter;
+    uint256 public taxConfigNonce;
+    bytes32 private constant TAX_CONFIG_TYPEHASH = keccak256(
+        "OmertaMarketTaxes(uint256 chainId,address hook,uint256 nonce,uint16 rwaBps,uint16 communityBps,uint16 polBps,uint16 surgeMaxBps)"
+    );
 
     uint64 public openedAtBlock;
     uint64 public openingEndsAtBlock;
@@ -100,11 +119,20 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     error InvalidRecipient();
     error NotRecipient();
     error OnlyPoolManagerETH();
+    error OnlyGovernanceSafe();
+    error TaxProposalPending();
+    error TaxProposalMismatch();
+    error TaxProposalNotReady();
 
     event PoolOpened(PoolId indexed id, uint64 blockNumber, uint64 openingEnd);
     event FeesAccrued(address indexed sender, Currency indexed currency, bool sell, uint256 base, uint256 stability);
     event FeesPaid(Currency indexed currency, uint8 indexed bucket, address indexed recipient, uint256 amount);
     event EpochFinalized(uint64 indexed epoch, uint64 end, uint32 observedSeconds);
+    event TaxConfigQueued(bytes32 indexed proposal, uint256 indexed nonce, uint64 executeAfter,
+        uint16 rwaBps, uint16 communityBps, uint16 polBps, uint16 surgeMaxBps);
+    event TaxConfigCancelled(bytes32 indexed proposal, uint256 indexed nonce);
+    event TaxConfigApplied(bytes32 indexed proposal, uint256 indexed nonce,
+        uint16 rwaBps, uint16 communityBps, uint16 polBps, uint16 surgeMaxBps);
 
     constructor(
         IPoolManager manager_,
@@ -115,10 +143,12 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         address[5] memory recipients_,
         OpeningConfig memory opening_,
         uint24 surgeFullTicks_,
-        uint32 epochDuration_
+        uint32 epochDuration_,
+        address governanceSafe_
     ) {
         if (
             address(manager_) == address(0) || omr_ == address(0) || initializer_ == address(0)
+                || governanceSafe_ == address(0) || governanceSafe_ == address(this)
                 || poolFee_ > 100_000 || tickSpacing_ <= 0 || tickSpacing_ > 32767
                 || opening_.blocks > MAX_OPENING_BLOCKS || opening_.buyBps > MAX_HOOK_BPS
                 || (opening_.blocks == 0 && (opening_.buyBps != 0 || opening_.maxBuyQuote != 0))
@@ -133,6 +163,9 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         poolManager = manager_;
         omr = omr_;
         authorized = initializer_;
+        governanceSafe = governanceSafe_;
+        opsRecipient = recipients_[DEV];
+        taxConfig = TaxConfig(160,240,300,100);
         poolFee = poolFee_;
         tickSpacing = tickSpacing_;
         recipients = recipients_;
@@ -154,6 +187,53 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
 
     function poolKey() public view returns (PoolKey memory) {
         return PoolKey(Currency.wrap(address(0)), Currency.wrap(omr), poolFee, tickSpacing, IHooks(address(this)));
+    }
+
+    function baseSellBps() public view returns (uint16) {
+        return uint16(uint256(OPS_SELL_BPS) + taxConfig.rwaBps + taxConfig.communityBps + taxConfig.polBps);
+    }
+
+    function taxConfigHash(TaxConfig calldata config, uint256 nonce) public view returns (bytes32) {
+        return keccak256(abi.encode(TAX_CONFIG_TYPEHASH, block.chainid, address(this), nonce,
+            config.rwaBps, config.communityBps, config.polBps, config.surgeMaxBps));
+    }
+
+    function queueTaxConfig(TaxConfig calldata config) external nonReentrant returns (bytes32 proposal) {
+        if (msg.sender != governanceSafe) revert OnlyGovernanceSafe();
+        if (queuedTaxHash != bytes32(0)) revert TaxProposalPending();
+        _validateTaxConfig(config);
+        if (block.timestamp > type(uint64).max - TAX_CONFIG_DELAY) revert InvalidConfiguration();
+        uint256 nonce = ++taxConfigNonce;
+        proposal = taxConfigHash(config,nonce);
+        queuedTaxHash = proposal; queuedTaxExecuteAfter = uint64(block.timestamp + TAX_CONFIG_DELAY);
+        emit TaxConfigQueued(proposal,nonce,queuedTaxExecuteAfter,
+            config.rwaBps,config.communityBps,config.polBps,config.surgeMaxBps);
+    }
+
+    function cancelTaxConfig() external nonReentrant {
+        if (msg.sender != governanceSafe) revert OnlyGovernanceSafe();
+        bytes32 proposal = queuedTaxHash;
+        if (proposal == bytes32(0)) revert TaxProposalMismatch();
+        queuedTaxHash = bytes32(0); queuedTaxExecuteAfter = 0;
+        emit TaxConfigCancelled(proposal,taxConfigNonce);
+    }
+
+    /// @notice The Safe applies its exact queued proposal after the delay. No callback runs.
+    function executeTaxConfig(TaxConfig calldata config, uint256 nonce) external nonReentrant {
+        if (msg.sender != governanceSafe) revert OnlyGovernanceSafe();
+        bytes32 proposal = taxConfigHash(config,nonce);
+        if (queuedTaxHash == bytes32(0) || proposal != queuedTaxHash || nonce != taxConfigNonce)
+            revert TaxProposalMismatch();
+        if (block.timestamp < queuedTaxExecuteAfter) revert TaxProposalNotReady();
+        _validateTaxConfig(config);
+        queuedTaxHash = bytes32(0); queuedTaxExecuteAfter = 0;
+        taxConfig = config;
+        emit TaxConfigApplied(proposal,nonce,config.rwaBps,config.communityBps,config.polBps,config.surgeMaxBps);
+    }
+
+    function _validateTaxConfig(TaxConfig memory config) private pure {
+        if (uint256(OPS_SELL_BPS) + config.rwaBps + config.communityBps + config.polBps + config.surgeMaxBps
+            > MAX_HOOK_BPS) revert InvalidConfiguration();
     }
 
     function supportsInterface(bytes4 interfaceId) external pure returns (bool) {
@@ -222,15 +302,17 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         if (sell) _active.sellQuote = _saturatingAdd(_active.sellQuote, quote);
         else _active.buyQuote = _saturatingAdd(_active.buyQuote, quote);
         if (_active.swaps < type(uint64).max) ++_active.swaps;
-        uint16 extra = sell ? _surgeRate() : _openingRate(quote, params.amountSpecified > 0);
+        TaxConfig memory config = taxConfig;
+        uint16 baseRate = uint16(uint256(OPS_SELL_BPS) + config.rwaBps + config.communityBps + config.polBps);
+        uint16 extra = sell ? _surgeRate(config.surgeMaxBps) : _openingRate(quote, params.amountSpecified > 0);
         bool currency0 = params.amountSpecified < 0 ? !params.zeroForOne : params.zeroForOne;
         Currency currency = currency0 ? key.currency0 : key.currency1;
         uint256 amount = _abs(currency0 ? delta.amount0() : delta.amount1());
-        uint256 base = sell ? amount * BASE_SELL_BPS / 10_000 : 0;
+        uint256 base = sell ? amount * baseRate / 10_000 : 0;
         uint256 stability = amount * extra / 10_000;
         uint256 total = base + stability;
         if (total == 0) return 0;
-        _accrueBase(currency, base);
+        if (sell) _accrueBase(currency, amount, base, config);
         owed[currency][STABILITY] += stability;
         totalOwed[currency] += total;
         emit FeesAccrued(sender, currency, sell, base, stability);
@@ -321,7 +403,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     /// @dev Progressive bounded tick-pressure toll. Buy reversals do not erase recent sell pressure.
     ///      Pressure decays on a real clock, not by calls or blocks. This raises repeated split-sale
     ///      costs but is not sandwich protection or a proof of order/splitting-independent pricing.
-    function _surgeRate() private returns (uint16 rate) {
+    function _surgeRate(uint16 maxSurge) private returns (uint16 rate) {
         uint256 elapsed = block.timestamp - pressureUpdatedAt;
         uint256 pressure = elapsed >= PRESSURE_DECAY_SECONDS
             ? 0 : uint256(sellPressureTicks) * (PRESSURE_DECAY_SECONDS - elapsed) / PRESSURE_DECAY_SECONDS;
@@ -333,21 +415,21 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         uint256 limit = surgeFullTicks;
         // Integrate min(pressure/limit,1) over the traversed tick interval rather than charging the
         // last rate to the entire move. Weighted trade amounts still make exact partitioning nontrivial.
-        if (movement == 0) rate = uint16(pressure * MAX_SURGE_BPS / limit);
-        else if (end <= limit) rate = uint16((pressure + end) * MAX_SURGE_BPS / (2 * limit));
+        if (movement == 0) rate = uint16(pressure * maxSurge / limit);
+        else if (end <= limit) rate = uint16((pressure + end) * maxSurge / (2 * limit));
         else {
             uint256 below = limit - pressure;
-            rate = uint16(MAX_SURGE_BPS - below * below * MAX_SURGE_BPS / (2 * limit * movement));
+            rate = uint16(maxSurge - below * below * maxSurge / (2 * limit * movement));
         }
         sellPressureTicks = uint24(end > limit ? limit : end);
         pressureUpdatedAt = uint64(block.timestamp);
     }
 
-    function _accrueBase(Currency currency, uint256 base) private {
+    function _accrueBase(Currency currency, uint256 gross, uint256 base, TaxConfig memory config) private {
         if (base == 0) return;
-        uint256 dev = base * 200 / BASE_SELL_BPS;
-        uint256 rwa = base * 160 / BASE_SELL_BPS;
-        uint256 community = base * 240 / BASE_SELL_BPS;
+        uint256 dev = gross * OPS_SELL_BPS / 10_000;
+        uint256 rwa = gross * config.rwaBps / 10_000;
+        uint256 community = gross * config.communityBps / 10_000;
         owed[currency][DEV] += dev;
         owed[currency][RWA] += rwa;
         owed[currency][COMMUNITY] += community;

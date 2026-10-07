@@ -4,7 +4,8 @@ import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RULES_CURRENT_PIN,
   DEED_SERVER_CURRENT_PIN, DEED_SOURCE_REVIEWED_REVISION, HTTP_RECEIPT_SERVER_PIN,
-  HTTP_RECEIPT_HELPER_PIN, HTTP_RECEIPT_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
+  HTTP_RECEIPT_HELPER_PIN, HTTP_RECEIPT_REVIEWED_REVISION, GENESIS_SERVER_WRAPPER_PIN,
+  GENESIS_SERVER_WRAPPER_SOURCE_REVISION } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
@@ -15,7 +16,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': HTTP_RECEIPT_SERVER_PIN,
+  'src/server.js': GENESIS_SERVER_WRAPPER_PIN,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
@@ -25,6 +26,10 @@ const sourceFiles = Object.freeze({
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
 export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 4, reviewedRevision: HTTP_RECEIPT_REVIEWED_REVISION, sourceFiles,
+  genesisWrapperSourceTransfer: { sourceRevision: GENESIS_SERVER_WRAPPER_SOURCE_REVISION,
+    actualServerSha256: GENESIS_SERVER_WRAPPER_PIN, predecessorServerSha256: HTTP_RECEIPT_SERVER_PIN,
+    inverseChunks: 3, publicGetRoutes: 12,
+    scope: 'Exact genesis unsigned-quote API import/registration and twelve static public page/module routes reconstruct the complete previously pinned HTTP server. Only unchanged recovery/deed/HTTP domain guards transfer; the new genesis API and wallet modules have separate review. No new worker semantic review, historical world execution, deployment or onchain pass is inherited.' },
   httpReceiptSourceReviewTransfer: { previousReviewedRevision: DEED_SOURCE_REVIEWED_REVISION,
     previousServerSha256: DEED_SERVER_CURRENT_PIN,
     evidence: 'docs/release/readiness-work/http-receipt-source-transfer.json',

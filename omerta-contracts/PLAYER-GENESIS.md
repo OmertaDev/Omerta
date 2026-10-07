@@ -1,5 +1,9 @@
 # Player Genesis contract preparation
 
+For the approved launch, follow [Genesis auction](GENESIS-AUCTION.md) and the
+[deployment steps](GENESIS-LAUNCH-STEPS.md). This file describes the retained
+two-leg implementation and its source review; it is not the selected deployment route.
+
 Source implementation for the player-first launch. No production deployment, funding or activation
 is performed by this work. The [review package](audits/2026-10-01-player-genesis/report.md) states
 the exact verified scope and outstanding release work.
@@ -7,10 +11,12 @@ the exact verified scope and outstanding release work.
 ## Contracts and enforceable rules
 
 - `GenesisPlayerSale`: immutable eligibility root and inventory, cumulative per-wallet ETH caps,
-  48-hour purchase window, proportional settlement, pull refunds and gated OMR claims.
+  character NFT ownership on each contribution, a 48-hour purchase window, proportional settlement,
+  pull refunds and gated OMR claims.
 - `OmertaGuardedAuction`: pinned public CCA implementation with an immutable common claim gate.
   Both single and batch token claims require successful pool creation and the auction claim cliff.
   Bid exits and unspent-currency refunds preserve the pinned CCA's behavior.
+  Every bid also requires the token recipient to own a character NFT; relayers may fund that recipient.
 - `OmertaGenesisCoordinatorV2`: the current market's authorized initializer. It atomically sweeps
   public proceeds and accepted player proceeds, initializes the pool and mints a real full-range
   PositionManager NFT to the approved liquidity owner. Any failure rolls the transaction back.
@@ -19,6 +25,12 @@ One play day allows 0.5 ETH, two 1 ETH, three 2.5 ETH, and four or five 5 ETH. Q
 is verified off-chain during the maximum 120-hour play window. The contract verifies the snapshot
 proof, not gameplay or uniqueness of a human. Publish exact UTC opening/cutoff timestamps and
 the meaningful-action definition before charging for character creation.
+
+Both free-credit and paid character mints qualify. Ownership is checked at purchase time, not when
+settling, refunding or claiming an accepted purchase. NFTs are transferable: this admission rule does
+not establish one human per wallet or prevent an NFT from being transferred between purchasers.
+The gameplay snapshot and per-wallet caps remain separate checks. Both sale legs must bind the same
+reviewed character NFT address; its deployed runtime and chain must be verified before release.
 
 Player caps apply to requested contributions across all transactions in this tranche. Public
 auction bids remain uncapped. Oversubscription scales token quantities proportionally; accepted
@@ -31,8 +43,10 @@ successful migration. No refundable ETH enters the liquidity budget.
    hook addresses so the hook's `authorized` initializer is the coordinator. Deploy and verify them.
    Choose an LP token reserve sufficient for both approved sale inventories and final price bounds.
 2. Deploy `OmertaGuardedAuction` directly, with OMR, native ETH, the coordinator as `fundsRecipient`
-   and `launchGate`, an approved unsold-token recipient, no validation hook, and the approved public
+   and `launchGate`, an approved unsold-token recipient, the reviewed character NFT, and the approved public
    schedule/graduation/claim parameters. Fund its inventory and call `onTokensReceived()`.
+   Pass zero as the caller-supplied validation hook: the guarded constructor deploys and installs its
+   fixed ownership validator internally. Arbitrary caller-supplied validators are rejected.
    This guarded variant intentionally has no protocol fee controller.
 3. Freeze the gameplay snapshot. Predict the player sale's CREATE address from the deployer's
    exact nonce; construct double-hashed leaves:

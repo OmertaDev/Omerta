@@ -207,11 +207,24 @@ with raids, a small garrison is enough.
 
 The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.
 
-The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.
+The approved launch starts with a 9% base sell fee: a fixed 2% founder/operations share, 1.6% RWA, 2.4% community and 3% protocol-owned liquidity, plus up to 1% surge. The LP swap fee is static at 0.3%, and opening buy penalties and caps are disabled. Committee tax proposals can change the other bounded rates prospectively through the Safe after 48 hours; the founder share and receiving addresses stay fixed. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.
 
 Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.
 
 Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.
+
+
+#### Genesis auction
+
+The approved launch is one five-day native ETH auction on Robinhood Chain for character NFT holders. Paid and free-credit mints qualify, with no individual allocation caps or gameplay eligibility list. The target is around noon New York on October 9–14, 2026. Verified native block boundaries determine the window; exact wall-clock timing is not guaranteed. Deployment, funding and launch verification must complete before participation opens.
+
+Allocate the existing 100M OMR as 40M offered, 20M for initial liquidity and 40M retained in the Safe for later bond activation. Unsold auction tokens return to the Safe and are accounted separately. The successful-raise minimum is 10 ETH; the starting floor corresponds approximately to 10 ETH for the complete 40M offered inventory.
+
+50% of accepted ETH funds liquidity with the 20M token allocation, subject to tightly bounded rounding. The opening pool price follows these funded amounts independently of the final auction price and can be lower. All remaining accepted ETH goes to the Safe's Family Yield treasury; holding it does not activate game reward conversion or payouts. After a successful auction closes, exit the bid and claim filled tokens without waiting for LP migration. Completed purchases are final; unused bid ETH is returned, and failed graduation returns deposited ETH. NFT transfers do not remove existing bid-owner refund or claim rights.
+
+#### Committee market-tax decisions
+
+The existing Safe queues an exact Committee configuration, waits at least 48 hours and explicitly executes it. The delay does not execute proposals automatically. This is a trusted Safe process, not cryptographic proof of an in-game vote. The founder/operations slice stays fixed at 2% of taxed sell value to A87 (0xA87b7A7eEcB6F4C771445F5CBa5Bb0D4B29E5CED); other rates may change prospectively within the 10% hook-tax ceiling. Recipients and accrued fees cannot be redirected. This authority cannot pause or upgrade the Hook, change the static 0.3% LP fee, or alter genesis proceeds, NFT eligibility, closure claims or Safe LP custody. Character NFT creation fees, gameplay fees and withdrawal policy remain separate. Production authority requires verified deployment and activation.
 
 
 **Currencies:** **cash** (in your pocket and your bank), **$OMR** (premium, account-level, earned through
@@ -2723,8 +2736,8 @@ a lever moves, this page moves with it (a test enforces that).
 - **Thin launch liquidity.** When the token market opens, it starts SMALL by design. Ordinary trades can move the
   price, and a round trip pays the sell tax plus slippage. Do not treat the pool as an exit for
   size.
-- **Canonical-pool selling is taxed.** On exact-input sells, 9% comes off the top of ETH output as the immutable base hook fee, plus a bounded **0–1% surge**.
-  Exact-output sells charge an OMR-input surcharge instead. LP fees are additional; other venues have their own policies.
+- **Canonical-pool selling is taxed.** On exact-input sells, 9% comes off the top of ETH output as the initial base hook fee, plus a bounded **0–1% surge**.
+  Exact-output sells charge an OMR-input surcharge instead. These are the approved launch rates; later Committee configurations require Safe execution after 48 hours, preserve the fixed 2% founder/operations share and stay within the 10% hook-tax ceiling. The static 0.3% LP fee is additional; other venues have their own policies.
   The separate game-withdrawal surcharge applies to balances younger than 48 hours, charging
   up to an extra 50% that fades to zero across that window; it does not apply to ordinary wallet holding.
 - **Withdrawing will pay a toll and can queue.** Once production extraction opens, every on-chain withdrawal pays a flat 2% toll, and the

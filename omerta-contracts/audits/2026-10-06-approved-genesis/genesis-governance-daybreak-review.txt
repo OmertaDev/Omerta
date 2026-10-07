@@ -1,0 +1,49 @@
+## Conclusion
+
+Not signing-ready. The Solidity governance/accounting delta is internally consistent, but two release-path findings block approval.
+
+### H-01 — Production planner accepts unauthorized immutable market settings
+
+[planner](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-auction-deployment-plan.js:235) accepts any `poolFee` through `100000` and nonzero opening fees/caps. Preflight merely verifies those input-selected values.
+
+Proof personally executed:
+
+```text
+PASS_UNAPPROVED_POOL_FEE hook 500
+```
+
+Impact: a packet can permanently deploy a non-0.3% pool or enable forbidden opening controls.
+
+Fix: require `poolFee === 3000`, `opening.blocks === 0`, `buyBps === 0`, and `maxBuyQuote === "0"` in planner, preflight, signer client, and negative tests.
+
+### H-02 — Signer client does not bind governance policy to hook calldata
+
+[client](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/genesis-deploy-client.js:53) checks `finalManifest.hookGovernance`, but [deployment validation](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/genesis-deploy-client.js:65) only requires nonempty hook calldata and packet-supplied runtime SHA.
+
+Proof personally executed with valid governance metadata but arbitrary hook payload:
+
+```text
+PASS_UNBOUND_HOOK_CALLDATA deadbeef
+```
+
+Impact: a packet can describe the approved Safe/A87 policy while deploying different constructor immutables. Matching attacker-supplied runtime pins allow all five signer stages to complete.
+
+Fix: decode and validate hook constructor calldata, recompute CREATE2 address/code hash, and bind governance Safe, recipients, fee/opening policy, and constructor ABI to trusted local expectations.
+
+### Contract verification
+
+No confirmed Solidity defect found in the reviewed delta:
+
+- Safe-only queue/cancel/execute, exact 48-hour boundary, chain/hook/nonce/payload replay domain, cancellation and bounds are enforced.
+- `_accrueBase` fixes ops at `floor(gross × 200 / 10000)`; POL receives deterministic remainder.
+- Rates are snapshotted per swap; buys exclude base tax; mutable surge remains within the aggregate 1000-bps cap.
+- Existing claims, launch timing, epochs, custody, F01/F02 supply/surplus behavior, and fund access were not broadened.
+- Live verification accepts legitimate future bounded totals such as 750 bps; the preflight’s 900 check applies only to fresh deployment state.
+
+### Evidence and limitations
+
+Passed personally on Node `v24.19.0`: `genesisauction`, deploy-client, preflight, and operations suites. Planner assertions reached its final filesystem-tamper section, then failed because read-only policy denied `mkdtemp`.
+
+Forge 1.7.1 was attempted but crashed before tests because it could not resolve a user home. Solhint was absent; Slither lacked a configured compiler. The requested Daybreak CLI/model/high-effort invocation was attempted, but startup was blocked by read-only Codex database/temp access; no Daybreak model session ran.
+
+Pins: HEAD `cdb3bd3300b29c063e6a74e693060b4be22517cb` + dirty. Hook source SHA-256 `614b70bc…6cbf62`; governance test `84912f4b…955bc`; artifact `f6130795…afe01`; creation bytecode Keccak `0x2faf5799…c6483`. The tenth constructor argument changes initcode, runtime immutables, salt-derived address, and all downstream calldata; prior packets remain invalid. No files were edited.

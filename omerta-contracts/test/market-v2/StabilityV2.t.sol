@@ -89,7 +89,7 @@ abstract contract StabilityV2Fixture is Test {
                 recipients,
                 OmertaHookV2.OpeningConfig(0, 0, 0),
                 uint24(600),
-                uint32(60)
+                uint32(60), address(this)
             ),
             hookAddress
         );

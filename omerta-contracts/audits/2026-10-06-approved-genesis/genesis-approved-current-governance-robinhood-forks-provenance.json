@@ -1,0 +1,75 @@
+{
+  "sourceCommit": "927f4f1736f01f5b2337f73e62b9b8a699935132",
+  "recordedAtUtc": "2026-10-07T04:12:47.1621072Z",
+  "scope": [
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "sha256": "614b70bcc6747310fdcb444427fba798fc6e273a7227bef9e4c61c26ae6cbf62",
+      "gitBlob": "b088dc2084c43c57c7b5a6614452edb7c7b5dee8"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0",
+      "gitBlob": "f134ea80a59ec966f57d32bdc1f1432f162d6561"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+      "sha256": "1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140",
+      "gitBlob": "2164105e5b5717c53b15c3537315c9f811378bee"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+      "sha256": "87eb43ba59e5c4306a033882f8195b173afcd6b272f9f3c9e83e4605a25065d4",
+      "gitBlob": "274bb893fe4b47fb426093ab7a91c10b761bc331"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol",
+      "sha256": "c6e08355c10adba7e3a29de1475639253c73e3e522bd4aa018a2dd5aceb6a66a",
+      "gitBlob": "f4dffc2ba96aa23600cba519f33db6aebb8e5fa3"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionGenesisRobinhoodFork.t.sol",
+      "sha256": "f54ab606dc63dfc803077df5304d385e59b911798112a04ecaf556dd2675ab13",
+      "gitBlob": "98afdb9325627210144ad7b6bfd6b4eacab4bfec"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisRobinhoodFork.t.sol",
+      "sha256": "4e12f1e3f052870902f29f407cfb9791583c78420e473287bee71cfb0c576b28",
+      "gitBlob": "f459670105ea1b51510fba0bf259c0e37d4761f8"
+    }
+  ],
+  "command": "forge test --match-path test/market-v2/*GenesisRobinhoodFork.t.sol -vv",
+  "environment": {
+    "GENESIS_ROBINHOOD_FORK": "true",
+    "GENESIS_ROBINHOOD_FORK_BLOCK": "unset:both selected latest",
+    "RPC": "https://rpc.mainnet.chain.robinhood.com/"
+  },
+  "exitCode": 0,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "forkBlock": "82182927",
+  "forkTimestamp": "1791346321",
+  "chainId": 4663,
+  "compiler": "0.8.26/optimizer800/Cancun/market-v2viaIR",
+  "compilation": "No files changed; compilation skipped, canonical current artifacts reused",
+  "claimsProved": [
+    "current10-argGovernanceHook construction withgovernanceSafe=primarySafe",
+    "50ETHpublicNFTauctiongraduation,20MLP/25ETHboundedfunding,custody,allowancerevocation,closureclaimsindependentmigration",
+    "retainedhistoricaltwo-legplayercompatibilitysettlement/migration/claims"
+  ],
+  "mockAndForkLocalChanges": [
+    "vm.etch(0x64,empty) BEFOREauctionconstruction;vendorchoosesblock.numberFALLBACK",
+    "vm.roll(start/end/claim) deterministicnative-clocksimulation",
+    "vm.dealholderandoutsider balances",
+    "vm.prankSafe/NFTownerfunding/transfersonlyfork",
+    "freshlocalcoordinator/actualCREATE2permission-minedHook/guardedauctiondeployments;retainedplayersaledeploymentonlyhistoricalscenario"
+  ],
+  "notProved": [
+    "NOTnativeArbSysuse=trueconstructoror5-daywallclock/cadencerehearsal",
+    "NOTseven-contractcandidate/preflight/signingpacketproof",
+    "NOlivegovernanceproposalqueue/apply;governanceeconomicpropertiesbelongseparateunit/fuzz/invariantreview",
+    "NOsigning,broadcast,deploymentoractivation"
+  ],
+  "logSha256": "86380feb9ccea2f2ab7bcb31e1fe1c5cb8580b5afe7e0be72a957396e27de8da"
+}

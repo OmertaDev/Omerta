@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {GenesisCharacterMock} from "./helpers/GenesisCharacterMock.sol";
 import {Test} from "forge-std/Test.sol";
 import {StdInvariant} from "forge-std/StdInvariant.sol";
 import {GenesisPlayerSale} from "../src/GenesisPlayerSale.sol";
@@ -27,8 +28,17 @@ contract PlayerSaleHandler is Test {
         bytes32[] memory proof = new bytes32[](2);
         proof[0] = leaves[i ^ 1]; proof[1] = i < 2 ? pair(leaves[2], leaves[3]) : pair(leaves[0], leaves[1]);
         uint256 value = bound(amount, 1, 6 ether);
+        uint256 beforeRequested = sale.requested(who);
+        bool ownsCharacter = sale.characterNft().balanceOf(who) != 0;
         vm.prank(who);
         try sale.contribute{value: value}(wrongTier ? uint8(5) : uint8(i + 1), proof) {} catch {}
+        if (!ownsCharacter) assertEq(sale.requested(who), beforeRequested);
+    }
+    function transferCharacter(uint8 tokenIndex, uint8 recipientIndex) external {
+        uint256 id = uint256(tokenIndex % 4) + 1;
+        address owner = sale.characterNft().ownerOf(id);
+        vm.prank(owner);
+        sale.characterNft().transferFrom(owner, wallet(recipientIndex % 4), id);
     }
     function settle(uint8 index, bool closeFirst) external {
         if (closeFirst && block.timestamp < sale.closesAt()) vm.warp(sale.closesAt());
@@ -61,6 +71,7 @@ contract PlayerSaleHandler is Test {
 }
 
 contract GenesisPlayerSaleInvariantTest is StdInvariant, Test {
+    GenesisCharacterMock characterNft;
     GenesisPlayerSale sale;
     PlayerTokenMock token;
     PlayerIntegrationMock integration;
@@ -69,15 +80,16 @@ contract GenesisPlayerSaleInvariantTest is StdInvariant, Test {
         return a < b ? keccak256(abi.encodePacked(a, b)) : keccak256(abi.encodePacked(b, a));
     }
     function setUp() public {
+        characterNft = new GenesisCharacterMock();
         token = new PlayerTokenMock(); integration = new PlayerIntegrationMock();
         address predicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         bytes32[4] memory leaves;
         for (uint256 i; i < 4; ++i) {
-            address who = address(uint160(0x1000 + i)); vm.deal(who, 1000 ether);
+            address who = address(uint160(0x1000 + i)); vm.deal(who, 1000 ether); characterNft.mint(who);
             leaves[i] = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, who, uint8(i + 1)))));
         }
         sale = new GenesisPlayerSale(token, integration, pair(pair(leaves[0], leaves[1]), pair(leaves[2], leaves[3])),
-            2 ether, block.timestamp + 1 days, block.timestamp + 5 days, address(0xCAFE));
+            2 ether, block.timestamp + 1 days, block.timestamp + 5 days, address(0xCAFE), characterNft);
         token.mint(address(sale), 2 ether); sale.open();
         handler = new PlayerSaleHandler(sale, integration, leaves);
         vm.deal(address(handler), 1000 ether);
@@ -86,10 +98,11 @@ contract GenesisPlayerSaleInvariantTest is StdInvariant, Test {
         for (uint8 i; i < 4; ++i) handler.contribute(i, 0.25 ether, false);
         assertEq(sale.participantCount(), 4);
         targetContract(address(handler));
-        bytes4[] memory selectors = new bytes4[](6);
+        bytes4[] memory selectors = new bytes4[](7);
         selectors[0] = handler.contribute.selector; selectors[1] = handler.settle.selector;
         selectors[2] = handler.release.selector; selectors[3] = handler.timeout.selector;
         selectors[4] = handler.refund.selector; selectors[5] = handler.claim.selector;
+        selectors[6] = handler.transferCharacter.selector;
         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
     }
     function invariantCapsAndSettlementAccounting() public view {

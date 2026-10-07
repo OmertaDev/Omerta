@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DEED_SERVER_BASELINE_PIN,
   DEED_SERVER_CURRENT_PIN, HTTP_RECEIPT_SERVER_PIN, HTTP_RECEIPT_HELPER_PIN } from '../tools/rc1-deed-source-compatibility.js';
+import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
+  GENESIS_SERVER_WRAPPER_SOURCE_REVISION } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
@@ -9,16 +11,29 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, HTTP_RECEIPT_SERVER_PIN);
+assert.equal(serverProof.actualSha256, GENESIS_SERVER_WRAPPER_PIN);
+const wrapperProof = assertGenesisWrapperServerCompatibility(serverText);
+assert.equal(sha256(wrapperProof.priorText), HTTP_RECEIPT_SERVER_PIN);
+assert.equal(wrapperProof.genesisWrapperTransfer.inverseChunks, 3);
+assert.equal(wrapperProof.genesisWrapperTransfer.publicGetRoutes, 12);
+assert.equal(wrapperProof.genesisWrapperTransfer.sourceRevision, GENESIS_SERVER_WRAPPER_SOURCE_REVISION);
+for (const changed of [
+  serverText.replace('  registerGenesisAuction(app, { auth });', '  registerGenesisAuction(app, { auth: null });'),
+  serverText.replace("app.get('/genesis-deploy.html', genesisdeployPage);", "app.get('/unreviewed', genesisdeployPage);"),
+  serverText.replace("import { register as registerGenesisAuction } from './routes/genesisauction.js';", ''),
+  serverText.replace('  registerGenesisAuction(app, { auth });', '  registerGenesisAuction(app, { auth });\n  registerGenesisAuction(app, { auth });'),
+  serverText + '\n// unrelated server change\n',
+]) assert.throws(() => assertGenesisWrapperServerCompatibility(changed), /source changed/);
 const receiptProof = assertHttpReceiptServerCompatibility(serverText);
 assert.equal(assertDeedServerCompatibility(receiptProof.priorText).actualSha256, DEED_SERVER_CURRENT_PIN);
 assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha256, DEED_SERVER_BASELINE_PIN);
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], HTTP_RECEIPT_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], GENESIS_SERVER_WRAPPER_PIN);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.version, 4);
+assert.equal(WORLD_RECOVERY_REVIEW.genesisWrapperSourceTransfer.predecessorServerSha256, HTTP_RECEIPT_SERVER_PIN);
 for (const [before, after] of [['row.response === reservationToken', 'true'],
   ['if (row.status === 0) req._idem', 'if (true) req._idem'],
   ["preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.checkin", "preHandler: null }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.checkin"]]) {

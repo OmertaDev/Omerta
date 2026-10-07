@@ -1,0 +1,207 @@
+Compiling 3 files with Solc 0.8.26
+Solc 0.8.26 finished in 69.13s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:254:5:
+    |
+254 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 3 tests for test/market-v2/FundingIntegrationV2.t.sol:FundingIntegrationV2Test
+[PASS] testActualHookBasePOLAndSeparateSurgeFundOnlyTheirOwnCompartment() (gas: 857521)
+[PASS] testExactOutputSellOMRFeesRemainOMRWhenFundingCoreAndReserve() (gas: 1040833)
+[PASS] testSolverProfitClaimForAndFlushFundReserveWithoutTreasuryCollateral() (gas: 2298851)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 36.14ms (5.32ms CPU time)
+
+Ran 17 tests for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2Test
+[PASS] testFuzz_allFeesAreCoveredAndNeverExceedTenPercent(uint96,bool) (runs: 512, μ: 374286, ~: 368706)
+Logs:
+  Bound result 41455654977680402452
+
+[PASS] test_buyCannotEraseRecentSellPressure() (gas: 686312)
+[PASS] test_callbacksRequireManager() (gas: 16768)
+[PASS] test_exactOutputSellPaysOMRBasedOnActualInput() (gas: 409393)
+[PASS] test_fullUint32IdleCyclePreservesCounterfactualAndWrittenCumulative() (gas: 519358)
+[PASS] test_idleGapSynthesizesNewestFullEpochWithoutRepeatingOldVolume() (gas: 466913)
+[PASS] test_liquidityChangesAccrueOldDepthBeforeAdoptingNewDepth() (gas: 244671)
+[PASS] test_onlyRecipientCanRedirectOwnClaim() (gas: 390609)
+[PASS] test_openingCapUsesFilledQuoteNotRequestedInput() (gas: 290832)
+[PASS] test_openingExpiresWithoutAnAdminCall() (gas: 370612)
+[PASS] test_openingSupportsExactOutputAndCapsActualQuoteIncludingFee() (gas: 513714)
+[PASS] test_partialFillTaxUsesActualAmountsForBothSellModes() (gas: 652717)
+[PASS] test_permissionsContainOnlyImplementedCallbacks() (gas: 12784)
+[PASS] test_poolIdentityIsPinned() (gas: 22570)
+[PASS] test_postOpeningBuysAreFreeInBothModes() (gas: 305228)
+[PASS] test_recipientFailureCannotBlockSwapsOrOtherPayments() (gas: 489756)
+[PASS] test_sellsKeepBaseAllocationAndIsolateSurge() (gas: 376151)
+Suite result: ok. 17 passed; 0 failed; 0 skipped; finished in 191.11ms (187.67ms CPU time)
+
+Ran 7 tests for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceV2Test
+[PASS] testChainAndHookDomainsCannotReplay() (gas: 279478)
+[PASS] testExactOutputFounderValueAndBuyDoesNotAcquireSellTax() (gas: 596592)
+[PASS] testExactPayloadNonceCancelAndAppliedReplayRejected() (gas: 153505)
+[PASS] testFuzzFutureFeeConservationAndOpsValue(uint16,uint16,uint16,uint16,uint64) (runs: 512, μ: 530522, ~: 525171)
+Logs:
+  Bound result 1000000003
+
+[PASS] testHardCapWideInputsAndFounderMinimum() (gas: 431511)
+[PASS] testOnlyFutureFeesChangeAndAllOldReceiverCreditsStayProtected() (gas: 740809)
+[PASS] testSafeOnlyQueueCancelExecuteAndExact48HourBoundary() (gas: 111449)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 191.16ms (185.89ms CPU time)
+
+Ran 1 test for test/market-v2/OmertaHookV2.t.sol:OmertaHookV2InvariantTest
+[PASS] invariant_liabilitiesRemainExactlyFundedInBothCurrencies() (runs: 64, calls: 4096, reverts: 0)
+
+╭------------------------------+------------+-------+---------+----------╮
+| Contract                     | Selector   | Calls | Reverts | Discards |
++========================================================================+
+| OmertaHookV2InvariantHandler | checkpoint | 1320  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | sweep      | 1358  | 0       | 0        |
+|------------------------------+------------+-------+---------+----------|
+| OmertaHookV2InvariantHandler | trade      | 1418  | 0       | 0        |
+╰------------------------------+------------+-------+---------+----------╯
+
+Logs:
+  Bound result 3
+  Bound result 1
+  Bound result 74379
+  Bound result 1
+  Bound result 4155057115492578
+  Bound result 99999999000864002
+  Bound result 4396778365710
+  Bound result 7320
+  Bound result 2
+  Bound result 99999999000001302
+  Bound result 7231
+  Bound result 2
+  Bound result 4
+  Bound result 6
+  Bound result 64707
+  Bound result 81288991635
+  Bound result 99999999000002001
+  Bound result 4
+  Bound result 1
+  Bound result 99999999000000501
+  Bound result 99999999000000061
+  Bound result 4
+  Bound result 32767
+  Bound result 1
+  Bound result 1
+  Bound result 99999999003549056
+  Bound result 27123
+  Bound result 2279040239589957
+  Bound result 47747
+  Bound result 3
+  Bound result 4
+  Bound result 2
+  Bound result 3
+  Bound result 1000000001
+  Bound result 379821044577360
+  Bound result 443870663885876
+  Bound result 3
+  Bound result 1
+  Bound result 46744257709551429
+  Bound result 898
+  Bound result 70
+  Bound result 38135
+  Bound result 1
+  Bound result 4634
+  Bound result 3
+  Bound result 3044
+  Bound result 0
+  Bound result 2
+  Bound result 99999999037341337
+  Bound result 2
+  Bound result 8996
+  Bound result 4
+  Bound result 48784827866
+  Bound result 99999999000000302
+  Bound result 81860680011702588
+  Bound result 99999999000172801
+  Bound result 3
+  Bound result 41810
+  Bound result 1
+  Bound result 255
+  Bound result 2
+  Bound result 99999999000057035
+  Bound result 85362
+  Bound result 16289
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.64s (2.61s CPU time)
+
+Ran 1 test for test/market-v2/HookTaxGovernanceV2.t.sol:HookTaxGovernanceInvariantTest
+[PASS] invariantProtectedOpsAndFundedLiabilitiesWithDelayedTaxChanges() (runs: 64, calls: 4096, reverts: 66)
+
+╭--------------------------+----------+-------+---------+----------╮
+| Contract                 | Selector | Calls | Reverts | Discards |
++==================================================================+
+| HookTaxGovernanceHandler | progress | 1023  | 66      | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | propose  | 997   | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | sweep    | 1041  | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| HookTaxGovernanceHandler | trade    | 1035  | 0       | 0        |
+╰--------------------------+----------+-------+---------+----------╯
+
+Logs:
+  Bound result 1
+  Bound result 99999999000032768
+  Bound result 2
+  Bound result 99999999000004338
+  Bound result 4
+  Bound result 99999999000000014
+  Bound result 99999999000013646
+  Bound result 0
+  Bound result 3113
+  Bound result 2
+  Bound result 2317973421
+  Bound result 1
+  Bound result 99999999000000031
+  Bound result 98
+  Bound result 18
+  Bound result 1000000003
+  Bound result 99999999319672856
+  Bound result 6725
+  Bound result 5
+  Bound result 99999999000051967
+  Bound result 1
+  Bound result 168155
+  Bound result 99999999000001620
+  Bound result 99999999000008990
+  Bound result 99999999000000061
+  Bound result 84510596065415756
+  Bound result 16383
+  Bound result 3
+  Bound result 99999999594135068
+  Bound result 4
+  Bound result 99999999000004709
+  Bound result 4
+  Bound result 4
+  Bound result 51643
+  Bound result 208869
+  Bound result 99999999000004358
+  Bound result 185
+  Bound result 4
+  Bound result 15593588004018380
+  Bound result 4
+  Bound result 99999999538946251
+  Bound result 3
+  Bound result 88492
+  Bound result 197245
+  Bound result 87792
+  Bound result 3
+  Bound result 99999999000012494
+  Bound result 7165111409479922
+  Bound result 99999999031622401
+  Bound result 4
+  Bound result 145456
+  Bound result 1
+  Bound result 4
+  Bound result 1
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.02s (2.98s CPU time)
+
+Ran 5 test suites in 3.04s (6.08s CPU time): 29 tests passed, 0 failed, 0 skipped (29 total tests)

@@ -94,6 +94,7 @@ import * as Desk from './desk.js';
 import * as Exchange from './exchange.js';
 import * as Bank from './bank.js';
 import { register as registerCasino } from './routes/casino.js';
+import { register as registerGenesisAuction } from './routes/genesisauction.js';
 import { register as registerPen } from './routes/pen.js';
 import { register as registerSpeakeasy } from './routes/speakeasy.js';
 import { register as registerPort } from './routes/port.js';
@@ -528,6 +529,27 @@ export async function buildServer() {
   // ── PWA — the web manifest + app icons, so the game INSTALLS to the home screen (iOS + Android) and
   // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.
   const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);
+  // Explicit public pages and reviewed deployment modules: no user-controlled file path.
+  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));
+  app.get('/defi', defiPage);
+  app.get('/defi.html', defiPage);
+  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));
+  app.get('/fee-flows', feeflowsPage);
+  app.get('/fee-flows.html', feeflowsPage);
+  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));
+  app.get('/genesis-deploy', genesisdeployPage);
+  app.get('/genesis-deploy.html', genesisdeployPage);
+  const reviewedModule = name => {
+    const code = readFileSync(pub(name), 'utf8');
+    return async (req, reply) => reply.type('application/javascript; charset=utf-8')
+      .header('cache-control', 'no-store').send(code);
+  };
+  app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));
+  app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
+  app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));
+  app.get('/genesis-deploy-vendor/_u64.js', reviewedModule('genesis-deploy-vendor/_u64.js'));
+  app.get('/genesis-deploy-vendor/utils.js', reviewedModule('genesis-deploy-vendor/utils.js'));
+  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));
   let manifestJson = ''; try { manifestJson = readFileSync(pub('manifest.json'), 'utf8'); } catch { /* headless */ }
   const serveManifest = async (req, reply) => reply.type('application/manifest+json; charset=utf-8').header('cache-control', 'public, max-age=3600').send(manifestJson);
   app.get('/manifest.json', serveManifest);
@@ -2335,6 +2357,7 @@ export async function buildServer() {
   registerHeists(app, { pool, auth });
 
   registerCasino(app, { pool, auth });
+  registerGenesisAuction(app, { auth });
 
   app.get('/v1/gangs', async () => {
     // two flat queries instead of a correlated subquery — identical response, and pg-mem

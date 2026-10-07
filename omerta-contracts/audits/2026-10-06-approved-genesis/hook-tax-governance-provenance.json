@@ -1,0 +1,92 @@
+{
+  "dateUtc": "2026-10-07T03:27:32.2546927Z",
+  "baseCommit": "cdb3bd3300b29c063e6a74e693060b4be22517cb",
+  "branch": "codex/genesis-nft-launch",
+  "files": [
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "sha256": "614b70bcc6747310fdcb444427fba798fc6e273a7227bef9e4c61c26ae6cbf62"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/HookTaxGovernanceV2.t.sol",
+      "sha256": "84912f4bfe15f3a313cc3df78a71960fd5f046e4e2b89bcf89d5a40f0de955bc"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/OmertaHookV2.t.sol",
+      "sha256": "5a441b18e15fdd6ae65bab27a55be156ea0ae6f20e22653de1fcf23cad2863d0"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/FundingIntegrationV2.t.sol",
+      "sha256": "a10a5470e89ccc28a57dcf4270cf911b8bc608a31c399e9bb775c446da788a0a"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/StabilityV2.t.sol",
+      "sha256": "597d1cb587ba3622216e8410140b4f76cc52bb0dbd7ef0748618a4dbbe32dbb2"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionCoordinatorV2.t.sol",
+      "sha256": "4497de64b90a728de23508302b9859b4e7ccf4d64320b0a114ffc107df987dd5"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionGenesisRobinhoodFork.t.sol",
+      "sha256": "f54ab606dc63dfc803077df5304d385e59b911798112a04ecaf556dd2675ab13"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/GenesisCoordinatorV2.t.sol",
+      "sha256": "958354be0ab1ec15b5199f5882bd855ce9c4d0357784937e5ee561f3eb46983c"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisIntegrationV2.t.sol",
+      "sha256": "ce65a13467a7cc2b2775407ca20fda7f44febab00e722a2b1ecaf46b749bbf16"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisRobinhoodFork.t.sol",
+      "sha256": "4e12f1e3f052870902f29f407cfb9791583c78420e473287bee71cfb0c576b28"
+    }
+  ],
+  "compiler": "0.8.26/viaIR/optimizer800/Cancun",
+  "constructorAdded": "10thfinaladdressgovernanceSafe_",
+  "fixedOpsBps": 200,
+  "fixedOpsRecipient": "constructorrecipientsDEVimmutable-in-instance;productionpolicyA87",
+  "governance": "Safeonlyqueue/cancel/execute;48hourminimum;exactchain/hook/nonce/configdomainhash",
+  "taxBounds": "OPS200+rwa+community+pol+surgeMax<=1000;initial160/240/300/100",
+  "fees": "snapshotmemoryconfig;OPSfloor(gross*200/10000);nonfounderPOLroundingremainder;oldowedandreceiversunaffected",
+  "poolFee": "STATIC3000launch;poolkeyimmutable",
+  "runtimeBytes": 13803,
+  "hookFlags": "0x35c4",
+  "focused": {
+    "fuzzRuns": 512,
+    "skipped": 0,
+    "failed": 0,
+    "invariantDepth": 64,
+    "passed": 29,
+    "suites": 5,
+    "invariantRuns": 64
+  },
+  "fullWarm": {
+    "failed": 0,
+    "skipped": 2,
+    "invariantRuns": 32,
+    "suites": 96,
+    "passed": 1357,
+    "seconds": 13.25,
+    "invariantDepth": 64,
+    "fuzzRuns": 128,
+    "seed": "0x20261007"
+  },
+  "independentReview": "PendingparentDaybreakfreshscopereview",
+  "liveCandidateProof": "Parent/marketagentownsVMmockArbSys-preserved7runtimecandidate;notclaimedhere",
+  "initialFailure": "vm.chainIdtestCHAINIDrematerialization;traceprovedrestore31338not31337;fixedopaqueexternalobservedChainIdcapture;contractunchanged",
+  "logs": [
+    "output/hook-tax-governance-focused.txt",
+    "output/hook-tax-governance-full-warm.txt",
+    "output/hook-tax-governance-initial-domain-failure.txt",
+    "output/hook-tax-domain-trace.txt"
+  ],
+  "limitations": [
+    "No signing,broadcastoractivation",
+    "Opt-inforks skippedfullwarm;actualcandidateproofseparatepending",
+    "No onchainCommitteevotingproofimplemented;existingSafeisexecutor",
+    "Formergenesis/F01-F02evidencepredatesgovernanceandnotfullcurrentpacketproof"
+  ]
+}

@@ -1,0 +1,33 @@
+## Conclusion
+
+H03 is resolved at final clean revision `aca24128dd4205f78887c592e2155320721a2262`. No remaining exploitable defect found in the four-file scope.
+
+- The prior valid arbitrary initcode `0x63600060006000526004601cf3` was rejected for `polFunding`, `reserveFunding`, `coordinator`, and `auction` before any wallet request.
+- Mutated authorities, Safe/NFT addresses, allocations, clocks, dynamic offsets, length, padding, trailing data, pricing, and schedules were rejected.
+- [Client reconstruction](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/public/genesis-deploy-client.js:84) matched actual compiled ABI encoding byte-for-byte.
+- Independent proof matched: outer offset `160`, tuple offset `352`, payload `2048` bytes, total arguments `2592` bytes, artifact SHA `2a85d18b…f9c66`.
+- Browser/planner schedule bytes matched across 10 boundary durations.
+
+Checks passed:
+
+```text
+build-genesis-deploy-trust.js --check
+test/genesis-deploy-client.js
+git diff --check
+```
+
+Runtime hashes remain evidence authorized by the manually reviewed packet digest and are checked at the receipt block. They are not locally derived runtime proofs; importantly, they can no longer authorize different creation code.
+
+Pins:
+
+```text
+builder   6c8af0b7…fcb0d1
+artifact  8356a747…77648
+client    07e0bd7c…5adbb
+tests     b7ba75d9…d743d
+proof     e21e1906…78060
+```
+
+Root source SHA-256: adapter `142d0082…bce3`, coordinator `330aecbf…4ec0`, auction `1630ccf3…4140`, hook `614b70bc…bf62`.
+
+Scope excluded unchanged contracts, planner, backend, live RPC, deployment, signing, and broadcasting. No files were edited.

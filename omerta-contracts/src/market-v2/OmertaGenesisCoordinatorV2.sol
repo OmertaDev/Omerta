@@ -20,6 +20,7 @@ import {Actions} from "../../lib/v4-periphery/src/libraries/Actions.sol";
 import {GenesisPlayerSale, IGenesisPlayerIntegration} from "../GenesisPlayerSale.sol";
 
 interface IGenesisGatedAuction {
+    function characterNft() external view returns (IERC721);
     function checkpoint() external;
     function lbpInitializationParams() external view returns (uint256, uint256, uint256);
     function fundsRecipient() external view returns (address);
@@ -102,6 +103,7 @@ contract OmertaGenesisCoordinatorV2 is IGenesisPlayerIntegration, ReentrancyGuar
             || address(auction_).code.length == 0 || address(sale_).code.length == 0
             || auction_.fundsRecipient() != address(this) || auction_.launchGate() != address(this)
             || auction_.currency() != address(0) || auction_.token() != address(omr)
+            || address(auction_.characterNft()) != address(sale_.characterNft())
             || auction_.blockNumberish() >= auction_.startBlock()
             || address(_key.hooks).code.length == 0
             || address(sale_.integration()) != address(this) || address(sale_.token()) != address(omr)) {

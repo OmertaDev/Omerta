@@ -1,0 +1,148 @@
+{
+  "sourceCommit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c",
+  "baseCommit": "b899f3766b95a942279fb0e8461c7dc1da6f5879",
+  "phase": "pre-deployment-single-auction",
+  "capturedUtc": "2026-10-06T23:30:17.736Z",
+  "evidenceNormalization": "UTF-8 text with LF line endings for Git; unchanged original outputs retained outside checkout",
+  "sources": [
+    {
+      "path": "omerta-contracts/GENESIS-AUCTION.md",
+      "sha256": "22929deaca5d9b8cf6c94a27e06f4f78873ef56ba1426f5b3942fc153ee0e444"
+    },
+    {
+      "path": "omerta-contracts/GENESIS-LAUNCH-STEPS.md",
+      "sha256": "ccea7401b282d20a8112b8d5deeb8b6e3967823abcfcf7605feda4db0cb5689b"
+    },
+    {
+      "path": "omerta-contracts/PLAYER-GENESIS.md",
+      "sha256": "867371d2837ad77509902811501144b31cc178744067f5af59683b5ff5e46cab"
+    },
+    {
+      "path": "omerta-contracts/src/GenesisPlayerSale.sol",
+      "sha256": "df0ab866c09b1a206907aabdf14cbb696130f91a0305c2dde4f6d1f1ca0701d9"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+      "sha256": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+      "sha256": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol",
+      "sha256": "c6e08355c10adba7e3a29de1475639253c73e3e522bd4aa018a2dd5aceb6a66a"
+    },
+    {
+      "path": "omerta-contracts/test/GenesisCharacterEligibility.t.sol",
+      "sha256": "40087df84227b9494d5e69272f1c33f418b798af8f0f6ac935f1c5e20d0939ca"
+    },
+    {
+      "path": "omerta-contracts/test/GenesisPlayerSale.t.sol",
+      "sha256": "3a0db7c61c2293bf9b6a1f3f268d8ab75b7de911cbac894adeb7d24f2ac2a2c4"
+    },
+    {
+      "path": "omerta-contracts/test/GenesisPlayerSaleInvariant.t.sol",
+      "sha256": "626713749cc7b7f28938ba44a2ab51ebfdd21a730bd17a3b9aa9519fdc83fb6c"
+    },
+    {
+      "path": "omerta-contracts/test/OmertaGuardedAuction.t.sol",
+      "sha256": "e4abb9f8c7ead14be80d241e2b7b8ff5cfc2f99cff99adfe130cc1a375694883"
+    },
+    {
+      "path": "omerta-contracts/test/audit/PlayerSaleCapDomain.t.sol",
+      "sha256": "bf66de7b3343f0ae42c2f75c88085df7b142eaee1e3991a245fe874d2e2da6ba"
+    },
+    {
+      "path": "omerta-contracts/test/helpers/GenesisCharacterMock.sol",
+      "sha256": "3d65a56b1326b15287a5e80a77aedb7c1966e3ff67e33b190fa1d281246839ef"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionCoordinatorV2.t.sol",
+      "sha256": "0e8b6e1306c544353718a360f6edbf1235c7e0cb31f6e241e30dea5102b6192c"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionGenesisRobinhoodFork.t.sol",
+      "sha256": "51fb71331f0446ddbc8a0cb5c205069f56b0b225fa4476a4eb48e0e24d5599ea"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/GenesisCoordinatorV2.t.sol",
+      "sha256": "c68d883bf1dc464cb5fef82584783d76b9051d48ab13f11d621fd573b1419602"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisIntegrationV2.t.sol",
+      "sha256": "327955179c2846404115538d5b2d6feef9605ccc3979a3a0f758332eb572dd0a"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/PlayerGenesisRobinhoodFork.t.sol",
+      "sha256": "2ca5e589de61a8dbc96a6da09f4e6876c84f7a02229c22185a124b0d2e01c1be"
+    },
+    {
+      "path": "package.json",
+      "sha256": "868161b31c59c95449cbc67826e582afd5d84df802663b1732d647599a148d64"
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "cdc2ab6317660237f6a70c3d505ef7807a99ef848a34559a05c2c32e4006c1c8"
+    },
+    {
+      "path": "src/genesisauction.js",
+      "sha256": "7aed50ae735ab0904f76ac8adb966209706c6ac9cffafc7d0ee9464e8f6a02a2"
+    },
+    {
+      "path": "src/preflight.js",
+      "sha256": "b4fc905c63fc3188402e4c85e6a97d9706284fcc42aafa061ff03f899d226a56"
+    },
+    {
+      "path": "src/routes/genesisauction.js",
+      "sha256": "073e30f65b518ea62d65eba77c5ee2f570ba6c4f8e2a16625d7336ee6385a50e"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "92fd4ba06314822768f0773f3058c34f55dff8ecf41ba32fdf34f941953ccb28"
+    },
+    {
+      "path": "test/genesis-auction-deployment-plan.js",
+      "sha256": "dfafc613c38448f507a1ebb49c82c4fef14c2aa8193688c7ad0a590c2a4ffc87"
+    },
+    {
+      "path": "test/genesis-auction-http.js",
+      "sha256": "fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87"
+    },
+    {
+      "path": "test/genesis-auction-operations.js",
+      "sha256": "0fbdbade80f827ca6f8ceedd86645a0104c20067eaea0caf408de5255c29398e"
+    },
+    {
+      "path": "test/genesisauction.js",
+      "sha256": "f8ed348cbd34c4ac18d756ddae7e2d33664eac581cce4ef877c9a197d206bcbb"
+    },
+    {
+      "path": "test/player-genesis-client.js",
+      "sha256": "15d0785933dd7c0399e7334dcec1afbf948439f93bdd4a574a4ed24f8e4c254c"
+    },
+    {
+      "path": "tools/genesis-auction-deployment-plan.js",
+      "sha256": "371d6f4c85237f72e6668cffbb973fd07cf1b96d9e5e478518fab4992b2413a6"
+    },
+    {
+      "path": "tools/genesis-auction-operations.js",
+      "sha256": "6bd76d0359dc63021f3f10c4ac8836810776364efcbaf30c7190219566724787"
+    }
+  ],
+  "cliReviews": {
+    "model": "gpt-daybreak-blue-latest",
+    "provider": "openai",
+    "initialExitCode": 0,
+    "retestExitCode": 0
+  },
+  "baselineFullForge": "preceding revision only; not current coordinator proof",
+  "hostedChecks": "not yet complete",
+  "deployed": false,
+  "funded": false,
+  "activated": false
+}

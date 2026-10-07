@@ -40,6 +40,48 @@ export function assertDeedBacklogCompatibility(file, text) {
 export const HTTP_RECEIPT_SERVER_PIN = '111d8de4b7a8aa96ed025d643e2c7831248302ae6eecee344a1d9e5eea3bfe88';
 export const HTTP_RECEIPT_HELPER_PIN = '2edeb237aa8c52c2655ac4821553d073fd6c90736600d0d34c092c4f567861fb';
 export const HTTP_RECEIPT_REVIEWED_REVISION = '7da453e05036cc18bb60533aadcad8e7818020cc';
+export const GENESIS_SERVER_WRAPPER_PIN = '8acb53225230920a2b6509636d51d3156acdddc53ed249391b620ffc8a695810';
+export const GENESIS_SERVER_WRAPPER_SOURCE_REVISION = '0e2fef3f3c0269ecfe1f70b76274d692d6462e0e';
+// A separate, source-specific routing transfer; it does not extend the historical HTTP/deed
+// semantic review to the new genesis API or wallet modules. Exactly undo only these three chunks.
+const genesisWrapperChanges = [
+  "import { register as registerGenesisAuction } from './routes/genesisauction.js';\n",
+  '  registerGenesisAuction(app, { auth });\n',
+  '  // Explicit public pages and reviewed deployment modules: no user-controlled file path.\n'
+    + "  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));\n"
+    + "  app.get('/defi', defiPage);\n"
+    + "  app.get('/defi.html', defiPage);\n"
+    + "  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));\n"
+    + "  app.get('/fee-flows', feeflowsPage);\n"
+    + "  app.get('/fee-flows.html', feeflowsPage);\n"
+    + "  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));\n"
+    + "  app.get('/genesis-deploy', genesisdeployPage);\n"
+    + "  app.get('/genesis-deploy.html', genesisdeployPage);\n"
+    + '  const reviewedModule = name => {\n'
+    + "    const code = readFileSync(pub(name), 'utf8');\n"
+    + "    return async (req, reply) => reply.type('application/javascript; charset=utf-8')\n"
+    + "      .header('cache-control', 'no-store').send(code);\n"
+    + '  };\n'
+    + "  app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));\n"
+    + "  app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));\n"
+    + "  app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));\n"
+    + "  app.get('/genesis-deploy-vendor/_u64.js', reviewedModule('genesis-deploy-vendor/_u64.js'));\n"
+    + "  app.get('/genesis-deploy-vendor/utils.js', reviewedModule('genesis-deploy-vendor/utils.js'));\n"
+    + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
+];
+export function assertGenesisWrapperServerCompatibility(text) {
+  const actualSha256 = hash(text);
+  if (actualSha256 === HTTP_RECEIPT_SERVER_PIN) return { actualSha256, priorText: text, genesisWrapperTransfer: null };
+  assert.equal(actualSha256, GENESIS_SERVER_WRAPPER_PIN, 'Recovery rule source changed: src/server.js');
+  let priorText = text;
+  for (const chunk of genesisWrapperChanges) {
+    assert.equal(priorText.split(chunk).length, 2, 'Genesis routing transfer is not exact and unique');
+    priorText = priorText.replace(chunk, '');
+  }
+  assert.equal(hash(priorText), HTTP_RECEIPT_SERVER_PIN, 'Server differs beyond exact genesis routing wrappers');
+  return { actualSha256, priorText, genesisWrapperTransfer: { sourceRevision: GENESIS_SERVER_WRAPPER_SOURCE_REVISION,
+    actualSha256, predecessorSha256: HTTP_RECEIPT_SERVER_PIN, inverseChunks: 3, publicGetRoutes: 12 } };
+}
 // Exact inverse literals for the reviewed HTTP transport change only.
 const receiptChanges = [
   [
@@ -86,14 +128,14 @@ const receiptChanges = [
 export function assertHttpReceiptServerCompatibility(text) {
   const actualSha256 = hash(text);
   if (actualSha256 === DEED_SERVER_CURRENT_PIN) return { actualSha256, priorText: text };
-  assert.equal(actualSha256, HTTP_RECEIPT_SERVER_PIN, 'Recovery rule source changed: src/server.js');
-  let priorText = text;
+  const wrapper = assertGenesisWrapperServerCompatibility(text);
+  let priorText = wrapper.priorText;
   for (const [current, original] of receiptChanges) {
     assert.equal(priorText.split(current).length, 2, 'Reviewed receipt change is not exact and unique');
     priorText = priorText.replace(current, original);
   }
   assert.equal(hash(priorText), DEED_SERVER_CURRENT_PIN, 'Server differs beyond reviewed receipt changes');
-  return { actualSha256, priorText };
+  return { actualSha256, priorText, genesisWrapperTransfer: wrapper.genesisWrapperTransfer };
 }
 const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
@@ -108,7 +150,8 @@ export function assertDeedServerCompatibility(text) {
   assert.equal(text.split(deedRoute).length, 2, 'Approved authenticated deed route is not exact and unique');
   const baselineText = text.slice(deedImport.length).replace(deedRoute, '');
   assert.equal(hash(baselineText), DEED_SERVER_BASELINE_PIN, 'Server differs from frozen baseline beyond approved deed route');
-  return { actualSha256, baselineSha256: DEED_SERVER_BASELINE_PIN, baselineText };
+  return { actualSha256, baselineSha256: DEED_SERVER_BASELINE_PIN, baselineText,
+    genesisWrapperTransfer: receiptTransfer.genesisWrapperTransfer };
 }
 export const CAR_MELT_BASELINE_RULES_PIN = 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed';
 const deedSinkLine = "    'megaproject:omr', 'bond:%', 'business:spec%', 'death:duty', 'window:burn', 'made:%', 'brokers:%', 'deed:upgrade',\n";

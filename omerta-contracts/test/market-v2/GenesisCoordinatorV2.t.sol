@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
+import {GenesisCharacterMock} from "../helpers/GenesisCharacterMock.sol";
 import {Test} from "forge-std/Test.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
@@ -24,9 +26,10 @@ contract GenesisCoordinatorToken is ERC20 {
 contract CoordinatorAuctionFixture is IGenesisGatedAuction {
     address public immutable launchGate;
     address public immutable token;
+    IERC721 public immutable characterNft;
     bool public claimsReady;
     bool public swept;
-    constructor(address gate, address token_) { launchGate = gate; token = token_; }
+    constructor(address gate, address token_, IERC721 characterNft_) { launchGate = gate; token = token_; characterNft = characterNft_; }
     function fundsRecipient() external view returns (address) { return launchGate; }
     function currency() external pure returns (address) { return address(0); }
     function checkpoint() external {}
@@ -43,6 +46,7 @@ contract CoordinatorAuctionFixture is IGenesisGatedAuction {
 }
 
 contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
+    GenesisCharacterMock characterNft;
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
     IPoolManager manager;
@@ -53,6 +57,8 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
     CoordinatorAuctionFixture auction;
     address alice = address(0xAAA);
     function setUp() public {
+        characterNft = new GenesisCharacterMock();
+        characterNft.mint(alice);
         vm.warp(3600); vm.roll(100); vm.deal(alice, 20 ether);
         manager = IPoolManager(deployCode("PoolManager.sol:PoolManager", abi.encode(address(this))));
         token = new GenesisCoordinatorToken();
@@ -66,13 +72,13 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
             3000, 60, 20 ether, address(0xBEEF), address(0x11), address(0x12), address(0x13));
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60)), hookAddress);
-        auction = new CoordinatorAuctionFixture(address(coordinator), address(token));
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60), address(this)), hookAddress);
+        auction = new CoordinatorAuctionFixture(address(coordinator), address(token), characterNft);
         vm.deal(address(auction), 10 ether);
         address salePredicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         bytes32 root = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, salePredicted, alice, uint8(2)))));
         sale = new GenesisPlayerSale(token, coordinator, root, 10 ether, block.timestamp + 1 days,
-            block.timestamp + 10 days, address(0x11));
+            block.timestamp + 10 days, address(0x11), characterNft);
         token.mint(address(sale), 10 ether); token.mint(address(coordinator), 20 ether);
         coordinator.bind(auction, sale); coordinator.checkpointAuction(); sale.open();
     }
@@ -119,11 +125,26 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(other),
             uint24(500), int24(10), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),
-            uint24(100),uint32(60)), address(hook));
-        CoordinatorAuctionFixture otherAuction = new CoordinatorAuctionFixture(address(other),address(token));
+            uint24(100),uint32(60), address(this)), address(hook));
+        CoordinatorAuctionFixture otherAuction = new CoordinatorAuctionFixture(address(other),address(token),characterNft);
         GenesisPlayerSale otherSale = new GenesisPlayerSale(token, other, bytes32(uint256(1)),
-            10 ether, block.timestamp + 1 days, block.timestamp + 10 days, address(0x11));
+            10 ether, block.timestamp + 1 days, block.timestamp + 10 days, address(0x11), characterNft);
         vm.expectRevert(OmertaGenesisCoordinatorV2.BadConfiguration.selector); other.bind(otherAuction,otherSale);
+    }
+    function testBindingRejectsDifferentCharacterNft() public {
+        IHooks hook = coordinator.poolKey().hooks;
+        OmertaGenesisCoordinatorV2 other = new OmertaGenesisCoordinatorV2(manager, positions,
+            coordinator.permit2(), token, hook, 3000, 60, 20 ether,
+            address(0xBEEF), address(0x11), address(0x12), address(0x13));
+        address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
+        deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(other),
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),
+            uint24(100),uint32(60), address(this)), address(hook));
+        CoordinatorAuctionFixture otherAuction = new CoordinatorAuctionFixture(address(other), address(token),
+            new GenesisCharacterMock());
+        GenesisPlayerSale otherSale = new GenesisPlayerSale(token, other, bytes32(uint256(1)),
+            10 ether, block.timestamp + 1 days, block.timestamp + 10 days, address(0x11), characterNft);
+        vm.expectRevert(OmertaGenesisCoordinatorV2.BadConfiguration.selector); other.bind(otherAuction, otherSale);
     }
     function testFuzzBothLegsFundLiquidityAndResiduals(uint96 amount_) public {
         uint256 amount = bound(uint256(amount_), 1, 1 ether);

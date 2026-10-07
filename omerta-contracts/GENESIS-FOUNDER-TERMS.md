@@ -1,0 +1,21 @@
+# Approved genesis terms — October 6, 2026
+
+The founder approved these recommendations after direct confirmations of the sale terms. The announcement remains an unpublished draft. Implementation and test evidence do not mean production is deployed or active.
+
+- One Character-NFT-whitelisted auction using native ETH on Robinhood Chain, chain ID 4663. Paid and free-credit NFT mints qualify. Admission checks the recipient on every bid; transfers do not revoke existing bid-owner recovery rights. No gameplay list, player tranche or individual economic caps.
+- Five days, targeting Friday, October 9 around noon New York through Wednesday, October 14 around noon. Exact native block boundaries require fresh calibration; exact wall-clock timing is not guaranteed.
+- Existing nominal supply: 100M OMR with 18 decimals. Allocate 40M to sale, 20M to initial LP and retain 40M in the existing Safe for the bond desk. Bond activation is separate. Unsold sale tokens return to the Safe and are accounted separately from the bond reserve.
+- Allocate 50% of accepted auction ETH to LP with the full 20M token allocation, subject only to tightly bounded integer rounding. Set the pool opening price from these funded amounts, independently of the final auction price. It can be below the final auction price, especially after undersubscription or rising prices; disclose this before bidding.
+- All remaining accepted ETH, including LP rounding dust, is credited to the Safe's Family Yield treasury. The old treasury/Vig/founder split is removed. Existing Family Yield game accounting uses OMR; holding ETH does not itself activate reward conversion or payouts.
+- LP custody, Family Yield custody, retained bond inventory and unsold-token custody use Safe 0xBe225658718DCb3865902437887a11830E4a9b10. Two owner approvals remain required for Safe funding.
+- Minimum successful raise: 10 ETH. Starting floor corresponds to 10 ETH for all 40M offered tokens, approximately 0.00000025 ETH per OMR. Minimal upward Q96/tick alignment prevents a one-wei graduation shortfall. The existing approximately 1% bid-price grid is disclosed in the packet; it is a maximum-price increment, not a guaranteed paid price.
+- Release tokens approximately evenly over the five-day native block window using a deterministic segmented integer schedule. The packet discloses every step and the cumulative rounding bound. There is no large final-block release cliff.
+- Successful-auction purchases become claimable at closure after the owner exits the bid, regardless of LP migration status. No added vesting or later claim cliff. Underlying graduation, bid-owner and filled-token accounting still apply.
+- Completed purchases are final. Exits return unused ETH; failed graduation returns deposited ETH. These are distinct from refunds of completed purchases.
+- Market trading starts with a static 0.3% LP fee, the existing 9% sell tax and up to 1% surge; opening buy penalties/caps are disabled. Committee tax proposals require the Safe to queue and execute an exact configuration after 48 hours. Founder/operations remains permanently 2% of taxed sell value, paid to the existing A87 wallet. Other tax allocations/rates may change prospectively within the 10% hook-tax ceiling. Accrued fees and recipients cannot be redirected, and tax configuration cannot change genesis proceeds, NFT rules, claim rights, LP ownership or the fixed LP fee.
+
+Example only: 50 ETH accepted gives a 25 ETH LP budget with approximately 20M OMR and the remaining 25 ETH plus rounding dust to Family Yield. This is not a committed raise or a guaranteed return. No treasury top-up is required by the funded-price policy.
+
+The public deployer is 0x5aE54B5555ae5dC9F899e03cB9aaC74dCcDc4E7E. Its nonce and gas balance must be refreshed before preparing a ready-to-sign packet. Earlier nonce-27 previews are superseded.
+
+Remaining release gates: independent review of revised source, required hosted checks, exact final configuration and runtime verification, native-clock evidence, final-plan simulation, two Safe approvers, production manifest and rollout, user-signed deployment/funding, and agreed live verification. No signing or deployment has occurred as part of this implementation. Unrelated bond, withdrawal and reward rails remain inactive unless separately approved and verified.

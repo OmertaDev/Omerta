@@ -23,6 +23,8 @@ on:
       - 'tools/market-v2-deployment-plan.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
+      - 'tools/genesis-auction-*.js'
+      - 'test/genesis-auction-deployment-plan.js'
       - 'package.json'
   pull_request:
     paths:
@@ -40,6 +42,8 @@ on:
       - 'tools/market-v2-deployment-plan.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
+      - 'tools/genesis-auction-*.js'
+      - 'test/genesis-auction-deployment-plan.js'
       - 'package.json'
   workflow_dispatch: {}
 
@@ -116,8 +120,22 @@ jobs:
       - name: Market V2 artifact contracts and keeper orchestration
         working-directory: .
         run: |
-          npm ci --omit=dev
+          npm ci
           npm run test:market-v2
+          npm run test:genesis-auction:deployment
+
+      - name: retain failed genesis compiler artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: genesis-compiler-artifacts
+          if-no-files-found: warn
+          path: |
+            omerta-contracts/foundry.toml
+            omerta-contracts/out/OmertaHookV2.sol/OmertaHookV2.json
+            omerta-contracts/out/OmertaReserveFundingV2.sol/OmertaReserveFundingV2.json
+            omerta-contracts/out/OmertaAuctionCoordinatorV2.sol/OmertaAuctionCoordinatorV2.json
+            omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv

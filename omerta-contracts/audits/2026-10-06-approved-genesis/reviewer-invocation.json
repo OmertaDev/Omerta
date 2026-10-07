@@ -1,0 +1,24 @@
+{
+  "model": "gpt-daybreak-blue-latest",
+  "effort": "high",
+  "sandbox": "read-only",
+  "parentCli": "OpenAI Codex v0.160.0",
+  "sessions": [
+    {
+      "id": "01a11472-c5cf-7fe2-8581-b11663105383",
+      "report": "genesis-governance-daybreak-final-retest.txt",
+      "exitCode": 0,
+      "scope": "H01/H02 retest and actual ABI selectors",
+      "result": "H01/H02 resolved; H03 remaining non-hook payload trust finding retained"
+    },
+    {
+      "id": "01a11472-c5cf-7fe2-8581-b11663105383",
+      "resume": true,
+      "report": "genesis-governance-daybreak-h03-retest.txt",
+      "exitCode": 0,
+      "scope": "Four-file H03 retest",
+      "result": "H03 resolved at clean aca24128; no remaining exploitable defect found in scoped files"
+    }
+  ],
+  "clarification": "Earlier governance report says no Daybreak model session ran after trying a nested invocation. The parent invocation ran on the actual gpt-daybreak-blue-latest model. The nested invocation failure and original report remain unchanged."
+}
