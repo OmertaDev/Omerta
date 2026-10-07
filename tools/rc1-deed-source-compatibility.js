@@ -37,13 +37,72 @@ export function assertDeedBacklogCompatibility(file, text) {
   assert.equal(hash(baselineText), baselineSha256, 'Backlog source differs beyond approved deed changes: ' + file);
   return { actualSha256, baselineSha256, baselineText };
 }
+export const HTTP_RECEIPT_SERVER_PIN = '111d8de4b7a8aa96ed025d643e2c7831248302ae6eecee344a1d9e5eea3bfe88';
+export const HTTP_RECEIPT_HELPER_PIN = '2edeb237aa8c52c2655ac4821553d073fd6c90736600d0d34c092c4f567861fb';
+export const HTTP_RECEIPT_REVIEWED_REVISION = '7da453e05036cc18bb60533aadcad8e7818020cc';
+// Exact inverse literals for the reviewed HTTP transport change only.
+const receiptChanges = [
+  [
+    "import { finalizeHttpIdempotency, readHttpIdempotency } from './http-idempotency.js';\n",
+    ""
+  ],
+  [
+    "        const reservationToken = crypto.randomUUID();\n",
+    ""
+  ],
+  [
+    "            [req.user.sub, key, bodyHash, reservationToken]);\n",
+    "            [req.user.sub, key, bodyHash, '']);\n"
+  ],
+  [
+    "        } catch (error) {\n          if (error?.code !== '23505' && !isDbDown(error)) throw error;\n          // A lost INSERT acknowledgement is safe to recognize only by this\n          // attempt's token. Other owners and ambiguous old rows stay guarded.\n        }\n        if (reserved) { req._idem = { key, bodyHash, reservationToken }; return; }\n        const row = (await readHttpIdempotency(pool, req.user.sub, key)).rows[0];\n",
+    "        } catch { /* PK conflict → the key already exists */ }\n        if (reserved) { req._idem = { key, bodyHash }; return; }\n        const row = (await pool.query('SELECT status, body_hash, response FROM idempotency WHERE account_id=$1 AND key=$2',\n          [req.user.sub, key])).rows[0];\n"
+  ],
+  [
+    "        if (row.status === 0 && row.response === reservationToken) {\n          req._idem = { key, bodyHash, reservationToken };\n          return;\n        }\n",
+    ""
+  ],
+  [
+    "          if (row.status === 0) req._idem = { key, bodyHash, reservationToken: row.response };\n",
+    "          req._idem = { key, bodyHash };\n"
+  ],
+  [
+    "          req._idem = { key, bodyHash, reservationToken: row.response };\n",
+    "          req._idem = { key, bodyHash };\n"
+  ],
+  [
+    "    const { key, bodyHash, reservationToken } = req._idem;\n    const reservation = { accountId: req.user.sub, key, bodyHash, reservationToken };\n",
+    "    const { key, bodyHash } = req._idem;\n"
+  ],
+  [
+    "      await finalizeHttpIdempotency(pool, reservation, { status: reply.statusCode, response: storedPayload })\n",
+    "      await pool.query('UPDATE idempotency SET status=$3, response=$4 WHERE account_id=$1 AND key=$2 AND body_hash=$5 AND status=0',\n        [req.user.sub, key, reply.statusCode, storedPayload, bodyHash])\n"
+  ],
+  [
+    "      await finalizeHttpIdempotency(pool, reservation, { status: reply.statusCode })\n        .catch((e) => console.error('idempotency: release DELETE failed — key left in-progress', e?.message));\n",
+    "      await pool.query('DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status=0 AND body_hash=$3',\n        [req.user.sub, key, bodyHash]).catch(() => {});\n"
+  ]
+];
+export function assertHttpReceiptServerCompatibility(text) {
+  const actualSha256 = hash(text);
+  if (actualSha256 === DEED_SERVER_CURRENT_PIN) return { actualSha256, priorText: text };
+  assert.equal(actualSha256, HTTP_RECEIPT_SERVER_PIN, 'Recovery rule source changed: src/server.js');
+  let priorText = text;
+  for (const [current, original] of receiptChanges) {
+    assert.equal(priorText.split(current).length, 2, 'Reviewed receipt change is not exact and unique');
+    priorText = priorText.replace(current, original);
+  }
+  assert.equal(hash(priorText), DEED_SERVER_CURRENT_PIN, 'Server differs beyond reviewed receipt changes');
+  return { actualSha256, priorText };
+}
 const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
   const actualSha256 = hash(text);
   if (actualSha256 === DEED_SERVER_BASELINE_PIN) return { actualSha256, baselineSha256: actualSha256, baselineText: text };
-  assert.equal(actualSha256, DEED_SERVER_CURRENT_PIN, 'Recovery rule source changed: src/server.js');
+  const receiptTransfer = assertHttpReceiptServerCompatibility(text);
+  text = receiptTransfer.priorText;
   assert(text.startsWith(deedImport), 'Approved deed namespace import is not the exact prefix');
   assert.equal(text.split(deedImport).length, 2, 'Approved deed import is not unique');
   assert.equal(text.split(deedRoute).length, 2, 'Approved authenticated deed route is not exact and unique');
