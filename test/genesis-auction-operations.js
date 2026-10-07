@@ -16,7 +16,8 @@ const safe = address(77);
 const policy = { totalSupplyWei:'100000000000000000000000000', decimals:18, saleTokenAmountWei:'40000000000000000000000000', lpTokenAmountWei:'20000000000000000000000000', bondTokenAmountWei:'40000000000000000000000000', familySafe:safe, liquidityOwner:safe, unsoldRecipient:safe, bondReserveCustodian:safe, minimumRaiseWei:'10000000000000000000', lpProceedsBps:5000, claimsAtAuctionEnd:true };
 const ceilFloor = ((10n**19n <<96n) +BigInt(policy.saleTokenAmountWei)-1n)/BigInt(policy.saleTokenAmountWei);
 const tick=(ceilFloor+99n)/100n, floor=tick*100n;
-const manifest = { chainId: 4663, contracts, dependencies, policy };
+const hookGovernance = { governanceSafe:safe, fixedFounderRecipient:'0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', fixedFounderBps:200, delaySeconds:172800, executionSafeOnly:true };
+const manifest = { chainId: 4663, contracts, dependencies, policy, hookGovernance };
 const codes = Object.fromEntries(names.map((name, i) => [contracts[name].address, `0x60${(i + 1).toString(16).padStart(2, '0')}`]));
 codes[validator] = '0x6005';
 for (const [i, name] of Object.keys(dependencies).entries()) codes[dependencies[name].address] = `0x60${(i + 11).toString(16).padStart(2, '0')}`;
@@ -26,7 +27,7 @@ function fixture() {
       launchGate: contracts.coordinator.address, fundsRecipient: contracts.coordinator.address,
       launchGateCodeHash: contracts.coordinator.runtimeCodeHash, launchChainId: 4663n,
       validationHook: validator, blockNumberish: 115n, startBlock: 110n, endBlock: 120n, claimBlock: 120n,
-      floorPrice: floor, TICK_SPACING_Q96: tick, MAX_BID_PRICE: 10n ** 30n, isGraduated: true, nextBidId: 2n,
+      floorPrice: floor, tickSpacing: tick, MAX_BID_PRICE: 10n ** 30n, isGraduated: true, nextBidId: 2n,
       bids: [110n, 1n, 0n, floor + tick, account, 1n << 96n, 0n], totalSupply: BigInt(policy.saleTokenAmountWei), tokensRecipient:safe, minimumRaiseWei:BigInt(policy.minimumRaiseWei), currencyRaised:10n **19n, clearingPrice:floor+tick*100n },
     coordinator: { auction: contracts.auction.address, characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash, validatorCodeHash: contracts.validator.runtimeCodeHash,
       omr: contracts.omr.address, auctionCodeHash: contracts.auction.runtimeCodeHash,
@@ -37,6 +38,7 @@ function fixture() {
     characterNft: { balanceOf: 1n },
     omr: { balanceOf: 0n, totalSupply:BigInt(policy.totalSupplyWei), decimals:18 },
     positionManager: { poolManager: dependencies.poolManager.address },
+    hook: { governanceSafe:safe, opsRecipient:hookGovernance.fixedFounderRecipient, OPS_SELL_BPS:200, TAX_CONFIG_DELAY:172800, TAX_EXECUTION_SAFE_ONLY:true, baseSellBps:900, taxConfig:[160,240,300,100], queuedTaxHash:'0x'+'0'.repeat(64), queuedTaxExecuteAfter:0n, taxConfigNonce:0n },
     validator: { characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash,
       eligibilityChainId: 4663n, omr:contracts.omr.address, omrCodeHash:contracts.omr.runtimeCodeHash, approvedSupply:BigInt(policy.totalSupplyWei) },
   };

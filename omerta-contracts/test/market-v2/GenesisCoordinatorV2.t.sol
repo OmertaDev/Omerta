@@ -72,7 +72,7 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
             3000, 60, 20 ether, address(0xBEEF), address(0x11), address(0x12), address(0x13));
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60)), hookAddress);
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60), address(this)), hookAddress);
         auction = new CoordinatorAuctionFixture(address(coordinator), address(token), characterNft);
         vm.deal(address(auction), 10 ether);
         address salePredicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
@@ -125,7 +125,7 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(other),
             uint24(500), int24(10), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),
-            uint24(100),uint32(60)), address(hook));
+            uint24(100),uint32(60), address(this)), address(hook));
         CoordinatorAuctionFixture otherAuction = new CoordinatorAuctionFixture(address(other),address(token),characterNft);
         GenesisPlayerSale otherSale = new GenesisPlayerSale(token, other, bytes32(uint256(1)),
             10 ether, block.timestamp + 1 days, block.timestamp + 10 days, address(0x11), characterNft);
@@ -139,7 +139,7 @@ contract GenesisCoordinatorV2Test is Test, DeployPermit2 {
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(other),
             uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),
-            uint24(100),uint32(60)), address(hook));
+            uint24(100),uint32(60), address(this)), address(hook));
         CoordinatorAuctionFixture otherAuction = new CoordinatorAuctionFixture(address(other), address(token),
             new GenesisCharacterMock());
         GenesisPlayerSale otherSale = new GenesisPlayerSale(token, other, bytes32(uint256(1)),

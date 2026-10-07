@@ -52,7 +52,7 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
             3000, 60, 1000 ether, address(0xBEEF), address(0x11), address(0x12), address(0x13));
         address[5] memory recipients = [address(0x11),address(0x12),address(0x13),address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60)), hook);
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(200,500,10 ether),uint24(100),uint32(60), address(this)), hook);
         AuctionParameters memory p = AuctionParameters(address(0), address(0x11), address(coordinator),
             110,120,130,2,address(0),(Q96 / 1000) / 2 * 2,1,
             abi.encodePacked(uint24(1_000_000),uint40(10)));

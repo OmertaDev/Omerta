@@ -1,0 +1,29 @@
+Founder-settings periphery review — 2026-10-06 — READ ONLY
+Scope: release checkout helper/routes/UI/new API tests/current single-auction docs and relevant contract claim/refund paths. Direct founder terms supplied by parent: native ETH Robinhood NFT whitelist, approximately five days starting Oct9 noon Eastern; no individual economic caps; total OMR split 40% sale /20% LP /40% bonds; claims upon closure; completed purchases nonrefundable, unused ETH returned. No new floor/threshold/recipient/proceeds parameters selected. Packet remains on hold.
+
+CONFIRMED DISCREPANCIES
+1. Timing still says 72 hours, not five days. public/index.html:5612 says72-hour; GENESIS-AUCTION.md:5 and GENESIS-LAUNCH-STEPS.md:11 specify Oct9..Oct12. tools/genesis-auction-deployment-plan.js:198-200 still enforces72h. Required: update source policy/planner regression/docs/UI; recalibrate five-day native clock. Approximately five days from Oct9noonEastern ends Oct14noonEastern (16:00UTC); this is an interpretation of the supplied duration, not a newly approved exact endpoint.
+2. GENESIS-LAUNCH-STEPS.md:9 retains proposed4.41M sale and asks to confirm inventory now explicitly chosen as40% total supply. Live public probe previously showed100M total supply, implying40M auction /20M LP /40M bond inventory under founder terms. Helper has no inventory distribution verification; final deployment inventory and funding proof must implement these terms. LP allocation is token inventory;20% LP tokens does not establish a percentage of ETH proceeds.
+3. Claim availability still depends on successful migration. OmertaAuctionCoordinatorV2.sol:140-142 playerClaimsOpen requires migrationSucceeded and claimsReady; OmertaGuardedAuction.sol:61-63 rejects claims while gate false. GENESIS-AUCTION.md:7,15 and UI:5612 expressly retain liquidity/claimdate gates. Concrete source proof: even after nativeclock>=claimBlock, migrationSucceeded=false produces false gate and LaunchClaimsClosed for token claims. Backend prepare claimBid relies on pinned same-block simulation and therefore rejects this claim. Required: align underlying claim policy and claimBlock with founder closure requirement, retain security accounting and re-review; merely changing UI would falsely promise availability. Mock helper tests which simulate everyclaim successfully do not independently prove real contract closure availability.
+
+NOT AN IMPLIED NEW ECONOMIC DECISION
+GENESIS-AUCTION.md:13 and coordinator:163 still allocate37.5% accepted ETH to LP. This is distinct from founder's20% total token supply LP reserve. The user's token percentages alone do not authorize a new ETH split. Required: retain as unresolved proceeds decision or obtain explicit compatible terms; do not silently reinterpret20% tokens as20% ETH. Similarly floor, graduation threshold, ETHsplit recipients and reserve adequacy remain unselected here.
+
+MATCHING CONTROLS / LIMITATIONS
+src/genesisauction.js:234-251 and routes input allowlist permit only bid/exitBid/claimBid; no gameplay snapshot/player tranche/participant settlement or35ETH economic cap is consulted. uint128 bid amount and integer/price bounds are contract representation limits, not a wallet allocation cap. Legacy player files remain historical and their methods are rejected in newhelpertest:80. UI action allowlist excludes player purchase/refund actions; its historical playerGenesis function names are technical identifiers.
+NFT ownership gates new bids only; preparation of exit/claim uses recovery context and skips balanceOf, while codehash/chain/bindings remain verified. Tests:84-86,160 exercise zeroNFT/recovery and owner mismatch. Live bid owner is fixed toconnectedaccount; stored bid owner must matchconnectedaccount for API recovery. NFTtransfer does not change bid ownership or revoke exit/claim rights.
+CCA ContinuousClearingAuction.sol:529-534 refunds full bid upon failedgraduation; graduated exit paths use accountedspentamount and return unused currency. Thus unused ETH is recoverable and completed spent purchases are not undone solely by later migration failure. UI:5618 conveys unspentrefund but should explicitly state completed-purchase nonrefundability and failedgraduation distinction under revised public terms.
+Allfivecontract+fourdependency runtime pins are mandatory before API reads/preparation, including recovery. This fails closed if dependency runtime/binding verification fails even when underlyingauction permits direct exits. Document direct-chain recovery fallback and missingruntime/APIunavailability distinction; this gate does not itself change contract refund rights.
+
+No signing, deployment, activation, network secret access or production/test edits. Existing earliergreen tests evidence oldterms only and must not be presented as revised five-day/distribution/closure-policy verification.
+
+SOURCE PINS AT REVIEW
+src/genesisauction.js SHA256 7aed50ae735ab0904f76ac8adb966209706c6ac9cffafc7d0ee9464e8f6a02a2
+src/routes/genesisauction.js SHA256 14cdd382d56eb02f00d776ce56a797cc18ff8c04077d100a3e3dcefc31b4fef1
+public/index.html SHA256 cdc2ab6317660237f6a70c3d505ef7807a99ef848a34559a05c2c32e4006c1c8
+test/genesisauction.js SHA256 f8ed348cbd34c4ac18d756ddae7e2d33664eac581cce4ef877c9a197d206bcbb
+test/genesis-auction-http.js SHA256 fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87
+omerta-contracts/GENESIS-AUCTION.md SHA256 22929deaca5d9b8cf6c94a27e06f4f78873ef56ba1426f5b3942fc153ee0e444
+omerta-contracts/GENESIS-LAUNCH-STEPS.md SHA256 ccea7401b282d20a8112b8d5deeb8b6e3967823abcfcf7605feda4db0cb5689b
+omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol SHA256 ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0
+omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol SHA256 f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e

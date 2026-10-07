@@ -20,9 +20,10 @@ const input = {
   observation: { blockNumber: '1000', blockHash: H, timestamp: '2000000000' },
   nativeClock: { chainId: 31337, mode: 'block.number', currentBlock: '1000', evidenceSha256: '21'.repeat(32), minMillisecondsPerBlock: '43200', maxMillisecondsPerBlock: '43200',
     samples: [{ nativeBlock: '900', rpcBlock: '900', timestamp: '1999995680' }, { nativeBlock: '1000', rpcBlock: '1000', timestamp: '2000000000' }] },
-  hook: { poolFee: 3000, tickSpacing: 60, opening: { blocks: 200, buyBps: 500, maxBuyQuote: String(10n * E) }, surgeFullTicks: 100, epochDuration: 60 },
+  hook: { poolFee: 3000, tickSpacing: 60, opening: { blocks: 0, buyBps: 0, maxBuyQuote: '0' }, surgeFullTicks: 100, epochDuration: 3600 },
   auction: { totalSupply: String(40000000n * E), startBlock: '1010', endBlock: '11010', claimBlock: '11010', tickSpacing: pricing.tickSpacing,
     floorPrice: pricing.floorPrice, requiredCurrencyRaised: String(10n * E), auctionStepsData: '0x0003e80000002710' },
+  hookGovernance: { governanceSafe: A(101), fixedFounderRecipient: A(107), fixedFounderBps: 200, delaySeconds: 172800, executionSafeOnly: true },
   tokenReserve: String(20000000n * E),
   allocation: { totalSupply: String(100000000n * E), decimals: 18, safeAddress: A(101), safeBalance: String(100000000n * E), observationBlockNumber: '1000', observationBlockHash: H, omrRuntimeHash: H, evidenceSha256: '31'.repeat(32) },
 };
@@ -44,6 +45,7 @@ const decodeConstructor = (contract, data) => {
 const coordinator = decodeConstructor('OmertaAuctionCoordinatorV2', plan.deployments[2].data);
 assert.equal(coordinator[4], plan.addresses.hook); assert.equal(coordinator[8], input.roles.safe);
 const hook = decodeConstructor('OmertaHookV2', `0x${plan.deployments[3].data.slice(66)}`);
+assert.equal(hook.length, 10); assert.equal(hook[9], input.roles.safe); assert.deepEqual(plan.finalManifest.hookGovernance, input.hookGovernance);
 assert.equal(hook[2], plan.addresses.coordinator); assert.deepEqual(hook[5], [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding]);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[0].data)[2], 0);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[1].data)[2], 5);
@@ -106,6 +108,11 @@ bad(v => v.tokenReserve = String(19999999n * E), /approved 20%/);
 bad(v => v.auction.requiredCurrencyRaised = String(9n * E), /approved 10 ETH/);
 bad(v => v.auction.floorPrice = String(BigInt(pricing.floorPrice) + BigInt(pricing.tickSpacing)), /minimally UP/);
 bad(v => v.roles.treasury = A(110), /unknown field/);
+bad(v => delete v.hookGovernance, /missing/);
+bad(v => v.hookGovernance.governanceSafe = A(110), /Committee tax governance/);
+bad(v => v.hookGovernance.fixedFounderBps = 199, /Committee tax governance/);
+bad(v => v.hookGovernance.delaySeconds = 86400, /Committee tax governance/);
+bad(v => v.hookGovernance.executionSafeOnly = false, /Committee tax governance/);
 bad(v => v.sourceRevision = '01'.repeat(20), /sourceRevision differs/);
 bad(v => v.artifactHashes.OmertaGuardedAuction = '22'.repeat(32), /artifact hash mismatch/);
 bad(v => v.sourceHashes['src/market-v2/OmertaAuctionCoordinatorV2.sol'] = '22'.repeat(32), /Source hash mismatch/);
@@ -127,7 +134,7 @@ bad(v => v.auction.startBlock = '999', /future/);
 bad(v => v.auction.auctionStepsData = '0x0003e8000000270f', /schedule duration/);
 bad(v => v.auction.claimBlock = '11009', /ordering/);
 bad(v => v.auction.claimBlock = '12000', /claims start at closure/);
-bad(v => { v.roles.safe = plan.addresses.auction; v.allocation.safeAddress = plan.addresses.auction; }, /Recipient cannot/);
+bad(v => { v.roles.safe = plan.addresses.auction; v.allocation.safeAddress = plan.addresses.auction; v.hookGovernance.governanceSafe = plan.addresses.auction; }, /Recipient cannot/);
 bad(v => v.playerSale = {}, /unknown field/);
 bad(v => v.observation.wallets = [], /unknown field/);
 bad(v => { v.nativeClock.minMillisecondsPerBlock = '26000'; v.nativeClock.maxMillisecondsPerBlock = '26000'; }, /contradict cadence/);
@@ -139,13 +146,20 @@ assert.equal(buildGenesisAuctionDeploymentPlan(arb).nativeClock.currentBlock, '5
 const longerCliff = clone(input); longerCliff.auction.claimBlock = '12000';
 assert.throws(() => buildGenesisAuctionDeploymentPlan(longerCliff), /claims start at closure/);
 const mainnet = clone(input); mainnet.chainId = 4663; mainnet.nativeClock.chainId = 4663;
-mainnet.roles.deployer = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e'; mainnet.roles.safe = '0xbe225658718dcb3865902437887a11830e4a9b10'; mainnet.allocation.safeAddress = mainnet.roles.safe; mainnet.external.omr.address = '0x2e82f8c1cfd5172612b3af56088d7d68d920545d';
+mainnet.roles.deployer = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e'; mainnet.roles.safe = '0xbe225658718dcb3865902437887a11830e4a9b10'; mainnet.allocation.safeAddress = mainnet.roles.safe; mainnet.roles.hookRecipients[0] = '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced'; mainnet.hookGovernance.governanceSafe = mainnet.roles.safe; mainnet.hookGovernance.fixedFounderRecipient = mainnet.roles.hookRecipients[0]; mainnet.external.omr.address = '0x2e82f8c1cfd5172612b3af56088d7d68d920545d';
 assert.equal(buildGenesisAuctionDeploymentPlan(mainnet).deployments[0].chainId, 4663, 'Robinhood Chain is accepted with exact chain-bound clock and artifact inputs');
 mainnet.localRehearsal = false;
 if (inventory.workingTreeMatchesRevision) assert.equal(buildGenesisAuctionDeploymentPlan(mainnet).deployments[0].chainId, 4663);
 else assert.throws(() => buildGenesisAuctionDeploymentPlan(mainnet), /Production planning requires committed source bytes/, 'Valid production chain proceeds to the separate source-cleanliness gate');
-const wrongSafe = clone(mainnet); wrongSafe.localRehearsal = true; wrongSafe.roles.safe = A(101); wrongSafe.allocation.safeAddress = A(101);
+const wrongSafe = clone(mainnet); wrongSafe.localRehearsal = true; wrongSafe.roles.safe = A(101); wrongSafe.allocation.safeAddress = A(101); wrongSafe.hookGovernance.governanceSafe = A(101);
 assert.throws(() => buildGenesisAuctionDeploymentPlan(wrongSafe), /founder approval/);
+for (const [edit, pattern] of [[v => { v.hook.poolFee = 500; }, /approved static LP fee/],
+  [v => { v.hook.opening = { blocks: 200, buyBps: 500, maxBuyQuote: String(10n * E) }; }, /opening restrictions must be OFF/],
+  [v => { v.hook.tickSpacing = 10; }, /tick spacing 60/], [v => { v.hook.epochDuration = 60; }, /epoch 3600/],
+  [v => { v.hook.surgeFullTicks = 200; }, /surge calibration/]]) {
+  const invalidProduction = clone(mainnet); invalidProduction.localRehearsal = true; edit(invalidProduction);
+  assert.throws(() => buildGenesisAuctionDeploymentPlan(invalidProduction), pattern, 'Fork rehearsal cannot bypass production approvals');
+}
 const threeDay = clone(input); threeDay.nativeClock.minMillisecondsPerBlock = '25920'; threeDay.nativeClock.maxMillisecondsPerBlock = '25920'; threeDay.nativeClock.samples[0].timestamp = '1999997408';
 assert.throws(() => buildGenesisAuctionDeploymentPlan(threeDay), /120 hours/);
 

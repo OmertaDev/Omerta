@@ -53,7 +53,7 @@ contract AuctionGenesisRobinhoodForkTest is Test {
         address[5] memory recipients = [SAFE,SAFE,SAFE,SAFE,SAFE];
         bytes memory hookCode = abi.encodePacked(type(OmertaHookV2).creationCode,abi.encode(
             MANAGER,address(TOKEN),predicted,uint24(3000),int24(60),recipients,
-            OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)));
+            OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),SAFE));
         bytes32 codeHash = keccak256(hookCode);
         bytes32 salt;
         address hookAddress;

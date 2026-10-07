@@ -1,0 +1,16 @@
+{
+  "chainId": 4663,
+  "token": "0x2e82f8C1cFD5172612b3aF56088d7D68d920545D",
+  "safe": "0xBe225658718DCb3865902437887a11830E4a9b10",
+  "totalSupplyBaseUnits": "100000000000000000000000000",
+  "decimals": 18,
+  "safeBalanceBaseUnits": "100000000000000000000000000",
+  "saleAllocationBaseUnits": "40000000000000000000000000",
+  "lpAllocationBaseUnits": "20000000000000000000000000",
+  "bondAllocationBaseUnits": "40000000000000000000000000",
+  "snapshot": {
+    "number": "82087945",
+    "hash": "0x1140c00864a9fa9f839b1b5cb8632a5e8ca0435602d81d49779c77f977424707",
+    "timestamp": "1791336508"
+  }
+}

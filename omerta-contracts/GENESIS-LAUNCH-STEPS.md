@@ -1,59 +1,24 @@
-# Genesis deployment steps
+# Genesis deployment checklist
 
-Operator draft, October 6, 2026. The approved route is one NFT-gated ETH/OMR auction. Contracts are not deployed or funded. This is not a ready-to-sign packet.
+Preparation checklist for the approved five-day NFT-gated auction. The signing packet is not ready until review, hosted checks and final-plan verification pass. Do not use the superseded nonce-27 preview.
 
-## 1. Prepare
+1. Select deployer 0x5aE54B5555ae5dC9F899e03cB9aaC74dCcDc4E7E in MetaMask on Robinhood Chain (4663). Verify gas funding. Confirm two owners can approve the Safe's token funding.
+2. Receive the verified signing packet: source/artifact and report pins, fresh nonce, predicted addresses, gas estimates, dependencies, Safe roles, schedule and simulations. Review the 40M sale / 20M LP / 40M retained bonds, 50% accepted ETH LP budget, Family Yield remainder, 10 ETH graduation and floor, and claims at closure. LP opens at its funded price, which can differ from the final auction price.
+3. Keep the deployer idle once this final packet's nonce is pinned. A new outgoing transaction requires regeneration. Before that final pin, old preview nonces need not be preserved.
+4. Sign deployment 1: Core liquidity funding adapter. Wait for confirmation and verify the deployed code/settings.
+5. Sign deployment 2: reserve funding adapter. Verify before continuing.
+6. Sign deployment 3: the approved single-auction coordinator. Verify its Safe, NFT, token reserve and immutable dependencies.
+7. Sign deployment 4: the mined market hook through the verified CREATE2 factory. Verify its address, permissions, coordinator authorization and pool key.
+8. Sign deployment 5: the NFT-gated auction. Verify inventory, native start/end, claim block equal to end, minimum raise, floor, fixed validator and stored release schedule.
+9. With two Safe owner approvals, execute the verified funding batch: transfer 40M OMR to the auction, transfer 20M OMR to the coordinator, and call auction onTokensReceived(). Verify 40M remains in the Safe for bonds. Bond operation is not activated by retaining these tokens.
+10. From the deployer, sign coordinator bind(auction). Verify successful binding before the opening block.
+11. Verify every deployed runtime and immutable policy, funded balances and registered inventory. Configure the API's pinned production manifest and verify the site rollout. Payments remain unavailable without this verification.
+12. Before opening, test refusal of early bids and verify NFT/account/network details. After opening, conduct one agreed small user-signed bid and verify its transaction hash and bid ID. Keep unknown or pending payments locked until their outcome is confirmed.
+13. At successful closure, owners exit their bids to recover unused ETH and claim filled tokens. Migration is not a prerequisite for their claims. Failed graduation uses full bid refunds.
+14. The assigned operator checkpoints the final auction and executes simulated migration. Verify actual 50% ETH funding, approximately 20M OMR paired within the rounding bound, Safe LP custody, zero temporary allowances and all remaining accepted ETH credited to the Family Yield Safe. Recover tightly bounded LP token dust and unused sale inventory to the Safe, separately from the bond allocation.
 
-Provide your public MetaMask deployment address and fund it with native ETH on Robinhood Chain (4663) for gas. Never share a private key or recovery phrase. Confirm two approvers for the existing Safe, 0xBe225658718DCb3865902437887a11830E4a9b10.
+There are five EOA deployment transactions and four funding/configuration calls before opening. Safe owner approvals are additional signatures; the funding calls can be batched. Five main contracts plus the internally created NFT validator and read-only auction schedule store produce seven addresses. The earlier six-address count omitted the schedule store; deployment transaction count stays five.
 
-Confirm recipient/custody choices, sale inventory, floor price, graduation threshold, liquidity token reserve, fee settings and claim cliff. Recommended treasury, Vig and LP custody is the Safe; founder proceeds go to 0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD. Confirm hook fee and unsold-token recipients separately. The 4.41 million OMR sale inventory remains a proposed packet input. A 50 ETH raise is a scenario, not committed funding.
+Existing OMR, character NFT and character-fee contracts are reused after verification. Core/reserve adapters are created without activating their future strategy controllers. No automatic Family Yield conversion/distribution or bond activation is part of genesis deployment.
 
-Public bidding targets Friday, October 9 noon New York through Monday, October 12 noon New York (16:00 UTC each date), 72 hours. Native chain blocks determine auction timing; fresh calibration is required and exact wall-clock boundaries are not guaranteed. Resolve strict UTC requirements before signing.
-
-There is no player tranche, gameplay snapshot or second sale window. Both paid and free-credit character NFTs qualify. NFT ownership does not establish unique-person identity.
-
-## 2. Review the unsigned packet
-
-I will finish review/checks and merge, then generate the final packet from a clean source revision. It must pin source/artifacts, dependencies, Safe ownership, deployer nonce, predicted addresses, economic bounds and transaction simulations. Rehearse the single-auction route and final configuration, including reserve adequacy; preceding two-leg test results do not prove the changed route.
-
-Keep the deployment account idle once its nonce is pinned. If it sends any other transaction, stop and regenerate predicted addresses and calldata. Do not use older external CCA/LBP factories or legacy configuration scripts.
-
-## 3. Sign five deployments
-
-In MetaMask select Robinhood Chain and the approved account. Review each prepared call and wait for confirmation and verification, in order:
-
-1. Protocol liquidity funding adapter.
-2. Reserve funding adapter.
-3. Single-auction genesis coordinator.
-4. Mined market hook through the verified CREATE2 factory.
-5. NFT-gated auction, which internally creates its validator.
-
-Five deployment transactions create six contract addresses. Existing OMR, character NFT and character-fee contracts remain in place. Stop if any account/network/value/destination/data differs or a deployment fails; do not reorder or skip calls.
-
-## 4. Fund and bind
-
-The Safe approves two OMR transfers: sale inventory to the auction and matching liquidity reserve to the coordinator. The packet also calls auction onTokensReceived() to register inventory. These three calls may be Safe-batched after review.
-
-The deployment account separately calls coordinator bind(auction). This configurator permission belongs to that account, not automatically to the Safe. That is four contract calls after five deployments: nine contract actions before opening, potentially fewer wallet transactions through batching.
-
-Verify balances, runtime hashes, immutable settings, NFT validator, hook authorization, dependency identities, custody and schedule before accepting bids. Liquidity ETH comes from actual accepted auction proceeds, not the hypothetical 50 ETH estimate. Matching OMR reserve must cover approved price/raise bounds.
-
-## 5. Enable and test the site
-
-Configure the verified public manifest and its pin using GENESIS_AUCTION_MANIFEST_PATH and GENESIS_AUCTION_MANIFEST_SHA256 in the API service. The file must exist in the running service. Verify the automatic production rollout; missing or unverifiable configuration keeps payments disabled.
-
-Use your OMERTA account and MetaMask to check the live network, wallet, schedule, NFT requirement and refusal of early bids. After opening, perform one agreed small real bid and verify its transaction hash and bid ID against chain events. Never repeat a payment whose outcome is unknown.
-
-## 6. Finalize and recover
-
-After the auction ends and graduates, prepare and sign checkpointAuction(), then the simulated migrate() call. Migration atomically creates liquidity from 37.5% of accepted proceeds. There is no additional 48-hour purchase window. Migration may precede the claim cliff; claims require both migration success and the cliff.
-
-Bid owners exit to collect unspent ETH and claim filled OMR under the auction rules. Fixed recipients withdraw their credits. Recover unused auction inventory and coordinator OMR dust through reviewed paths. Assign an operator and backup before opening; unsigned preparation tools are not an unattended production keeper.
-
-Failed graduation uses bid-exit refund paths. Failed migration rolls back atomically and can be retried for recoverable conditions. Graduated, spent bids are not automatically refundable merely because later pool configuration fails; verify immutable dependencies and reserve adequacy before taking funds.
-
-## Remaining blockers
-
-Public deployment wallet/gas; two Safe approvers; final economics/recipients; native-clock calibration; changed-source review and checks; final-plan simulations; release evidence/merge/rollout; actual deployment/funding/binding; production manifest/live bid verification; settlement operator coverage.
-
-The prior 1,325-test result covers the preceding revision, not the new single-auction coordinator. Existing unrelated withdrawal, bond, reserve strategy and automation activation remains separate.
+No private keys or recovery phrases are requested. The user reviews and signs wallet transactions; the agent prepares and verifies them. A failed deployment or changed nonce stops the sequence for regeneration. All step addresses, values and data must match the final verified packet.

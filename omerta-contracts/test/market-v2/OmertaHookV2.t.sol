@@ -58,7 +58,7 @@ abstract contract OmertaHookV2Fixture is Test {
         address target = address(uint160((uint256(0xBEEF) << 144) | FLAGS));
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(
             manager, address(omr), address(this), uint24(3000), int24(60), recipients,
-            OmertaHookV2.OpeningConfig(200, 500, 10 ether), uint24(100), uint32(60)
+            OmertaHookV2.OpeningConfig(200, 500, 10 ether), uint24(100), uint32(60), address(this)
         ), target);
         hook = OmertaHookV2(payable(target));
         key = hook.poolKey();
@@ -122,10 +122,10 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         BalanceDelta result = _swap(false, -int256(10 ether));
         uint256 gross = uint256(uint128(result.amount0())) + _total(eth);
         uint256 base = gross * 900 / 10_000;
-        assertEq(hook.owed(eth, 0), base * 200 / 900);
-        assertEq(hook.owed(eth, 1), base * 160 / 900);
-        assertEq(hook.owed(eth, 2), base * 240 / 900);
-        assertEq(hook.owed(eth, 3), base - base * 200 / 900 - base * 160 / 900 - base * 240 / 900);
+        assertEq(hook.owed(eth, 0), gross * 200 / 10_000);
+        assertEq(hook.owed(eth, 1), gross * 160 / 10_000);
+        assertEq(hook.owed(eth, 2), gross * 240 / 10_000);
+        assertEq(hook.owed(eth, 3), base - gross * 200 / 10_000 - gross * 160 / 10_000 - gross * 240 / 10_000);
         assertGt(hook.owed(eth, 4), 0);
         assertLe(hook.owed(eth, 4), gross / 100);
         _assertConserved(eth);

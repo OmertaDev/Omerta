@@ -1,0 +1,76 @@
+{
+  "dateUtc": "2026-10-07T01:29:42.3360699Z",
+  "commit": "ead92ac404788a6792d2b7677fa2d8e6c96fc34b",
+  "branch": "codex/genesis-nft-launch",
+  "scope": [
+    {
+      "path": "omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol",
+      "sha256": "f00cffb8a6b33be343f05d642b1ad6eeee9426374eb38e2ddc78f999d849369e"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol",
+      "sha256": "072cc95aaa2f902ac1e716ce75ba0817af1cb1304128c8402dded7c08f904d26"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaAuctionCoordinatorV2.sol",
+      "sha256": "ea75966878ac344d634f2cbfc3e332b9ac4c8383417008843be40ff3a8b758a0"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/vendor/cca/ContinuousClearingAuction.sol",
+      "sha256": "2993339a5ef355d1b49decd1d306acf1f64b5a93d341aba69bd353b1abf9e861"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/vendor/cca/StepStorage.sol",
+      "sha256": "cbd8d3327262ede3e3ef24bfc1b95930f0176db8d586954637a588891bda457c"
+    },
+    {
+      "path": "omerta-contracts/src/genesis-auction/vendor/cca/libraries/CheckpointAccountingLib.sol",
+      "sha256": "e391812fc475a0e63e61723396b4423b0b9f0de5858f9e93b382372c66108cf9"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/AuctionCoordinatorV2.t.sol",
+      "sha256": "0e8b6e1306c544353718a360f6edbf1235c7e0cb31f6e241e30dea5102b6192c"
+    },
+    {
+      "path": "omerta-contracts/test/GenesisCharacterEligibility.t.sol",
+      "sha256": "40087df84227b9494d5e69272f1c33f418b798af8f0f6ac935f1c5e20d0939ca"
+    },
+    {
+      "path": "omerta-contracts/test/OmertaGuardedAuction.t.sol",
+      "sha256": "e4abb9f8c7ead14be80d241e2b7b8ff5cfc2f99cff99adfe130cc1a375694883"
+    }
+  ]
+}
+Founder-confirmed settings discrepancy review (read only)
+Terms supplied directly by parent from founder replies: ONE NFT-holder-whitelisted Robinhood native-ETH public auction; approximately October9 noonEastern opening, five days; no individual caps; total token inventory40%sale,20%LP,40%bond; purchases claimable upon closure; completed purchase final, unused ETH returned. No new floor, graduation threshold, ETH residual split, LPcustody or unsold destination approved. No signing/deployment/activation authorization for this review.
+
+1. LP20% total is NOT enforced.
+Coordinator163 fixes nativeBudget=floor(publicProceeds*3750/10000). Lines175-181 compute liquidity from this ETH budget and tokenReserve, require ETH-side limiting liquidity, and give tokenReserve only as maximum token spend. Lines199-205 account real ETH spend and split remaining proceeds40%treasury/36%Vig/remainder24%founder. An immutable reserve equal20%supply is not proof that all20%entersLP; unused tokens remain coordinator dust recoverable to fixedtreasury217-218.
+Executed unchanged harness trace: forge test --match-path test/market-v2/AuctionCoordinatorV2.t.sol --match-test testOneAuctionMigratesBeforeCliffAndClaimsAfterward|testInsufficientReserveRollsBackSweepPoolAndAllowanceThenRetries -vvvv. PASS2/0fail/0skip.
+Observed final price158456325028528675187087901Q96 (~0.002ETH/OMR), public proceeds2ETH, LP native spend~0.75ETH, token transfer375000000000000000445baseunits (~375OMR), reserve1000OMR, sale1000OMR. Normalize sale1000=40% of a hypothetical total2500 for comparison with founder terms: target LP500OMR requires~1ETH at that final price, while current LP375OMR is15%total. The fixture itself does NOT claim its ERC20 total supply implements founder allocations; this is a proportional comparison using actual traced LP spend.
+Conditional arithmetic: If every40%-sale token sells at final priceP, reserve20% atP requires50% of sale raise, not37.5%. CCA is time-varying; CheckpointAccountingLib calculateFill64-82 integrates inverse checkpoint prices. Hence actual raised ETH need not equal finalP*totalSold; changing budget to50% of raised ETH alone does NOT generally prove exact20%LP.
+Undersubscription example (normalized units, explicit mathematical scenario): totalT2500, LPtarget500, finalP0.002ETH/OMR, sold100tokens => raise0.2ETH under constantP; desiredLP1ETH exceeds ALLsaleproceeds by0.8ETH. Native budget37.5%raise0.075ETH mints~37.5LPtokens. No coordinator ETH top-up rail exists: receive221-222 accepts only auction/PositionManager; forced ETH is excluded from publicProceeds/nativeBudget and cannot fund the20%target through current logic.
+Required unresolved decision: approved additional ETH source/budget for exact20%token deposit, or explicit policy relaxing LPamount under low sale; funding/graduation condition supporting it; required token+ETH rounding tolerances. Do NOT assume reserve20% or simple raised-percentage change suffices.
+
+2. Claims at closure are NOT unconditional.
+StepStorage36 permits CLAIM_BLOCK>=END_BLOCK, including equality, but never forces equality. Auction607/622 require nativeclock>=CLAIM_BLOCK and graduation; guarded wrapper59-64 additionally requires coordinator.playerClaimsOpen(). Coordinator140-142 requires migrationSucceeded plus auction.claimsReady. Migration is permissionless but occurs in a separate transaction after successful finalization and real pool funding.
+Executed existing trace: test schedule END120/CLAIM130, migrate at120 succeeds yet playerClaimsOpen=false; opens at130. Reserve-failure trace preserves auction principal, sweep marker0, uninitializedpool, closed migration; only after reserve returned does migration succeed.
+Required fix/config decision: claimBlock=end and approved policy for closure-time finalization/migration execution and failures. If founder means claims immediately at close regardless of migration, the existing claim gate contradicts that policy; removing it materially changes buyer protection and must be explicitly resolved. Source tests do not guarantee a close-block keeper transaction.
+
+3. Final-purchase/unused versus failed-sale refunds need an explicit threshold policy.
+Auction498-505: after auction end, failed graduation calls _processExit(id,0,0), returning ALL bid ETH and no filled tokens. _isGraduated170-171 compares cumulative raised to immutable threshold. Both claim paths reject NotGraduated607-626.
+For graduated bids, _processExit403-417 refunds only unused Q96 input minus spent currency, clamped against rounding. Filled purchase has no coordinator cancellation/refund after later migration failure. Partial/outbid exits validate hints517-603. It is inaccurate to describe all submissions as final purchases before graduation.
+Executed unchanged guarded+NFT harness5PASS/0fail/0skip. Failed threshold100ETH with bid1ETH emitted BidExited tokensFilled0/currencyRefunded1ETH and restored bidder10ETH balance; successful allocated bid emitted tokensFilled~1000/currencyRefunded0.
+Required decision: graduation/minimum-funding threshold and whether failed graduation is an allowed exception to purchase finality. No new threshold approved.
+
+4. NFT whitelist/no individual caps is consistent with holder admission, with explicit limitations.
+ContinuousClearingAuction467-494 both overloads reach shared _submitBid347-362, which invokes internally deployed validator. GenesisCharacterEligibility26-29 checks recipient balance, pinned NFTcodehash andchain; it does not cap cumulative bids. Native amount is uint128 (technical ABI limit, not individual economic allocation cap). Relayers may fund NFTrecipient; an NFTheld only by sender cannot qualify a different recipient.
+Executed tests prove both overload rejection, relayer-to-holder acceptance, and claim after NFTtransfer. Existing admitted positions/refunds remain owned by original bidrecipient; NFTtransfer neither transfers the bid nor blocks recovery. Transferable NFT may be reused across successive wallets; it is not unique-person or permanent-whitelist enforcement.
+
+5. Five-day timing, total allocation, custody/proceeds/unsold recipient still require reviewed deployment settings.
+Auction schedule is native blockNumberish, not timestamp-based five-day wallclock (StepStorage/BlockNumberish). Need final exactUTCwindow + fresh native-clock cadence/schedule and explicit claim=end. No deployed current auction is proved here.
+Coordinator has no bond allocation enforcement or total-supply percentage check; its tokenReserve and auction TOTAL_SUPPLY are independent constructor values. Verify40%sale/20%LP/40%bond against exact total supply and actual transfers before any bid.
+Current residual split/custody/unsold destinations are existing immutable behaviors, not newly approved founder choices. No new values were inferred. Original72hour/4.41Minventory assumptions are excluded.
+
+Evidence: output/genesis-founder-settings-contract-trace.txt/-exit.txt and output/genesis-founder-settings-nft-refund-trace.txt/-exit.txt. Tests only executed existing source; no contract/test/source changes, no signing or live transaction.
+

@@ -62,7 +62,7 @@ contract AuctionCoordinatorV2Test is Test, DeployPermit2 {
             3000, 60, LP_RESERVE, owner, nft);
         address[5] memory recipients = [treasury, vig, founder, address(0x14), address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)), hook);
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),owner), hook);
         auction = deployAuction(nft); token.transfer(owner,40_000_000 ether);
     }
     function deployAuction(IERC721 character) internal returns (OmertaGuardedAuction result) {
@@ -196,7 +196,7 @@ contract AuctionCoordinatorV2Test is Test, DeployPermit2 {
         vm.clearMockedCalls();
         address[5] memory recipients = [treasury,vig,founder,address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2",abi.encode(manager,address(token),address(coordinator),
-            uint24(500),int24(10),recipients,OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)),hook);
+            uint24(500),int24(10),recipients,OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),owner),hook);
         vm.expectRevert(OmertaAuctionCoordinatorV2.BadConfiguration.selector);
         coordinator.bind(ISingleGenesisAuction(address(auction)));
     }

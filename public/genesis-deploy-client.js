@@ -1,4 +1,6 @@
 // A reviewed packet reader and five individually approved EOA deployments. No Safe operations.
+import { keccak_256 } from './genesis-deploy-vendor/sha3.js';
+import { TRUSTED_HOOK } from './genesis-deploy-artifact.js';
 export const DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 export const SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 export const FACTORY = '0x4e59b44847b379578588920ca78fbf26c0b4956c';
@@ -27,6 +29,56 @@ const hexInt = value => {
   return BigInt(value);
 };
 const hex = value => `0x${value.toString(16)}`;
+const byteHex = value => `0x${[...value].map(x => x.toString(16).padStart(2, '0')).join('')}`;
+const concat = (...parts) => {
+  const output = new Uint8Array(parts.reduce((length, part) => length + part.length, 0));
+  let offset = 0; for (const part of parts) { output.set(part, offset); offset += part.length; } return output;
+};
+export const keccakHex = value => byteHex(keccak_256(bytes(value)));
+export function predictCreateAddress(from, nonce) {
+  check(ADDRESS.test(from || '') && nonce >= 0n && nonce < 1n << 64n, 'Invalid CREATE address input.');
+  let encodedNonce;
+  if (nonce === 0n) encodedNonce = Uint8Array.of(0x80);
+  else if (nonce < 128n) encodedNonce = Uint8Array.of(Number(nonce));
+  else {
+    const raw = bytes(`0x${nonce.toString(16).padStart(Math.ceil(nonce.toString(16).length / 2) * 2, '0')}`);
+    encodedNonce = concat(Uint8Array.of(0x80 + raw.length), raw);
+  }
+  const body = concat(Uint8Array.of(0x94), bytes(from), encodedNonce);
+  return byteHex(keccak_256(concat(Uint8Array.of(0xc0 + body.length), body)).slice(-20));
+}
+export function predictCreate2Address(factory, salt, initCode) {
+  check(ADDRESS.test(factory || '') && HASH.test(salt || ''), 'Invalid CREATE2 address input.');
+  return byteHex(keccak_256(concat(Uint8Array.of(0xff), bytes(factory), bytes(salt), keccak_256(bytes(initCode)))).slice(-20));
+}
+function verifyHookCreation(p) {
+  const configuration = p.hookConfiguration;
+  check(configuration && configuration.poolFee === 3000 && configuration.tickSpacing === 60
+    && configuration.opening?.blocks === 0 && configuration.opening?.buyBps === 0 && configuration.opening?.maxBuyQuote === '0'
+    && configuration.surgeFullTicks === 100 && configuration.epochDuration === 3600,
+    'The reviewed static 0.3% LP fee and disabled opening policy metadata differs.');
+  const deployment = p.deployments[3], raw = bytes(deployment.data), template = bytes(TRUSTED_HOOK.creationBytecode);
+  check(TRUSTED_HOOK.constructorWords === 16 && template.length === TRUSTED_HOOK.creationBytecodeBytes
+    && keccakHex(TRUSTED_HOOK.creationBytecode) === TRUSTED_HOOK.creationBytecodeKeccak256,
+    'The locally shipped trusted hook creation template is inconsistent.');
+  check(raw.length === 32 + template.length + 16 * 32
+    && byteHex(raw.slice(32, 32 + template.length)) === lower(TRUSTED_HOOK.creationBytecode),
+    'Hook calldata does not contain the trusted local compiled creation bytecode and canonical constructor size.');
+  const words = Array.from({ length: 16 }, (_, i) => byteHex(raw.slice(32 + template.length + i * 32, 32 + template.length + (i + 1) * 32)));
+  const addressWord = (index, expected) => check(words[index] === `0x${'00'.repeat(12)}${lower(expected).slice(2)}`,
+    'A hook constructor authority, recipient, token or manager differs.');
+  const uintWord = (index, expected) => check(words[index] === `0x${BigInt(expected).toString(16).padStart(64, '0')}`,
+    'The hook fee, spacing, opening, surge or epoch constructor policy differs.');
+  addressWord(0, DEPENDENCIES.poolManager); addressWord(1, DEPENDENCIES.omr); addressWord(2, p.deployments[2].predicted);
+  uintWord(3, 3000); uintWord(4, 60);
+  [ '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
+    '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments[0].predicted, p.deployments[1].predicted ]
+    .forEach((address, i) => addressWord(5 + i, address));
+  [10, 11, 12].forEach(i => uintWord(i, 0)); uintWord(13, 100); uintWord(14, 3600); addressWord(15, SAFE);
+  const predicted = predictCreate2Address(FACTORY, byteHex(raw.slice(0, 32)), byteHex(raw.slice(32)));
+  check(predicted === lower(deployment.predicted) && (BigInt(predicted) & 0x3fffn) === 0x35c4n,
+    'The salt/initcode CREATE2 address or hook permission flags differ from the reviewed prediction.');
+}
 export async function sha256(value, cryptoApi = globalThis.crypto) {
   const digest = await cryptoApi.subtle.digest('SHA-256', value);
   return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('');
@@ -50,6 +102,11 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   check(p.finalManifest?.chainId === 4663 && policy && Object.entries(amounts).every(([k, v]) => policy[k] === v)
     && ['familySafe', 'liquidityOwner', 'unsoldRecipient', 'bondReserveCustodian'].every(k => lower(policy[k]) === SAFE),
   'The founder-approved allocation, proceeds or Safe custody differs.');
+  const governance = p.finalManifest.hookGovernance;
+  check(governance && Object.keys(governance).length === 5 && lower(governance.governanceSafe) === SAFE
+    && lower(governance.fixedFounderRecipient) === '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced'
+    && governance.fixedFounderBps === 200 && governance.delaySeconds === 172800 && governance.executionSafeOnly === true,
+    'The fixed founder 2% and 48-hour Safe-only tax governance differs.');
   const clock = p.launchClock;
   check(clock && ['arbsys', 'block.number'].includes(clock.mode), 'The native launch clock is missing.');
   check(integer(clock.startBlock) < integer(clock.endBlock) && clock.claimBlock === clock.endBlock,
@@ -71,6 +128,9 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
       'A deployment runtime SHA-256 is missing or differs.');
   }
   check(new Set(p.deployments.map(d => lower(d.predicted))).size === 5, 'Deployment addresses collide.');
+  for (const index of [0, 1, 2, 4]) check(lower(p.deployments[index].predicted)
+    === predictCreateAddress(DEPLOYER, integer(p.deployments[index].nonce)), 'A CREATE deployment address differs from the reviewed EOA nonce.');
+  verifyHookCreation(p);
   check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 6, 'Six production dependency checks are required.');
   const names = new Set();
   for (const pin of p.dependencyChecks) {
@@ -81,6 +141,9 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   check(Array.isArray(p.auxiliaryRuntimeChecks) && p.auxiliaryRuntimeChecks.length === 2,
     'Both internally created auction runtime checks are required.');
   const auxiliaryAddresses = { validator: p.internalValidatorAddress, scheduleStore: p.internalScheduleAddress };
+  check(lower(p.internalValidatorAddress) === predictCreateAddress(p.deployments[4].predicted, 1n)
+    && lower(p.internalScheduleAddress) === predictCreateAddress(p.deployments[4].predicted, 2n),
+    'Internal auction addresses differ from their actual CREATE nonce predictions.');
   const auxiliaryNames = new Set();
   for (const pin of p.auxiliaryRuntimeChecks) {
     check(Object.hasOwn(auxiliaryAddresses, pin.name) && !auxiliaryNames.has(pin.name)

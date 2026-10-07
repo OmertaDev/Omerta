@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { decodeFunctionData, encodeAbiParameters, keccak256, parseAbi } from 'viem';
 import { readGenesisAuction, prepareGenesisAuctionTransaction } from '../src/genesisauction.js';
 
@@ -6,6 +7,21 @@ const address = n => `0x${n.toString(16).padStart(40, '0')}`;
 const account = address(99), other = address(100), validator = address(5);
 const zero = address(0), blockHash = `0x${'ab'.repeat(32)}`;
 const names = ['auction', 'coordinator', 'characterNft', 'omr', 'validator'];
+const tickInterface = fs.readFileSync(new URL('../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol', import.meta.url), 'utf8');
+assert.match(tickInterface, /function tickSpacing\(\)/, 'the pinned CCA interface exposes tickSpacing()');
+const artifactNames = { auction: 'OmertaGuardedAuction', coordinator: 'OmertaAuctionCoordinatorV2', hook: 'OmertaHookV2',
+  validator: 'GenesisCharacterBidValidation', omr: 'OMR', characterNft: 'DynastyNFT' };
+const actualAbiFunctions = {};
+for (const [role, contract] of Object.entries(artifactNames)) {
+  const sourceName = contract === 'GenesisCharacterBidValidation' ? 'GenesisCharacterEligibility' : contract;
+  const file = new URL(`../omerta-contracts/out/${sourceName}.sol/${contract}.json`, import.meta.url);
+  if (fs.existsSync(file)) actualAbiFunctions[role] = new Set(JSON.parse(fs.readFileSync(file, 'utf8')).abi
+    .filter(entry => entry.type === 'function').map(entry => entry.name));
+}
+if (actualAbiFunctions.auction) {
+  assert.ok(actualAbiFunctions.auction.has('tickSpacing'));
+  assert.ok(!actualAbiFunctions.auction.has('TICK_SPACING_Q96'), 'an internal immutable has no external getter');
+}
 const contracts = Object.fromEntries(names.map((name, i) => [name, {
   address: address(i + 1), runtimeCodeHash: keccak256(`0x60${(i + 1).toString(16).padStart(2, '0')}`),
 }]));
@@ -15,17 +31,22 @@ const safe = address(77);
 const policy = { totalSupplyWei:'100000000000000000000000000',decimals:18,saleTokenAmountWei:'40000000000000000000000000',lpTokenAmountWei:'20000000000000000000000000',bondTokenAmountWei:'40000000000000000000000000',familySafe:safe,liquidityOwner:safe,unsoldRecipient:safe,bondReserveCustodian:safe,minimumRaiseWei:'10000000000000000000',lpProceedsBps:5000,claimsAtAuctionEnd:true };
 const ceilFloor=((10n**19n<<96n)+BigInt(policy.saleTokenAmountWei)-1n)/BigInt(policy.saleTokenAmountWei);
 const tick=(ceilFloor+99n)/100n,floor=tick*100n,bidPrice=floor+tick*1000n;
-const manifest = { chainId: 4663, contracts, dependencies, policy };
+const founder = '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD';
+const hookGovernance = { governanceSafe: safe, fixedFounderRecipient: founder, fixedFounderBps: 200, delaySeconds: 172800, executionSafeOnly: true };
+const manifest = { chainId: 4663, contracts, dependencies, policy, hookGovernance };
 const codes = Object.fromEntries(names.map((name, i) => [contracts[name].address, `0x60${(i + 1).toString(16).padStart(2, '0')}`]));
 codes[validator] = '0x6005';
 for (const pin of Object.values(dependencies)) codes[pin.address] = `0x60${Number(BigInt(pin.address)).toString(16)}`;
 function fixture() {
   const values = {
+    hook: { governanceSafe: safe, opsRecipient: founder, OPS_SELL_BPS: 200n, TAX_CONFIG_DELAY: 172800n,
+      TAX_EXECUTION_SAFE_ONLY: true, baseSellBps: 900n, taxConfig: [160n, 240n, 300n, 100n],
+      queuedTaxHash: `0x${'00'.repeat(32)}`, queuedTaxExecuteAfter: 0n, taxConfigNonce: 0n },
     auction: { characterNft: contracts.characterNft.address, token: contracts.omr.address, currency: zero,
       launchGate: contracts.coordinator.address, fundsRecipient: contracts.coordinator.address,
       launchGateCodeHash: contracts.coordinator.runtimeCodeHash, launchChainId: 4663n,
       validationHook: validator, blockNumberish: 115n, startBlock: 110n, endBlock: 120n, claimBlock: 120n,
-      floorPrice: floor, MAX_BID_PRICE: 10n**30n, TICK_SPACING_Q96: tick, isGraduated: true, nextBidId: 2n,
+      floorPrice: floor, MAX_BID_PRICE: 10n**30n, tickSpacing: tick, isGraduated: true, nextBidId: 2n,
       bids: [110n, 1n, 0n, bidPrice, account, 1n << 96n, 0n], totalSupply:BigInt(policy.saleTokenAmountWei), tokensRecipient:safe, minimumRaiseWei:BigInt(policy.minimumRaiseWei), currencyRaised:10n**19n, clearingPrice:floor+tick*100n },
     coordinator: { auction: contracts.auction.address, characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash, validatorCodeHash: contracts.validator.runtimeCodeHash,
       omr: contracts.omr.address, auctionCodeHash: contracts.auction.runtimeCodeHash,
@@ -49,11 +70,16 @@ function fixture() {
       ? '0x6000' : codes[args.address.toLowerCase()]; },
     readContract: async args => {
       observations.push(args);
+      if (args.address === dependencies.hook.address) {
+        if (actualAbiFunctions.hook) assert.ok(actualAbiFunctions.hook.has(args.functionName), `real hook ABI exposes ${args.functionName}`);
+        assert.ok(Object.hasOwn(values.hook, args.functionName)); return values.hook[args.functionName];
+      }
       if (args.address === dependencies.positionManager.address && args.functionName === 'poolManager')
         return dependencies.poolManager.address;
       const name = args.address.toLowerCase() === validator ? 'validator'
         : names.find(n => contracts[n].address === args.address.toLowerCase());
       assert.ok(name, 'all contract reads target manifest contracts or pinned auction validator');
+      if (actualAbiFunctions[name]) assert.ok(actualAbiFunctions[name].has(args.functionName), `real ${name} ABI exposes ${args.functionName}`);
       if (args.functionName === 'checkpoints') return checkpoints.get(args.args[0].toString()) || [0n, 0n, 0n, 0n, 0n, 0n];
       assert.ok(Object.hasOwn(values[name], args.functionName), `fixture knows ${name}.${args.functionName}`);
       return values[name][args.functionName];
@@ -81,7 +107,7 @@ assert.doesNotThrow(()=>JSON.stringify(state));assert.doesNotThrow(()=>JSON.stri
 assert.equal(state.auction.tickSpacingQ96, tick.toString());
 await rejected({...f.options, action:'bid', amountEth:'1', maxPriceX96:(floor+1001n).toString()}, 'invalid_input');
 assert.equal(f.simulations.length, 1, 'off-tick bids are rejected before simulation');
-assert.ok(f.observations.some(o => o.functionName === 'TICK_SPACING_Q96' && o.blockNumber === 115n));
+assert.ok(f.observations.some(o => o.functionName === 'tickSpacing' && o.blockNumber === 115n));
 for(const action of ['contribute','claimPlayer','refundPlayer','transfer']) await rejected({...f.options,action},'invalid_input');
 for(const amountEth of ['0','-1','1e-3','0.0000000000000000001','01',0.1,'9'.repeat(120)]) await rejected({...f.options,action:'bid',amountEth,maxPriceX96:bidPrice.toString()},'invalid_input');
 f=fixture();f.values.characterNft.balanceOf=0n; await rejected({...f.options,action:'bid',amountEth:'1',maxPriceX96:bidPrice.toString()},'nft_required');
@@ -277,3 +303,23 @@ for (const change of [
   assert.equal(f.simulations.length, 0);
 }
 console.log('Validator OMR identity, runtime and immutable approved-supply snapshot bindings PASS');
+f = fixture();
+Object.assign(f.values.hook, { baseSellBps: 750n, taxConfig: [150n, 200n, 200n, 200n],
+  queuedTaxHash: blockHash, queuedTaxExecuteAfter: 200000n, taxConfigNonce: 2n });
+const governed = await readGenesisAuction(f.options);
+assert.equal(governed.hookTax.baseSellBps, '750', 'legitimate executed changes need not equal the initial 900 bps');
+assert.equal(governed.hookTax.fixedFounderBps, 200);
+assert.equal(governed.hookTax.executionSafeOnly, true);
+assert.equal(governed.hookTax.delaySeconds, 172800);
+assert.match(governed.hookTax.committeeProposalProcess, /offchain/);
+for (const change of [f => { f.values.hook.governanceSafe = other; }, f => { f.values.hook.opsRecipient = other; },
+  f => { f.values.hook.OPS_SELL_BPS = 201n; }, f => { f.values.hook.TAX_CONFIG_DELAY = 1n; },
+  f => { f.values.hook.TAX_EXECUTION_SAFE_ONLY = false; }, f => { f.values.hook.baseSellBps = 800n; },
+  f => { f.values.hook.taxConfig = [160n, 240n, 300n, 101n]; }]) {
+  f = fixture(); change(f);
+  await assert.rejects(() => readGenesisAuction(f.options), { code: 'deployment_mismatch' });
+  await assert.rejects(() => readGenesisAuction(f.options, { recovery: true }), { code: 'deployment_mismatch' });
+}
+f = fixture(); f.options.manifest = { ...manifest, hookGovernance: undefined };
+await assert.rejects(() => readGenesisAuction(f.options), { code: 'invalid_configuration' });
+console.log('Immutable founder 2%/recipient and 48h Safe-only governance pins verified; future bounded rates accepted PASS');

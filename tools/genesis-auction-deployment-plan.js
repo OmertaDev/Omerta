@@ -15,6 +15,7 @@ const APPROVED_SUPPLY = 100000000n * ETHER, MINIMUM_RAISE = 10n * ETHER;
 const PRODUCTION_DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 const PRODUCTION_SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 const PRODUCTION_OMR = '0x2e82f8c1cfd5172612b3af56088d7d68d920545d';
+const PRODUCTION_FOUNDER = '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced';
 export const GENESIS_AUCTION_ARTIFACTS = Object.freeze({
   OmertaAuctionCoordinatorV2: 'src/market-v2/OmertaAuctionCoordinatorV2.sol',
   OmertaHookV2: 'src/market-v2/OmertaHookV2.sol',
@@ -156,7 +157,7 @@ export function genesisAuctionArtifactInventory({ contractsRoot = ROOT } = {}) {
 export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT } = {}) {
   publicOnly(input);
   closed('manifest', input, ['schemaVersion', 'chainId', 'localRehearsal', 'sourceRevision', 'startingNonce', 'roles',
-    'external', 'create2', 'artifactHashes', 'sourceHashes', 'observation', 'nativeClock', 'hook', 'auction', 'tokenReserve', 'allocation']);
+    'external', 'create2', 'artifactHashes', 'sourceHashes', 'observation', 'nativeClock', 'hook', 'hookGovernance', 'auction', 'tokenReserve', 'allocation']);
   check(input.schemaVersion === 1 && typeof input.localRehearsal === 'boolean', 'Explicit schemaVersion/localRehearsal required');
   const chainId = number('chainId', input.chainId, 1, Number.MAX_SAFE_INTEGER);
   check(chainId === 4663 || chainId === 31337, 'Only production chain 4663 or explicit local rehearsal chain 31337 is supported');
@@ -180,6 +181,13 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     'Production deployer and single LP/Family/bond/unsold Safe must match founder approval');
   check(Array.isArray(input.roles.hookRecipients) && input.roles.hookRecipients.length === 3, 'Three explicit dev/RWA/community hook recipients required; POL/reserve adapters are deployed internally');
   const recipients = input.roles.hookRecipients.map((a, i) => addr(`hookRecipients.${i}`, a));
+  if (chainId === 4663) check(recipients[0].toLowerCase() === PRODUCTION_FOUNDER, 'Production fixed Founder Ops recipient must be approved A87');
+  closed('hookGovernance', input.hookGovernance, ['governanceSafe', 'fixedFounderRecipient', 'fixedFounderBps', 'delaySeconds', 'executionSafeOnly']);
+  const governance = input.hookGovernance;
+  check(addr('hookGovernance.governanceSafe', governance.governanceSafe) === r.safe
+    && addr('hookGovernance.fixedFounderRecipient', governance.fixedFounderRecipient) === recipients[0]
+    && governance.fixedFounderBps === 200 && governance.delaySeconds === 172800 && governance.executionSafeOnly === true,
+    'Committee tax governance must use the approved Safe, fixed Founder Ops 2% recipient and 48-hour delay');
   const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft'];
   closed('external', input.external, externalKeys);
   const e = Object.fromEntries(externalKeys.map(k => { closed(`external.${k}`, input.external[k], ['address', 'runtimeHash']);
@@ -230,10 +238,15 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   uint('opening.maxBuyQuote', h.opening.maxBuyQuote, 128, true);
   check(h.opening.blocks !== 0 || (h.opening.buyBps === 0 && h.opening.maxBuyQuote === '0'), 'Disabled opening policy carries fee/cap');
   number('surgeFullTicks', h.surgeFullTicks, 1, 100000); number('epochDuration', h.epochDuration, 60, 86400);
+  if (chainId === 4663) {
+    check(fee === 3000 && spacing === 60, 'Production launch requires approved static LP fee 3000 and tick spacing 60');
+    check(h.opening.blocks === 0 && h.opening.buyBps === 0 && h.opening.maxBuyQuote === '0', 'Production opening restrictions must be OFF');
+    check(h.surgeFullTicks === 100 && h.epochDuration === 3600, 'Production launch requires disclosed surge calibration 100 and epoch 3600');
+  }
   const deployData = (name, args) => { const a = artifacts[name]; const data = encodeDeployData({ abi: a.abi, bytecode: a.bytecode, args });
     check((data.length - 2) / 2 <= 49152, `${name}: EIP-3860 initcode size`); return data; };
   const hookInit = deployData('OmertaHookV2', [e.poolManager.address, e.omr.address, deployed.coordinator, fee, spacing,
-    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration]);
+    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration, r.safe]);
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), uint('saltStart', input.create2.saltStart, 256, true), number('maxAttempts', input.create2.maxAttempts, 1, 1000000));
   deployed.hook = mined.address;
   const internalValidatorAddress = getContractAddress({ from: deployed.auction, nonce: 1n });
@@ -300,11 +313,11 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
       totalSafeOmrRequired: String(totalSupply), initialFundingOmr: String(supply + reserve), expectedSafeBalanceAfterFunding: String(safeBalance - supply - reserve),
       bondActivated: false, bondReserveCustodian: r.safe, unsoldRecipient: r.safe, unsoldAccounting: 'Auction-unsold tokens returned to Safe are separate from the retained bond allocation.',
       auctionDurationSecondsBounds: [String(duration * minMs / 1000n), String((duration * maxMs + 999n) / 1000n)] },
-    pricing, releaseSchedule, allocationEvidence: allocation,
+    pricing, releaseSchedule, allocationEvidence: allocation, hookGovernance: governance,
     liquidityPolicy: { lpTokenAmountWei: String(lpAllocation), lpProceedsBps: 5000, familyProceedsBps: 5000, liquidityOwner: r.safe,
       familyYieldTreasury: r.safe, poolPrice: 'Derived from actual fixed LP tokens and 50% accepted ETH; independent of auction clearing price.' },
     deployments, safeFundingCalls: funding, deployerBindCall: call(r.deployer, deployed.coordinator, artifacts.OmertaAuctionCoordinatorV2.abi, 'bind', [deployed.auction]),
-    finalManifest: { chainId, activationReady: false, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
+    finalManifest: { chainId, activationReady: false, hookGovernance: governance, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
       saleTokenAmountWei: String(saleAllocation), lpTokenAmountWei: String(lpAllocation), bondTokenAmountWei: String(bondAllocation),
       familySafe: r.safe, liquidityOwner: r.safe, unsoldRecipient: r.safe, bondReserveCustodian: r.safe,
       minimumRaiseWei: String(MINIMUM_RAISE), lpProceedsBps: 5000, claimsAtAuctionEnd: true }, contracts: {
@@ -321,6 +334,7 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     } },
     remainingGates: ['Reverify pinned 100M OMR supply, 18 decimals, full initial Safe balance and zero minter at execution; preserve 40M bond reserve and separately account auction-unsold tokens.',
       'An offline input hash or referenced evidence file is not a live verification: resolve and re-read every runtime, nonce, supply, balance, native-clock and governance record before signing.',
+      'Launch LP fee is the approved static 0.3% (3000); dynamic LP fees are not authorized. Refresh all hook bytecode/salt/runtime and derived calldata after the governance ABI change.',
       'The source revision must be committed and all reviewed source/artifact pins refreshed after remediation; constructor runtime hashes for auction/coordinator/validator/hook remain unresolved until simulated/deployed and checked.',
       'Verify every external/factory runtime hash and interface, approved Safe/deployer roles, 10 ETH minimum, aligned floor, segmented issuance and end-block claims.',
       'Verify deployer nonce, empty predicted addresses, factory salt-prefix semantics, and native clock selection/cadence at execution.',

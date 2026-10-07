@@ -13,6 +13,16 @@ const ABI = parseAbi([
   'function positionManager() view returns (address)',
   'function permit2() view returns (address)',
   'function poolKey() view returns (address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)',
+  'function governanceSafe() view returns (address)',
+  'function opsRecipient() view returns (address)',
+  'function OPS_SELL_BPS() view returns (uint16)',
+  'function TAX_CONFIG_DELAY() view returns (uint256)',
+  'function TAX_EXECUTION_SAFE_ONLY() view returns (bool)',
+  'function baseSellBps() view returns (uint16)',
+  'function taxConfig() view returns (uint16 rwaBps, uint16 communityBps, uint16 polBps, uint16 surgeMaxBps)',
+  'function queuedTaxHash() view returns (bytes32)',
+  'function queuedTaxExecuteAfter() view returns (uint64)',
+  'function taxConfigNonce() view returns (uint256)',
   'function eligibilityChainId() view returns (uint256)',
   'function launchGate() view returns (address)',
   'function launchGateCodeHash() view returns (bytes32)',
@@ -49,7 +59,7 @@ const ABI = parseAbi([
   'function claimBlock() view returns (uint64)',
   'function floorPrice() view returns (uint256)',
   'function MAX_BID_PRICE() view returns (uint256)',
-  'function TICK_SPACING_Q96() view returns (uint256)',
+  'function tickSpacing() view returns (uint256)',
   'function isGraduated() view returns (bool)',
   'function nextBidId() view returns (uint256)',
   'function balanceOf(address) view returns (uint256)',
@@ -120,6 +130,14 @@ function configuration(manifest, account) {
     || custody.some(key => !isAddress(policy[key] || '') || same(policy[key], ZERO)
       || !same(policy[key], policy.familySafe)))
     fail('invalid_configuration', 'The reviewed founder allocation and Safe custody policy is incomplete or differs.');
+  const governance = manifest.hookGovernance;
+  const governanceKeys = ['governanceSafe', 'fixedFounderRecipient', 'fixedFounderBps', 'delaySeconds', 'executionSafeOnly'];
+  if (!governance || Object.keys(governance).length !== governanceKeys.length
+    || Object.keys(governance).some(key => !governanceKeys.includes(key))
+    || !same(governance.governanceSafe, policy.familySafe)
+    || !same(governance.fixedFounderRecipient, '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD')
+    || governance.fixedFounderBps !== 200 || governance.delaySeconds !== 172800 || governance.executionSafeOnly !== true)
+    fail('invalid_configuration', 'The reviewed fixed founder tax and delayed Safe governance policy differs.');
   const maxAge = manifest.maxSnapshotAgeSeconds ?? 120;
   if (!Number.isSafeInteger(maxAge) || maxAge < 1 || maxAge > 120)
     fail('invalid_configuration', 'The snapshot freshness limit is invalid.');
@@ -190,6 +208,22 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
         functionName: 'poolManager', blockNumber: block.number }), deps.poolManager.address))
       fail('deployment_mismatch', 'The production pool and position-manager bindings differ.');
   }
+  const hook = manifest.dependencies.hook.address, governance = manifest.hookGovernance;
+  const hookValues = await Promise.all(['governanceSafe', 'opsRecipient', 'OPS_SELL_BPS', 'TAX_CONFIG_DELAY', 'TAX_EXECUTION_SAFE_ONLY',
+    'baseSellBps', 'taxConfig', 'queuedTaxHash', 'queuedTaxExecuteAfter', 'taxConfigNonce'].map(fn => read(hook, fn)));
+  const [governanceSafe, opsRecipient, opsBps, delay, safeOnly, baseSellBps, taxConfig, queuedTaxHash, queuedTaxExecuteAfter, taxConfigNonce] = hookValues;
+  if (!same(governanceSafe, governance.governanceSafe) || !same(opsRecipient, governance.fixedFounderRecipient)
+    || BigInt(opsBps) !== 200n || BigInt(delay) !== 172800n || safeOnly !== true)
+    fail('deployment_mismatch', 'The hook immutable tax authority, founder recipient, rate or delay differs.');
+  if (!Array.isArray(taxConfig) || taxConfig.length !== 4)
+    fail('state_unavailable', 'The live hook tax configuration is unavailable.');
+  const rates = taxConfig.map(BigInt), base = BigInt(baseSellBps);
+  if (rates.some(rate => rate < 0n || rate > 1000n) || base !== 200n + rates[0] + rates[1] + rates[2]
+    || base + rates[3] > 1000n || !HASH.test(queuedTaxHash || '') || BigInt(queuedTaxExecuteAfter) < 0n || BigInt(taxConfigNonce) < 0n)
+    fail('deployment_mismatch', 'The live hook tax bounds or fixed founder allocation differ.');
+  const hookTax = { ...governance, baseSellBps: base.toString(), rwaBps: rates[0].toString(), communityBps: rates[1].toString(),
+    polBps: rates[2].toString(), surgeMaxBps: rates[3].toString(), queuedTaxHash, queuedTaxExecuteAfter: BigInt(queuedTaxExecuteAfter).toString(),
+    taxConfigNonce: BigInt(taxConfigNonce).toString(), committeeProposalProcess: 'Recorded offchain; Safe-authorized delayed execution, no onchain committee voting.' };
   const validator = await read('auction', 'validationHook');
   if (!isAddress(validator || '') || same(validator, ZERO)) fail('deployment_mismatch', 'The auction ownership validator is missing.');
   const validatorCode = await client.getCode({ address: validator, blockNumber: block.number });
@@ -203,14 +237,14 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
   for (const [name, fn] of [['auction', 'launchChainId'], ['coordinator', 'chainId'], [validator, 'eligibilityChainId']]) {
     if (BigInt(await read(name, fn)) !== BigInt(CHAIN_ID)) fail('deployment_mismatch', 'A genesis chain binding is incorrect.');
   }
-  const requests = [...['blockNumberish', 'startBlock', 'endBlock', 'claimBlock', 'floorPrice', 'MAX_BID_PRICE', 'TICK_SPACING_Q96', 'isGraduated'].map(fn => ['auction', fn]),
+  const requests = [...['blockNumberish', 'startBlock', 'endBlock', 'claimBlock', 'floorPrice', 'MAX_BID_PRICE', 'tickSpacing', 'isGraduated'].map(fn => ['auction', fn]),
     ...['currencyRaised', 'clearingPrice'].map(fn => ['auction', fn]),
     ...['migrationSucceeded', 'playerClaimsOpen', 'auctionPriceX96', 'poolPriceX96', 'lpNativeBudget', 'publicProceeds'].map(fn => ['coordinator', fn])];
   const state = {};
   await Promise.all(requests.map(async ([name, fn, args = []]) => { state[fn] = await read(name, fn, args); }));
   if (BigInt(state.claimBlock) !== BigInt(state.endBlock))
     fail('deployment_mismatch', 'Auction claims must open at auction closure.');
-  const tick = BigInt(state.TICK_SPACING_Q96);
+  const tick = BigInt(state.tickSpacing);
   const saleAmount = BigInt(policy.saleTokenAmountWei);
   const ceilFloor = ((BigInt(policy.minimumRaiseWei) << 96n) + saleAmount - 1n) / saleAmount;
   const expectedTick = (ceilFloor + 99n) / 100n;
@@ -233,7 +267,7 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
   }
   const native = BigInt(state.blockNumberish), start = BigInt(state.startBlock), end = BigInt(state.endBlock);
   const phase = state.migrationSucceeded ? 'migrated' : native < start ? 'prepare' : native < end ? 'auction' : 'auction_closed';
-  return { config, state, bid, block, phase, client, manifest };
+  return { config, state, bid, block, phase, client, manifest, hookTax };
 }
 async function unchanged(ctx) {
   const block = await ctx.client.getBlock({ blockNumber: ctx.block.number });
@@ -276,10 +310,11 @@ function projection(ctx) {
   return { chainId: CHAIN_ID, account: config.account, snapshot: { blockNumber: block.number.toString(),
     blockHash: block.hash, timestamp: block.timestamp.toString() }, phase,
   auction: { nativeClock: s.blockNumberish.toString(), start: s.startBlock.toString(), end: s.endBlock.toString(),
-    claim: s.claimBlock.toString(), floorPriceX96: s.floorPrice.toString(), maxBidPriceX96: s.MAX_BID_PRICE.toString(), tickSpacingQ96: s.TICK_SPACING_Q96.toString(), graduated: s.isGraduated,
+    claim: s.claimBlock.toString(), floorPriceX96: s.floorPrice.toString(), maxBidPriceX96: s.MAX_BID_PRICE.toString(), tickSpacingQ96: s.tickSpacing.toString(), graduated: s.isGraduated,
     clearingPriceX96: s.clearingPrice.toString(), finalClearingPriceX96: s.auctionPriceX96.toString(), acceptedEthWei: s.currencyRaised.toString() },
   nftOwned: s.balanceOf === null ? null : BigInt(s.balanceOf) > 0n, bid,
   policy: { ...ctx.manifest.policy },
+  hookTax: ctx.hookTax,
   migration: { succeeded: s.migrationSucceeded, claimsOpen: s.playerClaimsOpen && s.isGraduated,
     fundedPoolPriceX96: s.poolPriceX96.toString(), lpNativeBudgetWei: s.lpNativeBudget.toString(),
     publicProceedsWei: s.publicProceeds.toString(), lpTokenAmountWei: ctx.manifest.policy.lpTokenAmountWei } };
@@ -305,7 +340,7 @@ export async function prepareGenesisAuctionTransaction(options) {
       value = amountWei(options.amountEth, U128);
       const price = uint(options.maxPriceX96);
       if (price <= BigInt(s.floorPrice) || price > BigInt(s.MAX_BID_PRICE)) fail('invalid_input', 'The bid price is outside the auction bounds.');
-      const spacing = BigInt(s.TICK_SPACING_Q96);
+      const spacing = BigInt(s.tickSpacing);
       if (spacing === 0n || price % spacing !== 0n) fail('invalid_input', 'The bid price must match the auction tick spacing.');
       name = 'auction'; fn = 'submitBid'; args = [price, value, config.account, '0x'];
     } else if (options.action === 'exitBid' || options.action === 'claimBid') {
