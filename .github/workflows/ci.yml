@@ -236,6 +236,14 @@ jobs:
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
 
+      - name: HTTP receipt recovery and reservation ownership (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: |
+          node test/http-idempotency-recovery.js
+          node test/http-idempotency-http.js
+
       - name: Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)
         if: '!cancelled()'
         env:
