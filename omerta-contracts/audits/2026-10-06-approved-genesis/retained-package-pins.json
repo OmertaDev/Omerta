@@ -102,7 +102,7 @@
     },
     {
       "file": "report.md",
-      "sha256": "b176c0b808e8e9e41db5acdf23d66d570d4c9bb61b033c66dd1089b1cd6b286d"
+      "sha256": "bd88dd1ce59d8bda35ff1655a9f56284a95605b62e688629df6e7db6eccfb7c4"
     },
     {
       "file": "retention-pins.json",
@@ -111,6 +111,14 @@
     {
       "file": "reviewer-invocation.json",
       "sha256": "e8eb31c2cb072090f051d0f8c2b5fa555a6c54df851e9067c20413699ae6d474"
+    },
+    {
+      "file": "shared-planner-ci-followup.json",
+      "sha256": "7130a39d2df61619763d428d376371a733c626dfc9ac86fc3eb8d9f0c6f8e87a"
+    },
+    {
+      "file": "shared-planner-ci-initial-failure.txt",
+      "sha256": "55d970ab271694c37a4e2a0c540d83a246ab58a3ccf9e8ddcdb8b3e5af5684cd"
     }
   ]
 }

@@ -1,0 +1,36 @@
+forge	Market V2 artifact contracts and keeper orchestration	﻿2026-10-07T03:55:54.7899197Z ##[group]Run npm ci --omit=dev
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:55:54.7902395Z ^[[36;1mnpm ci --omit=dev^[[0m
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:55:54.7902533Z ^[[36;1mnpm run test:market-v2^[[0m
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:55:54.7902740Z ^[[36;1mnpm run test:genesis-auction:deployment^[[0m
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:55:54.8632156Z shell: /usr/bin/bash -e {0}
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:55:54.8632492Z ##[endgroup]
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1873968Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1874616Z added 157 packages, and audited 158 packages in 7s
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1875120Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1875312Z 46 packages are looking for funding
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1875801Z   run `npm fund` for details
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1968761Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1997220Z 3 vulnerabilities (2 moderate, 1 high)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.1997874Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.2006928Z To address all issues, run:
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.2007366Z   npm audit fix
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.2007581Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.2007753Z Run `npm audit` for details.
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.3327663Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.3328275Z > omerta-backend@1.2.0 test:market-v2
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.3329228Z > node test/market-v2-deployment-plan.js && node test/marketv2keeper.js && node test/marketv2solver.js
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:02.3329789Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4307879Z file:///home/runner/work/Omerta/Omerta/tools/market-v2-deployment-plan.js:148
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4309485Z   if (inputs.length !== args.length) throw Error(`${name}: wrong constructor arity`);
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4310289Z                                            ^
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4310551Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4310895Z Error: hook: wrong constructor arity
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4311782Z     at checkedArgs (file:///home/runner/work/Omerta/Omerta/tools/market-v2-deployment-plan.js:148:44)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4312638Z     at buildMarketV2DeploymentPlan (file:///home/runner/work/Omerta/Omerta/tools/market-v2-deployment-plan.js:214:11)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4313340Z     at file:///home/runner/work/Omerta/Omerta/test/market-v2-deployment-plan.js:58:16
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4313865Z     at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4314401Z     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4314978Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4315322Z 
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4315416Z Node.js v22.23.3
+forge	Market V2 artifact contracts and keeper orchestration	2026-10-07T03:56:03.4491726Z ##[error]Process completed with exit code 1.

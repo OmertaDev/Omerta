@@ -31,3 +31,7 @@ Hosted checks, final fresh signing-packet verification, human wallet signatures,
 Optional static-tool/compiler limitations and initial failed fixtures remain visible in original evidence. No static-clean or zero-exploit guarantee is asserted. Runtime hash evidence remains authorized through the manually reviewed packet digest; the browser now independently binds all creation code and constructor data.
 
 Evidence copies use UTF-8 LF. retention-pins.json maps original external-file hashes to retained hashes; original files remain in the parent output directory. reviewer-invocation.json records actual parent Daybreak invocations and clarifies the earlier report's failed nested invocation without altering its text. retained-package-pins.json verifies all retained files except itself.
+
+## Hosted-check caller follow-up
+
+The first hosted contract job caught a shared market planner still passing the old nine-argument hook constructor. Follow-up revision e5eaa1857dafa46e5fb00a5481a3e4414d2b16df derives argument ten from the existing Safe, adds exact-authority/override regression checks, and narrowly handles the existing Permit2 mount while retaining all imported source hash checks. The 15-check artifact-backed planner, keeper and solver suite passed. Financial contracts and the reviewed signing page are unchanged. Original hosted failure and follow-up source pins are retained; final hosted gates remain required.
