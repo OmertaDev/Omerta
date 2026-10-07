@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+  "sourceRevision": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9806,
-    "edges": 39984,
+    "nodes": 9808,
+    "edges": 39992,
     "byNodeType": {
       "Artifact": 4172,
       "Command": 181,
-      "Commit": 2048,
+      "Commit": 2050,
       "Contract": 120,
       "Document": 686,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3250,
-      "CHANGED": 15548,
+      "CHANGED": 15554,
       "CONTAINS": 4193,
       "DECLARES": 181,
       "DEFINED_IN": 1296,
       "DEPENDS_ON": 65,
       "EXECUTES": 616,
       "HANDLED_BY": 712,
-      "HAS_COMMIT": 2048,
+      "HAS_COMMIT": 2050,
       "IMPLEMENTS": 124,
       "IMPORTS": 3951,
       "INHERITS": 39,
@@ -59840,20 +59840,20 @@
       "path": "output/deed-rwa-upgrades/release-catalog-fix.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 698,
-      "lines": 17,
-      "version": "7ddbb59f46130a1d",
+      "bytes": 1157,
+      "lines": 28,
+      "version": "a94ef761e38b2388",
       "text": true,
       "provenance": [
         {
           "file": "output/deed-rwa-upgrades/release-catalog-fix.json",
           "line": 1,
-          "version": "7ddbb59f46130a1d"
+          "version": "a94ef761e38b2388"
         }
       ],
-      "lastChangedAt": "2026-10-06T23:52:19.000Z",
+      "lastChangedAt": "2026-10-07T00:11:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5"
+      "lastChangedCommit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
     },
     {
       "key": "Artifact:output/deed-rwa-upgrades/review.md",
@@ -83139,20 +83139,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10328,
-      "lines": 136,
-      "version": "09918faed15a8f6a",
+      "bytes": 10782,
+      "lines": 140,
+      "version": "7f827c6aa9ac1c18",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "09918faed15a8f6a"
+          "version": "7f827c6aa9ac1c18"
         }
       ],
-      "lastChangedAt": "2026-10-06T19:53:30.000Z",
+      "lastChangedAt": "2026-10-07T00:11:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d9683e20e100adbbae3c0b1de981ed573c81e099"
+      "lastChangedCommit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -108068,6 +108068,22 @@
       ]
     },
     {
+      "key": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "type": "Commit",
+      "id": "477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "label": "Refresh knowledge after migration catalog correction",
+      "title": "Refresh knowledge after migration catalog correction",
+      "date": "2026-10-06T23:53:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "provenance": [
+        {
+          "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+        }
+      ]
+    },
+    {
       "key": "Commit:478faff2d00ff11bbabade265ed041337f570315",
       "type": "Commit",
       "id": "478faff2d00ff11bbabade265ed041337f570315",
@@ -112752,6 +112768,22 @@
         {
           "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99",
           "url": "https://github.com/OmertaDev/Omerta/commit/6e7ccb47043e8dec766b84337eabcd52383a3d99"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "type": "Commit",
+      "id": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "label": "Verify new deed constraints in populated Director migration",
+      "title": "Verify new deed constraints in populated Director migration",
+      "date": "2026-10-07T00:11:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "provenance": [
+        {
+          "commit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
         }
       ]
     },
@@ -151348,6 +151380,9 @@
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
+          "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+        },
+        {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
@@ -152197,6 +152232,9 @@
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
+          "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+        },
+        {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
@@ -153044,6 +153082,9 @@
         },
         {
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
+          "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
         },
         {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
@@ -154124,6 +154165,9 @@
         },
         {
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
+          "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
         },
         {
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
@@ -163348,7 +163392,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e797f9ab0786b3617cb4df7ded375a1d74d72fb5",
+      "revision": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
       "currentBranch": "codex/deed-rwa-vault-upgrades",
       "defaultBranch": "main",
       "visibility": "public",
@@ -192204,13 +192248,13 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 136,
-      "version": "09918faed15a8f6a",
+      "lines": 140,
+      "version": "7f827c6aa9ac1c18",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "09918faed15a8f6a"
+          "version": "7f827c6aa9ac1c18"
         }
       ]
     },
@@ -261395,6 +261439,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:478faff2d00ff11bbabade265ed041337f570315",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -279919,6 +279995,22 @@
       "to": "Artifact:docs/release/readiness-work/hosted-6368339e-contract-results.json",
       "provenance": {
         "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "to": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "provenance": {
+        "commit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
       }
     },
     {
@@ -420108,6 +420200,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:477d0ccfb75b526b2434ff9e09f7913f8c80deed",
+      "provenance": {
+        "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:478faff2d00ff11bbabade265ed041337f570315",
       "provenance": {
         "commit": "478faff2d00ff11bbabade265ed041337f570315"
@@ -422447,6 +422547,14 @@
       "to": "Commit:6e7ccb47043e8dec766b84337eabcd52383a3d99",
       "provenance": {
         "commit": "6e7ccb47043e8dec766b84337eabcd52383a3d99"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6ec579eb5000f17fc422e8e6b2c5962037e9dbdb",
+      "provenance": {
+        "commit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
       }
     },
     {
