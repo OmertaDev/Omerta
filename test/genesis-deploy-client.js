@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import { webcrypto } from 'node:crypto';
-import { getContractAddress, getCreate2Address, keccak256, encodeAbiParameters } from 'viem';
-import { TRUSTED_HOOK } from '../public/genesis-deploy-artifact.js';
+import { webcrypto, createHash } from 'node:crypto';
+import { getContractAddress, getCreate2Address, keccak256, encodeAbiParameters, encodeDeployData } from 'viem';
+import { TRUSTED_HOOK, TRUSTED_CREATIONS } from '../public/genesis-deploy-artifact.js';
 import { DEPLOYER, SAFE, FACTORY, STORAGE_KEY, GenesisDeploymentClient, sha256, verifyDeploymentPacket, predictCreateAddress, predictCreate2Address, keccakHex } from '../public/genesis-deploy-client.js';
 
+import { uniformGenesisAuctionSchedule } from '../tools/genesis-auction-deployment-plan.js';
 const now = Date.parse('2026-10-07T00:00:00Z');
 const addr = n => `0x${n.toString(16).padStart(40, '0')}`;
 const roles = ['polFunding', 'reserveFunding', 'coordinator', 'hook', 'auction'];
@@ -54,6 +55,20 @@ function makePacket(start=27n) {
   p.internalValidatorAddress=getContractAddress({from:p.deployments[4].predicted,nonce:1n}).toLowerCase();
   p.internalScheduleAddress=getContractAddress({from:p.deployments[4].predicted,nonce:2n}).toLowerCase();
   p.auxiliaryRuntimeChecks[0].address=p.internalValidatorAddress;p.auxiliaryRuntimeChecks[1].address=p.internalScheduleAddress;
+  const schedule=uniformGenesisAuctionSchedule(BigInt(p.launchClock.endBlock)-BigInt(p.launchClock.startBlock));
+  p.releaseSchedule=schedule;p.internalScheduleRuntime='0x00'+schedule.auctionStepsData.slice(2);
+  p.auxiliaryRuntimeChecks[1].sha256=createHash('sha256').update(Buffer.from(p.internalScheduleRuntime.slice(2),'hex')).digest('hex');
+  const build=(name,args)=>encodeDeployData({abi:[TRUSTED_CREATIONS[name].constructorAbi],bytecode:TRUSTED_CREATIONS[name].creationBytecode,args});
+  p.deployments[0].data=build('OmertaReserveFundingV2',[SAFE,dependencyAddresses.omr,0]);
+  p.deployments[1].data=build('OmertaReserveFundingV2',[SAFE,dependencyAddresses.omr,5]);
+  p.deployments[2].data=build('OmertaAuctionCoordinatorV2',[dependencyAddresses.poolManager,dependencyAddresses.positionManager,dependencyAddresses.permit2,
+    dependencyAddresses.omr,p.deployments[3].predicted,3000,60,BigInt(p.finalManifest.policy.lpTokenAmountWei),SAFE,dependencyAddresses.characterNft]);
+  const supply=BigInt(p.finalManifest.policy.saleTokenAmountWei),minimum=BigInt(p.finalManifest.policy.minimumRaiseWei);
+  const ceilFloor=(minimum*(1n<<96n)+supply-1n)/supply,tick=(ceilFloor+99n)/100n;
+  p.deployments[4].data=build('OmertaGuardedAuction',[dependencyAddresses.omr,supply,
+    {currency:addr(0),tokensRecipient:SAFE,fundsRecipient:p.deployments[2].predicted,startBlock:BigInt(p.launchClock.startBlock),endBlock:BigInt(p.launchClock.endBlock),
+      claimBlock:BigInt(p.launchClock.claimBlock),tickSpacing:tick,validationHook:addr(0),floorPrice:tick*100n,requiredCurrencyRaised:minimum,auctionStepsData:schedule.auctionStepsData},
+    p.deployments[2].predicted,dependencyAddresses.characterNft]);
   return p;
 }
 const packet=makePacket();
@@ -101,7 +116,7 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
         ...(tx.to ? {} : { contractAddress: packet.deployments[i].predicted }) });
       if (!state.failed) state.codes.set(packet.deployments[i].predicted, state.runtimeBad ? '0x6001' : code);
       if (!state.failed && i === 4) for (const pin of packet.auxiliaryRuntimeChecks)
-        state.codes.set(pin.address, pin.name === 'scheduleStore' ? scheduleCode : code);
+        state.codes.set(pin.address, pin.name === 'scheduleStore' ? packet.internalScheduleRuntime : code);
       state.nonce++; state.pendingNonce = state.nonce;
       return state.sendHash ? h : undefined;
     }
@@ -311,3 +326,40 @@ for (const change of [
   assert.equal(f.state.requests.length, 0, 'self-hashed forged hook data is rejected before any wallet request');
 }
 console.log('Trusted local hook bytecode/16 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS');
+const replaceCreationWord = (p, roleIndex, contract, wordIndex, word) => {
+  const offset = 2 + TRUSTED_CREATIONS[contract].creationBytecodeBytes * 2 + wordIndex * 64;
+  p.deployments[roleIndex].data = p.deployments[roleIndex].data.slice(0, offset) + word.padStart(64, '0') + p.deployments[roleIndex].data.slice(offset + 64);
+};
+for (const roleIndex of [0, 1, 2, 4]) {
+  const forged = structuredClone(packet); forged.deployments[roleIndex].data = '0x60006000';
+  const [r, d] = await encoded(forged); f = fixture(); await assert.rejects(() => f.client.load(r, d));
+  assert.equal(f.state.requests.length, 0);
+}
+for (const change of [
+  p => replaceCreationWord(p, 0, 'OmertaReserveFundingV2', 0, addr(777).slice(2)),
+  p => replaceCreationWord(p, 1, 'OmertaReserveFundingV2', 2, '0'),
+  p => replaceCreationWord(p, 2, 'OmertaAuctionCoordinatorV2', 4, addr(777).slice(2)),
+  p => replaceCreationWord(p, 2, 'OmertaAuctionCoordinatorV2', 7, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 1, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 2, 'c0'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 6, addr(777).slice(2)),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 8, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 11, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 12, addr(777).slice(2)),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 13, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 14, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 15, '180'),
+  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 16, '1'),
+  p => { p.deployments[4].data += '00'; },
+  p => { p.launchClock.endBlock = (1n << 64n).toString(); p.launchClock.claimBlock = p.launchClock.endBlock; },
+  p => {
+    // Matching packet/runtime hashes cannot authorize a different final-cliff issuance schedule.
+    const alternate = '0x000000' + '0000000001' + '989680' + '0000000001';
+    p.releaseSchedule.auctionStepsData = alternate; p.internalScheduleRuntime = '0x00' + alternate.slice(2);
+    p.auxiliaryRuntimeChecks[1].sha256 = createHash('sha256').update(Buffer.from(p.internalScheduleRuntime.slice(2), 'hex')).digest('hex');
+  },
+]) {
+  const forged = structuredClone(packet); change(forged); const [r, d] = await encoded(forged);
+  f = fixture(); await assert.rejects(() => f.client.load(r, d)); assert.equal(f.state.requests.length, 0);
+}
+console.log('All five local creation templates and canonical adapter/coordinator/dynamic-auction constructors, offsets, prices and derived uniform schedule bound before wallet access PASS');

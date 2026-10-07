@@ -51,9 +51,30 @@ const trusted = { schemaVersion: 1, contract: 'OmertaHookV2', constructorSchema:
   creationBytecodeKeccak256: artifact.evidence.creationBytecodeKeccak256,
   creationBytecodeSha256: sha(Buffer.from(artifact.bytecode.slice(2), 'hex')),
   creationBytecodeBytes: (artifact.bytecode.length - 2) / 2 };
+const creationDefinitions = {}, reviewed = {
+  OmertaReserveFundingV2: { source: 'src/market-v2/OmertaReserveFundingV2.sol', sha256: '142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3',
+    schema: ['address', 'address', 'uint8'] },
+  OmertaAuctionCoordinatorV2: { source: 'src/market-v2/OmertaAuctionCoordinatorV2.sol', sha256: '330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0',
+    schema: ['address', 'address', 'address', 'address', 'address', 'uint24', 'int24', 'uint128', 'address', 'address'] },
+  OmertaGuardedAuction: { source: 'src/genesis-auction/OmertaGuardedAuction.sol', sha256: '1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140',
+    schema: ['address', 'uint128', 'tuple', 'address', 'address'] },
+};
+for (const [name, pin] of Object.entries(reviewed)) {
+  const a = loadGenesisAuctionArtifact(name), ctor = a.abi.find(entry => entry.type === 'constructor');
+  if (a.evidence.sources[pin.source]?.sha256 !== pin.sha256 || JSON.stringify(ctor?.inputs.map(input => input.type)) !== JSON.stringify(pin.schema))
+    throw Error(`${name}: reviewed source or constructor schema differs.`);
+  if (name === 'OmertaGuardedAuction' && JSON.stringify(ctor.inputs[2].components.map(input => input.type))
+    !== JSON.stringify(['address', 'address', 'address', 'uint64', 'uint64', 'uint64', 'uint256', 'address', 'uint256', 'uint128', 'bytes']))
+    throw Error('Guarded auction dynamic tuple does not match the reviewed canonical schema.');
+  creationDefinitions[name] = { contract: name, constructorAbi: ctor, compiler: a.evidence.compiler,
+    sourceHashes: Object.fromEntries(Object.entries(a.evidence.sources).map(([file, source]) => [file, source.sha256])),
+    creationBytecode: a.bytecode, creationBytecodeKeccak256: a.evidence.creationBytecodeKeccak256,
+    creationBytecodeSha256: sha(Buffer.from(a.bytecode.slice(2), 'hex')), creationBytecodeBytes: (a.bytecode.length - 2) / 2 };
+}
 outputs.set(path.join(publicRoot, 'genesis-deploy-artifact.js'), Buffer.from(
   '// Generated offline from reviewed compiler metadata and every imported source; do not hand edit.\n'
-  + 'export const TRUSTED_HOOK = Object.freeze(' + JSON.stringify(trusted, null, 2) + ');\n'));
+  + 'export const TRUSTED_HOOK = Object.freeze(' + JSON.stringify(trusted, null, 2) + ');\n'
+  + 'export const TRUSTED_CREATIONS = Object.freeze(' + JSON.stringify(creationDefinitions, null, 2) + ');\n'));
 for (const [file, content] of outputs) {
   if (checkOnly) {
     if (!fs.existsSync(file) || !fs.readFileSync(file).equals(content)) throw Error(`Trusted deployment asset is stale: ${path.relative(root, file)}`);

@@ -1,6 +1,6 @@
 // A reviewed packet reader and five individually approved EOA deployments. No Safe operations.
 import { keccak_256 } from './genesis-deploy-vendor/sha3.js';
-import { TRUSTED_HOOK } from './genesis-deploy-artifact.js';
+import { TRUSTED_HOOK, TRUSTED_CREATIONS } from './genesis-deploy-artifact.js';
 export const DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 export const SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 export const FACTORY = '0x4e59b44847b379578588920ca78fbf26c0b4956c';
@@ -79,6 +79,54 @@ function verifyHookCreation(p) {
   check(predicted === lower(deployment.predicted) && (BigInt(predicted) & 0x3fffn) === 0x35c4n,
     'The salt/initcode CREATE2 address or hook permission flags differ from the reviewed prediction.');
 }
+const abiWord = value => BigInt(value).toString(16).padStart(64, '0');
+const abiAddress = value => lower(value).slice(2).padStart(64, '0');
+export function deriveApprovedSchedule(duration) {
+  check(duration > 0n && duration <= 10000000n, 'The approved uniform schedule duration is out of bounds.');
+  const count = duration < 128n ? duration : 128n, steps = [];
+  const add = (rate, delta) => {
+    if (delta === 0n) return;
+    const previous = steps.at(-1);
+    if (previous?.rate === rate) previous.delta += delta; else steps.push({ rate, delta });
+  };
+  let priorBlock = 0n, priorMps = 0n;
+  for (let i = 1n; i <= count; i++) {
+    const boundary = duration * i / count, cumulative = 10000000n * boundary / duration;
+    const delta = boundary - priorBlock, issued = cumulative - priorMps;
+    add(issued / delta + 1n, issued % delta); add(issued / delta, delta - issued % delta);
+    priorBlock = boundary; priorMps = cumulative;
+  }
+  return '0x' + steps.map(step => step.rate.toString(16).padStart(6, '0') + step.delta.toString(16).padStart(10, '0')).join('');
+}
+function verifyOtherCreations(p) {
+  const address = p.deployments.map(deployment => deployment.predicted), policy = p.finalManifest.policy;
+  const word = abiWord, addr = abiAddress;
+  const expected = [
+    ['OmertaReserveFundingV2', addr(SAFE) + addr(DEPENDENCIES.omr) + word(0)],
+    ['OmertaReserveFundingV2', addr(SAFE) + addr(DEPENDENCIES.omr) + word(5)],
+    ['OmertaAuctionCoordinatorV2', [addr(DEPENDENCIES.poolManager), addr(DEPENDENCIES.positionManager), addr(DEPENDENCIES.permit2),
+      addr(DEPENDENCIES.omr), addr(address[3]), word(3000), word(60), word(policy.lpTokenAmountWei), addr(SAFE), addr(DEPENDENCIES.characterNft)].join('')],
+  ];
+  const duration = integer(p.launchClock.endBlock) - integer(p.launchClock.startBlock);
+  const schedule = deriveApprovedSchedule(duration);
+  check(lower(p.releaseSchedule?.auctionStepsData) === schedule, 'Auction issuance bytes differ from the approved bounded uniform schedule.');
+  const supply = integer(policy.saleTokenAmountWei), minimum = integer(policy.minimumRaiseWei);
+  const rawFloorCeil = (minimum * (1n << 96n) + supply - 1n) / supply, tick = (rawFloorCeil + 99n) / 100n, floor = tick * 100n;
+  const head = [addr(DEPENDENCIES.omr), word(supply), word(160), addr(address[2]), addr(DEPENDENCIES.characterNft)].join('');
+  const tuple = [addr('0x' + '0'.repeat(40)), addr(SAFE), addr(address[2]), word(p.launchClock.startBlock), word(p.launchClock.endBlock),
+    word(p.launchClock.claimBlock), word(tick), addr('0x' + '0'.repeat(40)), word(floor), word(minimum), word(352)].join('');
+  const scheduleBytes = bytes(schedule), padded = schedule.slice(2).padEnd(Math.ceil(scheduleBytes.length / 32) * 64, '0');
+  expected.push(['OmertaGuardedAuction', head + tuple + word(scheduleBytes.length) + padded]);
+  for (let i = 0; i < expected.length; i++) {
+    const [name, argumentsHex] = expected[i], definition = TRUSTED_CREATIONS[name];
+    check(definition && bytes(definition.creationBytecode).length === definition.creationBytecodeBytes
+      && keccakHex(definition.creationBytecode) === definition.creationBytecodeKeccak256,
+      'A locally shipped trusted creation template is inconsistent.');
+    const roleIndex = i === 3 ? 4 : i;
+    check(lower(p.deployments[roleIndex].data) === lower(definition.creationBytecode) + argumentsHex,
+      'Deployment creation bytecode or canonical constructor allocation, authority, clock, price or schedule differs.');
+  }
+}
 export async function sha256(value, cryptoApi = globalThis.crypto) {
   const digest = await cryptoApi.subtle.digest('SHA-256', value);
   return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('');
@@ -111,6 +159,7 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   check(clock && ['arbsys', 'block.number'].includes(clock.mode), 'The native launch clock is missing.');
   check(integer(clock.startBlock) < integer(clock.endBlock) && clock.claimBlock === clock.endBlock,
     'The closure claim clock or auction schedule differs.');
+  check(integer(clock.endBlock) < 1n << 64n, 'The auction clock exceeds the canonical uint64 constructor bounds.');
   check(Array.isArray(p.deployments) && p.deployments.length === 5 && p.runtimeChecks
     && Object.keys(p.runtimeChecks).length === 5, 'Exactly five deployment and runtime checks are required.');
   let first;
@@ -131,6 +180,7 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   for (const index of [0, 1, 2, 4]) check(lower(p.deployments[index].predicted)
     === predictCreateAddress(DEPLOYER, integer(p.deployments[index].nonce)), 'A CREATE deployment address differs from the reviewed EOA nonce.');
   verifyHookCreation(p);
+  verifyOtherCreations(p);
   check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 6, 'Six production dependency checks are required.');
   const names = new Set();
   for (const pin of p.dependencyChecks) {
