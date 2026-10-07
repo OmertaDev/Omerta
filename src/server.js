@@ -529,6 +529,19 @@ export async function buildServer() {
   // ── PWA — the web manifest + app icons, so the game INSTALLS to the home screen (iOS + Android) and
   // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.
   const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);
+  // Explicit public pages and reviewed deployment modules: no wildcard or user-controlled file path.
+  for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {
+    const page = servePage(readFileSync(pub(name + '.html'), 'utf8'));
+    app.get('/' + name, page);
+    app.get('/' + name + '.html', page);
+  }
+  for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',
+    'genesis-deploy-vendor/sha3.js', 'genesis-deploy-vendor/_u64.js',
+    'genesis-deploy-vendor/utils.js', 'genesis-deploy-vendor/crypto.js']) {
+    const code = readFileSync(pub(name), 'utf8');
+    app.get('/' + name, async (req, reply) => reply.type('application/javascript; charset=utf-8')
+      .header('cache-control', 'no-store').send(code));
+  }
   let manifestJson = ''; try { manifestJson = readFileSync(pub('manifest.json'), 'utf8'); } catch { /* headless */ }
   const serveManifest = async (req, reply) => reply.type('application/manifest+json; charset=utf-8').header('cache-control', 'public, max-age=3600').send(manifestJson);
   app.get('/manifest.json', serveManifest);
