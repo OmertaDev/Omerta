@@ -529,19 +529,27 @@ export async function buildServer() {
   // ── PWA — the web manifest + app icons, so the game INSTALLS to the home screen (iOS + Android) and
   // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.
   const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);
-  // Explicit public pages and reviewed deployment modules: no wildcard or user-controlled file path.
-  for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {
-    const page = servePage(readFileSync(pub(name + '.html'), 'utf8'));
-    app.get('/' + name, page);
-    app.get('/' + name + '.html', page);
-  }
-  for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',
-    'genesis-deploy-vendor/sha3.js', 'genesis-deploy-vendor/_u64.js',
-    'genesis-deploy-vendor/utils.js', 'genesis-deploy-vendor/crypto.js']) {
+  // Explicit public pages and reviewed deployment modules: no user-controlled file path.
+  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));
+  app.get('/defi', defiPage);
+  app.get('/defi.html', defiPage);
+  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));
+  app.get('/fee-flows', feeflowsPage);
+  app.get('/fee-flows.html', feeflowsPage);
+  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));
+  app.get('/genesis-deploy', genesisdeployPage);
+  app.get('/genesis-deploy.html', genesisdeployPage);
+  const reviewedModule = name => {
     const code = readFileSync(pub(name), 'utf8');
-    app.get('/' + name, async (req, reply) => reply.type('application/javascript; charset=utf-8')
-      .header('cache-control', 'no-store').send(code));
-  }
+    return async (req, reply) => reply.type('application/javascript; charset=utf-8')
+      .header('cache-control', 'no-store').send(code);
+  };
+  app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));
+  app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
+  app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));
+  app.get('/genesis-deploy-vendor/_u64.js', reviewedModule('genesis-deploy-vendor/_u64.js'));
+  app.get('/genesis-deploy-vendor/utils.js', reviewedModule('genesis-deploy-vendor/utils.js'));
+  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));
   let manifestJson = ''; try { manifestJson = readFileSync(pub('manifest.json'), 'utf8'); } catch { /* headless */ }
   const serveManifest = async (req, reply) => reply.type('application/manifest+json; charset=utf-8').header('cache-control', 'public, max-age=3600').send(manifestJson);
   app.get('/manifest.json', serveManifest);
