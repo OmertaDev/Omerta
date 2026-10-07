@@ -3,18 +3,24 @@ import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { verifyWorldRecoverySources, WORLD_DURATION_CANDIDATES } from './rc1-world-qualification.js';
 import { STAKE_LOCKS } from '../src/rules.js';
+import { DEED_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 
 const hash = value => sha256(canonicalJson(value));
 const pins = {
-  'src/made.js': 'f871cf72aa3f4f65488c77ad16b257100569d40e3cf9b96dd4877e6c22be0e02', 'src/brokers.js': '75c5b13315ed220dd22cbb16c22e8bc1f245da75e392fbb0e940c5df73e8516f',
+  'src/made.js': 'f871cf72aa3f4f65488c77ad16b257100569d40e3cf9b96dd4877e6c22be0e02', 'src/brokers.js': '7c7fbcdcec9e22f88edff54132a20eeed40564b1f15a083b89f83ae5aba2a33e',
   'src/routes/estate.js': 'e72723bad80d851d7cd70e1b55109414fbb263099f4e0c241cbc4a47382d4e4e', 'src/player-commands.js': '79ead5d111f072b3e957ea4a5d0d154589f2677a8f22cfc6d2d95d2d7ad4aff6',
 };
-export const LIFECYCLE_APPLICABILITY_REVIEW = Object.freeze({ version: 1, pins,
+export const LIFECYCLE_APPLICABILITY_REVIEW = Object.freeze({ version: 2, pins,
+  reviewedRevision: DEED_SOURCE_REVIEWED_REVISION,
+  sourceReviewTransfer: { baselineRevision: 'db54f824004c4d855778668081ce2adfac173c39',
+    previousBrokerSha256: '75c5b13315ed220dd22cbb16c22e8bc1f245da75e392fbb0e940c5df73e8516f',
+    evidence: 'output/deed-rwa-upgrades/review.md',
+    scope: 'Reviewed baseline gameplay participation and optional permanent deed upgrades; activate now unconditionally rejects before payment. Existing paid commitments and expiry remain applicable; historical receipts retain previous review bindings.' },
   openingWriters: { 'made-membership': 'src/made.js payDues -> setMadeUntil; POST /v1/made',
-    'broker-activation': 'src/brokers.js activate; POST /v1/brokers/activate',
+    'broker-activation': 'Existing broker_activations only; src/brokers.js activate and POST /v1/brokers/activate reject new activation and renewal',
     'stake-lock': 'src/economy.js lockStake; POST /v1/stake/lock' },
-  closure: 'Original local worker callbacks and PlayerCommand domain dispatch do not invoke these dedicated activation writers. Canonical HTTP dispatch opens them only through the listed mounted routes. GET /v1/me and readCharacter accrue original state, but do not open these paid activations/locks. The complete measured invocation inventory must include every actor, preparation after baseline, retry, pending replay and HTTP/direct dispatch. Other direct domain callbacks are UNKNOWN.',
-  scope: 'NOT_APPLICABLE means no initialized active timer and no possible opening invocation in this exact measured workload. Mounted routes remain available; no claim about final production flags, future user actions or deployment activation is made.',
+  closure: 'Original local worker callbacks and PlayerCommand domain dispatch do not invoke dedicated made/stake activation writers. Canonical HTTP dispatch opens those timers only through the listed mounted routes; broker activation rejects before payment. GET /v1/me and readCharacter accrue original state without opening paid timers. The complete measured invocation inventory must include every actor, preparation after baseline, retry, pending replay and HTTP/direct dispatch. Other direct domain callbacks are UNKNOWN.',
+  scope: 'NOT_APPLICABLE means no initialized active timer and no possible opening invocation in this exact measured workload. Made/stake routes remain available; broker activation and renewal are explicitly retired. No claim about final production flags or deployment activation is made.',
   shorterHorizons: 'Original broker allocation/Family week and workload loan/shipment/operation/Law/turf/market timers are at most7 days, below the28-day season. Their due original workers still require execution receipts. Historical wallet-age eligibility and telemetry retention are not gameplay lifecycles.',
 });
 export async function verifyLifecycleSources(input) {
@@ -53,7 +59,7 @@ export function reviewWorkloadLifecycleApplicability({ source, configurationSha2
     const pathname = call.path.split('?')[0].replace(/\/$/, '');
     if (call.method !== 'POST') continue;
     if (pathname === '/v1/made') opened.add('made-membership');
-    if (pathname === '/v1/brokers/activate') opened.add('broker-activation');
+    // The mounted broker activation route unconditionally rejects; it opens no timer.
     if (pathname === '/v1/stake/lock') {
       const tier = STAKE_LOCKS.TIERS.find(row => row.id === call.body?.tier);
       // Unknown/variable tier can open any original tier; do not waive90 days.

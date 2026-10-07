@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { carOf, levelOf, POPULATION, rollRarity } from '../src/rules.js';
-import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS } from './rc1-car-melt-provenance.js';
+import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS, assertCarMeltRulesCompatibility } from './rc1-car-melt-provenance.js';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 
 export const NPC_CAR_SOURCE_PINS = Object.freeze({
@@ -27,6 +27,7 @@ export function assertNpcCarSources() {
   for (const [file, expected] of Object.entries(NPC_CAR_SOURCE_PINS)) {
     const text = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
     assert.equal(sha256(text), expected, 'NPC car source changed: ' + file);
+    if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
     if (file === 'src/population.js') population = text;
   }
   const line = needle => {

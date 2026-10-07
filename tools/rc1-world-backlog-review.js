@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
+import { assertCarMeltRulesCompatibility, assertDeedBacklogCompatibility, DEED_RULES_CURRENT_PIN,
+  DEED_BACKLOG_CURRENT_PINS, DEED_BACKLOG_BASELINE_PINS, DEED_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 import { LOAN, LAW, WORLD, PEN, CREW, MENTOR, BOXING, CASINO, FAMILY_YIELD, HEIST_PLAN_TTL_MS, dayOf, weekOf } from '../src/rules.js';
 
 export const BACKLOG_SOURCE_PINS = Object.freeze({
@@ -20,9 +22,9 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/favors.js': '9026bd6a0e76da70e8307bbca45b08982904e455cf1e2e46ac8a843f14bb4f87',
   'src/auction.js': 'aa5b1931188d7e8294e6c1518b36ea2664544fd218c431ea62cd4b435bfdf743',
   'src/commission.js': '7e1aabd4aea45dc32ff68f3ba9307fd8e6a3794c74ad7e9387f308045da5445f',
-  'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+  'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
-  'src/invariants.js': 'ffbaae96e4ff8f9a62a0d8329020c13853a50ccc69a197f5c0b4c6a04bc7e9c4',
+  'src/invariants.js': DEED_BACKLOG_CURRENT_PINS['src/invariants.js'],
   'src/law.js': '24fef65ec00bf064bcd3db5513e047ff8339950e4c4ee80ad331747bf7510cca',
   'src/desk.js': 'c3f93aab7cac98192f266dad21e6ec0e0687cb0a1c7541ae0710f822607157e9',
   'src/diplomacy.js': 'dbfad062b79ea5fa8e21d0bf6c9d10b99899b801a68708cf8151c261be106d7b',
@@ -41,9 +43,14 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/pass.js': '299a9465d324019a500b40f03d09a686d6b57b11498e5ff4a40543d75bde9997',
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/primetime.js': '48c4def2e7a270ee79a00504b9a1f8fd1098989b2ba775534dc19f28feaeb41f',
-  'src/chain.js': 'ce26f5bdc6b9ac0a6f448b973bd47ad58b94675f58a3ba5576d7cf25a7532381',
+  'src/chain.js': DEED_BACKLOG_CURRENT_PINS['src/chain.js'],
   'src/exchange.js': 'ab28cdc4d722fce1699a486b66314b720bca93601b1b83e4fb88f2d542f4c956',
 });
+export const BACKLOG_DEED_SOURCE_TRANSFER = Object.freeze({ reviewedRevision: DEED_SOURCE_REVIEWED_REVISION,
+  baselineRevision: 'db54f824004c4d855778668081ce2adfac173c39', baselinePins: DEED_BACKLOG_BASELINE_PINS,
+  baselineRulesSha256: 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+  evidence: 'output/deed-rwa-upgrades/release-source-pin-fix.json',
+  scope: 'Exact reviewed deed rules, atomic ownership/wallet day fields and OMR reason addition; complete baseline sources reconstructed. Existing backlog disposition logic unchanged.' });
 const compact = text => text.replace(/\s+/g, ' ').trim();
 const digest = value => sha256(canonicalJson(value));
 const round6 = x => Math.round(Number(x) * 1e6) / 1e6;
@@ -57,6 +64,8 @@ function sourceProof(revision) {
   for (const [file, expected] of Object.entries(BACKLOG_SOURCE_PINS)) {
     const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
     assert.equal(sha256(actual), expected, `Backlog reviewer source changed: ${file}`);
+    if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
+    if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
     const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
     assert.equal(sha256(pinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(actual));
   }
@@ -355,7 +364,7 @@ export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, config
   if (checks.length !== INVARIANT_NAMES.length) unknown.push({ kind: 'canonical-invariant-evidence-missing', missing: INVARIANT_NAMES.filter(name => !checks.some(c => c.name === name)) });
   const jobCoverage = workerJobCoverage();
   if (jobCoverage.unmapped.length) unknown.push({ kind: 'original-worker-job-disposition-missing', workerLabels: jobCoverage.unmapped });
-  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS,
+  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER,
     configuration, configurationSha256: digest(configuration), inventory, liveState, jobCoverage, unknown,
     scope: 'Original internal lifecycle drainers across the same workload policies, including Law, deferred financial work and explicitly conditional external-input queues. Recurring generators, provider polling, external notification transport and historical retention are separate from this row-draining inventory.',
     qualification: 'OBSERVATIONS_ONLY' };

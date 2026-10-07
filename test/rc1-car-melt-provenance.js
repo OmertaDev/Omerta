@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS } from '../tools/rc1-car-melt-provenance.js';
+import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, CAR_MELT_BASELINE_RULES_PIN, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
 import { carMelt } from '../src/rules.js';
+
+const rulesText = fs.readFileSync(new URL('../src/rules.tail.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const compatibility = assertCarMeltRulesCompatibility(rulesText);
+assert.equal(compatibility.actualSha256, CAR_MELT_SOURCE_PINS['src/rules.tail.js']);
+assert.equal(compatibility.baselineSha256, CAR_MELT_BASELINE_RULES_PIN);
+assert.equal(assertCarMeltRulesCompatibility(compatibility.baselineText).actualSha256, CAR_MELT_BASELINE_RULES_PIN);
+assert(rulesText.includes('MELT_TITHE: 0.25'), 'Negative control must locate the actual car melt rule');
+assert.throws(() => assertCarMeltRulesCompatibility(rulesText.replace('MELT_TITHE: 0.25', 'MELT_TITHE: 0.26')), /source changed/);
+assert.throws(() => assertCarMeltRulesCompatibility(compatibility.baselineText.replace('MELT_TITHE: 0.25', 'MELT_TITHE: 0.26')), /source changed/);
+assert.throws(() => assertCarMeltRulesCompatibility(rulesText.replace('costOmr: 150, bonusBps: 500', 'costOmr: 151, bonusBps: 500')), /source changed/);
 
 const source = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
 const bulk = source.match(/const bulk = await client\.query\(`([\s\S]*?)`,\s*\[ch\.id, ch\.account_id, today\]\)/)[1];

@@ -1,11 +1,22 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { assertDeedServerCompatibility, DEED_SERVER_BASELINE_PIN, DEED_SERVER_CURRENT_PIN } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
+const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const serverProof = assertDeedServerCompatibility(serverText);
+assert.equal(serverProof.actualSha256, DEED_SERVER_CURRENT_PIN);
+assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha256, DEED_SERVER_BASELINE_PIN);
+assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
+assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+const carCatalog = await fs.readFile('src/rules.generated.js', 'utf8');
+assert(carCatalog.includes('melt: 28, val: 900'), 'Car value rejection control must modify an actual car catalog row');
+await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+  readFile: async file => file === 'src/rules.generated.js' ? carCatalog.replace('melt: 28, val: 900', 'melt: 28, val: 901') : fs.readFile(file) }), /source changed/);
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 for (const changedFile of ['src/game.js', 'src/server.js']) await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,

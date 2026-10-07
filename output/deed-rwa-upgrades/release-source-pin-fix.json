@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-06",
+  "sourceCommit": "7222b0964606e944326da2e2cd0ac8c0e4d02b36",
+  "baselineCommit": "db54f824004c4d855778668081ce2adfac173c39",
+  "scope": "Test-only source-pin class compatibility across car, NPC family/acquisition, world recovery and backlog; no product or immutable historical review edits",
+  "normalizedRulesBaselineSha256": "ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed",
+  "normalizedActualRulesSha256": "83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb",
+  "compatibilityProof": "Exact approved text transformations reconstruct complete db54 rules/server/chain/invariants bytes; both old and actual full digests verified. No regex stripping or permissive source matching.",
+  "negativeControls": [
+    "actual MELT_TITHE alteration rejected in current source",
+    "actual MELT_TITHE alteration rejected in baseline source",
+    "unapproved ladder constant alteration rejected",
+    "deed route authentication removal rejected",
+    "unsupported baseline server route rejected",
+    "actual car catalog value 900 to901 rejected",
+    "unapproved chain/invariants changes rejected"
+  ],
+  "positiveControls": [
+    "current complete-file digest accepted and truthfully attested",
+    "original complete-file baseline accepted by compatibility proof",
+    "original melt semantics and source-map consumers unchanged"
+  ],
+  "filesSha256": {
+    "tools/rc1-lifecycle-applicability.js": "9DBD049700DD78EE9B5F53ACBFBD13790794292E701CB3FFB02B962613097B0F",
+    "test/rc1-car-melt-provenance.js": "77E64B782420ED341E8B8D0425ED553CD3423336DDF321BDC4877F0AA6E7D052",
+    "test/rc1-world-qualification.js": "A08BD1887495EF82472312B1B352BFDDBD2F8E6E8F486DEB81377ABDAF5393BD",
+    "tools/rc1-deed-source-compatibility.js": "7D93F4B06C1764044B6C32C65F97BD2CA9E79B13F57A593124AB16298E90ED85",
+    "tools/rc1-car-melt-provenance.js": "E182EFF563D8CB9A4382F76016BDE89CFFCA9A564688D4E8E76CA7CF40C6B732",
+    "test/rc1-world-backlog-review.js": "7D4EDE80657A8B3C8C21D953F869496260993A0F88A43CD09473719FAE1E46D5",
+    "test/rc1-lifecycle-applicability.js": "82195B923664BCE981489C10154EFEC1D5DD575467684A94CD38225C2E280286",
+    "tools/rc1-npc-car-acquisition.js": "60660CAAC055D25E8D4B84443A3339CC53969E4D58BAA32ED88BE31FF4B9B51F",
+    "tools/rc1-world-qualification.js": "E5D9027058A2FA46DBAE5CB028EDF38FD457AEB4EE584BE01F245ADC63F91222",
+    "tools/rc1-world-backlog-review.js": "122665DEE85EF39B5E7817420434C999CB14A5841FEBF2ADEDE98C7FAB696101",
+    "tools/rc1-npc-family-provenance.js": "EB217E6D4F028403C5418F6C9E638244846740ACF914B6BA71C94392530859BE"
+  },
+  "checks": [
+    {
+      "command": "node test/rc1-car-melt-provenance.js",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "node test/rc1-npc-car-acquisition.js",
+      "exitCode": 0,
+      "status": "PASS_SYNTHETIC"
+    },
+    {
+      "command": "node test/rc1-npc-retirement-journal.js",
+      "exitCode": 0,
+      "status": "PASS_SCOPED"
+    },
+    {
+      "command": "exact baseline reconstruction compared with git show db54",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:rc1:harness",
+      "exitCode": 1,
+      "status": "FAILED_SEPARATE_RECOVERY_SOURCE_PIN",
+      "detail": "Former NPC retirement failure passed; stopped subsequently at test/rc1-world-qualification.js due tools/rc1-world-qualification.js:50 retaining old rules.tail.js digest. Recovery tool is outside assigned mutation scope."
+    }
+  ],
+  "limits": "Synthetic provenance controls do not replace native PostgreSQL gameplay proof. No product source was edited or deployment executed.",
+  "sourceTransfer": {
+    "reviewedRevision": "7222b0964606e944326da2e2cd0ac8c0e4d02b36",
+    "recoveryReviewVersion": 3,
+    "currentInvariants": "c1f9e4cc88ee7e7f4b78b3d2165eb0c3ae03e36232f8e98645867cac95900339",
+    "currentServer": "bbbeb137b8b1baeff09985331bc70a57670ddb723925057ffa858f840880e453",
+    "baselineRevision": "db54f824004c4d855778668081ce2adfac173c39",
+    "currentChain": "182ec8bbd6caef02e6c9084f6ec755333a0e40b554cad2367686865c4d52eae1",
+    "lifecycleReviewVersion": 2,
+    "currentBroker": "7c7fbcdcec9e22f88edff54132a20eeed40564b1f15a083b89f83ae5aba2a33e",
+    "baselineBroker": "75c5b13315ed220dd22cbb16c22e8bc1f245da75e392fbb0e940c5df73e8516f",
+    "brokerTransferKind": "Semantic review transfer using retained backend review; not additive source reconstruction"
+  },
+  "directedDigestSweep": "91 literal rc1 product source pins checked against current normalized bytes: zero mismatches after lifecycle semantic review transfer. Frozen baseline constants and history metadata intentionally excluded.",
+  "adjacentChecks": [
+    "node test/rc1-world-qualification.js PASS",
+    "node test/rc1-world-backlog-review.js PASS",
+    "node test/rc1-npc-family-recruitment.js PASS",
+    "four exact baseline reconstruction byte comparisons PASS",
+    "node test/rc1-lifecycle-applicability.js PASS: retired activation cannot open timer; existing paid commitment remains applicable"
+  ],
+  "fullHarnessRetest": {
+    "command": "npm run test:rc1:harness",
+    "log": "output/deed-rwa-upgrades/release-source-pin-harness.log",
+    "status": "PASS",
+    "detail": "Complete npm run test:rc1:harness passed through final world-cell-admission test; current source remains7222 product revision with harness-only dirty edits.",
+    "exitCode": 0,
+    "logSha256": "C45A90F6CB0CD5171424AB1A14E5E5CE56071B14D7ADBA24400AF6064D3B3E74"
+  },
+  "censusImpact": "One added tools helper; no added src/test file or product census change"
+}

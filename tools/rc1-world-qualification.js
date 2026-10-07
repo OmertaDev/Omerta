@@ -2,6 +2,8 @@
 import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
+import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RULES_CURRENT_PIN,
+  DEED_SERVER_CURRENT_PIN, DEED_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
@@ -11,8 +13,8 @@ const sourceFiles = Object.freeze({
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
-  'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
-  'src/server.js': '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff',
+  'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
+  'src/server.js': DEED_SERVER_CURRENT_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
   'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
@@ -20,7 +22,12 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 2, reviewedRevision: '788e672741e558210029683fed928a06934123f3', sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 3, reviewedRevision: DEED_SOURCE_REVIEWED_REVISION, sourceFiles,
+  deedSourceReviewTransfer: { previousReviewedRevision: '788e672741e558210029683fed928a06934123f3',
+    previousRulesSha256: 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+    previousServerSha256: '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff',
+    evidence: 'output/deed-rwa-upgrades/release-source-pin-fix.json',
+    scope: 'Exact deed sink and literal catalog additions plus authenticated deed upgrade import/route; complete prior source reconstructed and hashed. Existing recovery guards unchanged. Historical receipts retain previous review bindings.' },
   sourceReviewTransfer: { previousReviewedRevision: '92f09bb436d9e7cacb874adb60f7238c0b1d709d',
     previousServerSha256: '3d5f86d5b5db4a410a757d3c3385d14ee6b6174cde003ca52662241ca3ec0bd4',
     evidence: 'omerta-contracts/audits/2026-10-04-character-checkout/manifest.json',
@@ -47,7 +54,12 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 2, reviewedRevisio
 
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
-  for (const [file, expected] of Object.entries(sourceFiles)) assert.equal(sha256(String(await readFile(file)).replace(/\r\n/g, '\n')), expected, 'Recovery rule source changed: ' + file);
+  for (const [file, expected] of Object.entries(sourceFiles)) {
+    const text = String(await readFile(file)).replace(/\r\n/g, '\n');
+    assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
+    if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
+    if (file === 'src/server.js') assertDeedServerCompatibility(text);
+  }
   return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles } };
 }
 function binding(source, checkpoint) {
@@ -187,7 +199,7 @@ export function joinWorldCheckpointAssertions({ manifest, source, checkpoint, di
 export const WORLD_DURATION_CANDIDATES = Object.freeze([
   { id: 'season', durationMs: 28 * DAY, source: 'src/worker.js runSeasonRollover / rules seasonIdxOf', applicability: 'Local world population; count distinct world seasons, never one rollover per actor' },
   { id: 'made-membership', durationMs: MADE.MS, source: 'src/rules.tail.js MADE/isMade', applicability: 'Review configured paid/status rail and workload; an empty balance alone is not a disabled-rail attestation' },
-  { id: 'broker-activation', durationMs: BROKERS.ACTIVATION_MS, source: 'src/rules.tail.js BROKERS/brokerActive', applicability: 'Review original paid activation writer and workload command closure; an uninvoked local route is not a disabled route' },
+  { id: 'broker-activation', durationMs: BROKERS.ACTIVATION_MS, source: 'src/rules.tail.js BROKERS/brokerActive', applicability: 'Existing paid commitments retain their duration and quoted terms; activation and renewal writers are explicitly retired. Optional permanent deed upgrades are separate and baseline participation requires no activation payment.' },
   ...STAKE_LOCKS.TIERS.map(tier => ({ id: 'stake-lock-' + tier.id, durationMs: tier.days * DAY,
     source: 'src/rules.tail.js STAKE_LOCKS/stakeLockActive', applicability: 'Review configured stake rail and workload; expiry predicate is not an automatic unbond or withdrawal' })),
 ]);
