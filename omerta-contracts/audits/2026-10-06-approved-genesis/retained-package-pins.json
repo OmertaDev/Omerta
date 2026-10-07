@@ -5,8 +5,24 @@
       "sha256": "ddc9ae89eab25db624c74278935f90dcaae4f8df3d080f31601ece9df66f10c1"
     },
     {
+      "file": "canonical-source-followup.json",
+      "sha256": "f4a956e0d699e87896c4ed1db6a2170f0a756a5ef1079767ff24984b71a6db96"
+    },
+    {
       "file": "genesis-approved-complete-technical-preflight.json",
       "sha256": "bc779f9782be5d97a1002cd83d65e3ce6ae3de9a791154a5fa9b883683a60cd0"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks-exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks-provenance.json",
+      "sha256": "c6fa1a9702f2a38de35e7e0905a069ec311fd8d33a97dc6bbab23e8d047478f9"
+    },
+    {
+      "file": "genesis-approved-current-governance-robinhood-forks.txt",
+      "sha256": "967bb62462dc809108f535fd0952a1c28aa77bcf4f2c69a734ba9425cdd95501"
     },
     {
       "file": "genesis-approved-daybreak-periphery-review.txt",
@@ -65,6 +81,10 @@
       "sha256": "e21e1906760fd567881357929768d0e0e80542ba3f46f894dbff7912a6578060"
     },
     {
+      "file": "genesis-daybreak-canonical-source-retest.txt",
+      "sha256": "a145c0b764ae88a0afb383bf2e7ba25491a20893cb0ab99926a7f8528559aabe"
+    },
+    {
       "file": "genesis-governance-daybreak-final-retest.txt",
       "sha256": "0d03ea29ed44c5f155e63585fbb3a34f35c238a4b00d44402a1381faee823cc6"
     },
@@ -102,11 +122,11 @@
     },
     {
       "file": "report.md",
-      "sha256": "bd88dd1ce59d8bda35ff1655a9f56284a95605b62e688629df6e7db6eccfb7c4"
+      "sha256": "a687b96163e6e887a7a4f9cef5946b11e6b1ee4a0d32eed3a8f8244483bd56b3"
     },
     {
       "file": "retention-pins.json",
-      "sha256": "c93f8419a50c9646fa28403fa429d3683ff6ed267784495fb3b62e08bec9a450"
+      "sha256": "adbb44ece56764d899bb58fcc659b794a58c7df659baae3351f8e982da03be17"
     },
     {
       "file": "reviewer-invocation.json",

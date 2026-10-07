@@ -1,0 +1,37 @@
+{
+  "sourceRevision": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c",
+  "files": [
+    {
+      "path": "tools/build-genesis-deploy-trust.js",
+      "sha256": "957e819ae1ca8d651c025423805b8925775c6515b068796b10539c3f87bd936c"
+    },
+    {
+      "path": "tools/genesis-deploy-trust-checks.js",
+      "sha256": "0c5e71bae868e31a70629312eb865534e50bcae33ad43ec0d3030dc97c0d63f0"
+    },
+    {
+      "path": "test/genesis-deploy-trust-checks.js",
+      "sha256": "ccadeb55170884f30b7cee52e0b9bc40d097cb00bde1be4c5bb36e4c06597755"
+    },
+    {
+      "path": "public/genesis-deploy-artifact.js",
+      "sha256": "79fb7aa7bd28b6bbef37e226f35809cb5a69132fb43682939af6fd72ea536a79"
+    }
+  ],
+  "review": {
+    "model": "gpt-daybreak-blue-latest",
+    "reasoningEffort": "high",
+    "report": "genesis-daybreak-canonical-source-retest.txt",
+    "exitCode": 0
+  },
+  "conclusion": "No concrete defect found in scoped correction. All creation code, bytecode hashes and constructor metadata unchanged; source identity follows exact compiler-verified LF bytes. Changed source and bytecode mutants rejected.",
+  "forkSupplement": {
+    "sourceRevision": "927f4f1736f01f5b2337f73e62b9b8a699935132",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "clock": "ArbSys removed and native block clock simulated; not production timing proof."
+  },
+  "signingReady": false,
+  "broadcast": false
+}

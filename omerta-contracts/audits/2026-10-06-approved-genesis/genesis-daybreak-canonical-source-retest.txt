@@ -1,0 +1,30 @@
+No in-scope security findings.
+
+Pinned base: `3f5e97d9d03f1d537dc63cfb33302325f643efb7`.
+
+- Builder SHA-256: `957e819ae1ca8d651c025423805b8925775c6515b068796b10539c3f87bd936c`
+- [Trust checks](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-deploy-trust-checks.js:6): `0c5e71bae868e31a70629312eb865534e50bcae33ad43ec0d3030dc97c0d63f0`
+- [Test](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/test/genesis-deploy-trust-checks.js:1): `ccadeb55170884f30b7cee52e0b9bc40d097cb00bde1be4c5bb36e4c06597755`
+- Generated artifact: `79fb7aa7bd28b6bbef37e226f35809cb5a69132fb43682939af6fd72ea536a79`
+
+Compared through `trustedModuleValues` against `HEAD`:
+
+| Definition | Bytes | SHA-256 / Keccak / constructor |
+|---|---:|---|
+| OmertaHookV2 | 15,547 | unchanged |
+| OmertaReserveFundingV2 | 2,461 | unchanged; shared by both funding adapter roles |
+| OmertaAuctionCoordinatorV2 | 16,358 | unchanged |
+| OmertaGuardedAuction | 23,966 | unchanged |
+
+After removing `sourceHashes` and the new `sourceHashEncoding`, all generated values were deeply identical to `HEAD`.
+
+The loader derives `compilerInputKeccak256` directly from compiler metadata and rejects unmatched raw/canonical source bytes ([loader](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/genesis-auction-deployment-plan.js:107)). All 101 unique sources matched canonical-LF compiler Keccak; 51 recorded entries changed solely from CRLF SHA-256 to LF SHA-256. Mutations of every source and all four bytecodes were rejected. `--check` retains strict byte equality ([builder](/C:/Users/Jorge/Documents/Omerta/output/contract-red-team-release/tools/build-genesis-deploy-trust.js:85)); diagnostics cannot authorize mismatches.
+
+Passed on Node `v24.19.0`:
+
+- New trust-check test
+- Builder `--check`
+- Deployment signer/client suite
+- Genesis preflight
+
+The aggregate deployment suite’s planner test could not run because the required `mkdtemp` was denied by the read-only sandbox; no assertion failed. No files were edited.

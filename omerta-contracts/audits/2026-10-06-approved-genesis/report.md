@@ -35,3 +35,7 @@ Evidence copies use UTF-8 LF. retention-pins.json maps original external-file ha
 ## Hosted-check caller follow-up
 
 The first hosted contract job caught a shared market planner still passing the old nine-argument hook constructor. Follow-up revision e5eaa1857dafa46e5fb00a5481a3e4414d2b16df derives argument ten from the existing Safe, adds exact-authority/override regression checks, and narrowly handles the existing Permit2 mount while retaining all imported source hash checks. The 15-check artifact-backed planner, keeper and solver suite passed. Financial contracts and the reviewed signing page are unchanged. Original hosted failure and follow-up source pins are retained; final hosted gates remain required.
+
+## Canonical source identity and current fork supplement
+
+Revision 9ae83b9c corrects cross-platform recorded source hashes after proving normalized LF bytes match the exact compiler input Keccak. All compiled creation code, bytecode identities, constructor metadata and signing behavior are unchanged. Daybreak found no concrete defect in the scoped correction; tests reject altered source or bytecode. The original hosted failure was metadata identity, not changed execution code. The current governance revision also passed both explicitly executed Robinhood fork scenarios; their retained clock mocks do not prove live ArbSys timing. The canonical-source follow-up pins the changed tooling, review and supplemental tests separately from the historical implementation revision above. Hosted checks and production/on-chain verification remain separate.
