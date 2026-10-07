@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a714d57f6cf66658ba163128dd344aadfcf95499",
+  "sourceRevision": "96b517973ed47445cab7308a9ee4ac26624ab294",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10031,
-    "edges": 40761,
+    "nodes": 10033,
+    "edges": 40777,
     "byNodeType": {
       "Artifact": 4299,
       "Command": 184,
-      "Commit": 2097,
+      "Commit": 2099,
       "Contract": 126,
       "Document": 693,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3389,
-      "CHANGED": 15877,
+      "CHANGED": 15886,
       "CONTAINS": 4320,
       "DECLARES": 184,
       "DEFINED_IN": 1316,
       "DEPENDS_ON": 66,
-      "EXECUTES": 627,
+      "EXECUTES": 632,
       "HANDLED_BY": 720,
-      "HAS_COMMIT": 2097,
+      "HAS_COMMIT": 2099,
       "IMPLEMENTS": 124,
       "IMPORTS": 4000,
       "INHERITS": 42,
@@ -40321,18 +40321,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "0e8dce8c9fff05a8",
+      "version": "95ad0173f85a4fde",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "0e8dce8c9fff05a8"
+          "version": "95ad0173f85a4fde"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:18:41.000Z",
+      "lastChangedAt": "2026-10-07T08:00:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9929839b3b305d6e24f1e7e4330fe4da8a9adc94"
+      "lastChangedCommit": "96b517973ed47445cab7308a9ee4ac26624ab294"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -62209,20 +62209,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 32574,
+      "bytes": 32729,
       "lines": 213,
-      "version": "9e2e9c1562d893d9",
+      "version": "0f7b6e559bff801b",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "9e2e9c1562d893d9"
+          "version": "0f7b6e559bff801b"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:00:06.000Z",
+      "lastChangedAt": "2026-10-07T08:00:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c"
+      "lastChangedCommit": "96b517973ed47445cab7308a9ee4ac26624ab294"
     },
     {
       "key": "Artifact:Procfile",
@@ -86589,20 +86589,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 284362,
-      "lines": 4230,
-      "version": "c9cb2137dfda3404",
+      "bytes": 285749,
+      "lines": 4238,
+      "version": "ae015f9d83a2fa56",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "c9cb2137dfda3404"
+          "version": "ae015f9d83a2fa56"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:56:02.000Z",
+      "lastChangedAt": "2026-10-07T08:00:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78660d15b46dc39dd6daad8a342505f04e0f9172"
+      "lastChangedCommit": "96b517973ed47445cab7308a9ee4ac26624ab294"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -99831,7 +99831,7 @@
       "type": "Command",
       "id": "npm:test",
       "label": "npm run test",
-      "command": "node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && npm run test:genesis-auction",
+      "command": "node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js",
       "provenance": [
         {
           "file": "package.json",
@@ -121492,6 +121492,22 @@
       ]
     },
     {
+      "key": "Commit:96b517973ed47445cab7308a9ee4ac26624ab294",
+      "type": "Commit",
+      "id": "96b517973ed47445cab7308a9ee4ac26624ab294",
+      "label": "Classify auction RPC batches and list all genesis tests in the default suite",
+      "title": "Classify auction RPC batches and list all genesis tests in the default suite",
+      "date": "2026-10-07T08:00:43.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/96b517973ed47445cab7308a9ee4ac26624ab294",
+      "provenance": [
+        {
+          "commit": "96b517973ed47445cab7308a9ee4ac26624ab294",
+          "url": "https://github.com/OmertaDev/Omerta/commit/96b517973ed47445cab7308a9ee4ac26624ab294"
+        }
+      ]
+    },
+    {
       "key": "Commit:96c646bb33ef093e8f68bf9836bfc9a737abc637",
       "type": "Commit",
       "id": "96c646bb33ef093e8f68bf9836bfc9a737abc637",
@@ -134852,6 +134868,22 @@
       ]
     },
     {
+      "key": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "type": "Commit",
+      "id": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "label": "Refresh release inventory for canonical deployment evidence and public pages",
+      "title": "Refresh release inventory for canonical deployment evidence and public pages",
+      "date": "2026-10-07T07:08:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "provenance": [
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        }
+      ]
+    },
+    {
       "key": "Commit:ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16",
       "type": "Commit",
       "id": "ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16",
@@ -145794,12 +145826,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "0e8dce8c9fff05a8",
+      "version": "95ad0173f85a4fde",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "0e8dce8c9fff05a8"
+          "version": "95ad0173f85a4fde"
         }
       ]
     },
@@ -156015,6 +156047,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -156912,6 +156947,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -157809,6 +157847,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -158949,6 +158990,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -159300,6 +159344,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -159426,6 +159473,9 @@
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        },
+        {
+          "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
         }
       ]
     },
@@ -167660,7 +167710,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a714d57f6cf66658ba163128dd344aadfcf95499",
+      "revision": "96b517973ed47445cab7308a9ee4ac26624ab294",
       "currentBranch": "codex/genesis-nft-launch",
       "defaultBranch": "main",
       "visibility": "public",
@@ -197377,13 +197427,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4230,
-      "version": "c9cb2137dfda3404",
+      "lines": 4238,
+      "version": "ae015f9d83a2fa56",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "c9cb2137dfda3404"
+          "version": "ae015f9d83a2fa56"
         }
       ]
     },
@@ -307126,6 +307176,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:96b517973ed47445cab7308a9ee4ac26624ab294",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b517973ed47445cab7308a9ee4ac26624ab294",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b517973ed47445cab7308a9ee4ac26624ab294",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:96c646bb33ef093e8f68bf9836bfc9a737abc637",
       "to": "Artifact:package.json",
       "provenance": {
@@ -359946,6 +360020,54 @@
       "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
       "provenance": {
         "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
       }
     },
     {
@@ -414918,6 +415040,42 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test",
+      "to": "Artifact:test/genesis-auction-http.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/genesis-auction-operations.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/genesis-deploy-client.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/genesisauction.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
       "to": "Artifact:test/graph.js",
       "provenance": {
         "file": "package.json",
@@ -415135,6 +415293,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test",
       "to": "Artifact:test/persist.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/player-genesis-client.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -435646,6 +435813,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:96b517973ed47445cab7308a9ee4ac26624ab294",
+      "provenance": {
+        "commit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:96c646bb33ef093e8f68bf9836bfc9a737abc637",
       "provenance": {
         "commit": "96c646bb33ef093e8f68bf9836bfc9a737abc637"
@@ -442321,6 +442496,14 @@
       "to": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
       "provenance": {
         "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9",
+      "provenance": {
+        "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
       }
     },
     {
@@ -459518,7 +459701,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3242
+        "line": 3250
       }
     },
     {
