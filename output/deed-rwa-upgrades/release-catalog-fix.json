@@ -12,5 +12,16 @@
     "cleanMigration": true,
     "populatedUpgrade": true,
     "causalNegatives": 12
+  },
+  "directorFix": {
+    "failedCiRun": 37549132834,
+    "change": "Keep exact preservation of existing constraints and explicitly check all five reviewed deed constraints",
+    "retest": {
+      "command": "COORDINATION_TEST_DATABASE_URL=<isolated loopback PostgreSQL> node test/director-migration.js",
+      "postgres": "18.4",
+      "exitCode": 0,
+      "populatedBaseline": "44f48a743e549591bd125a1f678099b8382dd78f",
+      "twoMigrations": true
+    }
   }
 }
