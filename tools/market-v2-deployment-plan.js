@@ -80,7 +80,8 @@ export function loadMarketV2Artifact(contract, { contractsRoot = ROOT } = {}) {
   const sourceHashes = {};
   for (const [source, info] of Object.entries(m.sources)) {
     const p = path.resolve(root, source);
-    if (!within(root, p) || !within(root, fs.realpathSync(p))) throw Error(`${contract}: source outside contracts root`);
+    const mount = source.startsWith('lib/permit2/') ? fs.realpathSync(path.join(root, 'lib', 'permit2')) : root;
+    if (!within(root, p) || !within(mount, fs.realpathSync(p))) throw Error(`${contract}: source outside approved source/dependency mount`);
     const sourceBytes = fs.readFileSync(p);
     const actual = keccak256(toHex(sourceBytes));
     const lf = keccak256(toHex(sourceBytes.toString('utf8').replace(/\r\n/g, '\n')));
@@ -208,7 +209,7 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   args.polFunding = [r.safe, external.omr.address, 0]; args.reserveFunding = [r.safe, external.omr.address, 5];
   args.gameSettlement = [r.safe, r.adjudicator];
   args.hook = [external.poolManager.address, external.omr.address, r.initializer, fee, spacing,
-    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration];
+    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration, r.safe];
   const hookArtifact = artifacts.OmertaHookV2;
   const hookInit = encodeDeployData({ abi: hookArtifact.abi, bytecode: hookArtifact.bytecode,
     args: checkedArgs(hookArtifact.abi, args.hook, 'hook') });

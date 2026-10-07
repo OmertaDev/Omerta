@@ -79,6 +79,8 @@ if (process.argv.includes('--example')) {
     const decoded = decodeAbiParameters(a.abi.find(x => x.type === 'constructor').inputs, `0x${initCode.slice(a.bytecode.length)}`);
     assert.equal(decoded[0], fixture.external.poolManager.address);
     assert.equal(decoded[1], fixture.external.omr.address);
+    assert.equal(decoded.length, 10);
+    assert.equal(decoded[9], fixture.roles.safe, 'Tax governance uses the same explicitly supplied immutable Safe as the market');
     assert.deepEqual(decoded[5], [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, plan.addresses.polFunding, plan.addresses.reserveFunding]);
     assert.deepEqual(plan.economics.splitBps, { dev: 200, rwa: 160, community: 240, pol: 300 });
     assert.equal(plan.economics.sellBaseBps, 900);
@@ -130,6 +132,8 @@ if (process.argv.includes('--example')) {
   test('unknown hook policy keys cannot silently change the intended economics', () => {
     const x = clone(fixture); x.policies.hook.baseSellBps = 1000;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /unknown manifest field/);
+    const y = clone(fixture); y.policies.hook.governanceSafe = A(0x999);
+    assert.throws(() => buildMarketV2DeploymentPlan(y), /unknown manifest field/, 'Governance authority cannot override the derived Safe');
   });
   test('nonce owner cannot also execute setup calls', () => {
     const x = clone(fixture); x.roles.safeExecutor = x.roles.deployer;
