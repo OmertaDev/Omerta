@@ -35,6 +35,14 @@
       "command": "node test/gates.js",
       "exitCode": 0
     },
-    "resume": "Existing workflow_dispatch tail_only executes repaired gates, chainparams, docs, playthrough truth, knowledge checks and all remaining CI stages; both PostgreSQL jobs rerun"
+    "resume": "Existing workflow_dispatch tail_only executes repaired gates, chainparams, docs, playthrough truth, knowledge and all remaining suite/simulation/browser stages; PostgreSQL jobs are skipped and retain passing native evidence from the unchanged application source",
+    "retainedNativeEvidence": {
+      "run": 37550879177,
+      "source": "4e83019e9616b367906c1d3e454c23c5015308de",
+      "pg16Job": 112565902553,
+      "pg18Job": 112565902829,
+      "pg16": "success",
+      "pg18": "success"
+    }
   }
 }
