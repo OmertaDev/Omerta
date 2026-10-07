@@ -120,7 +120,7 @@ jobs:
       - name: Market V2 artifact contracts and keeper orchestration
         working-directory: .
         run: |
-          npm ci --omit=dev
+          npm ci
           npm run test:market-v2
           npm run test:genesis-auction:deployment
 
