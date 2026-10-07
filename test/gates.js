@@ -3516,7 +3516,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:deed-upgrades:postgres', 'pgcheck', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:deed-upgrades:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3608,6 +3608,9 @@ scopedSocialContext = async function(db) {
   assert.throws(() => nativeCommandsFrom(badIndent), /unsupported inconsistent/,
     'a malformed literal scalar must not invent a command position');
   const nativeCommands = nativeCommandsFrom(pgcheck);
+  assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts['test:http-idempotency:postgres'],
+    'node test/http-idempotency-recovery.js && node test/http-idempotency-http.js',
+    'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
   console.log('  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 20m, with every lane intact');

@@ -48,6 +48,7 @@
     "preflight": "node tools/worldgraph-content.js && node tools/core-progression.js check && node tools/preflight.js",
     "worldgraph:check": "node tools/worldgraph-content.js",
     "pgcheck": "node tools/pgcheck.js",
+    "test:http-idempotency:postgres": "node test/http-idempotency-recovery.js && node test/http-idempotency-http.js",
     "pgquery": "node tools/pgquery.js",
     "gearcaps": "node tools/gearcaps.js",
     "sim": "node tools/sim.js",
