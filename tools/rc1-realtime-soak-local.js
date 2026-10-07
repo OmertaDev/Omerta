@@ -337,8 +337,10 @@ export function localSoakFaultPlan(environment, { schedule, pauseMs = 1000, reco
       assert(actors.length >= 3);
       const board = ok(await request(recorder, client, actors[0], { method: 'GET', path: '/v1/market' }));
       const views = await Promise.all(actors.map(actor => request(recorder, client, actor, { method: 'GET', path: '/v1/me' }).then(ok)));
+      // The market control uses two buyers; the 100-request burst and reconnect
+      // are separate controls, not a required market participant count.
       const { seller, buyers, observation } = selectSoakContentionActors(actors, views,
-        { minCash: board.levers.minPrice, maxBuyers: Math.max(2, reconnectActors) });
+        { minCash: board.levers.minPrice, maxBuyers: 2 });
       await recorder.record({ kind: 'soak-contention-selection', ...observation });
       const rules = ok(await request(recorder, client, seller, { method: 'GET', path: '/v1/rules' }));
       const good = [...rules.goods].sort((a, b) => a.base - b.base)[0];
