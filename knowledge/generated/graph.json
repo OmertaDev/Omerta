@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "fbf94fdfbf48f01cffdf2a1273fb8474b3f6d1e7",
+  "sourceRevision": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9848,
-    "edges": 40052,
+    "nodes": 9850,
+    "edges": 40063,
     "byNodeType": {
       "Artifact": 4201,
       "Command": 181,
-      "Commit": 2045,
+      "Commit": 2047,
       "Contract": 126,
       "Document": 687,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3292,
-      "CHANGED": 15541,
+      "CHANGED": 15550,
       "CONTAINS": 4222,
       "DECLARES": 181,
       "DEFINED_IN": 1302,
       "DEPENDS_ON": 65,
       "EXECUTES": 616,
       "HANDLED_BY": 713,
-      "HAS_COMMIT": 2045,
+      "HAS_COMMIT": 2047,
       "IMPLEMENTS": 124,
       "IMPORTS": 3953,
       "INHERITS": 42,
@@ -80057,20 +80057,20 @@
       "path": "src/routes/genesisauction.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 3958,
+      "bytes": 3997,
       "lines": 62,
-      "version": "073e30f65b518ea6",
+      "version": "14cdd382d56eb02f",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/genesisauction.js",
           "line": 1,
-          "version": "073e30f65b518ea6"
+          "version": "14cdd382d56eb02f"
         }
       ],
-      "lastChangedAt": "2026-10-06T23:27:13.000Z",
+      "lastChangedAt": "2026-10-07T00:58:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c"
+      "lastChangedCommit": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920"
     },
     {
       "key": "Artifact:src/routes/heists.js",
@@ -100251,6 +100251,22 @@
         {
           "commit": "0adeb83a2f96a321d390ea98b1967efee1a70f85",
           "url": "https://github.com/OmertaDev/Omerta/commit/0adeb83a2f96a321d390ea98b1967efee1a70f85"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+      "type": "Commit",
+      "id": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+      "label": "Keep manifest hash validation compatible with route scope checks",
+      "title": "Keep manifest hash validation compatible with route scope checks",
+      "date": "2026-10-07T00:58:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+      "provenance": [
+        {
+          "commit": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0b006bc7d97e4a491a47f3d75cd0e9e698cdf920"
         }
       ]
     },
@@ -123211,6 +123227,22 @@
         {
           "commit": "b7fb5ff36dd30a99fec83c7dff49b0988de62a7e",
           "url": "https://github.com/OmertaDev/Omerta/commit/b7fb5ff36dd30a99fec83c7dff49b0988de62a7e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "type": "Commit",
+      "id": "b82324238e4f7882795c56ddff6f51227da33083",
+      "label": "Refresh knowledge artifacts for the single-auction release",
+      "title": "Refresh knowledge artifacts for the single-auction release",
+      "date": "2026-10-06T23:34:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b82324238e4f7882795c56ddff6f51227da33083",
+      "provenance": [
+        {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b82324238e4f7882795c56ddff6f51227da33083"
         }
       ]
     },
@@ -151436,6 +151468,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -152459,6 +152494,9 @@
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+        },
+        {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
         },
         {
@@ -153300,6 +153338,9 @@
         },
         {
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
         },
         {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
@@ -154145,6 +154186,9 @@
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+        },
+        {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
         },
         {
@@ -154527,6 +154571,9 @@
         },
         {
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
+        },
+        {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
         },
         {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
@@ -155213,6 +155260,9 @@
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+        },
+        {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
         },
         {
@@ -155669,6 +155719,9 @@
           "commit": "b79a291f61334ef9b332a9e6521a85a57d2dbd9f"
         },
         {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+        },
+        {
           "commit": "b899f3766b95a942279fb0e8461c7dc1da6f5879"
         },
         {
@@ -155847,6 +155900,9 @@
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+        },
+        {
+          "commit": "b82324238e4f7882795c56ddff6f51227da33083"
         },
         {
           "commit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
@@ -159711,12 +159767,12 @@
       "id": "src/routes/genesisauction.js",
       "label": "src/routes/genesisauction.js",
       "lines": 62,
-      "version": "073e30f65b518ea6",
+      "version": "14cdd382d56eb02f",
       "provenance": [
         {
           "file": "src/routes/genesisauction.js",
           "line": 1,
-          "version": "073e30f65b518ea6"
+          "version": "14cdd382d56eb02f"
         }
       ]
     },
@@ -164075,7 +164131,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "fbf94fdfbf48f01cffdf2a1273fb8474b3f6d1e7",
+      "revision": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
       "currentBranch": "codex/genesis-nft-launch",
       "defaultBranch": "main",
       "visibility": "public",
@@ -231638,6 +231694,14 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "0adeb83a2f96a321d390ea98b1967efee1a70f85"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+      "to": "Artifact:src/routes/genesisauction.js",
+      "provenance": {
+        "commit": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920"
       }
     },
     {
@@ -313846,6 +313910,70 @@
       "to": "HistoricalArtifact:omerta-economy-plan.md",
       "provenance": {
         "commit": "b7fb5ff36dd30a99fec83c7dff49b0988de62a7e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/contracts.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
       }
     },
     {
@@ -417368,6 +417496,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0b006bc7d97e4a491a47f3d75cd0e9e698cdf920",
+      "provenance": {
+        "commit": "0b006bc7d97e4a491a47f3d75cd0e9e698cdf920"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0b10337d8e409fdf796c391ea28122a485d9efae",
       "provenance": {
         "commit": "0b10337d8e409fdf796c391ea28122a485d9efae"
@@ -428843,6 +428979,14 @@
       "to": "Commit:b7fb5ff36dd30a99fec83c7dff49b0988de62a7e",
       "provenance": {
         "commit": "b7fb5ff36dd30a99fec83c7dff49b0988de62a7e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b82324238e4f7882795c56ddff6f51227da33083",
+      "provenance": {
+        "commit": "b82324238e4f7882795c56ddff6f51227da33083"
       }
     },
     {

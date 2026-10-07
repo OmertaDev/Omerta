@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fbf94fdfbf48`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0b006bc7d97e`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2045 |
+| Commits in clone | 2047 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-06 — Run auction artifact checks after contract compilation in CI |
+| Latest commit | 2026-10-07 — Keep manifest hash validation compatible with route scope checks |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1155 |
+| OmertaDev | 1157 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 45 |
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 368 | yes |
 | [SPEC.md](../../SPEC.md) | 355 | yes |
 | [schema.sql](../../schema.sql) | 298 | yes |
-| knowledge/generated/github-history.md | 278 | historical |
-| knowledge/generated/graph-summary.md | 278 | historical |
-| knowledge/generated/graph.json | 278 | historical |
-| knowledge/generated/inventory.md | 278 | historical |
+| knowledge/generated/github-history.md | 279 | historical |
+| knowledge/generated/graph-summary.md | 279 | historical |
+| knowledge/generated/graph.json | 279 | historical |
+| knowledge/generated/inventory.md | 279 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 227 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -49,14 +49,14 @@
 | [src/invariants.js](../../src/invariants.js) | 124 | yes |
 | [test/client.js](../../test/client.js) | 119 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
-| knowledge/generated/modules.md | 108 | historical |
+| knowledge/generated/modules.md | 109 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 87 | yes |
 | [test/gates.js](../../test/gates.js) | 85 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 75 | yes |
-| knowledge/generated/graph.mmd | 72 | historical |
+| knowledge/generated/graph.mmd | 73 | historical |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 63 | yes |
 | [README.md](../../README.md) | 60 | yes |
