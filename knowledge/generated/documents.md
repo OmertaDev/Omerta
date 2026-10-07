@@ -313,7 +313,7 @@
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6860 | 2026-09-25 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 427 | 2026-10-02 |
+| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 429 | 2026-10-07 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-06 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 52 | 2026-09-25 |
@@ -511,7 +511,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 251 | 2026-09-14 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2803 | 2026-10-06 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2816 | 2026-10-07 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-09-25 |
@@ -530,7 +530,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-06 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-07 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
