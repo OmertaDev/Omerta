@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
+import { finalizeHttpIdempotency, readHttpIdempotency } from './http-idempotency.js';
 import { preflight } from './preflight.js';
 import { RwaHealthError } from './rwahealtherror.js';
 import * as G from './game.js';
@@ -1164,23 +1165,31 @@ export async function buildServer() {
       // further retry re-executed = double bank/spend. Loop and re-INSERT so every proceeding request
       // holds a reservation; on a pathological insert/delete storm, refuse (409) rather than run unprotected.
       for (let attempt = 0; attempt < 5; attempt++) {
+        const reservationToken = crypto.randomUUID();
         let reserved = false;
         try {
           await pool.query('INSERT INTO idempotency (account_id, key, status, body_hash, response) VALUES ($1,$2,0,$3,$4)',
-            [req.user.sub, key, bodyHash, '']);
+            [req.user.sub, key, bodyHash, reservationToken]);
           reserved = true;
-        } catch { /* PK conflict → the key already exists */ }
-        if (reserved) { req._idem = { key, bodyHash }; return; }
-        const row = (await pool.query('SELECT status, body_hash, response FROM idempotency WHERE account_id=$1 AND key=$2',
-          [req.user.sub, key])).rows[0];
+        } catch (error) {
+          if (error?.code !== '23505' && !isDbDown(error)) throw error;
+          // A lost INSERT acknowledgement is safe to recognize only by this
+          // attempt's token. Other owners and ambiguous old rows stay guarded.
+        }
+        if (reserved) { req._idem = { key, bodyHash, reservationToken }; return; }
+        const row = (await readHttpIdempotency(pool, req.user.sub, key)).rows[0];
         if (!row) continue; // released between our INSERT and this SELECT — loop and re-reserve, never proceed unreserved
         if (row.body_hash !== bodyHash)
           return reply.code(422).send({ error: 'idempotency_key_reuse', message: 'This Idempotency-Key was used with a different request.' });
+        if (row.status === 0 && row.response === reservationToken) {
+          req._idem = { key, bodyHash, reservationToken };
+          return;
+        }
         if (req.routeOptions?.config?.currentCommandProjection === coordinationReceiptTrust) {
           // A Command Center reply includes private, revocable projections. Even
           // completed retries must reauthenticate/reproject; the domain receipt
           // prevents effects from running twice. Never return the cached board.
-          req._idem = { key, bodyHash };
+          if (row.status === 0) req._idem = { key, bodyHash, reservationToken: row.response };
           return;
         }
         if (row.status === 0 && req.routeOptions?.config?.coordinationReceipts === coordinationReceiptTrust) {
@@ -1188,7 +1197,7 @@ export async function buildServer() {
           // atomically with state/events under the account lock. They can resolve an
           // exact pending request after a lost HTTP receipt-store acknowledgement,
           // or serialize against its concurrent execution. Other handlers cannot.
-          req._idem = { key, bodyHash };
+          req._idem = { key, bodyHash, reservationToken: row.response };
           return;
         }
         if (row.status === 0)
@@ -1200,7 +1209,8 @@ export async function buildServer() {
   });
   app.addHook('onSend', async (req, reply, payload) => {
     if (!req._idem || reply.getHeader('x-idempotent-replay')) return payload;
-    const { key, bodyHash } = req._idem;
+    const { key, bodyHash, reservationToken } = req._idem;
+    const reservation = { accountId: req.user.sub, key, bodyHash, reservationToken };
     // Only a genuine success is stored (and thus replayed). A 4xx/5xx RELEASES the
     // reservation so the key isn't poisoned — a transient "jailed" or a 429 must not
     // permanently lock the key out.
@@ -1224,12 +1234,11 @@ export async function buildServer() {
       // A concurrent pending-receipt retry can outlive another callback that
       // released this key. Compare the original request binding before storing;
       // an older response cannot overwrite a replacement or finalized receipt.
-      await pool.query('UPDATE idempotency SET status=$3, response=$4 WHERE account_id=$1 AND key=$2 AND body_hash=$5 AND status=0',
-        [req.user.sub, key, reply.statusCode, storedPayload, bodyHash])
+      await finalizeHttpIdempotency(pool, reservation, { status: reply.statusCode, response: storedPayload })
         .catch((e) => console.error('idempotency: store UPDATE failed — key left in-progress, value may have committed', e?.message));
     } else {
-      await pool.query('DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status=0 AND body_hash=$3',
-        [req.user.sub, key, bodyHash]).catch(() => {});
+      await finalizeHttpIdempotency(pool, reservation, { status: reply.statusCode })
+        .catch((e) => console.error('idempotency: release DELETE failed — key left in-progress', e?.message));
     }
     return payload;
   });

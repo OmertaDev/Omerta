@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RULES_CURRENT_PIN,
-  DEED_SERVER_CURRENT_PIN, DEED_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
+  DEED_SERVER_CURRENT_PIN, DEED_SOURCE_REVIEWED_REVISION, HTTP_RECEIPT_SERVER_PIN,
+  HTTP_RECEIPT_HELPER_PIN, HTTP_RECEIPT_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
@@ -14,7 +15,8 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': DEED_SERVER_CURRENT_PIN,
+  'src/server.js': HTTP_RECEIPT_SERVER_PIN,
+  'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/coordination/operations.js': '3b6cd3bc40386d96ef21d037366203832b6a1729d87b3a9fffe8dfea0e11a3f7',
   'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
@@ -22,7 +24,11 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 3, reviewedRevision: DEED_SOURCE_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 4, reviewedRevision: HTTP_RECEIPT_REVIEWED_REVISION, sourceFiles,
+  httpReceiptSourceReviewTransfer: { previousReviewedRevision: DEED_SOURCE_REVIEWED_REVISION,
+    previousServerSha256: DEED_SERVER_CURRENT_PIN,
+    evidence: 'docs/release/readiness-work/http-receipt-source-transfer.json',
+    scope: 'Exact ten inverse edits reconstruct the prior complete server. Only unchanged check-in, ammunition, Family, operation and Knowledge domain guards transfer. New HTTP reservation/retry semantics have separate native recovery and replay evidence; no historical world execution or deployment pass is inherited.' },
   deedSourceReviewTransfer: { previousReviewedRevision: '788e672741e558210029683fed928a06934123f3',
     previousRulesSha256: 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
     previousServerSha256: '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff',

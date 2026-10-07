@@ -5,10 +5,33 @@ import { once } from 'node:events';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createSoakHttpClient, enterSoakActors, nextSoakRequest, createSoakMeasurements, runSoakTraffic } from '../tools/rc1-realtime-soak.js';
-import { localSoakEnvironmentValues, createLocalSoakEnvironment, localSoakFaultPlan, withSharedSoakRead } from '../tools/rc1-realtime-soak-local.js';
+import { localSoakEnvironmentValues, createLocalSoakEnvironment, localSoakFaultPlan, withSharedSoakRead, selectSoakContentionActors } from '../tools/rc1-realtime-soak-local.js';
 import { sourceIdentity, createProofRecorder, verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+{
+  const actors = Array.from({ length: 7 }, (_, actorIndex) => ({ actorIndex, characterId: `character-${actorIndex}` }));
+  const views = actors.map(actor => ({ character: { id: actor.characterId, loc: 'dock', jailSeconds: 0, cash: 100,
+    cargoCap: 2, cargo: {} } }));
+  const options = { minCash: 10, maxBuyers: 2 };
+  views[0].character.jailSeconds = 30;
+  views[1].character.loc = 'other';
+  const selected = selectSoakContentionActors(actors, views, options);
+  assert.equal(selected.seller.actorIndex, 2);
+  assert.deepEqual(selected.observation.buyerIndexes, [3, 4]);
+  assert.deepEqual(selected.observation.exclusions, { jailed: 1 });
+  assert.deepEqual(selectSoakContentionActors(actors, views, options).observation, selected.observation);
+  const invalid = structuredClone(views);
+  invalid[2].character.cash = 9;
+  invalid[3].character.cargo = { wire: 2 };
+  invalid[4] = {};
+  invalid[6].character.id = invalid[5].character.id;
+  assert.throws(() => selectSoakContentionActors(actors, invalid, options), /No eligible common-location group/);
+  assert.throws(() => selectSoakContentionActors(actors.slice(0, 3), views.slice(0, 3), options), /No eligible common-location group/);
+  const identityMismatch = structuredClone(views.slice(2, 5));
+  identityMismatch[0].character.id = 'foreign-character';
+  assert.throws(() => selectSoakContentionActors(actors.slice(2, 5), identityMismatch, options), /No eligible common-location group/);
+}
 const recorder = () => ({ events: [], artifacts: new Map(),
   async record(event) { this.events.push(structuredClone(event)); },
   async artifact(name, value) { assert(!this.artifacts.has(name)); this.artifacts.set(name, structuredClone(value)); },

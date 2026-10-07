@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { assertDeedServerCompatibility, DEED_SERVER_BASELINE_PIN, DEED_SERVER_CURRENT_PIN } from '../tools/rc1-deed-source-compatibility.js';
+import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DEED_SERVER_BASELINE_PIN,
+  DEED_SERVER_CURRENT_PIN, HTTP_RECEIPT_SERVER_PIN, HTTP_RECEIPT_HELPER_PIN } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
@@ -8,11 +9,28 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, DEED_SERVER_CURRENT_PIN);
+assert.equal(serverProof.actualSha256, HTTP_RECEIPT_SERVER_PIN);
+const receiptProof = assertHttpReceiptServerCompatibility(serverText);
+assert.equal(assertDeedServerCompatibility(receiptProof.priorText).actualSha256, DEED_SERVER_CURRENT_PIN);
 assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha256, DEED_SERVER_BASELINE_PIN);
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+assert.equal(source.sourceFiles['src/server.js'], HTTP_RECEIPT_SERVER_PIN);
+assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 4);
+for (const [before, after] of [['row.response === reservationToken', 'true'],
+  ['if (row.status === 0) req._idem', 'if (true) req._idem'],
+  ["preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.checkin", "preHandler: null }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.checkin"]]) {
+  assert(serverText.includes(before), 'Mutation must target an actual server guard');
+  assert.throws(() => assertDeedServerCompatibility(serverText.replace(before, after)), /source changed/);
+}
+const receiptHelper = await fs.readFile('src/http-idempotency.js', 'utf8');
+for (const [before, after] of [['AND response=$6', ''], ['attempt < 3', 'attempt < 30'], ['!isDbDown(error)', 'false']]) {
+  assert(receiptHelper.includes(before));
+  await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+    readFile: async file => file === 'src/http-idempotency.js' ? receiptHelper.replace(before, after) : fs.readFile(file) }), /source changed/);
+}
 const carCatalog = await fs.readFile('src/rules.generated.js', 'utf8');
 assert(carCatalog.includes('melt: 28, val: 900'), 'Car value rejection control must modify an actual car catalog row');
 await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
@@ -36,6 +54,14 @@ function fixture(rows = data) {
       { id: 'omr-prerequisite', accountId: 'a', resource: 'omr', quantity: 1, goal: 'omr>=1' }] };
 }
 const input = fixture(), first = canonicalRecoveryWitnesses(input), byId = id => first.witnesses.find(row => row.id === id);
+const historicalSource = clone(input);
+historicalSource.source.sourceFiles['src/server.js'] = DEED_SERVER_CURRENT_PIN;
+delete historicalSource.source.sourceFiles['src/http-idempotency.js'];
+assert.throws(() => canonicalRecoveryWitnesses(historicalSource),
+  'Historical source attestations cannot be relabeled as the receipt review');
+const historicalReview = clone(input); historicalReview.source.reviewSha256 = '0'.repeat(64);
+assert.throws(() => canonicalRecoveryWitnesses(historicalReview),
+  'Historical review identities cannot inherit the current receipt review');
 assert.equal(byId('actor:a').status, 'BOUNDED_WAIT'); assert.equal(byId('actor:a').dueAt, (today + 1) * DAY);
 assert.equal(byId('ammo-prerequisite').status, 'UNKNOWN', 'Repeated faucet availability does not prove savings through unavoidable intervening losses');
 assert.equal(byId('family:a').status, 'UNKNOWN'); assert.equal(byId('omr-prerequisite').status, 'UNKNOWN');
