@@ -137,3 +137,25 @@ Players may not stay. OMR can fall in price. Vesting bonds can create future sel
 For an **exact-input sale**, where the hook fee is deducted from ETH output, a 9% fee requires approximately **9.89%** price appreciation merely to break even on a wallet purchase and sale, before ordinary swap fees, slippage and gas. At the 10% maximum hook charge, the figure is **11.11%**. With the inventory bond's maximum 10% discount and an unchanged reference price, the same exact-input sale leaves about 1.11% before other costs at a 9% fee, or zero at a 10% fee. Exact-output sales instead charge an OMR-input surcharge and require different arithmetic, detailed in the technical guide. Vesting price movement, LP fees, slippage and gas can eliminate an apparent spread.
 
 Before treating OMR as investable, the decisive evidence is an active, verified launch; liquid executable prices; a clear supply/distribution policy; sustained human retention and spending; separately reported agent/NPC activity; funded reward and withdrawal reserves; and actual net OMR purchases after issuance and resales. No current market valuation, realized investor yield or investment return is established by this review.
+
+## Deeds and eligible RWA distributions
+
+**Your deed is your RWA vault.** Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.
+
+No paid Broker activation or deed upgrade is required for baseline qualification. Successful server-authoritative play must still meet the seven-day epoch’s three-track and score-25 gate; spending alone never qualifies. Without a finalized on-chain deed delivery target, allocations wait without expiry.
+
+Optional permanent deed upgrades are sequential:
+
+| Level | Spend $OMR | Required renown | Reward-weight bonus |
+| --- | ---: | ---: | ---: |
+| 1 | 150 | 5 | 5% |
+| 2 | 450 | 20 | 10% |
+| 3 | 1,200 | 50 | 15% |
+| 4 | 3,000 | 80 | 20% |
+| 5 | 9,000 | 120 | 25% |
+
+Each upgrade also requires qualifying activity in the last seven days. Bonuses replace lower levels, cap at 25%, and apply only to future epochs whose entire activity window starts on or after the next UTC day. They redistribute shares of a fixed treasury-funded pool; they do not increase its budget or guarantee a payout. Spending $OMR uses the game sink and recycles inventory to the current market shelf; it does not destroy ERC-20 supply.
+
+Upgrade level follows the deed when sold. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Upgrading or selling cannot rewrite previously allocated rewards or their original qualifying account. Existing paid Broker commitments retain their multiplier until expiry; the larger eligible multiplier applies, without stacking it with the upgrade bonus. All existing asset, funding, chain-finality, delivery and launch gates remain in force; source availability does not establish live RWA payouts.
+
+Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.

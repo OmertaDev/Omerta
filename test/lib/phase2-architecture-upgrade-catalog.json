@@ -2,91 +2,6 @@
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
     {
-      "table_name": "director_action_intents",
-      "name": "director_action_intents_pkey",
-      "definition": "PRIMARY KEY (account_id, command_key)"
-    },
-    {
-      "table_name": "director_action_intents",
-      "name": "director_action_intents_situation_id_fkey",
-      "definition": "FOREIGN KEY (situation_id) REFERENCES director_situations(id)"
-    },
-    {
-      "table_name": "director_campaigns",
-      "name": "director_campaigns_pkey",
-      "definition": "PRIMARY KEY (id)"
-    },
-    {
-      "table_name": "director_campaigns",
-      "name": "director_campaigns_revision_check",
-      "definition": "CHECK (revision > 0)"
-    },
-    {
-      "table_name": "director_campaigns",
-      "name": "director_campaigns_status_check",
-      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'abandoned'::text]))"
-    },
-    {
-      "table_name": "director_clock",
-      "name": "director_clock_pkey",
-      "definition": "PRIMARY KEY (id)"
-    },
-    {
-      "table_name": "director_definitions",
-      "name": "director_definitions_content_hash_check",
-      "definition": "CHECK (char_length(content_hash) = 64)"
-    },
-    {
-      "table_name": "director_definitions",
-      "name": "director_definitions_kind_check",
-      "definition": "CHECK (kind = ANY (ARRAY['situation'::text, 'campaign'::text]))"
-    },
-    {
-      "table_name": "director_definitions",
-      "name": "director_definitions_pkey",
-      "definition": "PRIMARY KEY (kind, definition_id, version)"
-    },
-    {
-      "table_name": "director_definitions",
-      "name": "director_definitions_version_check",
-      "definition": "CHECK (version > 0)"
-    },
-    {
-      "table_name": "director_receipts",
-      "name": "director_receipts_pkey",
-      "definition": "PRIMARY KEY (execution_id)"
-    },
-    {
-      "table_name": "director_selections",
-      "name": "director_selections_pkey",
-      "definition": "PRIMARY KEY (id)"
-    },
-    {
-      "table_name": "director_situations",
-      "name": "director_situations_campaign_id_fkey",
-      "definition": "FOREIGN KEY (campaign_id) REFERENCES director_campaigns(id)"
-    },
-    {
-      "table_name": "director_situations",
-      "name": "director_situations_campaign_id_node_id_key",
-      "definition": "UNIQUE (campaign_id, node_id)"
-    },
-    {
-      "table_name": "director_situations",
-      "name": "director_situations_pkey",
-      "definition": "PRIMARY KEY (id)"
-    },
-    {
-      "table_name": "director_situations",
-      "name": "director_situations_revision_check",
-      "definition": "CHECK (revision > 0)"
-    },
-    {
-      "table_name": "director_situations",
-      "name": "director_situations_world_event_id_fkey",
-      "definition": "FOREIGN KEY (world_event_id) REFERENCES world_kernel_events(id)"
-    },
-    {
       "table_name": "coordination_archive_entries",
       "name": "coordination_archive_entries_archive_id_claim_id_key",
       "definition": "UNIQUE (archive_id, claim_id)"
@@ -420,6 +335,116 @@
       "table_name": "coordination_knowledge_archives",
       "name": "coordination_knowledge_archives_policy_check",
       "definition": "CHECK (policy = 'personal_reference'::text)"
+    },
+    {
+      "table_name": "deed_upgrades",
+      "name": "deed_upgrades_bonus_bps_check",
+      "definition": "CHECK (bonus_bps >= 500 AND bonus_bps <= 2500)"
+    },
+    {
+      "table_name": "deed_upgrades",
+      "name": "deed_upgrades_cost_omr_check",
+      "definition": "CHECK (cost_omr > 0::numeric)"
+    },
+    {
+      "table_name": "deed_upgrades",
+      "name": "deed_upgrades_deed_name_fkey",
+      "definition": "FOREIGN KEY (deed_name) REFERENCES street_deeds(name)"
+    },
+    {
+      "table_name": "deed_upgrades",
+      "name": "deed_upgrades_level_check",
+      "definition": "CHECK (level >= 1 AND level <= 5)"
+    },
+    {
+      "table_name": "deed_upgrades",
+      "name": "deed_upgrades_pkey",
+      "definition": "PRIMARY KEY (deed_name, level)"
+    },
+    {
+      "table_name": "director_action_intents",
+      "name": "director_action_intents_pkey",
+      "definition": "PRIMARY KEY (account_id, command_key)"
+    },
+    {
+      "table_name": "director_action_intents",
+      "name": "director_action_intents_situation_id_fkey",
+      "definition": "FOREIGN KEY (situation_id) REFERENCES director_situations(id)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "director_campaigns",
+      "name": "director_campaigns_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'abandoned'::text]))"
+    },
+    {
+      "table_name": "director_clock",
+      "name": "director_clock_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_content_hash_check",
+      "definition": "CHECK (char_length(content_hash) = 64)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['situation'::text, 'campaign'::text]))"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_pkey",
+      "definition": "PRIMARY KEY (kind, definition_id, version)"
+    },
+    {
+      "table_name": "director_definitions",
+      "name": "director_definitions_version_check",
+      "definition": "CHECK (version > 0)"
+    },
+    {
+      "table_name": "director_receipts",
+      "name": "director_receipts_pkey",
+      "definition": "PRIMARY KEY (execution_id)"
+    },
+    {
+      "table_name": "director_selections",
+      "name": "director_selections_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES director_campaigns(id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_campaign_id_node_id_key",
+      "definition": "UNIQUE (campaign_id, node_id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "director_situations",
+      "name": "director_situations_world_event_id_fkey",
+      "definition": "FOREIGN KEY (world_event_id) REFERENCES world_kernel_events(id)"
     },
     {
       "table_name": "keeper_transactions",
@@ -1029,6 +1054,15 @@
       "subject_id",
       "updated_at",
       "used"
+    ],
+    "deed_upgrades": [
+      "account_id",
+      "bonus_bps",
+      "cost_omr",
+      "created_at",
+      "deed_name",
+      "effective_from_day",
+      "level"
     ]
   }
 }

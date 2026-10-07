@@ -219,6 +219,11 @@ jobs:
           "
           npm run pgquery
 
+      - name: deed upgrades (real PostgreSQL concurrency)
+        env:
+          DEED_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:deed-upgrades:postgres
+
       - name: pgcheck (pooling, row locks, timeouts, migration, ledger)
         env:
           DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check

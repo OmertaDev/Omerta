@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { buildServer } from '../src/server.js';
+import { upgradeWeights } from '../src/deed-upgrades.js';
+import { brokerBoard, allocateEpoch } from '../src/brokers.js';
+import { dayOf } from '../src/rules.js';
+const app=await buildServer(),pool=app.pool;
+const aid='deed-ownership-holder';
+const today=dayOf(),start=today-6;
+await pool.query('INSERT INTO account_persistent (account_id,wallet_address) VALUES ($1,$2)',[aid,'0xholder']);
+for(const [account,name,level,bps,at] of [['onchain:strong','Older Strong',5,2500,new Date(Date.now()-86400000)],['onchain:weak','Newer Weak',1,500,new Date()]]){
+ await pool.query('INSERT INTO street_deeds (account_id,name,name_lc,district,claimed_at,onchain_token_id,extracted_by_account,extracted_at,onchain_owner,ownership_since_day) VALUES ($1,$2,$3,$4,$5,$6,$7,$5,$8,$9)',[account,name,name.toLowerCase(),'neon',at,level.toString(),aid,'0xholder',start]);
+ await pool.query('INSERT INTO deed_upgrades (deed_name,level,bonus_bps,cost_omr,account_id,effective_from_day) VALUES ($1,$2,$3,$4,$5,$6)',[name,level,bps,150,aid,start]);
+}
+await pool.query("INSERT INTO activity_log (account_id,day,tag,n) VALUES ($1,$2,'crime',200),($1,$2,'jump',20),($1,$2,'heist',5)",[aid,today]);
+let board=await brokerBoard(pool,{account_id:aid});
+assert.equal(board.upgrade.level,1,'displayed selected deed is latest weak deed');
+assert.equal(board.upgrade.effectiveBonusBps,2500,'effective account bonus is maximum of owned deeds');
+assert.equal(board.weight,board.activity.score*1.25,'board uses max permanent bonus');
+const epoch=await allocateEpoch(pool,{endDay:today});
+assert.equal(Number((await pool.query('SELECT weight FROM broker_weights WHERE epoch_id=$1 AND account_id=$2',[epoch.epochId,aid])).rows[0].weight),board.weight,'board and allocator agree for multiple NFT holdings');
+await pool.query('UPDATE street_deeds SET ownership_since_day=$2 WHERE name=$1',['Older Strong',start+1]);
+assert.equal((await upgradeWeights(pool,start)).get(aid),500,'post-start acquisition excludes stronger deed for overlapping epoch');
+assert.equal((await upgradeWeights(pool,start+1)).get(aid),2500,'next epoch start admits acquired deed');
+await pool.query('UPDATE account_persistent SET reward_wallet_since_day=$2 WHERE account_id=$1',[aid,start+2]);
+assert.equal((await upgradeWeights(pool,start+1)).get(aid),0,'recent wallet rotation excludes old NFT holdings for pre-link epoch');
+assert.equal((await upgradeWeights(pool,start+2)).get(aid),2500,'future epoch admits wallet-linked ownership');
+await pool.query('UPDATE street_deeds SET onchain_owner=$2 WHERE name=$1',['Older Strong','0xunlinked']);
+assert.equal((await upgradeWeights(pool,start+2)).get(aid),500,'observed sold NFT never falls back to stale extractor');
+await pool.query('UPDATE account_persistent SET npc_flag=true WHERE account_id=$1',[aid]);
+board=await brokerBoard(pool,{account_id:aid});assert.equal(board.weight,0,'NFT ownership and upgrade never override NPC exclusion');
+await app.close();console.log('deed upgrade ownership: PASS — acquisition and wallet day gates, multiple holdings max consistency, stale extractor and NPC exclusions');

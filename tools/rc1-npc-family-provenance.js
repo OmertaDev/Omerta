@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
+import { assertCarMeltRulesCompatibility, DEED_RULES_CURRENT_PIN } from './rc1-deed-source-compatibility.js';
 export const NPC_FAMILY_SOURCE_PINS = Object.freeze({
   'src/population.js': '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
-  'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+  'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
 });
 export const NPC_FORMATION_SQL = Object.freeze([
@@ -45,8 +46,11 @@ function captureFrames() {
   finally { Error.stackTraceLimit = prior; }
 }
 export function assertNpcFamilySourcePins() {
-  for (const [file, pin] of Object.entries(NPC_FAMILY_SOURCE_PINS))
-    assert.equal(hash(fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), pin, `NPC provenance source changed: ${file}`);
+  for (const [file, pin] of Object.entries(NPC_FAMILY_SOURCE_PINS)) {
+    const text = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    assert.equal(hash(text), pin, `NPC provenance source changed: ${file}`);
+    if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
+  }
 }
 export function createNpcFamilyCommitObserver({ innerObserverFactory = createNativeCommitObserver, onBoundary, ...options }) {
   assertNpcFamilySourcePins();

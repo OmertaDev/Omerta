@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { assertDeedBacklogCompatibility } from '../tools/rc1-deed-source-compatibility.js';
 import { execFileSync } from 'node:child_process';
 import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
+for (const file of ['src/chain.js', 'src/invariants.js']) {
+  const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const proof = assertDeedBacklogCompatibility(file, text);
+  assert.equal(assertDeedBacklogCompatibility(file, proof.baselineText).actualSha256, proof.baselineSha256);
+  assert.throws(() => assertDeedBacklogCompatibility(file, text + '\n// unsupported change\n'), /source changed/);
+  assert.equal(proof.baselineText, execFileSync('git', ['show', 'db54f824004c4d855778668081ce2adfac173c39:' + file], { encoding: 'utf8' }).replaceAll('\r\n', '\n'));
+}
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { LOAN, LAW, CASINO, dayOf } from '../src/rules.js';
 

@@ -2487,6 +2487,8 @@
     return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
   };
   function describe(body, code) {
+    if (!body?.error && body?.deedName && body.level != null && body.costOmr != null && body.bonusBps != null)
+      return `${body.deedName} upgraded to level ${body.level} — ${fmt(body.costOmr)} $OMR spent; +${body.bonusBps / 100}% weight for future full reward windows from ${new Date(Number(body.effectiveFromDay) * 86400000).toISOString().slice(0,10)} UTC. Already earned allocations are unchanged.`;
     if (body?.inviteIssued) return `Invitation ready. ${Number(body.remaining)} launch invites left — copy the link from your crew.`;
     // PLAIN TEXT, not HTML. Every consumer of describe() is toast(), which assigns to textContent —
     // injection-proof by construction — so HTML-escaping here protects nothing and CORRUPTS the very
@@ -8653,6 +8655,31 @@
     const t = $('#tab-deeds');
     const b = (await api('GET', '/v1/deeds')).body || {};
     const deed = b.deed, districts = b.districts || [], history = b.history || [], ranks = b.ranks || [];
+    const upgrades = b.upgrades || {}, rewards = b.rewards || {}, nextUpgrade = upgrades.next;
+    const upgradeReasons = {
+      no_deed: 'Claim a street first.', not_deed_owner: 'Only the current deed owner can upgrade it.',
+      deed_listed: 'Remove the deed from sale before upgrading.', not_enough_renown: 'Build the street’s legend to reach the renown milestone.',
+      not_enough_play: 'Qualify through gameplay across the required activity tracks.', insufficient_omr: 'Earn enough $OMR for this upgrade.',
+      pending_upgrade: 'An upgrade is already scheduled.', max_level: 'Maximum upgrade level reached.',
+    };
+    const upgradeCard = upgrades.deedName ? `<section class="card" aria-labelledby="deed-upgrade-title" style="border-color:var(--gold);margin:10px 0">
+      <h2 id="deed-upgrade-title">Optional deed upgrades</h2><div class="t">${esc(upgrades.deedName)}</div>
+      <div class="d">Level ${Number(upgrades.level) || 0}/${Number(upgrades.maxLevel) || 5} · current reward-weight bonus +${(Number(upgrades.effectiveBonusBps || 0) / 100).toFixed(0)}% · capped at +25%.</div>
+      ${Number(upgrades.bonusBps || 0) > Number(upgrades.effectiveBonusBps || 0) ? '<div class="d">Your higher level is scheduled for future full reward windows.</div>' : ''}
+      <p class="d">Participation requires qualifying play, never a paid activation. Upgrades require earned renown and qualifying gameplay, plus $OMR spending. They change your share of a fixed funded pool; they do not create rewards or guarantee a payout.</p>
+      ${nextUpgrade ? `<div class="d">Next: level ${Number(nextUpgrade.level)} · ${fmt(Number(nextUpgrade.costOmr))} $OMR · ${Number(nextUpgrade.minRenown)} renown · +${(Number(nextUpgrade.bonusBps) / 100).toFixed(0)}% weight.</div>
+        <button class="act" id="deed-upgrade" type="button" data-level="${Number(upgrades.level) || 0}" data-name="${esc(upgrades.deedName)}" data-cost="${Number(nextUpgrade.costOmr)}"${upgrades.canUpgrade ? '' : ' disabled'} style="margin-top:8px">Upgrade to level ${Number(nextUpgrade.level)} — ${fmt(Number(nextUpgrade.costOmr))} $OMR</button>
+        ${upgrades.canUpgrade ? '' : `<div class="d">${esc(upgradeReasons[nextUpgrade.blocked] || 'Meet the ownership, renown, activity and $OMR requirements before upgrading.')}</div>`}` : '<div class="d">There are no further upgrades.</div>'}
+      <p class="d" style="font-size:11px">A new bonus starts only with reward windows beginning on or after its effective UTC day, never past or overlapping windows. Transfers and wallet changes also affect only future full reward windows. Spent $OMR returns to the market shelf. Already earned allocations remain payable without upgrading.</p>
+    </section>` : '';
+    const rewardRows = rewards.allocations || [];
+    const rewardCard = `<section class="card" aria-labelledby="deed-reward-title" style="margin:10px 0">
+      <h2 id="deed-reward-title">Your RWA distributions</h2>
+      <p class="d">Qualifying gameplay determines your share of treasury-funded assets. Mint an on-chain deed to receive deliveries. Your allocations wait without expiry if no valid delivery vault is available.</p>
+      <div class="d">${!rewards.configured ? 'Delivery is unavailable until the RWA rail is configured and opened.' : !rewards.targetReady ? 'Delivery is waiting for a valid on-chain deed owned by your linked wallet.' : 'A deed delivery target is available. Only confirmed transfers count as received.'}</div>
+      ${rewardRows.length ? `<div class="grid" style="margin-top:8px">${rewardRows.map((r) => `<div class="card"><span class="t">${esc(r.ticker)}</span><dl class="d"><dt>Allocated</dt><dd>${Number(r.allocated || 0).toLocaleString(undefined, { maximumFractionDigits: 6 })}</dd><dt>Pending delivery</dt><dd>${Number(r.pending || 0).toLocaleString(undefined, { maximumFractionDigits: 6 })}</dd><dt>Received (confirmed deliveries)</dt><dd>${Number(r.delivered || 0).toLocaleString(undefined, { maximumFractionDigits: 6 })}</dd></dl></div>`).join('')}</div>` : '<div class="d">No RWA allocation has been recorded for your account yet.</div>'}
+      <p class="d" style="font-size:11px">Received is a delivery record, not the vault’s current balance. Owners can move assets out. Minting and upgrading do not guarantee payouts.</p>
+    </section>`;
     const evLabel = (k) => ({ claim: '🏷 claimed', fell: '🩸 a bloodline fell here', blood: '🔫 blood spilled',
       empire: '💰 an empire ran here', title: '👑 a title held', war: '⚔ a war won' }[k] || k);
     // THE CORNER (Phase 2) — the contestable rent layer. You hold the deed forever; a rival with muscle
@@ -8734,7 +8761,7 @@
       else if (!chain.walletLinked) row = `<div class="d" style="color:var(--dim)">Link a wallet in the Capital Desk to mint your deed.</div>`;
       else row = `<div class="d" style="color:var(--dim)">Pull the street off the in-game market first to extract it.</div>`;
       return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Mint your deed</span>
-        <div class="d" style="font-size:11px;color:var(--dim);margin-bottom:3px">turn your street into a tradeable ERC-721 you own in your own wallet — it carries its whole legend and sells on any marketplace. While on-chain it's a collectible (inert in-game) until you or a buyer re-import it to play the corner game with it again. The deed transfers; your extraction entitlement doesn't.</div>
+        <div class="d" style="font-size:11px;color:var(--dim);margin-bottom:3px">Your deed is your RWA vault. Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to its on-chain vault. Your share depends on qualifying gameplay and available funding. While on-chain, its in-game corner is inactive until re-import. The deed and its upgrade level transfer; previously earned allocations remain with the account that earned them.</div>
         ${row}${burnWarning}</div>`;
     };
     // THE GROWING MAP (Phase 4) — the city expands as users join
@@ -8749,6 +8776,8 @@
         ${b.canClaim ? `<button class="act" data-claimdist="${d.id}">claim a street here</button>` : ''}</div>`; }).join('')}</div>`;
     t.innerHTML = `
       ${chainCard()}
+      ${rewardCard}
+      ${upgradeCard}
       ${deed ? `<h2>${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
         <div class="card" style="border-color:var(--gold)"><span class="t">The Deed</span>
           <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, on ${esc(deed.districtName)}${deed.neighborhood ? ' — ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. It's yours — nobody takes it off you, and it outlives your street: the heir inherits it.</div>
@@ -8779,6 +8808,10 @@
     { const el = $('#deed-collect'); if (el) el.onclick = () => act('POST', '/v1/deeds/corner').then(() => renderDeeds()); }
     t.querySelectorAll('[data-shake]').forEach((btn) => btn.onclick = () =>
       act('POST', '/v1/deeds/shakedown/' + btn.dataset.shake).then(() => renderDeeds()));
+    { const el = $('#deed-upgrade'); if (el) el.onclick = async () => {
+      const ok = await ask('Upgrade your deed?', `Spend ${fmt(Number(el.dataset.cost))} $OMR to upgrade this deed? Gameplay and funding still determine rewards; the bonus applies only to future full windows; it does not increase the funded pool or guarantee payouts. Spent tokens return to the market shelf.`, { yes: 'Upgrade deed' });
+      if (ok) act('POST', '/v1/deeds/upgrade', { expectedLevel: Number(el.dataset.level), deedName: el.dataset.name }).then(() => renderDeeds());
+    }; }
     // Phase 3 — the market
     { const el = $('#deed-list'); if (el) el.onclick = () => {
       const p = Math.floor(Number($('#deed-price') && $('#deed-price').value || 0));
@@ -9351,7 +9384,7 @@
             <div class="d">Link your wallet, review character NFT checkout, and confirm your mint status. Already paid? Check confirmed credit before paying again.</div>
             <button class="act prime" data-character-open type="button" style="margin-top:8px">Mint your character NFT →</button></div>
           <div class="card" style="border-color:var(--gold)"><span class="t">2 · Mint your deed</span>
-            <div class="d">Claim and name your street, then review its NFT mint requirements. An on-chain deed is a collectible; the corner becomes inactive until re-import.</div>
+            <div class="d">Your deed is your RWA vault. Mint it to receive eligible distributions funded by the protocol’s tax share when distributions are active. Optional upgrades require gameplay and $OMR spending; no activation payment is required.</div>
             <button class="act prime" data-go-tab="deeds" type="button" style="margin-top:8px">Prepare your deed mint →</button></div>
         </div>
       </section>
@@ -12246,7 +12279,6 @@
         : desk.closed ? String(desk.closed).replaceAll('_', ' ') : 'awaiting the next lot';
     const reserve = wd.reserve || {};
     const walletReady = !!me.wallet, identityReady = !!me.minted, marketReady = genesis.phase === 'live';
-    const brokerActive = !!bkr.activation?.active;
     const deskPrice = deskAuction?.priceEthPerOmr == null ? null : Number(deskAuction.priceEthPerOmr);
     const deskPriceText = deskPrice == null ? 'no live print' : `${deskPrice.toFixed(8)} ETH / $OMR`;
     t.innerHTML = `
@@ -12331,8 +12363,8 @@
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Brokers’ RWA</span>
-            <span class="capital-market__body">Your activation window and play-weight are tracked now; stock delivery waits for the launch rail and a valid Street Deed.</span>
-            <span class="capital-market__value ${brokerActive && !bkr.blocked ? 'is-live' : 'is-closed'}">${brokerActive ? (bkr.blocked ? 'activated, not qualified' : `weight ${fmt(Math.floor(bkr.weight || 0))}`) : 'not activated'}</span>
+            <span class="capital-market__body">Qualifying gameplay earns allocation weight without an activation payment. Delivery needs an available RWA rail and a valid on-chain deed.</span>
+            <span class="capital-market__value ${!bkr.blocked ? 'is-live' : 'is-closed'}">${bkr.blocked ? 'gameplay not qualified' : `weight ${fmt(Math.floor(bkr.weight || 0))}`}</span>
           </div>
         </div>
       </section>
@@ -12406,27 +12438,17 @@
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">The Bank keeps its own books. City money never becomes collateral and collateral never becomes city money — the only thing that crosses is the profit above, and it only goes one way.</div>
       </div>`; })()}
 
-      ${bkr.activation ? (() => {
-        const cat = bkr.catalog || {}, act2 = bkr.activation || {}, play = bkr.activity || {};
-        // The whole design in one plain sentence, then YOUR standing, then the buy-in. The blocked
-        // line does the explaining — a weight number alone means nothing to a person.
-        const standing = act2.active
-          ? (bkr.blocked === 'not_enough_play'
-            ? `<span class="chip cold">ACTIVATED, NOT IN</span> you're paid up (${esc(act2.name || '')}, ${Math.max(1, Math.floor((act2.secondsLeft || 0) / 86400))}d left) but haven't played enough this week — work <b>${cat.minTracks}</b> different rackets and score <b>${cat.minScore}</b>+, and you're in.`
-            : `<span class="chip good">IN THE SPLIT</span> ${esc(act2.name || '')} (×${act2.mult}) with ${Math.max(1, Math.floor((act2.secondsLeft || 0) / 86400))}d on the window — your cut scales with your play, weight <b>${fmt(Math.floor(bkr.weight || 0))}</b>.`)
-          : `<span class="chip cold">NOT ACTIVATED</span> your play this week already counts (score ${fmt(Math.floor(play.score || 0))} across ${play.tracks || 0} trades${play.qualifies ? ' — enough to qualify' : ''}) — activate below and you're in the next split.`;
-        return `
-      <h2 class="capital-anchor" id="capital-brokers" style="margin-top:12px">The Brokers' Desk <span class="d" style="font-size:11px">(the treasury buys stock with the city's own revenue — activated brokers who PLAY split every buy)</span></h2>
-      <div class="card"${act2.active && !bkr.blocked ? ' style="border-color:var(--ok)"' : ''}>
-        <div class="d">The families vote a ticker each day, and the treasury buys it with its own revenue.
-          Every buy is split among <b>activated brokers</b> — weighted by how much you actually <b>played</b>
-          that week, never by how much you burned. A rich man who doesn't play takes <b>nothing</b>.</div>
-        <div class="d" style="margin-top:6px;border-top:1px solid rgba(255,255,255,.06);padding-top:6px"><b>You:</b> ${standing}</div>
-        <div class="row" style="margin-top:6px;flex-wrap:wrap;gap:6px">${(cat.tiers || []).map((tr) =>
-          `<button class="act" data-brokertier="${tr.id}"${act2.active && Number(act2.tier) > tr.id ? ' disabled' : ''}>${esc(tr.name)} — ${fmt(tr.omr)} $OMR (×${tr.mult})</button>`).join('')}</div>
-        <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">A window runs ${cat.windowDays} days; paying again extends it, and a higher tier raises your multiplier. You can't downgrade mid-window.</div>
-        <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">Straight talk: <b>no stock moves yet</b> — the treasury's buying opens with the chain at launch. Your window and your play are real today; the splits start when the buys do, and land in your Street Deed's vault.</div>
-      </div>`; })() : ''}
+      ${bkr.activity ? (() => {
+        const cat = bkr.catalog || {}, play = bkr.activity || {}, upgrade = bkr.upgrade || {}, commitment = bkr.activation || {};
+        return `<h2 class="capital-anchor" id="capital-brokers" style="margin-top:12px">Deed RWA rewards</h2>
+        <div class="card"><div class="d">Your deed is your RWA vault; eligible distributions are funded by the protocol’s tax share and delivered to an on-chain deed when the rail is active. Shares depend on qualifying gameplay and available funding; no activation or upgrade payment is required.</div>
+          <div class="d" style="margin-top:8px">${bkr.blocked ? `Work ${Number(cat.minTracks) || 3} different activity tracks and score ${Number(cat.minScore) || 25}+ to qualify. Your score: ${fmt(Number(play.score || 0))}.` : `Gameplay qualified · reward weight ${fmt(Number(bkr.weight || 0))}.`}</div>
+          <div class="d">Optional deed level ${Number(upgrade.level) || 0} · effective weight bonus +${(Number(upgrade.effectiveBonusBps || 0) / 100).toFixed(0)}% · upgrade cap +25%.</div>
+          ${commitment.active ? `<div class="d">Your existing paid commitment is honored until ${esc(String(commitment.until || '').slice(0,10))}; a larger active multiplier does not stack with the deed bonus.</div>` : ''}
+          <button class="act" type="button" data-capital-tab="deeds" style="margin-top:8px">View your deed, distributions &amp; optional upgrades →</button>
+          <p class="d" style="font-size:11px">Upgrades require renown and gameplay milestones. Spent $OMR returns to the market shelf. Bonuses apply only to future full reward windows and redistribute a fixed funded pool. Existing allocations remain payable without upgrading. Delivery has separate availability gates.</p>
+        </div>`;
+      })() : ''}
 
       <div class="card capital-anchor" id="capital-stake"><span class="t">THE LADDER — ${esc(me.ladder?.name || 'off the ladder')}${me.ladder?.rung ? ` (rung ${me.ladder.rung}/${me.ladder.of})` : ''}</span>
         <div class="d">Power runs on $OMR you <b>HOLD</b>, not what you spend — ${fmt(Math.floor(me.ladder?.staked || 0))} staked.
@@ -12703,9 +12725,7 @@
         { yes: 'lock it in', danger: true })) return;
       act('POST', '/v1/stake/lock', { tier: t.id }).then(() => renderPortfolio());
     }; });
-    // the brokers' desk — activate (or extend/upgrade) a window at the picked tier
-    t.querySelectorAll('[data-brokertier]').forEach((b) => b.onclick = () =>
-      act('POST', '/v1/brokers/activate', { tier: Number(b.dataset.brokertier) }).then(() => renderPortfolio()));
+
   }
 
   // ── THE ESTATE: the compound — a tiered, furnishable home that displays your legend ──

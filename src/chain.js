@@ -1062,7 +1062,7 @@ export async function recordDeedTransfer(pool, { tokenId, to, from }) {
       'SELECT account_id, extracted_by_account, name, onchain_owner FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE',
       [String(tokenId)])).rows[0];
     const row = (cur && String(cur.onchain_owner || '').toLowerCase() !== owner) ? cur : null;
-    if (row) await client.query('UPDATE street_deeds SET onchain_owner=$2 WHERE onchain_token_id=$1', [String(tokenId), owner]);
+    if (row) await client.query('UPDATE street_deeds SET onchain_owner=$2, ownership_since_day=$3 WHERE onchain_token_id=$1', [String(tokenId), owner, dayOf() + 1]);
     // a genuine SECONDARY move (not the mint — the mint has no prior owner recorded) goes on the
     // public record: provenance is the deed's value, and a sale is part of its story
     const isMint = !from || String(from).toLowerCase() === '0x0000000000000000000000000000000000000000';
@@ -1236,7 +1236,7 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   await client.query(
     `UPDATE street_deeds SET account_id=$2, onchain_token_id=NULL, extracted_by_account=NULL,
        extracted_at=NULL, onchain_owner=NULL, controller_account=NULL, control_until=NULL,
-       corner_at=now(), shakedown_at=NULL, sale_price=NULL WHERE account_id=$1`, [onchainOwner, acct.account_id]);
+       corner_at=now(), shakedown_at=NULL, sale_price=NULL, ownership_since_day=$3 WHERE account_id=$1`, [onchainOwner, acct.account_id, dayOf() + 1]);
   // append a lineage line to the legend (fixed string, no user input → a plain insert, no cleanText/SAVEPOINT)
   await client.query("INSERT INTO street_deed_history (account_id, kind, detail) VALUES ($1,'sold','brought back into the city from on-chain')", [acct.account_id]);
   await client.query("UPDATE deed_reimports SET status='applied', applied_account=$2, applied_at=now() WHERE ref=$1", [ref, acct.account_id]);
@@ -1467,7 +1467,7 @@ export async function walletVerify(pool, accountId, address, signature) {
   // race the UPDATE; the ux_wallet_address unique index rejects the loser. Catch that as a clean
   // wallet_taken (audit LOW-1) instead of a raw 500. Data integrity was never at risk.
   try {
-    await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_id=$1', [accountId, addr]);
+    await pool.query('UPDATE account_persistent SET wallet_address=$2, reward_wallet_since_day=CASE WHEN lower(wallet_address)=lower($2) THEN reward_wallet_since_day ELSE $3 END WHERE account_id=$1', [accountId, addr, dayOf() + 1]);
   } catch (e) {
     if (e?.code === '23505') throw new GameError('wallet_taken', 'That wallet is already linked to another account.');
     throw e;

@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reimport.js OK
+reimport: undecodable token 99999 gearIdOfToken: no gear class for token 99999

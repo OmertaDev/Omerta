@@ -12,11 +12,13 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const json = value => JSON.parse(JSON.stringify(value));
 const canonical = value => Array.isArray(value) ? '[' + value.map(canonical).join(',') + ']'
   : value && typeof value === 'object' ? '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}' : JSON.stringify(value);
+import { assertCarMeltRulesCompatibility } from './rc1-deed-source-compatibility.js';
+export { assertCarMeltRulesCompatibility, CAR_MELT_BASELINE_RULES_PIN } from './rc1-deed-source-compatibility.js';
 export const CAR_MELT_SOURCE_PINS = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
-  'src/rules.tail.js': 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
+  'src/rules.tail.js': '83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
 });
 let shapes;
@@ -26,6 +28,7 @@ export function assertCarMeltSources() {
   for (const [file, pin] of Object.entries(CAR_MELT_SOURCE_PINS)) {
     sources[file] = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
     assert.equal(hash(sources[file]), pin, 'Car melt provenance source changed: ' + file);
+    if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(sources[file]);
   }
   const bulk = sources['src/game.js'].match(/const bulk = await client\.query\(`([\s\S]*?)`,\s*\[ch\.id, ch\.account_id, today\]\)/);
   assert(bulk, 'Original complete loadOwned UNION not located');

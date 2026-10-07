@@ -1276,16 +1276,16 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       rehypothecation, and collateral use are not permanently prohibited, but this decision authorizes none for MVP.
       **OMR-STAKING MULTIPLICATIVE WEIGHT / FULL-EPOCH TWA — COMPLETE RULE, IMPLEMENTATION PENDING (founder direction 2026-08-25, completed 2026-08-26):** change
       no shipped allocation code yet. When implemented, retain active-play qualification for human and agent accounts, NPC/resident exclusion, and
-      recurring 30-day Broker activation. Compute
-      `finalWeight = activationMult × activityScore × stakeMult`; failing activity remains zero. Use fixed public
+      free baseline gameplay qualification. Compute
+      `finalWeight = deedOrLegacyMult × activityScore × stakeMult`; failing activity remains zero. Use fixed public
       `stakeMult` tiers derived only from finalized time-weighted-average eligible staked principal across the complete
       seven-day epoch. Add no separate 72-hour maturity delay: accepted principal contributes pro rata from entry to
       exit. Bind one verified allocation wallet per account/epoch and defer wallet changes to the next epoch. Exclude
-      liquid OMR, pending/unclaimed rewards, claimed-but-not-restaked rewards, and Broker-activation spend. The founder
+      liquid OMR, pending/unclaimed rewards, claimed-but-not-restaked rewards, and deed-upgrade spend. The founder
       rejected a 2× maximum and approved a 1.50× cap with exact 300/1,000/5,000/20,000 OMR thresholds. The source
       direction is now a unified actual on-chain OMR gameplay stake; `account_persistent.staked` cannot remain a separate
       balance. Until the unified vault and finalized history are complete, retain the
-      shipped `activationMult × activityScore` formula. Never read only the current balance at allocation time, because
+      shipped `deedOrLegacyMult × activityScore` formula. Never read only the current balance at allocation time, because
       immediate stake/unstake around the snapshot is flash-weightable. Rehearse zero-play/large-stake, duplicate wallet
       claims, wallet changes, source rotation/code drift, tier edges, stake/unstake races, short-lived pro-rata stake,
       finality/reorgs, and repeat snapshot idempotency.
@@ -1508,7 +1508,7 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       One verified wallet qualifies one permanent account per epoch; conflicting claims all receive zero stake multiplier
       until resolved. Finalized transitions affect TWA prospectively at canonical time with no backfill/snapshot shortcut.
       Only Safe may change tiers/thresholds, with seven public days' notice and effect no earlier than the first later full
-      epoch. Freeze per epoch the schedule, wallet bindings, eligible buckets, activity formula, activation requirement,
+      epoch. Freeze per epoch the schedule, wallet bindings, eligible buckets, activity formula, optional upgrade rules,
       and ruleset. Pause or cancel a critically defective epoch; never rewrite known weights. Rehearse tier edges, wallet
       collisions, checkpoint order/reorg, loss/unbond/loot eligibility, schedule-boundary races, and cancelled epochs.
       Rehearse changed execution-time balances,

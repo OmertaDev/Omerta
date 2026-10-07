@@ -1,0 +1,100 @@
+{
+  "baseCommit": "db54f824004c4d855778668081ce2adfac173c39",
+  "reviewPhase": "local implementation",
+  "node": "v24.19.0",
+  "postgres": "18.4",
+  "checkedAt": "2026-10-06T16:29:47.920Z",
+  "checks": [
+    {
+      "command": "node test/deed-upgrades.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/brokers.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/deeds.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/reimport.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/stockdeliver.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/activity.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/rules.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/levers.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/deed-upgrades.js --postgres",
+      "exitCode": 0
+    },
+    {
+      "command": "node tools/pgquery.js",
+      "exitCode": 0,
+      "staticStatements": 4089
+    },
+    {
+      "command": "node test/deed-upgrade-ownership.js",
+      "exitCode": 0
+    }
+  ],
+  "hashes": [
+    {
+      "path": "src/deed-upgrades.js",
+      "sha256": "0c5cdbc6ff7a7af0bcf8506f9271493846d8f98deb6a4bcc1e4f0e20c271c753"
+    },
+    {
+      "path": "src/brokers.js",
+      "sha256": "7c7fbcdcec9e22f88edff54132a20eeed40564b1f15a083b89f83ae5aba2a33e"
+    },
+    {
+      "path": "src/deeds.js",
+      "sha256": "bad636255f9b6b0b29331520298a1c2f67a190e407f1a829f93eebda00e17e4f"
+    },
+    {
+      "path": "src/chain.js",
+      "sha256": "27b0edc4e7e6649e916ba4ea868d3fadbd44959ab3dafc107935c9fad7c5cec2"
+    },
+    {
+      "path": "src/invariants.js",
+      "sha256": "558f8c34930618d873b83246642764782bbe459fc014b3842dc363f2a5403eba"
+    },
+    {
+      "path": "src/rules.tail.js",
+      "sha256": "1889e906a6a1734cfbc6db0ff9b470b48bd5fb62f94ad43f7056d9cc826aac05"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "e9ee0db076fb157a1940b50528bc59bfbbff9e82586488a08af401cd91c65e5c"
+    },
+    {
+      "path": "schema.sql",
+      "sha256": "06625ad360639c52b63e190eb81c1ed4dddb5dcd6117366f6449932b582ec016"
+    },
+    {
+      "path": "test/deed-upgrades.js",
+      "sha256": "b812f76b2288de0a299153a861b78dd660608da26f248f3fdca44a1cb48f6784"
+    },
+    {
+      "path": "test/brokers.js",
+      "sha256": "56682cab41e9b092834db10eb88d3b580db91aa9d06bf9a1392a78f44d12c721"
+    },
+    {
+      "path": "test/deed-upgrade-ownership.js",
+      "sha256": "b42a7a767a747d98401dc7c99fc7984bec11f221f2be62cb3822a6205f02e873"
+    }
+  ]
+}

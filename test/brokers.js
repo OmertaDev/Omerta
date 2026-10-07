@@ -56,26 +56,11 @@ let r = await call('GET', '/v1/brokers', { token: sal.token });
 assert.equal(r.code, 200, 'the board is readable');
 assert(r.body.activity.score > 0, 'the play is scored');
 assert.equal(r.body.activity.qualifies, true, 'and clears the breadth gate');
-assert.equal(r.body.weight, 0, 'but an UNACTIVATED holder weighs nothing');
-assert.equal(r.body.blocked, 'not_activated');
+assert.equal(r.body.weight, r.body.activity.score, 'qualified baseline play requires no paid activation');
+assert.equal(r.body.blocked, null);
 
-// ── activation burns $OMR, and the burn RECYCLES to the desk like every sink since economy v3 ──
-await pool.query(`UPDATE account_persistent SET omr=6000 WHERE account_id='${sal.aid}'`);
-const shelfBefore = await shelf();
-const t3 = BROKERS.TIERS.find((x) => x.id === 3);
-
-r = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier: 3 } });
-assert.equal(r.code, 200, JSON.stringify(r.body));
-assert.equal(r.body.tier, 3);
-assert.equal(r.body.mult, t3.mult);
-assert.equal(await omrOf(sal.aid), 6000 - t3.omr, 'exactly the tier price left the balance');
-
-const burns = (await pool.query(
-  `SELECT amount FROM transactions WHERE account_id='${sal.aid}' AND reason='brokers:activate'`)).rows;
-assert.equal(burns.length, 1, 'one ledgered burn');
-assert.equal(Number(burns[0].amount), -t3.omr, 'for exactly the tier price');
-assert.equal(await shelf() - shelfBefore, t3.omr, 'and it recycled to the desk shelf, not the fire');
-
+// A grandfathered paid window keeps the historical quoted multiplier.
+await pool.query('INSERT INTO broker_activations (account_id, tier, until, spent_omr) VALUES ($1,3,$2,1200)', [sal.aid, new Date(Date.now()+86400000)]);
 // ── an activated holder who played weighs tier x score ──
 r = await call('GET', '/v1/brokers', { token: sal.token });
 assert.equal(r.body.activation.active, true);
@@ -86,8 +71,7 @@ assert(r.body.weight > 0);
 // ── THE WALL: activation alone buys nothing ──────────────────────────────────────────────────────
 // If this ever returns non-zero, the mechanism has become a yield product for whoever burns most.
 await pool.query(`UPDATE account_persistent SET omr=30000 WHERE account_id='${nico.aid}'`);
-r = await call('POST', '/v1/brokers/activate', { token: nico.token, body: { tier: 5 } });
-assert.equal(r.code, 200, JSON.stringify(r.body));
+await pool.query('INSERT INTO broker_activations (account_id, tier, until, spent_omr) VALUES ($1,5,$2,9000)', [nico.aid, new Date(Date.now()+86400000)]);
 r = await call('GET', '/v1/brokers', { token: nico.token });
 assert.equal(r.body.activation.active, true, 'activated at the HIGHEST tier');
 assert.equal(r.body.weight, 0, 'and still weighs NOTHING without play');
@@ -145,7 +129,8 @@ assert.match(workerSource, /safe\('broker epoch',\s*\(\)\s*=>\s*allocateEpoch\(p
     const activated = await call('POST', '/v1/brokers/activate', {
       token: x.token, body: { tier: 1 },
     });
-    assert.equal(activated.code, 200, JSON.stringify(activated.body));
+    assert.equal(activated.code, 400);
+    assert.equal(activated.body.error, 'activation_retired');
     await pool.query(
       `INSERT INTO activity_log (account_id, day, tag, n) VALUES
        ($1, $2, 'crime', 50), ($1, $2, 'jump', 5), ($1, $2, 'heist', 1)`,
@@ -195,28 +180,12 @@ assert.equal(nicoPulled, 1, 'a job landed for Nico too');
 assert.equal((await gainsFor(pool, nico.aid, today, today)).crime, 1,
   'the INSERT path records ONE as well — a fresh day cannot start the count at an XP award');
 
-// ── gates ──
-r = await call('POST', '/v1/brokers/activate', { token: nico.token, body: { tier: 1 } });
-assert.equal(r.code, 400, 'a mid-window downgrade is refused');
-assert.equal(r.body.error, 'downgrade');
-r = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier: 99 } });
-assert.equal(r.code, 400);
-assert.equal(r.body.error, 'bad_tier');
-// …and it ENUMERATES, off the live catalog — the lockStake sibling's shape. A caller who guessed the
-// tier's NAME instead of its id must be able to learn the ids from the refusal itself rather than
-// spending a second round trip on GET /v1/brokers. Read from BROKERS.TIERS, never restated, so a
-// retune that reprices a desk fails here rather than leaving the sentence stale.
-{
-  const named = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier: 'Runner' } });
-  assert.equal(named.body.error, 'bad_tier', 'a tier NAME is not an id');
-  for (const d of BROKERS.TIERS) {
-    assert(named.body.message.includes(`${d.id} — ${d.name}`),
-      `the bad_tier refusal must enumerate desk ${d.id} (${d.name}): ${named.body.message}`);
-    assert(named.body.message.includes(`${d.omr} $OMR`),
-      `the bad_tier refusal must price desk ${d.name} off the live catalog: ${named.body.message}`);
-  }
+// Every new activation or renewal is refused without taking payment.
+for (const tier of [1, 99, 'Runner']) {
+  r = await call('POST', '/v1/brokers/activate', { token: sal.token, body: { tier } });
+  assert.equal(r.code, 400);
+  assert.equal(r.body.error, 'activation_retired');
 }
-
 // ── §10.4 ──
 const inv = await runLedgerInvariants(pool, { alert: false });
 const vocab = inv.checks.find((c) => /vocabulary/i.test(c.name));
@@ -231,7 +200,8 @@ assert(vocab.ok, `brokers:activate must be a recognised reason: ${JSON.stringify
   const vera = await mk('Vera Calzone');
   await pool.query(`UPDATE account_persistent SET omr=6000 WHERE account_id='${vera.aid}'`);
   let vr = await call('POST', '/v1/brokers/activate', { token: vera.token, body: { tier: 1 } });
-  assert.equal(vr.code, 200, JSON.stringify(vr.body));
+  assert.equal(vr.code, 400);
+  assert.equal(vr.body.error, 'activation_retired');
   await pool.query(
     `INSERT INTO activity_log (account_id, day, tag, n) VALUES
      ('${vera.aid}', ${today}, 'crime', 50),
@@ -325,10 +295,4 @@ assert(vocab.ok, `brokers:activate must be a recognised reason: ${JSON.stringify
 }
 
 await app.close();
-console.log('✅ brokers test passed — the weight is tier x play, activation alone buys NOTHING (the '
-  + 'wealth-weighted case this design deliberately does not pay), the burn recycles to the desk, the '
-  + 'allocator publishes and delivers nothing, the recorder logs COUNTS so no progression multiplier '
-  + 'can ever reach the distribution key, and THE DISTRIBUTION splits a real buy pro-rata over the '
-  + 'FROZEN epoch exactly once (a post-buy epoch can never receive it, a comp refuses by name, a '
-  + 'buy with no frozen epoch consumes its latch with zero, and the whole thing writes not one '
-  + 'ledger row).');
+console.log('brokers: PASS — qualified baseline play, retired activation, legacy terms, fixed published weights and idempotent funded distribution');

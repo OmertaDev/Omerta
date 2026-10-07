@@ -1,3 +1,4 @@
+import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
@@ -3396,6 +3397,8 @@ export async function buildServer() {
     Chain.requestItemWithdraw(pool, req.user.sub, req.params.kind, req.params.id, req.body?.address));
   // STREET DEEDS on-chain — extract your street as a tradeable StreetDeed ERC-721 (design §2/§3). The
   // deed goes INERT in-game until re-imported; the `minted` extraction entitlement never travels with it.
+  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));
   app.post('/v1/deeds/extract', { preHandler: auth }, async (req) =>
     // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act
     Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));

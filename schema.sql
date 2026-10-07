@@ -7377,3 +7377,18 @@ CREATE TABLE IF NOT EXISTS world_recipe_usage (
   PRIMARY KEY (recipe_id,scope,subject_id,period_kind,period_key),
   CHECK ((scope='global' AND subject_id='*') OR (scope<>'global' AND subject_id<>'*' AND char_length(subject_id)>0))
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_deed_upgrade_name ON street_deeds(name);
+CREATE TABLE IF NOT EXISTS deed_upgrades (
+ deed_name TEXT NOT NULL REFERENCES street_deeds(name),
+ level INT NOT NULL CHECK (level BETWEEN 1 AND 5),
+ bonus_bps INT NOT NULL CHECK (bonus_bps BETWEEN 500 AND 2500),
+ cost_omr NUMERIC NOT NULL CHECK (cost_omr > 0),
+ account_id TEXT NOT NULL,
+ effective_from_day INT NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+ PRIMARY KEY (deed_name, level)
+);
+
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS ownership_since_day INT;
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS reward_wallet_since_day INT;

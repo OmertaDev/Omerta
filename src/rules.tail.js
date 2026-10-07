@@ -3515,7 +3515,7 @@ export const DESK = {
   SINK_REASONS: ['vest:%', 'cleanpapers', 'lab:%', 'gear:mint:%', 'path:%', 'gang:dissolved',
     'withdraw:omr', 'vanity:%', 'intel:%', 'respec%', 'plex:%', 'law:jury', 'law:envelope',
     'foundation:%', 'rwa:%', 'estate:%', 'auction:win', 'auction:take', 'auction:consign:fee',
-    'megaproject:omr', 'bond:%', 'business:spec%', 'death:duty', 'window:burn', 'made:%', 'brokers:%',
+    'megaproject:omr', 'bond:%', 'business:spec%', 'death:duty', 'window:burn', 'made:%', 'brokers:%', 'deed:upgrade',
     // THE LAB MODULE (kitchen.js:301) is a $OMR sink — but it ledgers `kitchen:module`, not `lab:*`,
     // so it was in the omr VOCABULARY yet MISSING from this burn term, and every purchase drifted the
     // §10.4 $OMR conservation check (a stable −N = the total ever spent on modules; found live via the
@@ -6142,3 +6142,12 @@ export const PROVENANCE = {
   },
 };
 export const wardOf = (id) => PROVENANCE.WARDS[Number(id)] || null;
+
+// Permanent deed-bound bonuses; gameplay and funding remain required.
+export const DEED_UPGRADES = [
+  { level: 1, costOmr: 150, bonusBps: 500, minRenown: 5 },
+  { level: 2, costOmr: 450, bonusBps: 1000, minRenown: 20 },
+  { level: 3, costOmr: 1200, bonusBps: 1500, minRenown: 50 },
+  { level: 4, costOmr: 3000, bonusBps: 2000, minRenown: 80 },
+  { level: 5, costOmr: 9000, bonusBps: 2500, minRenown: 120 },
+];

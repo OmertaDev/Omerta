@@ -1,5 +1,29 @@
 # OMERTÀ — STREET DEEDS (the map as property)
 
+## Current deed reward policy — 2026-10-06
+
+**Your deed is your RWA vault.** Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.
+
+No paid Broker activation or deed upgrade is required for baseline qualification. Successful server-authoritative play must still meet the seven-day epoch’s three-track and score-25 gate; spending alone never qualifies. Without a finalized on-chain deed delivery target, allocations wait without expiry.
+
+Optional permanent deed upgrades are sequential:
+
+| Level | Spend $OMR | Required renown | Reward-weight bonus |
+| --- | ---: | ---: | ---: |
+| 1 | 150 | 5 | 5% |
+| 2 | 450 | 20 | 10% |
+| 3 | 1,200 | 50 | 15% |
+| 4 | 3,000 | 80 | 20% |
+| 5 | 9,000 | 120 | 25% |
+
+Each upgrade also requires qualifying activity in the last seven days. Bonuses replace lower levels, cap at 25%, and apply only to future epochs whose entire activity window starts on or after the next UTC day. They redistribute shares of a fixed treasury-funded pool; they do not increase its budget or guarantee a payout. Spending $OMR uses the game sink and recycles inventory to the current market shelf; it does not destroy ERC-20 supply.
+
+Upgrade level follows the deed when sold. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Upgrading or selling cannot rewrite previously allocated rewards or their original qualifying account. Existing paid Broker commitments retain their multiplier until expiry; the larger eligible multiplier applies, without stacking it with the upgrade bonus. All existing asset, funding, chain-finality, delivery and launch gates remain in force; source availability does not establish live RWA payouts.
+
+Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.
+
+The current policy above supersedes earlier paid-activation proposals and dated implementation notes below. Historical decisions and implementation evidence remain recorded with their dates.
+
 **Founder-directed, 2026-08-14.** Reframe the identity mint from a character PFP to a **Street Deed**:
 a named, mapped plot of the world a player owns, trades, and builds a legend on — the Monopoly layer.
 The founder wants all three of collectible (A), rent (B), and productive turf (C), so the deed becomes
@@ -41,9 +65,9 @@ Everything below follows from that split. It is what lets A+B+C coexist:
 
 - **Agent-wallet parity:** a real `/v1/auth/agent-key` account may claim and control a deed, collect
   its corner, seize or reclaim control, use its district perks and operation seat, list/sell/buy it,
-  extract it to a SIWE-proven wallet, re-import it, activate a Broker tier, accrue an RWA allocation,
+  extract it to a SIWE-proven wallet, re-import it, optionally upgrade a deed, accrue an RWA allocation,
   and receive that allocation in the deed's ERC-6551 account. `agent_flag` is never an ownership,
-  activation, allocation, or delivery disqualifier. Agents remain subject to the same one-deed limit,
+  upgrade, allocation, or delivery disqualifier. Agents remain subject to the same one-deed limit,
   level/activity gates, exposure, attestation, paid mint, wallet-ownership, chain, audit, and finality
   walls. The separate Great Streets prestige board may retain the established human-status posture;
   it cannot gate any deed right or value flow.

@@ -34,11 +34,19 @@ const input = fixture(), before = JSON.stringify(input), result = reviewWorkload
 assert.equal(JSON.stringify(input), before); assert.equal(result.complete, true); assert.equal(result.matrixQualifying, false);
 assert.equal(result.lifecycles.find(row => row.id === 'season').applicability, 'APPLICABLE');
 assert(result.lifecycles.filter(row => row.id !== 'season').every(row => row.applicability === 'NOT_APPLICABLE'));
-for (const [path, body, ids] of [['/v1/made', {}, ['made-membership']], ['/v1/brokers/activate', {}, ['broker-activation']],
+for (const [path, body, ids] of [['/v1/made', {}, ['made-membership']],
   ['/v1/stake/lock', { tier: 'quarter' }, ['stake-lock-quarter']], ['/v1/stake/lock', {}, ['stake-lock-week', 'stake-lock-month', 'stake-lock-quarter']]]) {
   const changed = fixture(); changed.workload.calls.push({ kind: 'http', method: 'POST', path, body });
   const reviewed = reviewWorkloadLifecycleApplicability(changed);
   for (const id of ids) assert.equal(reviewed.lifecycles.find(row => row.id === id).applicability, 'APPLICABLE', 'An intermediate opened-and-expired timer remains applicable even with empty endpoint snapshots');
+}
+{
+  const changed = fixture(); changed.workload.calls.push({ kind: 'http', method: 'POST', path: '/v1/brokers/activate', body: { tier: 5 } });
+  assert.equal(reviewWorkloadLifecycleApplicability(changed).lifecycles.find(row => row.id === 'broker-activation').applicability, 'NOT_APPLICABLE', 'Retired activation cannot open a new paid timer');
+  changed.initialSnapshot.tables.broker_activations.push(JSON.stringify({ account_id: 'a', until: new Date(startAt + 86400000).toISOString() }));
+  changed.initialSnapshot.stateSha256 = hash({ tables: changed.initialSnapshot.tables, sequences: changed.initialSnapshot.sequences });
+  changed.workload.binding.initialStateSha256 = changed.initialSnapshot.stateSha256;
+  assert.equal(reviewWorkloadLifecycleApplicability(changed).lifecycles.find(row => row.id === 'broker-activation').applicability, 'APPLICABLE', 'Existing paid commitment remains subject to duration review');
 }
 {
   const changed = fixture(); changed.initialSnapshot = snapshot({ stake_lock_until: new Date(startAt + 86400000).toISOString(), stake_lock_mult: 1.5 });

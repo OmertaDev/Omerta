@@ -3338,6 +3338,42 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
 }
 
 // Founder batch: freeze an exact pre-vote budget, keep the MVP spot-only and units-first, and record
+// Optional deed upgrades must never become paid baseline eligibility or guaranteed rewards.
+{
+  for (const name of ['AGENTS.md', 'docs/WIKI.md', 'docs/investors/01-plain-language.md',
+    'docs/investors/02-technical-detail.md', 'docs/GAMEPLAY-MARKETING-PACK.md', 'docs/OMR-MARKETING-PACK.md']) {
+    const src = read(name);
+    assert(src.includes('Your deed is your RWA vault')
+      && src.includes('funded by the protocol’s tax share')
+      && src.includes('No paid Broker activation or deed upgrade is required for baseline qualification')
+      && src.includes('spending alone never qualifies')
+      && src.includes('allocations wait without expiry'), `${name} must explain free gameplay qualification and deed delivery`);
+    for (const row of ['| 1 | 150 | 5 | 5% |', '| 2 | 450 | 20 | 10% |', '| 3 | 1,200 | 50 | 15% |',
+      '| 4 | 3,000 | 80 | 20% |', '| 5 | 9,000 | 120 | 25% |']) {
+      assert(src.includes(row), `${name} must publish the exact sequential upgrade schedule`);
+    }
+    assert(src.includes('qualifying activity in the last seven days')
+      && src.includes('entire activity window starts on or after the next UTC day')
+      && src.includes('fixed treasury-funded pool') && src.includes('do not increase its budget or guarantee a payout')
+      && src.includes('does not destroy ERC-20 supply')
+      && src.includes('original qualifying account') && src.includes('without stacking')
+      && src.includes('Transfers, reimports and wallet changes apply bonuses only to future full reward windows')
+      && src.includes('already earned allocations stay with the account that earned them')
+      && src.includes('"deedName": "Ash Street", "expectedLevel": 0'),
+    `${name} must preserve prospective rewards, fixed funding, original allocations, sink accounting and stale-deed protection`);
+  }
+  const web = read('public/wiki.html');
+  assert(web.includes('No paid activation or upgrade is required')
+    && web.includes('150 / 450 / 1,200 / 3,000 / 9,000')
+    && web.includes('5 / 20 / 50 / 80 / 120') && web.includes('bonus caps at 25%')
+    && web.includes('entire activity window starts on or after the next UTC day')
+    && web.includes('never its budget or a guaranteed payout')
+    && web.includes('prior allocations keep their original qualifying account')
+    && web.includes('Transfers, reimports and wallet changes apply bonuses only to future full reward windows'),
+  'the public Codex must disclose the complete optional upgrade policy');
+  console.log('✓ deed copy pins free baseline qualification, exact optional upgrades, prospective fixed-pool rewards and preserved allocations');
+}
+
 // OMR staking as an allocation direction rather than silently changing the shipped broker formula.
 {
   const design = read('omerta-brokers-design.md');
@@ -3368,8 +3404,8 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('not a separate') && plain.includes('account_persistent.staked')
       && plain.includes('Active-play qualification for human and agent accounts')
       && plain.includes('NPC/resident exclusion')
-      && plain.includes('recurring 30-day Broker activation remain mandatory')
-      && plain.includes('activationMult × activityScore × stakeMult')
+      && plain.includes('baseline eligibility without paid activation remain mandatory')
+      && plain.includes('deedOrLegacyMult × activityScore × stakeMult')
       && plain.includes('failed activity still produces zero')
       && plain.includes('fixed public tiers')
       && plain.includes('finalized time-weighted-average eligible principal')
@@ -3377,7 +3413,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('no separate 72-hour maturity delay')
       && plain.includes('one verified allocation wallet') && plain.includes('wallet change begins next epoch')
       && plain.includes('Liquid OMR') && plain.includes('claimed rewards not restaked')
-      && plain.includes('Broker-activation spend do not count')
+      && plain.includes('deed-upgrade spend do not count')
       && plain.includes('approved cap is 1.50×')
       && plain.includes('below 300 OMR receives 1.00×')
       && plain.includes('300–999.999… receives 1.10×')
@@ -3398,7 +3434,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('actual reserve-backed on-chain OMR')
       && plain.includes('one-use typed and rate-bounded chain-first gameplay outcomes')
       && plain.includes('credits stake only against deposited OMR')
-      && plain.includes('shipped formula remains') && plain.includes('activationMult × activityScore')
+      && plain.includes('shipped formula remains') && plain.includes('deedOrLegacyMult × activityScore')
       && plain.includes('no current stake balance counts silently or retroactively')
       && plain.includes('Agent accounts have full economic parity')
       && plain.includes('verified EOA or ERC-1271 controller wallets')
@@ -3692,7 +3728,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && deploy.includes('SPOT-ONLY MVP / NO DISCRETIONARY SELLING')
     && deploy.includes('OMR-STAKING MULTIPLICATIVE WEIGHT / FULL-EPOCH TWA — COMPLETE RULE, IMPLEMENTATION PENDING')
     && deploy.includes('UNITS-FIRST PORTFOLIO / EVIDENCE-BASED COMPLEXITY')
-    && deploy.includes('finalWeight = activationMult × activityScore × stakeMult')
+    && deploy.includes('finalWeight = deedOrLegacyMult × activityScore × stakeMult')
     && deploy.includes('one verified allocation wallet per account/epoch')
     && deploy.includes('defer wallet changes to the next epoch')
     && deploy.includes('account_persistent.staked')

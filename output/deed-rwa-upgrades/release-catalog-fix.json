@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-06T23:52:19.255Z",
+  "releaseSource": "eda810aa3522f9fb2e83d7aa852738e16126dd1b",
+  "failedCiRun": 37547699890,
+  "failure": "Phase2 upgrade catalog omitted deed_upgrades constraints in PostgreSQL16/18",
+  "change": "Add exact five PK/FK/CHECK expectations and seven PG18 NOT NULL columns; no product changes or relaxed assertions",
+  "catalogSha256": "3131a6553a385a7118ccf44552a5754be08fe49e574084c4c23cd8ee408210a8",
+  "retest": {
+    "command": "TEST_DATABASE_URL=<isolated loopback PostgreSQL> node test/phase2-postgres.js --definitions",
+    "postgres": "18.4",
+    "exitCode": 0,
+    "cleanMigration": true,
+    "populatedUpgrade": true,
+    "causalNegatives": 12
+  },
+  "directorFix": {
+    "failedCiRun": 37549132834,
+    "change": "Keep exact preservation of existing constraints and explicitly check all five reviewed deed constraints",
+    "retest": {
+      "command": "COORDINATION_TEST_DATABASE_URL=<isolated loopback PostgreSQL> node test/director-migration.js",
+      "postgres": "18.4",
+      "exitCode": 0,
+      "populatedBaseline": "44f48a743e549591bd125a1f678099b8382dd78f",
+      "twoMigrations": true
+    }
+  },
+  "ciInventoryFix": {
+    "failedCiRun": 37550879177,
+    "prefixSource": "4e83019e9616b367906c1d3e454c23c5015308de",
+    "prefixLogSha256": "df74c81bd57cfe2f350e8398443da8ff1821974c88de9897fe66de7df0258893",
+    "failure": "test/gates.js:3534 omitted the new PostgreSQL deed-upgrade command",
+    "change": "Include required deed PostgreSQL test after pgquery; preserve missing-pgquery causal assertion",
+    "applicationSourceUnchanged": true,
+    "localRetest": {
+      "command": "node test/gates.js",
+      "exitCode": 0
+    },
+    "resume": "Existing workflow_dispatch tail_only executes repaired gates, chainparams, docs, playthrough truth, knowledge and all remaining suite/simulation/browser stages; PostgreSQL jobs are skipped and retain passing native evidence from the unchanged application source",
+    "retainedNativeEvidence": {
+      "run": 37550879177,
+      "source": "4e83019e9616b367906c1d3e454c23c5015308de",
+      "pg16Job": 112565902553,
+      "pg18Job": 112565902829,
+      "pg16": "success",
+      "pg18": "success"
+    }
+  }
+}

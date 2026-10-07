@@ -1,3 +1,4 @@
+import { upgradeBoard } from './deed-upgrades.js';
 // STREET DEEDS — the map as property (omerta-street-deeds-design.md). A named, mapped plot of the
 // world a player OWNS and builds a legend on — the Monopoly layer. Phase 1 is PURE STATUS: the deed,
 // its name, its map plot and its provenance are all status, so NO `transactions` row is ever written,
@@ -12,10 +13,10 @@
 // Deliberately NOT wired into the live mint / the `minted` extraction flag,
 // so the Sybil/extraction machinery is untouched (design §8).
 import { GameError, cleanText } from './game.js';
-import { vaultHistoryFor, vaultLiveBalances } from './stockdeliver.js';
+import { vaultHistoryFor, vaultLiveBalances, deedTargetRows, deliveryKeeperReady } from './stockdeliver.js';
 import { paintedDeedSvg } from './nft-art.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
-  deedNeighborhoodsOpen, deedNeighborhoodOf,
+  deedNeighborhoodsOpen, deedNeighborhoodOf, dayOf,
   effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
 
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
@@ -218,6 +219,14 @@ export async function deedBoard(ch, client, h) {
       onChain: !!deed.onchain_token_id, vault: vaults.get(deed.name) || null } : null,
     renown, rank: deedRankOf(renown).name, ranks: DEEDS.RANKS,
     history, corner, market, chain,
+    rewards: {
+      configured: deliveryKeeperReady(),
+      targetReady: (await deedTargetRows(client)).some(d => d.accountId === ch.account_id),
+      allocations: (await client.query('SELECT ticker, SUM(units) AS allocated, SUM(delivered_units) AS delivered FROM stock_allocations WHERE account_id=$1 GROUP BY ticker', [ch.account_id])).rows.map(r => ({
+        ticker: r.ticker, allocated: Number(r.allocated), delivered: Number(r.delivered), pending: Math.max(0, Number(r.allocated) - Number(r.delivered)),
+      })),
+    },
+    upgrades: await upgradeBoard(client, ch.account_id, { deedName: deed?.name }),
     // Phase 4 — the growing map: how big the city is, and how much more opens as it grows
     city: { population, step, nextExpansionAt: nextAt, openNeighborhoods: totalOpen, totalNeighborhoods: totalHoods },
     districts: DISTRICTS.map((d) => ({ id: d.id, name: d.name, perk: d.perk, deeds: counts.get(d.id) || 0,
@@ -448,8 +457,8 @@ export async function buyDeed(buyer, seller, client, h) {
   await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]);
   // TRANSFER the deed + re-key its provenance to the buyer; control RESETS (the buyer earns the corner).
   await client.query(
-    `UPDATE street_deeds SET account_id=$2, sale_price=NULL, controller_account=NULL, control_until=NULL, corner_at=now()
-       WHERE account_id=$1`, [seller.account_id, buyer.account_id]);
+    `UPDATE street_deeds SET account_id=$2, sale_price=NULL, controller_account=NULL, control_until=NULL, corner_at=now(), ownership_since_day=$3
+       WHERE account_id=$1`, [seller.account_id, buyer.account_id, dayOf() + 1]);
   await client.query('UPDATE street_deed_history SET account_id=$2 WHERE account_id=$1', [seller.account_id, buyer.account_id]);
   await recordDeedEvent(client, buyer.account_id, 'sold', `${seller.name} sold the street to ${buyer.name} for $${price.toLocaleString()}`);
   await h.notify(client, seller.id, 'deed_sold', { street: deed.name, to: buyer.name, price });

@@ -95,7 +95,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations'), oldConstraints,
+  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades'), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   assert.deepEqual(upgradedConstraints.filter((row) => row.table_name.startsWith('director_')),
     inventory.added.filter((row) => row.table_name.startsWith('director_')),
@@ -103,6 +103,10 @@ try {
   assert.deepEqual(upgradedConstraints.filter((row) => row.table_name === 'player_reset_migrations'),
     [{ table_name: 'player_reset_migrations', name: 'player_reset_migrations_pkey', definition: 'PRIMARY KEY (id)' }],
     'The one-time player reset installs only its reviewed identity constraint');
+  const deedConstraints = inventory.added.filter((row) => row.table_name === 'deed_upgrades');
+  assert.equal(deedConstraints.length, 5, 'All five reviewed deed PK/FK/CHECK constraints must be catalogued');
+  assert.deepEqual(upgradedConstraints.filter((row) => row.table_name === 'deed_upgrades'), deedConstraints,
+    'Deed upgrades install exactly the reviewed ownership, cap, cost, and uniqueness constraints');
   const notNull = (await pool.query(`SELECT table_name,column_name FROM information_schema.columns
     WHERE table_schema=current_schema() AND table_name LIKE 'director_%' AND is_nullable='NO' ORDER BY table_name,column_name`)).rows;
   assert.deepEqual(Object.fromEntries(directorTables.map((table) => [table, notNull.filter((row) => row.table_name === table).map((row) => row.column_name)])),

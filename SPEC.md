@@ -12,15 +12,15 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **278** files, **106840** lines (`src/`, including support modules) |
-| Test suites | **431** files, **136604** lines (`test/`, including support modules) |
-| HTTP routes | **805** registrations (**805** unique) |
-| Database tables | **369** (`schema.sql`, 7379 lines) |
+| Backend modules | **279** files, **106840** lines (`src/`, including support modules) |
+| Test suites | **433** files, **136604** lines (`test/`, including support modules) |
+| HTTP routes | **806** registrations (**806** unique) |
+| Database tables | **370** (`schema.sql`, 7379 lines) |
 | Client | **13574** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11520** lines, **1078** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **697** markdown files, **134657** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **699** markdown files, **134657** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **55** checks — **49** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **262,000 lines** of backend code, tests, schema and top-level contracts.
@@ -108,6 +108,8 @@ Gameplay stakes pay no personal yield, remain exposed to loss and have a six-hou
 delay. The canonical market uses funded liquidity and inventory; it does not promise a price floor.
 See `omerta-economy-design.md` and `omerta-contracts/docs/market/DESIGN.md` for current boundaries,
 including the separate stock-acquisition and contract-activation gates.
+
+Street Deeds are RWA delivery vaults: qualifying gameplay earns funded allocations without paid Broker activation. Optional sequential upgrades spend OMR for a capped 25% future reward-weight bonus; they never increase the funded pool or rewrite prior allocations. Delivery and launch gates remain separate. See `AGENTS.md` for current costs and requirements.
 
 ### 3.8 The pillars
 **Territory** — rackets with scale tiers and business types, the Bureau crackdown, fortification, rival
