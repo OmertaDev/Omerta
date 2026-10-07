@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+  "sourceRevision": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 9810,
-    "edges": 40001,
+    "nodes": 9812,
+    "edges": 40008,
     "byNodeType": {
       "Artifact": 4172,
       "Command": 181,
-      "Commit": 2052,
+      "Commit": 2054,
       "Contract": 120,
       "Document": 686,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3250,
-      "CHANGED": 15561,
+      "CHANGED": 15566,
       "CONTAINS": 4193,
       "DECLARES": 181,
       "DEFINED_IN": 1296,
       "DEPENDS_ON": 65,
       "EXECUTES": 616,
       "HANDLED_BY": 712,
-      "HAS_COMMIT": 2052,
+      "HAS_COMMIT": 2054,
       "IMPLEMENTS": 124,
       "IMPORTS": 3951,
       "INHERITS": 39,
@@ -59840,20 +59840,20 @@
       "path": "output/deed-rwa-upgrades/release-catalog-fix.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 1884,
-      "lines": 41,
-      "version": "9229e9f1252e4025",
+      "bytes": 2209,
+      "lines": 49,
+      "version": "b114d50ae02b18b5",
       "text": true,
       "provenance": [
         {
           "file": "output/deed-rwa-upgrades/release-catalog-fix.json",
           "line": 1,
-          "version": "9229e9f1252e4025"
+          "version": "b114d50ae02b18b5"
         }
       ],
-      "lastChangedAt": "2026-10-07T00:52:32.000Z",
+      "lastChangedAt": "2026-10-07T00:57:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded"
+      "lastChangedCommit": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a"
     },
     {
       "key": "Artifact:output/deed-rwa-upgrades/review.md",
@@ -112052,6 +112052,22 @@
       ]
     },
     {
+      "key": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "type": "Commit",
+      "id": "67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "label": "Refresh knowledge after CI command inventory correction",
+      "title": "Refresh knowledge after CI command inventory correction",
+      "date": "2026-10-07T00:53:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "provenance": [
+        {
+          "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526",
+          "url": "https://github.com/OmertaDev/Omerta/commit/67edfa1e53243e5f8048f813223a2cc099e5a526"
+        }
+      ]
+    },
+    {
       "key": "Commit:680e76bfed8ac7bcf0702fde96cb8d860c31346e",
       "type": "Commit",
       "id": "680e76bfed8ac7bcf0702fde96cb8d860c31346e",
@@ -122384,6 +122400,22 @@
         {
           "commit": "b7172180d6b917a7d433513e144d55b67ad4697b",
           "url": "https://github.com/OmertaDev/Omerta/commit/b7172180d6b917a7d433513e144d55b67ad4697b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+      "type": "Commit",
+      "id": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+      "label": "Clarify retained PostgreSQL evidence in CI resume record",
+      "title": "Clarify retained PostgreSQL evidence in CI resume record",
+      "date": "2026-10-07T00:57:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+      "provenance": [
+        {
+          "commit": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b722c681a8f5fc479c2bffc8bad9c44427f5f16a"
         }
       ]
     },
@@ -151511,6 +151543,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+        },
+        {
           "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
         },
         {
@@ -152366,6 +152401,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+        },
+        {
           "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
         },
         {
@@ -153219,6 +153257,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
         },
         {
           "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
@@ -154305,6 +154346,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
         },
         {
           "commit": "68a5467d37ac649a6210bac0984897a6a35b5831"
@@ -163436,7 +163480,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ce016e23a8f3a493b5d2039ec6de6d10b68b5ded",
+      "revision": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
       "currentBranch": "codex/deed-rwa-vault-upgrades",
       "defaultBranch": "main",
       "visibility": "public",
@@ -278051,6 +278095,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:680e76bfed8ac7bcf0702fde96cb8d860c31346e",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -311975,6 +312051,14 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "commit": "b7172180d6b917a7d433513e144d55b67ad4697b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+      "to": "Artifact:output/deed-rwa-upgrades/release-catalog-fix.json",
+      "provenance": {
+        "commit": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a"
       }
     },
     {
@@ -422292,6 +422376,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:67edfa1e53243e5f8048f813223a2cc099e5a526",
+      "provenance": {
+        "commit": "67edfa1e53243e5f8048f813223a2cc099e5a526"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:680e76bfed8ac7bcf0702fde96cb8d860c31346e",
       "provenance": {
         "commit": "680e76bfed8ac7bcf0702fde96cb8d860c31346e"
@@ -427455,6 +427547,14 @@
       "to": "Commit:b7172180d6b917a7d433513e144d55b67ad4697b",
       "provenance": {
         "commit": "b7172180d6b917a7d433513e144d55b67ad4697b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b722c681a8f5fc479c2bffc8bad9c44427f5f16a",
+      "provenance": {
+        "commit": "b722c681a8f5fc479c2bffc8bad9c44427f5f16a"
       }
     },
     {
