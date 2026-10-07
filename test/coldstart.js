@@ -40,6 +40,7 @@ const j = async (method, url, token, payload) => {
 // route that refuses because the world is empty does not belong here — that is the bug this file
 // exists to find.
 const DECLARED = {
+  '/v1/genesis-auction': 'genesis payments stay unavailable until deployed code, funding and binding are verified through the pinned production manifest',
   '/v1/identity/readiness': 'NFT checkout is dormant without chain configuration; readiness must refuse with chain_unconfigured rather than offer an unchecked payment',
   '/v1/wage': 'retired — the Street Wage faucet is gone (economy v3 step 1); the route stays mounted so a polling client learns that instead of 404-guessing',
   '/v1/portfolio': 'retired — D11 removed the stock layer; the tombstone tells a stale client why',
@@ -99,6 +100,10 @@ for (const p of paths) {
   const r = await j('GET', p, token);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
+    if (p === '/v1/genesis-auction') {
+      assert.equal(r.code, 503, 'unconfigured genesis must refuse payments');
+      assert.equal(r.body?.error, 'genesis_not_ready', 'genesis must report its verified-deployment gate');
+    }
     if (p === '/v1/identity/readiness') {
       assert.equal(r.code, 400, 'unconfigured NFT readiness must fail closed');
       assert.equal(r.body?.error, 'chain_unconfigured', 'readiness must report the configuration refusal');
