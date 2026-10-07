@@ -115,6 +115,9 @@ for (const action of ['contribute', 'refundPlayer', 'claimPlayer', 'arbitrary'])
   const f = fixture(); await f.run(action); assert.equal(f.sends, 0); assert.equal(f.quoteCount, 0);
 }
 assert(!fixture().context.render().includes('data-genesis-action="contribute"'));
+assert(fixture().context.render().includes('five-day'));
+assert(fixture().context.render().includes('can be below the final auction price'));
+assert(fixture().context.render().includes('full deposited ETH'));
 for (const action of ['exitBid', 'claimBid']) {
   const f = fixture(); f.nodes['genesis-bid-id'].value = '0'; await f.run(action);
   assert.equal(f.sends, 1, action); assert.equal(JSON.parse(f.store.get(KEY)).value, '0x0', 'Recovery never requests ETH');

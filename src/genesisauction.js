@@ -24,10 +24,25 @@ const ABI = parseAbi([
   'function chainId() view returns (uint256)',
   'function auction() view returns (address)',
   'function omr() view returns (address)',
+  'function omrCodeHash() view returns (bytes32)',
+  'function approvedSupply() view returns (uint256)',
   'function auctionCodeHash() view returns (bytes32)',
   'function migrationSucceeded() view returns (bool)',
   'function playerClaimsOpen() view returns (bool)',
   'function auctionPriceX96() view returns (uint256)',
+  'function poolPriceX96() view returns (uint256)',
+  'function lpNativeBudget() view returns (uint256)',
+  'function publicProceeds() view returns (uint256)',
+  'function safe() view returns (address)',
+  'function familyYieldTreasury() view returns (address)',
+  'function liquidityOwner() view returns (address)',
+  'function tokenReserve() view returns (uint128)',
+  'function totalSupply() view returns (uint256)',
+  'function decimals() view returns (uint8)',
+  'function tokensRecipient() view returns (address)',
+  'function minimumRaiseWei() view returns (uint256)',
+  'function currencyRaised() view returns (uint256)',
+  'function clearingPrice() view returns (uint256)',
   'function blockNumberish() view returns (uint256)',
   'function startBlock() view returns (uint64)',
   'function endBlock() view returns (uint64)',
@@ -93,6 +108,18 @@ function configuration(manifest, account) {
       fail('invalid_configuration', 'Production dependency pins must be complete and distinct.');
     addresses.add(pin.address.toLowerCase());
   }
+  const policy = manifest.policy;
+  const approved = { totalSupplyWei: '100000000000000000000000000', decimals: 18,
+    saleTokenAmountWei: '40000000000000000000000000', lpTokenAmountWei: '20000000000000000000000000',
+    bondTokenAmountWei: '40000000000000000000000000', minimumRaiseWei: '10000000000000000000',
+    lpProceedsBps: 5000, claimsAtAuctionEnd: true };
+  const custody = ['familySafe', 'liquidityOwner', 'unsoldRecipient', 'bondReserveCustodian'];
+  if (!policy || Object.keys(policy).length !== Object.keys(approved).length + custody.length
+    || Object.entries(approved).some(([key, value]) => policy[key] !== value)
+    || Object.keys(policy).some(key => !Object.hasOwn(approved, key) && !custody.includes(key))
+    || custody.some(key => !isAddress(policy[key] || '') || same(policy[key], ZERO)
+      || !same(policy[key], policy.familySafe)))
+    fail('invalid_configuration', 'The reviewed founder allocation and Safe custody policy is incomplete or differs.');
   const maxAge = manifest.maxSnapshotAgeSeconds ?? 120;
   if (!Number.isSafeInteger(maxAge) || maxAge < 1 || maxAge > 120)
     fail('invalid_configuration', 'The snapshot freshness limit is invalid.');
@@ -127,6 +154,23 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
   await Promise.all(bindings.map(async ([name, fn, expected]) => {
     if (!same(await read(name, fn), expected)) fail('deployment_mismatch', 'Genesis immutable bindings do not match the manifest.');
   }));
+  const policy = manifest.policy;
+  for (const [name, fn, expected] of [
+    ['coordinator', 'safe', policy.familySafe], ['coordinator', 'familyYieldTreasury', policy.familySafe],
+    ['coordinator', 'liquidityOwner', policy.liquidityOwner], ['auction', 'tokensRecipient', policy.unsoldRecipient],
+  ]) if (!same(await read(name, fn), expected))
+    fail('deployment_mismatch', 'The founder-approved Safe custody binding differs.');
+  for (const [name, fn, expected] of [
+    ['omr', 'totalSupply', policy.totalSupplyWei], ['omr', 'decimals', policy.decimals],
+    ['auction', 'totalSupply', policy.saleTokenAmountWei], ['coordinator', 'tokenReserve', policy.lpTokenAmountWei],
+    ['auction', 'minimumRaiseWei', policy.minimumRaiseWei],
+  ]) {
+    // Mutable supply is a launch/admission prerequisite; earned exits and claims retain their
+    // immutable accounting if later issuance changes it. Runtime/decimals/allocation pins remain.
+    if (recovery && name === 'omr' && fn === 'totalSupply') continue;
+    if (BigInt(await read(name, fn)) !== BigInt(expected))
+      fail('deployment_mismatch', 'The founder-approved token allocation or minimum raise differs.');
+  }
   {
     const deps = manifest.dependencies;
     for (const name of ['poolManager', 'positionManager', 'permit2', 'hook']) {
@@ -151,15 +195,30 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
   const validatorCode = await client.getCode({ address: validator, blockNumber: block.number });
   if (!validatorCode || validatorCode === '0x'
     || !same(await read(validator, 'characterNft'), c.characterNft.address)
-    || !same(await read(validator, 'characterNftCodeHash'), c.characterNft.runtimeCodeHash))
-    fail('deployment_mismatch', 'The auction ownership validator does not match the NFT.');
+    || !same(await read(validator, 'characterNftCodeHash'), c.characterNft.runtimeCodeHash)
+    || !same(await read(validator, 'omr'), c.omr.address)
+    || !same(await read(validator, 'omrCodeHash'), c.omr.runtimeCodeHash)
+    || BigInt(await read(validator, 'approvedSupply')) !== BigInt(policy.totalSupplyWei))
+    fail('deployment_mismatch', 'The auction admission validator does not match the reviewed NFT, OMR and supply snapshot.');
   for (const [name, fn] of [['auction', 'launchChainId'], ['coordinator', 'chainId'], [validator, 'eligibilityChainId']]) {
     if (BigInt(await read(name, fn)) !== BigInt(CHAIN_ID)) fail('deployment_mismatch', 'A genesis chain binding is incorrect.');
   }
   const requests = [...['blockNumberish', 'startBlock', 'endBlock', 'claimBlock', 'floorPrice', 'MAX_BID_PRICE', 'TICK_SPACING_Q96', 'isGraduated'].map(fn => ['auction', fn]),
-    ...['migrationSucceeded', 'playerClaimsOpen', 'auctionPriceX96'].map(fn => ['coordinator', fn])];
+    ...['currencyRaised', 'clearingPrice'].map(fn => ['auction', fn]),
+    ...['migrationSucceeded', 'playerClaimsOpen', 'auctionPriceX96', 'poolPriceX96', 'lpNativeBudget', 'publicProceeds'].map(fn => ['coordinator', fn])];
   const state = {};
   await Promise.all(requests.map(async ([name, fn, args = []]) => { state[fn] = await read(name, fn, args); }));
+  if (BigInt(state.claimBlock) !== BigInt(state.endBlock))
+    fail('deployment_mismatch', 'Auction claims must open at auction closure.');
+  const tick = BigInt(state.TICK_SPACING_Q96);
+  const saleAmount = BigInt(policy.saleTokenAmountWei);
+  const ceilFloor = ((BigInt(policy.minimumRaiseWei) << 96n) + saleAmount - 1n) / saleAmount;
+  const expectedTick = (ceilFloor + 99n) / 100n;
+  if (tick < 2n || tick !== expectedTick || BigInt(state.floorPrice) !== expectedTick * 100n)
+    fail('deployment_mismatch', 'The auction floor differs from the approved full-inventory floor.');
+  if (state.migrationSucceeded && (BigInt(state.lpNativeBudget) !== BigInt(state.publicProceeds) / 2n
+    || BigInt(state.poolPriceX96) !== (BigInt(state.lpNativeBudget) << 96n) / BigInt(policy.lpTokenAmountWei)))
+    fail('deployment_mismatch', 'The funded LP budget and price differ from the approved funded ratio.');
   // NFT ownership is admission only. An unrelated balance read must not prevent recovery.
   if (recovery) state.balanceOf = null;
   else state.balanceOf = await read('characterNft', 'balanceOf', [config.account]);
@@ -173,7 +232,7 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
       owner: getAddress(b[4]), amountQ96: b[5].toString(), tokensFilled: b[6].toString(), ownedByAccount: same(b[4], config.account) };
   }
   const native = BigInt(state.blockNumberish), start = BigInt(state.startBlock), end = BigInt(state.endBlock);
-  const phase = state.migrationSucceeded ? 'migrated' : native < start ? 'prepare' : native < end ? 'auction' : 'migration_pending';
+  const phase = state.migrationSucceeded ? 'migrated' : native < start ? 'prepare' : native < end ? 'auction' : 'auction_closed';
   return { config, state, bid, block, phase, client, manifest };
 }
 async function unchanged(ctx) {
@@ -217,9 +276,13 @@ function projection(ctx) {
   return { chainId: CHAIN_ID, account: config.account, snapshot: { blockNumber: block.number.toString(),
     blockHash: block.hash, timestamp: block.timestamp.toString() }, phase,
   auction: { nativeClock: s.blockNumberish.toString(), start: s.startBlock.toString(), end: s.endBlock.toString(),
-    claim: s.claimBlock.toString(), floorPriceX96: s.floorPrice.toString(), maxBidPriceX96: s.MAX_BID_PRICE.toString(), tickSpacingQ96: s.TICK_SPACING_Q96.toString(), graduated: s.isGraduated },
+    claim: s.claimBlock.toString(), floorPriceX96: s.floorPrice.toString(), maxBidPriceX96: s.MAX_BID_PRICE.toString(), tickSpacingQ96: s.TICK_SPACING_Q96.toString(), graduated: s.isGraduated,
+    clearingPriceX96: s.clearingPrice.toString(), finalClearingPriceX96: s.auctionPriceX96.toString(), acceptedEthWei: s.currencyRaised.toString() },
   nftOwned: s.balanceOf === null ? null : BigInt(s.balanceOf) > 0n, bid,
-  migration: { succeeded: s.migrationSucceeded, claimsOpen: s.playerClaimsOpen, priceX96: s.auctionPriceX96.toString() } };
+  policy: { ...ctx.manifest.policy },
+  migration: { succeeded: s.migrationSucceeded, claimsOpen: s.playerClaimsOpen && s.isGraduated,
+    fundedPoolPriceX96: s.poolPriceX96.toString(), lpNativeBudgetWei: s.lpNativeBudget.toString(),
+    publicProceedsWei: s.publicProceeds.toString(), lpTokenAmountWei: ctx.manifest.policy.lpTokenAmountWei } };
 }
 async function safe(work) {
   try { return await work(); }
@@ -248,6 +311,10 @@ export async function prepareGenesisAuctionTransaction(options) {
     } else if (options.action === 'exitBid' || options.action === 'claimBid') {
       if (!ctx.bid || !ctx.bid.ownedByAccount) fail('bid_owner', 'Select a bid owned by this wallet.');
       name = 'auction'; fn = options.action === 'exitBid' ? 'exitBid' : 'claimTokens'; args = [BigInt(ctx.bid.id)];
+      if (options.action === 'claimBid' && BigInt(s.blockNumberish) < BigInt(s.endBlock))
+        fail('wrong_phase', 'Auction token claims open at auction closure.');
+      if (options.action === 'claimBid' && !s.isGraduated)
+        fail('wrong_phase', 'This auction has not graduated. Exit the bid to recover its refundable ETH.');
     }
     const to = config.contracts[name].address;
     const simulate = (functionName, callArgs) => ctx.client.simulateContract({ account: config.account, address: to,

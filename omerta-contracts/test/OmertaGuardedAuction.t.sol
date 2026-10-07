@@ -10,6 +10,7 @@ import {AuctionParameters} from "../src/genesis-auction/vendor/cca/interfaces/IC
 contract GuardedAuctionToken is ERC20 {
     constructor() ERC20("OMR", "OMR") {}
     function mint(address to, uint256 amount) external { _mint(to, amount); }
+    function burn(address from, uint256 amount) external { _burn(from, amount); }
 }
 contract AuctionClaimGateMock is IOmertaGenesisClaimGate {
     bool public playerClaimsOpen;
@@ -33,9 +34,9 @@ contract OmertaGuardedAuctionTest is Test {
     function setUp() public {
         characterNft = new GenesisCharacterMock();
         characterNft.mint(alice);
-        token = new GuardedAuctionToken(); gate = new AuctionClaimGateMock();
+        token = new GuardedAuctionToken(); token.mint(address(this),2000 ether); gate = new AuctionClaimGateMock();
         auction = new OmertaGuardedAuction(address(token), 1000 ether, parameters(address(gate)), gate, characterNft);
-        token.mint(address(auction), 1000 ether); auction.onTokensReceived();
+        token.transfer(address(auction),1000 ether); auction.onTokensReceived();
         vm.deal(alice, 10 ether);
     }
     function completedBid() internal returns (uint256 id) {
@@ -77,7 +78,7 @@ contract OmertaGuardedAuctionTest is Test {
     function testUngradulatedAuctionRefundUnaffectedByClaimGate() public {
         AuctionParameters memory p = parameters(address(gate)); p.requiredCurrencyRaised = 100 ether;
         OmertaGuardedAuction failed = new OmertaGuardedAuction(address(token), 1000 ether, p, gate, characterNft);
-        token.mint(address(failed), 1000 ether); failed.onTokensReceived(); vm.roll(10);
+        token.transfer(address(failed),1000 ether); failed.onTokensReceived(); vm.roll(10);
         vm.prank(alice); uint256 id = failed.submitBid{value: 1 ether}(Q96, uint128(1 ether), alice, bytes(""));
         vm.prank(alice); characterNft.transferFrom(alice, address(0xDEAD), 1);
         vm.roll(20); failed.checkpoint(); assertFalse(failed.isGraduated());

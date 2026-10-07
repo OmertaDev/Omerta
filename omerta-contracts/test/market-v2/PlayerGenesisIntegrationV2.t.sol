@@ -41,7 +41,7 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
         characterNft.mint(alice); characterNft.mint(bob);
         vm.warp(3600); vm.roll(100); vm.deal(alice, 10 ether); vm.deal(bob, 10 ether);
         manager = IPoolManager(deployCode("PoolManager.sol:PoolManager", abi.encode(address(this))));
-        token = new GenesisCoordinatorToken();
+        token = new GenesisCoordinatorToken(); token.mint(address(this),2100 ether);
         IAllowanceTransfer permit = IAllowanceTransfer(deployPermit2());
         positions = new PositionManager(manager, permit, 100_000, IPositionDescriptor(address(0)), IWETH9(address(0)));
         uint160 flags = uint160(Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_INITIALIZE_FLAG
@@ -61,8 +61,8 @@ contract PlayerGenesisIntegrationV2Test is Test, DeployPermit2 {
         bytes32 root = keccak256(bytes.concat(keccak256(abi.encode(block.chainid,predicted,alice,uint8(2)))));
         sale = new GenesisPlayerSale(token,coordinator,root,100 ether,block.timestamp + 1 days,
             block.timestamp + 10 days,address(0x11), characterNft);
-        token.mint(address(auction),1000 ether); auction.onTokensReceived();
-        token.mint(address(sale),100 ether); token.mint(address(coordinator),1000 ether);
+        token.transfer(address(auction),1000 ether); auction.onTokensReceived();
+        token.transfer(address(sale),100 ether); token.transfer(address(coordinator),1000 ether);
         coordinator.bind(IGenesisGatedAuction(address(auction)),sale);
         vm.roll(110); vm.prank(bob);
         bid = auction.submitBid{value:2 ether}(Q96,uint128(2 ether),bob,bytes(""));

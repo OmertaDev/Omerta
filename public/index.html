@@ -5609,13 +5609,14 @@
   function playerGenesisHtml() {
     return `<h2>Genesis auction</h2><div class="card" id="player-genesis-card">
       <p>Own a minted character NFT to participate. Both paid and free-credit mints qualify.</p>
-      <p class="d">One auction for every character NFT holder. Bid ETH for OMR during the 72-hour auction. Tokens become claimable after successful liquidity creation and the claim date. Check live status before paying.</p>
+      <p class="d">One five-day ETH auction for every character NFT holder, with no individual allocation caps. After a successful auction closes, exit your bid and claim your filled tokens.</p>
+      <p class="d">40% of total OMR supply is offered, 20% funds liquidity, and 40% stays in the Safe for the bond desk. Half of accepted ETH funds liquidity; the rest goes to the Safe's Family Yield treasury. The pool's opening price follows its funded amounts and can be below the final auction price.</p>
       <button class="act" data-genesis-action="read">Check my wallet and sale status</button>
       <div id="player-genesis-status" role="status" aria-live="polite">Deployment and funding must be verified before payments open.</div>
       <div class="row" style="margin-top:8px"><input id="genesis-amount" inputmode="decimal" placeholder="ETH to bid" aria-label="ETH amount">
       <input id="genesis-min-omr" inputmode="numeric" placeholder="Minimum OMR per ETH" aria-label="Minimum OMR per ETH">
       <button class="act" data-genesis-action="bid">Review auction bid</button></div>
-      <p class="d">A bid's price limit protects the rate you accept; it does not guarantee a fill. Unspent bid ETH is refunded when you exit after the auction.</p>
+      <p class="d">A bid's price limit protects the rate you accept; it does not guarantee a fill. Completed purchases are final. Exits return unused ETH; if the auction fails its 10 ETH minimum raise, exits return the full deposited ETH.</p>
       <div class="row"><input id="genesis-bid-id" inputmode="numeric" placeholder="Your bid ID" aria-label="Your bid ID">
       <button class="act" data-genesis-action="exitBid">Exit bid / collect refund</button>
       <button class="act" data-genesis-action="claimBid">Claim auction tokens</button>
@@ -5702,7 +5703,9 @@
           + (bidId ? '&bidId=' + encodeURIComponent(bidId) : '')), 'Checking live sale state and NFT ownership…');
         if (r.code !== 200) throw Error(r.body?.message || 'Sale state is unavailable.');
         playerGenesisStatus('Sale phase: ' + r.body.phase.replaceAll('_', ' ') + '. Character NFT: '
-          + (r.body.nftOwned ? 'owned.' : 'required for new bids.'));
+          + (r.body.nftOwned ? 'owned.' : 'required for new bids.')
+          + ' Token claims: ' + (r.body.migration?.claimsOpen ? 'available after your bid exits.' : 'awaiting successful auction closure.')
+          + ' Liquidity: ' + (r.body.migration?.succeeded ? 'created.' : 'pending; it does not delay closure claims.'));
         return;
       }
       if (!navigator.locks) throw Error('Use a current browser with wallet transaction locking.');

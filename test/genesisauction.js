@@ -11,7 +11,11 @@ const contracts = Object.fromEntries(names.map((name, i) => [name, {
 }]));
 const dependencies = Object.fromEntries(['poolManager', 'positionManager', 'permit2', 'hook'].map((name, i) =>
   [name, { address: address(11 + i), runtimeCodeHash: keccak256(`0x60${(11 + i).toString(16)}`) }]));
-const manifest = { chainId: 4663, contracts, dependencies };
+const safe = address(77);
+const policy = { totalSupplyWei:'100000000000000000000000000',decimals:18,saleTokenAmountWei:'40000000000000000000000000',lpTokenAmountWei:'20000000000000000000000000',bondTokenAmountWei:'40000000000000000000000000',familySafe:safe,liquidityOwner:safe,unsoldRecipient:safe,bondReserveCustodian:safe,minimumRaiseWei:'10000000000000000000',lpProceedsBps:5000,claimsAtAuctionEnd:true };
+const ceilFloor=((10n**19n<<96n)+BigInt(policy.saleTokenAmountWei)-1n)/BigInt(policy.saleTokenAmountWei);
+const tick=(ceilFloor+99n)/100n,floor=tick*100n,bidPrice=floor+tick*1000n;
+const manifest = { chainId: 4663, contracts, dependencies, policy };
 const codes = Object.fromEntries(names.map((name, i) => [contracts[name].address, `0x60${(i + 1).toString(16).padStart(2, '0')}`]));
 codes[validator] = '0x6005';
 for (const pin of Object.values(dependencies)) codes[pin.address] = `0x60${Number(BigInt(pin.address)).toString(16)}`;
@@ -20,17 +24,18 @@ function fixture() {
     auction: { characterNft: contracts.characterNft.address, token: contracts.omr.address, currency: zero,
       launchGate: contracts.coordinator.address, fundsRecipient: contracts.coordinator.address,
       launchGateCodeHash: contracts.coordinator.runtimeCodeHash, launchChainId: 4663n,
-      validationHook: validator, blockNumberish: 115n, startBlock: 110n, endBlock: 120n, claimBlock: 130n,
-      floorPrice: 100n, MAX_BID_PRICE: 100000n, TICK_SPACING_Q96: 2n, isGraduated: true, nextBidId: 2n,
-      bids: [110n, 1n, 0n, 1000n, account, 1n << 96n, 0n] },
+      validationHook: validator, blockNumberish: 115n, startBlock: 110n, endBlock: 120n, claimBlock: 120n,
+      floorPrice: floor, MAX_BID_PRICE: 10n**30n, TICK_SPACING_Q96: tick, isGraduated: true, nextBidId: 2n,
+      bids: [110n, 1n, 0n, bidPrice, account, 1n << 96n, 0n], totalSupply:BigInt(policy.saleTokenAmountWei), tokensRecipient:safe, minimumRaiseWei:BigInt(policy.minimumRaiseWei), currencyRaised:10n**19n, clearingPrice:floor+tick*100n },
     coordinator: { auction: contracts.auction.address, characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash, validatorCodeHash: contracts.validator.runtimeCodeHash,
       omr: contracts.omr.address, auctionCodeHash: contracts.auction.runtimeCodeHash,
       poolManager: dependencies.poolManager.address, positionManager: dependencies.positionManager.address,
       permit2: dependencies.permit2.address, hookCodeHash: dependencies.hook.runtimeCodeHash,
       poolKey: [zero, contracts.omr.address, 3000, 60, dependencies.hook.address], chainId: 4663n,
-      migrationSucceeded: false, playerClaimsOpen: false, auctionPriceX96: 0n },
-    characterNft: { balanceOf: 1n },
+      safe,familyYieldTreasury:safe,liquidityOwner:safe,tokenReserve:BigInt(policy.lpTokenAmountWei), poolPriceX96:0n,lpNativeBudget:0n,publicProceeds:0n,migrationSucceeded: false, playerClaimsOpen: false, auctionPriceX96: 0n },
+    omr:{totalSupply:BigInt(policy.totalSupplyWei),decimals:18}, characterNft: { balanceOf: 1n },
     validator: { characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash,
+      omr: contracts.omr.address, omrCodeHash: contracts.omr.runtimeCodeHash, approvedSupply: BigInt(policy.totalSupplyWei),
       eligibilityChainId: 4663n },
   };
   let chain = 4663, changedHash = false, badCode = false, simulationFails = false, timestamp = 1000n;
@@ -68,30 +73,30 @@ let f = fixture();
 const state = await readGenesisAuction({...f.options,bidId:'1'});
 assert.equal(state.phase,'auction'); assert.equal(state.nftOwned,true); assert.equal(state.bid.ownedByAccount,true);
 assert.ok(!Object.hasOwn(state,'player')); assert.ok(!Object.hasOwn(state,'playerEligibility'));
-const bid = await prepareGenesisAuctionTransaction({...f.options,action:'bid',amountEth:'0.123456789012345678',maxPriceX96:'1000',to:other,data:'0xdeadbeef'});
-assert.deepEqual(decodeFunctionData({abi:txAbi,data:bid.data}).args,[1000n,123456789012345678n,account,'0x']);
+const bid = await prepareGenesisAuctionTransaction({...f.options,action:'bid',amountEth:'0.123456789012345678',maxPriceX96:bidPrice.toString(),to:other,data:'0xdeadbeef'});
+assert.deepEqual(decodeFunctionData({abi:txAbi,data:bid.data}).args,[bidPrice,123456789012345678n,account,'0x']);
 assert.equal(bid.to.toLowerCase(),contracts.auction.address);assert.equal(bid.valueWei,'123456789012345678');
 assert.ok(f.observations.every(o=>o.blockNumber===115n));assert.equal(f.simulations.at(-1).blockNumber,115n);
 assert.doesNotThrow(()=>JSON.stringify(state));assert.doesNotThrow(()=>JSON.stringify(bid));
-assert.equal(state.auction.tickSpacingQ96, '2');
-await rejected({...f.options, action:'bid', amountEth:'1', maxPriceX96:'1001'}, 'invalid_input');
+assert.equal(state.auction.tickSpacingQ96, tick.toString());
+await rejected({...f.options, action:'bid', amountEth:'1', maxPriceX96:(floor+1001n).toString()}, 'invalid_input');
 assert.equal(f.simulations.length, 1, 'off-tick bids are rejected before simulation');
 assert.ok(f.observations.some(o => o.functionName === 'TICK_SPACING_Q96' && o.blockNumber === 115n));
 for(const action of ['contribute','claimPlayer','refundPlayer','transfer']) await rejected({...f.options,action},'invalid_input');
-for(const amountEth of ['0','-1','1e-3','0.0000000000000000001','01',0.1,'9'.repeat(120)]) await rejected({...f.options,action:'bid',amountEth,maxPriceX96:'1000'},'invalid_input');
-f=fixture();f.values.characterNft.balanceOf=0n; await rejected({...f.options,action:'bid',amountEth:'1',maxPriceX96:'1000'},'nft_required');
+for(const amountEth of ['0','-1','1e-3','0.0000000000000000001','01',0.1,'9'.repeat(120)]) await rejected({...f.options,action:'bid',amountEth,maxPriceX96:bidPrice.toString()},'invalid_input');
+f=fixture();f.values.characterNft.balanceOf=0n; await rejected({...f.options,action:'bid',amountEth:'1',maxPriceX96:bidPrice.toString()},'nft_required');
 f.values.auction.blockNumberish=120n;
 for(const action of ['exitBid','claimBid']) { const tx=await prepareGenesisAuctionTransaction({...f.options,action,bidId:'1'});assert.equal(tx.value,'0x0'); }
 assert.equal(f.observations.filter(o=>o.functionName==='balanceOf').length,1,'only rejected bid reads NFTbalance');
 f.values.auction.bids[4]=other;await rejected({...f.options,action:'claimBid',bidId:'1'},'bid_owner');
-f=fixture();f.reorg();await rejected({...f.options,action:'claimBid',bidId:'1'},'state_unavailable');
-f=fixture();f.chain(1);await rejected({...f.options,action:'bid',amountEth:'1',maxPriceX96:'1000'},'deployment_mismatch');
+f=fixture();f.values.auction.blockNumberish=120n;f.reorg();await rejected({...f.options,action:'claimBid',bidId:'1'},'state_unavailable');
+f=fixture();f.chain(1);await rejected({...f.options,action:'bid',amountEth:'1',maxPriceX96:bidPrice.toString()},'deployment_mismatch');
 f=fixture();f.badCode();await assert.rejects(()=>readGenesisAuction(f.options),{code:'deployment_mismatch'});
 f=fixture();f.badValidator();await assert.rejects(()=>readGenesisAuction(f.options),{code:'deployment_mismatch'});
-f=fixture();f.failSimulation();await rejected({...f.options,action:'claimBid',bidId:'1'},'simulation_failed');
+f=fixture();f.values.auction.blockNumberish=120n;f.failSimulation();await rejected({...f.options,action:'claimBid',bidId:'1'},'simulation_failed');
 for(const timestamp of [879n,1031n]){ f=fixture();f.timestamp(timestamp);await assert.rejects(()=>readGenesisAuction(f.options),{code:'state_unavailable'}); }
 const sentinel = (1n << 64n) - 1n;
-const checkpoint = (price, prev, next) => [price, 0n, 0n, 1n, prev, next];
+const checkpoint = (price, prev, next) => [floor+price*tick, 0n, 0n, 1n, prev, next];
 function partialFixture() {
   const p = fixture(); p.simpleExitFails(); p.values.characterNft.balanceOf = 0n;
   p.values.auction.blockNumberish = 120n;
@@ -142,7 +147,7 @@ for (const change of [
   assert.equal(f.simulations.length, 1, 'inconsistent derived hints are never offered');
 }
 f = partialFixture(); f.checkpoints.clear();
-f.values.auction.bids[0] = 1n; f.values.auction.endBlock = 258n; f.values.auction.blockNumberish = 258n;
+f.values.auction.bids[0] = 1n; f.values.auction.endBlock = 258n; f.values.auction.claimBlock=258n; f.values.auction.blockNumberish = 258n;
 for (let n = 1n; n <= 258n; n++) f.checkpoints.set(n.toString(), checkpoint(n < 257n ? 100n : 1000n,
   n - 1n, n === 258n ? sentinel : n + 1n));
 await assert.rejects(() => prepareGenesisAuctionTransaction({ ...f.options, action: 'exitBid', bidId: '1' }),
@@ -157,6 +162,7 @@ f.client.readContract = async args => {
   if (args.functionName === 'balanceOf') throw Error('NFT index unavailable');
   return originalRead(args);
 };
+f.values.auction.blockNumberish=120n;
 await prepareGenesisAuctionTransaction({ ...f.options, action: 'claimBid', bidId: '1' });
 f = fixture();
 f.options.manifest = { ...manifest, dependencies };
@@ -182,8 +188,92 @@ for (const badDependencies of [undefined, {}, { ...dependencies, hook: undefined
   { ...dependencies, hook: dependencies.permit2 }, { ...dependencies, hook: contracts.omr }]) {
   f = fixture(); f.options.manifest = { ...manifest, dependencies: badDependencies };
   await assert.rejects(() => readGenesisAuction(f.options), { code: 'invalid_configuration' });
-  await rejected({ ...f.options, action: 'bid', amountEth: '1', maxPriceX96: '1000' }, 'invalid_configuration');
+  await rejected({ ...f.options, action: 'bid', amountEth: '1', maxPriceX96: bidPrice.toString() }, 'invalid_configuration');
   await rejected({ ...f.options, action: 'claimBid', bidId: '1' }, 'invalid_configuration');
   assert.equal(f.simulations.length, 0, 'incomplete or aliased dependency pins never reach simulation');
 }
 console.log('genesis auction: pinned deployment, exact unsigned calldata, NFT admission, complete bid recovery and bounded checkpoint hints PASS');
+f = fixture();
+await rejected({ ...f.options, action: 'claimBid', bidId: '1' }, 'wrong_phase');
+assert.equal(f.simulations.length, 0);
+f.values.auction.blockNumberish = 120n; f.values.auction.bids[2] = 120n;
+f.values.coordinator.playerClaimsOpen = true;
+f.values.characterNft.balanceOf = 0n;
+const closureClaim = await prepareGenesisAuctionTransaction({ ...f.options, action: 'claimBid', bidId: '1' });
+assert.equal(closureClaim.value, '0x0');
+assert.equal(f.values.coordinator.migrationSucceeded, false, 'claims do not wait for LP migration');
+assert.ok(!f.observations.some(o => o.functionName === 'balanceOf'));
+const simulateClosure = f.client.simulateContract;
+f.client.simulateContract = async args => {
+  if (args.functionName === 'claimTokens' && (!f.values.auction.isGraduated || f.values.auction.bids[2] === 0n))
+    throw Error('underlying auction requires graduated, exited bid');
+  return simulateClosure(args);
+};
+f.values.auction.isGraduated = false;
+await rejected({ ...f.options, action: 'claimBid', bidId: '1' }, 'wrong_phase');
+const failedAuction = await readGenesisAuction(f.options, { recovery: true });
+assert.equal(failedAuction.migration.claimsOpen, false, 'closure alone does not create claimable purchases in a failed auction');
+assert.equal(f.values.coordinator.playerClaimsOpen, true, 'the compatible contract gate remains time-only');
+const failedExit = await prepareGenesisAuctionTransaction({ ...f.options, action: 'exitBid', bidId: '1' });
+assert.equal(failedExit.value, '0x0', 'failed graduation preserves bid exit and ETH recovery');
+f.values.auction.isGraduated = true; f.values.auction.bids[2] = 0n;
+await rejected({ ...f.options, action: 'claimBid', bidId: '1' }, 'simulation_failed');
+for (const changed of [{ ...policy, lpProceedsBps: 3750 }, { ...policy, saleTokenAmountWei: '4410000000000000000000000' },
+  { ...policy, bondReserveCustodian: other }, undefined]) {
+  f = fixture(); f.options.manifest = { ...manifest, policy: changed };
+  await assert.rejects(() => readGenesisAuction(f.options), { code: 'invalid_configuration' });
+}
+for (const change of [
+  f => { f.values.coordinator.familyYieldTreasury = other; },
+  f => { f.values.coordinator.liquidityOwner = other; },
+  f => { f.values.coordinator.tokenReserve = 1n; },
+  f => { f.values.auction.totalSupply = 1n; },
+  f => { f.values.auction.minimumRaiseWei = 1n; },
+  f => { f.values.auction.claimBlock = 130n; },
+  f => { f.values.auction.floorPrice = floor - 2n; },
+]) {
+  f = fixture(); change(f);
+  await assert.rejects(() => readGenesisAuction(f.options), { code: 'deployment_mismatch' });
+}
+f = fixture(); f.values.auction.blockNumberish = 120n;
+Object.assign(f.values.coordinator, { migrationSucceeded: true, playerClaimsOpen: true,
+  auctionPriceX96: floor + 1000n, publicProceeds: 10n ** 19n, lpNativeBudget: 5n * 10n ** 18n,
+  poolPriceX96: (5n * 10n ** 18n << 96n) / BigInt(policy.lpTokenAmountWei) });
+const funded = await readGenesisAuction(f.options);
+assert.notEqual(funded.auction.finalClearingPriceX96, funded.migration.fundedPoolPriceX96);
+assert.equal(funded.migration.lpNativeBudgetWei, '5000000000000000000');
+assert.equal(funded.policy.bondTokenAmountWei, '40000000000000000000000000');
+assert.ok(!Object.hasOwn(funded.migration, 'priceX96'), 'LP price has no ambiguous auction-price alias');
+f.values.coordinator.lpNativeBudget = 1n;
+await assert.rejects(() => readGenesisAuction(f.options), { code: 'deployment_mismatch' });
+console.log('Founder terms verified: allocation/Safe/minimum raise/floor, closure claims independent of LP, and distinct funded LP budget/price PASS');
+f = fixture(); f.values.omr.totalSupply += 1n;
+await rejected({ ...f.options, action: 'bid', amountEth: '1', maxPriceX96: bidPrice.toString() }, 'deployment_mismatch');
+f.values.auction.blockNumberish = 120n; f.values.auction.bids[2] = 120n;
+const recoveryRead = f.client.readContract;
+f.client.readContract = async args => {
+  if ((args.address === contracts.omr.address && args.functionName === 'totalSupply')
+    || (args.address === contracts.characterNft.address && args.functionName === 'balanceOf'))
+    throw Error('mutable admission-only read must not be requested');
+  return recoveryRead(args);
+};
+for (const action of ['exitBid', 'claimBid']) {
+  const recovered = await prepareGenesisAuctionTransaction({ ...f.options, action, bidId: '1' });
+  assert.equal(recovered.value, '0x0');
+}
+await readGenesisAuction(f.options, { recovery: true });
+f.values.omr.decimals = 6;
+await rejected({ ...f.options, action: 'claimBid', bidId: '1' }, 'deployment_mismatch');
+console.log('Mutable OMR supply drift blocks admission, preserves immutable recovery and avoids NFT balance reads PASS');
+for (const change of [
+  f => { delete f.values.validator.omr; },
+  f => { f.values.validator.omr = other; },
+  f => { f.values.validator.omrCodeHash = blockHash; },
+  f => { f.values.validator.approvedSupply = 1n; },
+]) {
+  f = fixture(); change(f);
+  await assert.rejects(() => readGenesisAuction(f.options));
+  await assert.rejects(() => readGenesisAuction(f.options, { recovery: true }));
+  assert.equal(f.simulations.length, 0);
+}
+console.log('Validator OMR identity, runtime and immutable approved-supply snapshot bindings PASS');

@@ -10,6 +10,11 @@ import { encodeDeployData, encodeFunctionData, encodeAbiParameters, getContractA
 import { mineMarketV2Hook } from './market-v2-deployment-plan.js';
 
 const ROOT = fileURLToPath(new URL('../omerta-contracts/', import.meta.url));
+const ETHER = 10n ** 18n, Q96 = 1n << 96n, MPS = 10000000n;
+const APPROVED_SUPPLY = 100000000n * ETHER, MINIMUM_RAISE = 10n * ETHER;
+const PRODUCTION_DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
+const PRODUCTION_SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
+const PRODUCTION_OMR = '0x2e82f8c1cfd5172612b3af56088d7d68d920545d';
 export const GENESIS_AUCTION_ARTIFACTS = Object.freeze({
   OmertaAuctionCoordinatorV2: 'src/market-v2/OmertaAuctionCoordinatorV2.sol',
   OmertaHookV2: 'src/market-v2/OmertaHookV2.sol',
@@ -52,6 +57,44 @@ function publicOnly(x) {
 }
 const within = (root, file) => { const p = path.relative(root, file); return p !== '..' && !p.startsWith(`..${path.sep}`) && !path.isAbsolute(p); };
 
+/** Minimum UP alignment is <=99 Q96 units, not an entire 1% price tick. */
+export function genesisAuctionFloor(saleAmount) {
+  const supply = BigInt(saleAmount); check(supply > 0n, 'Positive sale inventory required');
+  const rawFloorCeil = (MINIMUM_RAISE * Q96 + supply - 1n) / supply;
+  const tickSpacing = (rawFloorCeil + 99n) / 100n;
+  const floorPrice = tickSpacing * 100n;
+  return { floorPrice: String(floorPrice), tickSpacing: String(tickSpacing), rawFloorCeil: String(rawFloorCeil),
+    alignmentQuantumQ96: '100', upwardRoundingQ96: String(floorPrice - rawFloorCeil),
+    upwardRoundingFromRawFloorQ96: String(floorPrice - MINIMUM_RAISE * Q96 / supply),
+    fullSaleAtFloorWei: String(supply * floorPrice / Q96), tickIncrementRelativeToFloorBps: 100 };
+}
+
+/** 128 bounded segments distribute integer rounding; there is no terminal issuance cliff. */
+export function uniformGenesisAuctionSchedule(duration) {
+  const blocks = BigInt(duration); check(blocks > 0n && blocks <= MPS, 'Uniform auction duration must be 1..10000000 native blocks');
+  const segments = blocks < 128n ? blocks : 128n, steps = [];
+  const add = (rate, delta) => {
+    if (delta === 0n) return;
+    check(rate >= 0n && rate < 1n << 24n && delta < 1n << 40n, 'Auction step encoding overflow');
+    const last = steps.at(-1); if (last?.mps === rate) last.blockDelta += delta; else steps.push({ mps: rate, blockDelta: delta });
+  };
+  let priorBlock = 0n, priorMps = 0n, maxSegment = 0n;
+  for (let i = 1n; i <= segments; i++) {
+    const boundary = blocks * i / segments, cumulative = MPS * boundary / blocks;
+    const delta = boundary - priorBlock, issued = cumulative - priorMps, rate = issued / delta, remainder = issued % delta;
+    add(rate + 1n, remainder); add(rate, delta - remainder);
+    if (delta > maxSegment) maxSegment = delta;
+    priorBlock = boundary; priorMps = cumulative;
+  }
+  const data = concatHex(steps.map(s => concatHex([toHex(s.mps, { size: 3 }), toHex(s.blockDelta, { size: 5 })])));
+  // At each segment boundary the cumulative rounding is <1 MPS; within a segment it is <=delta/4.
+  const deviationMpsCeil = (maxSegment + 3n) / 4n + 1n;
+  return { auctionStepsData: data, nativeBlocks: String(blocks), segments: Number(segments), stepCount: steps.length,
+    totalMps: String(MPS), maxCumulativeDeviationMpsCeil: String(deviationMpsCeil),
+    maxCumulativeDeviationFraction: `${deviationMpsCeil}/${MPS}`,
+    steps: steps.map(s => ({ mps: String(s.mps), blockDelta: String(s.blockDelta) })) };
+}
+
 /** Uses the actual mixed default/via-IR profiles, and hashes every transitive imported source. */
 export function loadGenesisAuctionArtifact(contract, { contractsRoot = ROOT } = {}) {
   const target = GENESIS_AUCTION_ARTIFACTS[contract]; check(target, 'Unsupported genesis artifact');
@@ -84,7 +127,12 @@ export function loadGenesisAuctionArtifact(contract, { contractsRoot = ROOT } = 
   const runtimeBytes = (a.deployedBytecode.object.length - 2) / 2;
   check(runtimeBytes <= 24576, `${contract}: EIP-170 runtime size`);
   check((a.bytecode.object.length - 2) / 2 <= 49152, `${contract}: EIP-3860 creation bytecode size`);
-  return { abi: a.abi, bytecode: a.bytecode.object, evidence: {
+  const nativeClockImmutableId = contract === 'OmertaGuardedAuction'
+    ? /_USE_ARB_SYS"\s*\*\/\s*loadimmutable\("([0-9]+)"\)/.exec(a.irOptimized || '')?.[1] : null;
+  const privateDependencyImmutableIds = contract === 'OmertaAuctionCoordinatorV2'
+    ? Object.fromEntries(['_managerHash', '_positionsHash', '_permitHash', '_tokenHash'].map(name =>
+      [name, new RegExp(name + '"\\s*\\*/\\s*loadimmutable\\("([0-9]+)"\\)').exec(a.irOptimized || '')?.[1]])) : {};
+  return { abi: a.abi, bytecode: a.bytecode.object, runtimeTemplate: a.deployedBytecode.object, nativeClockImmutableId, privateDependencyImmutableIds, evidence: {
     contract, artifactSha256: sha(bytes), abiSha256: sha(abiIdentity(a.abi)), compiler: m.compiler.version,
     settings: m.settings, sources, runtimeTemplateBytes: runtimeBytes,
     runtimeTemplateKeccak256: keccak256(a.deployedBytecode.object), creationBytecodeKeccak256: keccak256(a.bytecode.object),
@@ -108,7 +156,7 @@ export function genesisAuctionArtifactInventory({ contractsRoot = ROOT } = {}) {
 export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT } = {}) {
   publicOnly(input);
   closed('manifest', input, ['schemaVersion', 'chainId', 'localRehearsal', 'sourceRevision', 'startingNonce', 'roles',
-    'external', 'create2', 'artifactHashes', 'sourceHashes', 'observation', 'nativeClock', 'hook', 'auction', 'tokenReserve']);
+    'external', 'create2', 'artifactHashes', 'sourceHashes', 'observation', 'nativeClock', 'hook', 'auction', 'tokenReserve', 'allocation']);
   check(input.schemaVersion === 1 && typeof input.localRehearsal === 'boolean', 'Explicit schemaVersion/localRehearsal required');
   const chainId = number('chainId', input.chainId, 1, Number.MAX_SAFE_INTEGER);
   check(chainId === 4663 || chainId === 31337, 'Only production chain 4663 or explicit local rehearsal chain 31337 is supported');
@@ -124,10 +172,12 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   closed('artifactHashes', input.artifactHashes, Object.keys(GENESIS_AUCTION_ARTIFACTS));
   closed('sourceHashes', input.sourceHashes, Object.keys(inventory.sourceHashes));
   for (const [file, hash] of Object.entries(inventory.sourceHashes)) check(digest(file, input.sourceHashes[file], false) === hash, `Source hash mismatch: ${file}`);
-  const roleKeys = ['deployer', 'safe', 'liquidityOwner', 'treasury', 'vig', 'founder', 'unsoldRecipient', 'hookRecipients'];
+  const roleKeys = ['deployer', 'safe', 'hookRecipients'];
   closed('roles', input.roles, roleKeys);
   const r = Object.fromEntries(roleKeys.filter(k => k !== 'hookRecipients').map(k => [k, addr(`roles.${k}`, input.roles[k])]));
   check(r.deployer !== r.safe, 'EOA nonce owner must be separate from funding Safe');
+  if (chainId === 4663) check(r.deployer.toLowerCase() === PRODUCTION_DEPLOYER && r.safe.toLowerCase() === PRODUCTION_SAFE,
+    'Production deployer and single LP/Family/bond/unsold Safe must match founder approval');
   check(Array.isArray(input.roles.hookRecipients) && input.roles.hookRecipients.length === 3, 'Three explicit dev/RWA/community hook recipients required; POL/reserve adapters are deployed internally');
   const recipients = input.roles.hookRecipients.map((a, i) => addr(`hookRecipients.${i}`, a));
   const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft'];
@@ -135,6 +185,7 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   const e = Object.fromEntries(externalKeys.map(k => { closed(`external.${k}`, input.external[k], ['address', 'runtimeHash']);
     return [k, { address: addr(k, input.external[k].address), runtimeHash: digest(k, input.external[k].runtimeHash) }]; }));
   check(new Set(Object.values(e).map(x => x.address)).size === externalKeys.length, 'External roles must be distinct contracts');
+  if (chainId === 4663) check(e.omr.address.toLowerCase() === PRODUCTION_OMR, 'Production requires the existing approved OMR token');
   closed('create2', input.create2, ['factory', 'runtimeHash', 'kind', 'saltStart', 'maxAttempts']);
   const factory = addr('factory', input.create2.factory); digest('factory.runtimeHash', input.create2.runtimeHash);
   check(input.create2.kind === 'salt-prefix', 'Only explicitly reviewed salt-prefix factory supported');
@@ -144,6 +195,16 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   closed('observation', input.observation, ['blockNumber', 'blockHash', 'timestamp']);
   uint('observation.blockNumber', input.observation.blockNumber, 64, true); digest('observation.blockHash', input.observation.blockHash);
   const now = uint('observation.timestamp', input.observation.timestamp, 64);
+  closed('allocation', input.allocation, ['totalSupply', 'decimals', 'safeAddress', 'safeBalance', 'observationBlockNumber', 'observationBlockHash', 'omrRuntimeHash', 'evidenceSha256']);
+  const allocation = input.allocation, totalSupply = uint('allocation.totalSupply', allocation.totalSupply), safeBalance = uint('allocation.safeBalance', allocation.safeBalance);
+  check(totalSupply === APPROVED_SUPPLY && allocation.decimals === 18, 'Approved allocation requires verified 100M total supply and 18 decimals');
+  check(addr('allocation.safeAddress', allocation.safeAddress) === r.safe && allocation.observationBlockNumber === input.observation.blockNumber
+    && digest('allocation.observationBlockHash', allocation.observationBlockHash) === input.observation.blockHash.toLowerCase()
+    && digest('allocation.omrRuntimeHash', allocation.omrRuntimeHash) === e.omr.runtimeHash, 'Allocation supply/balance evidence must bind the same observed OMR runtime and block');
+  digest('allocation.evidenceSha256', allocation.evidenceSha256, false);
+  const saleAllocation = totalSupply * 40n / 100n, lpAllocation = totalSupply * 20n / 100n, bondAllocation = totalSupply * 40n / 100n;
+  check(saleAllocation + lpAllocation + bondAllocation === totalSupply, 'Allocation must conserve the complete supply');
+  check(safeBalance >= totalSupply && safeBalance <= totalSupply, 'Safe must hold all allocated supply before funding');
   closed('nativeClock', input.nativeClock, ['chainId', 'mode', 'currentBlock', 'evidenceSha256', 'minMillisecondsPerBlock', 'maxMillisecondsPerBlock', 'samples']);
   const clock = input.nativeClock;
   check(clock.chainId === chainId && ['block.number', 'arbsys'].includes(clock.mode), 'Explicit chain-bound native clock mode required');
@@ -175,35 +236,44 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration]);
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), uint('saltStart', input.create2.saltStart, 256, true), number('maxAttempts', input.create2.maxAttempts, 1, 1000000));
   deployed.hook = mined.address;
-  const allNew = Object.values(deployed);
+  const internalValidatorAddress = getContractAddress({ from: deployed.auction, nonce: 1n });
+  const internalScheduleAddress = getContractAddress({ from: deployed.auction, nonce: 2n });
+  const allNew = [...Object.values(deployed), internalValidatorAddress, internalScheduleAddress];
   check(new Set([...allNew, ...Object.values(e).map(x => x.address), factory]).size === allNew.length + externalKeys.length + 1, 'Deployment address collision');
   check([...Object.values(r), ...recipients].every(a => !allNew.includes(a)), 'Recipient cannot be a newly deployed contract');
   const reserve = uint('tokenReserve', input.tokenReserve, 128); check(reserve <= (1n << 127n) - 1n, 'Reserve exceeds signed liquidity bound');
+  check(reserve === lpAllocation, 'Coordinator LP reserve must equal approved 20% allocation');
   closed('auction', input.auction, ['totalSupply', 'startBlock', 'endBlock', 'claimBlock', 'tickSpacing', 'floorPrice', 'requiredCurrencyRaised', 'auctionStepsData']);
   const a = input.auction, supply = uint('auction.totalSupply', a.totalSupply, 128);
   check(supply <= 1n << 100n, 'Auction total supply limit');
+  check(supply === saleAllocation, 'Public auction inventory must equal approved 40% allocation');
   const start = uint('startBlock', a.startBlock, 64), end = uint('endBlock', a.endBlock, 64), claim = uint('claimBlock', a.claimBlock, 64);
-  check(current < start && start < end && end <= claim, 'Auction native-clock ordering must be future');
+  check(current < start && start < end && end === claim, 'Auction native-clock ordering must be future and claims start at closure');
   const tick = uint('auction.tickSpacing', a.tickSpacing), floor = uint('floorPrice', a.floorPrice);
   const q = (1n << 154n) / supply, raisedBound = (1n << 222n) / supply;
   const maxBid = supply <= 1n << 62n ? (1n << 160n) - 1n : q * q < raisedBound ? q * q : raisedBound;
   check(tick >= 2n && floor > 1n << 32n && floor % tick === 0n && floor + tick <= maxBid, 'Auction floor/tick constructor bounds');
-  uint('requiredCurrencyRaised', a.requiredCurrencyRaised, 128);
+  const pricing = genesisAuctionFloor(supply);
+  check(a.tickSpacing === pricing.tickSpacing && a.floorPrice === pricing.floorPrice, 'Floor and 1% price grid must equal minimally UP-aligned 10 ETH/full-sale ratio');
+  check(uint('requiredCurrencyRaised', a.requiredCurrencyRaised, 128) === MINIMUM_RAISE, 'Graduation requires exactly approved 10 ETH');
   check(/^0x(?:[a-f0-9]{16})+$/i.test(a.auctionStepsData), 'Auction schedule must encode uint24 mps + uint40 blockDelta steps');
   let duration = 0n, mps = 0n;
   for (let i = 2; i < a.auctionStepsData.length; i += 16) { const rate = BigInt(`0x${a.auctionStepsData.slice(i, i + 6)}`), delta = BigInt(`0x${a.auctionStepsData.slice(i + 6, i + 16)}`);
     check(delta > 0n, 'Zero auction step duration'); duration += delta; mps += rate * delta; }
   check(duration === end - start && mps === 10000000n, 'Auction schedule duration/issuance mismatch');
+  const releaseSchedule = uniformGenesisAuctionSchedule(duration);
+  check(a.auctionStepsData.toLowerCase() === releaseSchedule.auctionStepsData, 'Auction issuance must use the bounded segmented uniform schedule, without a final cliff');
   check(supply + reserve < 1n << 256n, 'Aggregate Safe OMR inventory overflows uint256');
-  const targetDurationMs = 72n * 3600n * 1000n;
+  const targetDurationMs = 120n * 3600n * 1000n;
   check(duration * minMs <= targetDurationMs && duration * maxMs >= targetDurationMs,
-    'Auction schedule must target 72 hours within measured native-clock cadence bounds');
-  const params = { currency: zeroAddress, tokensRecipient: r.unsoldRecipient, fundsRecipient: deployed.coordinator,
+    'Auction schedule must target 120 hours within measured native-clock cadence bounds');
+  const params = { currency: zeroAddress, tokensRecipient: r.safe, fundsRecipient: deployed.coordinator,
     startBlock: start, endBlock: end, claimBlock: claim, tickSpacing: tick, validationHook: zeroAddress, floorPrice: floor,
     requiredCurrencyRaised: BigInt(a.requiredCurrencyRaised), auctionStepsData: a.auctionStepsData };
   const coordinatorData = deployData('OmertaAuctionCoordinatorV2', [e.poolManager.address, e.positionManager.address, e.permit2.address, e.omr.address,
-    deployed.hook, fee, spacing, reserve, r.liquidityOwner, r.treasury, r.vig, r.founder, e.characterNft.address]);
+    deployed.hook, fee, spacing, reserve, r.safe, e.characterNft.address]);
   const auctionData = deployData('OmertaGuardedAuction', [e.omr.address, supply, params, deployed.coordinator, e.characterNft.address]);
+  const validatorInit = deployData('GenesisCharacterBidValidation', [e.characterNft.address, e.omr.address]);
   const call = (from, to, abi, functionName, args = []) => ({ chainId, from, to, value: '0x0', data: encodeFunctionData({ abi, functionName, args }) });
   const funding = [[deployed.auction, supply], [deployed.coordinator, reserve]].map(([to, amount]) =>
     call(r.safe, e.omr.address, parseAbi(['function transfer(address to,uint256 amount) returns(bool)']), 'transfer', [to, amount]));
@@ -220,10 +290,24 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     sourceRevision: input.sourceRevision, workingTreeMatchesRevision: inventory.workingTreeMatchesRevision,
     manifestSha256: sha(JSON.stringify(ordered(input))), evidence: inventory.artifacts, external: e,
     factory: input.create2, observation: input.observation, nativeClock: clock, addresses: deployed,
-    internalValidatorAddress: getContractAddress({ from: deployed.auction, nonce: 1n }), hookMining: mined,
-    inventory: { public: String(supply), reserve: String(reserve), totalSafeOmrRequired: String(supply + reserve), auctionDurationSecondsBounds: [String(duration * minMs / 1000n), String((duration * maxMs + 999n) / 1000n)] },
+    internalValidatorAddress, internalValidatorConstructorArgs: [e.characterNft.address, e.omr.address],
+    internalValidatorInitCodeHash: keccak256(validatorInit), internalValidatorApprovedSupply: String(totalSupply), internalScheduleAddress,
+    internalScheduleStoreAddress: internalScheduleAddress,
+    internalScheduleRuntime: concatHex(['0x00', a.auctionStepsData]), internalScheduleRuntimeHash: keccak256(concatHex(['0x00', a.auctionStepsData])),
+    internalScheduleRuntimeSha256: sha(Buffer.from('00' + a.auctionStepsData.slice(2), 'hex')),
+    deploymentAddressCount: 7, hookMining: mined,
+    inventory: { totalSupply: String(totalSupply), decimals: 18, public: String(supply), reserve: String(reserve), bondHeldAtSafe: String(bondAllocation),
+      totalSafeOmrRequired: String(totalSupply), initialFundingOmr: String(supply + reserve), expectedSafeBalanceAfterFunding: String(safeBalance - supply - reserve),
+      bondActivated: false, bondReserveCustodian: r.safe, unsoldRecipient: r.safe, unsoldAccounting: 'Auction-unsold tokens returned to Safe are separate from the retained bond allocation.',
+      auctionDurationSecondsBounds: [String(duration * minMs / 1000n), String((duration * maxMs + 999n) / 1000n)] },
+    pricing, releaseSchedule, allocationEvidence: allocation,
+    liquidityPolicy: { lpTokenAmountWei: String(lpAllocation), lpProceedsBps: 5000, familyProceedsBps: 5000, liquidityOwner: r.safe,
+      familyYieldTreasury: r.safe, poolPrice: 'Derived from actual fixed LP tokens and 50% accepted ETH; independent of auction clearing price.' },
     deployments, safeFundingCalls: funding, deployerBindCall: call(r.deployer, deployed.coordinator, artifacts.OmertaAuctionCoordinatorV2.abi, 'bind', [deployed.auction]),
-    finalManifest: { chainId, activationReady: false, contracts: {
+    finalManifest: { chainId, activationReady: false, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
+      saleTokenAmountWei: String(saleAllocation), lpTokenAmountWei: String(lpAllocation), bondTokenAmountWei: String(bondAllocation),
+      familySafe: r.safe, liquidityOwner: r.safe, unsoldRecipient: r.safe, bondReserveCustodian: r.safe,
+      minimumRaiseWei: String(MINIMUM_RAISE), lpProceedsBps: 5000, claimsAtAuctionEnd: true }, contracts: {
       auction: { address: deployed.auction, runtimeCodeHash: null },
       coordinator: { address: deployed.coordinator, runtimeCodeHash: null },
       characterNft: { address: e.characterNft.address, runtimeCodeHash: e.characterNft.runtimeHash },
@@ -235,10 +319,13 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
       permit2: { address: e.permit2.address, runtimeCodeHash: e.permit2.runtimeHash },
       hook: { address: deployed.hook, runtimeCodeHash: null },
     } },
-    remainingGates: ['Verify every external/factory runtime hash and interface, OMR decimals=18 and Safe inventory at execution.',
+    remainingGates: ['Reverify pinned 100M OMR supply, 18 decimals, full initial Safe balance and zero minter at execution; preserve 40M bond reserve and separately account auction-unsold tokens.',
+      'An offline input hash or referenced evidence file is not a live verification: resolve and re-read every runtime, nonce, supply, balance, native-clock and governance record before signing.',
+      'The source revision must be committed and all reviewed source/artifact pins refreshed after remediation; constructor runtime hashes for auction/coordinator/validator/hook remain unresolved until simulated/deployed and checked.',
+      'Verify every external/factory runtime hash and interface, approved Safe/deployer roles, 10 ETH minimum, aligned floor, segmented issuance and end-block claims.',
       'Verify deployer nonce, empty predicted addresses, factory salt-prefix semantics, and native clock selection/cadence at execution.',
       'Simulate all deployment/funding/bind transactions and verify NFT validator and governance recipients.',
-      'Review reserve adequacy at actual clearing price and total raised; no unconditional migration guarantee is inferred from inventory.',
+      'Simulate fixed 20M LP tokens with 50% accepted ETH at the derived funded pool price, actual token-spend rounding, and remaining 50% Family Yield credit; do not substitute auction clearing price.',
       'Bids, checkpoint, migration and claims require separate launch approval; this plan does not arm market strategies.'] };
   return JSON.parse(json(plan));
 }

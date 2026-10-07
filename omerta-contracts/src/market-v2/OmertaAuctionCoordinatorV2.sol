@@ -30,6 +30,8 @@ interface ISingleGenesisAuction {
     function currency() external view returns (address);
     function claimsReady() external view returns (bool);
     function startBlock() external view returns (uint64);
+    function endBlock() external view returns (uint64);
+    function claimBlock() external view returns (uint64);
     function blockNumberish() external view returns (uint256);
     function sweepCurrency() external;
 }
@@ -43,6 +45,9 @@ interface ISingleGenesisCharacterGate {
     function characterNft() external view returns (IERC721);
     function characterNftCodeHash() external view returns (bytes32);
     function eligibilityChainId() external view returns (uint256);
+    function omr() external view returns (IERC20);
+    function omrCodeHash() external view returns (bytes32);
+    function approvedSupply() external view returns (uint256);
 }
 
 /// @notice Atomically migrates one NFT-gated public auction into the current market.
@@ -57,9 +62,8 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
     IERC20 public immutable omr;
     address public immutable configurator;
     address public immutable liquidityOwner;
-    address public immutable treasury;
-    address public immutable vig;
-    address public immutable founder;
+    address public immutable safe;
+    address public immutable familyYieldTreasury;
     uint128 public immutable tokenReserve;
     uint256 public immutable chainId;
     bytes32 private immutable _managerHash;
@@ -74,8 +78,12 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
     PoolKey private _key;
     ISingleGenesisAuction public auction;
     uint256 public auctionPriceX96;
+    uint256 public poolPriceX96;
+    uint256 public lpNativeBudget;
+    uint256 public publicProceeds;
     bool public migrationSucceeded;
     mapping(address => uint256) public residualCredit;
+    uint256 public totalOutstandingCredit;
     event Bound(address auction);
     event AuctionFinalized(uint256 priceX96);
     event Migrated(uint256 positionId, uint128 liquidity, uint256 publicProceeds);
@@ -85,16 +93,15 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
 
     constructor(IPoolManager manager_, IPositionManager positions_, IAllowanceTransfer permit2_,
         IERC20 token_, IHooks hook_, uint24 fee_, int24 spacing_, uint128 reserve_,
-        address liquidityOwner_, address treasury_, address vig_, address founder_, IERC721 characterNft_) {
+        address safe_, IERC721 characterNft_) {
         if (address(manager_).code.length == 0 || address(positions_).code.length == 0
             || address(permit2_).code.length == 0 || address(token_).code.length == 0
             || address(hook_) == address(0) || address(characterNft_).code.length == 0 || spacing_ <= 0 || reserve_ == 0
-            || reserve_ > uint128(type(int128).max) || liquidityOwner_ == address(0)
-            || treasury_ == address(0) || vig_ == address(0) || founder_ == address(0)
+            || reserve_ > uint128(type(int128).max) || safe_ == address(0) || safe_ == address(this)
             || address(positions_.poolManager()) != address(manager_)) revert BadConfiguration();
         poolManager = manager_; positionManager = positions_; permit2 = permit2_; omr = token_;
-        configurator = msg.sender; liquidityOwner = liquidityOwner_; tokenReserve = reserve_;
-        treasury = treasury_; vig = vig_; founder = founder_;
+        configurator = msg.sender; liquidityOwner = safe_; tokenReserve = reserve_;
+        safe = safe_; familyYieldTreasury = safe_;
         chainId = block.chainid; characterNft = characterNft_;
         characterNftCodeHash = address(characterNft_).codehash;
         _managerHash = address(manager_).codehash; _positionsHash = address(positions_).codehash;
@@ -111,6 +118,7 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
             || address(auction_).code.length == 0 || auction_.fundsRecipient() != address(this)
             || auction_.launchGate() != address(this) || auction_.currency() != address(0)
             || auction_.token() != address(omr) || address(auction_.characterNft()) != address(characterNft)
+            || auction_.claimBlock() != auction_.endBlock()
             || auction_.blockNumberish() >= auction_.startBlock() || address(_key.hooks).code.length == 0) {
             revert BadConfiguration();
         }
@@ -118,7 +126,10 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
         if (validator.code.length == 0
             || address(ISingleGenesisCharacterGate(validator).characterNft()) != address(characterNft)
             || ISingleGenesisCharacterGate(validator).characterNftCodeHash() != characterNftCodeHash
-            || ISingleGenesisCharacterGate(validator).eligibilityChainId() != chainId) revert BadConfiguration();
+            || ISingleGenesisCharacterGate(validator).eligibilityChainId() != chainId
+            || address(ISingleGenesisCharacterGate(validator).omr()) != address(omr)
+            || ISingleGenesisCharacterGate(validator).omrCodeHash() != _tokenHash
+            || ISingleGenesisCharacterGate(validator).approvedSupply() == 0) revert BadConfiguration();
         ISingleGenesisMarketHook marketHook = ISingleGenesisMarketHook(address(_key.hooks));
         if (marketHook.authorized() != address(this)
             || PoolId.unwrap(marketHook.poolKey().toId()) != PoolId.unwrap(_key.toId())) revert BadConfiguration();
@@ -136,9 +147,10 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
         auctionPriceX96 = price; emit AuctionFinalized(price);
     }
 
-    /// @notice Compatibility with the guarded auction's immutable claim-gate interface.
+    /// @notice Closure releases graduated purchases independently of liquidity migration.
+    /// @dev The auction itself still enforces graduation and exited-bid token accounting.
     function playerClaimsOpen() external view returns (bool) {
-        return migrationSucceeded && block.chainid == chainId
+        return address(auction) != address(0) && block.chainid == chainId
             && address(auction).codehash == auctionCodeHash && auction.claimsReady();
     }
 
@@ -155,15 +167,19 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
             || address(poolManager).codehash != _managerHash || address(positionManager).codehash != _positionsHash
             || address(permit2).codehash != _permitHash || address(omr).codehash != _tokenHash) revert WrongPhase();
         uint256 beforeSweep = address(this).balance;
-        (uint256 price,, uint256 publicProceeds) = auction.lbpInitializationParams();
+        (uint256 price,, uint256 proceeds) = auction.lbpInitializationParams();
         if (price != auctionPriceX96) revert SettlementMismatch();
         auction.sweepCurrency();
-        if (address(this).balance - beforeSweep != publicProceeds) revert SettlementMismatch();
-        uint256 total = publicProceeds;
-        uint256 nativeBudget = Math.mulDiv(total, 3750, 10_000);
+        if (address(this).balance - beforeSweep != proceeds) revert SettlementMismatch();
+        uint256 nativeBudget = proceeds / 2;
         if (nativeBudget == 0 || nativeBudget > uint128(type(int128).max)
             || omr.balanceOf(address(this)) < tokenReserve) revert SettlementMismatch();
-        uint160 sqrtPrice = uint160(Math.sqrt(Math.mulDiv(uint256(1) << 192, uint256(1) << 96, price)));
+        // Funded pool ratio is independent of the CCA's temporal/final clearing price. Scaling
+        // by 2^128 before sqrt, then 2^32, avoids overflowing a 256-bit squared Q96 ratio.
+        uint256 scaled = Math.mulDiv(tokenReserve, uint256(1) << 128, nativeBudget);
+        uint256 rooted = Math.sqrt(scaled) << 32;
+        if (rooted > type(uint160).max) revert SettlementMismatch();
+        uint160 sqrtPrice = uint160(rooted);
         if (sqrtPrice < TickMath.MIN_SQRT_PRICE || sqrtPrice >= TickMath.MAX_SQRT_PRICE) revert SettlementMismatch();
         PoolKey memory key = _key;
         (uint160 existing,,,) = poolManager.getSlot0(key.toId());
@@ -173,9 +189,7 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
         int24 upper = TickMath.maxUsableTick(key.tickSpacing);
         uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(sqrtPrice,
             TickMath.getSqrtPriceAtTick(lower), TickMath.getSqrtPriceAtTick(upper), nativeBudget, tokenReserve);
-        // OMR must fund the ETH budget; insufficient matching tokens cannot silently reduce LP.
-        if (liquidity == 0 || liquidity != LiquidityAmounts.getLiquidityForAmount0(
-            sqrtPrice, TickMath.getSqrtPriceAtTick(upper), nativeBudget)) revert SettlementMismatch();
+        if (liquidity == 0) revert SettlementMismatch();
         uint256 positionId = positionManager.nextTokenId();
         bytes[] memory params = new bytes[](3);
         params[0] = abi.encode(key, lower, upper, uint256(liquidity), uint128(nativeBudget), tokenReserve, liquidityOwner, bytes(""));
@@ -197,25 +211,40 @@ contract OmertaAuctionCoordinatorV2 is ReentrancyGuard {
             || address(this).balance >= nativeBefore + positionManagerDust
             || omr.balanceOf(address(this)) >= tokenBefore) revert SettlementMismatch();
         uint256 spent = nativeBefore + positionManagerDust - address(this).balance;
-        // Full-range liquidity arithmetic leaves rounding dust; bound it to 1% of the LP budget.
-        if (spent > nativeBudget || spent < Math.mulDiv(nativeBudget, 9900, 10_000)) revert SettlementMismatch();
-        uint256 residual = total - spent;
-        residualCredit[treasury] += Math.mulDiv(residual, 4000, 10_000);
-        residualCredit[vig] += Math.mulDiv(residual, 3600, 10_000);
-        residualCredit[founder] += residual - Math.mulDiv(residual, 4000, 10_000) - Math.mulDiv(residual, 3600, 10_000);
+        uint256 tokenSpent = tokenBefore - omr.balanceOf(address(this));
+        // Both reserves must be paired, not merely approved as maxima. Full-range endpoints,
+        // integer sqrt and liquidity rounding allow at most one part in 10^12 (minimum 2 wei).
+        uint256 nativeDust = Math.max(2, nativeBudget / 1e12);
+        uint256 tokenDust = Math.max(2, uint256(tokenReserve) / 1e12);
+        if (spent > nativeBudget || nativeBudget - spent > nativeDust
+            || tokenSpent > tokenReserve || uint256(tokenReserve) - tokenSpent > tokenDust) revert SettlementMismatch();
+        publicProceeds = proceeds; lpNativeBudget = nativeBudget;
+        poolPriceX96 = Math.mulDiv(nativeBudget, uint256(1) << 96, tokenReserve);
+        residualCredit[familyYieldTreasury] += proceeds - spent;
+        totalOutstandingCredit += proceeds - spent;
         migrationSucceeded = true;
-        emit Migrated(positionId, liquidity, publicProceeds);
+        emit Migrated(positionId, liquidity, proceeds);
     }
 
     function withdrawResidual() external nonReentrant {
         uint256 amount = residualCredit[msg.sender]; residualCredit[msg.sender] = 0;
+        totalOutstandingCredit -= amount;
         (bool ok,) = msg.sender.call{value: amount}("");
+        if (!ok) revert SettlementMismatch();
+    }
+
+    /// @notice Recover donations or PositionManager dust without spending any outstanding credit.
+    function recoverEthSurplus() external nonReentrant {
+        if (msg.sender != safe) revert WrongPhase();
+        uint256 balance = address(this).balance;
+        if (balance <= totalOutstandingCredit) revert WrongPhase();
+        (bool ok,) = safe.call{value: balance - totalOutstandingCredit}("");
         if (!ok) revert SettlementMismatch();
     }
 
     function recoverTokenDust() external nonReentrant {
         if (!migrationSucceeded) revert WrongPhase();
-        omr.safeTransfer(treasury, omr.balanceOf(address(this)));
+        omr.safeTransfer(safe, omr.balanceOf(address(this)));
     }
 
     receive() external payable {

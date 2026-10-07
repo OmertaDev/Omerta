@@ -46,9 +46,9 @@ contract AuctionGenesisRobinhoodForkTest is Test {
         emit log_named_bytes32("Live PositionManager runtime",address(POSITIONS).codehash);
         emit log_named_bytes32("Live Permit2 runtime",address(PERMIT).codehash);
         assertEq(block.chainid,4663); assertEq(NFT.ownerOf(1),HOLDER);
-        assertGe(TOKEN.balanceOf(SAFE),2000 ether);
+        assertGe(TOKEN.balanceOf(SAFE),60_000_000 ether);
         assertEq(address(POSITIONS.poolManager()),address(MANAGER));
-        vm.etch(address(0x64),bytes("")); vm.deal(HOLDER,10 ether); vm.deal(outsider,10 ether);
+        vm.etch(address(0x64),bytes("")); vm.deal(HOLDER,100 ether); vm.deal(outsider,10 ether);
         address predicted = vm.computeCreateAddress(address(this),vm.getNonce(address(this)));
         address[5] memory recipients = [SAFE,SAFE,SAFE,SAFE,SAFE];
         bytes memory hookCode = abi.encodePacked(type(OmertaHookV2).creationCode,abi.encode(
@@ -64,30 +64,34 @@ contract AuctionGenesisRobinhoodForkTest is Test {
         }
         assertEq(uint160(hookAddress) & 0x3fff,0x35c4);
         coordinator = new OmertaAuctionCoordinatorV2(MANAGER,POSITIONS,PERMIT,TOKEN,
-            IHooks(hookAddress),3000,60,1000 ether,SAFE,SAFE,SAFE,SAFE,NFT);
+            IHooks(hookAddress),3000,60,20_000_000 ether,SAFE,NFT);
         assertEq(address(coordinator),predicted);
         address deployed;
         assembly { deployed := create2(0,add(hookCode,32),mload(hookCode),salt) }
         assertEq(deployed,hookAddress);
         uint64 start = uint64(block.number + 10);
         AuctionParameters memory p = AuctionParameters(address(0),SAFE,address(coordinator),
-            start,start+10,start+20,2,address(0),(Q96/1000)/2*2,1,
+            start,start+10,start+10,2,address(0),(Q96/4_000_000)/2*2,10 ether,
             abi.encodePacked(uint24(1_000_000),uint40(10)));
-        auction = new OmertaGuardedAuction(address(TOKEN),1000 ether,p,IOmertaGenesisClaimGate(address(coordinator)),NFT);
-        vm.startPrank(SAFE); TOKEN.transfer(address(auction),1000 ether);
-        TOKEN.transfer(address(coordinator),1000 ether); vm.stopPrank();
+        auction = new OmertaGuardedAuction(address(TOKEN),40_000_000 ether,p,IOmertaGenesisClaimGate(address(coordinator)),NFT);
+        vm.startPrank(SAFE); TOKEN.transfer(address(auction),40_000_000 ether);
+        TOKEN.transfer(address(coordinator),20_000_000 ether); vm.stopPrank();
         auction.onTokensReceived(); coordinator.bind(ISingleGenesisAuction(address(auction)));
         vm.roll(start); vm.prank(outsider); vm.expectRevert();
         auction.submitBid{value:1 ether}(Q96,uint128(1 ether),outsider,bytes(""));
-        vm.prank(HOLDER); bid = auction.submitBid{value:2 ether}(Q96,uint128(2 ether),HOLDER,bytes(""));
+        vm.prank(HOLDER); bid = auction.submitBid{value:50 ether}(Q96,uint128(50 ether),HOLDER,bytes(""));
         vm.roll(start+10); coordinator.checkpointAuction(); auction.exitBid(bid);
         positionId = POSITIONS.nextTokenId();
     }
     function testLiveNftAndDependencyAuctionMigrationAndClaim() public {
         uint256 proceeds = address(auction).balance;
         uint256 managerBefore = address(MANAGER).balance;
+        uint256 tokenBefore = TOKEN.balanceOf(address(MANAGER));
+        assertTrue(coordinator.playerClaimsOpen());
+        vm.prank(HOLDER); NFT.transferFrom(HOLDER,outsider,1);
+        auction.claimTokens(bid); assertGt(TOKEN.balanceOf(HOLDER),0);
         coordinator.migrate(); assertTrue(coordinator.migrationSucceeded());
-        assertFalse(coordinator.playerClaimsOpen());
+        assertTrue(coordinator.playerClaimsOpen());
         assertEq(IERC721(address(POSITIONS)).ownerOf(positionId),SAFE);
         assertGt(POSITIONS.getPositionLiquidity(positionId),0);
         PositionInfo info = POSITIONS.positionInfo(positionId);
@@ -95,11 +99,12 @@ contract AuctionGenesisRobinhoodForkTest is Test {
         assertEq(TOKEN.allowance(address(coordinator),address(PERMIT)),0);
         (uint160 amount,,) = PERMIT.allowance(address(coordinator),address(TOKEN),address(POSITIONS)); assertEq(amount,0);
         uint256 spent = address(MANAGER).balance - managerBefore;
-        assertGe(spent,proceeds*3750/10_000*99/100); assertLe(spent,proceeds*3750/10_000);
+        assertLe(spent,proceeds/2); assertLe(proceeds/2-spent,proceeds/2/1e12+2);
+        uint256 paired = TOKEN.balanceOf(address(MANAGER))-tokenBefore;
+        assertLe(paired,20_000_000 ether); assertLe(20_000_000 ether-paired,20_000_000 ether/1e12+2);
+        assertEq(coordinator.lpNativeBudget(),25 ether);
         assertEq(spent+address(coordinator).balance,proceeds);
         assertEq(coordinator.residualCredit(SAFE),address(coordinator).balance);
-        vm.roll(auction.claimBlock()); assertTrue(coordinator.playerClaimsOpen());
-        vm.prank(HOLDER); NFT.transferFrom(HOLDER,outsider,1);
-        auction.claimTokens(bid); assertGt(TOKEN.balanceOf(HOLDER),0);
+        assertEq(auction.claimBlock(),auction.endBlock());
     }
 }
