@@ -7,7 +7,7 @@ export function loadGenesisAuctionManifest(env = process.env) {
   const file = env === process.env ? process.env.GENESIS_AUCTION_MANIFEST_PATH : env.GENESIS_AUCTION_MANIFEST_PATH;
   const expected = env === process.env ? process.env.GENESIS_AUCTION_MANIFEST_SHA256 : env.GENESIS_AUCTION_MANIFEST_SHA256;
   if (!file && !expected) return null;
-  if (!file || !/^[a-f0-9]{64}$/i.test(expected || '')) throw Error('Genesis manifest pin is incomplete.');
+  if (!file || typeof expected !== 'string' || !/^[a-f0-9]{64}$/.test(expected.toLowerCase())) throw Error('Genesis manifest pin is incomplete.');
   const stat = statSync(file);
   if (!stat.isFile() || stat.size > 1_048_576) throw Error('Genesis manifest must be a bounded regular file.');
   const bytes = readFileSync(file);
