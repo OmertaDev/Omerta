@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "03b413a80e2fa20971cbe6e36b2ae2fbed1fa863",
+  "sourceRevision": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 9925,
-    "edges": 40406,
+    "nodes": 9962,
+    "edges": 40522,
     "byNodeType": {
-      "Artifact": 4241,
+      "Artifact": 4272,
       "Command": 183,
-      "Commit": 2067,
+      "Commit": 2072,
       "Contract": 126,
-      "Document": 692,
+      "Document": 693,
       "Domain": 13,
       "ExternalDependency": 28,
       "HistoricalArtifact": 424,
@@ -64,20 +64,20 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3320,
-      "CHANGED": 15720,
-      "CONTAINS": 4262,
+      "BELONGS_TO": 3351,
+      "CHANGED": 15767,
+      "CONTAINS": 4293,
       "DECLARES": 183,
       "DEFINED_IN": 1304,
       "DEPENDS_ON": 66,
       "EXECUTES": 624,
       "HANDLED_BY": 714,
-      "HAS_COMMIT": 2067,
+      "HAS_COMMIT": 2072,
       "IMPLEMENTS": 124,
-      "IMPORTS": 3990,
+      "IMPORTS": 3991,
       "INHERITS": 42,
       "REFERENCES": 3122,
-      "REPRESENTS": 1530,
+      "REPRESENTS": 1531,
       "TESTS": 1370,
       "TRACKS": 126,
       "USES_TABLE": 1842
@@ -51559,6 +51559,719 @@
       "lastChangedCommit": "6f6fee6e5f028e69881cfa477529d7547d09d26a"
     },
     {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "label": "actual-plan-signer-binding-proof.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 414,
+      "lines": 11,
+      "version": "ddc9ae89eab25db6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+          "line": 1,
+          "version": "ddc9ae89eab25db6"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "label": "genesis-approved-complete-technical-preflight.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 244953,
+      "lines": 253,
+      "version": "bc779f9782be5d97",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+          "line": 1,
+          "version": "bc779f9782be5d97"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "label": "genesis-approved-daybreak-periphery-review.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 1210,
+      "lines": 18,
+      "version": "04b9892d059558a6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+          "line": 1,
+          "version": "04b9892d059558a6"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "label": "genesis-approved-daybreak-retest.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 6253,
+      "lines": 78,
+      "version": "dc779db42788bc5f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+          "line": 1,
+          "version": "dc779db42788bc5f"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "label": "genesis-approved-daybreak-review.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 8058,
+      "lines": 117,
+      "version": "5fa832a35cd95a71",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+          "line": 1,
+          "version": "5fa832a35cd95a71"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "label": "genesis-approved-f01-f02-focused.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 3460,
+      "lines": 61,
+      "version": "ea6169b739a0d6a1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+          "line": 1,
+          "version": "ea6169b739a0d6a1"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "label": "genesis-approved-f01-f02-full-warm.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 168701,
+      "lines": 2906,
+      "version": "fdeb5c2bfcaf82e4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+          "line": 1,
+          "version": "fdeb5c2bfcaf82e4"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "label": "genesis-approved-f01-f02-initial-naming-failure.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 18743,
+      "lines": 448,
+      "version": "9d77a7eeebcbd426",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+          "line": 1,
+          "version": "9d77a7eeebcbd426"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "label": "genesis-approved-f01-f02-provenance.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 3019,
+      "lines": 82,
+      "version": "bea0efa1b4767777",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+          "line": 1,
+          "version": "bea0efa1b4767777"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "label": "genesis-approved-f01-f02-robinhood-forks.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 1495,
+      "lines": 26,
+      "version": "0a67fd5a82202638",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+          "line": 1,
+          "version": "0a67fd5a82202638"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "label": "genesis-approved-seven-runtime-dryfork-proof.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 109185,
+      "lines": 48,
+      "version": "1e9ae40c6503f47e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+          "line": 1,
+          "version": "1e9ae40c6503f47e"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "label": "genesis-approved-seven-runtime-dryfork-run.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 135,
+      "lines": 6,
+      "version": "0bfe842bdbad46e7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+          "line": 1,
+          "version": "0bfe842bdbad46e7"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "label": "genesis-approved-seven-runtime-external-proof.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 147554,
+      "lines": 14,
+      "version": "426003ac5e01fc15",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+          "line": 1,
+          "version": "426003ac5e01fc15"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "label": "genesis-approved-seven-runtime-getter-proof.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 17513,
+      "lines": 218,
+      "version": "c1bab0fac4829e52",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+          "line": 1,
+          "version": "c1bab0fac4829e52"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "label": "genesis-approved-validator-runtime-observation.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 3960,
+      "lines": 23,
+      "version": "dca3d0e319efc217",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+          "line": 1,
+          "version": "dca3d0e319efc217"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "label": "genesis-auction-constructor-encoding-proof.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 454,
+      "lines": 14,
+      "version": "e21e1906760fd567",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+          "line": 1,
+          "version": "e21e1906760fd567"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "label": "genesis-governance-daybreak-final-retest.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 2832,
+      "lines": 37,
+      "version": "0d03ea29ed44c5f1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+          "line": 1,
+          "version": "0d03ea29ed44c5f1"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "label": "genesis-governance-daybreak-h03-retest.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 1649,
+      "lines": 33,
+      "version": "d31f8b1b4608db5e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+          "line": 1,
+          "version": "d31f8b1b4608db5e"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "label": "genesis-governance-daybreak-review.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 3420,
+      "lines": 49,
+      "version": "2b23fd06bdd7168a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+          "line": 1,
+          "version": "2b23fd06bdd7168a"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "label": "hook-tax-domain-trace.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 296769,
+      "lines": 156,
+      "version": "99ae3003277078ae",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+          "line": 1,
+          "version": "99ae3003277078ae"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "label": "hook-tax-governance-focused.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 7841,
+      "lines": 208,
+      "version": "dc094141499a63bb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+          "line": 1,
+          "version": "dc094141499a63bb"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "label": "hook-tax-governance-full-warm.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 172085,
+      "lines": 2984,
+      "version": "90765491d7386f4e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+          "line": 1,
+          "version": "90765491d7386f4e"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "label": "hook-tax-governance-initial-domain-failure.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 3781,
+      "lines": 100,
+      "version": "f81caf8748a99165",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+          "line": 1,
+          "version": "f81caf8748a99165"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "label": "hook-tax-governance-provenance.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 3695,
+      "lines": 93,
+      "version": "3c0e71413614c68f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+          "line": 1,
+          "version": "3c0e71413614c68f"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "label": "release-source-pins.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 2139,
+      "lines": 59,
+      "version": "c90b996969fb5013",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+          "line": 1,
+          "version": "c90b996969fb5013"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "label": "report.md",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "kind": "contract-project",
+      "extension": ".md",
+      "bytes": 5026,
+      "lines": 38,
+      "version": "bd88dd1ce59d8bda",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+          "line": 1,
+          "version": "bd88dd1ce59d8bda"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T04:03:55.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "label": "retained-package-pins.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 4583,
+      "lines": 125,
+      "version": "ca1d9a9cbac79283",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+          "line": 1,
+          "version": "ca1d9a9cbac79283"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T04:03:55.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "label": "retention-pins.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 5985,
+      "lines": 121,
+      "version": "c93f8419a50c9646",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+          "line": 1,
+          "version": "c93f8419a50c9646"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "label": "reviewer-invocation.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 1016,
+      "lines": 25,
+      "version": "e8eb31c2cb072090",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+          "line": 1,
+          "version": "e8eb31c2cb072090"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T03:57:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "label": "shared-planner-ci-followup.json",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 1075,
+      "lines": 29,
+      "version": "7130a39d2df61619",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+          "line": 1,
+          "version": "7130a39d2df61619"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T04:03:55.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+    },
+    {
+      "key": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "type": "Artifact",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "label": "shared-planner-ci-initial-failure.txt",
+      "path": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "kind": "contract-project",
+      "extension": ".txt",
+      "bytes": 4629,
+      "lines": 37,
+      "version": "55d970ab271694c3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+          "line": 1,
+          "version": "55d970ab271694c3"
+        }
+      ],
+      "lastChangedAt": "2026-10-07T04:03:55.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+    },
+    {
       "key": "Artifact:omerta-contracts/audits/2026-10-06-founder-reconciliation/genesis-founder-settings-contract-review.txt",
       "type": "Artifact",
       "id": "omerta-contracts/audits/2026-10-06-founder-reconciliation/genesis-founder-settings-contract-review.txt",
@@ -75618,20 +76331,20 @@
       "path": "public/genesis-deploy-artifact.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 35750,
-      "lines": 66,
-      "version": "641938e465496980",
+      "bytes": 144493,
+      "lines": 401,
+      "version": "8356a7475da97957",
       "text": true,
       "provenance": [
         {
           "file": "public/genesis-deploy-artifact.js",
           "line": 1,
-          "version": "641938e465496980"
+          "version": "8356a7475da97957"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:42:22.000Z",
+      "lastChangedAt": "2026-10-07T03:55:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "308c7bd58edf1a8dcff78b6bf760f24762932011"
+      "lastChangedCommit": "aca24128dd4205f78887c592e2155320721a2262"
     },
     {
       "key": "Artifact:public/genesis-deploy-client.js",
@@ -75641,20 +76354,20 @@
       "path": "public/genesis-deploy-client.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 28913,
-      "lines": 407,
-      "version": "bb48c9de9239aa9a",
+      "bytes": 32583,
+      "lines": 457,
+      "version": "07e0bd7cddc622ab",
       "text": true,
       "provenance": [
         {
           "file": "public/genesis-deploy-client.js",
           "line": 1,
-          "version": "bb48c9de9239aa9a"
+          "version": "07e0bd7cddc622ab"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:42:22.000Z",
+      "lastChangedAt": "2026-10-07T03:55:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "308c7bd58edf1a8dcff78b6bf760f24762932011"
+      "lastChangedCommit": "aca24128dd4205f78887c592e2155320721a2262"
     },
     {
       "key": "Artifact:public/genesis-deploy-vendor/_u64.js",
@@ -85462,20 +86175,20 @@
       "path": "test/genesis-deploy-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22772,
-      "lines": 314,
-      "version": "563451b3177a48df",
+      "bytes": 27265,
+      "lines": 366,
+      "version": "b7ba75d9b2db49fc",
       "text": true,
       "provenance": [
         {
           "file": "test/genesis-deploy-client.js",
           "line": 1,
-          "version": "563451b3177a48df"
+          "version": "b7ba75d9b2db49fc"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:42:22.000Z",
+      "lastChangedAt": "2026-10-07T03:55:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "308c7bd58edf1a8dcff78b6bf760f24762932011"
+      "lastChangedCommit": "aca24128dd4205f78887c592e2155320721a2262"
     },
     {
       "key": "Artifact:test/genesisauction.js",
@@ -86589,20 +87302,20 @@
       "path": "test/market-v2-deployment-plan.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11496,
-      "lines": 163,
-      "version": "06aa201bb1967ba7",
+      "bytes": 11878,
+      "lines": 167,
+      "version": "e1a67314937900e9",
       "text": true,
       "provenance": [
         {
           "file": "test/market-v2-deployment-plan.js",
           "line": 1,
-          "version": "06aa201bb1967ba7"
+          "version": "e1a67314937900e9"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-10-07T04:03:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
     },
     {
       "key": "Artifact:test/market.js",
@@ -93305,20 +94018,20 @@
       "path": "tools/build-genesis-deploy-trust.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4606,
-      "lines": 63,
-      "version": "15415f0dbae45905",
+      "bytes": 6661,
+      "lines": 84,
+      "version": "6c8af0b720b1e35a",
       "text": true,
       "provenance": [
         {
           "file": "tools/build-genesis-deploy-trust.js",
           "line": 1,
-          "version": "15415f0dbae45905"
+          "version": "6c8af0b720b1e35a"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:42:22.000Z",
+      "lastChangedAt": "2026-10-07T03:55:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "308c7bd58edf1a8dcff78b6bf760f24762932011"
+      "lastChangedCommit": "aca24128dd4205f78887c592e2155320721a2262"
     },
     {
       "key": "Artifact:tools/campaign-network-sim.js",
@@ -94317,20 +95030,20 @@
       "path": "tools/market-v2-deployment-plan.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 33359,
-      "lines": 426,
-      "version": "7b86eadd73f3330c",
+      "bytes": 33499,
+      "lines": 427,
+      "version": "62df8f4e553658c9",
       "text": true,
       "provenance": [
         {
           "file": "tools/market-v2-deployment-plan.js",
           "line": 1,
-          "version": "7b86eadd73f3330c"
+          "version": "62df8f4e553658c9"
         }
       ],
-      "lastChangedAt": "2026-09-14T21:25:04.000Z",
+      "lastChangedAt": "2026-10-07T04:03:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
+      "lastChangedCommit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
     },
     {
       "key": "Artifact:tools/market-v2-keeper.js",
@@ -114081,6 +114794,22 @@
       ]
     },
     {
+      "key": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "type": "Commit",
+      "id": "6b54ffca251759fcc633e168454d743f4a9d3392",
+      "label": "Refresh knowledge for verified genesis governance release source",
+      "title": "Refresh knowledge for verified genesis governance release source",
+      "date": "2026-10-07T03:46:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6b54ffca251759fcc633e168454d743f4a9d3392",
+      "provenance": [
+        {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6b54ffca251759fcc633e168454d743f4a9d3392"
+        }
+      ]
+    },
+    {
       "key": "Commit:6bb6abfaec92abd21608a2e12dce73e6475efe0f",
       "type": "Commit",
       "id": "6bb6abfaec92abd21608a2e12dce73e6475efe0f",
@@ -121153,6 +121882,22 @@
       ]
     },
     {
+      "key": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "type": "Commit",
+      "id": "a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "label": "Retain approved genesis review findings, retests and deployment rehearsal evidence",
+      "title": "Retain approved genesis review findings, retests and deployment rehearsal evidence",
+      "date": "2026-10-07T03:57:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "provenance": [
+        {
+          "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a007720dc58aa3e90e87e6e3fdb231062988f18a"
+        }
+      ]
+    },
+    {
       "key": "Commit:a0177910c11c4502fb101c4ac506788a53d7ef88",
       "type": "Commit",
       "id": "a0177910c11c4502fb101c4ac506788a53d7ef88",
@@ -122893,6 +123638,22 @@
         {
           "commit": "ac943493061c880e247a3ace69252db9cccb1a8e",
           "url": "https://github.com/OmertaDev/Omerta/commit/ac943493061c880e247a3ace69252db9cccb1a8e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "type": "Commit",
+      "id": "aca24128dd4205f78887c592e2155320721a2262",
+      "label": "Bind every genesis deployment to reviewed code and canonical constructor data",
+      "title": "Bind every genesis deployment to reviewed code and canonical constructor data",
+      "date": "2026-10-07T03:55:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/aca24128dd4205f78887c592e2155320721a2262",
+      "provenance": [
+        {
+          "commit": "aca24128dd4205f78887c592e2155320721a2262",
+          "url": "https://github.com/OmertaDev/Omerta/commit/aca24128dd4205f78887c592e2155320721a2262"
         }
       ]
     },
@@ -129825,6 +130586,22 @@
       ]
     },
     {
+      "key": "Commit:e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "type": "Commit",
+      "id": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "label": "Update shared market planner for immutable Safe tax governance",
+      "title": "Update shared market planner for immutable Safe tax governance",
+      "date": "2026-10-07T04:03:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "provenance": [
+        {
+          "commit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
+        }
+      ]
+    },
+    {
       "key": "Commit:e5ec713d3dc29797e369335e3a3ac93b6758850e",
       "type": "Commit",
       "id": "e5ec713d3dc29797e369335e3a3ac93b6758850e",
@@ -131693,6 +132470,22 @@
         {
           "commit": "f528739f70ee0678a1e0bc83a99fc9f16c80a370",
           "url": "https://github.com/OmertaDev/Omerta/commit/f528739f70ee0678a1e0bc83a99fc9f16c80a370"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "type": "Commit",
+      "id": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "label": "Record hosted shared-planner correction and validation",
+      "title": "Record hosted shared-planner correction and validation",
+      "date": "2026-10-07T04:03:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "provenance": [
+        {
+          "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
         }
       ]
     },
@@ -144649,6 +145442,22 @@
       ]
     },
     {
+      "key": "Document:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "type": "Document",
+      "id": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "label": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "documentType": "contract-project",
+      "lines": 38,
+      "version": "bd88dd1ce59d8bda",
+      "provenance": [
+        {
+          "file": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+          "line": 1,
+          "version": "bd88dd1ce59d8bda"
+        }
+      ]
+    },
+    {
       "key": "Document:omerta-contracts/audits/2026-10-06-founder-reconciliation/report.md",
       "type": "Document",
       "id": "omerta-contracts/audits/2026-10-06-founder-reconciliation/report.md",
@@ -152835,6 +153644,9 @@
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -153631,6 +154443,9 @@
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
+        },
+        {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
         },
         {
           "commit": "6bd1a1dab316543b46a1f535ddbfac4161b2fead"
@@ -154503,6 +155318,9 @@
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+        },
+        {
           "commit": "6bd1a1dab316543b46a1f535ddbfac4161b2fead"
         },
         {
@@ -155373,6 +156191,9 @@
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+        },
+        {
           "commit": "6bd1a1dab316543b46a1f535ddbfac4161b2fead"
         },
         {
@@ -155943,6 +156764,9 @@
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
         },
         {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -156475,6 +157299,9 @@
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
+        },
+        {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
         },
         {
           "commit": "6bd1a1dab316543b46a1f535ddbfac4161b2fead"
@@ -157098,6 +157925,9 @@
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
         },
         {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -157363,6 +158193,9 @@
         },
         {
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
+        },
+        {
+          "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
@@ -165639,12 +166472,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "03b413a80e2fa20971cbe6e36b2ae2fbed1fa863",
+      "revision": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
       "currentBranch": "codex/genesis-nft-launch",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4241,
+      "currentArtifactCount": 4272,
       "provenance": [
         {
           "file": "README.md",
@@ -195143,13 +195976,13 @@
       "type": "TestSuite",
       "id": "test/genesis-deploy-client.js",
       "label": "test/genesis-deploy-client.js",
-      "lines": 314,
-      "version": "563451b3177a48df",
+      "lines": 366,
+      "version": "b7ba75d9b2db49fc",
       "provenance": [
         {
           "file": "test/genesis-deploy-client.js",
           "line": 1,
-          "version": "563451b3177a48df"
+          "version": "b7ba75d9b2db49fc"
         }
       ]
     },
@@ -195863,13 +196696,13 @@
       "type": "TestSuite",
       "id": "test/market-v2-deployment-plan.js",
       "label": "test/market-v2-deployment-plan.js",
-      "lines": 163,
-      "version": "06aa201bb1967ba7",
+      "lines": 167,
+      "version": "e1a67314937900e9",
       "provenance": [
         {
           "file": "test/market-v2-deployment-plan.js",
           "line": 1,
-          "version": "06aa201bb1967ba7"
+          "version": "e1a67314937900e9"
         }
       ]
     },
@@ -205544,6 +206377,285 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/ui-quality-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
         "line": 1
       }
     },
@@ -282407,6 +283519,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/contracts.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6bb6abfaec92abd21608a2e12dce73e6475efe0f",
       "to": "Artifact:docs/release/readiness-work/harness-worker-isolated-results.json",
       "provenance": {
@@ -307879,6 +309055,238 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a0177910c11c4502fb101c4ac506788a53d7ef88",
       "to": "Artifact:package.json",
       "provenance": {
@@ -312451,6 +313859,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "to": "Artifact:public/genesis-deploy-artifact.js",
+      "provenance": {
+        "commit": "aca24128dd4205f78887c592e2155320721a2262"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "to": "Artifact:public/genesis-deploy-client.js",
+      "provenance": {
+        "commit": "aca24128dd4205f78887c592e2155320721a2262"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "to": "Artifact:test/genesis-deploy-client.js",
+      "provenance": {
+        "commit": "aca24128dd4205f78887c592e2155320721a2262"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "to": "Artifact:tools/build-genesis-deploy-trust.js",
+      "provenance": {
+        "commit": "aca24128dd4205f78887c592e2155320721a2262"
       }
     },
     {
@@ -342023,6 +343463,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "to": "Artifact:test/market-v2-deployment-plan.js",
+      "provenance": {
+        "commit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "to": "Artifact:tools/market-v2-deployment-plan.js",
+      "provenance": {
+        "commit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e5ec713d3dc29797e369335e3a3ac93b6758850e",
       "to": "Artifact:package.json",
       "provenance": {
@@ -351411,6 +352867,38 @@
       "to": "Artifact:tools/rc1-churn-policy.js",
       "provenance": {
         "commit": "f528739f70ee0678a1e0bc83a99fc9f16c80a370"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "provenance": {
+        "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "provenance": {
+        "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "provenance": {
+        "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "provenance": {
+        "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
       }
     },
     {
@@ -362786,6 +364274,285 @@
       "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/ui-quality-final.txt",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/ui-quality-final.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/actual-plan-signer-binding-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-complete-technical-preflight.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-periphery-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-daybreak-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-focused.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-full-warm.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-initial-naming-failure.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-provenance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-f01-f02-robinhood-forks.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-dryfork-run.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-external-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-seven-runtime-getter-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-approved-validator-runtime-observation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-auction-constructor-encoding-proof.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-final-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-h03-retest.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/genesis-governance-daybreak-review.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-domain-trace.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-focused.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-full-warm.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-initial-domain-failure.txt",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/hook-tax-governance-provenance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/release-source-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retained-package-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/retention-pins.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/reviewer-invocation.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-followup.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/shared-planner-ci-initial-failure.txt",
         "line": 1
       }
     },
@@ -427657,6 +429424,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
+      "provenance": {
+        "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6bb6abfaec92abd21608a2e12dce73e6475efe0f",
       "provenance": {
         "commit": "6bb6abfaec92abd21608a2e12dce73e6475efe0f"
@@ -431193,6 +432968,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a007720dc58aa3e90e87e6e3fdb231062988f18a",
+      "provenance": {
+        "commit": "a007720dc58aa3e90e87e6e3fdb231062988f18a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a0177910c11c4502fb101c4ac506788a53d7ef88",
       "provenance": {
         "commit": "a0177910c11c4502fb101c4ac506788a53d7ef88"
@@ -432060,6 +433843,14 @@
       "to": "Commit:ac943493061c880e247a3ace69252db9cccb1a8e",
       "provenance": {
         "commit": "ac943493061c880e247a3ace69252db9cccb1a8e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:aca24128dd4205f78887c592e2155320721a2262",
+      "provenance": {
+        "commit": "aca24128dd4205f78887c592e2155320721a2262"
       }
     },
     {
@@ -435529,6 +437320,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e5eaa1857dafa46e5fb00a5481a3e4414d2b16df",
+      "provenance": {
+        "commit": "e5eaa1857dafa46e5fb00a5481a3e4414d2b16df"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e5ec713d3dc29797e369335e3a3ac93b6758850e",
       "provenance": {
         "commit": "e5ec713d3dc29797e369335e3a3ac93b6758850e"
@@ -436460,6 +438259,14 @@
       "to": "Commit:f528739f70ee0678a1e0bc83a99fc9f16c80a370",
       "provenance": {
         "commit": "f528739f70ee0678a1e0bc83a99fc9f16c80a370"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2",
+      "provenance": {
+        "commit": "f59e06b1be5f0c7d6f4c6906c2fae9afc03b42a2"
       }
     },
     {
@@ -454430,6 +456237,15 @@
       "provenance": {
         "file": "test/genesis-deploy-client.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/genesis-deploy-client.js",
+      "to": "Artifact:tools/genesis-auction-deployment-plan.js",
+      "provenance": {
+        "file": "test/genesis-deploy-client.js",
+        "line": 7
       }
     },
     {
@@ -507862,6 +509678,15 @@
       "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/report.md",
       "provenance": {
         "file": "omerta-contracts/audits/2026-10-04-character-checkout/report.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "to": "Artifact:omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
+      "provenance": {
+        "file": "omerta-contracts/audits/2026-10-06-approved-genesis/report.md",
         "line": 1
       }
     },

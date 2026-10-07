@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `03b413a80e2f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f59e06b1be5f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2067 |
+| Commits in clone | 2072 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-07 — Merge current production changes into genesis release |
+| Latest commit | 2026-10-07 — Record hosted shared-planner correction and validation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1177 |
+| OmertaDev | 1182 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 45 |
@@ -35,10 +35,10 @@
 | [src/server.js](../../src/server.js) | 369 | yes |
 | [SPEC.md](../../SPEC.md) | 358 | yes |
 | [schema.sql](../../schema.sql) | 299 | yes |
-| knowledge/generated/github-history.md | 287 | historical |
-| knowledge/generated/graph-summary.md | 287 | historical |
-| knowledge/generated/graph.json | 287 | historical |
-| knowledge/generated/inventory.md | 287 | historical |
+| knowledge/generated/github-history.md | 288 | historical |
+| knowledge/generated/graph-summary.md | 288 | historical |
+| knowledge/generated/graph.json | 288 | historical |
+| knowledge/generated/inventory.md | 288 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 230 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -49,14 +49,14 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [test/client.js](../../test/client.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
-| knowledge/generated/modules.md | 111 | historical |
+| knowledge/generated/modules.md | 112 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 88 | yes |
 | [test/gates.js](../../test/gates.js) | 86 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
+| knowledge/generated/graph.mmd | 76 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 76 | yes |
-| knowledge/generated/graph.mmd | 75 | historical |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 63 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
