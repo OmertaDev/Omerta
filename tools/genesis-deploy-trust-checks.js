@@ -38,6 +38,29 @@ export function trustedAssetDifference(actualBytes, expectedBytes) {
       const json = JSON.stringify(value) ?? 'undefined';
       return json.length <= 180 ? json : `${json.slice(0, 100)}… (${json.length} chars)`;
     };
+    if (typeof diff.actual === 'string' && typeof diff.expected === 'string'
+      && /^0x(?:[\da-f]{2})+$/i.test(diff.actual) && /^0x(?:[\da-f]{2})+$/i.test(diff.expected)
+      && diff.path.endsWith('.creationBytecode'))
+      return `${diff.path}: ${bytecodeDifference(diff.actual, diff.expected)}`;
     return `${diff.path}: stored=${summary(diff.actual)} compiled=${summary(diff.expected)}`;
   } catch (error) { return `cannot parse trusted asset diagnostics: ${error.message}`; }
+}
+export function bytecodeDifference(storedHex, compiledHex) {
+  const stored = Buffer.from(storedHex.slice(2), 'hex'), compiled = Buffer.from(compiledHex.slice(2), 'hex');
+  let first = 0; while (first < Math.min(stored.length, compiled.length) && stored[first] === compiled[first]) first++;
+  const sha = value => createHash('sha256').update(value).digest('hex');
+  const metadata = code => {
+    if (code.length < 3) return null;
+    const length = code.readUInt16BE(code.length - 2), start = code.length - length - 2;
+    if (length === 0 || start < 0 || code[start] < 0xa0 || code[start] > 0xbf) return null;
+    return { start, bytes: code.slice(start).toString('hex'), sha256: sha(code.slice(start)) };
+  };
+  const a = metadata(stored), b = metadata(compiled);
+  const hexByte = (code, offset) => offset < code.length ? code[offset].toString(16).padStart(2, '0') : '<end>';
+  return JSON.stringify({ firstDiffByteOffset: first, storedByte: hexByte(stored, first), compiledByte: hexByte(compiled, first),
+    storedBytes: stored.length, compiledBytes: compiled.length,
+    storedKeccak256: keccak256(storedHex), compiledKeccak256: keccak256(compiledHex),
+    storedSha256: sha(stored), compiledSha256: sha(compiled),
+    bodyBeforeMetadataEqual: a && b ? stored.slice(0, a.start).equals(compiled.slice(0, b.start)) : null,
+    storedMetadata: a, compiledMetadata: b });
 }

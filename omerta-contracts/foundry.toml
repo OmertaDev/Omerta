@@ -2,6 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+# Freeze compiler metadata across local and CI checkouts, including optional node_modules.
+auto_detect_remappings = false
 solc_version = "0.8.26"
 optimizer = true
 optimizer_runs = 800
@@ -49,6 +51,10 @@ remappings = [
   "@uniswap/v4-core/=lib/v4-core/",
   "permit2/=lib/permit2/",
   "solmate/=lib/v4-core/lib/solmate/",
+  "forge-std/=lib/forge-std/src/",
+  "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+  "v4-periphery/=lib/v4-periphery/src/",
+  "@uniswap/v4-periphery/=lib/v4-periphery/",
 ]
 
 [fuzz]
