@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a5c3b764d4ae`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cd858c466062`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2121 |
+| Commits in clone | 2123 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Include depot purchases in business engagement reporting |
+| Latest commit | 2026-10-08 — Bind replay proofs to depot-aware sources and exact legacy transfers |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1227 |
+| OmertaDev | 1229 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 49 |
@@ -34,10 +34,10 @@
 | [public/index.html](../../public/index.html) | 435 | yes |
 | [src/server.js](../../src/server.js) | 374 | yes |
 | [SPEC.md](../../SPEC.md) | 365 | yes |
-| knowledge/generated/github-history.md | 308 | historical |
-| knowledge/generated/graph-summary.md | 308 | historical |
-| knowledge/generated/graph.json | 308 | historical |
-| knowledge/generated/inventory.md | 308 | historical |
+| knowledge/generated/github-history.md | 309 | historical |
+| knowledge/generated/graph-summary.md | 309 | historical |
+| knowledge/generated/graph.json | 309 | historical |
+| knowledge/generated/inventory.md | 309 | historical |
 | [schema.sql](../../schema.sql) | 300 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 235 | yes |
