@@ -13,6 +13,10 @@ for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
   controller.transformations.push({ file, pinnedLfSha256, originalSource,
     transformedSource: originalSource, transformedSourceSha256: sha256(originalSource) });
 }
+const dbSource = controller.transformations.find(row => row.file === 'src/db.js').originalSource;
+const compatibilityAddition = "  mem.public.registerFunction({\n    name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,\n    implementation: (value, divisor) => value % divisor,\n  });\n";
+assert.equal(dbSource.split(compatibilityAddition).length, 2);
+assert.equal(sha256(dbSource.replace(compatibilityAddition, '')), '9e6360ea61c840bd92cde9a90330e29156fc137dc27ba5fa1e0d99cb432feb97', 'Only the isolated pg-mem function may differ from the prior native boot pin');
 let lastSeason = Math.floor(start / season);
 async function guardedSeasonTick() {
   await controller.job('season rollover', () => {
