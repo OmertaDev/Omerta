@@ -42,7 +42,7 @@ flowchart LR
   sub_contracts --> dom_chain-economy
   sub_quality --> dom_delivery-assurance
   sub_web --> dom_client-experience
-  dom_delivery-assurance -->|1084| dom_platform-core
+  dom_delivery-assurance -->|1086| dom_platform-core
   dom_delivery-assurance -->|229| dom_economy-ledger
   dom_delivery-assurance -->|136| dom_world-graph
   dom_delivery-assurance -->|53| dom_social-combat
@@ -82,6 +82,7 @@ flowchart LR
   dom_enterprise-logistics -->|4| dom_vice-competition
   dom_law-intelligence -->|4| dom_engagement-growth
   dom_vice-competition -->|4| dom_world-progression
+  dom_delivery-assurance -->|3| dom_client-experience
   dom_engagement-growth -->|3| dom_economy-ledger
   dom_engagement-growth -->|3| dom_enterprise-logistics
   dom_engagement-growth -->|3| dom_social-combat
@@ -91,7 +92,6 @@ flowchart LR
   dom_world-progression -->|3| dom_social-combat
   dom_chain-economy -->|2| dom_delivery-assurance
   dom_chain-economy -->|2| dom_engagement-growth
-  dom_delivery-assurance -->|2| dom_client-experience
   dom_economy-ledger -->|2| dom_chain-economy
   dom_economy-ledger -->|2| dom_law-intelligence
   dom_economy-ledger -->|2| dom_world-graph
@@ -104,6 +104,7 @@ flowchart LR
   dom_engagement-growth -->|1| dom_chain-economy
   dom_enterprise-logistics -->|1| dom_chain-economy
   dom_law-intelligence -->|1| dom_world-progression
+  dom_platform-core -->|1| dom_client-experience
   dom_social-combat -->|1| dom_economy-ledger
   dom_vice-competition -->|1| dom_economy-ledger
   dom_vice-competition -->|1| dom_engagement-growth
