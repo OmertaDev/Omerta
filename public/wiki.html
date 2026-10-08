@@ -164,6 +164,28 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+<style>
+/* Brass chapter markers, city artwork and readable route diagrams. */
+#doc{max-width:1080px}
+#doc .codex-intro{position:relative;padding:32px 28px;overflow:hidden;border:1px solid var(--line2);background:#121110}
+#doc .codex-intro:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,9,8,.97) 10%,rgba(10,9,8,.78) 65%,rgba(10,9,8,.35)),url('/art/hero-poster-960.webp') center/cover;pointer-events:none}
+#doc .codex-intro>*{position:relative}
+.codex-eyebrow{font:11px/1.5 var(--mono);letter-spacing:.2em;color:var(--neon);display:block;margin-bottom:16px}
+#doc .codex-plate{margin:0 0 24px;position:relative;overflow:hidden;border:1px solid var(--line2);background:var(--panel2)}
+.codex-plate img{display:block;width:100%;height:clamp(140px,23vw,230px);object-fit:cover;object-position:center 45%;filter:saturate(.7)}
+.codex-plate:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(10,9,8,.9));pointer-events:none}
+.codex-plate figcaption{position:absolute;bottom:14px;left:18px;right:18px;z-index:1;display:flex;justify-content:space-between;gap:12px;color:#eee1c7;font:10px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+#doc .codex-guide{margin:24px 0 28px;padding:18px 0;border-block:1px solid var(--line2)}
+.codex-guide figcaption{color:var(--neon);font:10px/1.5 var(--mono);letter-spacing:.2em;margin-bottom:16px}
+#doc .codex-guide ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+#doc .codex-guide li{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;font-size:14px;line-height:1.4;position:relative}
+.guide-number{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid var(--neon-d);color:var(--neon);font:11px var(--mono);border-radius:50%}
+.codex-guide li:not(:last-child):after{content:'';height:1px;background:var(--line2);position:absolute;top:16px;left:42px;right:0}
+#doc .num{color:var(--neon);margin-bottom:12px}
+@media(max-width:600px){#doc .codex-intro{padding:24px 18px}.codex-plate figcaption{left:12px;right:12px;font-size:9px;letter-spacing:.08em}#doc .codex-guide ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 14px}.codex-guide li:nth-child(2):after{display:none}}
+@media print{.codex-plate,.codex-intro:before{display:none!important}}
+
+</style>
 </head>
 <body class="public-page">
 <a class="skip-link" href="#doc">Skip to the Codex</a>
@@ -194,6 +216,42 @@
 <a id="totop" href="#top" aria-label="Back to the top of the Codex">Back to top</a>
 
 <script>
+/* Illustrated chapter plates use the same locations as the game console. */
+const CODEX_ART = {
+  welcome:'start', coreloop:'streets', character:'life', paths:'start', cars:'garage', city:'streets', regimen:'gym',
+  'canonical-market':'trade', coordination:'wire', economy:'trade', kitchen:'kitchen', business:'empire', territory:'empire',
+  families:'family', commission:'family', diplomacy:'family', worldgraph:'scores', contentgraph:'scores', den:'den', stable:'stable',
+  speakeasy:'speakeasy', boxing:'gym', pvp:'pvp', riskpay:'pvp', law:'law', pen:'pen', loans:'loans',
+  convoys:'port', port:'port', races:'garage', deeds:'legit', heists:'scores', market:'market', vendettas:'pvp', skills:'gym', trades:'kitchen',
+  underworld:'speakeasy', wire:'wire', store:'store', legit:'legit', grillv2:'legit', brokers:'legit',
+  window:'trade', estate:'estate', chain:'trade', growth:'start', megaproject:'empire', deferred4:'family',
+  slate456:'scores', phone:'wire', streetlife:'streets', risks:'law', reference:'start'
+};
+const CODEX_GUIDES = {
+  coreloop: ['Choose a job', 'Spend resources', 'Earn & improve', 'Plan the next move'],
+  kitchen: ['Buy makings', 'Cook a batch', 'Collect', 'Deal or assign crew'],
+  heists: ['Choose a score', 'Recruit a crew', 'Assign roles', 'Launch the heist'],
+  convoys: ['Load goods', 'Choose a route', 'Dispatch', 'Resolve the journey'],
+  paths: ['Compare Paths', 'Read the tradeoffs', 'Choose your doctrine', 'Build your skills'],
+  contentgraph: ['Find a lead', 'Gather evidence', 'Make a choice', 'Follow the outcome'],
+  worldgraph: ['Explore', 'Discover items', 'Coordinate', 'Resolve an operation'],
+  economy: ['Cash on the street', 'OMR on the ledger', 'Funded conversion', 'Read the risks'],
+  families: ['Find your people', 'Build the treasury', 'Hold territory', 'Manage rivalries'],
+  law: ['Watch heat', 'Understand evidence', 'Face the case', 'Manage the consequences'],
+  character: ['Build respect', 'Rise in rank', 'Risk your life', 'Continue the bloodline']
+};
+function codexPlate(section, number) {
+  const art = CODEX_ART[section.id] || 'start';
+  return `<figure class="codex-plate" aria-label="${escText(section.title)} illustration"><img src="/art/interior-${art}.jpg" alt="" loading="lazy" decoding="async" width="1200" height="675"><figcaption><span>FIELD GUIDE / ${String(number).padStart(2,'0')}</span><span>${escText(section.group)}</span></figcaption></figure>`;
+}
+function codexGuide(section) {
+  const steps = CODEX_GUIDES[section.id];
+  if (!steps) return '';
+  return `<figure class="codex-guide"><figcaption>AT A GLANCE</figcaption><ol>${steps.map((step, i) => `<li><span class="guide-number">${String(i+1).padStart(2,'0')}</span><span>${escText(step)}</span></li>`).join('')}</ol></figure>`;
+}
+
+</script>
+<script>
 // ── The codex content. Each section: { id, group, title, tag, html }. Rendered into #doc + #nav. ──
 // GROUPS order the sidebar. Content authored from the verified feature inventory.
 const R = (s) => `<div class="routes">${s}</div>`;          // route line
@@ -221,22 +279,23 @@ const SECTIONS = [
       requirement, a nerve cost, a cash range, and a chance of jail if you fail. Your success rate increases with cunning
       and speed, your family level, some districts, and your rank. Jobs can give <b>crates</b> (buy guns and make gear) and
       <b>makings</b> (Kitchen ingredients).</p>
+      <p><b>Choose an approach:</b> Case It improves the success chance and shortens jail time, with a smaller payout and fewer drops. Standard is the baseline. Go Loud lowers the success chance for a larger successful take, more drops and respect, but adds 6 heat and lengthens jail time.</p>
       <p><b>Every job has a mark, and the money comes off them.</b> A crime names a victim drawn from the NPC residents standing in your district. When that mark has money on them, <b>THE TAKE</b> moves it: the cash you earn is transferred off their pocket (up to 25% of it per job) and only the shortfall is created by the game. A job on a busy street is a robbery with a name on it; a job on an empty one still pays exactly the same, it just comes from nowhere. Marks are always NPC residents — a real player is never robbed by a stranger's crime roll, because they would get no warning and no way to answer. Taking from a real player is what the PvP asset crimes are for (rob a front, steal a car, mug their trunk), and those always tell the victim who did it.</p>
 <p><b>Energy and nerve</b> power your actions and increase again with time. <b>Heat</b> is the police attention that
       crime causes. Too much heat starts a police case. <b>Train</b> costs 10 energy (the increase becomes smaller as a
-      stat becomes higher). <b>Heal</b> returns you to full health. <b>Check in</b> one time each day for a streak bonus
+      stat becomes higher), with a shared 3-minute gym cooldown. Levelling up refills energy and nerve from a 10-refill allowance that replenishes gradually at 10 per day. <b>Heal</b> returns you to full health. <b>Check in</b> one time each day for a streak bonus
       and energy.</p>
       <p><b>The Bank:</b> cleared bank cash is outside a killer's loot cut, but it does <b>not</b> survive your character's death. A new deposit stays <b>"in transit" for exactly 2 hours</b> and remains lootable until it clears. You cannot use the bank from a safehouse.</p>
       ${R(`POST /v1/crimes/:id · /train/:stat · /heal · /checkin · /bank/deposit|withdraw · /travel/:district`)}` },
 
   { id: 'character', group: 'The Basics', title: 'Your Character, Death & the Heir', tag: 'respect, rank, the estate',
     html: `<p>Each account has one living character. You start at L1, with 50 energy, 10 nerve, 100 health, $500, and a RANDOM
-      stat spread (always 15 points across muscle/cunning/speed, each at least 3 — no two builds the same). <b>Respect</b> is your experience. It sets your <b>level</b> and your <b>rank</b> (benefits at L10
+      stat spread (always 15 points across muscle/cunning/speed, each at least 3). <b>Respect</b> is your experience. It sets your <b>level</b> and your <b>rank</b> (benefits at L10
       Hustler, L35 Enforcer, L65 Soldier "made man", L95 Underboss, L125 Don). <b>Effective stats</b> = trained + gear +
       assets. <b>Firepower (fp)</b> comes from your gun — you need 50 fp or more to make a lethal hit.</p>
       ${L(`<b>Death:</b> the character dies, but the account does not die. An heir is born and inherits everything at the
       account level.`)}
-      <p><b>Lost when the character dies:</b> pocket and bank cash, stats, skills, businesses, the speakeasy, the Kitchen crew, the boxing fighter, territory operation control, and this season's kills. <b>Passes to the heir:</b> the remaining $OMR after the game's loot and death rules, prestige, the Estate, deeds, Store patron/pass benefits, minted status, revive tokens, account-level legends, and 25% of your Underworld standings.</p>
+      <p><b>Lost when the character dies:</b> pocket and bank cash, stats, skills (apart from prestige-based muscle memory), businesses, the speakeasy, the Kitchen crew, the boxing fighter, territory operation control, and this season's kills. <b>Passes to the heir:</b> the remaining $OMR after the game's loot and death rules, prestige, the Estate, deeds, Store patron/pass benefits, minted status, revive tokens, account-level legends, and 25% of your Underworld standings.</p>
       <p><b>Seasons</b> last 28 days. At the end, your level converts to prestige (<code>floor(level/2)</code>) and your
       respect returns to 0. <b>Respec</b> your stats for 90 $OMR (24-hour cooldown).</p>
       ${R(`POST /v1/character · GET /v1/me · /v1/session · POST /v1/respec`)}` },
@@ -563,10 +622,10 @@ const SECTIONS = [
       your <b>crew</b> sell while you are offline).`)}
       <p>Your <b>trade rank</b> controls it. There are 8 drugs (unlocked by rank). Cook produces <code>demand×12</code>,
       with a fire risk. <b>Deal</b> income = demand × quality × event × trade bonus, and <b>adds heat</b> (feeds the Law).
-      A rank-0 dealer gets a +50% bonus on the corner. <b>Crew</b> (up to 5) sell while you are offline but cost
+      A rank-0 dealer gets a +50% bonus on the corner. <b>Dealing styles:</b> Work the Regulars halves heat, doubles nerve use and adds 10% trade reputation; Hit the Corner is standard; Move Weight doubles heat, halves nerve use and reduces reputation by 10%. Dealing also uses energy. <b>Crew</b> (up to 5) sell while you are offline but cost
       <b>$1,200 each hour in wages ("the nut")</b> whether the stash moves or not — if you do not pay for 3 days, the
       crew becomes <b>cold</b> and stops. Offline sales cap at 8 hours' worth however long you are away, but the nut
-      runs up to a week, so <b>keep them stocked and check in often</b>: three visits a day earns ~3.6× the wages even
+      runs up to two days, so <b>keep them stocked and check in often</b>: three visits a day earns ~3.6× the wages even
       on the cheapest line, once a day barely clears it, three days away costs more than it makes. You can always
       <b>let one go</b> — square up and one walks, or a cold crew walks for nothing (their buy-in is gone either way).
       <b>Lay low</b> and <b>clean papers</b> reduce heat. Above heat 60, the Bureau can raid.</p>
@@ -579,8 +638,7 @@ const SECTIONS = [
       ${L(`<b>buy</b> → <b>collect</b> (24-hour limit) → <b>upgrade</b> → <b>pay the upkeep</b>.`)}
       <p><b>A front wants an owner who shows up, and the terms say so.</b> The till holds only a <b>day</b> of
       takings, but <b>the pad</b> — protection and wages, 20% of hourly income, climbing 5% for every extra
-      front you run — keeps running for a <b>week</b> whether you are there or not. So an absent owner can owe
-      more than the place can hand back. That is the deal working as written, not a fault. Unpaid for 3 days it
+      front you run — keeps running for <b>two days</b> whether you are there or not. Missed collections lose income once the till fills. Unpaid for 3 days it
       goes <b>cold</b>: no income, no upgrades, until you square it out of pocket.</p>
       <p><b>Closing up</b> (<code>DELETE /v1/business/:id</code>) is the way out. You can own one of each kind,
       so a cold front you cannot carry holds that slot for the rest of your street's life. Close it and the pad
@@ -617,13 +675,13 @@ const SECTIONS = [
       ${R(`POST /v1/gangs · /gangs/:id/join · /leave · /kick · /promote · /gangs/tribute[/omr] · /war/:id · /districts/:id/seize · /gangs/foundation · /gangs/vanity/*`)}` },
 
   { id: 'commission', group: 'Crews & Family', title: 'The Commission', tag: 'server politics',
-    html: `<p>Weekly governance with no money. The <b>top 5 families by this season's standing</b> hold seats. Each seated
-      boss or underboss casts one <b>public vote each week</b>. Last week's majority controls this week. The boss of the
-      first seat can <b>veto</b> one time each week.</p>
+    html: `<p>The <b>top 5 player families by this season's standing</b> hold seats. Standing is this season's tribute plus $10k per war won. Each seated
+      boss or underboss casts one changeable <b>public vote each week</b>. Ballots record standing when cast; the top five recorded ballots carry weights 5, 4, 3, 2 and 1. Last week's weighted result controls this week; a tie or silence means no decree. The boss of the
+      first seat can <b>veto</b> one time each week. The other seated families can <b>override</b> with at least 7 of their 10 combined seat-weight. Political actions build the account-level <b>Statesman</b> legend. Treasury-backed motions are explained under The Household &amp; Motions.</p>
       <p><b>Decrees</b> (8): Open Season (safehouse ×0.5), Pax (no new wars), Amnesty (lay-low ×0.5), Lockdown (convoy
       defense +20), The Levy (the family yield pays the chamber), Smuggler's Moon (port interdiction ×0.75), Open Roads
       (convoys ×0.8 time), Blood Oath (kill loot ×1.25).</p>
-      ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto`)}` },
+      ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto · /override · /propose`)}` },
 
   { id: 'worldgraph', group: 'The City & the World', title: 'The World Graph — Items, Mysteries & Crew Operations', tag: 'conserved direct play · Belladonna',
     html: `<p>The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><p><b>The Belladonna proof is one server-authoritative route sequence.</b> Read
@@ -771,7 +829,9 @@ const SECTIONS = [
       street-tax pool from real profit only.</p>
       <ul><li><b>Craps</b> — the pass line in one action, 1:1, edge about 1.41%, 1 nerve, up to $250k ($2M in the high-stakes room —
       L30 or the Madame's rope, plus the 300 $OMR access stake).</li>
-      <li><b>The Numbers</b> — pick a number 0–999, one ticket each day, pays 600:1.</li>
+      <li><b>The Numbers</b> — pick a number 0–999, one ticket each day, pays 600:1. An exact hit also claims half of the funded progressive <b>Vig Pot</b>; a near miss within five numbers (wrapping around 999 to 0) returns 5× the stake.</li>
+      <li><b>Blackjack</b> — deal, hit, stand or double. A natural pays 3:2; the dealer hits soft 17. Each new hand costs 1 nerve unless a contact perk covers it.</li>
+      <li><b>Heads-up poker</b> — list a deal limit and challenge another player for a cash stake; the winner takes the pot after rake. <b>The tournament</b> takes a $5k buy-in into escrow and pays the top places after a 5% rake. Ring Poker adds multi-player betting streets; see The Household &amp; Ring Poker.</li>
       <li><b>Back-room PvP dice</b> — agree by listing a fade limit; the winner takes the pot minus a 5% rake.</li>
       <li><b>The weekly Fight</b> — one $5k bet on a favorite; the Neon-holding boss can <b>fix</b> it for $50k.</li>
       <li><b>The Track</b> — the greyhounds and the horses. A daily card (6 runners with posted odds, about 15% house
@@ -783,7 +843,27 @@ const SECTIONS = [
       form; the winners share the losing pool minus a 5% share, and the winning owner takes a promoter's purse. (This is
       different from The Stakes — that is owners competing for a pooled buy-in; the Futurity is the crowd betting on the
       field.)</li></ul>
-      ${R(`GET /v1/casino [public] · POST /v1/casino/dice · /numbers[/claim] · /fade · /dice/:id · /fight[/claim|/fix] · /track[/claim] · /futurity/nominate/:id · /futurity/bet`)}` },
+      ${R(`GET /v1/casino · POST /v1/casino/dice · /numbers[/claim] · /fade · /dice/:id · /fight[/claim|/fix] · /track[/claim] · /track/enter/:id · /futurity/nominate/:id · /futurity/bet · /blackjack[/hit|/stand|/double] · /poker/deal · /poker/:id · /tournament`)}` },
+
+  { id: 'races', group: 'Money', title: 'Street Racing', tag: 'the circuit, the strip and pink slips',
+    html: `<p>Your garage is a racing stable. Enter the <b>NPC circuit</b> for a cash entry fee and a winning purse, or list a car for <b>player wagers</b>: the winner takes the pot after a 5% rake and the losing car takes damage. Car value, tuning, your speed and damage affect race power.</p>
+      <p><b>Tune</b> a car and buy consumable <b>nitrous</b> for a racing edge. <b>Pink slips</b> require an explicitly listed car and put the car itself at risk. The scheduled <b>Grand Prix</b> pools entry fees and pays the top places after rake. Lifetime racing wins build <b>The Wheel</b> legend and survive death.</p>
+      ${R(`GET /v1/races · POST /v1/races/npc · /tune/:carId · /nos/:carId · /list/:carId · /unlist/:carId · /pinkslip/:carId · /challenge/:ownerId · /pinks/:ownerId · /gp`)}` },
+
+  { id: 'port', group: 'The Underworld', title: 'The Port', tag: 'offshore freight and piracy',
+    html: `<p>Buy a <b>boat</b>, pay an offshore supplier and launch a timed <b>smuggling run</b>, with optional escort. A clean arrival pays the contraband margin; the <b>Coast Guard</b> can seize cargo, fine you or sink the vessel. Daily supply limits bound the trade. Boats die with your character.</p>
+      <p>Upgrade <b>hull and engine</b>, intercept a rival's active run through <b>piracy</b>, or arrange a consensual <b>rendezvous</b> to hand a run to a partner's open boat. Store an arrival as <b>warehoused contraband</b> and fence it later at the day's rate; rent additional <b>berths</b> to expand your fleet. Busy routes attract attention. Lifetime landings build the <b>Smuggler's Legend</b> and its route and toll perks.</p>
+      ${R(`GET /v1/port · POST /v1/port/boat/:kind · /boat/:boatId/sell · /run/:boatId · /collect/:boatId · /upgrade/:boatId · /intercept/:boatId · /boat/:boatId/rendezvous · /rendezvous/:boatId · /fence · /berth`)}` },
+
+  { id: 'diplomacy', group: 'Crews & Family', title: 'Diplomacy & Coalitions', tag: 'sworn pacts and shared rivals',
+    html: `<p>Bosses and underbosses can propose and accept <b>seven-day non-aggression pacts</b> between families. An active pact blocks war declarations. Breaking it early marks the family <b>Oathbreaker</b>, blocks new proposals while the mark lasts and costs the breaking leader honor.</p>
+      <p><b>Coalitions</b> unite families against a dominant rival, identified by territory or standing. With enough member families, war-chest costs against the target are halved and territory challenges receive a 15% discount. Families can form, join or leave; the board shows treaties, dominance and coalition membership.</p>
+      ${R(`GET /v1/diplomacy · POST /v1/diplomacy/pact/:gangId · /pact/:gangId/accept · /coalition/:gangId · /coalition/:id/join · DELETE /v1/diplomacy/pact/:gangId · /coalition/:id`)}` },
+
+  { id: 'deeds', group: 'Endgame & Going Legit', title: 'Street Deeds & Corners', tag: 'a named street for your bloodline',
+    html: `<p><b>Claim</b> one uniquely named street in a district for your account. Its deed, renown and recorded history follow your bloodline through death. At level 8, collect the capped cash <b>corner take</b> from streets you control. A rival's <b>shakedown</b> contests temporary control of the income; it does not transfer the deed's ownership.</p>
+      <p><b>List</b> or withdraw a deed's cash sale offer, or buy a listed street from its owner. The purchase-confirmation view exposes its vault record and live balance. Extraction and any Stock Token delivery have separate launch gates described in the chain and Brokers sections; an extracted or extraction-pending street earns no in-game corner take.</p>
+      ${R(`GET /v1/deeds · POST /v1/deeds/claim · /corner · /shakedown/:targetCharacterId · /list · /unlist · /buy/:sellerCharacterId · GET /v1/deeds/vault/:sellerCharacterId`)}` },
 
   { id: 'stable', group: 'Money', title: 'The Stable', tag: 'own the dogs and the ponies',
     html: `<p>Own racing animals. <b>Buy</b> a greyhound ($30k) or a racehorse ($120k) at L6 or higher, <b>train</b> its
@@ -814,11 +894,13 @@ const SECTIONS = [
       limit, and <b>fight</b> other managers. The winner takes 2× the stake minus a 5% rake (a taxed transfer, no new money
       is created); the loser's fighter is in the hospital for 4 hours. The fighter dies when your character dies. Ranks:
       Prospect to Hall of Famer.</p>
-      ${R(`GET /v1/boxing · POST /v1/boxing/recruit|train|list · /fight/:opponentId · GET /v1/leaderboard/boxing`)}` },
+      <p><b>Exhibitions</b> let you fight NPC contenders for a bounded purse and a record. <b>Main Events</b> announce a bout for public betting. The <b>world title belt</b> changes hands when its holder loses; a champion must defend within 7 days. The number-one player contender can <b>call out</b> the champion, who has 48 hours to accept or forfeits the belt to the challenger. Your manager's lifetime wins and career legend survive character death.</p>
+      ${R(`GET /v1/boxing · POST /v1/boxing/recruit|train|list|exhibition · /fight/:opponentId · /announce/:opponentId · /bout/:id/bet · /callout/:fighterId · /callout/accept · GET /v1/leaderboard/boxing`)}` },
 
   { id: 'pvp', group: 'The Underworld', title: 'PvP — Jumps, Hits & Contracts', tag: 'attacking players',
     html: `<p><b>Jump</b> — not lethal; costs energy and ammo; steals up to $25k pocket cash; hospitalizes for about 3
       minutes; scores 1 war point.</p>
+      <p><b>Jump intents:</b> Roll Them favors stolen cash over respect, damage and hospital time. Jump Them is the baseline. Send a Message favors respect and damage, steals less, extends hospital time, costs 50% more energy and adds 5 heat. The $25k theft cap still applies.</p>
       ${L(`<b>The hit:</b> place a <b>search</b> (about 3 hours to be ready) → <b>fire</b> (50 fp or more, 2-hour cooldown,
       +20 heat).`)}
       <p>A fire-<b>kill</b> runs the estate, <b>takes 40% of the cars</b>, <b>loots cash and $OMR</b>, has a 15% chance to
@@ -844,14 +926,14 @@ const SECTIONS = [
   { id: 'law', group: 'The Law', title: 'The Law & RICO', tag: 'the state opponent',
     html: `<p>The state reacts to your <b>heat</b>. The <b>investigation meter</b> builds from high heat and decreases
       slowly: clean → watched → investigation → <b>indicted</b>. <code>GET /v1/law</code> is your record.</p>
-      <p><b>Escapes:</b> <b>bribe</b> (scales with wealth), the <b>lawyer retainer</b> ($150k for 3 days, reduces the bust
+      <p><b>Escapes:</b> <b>bribe</b> (priced from case exposure, minimum $25k; unavailable after indictment), the <b>lawyer retainer</b> ($150k for 3 days, reduces the bust
       and forfeiture), the <b>envelope</b> (90 $OMR for 7 days — halves the meter's gain, doubles its decrease).</p>
       ${L(`<b>The RICO bust</b> takes 30% of pocket and bank — but <b>staked $OMR and minted gear are safe, and it is NOT
       death.</b> If you stay offline past the grace window, the state force-busts you.`)}
       <p><b>Courtroom:</b> plea, buy the jury ($OMR), demand trial. <b>Informants:</b> <b>flip</b> a rival (drop your case,
       add exposure to them, earn the permanent <b>rat</b> badge — a rat loses omertà); <b>witness protection</b> makes you
       untargetable for a short time. The Foundation reduces family convictions; patrol hours increase convictions.</p>
-      ${R(`GET /v1/law [public] · POST /v1/law/bribe|retainer|envelope|plea|jury|trial|witpro|flip/:id`)}` },
+      ${R(`GET /v1/law · POST /v1/law/bribe|retainer|envelope|plea|jury|trial|witpro|flip/:id`)}` },
 
   { id: 'pen', group: 'The Law', title: 'The Pen (Prison)', tag: 'jail is a place',
     html: `<p>Every Pen action requires that you are jailed. <b>Work the yard</b> (reduces your sentence), the
@@ -883,7 +965,8 @@ const SECTIONS = [
       of your muscle and speed against the guards and turf defense; a win takes goods up to your trunk limit. Up to 3
       hijacks for each convoy. <b>Tolls</b> — if you collect at another family's docks, you pay 5% to their treasury.
       <b>Insured</b> freight pays for a hijack (with a limit against related-account abuse).</p>
-      ${R(`GET /v1/convoys [public] · POST /v1/convoy · /convoy/load · /depart · /cancel · /:id/ambush|collect`)}` },
+      <p><b>The Rig</b> is your dedicated hauler: buy a Panel Van, Box Truck, Armored Hauler or Semi, then upgrade its armor and engine for defense and travel speed. Repeated traffic heats a route and draws attention. Lifetime clean-delivered and hijacked value build the <b>Teamster</b> and <b>Highwayman</b> legends; experienced haulers gain route and toll perks. NPC freight also appears on the road.</p>
+      ${R(`GET /v1/convoys [public] · POST /v1/convoy · /convoy/load · /depart · /cancel · /:id/ambush|collect · /rig/:kind · /rig/upgrade`)}` },
 
   { id: 'heists', group: 'The Underworld', title: 'Crew Heists (The Big Score)', tag: 'co-op raids',
     html: `<p>Jobs: a 12-rung ladder from the Corner Store (crew 2, L4) up to the Federal Reserve (crew 5, L80),
@@ -894,7 +977,8 @@ const SECTIONS = [
       <p>Success divides the pot (1.2× for the leader); failure jails everyone. <b>The Rat</b> — any member can inform
       silently; the job fails, the rat leaves with half the stake, the rest get double jail, and the feed only says
       "somebody talked." The <b>solo Daily Score</b> shares an 8-hour cooldown.</p>
-      ${R(`GET /v1/heists [public] · POST /v1/heists/plan · /:id/join|leave|rat|execute · POST /v1/heist (solo)`)}` },
+      <p><b>Case the joint</b> once per member for 10 energy: each adds 3 percentage points to the success chance, capped at 15. A leader can pay $5k to <b>hire one NPC hand</b> into an empty role, so the entry job is playable alone while larger crews still need players. Choose a <b>hot-loot</b> payout when planning to warehouse the take and sell it later at the day's fence rate; fencing adds heat, and the stash is exposed to a lethal hit. Big scores also require an earned heist record.</p>
+      ${R(`GET /v1/heists · POST /v1/heists/plan · /:id/join|leave|fill|case|rat|execute · /heists/fence · POST /v1/heist (solo)`)}` },
 
   { id: 'market', group: 'The Underworld', title: 'The Black Market', tag: 'player-to-player trade',
     html: `<p><b>Cars sell by auction; goods sell at a fixed price with a district pickup; buy orders (WTB) let buyers name
@@ -903,6 +987,7 @@ const SECTIONS = [
       bidder gets a refund immediately. A listed car locks.</li>
       <li><b>Goods</b> — a fixed price; the buyer must stand at the listing's dock with trunk space (partial buys).</li>
       <li><b>Buy orders</b> — escrow quantity × price at your dock; sellers fill from the trunk and are paid at once.</li></ul>
+      <p><b>Supply-depot pilot</b> — when enabled on the server, operate one gin depot with its own cash book and stock, set sale and procurement prices, fund restocking, receive filled orders and sell to visitors at its district. Delegated operation requires an owner's bounded operating policy. <b>Delivery-contract pilot</b> — when enabled, accept a fixed-price buy-order commitment, reserve its quantity, then bring goods to its district before the deadline. Limits are two active commitments, 40 units total, a $100k procurement cap and a six-hour maximum deadline. These pilots are discoverable through their boards; route availability alone does not mean intake is open.</p>
       ${R(`GET /v1/market [public] · POST /v1/market · /:id/bid|buy|cancel · /market/order · /:id/fill|claim`)}` },
 
   { id: 'vendettas', group: 'The Underworld', title: 'Vendettas & Blood Feuds', tag: 'status, no money',
@@ -914,11 +999,17 @@ const SECTIONS = [
 
   { id: 'skills', group: 'The Underworld', title: 'Skills & Specializations', tag: 'your build',
     html: `<p>Three branches, FOUR levels each — the 4th a capstone that unlocks an ACTIVE ability; points <b>come from your level</b> (<code>floor(level/4)</code> plus a small prestige bonus). Skills
-      die with the character. Respec for 60 $OMR (shared 24-hour cooldown).</p>
+      reset with the character, except for the heir's prestige-based muscle memory: one remembered skill per 8 prestige, capped at 3, chosen lowest-tier-first. Respec for 60 $OMR (shared 24-hour cooldown).</p>
       <ul><li><b>Enforcer</b> — Bruiser (jump/shakedown ×1.08) · Doctor's Friend (heal ×0.75) · Executioner (search ×0.8).</li>
       <li><b>Operator</b> — Fast Talker (lay-low ×0.8) · Fence Network (fence/melt +8%) · Broker (listing fees ×0.5).</li>
       <li><b>Wheelman</b> — Pack Mule (+3 trunk) · Getaway (crime jail ×0.8) · Road Captain (own convoys 20% faster).</li></ul>
-      ${R(`GET /v1/skills · POST /v1/skills/:id · /skills/respec`)}` },
+      <p><b>Capstones</b> cost 4 points after their branch prerequisites: Made Man adds another 8% to jump/shakedown power and unlocks Adrenaline Rush (refill energy); Kingpin adds another 8% to fence/melt proceeds and unlocks Moxie (refill nerve); Road Boss adds 3 more trunk spaces and unlocks Hot Wire (clear heist/world-raid cooldowns). Active abilities share an 8-hour cooldown. Owning a pair of capstones derives The Boss, The Warlord or The Shadow Grandmastery, combines the pair's active effects and reduces that shared cooldown to 4 hours. Unlearn one leaf skill for 30 $OMR.</p>
+      ${R(`GET /v1/skills · POST /v1/skills/:id · /skills/respec · /skills/respec/:id · /skills/active/:ability`)}` },
+
+  { id: 'regimen', group: 'The Basics', title: 'The Regimen & Trainer Drills', tag: 'eight disciplines',
+    html: `<p>Train eight disciplines alongside muscle, cunning and speed: <b>Roadwork</b> raises maximum energy; <b>Steady Hands</b> raises maximum nerve; <b>Iron Chin</b> discounts healing; <b>The Range</b> improves duel scores; <b>Work the Room</b> raises the daily Underworld standing budget; <b>White Knuckle</b> improves street-race scores; <b>Cool Head</b> discounts laying low; <b>Night Eyes</b> improves your convoys' guard defense.</p>
+      <p>Each discipline caps at level 25. A session costs 10 energy, earns 8–12 discipline XP and shares the core gym's cooldown. Trainer drills require the day's displayed task and award 25 XP when claimed. Read the Regimen board for trainer locations, tasks and progress.</p>
+      ${R(`GET /v1/regimen · POST /v1/regimen/:id · /v1/regimen/drill/:npc`)}` },
 
   { id: 'trades', group: 'The Underworld', title: 'The Trades (mastery)', tag: 'learn by doing',
     html: `<p>Ten <b>use-XP tracks</b> — every job, deal, race and bout schools its own craft, and nothing
@@ -1877,11 +1968,7 @@ const SECTIONS = [
         city. A player who never logs off is a rich player, not a source of new supply.</li>
         <li><b>Supply is enumerated, and a nightly job proves it.</b> The ledger checks
         <code>buckets == genesis + mints − burns</code>, and a reason nobody enumerated is itself an alarm. The
-        city has no scheduled printer, and a nightly check asserts none appears. What can mint is a short list: the
-        mission ladder (a few hundred $OMR over a whole career, once per account) is the one tap that pays you for
-        playing, and the rest — the prize pool and the two buybacks — issue a token only when a real one has arrived to
-        back it, one for one. And a sink does not destroy anything: it is the house's cut, and it goes to the desk to be
-        sold again rather than to the fire.</li>
+        city has no scheduled printer. Mission and prize credits are game-ledger awards; they do not call an ERC-20 mint. Canonical inventory bonds distribute funded OMR with linear vesting; commitment rewards are prefunded. Spent game-ledger OMR returns to the Desk rather than being destroyed.</li>
         <li><b>What you can take out is bounded by code, not by arithmetic.</b> The withdrawal rail signs nothing the
         reserve cannot back, and the reserve is filled by real revenue — so "you can only take out what somebody put
         in" is a rule the rail enforces on every withdrawal, whatever the supply does. That is the guarantee worth
@@ -1953,7 +2040,7 @@ const SECTIONS = [
       and families. <b>My Profile</b> (the "My Profile" screen, <code>GET /v1/profile</code>) is your personal page —
       mood, member-since, generation, family, honor, kills, your <b>Top 8</b> recruits with their status, and
       <b>The Take</b>: exactly what recruiting has paid you in cash and $OMR, read straight from the ledger, with
-      copy-the-link and share buttons. <b>Spread the Word</b> — three daily social tasks pay a small amount of cash ($300; $500 for all three; a post must STAND 4 hours before it pays — post-and-delete pays nothing)
+      copy-the-link and share buttons. <b>Spread the Word</b> — when social verification is enabled, three daily social tasks pay human accounts a small amount of cash ($300; $500 for all three; register a post, let it STAND 4 hours, then claim within 48 hours — post-and-delete pays nothing)
       and share your referral code. <b>The First Week</b> — an 8-task checklist that pays cash to teach the game, with a
       final bonus. <b>The Coach</b> (the ▸ line on your sheet) always names your best next action.</p>
       ${R(`POST /v1/path · /missions/:id · GET /v1/daily · /daily/:id/claim · POST /v1/heist · GET /v1/onboard · /onboard/:taskId/claim · GET /v1/social · /v1/social/:taskId/claim · GET /v1/leaderboard/recruiters`)}` },
@@ -1985,7 +2072,7 @@ const SECTIONS = [
     html: `<p><b>The Dueling Circuit</b> (Wet Work) — the ranked ladder. List yourself with a stake cap,
     challenge anyone listed: your BUILD fights (stats + gear), the stake changes hands minus the 5% rake, and
     your <b>ELO</b> moves. Seasonal (resets every 28 days), dies with your street; lifetime wins are a dynasty
-    legend. Rematch-farming the same rival pays less each day.</p>
+    legend. Rematch-farming the same rival pays less each day. Pick a public <b>stance</b>: Brawler beats Gunslinger, Gunslinger beats Fencer, and Fencer beats Brawler. A favorable matchup multiplies your contest roll by 1.15; matching stances are neutral.</p>
     <p><b>Clue Scrolls</b> (Streets) — a rare drop on any successful job starts a treasure trail: 3–7 riddles by tier,
     each naming a district (sometimes an hour of day). Travel there and DIG. The last dig opens a <b>casket</b>
     and counts on your lifetime diggers' legend. One hunt at a time; after a casket the streets go quiet 8h.</p>
@@ -1995,7 +2082,7 @@ const SECTIONS = [
   { id: 'phone', group: 'Reference', title: 'The Cellphone & the Troll Box', tag: 'talking',
     html: `<p><b>The Cellphone</b> (the 📱 button up top) is your personal inbox + direct messages. The
     <b>inbox</b> shows what happened TO you — a convoy jacked, a contract posted on your head, a fee credited.
-    <b>The line</b> is player-to-player DMs: pick anyone off the streets and talk. Threads live on your
+    <b>The line</b> is player-to-player DMs: earn someone's number in your Black Book, then call them. Threads live on your
     ACCOUNT, so they survive death — the heir picks up the phone. 240 characters a line, one message every
     2 seconds, 30-day retention. No money ever rides a message — a "deal" in DMs still has to happen through
     the game's real systems. <b>Blocked lines</b>: block a pest from their thread and they get a dead tone
@@ -2094,6 +2181,7 @@ function render() {
   const doc = document.getElementById('doc');
   const nav = document.getElementById('navlist');
   doc.innerHTML = `<header class="codex-intro">
+    <span class="codex-eyebrow">OMERTÀ / THE CITY FIELD GUIDE</span>
     <h1>THE CODEX</h1>
     <p>Search the complete city: what every system does, what it costs, what can go wrong, and which route proves it.</p>
     <nav class="codex-routes" aria-label="Start reading"><a href="#coreloop">Learn the core loop</a><a href="#paths">Choose your Path</a><a href="/agents">Read the agent guide →</a></nav>
@@ -2103,14 +2191,15 @@ function render() {
   const groups = {};
   for (const s of SECTIONS) (groups[s.group] = groups[s.group] || []).push(s);
   const order = [...GROUP_ORDER.filter((g) => groups[g]), ...Object.keys(groups).filter((g) => !GROUP_ORDER.includes(g))];
+  let chapter = 0;
   for (const g of order) {
     const gl = document.createElement('div'); gl.className = 'grp'; gl.textContent = g; nav.appendChild(gl);
     for (const s of groups[g]) {
       const a = document.createElement('a'); a.className = 'item'; a.href = '#' + s.id; a.dataset.id = s.id;
       a.textContent = s.title; nav.appendChild(a);
       const sec = document.createElement('section'); sec.id = s.id; sec.setAttribute('aria-labelledby', s.id + '-title'); sec.tabIndex = -1;
-      sec.innerHTML = `<a class="section-link" href="#${s.id}" aria-label="Link to ${escText(s.title)}">#</a><h2 id="${s.id}-title">${s.title}</h2>`
-        + `${s.tag ? `<div class="tag">${s.tag}</div>` : ''}${s.html}`;
+      sec.innerHTML = codexPlate(s, ++chapter) + `<span class="num">Chapter ${String(chapter).padStart(2,'0')} / ${escText(s.group)}</span><a class="section-link" href="#${s.id}" aria-label="Link to ${escText(s.title)}">#</a><h2 id="${s.id}-title">${s.title}</h2>`
+        + `${s.tag ? `<div class="tag">${s.tag}</div>` : ''}${codexGuide(s)}${s.html}`;
       doc.appendChild(sec);
     }
   }
