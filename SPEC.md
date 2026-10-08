@@ -14,7 +14,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 |---|---|
 | Backend modules | **293** files, **108270** lines (recursive source inventory) |
 | Test suites | **449** files, **139531** lines (recursive source inventory) |
-| HTTP routes | **838** registrations (**838** unique) |
+| HTTP routes | **839** registrations (**839** unique) |
 | Database tables | **375** (`schema.sql`, 7482 lines) |
 | Client | **13845** lines (public/index.html, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
