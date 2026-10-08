@@ -705,6 +705,121 @@
       "table_name": "world_recipe_usage",
       "name": "world_recipe_usage_used_check",
       "definition": "CHECK (used >= 0 AND used <= 1000000)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_stock_check",
+      "definition": "CHECK (stock >= 0 AND stock <= 40)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_stock_cost_check",
+      "definition": "CHECK (stock_cost >= 0::numeric)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_treasury_check",
+      "definition": "CHECK (treasury >= 0::numeric)"
+    },
+    {
+      "table_name": "business_external_costs",
+      "name": "business_external_costs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_external_costs",
+      "name": "business_external_costs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_external_costs",
+      "name": "business_external_costs_usd_micros_check",
+      "definition": "CHECK (usd_micros > 0::numeric)"
+    },
+    {
+      "table_name": "business_operating_policies",
+      "name": "business_operating_policies_check",
+      "definition": "CHECK (spent >= 0::numeric AND spent <= max_spend)"
+    },
+    {
+      "table_name": "business_operating_policies",
+      "name": "business_operating_policies_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_operating_policies",
+      "name": "business_operating_policies_depot_id_revision_key",
+      "definition": "UNIQUE (depot_id, revision)"
+    },
+    {
+      "table_name": "business_operating_policies",
+      "name": "business_operating_policies_max_spend_check",
+      "definition": "CHECK (max_spend >= 0::numeric)"
+    },
+    {
+      "table_name": "business_operating_policies",
+      "name": "business_operating_policies_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_check",
+      "definition": "CHECK (remaining >= 0 AND remaining <= quantity)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_check1",
+      "definition": "CHECK (spent >= 0::numeric AND spent <= spend_limit)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 40)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_spend_limit_check",
+      "definition": "CHECK (spend_limit > 0::numeric)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_commitments",
+      "name": "delivery_commitments_take_bps_check",
+      "definition": "CHECK (take_bps >= 0 AND take_bps <= 10000)"
     }
   ],
   "removed": [
@@ -1063,6 +1178,74 @@
       "deed_name",
       "effective_from_day",
       "level"
+    ],
+    "business_depots": [
+      "bid_price",
+      "created_at",
+      "district",
+      "id",
+      "owner_character",
+      "reorder_at",
+      "restock_budget",
+      "sale_price",
+      "status",
+      "stock",
+      "stock_cost",
+      "target_stock",
+      "treasury"
+    ],
+    "business_depot_journal": [
+      "cash_delta",
+      "cost_delta",
+      "created_at",
+      "depot_id",
+      "expense",
+      "id",
+      "reason",
+      "stock_delta"
+    ],
+    "business_operating_policies": [
+      "allow_receive",
+      "allow_restock",
+      "bid_price",
+      "business_priority",
+      "created_at",
+      "depot_id",
+      "enabled",
+      "expires_at",
+      "id",
+      "max_spend",
+      "order_budget",
+      "reorder_at",
+      "reserve_cash",
+      "revision",
+      "spent",
+      "target_stock"
+    ],
+    "business_external_costs": [
+      "category",
+      "created_at",
+      "depot_id",
+      "id",
+      "usd_micros"
+    ],
+    "delivery_commitments": [
+      "buyer_character",
+      "created_at",
+      "deadline",
+      "depot_id",
+      "district",
+      "good_id",
+      "id",
+      "order_id",
+      "quantity",
+      "remaining",
+      "spend_limit",
+      "spent",
+      "status",
+      "supplier_character",
+      "take_bps",
+      "unit_price"
     ]
   }
 }

@@ -2,7 +2,8 @@ import crypto from 'node:crypto';
 import { GameError } from './game.js';
 
 export async function latestPolicy(client, depotId, lock = false) {
-  return (await client.query(`SELECT * FROM business_operating_policies WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1${lock ? ' FOR UPDATE' : ''}`, [depotId])).rows[0] || null;
+  if (lock) return (await client.query('SELECT * FROM business_operating_policies WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1 FOR UPDATE', [depotId])).rows[0] || null;
+  return (await client.query('SELECT * FROM business_operating_policies WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1', [depotId])).rows[0] || null;
 }
 export const policyLive = (policy) => !!policy?.enabled && new Date(policy.expires_at).getTime() > Date.now();
 export function policyTermsMatch(policy, depot) {
