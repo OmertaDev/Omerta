@@ -35,12 +35,12 @@ const standingSite = `SELECT a.account_id, \${sel}, c.name, c.respect
        JOIN accounts ac ON ac.id = a.account_id
       WHERE NOT a.agent_flag AND NOT a.npc_flag AND ac.status <> 'banned'`;
 const standingSql = standingSite.replace('${sel}', standingColumns.map(c => `COALESCE(a.${c},0) AS ${c}`).join(', '));
-const marketSql = "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()";
-const marketEligibleSql = marketSql.replace('SELECT id, kind, seller_character, bidder ', 'SELECT * ');
+const marketSql = "SELECT id, kind, seller_character, bidder, depot_id FROM market_listings WHERE status='live' AND expires_at <= now()";
+const marketEligibleSql = marketSql.replace('SELECT id, kind, seller_character, bidder, depot_id ', 'SELECT * ');
 const marketTransformedSql = `SELECT
   COALESCE((SELECT json_agg(rc1_selected) FROM (${marketSql}) rc1_selected), '[]'::json) AS limited_rows,
   COALESCE((SELECT json_agg(row_to_json(rc1_eligible)::text) FROM (${marketEligibleSql}) rc1_eligible), '[]'::json) AS eligible_rows`;
-export const QUERY_ORDER_SCOPE = Object.freeze({ version: 5, storageFormat: 3,
+export const QUERY_ORDER_SCOPE = Object.freeze({ version: 6, storageFormat: 3,
   reason: 'Retained 90-day replay changed a tied seasonal champion and exchanged generated market refund/notification IDs. Record only the three exact demonstrated queries; no gameplay tiebreak or ID normalization.',
   queries: [populationScope, {
     id: 'standing-population', kind: 'complete-typed-rows', file: 'src/standing.js', site: standingSite,
@@ -50,10 +50,10 @@ export const QUERY_ORDER_SCOPE = Object.freeze({ version: 5, storageFormat: 3,
     eligibility: 'Unchanged full canonical ranking input: every eligible returned row and column, with native pg types/numeric strings and duplicate multiplicities. No LIMIT or SQL rewriting.',
   }, {
     id: 'market-due', kind: 'complete-projection', file: 'src/market.js', site: marketSql,
-    sourceSha256: 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
+    sourceSha256: '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
     originalSql: marketSql, sql: normalizedSql(marketSql), originalSqlSha256: sha256(marketSql),
     eligibleSql: marketEligibleSql, transformedSql: marketTransformedSql, transformedSqlSha256: sha256(marketTransformedSql),
-    projection: ['id', 'kind', 'seller_character', 'bidder'],
+    projection: ['id', 'kind', 'seller_character', 'bidder', 'depot_id'],
     eligibility: 'One statement snapshot retains the unchanged original due projection plus every full eligible listing as exact PostgreSQL JSON text, including empty results.',
   }],
   failClosed: 'Exact source/query/parameters and complete eligible row multiset, values and multiplicities must match before any recorded ordering is returned. Earlier tape scope versions cannot qualify this scope.' });

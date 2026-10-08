@@ -6,18 +6,18 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   DEED_SERVER_CURRENT_PIN, DEED_SOURCE_REVIEWED_REVISION, HTTP_RECEIPT_SERVER_PIN,
   HTTP_RECEIPT_HELPER_PIN, HTTP_RECEIPT_REVIEWED_REVISION, GENESIS_SERVER_WRAPPER_PIN,
   GENESIS_SERVER_WRAPPER_SOURCE_REVISION, GENESIS_SNAPSHOT_SERVER_PIN,
-  GENESIS_SNAPSHOT_MODULE_PINS, GENESIS_SNAPSHOT_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
+  GENESIS_SNAPSHOT_MODULE_PINS, GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
-  'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
+  'src/economy.js': ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'],
   'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': GENESIS_SNAPSHOT_SERVER_PIN,
+  'src/server.js': ECONOMY_SOURCE_CURRENT_PINS['src/server.js'],
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -27,7 +27,8 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 5, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 6, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  economySourceTransfer: { sourcePins: ECONOMY_SOURCE_CURRENT_PINS, scope: 'Exact inverse routing and shared goods quote chunks reconstruct prior reviewed sources. Only unchanged personal recovery and car-melt rules transfer; no agent economy or historical world execution is inherited.' },
   genesisSnapshotSourceTransfer: { sourceRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION,
     actualServerSha256: GENESIS_SNAPSHOT_SERVER_PIN, predecessorServerSha256: GENESIS_SERVER_WRAPPER_PIN,
     inverseChunks: 1, publicGetRoutes: 1, modulePins: GENESIS_SNAPSHOT_MODULE_PINS,
@@ -74,6 +75,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   for (const [file, expected] of Object.entries(sourceFiles)) {
     const text = String(await readFile(file)).replace(/\r\n/g, '\n');
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
+    if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
     if (file === 'src/server.js') assertDeedServerCompatibility(text);
   }

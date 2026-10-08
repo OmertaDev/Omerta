@@ -31,6 +31,12 @@ function review(rows = empty(), options = {}) {
 const count = (report, id) => report.inventory.find(row => row.id === id).count;
 let cases = 0;
 function test(name, fn) { fn(); cases++; }
+test('agent economy custody cannot inherit legacy backlog coverage', () => {
+  for (const table of ['business_depots', 'delivery_commitments']) {
+    const rows = empty(); rows[table] = [{ id: 'outside-scope' }];
+    assert.throws(() => review(rows), /outside this backlog review scope/);
+  }
+});
 
 test('complete empty lifecycle tables prove zero rows while missing evidence stays unknown', () => {
   const result = review(); assert(result.inventory.every(row => row.count === 0)); assert.equal(result.inventory.length, BACKLOG_CLASS_COUNT);

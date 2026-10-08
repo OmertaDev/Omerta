@@ -13,8 +13,8 @@ assert.equal(replayRowOrder([...typed].reverse(), typed)[0], typed[0], 'Replay r
 for (const changed of [[typed[0]], [...typed, typed[0]], [typed[0], typed[0]],
   [{ ...typed[0], kills: '9007199254740992' }, typed[1]]])
   assert.throws(() => replayRowOrder(changed, typed), /row count|membership\/value/);
-const listings = ['{"id":"a","kind":"order","seller_character":"alice","bidder":null,"price":9007199254740993}',
-  '{"id":"b","kind":"order","seller_character":"bob","bidder":null,"price":2492}'];
+const listings = ['{"id":"a","kind":"order","seller_character":"alice","bidder":null,"depot_id":null,"price":9007199254740993}',
+  '{"id":"b","kind":"order","seller_character":"bob","bidder":null,"depot_id":null,"price":2492}'];
 const selected = listings.map(text => { const row = JSON.parse(text); return Object.fromEntries(market.projection.map(key => [key, row[key]])); });
 const projection = { eligibleRows: listings, nativeRows: selected, projection: market.projection };
 assert.deepEqual(replayCompleteProjection({ ...projection, nativeRows: [...selected].reverse() }), [...selected].reverse());

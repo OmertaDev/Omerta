@@ -5,12 +5,12 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { assertCarMeltRulesCompatibility, assertDeedBacklogCompatibility, DEED_RULES_CURRENT_PIN,
-  DEED_BACKLOG_CURRENT_PINS, DEED_BACKLOG_BASELINE_PINS, DEED_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
+  DEED_BACKLOG_CURRENT_PINS, DEED_BACKLOG_BASELINE_PINS, DEED_SOURCE_REVIEWED_REVISION, AGENT_ECONOMY_INVARIANT_PIN } from './rc1-deed-source-compatibility.js';
 import { LOAN, LAW, WORLD, PEN, CREW, MENTOR, BOXING, CASINO, FAMILY_YIELD, HEIST_PLAN_TTL_MS, dayOf, weekOf } from '../src/rules.js';
 
 export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
-  'src/market.js': 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
+  'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
   'src/loans.js': '663f71b15332367689b5b4db5cf7fc8d94e49249d8697cc6b98bb986607cb14e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/social/contracts.js': '46c2c5293f89dde7a2dda71f48f5e517e014a7097cf7a44109cd02682c9a5c8d',
@@ -24,7 +24,7 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/commission.js': '7e1aabd4aea45dc32ff68f3ba9307fd8e6a3794c74ad7e9387f308045da5445f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
-  'src/invariants.js': DEED_BACKLOG_CURRENT_PINS['src/invariants.js'],
+  'src/invariants.js': AGENT_ECONOMY_INVARIANT_PIN,
   'src/law.js': '24fef65ec00bf064bcd3db5513e047ff8339950e4c4ee80ad331747bf7510cca',
   'src/desk.js': 'c3f93aab7cac98192f266dad21e6ec0e0687cb0a1c7541ae0710f822607157e9',
   'src/diplomacy.js': 'dbfad062b79ea5fa8e21d0bf6c9d10b99899b801a68708cf8151c261be106d7b',
@@ -76,7 +76,7 @@ function spec(id, label, file, table, fields, query, filter, disposition, keys =
   specs.push({ id, label, file, table, fields: [...new Set([...fields, ...keys])], query, filter, disposition, keys, periodMs: 3600000, ...extra });
 }
 spec('market-expiry', 'market sweep', 'src/market.js', 'market_listings', ['status', 'expires_at'],
-  "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+  "SELECT id, kind, seller_character, bidder, depot_id FROM market_listings WHERE status='live' AND expires_at <= now()",
   (r, at) => r.status === 'live' && due(r, 'expires_at', at), 'Original sweep settles/refunds or marks expired; expired goods and delivered warehouse cargo remain public-command recoverable.');
 spec('loan-offer-expiry', 'loan sweep', 'src/loans.js', 'loans', ['status', 'offered_at'],
   "SELECT id, lender_character FROM loans WHERE status='open' AND offered_at < $1 ORDER BY id",
@@ -315,6 +315,10 @@ const INVARIANT_NAMES = ['world graph stack conservation', 'world graph unique c
   'item lot quantity integrity', 'item lot custody integrity', 'item lot lineage parity', 'item lot conservation'];
 
 export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, configuration, lifecycleDiagnostics = null, invariants = null } = {}) {
+  // The original worker disposition inventory does not classify depot or
+  // committed-delivery custody. Reject it instead of claiming complete coverage.
+  for (const table of ['business_depots', 'delivery_commitments'])
+    assert(!(snapshot.tables[table] || []).length, 'Agent economy custody is outside this backlog review scope');
   sourceProof(sourceRevision); assert(Number.isSafeInteger(logicalAt)); assert(configuration && typeof configuration === 'object');
   assert.equal(instant(snapshot.capturedAt), logicalAt, 'Snapshot clock differs from backlog boundary');
   assert.equal(snapshot.stateSha256, digest({ tables: snapshot.tables, sequences: snapshot.sequences }), 'Native snapshot hash mismatch');

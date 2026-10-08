@@ -5,7 +5,7 @@ import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DE
 import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   GENESIS_SERVER_WRAPPER_SOURCE_REVISION, assertGenesisSnapshotServerCompatibility,
   GENESIS_SNAPSHOT_SERVER_PIN, GENESIS_SNAPSHOT_MODULE_PINS,
-  GENESIS_SNAPSHOT_REVIEWED_REVISION } from '../tools/rc1-deed-source-compatibility.js';
+  GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
@@ -13,7 +13,15 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, GENESIS_SNAPSHOT_SERVER_PIN);
+assert.equal(serverProof.actualSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER_PIN);
+for (const file of ['src/server.js', 'src/economy.js']) {
+ const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+ const proof = assertEconomySourceTransfer(file, text);
+ assert(proof.inverseChunks > 0);
+ assert.equal(sha256(proof.baselineText), proof.baselineSha256);
+ assert.throws(() => assertEconomySourceTransfer(file, text + '\n// unsupported change\n'), /source changed/);
+}
 const snapshotProof = assertGenesisSnapshotServerCompatibility(serverText);
 assert.equal(sha256(snapshotProof.priorText), GENESIS_SERVER_WRAPPER_PIN);
 assert.equal(snapshotProof.snapshotModuleTransfer.inverseChunks, 1);
@@ -47,9 +55,9 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], GENESIS_SNAPSHOT_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 5);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 6);
 assert.equal(WORLD_RECOVERY_REVIEW.genesisSnapshotSourceTransfer.predecessorServerSha256, GENESIS_SERVER_WRAPPER_PIN);
 for (const [file, pin] of Object.entries(GENESIS_SNAPSHOT_MODULE_PINS)) {
   assert.equal(source.sourceFiles[file], pin, 'Actual reviewed genesis module digest must be attested');
