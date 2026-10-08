@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+  "sourceRevision": "be7a025c56fe2526e2360bc69e135c6aa457b599",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10231,
-    "edges": 41589,
+    "nodes": 10233,
+    "edges": 41599,
     "byNodeType": {
       "Artifact": 4345,
       "Command": 198,
-      "Commit": 2140,
+      "Commit": 2142,
       "Contract": 126,
       "Document": 698,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3470,
-      "CHANGED": 16138,
+      "CHANGED": 16146,
       "CONTAINS": 4366,
       "DECLARES": 198,
       "DEFINED_IN": 1376,
       "DEPENDS_ON": 67,
       "EXECUTES": 668,
       "HANDLED_BY": 758,
-      "HAS_COMMIT": 2140,
+      "HAS_COMMIT": 2142,
       "IMPLEMENTS": 124,
       "IMPORTS": 4104,
       "INHERITS": 42,
@@ -91097,20 +91097,20 @@
       "path": "test/rc1-mod-ingress-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8596,
-      "lines": 102,
-      "version": "fb39720f5e495c14",
+      "bytes": 9023,
+      "lines": 106,
+      "version": "1d4faf495fd156d0",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-mod-ingress-postgres.js",
           "line": 1,
-          "version": "fb39720f5e495c14"
+          "version": "1d4faf495fd156d0"
         }
       ],
-      "lastChangedAt": "2026-09-21T05:47:26.000Z",
+      "lastChangedAt": "2026-10-08T18:37:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77e630275f1529cb877685a14867eba6df5cc031"
+      "lastChangedCommit": "be7a025c56fe2526e2360bc69e135c6aa457b599"
     },
     {
       "key": "Artifact:test/rc1-mystery-policies.js",
@@ -104552,6 +104552,22 @@
         {
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f",
           "url": "https://github.com/OmertaDev/Omerta/commit/10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "type": "Commit",
+      "id": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "label": "Refresh knowledge for durable payment reversal receipts",
+      "title": "Refresh knowledge for durable payment reversal receipts",
+      "date": "2026-10-08T18:36:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "provenance": [
+        {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+          "url": "https://github.com/OmertaDev/Omerta/commit/10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
         }
       ]
     },
@@ -128744,6 +128760,22 @@
         {
           "commit": "be5876e40097937725bc188fff915e337d4f69d1",
           "url": "https://github.com/OmertaDev/Omerta/commit/be5876e40097937725bc188fff915e337d4f69d1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "type": "Commit",
+      "id": "be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "label": "Verify resource moderator controls before JSON parsing",
+      "title": "Verify resource moderator controls before JSON parsing",
+      "date": "2026-10-08T18:37:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "provenance": [
+        {
+          "commit": "be7a025c56fe2526e2360bc69e135c6aa457b599",
+          "url": "https://github.com/OmertaDev/Omerta/commit/be7a025c56fe2526e2360bc69e135c6aa457b599"
         }
       ]
     },
@@ -156772,6 +156804,9 @@
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
         },
         {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+        },
+        {
           "commit": "118151b788b1ff7f150949ff8bc71aa13236ba04"
         },
         {
@@ -157229,6 +157264,9 @@
         },
         {
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
+        },
+        {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
         },
         {
           "commit": "118151b788b1ff7f150949ff8bc71aa13236ba04"
@@ -158188,6 +158226,9 @@
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
         },
         {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+        },
+        {
           "commit": "118151b788b1ff7f150949ff8bc71aa13236ba04"
         },
         {
@@ -159143,6 +159184,9 @@
         },
         {
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
+        },
+        {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
         },
         {
           "commit": "118151b788b1ff7f150949ff8bc71aa13236ba04"
@@ -160360,6 +160404,9 @@
           "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
         },
         {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+        },
+        {
           "commit": "118151b788b1ff7f150949ff8bc71aa13236ba04"
         },
         {
@@ -161272,6 +161319,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+        },
+        {
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
         },
         {
@@ -161786,6 +161836,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
         },
         {
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
@@ -170293,7 +170346,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "revision": "be7a025c56fe2526e2360bc69e135c6aa457b599",
       "currentBranch": "codex/agent-resource-economy",
       "defaultBranch": "main",
       "visibility": "public",
@@ -203844,13 +203897,13 @@
       "type": "TestSuite",
       "id": "test/rc1-mod-ingress-postgres.js",
       "label": "test/rc1-mod-ingress-postgres.js",
-      "lines": 102,
-      "version": "fb39720f5e495c14",
+      "lines": 106,
+      "version": "1d4faf495fd156d0",
       "provenance": [
         {
           "file": "test/rc1-mod-ingress-postgres.js",
           "line": 1,
-          "version": "fb39720f5e495c14"
+          "version": "1d4faf495fd156d0"
         }
       ]
     },
@@ -243191,6 +243244,62 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
       }
     },
     {
@@ -331951,6 +332060,14 @@
       "to": "Artifact:tools/public-ui.js",
       "provenance": {
         "commit": "be5876e40097937725bc188fff915e337d4f69d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "to": "Artifact:test/rc1-mod-ingress-postgres.js",
+      "provenance": {
+        "commit": "be7a025c56fe2526e2360bc69e135c6aa457b599"
       }
     },
     {
@@ -435382,6 +435499,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:10faed964bdf59d1b05a15b8b0afb27ec7d26a50",
+      "provenance": {
+        "commit": "10faed964bdf59d1b05a15b8b0afb27ec7d26a50"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:110e1671ed4155e7fda2854ed5a4d9e19e20fe9c",
       "provenance": {
         "commit": "110e1671ed4155e7fda2854ed5a4d9e19e20fe9c"
@@ -447473,6 +447598,14 @@
       "to": "Commit:be5876e40097937725bc188fff915e337d4f69d1",
       "provenance": {
         "commit": "be5876e40097937725bc188fff915e337d4f69d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "provenance": {
+        "commit": "be7a025c56fe2526e2360bc69e135c6aa457b599"
       }
     },
     {
