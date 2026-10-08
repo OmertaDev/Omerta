@@ -668,8 +668,8 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
       console.error(`🚨 CHAIN PARITY — ${lines}. The chain and the backend disagree about a value the chain holds.`);
       await safe('chain parity alert', () => alertDrift(pool, [{
         name: 'chain parity', mismatches: sp.mismatches,
-        note: 'A value the chain holds and the backend restates disagree. The bond bps are IMMUTABLE, so the fix '
-          + 'is the ENV (fee-splits.env on BOTH api and worker) unless the deploy itself was wrong.',
+        note: 'Check the named parameters against the active deployment. Keep API and worker configuration '
+          + 'in lockstep with the chain. Bond split bps are immutable; fee prices and sell tax are settable.',
       }], 'split'));
     } else if (sp && sp.state === 'ok' && chainParityAlerted) {
       chainParityAlerted = false;

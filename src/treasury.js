@@ -362,6 +362,7 @@ export async function allocateStock(client, { epochId, accountId, ticker, units 
 // `bootstrap: true` is the deliberate first fill (the treasury's own posture — an unreferenced first
 // fill is refused, never silently trusted).
 export async function recordSellTax(pool, { ref, omrTaxed, priceOmrPerEth, txHash = null, bootstrap = false } = {}) {
+  if (SELL_TAX.BPS === 0) throw new GameError('tax_disabled', 'Sell tax is disabled; no tax revenue can be booked.');
   const key = String(ref || '').trim();
   if (!key) throw new GameError('ref', 'A tax episode needs a ref (txHash:logIndex).');
   const omr = Number(omrTaxed);
