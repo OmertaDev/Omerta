@@ -105,6 +105,10 @@
     border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;
     background: color-mix(in srgb, var(--panel) 82%, transparent);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  /* Let the header scroll away when a phone keyboard leaves little vertical space. */
+  @media (max-width: 760px) and (max-height: 500px) {
+    #top { position: static; }
+  }
   #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;
     text-shadow: 0 0 22px var(--neon-glow); }
   #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }
