@@ -49,6 +49,7 @@
     "worldgraph:check": "node tools/worldgraph-content.js",
     "pgcheck": "node tools/pgcheck.js",
     "test:http-idempotency:postgres": "node test/http-idempotency-recovery.js && node test/http-idempotency-http.js",
+    "test:due-work:postgres": "node test/due-work-process-recovery.js",
     "pgquery": "node tools/pgquery.js",
     "gearcaps": "node tools/gearcaps.js",
     "sim": "node tools/sim.js",
