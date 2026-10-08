@@ -38,6 +38,8 @@ Payment receipts verify signature/exact bytes, paid state, USD cents, metadata/c
 
 **RE-05 — medium, aggregate balance bound; fixed.** Available and reserved balances were each bounded at 1e12, but the original posting helper did not bound their sum. Concrete trace: available 1e12-100 plus reserved 100; capital top-up 100 reaches available 1e12; refund 100 then exceeds the available bound and cannot release reserved funds. Primary now enforces aggregate exposure in the posting helper and schema, and checks existing/pending checkout exposure before creating a new funding intent. Memory and native causal regressions reject the top-up, preserve escrow, then successfully refund to exactly the cap with zero ledger drift. Funding tests reject checkout capacity overflow before remote dispatch. Unknown checkout retries older than 20 hours require reconciliation rather than risking provider idempotency expiration; memory/native regression confirms no additional provider call.
 
+**RE-06 — medium, recovery queue starvation; fixed.** A first page of 100 held escrows could prevent later refunds from being inspected. The worker now advances a bounded `(created_at,id)` cursor and wraps at the end. Primary-agent memory and native PostgreSQL tests seed 100 frozen jobs ahead of an unrelated refund: the second page refunds the later job, the held funds remain reserved, and ledger/liability drift stays zero.
+
 Accepted operational risks and limitations: successful card payments remain reversible, and a later freeze cannot recover compute already consumed or funds already transferred before the reversal. Operators need fraud/reserve/settlement controls before enabling live funding. Prices are operator-configured estimates requiring provider billing reconciliation; hosting and payment fees are not assumed covered. Funding return URLs must remain stable while ambiguous Stripe intents are being retried because full request parameters participate in provider idempotency. Retention-off ambiguous inference requires external operator reconciliation; reservations must not be guessed free. The dedicated resource worker must actually be launched for unattended expiry/settlement. No claim of self-funding profitability follows from deterministic test demand.
 
 ## Executed evidence
@@ -90,7 +92,7 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/resourcework.js | fdb694a5b26bb91e242f40495de13717ffd127eb56cd7f423169b1220c567cbf |
 | src/routes/resources.js | b15818c680be9f7de19fe79e56965eccd981e3989735f9d69b4da6b16ecba7f4 |
 | tools/resource-agent.js | 631524fb063c249425be1b1c03ceff308f6293bf62f5ee52f8ce63334909fa18 |
-| tools/resource-worker.js | c6daa46fe015f032db26c9e0e5a426ef62199876ac2fe9ba33d04719da4c6027 |
+| tools/resource-worker.js | aeda9cec9314a0b41b3ccfa59ec8ba3df84651ba484f4d3a5917bf48ef1d537c |
 | tools/resource-economy-pilot.js | 3c375d06fb8efdf66b5430d28ab1499dbc5a2fb3a4b027d124356f08167813c0 |
 | schema.sql | 2011ff7e046d489b4da812bcf155b7c035268c2ecfb0be6c6b065221ca7cb415 |
 | src/server.js | 6d5cfc24df5fc2cfe7b47bfbb4f4952feba660c9737b22692c44ad2aecc7f853 |
@@ -103,5 +105,5 @@ Evidence supports the scoped local test implementation and the resolved findings
 | test/resourcepayments.js | 58e4469305704567ecf36d5d690e0187dc93031e6449dd749f63a4cbef864940 |
 | test/resourcecompute.js | d6b9518cc176454068b5af33c00ce4ccccf8da62f8ff88c98e0281cd7f009b9e |
 | test/resourcework.js | 42c2e21890f3c472aea738ff935e7fae57ba09d46a7df7199325e69117d65e23 |
-| test/resource-worker.js | a2f93c224473bd665d16b33d3702629ebdf3ab853eb74717664feaf476501892 |
+| test/resource-worker.js | 34e3353b1a3309a9b4b223658a938f390c0d67f3b8f35671f14a1f97f9c50c64 |
 

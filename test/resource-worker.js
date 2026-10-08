@@ -66,6 +66,29 @@ try {
   assert.equal(jobPostings.length, 1, 'Repeated recovery cannot double refund a job');
   assert.equal((await pool.query('SELECT id FROM resource_ledger WHERE event_key=$1', ['call:worker-abandoned-call:refund'])).rows.length, 1, 'Abandoned pre-dispatch reservation refunds only once');
   assert.equal(heldLogs.length, 3, 'Each tick records the held investigation without aborting other work');
+  await resourceTransaction(pool, async client => {
+    await lockResourceTreasury(client, 'worker-buyer-frozen');
+    await moveResourceMoney(client, 'worker-buyer-frozen', 1000000, 0, 'capital', 'seed:pagination-capital');
+    for (let i = 0; i < 100; i++) {
+      const id = `worker-held-${String(i).padStart(3, '0')}`;
+      await moveResourceMoney(client, 'worker-buyer-frozen', -10000, 10000, 'job_reserve', `seed:${id}`);
+      await client.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at,accept_after,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+        [id, 'worker-buyer-frozen', 'worker-seller', id, 1, 10000, { question: 'Held escrow.' }, 'submitted', past, past, new Date(past.getTime() - 10000)]);
+    }
+  });
+  await resourceTransaction(pool, async client => {
+    await lockResourceTreasury(client, 'worker-buyer-due');
+    await moveResourceMoney(client, 'worker-buyer-due', -10000, 10000, 'job_reserve', 'seed:later-job');
+    await client.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+      ['worker-later-job', 'worker-buyer-due', 'worker-seller', 'later-job', 1, 10000, { question: 'Later refund.' }, 'open', past, past]);
+  });
+  const firstPage = await resourceTick(pool);
+  assert.equal(firstPage.inspectedJobs, 100);
+  assert.equal((await pool.query('SELECT state FROM resource_jobs WHERE id=$1', ['worker-later-job'])).rows[0].state, 'open');
+  const nextPage = await resourceTick(pool, { after: firstPage.nextCursor });
+  assert.equal(nextPage.inspectedJobs, 2);
+  assert.equal((await pool.query('SELECT state FROM resource_jobs WHERE id=$1', ['worker-later-job'])).rows[0].state, 'refunded', 'Held first page cannot starve a later refund');
+  assert.equal((await resourceTick(pool, { after: nextPage.nextCursor })).nextCursor, null, 'End of sweep wraps its cursor');
   for (const account of accounts) {
     const accounting = await resourceAccounting(pool, account);
     assert.equal(accounting.ledgerDriftUsdMicros, 0); assert.equal(accounting.liabilityDriftUsdMicros, 0);
