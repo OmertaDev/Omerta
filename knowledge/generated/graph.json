@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+  "sourceRevision": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10130,
-    "edges": 41194,
+    "nodes": 10132,
+    "edges": 41203,
     "byNodeType": {
       "Artifact": 4325,
       "Command": 193,
-      "Commit": 2117,
+      "Commit": 2119,
       "Contract": 126,
       "Document": 696,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3427,
-      "CHANGED": 16009,
+      "CHANGED": 16016,
       "CONTAINS": 4346,
       "DECLARES": 193,
       "DEFINED_IN": 1340,
       "DEPENDS_ON": 67,
       "EXECUTES": 647,
       "HANDLED_BY": 739,
-      "HAS_COMMIT": 2117,
+      "HAS_COMMIT": 2119,
       "IMPLEMENTS": 124,
       "IMPORTS": 4067,
       "INHERITS": 42,
@@ -77297,20 +77297,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1342888,
-      "lines": 13846,
-      "version": "73ca18beacdf1ebc",
+      "bytes": 1343455,
+      "lines": 13852,
+      "version": "138d9066af5134d1",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "73ca18beacdf1ebc"
+          "version": "138d9066af5134d1"
         }
       ],
-      "lastChangedAt": "2026-10-08T00:35:44.000Z",
+      "lastChangedAt": "2026-10-08T08:19:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
+      "lastChangedCommit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -79620,20 +79620,20 @@
       "path": "src/depot.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 18046,
+      "bytes": 18136,
       "lines": 236,
-      "version": "7f808d3e8e7df8af",
+      "version": "26b48647e1116050",
       "text": true,
       "provenance": [
         {
           "file": "src/depot.js",
           "line": 1,
-          "version": "7f808d3e8e7df8af"
+          "version": "26b48647e1116050"
         }
       ],
-      "lastChangedAt": "2026-10-08T06:29:06.000Z",
+      "lastChangedAt": "2026-10-08T08:19:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d7f15047043e4fff594e7e1207eaf923fff81aed"
+      "lastChangedCommit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
     },
     {
       "key": "Artifact:src/depotbook.js",
@@ -99377,20 +99377,20 @@
       "path": "tools/stock-e2e.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 18730,
-      "lines": 278,
-      "version": "f77d6b7087513a5b",
+      "bytes": 18995,
+      "lines": 281,
+      "version": "589ca09fb4b3b108",
       "text": true,
       "provenance": [
         {
           "file": "tools/stock-e2e.js",
           "line": 1,
-          "version": "f77d6b7087513a5b"
+          "version": "589ca09fb4b3b108"
         }
       ],
-      "lastChangedAt": "2026-08-17T04:14:11.000Z",
+      "lastChangedAt": "2026-10-08T08:19:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2956a9e0c4f826ae89c14a0ee9e235fe23787708"
+      "lastChangedCommit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
     },
     {
       "key": "Artifact:tools/validate-fee-splits.js",
@@ -113211,6 +113211,22 @@
         {
           "commit": "513bc1263a0b0e2ee37499c186f71548ca6c7007",
           "url": "https://github.com/OmertaDev/Omerta/commit/513bc1263a0b0e2ee37499c186f71548ca6c7007"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "type": "Commit",
+      "id": "5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "label": "chore(knowledge): refresh complete economy migration verification",
+      "title": "chore(knowledge): refresh complete economy migration verification",
+      "date": "2026-10-08T07:26:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "provenance": [
+        {
+          "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5158413950c670c9f373a8a5171e1ebc7abc347a"
         }
       ]
     },
@@ -130059,6 +130075,22 @@
         {
           "commit": "d1048046e9be9448174c47904bfe68549d4180d5",
           "url": "https://github.com/OmertaDev/Omerta/commit/d1048046e9be9448174c47904bfe68549d4180d5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "type": "Commit",
+      "id": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "label": "Distinguish depot responses and await stock delivery mining",
+      "title": "Distinguish depot responses and await stock delivery mining",
+      "date": "2026-10-08T08:19:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "provenance": [
+        {
+          "commit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d15bb1c5cbb82d0f589b639f3641452296c81c5c"
         }
       ]
     },
@@ -156542,6 +156574,9 @@
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
         },
         {
+          "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+        },
+        {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
@@ -157469,6 +157504,9 @@
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
         },
         {
+          "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+        },
+        {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
@@ -158394,6 +158432,9 @@
         },
         {
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
+        },
+        {
+          "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -159576,6 +159617,9 @@
         },
         {
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
+        },
+        {
+          "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
@@ -162852,12 +162896,12 @@
       "id": "src/depot.js",
       "label": "src/depot.js",
       "lines": 236,
-      "version": "7f808d3e8e7df8af",
+      "version": "26b48647e1116050",
       "provenance": [
         {
           "file": "src/depot.js",
           "line": 1,
-          "version": "7f808d3e8e7df8af"
+          "version": "26b48647e1116050"
         }
       ]
     },
@@ -169091,7 +169135,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "revision": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
       "currentBranch": "codex/agent-economy-production",
       "defaultBranch": "main",
       "visibility": "public",
@@ -273791,6 +273835,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:515ae46cf834ec0929c8b819d624bdc3bc14e91a",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -336707,6 +336783,30 @@
       "to": "Artifact:tools/rc1-resource-proof.js",
       "provenance": {
         "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "to": "Artifact:src/depot.js",
+      "provenance": {
+        "commit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "to": "Artifact:tools/stock-e2e.js",
+      "provenance": {
+        "commit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
       }
     },
     {
@@ -435522,6 +435622,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5158413950c670c9f373a8a5171e1ebc7abc347a",
+      "provenance": {
+        "commit": "5158413950c670c9f373a8a5171e1ebc7abc347a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:515ae46cf834ec0929c8b819d624bdc3bc14e91a",
       "provenance": {
         "commit": "515ae46cf834ec0929c8b819d624bdc3bc14e91a"
@@ -443941,6 +444049,14 @@
       "to": "Commit:d1048046e9be9448174c47904bfe68549d4180d5",
       "provenance": {
         "commit": "d1048046e9be9448174c47904bfe68549d4180d5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "provenance": {
+        "commit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
       }
     },
     {
@@ -483976,7 +484092,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "tools/stock-e2e.js",
-        "line": 266
+        "line": 269
       }
     },
     {
@@ -483985,7 +484101,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "tools/stock-e2e.js",
-        "line": 241
+        "line": 244
       }
     },
     {
