@@ -95,7 +95,10 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
     if (method === 'eth_chainId') return state.chain;
     if (method === 'eth_accounts') return [state.account];
     if (method === 'eth_getTransactionCount') return '0x' + (params[1] === 'pending' ? state.pendingNonce : state.nonce).toString(16);
-    if (method === 'eth_getCode') return state.codes.get(params[0].toLowerCase()) || '0x';
+    if (method === 'eth_getCode') {
+      if (state.hashUnsupported && params[1]?.blockHash) throw Error('Wallet provider does not support canonical hash reads');
+      return state.codes.get(params[0].toLowerCase()) || '0x';
+    }
     if (method === 'eth_call') return '0x' + state.native.toString(16).padStart(64, '0');
     if (method === 'eth_estimateGas') return '0x186a0';
     if (method === 'eth_gasPrice') return '0x3e8';
@@ -297,7 +300,8 @@ f.state.codes.set(packet.deployments[0].predicted, '0x6001');
 await assert.rejects(() => f.client.checkPending(), /runtime differs/);
 assert.equal(f.client.summary().stage, 4); assert.ok(f.client.state().pending);
 assert.ok(f.state.requests.some(r => r.method === 'eth_getCode'
-  && r.params[0] === packet.deployments[0].predicted && r.params[1] === '0x64'));
+  && r.params[0] === packet.deployments[0].predicted
+  && r.params[1].blockHash === hash(100) && r.params[1].requireCanonical === true));
 console.log('Stored intent is bound to reviewed calldata/nonce/role/runtime before RPC; all five parent and two child runtimes rechecked at final receipt block PASS');
 assert.equal(keccakHex('0x'), '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470');
 for (const nonce of [0n, 1n, 127n, 128n, 255n, 256n, (1n << 64n) - 1n])
@@ -363,3 +367,10 @@ for (const change of [
   f = fixture(); await assert.rejects(() => f.client.load(r, d)); assert.equal(f.state.requests.length, 0);
 }
 console.log('All five local creation templates and canonical adapter/coordinator/dynamic-auction constructors, offsets, prices and derived uniform schedule bound before wallet access PASS');
+
+f = fixture(); await load(f); f.state.hashUnsupported = true;
+await assert.rejects(() => f.client.sendNext(), /does not support canonical hash reads/);
+assert.equal(f.client.summary().stage, 0); assert.equal(f.client.state().pending, null);
+assert.equal(f.state.requests.filter(r => r.method === 'eth_sendTransaction').length, 0);
+assert(f.state.requests.filter(r => r.method === 'eth_getCode').every(r => r.params[1]?.requireCanonical === true));
+console.log('Unsupported wallet hash reads fail closed before signing, without numeric/latest fallback PASS');

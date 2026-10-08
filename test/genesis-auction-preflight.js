@@ -5,6 +5,9 @@ import { parse } from 'acorn';
 import { getAddress, keccak256 } from 'viem';
 import { buildGenesisAuctionDeploymentPlan, genesisAuctionArtifactInventory, genesisAuctionFloor, loadGenesisAuctionArtifact } from '../tools/genesis-auction-deployment-plan.js';
 import { verifyGenesisAuctionPreflight } from '../tools/genesis-auction-preflight.js';
+import { genesisSnapshotRequest } from '../public/genesis-snapshot-rpc.js';
+import { genesisSnapshotTransport } from '../src/genesisrpc.js';
+import { createPublicClient, custom, parseAbi } from 'viem';
 
 // Reuse the reviewed synthetic policy fixture initializer, not its executable tests.
 const text = fs.readFileSync(new URL('./genesis-auction-deployment-plan.js', import.meta.url), 'utf8');
@@ -123,3 +126,52 @@ for (const [name, pattern] of [['wrongChain', /Wrong primary/], ['nonceChanged',
 f = fixture(); f.evidenceSha256 = '33'.repeat(32); await assert.rejects(() => verifyGenesisAuctionPreflight(f), /evidence hash/);
 f = fixture(); f.nowMs += 121000; await assert.rejects(() => verifyGenesisAuctionPreflight(f), /Stale primary/);
 console.log('Read-only genesis preflight PASS: real compiled-runtime templates, five main/two auxiliary SHA snapshots, actual-clock immutable selection, nine dependency/getter bindings, source/head/nonce/supply/authority/runtime/schedule rejection; no key, signing or broadcasting and signingReady remains false.');
+
+// Actual transport wiring, not a high-level fixture that ignores block selectors.
+const rpcAddress = A(1);
+const rpcHashA = '0x' + 'a1'.repeat(32), rpcHashB = '0x' + 'b2'.repeat(32), rpcCalls = [];
+let rpcHeader = { number: '0xa', hash: rpcHashA, timestamp: '0x1', transactions: [] }, rpcChain = '0x1237', rejectHash = false;
+const rawGenesisRequest = async args => {
+  rpcCalls.push(structuredClone(args));
+  if (args.method === 'eth_chainId') return rpcChain;
+  if (args.method === 'eth_getBlockByNumber') return rpcHeader;
+  if (rejectHash && args.params[1]?.blockHash) throw Error('provider rejects canonical hash selector');
+  return args.method === 'eth_call' ? '0x' + '0'.repeat(62) + '12' : '0x6000';
+};
+const pinnedRpc = genesisSnapshotRequest(rawGenesisRequest, { maximumHeaders: 1 });
+assert.throws(() => genesisSnapshotRequest(rawGenesisRequest, { maximumHeaders: 257 }), /configuration/);
+await assert.rejects(() => pinnedRpc({ method: 'eth_call', params: [{ to: rpcAddress }, '0xa'] }), /unknown/);
+await pinnedRpc({ method: 'eth_getBlockByNumber', params: ['latest', false] });
+const originalRead = { method: 'eth_call', params: [{ to: rpcAddress, data: '0x1234', value: '0x0' }, '0xa', { state: 'unchanged' }] };
+await pinnedRpc(originalRead);
+assert.deepEqual(rpcCalls.at(-1).params, [originalRead.params[0], { blockHash: rpcHashA, requireCanonical: true }, originalRead.params[2]]);
+assert.equal(originalRead.params[1], '0xa');
+await assert.rejects(() => pinnedRpc({ method: 'eth_call', params: [{ to: rpcAddress }, 'latest'] }), /canonical snapshot/);
+await assert.rejects(() => pinnedRpc({ method: 'eth_getCode', params: [rpcAddress, { blockHash: rpcHashB, requireCanonical: true }] }), /unknown/);
+await assert.rejects(() => pinnedRpc({ method: 'eth_getCode', params: [rpcAddress, { blockHash: rpcHashA, requireCanonical: false }] }), /noncanonical/);
+rpcHeader = { ...rpcHeader, hash: rpcHashB };
+await assert.rejects(() => pinnedRpc({ method: 'eth_getBlockByNumber', params: ['0xa', false] }), /snapshot changed/);
+await assert.rejects(() => pinnedRpc({ method: 'eth_getBlockByNumber', params: ['0xb', false] }), /wrong number/);
+rpcHeader = { ...rpcHeader, number: '0xb' };
+await pinnedRpc({ method: 'eth_getBlockByNumber', params: ['0xb', false] });
+await assert.rejects(() => pinnedRpc({ method: 'eth_getCode', params: [rpcAddress, '0xa'] }), /unknown/); // bounded eviction
+for (const method of ['eth_getBalance', 'eth_getTransactionCount']) for (const tag of ['latest', 'pending']) {
+  await pinnedRpc({ method, params: [rpcAddress, tag] }); assert.equal(rpcCalls.at(-1).params[1], tag);
+}
+rejectHash = true; const rejectedReadStart = rpcCalls.length;
+await assert.rejects(() => pinnedRpc({ method: 'eth_getCode', params: [rpcAddress, '0xb'] }), /rejects canonical/);
+assert.equal(rpcCalls.length, rejectedReadStart + 1); // no weaker selector retry
+rejectHash = false; await pinnedRpc({ method: 'eth_chainId' }); rpcChain = '0x1';
+await assert.rejects(() => pinnedRpc({ method: 'eth_chainId' }), /chain changed/);
+await assert.rejects(() => pinnedRpc({ method: 'eth_getCode', params: [rpcAddress, '0xb'] }), /unknown/);
+rpcHeader = { number: '0xa', hash: rpcHashA, timestamp: '0x1', transactions: [] }; rpcChain = '0x1237';
+const actualGenesisClient = createPublicClient({ transport: genesisSnapshotTransport(custom({ request: rawGenesisRequest }, { retryCount: 0 })) });
+const actualHeader = await actualGenesisClient.getBlock();
+assert.equal(await actualGenesisClient.readContract({ address: rpcAddress, abi: parseAbi(['function decimals() view returns (uint8)']), functionName: 'decimals', blockNumber: actualHeader.number }), 18);
+assert.deepEqual(rpcCalls.at(-1).params[1], { blockHash: rpcHashA, requireCanonical: true });
+await actualGenesisClient.getCode({ address: rpcAddress, blockNumber: actualHeader.number });
+assert.deepEqual(rpcCalls.at(-1).params[1], { blockHash: rpcHashA, requireCanonical: true });
+await actualGenesisClient.getBlock({ blockNumber: actualHeader.number }); // final canonical header recheck preserved
+rpcHeader = { ...rpcHeader, number: '0x1' + '0'.repeat(64) };
+await assert.rejects(() => pinnedRpc({ method: 'eth_getBlockByNumber', params: ['latest', false] }), /unavailable/);
+console.log('Genesis canonical hash transport PASS: real viem reads, immutable calldata, unknown/reorg/wrong-header/chain/eviction/provider rejection and live nonce/balance exceptions; no fallback.');

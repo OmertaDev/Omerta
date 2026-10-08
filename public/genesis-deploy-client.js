@@ -1,6 +1,7 @@
 // A reviewed packet reader and five individually approved EOA deployments. No Safe operations.
 import { keccak_256 } from './genesis-deploy-vendor/sha3.js';
 import { TRUSTED_HOOK, TRUSTED_CREATIONS } from './genesis-deploy-artifact.js';
+import { genesisSnapshotRequest } from './genesis-snapshot-rpc.js';
 export const DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 export const SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 export const FACTORY = '0x4e59b44847b379578588920ca78fbf26c0b4956c';
@@ -226,6 +227,7 @@ export class GenesisDeploymentClient {
     this.provider = provider; this.storage = storage; this.locks = locks; this.crypto = cryptoApi;
     this.now = now; this.readTimeoutMs = readTimeoutMs; this.status = status; this.inFlight = false; this.loaded = null;
     this.confirm = confirm;
+    this.snapshotRequest = genesisSnapshotRequest(args => this.provider.request(args));
   }
   state() {
     const raw = this.storage.getItem(STORAGE_KEY);
@@ -258,7 +260,7 @@ export class GenesisDeploymentClient {
     stage: s.stage, nextRole: ROLES[s.stage] || 'complete', pending: s.pending?.hash || (s.pending ? 'unknown wallet outcome' : null), halted: s.halted }; }
   async rpc(method, params = []) {
     let timer;
-    try { return await Promise.race([this.provider.request({ method, params }), new Promise((_, reject) => {
+    try { return await Promise.race([this.snapshotRequest({ method, params }), new Promise((_, reject) => {
       timer = setTimeout(() => reject(Error('The public wallet read timed out. No new deployment was requested.')), this.readTimeoutMs);
     })]); } finally { clearTimeout(timer); }
   }
