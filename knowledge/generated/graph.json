@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+  "sourceRevision": "a5c3b764d4ae55c663a76452b950b1c6940932c9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10132,
-    "edges": 41203,
+    "nodes": 10134,
+    "edges": 41210,
     "byNodeType": {
       "Artifact": 4325,
       "Command": 193,
-      "Commit": 2119,
+      "Commit": 2121,
       "Contract": 126,
       "Document": 696,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3427,
-      "CHANGED": 16016,
+      "CHANGED": 16021,
       "CONTAINS": 4346,
       "DECLARES": 193,
       "DEFINED_IN": 1340,
       "DEPENDS_ON": 67,
       "EXECUTES": 647,
       "HANDLED_BY": 739,
-      "HAS_COMMIT": 2119,
+      "HAS_COMMIT": 2121,
       "IMPLEMENTS": 124,
       "IMPORTS": 4067,
       "INHERITS": 42,
@@ -80126,20 +80126,20 @@
       "path": "src/engagement.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 20568,
+      "bytes": 20586,
       "lines": 374,
-      "version": "be93e17092e49ea2",
+      "version": "faa830ec77759bda",
       "text": true,
       "provenance": [
         {
           "file": "src/engagement.js",
           "line": 1,
-          "version": "be93e17092e49ea2"
+          "version": "faa830ec77759bda"
         }
       ],
-      "lastChangedAt": "2026-09-19T00:08:05.000Z",
+      "lastChangedAt": "2026-10-08T08:20:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bbd022fce6b517fff06b977b79423e9fd6c66413"
+      "lastChangedCommit": "a5c3b764d4ae55c663a76452b950b1c6940932c9"
     },
     {
       "key": "Artifact:src/estate.js",
@@ -123503,6 +123503,22 @@
       ]
     },
     {
+      "key": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "type": "Commit",
+      "id": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "label": "chore(knowledge): refresh for d15bb1c5",
+      "title": "chore(knowledge): refresh for d15bb1c5",
+      "date": "2026-10-08T08:20:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "provenance": [
+        {
+          "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+        }
+      ]
+    },
+    {
       "key": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
       "type": "Commit",
       "id": "9ea7377b01e2ae29df861880728a76a14455117a",
@@ -124459,6 +124475,22 @@
         {
           "commit": "a5af028bd4be816b5836314f2272dfba51a79814",
           "url": "https://github.com/OmertaDev/Omerta/commit/a5af028bd4be816b5836314f2272dfba51a79814"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a5c3b764d4ae55c663a76452b950b1c6940932c9",
+      "type": "Commit",
+      "id": "a5c3b764d4ae55c663a76452b950b1c6940932c9",
+      "label": "Include depot purchases in business engagement reporting",
+      "title": "Include depot purchases in business engagement reporting",
+      "date": "2026-10-08T08:20:43.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a5c3b764d4ae55c663a76452b950b1c6940932c9",
+      "provenance": [
+        {
+          "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a5c3b764d4ae55c663a76452b950b1c6940932c9"
         }
       ]
     },
@@ -156844,6 +156876,9 @@
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
+          "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -157774,6 +157809,9 @@
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
+          "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -158702,6 +158740,9 @@
         },
         {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
+        },
+        {
+          "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -159887,6 +159928,9 @@
         },
         {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
+        },
+        {
+          "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -163226,12 +163270,12 @@
       "id": "src/engagement.js",
       "label": "src/engagement.js",
       "lines": 374,
-      "version": "be93e17092e49ea2",
+      "version": "faa830ec77759bda",
       "provenance": [
         {
           "file": "src/engagement.js",
           "line": 1,
-          "version": "be93e17092e49ea2"
+          "version": "faa830ec77759bda"
         }
       ]
     },
@@ -169135,7 +169179,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d15bb1c5cbb82d0f589b639f3641452296c81c5c",
+      "revision": "a5c3b764d4ae55c663a76452b950b1c6940932c9",
       "currentBranch": "codex/agent-economy-production",
       "defaultBranch": "main",
       "visibility": "public",
@@ -313995,6 +314039,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
       "to": "Artifact:CHAIN-AUDIT-PACKET.md",
       "provenance": {
@@ -316583,6 +316659,14 @@
       "to": "Artifact:tools/rc1-world-resource-observer.js",
       "provenance": {
         "commit": "a5af028bd4be816b5836314f2272dfba51a79814"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a5c3b764d4ae55c663a76452b950b1c6940932c9",
+      "to": "Artifact:src/engagement.js",
+      "provenance": {
+        "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9"
       }
     },
     {
@@ -440766,6 +440850,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9ea52f4ca1cd579625b205d6c0cce9d319ed1eca",
+      "provenance": {
+        "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
       "provenance": {
         "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
@@ -441241,6 +441333,14 @@
       "to": "Commit:a5af028bd4be816b5836314f2272dfba51a79814",
       "provenance": {
         "commit": "a5af028bd4be816b5836314f2272dfba51a79814"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a5c3b764d4ae55c663a76452b950b1c6940932c9",
+      "provenance": {
+        "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9"
       }
     },
     {
