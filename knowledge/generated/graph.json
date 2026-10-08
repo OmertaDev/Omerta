@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "507a62c5c497382b876aabd0d81a17306d18188f",
+  "sourceRevision": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10236,
-    "edges": 41610,
+    "nodes": 10238,
+    "edges": 41618,
     "byNodeType": {
       "Artifact": 4345,
       "Command": 199,
-      "Commit": 2144,
+      "Commit": 2146,
       "Contract": 126,
       "Document": 698,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3470,
-      "CHANGED": 16153,
+      "CHANGED": 16159,
       "CONTAINS": 4366,
       "DECLARES": 199,
       "DEFINED_IN": 1376,
       "DEPENDS_ON": 67,
       "EXECUTES": 669,
       "HANDLED_BY": 758,
-      "HAS_COMMIT": 2144,
+      "HAS_COMMIT": 2146,
       "IMPLEMENTS": 124,
       "IMPORTS": 4104,
       "INHERITS": 42,
@@ -93006,20 +93006,20 @@
       "path": "test/rc1-world-duration-evidence.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3911,
-      "lines": 61,
-      "version": "b99eee0d82bf19f6",
+      "bytes": 4505,
+      "lines": 65,
+      "version": "de52dd3d59d390db",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-duration-evidence.js",
           "line": 1,
-          "version": "b99eee0d82bf19f6"
+          "version": "de52dd3d59d390db"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:11:52.000Z",
+      "lastChangedAt": "2026-10-08T20:34:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "03aa5199b7c9783b1be0883647fb6caf17979000"
+      "lastChangedCommit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
     },
     {
       "key": "Artifact:test/rc1-world-economy-metrics.js",
@@ -98204,20 +98204,20 @@
       "path": "tools/rc1-native-worker.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 15061,
-      "lines": 227,
-      "version": "896b3c6b5db7fce9",
+      "bytes": 15157,
+      "lines": 228,
+      "version": "fbe280985b5b89ad",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-native-worker.js",
           "line": 1,
-          "version": "896b3c6b5db7fce9"
+          "version": "fbe280985b5b89ad"
         }
       ],
-      "lastChangedAt": "2026-10-06T21:12:32.000Z",
+      "lastChangedAt": "2026-10-08T20:34:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b6643306e8ecbd6d0894fb9e3d7c79960e8a0735"
+      "lastChangedCommit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
     },
     {
       "key": "Artifact:tools/rc1-npc-boat-fault.js",
@@ -115141,6 +115141,22 @@
         {
           "commit": "5c20a24a3ffea1e78f01d597e3924e6a705fbe86",
           "url": "https://github.com/OmertaDev/Omerta/commit/5c20a24a3ffea1e78f01d597e3924e6a705fbe86"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "type": "Commit",
+      "id": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "label": "Pin resource schema compatibility without changing native worker boot",
+      "title": "Pin resource schema compatibility without changing native worker boot",
+      "date": "2026-10-08T20:34:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "provenance": [
+        {
+          "commit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
         }
       ]
     },
@@ -135209,6 +135225,22 @@
       ]
     },
     {
+      "key": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "type": "Commit",
+      "id": "f324622fe85891e07cc319904d6873990dcb879a",
+      "label": "Refresh knowledge for native resource pilot script",
+      "title": "Refresh knowledge for native resource pilot script",
+      "date": "2026-10-08T18:42:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f324622fe85891e07cc319904d6873990dcb879a",
+      "provenance": [
+        {
+          "commit": "f324622fe85891e07cc319904d6873990dcb879a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f324622fe85891e07cc319904d6873990dcb879a"
+        }
+      ]
+    },
+    {
       "key": "Commit:f3430dd7169e29b601fb1ea6d336df8868d5e36a",
       "type": "Commit",
       "id": "f3430dd7169e29b601fb1ea6d336df8868d5e36a",
@@ -151129,7 +151161,7 @@
         },
         {
           "file": "tools/rc1-native-worker.js",
-          "line": 166
+          "line": 167
         },
         {
           "file": "tools/rc1-realtime-soak-local.js",
@@ -158160,6 +158192,9 @@
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
         },
         {
+          "commit": "f324622fe85891e07cc319904d6873990dcb879a"
+        },
+        {
           "commit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
         },
         {
@@ -159123,6 +159158,9 @@
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
         },
         {
+          "commit": "f324622fe85891e07cc319904d6873990dcb879a"
+        },
+        {
           "commit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
         },
         {
@@ -160084,6 +160122,9 @@
         },
         {
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
+        },
+        {
+          "commit": "f324622fe85891e07cc319904d6873990dcb879a"
         },
         {
           "commit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
@@ -161305,6 +161346,9 @@
         },
         {
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
+        },
+        {
+          "commit": "f324622fe85891e07cc319904d6873990dcb879a"
         },
         {
           "commit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
@@ -170403,7 +170447,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "507a62c5c497382b876aabd0d81a17306d18188f",
+      "revision": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
       "currentBranch": "codex/agent-resource-economy",
       "defaultBranch": "main",
       "visibility": "public",
@@ -205199,13 +205243,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-duration-evidence.js",
       "label": "test/rc1-world-duration-evidence.js",
-      "lines": 61,
-      "version": "b99eee0d82bf19f6",
+      "lines": 65,
+      "version": "de52dd3d59d390db",
       "provenance": [
         {
           "file": "test/rc1-world-duration-evidence.js",
           "line": 1,
-          "version": "b99eee0d82bf19f6"
+          "version": "de52dd3d59d390db"
         }
       ]
     },
@@ -282781,6 +282825,22 @@
       "to": "Artifact:tools/rc1-season-election-provenance.js",
       "provenance": {
         "commit": "5c20a24a3ffea1e78f01d597e3924e6a705fbe86"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "to": "Artifact:test/rc1-world-duration-evidence.js",
+      "provenance": {
+        "commit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "to": "Artifact:tools/rc1-native-worker.js",
+      "provenance": {
+        "commit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
       }
     },
     {
@@ -361829,6 +361889,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f324622fe85891e07cc319904d6873990dcb879a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f324622fe85891e07cc319904d6873990dcb879a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f324622fe85891e07cc319904d6873990dcb879a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f324622fe85891e07cc319904d6873990dcb879a"
       }
     },
     {
@@ -440918,6 +441010,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43",
+      "provenance": {
+        "commit": "5c32eedb6ce3f8a6697c96205ba2ca3023cbaa43"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5c535973f69789ad5c1a404a04b5a91cc84e89f6",
       "provenance": {
         "commit": "5c535973f69789ad5c1a404a04b5a91cc84e89f6"
@@ -450945,6 +451045,14 @@
       "to": "Commit:f323ff5af5dd8e16a180cd6d50fad2480086ecee",
       "provenance": {
         "commit": "f323ff5af5dd8e16a180cd6d50fad2480086ecee"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f324622fe85891e07cc319904d6873990dcb879a",
+      "provenance": {
+        "commit": "f324622fe85891e07cc319904d6873990dcb879a"
       }
     },
     {
@@ -487173,7 +487281,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/rc1-native-worker.js",
-        "line": 166
+        "line": 167
       }
     },
     {

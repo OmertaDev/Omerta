@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `507a62c5c497`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5c32eedb6ce3`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2144 |
+| Commits in clone | 2146 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Declare native resource pilot in exact release gate inventory |
+| Latest commit | 2026-10-08 — Pin resource schema compatibility without changing native worker boot |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1248 |
+| OmertaDev | 1250 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 51 |
@@ -34,10 +34,10 @@
 | [public/index.html](../../public/index.html) | 435 | yes |
 | [src/server.js](../../src/server.js) | 375 | yes |
 | [SPEC.md](../../SPEC.md) | 367 | yes |
-| knowledge/generated/github-history.md | 318 | historical |
-| knowledge/generated/graph-summary.md | 318 | historical |
-| knowledge/generated/graph.json | 318 | historical |
-| knowledge/generated/inventory.md | 318 | historical |
+| knowledge/generated/github-history.md | 319 | historical |
+| knowledge/generated/graph-summary.md | 319 | historical |
+| knowledge/generated/graph.json | 319 | historical |
+| knowledge/generated/inventory.md | 319 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 237 | yes |
