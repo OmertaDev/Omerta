@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `324f8961f397`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e4daf78e9774`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2138 |
+| Commits in clone | 2140 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Retain bounded resource observations in agent results |
+| Latest commit | 2026-10-08 — Retain early payment reversals before checkout settlement |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1242 |
+| OmertaDev | 1244 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 51 |
@@ -33,21 +33,21 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 435 | yes |
 | [src/server.js](../../src/server.js) | 375 | yes |
-| [SPEC.md](../../SPEC.md) | 366 | yes |
-| knowledge/generated/github-history.md | 315 | historical |
-| knowledge/generated/graph-summary.md | 315 | historical |
-| knowledge/generated/graph.json | 315 | historical |
-| knowledge/generated/inventory.md | 315 | historical |
-| [schema.sql](../../schema.sql) | 301 | yes |
+| [SPEC.md](../../SPEC.md) | 367 | yes |
+| knowledge/generated/github-history.md | 316 | historical |
+| knowledge/generated/graph-summary.md | 316 | historical |
+| knowledge/generated/graph.json | 316 | historical |
+| knowledge/generated/inventory.md | 316 | historical |
+| [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 236 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 137 | historical |
+| knowledge/generated/documents.md | 138 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/modules.md | 122 | historical |
+| knowledge/generated/modules.md | 123 | historical |
 | [test/client.js](../../test/client.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |

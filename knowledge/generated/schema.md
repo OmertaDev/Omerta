@@ -1,6 +1,6 @@
 # Generated database catalog
 
-> 385 tables extracted from [schema.sql](../../schema.sql). “Used by” is an exact-name source scan; dynamic SQL may add relationships not visible here.
+> 386 tables extracted from [schema.sql](../../schema.sql). “Used by” is an exact-name source scan; dynamic SQL may add relationships not visible here.
 
 | Table | Defined | Used by modules |
 |---|---:|---|
@@ -260,11 +260,12 @@
 | `resource_calls` | [L7551](../../schema.sql#L7551) | [resourcebook.js](../../src/resourcebook.js), [resourcecompute.js](../../src/resourcecompute.js), [resourcework.js](../../src/resourcework.js) |
 | `resource_compute_policies` | [L7504](../../schema.sql#L7504) | [resourcebook.js](../../src/resourcebook.js), [resourcecompute.js](../../src/resourcecompute.js), [routes/resources.js](../../src/routes/resources.js) |
 | `resource_credits` | [L7540](../../schema.sql#L7540) | [resourcebook.js](../../src/resourcebook.js), [resourcecompute.js](../../src/resourcecompute.js) |
-| `resource_jobs` | [L7596](../../schema.sql#L7596) | [resourcebook.js](../../src/resourcebook.js), [resourcework.js](../../src/resourcework.js) |
+| `resource_jobs` | [L7603](../../schema.sql#L7603) | [resourcebook.js](../../src/resourcebook.js), [resourcework.js](../../src/resourcework.js) |
 | `resource_ledger` | [L7493](../../schema.sql#L7493) | [resourcebook.js](../../src/resourcebook.js), [resourcepayments.js](../../src/resourcepayments.js) |
+| `resource_payment_intents` | [L7590](../../schema.sql#L7590) | [resourcepayments.js](../../src/resourcepayments.js) |
 | `resource_payments` | [L7575](../../schema.sql#L7575) | [resourcepayments.js](../../src/resourcepayments.js), [routes/resources.js](../../src/routes/resources.js) |
 | `resource_rounds` | [L7515](../../schema.sql#L7515) | [resourcecompute.js](../../src/resourcecompute.js) |
-| `resource_services` | [L7590](../../schema.sql#L7590) | [resourcework.js](../../src/resourcework.js) |
+| `resource_services` | [L7597](../../schema.sql#L7597) | [resourcework.js](../../src/resourcework.js) |
 | `resource_treasuries` | [L7485](../../schema.sql#L7485) | [resourcebook.js](../../src/resourcebook.js), [resourcecompute.js](../../src/resourcecompute.js), [resourcepayments.js](../../src/resourcepayments.js), [resourcework.js](../../src/resourcework.js) |
 | `rigs` | [L2886](../../schema.sql#L2886) | [convoy.js](../../src/convoy.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
 | `rival_events` | [L3219](../../schema.sql#L3219) | [firstblood.js](../../src/firstblood.js), [game.js](../../src/game.js), [people.js](../../src/people.js), [rivals.js](../../src/rivals.js), [wire.js](../../src/wire.js) |

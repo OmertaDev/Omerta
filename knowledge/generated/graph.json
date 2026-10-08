@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "324f8961f397a8abdda0f18a140cfdc371f37d50",
+  "sourceRevision": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10228,
-    "edges": 41570,
+    "nodes": 10231,
+    "edges": 41589,
     "byNodeType": {
       "Artifact": 4345,
       "Command": 198,
-      "Commit": 2138,
+      "Commit": 2140,
       "Contract": 126,
       "Document": 698,
       "Domain": 13,
@@ -59,20 +59,20 @@
       "Repository": 1,
       "Route": 864,
       "Subsystem": 8,
-      "Table": 385,
+      "Table": 386,
       "TestSuite": 567,
       "Workflow": 6
     },
     "byEdgeType": {
       "BELONGS_TO": 3470,
-      "CHANGED": 16123,
+      "CHANGED": 16138,
       "CONTAINS": 4366,
       "DECLARES": 198,
-      "DEFINED_IN": 1375,
+      "DEFINED_IN": 1376,
       "DEPENDS_ON": 67,
       "EXECUTES": 668,
       "HANDLED_BY": 758,
-      "HAS_COMMIT": 2138,
+      "HAS_COMMIT": 2140,
       "IMPLEMENTS": 124,
       "IMPORTS": 4104,
       "INHERITS": 42,
@@ -80,7 +80,7 @@
       "REPRESENTS": 1572,
       "TESTS": 1402,
       "TRACKS": 126,
-      "USES_TABLE": 1902
+      "USES_TABLE": 1903
     }
   },
   "nodes": [
@@ -24012,20 +24012,20 @@
       "path": "docs/agent-resource-economy.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 6752,
-      "lines": 34,
-      "version": "c253f81215ca19e1",
+      "bytes": 6920,
+      "lines": 36,
+      "version": "955555208e99d2fb",
       "text": true,
       "provenance": [
         {
           "file": "docs/agent-resource-economy.md",
           "line": 1,
-          "version": "c253f81215ca19e1"
+          "version": "955555208e99d2fb"
         }
       ],
-      "lastChangedAt": "2026-10-08T18:19:03.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "324f8961f397a8abdda0f18a140cfdc371f37d50"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:docs/ART.md",
@@ -38893,20 +38893,20 @@
       "path": "docs/resource-economy-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 17350,
-      "lines": 116,
-      "version": "fd038b4071bbb156",
+      "bytes": 18005,
+      "lines": 118,
+      "version": "569fa9ff22fd985d",
       "text": true,
       "provenance": [
         {
           "file": "docs/resource-economy-security-review.md",
           "line": 1,
-          "version": "fd038b4071bbb156"
+          "version": "569fa9ff22fd985d"
         }
       ],
-      "lastChangedAt": "2026-10-08T18:19:03.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "324f8961f397a8abdda0f18a140cfdc371f37d50"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -77573,20 +77573,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 464200,
-      "lines": 7615,
-      "version": "2011ff7e046d489b",
+      "bytes": 464568,
+      "lines": 7622,
+      "version": "34614492a4385fe5",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "2011ff7e046d489b"
+          "version": "34614492a4385fe5"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -77644,18 +77644,18 @@
       "extension": ".md",
       "bytes": 55438,
       "lines": 742,
-      "version": "1478bd780e9c75a6",
+      "version": "5e1c65ae16140ce6",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "1478bd780e9c75a6"
+          "version": "5e1c65ae16140ce6"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:src/access.js",
@@ -82219,20 +82219,20 @@
       "path": "src/resourcepayments.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 9151,
-      "lines": 114,
-      "version": "1664e757172c86ec",
+      "bytes": 10950,
+      "lines": 130,
+      "version": "5380b240c388f677",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcepayments.js",
           "line": 1,
-          "version": "1664e757172c86ec"
+          "version": "5380b240c388f677"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:src/resourceproviders.js",
@@ -86405,20 +86405,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13322,
+      "bytes": 13354,
       "lines": 158,
-      "version": "15cfd0a6db4ee7d4",
+      "version": "1c4017168a9ceb93",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "15cfd0a6db4ee7d4"
+          "version": "1c4017168a9ceb93"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -88061,20 +88061,20 @@
       "path": "test/lib/phase2-architecture-upgrade-catalog.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 55959,
-      "lines": 1700,
-      "version": "9c12dac503d826dc",
+      "bytes": 56898,
+      "lines": 1726,
+      "version": "9ba0662ffc6173f6",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-architecture-upgrade-catalog.json",
           "line": 1,
-          "version": "9c12dac503d826dc"
+          "version": "9ba0662ffc6173f6"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:test/lib/phase2-definition-fixtures.js",
@@ -93604,20 +93604,20 @@
       "path": "test/resourcepayments.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7844,
-      "lines": 103,
-      "version": "58e4469305704567",
+      "bytes": 11799,
+      "lines": 147,
+      "version": "79dd5c0104c6f709",
       "text": true,
       "provenance": [
         {
           "file": "test/resourcepayments.js",
           "line": 1,
-          "version": "58e4469305704567"
+          "version": "79dd5c0104c6f709"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:35:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
     },
     {
       "key": "Artifact:test/resourceproviders.js",
@@ -127004,6 +127004,22 @@
       ]
     },
     {
+      "key": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "type": "Commit",
+      "id": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "label": "Refresh complete resource route and observation inventory",
+      "title": "Refresh complete resource route and observation inventory",
+      "date": "2026-10-08T18:20:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "provenance": [
+        {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+        }
+      ]
+    },
+    {
       "key": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
       "type": "Commit",
       "id": "b2c3e8929565bb65c519032df228eda1a4235628",
@@ -133256,6 +133272,22 @@
         {
           "commit": "e4a6994bfee0159714eb0386e104066b391aac21",
           "url": "https://github.com/OmertaDev/Omerta/commit/e4a6994bfee0159714eb0386e104066b391aac21"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "type": "Commit",
+      "id": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "label": "Retain early payment reversals before checkout settlement",
+      "title": "Retain early payment reversals before checkout settlement",
+      "date": "2026-10-08T18:35:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "provenance": [
+        {
+          "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e4daf78e9774d5766e0c2143ef415f4bac293b2a"
         }
       ]
     },
@@ -144361,13 +144393,13 @@
       "id": "docs/agent-resource-economy.md",
       "label": "docs/agent-resource-economy.md",
       "documentType": "documentation",
-      "lines": 34,
-      "version": "c253f81215ca19e1",
+      "lines": 36,
+      "version": "955555208e99d2fb",
       "provenance": [
         {
           "file": "docs/agent-resource-economy.md",
           "line": 1,
-          "version": "c253f81215ca19e1"
+          "version": "955555208e99d2fb"
         }
       ]
     },
@@ -146665,13 +146697,13 @@
       "id": "docs/resource-economy-security-review.md",
       "label": "docs/resource-economy-security-review.md",
       "documentType": "documentation",
-      "lines": 116,
-      "version": "fd038b4071bbb156",
+      "lines": 118,
+      "version": "569fa9ff22fd985d",
       "provenance": [
         {
           "file": "docs/resource-economy-security-review.md",
           "line": 1,
-          "version": "fd038b4071bbb156"
+          "version": "569fa9ff22fd985d"
         }
       ]
     },
@@ -150010,12 +150042,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "1478bd780e9c75a6",
+      "version": "5e1c65ae16140ce6",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "1478bd780e9c75a6"
+          "version": "5e1c65ae16140ce6"
         }
       ]
     },
@@ -156989,6 +157021,9 @@
           "commit": "b17a458ecbac882512e0a93b7c5a1f239599328d"
         },
         {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -157800,6 +157835,9 @@
         },
         {
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
+        },
+        {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
         },
         {
           "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
@@ -158756,6 +158794,9 @@
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
         },
         {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+        },
+        {
           "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
         },
         {
@@ -159708,6 +159749,9 @@
         },
         {
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
+        },
+        {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
         },
         {
           "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
@@ -160922,6 +160966,9 @@
           "commit": "b1d8aa8eb94e5825259809f6dbf5b7017dd3a4d4"
         },
         {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+        },
+        {
           "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
         },
         {
@@ -161441,6 +161488,9 @@
           "commit": "b17a458ecbac882512e0a93b7c5a1f239599328d"
         },
         {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -161667,6 +161717,9 @@
         },
         {
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
+        },
+        {
+          "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -165545,13 +165598,13 @@
       "type": "Module",
       "id": "src/resourcepayments.js",
       "label": "src/resourcepayments.js",
-      "lines": 114,
-      "version": "1664e757172c86ec",
+      "lines": 130,
+      "version": "5380b240c388f677",
       "provenance": [
         {
           "file": "src/resourcepayments.js",
           "line": 1,
-          "version": "1664e757172c86ec"
+          "version": "5380b240c388f677"
         }
       ]
     },
@@ -170240,7 +170293,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "324f8961f397a8abdda0f18a140cfdc371f37d50",
+      "revision": "e4daf78e9774d5766e0c2143ef415f4bac293b2a",
       "currentBranch": "codex/agent-resource-economy",
       "defaultBranch": "main",
       "visibility": "public",
@@ -195709,13 +195762,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7596
+          "line": 7603
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7596
+          "line": 7603
         }
       ]
     },
@@ -195734,6 +195787,24 @@
         {
           "file": "schema.sql",
           "line": 7493
+        }
+      ]
+    },
+    {
+      "key": "Table:resource_payment_intents",
+      "type": "Table",
+      "id": "resource_payment_intents",
+      "label": "resource_payment_intents",
+      "definitions": [
+        {
+          "file": "schema.sql",
+          "line": 7590
+        }
+      ],
+      "provenance": [
+        {
+          "file": "schema.sql",
+          "line": 7590
         }
       ]
     },
@@ -195781,13 +195852,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 7590
+          "line": 7597
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 7590
+          "line": 7597
         }
       ]
     },
@@ -200879,12 +200950,12 @@
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
       "lines": 158,
-      "version": "15cfd0a6db4ee7d4",
+      "version": "1c4017168a9ceb93",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "15cfd0a6db4ee7d4"
+          "version": "1c4017168a9ceb93"
         }
       ]
     },
@@ -205408,13 +205479,13 @@
       "type": "TestSuite",
       "id": "test/resourcepayments.js",
       "label": "test/resourcepayments.js",
-      "lines": 103,
-      "version": "58e4469305704567",
+      "lines": 147,
+      "version": "79dd5c0104c6f709",
       "provenance": [
         {
           "file": "test/resourcepayments.js",
           "line": 1,
-          "version": "58e4469305704567"
+          "version": "79dd5c0104c6f709"
         }
       ]
     },
@@ -324044,6 +324115,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -352464,6 +352591,70 @@
       "to": "HistoricalArtifact:reference-prototype-v24.jsx",
       "provenance": {
         "commit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:docs/agent-resource-economy.md",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:docs/resource-economy-security-review.md",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:src/resourcepayments.js",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "to": "Artifact:test/resourcepayments.js",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
       }
     },
     {
@@ -419046,7 +419237,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7596
+        "line": 7603
       }
     },
     {
@@ -419056,6 +419247,15 @@
       "provenance": {
         "file": "schema.sql",
         "line": 7493
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Table:resource_payment_intents",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "file": "schema.sql",
+        "line": 7590
       }
     },
     {
@@ -419082,7 +419282,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 7590
+        "line": 7597
       }
     },
     {
@@ -446406,6 +446606,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b2119638be85a9ce6283c0bb9b0f9aabeff0cb95",
+      "provenance": {
+        "commit": "b2119638be85a9ce6283c0bb9b0f9aabeff0cb95"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b2c3e8929565bb65c519032df228eda1a4235628",
       "provenance": {
         "commit": "b2c3e8929565bb65c519032df228eda1a4235628"
@@ -449529,6 +449737,14 @@
       "to": "Commit:e4a6994bfee0159714eb0386e104066b391aac21",
       "provenance": {
         "commit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e4daf78e9774d5766e0c2143ef415f4bac293b2a",
+      "provenance": {
+        "commit": "e4daf78e9774d5766e0c2143ef415f4bac293b2a"
       }
     },
     {
@@ -505658,7 +505874,7 @@
       "to": "Artifact:test/resource-worker.js",
       "provenance": {
         "file": "docs/resource-economy-security-review.md",
-        "line": 80
+        "line": 82
       }
     },
     {
@@ -556184,7 +556400,16 @@
       "to": "Table:resource_ledger",
       "provenance": {
         "file": "src/resourcepayments.js",
-        "line": 97
+        "line": 104
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourcepayments.js",
+      "to": "Table:resource_payment_intents",
+      "provenance": {
+        "file": "src/resourcepayments.js",
+        "line": 86
       }
     },
     {
@@ -556202,7 +556427,7 @@
       "to": "Table:resource_treasuries",
       "provenance": {
         "file": "src/resourcepayments.js",
-        "line": 88
+        "line": 96
       }
     },
     {
