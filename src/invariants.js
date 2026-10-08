@@ -1381,7 +1381,12 @@ export function webhookText(kind, failed = []) {
   const lines = arr.map((f) => {
     if (!f || typeof f !== 'object') return `• ${String(f)}`;
     if (f.drift !== undefined) return `• ${f.name}: drift ${f.drift} (balances ${f.lhs} vs ledger ${f.rhs})`;
-    const rest = Object.entries(f).filter(([k]) => k !== 'name').map(([k, v]) => `${k}=${v}`).join(', ');
+    if (Array.isArray(f.mismatches)) {
+      const details = f.mismatches.map((m) => `  • ${m.what}: on-chain ${m.onchain} vs backend ${m.backend}`);
+      return [`• ${f.name || 'check'}`, ...details, ...(f.note ? [`  ${f.note}`] : [])].join('\n');
+    }
+    const rest = Object.entries(f).filter(([k]) => k !== 'name')
+      .map(([k, v]) => `${k}=${v !== null && typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ');
     return `• ${f.name || 'check'}${rest ? `: ${rest}` : ''}`;
   });
   const body = `${head}\n${lines.join('\n')}`;

@@ -45,7 +45,7 @@ export function waterfall() {
   const commFee = COMMUNITY.FEE_BPS();
   const commStore = COMMUNITY.STORE_BPS();
   // sell-tax community, normalized from a share OF THE TAX to a share of the inflow (the dev/rwa shape)
-  const commTax = Math.round(COMMUNITY.TAX_BPS() / SELL_TAX.BPS * 10000);
+  const commTax = SELL_TAX.BPS > 0 ? Math.round(COMMUNITY.TAX_BPS() / SELL_TAX.BPS * 10000) : 0;
   const commHarvest = COMMUNITY.HARVEST_BPS();
   const polfeesVig = COMMUNITY.POLFEES_VIG_BPS();
   return [
@@ -75,14 +75,14 @@ export function waterfall() {
       ] },
     // The sell tax's slices are declared as bps OF THE TAXED GROSS (DEV_BPS/RWA_BPS/LP_BPS sum to
     // SELL_TAX.BPS, not 10000) — normalized here to shares-of-the-inflow so every row reads alike.
-    { id: 'tax', name: `DEX sell tax (${SELL_TAX.BPS} bps of every OMR sell)`, currency: 'eth', totalBps: 10000,
-      splits: [
+    { id: 'tax', name: `DEX sell tax (${SELL_TAX.BPS} bps of every OMR sell)`, currency: 'eth', totalBps: SELL_TAX.BPS > 0 ? 10000 : 0,
+      splits: SELL_TAX.BPS > 0 ? [
         { dest: 'operations', bps: Math.round(SELL_TAX.DEV_BPS / SELL_TAX.BPS * 10000), lands: 'sell_tax_events.dev_eth' },
         { dest: 'treasury', bps: Math.round(SELL_TAX.RWA_BPS / SELL_TAX.BPS * 10000), lands: "sell_tax_events.rwa_eth + rwa_revenue source='tax'" },
         ...(commTax > 0 ? [{ dest: 'community', bps: commTax, lands: "sell_tax_events.community_eth + community_revenue source='tax'" }] : []),
         { dest: 'pol', bps: 10000 - Math.round(SELL_TAX.DEV_BPS / SELL_TAX.BPS * 10000) - Math.round(SELL_TAX.RWA_BPS / SELL_TAX.BPS * 10000) - commTax,
           lands: 'sell_tax_events.lp_eth (the remainder rule sits on LP)' },
-      ] },
+      ] : [] },
     // RETIRED 2026-08-11 (founder-directed). The row STAYS so the map makes the positive claim —
     // a retired rail that simply vanishes from the board says nothing, and any historical row would
     // then have no declaration to reconcile against. Two hooks wanted one canonical pool; the
