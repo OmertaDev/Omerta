@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `93dded6c97de`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1f1af8e2d29a`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2107 |
+| Commits in clone | 2109 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Pin genesis reads to supported canonical block hashes |
+| Latest commit | 2026-10-08 — Restate measured module and test census for RPC helper |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1214 |
+| OmertaDev | 1216 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 48 |
@@ -33,11 +33,11 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 434 | yes |
 | [src/server.js](../../src/server.js) | 373 | yes |
-| [SPEC.md](../../SPEC.md) | 362 | yes |
-| knowledge/generated/github-history.md | 301 | historical |
-| knowledge/generated/graph-summary.md | 301 | historical |
-| knowledge/generated/graph.json | 301 | historical |
-| knowledge/generated/inventory.md | 301 | historical |
+| [SPEC.md](../../SPEC.md) | 363 | yes |
+| knowledge/generated/github-history.md | 302 | historical |
+| knowledge/generated/graph-summary.md | 302 | historical |
+| knowledge/generated/graph.json | 302 | historical |
+| knowledge/generated/inventory.md | 302 | historical |
 | [schema.sql](../../schema.sql) | 299 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 234 | yes |
@@ -49,13 +49,13 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [test/client.js](../../test/client.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
-| knowledge/generated/modules.md | 116 | historical |
+| knowledge/generated/modules.md | 117 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/gates.js](../../test/gates.js) | 89 | yes |
 | [public/wiki.html](../../public/wiki.html) | 89 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
-| knowledge/generated/graph.mmd | 79 | historical |
+| knowledge/generated/graph.mmd | 80 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 77 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 63 | yes |
