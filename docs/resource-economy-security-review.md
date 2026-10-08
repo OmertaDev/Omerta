@@ -40,6 +40,8 @@ Payment receipts verify signature/exact bytes, paid state, USD cents, metadata/c
 
 **RE-06 — medium, recovery queue starvation; fixed.** A first page of 100 held escrows could prevent later refunds from being inspected. The worker now advances a bounded `(created_at,id)` cursor and wraps at the end. Primary-agent memory and native PostgreSQL tests seed 100 frozen jobs ahead of an unrelated refund: the second page refunds the later job, the held funds remain reserved, and ledger/liability drift stays zero.
 
+**RE-07 — medium, auxiliary-request cadence; fixed.** Compute and paid-work requests initially bypassed the gameplay runner’s request pacing and would hit the agent account’s production three-second throttle. A shared monotonic transport now spaces all authenticated turn, queue, claim, work, compute and gameplay requests by at least 3100ms. Parent-agent tests verify six-request spacing, cancellation and origin isolation with an explicitly named fake-clock seam; production has no interval override. The owner-selected paid-work quota defaults to zero, is capped at ten, and deduplicates attempted jobs including ambiguous outcomes. Only viewer-derived assigned jobs can be selected; customer acceptance is never automated by the seller. Active seller jobs are listed separately from bounded completed history.
+
 Accepted operational risks and limitations: successful card payments remain reversible, and a later freeze cannot recover compute already consumed or funds already transferred before the reversal. Operators need fraud/reserve/settlement controls before enabling live funding. Prices are operator-configured estimates requiring provider billing reconciliation; hosting and payment fees are not assumed covered. Funding return URLs must remain stable while ambiguous Stripe intents are being retried because full request parameters participate in provider idempotency. Retention-off ambiguous inference requires external operator reconciliation; reservations must not be guessed free. The dedicated resource worker must actually be launched for unattended expiry/settlement. No claim of self-funding profitability follows from deterministic test demand.
 
 ## Executed evidence
@@ -89,9 +91,9 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/resourcecontracts.js | 3ba649e71144a7602882231c9988e6f94f218a6c0142972fe77bec96762253f2 |
 | src/resourcepayments.js | 1664e757172c86ecf77b010cb57470ce416dffb2603241824e3983f5090fe880 |
 | src/resourceproviders.js | c4ce4ebbe78db8c8de4aec6cd108807aae2521ba495ff1a654db73a29aea7223 |
-| src/resourcework.js | fdb694a5b26bb91e242f40495de13717ffd127eb56cd7f423169b1220c567cbf |
+| src/resourcework.js | 65544ae71f899e770ac6887460a7d2bc64b126d1f98cf2330dfc0c032a4b5d59 |
 | src/routes/resources.js | b15818c680be9f7de19fe79e56965eccd981e3989735f9d69b4da6b16ecba7f4 |
-| tools/resource-agent.js | 631524fb063c249425be1b1c03ceff308f6293bf62f5ee52f8ce63334909fa18 |
+| tools/resource-agent.js | bc2bad8ba825a8e9f0e0e70d66181e22b3b6237dc613a9b46c84e1a7c90ca4fe |
 | tools/resource-worker.js | aeda9cec9314a0b41b3ccfa59ec8ba3df84651ba484f4d3a5917bf48ef1d537c |
 | tools/resource-economy-pilot.js | 3c375d06fb8efdf66b5430d28ab1499dbc5a2fb3a4b027d124356f08167813c0 |
 | schema.sql | 2011ff7e046d489b4da812bcf155b7c035268c2ecfb0be6c6b065221ca7cb415 |
@@ -100,7 +102,7 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/db.js | d5d72084714652eba64548d77af4febb72aea98a60995a1b1e0f27475da03401 |
 | src/preflight.js | 3e08d1c02e8bd48f91b360393238fd3733421bbb13f5470aa46a51f76e90f15b |
 | test/resourceauction.js | ea751667e7f5dc338b30b894643b27b37b88965f93a58f171ab7219f5d0a7d44 |
-| test/resource-agent.js | 782021365de5aa149aef65eba6a953cd5d45422404681b154247af5ee609362e |
+| test/resource-agent.js | 3983fcb2b77563c25367931f5665d7e1e794baa50c6c7b3be128314f7a210c7f |
 | test/resourceproviders.js | ead7c0f057a95e5639ae6f03a30c1a2999b2e3798d03a8a7adac414b5ca341b8 |
 | test/resourcepayments.js | 58e4469305704567ecf36d5d690e0187dc93031e6449dd749f63a4cbef864940 |
 | test/resourcecompute.js | d6b9518cc176454068b5af33c00ce4ccccf8da62f8ff88c98e0281cd7f009b9e |

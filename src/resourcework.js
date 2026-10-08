@@ -13,6 +13,7 @@ export function resourceJobView(job, accountId) {
   if (!job || ![job.buyer_account, job.seller_account].includes(accountId))
     throw resourceError('job', 'This service job is not available to this account.');
   return { id: job.id, buyerAccountId: job.buyer_account, sellerAccountId: job.seller_account,
+    assignedToYou: job.seller_account === accountId,
     serviceRevision: Number(job.service_revision), priceUsdMicros: jobAmount(job), state: job.state,
     question: job.input?.question, report: job.report || null, callId: job.call_id || null,
     createdAt: iso(job.created_at), expiresAt: iso(job.expires_at), claimedAt: iso(job.claimed_at),
@@ -208,5 +209,6 @@ export async function expireResourceJob(pool, id) {
 }
 export async function listResourceJobs(pool, accountId) {
   const jobs = (await pool.query('SELECT * FROM resource_jobs WHERE buyer_account=$1 OR seller_account=$1 ORDER BY created_at DESC LIMIT 100', [accountId])).rows;
-  return { jobs: jobs.map(job => resourceJobView(job, accountId)) };
+  const assigned = (await pool.query("SELECT * FROM resource_jobs WHERE seller_account=$1 AND state IN ('open','claimed') ORDER BY created_at,id LIMIT 100", [accountId])).rows;
+  return { jobs: jobs.map(job => resourceJobView(job, accountId)), assignedJobs: assigned.map(job => resourceJobView(job, accountId)) };
 }

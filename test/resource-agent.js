@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
-import { createResourceAgentFetch, runPaidWork } from '../tools/resource-agent.js';
+import { performance } from 'node:perf_hooks';
+import { createResourceAgentFetch, createResourceAgentTestFetch, runPaidWork } from '../tools/resource-agent.js';
+
+const testFetch = options => {
+  let now = 0;
+  return createResourceAgentTestFetch(options, { now: () => now, sleep: async ms => { now += ms; } });
+};
 
 const baseUrl = 'https://omerta.test';
 const headers = { authorization: 'Bearer private-token' };
@@ -12,7 +18,7 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), { status
 
 async function fixture({ output = '{"actionId":"b"}', status = 200, role = 'general', initial = turn(), fail = false } = {}) {
   const calls = []; const observations = []; let current = initial;
-  const wrapped = createResourceAgentFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, role,
+  const wrapped = testFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, role,
     onObservation: event => observations.push(event), requestIdFactory: () => 'request-fixed',
     fetchImpl: async (url, init) => {
       calls.push({ url: String(url), init });
@@ -100,4 +106,77 @@ const pending = await runPaidWork({ baseUrl, token: 't', jobId: 'job-1', provide
   fetchImpl: async () => { pendingCalls++; return json({ pending: true }, 202); } });
 assert.equal(pending.pending, true);
 assert.equal(pendingCalls, 1, 'pending claim cannot start work');
+async function queueFixture({ maxPaidJobs = 1, unknown = false, pending = false } = {}) {
+  const calls = []; const events = []; let index = 0;
+  const wrapped = testFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, maxPaidJobs,
+    onObservation: value => events.push(value), fetchImpl: async (url, init) => {
+      calls.push({ url: String(url), init });
+      assert.equal(init.redirect, 'error');
+      if (String(url).endsWith('/v1/agent/turn')) return json({ ...turn(`queue-${index++}`), actions: [] });
+      assert.equal(init.headers.authorization, headers.authorization);
+      if (String(url).endsWith('/v1/resources/jobs')) return json({ jobs: [{ id: 'completed-history', assignedToYou: true, state: 'accepted' }], assignedJobs: [
+        { id: 'foreign', assignedToYou: false, state: 'open' },
+        { id: 'submitted', assignedToYou: true, state: 'submitted' },
+        { id: 'own-1', assignedToYou: true, state: 'open' },
+        { id: 'own-2', assignedToYou: true, state: 'claimed' },
+      ] });
+      if (String(url).endsWith('/claim')) {
+        if (unknown) throw new Error('unknown');
+        if (pending) return json({ pending: true }, 202);
+        return json({ job: { state: 'claimed' } });
+      }
+      if (String(url).endsWith('/work')) return json({ job: { state: 'submitted', report: { text: 'private-token' } } });
+      throw new Error('Unexpected request');
+    } });
+  return { wrapped, calls, events };
+}
+for (const settings of [{}, { unknown: true }, { pending: true }]) {
+  const queue = await queueFixture(settings);
+  for (let i = 0; i < 4; i++) await queue.wrapped(`${baseUrl}/v1/agent/turn`, { headers });
+  assert.equal(queue.calls.filter(c => c.url.endsWith('/claim')).length, 1);
+  assert.equal(queue.calls.filter(c => c.url.endsWith('/work')).length, settings.unknown || settings.pending ? 0 : 1);
+  assert(queue.calls.every(c => !c.url.includes('foreign') && !c.url.includes('/accept')));
+  assert(!JSON.stringify(queue.events).includes('private-token'), 'raw work output is never telemetry');
+  assert(queue.events.every(e => e.retry === false));
+}
+const quota = await queueFixture({ maxPaidJobs: 2 });
+await quota.wrapped(`${baseUrl}/v1/agent/turn`, { headers });
+await quota.wrapped(`${baseUrl}/v1/agent/turn`, { headers });
+assert.equal(quota.calls.filter(c => c.url.endsWith('/work')).length, 2);
+const disabledQueue = await queueFixture({ maxPaidJobs: 0 });
+await disabledQueue.wrapped(`${baseUrl}/v1/agent/turn`, { headers });
+assert.equal(disabledQueue.calls.length, 1, 'paid queue polling requires explicit opt-in');
+assert.throws(() => createResourceAgentFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, maxPaidJobs: 11 }));
+await assert.rejects(() => quota.wrapped('https://evil.test/v1/agent/turn', { headers }), /origin/);
+let pacedNow = 0; let pacedTurn = 0; const starts = [];
+const paced = createResourceAgentTestFetch({ baseUrl, providerId: 'openai:reasoning.v1', maxOutputTokens: 256, maxPaidJobs: 1,
+  fetchImpl: async (url, init) => {
+    starts.push({ url: String(url), at: pacedNow });
+    assert.equal(init.redirect, 'error');
+    if (String(url).endsWith('/v1/agent/turn')) return json(turn(`paced-${pacedTurn++}`));
+    if (String(url).endsWith('/v1/resources/jobs')) return json({ jobs: [{ id: 'paced-job', assignedToYou: true, state: 'open' }] });
+    if (String(url).endsWith('/claim')) return json({ job: { state: 'claimed' } });
+    if (String(url).endsWith('/work')) return json({ job: { state: 'submitted' } });
+    if (String(url).endsWith('/compute')) return json({ call: { id: 'paced-call', output: '{"actionId":"b"}', costUsdMicros: 10 } });
+    if (String(url).endsWith('/v1/agent/act')) return json({ ok: true });
+    throw new Error('Unexpected paced URL');
+  } }, { now: () => pacedNow, sleep: async ms => { pacedNow += ms; } });
+await paced(`${baseUrl}/v1/agent/turn`, { headers });
+await paced(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, body: '{}' });
+assert.equal(starts.length, 6, 'turn, queue, claim, work, compute and gameplay share one scheduler');
+for (let i = 1; i < starts.length; i++) assert(starts[i].at - starts[i - 1].at >= 3100);
+const startedCount = starts.length;
+await assert.rejects(() => paced('https://evil.test/v1/resources/jobs', { headers }), /origin/);
+assert.equal(starts.length, startedCount);
+const aborted = new AbortController(); aborted.abort();
+await assert.rejects(() => paced(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, signal: aborted.signal }));
+assert.equal(starts.length, startedCount, 'queued cancelled work never dispatches');
+assert.throws(() => createResourceAgentTestFetch({ baseUrl, providerId: 'p', maxOutputTokens: 1 }, {}));
+const originalFetch = globalThis.fetch; const productionStarts = [];
+try {
+  globalThis.fetch = async () => { productionStarts.push(performance.now()); return json({ job: { state: 'claimed' } }); };
+  await runPaidWork({ baseUrl, token: 'production-clock-test', jobId: 'clock-job', providerId: 'metered', maxOutputTokens: 20 });
+  assert.equal(productionStarts.length, 2);
+  assert(productionStarts[1] - productionStarts[0] >= 3100, 'standalone default transport enforces production monotonic cadence');
+} finally { globalThis.fetch = originalFetch; }
 console.log('resource-agent: compute selection, bounded authority, observations, and work recovery passed');

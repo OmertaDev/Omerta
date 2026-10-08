@@ -2,7 +2,44 @@
 import crypto from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { performance } from 'node:perf_hooks';
 import { recommendationOf, runAgentAlpha } from './agent-alpha.js';
+
+const REQUEST_INTERVAL_MS = 3100;
+const transportCache = new WeakMap();
+const productionClock = { now: () => performance.now(), sleep: ms => new Promise(resolveSleep => setTimeout(resolveSleep, ms)) };
+
+function pacedTransport(origin, fetchImpl, clock = productionClock, cache = true) {
+  let origins = transportCache.get(fetchImpl);
+  if (cache && origins?.has(origin)) return origins.get(origin);
+  const identities = new Map();
+  const transport = async (input, init = {}) => {
+    const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
+    const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
+    const signal = init.signal || (input instanceof Request ? input.signal : null);
+    const authorization = headers.get('authorization');
+    if (authorization && url.origin !== origin) throw new Error('Credential origin mismatch');
+    if (!authorization) return fetchImpl(input, { ...init, redirect: 'error' });
+    let identity = identities.get(authorization);
+    if (!identity) { identity = { tail: Promise.resolve(), started: -Infinity }; identities.set(authorization, identity); }
+    const dispatch = identity.tail.then(async () => {
+      while (clock.now() - identity.started < REQUEST_INTERVAL_MS) {
+        if (signal?.aborted) throw signal.reason || new DOMException('Aborted', 'AbortError');
+        await clock.sleep(REQUEST_INTERVAL_MS - (clock.now() - identity.started));
+      }
+      if (signal?.aborted) throw signal.reason || new DOMException('Aborted', 'AbortError');
+      identity.started = clock.now();
+      return fetchImpl(input, { ...init, redirect: 'error' });
+    });
+    identity.tail = dispatch.then(() => {}, () => {});
+    return dispatch;
+  };
+  if (cache) {
+    if (!origins) { origins = new Map(); transportCache.set(fetchImpl, origins); }
+    origins.set(origin, transport);
+  }
+  return transport;
+}
 
 function originOf(baseUrl) {
   const url = new URL(baseUrl);
@@ -13,7 +50,7 @@ function originOf(baseUrl) {
 }
 
 function validateOptions(providerId, maxOutputTokens, role) {
-  if (typeof providerId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(providerId)) throw new Error('Invalid provider');
+  if (typeof providerId !== 'string' || !/^[A-Za-z0-9:_.-]{1,128}$/.test(providerId)) throw new Error('Invalid provider');
   if (!Number.isSafeInteger(maxOutputTokens) || maxOutputTokens < 1 || maxOutputTokens > 16384) throw new Error('Invalid output limit');
   recommendationOf({}, role);
 }
@@ -24,12 +61,17 @@ function safeCandidate(turn, candidate, role) {
   return recommendationOf({ ...turn, recommendedActionId: candidate.id, actions: [candidate] }, role).action === candidate;
 }
 
-export function createResourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputTokens,
-  minExpectedGameCashGain = 100, role = 'general', requestIdFactory = crypto.randomUUID, onObservation = () => {} }) {
+function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputTokens,
+  minExpectedGameCashGain = 100, role = 'general', maxPaidJobs = 0,
+  requestIdFactory = crypto.randomUUID, onObservation = () => {} }, clock, cache) {
   const origin = originOf(baseUrl);
+  fetchImpl = pacedTransport(origin, fetchImpl, clock, cache);
   validateOptions(providerId, maxOutputTokens, role);
   if (!Number.isFinite(minExpectedGameCashGain) || minExpectedGameCashGain < 0) throw new Error('Invalid gain threshold');
+  if (!Number.isSafeInteger(maxPaidJobs) || maxPaidJobs < 0 || maxPaidJobs > 10) throw new Error('Invalid paid work limit');
   const attempted = new Set();
+  const attemptedJobs = new Set();
+  const polledTurns = new Set();
   const outcomes = [];
   const observe = event => { try { onObservation(event); } catch { /* Telemetry cannot change gameplay. */ } };
   return async (input, init = {}) => {
@@ -41,6 +83,27 @@ export function createResourceAgentFetch({ baseUrl, fetchImpl = fetch, providerI
     if (url.origin !== origin || url.pathname !== '/v1/agent/turn' || url.search || method !== 'GET' || !response.ok) return response;
     let turn;
     try { turn = await response.clone().json(); } catch { return response; }
+    const bearer = /^Bearer (.+)$/i.exec(headers.get('authorization') || '');
+    if (bearer && typeof turn?.turnId === 'string' && !polledTurns.has(turn.turnId) && attemptedJobs.size < maxPaidJobs) {
+      polledTurns.add(turn.turnId);
+      if (polledTurns.size > 1000) polledTurns.delete(polledTurns.values().next().value);
+      try {
+        const queue = await fetchImpl(`${origin}/v1/resources/jobs`, { method: 'GET', redirect: 'error', headers: { authorization: headers.get('authorization') } });
+        const queueBody = queue.ok ? await queue.json() : null;
+        const jobs = queueBody?.assignedJobs ?? queueBody?.jobs;
+        if (Array.isArray(jobs) && jobs.length <= 100) {
+          for (const job of jobs) {
+            if (attemptedJobs.size >= maxPaidJobs) break;
+            if (job?.assignedToYou !== true || !['open', 'claimed'].includes(job.state)
+                || typeof job.id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(job.id) || attemptedJobs.has(job.id)) continue;
+            attemptedJobs.add(job.id); // Unknown outcomes consume this run's quota and never retry.
+            const result = await runPaidWork({ baseUrl: origin, token: bearer[1], jobId: job.id, providerId, maxOutputTokens, fetchImpl });
+            observe({ kind: 'paid_work', jobId: job.id, stage: result.stage, status: result.status || null,
+              pending: result.pending === true || result.result?.pending === true, retry: false });
+          }
+        }
+      } catch { observe({ kind: 'paid_work_queue_unavailable', retry: false }); }
+    }
     const cash = turn?.state?.resources?.cash;
     for (let i = outcomes.length - 1; i >= 0; i--) {
       const pending = outcomes[i];
@@ -91,12 +154,23 @@ export function createResourceAgentFetch({ baseUrl, fetchImpl = fetch, providerI
   };
 }
 
+export function createResourceAgentFetch(options) {
+  return resourceAgentFetch(options, productionClock, true);
+}
+
+// Only this explicitly named test constructor accepts a fake monotonic clock.
+export function createResourceAgentTestFetch(options, { now, sleep }) {
+  if (typeof now !== 'function' || typeof sleep !== 'function') throw new Error('Resource test timing requires now and sleep');
+  return resourceAgentFetch(options, { now, sleep }, false);
+}
+
 export async function runResourceAgent(options) {
   return runAgentAlpha({ ...options, fetchImpl: createResourceAgentFetch(options) });
 }
 
 export async function runPaidWork({ baseUrl, token, jobId, providerId, maxOutputTokens, fetchImpl = fetch }) {
   const origin = originOf(baseUrl);
+  if (fetchImpl === globalThis.fetch) fetchImpl = pacedTransport(origin, fetchImpl);
   validateOptions(providerId, maxOutputTokens, 'general');
   if (typeof token !== 'string' || !token || typeof jobId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(jobId)) throw new Error('Invalid work identity');
   const post = (path, body) => fetchImpl(`${origin}${path}`, { method: 'POST', redirect: 'error',
@@ -118,12 +192,12 @@ export async function runPaidWork({ baseUrl, token, jobId, providerId, maxOutput
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const options = { baseUrl: process.env.OMERTA_BASE_URL || 'https://www.omerta.fun' };
   const flags = { '--base': 'baseUrl', '--session': 'sessionFile', '--report': 'reportFile', '--role': 'role',
-    '--provider': 'providerId', '--max-output-tokens': 'maxOutputTokens', '--max-actions': 'maxActions' };
+    '--provider': 'providerId', '--max-output-tokens': 'maxOutputTokens', '--max-actions': 'maxActions', '--max-paid-jobs': 'maxPaidJobs' };
   try {
     for (let i = 2; i < process.argv.length; i++) {
       const key = flags[process.argv[i]];
       if (!key || !process.argv[i + 1]) throw new Error('Invalid option');
-      options[key] = ['maxOutputTokens', 'maxActions'].includes(key) ? Number(process.argv[++i]) : process.argv[++i];
+      options[key] = ['maxOutputTokens', 'maxActions', 'maxPaidJobs'].includes(key) ? Number(process.argv[++i]) : process.argv[++i];
     }
     runResourceAgent(options).then(result => process.stdout.write(`${JSON.stringify(result)}\n`))
       .catch(() => { process.stderr.write('resource_agent_error\n'); process.exitCode = 1; });
