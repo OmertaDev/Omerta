@@ -20,6 +20,10 @@ export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
 // real-Postgres branch never calls this compatibility registrar.
 export function registerPgMemCompatibility(mem, DataType) {
   mem.public.registerFunction({
+    name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,
+    implementation: (value, divisor) => value % divisor,
+  });
+  mem.public.registerFunction({
     name: 'translate', args: [DataType.text, DataType.text, DataType.text], returns: DataType.text,
     implementation: (value, from, to) => {
       const source = Array.from(from), target = Array.from(to);

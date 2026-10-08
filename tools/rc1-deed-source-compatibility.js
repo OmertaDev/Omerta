@@ -248,7 +248,7 @@ export function assertCarMeltRulesCompatibility(text) {
 // car-melt evidence; they grant no depot, supplier or agent authority coverage.
 export const ECONOMY_SOURCE_CURRENT_PINS = Object.freeze({
   "src/economy.js": "c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b",
-  "src/server.js": "bede99f055c871f8f73382f1eb68a2ce4fdf1f0418777739406ff45448742f4d"
+  "src/server.js": "2a8f9eb10ccebed5f5304230435f33cd1e39241c616a7cb4c442097002530d57"
 });
 const economySourceInverse = {
   "src/economy.js": {
@@ -267,6 +267,8 @@ const economySourceInverse = {
   "src/server.js": {
     "baseline": "cf17311eeea98729ba277c722eb18426cdbfd1da863859684fdeec31a793dc97",
     "changes": [
+      ["import { register as registerResources } from './routes/resources.js';\n",""],
+      ["  registerResources(app, { pool, auth, modAuth });\n",""],
       [
         "import * as Depot from './depot.js';\nimport * as Delivery from './delivery.js';\nimport { register as registerDelivery } from './routes/delivery.js';\nimport { register as registerDepot } from './routes/depot.js';\n",
         ""

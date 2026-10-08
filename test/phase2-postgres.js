@@ -343,6 +343,12 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     (rows,index) => { rows[index].definition += ' altered'; }));
   rejected('delivery quantity bound removed',mutate('delivery_commitments','delivery_commitments_quantity_check',
     (rows,index) => rows.splice(index,1)));
+  rejected('resource aggregate balance bound removed',mutate('resource_treasuries','resource_total_balance_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('resource inference replay identity removed',mutate('resource_calls','resource_calls_account_id_request_key_key',
+    (rows,index) => rows.splice(index,1)));
+  rejected('resource payment session identity altered',mutate('resource_payments','resource_payments_session_id_key',
+    (rows,index) => { rows[index].definition += ' altered'; }));
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');

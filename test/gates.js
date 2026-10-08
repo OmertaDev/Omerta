@@ -2116,6 +2116,7 @@ const SCENERY_WAIVED = {
     'corner.js:kind':     'the drawn daily-counter kind (crime|jump|…) the client jumps a tab on',
     'diplomacy.js:kind':  'pact|coalition — the discriminator',
     'market.js:kind':     'car|good|order — the discriminator every market card branches on',
+    'resourcework.js:kind': 'car|good|order copied from the public market snapshot; a listing discriminator for analysis, not a narrative catalog label',
     'game.js:kind':       'an internal progress return; crew.js attaches the label before a player sees it',
     'regimen.js:kind':    "the drawn drill; `how` in the same literal is the human sentence",
     'rules.tail.js:kind': 'the same drill helper — `how` is the sentence beside it',

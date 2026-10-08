@@ -7480,3 +7480,135 @@ CREATE TABLE IF NOT EXISTS business_external_costs (
   category TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- External-resource custody is separate from every game cash/token identity.
+CREATE TABLE IF NOT EXISTS resource_treasuries (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  mode TEXT NOT NULL CHECK (mode IN ('test','live')),
+  available_usd_micros BIGINT NOT NULL DEFAULT 0 CHECK (available_usd_micros BETWEEN 0 AND 1000000000000),
+  reserved_usd_micros BIGINT NOT NULL DEFAULT 0 CHECK (reserved_usd_micros BETWEEN 0 AND 1000000000000),
+  frozen BOOLEAN NOT NULL DEFAULT false,
+  CONSTRAINT resource_total_balance_check CHECK (available_usd_micros + reserved_usd_micros <= 1000000000000)
+);
+CREATE TABLE IF NOT EXISTS resource_ledger (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  event_key TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  available_delta BIGINT NOT NULL CHECK (available_delta BETWEEN -1000000000000 AND 1000000000000),
+  reserved_delta BIGINT NOT NULL CHECK (reserved_delta BETWEEN -1000000000000 AND 1000000000000),
+  authorized_usd_micros BIGINT NOT NULL DEFAULT 0 CHECK (authorized_usd_micros BETWEEN 0 AND 1000000000000),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(account_id,event_key)
+);
+CREATE TABLE IF NOT EXISTS resource_compute_policies (
+  account_id TEXT PRIMARY KEY REFERENCES resource_treasuries(account_id),
+  revision INT NOT NULL CHECK (revision > 0),
+  enabled BOOLEAN NOT NULL,
+  providers JSONB NOT NULL,
+  max_per_call BIGINT NOT NULL CHECK (max_per_call BETWEEN 0 AND 1000000000000),
+  max_per_day BIGINT NOT NULL CHECK (max_per_day BETWEEN 0 AND 1000000000000),
+  minimum_reserve BIGINT NOT NULL CHECK (minimum_reserve BETWEEN 0 AND 1000000000000),
+  allow_stored_responses BOOLEAN NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS resource_rounds (
+  id TEXT PRIMARY KEY,
+  provider_id TEXT NOT NULL,
+  config JSONB NOT NULL,
+  max_output_tokens INT NOT NULL CHECK (max_output_tokens > 0),
+  capacity INT NOT NULL CHECK (capacity BETWEEN 1 AND 100),
+  reserve_usd_micros BIGINT NOT NULL CHECK (reserve_usd_micros BETWEEN 1 AND 1000000000000),
+  commit_until TIMESTAMPTZ NOT NULL,
+  reveal_until TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','settled')),
+  settlement JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS resource_bids (
+  id TEXT PRIMARY KEY,
+  round_id TEXT NOT NULL REFERENCES resource_rounds(id),
+  account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  commitment TEXT NOT NULL,
+  maximum_usd_micros BIGINT NOT NULL CHECK (maximum_usd_micros BETWEEN 1 AND 1000000000000),
+  bid_usd_micros BIGINT CHECK (bid_usd_micros BETWEEN 1 AND 1000000000000),
+  policy_revision INT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'sealed' CHECK (status IN ('sealed','revealed','won','lost')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(round_id,account_id)
+);
+CREATE TABLE IF NOT EXISTS resource_credits (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  bid_id TEXT NOT NULL UNIQUE REFERENCES resource_bids(id),
+  provider_id TEXT NOT NULL,
+  config JSONB NOT NULL,
+  max_output_tokens INT NOT NULL CHECK (max_output_tokens > 0),
+  price_usd_micros BIGINT NOT NULL CHECK (price_usd_micros BETWEEN 1 AND 1000000000000),
+  status TEXT NOT NULL DEFAULT 'unused' CHECK (status IN ('unused','reserved','consumed','refunded')),
+  expires_at TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS resource_calls (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  request_key TEXT NOT NULL,
+  request_hash TEXT NOT NULL,
+  provider_id TEXT NOT NULL,
+  config JSONB NOT NULL,
+  max_output_tokens INT NOT NULL CHECK (max_output_tokens > 0),
+  cap_usd_micros BIGINT NOT NULL CHECK (cap_usd_micros BETWEEN 1 AND 1000000000000),
+  cost_usd_micros BIGINT CHECK (cost_usd_micros BETWEEN 0 AND 1000000000000),
+  provider_cost_usd_micros BIGINT CHECK (provider_cost_usd_micros BETWEEN 0 AND 1000000000000),
+  policy_revision INT NOT NULL,
+  purpose JSONB NOT NULL,
+  output TEXT,
+  provider_request_id TEXT UNIQUE,
+  error_code TEXT,
+  credit_id TEXT UNIQUE REFERENCES resource_credits(id),
+  simulated BOOLEAN NOT NULL DEFAULT false,
+  status TEXT NOT NULL DEFAULT 'reserved' CHECK (status IN ('reserved','sending','succeeded','failed','unknown')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sent_at TIMESTAMPTZ,
+  settled_at TIMESTAMPTZ,
+  UNIQUE(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS resource_payments (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  request_key TEXT NOT NULL,
+  amount_usd_micros BIGINT NOT NULL CHECK (amount_usd_micros BETWEEN 10000 AND 1000000000 AND mod(amount_usd_micros,10000) = 0),
+  mode TEXT NOT NULL CHECK (mode IN ('test','live')),
+  state TEXT NOT NULL DEFAULT 'creating' CHECK (state IN ('creating','pending','settled','unknown','refunded','disputed')),
+  session_id TEXT UNIQUE,
+  payment_intent_id TEXT UNIQUE,
+  stripe_event_id TEXT UNIQUE,
+  checkout_url TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  settled_at TIMESTAMPTZ,
+  UNIQUE(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS resource_services (
+  account_id TEXT PRIMARY KEY REFERENCES resource_treasuries(account_id),
+  revision INT NOT NULL DEFAULT 1 CHECK (revision > 0),
+  enabled BOOLEAN NOT NULL,
+  price_usd_micros BIGINT NOT NULL CHECK (price_usd_micros BETWEEN 10000 AND 1000000000 AND mod(price_usd_micros,10000) = 0)
+);
+CREATE TABLE IF NOT EXISTS resource_jobs (
+  id TEXT PRIMARY KEY,
+  buyer_account TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  seller_account TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  request_key TEXT NOT NULL,
+  service_revision INT NOT NULL,
+  price_usd_micros BIGINT NOT NULL CHECK (price_usd_micros BETWEEN 10000 AND 1000000000),
+  input JSONB NOT NULL,
+  state TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open','claimed','submitted','accepted','disputed','refunded')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  claimed_at TIMESTAMPTZ,
+  submitted_at TIMESTAMPTZ,
+  accept_after TIMESTAMPTZ,
+  report JSONB,
+  call_id TEXT REFERENCES resource_calls(id),
+  CHECK (buyer_account <> seller_account),
+  UNIQUE(buyer_account,request_key)
+);

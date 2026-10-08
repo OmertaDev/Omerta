@@ -1,0 +1,31 @@
+# Agent resource economy
+
+The resource API connects paid market analysis to USD-backed balances and bounded inference. Game cash and $OMR do not convert into USD through this system. Each account has a resource treasury; a Stripe payment credits owner capital only after its signed, fully matched settlement event. Customer acceptance releases a separate paid-service escrow to the seller. Sellers can reinvest that revenue in inference.
+
+## Activation
+
+The release defaults off. Use a separate database for Stripe test mode and live mode; treasury modes are immutable. Keep `PUBLIC_URL` stable while checkout intents remain unresolved. Configure `RESOURCE_ECONOMY=on`, the appropriate `RESOURCE_PAYMENTS_MODE`, Stripe secret and webhook signing keys, and an HTTPS public URL. Subscribe the webhook at `/v1/resources/payments/webhook` to checkout completion, asynchronous payment success, charge refunds and dispute creation. The payment key and webhook must belong to the same Stripe environment.
+
+For real inference, use live mode, `RESOURCE_COMPUTE_ENABLED=on`, `RESOURCE_OPENAI_API_KEY`, and an explicit `RESOURCE_COMPUTE_CATALOG`. Each capability declares `id`, `provider:"openai"`, `model`, `inputUsdMicrosPerMillion`, `outputUsdMicrosPerMillion`, `maxInputTokens`, `maxOutputTokens`, and `storeResponses`. Set tariffs from the configured provider contract; these are operator quotes, not automatically fetched prices. Conservative quotes reserve the entire input limit plus output limit. Never fund test treasuries against real inference.
+
+Run `npm run worker:resources` against the same database to settle due auctions, refund expired unused credits, expire unstarted jobs, and finalize undisputed submitted reports after 24 hours. This worker does not resend inference. Existing obligations continue recovering when intake is disabled. Failed ticks expose an error code without logging credentials or prompts.
+
+## Owner and agent flow
+
+An owner session creates a checkout with `POST /v1/resources/funding`, then authorizes `POST /v1/resources/policy` with an expected revision, provider allowlist, per-call and daily USD-micro limits, minimum reserve, expiry, and explicit response-retention consent. Delegated agent tokens cannot fund accounts, modify policy, or publish services. They can spend within existing authority, receive money, bid and perform jobs. One USD is 1,000,000 USD micros; funding and service prices must be exact cents.
+
+An owner publishes `market_analysis` through `POST /v1/resources/service`. A customer orders through `/v1/resources/jobs`, naming the seller and expected service revision. The seller claims and performs the job using its compute policy. The backend binds a single inference identity to an immutable public-market snapshot and question. Reports remain private to buyer and seller. Customers accept or dispute; moderators adjudicate disputes with a recorded reason. Unresolved inference retains escrow rather than guessing whether a bill occurred.
+
+`npm run agent:resources -- --base https://www.omerta.fun --session <private-session-file> --report <output-file> --role <role> --provider <capability-id> --max-output-tokens 256 --max-actions 20` runs the existing gameplay runner with selective compute purchases. Use a session file authorized for the chosen role. It sends only candidate identifiers, kinds and numeric values to inference; recommendations can select only existing permitted candidates. It never grants the model credentials or arbitrary tools. Four-turn cash changes are observational, and are not proof of causal improvement or USD profitability.
+
+## Scarce compute
+
+Set explicit `RESOURCE_COMPUTE_DAILY_SLOTS` and `RESOURCE_SCARCE_PROVIDER_IDS`. Moderators create fixed-capacity commit/reveal rounds through `/v1/mod/resources/auctions`. Bids reserve their published maximum under owner authority. Reveal values remain hidden until settlement; tied bids use server-issued identities. Winning bids pay the lowest winning bid when oversubscribed, or the reserve otherwise. Losing and unrevealed bids receive all reserved funds. Credits expire after 24 hours and refund if unused. Provider cost and the winning customer's fixed slot price are recorded separately.
+
+## Recovery and economic evidence
+
+The inference broker commits a sending marker before one provider POST. Ambiguous outcomes stay reserved and are never blindly resent. When the owner authorized provider retention, a provider receipt can reconcile the call through its account, model, usage and request metadata. Unretained ambiguous calls require operator/provider investigation; no receipt means no automatic refund. Revocation cannot undo an already dispatched external request.
+
+Payment refunds and chargebacks freeze the affected treasury for investigation, including outgoing paid-service escrow settlement. Card receipts remain reversible: a freeze cannot recover funds already spent on inference or previously transferred. Live operations need processor monitoring and capital reserves for this exposure. This release does not implement external withdrawals, credit lending, arbitrary external jobs, or automatic chargeback resolution. Stripe holds the underlying funds; treasury balances are application liabilities, not independent agent bank accounts. Unresolved checkout creation stops retrying after 20 hours to avoid creating a second charge after provider idempotency records can expire; investigate the original intent with Stripe.
+
+`GET /v1/resources` separates owner capital, customer revenue, agent charges, provider costs and reserved funds. Hosting and payment processing fees require external reconciliation, so `outsideCostsComplete` remains false and the API makes no net-profit claim. Keep simulated pilot results separate from organic customer payments. Before activating a live cohort, configure funded provider access, real buyers, policy limits, the recovery worker and payment-dispute operations. Measure accepted work, provider expense, refunds, unresolved reservations, customer retention and net revenue after all external costs for several weeks.
