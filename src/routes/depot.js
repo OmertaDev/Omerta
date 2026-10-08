@@ -19,17 +19,18 @@ export function register(app, { pool, auth }) {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Depot.openDepot(ch, req.body, client, h)));
   app.post('/v1/depot/:id/configure', { preHandler: auth }, async (req) =>
     controlled(req, (ch, client) => Depot.configureDepot(ch, req.params.id, req.body, client)));
-  for (const [action, handler] of [['fund', Depot.fundDepot], ['withdraw', Depot.withdrawDepot]])
-    app.post(`/v1/depot/:id/${action}`, { preHandler: auth }, async (req) =>
-      controlled(req, (ch, client, h) => handler(ch, req.params.id, req.body?.amount, client, h)));
+  app.post('/v1/depot/:id/fund', { preHandler: auth }, async (req) =>
+    controlled(req, (ch, client, h) => Depot.fundDepot(ch, req.params.id, req.body?.amount, client, h)));
+  app.post('/v1/depot/:id/withdraw', { preHandler: auth }, async (req) =>
+    controlled(req, (ch, client, h) => Depot.withdrawDepot(ch, req.params.id, req.body?.amount, client, h)));
   app.post('/v1/depot/:id/restock', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Depot.restockDepot(ch, req.params.id, client, h,
       { automated: req.user.agent === true, policyId: req.body?.policyId })));
-  for (const [action, handler] of [['receive', Depot.receiveDepot], ['cancel', Depot.cancelDepotOrder]])
-    app.post(`/v1/depot/:id/orders/:orderId/${action}`, { preHandler: auth }, async (req) =>
-      G.withCharacter(pool, req.user.sub, (ch, client, h) => action === 'receive'
-        ? handler(ch, req.params.id, req.params.orderId, client, { automated: req.user.agent === true, policyId: req.body?.policyId })
-        : guardDelegatedControl(client, req.params.id, req.user.agent === true).then(() => handler(ch, req.params.id, req.params.orderId, client, h))));
+  app.post('/v1/depot/:id/orders/:orderId/receive', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client) => Depot.receiveDepot(ch, req.params.id, req.params.orderId, client,
+      { automated: req.user.agent === true, policyId: req.body?.policyId })));
+  app.post('/v1/depot/:id/orders/:orderId/cancel', { preHandler: auth }, async (req) =>
+    controlled(req, (ch, client, h) => Depot.cancelDepotOrder(ch, req.params.id, req.params.orderId, client, h)));
   app.post('/v1/depot/:id/stock/withdraw', { preHandler: auth }, async (req) =>
     controlled(req, (ch, client, h) => Depot.withdrawDepotStock(ch, req.params.id, req.body?.qty, client, h)));
   app.post('/v1/depot/:id/close', { preHandler: auth }, async (req) =>
