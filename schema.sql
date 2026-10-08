@@ -7587,6 +7587,13 @@ CREATE TABLE IF NOT EXISTS resource_payments (
   settled_at TIMESTAMPTZ,
   UNIQUE(account_id,request_key)
 );
+CREATE TABLE IF NOT EXISTS resource_payment_intents (
+  payment_intent_id TEXT NOT NULL CHECK (char_length(payment_intent_id) BETWEEN 1 AND 128),
+  mode TEXT NOT NULL CHECK (mode IN ('test','live')),
+  reversed BOOLEAN NOT NULL DEFAULT false,
+  last_event_id TEXT NOT NULL CHECK (char_length(last_event_id) BETWEEN 1 AND 128),
+  PRIMARY KEY(payment_intent_id,mode)
+);
 CREATE TABLE IF NOT EXISTS resource_services (
   account_id TEXT PRIMARY KEY REFERENCES resource_treasuries(account_id),
   revision INT NOT NULL DEFAULT 1 CHECK (revision > 0),

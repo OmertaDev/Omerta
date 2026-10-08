@@ -71,24 +71,31 @@ export async function createResourceFunding(pool, accountId, body, { adapter = P
 export async function settleResourcePayment(pool, rawBuffer, signature, { adapter = Providers } = {}) {
   const event = await adapter.verifyPaymentWebhook(rawBuffer, signature);
   const object = event?.data?.object;
-  if (!event || !/^evt_[A-Za-z0-9_]+$/.test(event.id || '') || typeof event.livemode !== 'boolean' || !object) throw resourceError('receipt', 'Invalid verified payment event.');
+  if (!event || typeof event.id !== 'string' || event.id.length > 128 || !/^evt_[A-Za-z0-9_]+$/.test(event.id)
+      || typeof event.livemode !== 'boolean' || !object) throw resourceError('receipt', 'Invalid verified payment event.');
   const funding = ['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type);
   const freeze = ['charge.dispute.created', 'charge.refunded'].includes(event.type);
   if (!funding && !freeze) return { ignored: true };
   const intentId = typeof object.payment_intent === 'string' ? object.payment_intent : object.payment_intent?.id;
-  if (!/^pi_[A-Za-z0-9_]+$/.test(intentId || '')) throw resourceError('receipt', 'Payment intent is missing.');
-  const candidate = funding
-    ? (await pool.query('SELECT * FROM resource_payments WHERE id=$1', [object.metadata?.resourcePaymentId || ''])).rows[0]
-    : (await pool.query('SELECT * FROM resource_payments WHERE payment_intent_id=$1', [intentId])).rows[0];
-  if (!candidate) {
-    if (funding) throw resourceError('pending', 'Payment binding is not yet available; retry this receipt.');
-    return { ignored: true };
-  }
+  if (typeof intentId !== 'string' || intentId.length > 128 || !/^pi_[A-Za-z0-9_]+$/.test(intentId)) throw resourceError('receipt', 'Payment intent is missing.');
+  if (typeof object.livemode === 'boolean' && object.livemode !== event.livemode) throw resourceError('mode', 'Receipt payment environment mismatch.');
+  const mode = event.livemode ? 'live' : 'test';
   return resourceTransaction(pool, async client => {
+    // Serialize receipts by the external intent even before a checkout is bound.
+    // A reversal is durable and cannot be erased by a later stale paid callback.
+    await client.query('INSERT INTO resource_payment_intents(payment_intent_id,mode,last_event_id) VALUES($1,$2,$3) ON CONFLICT(payment_intent_id,mode) DO NOTHING', [intentId, mode, event.id]);
+    const intent = (await client.query('SELECT * FROM resource_payment_intents WHERE payment_intent_id=$1 AND mode=$2 FOR UPDATE', [intentId, mode])).rows[0];
+    const candidate = funding
+      ? (await client.query('SELECT * FROM resource_payments WHERE id=$1', [object.metadata?.resourcePaymentId || ''])).rows[0]
+      : (await client.query('SELECT * FROM resource_payments WHERE payment_intent_id=$1', [intentId])).rows[0];
+    if (freeze) await client.query('UPDATE resource_payment_intents SET reversed=true,last_event_id=$3 WHERE payment_intent_id=$1 AND mode=$2', [intentId, mode, event.id]);
+    if (!candidate) {
+      if (funding) throw resourceError('pending', 'Payment binding is not yet available; retry this receipt.');
+      return { resourceAction: 'funding_reversal_held', held: true };
+    }
     const treasury = (await client.query('SELECT * FROM resource_treasuries WHERE account_id=$1 FOR UPDATE', [candidate.account_id])).rows[0];
     const payment = (await client.query('SELECT * FROM resource_payments WHERE id=$1 FOR UPDATE', [candidate.id])).rows[0];
-    if (!treasury || treasury.mode !== payment.mode || event.livemode !== (payment.mode === 'live')
-        || typeof object.livemode === 'boolean' && object.livemode !== event.livemode) throw resourceError('mode', 'Receipt payment environment mismatch.');
+    if (!treasury || treasury.mode !== payment.mode || payment.mode !== mode) throw resourceError('mode', 'Receipt payment environment mismatch.');
     if (freeze) {
       if (payment.payment_intent_id !== intentId) throw resourceError('receipt', 'Disputed payment identity mismatch.');
       await client.query('UPDATE resource_treasuries SET frozen=true WHERE account_id=$1', [payment.account_id]);
@@ -103,9 +110,18 @@ export async function settleResourcePayment(pool, rawBuffer, signature, { adapte
         || object.client_reference_id !== payment.id || object.payment_status !== 'paid' || object.currency !== 'usd'
         || !Number.isSafeInteger(object.amount_total) || object.amount_total * 10000 !== Number(payment.amount_usd_micros)
         || payment.payment_intent_id && payment.payment_intent_id !== intentId) throw resourceError('receipt', 'Checkout receipt terms mismatch.');
-    if (['settled', 'disputed', 'refunded'].includes(payment.state)) return { resourceAction: 'funding', payment: paymentView(payment), duplicate: true };
     const reused = (await client.query('SELECT id FROM resource_payments WHERE payment_intent_id=$1 OR stripe_event_id=$2', [intentId, event.id])).rows[0];
     if (reused && reused.id !== payment.id) throw resourceError('receipt', 'Payment receipt was already bound.');
+    if (intent.reversed) {
+      await client.query('UPDATE resource_treasuries SET frozen=true WHERE account_id=$1', [payment.account_id]);
+      await client.query("UPDATE resource_payments SET state='disputed',payment_intent_id=$2 WHERE id=$1", [payment.id, intentId]);
+      const eventKey = `payment_event:${event.id}`;
+      const recorded = (await client.query('SELECT id FROM resource_ledger WHERE account_id=$1 AND event_key=$2', [payment.account_id, eventKey])).rows[0];
+      if (!recorded) await moveResourceMoney(client, payment.account_id, 0, 0, 'payment_dispute', eventKey);
+      return { resourceAction: 'funding_frozen', paymentId: payment.id, frozen: true, creditedUsdMicros: 0 };
+    }
+    if (['settled', 'disputed', 'refunded'].includes(payment.state)) return { resourceAction: 'funding', payment: paymentView(payment), duplicate: true };
+    await client.query('UPDATE resource_payment_intents SET last_event_id=$3 WHERE payment_intent_id=$1 AND mode=$2', [intentId, mode, event.id]);
     await moveResourceMoney(client, payment.account_id, Number(payment.amount_usd_micros), 0, 'capital', `payment:${payment.id}`);
     await client.query("UPDATE resource_payments SET state='settled',payment_intent_id=$2,stripe_event_id=$3,settled_at=NOW() WHERE id=$1", [payment.id, intentId, event.id]);
     return { resourceAction: 'funding', payment: paymentView({ ...payment, state: 'settled' }) };

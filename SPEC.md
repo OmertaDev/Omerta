@@ -15,7 +15,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 | Backend modules | **301** files, **109665** lines (recursive source inventory) |
 | Test suites | **456** files, **140852** lines (recursive source inventory) |
 | HTTP routes | **864** registrations (**864** unique) |
-| Database tables | **385** (`schema.sql`, 7614 lines) |
+| Database tables | **386** (`schema.sql`, 7621 lines) |
 | Client | **13845** lines (public/index.html, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |

@@ -1047,6 +1047,26 @@
       "definition": "CHECK (reserved_delta >= '-1000000000000'::bigint AND reserved_delta <= '1000000000000'::bigint)"
     },
     {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_last_event_id_check",
+      "definition": "CHECK (char_length(last_event_id) >= 1 AND char_length(last_event_id) <= 128)"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_mode_check",
+      "definition": "CHECK (mode = ANY (ARRAY['test'::text, 'live'::text]))"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_payment_intent_id_check",
+      "definition": "CHECK (char_length(payment_intent_id) >= 1 AND char_length(payment_intent_id) <= 128)"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_pkey",
+      "definition": "PRIMARY KEY (payment_intent_id, mode)"
+    },
+    {
       "table_name": "resource_payments",
       "name": "resource_payments_account_id_fkey",
       "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
@@ -1694,6 +1714,12 @@
       "frozen",
       "mode",
       "reserved_usd_micros"
+    ],
+    "resource_payment_intents": [
+      "last_event_id",
+      "mode",
+      "payment_intent_id",
+      "reversed"
     ]
   }
 }

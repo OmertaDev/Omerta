@@ -8,12 +8,18 @@ process.env.PUBLIC_URL = 'https://omerta.test/nested?untrusted=ignored';
 const db = await commandDatabase('resourcepayments');
 const { pool } = db;
 const sessions = new Map(); const sent = [];
-let next = 0; let ambiguous = false; let early = false;
+let next = 0; let ambiguous = false; let early = false; let earlyReversal = false;
 const adapter = {
   async createPaymentSession(options) {
     sent.push(options);
     if (ambiguous) { ambiguous = false; throw new Error('unknown send'); }
     if (!sessions.has(options.id)) sessions.set(options.id, { sessionId: `cs_test_${++next}`, url: `https://checkout.stripe.com/c/test${next}`, amountUsdMicros: options.amountUsdMicros });
+    if (earlyReversal) {
+      earlyReversal = false;
+      const paid = event(options.id, sessions.get(options.id).sessionId, options.amountUsdMicros);
+      assert.equal((await settle(reversal(paid))).held, true);
+      await assert.rejects(() => settle(paid), e => e.code === 'resource_pending');
+    }
     if (early) {
       early = false;
       await assert.rejects(() => settleResourcePayment(pool, Buffer.from('{}'), 'signed', { adapter: {
@@ -34,6 +40,8 @@ function event(id, sessionId, amount, extras = {}) {
       payment_intent: `pi_${id.replaceAll('-', '')}` } }, ...extras };
 }
 const settle = data => settleResourcePayment(pool, Buffer.from(JSON.stringify(data)), 'signed', { adapter });
+const reversal = (paid, type = 'charge.refunded') => ({ id: `evt_reverse_${paid.data.object.payment_intent.slice(3)}`,
+  type, livemode: paid.livemode, data: { object: { payment_intent: paid.data.object.payment_intent } } });
 try {
   await addPlayer(pool, 'payment-owner', 'Payment Owner');
   const body = { requestId: 'first', amountUsdMicros: 1000000 };
@@ -94,6 +102,42 @@ try {
   assert.equal((await pool.query('SELECT state FROM resource_payments WHERE id=$1', [funding.payment.id])).rows[0].state, 'disputed');
   assert.equal(Number((await pool.query('SELECT available_usd_micros FROM resource_treasuries WHERE account_id=$1', ['payment-owner'])).rows[0].available_usd_micros), postgres ? 1020000 : 1000000);
   assert.equal((await pool.query("SELECT id FROM resource_ledger WHERE event_key='payment_event:evt_disputed'")).rows.length, 1);
+  for (const [account, beforeBinding] of [['reverse-first', false], ['reverse-before-binding', true]]) {
+    await addPlayer(pool, account, account);
+    earlyReversal = beforeBinding;
+    const opening = await createResourceFunding(pool, account, { requestId: 'opening', amountUsdMicros: 10000 }, { adapter });
+    const paid = event(opening.payment.id, sessions.get(opening.payment.id).sessionId, 10000);
+    if (!beforeBinding) assert.equal((await settle(reversal(paid, 'charge.dispute.created'))).held, true);
+    assert.equal((await settle(paid)).creditedUsdMicros, 0);
+    assert.equal((await settle(paid)).creditedUsdMicros, 0, 'stale paid replay never mints reversed funding');
+    const treasury = (await pool.query('SELECT * FROM resource_treasuries WHERE account_id=$1', [account])).rows[0];
+    assert.equal(Number(treasury.available_usd_micros), 0); assert.equal(treasury.frozen, true);
+    assert.equal((await pool.query('SELECT state,payment_intent_id FROM resource_payments WHERE id=$1', [opening.payment.id])).rows[0].state, 'disputed');
+    assert.equal((await pool.query("SELECT id FROM resource_ledger WHERE account_id=$1 AND kind='capital'", [account])).rows.length, 0);
+    await settle(reversal(paid)); // A known duplicate reversal stays frozen without a charge.
+  }
+  await addPlayer(pool, 'mode-isolated', 'Mode Isolation');
+  const modeFunding = await createResourceFunding(pool, 'mode-isolated', { requestId: 'mode', amountUsdMicros: 10000 }, { adapter });
+  const modePaid = event(modeFunding.payment.id, sessions.get(modeFunding.payment.id).sessionId, 10000);
+  modePaid.data.object.payment_intent = 'pi_mode_shared';
+  assert.equal((await settle({ ...reversal(modePaid), livemode: true })).held, true);
+  assert.equal((await settle(modePaid)).payment.state, 'settled');
+  assert.equal((await pool.query('SELECT frozen FROM resource_treasuries WHERE account_id=$1', ['mode-isolated'])).rows[0].frozen, false);
+  await assert.rejects(() => settle({ ...reversal(modePaid), id: 'evt_badmode', data: { object: { payment_intent: 'pi_bad_mode', livemode: true } } }), e => e.code === 'resource_mode');
+  assert.equal((await pool.query('SELECT * FROM resource_payment_intents WHERE payment_intent_id=$1', ['pi_bad_mode'])).rows.length, 0);
+  await assert.rejects(() => settle({ ...reversal(modePaid), id: 'evt_' + 'a'.repeat(128) }), e => e.code === 'resource_receipt');
+  if (postgres) {
+    await addPlayer(pool, 'payment-race', 'Payment Race');
+    const opening = await createResourceFunding(pool, 'payment-race', { requestId: 'race', amountUsdMicros: 10000 }, { adapter });
+    const paid = event(opening.payment.id, sessions.get(opening.payment.id).sessionId, 10000);
+    await Promise.all([settle(paid), settle(reversal(paid))]);
+    const raced = (await pool.query('SELECT * FROM resource_treasuries WHERE account_id=$1', ['payment-race'])).rows[0];
+    assert.equal(raced.frozen, true);
+    assert([0, 10000].includes(Number(raced.available_usd_micros)), 'either receipt ordering is safe after the reversal');
+    await settle(paid);
+    assert.equal((await pool.query('SELECT available_usd_micros FROM resource_treasuries WHERE account_id=$1', ['payment-race'])).rows[0].available_usd_micros, raced.available_usd_micros);
+    assert.equal((await pool.query('SELECT state FROM resource_payments WHERE id=$1', [opening.payment.id])).rows[0].state, 'disputed');
+  }
   assert.deepEqual(await settle({ ...receipt, type: 'unrelated.event' }), { ignored: true });
   for (const amountUsdMicros of [0, 10001, 1e9 + 10000, 1.5]) await assert.rejects(() => createResourceFunding(pool, 'payment-owner', { requestId: 'invalid', amountUsdMicros }, { adapter }));
   process.env.PUBLIC_URL = 'http://example.com';

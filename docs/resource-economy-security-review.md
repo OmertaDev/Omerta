@@ -44,6 +44,8 @@ Payment receipts verify signature/exact bytes, paid state, USD cents, metadata/c
 
 **RE-07 — medium, auxiliary-request cadence; fixed.** Compute and paid-work requests initially bypassed the gameplay runner’s request pacing and would hit the agent account’s production three-second throttle. A shared monotonic transport now spaces all authenticated turn, queue, claim, work, compute and gameplay requests by at least 3100ms. Parent-agent tests verify six-request spacing, cancellation and origin isolation with an explicitly named fake-clock seam; production has no interval override. The owner-selected paid-work quota defaults to zero, is capped at ten, and deduplicates attempted jobs including ambiguous outcomes. Only viewer-derived assigned jobs can be selected; customer acceptance is never automated by the seller. Active seller jobs are listed separately from bounded completed history.
 
+**RE-08 — high before live payments, reversed callback ordering; fixed.** A signed refund or dispute arriving before checkout completion could previously be ignored and a later success callback could create spendable funds. Each recognized receipt now locks a persistent payment-intent record before the treasury and payment records. Reversals survive missing checkout bindings; validated later completion freezes the owner, marks the payment disputed and credits nothing. Memory and native PostgreSQL regressions cover early reversal, provider-response binding races, stale callback replay, mode isolation and concurrent completion/refund settlement.
+
 Accepted operational risks and limitations: successful card payments remain reversible, and a later freeze cannot recover compute already consumed or funds already transferred before the reversal. Operators need fraud/reserve/settlement controls before enabling live funding. Prices are operator-configured estimates requiring provider billing reconciliation; hosting and payment fees are not assumed covered. Funding return URLs must remain stable while ambiguous Stripe intents are being retried because full request parameters participate in provider idempotency. Retention-off ambiguous inference requires external operator reconciliation; reservations must not be guessed free. The dedicated resource worker must actually be launched for unattended expiry/settlement. No claim of self-funding profitability follows from deterministic test demand.
 
 ## Executed evidence
@@ -93,14 +95,14 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/resourcebook.js | cec63c67a4c86b48d5a617d6175cba0da433b81c20260700e3295d20932b8d1a |
 | src/resourcecompute.js | 95638d3c769e8b7702340618f58afa3321979953cfc3b1a0b9d8afb024e5955c |
 | src/resourcecontracts.js | 3ba649e71144a7602882231c9988e6f94f218a6c0142972fe77bec96762253f2 |
-| src/resourcepayments.js | 1664e757172c86ecf77b010cb57470ce416dffb2603241824e3983f5090fe880 |
+| src/resourcepayments.js | 5380b240c388f67700851e0335127afc554fdf0e336898b0cb30ee0126029818 |
 | src/resourceproviders.js | c4ce4ebbe78db8c8de4aec6cd108807aae2521ba495ff1a654db73a29aea7223 |
 | src/resourcework.js | 65544ae71f899e770ac6887460a7d2bc64b126d1f98cf2330dfc0c032a4b5d59 |
 | src/routes/resources.js | 7c2532f845a83bb1bbc963814329bc17da8a6a8da0928ee1508b97eb82f48c20 |
 | tools/resource-agent.js | d8e9474b54486fac4f9b626daa16a71048c0f612c2ae29e143512fdf041ff4d0 |
 | tools/resource-worker.js | aeda9cec9314a0b41b3ccfa59ec8ba3df84651ba484f4d3a5917bf48ef1d537c |
 | tools/resource-economy-pilot.js | 3c375d06fb8efdf66b5430d28ab1499dbc5a2fb3a4b027d124356f08167813c0 |
-| schema.sql | 2011ff7e046d489b4da812bcf155b7c035268c2ecfb0be6c6b065221ca7cb415 |
+| schema.sql | 34614492a4385fe50f385d165108806099d0d1c3391f6cc8ee9aed2723f24457 |
 | src/server.js | 6d5cfc24df5fc2cfe7b47bfbb4f4952feba660c9737b22692c44ad2aecc7f853 |
 | src/agentgateway.js | 3d7ef59298315e8589941fcecd9686bf0d8d18223b38890abf4954f663ea0cdf |
 | src/db.js | d5d72084714652eba64548d77af4febb72aea98a60995a1b1e0f27475da03401 |
@@ -108,7 +110,7 @@ Evidence supports the scoped local test implementation and the resolved findings
 | test/resourceauction.js | ea751667e7f5dc338b30b894643b27b37b88965f93a58f171ab7219f5d0a7d44 |
 | test/resource-agent.js | 3983fcb2b77563c25367931f5665d7e1e794baa50c6c7b3be128314f7a210c7f |
 | test/resourceproviders.js | ead7c0f057a95e5639ae6f03a30c1a2999b2e3798d03a8a7adac414b5ca341b8 |
-| test/resourcepayments.js | 58e4469305704567ecf36d5d690e0187dc93031e6449dd749f63a4cbef864940 |
+| test/resourcepayments.js | 79dd5c0104c6f7098d9ead05d22da9a2ef961cdb303b7517be33a3086b2a4b18 |
 | test/resourcecompute.js | d6b9518cc176454068b5af33c00ce4ccccf8da62f8ff88c98e0281cd7f009b9e |
 | test/resourcework.js | 42c2e21890f3c472aea738ff935e7fae57ba09d46a7df7199325e69117d65e23 |
 | test/resource-worker.js | 34e3353b1a3309a9b4b223658a938f390c0d67f3b8f35671f14a1f97f9c50c64 |
