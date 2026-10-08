@@ -248,7 +248,7 @@ jobs:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: |
           npm run test:resources:postgres
-          npm run pilot:resources -- --postgres
+          npm run pilot:resources:postgres
 
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'

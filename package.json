@@ -203,7 +203,8 @@
     "agent:resources": "node tools/resource-agent.js",
     "test:resources": "node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resource-agent.js && node test/resource-worker.js",
     "test:resources:postgres": "node test/resourcepayments.js --postgres && node test/resourcecompute.js --postgres && node test/resourcework.js --postgres && node test/resource-worker.js --postgres",
-    "pilot:resources": "node tools/resource-economy-pilot.js"
+    "pilot:resources": "node tools/resource-economy-pilot.js",
+    "pilot:resources:postgres": "node tools/resource-economy-pilot.js --postgres"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
