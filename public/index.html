@@ -2491,6 +2491,12 @@
     return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
   };
   function describe(body, code) {
+    if (!body?.error && body?.depotAction === 'cash_withdraw')
+      return `$${fmt(body.withdrawn)} moved from your depot to your pocket; $${fmt(body.treasury)} remains in the business.`;
+    if (!body?.error && body?.depotAction === 'stock_withdraw')
+      return `Moved ${body.withdrawn} cargo units from your depot into your trunk; ${body.stock} remain stocked.`;
+    if (!body?.error && body?.depotAction === 'cancel_order')
+      return `Procurement cancelled: $${fmt(body.refunded)} returned to the depot treasury; ${body.awaiting} paid units await receipt.`;
     if (!body?.error && body?.deedName && body.level != null && body.costOmr != null && body.bonusBps != null)
       return `${body.deedName} upgraded to level ${body.level} — ${fmt(body.costOmr)} $OMR spent; +${body.bonusBps / 100}% weight for future full reward windows from ${new Date(Number(body.effectiveFromDay) * 86400000).toISOString().slice(0,10)} UTC. Already earned allocations are unchanged.`;
     if (body?.inviteIssued) return `Invitation ready. ${Number(body.remaining)} launch invites left — copy the link from your crew.`;

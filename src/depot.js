@@ -77,7 +77,7 @@ export async function withdrawDepot(ch, id, amount, client, h) {
   const row = await own(ch, id, client);
   if (Number(row.treasury) < amount) throw new GameError('treasury', 'Withdraw only uncommitted business cash.');
   await releaseCash(ch, row, amount, client, h);
-  return { ok: true, treasury: Number(row.treasury), withdrawn: amount };
+  return { ok: true, depotAction: 'cash_withdraw', treasury: Number(row.treasury), withdrawn: amount };
 }
 
 async function releaseCash(ch, row, amount, client, h) {
@@ -142,7 +142,7 @@ export async function cancelDepotOrder(ch, id, orderId, client, h) {
     await h.ledger(client, { currency: 'cash', amount: refund, reason: 'market:refund', counterparty: id });
   }
   await client.query("UPDATE market_listings SET qty=0,status='cancelled' WHERE id=$1", [orderId]);
-  return { ok: true, refunded: refund, awaiting: Number(order.filled_qty) };
+  return { ok: true, depotAction: 'cancel_order', refunded: refund, awaiting: Number(order.filled_qty) };
 }
 
 export async function buyFromDepot(ch, owner, id, quantity, maxUnitPrice, client, h) {
@@ -181,7 +181,7 @@ export async function withdrawDepotStock(ch, id, quantity, client, h) {
   cargo[DEPOT.good] = Number(cargo[DEPOT.good] || 0) + quantity;
   await client.query('DELETE FROM character_cargo WHERE character_id=$1 AND good_id=$2', [ch.id, DEPOT.good]);
   await client.query('INSERT INTO character_cargo (character_id,good_id,qty) VALUES ($1,$2,$3)', [ch.id, DEPOT.good, cargo[DEPOT.good]]);
-  return { ok: true, withdrawn: quantity, stock: Number(row.stock) };
+  return { ok: true, depotAction: 'stock_withdraw', withdrawn: quantity, stock: Number(row.stock) };
 }
 
 export async function closeDepot(ch, id, client, h) {
