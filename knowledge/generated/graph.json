@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "be7a025c56fe2526e2360bc69e135c6aa457b599",
+  "sourceRevision": "507a62c5c497382b876aabd0d81a17306d18188f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10233,
-    "edges": 41599,
+    "nodes": 10236,
+    "edges": 41610,
     "byNodeType": {
       "Artifact": 4345,
-      "Command": 198,
-      "Commit": 2142,
+      "Command": 199,
+      "Commit": 2144,
       "Contract": 126,
       "Document": 698,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3470,
-      "CHANGED": 16146,
+      "CHANGED": 16153,
       "CONTAINS": 4366,
-      "DECLARES": 198,
+      "DECLARES": 199,
       "DEFINED_IN": 1376,
       "DEPENDS_ON": 67,
-      "EXECUTES": 668,
+      "EXECUTES": 669,
       "HANDLED_BY": 758,
-      "HAS_COMMIT": 2142,
+      "HAS_COMMIT": 2144,
       "IMPLEMENTS": 124,
       "IMPORTS": 4104,
       "INHERITS": 42,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 26365,
+      "bytes": 26360,
       "lines": 513,
-      "version": "0f08871273c1d86b",
+      "version": "c45a5b92ef32495b",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "0f08871273c1d86b"
+          "version": "c45a5b92ef32495b"
         }
       ],
-      "lastChangedAt": "2026-10-08T18:09:25.000Z",
+      "lastChangedAt": "2026-10-08T18:41:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b59747099e4402f0691140d1129451bd7e703a72"
+      "lastChangedCommit": "507a62c5c497382b876aabd0d81a17306d18188f"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -62416,20 +62416,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 34254,
-      "lines": 227,
-      "version": "df1e342fda9345eb",
+      "bytes": 34337,
+      "lines": 228,
+      "version": "738bbf5bb4b1d0dc",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "df1e342fda9345eb"
+          "version": "738bbf5bb4b1d0dc"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:41:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "507a62c5c497382b876aabd0d81a17306d18188f"
     },
     {
       "key": "Artifact:Procfile",
@@ -87325,20 +87325,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 286154,
+      "bytes": 286209,
       "lines": 4241,
-      "version": "0982dbef5ea0a1a6",
+      "version": "fc9db9f34d153cf4",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "0982dbef5ea0a1a6"
+          "version": "fc9db9f34d153cf4"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:41:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "507a62c5c497382b876aabd0d81a17306d18188f"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -100768,6 +100768,19 @@
       ]
     },
     {
+      "key": "Command:npm:pilot:resources:postgres",
+      "type": "Command",
+      "id": "npm:pilot:resources:postgres",
+      "label": "npm run pilot:resources:postgres",
+      "command": "node tools/resource-economy-pilot.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:playthrough",
       "type": "Command",
       "id": "npm:playthrough",
@@ -112556,6 +112569,22 @@
       ]
     },
     {
+      "key": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "type": "Commit",
+      "id": "47158b8e931aa35488505948038a971c2074f06d",
+      "label": "Refresh knowledge for resource moderator ingress checks",
+      "title": "Refresh knowledge for resource moderator ingress checks",
+      "date": "2026-10-08T18:38:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/47158b8e931aa35488505948038a971c2074f06d",
+      "provenance": [
+        {
+          "commit": "47158b8e931aa35488505948038a971c2074f06d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/47158b8e931aa35488505948038a971c2074f06d"
+        }
+      ]
+    },
+    {
       "key": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
       "type": "Commit",
       "id": "4723c2382c601c947615c62f6cc885a13071aced",
@@ -113736,6 +113765,22 @@
         {
           "commit": "5077b0f8271bf4e79505623b1e97e873cd6a6d1b",
           "url": "https://github.com/OmertaDev/Omerta/commit/5077b0f8271bf4e79505623b1e97e873cd6a6d1b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:507a62c5c497382b876aabd0d81a17306d18188f",
+      "type": "Commit",
+      "id": "507a62c5c497382b876aabd0d81a17306d18188f",
+      "label": "Declare native resource pilot in exact release gate inventory",
+      "title": "Declare native resource pilot in exact release gate inventory",
+      "date": "2026-10-08T18:41:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/507a62c5c497382b876aabd0d81a17306d18188f",
+      "provenance": [
+        {
+          "commit": "507a62c5c497382b876aabd0d81a17306d18188f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/507a62c5c497382b876aabd0d81a17306d18188f"
         }
       ]
     },
@@ -157488,6 +157533,9 @@
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
+          "commit": "47158b8e931aa35488505948038a971c2074f06d"
+        },
+        {
           "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
         },
         {
@@ -158448,6 +158496,9 @@
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
         },
         {
+          "commit": "47158b8e931aa35488505948038a971c2074f06d"
+        },
+        {
           "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
         },
         {
@@ -159406,6 +159457,9 @@
         },
         {
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
+          "commit": "47158b8e931aa35488505948038a971c2074f06d"
         },
         {
           "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
@@ -160624,6 +160678,9 @@
         },
         {
           "commit": "46727268799f8719a0514d4cb27cd5531d0dcc50"
+        },
+        {
+          "commit": "47158b8e931aa35488505948038a971c2074f06d"
         },
         {
           "commit": "477d0ccfb75b526b2434ff9e09f7913f8c80deed"
@@ -170346,7 +170403,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "be7a025c56fe2526e2360bc69e135c6aa457b599",
+      "revision": "507a62c5c497382b876aabd0d81a17306d18188f",
       "currentBranch": "codex/agent-resource-economy",
       "defaultBranch": "main",
       "visibility": "public",
@@ -201453,12 +201510,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4241,
-      "version": "0982dbef5ea0a1a6",
+      "version": "fc9db9f34d153cf4",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "0982dbef5ea0a1a6"
+          "version": "fc9db9f34d153cf4"
         }
       ]
     },
@@ -206658,12 +206715,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 513,
-      "version": "0f08871273c1d86b",
+      "version": "c45a5b92ef32495b",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "0f08871273c1d86b"
+          "version": "c45a5b92ef32495b"
         }
       ]
     },
@@ -273440,6 +273497,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "47158b8e931aa35488505948038a971c2074f06d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "47158b8e931aa35488505948038a971c2074f06d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "47158b8e931aa35488505948038a971c2074f06d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "47158b8e931aa35488505948038a971c2074f06d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
       "to": "Artifact:docs/release/readiness-work/scenario-manifest.json",
       "provenance": {
@@ -276396,6 +276485,30 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "commit": "5077b0f8271bf4e79505623b1e97e873cd6a6d1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:507a62c5c497382b876aabd0d81a17306d18188f",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "507a62c5c497382b876aabd0d81a17306d18188f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:507a62c5c497382b876aabd0d81a17306d18188f",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "507a62c5c497382b876aabd0d81a17306d18188f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:507a62c5c497382b876aabd0d81a17306d18188f",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "507a62c5c497382b876aabd0d81a17306d18188f"
       }
     },
     {
@@ -406877,6 +406990,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:pilot:resources:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:playthrough",
       "provenance": {
         "file": "package.json",
@@ -421463,6 +421585,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pilot:resources",
+      "to": "Artifact:tools/resource-economy-pilot.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pilot:resources:postgres",
       "to": "Artifact:tools/resource-economy-pilot.js",
       "provenance": {
         "file": "package.json",
@@ -439499,6 +439630,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:47158b8e931aa35488505948038a971c2074f06d",
+      "provenance": {
+        "commit": "47158b8e931aa35488505948038a971c2074f06d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4723c2382c601c947615c62f6cc885a13071aced",
       "provenance": {
         "commit": "4723c2382c601c947615c62f6cc885a13071aced"
@@ -440086,6 +440225,14 @@
       "to": "Commit:5077b0f8271bf4e79505623b1e97e873cd6a6d1b",
       "provenance": {
         "commit": "5077b0f8271bf4e79505623b1e97e873cd6a6d1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:507a62c5c497382b876aabd0d81a17306d18188f",
+      "provenance": {
+        "commit": "507a62c5c497382b876aabd0d81a17306d18188f"
       }
     },
     {
