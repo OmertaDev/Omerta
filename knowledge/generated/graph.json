@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bdbc3c4a2180c4a3fbaef931f93ffb352a76282f",
+  "sourceRevision": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10128,
-    "edges": 41184,
+    "nodes": 10130,
+    "edges": 41194,
     "byNodeType": {
       "Artifact": 4325,
       "Command": 193,
-      "Commit": 2115,
+      "Commit": 2117,
       "Contract": 126,
       "Document": 696,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3427,
-      "CHANGED": 16001,
+      "CHANGED": 16009,
       "CONTAINS": 4346,
       "DECLARES": 193,
       "DEFINED_IN": 1340,
       "DEPENDS_ON": 67,
       "EXECUTES": 647,
       "HANDLED_BY": 739,
-      "HAS_COMMIT": 2115,
+      "HAS_COMMIT": 2117,
       "IMPLEMENTS": 124,
       "IMPORTS": 4067,
       "INHERITS": 42,
@@ -86175,20 +86175,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10782,
-      "lines": 140,
-      "version": "7f827c6aa9ac1c18",
+      "bytes": 12117,
+      "lines": 150,
+      "version": "0012c2365e724048",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "7f827c6aa9ac1c18"
+          "version": "0012c2365e724048"
         }
       ],
-      "lastChangedAt": "2026-10-07T00:11:57.000Z",
+      "lastChangedAt": "2026-10-08T07:25:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6ec579eb5000f17fc422e8e6b2c5962037e9dbdb"
+      "lastChangedCommit": "61b75595a3f4b3c3d4021a2563273f4ea20eb559"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -115183,6 +115183,22 @@
       ]
     },
     {
+      "key": "Commit:61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "type": "Commit",
+      "id": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "label": "Preserve Director migration catalog with exact economy constraints",
+      "title": "Preserve Director migration catalog with exact economy constraints",
+      "date": "2026-10-08T07:25:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "provenance": [
+        {
+          "commit": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+          "url": "https://github.com/OmertaDev/Omerta/commit/61b75595a3f4b3c3d4021a2563273f4ea20eb559"
+        }
+      ]
+    },
+    {
       "key": "Commit:620c89af51987d036622075a1fee882b065bae55",
       "type": "Commit",
       "id": "620c89af51987d036622075a1fee882b065bae55",
@@ -123339,6 +123355,22 @@
         {
           "commit": "9de0269629640509e95b5f48df542628c6f998f0",
           "url": "https://github.com/OmertaDev/Omerta/commit/9de0269629640509e95b5f48df542628c6f998f0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "type": "Commit",
+      "id": "9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "label": "chore(knowledge): refresh integrated production economy release",
+      "title": "chore(knowledge): refresh integrated production economy release",
+      "date": "2026-10-08T07:07:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "provenance": [
+        {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9df83f23de23558d19ebe38c7ef011e419ffd655"
         }
       ]
     },
@@ -156771,6 +156803,9 @@
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+        },
+        {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
@@ -157693,6 +157728,9 @@
         },
         {
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
@@ -158619,6 +158657,9 @@
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+        },
+        {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
@@ -159097,6 +159138,9 @@
         },
         {
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
@@ -159795,6 +159839,9 @@
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+        },
+        {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
@@ -160338,6 +160385,9 @@
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
         },
         {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+        },
+        {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
@@ -160585,6 +160635,9 @@
         },
         {
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        },
+        {
+          "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
@@ -169038,7 +169091,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bdbc3c4a2180c4a3fbaef931f93ffb352a76282f",
+      "revision": "61b75595a3f4b3c3d4021a2563273f4ea20eb559",
       "currentBranch": "codex/agent-economy-production",
       "defaultBranch": "main",
       "visibility": "public",
@@ -198896,13 +198949,13 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 140,
-      "version": "7f827c6aa9ac1c18",
+      "lines": 150,
+      "version": "0012c2365e724048",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "7f827c6aa9ac1c18"
+          "version": "0012c2365e724048"
         }
       ]
     },
@@ -281698,6 +281751,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "61b75595a3f4b3c3d4021a2563273f4ea20eb559"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:620c89af51987d036622075a1fee882b065bae55",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "provenance": {
@@ -313358,6 +313419,62 @@
       "to": "Artifact:test/store.js",
       "provenance": {
         "commit": "9de0269629640509e95b5f48df542628c6f998f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
       }
     },
     {
@@ -436389,6 +436506,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:61b75595a3f4b3c3d4021a2563273f4ea20eb559",
+      "provenance": {
+        "commit": "61b75595a3f4b3c3d4021a2563273f4ea20eb559"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:620c89af51987d036622075a1fee882b065bae55",
       "provenance": {
         "commit": "620c89af51987d036622075a1fee882b065bae55"
@@ -440464,6 +440589,14 @@
       "to": "Commit:9de0269629640509e95b5f48df542628c6f998f0",
       "provenance": {
         "commit": "9de0269629640509e95b5f48df542628c6f998f0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
+      "provenance": {
+        "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
       }
     },
     {
