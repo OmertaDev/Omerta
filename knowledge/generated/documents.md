@@ -322,7 +322,7 @@
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-09 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
-| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 32 | 2026-10-08 |
+| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 34 | 2026-10-08 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |

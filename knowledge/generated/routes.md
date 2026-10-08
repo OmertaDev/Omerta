@@ -1,6 +1,6 @@
 # Generated HTTP route catalog
 
-> 863 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
+> 864 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
 
 ## Route groups
 
@@ -11,8 +11,8 @@
 | web | 39 |
 | casino | 28 |
 | worldgraph | 26 |
+| resources | 22 |
 | gangs | 22 |
-| resources | 21 |
 | pen | 19 |
 | coordination | 18 |
 | content | 16 |
@@ -860,6 +860,7 @@
 | POST | `/v1/resources/jobs/:id/claim` | authenticated | platform-core | [src/routes/resources.js:38](../../src/routes/resources.js#L38) | `claimResourceJob` |
 | POST | `/v1/resources/jobs/:id/dispute` | authenticated | platform-core | [src/routes/resources.js:41](../../src/routes/resources.js#L41) | `disputeResourceJob` |
 | POST | `/v1/resources/jobs/:id/work` | authenticated | platform-core | [src/routes/resources.js:39](../../src/routes/resources.js#L39) | `workResourceJob` |
+| POST | `/v1/resources/payments/webhook` | public | platform-core | [src/routes/resources.js:53](../../src/routes/resources.js#L53) | — |
 | GET | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:20](../../src/routes/resources.js#L20) | — |
 | POST | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:23](../../src/routes/resources.js#L23) | `setResourcePolicy` |
 | POST | `/v1/resources/service` | authenticated | platform-core | [src/routes/resources.js:28](../../src/routes/resources.js#L28) | `setResourceService` |
