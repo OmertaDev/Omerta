@@ -150,7 +150,7 @@
 | [src/liquiditypolicy.js](../../src/liquiditypolicy.js) | 122 | platform-core | 5 / 10 | 0 | 4 | 4 |
 | [src/liquidityqueue.js](../../src/liquidityqueue.js) | 55 | platform-core | 2 / 2 | 0 | 1 | 1 |
 | [src/liquiditystate.js](../../src/liquiditystate.js) | 9 | platform-core | 0 / 3 | 0 | 0 | 1 |
-| [src/loans.js](../../src/loans.js) | 818 | enterprise-logistics | 4 / 14 | 13 | 10 | 5 |
+| [src/loans.js](../../src/loans.js) | 818 | enterprise-logistics | 4 / 15 | 13 | 10 | 6 |
 | [src/made.js](../../src/made.js) | 97 | social-combat | 3 / 1 | 2 | 1 | 0 |
 | [src/market.js](../../src/market.js) | 643 | economy-ledger | 3 / 13 | 8 | 8 | 5 |
 | [src/marketv2keeper.js](../../src/marketv2keeper.js) | 267 | platform-core | 1 / 5 | 0 | 1 | 2 |

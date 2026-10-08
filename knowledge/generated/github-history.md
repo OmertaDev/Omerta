@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f78a71e7e3f8`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f12d3095237b`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2103 |
+| Commits in clone | 2105 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-07 — Merge pull request #191 from OmertaDev/codex/genesis-nft-launch |
+| Latest commit | 2026-10-08 — Keep mobile actions reachable and verify due-work recovery (#193) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1212 |
+| OmertaDev | 1213 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 46 |
+| github-actions[bot] | 47 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,16 +31,16 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 433 | yes |
+| [public/index.html](../../public/index.html) | 434 | yes |
 | [src/server.js](../../src/server.js) | 372 | yes |
-| [SPEC.md](../../SPEC.md) | 361 | yes |
-| knowledge/generated/github-history.md | 299 | historical |
-| knowledge/generated/graph-summary.md | 299 | historical |
-| knowledge/generated/graph.json | 299 | historical |
-| knowledge/generated/inventory.md | 299 | historical |
+| [SPEC.md](../../SPEC.md) | 362 | yes |
+| knowledge/generated/github-history.md | 300 | historical |
+| knowledge/generated/graph-summary.md | 300 | historical |
+| knowledge/generated/graph.json | 300 | historical |
+| knowledge/generated/inventory.md | 300 | historical |
 | [schema.sql](../../schema.sql) | 299 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 233 | yes |
+| [package.json](../../package.json) | 234 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 132 | historical |
@@ -51,8 +51,8 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | knowledge/generated/modules.md | 115 | historical |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
+| [test/gates.js](../../test/gates.js) | 89 | yes |
 | [public/wiki.html](../../public/wiki.html) | 89 | yes |
-| [test/gates.js](../../test/gates.js) | 88 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | knowledge/generated/graph.mmd | 78 | historical |
@@ -68,7 +68,7 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | knowledge/generated/schema.md | 50 | historical |
 | [src/economy.js](../../src/economy.js) | 50 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 46 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 47 | yes |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 
 ## Pull requests

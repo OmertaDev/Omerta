@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+  "sourceRevision": "f12d3095237b887311cdb23da83e582158210c4e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10037,
-    "edges": 40792,
+    "nodes": 10042,
+    "edges": 40814,
     "byNodeType": {
-      "Artifact": 4299,
-      "Command": 184,
-      "Commit": 2103,
+      "Artifact": 4300,
+      "Command": 185,
+      "Commit": 2105,
       "Contract": 126,
       "Document": 693,
       "Domain": 13,
@@ -60,25 +60,25 @@
       "Route": 820,
       "Subsystem": 8,
       "Table": 370,
-      "TestSuite": 554,
+      "TestSuite": 555,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3389,
-      "CHANGED": 15897,
-      "CONTAINS": 4320,
-      "DECLARES": 184,
+      "BELONGS_TO": 3390,
+      "CHANGED": 15908,
+      "CONTAINS": 4321,
+      "DECLARES": 185,
       "DEFINED_IN": 1316,
       "DEPENDS_ON": 66,
-      "EXECUTES": 632,
+      "EXECUTES": 633,
       "HANDLED_BY": 720,
-      "HAS_COMMIT": 2103,
+      "HAS_COMMIT": 2105,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4000,
+      "IMPORTS": 4003,
       "INHERITS": 42,
       "REFERENCES": 3123,
-      "REPRESENTS": 1535,
-      "TESTS": 1372,
+      "REPRESENTS": 1536,
+      "TESTS": 1373,
       "TRACKS": 126,
       "USES_TABLE": 1843
     }
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 25777,
-      "lines": 499,
-      "version": "7d0262080fae0f93",
+      "bytes": 26030,
+      "lines": 505,
+      "version": "98fc5ad0fa3c86d7",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "7d0262080fae0f93"
+          "version": "98fc5ad0fa3c86d7"
         }
       ],
-      "lastChangedAt": "2026-10-07T03:56:02.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78660d15b46dc39dd6daad8a342505f04e0f9172"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -35213,20 +35213,20 @@
       "path": "docs/release/readiness-work/gate-registry.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 38419,
-      "lines": 1458,
-      "version": "33837c89429531ca",
+      "bytes": 38959,
+      "lines": 1467,
+      "version": "6b235421c740d5ad",
       "text": true,
       "provenance": [
         {
           "file": "docs/release/readiness-work/gate-registry.json",
           "line": 1,
-          "version": "33837c89429531ca"
+          "version": "6b235421c740d5ad"
         }
       ],
-      "lastChangedAt": "2026-09-21T13:39:38.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "41210d739b24399eebe3d10400cf5db185a0a4b2"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:docs/release/readiness-work/golden-browser-regressions.json",
@@ -62209,20 +62209,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 32729,
-      "lines": 213,
-      "version": "0f7b6e559bff801b",
+      "bytes": 32801,
+      "lines": 214,
+      "version": "af1d4d34262a2330",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "0f7b6e559bff801b"
+          "version": "af1d4d34262a2330"
         }
       ],
-      "lastChangedAt": "2026-10-07T08:00:43.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:Procfile",
@@ -77113,20 +77113,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1342712,
-      "lines": 13842,
-      "version": "91032205f429cf00",
+      "bytes": 1342888,
+      "lines": 13846,
+      "version": "73ca18beacdf1ebc",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "91032205f429cf00"
+          "version": "73ca18beacdf1ebc"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:00:06.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -77414,18 +77414,18 @@
       "extension": ".md",
       "bytes": 55455,
       "lines": 742,
-      "version": "4c5c6b1184c8e8bd",
+      "version": "558749d781690682",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "4c5c6b1184c8e8bd"
+          "version": "558749d781690682"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:18:41.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9929839b3b305d6e24f1e7e4330fe4da8a9adc94"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:src/access.js",
@@ -85938,6 +85938,29 @@
       "lastChangedCommit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
     },
     {
+      "key": "Artifact:test/due-work-process-recovery.js",
+      "type": "Artifact",
+      "id": "test/due-work-process-recovery.js",
+      "label": "due-work-process-recovery.js",
+      "path": "test/due-work-process-recovery.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 9790,
+      "lines": 125,
+      "version": "9798b142dc743c84",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/due-work-process-recovery.js",
+          "line": 1,
+          "version": "9798b142dc743c84"
+        }
+      ],
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
+    },
+    {
       "key": "Artifact:test/duels.js",
       "type": "Artifact",
       "id": "test/duels.js",
@@ -86589,20 +86612,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 285749,
-      "lines": 4238,
-      "version": "ae015f9d83a2fa56",
+      "bytes": 286000,
+      "lines": 4240,
+      "version": "368a553892081040",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "ae015f9d83a2fa56"
+          "version": "368a553892081040"
         }
       ],
-      "lastChangedAt": "2026-10-07T08:00:43.000Z",
+      "lastChangedAt": "2026-10-08T00:35:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "96b517973ed47445cab7308a9ee4ac26624ab294"
+      "lastChangedCommit": "f12d3095237b887311cdb23da83e582158210c4e"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -100001,6 +100024,19 @@
       "id": "npm:test:director:postgres",
       "label": "npm run test:director:postgres",
       "command": "node test/director-runtime.js --postgres && node test/director-recovery.js --postgres && node test/director-dock-world.js --postgres && node test/director-commands.js --postgres && node test/director-api.js --postgres && node test/director-journey.js --postgres && node test/director-security.js --postgres && node test/director-migration.js --postgres && node test/director-network.js --postgres && node test/campaign-network-journey.js --postgres && node test/director-network-recovery.js --postgres",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:due-work:postgres",
+      "type": "Command",
+      "id": "npm:test:due-work:postgres",
+      "label": "npm run test:due-work:postgres",
+      "command": "node test/due-work-process-recovery.js",
       "provenance": [
         {
           "file": "package.json",
@@ -129076,6 +129112,22 @@
       ]
     },
     {
+      "key": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "type": "Commit",
+      "id": "d088a237e53b354919a3e293b783180a247f66e1",
+      "label": "chore(knowledge): refresh generated artifacts for f78a71e7",
+      "title": "chore(knowledge): refresh generated artifacts for f78a71e7",
+      "date": "2026-10-07T09:59:52.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d088a237e53b354919a3e293b783180a247f66e1",
+      "provenance": [
+        {
+          "commit": "d088a237e53b354919a3e293b783180a247f66e1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d088a237e53b354919a3e293b783180a247f66e1"
+        }
+      ]
+    },
+    {
       "key": "Commit:d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72",
       "type": "Commit",
       "id": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72",
@@ -132960,6 +133012,22 @@
         {
           "commit": "f107791cb8556850edd5e74de6ddbc7c65f0882e",
           "url": "https://github.com/OmertaDev/Omerta/commit/f107791cb8556850edd5e74de6ddbc7c65f0882e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "type": "Commit",
+      "id": "f12d3095237b887311cdb23da83e582158210c4e",
+      "label": "Keep mobile actions reachable and verify due-work recovery (#193)",
+      "title": "Keep mobile actions reachable and verify due-work recovery (#193)",
+      "date": "2026-10-08T00:35:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f12d3095237b887311cdb23da83e582158210c4e",
+      "provenance": [
+        {
+          "commit": "f12d3095237b887311cdb23da83e582158210c4e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f12d3095237b887311cdb23da83e582158210c4e"
         }
       ]
     },
@@ -148130,12 +148198,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "4c5c6b1184c8e8bd",
+      "version": "558749d781690682",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "4c5c6b1184c8e8bd"
+          "version": "558749d781690682"
         }
       ]
     },
@@ -148816,6 +148884,10 @@
         },
         {
           "file": "test/director-migration.js",
+          "line": 7
+        },
+        {
+          "file": "test/due-work-process-recovery.js",
           "line": 7
         },
         {
@@ -155963,6 +156035,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+        },
+        {
           "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
         },
         {
@@ -156869,6 +156944,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+        },
+        {
           "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
         },
         {
@@ -157773,6 +157851,9 @@
         },
         {
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
+          "commit": "d088a237e53b354919a3e293b783180a247f66e1"
         },
         {
           "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
@@ -158922,6 +159003,9 @@
         },
         {
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
+        },
+        {
+          "commit": "d088a237e53b354919a3e293b783180a247f66e1"
         },
         {
           "commit": "d0ed35322702ccad510296cca0b9a78347e68f47"
@@ -167798,12 +167882,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f78a71e7e3f83eb7598f844cb88be812f6fc7086",
+      "revision": "f12d3095237b887311cdb23da83e582158210c4e",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4299,
+      "currentArtifactCount": 4300,
       "provenance": [
         {
           "file": "README.md",
@@ -197241,6 +197325,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/due-work-process-recovery.js",
+      "type": "TestSuite",
+      "id": "test/due-work-process-recovery.js",
+      "label": "test/due-work-process-recovery.js",
+      "lines": 125,
+      "version": "9798b142dc743c84",
+      "provenance": [
+        {
+          "file": "test/due-work-process-recovery.js",
+          "line": 1,
+          "version": "9798b142dc743c84"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/duels.js",
       "type": "TestSuite",
       "id": "test/duels.js",
@@ -197515,13 +197614,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4238,
-      "version": "ae015f9d83a2fa56",
+      "lines": 4240,
+      "version": "368a553892081040",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "ae015f9d83a2fa56"
+          "version": "368a553892081040"
         }
       ]
     },
@@ -202570,13 +202669,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 499,
-      "version": "7d0262080fae0f93",
+      "lines": 505,
+      "version": "98fc5ad0fa3c86d7",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "7d0262080fae0f93"
+          "version": "98fc5ad0fa3c86d7"
         }
       ]
     },
@@ -220690,6 +220789,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/drop.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/due-work-process-recovery.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
         "line": 1
       }
     },
@@ -332880,6 +332988,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72",
       "to": "Artifact:.gitignore",
       "provenance": {
@@ -350420,6 +350560,62 @@
       "to": "Artifact:test/rc1-city-lock-release.js",
       "provenance": {
         "commit": "f101a479fb1d1005ae8ff774b2c29a480b718817"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:docs/release/readiness-work/gate-registry.json",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:test/due-work-process-recovery.js",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
       }
     },
     {
@@ -383175,6 +383371,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/due-work-process-recovery.js",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/duels.js",
       "provenance": {
         "file": "test/duels.js",
@@ -399862,6 +400067,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:due-work:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:family-operations",
       "provenance": {
         "file": "package.json",
@@ -412694,7 +412908,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:enterprise-logistics",
-      "weight": 21
+      "weight": 22
     },
     {
       "type": "DEPENDS_ON",
@@ -416405,6 +416619,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:director:postgres",
       "to": "Artifact:test/director-security.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:due-work:postgres",
+      "to": "Artifact:test/due-work-process-recovery.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -439781,6 +440004,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d088a237e53b354919a3e293b783180a247f66e1",
+      "provenance": {
+        "commit": "d088a237e53b354919a3e293b783180a247f66e1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72",
       "provenance": {
         "commit": "d0a5b2c5f33d53fbb458eaf085f5a6ee31646f72"
@@ -441720,6 +441951,14 @@
       "to": "Commit:f107791cb8556850edd5e74de6ddbc7c65f0882e",
       "provenance": {
         "commit": "f107791cb8556850edd5e74de6ddbc7c65f0882e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f12d3095237b887311cdb23da83e582158210c4e",
+      "provenance": {
+        "commit": "f12d3095237b887311cdb23da83e582158210c4e"
       }
     },
     {
@@ -458911,6 +459150,33 @@
       "provenance": {
         "file": "test/drop.js",
         "line": 18
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/due-work-process-recovery.js",
+      "to": "Artifact:src/loans.js",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/due-work-process-recovery.js",
+      "to": "Artifact:tools/rc1-native-database.js",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/due-work-process-recovery.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 7
       }
     },
     {
@@ -518783,6 +519049,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/due-work-process-recovery.js",
+      "to": "Artifact:test/due-work-process-recovery.js",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/duels.js",
       "to": "Artifact:test/duels.js",
       "provenance": {
@@ -525187,6 +525462,15 @@
       "provenance": {
         "file": "test/drop.js",
         "line": 312
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/due-work-process-recovery.js",
+      "to": "Artifact:src/loans.js",
+      "provenance": {
+        "file": "test/due-work-process-recovery.js",
+        "line": 10
       }
     },
     {
