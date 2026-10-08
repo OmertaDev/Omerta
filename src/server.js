@@ -545,6 +545,7 @@ export async function buildServer() {
       .header('cache-control', 'no-store').send(code);
   };
   app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));
+  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));
   app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
   app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));
   app.get('/genesis-deploy-vendor/_u64.js', reviewedModule('genesis-deploy-vendor/_u64.js'));

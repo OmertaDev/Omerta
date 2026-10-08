@@ -2,6 +2,7 @@ import { readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { createPublicClient, defineChain, getAddress, http } from 'viem';
 import { GenesisAuctionError, readGenesisAuction, prepareGenesisAuctionTransaction } from '../genesisauction.js';
+import { genesisSnapshotTransport } from '../genesisrpc.js';
 
 export function loadGenesisAuctionManifest(env = process.env) {
   const file = env === process.env ? process.env.GENESIS_AUCTION_MANIFEST_PATH : env.GENESIS_AUCTION_MANIFEST_PATH;
@@ -20,7 +21,7 @@ export function register(app, { auth, env = process.env, client = null, manifest
   const publicClient = client || (pinned && createPublicClient({
     chain: defineChain({ id: 4663, name: 'Robinhood Chain', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
       rpcUrls: { default: { http: [env.CHAIN_RPC_URL || 'https://rpc.mainnet.chain.robinhood.com/'] } } }),
-    transport: http(env.CHAIN_RPC_URL || 'https://rpc.mainnet.chain.robinhood.com/', { timeout: 12_000, retryCount: 0 }),
+    transport: genesisSnapshotTransport(http(env.CHAIN_RPC_URL || 'https://rpc.mainnet.chain.robinhood.com/', { timeout: 12_000, retryCount: 0 })),
   }));
   const options = auth ? { preHandler: auth } : {};
   const unavailable = reply => reply.code(503).send({ error: 'genesis_not_ready',
