@@ -165,7 +165,14 @@ export function createResourceAgentTestFetch(options, { now, sleep }) {
 }
 
 export async function runResourceAgent(options) {
-  return runAgentAlpha({ ...options, fetchImpl: createResourceAgentFetch(options) });
+  const resourceObservations = [];
+  const onObservation = event => {
+    if (resourceObservations.length >= 1000) resourceObservations.shift();
+    resourceObservations.push(event);
+    options.onObservation?.(event);
+  };
+  const result = await runAgentAlpha({ ...options, fetchImpl: createResourceAgentFetch({ ...options, onObservation }) });
+  return { ...result, resourceObservations };
 }
 
 export async function runPaidWork({ baseUrl, token, jobId, providerId, maxOutputTokens, fetchImpl = fetch }) {

@@ -79,7 +79,7 @@ Static checks executed: `node --check` on nine resource JavaScript modules/clien
 
 Final refresh evidence supplied by the implementing agent: `test/resource-worker.js` and the deterministic resource pilot passed memory/native runs, including intake-off recovery, abandoned pre-dispatch reservation release exactly once, frozen-job isolation, and zero ledger/liability drift. This reviewer read those regression assertions and affected code; these follow-up runtime runs were not independently repeated here. The prior directly executed commands above retain their exact scope. Final syntax checks independently repeated for changed compute/accounting/preflight/worker files, all exit 0.
 
-Client automation follow-up independently executed: `node test/resource-agent.js`, exit 0. New cases cover assigned-queue selection, global quota, foreign/customer jobs ignored, pending/unknown no resend, sanitised telemetry, six-request shared fake-clock spacing, aborted/cross-origin dispatch rejection, dot/colon provider IDs, and standalone production monotonic spacing using a mocked network with the real clock. Its production-clock assertion waits through the actual minimum cadence; no live API or credentials are involved.
+Client automation follow-up independently executed: `node test/resource-agent.js`, exit 0. New cases cover assigned-queue selection, global quota, foreign/customer jobs ignored, pending/unknown no resend, sanitised telemetry, six-request shared fake-clock spacing, aborted/cross-origin dispatch rejection, dot/colon provider IDs, and standalone production monotonic spacing using a mocked network with the real clock. Its production-clock assertion waits through the actual minimum cadence; no live API or credentials are involved. The final runner result retains a bounded list of sanitized resource observations for operator review.
 
 ## Conclusion
 
@@ -97,7 +97,7 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/resourceproviders.js | c4ce4ebbe78db8c8de4aec6cd108807aae2521ba495ff1a654db73a29aea7223 |
 | src/resourcework.js | 65544ae71f899e770ac6887460a7d2bc64b126d1f98cf2330dfc0c032a4b5d59 |
 | src/routes/resources.js | 7c2532f845a83bb1bbc963814329bc17da8a6a8da0928ee1508b97eb82f48c20 |
-| tools/resource-agent.js | bc2bad8ba825a8e9f0e0e70d66181e22b3b6237dc613a9b46c84e1a7c90ca4fe |
+| tools/resource-agent.js | d8e9474b54486fac4f9b626daa16a71048c0f612c2ae29e143512fdf041ff4d0 |
 | tools/resource-worker.js | aeda9cec9314a0b41b3ccfa59ec8ba3df84651ba484f4d3a5917bf48ef1d537c |
 | tools/resource-economy-pilot.js | 3c375d06fb8efdf66b5430d28ab1499dbc5a2fb3a4b027d124356f08167813c0 |
 | schema.sql | 2011ff7e046d489b4da812bcf155b7c035268c2ecfb0be6c6b065221ca7cb415 |
