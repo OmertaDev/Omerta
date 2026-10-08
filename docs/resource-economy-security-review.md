@@ -96,7 +96,7 @@ Evidence supports the scoped local test implementation and the resolved findings
 | src/resourcepayments.js | 1664e757172c86ecf77b010cb57470ce416dffb2603241824e3983f5090fe880 |
 | src/resourceproviders.js | c4ce4ebbe78db8c8de4aec6cd108807aae2521ba495ff1a654db73a29aea7223 |
 | src/resourcework.js | 65544ae71f899e770ac6887460a7d2bc64b126d1f98cf2330dfc0c032a4b5d59 |
-| src/routes/resources.js | b15818c680be9f7de19fe79e56965eccd981e3989735f9d69b4da6b16ecba7f4 |
+| src/routes/resources.js | 7c2532f845a83bb1bbc963814329bc17da8a6a8da0928ee1508b97eb82f48c20 |
 | tools/resource-agent.js | bc2bad8ba825a8e9f0e0e70d66181e22b3b6237dc613a9b46c84e1a7c90ca4fe |
 | tools/resource-worker.js | aeda9cec9314a0b41b3ccfa59ec8ba3df84651ba484f4d3a5917bf48ef1d537c |
 | tools/resource-economy-pilot.js | 3c375d06fb8efdf66b5430d28ab1499dbc5a2fb3a4b027d124356f08167813c0 |

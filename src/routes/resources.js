@@ -47,10 +47,10 @@ export function register(app, { pool, auth, modAuth }) {
   app.post('/v1/mod/resources/jobs/:id/adjudicate', { preHandler: modAuth }, async req => adjudicateResourceJob(pool, req.params.id, req.body));
   // Signature verification needs exact bytes. The parser is confined to this
   // child plugin; all other JSON endpoints retain their normal object parser.
-  app.register(async scope => {
-    scope.removeContentTypeParser('application/json');
-    scope.addContentTypeParser('application/json', { parseAs: 'buffer', bodyLimit: 65536 }, (_req, body, done) => done(null, body));
-    scope.post('/v1/resources/payments/webhook', { bodyLimit: 65536 }, async (req, reply) => {
+  app.register(async app => {
+    app.removeContentTypeParser('application/json');
+    app.addContentTypeParser('application/json', { parseAs: 'buffer', bodyLimit: 65536 }, (_req, body, done) => done(null, body));
+    app.post('/v1/resources/payments/webhook', { bodyLimit: 65536 }, async (req, reply) => {
       try { return await settleResourcePayment(pool, req.body, req.headers['stripe-signature']); }
       catch (error) {
         if (error instanceof ResourceProviderError) return reply.code(error.code === 'provider_unconfigured' ? 503 : 400).send({ error: `resource_${error.code}` });
