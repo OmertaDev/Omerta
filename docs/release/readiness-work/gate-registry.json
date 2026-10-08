@@ -9,6 +9,15 @@
   "note": "Pinned required command inventory across the four source workflows. Preserve each workflow setup, database isolation, platform, environment and budgets. A component regression pass does not clear a full native, deployed, or human proof.",
   "gates": [
     {
+      "id": "due-work-process-recovery",
+      "command": ["npm", "run", "test:due-work:postgres"],
+      "timeoutMs": 600000,
+      "scope": "regression",
+      "coverageExclusions": [
+        "One nonempty loan-offer-expiry cash custody queue only. Initial cash and matured deadline are declared pre-baseline fixtures; native refund-insert barrier does not change game rates or post-baseline deadlines. No natural acquisition, other queues, full resource taxonomy, soak, deployed environment or human qualification."
+      ]
+    },
+    {
       "id": "rc1-car-journal",
       "command": [
         "npm",
