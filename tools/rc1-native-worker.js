@@ -9,7 +9,8 @@ export const WORKER_SOURCE_PINS = Object.freeze({
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   // Previous boot pin: 6033b850aa9843703b0907c32da9a3032bd501c893ad32835b0fbfe03c3750b8.
   // This revision adds only the once-per-database player level reset; PG 16/18.4 migration checks passed in run 37522281745.
-  'src/db.js': '9e6360ea61c840bd92cde9a90330e29156fc137dc27ba5fa1e0d99cb432feb97',
+  // Resource schema adds only pg-mem mod(bigint,integer); native PostgreSQL boot is unchanged.
+  'src/db.js': '9c43ed14a026c378ec4768d39a52cc66840b63396e3b6218075cc4797bdfcd81',
 });
 const plain = (value) => value === undefined ? null : JSON.parse(JSON.stringify(value));
 const fingerprint = (value) => sha256(canonicalJson(plain(value)));
