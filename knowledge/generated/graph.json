@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "cd858c46606249d07b231fb44594ad5e641fdb81",
+  "sourceRevision": "90ea8659c1df9149b30c7a952b8e271a4c479ec7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10136,
-    "edges": 41228,
+    "nodes": 10138,
+    "edges": 41234,
     "byNodeType": {
       "Artifact": 4325,
       "Command": 193,
-      "Commit": 2123,
+      "Commit": 2125,
       "Contract": 126,
       "Document": 696,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3427,
-      "CHANGED": 16037,
+      "CHANGED": 16041,
       "CONTAINS": 4346,
       "DECLARES": 193,
       "DEFINED_IN": 1340,
       "DEPENDS_ON": 67,
       "EXECUTES": 647,
       "HANDLED_BY": 739,
-      "HAS_COMMIT": 2123,
+      "HAS_COMMIT": 2125,
       "IMPLEMENTS": 124,
       "IMPORTS": 4067,
       "INHERITS": 42,
@@ -119663,6 +119663,22 @@
       ]
     },
     {
+      "key": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "type": "Commit",
+      "id": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "label": "chore(knowledge): refresh for cd858c46",
+      "title": "chore(knowledge): refresh for cd858c46",
+      "date": "2026-10-08T08:30:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "provenance": [
+        {
+          "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+        }
+      ]
+    },
+    {
       "key": "Commit:82c9f670c0bd836b23b231d8ab9aa36bd5e87177",
       "type": "Commit",
       "id": "82c9f670c0bd836b23b231d8ab9aa36bd5e87177",
@@ -121467,6 +121483,22 @@
         {
           "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4",
           "url": "https://github.com/OmertaDev/Omerta/commit/90da79d54588addd315b4c1f5c4bd716961d43d4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+      "type": "Commit",
+      "id": "90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+      "label": "Merge pull request #196 from OmertaDev/codex/agent-economy-production",
+      "title": "Merge pull request #196 from OmertaDev/codex/agent-economy-production",
+      "date": "2026-10-08T09:29:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+      "provenance": [
+        {
+          "commit": "90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/90ea8659c1df9149b30c7a952b8e271a4c479ec7"
         }
       ]
     },
@@ -156800,6 +156832,9 @@
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
+          "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+        },
+        {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
@@ -157736,6 +157771,9 @@
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
+          "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+        },
+        {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
@@ -158670,6 +158708,9 @@
         },
         {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+        },
+        {
+          "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -159861,6 +159902,9 @@
         },
         {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+        },
+        {
+          "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -169223,8 +169267,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "cd858c46606249d07b231fb44594ad5e641fdb81",
-      "currentBranch": "codex/agent-economy-production",
+      "revision": "90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -301367,6 +301411,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
       }
     },
     {
@@ -439102,6 +439178,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
+      "provenance": {
+        "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:82c9f670c0bd836b23b231d8ab9aa36bd5e87177",
       "provenance": {
         "commit": "82c9f670c0bd836b23b231d8ab9aa36bd5e87177"
@@ -440001,6 +440085,14 @@
       "to": "Commit:90da79d54588addd315b4c1f5c4bd716961d43d4",
       "provenance": {
         "commit": "90da79d54588addd315b4c1f5c4bd716961d43d4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:90ea8659c1df9149b30c7a952b8e271a4c479ec7",
+      "provenance": {
+        "commit": "90ea8659c1df9149b30c7a952b8e271a4c479ec7"
       }
     },
     {
