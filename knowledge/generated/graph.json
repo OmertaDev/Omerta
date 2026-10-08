@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4f667d5563a74d732bc7035617797200633f2c82",
+  "sourceRevision": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10219,
-    "edges": 41529,
+    "nodes": 10222,
+    "edges": 41547,
     "byNodeType": {
       "Artifact": 4345,
       "Command": 198,
-      "Commit": 2130,
+      "Commit": 2133,
       "Contract": 126,
       "Document": 698,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3469,
-      "CHANGED": 16092,
+      "CHANGED": 16107,
       "CONTAINS": 4366,
       "DECLARES": 198,
       "DEFINED_IN": 1374,
       "DEPENDS_ON": 67,
       "EXECUTES": 668,
       "HANDLED_BY": 758,
-      "HAS_COMMIT": 2130,
+      "HAS_COMMIT": 2133,
       "IMPLEMENTS": 124,
       "IMPORTS": 4104,
       "INHERITS": 42,
@@ -24012,20 +24012,20 @@
       "path": "docs/agent-resource-economy.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 6114,
+      "bytes": 6431,
       "lines": 32,
-      "version": "e7bad51e2b2693b9",
+      "version": "989fec0f39fc8afe",
       "text": true,
       "provenance": [
         {
           "file": "docs/agent-resource-economy.md",
           "line": 1,
-          "version": "e7bad51e2b2693b9"
+          "version": "989fec0f39fc8afe"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:04:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
     },
     {
       "key": "Artifact:docs/ART.md",
@@ -38893,20 +38893,20 @@
       "path": "docs/resource-economy-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 14904,
-      "lines": 110,
-      "version": "f0fd76f7e8d4c82a",
+      "bytes": 17247,
+      "lines": 116,
+      "version": "9487319a93f6910b",
       "text": true,
       "provenance": [
         {
           "file": "docs/resource-economy-security-review.md",
           "line": 1,
-          "version": "f0fd76f7e8d4c82a"
+          "version": "9487319a93f6910b"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:57:06.000Z",
+      "lastChangedAt": "2026-10-08T18:05:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4f667d5563a74d732bc7035617797200633f2c82"
+      "lastChangedCommit": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-23-discovery-integrity.md",
@@ -82265,20 +82265,20 @@
       "path": "src/resourcework.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 16977,
-      "lines": 213,
-      "version": "fdb694a5b26bb91e",
+      "bytes": 17275,
+      "lines": 215,
+      "version": "65544ae71f899e77",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcework.js",
           "line": 1,
-          "version": "fdb694a5b26bb91e"
+          "version": "65544ae71f899e77"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:04:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
     },
     {
       "key": "Artifact:src/restock.js",
@@ -93512,20 +93512,20 @@
       "path": "test/resource-agent.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6277,
-      "lines": 104,
-      "version": "782021365de5aa14",
+      "bytes": 11748,
+      "lines": 183,
+      "version": "3983fcb2b77563c2",
       "text": true,
       "provenance": [
         {
           "file": "test/resource-agent.js",
           "line": 1,
-          "version": "782021365de5aa14"
+          "version": "3983fcb2b77563c2"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:04:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
     },
     {
       "key": "Artifact:test/resource-worker.js",
@@ -99538,20 +99538,20 @@
       "path": "tools/resource-agent.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 8756,
-      "lines": 132,
-      "version": "631524fb063c2494",
+      "bytes": 13159,
+      "lines": 206,
+      "version": "bc2bad8ba825a8e9",
       "text": true,
       "provenance": [
         {
           "file": "tools/resource-agent.js",
           "line": 1,
-          "version": "631524fb063c2494"
+          "version": "bc2bad8ba825a8e9"
         }
       ],
-      "lastChangedAt": "2026-10-08T17:53:20.000Z",
+      "lastChangedAt": "2026-10-08T18:04:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "804634f14795f6bf4faf2bd5f1426395036ff893"
+      "lastChangedCommit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
     },
     {
       "key": "Artifact:tools/resource-economy-pilot.js",
@@ -111356,6 +111356,22 @@
       ]
     },
     {
+      "key": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "type": "Commit",
+      "id": "3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "label": "Refresh knowledge for funded agent economy",
+      "title": "Refresh knowledge for funded agent economy",
+      "date": "2026-10-08T17:59:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "provenance": [
+        {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        }
+      ]
+    },
+    {
       "key": "Commit:3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6",
       "type": "Commit",
       "id": "3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6",
@@ -114808,6 +114824,22 @@
         {
           "commit": "59c7c47abb48723f1727a37e3e033735842c6189",
           "url": "https://github.com/OmertaDev/Omerta/commit/59c7c47abb48723f1727a37e3e033735842c6189"
+        }
+      ]
+    },
+    {
+      "key": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "type": "Commit",
+      "id": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "label": "Let bounded gameplay agents earn through assigned paid work",
+      "title": "Let bounded gameplay agents earn through assigned paid work",
+      "date": "2026-10-08T18:04:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "provenance": [
+        {
+          "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
         }
       ]
     },
@@ -128728,6 +128760,22 @@
         {
           "commit": "bfa6149eeaee5eb435ecc1012d94f561c160bb44",
           "url": "https://github.com/OmertaDev/Omerta/commit/bfa6149eeaee5eb435ecc1012d94f561c160bb44"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+      "type": "Commit",
+      "id": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+      "label": "Retain final resource client pacing review evidence",
+      "title": "Retain final resource client pacing review evidence",
+      "date": "2026-10-08T18:05:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+      "provenance": [
+        {
+          "commit": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bfc2c8183f6cecf37bd2327075c7375f70a72c1f"
         }
       ]
     },
@@ -144234,12 +144282,12 @@
       "label": "docs/agent-resource-economy.md",
       "documentType": "documentation",
       "lines": 32,
-      "version": "e7bad51e2b2693b9",
+      "version": "989fec0f39fc8afe",
       "provenance": [
         {
           "file": "docs/agent-resource-economy.md",
           "line": 1,
-          "version": "e7bad51e2b2693b9"
+          "version": "989fec0f39fc8afe"
         }
       ]
     },
@@ -146537,13 +146585,13 @@
       "id": "docs/resource-economy-security-review.md",
       "label": "docs/resource-economy-security-review.md",
       "documentType": "documentation",
-      "lines": 110,
-      "version": "f0fd76f7e8d4c82a",
+      "lines": 116,
+      "version": "9487319a93f6910b",
       "provenance": [
         {
           "file": "docs/resource-economy-security-review.md",
           "line": 1,
-          "version": "f0fd76f7e8d4c82a"
+          "version": "9487319a93f6910b"
         }
       ]
     },
@@ -156690,6 +156738,9 @@
           "commit": "3ed1cdf0accddb582d2c621bf5049b9039358502"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -157246,6 +157297,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
         },
         {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
@@ -158193,6 +158247,9 @@
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
@@ -159138,6 +159195,9 @@
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
@@ -159873,6 +159933,9 @@
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -160336,6 +160399,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
         },
         {
           "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
@@ -161109,6 +161175,9 @@
           "commit": "3c99e325d7e9d7be2dfd2aecf99252545ad18375"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -161433,6 +161502,9 @@
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -161569,6 +161641,9 @@
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
+        },
+        {
+          "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
@@ -165390,13 +165465,13 @@
       "type": "Module",
       "id": "src/resourcework.js",
       "label": "src/resourcework.js",
-      "lines": 213,
-      "version": "fdb694a5b26bb91e",
+      "lines": 215,
+      "version": "65544ae71f899e77",
       "provenance": [
         {
           "file": "src/resourcework.js",
           "line": 1,
-          "version": "fdb694a5b26bb91e"
+          "version": "65544ae71f899e77"
         }
       ]
     },
@@ -170055,7 +170130,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4f667d5563a74d732bc7035617797200633f2c82",
+      "revision": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
       "currentBranch": "codex/agent-resource-economy",
       "defaultBranch": "main",
       "visibility": "public",
@@ -205139,13 +205214,13 @@
       "type": "TestSuite",
       "id": "test/resource-agent.js",
       "label": "test/resource-agent.js",
-      "lines": 104,
-      "version": "782021365de5aa14",
+      "lines": 183,
+      "version": "3983fcb2b77563c2",
       "provenance": [
         {
           "file": "test/resource-agent.js",
           "line": 1,
-          "version": "782021365de5aa14"
+          "version": "3983fcb2b77563c2"
         }
       ]
     },
@@ -269362,6 +269437,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6",
       "to": "Artifact:docs/release/readiness-work/harness-worker-schedule.md",
       "provenance": {
@@ -281654,6 +281801,46 @@
       "to": "Artifact:test/rc1-native-world-workload.js",
       "provenance": {
         "commit": "59c7c47abb48723f1727a37e3e033735842c6189"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "to": "Artifact:docs/agent-resource-economy.md",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "to": "Artifact:docs/resource-economy-security-review.md",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "to": "Artifact:src/resourcework.js",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "to": "Artifact:test/resource-agent.js",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "to": "Artifact:tools/resource-agent.js",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
       }
     },
     {
@@ -331614,6 +331801,14 @@
       "to": "Artifact:tools/rc1-shipment-journal.js",
       "provenance": {
         "commit": "bfa6149eeaee5eb435ecc1012d94f561c160bb44"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+      "to": "Artifact:docs/resource-economy-security-review.md",
+      "provenance": {
+        "commit": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f"
       }
     },
     {
@@ -438107,6 +438302,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3f8922f27e627efdfa3b388935ad8e9d8e25173c",
+      "provenance": {
+        "commit": "3f8922f27e627efdfa3b388935ad8e9d8e25173c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6",
       "provenance": {
         "commit": "3fcc267c10e0e1cc49ff4ac6e2fd5d52a24887c6"
@@ -439830,6 +440033,14 @@
       "to": "Commit:59c7c47abb48723f1727a37e3e033735842c6189",
       "provenance": {
         "commit": "59c7c47abb48723f1727a37e3e033735842c6189"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:59d0e25a61bdcc6dc0dee9676d13ff415bacb17c",
+      "provenance": {
+        "commit": "59d0e25a61bdcc6dc0dee9676d13ff415bacb17c"
       }
     },
     {
@@ -446790,6 +447001,14 @@
       "to": "Commit:bfa6149eeaee5eb435ecc1012d94f561c160bb44",
       "provenance": {
         "commit": "bfa6149eeaee5eb435ecc1012d94f561c160bb44"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bfc2c8183f6cecf37bd2327075c7375f70a72c1f",
+      "provenance": {
+        "commit": "bfc2c8183f6cecf37bd2327075c7375f70a72c1f"
       }
     },
     {
@@ -480144,7 +480363,7 @@
       "to": "Artifact:tools/resource-agent.js",
       "provenance": {
         "file": "test/resource-agent.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -487974,7 +488193,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "tools/resource-agent.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -505119,7 +505338,7 @@
       "to": "Artifact:test/resource-worker.js",
       "provenance": {
         "file": "docs/resource-economy-security-review.md",
-        "line": 76
+        "line": 80
       }
     },
     {
@@ -555681,7 +555900,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 48
+        "line": 49
       }
     },
     {
@@ -555690,7 +555909,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 95
+        "line": 96
       }
     },
     {
@@ -555699,7 +555918,7 @@
       "to": "Table:resource_calls",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 111
+        "line": 112
       }
     },
     {
@@ -555708,7 +555927,7 @@
       "to": "Table:resource_jobs",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 54
+        "line": 55
       }
     },
     {
@@ -555717,7 +555936,7 @@
       "to": "Table:resource_services",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 30
+        "line": 31
       }
     },
     {
@@ -555726,7 +555945,7 @@
       "to": "Table:resource_treasuries",
       "provenance": {
         "file": "src/resourcework.js",
-        "line": 155
+        "line": 156
       }
     },
     {

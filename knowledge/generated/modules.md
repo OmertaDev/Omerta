@@ -204,7 +204,7 @@
 | [src/resourcecontracts.js](../../src/resourcecontracts.js) | 38 | platform-core | 0 / 1 | 0 | 1 | 0 |
 | [src/resourcepayments.js](../../src/resourcepayments.js) | 114 | platform-core | 1 / 3 | 1 | 3 | 1 |
 | [src/resourceproviders.js](../../src/resourceproviders.js) | 183 | platform-core | 0 / 5 | 0 | 1 | 1 |
-| [src/resourcework.js](../../src/resourcework.js) | 213 | platform-core | 2 / 2 | 8 | 6 | 0 |
+| [src/resourcework.js](../../src/resourcework.js) | 215 | platform-core | 2 / 2 | 8 | 6 | 0 |
 | [src/restock.js](../../src/restock.js) | 78 | platform-core | 2 / 2 | 0 | 1 | 1 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |
 | [src/rivals.js](../../src/rivals.js) | 107 | social-combat | 1 / 6 | 1 | 8 | 1 |
