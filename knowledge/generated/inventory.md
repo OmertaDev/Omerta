@@ -1,39 +1,39 @@
 # Generated repository inventory
 
-> Source: worktree at `f12d3095237b`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `af0bb4fce514`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,300 |
-| Text lines | 1,544,514 |
-| Repository bytes inventoried | 811,150,109 |
-| Backend/route modules | 282 |
-| HTTP route registrations / unique routes | 820 / 820 |
-| Database tables | 370 |
+| Current artifacts | 4,323 |
+| Text lines | 1,547,289 |
+| Repository bytes inventoried | 811,321,445 |
+| Backend/route modules | 292 |
+| HTTP route registrations / unique routes | 838 / 838 |
+| Database tables | 375 |
 | Solidity declarations | 126 |
-| Git commits | 2,105 |
+| Git commits | 2,108 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,042 / 40,814 |
+| Graph nodes / edges | 10,117 / 41,118 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 1,194 |
-| artifact | 669 |
+| artifact | 673 |
 | contract-project | 646 |
-| test-suite | 444 |
-| documentation | 410 |
-| backend-module | 253 |
-| engineering-harness | 199 |
+| test-suite | 449 |
+| documentation | 413 |
+| backend-module | 261 |
+| engineering-harness | 200 |
 | contract-test | 111 |
 | contract-source | 105 |
 | audit | 98 |
 | design | 82 |
-| route-module | 29 |
+| route-module | 31 |
 | web-surface | 24 |
 | operations | 11 |
 | knowledge-base | 11 |
@@ -75,7 +75,7 @@
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [schema.sql](../../schema.sql) | 7,395 | data-schema | 2026-10-06 |
+| [schema.sql](../../schema.sql) | 7,483 | data-schema | 2026-10-08 |
 
 ## Media estate
 
