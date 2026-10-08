@@ -4,12 +4,14 @@
 // what's actually mounted). Read-only, keyless, zero §10.4 surface.
 import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
+import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
 const PUBLIC_PATHS = new Set([
   '/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json',
   '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',
+  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',
   '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',
   '/v1/access/redeem', '/v1/access/logout',
 ]);
@@ -265,6 +267,7 @@ export const COORDINATION_SCHEMAS = {
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
   ...DEPOT_CONTRACTS,
+  ...RESOURCE_CONTRACTS,
   ...knowledgeContracts(coordinationContract),
   'GET /v1/coordination': coordinationContract('getCoordinationCatalog', 'CoordinationCatalog'),
   'POST /v1/coordination/:graphId/instances': coordinationContract('createCoordinationInstance', 'CoordinationReceipt', {

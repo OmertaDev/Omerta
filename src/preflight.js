@@ -74,6 +74,9 @@ export const EXPLICIT_ENV = {
 // ── Everything else, classified so nothing can be added without a decision. `test/preflight.js`
 //    fails on any src/ env var missing from this file entirely.
 export const OPERATIONAL_ENV = [
+  'RESOURCE_ECONOMY', 'RESOURCE_PAYMENTS_MODE', 'RESOURCE_COMPUTE_ENABLED',
+  'RESOURCE_COMPUTE_CATALOG', 'RESOURCE_OPENAI_API_KEY', 'RESOURCE_STRIPE_SECRET_KEY',
+  'RESOURCE_STRIPE_WEBHOOK_SECRET', 'RESOURCE_SCARCE_PROVIDER_IDS', 'RESOURCE_COMPUTE_DAILY_SLOTS',
   // Economy intake defaults off; disabling it preserves funded recovery routes.
   'DEPOT_PILOT', 'DELIVERY_CONTRACTS',
   // Inert coordination pilot: disabled by default; optional account cohort only narrows access.
@@ -278,6 +281,22 @@ export function normalizeRwaReviewerConfig(env = process.env) {
 export function preflight(env = process.env) {
   const errors = [], warnings = [];
   if (!isHardened(env)) return { errors, warnings };  // dev/CI keeps the convenient fallbacks
+  if (env.RESOURCE_ECONOMY === 'on') {
+    if (!['test', 'live'].includes(env.RESOURCE_PAYMENTS_MODE)) errors.push('RESOURCE_PAYMENTS_MODE must explicitly select test or live before resource intake.');
+    for (const key of ['RESOURCE_STRIPE_SECRET_KEY', 'RESOURCE_STRIPE_WEBHOOK_SECRET'])
+      if (!env[key]?.trim()) errors.push(`${key} is required before resource intake.`);
+    let publicUrl;
+    try { publicUrl = new URL(env.PUBLIC_URL); } catch { /* rejected below */ }
+    if (!publicUrl || publicUrl.protocol !== 'https:' || publicUrl.username || publicUrl.password)
+      errors.push('PUBLIC_URL must be trusted HTTPS before resource intake.');
+    if (env.RESOURCE_COMPUTE_ENABLED === 'on') {
+      if (env.RESOURCE_PAYMENTS_MODE !== 'live') errors.push('Real resource compute requires live payment mode.');
+      if (!env.RESOURCE_OPENAI_API_KEY?.trim()) errors.push('RESOURCE_OPENAI_API_KEY is required before resource compute.');
+      let catalog;
+      try { catalog = JSON.parse(env.RESOURCE_COMPUTE_CATALOG); } catch { /* rejected below */ }
+      if (!Array.isArray(catalog) || !catalog.length) errors.push('RESOURCE_COMPUTE_CATALOG must explicitly configure capabilities before resource compute.');
+    }
+  }
 
   for (const [key, why] of Object.entries(REQUIRED_ENV))
     if (!env[key]) errors.push(`${key} must be set for a real deployment — ${why}.`);

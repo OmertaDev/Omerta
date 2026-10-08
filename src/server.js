@@ -69,6 +69,7 @@ import * as Depot from './depot.js';
 import * as Delivery from './delivery.js';
 import { register as registerDelivery } from './routes/delivery.js';
 import { register as registerDepot } from './routes/depot.js';
+import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
 import * as Boxing from './boxing.js';
 import * as Stable from './stable.js';
@@ -2359,6 +2360,7 @@ export async function buildServer() {
   });
   registerConvoy(app, { pool, auth });
   registerDepot(app, { pool, auth });
+  registerResources(app, { pool, auth, modAuth });
   registerDelivery(app, { pool, auth });
 
   registerHeists(app, { pool, auth });

@@ -820,6 +820,371 @@
       "table_name": "delivery_commitments",
       "name": "delivery_commitments_take_bps_check",
       "definition": "CHECK (take_bps >= 0 AND take_bps <= 10000)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_bid_usd_micros_check",
+      "definition": "CHECK (bid_usd_micros >= 1 AND bid_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_maximum_usd_micros_check",
+      "definition": "CHECK (maximum_usd_micros >= 1 AND maximum_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_round_id_account_id_key",
+      "definition": "UNIQUE (round_id, account_id)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_round_id_fkey",
+      "definition": "FOREIGN KEY (round_id) REFERENCES resource_rounds(id)"
+    },
+    {
+      "table_name": "resource_bids",
+      "name": "resource_bids_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['sealed'::text, 'revealed'::text, 'won'::text, 'lost'::text]))"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_account_id_request_key_key",
+      "definition": "UNIQUE (account_id, request_key)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_cap_usd_micros_check",
+      "definition": "CHECK (cap_usd_micros >= 1 AND cap_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_cost_usd_micros_check",
+      "definition": "CHECK (cost_usd_micros >= 0 AND cost_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_credit_id_fkey",
+      "definition": "FOREIGN KEY (credit_id) REFERENCES resource_credits(id)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_credit_id_key",
+      "definition": "UNIQUE (credit_id)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_max_output_tokens_check",
+      "definition": "CHECK (max_output_tokens > 0)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_provider_cost_usd_micros_check",
+      "definition": "CHECK (provider_cost_usd_micros >= 0 AND provider_cost_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_provider_request_id_key",
+      "definition": "UNIQUE (provider_request_id)"
+    },
+    {
+      "table_name": "resource_calls",
+      "name": "resource_calls_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['reserved'::text, 'sending'::text, 'succeeded'::text, 'failed'::text, 'unknown'::text]))"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_max_per_call_check",
+      "definition": "CHECK (max_per_call >= 0 AND max_per_call <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_max_per_day_check",
+      "definition": "CHECK (max_per_day >= 0 AND max_per_day <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_minimum_reserve_check",
+      "definition": "CHECK (minimum_reserve >= 0 AND minimum_reserve <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "resource_compute_policies",
+      "name": "resource_compute_policies_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_bid_id_fkey",
+      "definition": "FOREIGN KEY (bid_id) REFERENCES resource_bids(id)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_bid_id_key",
+      "definition": "UNIQUE (bid_id)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_max_output_tokens_check",
+      "definition": "CHECK (max_output_tokens > 0)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_price_usd_micros_check",
+      "definition": "CHECK (price_usd_micros >= 1 AND price_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_credits",
+      "name": "resource_credits_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['unused'::text, 'reserved'::text, 'consumed'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_buyer_account_request_key_key",
+      "definition": "UNIQUE (buyer_account, request_key)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_call_id_fkey",
+      "definition": "FOREIGN KEY (call_id) REFERENCES resource_calls(id)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_check",
+      "definition": "CHECK (buyer_account <> seller_account)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_price_usd_micros_check",
+      "definition": "CHECK (price_usd_micros >= 10000 AND price_usd_micros <= 1000000000)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_jobs",
+      "name": "resource_jobs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'claimed'::text, 'submitted'::text, 'accepted'::text, 'disputed'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_account_id_event_key_key",
+      "definition": "UNIQUE (account_id, event_key)"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_authorized_usd_micros_check",
+      "definition": "CHECK (authorized_usd_micros >= 0 AND authorized_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_available_delta_check",
+      "definition": "CHECK (available_delta >= '-1000000000000'::bigint AND available_delta <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_ledger",
+      "name": "resource_ledger_reserved_delta_check",
+      "definition": "CHECK (reserved_delta >= '-1000000000000'::bigint AND reserved_delta <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_last_event_id_check",
+      "definition": "CHECK (char_length(last_event_id) >= 1 AND char_length(last_event_id) <= 128)"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_mode_check",
+      "definition": "CHECK (mode = ANY (ARRAY['test'::text, 'live'::text]))"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_payment_intent_id_check",
+      "definition": "CHECK (char_length(payment_intent_id) >= 1 AND char_length(payment_intent_id) <= 128)"
+    },
+    {
+      "table_name": "resource_payment_intents",
+      "name": "resource_payment_intents_pkey",
+      "definition": "PRIMARY KEY (payment_intent_id, mode)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_account_id_request_key_key",
+      "definition": "UNIQUE (account_id, request_key)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_amount_usd_micros_check",
+      "definition": "CHECK (amount_usd_micros >= 10000 AND amount_usd_micros <= 1000000000 AND mod(amount_usd_micros, 10000::bigint) = 0)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_mode_check",
+      "definition": "CHECK (mode = ANY (ARRAY['test'::text, 'live'::text]))"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_payment_intent_id_key",
+      "definition": "UNIQUE (payment_intent_id)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_session_id_key",
+      "definition": "UNIQUE (session_id)"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['creating'::text, 'pending'::text, 'settled'::text, 'unknown'::text, 'refunded'::text, 'disputed'::text]))"
+    },
+    {
+      "table_name": "resource_payments",
+      "name": "resource_payments_stripe_event_id_key",
+      "definition": "UNIQUE (stripe_event_id)"
+    },
+    {
+      "table_name": "resource_rounds",
+      "name": "resource_rounds_capacity_check",
+      "definition": "CHECK (capacity >= 1 AND capacity <= 100)"
+    },
+    {
+      "table_name": "resource_rounds",
+      "name": "resource_rounds_max_output_tokens_check",
+      "definition": "CHECK (max_output_tokens > 0)"
+    },
+    {
+      "table_name": "resource_rounds",
+      "name": "resource_rounds_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_rounds",
+      "name": "resource_rounds_reserve_usd_micros_check",
+      "definition": "CHECK (reserve_usd_micros >= 1 AND reserve_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_rounds",
+      "name": "resource_rounds_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['open'::text, 'settled'::text]))"
+    },
+    {
+      "table_name": "resource_services",
+      "name": "resource_services_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_services",
+      "name": "resource_services_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "resource_services",
+      "name": "resource_services_price_usd_micros_check",
+      "definition": "CHECK (price_usd_micros >= 10000 AND price_usd_micros <= 1000000000 AND mod(price_usd_micros, 10000::bigint) = 0)"
+    },
+    {
+      "table_name": "resource_services",
+      "name": "resource_services_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_total_balance_check",
+      "definition": "CHECK ((available_usd_micros + reserved_usd_micros) <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_treasuries_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_treasuries_available_usd_micros_check",
+      "definition": "CHECK (available_usd_micros >= 0 AND available_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_treasuries_mode_check",
+      "definition": "CHECK (mode = ANY (ARRAY['test'::text, 'live'::text]))"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_treasuries_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "resource_treasuries",
+      "name": "resource_treasuries_reserved_usd_micros_check",
+      "definition": "CHECK (reserved_usd_micros >= 0 AND reserved_usd_micros <= '1000000000000'::bigint)"
     }
   ],
   "removed": [
@@ -1246,6 +1611,115 @@
       "supplier_character",
       "take_bps",
       "unit_price"
+    ],
+    "resource_bids": [
+      "account_id",
+      "commitment",
+      "created_at",
+      "id",
+      "maximum_usd_micros",
+      "policy_revision",
+      "round_id",
+      "status"
+    ],
+    "resource_calls": [
+      "account_id",
+      "cap_usd_micros",
+      "config",
+      "created_at",
+      "id",
+      "max_output_tokens",
+      "policy_revision",
+      "provider_id",
+      "purpose",
+      "request_hash",
+      "request_key",
+      "simulated",
+      "status"
+    ],
+    "resource_compute_policies": [
+      "account_id",
+      "allow_stored_responses",
+      "enabled",
+      "expires_at",
+      "max_per_call",
+      "max_per_day",
+      "minimum_reserve",
+      "providers",
+      "revision"
+    ],
+    "resource_credits": [
+      "account_id",
+      "bid_id",
+      "config",
+      "expires_at",
+      "id",
+      "max_output_tokens",
+      "price_usd_micros",
+      "provider_id",
+      "status"
+    ],
+    "resource_jobs": [
+      "buyer_account",
+      "created_at",
+      "expires_at",
+      "id",
+      "input",
+      "price_usd_micros",
+      "request_key",
+      "seller_account",
+      "service_revision",
+      "state"
+    ],
+    "resource_ledger": [
+      "account_id",
+      "authorized_usd_micros",
+      "available_delta",
+      "created_at",
+      "event_key",
+      "id",
+      "kind",
+      "reserved_delta"
+    ],
+    "resource_payments": [
+      "account_id",
+      "amount_usd_micros",
+      "created_at",
+      "id",
+      "mode",
+      "request_key",
+      "state"
+    ],
+    "resource_rounds": [
+      "capacity",
+      "commit_until",
+      "config",
+      "created_at",
+      "id",
+      "max_output_tokens",
+      "provider_id",
+      "reserve_usd_micros",
+      "reveal_until",
+      "status"
+    ],
+    "resource_services": [
+      "account_id",
+      "enabled",
+      "price_usd_micros",
+      "revision"
+    ],
+    "resource_treasuries": [
+      "account_id",
+      "available_usd_micros",
+      "frozen",
+      "mode",
+      "reserved_usd_micros"
+    ],
+    "resource_payment_intents": [
+      "last_event_id",
+      "mode",
+      "payment_intent_id",
+      "reversed"
     ]
   }
 }

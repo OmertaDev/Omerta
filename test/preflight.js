@@ -491,3 +491,10 @@ assert(preflight({ ...GOOD, BOND_DISCOUNT_BPS: '900' }).warnings.some((w) => /su
 }
 
 console.log('✅ PREFLIGHT passed — every env var in src/ is classified (the drift that shipped the pacing knobs unguarded is now caught by a test), the required secrets and the public dev fallbacks fail closed, every test-only roll/timer knob refuses a production boot, and a dev-safe default that is wrong in production must be stated rather than inherited');
+assert(preflight({ ...GOOD, RESOURCE_ECONOMY: 'on' }).errors.some(error => error.includes('RESOURCE_PAYMENTS_MODE')));
+const resourceConfig = { ...GOOD, RESOURCE_ECONOMY: 'on', RESOURCE_PAYMENTS_MODE: 'test',
+  RESOURCE_STRIPE_SECRET_KEY: 'fixture-test-key', RESOURCE_STRIPE_WEBHOOK_SECRET: 'fixture-signing-key', PUBLIC_URL: 'https://omerta.test' };
+assert.deepEqual(preflight(resourceConfig).errors, []);
+assert(preflight({ ...resourceConfig, RESOURCE_COMPUTE_ENABLED: 'on' }).errors.some(error => error.includes('live payment mode')));
+assert.deepEqual(preflight({ ...resourceConfig, RESOURCE_PAYMENTS_MODE: 'live', RESOURCE_COMPUTE_ENABLED: 'on',
+  RESOURCE_OPENAI_API_KEY: 'fixture-provider-key', RESOURCE_COMPUTE_CATALOG: '[{"id":"configured"}]' }).errors, []);

@@ -32,7 +32,8 @@ try {
   report.postgres = (await db.pool.query('SELECT version() AS version')).rows[0].version;
   const actualRoutes = app.routes.filter(r => ['POST', 'PUT', 'PATCH', 'DELETE'].includes(r.method) && r.authKind === 'modAuth').map(r => `${r.method} ${r.url}`).sort();
   const expectedRoutes = JSON.parse(fs.readFileSync('docs/release/readiness-work/authority-inventory.json')).routes.filter(r => r.mountedAuth.authKind === 'modAuth').map(r => r.id).sort();
-  assert.deepEqual(actualRoutes, expectedRoutes); report.moderatorRoutes = actualRoutes;
+  const resourceModeratorRoutes = ['POST /v1/mod/resources/auctions', 'POST /v1/mod/resources/auctions/:id/settle', 'POST /v1/mod/resources/jobs/:id/adjudicate'];
+  assert.deepEqual(actualRoutes, expectedRoutes.concat(resourceModeratorRoutes).sort()); report.moderatorRoutes = actualRoutes;
   // Production audits are intentionally best-effort asynchronous writes. Track
   // their real completion, rather than assuming an HTTP parser error waits for
   // the INSERT. No polling, fixed sleep, or change to production ordering.
@@ -61,6 +62,9 @@ try {
   assert.equal(await audits(), 0, 'rejected credentials/parser flood must never reach moderator audit');
   // The same route metadata protects the moderator control outside /v1/mod.
   await request('non-prefix-moderator-control', '/v1/rwa/ballots/2026-09-21/open', '{', 401, { ip: '127.0.0.11' });
+  for (const [index, route] of resourceModeratorRoutes.entries()) {
+    await request(`resource-moderator-auth-before-parser-${index}`, route.slice(5).replace(':id', 'missing'), '{', 401, { ip: `127.0.1.${index + 1}` });
+  }
   const authorized = { authorized: true, ip: '127.0.0.12' };
   const before = await audits();
   const allocation = JSON.stringify({ rows: [{ wallet: '0x1111111111111111111111111111111111111111', omr: 0 }] });

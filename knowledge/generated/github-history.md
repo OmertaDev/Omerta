@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0ba8d2079e53`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `507a62c5c497`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2127 |
+| Commits in clone | 2144 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Improve Wiki feature coverage and illustrated chapters |
+| Latest commit | 2026-10-08 — Declare native resource pilot in exact release gate inventory |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1232 |
+| OmertaDev | 1248 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 50 |
+| github-actions[bot] | 51 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -32,43 +32,43 @@
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 435 | yes |
-| [src/server.js](../../src/server.js) | 374 | yes |
-| [SPEC.md](../../SPEC.md) | 365 | yes |
-| knowledge/generated/github-history.md | 311 | historical |
-| knowledge/generated/graph-summary.md | 311 | historical |
-| knowledge/generated/graph.json | 311 | historical |
-| knowledge/generated/inventory.md | 311 | historical |
-| [schema.sql](../../schema.sql) | 300 | yes |
+| [src/server.js](../../src/server.js) | 375 | yes |
+| [SPEC.md](../../SPEC.md) | 367 | yes |
+| knowledge/generated/github-history.md | 318 | historical |
+| knowledge/generated/graph-summary.md | 318 | historical |
+| knowledge/generated/graph.json | 318 | historical |
+| knowledge/generated/inventory.md | 318 | historical |
+| [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 235 | yes |
+| [package.json](../../package.json) | 237 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 134 | historical |
+| knowledge/generated/documents.md | 139 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/modules.md | 120 | historical |
+| knowledge/generated/modules.md | 124 | historical |
 | [test/client.js](../../test/client.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
+| [test/gates.js](../../test/gates.js) | 91 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
-| [test/gates.js](../../test/gates.js) | 89 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| knowledge/generated/graph.mmd | 82 | historical |
+| knowledge/generated/graph.mmd | 83 | historical |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
-| [src/preflight.js](../../src/preflight.js) | 64 | yes |
+| [src/preflight.js](../../src/preflight.js) | 65 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
-| knowledge/generated/schema.md | 51 | historical |
+| knowledge/generated/schema.md | 53 | historical |
 | [src/economy.js](../../src/economy.js) | 51 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 47 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 49 | yes |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 
 ## Pull requests

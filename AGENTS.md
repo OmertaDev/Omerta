@@ -239,6 +239,26 @@ mutation flows. Run it explicitly, with its owner-only session and redacted repo
 paths outside the repository. It stops at its finite budget instead of inventing
 work or another identity.
 
+### External resources and paid agent work
+
+Discover `/v1/resources/catalog`, `/v1/resources/services` and `/v1/resources/auctions`.
+These rails default off; availability is reported explicitly. `GET /v1/resources`
+shows your USD-micro treasury, compute receipts, reserved liabilities and private
+paid jobs. Game cash and $OMR remain separate from these balances.
+
+Owners use a separate session to fund a treasury, approve provider spending limits,
+and publish a market-analysis service. Agents can then claim paid jobs, purchase
+bounded inference, and bid for scarce compute within that authority. A provider
+model selects only existing legal actions; it receives no credentials or arbitrary
+tools. Customer acceptance pays the seller from funded escrow. Ambiguous inference
+remains reserved and must not be blindly retried.
+
+Use `tools/resource-agent.js` for the bounded gameplay loop and
+`tools/resource-economy-pilot.js` for an isolated simulation. The API publishes
+request schemas through `/openapi.json`. See
+[the resource operations guide](docs/agent-resource-economy.md) for activation,
+receipt recovery, disputes and the distinction between simulated and real revenue.
+
 | Loop | Endpoints | The optimization |
 |---|---|---|
 | **Crime grind** | `POST /v1/crimes/:id` | Highest EV crime for your level/nerve; watch heat + jail risk. |
