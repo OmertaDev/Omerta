@@ -24,7 +24,34 @@ const chainChanges = [
 ];
 const invariantChanges = [["    'window:', 'yield:', 'desk:', 'made:', 'rarity:', 'brokers:', 'deed:upgrade',\n",
   "    'window:', 'yield:', 'desk:', 'made:', 'rarity:', 'brokers:',\n"]];
+// Exact inverse transfer of the additive depot/delivery checks and webhook formatting.
+// Historical deed evidence is reconstructed, not extended to the new economy.
+export const AGENT_ECONOMY_INVARIANT_PIN = 'cd46343ec94dfb570c99fcd0e5618fe0631eb6d73557ddb8b53980983dc40150';
+const economyInvariantChanges = [
+  [
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n",
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n"
+  ],
+  [
+    "  const deliveryRows = (await pool.query(\"SELECT * FROM delivery_commitments WHERE status='accepted' AND deadline>now()\")).rows;\n  const deliveryOrders = (await pool.query(\"SELECT id,qty,price,seller_character,depot_id,good_id,district,status,expires_at FROM market_listings WHERE kind='order'\")).rows;\n  for (const id of [...new Set(deliveryRows.map((c) => c.order_id))]) {\n    const contracts = deliveryRows.filter((c) => c.order_id === id), order = deliveryOrders.find((o) => o.id === id);\n    const reserved = contracts.reduce((n, c) => n + Number(c.remaining), 0);\n    push(`delivery capacity:${id}`, Math.max(0, reserved - Number(order?.qty || 0)), 0, 0);\n    const mismatch = contracts.filter((c) => !order || order.status !== 'live' || order.depot_id !== c.depot_id\n      || order.seller_character !== c.buyer_character || order.good_id !== c.good_id || order.district !== c.district\n      || Number(order.price) !== Number(c.unit_price) || new Date(c.deadline) > new Date(order.expires_at)\n      || Number(c.spent) > Number(c.spend_limit)).length;\n    push(`delivery terms:${id}`, mismatch, 0, 0);\n  }\n\n  // Pilot business custody is independently journaled. Cash funding/withdrawals and\n  // customer receipts must also reconcile with the existing character ledger.\n  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;\n  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;\n  const depotOrders = (await pool.query(\"SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)\")).rows;\n  for (const depot of depots) {\n    const entries = depotJournal.filter((entry) => entry.depot_id === depot.id);\n    for (const [column, delta] of [['treasury', 'cash_delta'], ['stock', 'stock_delta'], ['stock_cost', 'cost_delta']])\n      push(`depot ${column}:${depot.id}`, Number(depot[column]), entries.reduce((n, entry) => n + Number(entry[delta]), 0), 0);\n    const promised = Number(depot.stock) + depotOrders.filter((order) => order.depot_id === depot.id)\n      .reduce((n, order) => n + Number(order.filled_qty) + (order.status === 'live' ? Number(order.qty) : 0), 0);\n    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);\n  }\n  const depotCash = (reason) => depotJournal.filter((entry) => entry.reason === reason).reduce((n, entry) => n + Number(entry.cash_delta), 0);\n  push('depot funding', depotCash('fund'), -(await sum(pool, \"currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL\")), 0);\n  push('depot withdrawals', -depotCash('withdraw'), await sum(pool, \"currency='cash' AND reason='depot:withdraw' AND character_id IS NOT NULL\"), 0);\n  push('depot sales', depotCash('sale'), -(await sum(pool, \"currency='cash' AND reason='depot:buy'\")) + await sum(pool, \"currency='cash' AND reason='depot:take'\"), 0);\n  push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, \"currency='cash' AND reason='market:order' AND character_id IS NULL\")), 0);\n  push('depot refunds', depotCash('restock_refund'), await sum(pool, \"currency='cash' AND reason='market:refund' AND character_id IS NULL\"), 0);\n  push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, \"currency='cash' AND reason='market:list' AND character_id IS NULL\")), 0);\n  push('depot death burn', -depotCash('death'), -(await sum(pool, \"currency='cash' AND reason='depot:death'\")), 0);\n  const policyRows = (await pool.query('SELECT id,spent,max_spend FROM business_operating_policies')).rows;\n  const policyJournal = (await pool.query(\"SELECT policy_id,cash_delta FROM business_depot_journal WHERE policy_id IS NOT NULL AND reason IN ('restock_escrow','restock_fee')\")).rows;\n  for (const policy of policyRows) {\n    push(`operating policy spend:${policy.id}`, Number(policy.spent), -policyJournal.filter((j) => j.policy_id === policy.id)\n      .reduce((n, j) => n + Number(j.cash_delta), 0), 0);\n    push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);\n  }\n",
+    ""
+  ],
+  [
+    "    if (Array.isArray(f.mismatches)) {\n      const details = f.mismatches.map((m) => `  • ${m.what}: on-chain ${m.onchain} vs backend ${m.backend}`);\n      return [`• ${f.name || 'check'}`, ...details, ...(f.note ? [`  ${f.note}`] : [])].join('\\n');\n    }\n    const rest = Object.entries(f).filter(([k]) => k !== 'name')\n      .map(([k, v]) => `${k}=${v !== null && typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ');\n",
+    "    const rest = Object.entries(f).filter(([k]) => k !== 'name').map(([k, v]) => `${k}=${v}`).join(', ');\n"
+  ]
+];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (file === 'src/invariants.js' && hash(text) === AGENT_ECONOMY_INVARIANT_PIN) {
+    let prior = text;
+    for (const [current, original] of economyInvariantChanges) {
+      assert.equal(prior.split(current).length, 2, 'Economy invariant transfer is not exact and unique');
+      prior = prior.replace(current, original);
+    }
+    assert.equal(hash(prior), DEED_BACKLOG_CURRENT_PINS[file], 'Invariant source differs beyond exact economy additions');
+    const proof = assertDeedBacklogCompatibility(file, prior);
+    return { ...proof, actualSha256: hash(text), economyTransfer: { predecessorSha256: hash(prior), inverseChunks: economyInvariantChanges.length } };
+  }
   const actualSha256 = hash(text), baselineSha256 = DEED_BACKLOG_BASELINE_PINS[file];
   assert(baselineSha256, 'Unknown backlog compatibility source');
   if (actualSha256 === baselineSha256) return { actualSha256, baselineSha256, baselineText: text };
@@ -54,6 +81,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertEconomySourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   if (actualSha256 === GENESIS_SERVER_WRAPPER_PIN) return { actualSha256, priorText: text, snapshotModuleTransfer: null };
   assert.equal(actualSha256, GENESIS_SNAPSHOT_SERVER_PIN, 'Recovery rule source changed: src/server.js');
@@ -91,6 +122,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertEconomySourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   if (actualSha256 === HTTP_RECEIPT_SERVER_PIN) return { actualSha256, priorText: text, genesisWrapperTransfer: null };
   const snapshot = assertGenesisSnapshotServerCompatibility(text);
@@ -149,6 +184,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertEconomySourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   if (actualSha256 === DEED_SERVER_CURRENT_PIN) return { actualSha256, priorText: text };
   const wrapper = assertGenesisWrapperServerCompatibility(text);
@@ -164,6 +203,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertEconomySourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   if (actualSha256 === DEED_SERVER_BASELINE_PIN) return { actualSha256, baselineSha256: actualSha256, baselineText: text };
   const receiptTransfer = assertHttpReceiptServerCompatibility(text);
@@ -199,4 +242,60 @@ export function assertCarMeltRulesCompatibility(text) {
   const baselineText = text.slice(0, -deedUpgradeLiteral.length).replace(deedSinkLine, baselineSinkLine);
   assert.equal(hash(baselineText), CAR_MELT_BASELINE_RULES_PIN, 'Car rules differ from frozen baseline beyond approved deed additions');
   return { actualSha256, baselineSha256: CAR_MELT_BASELINE_RULES_PIN, baselineText };
+}
+
+// Exact routing/quote inverse guards preserve historical personal-recovery and
+// car-melt evidence; they grant no depot, supplier or agent authority coverage.
+export const ECONOMY_SOURCE_CURRENT_PINS = Object.freeze({
+  "src/economy.js": "c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b",
+  "src/server.js": "bede99f055c871f8f73382f1eb68a2ce4fdf1f0418777739406ff45448742f4d"
+});
+const economySourceInverse = {
+  "src/economy.js": {
+    "baseline": "f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835",
+    "changes": [
+      [
+        "import { goodsBuyQuote } from './goodsquote.js';\n",
+        ""
+      ],
+      [
+        "  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned);\n",
+        "  const unit = Math.round(goodPriceOf(goodId, ch.loc) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'buy'));\n  const cost = unit * n, fee = Math.ceil(cost * 0.01), tax = Math.ceil(cost * 0.01);\n"
+      ]
+    ]
+  },
+  "src/server.js": {
+    "baseline": "cf17311eeea98729ba277c722eb18426cdbfd1da863859684fdeec31a793dc97",
+    "changes": [
+      [
+        "import * as Depot from './depot.js';\nimport * as Delivery from './delivery.js';\nimport { register as registerDelivery } from './routes/delivery.js';\nimport { register as registerDepot } from './routes/depot.js';\n",
+        ""
+      ],
+      [
+        "  registerDepot(app, { pool, auth });\n  registerDelivery(app, { pool, auth });\n",
+        ""
+      ],
+      [
+        "      case 'restock_buy':\n",
+        ""
+      ],
+      [
+        "      case 'restock_travel':\n      case 'depot_travel':\n",
+        ""
+      ],
+      [
+        "      case 'depot_restock': return Depot.restockDepot(ch, tail('/v1/depot/').replace(/\\/restock$/, ''), client, h,\n        { automated: true, policyId: action.body.policyId });\n      case 'delivery_accept': return Delivery.acceptDelivery(ch, action.body.orderId, action.body, client);\n      case 'delivery_deliver': return Delivery.deliverCommitment(ch, action.body.commitmentId, action.body.qty, client, h);\n      case 'delivery_buy':\n      case 'delivery_travel': return Delivery.deliveryStep(ch, action.body.commitmentId, action.kind, action.body, client, h);\n      case 'depot_receive': {\n        const [id, order] = tail('/v1/depot/').split('/orders/');\n        return Depot.receiveDepot(ch, id, order.replace(/\\/receive$/, ''), client, { automated: true, policyId: action.body.policyId });\n      }\n",
+        ""
+      ]
+    ]
+  }
+};
+export function assertEconomySourceTransfer(file, text) {
+ const scope = economySourceInverse[file]; assert(scope, 'Unknown economy transfer source');
+ if (hash(text) === scope.baseline) return { baselineText: text, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: 0 };
+ assert.equal(hash(text), ECONOMY_SOURCE_CURRENT_PINS[file], 'Economy transfer source changed: ' + file);
+ let baselineText = text;
+ for (const [current, original] of scope.changes) { assert.equal(baselineText.split(current).length, 2, 'Economy source chunk is not exact and unique'); baselineText = baselineText.replace(current, original); }
+ assert.equal(hash(baselineText), scope.baseline, 'Source differs beyond exact economy changes');
+ return { baselineText, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: scope.changes.length };
 }

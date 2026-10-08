@@ -4,6 +4,7 @@ process.env.RATE_LIMIT = 'off';
 process.env.JWT_SECRET = 'test-jwt-secret-for-agent-turn';
 
 import assert from 'node:assert/strict';
+import { goodPriceOf } from '../src/rules.js';
 import { buildServer } from '../src/server.js';
 import { agentActionLockHooks, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
 
@@ -467,6 +468,10 @@ try {
     method: 'POST', path: '/v1/market/agent-order/fill', body: { qty: 2 },
     cost: { goods: { gin: 2 } }, reward: { cash: { gross: 1000, net: 980 } },
   }, 'a fillable local order becomes a structured action sized to the agent\'s actual cargo');
+  assert.equal(fill.ev.inventory, -2 * goodPriceOf('gin', 'docks'),
+    'order fills deduct delivered inventory from their economic score');
+  assert.equal(fill.score, fill.ev.cash + fill.ev.inventory,
+    'cash receipts are not ranked as profit without accounting for the goods surrendered');
 
   await app.pool.query('DELETE FROM character_cargo WHERE character_id=$1', [turn.body.state.identity.id]);
   await app.pool.query('UPDATE characters SET nerve=0,last_accrued_at=now() WHERE id=$1', [turn.body.state.identity.id]);

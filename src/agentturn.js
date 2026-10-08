@@ -3,6 +3,9 @@
 // on observation. This response joins the existing coach and economic board, then adds executable
 // action descriptors whose method/path/body can be handed straight back to the API.
 import crypto from 'node:crypto';
+import { restockCandidates } from './restock.js';
+import { depotState, depotPilotEnabled } from './depot.js';
+import { deliveryBoard, deliveryIntakeEnabled, DELIVERY } from './delivery.js';
 import { BLACK_MARKET, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
 import { view } from './game.js';
 import { opportunityBoard } from './opportunities.js';
@@ -123,7 +126,8 @@ function marketActions(ch, owned, opportunities) {
         id: `market:fill:${o.listingId}`, kind: 'market_fill', label: `Fill ${o.good} buy order`,
         method: 'POST', path: `/v1/market/${o.listingId}/fill`, body: { qty }, executable: true,
         cost: { goods: { [o.good]: qty } }, reward: { cash: { gross, net } }, risk: { level: 'none' },
-      }, { cash: net, confidence: 1, basis: 'Deterministic order proceeds after the published market take.' });
+      }, { cash: net, inventory: -qty * goodPriceOf(o.good, ch.loc), confidence: 1,
+        basis: 'Order proceeds after the published market take, less current district value of delivered cargo.' });
     });
 }
 
@@ -150,8 +154,8 @@ function arbitragePlans(ch, sheet, owned, niches) {
       const atSeller = ch.loc === edge.sellIn;
       const travel = atSeller ? 0 : CONSTANTS.TRAVEL_COST;
       const proceeds = sellNet(edge.sellPrice, held);
-      const estimate = valuation({ cash: proceeds - travel, confidence: 0.75,
-        basis: 'Expected liquidation proceeds from held cargo after the 2% sell take and required travel; acquisition cost is already sunk and unavailable.' });
+      const estimate = valuation({ cash: proceeds - travel, inventory: -held * goodPriceOf(edge.good, ch.loc), confidence: 0.75,
+        basis: 'Expected liquidation proceeds after the 2% sell take and travel, less current district value of held cargo; acquisition cost is already sunk and unavailable.' });
       const nextActionId = `${id}:${atSeller ? 'sell' : 'travel-sell'}`;
       plans.push({
         id, kind: 'arbitrage', label: `${edge.name}: ${edge.buyIn} to ${edge.sellIn}`,
@@ -335,6 +339,33 @@ async function businessActions(db, ch) {
   })];
 }
 
+function depotActions(ch, depot) {
+  if (!depot || jailed(ch) || safeHoused(ch)) return [];
+  const policy = depot.operatingPolicy;
+  if (!policy?.enabled) return [];
+  const delivery = policy.allowReceive && depot.orders.find((order) => order.delivered > 0);
+  const replenish = depotPilotEnabled() && policy.allowRestock && depot.automatedRestockQuote;
+  if (!delivery && !replenish) return [];
+  if (ch.loc !== depot.district) {
+    if (Number(ch.cash) < POLICY.cashReserve + CONSTANTS.TRAVEL_COST) return [];
+    return [valued({ id: `depot:${depot.id}:travel`, kind: 'depot_travel', label: 'Visit your supply depot',
+      method: 'POST', path: `/v1/travel/${depot.district}`, body: { policyId: policy.id }, executable: true,
+      cost: { cash: CONSTANTS.TRAVEL_COST }, reward: { businessInventoryPending: delivery?.delivered || 0 },
+      risk: { level: 'low' } }, { cash: -CONSTANTS.TRAVEL_COST, basis: 'Actual fare to receive paid inventory or manage a funded procurement budget.' })];
+  }
+  if (delivery) return [valued({ id: `depot:${depot.id}:receive:${delivery.id}`, kind: 'depot_receive',
+    label: 'Receive supplier delivery into business stock', method: 'POST',
+    path: `/v1/depot/${depot.id}/orders/${delivery.id}/receive`, body: { policyId: policy.id }, executable: true,
+    cost: {}, reward: { businessStock: delivery.delivered }, risk: { level: 'none' } },
+  { basis: 'Moves already-paid warehouse inventory into the business; no cash or new economic reward is created.' })];
+  return [valued({ id: `depot:${depot.id}:restock`, kind: 'depot_restock', label: 'Post a treasury-funded procurement order',
+    method: 'POST', path: `/v1/depot/${depot.id}/restock`, body: { policyId: policy.id }, executable: true,
+    cost: { businessCash: replenish.total }, reward: { requestedStock: replenish.qty },
+    risk: { level: 'medium', customerDemandGuaranteed: false } },
+  { treasury: -replenish.total, inventory: replenish.escrow, confidence: 0.7,
+    basis: 'Commits business cash to supplier escrow within owner-set terms; the listing fee is an expense and future customer demand is uncommitted.' })];
+}
+
 async function territoryActions(db, ch, owned) {
   if (!owned.gangId || safeHoused(ch)) return [];
   const operations = (await territoryOf(db, owned.gangId))
@@ -489,13 +520,70 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const exploration = await exploreBoard(db, ch, acct, owned, { onlineAccounts });
   const crime = crimePlan(ch, owned);
   const passive = [...await businessActions(db, ch), ...await territoryActions(db, ch, owned)];
+  const depot = await depotState(db, ch, { acct, owned });
+  const commitments = await deliveryBoard(db, ch);
   const arbitrage = arbitragePlans(ch, sheet, owned, opportunities.niches.arbitrage);
+  const restock = restockCandidates(ch, sheet, owned, opportunities.opportunities, POLICY);
+  const activeDeliveries = commitments.filter((c) => c.supplierId === ch.id && c.status === 'accepted');
+  if (deliveryIntakeEnabled()) for (const candidate of restock) {
+    const order = opportunities.opportunities.find((o) => o.listingId === candidate.plan.listingId);
+    if (!order?.depotId || activeDeliveries.length >= DELIVERY.maxActive
+        || activeDeliveries.reduce((n, c) => n + c.remaining, 0) + candidate.plan.quantity > DELIVERY.maxUnits
+        || new Date(order.expiresAt).getTime() - Date.now() < 3700000) continue;
+    const budget = candidate.plan.acquisitionCash + candidate.plan.travelCash;
+    if (budget < 1 || budget > DELIVERY.maxSpend) continue;
+    candidate.action = { ...candidate.action, kind: 'delivery_accept', label: 'Accept a funded supplier delivery',
+      path: `/v1/market/${order.listingId}/accept-delivery`,
+      body: { orderId: order.listingId, qty: candidate.plan.quantity, unitPrice: order.unitPrice,
+        maxProcurementCash: budget, deadlineSeconds: 3600 }, cost: {},
+      risk: { level: 'medium', orderReservedAfterAcceptance: true, deathMayTerminate: true } };
+    candidate.plan.status = 'accept_delivery';
+    candidate.plan.route.unshift({ kind: 'accept', path: candidate.action.path, quantity: candidate.plan.quantity });
+  }
+  const deliveryActions = [];
+  const deliveryPlans = [];
+  for (const contract of activeDeliveries) {
+    if (jailed(ch) || safeHoused(ch)) continue;
+    const held = Math.min(contract.remaining, Number(owned.cargo?.[contract.good] || 0));
+    if (held && ch.loc === contract.district) {
+      const gross = held * contract.unitPrice, done = contract.quantity - contract.remaining;
+      const net = gross - (Math.ceil((done + held) * contract.unitPrice * contract.takeBps / 10000)
+        - Math.ceil(done * contract.unitPrice * contract.takeBps / 10000));
+      const action = valued({ id: `delivery:${contract.id}:deliver`, planId: `delivery:${contract.id}`, kind: 'delivery_deliver',
+        label: 'Deliver reserved goods', method: 'POST', path: `/v1/deliveries/${contract.id}/deliver`,
+        body: { commitmentId: contract.id, qty: held }, executable: true,
+        cost: { goods: { [contract.good]: held } }, reward: { cash: { gross, net } }, risk: { level: 'low' } },
+      { cash: net, inventory: -held * goodPriceOf(contract.good, ch.loc), basis: 'Fixed committed payout after market take, less delivered inventory value.' });
+      deliveryActions.push(action);
+      deliveryPlans.push({ id: action.planId, kind: 'delivery', commitmentId: contract.id, deadline: contract.deadline,
+        label: 'Settle committed delivery', quantity: held, status: 'deliver', nextActionId: action.id,
+        refreshAfterStep: true, score: action.score, ev: action.ev,
+        route: [{ kind: 'deliver', path: action.path, quantity: held }] });
+      continue;
+    }
+    const available = contract.maxProcurementCash - contract.spent;
+    const choices = restockCandidates({ ...ch, cash: Math.min(Number(ch.cash), available + POLICY.cashReserve) }, sheet, owned,
+      [{ type: 'order', listingId: contract.orderId, posterId: contract.buyerId, good: contract.good,
+        wanted: contract.remaining, unitPrice: contract.unitPrice, district: contract.district, expiresAt: contract.deadline }], POLICY);
+    if (!choices.length) continue;
+    const choice = choices[0];
+    const action = valued({ ...choice.action, id: `delivery:${contract.id}:${choice.plan.status}`, planId: `delivery:${contract.id}`,
+      kind: choice.action.kind === 'restock_buy' ? 'delivery_buy' : 'delivery_travel',
+      body: { ...choice.action.body, commitmentId: contract.id,
+        ...(choice.action.kind === 'restock_travel' ? { district: choice.action.path.split('/').at(-1) } : {}) },
+      risk: { level: 'medium', orderReserved: true, deathMayTerminate: true } }, choice.estimate);
+    deliveryActions.push(action);
+    deliveryPlans.push({ ...choice.plan, id: action.planId, kind: 'delivery', commitmentId: contract.id,
+      deadline: contract.deadline, nextActionId: action.id, ...valuation(choice.estimate),
+      route: choice.plan.route.map((step) => step.kind === 'fill'
+        ? { kind: 'deliver', path: `/v1/deliveries/${contract.id}/deliver`, quantity: step.quantity } : step) });
+  }
   const kitchen = kitchenPlans(sheet);
   const convoy = convoyPlans(ch, sheet, owned, convoyBoardState);
   const loans = loanPlans(ch, loanBoardState);
   const organization = organizationPlans(crewBoardState);
   const actions = rankActions([...rewards, ...passive, ...marketActions(ch, owned, opportunities.opportunities),
-    ...arbitrage.actions, ...kitchen.actions, ...convoy.actions, ...loans.actions,
+    ...arbitrage.actions, ...restock.map((c) => valued(c.action, c.estimate)), ...deliveryActions, ...depotActions(ch, depot), ...kitchen.actions, ...convoy.actions, ...loans.actions,
     ...organization.actions, crime]
     .filter((action) => action?.executable));
   const blockedActions = [...kitchen.blockedActions, ...convoy.blockedActions, ...loans.blockedActions,
@@ -517,14 +605,19 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
         wantedUntil: ch.wanted_until || null, indictedAt: ch.indicted_at || null },
     },
     extraction: extractionState(acct),
+    depot,
+    deliveries: commitments,
     coach: sheet.coach,
     coachPlan: sheet.coachPlan,
     policy: POLICY,
     ranking: RANKING,
-    recommendedActionId: actions[0]?.id || null,
+    recommendedActionId: (depot?.operatingPolicy?.enabled && depot.operatingPolicy.businessPriority
+      ? actions.find((a) => ['depot_restock', 'depot_receive', 'depot_travel'].includes(a.kind))?.id : null) || actions[0]?.id || null,
+    recommendationSource: depot?.operatingPolicy?.enabled && depot.operatingPolicy.businessPriority
+      && actions.some((a) => ['depot_restock', 'depot_receive', 'depot_travel'].includes(a.kind)) ? 'owner_policy' : 'cash_equivalent',
     actions,
     blockedActions,
-    plans: rankPlans([...arbitrage.plans, ...kitchen.plans, ...convoy.plans, ...loans.plans,
+    plans: rankPlans([...arbitrage.plans, ...restock.map((c) => ({ ...c.plan, ...valuation(c.estimate) })), ...deliveryPlans, ...kitchen.plans, ...convoy.plans, ...loans.plans,
       ...organization.plans]),
     nextWakeAt: actions.length || !(futureClocks.length || blockedClocks.length)
       ? null : new Date(Math.min(...futureClocks, ...blockedClocks)).toISOString(),

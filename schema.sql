@@ -1461,6 +1461,7 @@ CREATE TABLE IF NOT EXISTS commission_vetoes (
 CREATE TABLE IF NOT EXISTS market_listings (
   id TEXT PRIMARY KEY,
   seller_character TEXT NOT NULL,     -- the POSTER (for kind='order' that's the buyer)
+  depot_id TEXT,                      -- business-funded procurement custody
   kind TEXT NOT NULL,                 -- 'car' | 'good' | 'order' (step two: standing WTB)
   car_id TEXT,                        -- kind='car'
   good_id TEXT,                       -- kind='good' | 'order'
@@ -7392,3 +7393,90 @@ CREATE TABLE IF NOT EXISTS deed_upgrades (
 
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS ownership_since_day INT;
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS reward_wallet_since_day INT;
+
+-- Inventory-backed gin depots. No clock-based income or mint authority.
+CREATE TABLE IF NOT EXISTS business_depots (
+  id TEXT PRIMARY KEY,
+  owner_character TEXT NOT NULL REFERENCES characters(id),
+  district TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  treasury NUMERIC NOT NULL DEFAULT 0 CHECK (treasury >= 0),
+  stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0 AND stock <= 40),
+  stock_cost NUMERIC NOT NULL DEFAULT 0 CHECK (stock_cost >= 0),
+  sale_price NUMERIC NOT NULL,
+  bid_price NUMERIC NOT NULL,
+  reorder_at INT NOT NULL,
+  target_stock INT NOT NULL,
+  restock_budget NUMERIC NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_depot_owner_open ON business_depots(owner_character) WHERE status='open';
+CREATE TABLE IF NOT EXISTS business_depot_journal (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  reason TEXT NOT NULL,
+  policy_id TEXT,
+  customer_character TEXT,
+  stock_after INT,
+  cash_delta NUMERIC NOT NULL DEFAULT 0,
+  stock_delta INT NOT NULL DEFAULT 0,
+  cost_delta NUMERIC NOT NULL DEFAULT 0,
+  expense NUMERIC NOT NULL DEFAULT 0,
+  order_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_depot_journal_depot ON business_depot_journal(depot_id);
+-- Existing installations need this column before the new index is constructed.
+ALTER TABLE market_listings ADD COLUMN IF NOT EXISTS depot_id TEXT;
+CREATE INDEX IF NOT EXISTS ix_market_depot ON market_listings(depot_id);
+
+CREATE TABLE IF NOT EXISTS delivery_commitments (
+  id TEXT PRIMARY KEY,
+  order_id TEXT NOT NULL,
+  depot_id TEXT NOT NULL,
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  good_id TEXT NOT NULL,
+  district TEXT NOT NULL,
+  unit_price NUMERIC NOT NULL,
+  take_bps INT NOT NULL CHECK (take_bps BETWEEN 0 AND 10000),
+  quantity INT NOT NULL CHECK (quantity BETWEEN 1 AND 40),
+  remaining INT NOT NULL CHECK (remaining >= 0 AND remaining <= quantity),
+  spend_limit NUMERIC NOT NULL CHECK (spend_limit > 0),
+  spent NUMERIC NOT NULL DEFAULT 0 CHECK (spent >= 0 AND spent <= spend_limit),
+  status TEXT NOT NULL DEFAULT 'accepted',
+  deadline TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_delivery_order ON delivery_commitments(order_id);
+CREATE INDEX IF NOT EXISTS ix_delivery_supplier ON delivery_commitments(supplier_character,status);
+
+CREATE TABLE IF NOT EXISTS business_operating_policies (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  revision INT NOT NULL,
+  enabled BOOLEAN NOT NULL,
+  allow_restock BOOLEAN NOT NULL,
+  allow_receive BOOLEAN NOT NULL,
+  business_priority BOOLEAN NOT NULL,
+  max_spend NUMERIC NOT NULL CHECK (max_spend >= 0),
+  spent NUMERIC NOT NULL DEFAULT 0 CHECK (spent >= 0 AND spent <= max_spend),
+  reserve_cash NUMERIC NOT NULL,
+  bid_price NUMERIC NOT NULL,
+  target_stock INT NOT NULL,
+  reorder_at INT NOT NULL,
+  order_budget NUMERIC NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (depot_id,revision)
+);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS policy_id TEXT;
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS customer_character TEXT;
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS stock_after INT;
+CREATE TABLE IF NOT EXISTS business_external_costs (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  usd_micros NUMERIC NOT NULL CHECK (usd_micros > 0),
+  category TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

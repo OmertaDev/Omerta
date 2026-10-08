@@ -65,6 +65,10 @@ import * as Collection from './collection.js';
 import * as Firsts from './firsts.js';
 import * as Shipment from './shipment.js';
 import * as Business from './business.js';
+import * as Depot from './depot.js';
+import * as Delivery from './delivery.js';
+import { register as registerDelivery } from './routes/delivery.js';
+import { register as registerDepot } from './routes/depot.js';
 import * as Speakeasy from './speakeasy.js';
 import * as Boxing from './boxing.js';
 import * as Stable from './stable.js';
@@ -2354,6 +2358,8 @@ export async function buildServer() {
     return Convoy.convoyBoard(pool, cid);
   });
   registerConvoy(app, { pool, auth });
+  registerDepot(app, { pool, auth });
+  registerDelivery(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 
@@ -2611,14 +2617,27 @@ export async function buildServer() {
     switch (action.kind) {
       case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);
       case 'market_fill': return Market.fillOrder(ch, tail('/v1/market/').replace(/\/fill$/, ''), action.body?.qty, client, h);
+      case 'restock_buy':
       case 'arbitrage_buy': return E.buyGood(ch, action.body?.goodId, action.body?.qty, client, h);
       case 'arbitrage_sell': return E.sellGood(ch, action.body?.goodId, action.body?.qty, client, h);
       case 'arbitrage_travel':
+      case 'restock_travel':
+      case 'depot_travel':
       case 'convoy_travel': return G.travel(ch, tail('/v1/travel/'), client, h);
       case 'kitchen_collect': return K.collect(ch, client, h);
       case 'convoy_collect': return Convoy.collectConvoy(ch,
         tail('/v1/convoy/').replace(/\/collect$/, ''), client, h);
       case 'business_collect': return Business.collectBusiness(ch, client, h);
+      case 'depot_restock': return Depot.restockDepot(ch, tail('/v1/depot/').replace(/\/restock$/, ''), client, h,
+        { automated: true, policyId: action.body.policyId });
+      case 'delivery_accept': return Delivery.acceptDelivery(ch, action.body.orderId, action.body, client);
+      case 'delivery_deliver': return Delivery.deliverCommitment(ch, action.body.commitmentId, action.body.qty, client, h);
+      case 'delivery_buy':
+      case 'delivery_travel': return Delivery.deliveryStep(ch, action.body.commitmentId, action.kind, action.body, client, h);
+      case 'depot_receive': {
+        const [id, order] = tail('/v1/depot/').split('/orders/');
+        return Depot.receiveDepot(ch, id, order.replace(/\/receive$/, ''), client, { automated: true, policyId: action.body.policyId });
+      }
       case 'territory_collect': return Territory.collectTerritory(ch, client, h);
       case 'onboard_claim': return W.claimOnboard(ch,
         tail('/v1/onboard/').replace(/\/claim$/, ''), client, h);

@@ -3,12 +3,13 @@
 // the live route registry (server.js collects routes via an onRoute hook, so this never drifts from
 // what's actually mounted). Read-only, keyless, zero §10.4 surface.
 import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
+import { DEPOT_CONTRACTS } from './depotcontracts.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
 const PUBLIC_PATHS = new Set([
   '/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json',
-  '/v1/rules', '/v1/catalog', '/v1/arena',
+  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',
   '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',
   '/v1/access/redeem', '/v1/access/logout',
 ]);
@@ -263,6 +264,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...DEPOT_CONTRACTS,
   ...knowledgeContracts(coordinationContract),
   'GET /v1/coordination': coordinationContract('getCoordinationCatalog', 'CoordinationCatalog'),
   'POST /v1/coordination/:graphId/instances': coordinationContract('createCoordinationInstance', 'CoordinationReceipt', {
@@ -1559,6 +1561,9 @@ const AGENT_SCHEMAS = {
         wallet: { type: ['string', 'null'] }, minted: { type: 'boolean' }, canExtract: { type: 'boolean' },
       } },
       coach: { type: ['object', 'null'] }, coachPlan: { type: 'array', items: { type: 'object' } },
+      depot: { type: ['object', 'null'], description: 'Owner-private inventory business, operating policy and results.' },
+      deliveries: { type: 'array', items: { type: 'object' } },
+      recommendationSource: { type: 'string', enum: ['owner_policy', 'cash_equivalent'] },
       policy: { type: 'object' }, ranking: { type: 'object' },
       recommendedActionId: { type: ['string', 'null'] },
       actions: { type: 'array', items: { $ref: '#/components/schemas/AgentAction' } },

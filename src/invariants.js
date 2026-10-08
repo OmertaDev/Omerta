@@ -35,7 +35,7 @@ const KNOWN_REASONS = {
     // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
-    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
+    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
@@ -537,6 +537,47 @@ async function collectLedgerChecks(pool, activationPolicy) {
   // the escrow-side outflow (the rest of the looted order burns as market:death). Net 0.
   const mLoot = -(await sum(pool, "currency='cash' AND reason='market:loot'"));
   push('market escrow', bidEscrow + orderEscrow, mPosted - mRefunded - mSales - mTakes - mDead - mLoot);
+  const deliveryRows = (await pool.query("SELECT * FROM delivery_commitments WHERE status='accepted' AND deadline>now()")).rows;
+  const deliveryOrders = (await pool.query("SELECT id,qty,price,seller_character,depot_id,good_id,district,status,expires_at FROM market_listings WHERE kind='order'")).rows;
+  for (const id of [...new Set(deliveryRows.map((c) => c.order_id))]) {
+    const contracts = deliveryRows.filter((c) => c.order_id === id), order = deliveryOrders.find((o) => o.id === id);
+    const reserved = contracts.reduce((n, c) => n + Number(c.remaining), 0);
+    push(`delivery capacity:${id}`, Math.max(0, reserved - Number(order?.qty || 0)), 0, 0);
+    const mismatch = contracts.filter((c) => !order || order.status !== 'live' || order.depot_id !== c.depot_id
+      || order.seller_character !== c.buyer_character || order.good_id !== c.good_id || order.district !== c.district
+      || Number(order.price) !== Number(c.unit_price) || new Date(c.deadline) > new Date(order.expires_at)
+      || Number(c.spent) > Number(c.spend_limit)).length;
+    push(`delivery terms:${id}`, mismatch, 0, 0);
+  }
+
+  // Pilot business custody is independently journaled. Cash funding/withdrawals and
+  // customer receipts must also reconcile with the existing character ledger.
+  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;
+  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;
+  const depotOrders = (await pool.query("SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)")).rows;
+  for (const depot of depots) {
+    const entries = depotJournal.filter((entry) => entry.depot_id === depot.id);
+    for (const [column, delta] of [['treasury', 'cash_delta'], ['stock', 'stock_delta'], ['stock_cost', 'cost_delta']])
+      push(`depot ${column}:${depot.id}`, Number(depot[column]), entries.reduce((n, entry) => n + Number(entry[delta]), 0), 0);
+    const promised = Number(depot.stock) + depotOrders.filter((order) => order.depot_id === depot.id)
+      .reduce((n, order) => n + Number(order.filled_qty) + (order.status === 'live' ? Number(order.qty) : 0), 0);
+    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);
+  }
+  const depotCash = (reason) => depotJournal.filter((entry) => entry.reason === reason).reduce((n, entry) => n + Number(entry.cash_delta), 0);
+  push('depot funding', depotCash('fund'), -(await sum(pool, "currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL")), 0);
+  push('depot withdrawals', -depotCash('withdraw'), await sum(pool, "currency='cash' AND reason='depot:withdraw' AND character_id IS NOT NULL"), 0);
+  push('depot sales', depotCash('sale'), -(await sum(pool, "currency='cash' AND reason='depot:buy'")) + await sum(pool, "currency='cash' AND reason='depot:take'"), 0);
+  push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL")), 0);
+  push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
+  push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);
+  push('depot death burn', -depotCash('death'), -(await sum(pool, "currency='cash' AND reason='depot:death'")), 0);
+  const policyRows = (await pool.query('SELECT id,spent,max_spend FROM business_operating_policies')).rows;
+  const policyJournal = (await pool.query("SELECT policy_id,cash_delta FROM business_depot_journal WHERE policy_id IS NOT NULL AND reason IN ('restock_escrow','restock_fee')")).rows;
+  for (const policy of policyRows) {
+    push(`operating policy spend:${policy.id}`, Number(policy.spent), -policyJournal.filter((j) => j.policy_id === policy.id)
+      .reduce((n, j) => n + Number(j.cash_delta), 0), 0);
+    push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);
+  }
 
   // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow
   // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.
@@ -1381,7 +1422,12 @@ export function webhookText(kind, failed = []) {
   const lines = arr.map((f) => {
     if (!f || typeof f !== 'object') return `• ${String(f)}`;
     if (f.drift !== undefined) return `• ${f.name}: drift ${f.drift} (balances ${f.lhs} vs ledger ${f.rhs})`;
-    const rest = Object.entries(f).filter(([k]) => k !== 'name').map(([k, v]) => `${k}=${v}`).join(', ');
+    if (Array.isArray(f.mismatches)) {
+      const details = f.mismatches.map((m) => `  • ${m.what}: on-chain ${m.onchain} vs backend ${m.backend}`);
+      return [`• ${f.name || 'check'}`, ...details, ...(f.note ? [`  ${f.note}`] : [])].join('\n');
+    }
+    const rest = Object.entries(f).filter(([k]) => k !== 'name')
+      .map(([k, v]) => `${k}=${v !== null && typeof v === 'object' ? JSON.stringify(v) : v}`).join(', ');
     return `• ${f.name || 'check'}${rest ? `: ${rest}` : ''}`;
   });
   const body = `${head}\n${lines.join('\n')}`;

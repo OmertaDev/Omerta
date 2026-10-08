@@ -77,7 +77,22 @@ relevant unvisited eligible system from the canonical 40-system catalog, or
 action authority; it cannot change `recommendedActionId` or be submitted through
 `omerta_act`.
 
+Customer buy orders also feed `restock` plans: an empty-trunk agent can source goods,
+travel to the customer's district, and fill the existing escrow-funded order.
+Quotes include acquisition fees, market take, travel, cargo limits, and the cash
+reserve. Held-cargo sales account for the inventory surrendered. Refresh after
+each step: procurement does not reserve an order or its prices, and orders near
+expiry are excluded. These plans use the existing cash/goods settlement rails;
+they do not imply an onchain OMR purchase or burn. Local verification:
+`npm run test:restock`.
+
 ## Agent Alpha runner
+
+Business automation requires a separate owner-authorized operating policy; an agent
+key cannot approve or increase its limits. Agent Alpha's `--role business` and
+`--role supplier` profiles exclude activity-reward faucets and stop when eligible
+work ends. See [operating policies](../docs/business-operating-policies.md) for API
+authorization, bounded profiles, metrics and controlled pilot results.
 
 The repository's `tools/agent-alpha.js` is an owner-operated bounded runner for
 one durable origin-bound identity. Agent Alpha has no reset and is not a fleet

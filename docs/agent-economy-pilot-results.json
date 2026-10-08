@@ -1,0 +1,195 @@
+{
+  "runId": "ed695ab5-6851-4a6e-97e8-81a4273ed233",
+  "startedAt": "2026-10-08T05:43:41.267Z",
+  "finishedAt": "2026-10-08T05:43:44.554Z",
+  "environment": "isolated PostgreSQL",
+  "cohort": {
+    "depots": 2,
+    "supplierAgents": 2,
+    "customerCharacters": 4,
+    "initialCapitalGameCash": 72000,
+    "additionalCapitalGrants": 0
+  },
+  "actionCount": 31,
+  "completion": {
+    "accepted": 6,
+    "delivered": 6
+  },
+  "businesses": [
+    {
+      "district": "docks",
+      "customerRevenueGameCash": 10584,
+      "costOfGoodsSoldGameCash": 3600,
+      "operatingExpensesGameCash": 5036,
+      "operatingProfitGameCash": 1948,
+      "treasuryGameCash": 16948,
+      "budgetSpentGameCash": 3636,
+      "stockouts": 3,
+      "repeatCustomerCharacters": 2,
+      "purchases": 6,
+      "inferenceCostUsdMicros": 0,
+      "profitAfterInference": null
+    },
+    {
+      "district": "neon",
+      "customerRevenueGameCash": 10584,
+      "costOfGoodsSoldGameCash": 3600,
+      "operatingExpensesGameCash": 5036,
+      "operatingProfitGameCash": 1948,
+      "treasuryGameCash": 16948,
+      "budgetSpentGameCash": 3636,
+      "stockouts": 3,
+      "repeatCustomerCharacters": 2,
+      "purchases": 6,
+      "inferenceCostUsdMicros": 0,
+      "profitAfterInference": null
+    }
+  ],
+  "supplierResults": [
+    {
+      "districtServed": "docks",
+      "netCashChangeGameCash": 2022
+    },
+    {
+      "districtServed": "neon",
+      "netCashChangeGameCash": 1476
+    }
+  ],
+  "finalLiquidCapitalGameCash": 57044,
+  "liquidCapitalReductionGameCash": 14956,
+  "activitySubsidies": 0,
+  "deployed": false,
+  "limitations": [
+    "Controlled purchasing demand and fixed prices; not evidence of organic or independent customers",
+    "Deterministic agents with no LLM calls; inference economics untested",
+    "Game cash has no verified USD conversion",
+    "Liquid capital reduction includes purchases of retained customer cargo; it is not total wealth loss",
+    "Test harness disables cadence; production Agent Alpha pacing is unchanged"
+  ],
+  "actions": [
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    },
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_travel"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    },
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    },
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    },
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    },
+    {
+      "role": "business",
+      "kind": "depot_restock"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_accept"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_buy"
+    },
+    {
+      "role": "supplier",
+      "kind": "delivery_deliver"
+    },
+    {
+      "role": "business",
+      "kind": "depot_receive"
+    }
+  ]
+}

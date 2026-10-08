@@ -149,11 +149,11 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
 
 export const MARKET_EXPIRY_SOURCE_PINS = Object.freeze({
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
-  'src/market.js': 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
+  'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
 });
 const EXPIRY_SQL = Object.freeze({
-  due: "SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()",
+  due: "SELECT id, kind, seller_character, bidder, depot_id FROM market_listings WHERE status='live' AND expires_at <= now()",
   lock: 'SELECT 1 FROM characters WHERE id=$1 FOR UPDATE',
   order: "SELECT * FROM market_listings WHERE id=$1 AND status='live' AND expires_at <= now() FOR UPDATE",
   alive: 'SELECT 1 FROM characters WHERE id=$1 AND alive',
@@ -165,6 +165,10 @@ const EXPIRY_SQL = Object.freeze({
 const stateHash = ({ boundary, ...state }) => sha256(state);
 let expirySourceChecked = false;
 function companionQueries(before, after, identity, evidence) {
+  for (const state of [before, after]) {
+    assert(!(state.tables.delivery_commitments || []).length, 'Committed delivery custody is outside this expiry resource scope');
+    assert(!(state.tables.market_listings || []).some(row => row.depot_id), 'Depot custody is outside this expiry resource scope');
+  }
   if (!expirySourceChecked) {
     for (const [file, expected] of Object.entries(MARKET_EXPIRY_SOURCE_PINS))
       assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Expiry source changed: ' + file);

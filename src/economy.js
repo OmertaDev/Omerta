@@ -2,6 +2,7 @@
 // Every formula cites spec §7 / prototype v24. Actions receive the locked character
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
+import { goodsBuyQuote } from './goodsquote.js';
 import { logCollect } from './collection.js';
 import { registerItemTransactionUndo } from './items.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
@@ -381,8 +382,7 @@ export async function buyGood(ch, goodId, qty, client, h) {
   const cap = trunkCap(h);
   if (cargoCount(h.owned.cargo) + n > cap) throw new GameError('cargo', `The trunk holds ${cap} units. Better Wheels carry more.`);
   // STREET DEEDS 2C — controlled corners count for the ±5% turf price edge (set-union → OR, once)
-  const unit = Math.round(goodPriceOf(goodId, ch.loc) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'buy'));
-  const cost = unit * n, fee = Math.ceil(cost * 0.01), tax = Math.ceil(cost * 0.01);
+  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned);
   if (Number(ch.cash) < cost + fee + tax) throw new GameError('cash', `That runs ${usd(cost + fee + tax)} with the 2% house take.`);
   ch.cash = Number(ch.cash) - cost - fee - tax;
   const have = (h.owned.cargo[goodId] || 0) + n;

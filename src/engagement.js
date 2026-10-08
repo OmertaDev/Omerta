@@ -45,7 +45,7 @@ export const SYSTEMS = {
   'territory': ['territory_raid', 'territory_op', 'territory_specialist', 'sov_income'],
   'the world': ['world_raid', 'world_raid_plan', 'world_raid_join', 'world_raid_hire'],
   'the blood war': ['family_raid'],
-  'business empire': ['business_raid'],
+  'business empire': ['business_raid', 'depot_purchase'],
   'convoys': ['convoy_depart', 'convoy_ambush'],
   'the port': ['port'],
   'the black market': ['market_list', 'market_fill', 'market_buy'],

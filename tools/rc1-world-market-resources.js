@@ -15,8 +15,9 @@ const cargoKey = (owner, good) => JSON.stringify([owner, good]);
 const marketRoute = path => path === '/v1/goods/buy' || /^\/v1\/market(?:\/order|\/[^/]+\/(?:buy|fill|claim|cancel))?$/.test(path);
 const stateHash = ({ boundary, ...state }) => sha256(state);
 const sourcePins = {
-  'src/market.js': 'ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40',
-  'src/economy.js': 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835',
+  'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
+  'src/economy.js': 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b',
+  'src/goodsquote.js': '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74',
 };
 let sourcesChecked = false;
 function commands(before, after, identity, evidence) {
@@ -51,6 +52,13 @@ function commands(before, after, identity, evidence) {
 export function reconcileMarketResources(before, after, { identity = null, receipts = [], quiescentGroupEvidence = null } = {}) {
   const result = { usedReceipts: new Set(), listingIds: new Set(), cargoKeys: new Set(), checks: [], movements: [] };
   const selected = commands(before, after, identity, quiescentGroupEvidence); if (!selected.length) return result;
+  // These equations cover personal orders only. Depot custody and committed
+  // delivery fees have separate proofs and cannot inherit historical RC1 evidence.
+  for (const state of [before, after]) {
+    assert(!(state.tables.delivery_commitments || []).length, 'Committed delivery custody is outside this market resource scope');
+    assert(!rows(state, 'market_listings').some(row => row.depot_id), 'Depot custody is outside this market resource scope');
+  }
+  assert(!selected.some(command => command.request.body?.commitmentId), 'Committed delivery fees are outside this market resource scope');
   if (!sourcesChecked) {
     for (const [file, pin] of Object.entries(sourcePins)) assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), pin, 'Market resource source changed: ' + file);
     sourcesChecked = true;

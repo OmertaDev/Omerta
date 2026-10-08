@@ -1001,7 +1001,9 @@ const ALLOWED_KINDS = [
   'onboard_claim', 'daily_claim', 'career_claim',
   'business_collect', 'territory_collect', 'kitchen_collect', 'convoy_collect',
   'convoy_travel', 'market_fill', 'arbitrage_buy', 'arbitrage_sell',
-  'arbitrage_travel', 'loan_repay', 'crew_recruiting', 'crime',
+  'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
+  'depot_restock', 'depot_receive', 'depot_travel',
+  'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
 ];
 
 async function actionApi({ kinds = ['crime'], policy = POLICY } = {}) {
@@ -1060,6 +1062,43 @@ async function withReadySession(api, prefix, callback) {
     await api.close();
     await rm(dir, { recursive: true, force: true });
   }
+}
+
+async function restrictedRoleRecoveryTest() {
+  const idleApi = await actionApi({ kinds: ['crime'] });
+  await withReadySession(idleApi, 'omerta-alpha-business-idle-', async ({ sessionFile, reportFile }) => {
+    const summary = await runAgentAlpha({ baseUrl: idleApi.baseUrl, sessionFile, reportFile, maxActions: 1, role: 'business' });
+    assert.deepEqual(summary, { status: 'complete', actions: 0 });
+    assert.equal(idleApi.state.actCalls, 0, 'business profile never farms a crime recommendation');
+  });
+  const api = await actionApi({ kinds: ['depot_restock'] });
+  await withReadySession(api, 'omerta-alpha-role-recovery-', async ({ sessionFile, reportFile }) => {
+    let cached;
+    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, role: 'business',
+      fetchImpl: async (url, options) => {
+        const response = await fetch(url, options);
+        if (new URL(url).pathname === '/v1/agent/act') { cached = response.clone(); throw new Error('role response dropped'); }
+        return response;
+      },
+    }), /role response dropped/);
+    const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;
+    assert.match(pending.operationId, /^business:/);
+    assert.deepEqual(Object.keys(pending).sort(), ['actionId', 'operationId', 'startedAt', 'turnId'], 'role binding preserves the existing recovery journal schema');
+    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, role: 'supplier' }), /original role/);
+    assert.equal(api.state.actCalls, 1, 'changing role cannot replay an ambiguous operation');
+    const recovered = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, role: 'business',
+      fetchImpl: async (url, options) => {
+        if (new URL(url).pathname === '/v1/agent/act') {
+          assert.equal(options.headers['idempotency-key'], api.state.actKeys[0]);
+          return cached.clone();
+        }
+        return fetch(url, options);
+      },
+    });
+    assert.deepEqual(recovered, { status: 'complete', actions: 1 });
+    assert.equal(api.state.actCalls, 1, 'same-role recovery uses the original receipt rather than a fresh action');
+    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+  });
 }
 
 async function exactAllowlistTest() {
@@ -2392,6 +2431,7 @@ await lifecycleTest();
 await failClosedSessionTest();
 await orphanedLockMetadataTest();
 await exactAllowlistTest();
+await restrictedRoleRecoveryTest();
 await safetyRefusalTest();
 await boundsTest();
 await ambiguousMutationRecoveryTest();

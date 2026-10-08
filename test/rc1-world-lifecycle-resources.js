@@ -121,7 +121,7 @@ corrupt(split, 'plea-stale-transit', (_, b) => { b.tables.characters[0].bank_int
 assert.equal(reconcileLifecycleCash(before, before).movements.length, 0);
 const orderBefore = initial();
 orderBefore.tables.market_listings = [{ id: 'order', kind: 'order', status: 'live', seller_character: 'one', qty: 2, price: '200', filled_qty: 3,
-  good_id: 'gin', district: 'docks', created_at: '2026-09-20T11:00:00.000Z', expires_at: at, bidder: null, bid: null }];
+  good_id: 'gin', district: 'docks', created_at: '2026-09-20T11:00:00.000Z', expires_at: at, bidder: null, depot_id: null, bid: null }];
 const orderAfter = structuredClone(orderBefore); orderAfter.tables.market_listings[0].qty = 0; orderAfter.tables.market_listings[0].status = 'expired';
 orderAfter.tables.characters[1].cash = '1400'; orderAfter.tables.transactions = [receipt('refund', 'one', '400', 'market:refund')];
 const expiry = { name: 'order-expiry', before: orderBefore, after: orderAfter,
@@ -163,7 +163,7 @@ const producer = createNativeQuiescentGroupObserver({ serialObserver, clock: () 
   snapshot: async () => structuredClone(snapshots++ ? aggregateAfter : aggregateBefore), onGroup: async evidence => { aggregateEvidence = evidence; } });
 const query = producer.wrapQuery({}, async (sql, params) => {
   const command = sql.split(' ')[0]; let found = [];
-  if (sql.startsWith('SELECT id, kind')) found = aggregateBefore.tables.market_listings.map(({ id, kind, seller_character, bidder }) => ({ id, kind, seller_character, bidder }));
+  if (sql.startsWith('SELECT id, kind')) found = aggregateBefore.tables.market_listings.map(({ id, kind, seller_character, bidder, depot_id }) => ({ id, kind, seller_character, bidder, depot_id }));
   else if (sql.startsWith('SELECT * FROM market_listings')) found = [structuredClone(aggregateBefore.tables.market_listings.find(row => row.id === params[0]))];
   else if (sql.startsWith('SELECT 1')) found = [{ '?column?': 1 }];
   return { command, rowCount: command === 'SELECT' ? found.length : ['BEGIN', 'COMMIT'].includes(command) ? null : 1, rows: found, fields: [] };
@@ -173,7 +173,7 @@ await producer.runGroup([{ accountId: 'account-one', request: { method: 'POST', 
   companion: { identity: { kind: 'original-worker-job', label: 'market sweep', logicalAt,
     sourceFile: 'src/worker.js', sourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/worker.js'], handlerSourceFile: 'src/market.js', handlerSourceSha256: MARKET_EXPIRY_SOURCE_PINS['src/market.js'] },
   execute: async () => {
-    await query("SELECT id, kind, seller_character, bidder FROM market_listings WHERE status='live' AND expires_at <= now()");
+    await query("SELECT id, kind, seller_character, bidder, depot_id FROM market_listings WHERE status='live' AND expires_at <= now()");
     for (const [i, order] of aggregateBefore.tables.market_listings.entries()) {
       await query('BEGIN'); await query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [order.seller_character]);
       await query("SELECT * FROM market_listings WHERE id=$1 AND status='live' AND expires_at <= now() FOR UPDATE", [order.id]);

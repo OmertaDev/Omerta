@@ -29,6 +29,7 @@ const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
 const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
+const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
 assert.equal(directorTables.length, 7);
 try {
   await admin.query(`CREATE SCHEMA ${namespace}`); created = true;
@@ -95,8 +96,17 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades'), oldConstraints,
+  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && !economyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
+  const economyConstraints = inventory.added.filter((row) => economyTables.includes(row.table_name))
+    .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
+  assert.equal(economyConstraints.length, 23, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  assert.deepEqual(upgradedConstraints.filter((row) => economyTables.includes(row.table_name)), economyConstraints,
+    'Economy migration installs exactly its frozen constraints, without waiving existing preservation');
+  const economyNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5) AND is_nullable='NO' ORDER BY table_name,column_name", economyTables)).rows;
+  assert.deepEqual(Object.fromEntries(economyTables.map((table) => [table, economyNotNull.filter((row) => row.table_name === table).map((row) => row.column_name)])),
+    Object.fromEntries(economyTables.map((table) => [table, inventory.notNullColumns[table]])),
+    'Economy required columns match the frozen schema on every PostgreSQL version');
   assert.deepEqual(upgradedConstraints.filter((row) => row.table_name.startsWith('director_')),
     inventory.added.filter((row) => row.table_name.startsWith('director_')),
     'Native Director constraints match the explicitly reviewed architecture inventory');
