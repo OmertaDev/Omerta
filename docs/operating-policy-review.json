@@ -1,0 +1,181 @@
+{
+  "sourceRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty; hashes pin this policy and pilot phase; pre-existing shared-file changes preserved",
+  "recordedAtUtc": "2026-10-08T05:49:56.7158409Z",
+  "phase": "local implementation and isolated PostgreSQL pilot; production flags off; no deployment, live cohort, inference provider or onchain activation",
+  "runtime": "Node.js v24.19.0; PostgreSQL 18.4; Windows; isolated loopback cluster",
+  "files": [
+    {
+      "path": "schema.sql",
+      "sha256": "ebc783df52464352dfc0726b5689d8d8cf9a230cdb39a06f69db62c1819d0cde"
+    },
+    {
+      "path": "src/operatingpolicy.js",
+      "sha256": "5a3b2a0f78f43107b76313683285afbe00a7025d1f5449783934c41bf7f6723b"
+    },
+    {
+      "path": "src/depot.js",
+      "sha256": "d2201d2724ecc1244d96ec8e127f6243a1b6dab48ca486e694e4f10b14612ba6"
+    },
+    {
+      "path": "src/depotbook.js",
+      "sha256": "0a9979aff511e9ccaeb9079bb711afcab18a6acfed1ec351db3bb05c0afe5a28"
+    },
+    {
+      "path": "src/routes/depot.js",
+      "sha256": "e6dc619a2ff548324736190a9dc69b70c17fb9eb0782fa3a67374b9b3ffdbc12"
+    },
+    {
+      "path": "src/agentturn.js",
+      "sha256": "fa889faede8ca3a5025b25268ced44082de86a9011efdef4efa02507d69717bb"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "29692eba6ee004d67fb6fd3d55d6e7bfeac58b09cb0f7e32cc9b463b9c6c14b2"
+    },
+    {
+      "path": "src/agentgateway.js",
+      "sha256": "5b1552cb7cfaa8010052723caeaa57d213031c33c9de627295b65b2017b6182d"
+    },
+    {
+      "path": "src/depotcontracts.js",
+      "sha256": "2fc1c7a2ba9705570641430f9195e10a1206c56808e8945da46c31b06c6394ab"
+    },
+    {
+      "path": "src/invariants.js",
+      "sha256": "b35d8b7ba2f864a83a301f519b0590da57512cadb760417f9a512b07be2742c4"
+    },
+    {
+      "path": "tools/agent-alpha.js",
+      "sha256": "549f4e3eb3377c20e4df7775c8bd1f7e61c9f4897cd4d474a612b233c7e00316"
+    },
+    {
+      "path": "tools/economy-pilot.js",
+      "sha256": "168e8998d6018ee4999ec1c00f946f55d35318039ddc780d9fb19e1014ddd94e"
+    },
+    {
+      "path": "test/operatingpolicy.js",
+      "sha256": "712236942ddb834c7fab354a1ed62bcdbf6da9ac1d7fc602fe97b1d4ec435350"
+    },
+    {
+      "path": "test/agent-alpha.js",
+      "sha256": "389f193827de46c9571be73a84301b0a7df2b972885e28e147b41a5a8501f6a1"
+    },
+    {
+      "path": "test/depot.js",
+      "sha256": "e2e8fa9cfcbabb7188ab9390d43db409b80f57b13319cc9094ec2dc81b6d08a6"
+    },
+    {
+      "path": "test/delivery.js",
+      "sha256": "1d50dd3d3d0ac79695faef0d5a12994135fa2ee4e548ce44aed898eada4dfa06"
+    },
+    {
+      "path": "test/migrate.js",
+      "sha256": "c72b35849a4a3bc3ad39306fc6db1a701c6347afcdc316797af6c0f79a7f164d"
+    },
+    {
+      "path": "package.json",
+      "sha256": "17b01b3a75594f8fca10cdae34881f61efe5c60b35aa806192d718bbf2a8a6e5"
+    },
+    {
+      "path": "SPEC.md",
+      "sha256": "9a41bec77eb7817a624d00db035b10bb4b506d268a6ecd0fdcb2f69b871047b6"
+    },
+    {
+      "path": "output/agent-economy-pilot.json",
+      "sha256": "c63395f5c3ab2ff750a66a6902ab287b1dea3db9dc22b631f16729dd9059fe5b"
+    }
+  ],
+  "boundaries": [
+    "non-agent owner credential versus saved agent key; no human-presence attestation",
+    "owner character, depot and policy locks; serialized revisions and revocation",
+    "approved terms, cumulative escrow/fee spend and no refund reset",
+    "revocation, expiry, death and closure",
+    "restricted roles exclude activity rewards; pending transport identity binds role",
+    "immutable customer/depletion receipts; separate owner-reported USD costs",
+    "fresh empty database required before app migration or capital seeding"
+  ],
+  "method": "Native scoped authority, custody and lifecycle passes; adversarial API proofs; real PostgreSQL races/rollback; exact ledger invariants; real HTTP and private-file recovery tests; syntax checks. No independent reviewer or full upstream orchestration claim.",
+  "passed": [
+    "test:operating-policy: separate owner authority, revision/replay, revocation, expiry, finite spend and outside-cost separation",
+    "test:operating-policy:postgres: concurrent same-revision grants and revocation versus spending",
+    "test:depot:postgres: competing purchases, withdrawals and cancellation/expiry refunds",
+    "test:delivery:postgres: acceptance, duplicate final settlement and buyer death versus delivery",
+    "pilot:economy: bounded cohort and exact money identities; zero activity rewards or post-setup capital",
+    "Agent Alpha restrictedRoleRecoveryTest, exactAllowlistTest, safetyRefusalTest: cross-role replay blocked; original receipt recovered; four-field journal preserved",
+    "test/agentturn.js: final observation/executor contract",
+    "test/migrate.js: 2939 derived idempotent migrations and 92 classified character-scoped tables",
+    "test/security.js: security regression suite",
+    "occupied-database guard rejects before migration or capital grants",
+    "native syntax and scoped git diff checks: no diagnostics"
+  ],
+  "pilot": {
+    "runId": "ed695ab5-6851-4a6e-97e8-81a4273ed233",
+    "depots": 2,
+    "supplierAgents": 2,
+    "customerCharacters": 4,
+    "initialCapitalGameCash": 72000,
+    "additionalCapitalGrants": 0,
+    "accepted": 6,
+    "delivered": 6,
+    "purchases": 12,
+    "profitPerDepotGameCash": 1948,
+    "activitySubsidies": 0,
+    "deterministic": true,
+    "organicDemandVerified": false,
+    "inferenceEconomicsVerified": false
+  },
+  "failedGates": [
+    {
+      "command": "npm run pgcheck",
+      "exit": 1,
+      "passed": 199,
+      "failed": 4,
+      "failures": [
+        "one invitation under eight simultaneous signups",
+        "losing signup invitation refusals",
+        "eight simultaneous Crew issuances mint exactly three codes",
+        "durable Crew allowance matches issuance"
+      ],
+      "scope": "broader invitation/crew behavior outside policy changes"
+    },
+    {
+      "command": "node test/routes.js",
+      "exit": 1,
+      "evidence": "824 registrations and auth/envelope checks pass; later homepage artwork assertion fails outside policy scope"
+    }
+  ],
+  "remediation": [
+    {
+      "id": "OPERATING-01",
+      "state": "fixed",
+      "issue": "Implicit automation permission",
+      "proof": "owner approval required; immutable terms and finite cumulative commitment budget"
+    },
+    {
+      "id": "OPERATING-02",
+      "state": "fixed",
+      "issue": "Delegated control and precheck races",
+      "proof": "owner credential enforcement; checks under character custody; native revocation race passes"
+    },
+    {
+      "id": "OPERATING-03",
+      "state": "fixed",
+      "issue": "Restricted role replaying an ambiguous older-role operation",
+      "proof": "role-bound operation identity, cross-role refusal and same-role original receipt recovery"
+    },
+    {
+      "id": "OPERATING-04",
+      "state": "fixed",
+      "issue": "Misleading inference-adjusted profit",
+      "proof": "owner-reported USD stays separate; converted profit null; controlled demand and zero-model-call scope explicit"
+    }
+  ],
+  "limitations": [
+    "No organic demand or independent customer proof",
+    "No actual inference workload or verified game-cash/USD quote",
+    "Depletion events do not measure lost demand or downtime",
+    "Four broad PostgreSQL invitation/crew failures and artwork assertion remain; full npm lifecycle and production readiness not claimed",
+    "Earlier review snapshots remain historical; PostgreSQL unavailability was resolved in this phase"
+  ]
+}

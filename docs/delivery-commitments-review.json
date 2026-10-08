@@ -1,0 +1,156 @@
+{
+  "sourceRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty; reviewed scope is committed depot delivery and its integration boundaries; hashes include pre-existing edits in shared files",
+  "recordedAtUtc": "2026-10-08T04:21:49.9875293Z",
+  "phase": "local implementation; DELIVERY_CONTRACTS and DEPOT_PILOT default off; no deployment or activation",
+  "runtime": "Node.js v24.19.0 on Windows; pg-mem",
+  "files": [
+    {
+      "path": "schema.sql",
+      "sha256": "00236dbeb180a590177bd7ee1509876fdf411a9f7911a607a9f1c056fd542541"
+    },
+    {
+      "path": "src/delivery.js",
+      "sha256": "3190b4fa624a51246550e77f655c209b3bcfaa0b0113aa989ba82073982c4b7e"
+    },
+    {
+      "path": "src/deliverybook.js",
+      "sha256": "eaf14f5bbb084354c13ab057d3efef60918f98ab097b62a49e33664701647c53"
+    },
+    {
+      "path": "src/routes/delivery.js",
+      "sha256": "2d643e167885c184cb742b34dd46d77d93b8a18b3c2d879f09cc3f0c6684f48f"
+    },
+    {
+      "path": "src/market.js",
+      "sha256": "235cac649a794585eeffaaf2ff5a47cff2025338059c57423b3ee1e39a48edaf"
+    },
+    {
+      "path": "src/depot.js",
+      "sha256": "d78c2ce8ef28159802bd4d50737832e1fbcd7f2959efff0c96189d4a62660d83"
+    },
+    {
+      "path": "src/depotbook.js",
+      "sha256": "0060db983e2acbb4b8bde451fb4a2b0ffa31632a871c9b80c1acfdd3b4a8b112"
+    },
+    {
+      "path": "src/opportunities.js",
+      "sha256": "8d8ef6b639974d3bbc5b9419699392367b12a911f24b28f64536f0f1073152ed"
+    },
+    {
+      "path": "src/agentturn.js",
+      "sha256": "3933421f6b46847b1ba04c84ba4b699ef0da40040095c8c0d2f4f16dab85e460"
+    },
+    {
+      "path": "src/agentgateway.js",
+      "sha256": "71b57e3682a8db8032dd24a97123b5d91fe881d0f444d9873626e78022d3cefb"
+    },
+    {
+      "path": "src/depotcontracts.js",
+      "sha256": "786f333e227fa50e190d21db05d4fd3ffe6a349a0d43898617a148d4337fdc74"
+    },
+    {
+      "path": "src/invariants.js",
+      "sha256": "78da4c0da3e512b99d453dc770c18b5d0702241c972dd6775da70c7aa0adc529"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "b1a77eef4179547b8aab412b6c6c349a82f79c4fc8e947ab332fe30fc28cc057"
+    },
+    {
+      "path": "src/game.js",
+      "sha256": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4"
+    },
+    {
+      "path": "src/social/estate.js",
+      "sha256": "e089698b3ae27ae51cdfff10d37167bb5547cff0b330f1f2542c01f56d7d579b"
+    },
+    {
+      "path": "tools/agent-alpha.js",
+      "sha256": "6f3b4eeb1cabe9582bf9e5499ed830050b3b6c28b44c674ec75b871143fd1501"
+    },
+    {
+      "path": "test/delivery.js",
+      "sha256": "1790ff45785e0cfec8dc94f7f89e96082d09c595837877698399aeb43ac61d75"
+    },
+    {
+      "path": "test/agent-alpha.js",
+      "sha256": "283c80d8b89d4cc5b7e67f79e2672bf4780991700a6410042ec65de60c3959bc"
+    },
+    {
+      "path": "test/migrate.js",
+      "sha256": "d81fee802d48493fb60252f433d265c87f45dccf72f10023dd7d3d93ff5bff57"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c735e135f5a37e69d1346cca409ebb65105b859af810348c1ca21c2b513872b6"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "d723a48f9968e8a46c7595f31e3d496902402152eb375ea5b65d53a98478acf1"
+    }
+  ],
+  "model": "Reservations partition existing order escrow. Character lock precedes order and commitment locks; depot owner operations lock character then depot then order. Acceptance preserves price, fee, destination, quantity, deadline and spending limit. Delivery transfers actual cargo and pays through existing market settlement. No additional monetary claim or mint.",
+  "methods": "Native scoped authority/custody inspection, separate lifecycle and accounting passes, adversarial API tests, exact ledger invariants, bounded agent-executor proof and syntax checks. No independent reviewer, upstream orchestration or PostgreSQL locking proof is claimed.",
+  "passed": [
+    "npm run test:delivery: reservation isolation, ownership, price binding, cumulative payout and fee routing, partial settlement, replay, exposure/spend caps, deadlines, disabled-intake fulfillment, canonical agent accept/procure/travel/deliver sequence, death and exact custody",
+    "npm run test:depot: existing inventory business lifecycle and treasury accounting",
+    "node test/market.js: existing market regression suite, rerun after cumulative fee routing change",
+    "node test/agentturn.js: final agent observation and executor contract",
+    "node test/migrate.js: schema re-apply safety and documented death disposition",
+    "npm run test:restock: existing supplier procurement and escrow-to-pickup flow",
+    "node test/security.js: existing security regression suite",
+    "focused exactAllowlistTest and safetyRefusalTest from test/agent-alpha.js: new delivery kinds accepted by the bounded client; temporary harness removed",
+    "node --check for new modules, market, agentturn and test; scoped git diff --check: no diagnostics"
+  ],
+  "incomplete": [
+    {
+      "command": "npm run test:delivery:postgres",
+      "exit": 1,
+      "reason": "DELIVERY_TEST_DATABASE_URL unset; stopped before database access; competing acceptance and final-settlement races remain unverified"
+    },
+    {
+      "command": "node test/routes.js",
+      "exit": 1,
+      "reason": "mounted authentication and response-envelope checks passed; later homepage research-artwork assertion failed outside delivery scope"
+    },
+    {
+      "command": "full npm lifecycle, full Agent Alpha, depot PostgreSQL and production release checks",
+      "reason": "not completed; no blanket release readiness claim"
+    }
+  ],
+  "findings": [
+    {
+      "id": "DELIVERY-01",
+      "state": "fixed before activation",
+      "issue": "Ordinary fills and buyer cancellation could consume promised quantity",
+      "evidence": "open fills use unreserved quantity; depot cancellation refuses active commitments; exact availability mirrors reservations"
+    },
+    {
+      "id": "DELIVERY-02",
+      "state": "fixed before activation",
+      "issue": "Per-chunk rounding changes final payout and fee routing",
+      "evidence": "cumulative frozen fee accounting; three one-unit deliveries equal one full delivery in net payout and street-tax allocation"
+    },
+    {
+      "id": "DELIVERY-03",
+      "state": "fixed before activation",
+      "issue": "Death cleanup must serialize against a newly accepted reservation",
+      "evidence": "buyer order rows locked before reloading commitment death disposition; supplier ownership locked for normal acceptance/settlement; real PostgreSQL race proof still pending"
+    },
+    {
+      "id": "DELIVERY-04",
+      "state": "fixed before activation",
+      "issue": "Procurement authority needed cumulative limits and unambiguous plans",
+      "evidence": "recorded purchase/travel spend, cash reserve, remaining-good limits and corresponding plans checked by canonical executor test"
+    }
+  ],
+  "residualRisks": [
+    "Buyer death terminates commitments under existing estate rules; no compensation or collateral",
+    "Supplier default releases quantity without payment or penalty; completion is not guaranteed",
+    "Supplier procurement prices may change; capped budget may become insufficient",
+    "Spending cap covers canonical commitment actions, not unrelated manual spending, inference or gas",
+    "In-memory tests do not prove PostgreSQL row locks, rollback, or production readiness",
+    "Earlier economy-pilot-review.json retains its earlier snapshot; this bundle pins the delivery layer"
+  ]
+}

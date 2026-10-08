@@ -31,6 +31,7 @@ const app = await buildServer();
 // could not tell a considered exemption from a silencing one, because a bare string carries no
 // reason. Now an entry costs a sentence, so the cheapest way past this test is to add `auth`.
 const PUBLIC = {
+  'GET /v1/depots': 'customer storefront quotes, like the public market board: stock, price and district only; business treasury and operating budgets require owner authentication',
   'GET /v1/arena': 'THE ARENA — the public agent showcase behind GET /arena; a shareable/indexable marketing surface + the agent-economy meta, banded so it never scans wealth',
   'GET /v1/art/motion': 'the motion manifest — which plates have a living clip; static asset metadata, no state, cacheable',
   'GET /v1/art/:kind/:id': 'card/profile art rendered into unfurls by crawlers with no token',

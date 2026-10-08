@@ -1,0 +1,156 @@
+{
+  "sourceRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty; hashes include pre-existing edits; scope is the depot implementation and its integration boundaries, not all content in hashed files",
+  "recordedAtUtc": "2026-10-08T01:18:01.8579355Z",
+  "phase": "local implementation; DEPOT_PILOT defaults off; no production or onchain activation",
+  "runtime": "Node.js v24.19.0 on Windows; pg-mem",
+  "files": [
+    {
+      "path": "schema.sql",
+      "sha256": "ab1d6ae4f69ae7ab2540d2250ee5f1f01d56d3d73627209d1dd7a0e783898041"
+    },
+    {
+      "path": "src/depot.js",
+      "sha256": "795bda8d78f5a5832d489f802b5a8358372c70e256e50c93ef2f3951c85403aa"
+    },
+    {
+      "path": "src/depotbook.js",
+      "sha256": "0060db983e2acbb4b8bde451fb4a2b0ffa31632a871c9b80c1acfdd3b4a8b112"
+    },
+    {
+      "path": "src/depotcontracts.js",
+      "sha256": "fc204fbc66d0c8c592df580a08cf26aad783f4e955bdad0a891066d7ab570f32"
+    },
+    {
+      "path": "src/routes/depot.js",
+      "sha256": "5b30e8c2afac8d42d9ec72a30c3c36ea11bb23e0206b351c0f12d9ecf4ae7f61"
+    },
+    {
+      "path": "src/market.js",
+      "sha256": "dc6be5982fba6c214844747bd7d76c5d602c2e5b2c8f0a69c93032dd356681d8"
+    },
+    {
+      "path": "src/agentturn.js",
+      "sha256": "f4a3e823fbc41087f3784f1f2bedf3274d9389d55f766c5c505f3d2111e2b6ac"
+    },
+    {
+      "path": "src/explore.js",
+      "sha256": "b7914e75a09f51761c0cc259bf8a38467e6526ef6116109a70bac75dac786d0f"
+    },
+    {
+      "path": "src/agentgateway.js",
+      "sha256": "ffe761185dd3a296ba37064309f26ee4bf402b5a62676d83b6ab144ea95b25e2"
+    },
+    {
+      "path": "src/invariants.js",
+      "sha256": "2ecba0f45e4d50222d08e624d5a7c53b4609ce8e758b55803925e11696fc226c"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "d7b977457060dbed49e50ed4e716bc11b75f3983c0588970bdac49acf1063853"
+    },
+    {
+      "path": "tools/agent-alpha.js",
+      "sha256": "fb39ed4396fa8765dcbb9ef853d2eebc80917f8d7b9f31c4a64d9404ca2a72b5"
+    },
+    {
+      "path": "test/depot.js",
+      "sha256": "ec22c5596619192e36356dd0a24fd2e70a3d2960768dbab207ffcc4012ed8658"
+    },
+    {
+      "path": "test/agent-alpha.js",
+      "sha256": "c46d096645dbeb8e4242e6d6a59a4b232dc8930067af9b6ebf5aa31eb3000077"
+    },
+    {
+      "path": "test/migrate.js",
+      "sha256": "65453bc7c49063101fba8f3a6dd12a388c4286a2d568527490725924802b775a"
+    },
+    {
+      "path": "test/routes.js",
+      "sha256": "3cff5a6e78bb0a26926e9c4e406aca362173406ecd26a4e51456a7262245a796"
+    },
+    {
+      "path": "src/game.js",
+      "sha256": "7829195c2235b24d2a8e5d0c879e4c58ca31525a5d80884603ce4c15394d7fc4"
+    },
+    {
+      "path": "src/db.js",
+      "sha256": "d2921c1a7945c1d0858cb155b6bf91a71c32582568bfcf4e9cd8dd1d76f4d0d8"
+    },
+    {
+      "path": "src/social/estate.js",
+      "sha256": "e089698b3ae27ae51cdfff10d37167bb5547cff0b330f1f2542c01f56d7d579b"
+    },
+    {
+      "path": "src/rules.js",
+      "sha256": "fff8a956f608fcdfa834d86767699aa87026abe58ff1fcb5c18d92c9b467d0bb"
+    },
+    {
+      "path": "src/rules.tail.js",
+      "sha256": "ab10af0a70ea476c5f38d16d677daade49840f6a672cde922d841068a7d8b8d5"
+    }
+  ],
+  "boundaries": [
+    "owner authentication; sorted two-party character locks before depot custody",
+    "personal capital versus operating cash and supplier escrow",
+    "generic market claim/cancel isolation; expiry refunds to original business",
+    "owner budgets, maximum stock and buyer maximum unit price",
+    "disabled-intake recovery and estate cleanup",
+    "net customer revenue, historical inventory cost and actual operating expenses"
+  ],
+  "methods": "Native call-chain inspection, separate custody and lifecycle passes, adversarial API proofs, exact ledger invariants, syntax checks and regression suites. No independent review, full upstream orchestration or PostgreSQL concurrency proof is claimed.",
+  "passed": [
+    "npm run test:depot: full inventory business, partial deliveries, customers, historical cost, price limits, profit, custody, retry, expiry, shutdown, death and generic-market isolation",
+    "npm run test:restock: supplier procurement and escrow-to-pickup cycle",
+    "node test/market.js: existing market regression suite",
+    "node test/economy.js: existing economy and ledger suite",
+    "node test/agentturn.js: final agent contract and caller projection regression",
+    "node test/migrate.js: re-apply-safe schema and documented death dispositions",
+    "node test/security.js: security regression suite",
+    "npm run sim: existing economy simulation and section 10.4 conservation; depot intake disabled, pilot tested separately",
+    "exactAllowlistTest and safetyRefusalTest from test/agent-alpha.js: focused temporary harness passed and removed",
+    "node --check: depot modules and test; scoped git diff --check: no diagnostics"
+  ],
+  "incomplete": [
+    {
+      "command": "node test/routes.js",
+      "exit": 1,
+      "evidence": "mounted route authentication and response-envelope checks passed; later stopped at unrelated homepage research-artwork assertion"
+    },
+    {
+      "command": "npm run test:depot:postgres",
+      "exit": 1,
+      "evidence": "DEPOT_TEST_DATABASE_URL is unset; stopped before database access; competing purchase, withdrawal and cancellation/expiry races remain unverified"
+    },
+    {
+      "command": "full npm lifecycle, full Agent Alpha and production release checks",
+      "evidence": "not completed; no blanket release readiness claim"
+    }
+  ],
+  "remediation": [
+    {
+      "id": "DEPOT-01",
+      "status": "fixed before activation",
+      "issue": "Mutable seller prices require buyer limits",
+      "proof": "maxUnitPrice required; over-limit purchase refused before funds or stock move"
+    },
+    {
+      "id": "DEPOT-02",
+      "status": "fixed before activation",
+      "issue": "Generic market custody assumes personal cash and cargo",
+      "proof": "business-tagged claim/cancel refused; expiry refund journals treasury; Explore preserves depot_id"
+    },
+    {
+      "id": "DEPOT-03",
+      "status": "fixed before activation",
+      "issue": "New business assets need explicit shutdown and estate dispositions",
+      "proof": "intake-disabled recovery and death tested with exact balances and retained journals"
+    }
+  ],
+  "limitations": [
+    "Controlled cash and pricing fixtures do not establish independent customer demand or live profitability",
+    "PostgreSQL locking, rollback and production release checks are required before activation",
+    "Game cash and gin cargo only; no OMR buy/burn, wallet custody, inference-cost or gas-cost accounting",
+    "Syntax checks are not a full static analyzer"
+  ]
+}

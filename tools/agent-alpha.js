@@ -23,8 +23,15 @@ const ALLOWED_KINDS = new Set([
   'onboard_claim', 'daily_claim', 'career_claim',
   'business_collect', 'territory_collect', 'kitchen_collect', 'convoy_collect',
   'convoy_travel', 'market_fill', 'arbitrage_buy', 'arbitrage_sell',
-  'arbitrage_travel', 'loan_repay', 'crew_recruiting', 'crime',
+  'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
+  'depot_restock', 'depot_receive', 'depot_travel',
+  'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
 ]);
+const ACTION_ROLES = {
+  general: ALLOWED_KINDS,
+  business: new Set(['depot_restock', 'depot_receive', 'depot_travel']),
+  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
+};
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 const execFileAsync = promisify(execFile);
@@ -824,11 +831,16 @@ function policyIsConservative(policy) {
   return policy && Object.entries(POLICY).every(([key, value]) => policy[key] === value);
 }
 
-function recommendationOf(turn) {
+export function recommendationOf(turn, role = 'general') {
+  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Unknown Agent Alpha role');
+  const allowed = ACTION_ROLES[role];
+  if (!allowed) throw new Error('Unknown Agent Alpha role');
   if (!turn?.recommendedActionId) return { action: null, errorCode: null };
   const action = Array.isArray(turn.actions)
-    ? turn.actions.find((candidate) => candidate?.id === turn.recommendedActionId)
+    ? turn.actions.find((candidate) => role === 'general' ? candidate?.id === turn.recommendedActionId
+      : candidate?.executable === true && allowed.has(candidate.kind))
     : null;
+  if (role !== 'general' && !action) return { action: null, errorCode: null };
   if (!action || action.executable !== true || !ALLOWED_KINDS.has(action.kind)) {
     return { action: null, candidate: action, errorCode: 'unsafe_action' };
   }
@@ -878,6 +890,8 @@ async function settlePending({ base, fetchImpl, reportStore, stateStore, session
 }
 
 async function runUnlocked(options, timing) {
+  const role = options.role ?? 'general';
+  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Agent Alpha role must be general, business or supplier');
   const base = originOf(options.baseUrl);
   const sessionFile = options.sessionFile;
   const reportStore = options.reportStore;
@@ -905,6 +919,8 @@ async function runUnlocked(options, timing) {
   }
 
   if (session.base !== base) throw new Error('Agent Alpha session belongs to a different origin');
+  if (session.pending && role !== 'general' && !session.pending.operationId.startsWith(`${role}:`))
+    throw new Error('Resolve the pending operation under its original role before switching to a restricted role');
   session = await ensureIdentity({
     base, fetchImpl, stateStore, session, requestedName: options.name,
   });
@@ -933,7 +949,7 @@ async function runUnlocked(options, timing) {
   while (attempts < maxActions) {
     const turn = currentTurn || await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
     currentTurn = null;
-    const recommendation = recommendationOf(turn);
+    const recommendation = recommendationOf(turn, role);
     const action = recommendation.action;
     if (!action) {
       if (recommendation.errorCode) {
@@ -952,7 +968,7 @@ async function runUnlocked(options, timing) {
     }
     await waitForCadence(timing, intervalMs);
 
-    const operationId = crypto.randomUUID();
+    const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;
     session = {
       ...session,
       pending: {
@@ -1036,6 +1052,7 @@ function cliOptions(argv) {
     else if (arg === '--max-actions') options.maxActions = Number(argv[++index]);
     else if (arg === '--session') options.sessionFile = argv[++index];
     else if (arg === '--report') options.reportFile = argv[++index];
+    else if (arg === '--role') options.role = argv[++index];
     else throw new Error('Unknown Agent Alpha option');
   }
   return options;

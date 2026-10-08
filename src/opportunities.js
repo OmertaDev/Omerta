@@ -84,7 +84,7 @@ export async function opportunityBoard(pool, ch) {
       opportunities.push({
         type: 'order', reward: l.wanted * l.unitPrice, risk: 'none',
         action: 'fill', listingId: l.id, posterId: l.sellerId, good: l.good,
-        wanted: l.wanted, unitPrice: l.unitPrice, district: l.district,
+        wanted: l.wanted, unitPrice: l.unitPrice, district: l.district, expiresAt: l.expiresAt, depotId: l.depotId,
         endpoint: `POST /v1/market/${l.id}/fill`,
         note: `WTB ${l.wanted}× ${l.good} @ $${l.unitPrice} at ${l.district} (fill from trunk)`,
       });

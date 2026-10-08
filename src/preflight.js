@@ -74,6 +74,8 @@ export const EXPLICIT_ENV = {
 // ── Everything else, classified so nothing can be added without a decision. `test/preflight.js`
 //    fails on any src/ env var missing from this file entirely.
 export const OPERATIONAL_ENV = [
+  // Economy intake defaults off; disabling it preserves funded recovery routes.
+  'DEPOT_PILOT', 'DELIVERY_CONTRACTS',
   // Inert coordination pilot: disabled by default; optional account cohort only narrows access.
   'COORDINATION_ENGINE', 'COORDINATION_ACCOUNT_IDS',
   'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING',
