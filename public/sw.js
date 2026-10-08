@@ -28,7 +28,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;        // third-party → passthrough
   // NEVER cache the live game surface — the API, the websocket, the SW itself.
-  if (url.pathname.startsWith('/v1/') || url.pathname === '/openapi.json' || url.pathname === '/sw.js') return;
+  if (url.pathname.startsWith('/v1/') || url.pathname === '/openapi.json' || url.pathname === '/sw.js'
+    || url.pathname === '/genesis-snapshot-rpc.js') return;
 
   const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
   if (isNav || url.pathname === '/omerta-ui.css') {

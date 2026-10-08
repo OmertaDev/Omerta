@@ -42,6 +42,27 @@ export const HTTP_RECEIPT_HELPER_PIN = '2edeb237aa8c52c2655ac4821553d073fd6c9073
 export const HTTP_RECEIPT_REVIEWED_REVISION = '7da453e05036cc18bb60533aadcad8e7818020cc';
 export const GENESIS_SERVER_WRAPPER_PIN = '8acb53225230920a2b6509636d51d3156acdddc53ed249391b620ffc8a695810';
 export const GENESIS_SERVER_WRAPPER_SOURCE_REVISION = '0e2fef3f3c0269ecfe1f70b76274d692d6462e0e';
+export const GENESIS_SNAPSHOT_SERVER_PIN = 'cf17311eeea98729ba277c722eb18426cdbfd1da863859684fdeec31a793dc97';
+export const GENESIS_SNAPSHOT_REVIEWED_REVISION = 'ebb5c217e62d200d64fc0c9143e9625f7e301119';
+export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
+  "src/genesisrpc.js": "53d43570c74883449002df25921cc394cffb376e2ede6c1fbea292c775a6ac44",
+  "src/routes/genesisauction.js": "fd288a9fa75993f6cd31e3fda9f5de9102056b74d050272e9d70fe974cf5a212",
+  "src/genesisauction.js": "7fe75323e9ce4e3e5047d653b858f440db13ffc4b4ad7f9f58f8b88988f9b39e",
+  "public/genesis-snapshot-rpc.js": "d284be80c7df6231eaccb2da27a273448be767de6e62016d798d09f018b31667",
+  "public/genesis-deploy-client.js": "3c8e2e19ddab7df96c77bb332bda35161e1be242913481b6504539f183d1d2ad",
+  "tools/genesis-auction-preflight.js": "829a17c59ec768cc1d67dab1a006878c241bdba4c393962af95e1ca86c2c461a"
+});
+const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
+export function assertGenesisSnapshotServerCompatibility(text) {
+  const actualSha256 = hash(text);
+  if (actualSha256 === GENESIS_SERVER_WRAPPER_PIN) return { actualSha256, priorText: text, snapshotModuleTransfer: null };
+  assert.equal(actualSha256, GENESIS_SNAPSHOT_SERVER_PIN, 'Recovery rule source changed: src/server.js');
+  assert.equal(text.split(genesisSnapshotRoute).length, 2, 'Snapshot module registration is not exact and unique');
+  const priorText = text.replace(genesisSnapshotRoute, '');
+  assert.equal(hash(priorText), GENESIS_SERVER_WRAPPER_PIN, 'Server differs beyond the reviewed static snapshot module route');
+  return { actualSha256, priorText, snapshotModuleTransfer: { sourceRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION,
+    predecessorSha256: GENESIS_SERVER_WRAPPER_PIN, inverseChunks: 1, publicGetRoutes: 1, modulePins: GENESIS_SNAPSHOT_MODULE_PINS } };
+}
 // A separate, source-specific routing transfer; it does not extend the historical HTTP/deed
 // semantic review to the new genesis API or wallet modules. Exactly undo only these three chunks.
 const genesisWrapperChanges = [
@@ -72,7 +93,8 @@ const genesisWrapperChanges = [
 export function assertGenesisWrapperServerCompatibility(text) {
   const actualSha256 = hash(text);
   if (actualSha256 === HTTP_RECEIPT_SERVER_PIN) return { actualSha256, priorText: text, genesisWrapperTransfer: null };
-  assert.equal(actualSha256, GENESIS_SERVER_WRAPPER_PIN, 'Recovery rule source changed: src/server.js');
+  const snapshot = assertGenesisSnapshotServerCompatibility(text);
+  text = snapshot.priorText;
   let priorText = text;
   for (const chunk of genesisWrapperChanges) {
     assert.equal(priorText.split(chunk).length, 2, 'Genesis routing transfer is not exact and unique');
@@ -80,7 +102,8 @@ export function assertGenesisWrapperServerCompatibility(text) {
   }
   assert.equal(hash(priorText), HTTP_RECEIPT_SERVER_PIN, 'Server differs beyond exact genesis routing wrappers');
   return { actualSha256, priorText, genesisWrapperTransfer: { sourceRevision: GENESIS_SERVER_WRAPPER_SOURCE_REVISION,
-    actualSha256, predecessorSha256: HTTP_RECEIPT_SERVER_PIN, inverseChunks: 3, publicGetRoutes: 12 } };
+    actualSha256: GENESIS_SERVER_WRAPPER_PIN, predecessorSha256: HTTP_RECEIPT_SERVER_PIN, inverseChunks: 3, publicGetRoutes: 12 },
+    snapshotModuleTransfer: snapshot.snapshotModuleTransfer };
 }
 // Exact inverse literals for the reviewed HTTP transport change only.
 const receiptChanges = [

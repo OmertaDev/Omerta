@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { createPublicClient, http, parseAbi, keccak256 } from 'viem';
 import { buildGenesisAuctionDeploymentPlan, loadGenesisAuctionArtifact } from './genesis-auction-deployment-plan.js';
+import { genesisSnapshotTransport } from '../src/genesisrpc.js';
 
 const sha = code => createHash('sha256').update(Buffer.from(code.slice(2), 'hex')).digest('hex');
 const equal = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
@@ -183,7 +184,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (forkUrl) assert(/^http:\/\/(127\.0\.0\.1|localhost):[0-9]+\/?$/.test(forkUrl), 'Fork URL must be explicit local loopback');
     const candidate = JSON.parse(fs.readFileSync(file, 'utf8')), raw = fs.readFileSync(candidate.evidencePath);
     const result = await verifyGenesisAuctionPreflight({ candidate, evidence: JSON.parse(raw), evidenceSha256: createHash('sha256').update(raw).digest('hex'),
-      client: createPublicClient({ transport: http('https://rpc.mainnet.chain.robinhood.com/', { timeout: 15000, retryCount: 0 }) }),
+      client: createPublicClient({ transport: genesisSnapshotTransport(http('https://rpc.mainnet.chain.robinhood.com/', { timeout: 15000, retryCount: 0 })) }),
       forkClient: forkUrl ? createPublicClient({ transport: http(forkUrl, { timeout: 15000, retryCount: 0 }) }) : null });
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   } catch (e) { process.stderr.write(`genesis-auction-preflight: ${e.message}\n`); process.exitCode = 1; }
