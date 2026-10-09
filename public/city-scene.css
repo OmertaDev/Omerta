@@ -71,9 +71,10 @@
   overflow-wrap: anywhere;
 }
 .omerta-city__hud { background: #17171b; border-bottom: 1px solid #34343a; }
+.omerta-city__world-hud { background: #17171b; border-bottom: 1px solid #625644; }
 .omerta-city__resources {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0;
   padding: 0 8px;
 }
@@ -107,6 +108,12 @@
 .omerta-city progress::-webkit-progress-value { background: var(--city-gold); }
 .omerta-city progress::-moz-progress-bar { background: var(--city-gold); }
 .omerta-city__resource-meter { margin-top: 6px; }
+.omerta-city__resources--walking { grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0 4px; }
+.omerta-city__resources--walking .omerta-city__resource { padding: 5px 6px; }
+.omerta-city__resources--walking dt { font-size: 9px; letter-spacing: 0; margin-bottom: 2px; }
+.omerta-city__resources--walking dd { font-size: 12px; line-height: 1.25; }
+.omerta-city__resources--walking .omerta-city__resource-meter { margin-top: 3px; }
+.omerta-city__world-hud .omerta-city__readiness { padding: 5px 10px; gap: 3px 6px; font-size: 10px; }
 .omerta-city__resource.is-low progress::-webkit-progress-value { background: #d98779; }
 .omerta-city__resource.is-low progress::-moz-progress-bar { background: #d98779; }
 .omerta-city__progress {
@@ -171,6 +178,9 @@
   cursor: pointer;
 }
 .omerta-city__viewport {
+  background: #1b2429;
+}
+.omerta-city__map-layer {
   position: relative;
   background: #1b2429;
   min-height: 320px;
@@ -421,6 +431,7 @@
 }
 .omerta-city--unavailable .omerta-city__canvas { display: none; }
 .omerta-city--unavailable .omerta-city__viewport { min-height: 0; padding: 1px 0; }
+.omerta-city--unavailable .omerta-city__map-layer { min-height: 0; }
 .omerta-city--unavailable .omerta-city__status {
   position: relative;
   top: auto;
@@ -440,17 +451,18 @@
 }
 .omerta-city--unavailable .omerta-city__instructions { display: none; }
 @media (max-width: 680px) {
+  .omerta-city__map-layer { min-height: 160px; }
   .omerta-city__header { padding: 13px 14px; gap: 12px; }
   .omerta-city__title { font-size: 22px; }
   .omerta-city__territory { font-size: 10px; padding-left: 8px; }
-  .omerta-city__resources { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .omerta-city__resources--summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .omerta-city__resource { padding: 8px 6px; }
   .omerta-city__resource dd { font-size: 12px; }
   .omerta-city__readiness { padding: 8px 14px; font-size: 10px; }
   .omerta-city__next-move { padding: 12px 14px; }
   .omerta-city__progress { margin-left: 14px; margin-right: 14px; font-size: 9px; }
   .omerta-city__controls { padding: 10px 12px; gap: 12px; }
-  .omerta-city__canvas { height: 440px; aspect-ratio: auto; }
+  .omerta-city__canvas { height: var(--city-map-height, 440px); min-height: 160px; aspect-ratio: auto; }
   .omerta-city__destinations { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .omerta-city__destination { min-height: 62px; padding: 10px 12px; }
   .omerta-city__destination:last-child { grid-column: 1 / -1; }

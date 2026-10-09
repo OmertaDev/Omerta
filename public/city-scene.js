@@ -142,6 +142,11 @@
     hud.setAttribute('role', 'group');
     hud.setAttribute('aria-label', 'Character resources');
     const resourceGrid = element('dl', 'omerta-city__resources');
+    resourceGrid.classList.add('omerta-city__resources--summary');
+    const worldHud = element('div', 'omerta-city__world-hud');
+    worldHud.setAttribute('role', 'group');
+    worldHud.setAttribute('aria-label', 'Walking resources and readiness');
+    const worldResources = element('dl', 'omerta-city__resources omerta-city__resources--walking');
     const resourceNodes = new Map();
     for (const [key, label] of [['cash', 'Cash'], ['health', 'Health'], ['energy', 'Energy'], ['nerve', 'Nerve'], ['heat', 'Heat'], ['level', 'Level']]) {
       const group = element('div', 'omerta-city__resource');
@@ -152,7 +157,7 @@
       meter.setAttribute('aria-label', label);
       meter.hidden = true;
       group.append(element('dt', '', label), value, meter);
-      resourceGrid.append(group);
+      (['cash', 'health', 'energy', 'nerve'].includes(key) ? worldResources : resourceGrid).append(group);
       resourceNodes.set(key, { group, value, meter });
     }
     const progressRow = element('div', 'omerta-city__progress');
@@ -163,13 +168,16 @@
     progressRow.append(progressCopy, progressMeter);
     const readiness = element('div', 'omerta-city__readiness');
     readiness.setAttribute('role', 'status');
+    readiness.setAttribute('aria-live', 'polite');
+    readiness.setAttribute('aria-atomic', 'true');
     const readinessLabel = element('strong');
     const readinessCopy = element('span');
     readiness.append(readinessLabel, readinessCopy);
     const journal = element('button', 'omerta-city__journal', 'Quest journal & fieldwork →');
     journal.type = 'button';
     journal.setAttribute('data-city-journal', '');
-    hud.append(resourceGrid, progressRow, readiness, journal);
+    hud.append(resourceGrid, progressRow, journal);
+    worldHud.append(worldResources, readiness);
     const nextMove = element('div', 'omerta-city__next-move');
     const nextCopy = element('div');
     nextCopy.setAttribute('role', 'status');
@@ -184,6 +192,7 @@
     nextButton.setAttribute('data-city-nextmove', '');
     nextMove.append(nextCopy, nextButton);
     const viewport = element('div', 'omerta-city__viewport');
+    const mapLayer = element('div', 'omerta-city__map-layer');
     const canvasHost = element('div', 'omerta-city__canvas');
     const status = element('div', 'omerta-city__status', 'Opening the neighborhood…');
     status.setAttribute('role', 'status');
@@ -212,7 +221,8 @@
     questCard.hidden = true;
     let renderedActionSignature = '', renderedQuestSignature = '';
     card.append(cardControls, cardTitle, cardText, questCard, open, actionList);
-    viewport.append(canvasHost, status, card);
+    mapLayer.append(canvasHost, status, card);
+    viewport.append(worldHud, mapLayer);
     const instructions = element('p', 'omerta-city__instructions');
     const walking = element('span');
     walking.append(element('strong', '', 'Tap to walk.'), document.createTextNode(' Focus the map for WASD / arrows.'));
@@ -332,6 +342,7 @@
       readiness.dataset.tone = condition.tone;
       setText(readinessLabel, condition.label);
       setText(readinessCopy, condition.detail);
+      fitWorldFrame();
       const quest = nextQuest(), coach = character.coach;
       nextMove.hidden = !quest && (!coach || (!coach.label && !coach.hint));
       nextMove.dataset.cityGuidance = quest ? 'quest' : 'coach';
@@ -536,8 +547,37 @@
       return VENUES.find(v => Math.hypot(v.x - player.x, v.y - player.y) < 42) || null;
     }
     function dimensions() {
-      return { width: Math.max(280, Math.round(canvasHost.clientWidth)), height: Math.max(320, Math.round(canvasHost.clientHeight)) };
+      const phone = window.innerWidth <= 680;
+      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone ? 160 : 320, Math.round(canvasHost.clientHeight)) };
     }
+    function fitWorldFrame() {
+      if (destroyed) return;
+      if (window.innerWidth > 680) {
+        if (canvasHost.style.getPropertyValue('--city-map-height')) {
+          canvasHost.style.removeProperty('--city-map-height');
+          fitCamera();
+        }
+        return;
+      }
+      let top = 0, bottom = window.innerHeight;
+      for (const id of ['top', 'vitals', 'bnav', 'toast']) {
+        const chrome = document.getElementById(id), style = chrome && getComputedStyle(chrome);
+        if (!chrome || !['fixed', 'sticky'].includes(style.position) || (id === 'toast' && !chrome.classList.contains('show'))) continue;
+        const bounds = chrome.getBoundingClientRect();
+        if (!bounds.height || bounds.bottom <= 0 || bounds.top >= window.innerHeight) continue;
+        if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
+        else { const pinned = parseFloat(style.top); top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom); }
+      }
+      const height = Math.max(160, Math.min(440, Math.floor(bottom - top - worldHud.getBoundingClientRect().height - 16)));
+      const value = height + 'px';
+      if (canvasHost.style.getPropertyValue('--city-map-height') !== value) {
+        canvasHost.style.setProperty('--city-map-height', value);
+        fitCamera();
+      }
+    }
+    const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;
+    if (hudObserver) hudObserver.observe(worldHud);
+    listen(window, 'resize', fitWorldFrame);
     function fitCamera() {
       if (!scene || !game || !player) return;
       const size = dimensions();
@@ -939,6 +979,7 @@
         destroyed = true; ready = false;
         if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
         if (resizeObserver) resizeObserver.disconnect();
+        if (hudObserver) hudObserver.disconnect();
         listeners.forEach(remove => remove());
         keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null;
         if (game) { game.destroy(true); game = null; }

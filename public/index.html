@@ -8817,7 +8817,8 @@
     const host = $('#city-scene-host'), options = _citySceneOptions;
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
-    if (_cityScene && _citySceneKey === key) { _cityScene.update?.(options); return; }
+    if (key !== cityIdentity()) return;
+    if (_cityScene && _citySceneKey === key) { _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() }); return; }
     destroyCityScene();
     const epoch = _citySceneEpoch;
     host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
@@ -8826,7 +8827,7 @@
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+      _cityScene = scene.mount(host, { ...options, character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
       _citySceneKey = key;
     } catch {
@@ -8925,7 +8926,11 @@
           || host?.querySelector('[data-destination]') || host?.querySelector('[data-city-jump]') || host?.querySelector('[role="status"]');
         cancelCityEntry();
         if (ready) host?.querySelector('.omerta-city__interaction:not([hidden]) [data-city-close]')?.click();
-        if (target?.isConnected) revealCityEntry(target);
+        if (target?.isConnected) {
+          revealCityEntry(ready && canvas ? canvas.closest('.omerta-city__viewport') : target, false);
+          if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+        }
         return;
       }
       const status = host?.querySelector('.omerta-city__status') || host?.querySelector('[role="status"]');
