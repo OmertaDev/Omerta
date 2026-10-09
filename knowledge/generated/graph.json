@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c",
+  "sourceRevision": "7a200d2201a28e46fe243a5316593090a8263565",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10258,
-    "edges": 41723,
+    "nodes": 10260,
+    "edges": 41733,
     "byNodeType": {
       "Artifact": 4356,
       "Command": 201,
-      "Commit": 2133,
+      "Commit": 2135,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3486,
-      "CHANGED": 16163,
+      "CHANGED": 16170,
       "CONTAINS": 4377,
       "DECLARES": 201,
       "DEFINED_IN": 1386,
       "DEPENDS_ON": 67,
       "EXECUTES": 679,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2133,
+      "HAS_COMMIT": 2135,
       "IMPLEMENTS": 124,
       "IMPORTS": 4123,
       "INHERITS": 42,
@@ -80,7 +80,7 @@
       "REPRESENTS": 1582,
       "TESTS": 1407,
       "TRACKS": 126,
-      "USES_TABLE": 1925
+      "USES_TABLE": 1926
     }
   },
   "nodes": [
@@ -24173,20 +24173,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 6878,
-      "lines": 51,
-      "version": "332c1fafdc166bd1",
+      "bytes": 7793,
+      "lines": 57,
+      "version": "ce76c7ada666ffef",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "332c1fafdc166bd1"
+          "version": "ce76c7ada666ffef"
         }
       ],
-      "lastChangedAt": "2026-10-09T06:20:39.000Z",
+      "lastChangedAt": "2026-10-09T10:20:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+      "lastChangedCommit": "7a200d2201a28e46fe243a5316593090a8263565"
     },
     {
       "key": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -82265,20 +82265,20 @@
       "path": "src/resourcebusiness.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 9706,
+      "bytes": 9858,
       "lines": 73,
-      "version": "d8a6158de5745156",
+      "version": "673b8f1c7b65a50b",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcebusiness.js",
           "line": 1,
-          "version": "d8a6158de5745156"
+          "version": "673b8f1c7b65a50b"
         }
       ],
-      "lastChangedAt": "2026-10-09T06:20:39.000Z",
+      "lastChangedAt": "2026-10-09T10:20:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+      "lastChangedCommit": "7a200d2201a28e46fe243a5316593090a8263565"
     },
     {
       "key": "Artifact:src/resourcecompute.js",
@@ -93765,20 +93765,20 @@
       "path": "test/resourcebusiness.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6757,
-      "lines": 86,
-      "version": "d2b16b4ce2e4796f",
+      "bytes": 8396,
+      "lines": 99,
+      "version": "580f3011e74fcce5",
       "text": true,
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "d2b16b4ce2e4796f"
+          "version": "580f3011e74fcce5"
         }
       ],
-      "lastChangedAt": "2026-10-09T06:20:39.000Z",
+      "lastChangedAt": "2026-10-09T10:20:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+      "lastChangedCommit": "7a200d2201a28e46fe243a5316593090a8263565"
     },
     {
       "key": "Artifact:test/resourcecompute.js",
@@ -119312,6 +119312,22 @@
       ]
     },
     {
+      "key": "Commit:7a200d2201a28e46fe243a5316593090a8263565",
+      "type": "Commit",
+      "id": "7a200d2201a28e46fe243a5316593090a8263565",
+      "label": "Exclude existing immutable bids from shadow work discovery",
+      "title": "Exclude existing immutable bids from shadow work discovery",
+      "date": "2026-10-09T10:20:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7a200d2201a28e46fe243a5316593090a8263565",
+      "provenance": [
+        {
+          "commit": "7a200d2201a28e46fe243a5316593090a8263565",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7a200d2201a28e46fe243a5316593090a8263565"
+        }
+      ]
+    },
+    {
       "key": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
       "type": "Commit",
       "id": "7a29485ca041e10b4f871b2bec3cdd60583a5c09",
@@ -121404,6 +121420,22 @@
         {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e",
           "url": "https://github.com/OmertaDev/Omerta/commit/892587b0463441ef6dda39b94119e9dc588dc83e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "type": "Commit",
+      "id": "8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "label": "chore(knowledge): refresh generated artifacts for eb04fbdf",
+      "title": "chore(knowledge): refresh generated artifacts for eb04fbdf",
+      "date": "2026-10-09T06:21:58.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "provenance": [
+        {
+          "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8947d67267e98d9947f76e02f206daadfaa6ccf4"
         }
       ]
     },
@@ -144685,13 +144717,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 51,
-      "version": "332c1fafdc166bd1",
+      "lines": 57,
+      "version": "ce76c7ada666ffef",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "332c1fafdc166bd1"
+          "version": "ce76c7ada666ffef"
         }
       ]
     },
@@ -157894,6 +157926,9 @@
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
         },
         {
+          "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
+        },
+        {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
@@ -158854,6 +158889,9 @@
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
         },
         {
+          "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
+        },
+        {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
@@ -159812,6 +159850,9 @@
         },
         {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
+          "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
@@ -161036,6 +161077,9 @@
         },
         {
           "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
+          "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
@@ -165839,12 +165883,12 @@
       "id": "src/resourcebusiness.js",
       "label": "src/resourcebusiness.js",
       "lines": 73,
-      "version": "d8a6158de5745156",
+      "version": "673b8f1c7b65a50b",
       "provenance": [
         {
           "file": "src/resourcebusiness.js",
           "line": 1,
-          "version": "d8a6158de5745156"
+          "version": "673b8f1c7b65a50b"
         }
       ]
     },
@@ -170593,8 +170637,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c",
-      "currentBranch": "main",
+      "revision": "7a200d2201a28e46fe243a5316593090a8263565",
+      "currentBranch": "codex/shadow-existing-bids",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -206022,13 +206066,13 @@
       "type": "TestSuite",
       "id": "test/resourcebusiness.js",
       "label": "test/resourcebusiness.js",
-      "lines": 86,
-      "version": "d2b16b4ce2e4796f",
+      "lines": 99,
+      "version": "580f3011e74fcce5",
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "d2b16b4ce2e4796f"
+          "version": "580f3011e74fcce5"
         }
       ]
     },
@@ -301735,6 +301779,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7a200d2201a28e46fe243a5316593090a8263565",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "7a200d2201a28e46fe243a5316593090a8263565"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7a200d2201a28e46fe243a5316593090a8263565",
+      "to": "Artifact:src/resourcebusiness.js",
+      "provenance": {
+        "commit": "7a200d2201a28e46fe243a5316593090a8263565"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7a200d2201a28e46fe243a5316593090a8263565",
+      "to": "Artifact:test/resourcebusiness.js",
+      "provenance": {
+        "commit": "7a200d2201a28e46fe243a5316593090a8263565"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
       "to": "Artifact:src/preflight.js",
       "provenance": {
@@ -307403,6 +307471,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
       }
     },
     {
@@ -443941,6 +444041,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7a200d2201a28e46fe243a5316593090a8263565",
+      "provenance": {
+        "commit": "7a200d2201a28e46fe243a5316593090a8263565"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7a29485ca041e10b4f871b2bec3cdd60583a5c09",
       "provenance": {
         "commit": "7a29485ca041e10b4f871b2bec3cdd60583a5c09"
@@ -444984,6 +445092,14 @@
       "to": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
       "provenance": {
         "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8947d67267e98d9947f76e02f206daadfaa6ccf4",
+      "provenance": {
+        "commit": "8947d67267e98d9947f76e02f206daadfaa6ccf4"
       }
     },
     {
@@ -557987,6 +558103,15 @@
       "provenance": {
         "file": "src/resourcebusiness.js",
         "line": 13
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourcebusiness.js",
+      "to": "Table:resource_labor_bids",
+      "provenance": {
+        "file": "src/resourcebusiness.js",
+        "line": 20
       }
     },
     {
