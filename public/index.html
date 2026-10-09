@@ -8817,7 +8817,8 @@
     const host = $('#city-scene-host'), options = _citySceneOptions;
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
-    if (_cityScene && _citySceneKey === key) { _cityScene.update?.(options); return; }
+    if (key !== cityIdentity()) return;
+    if (_cityScene && _citySceneKey === key) { _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() }); return; }
     destroyCityScene();
     const epoch = _citySceneEpoch;
     host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
@@ -8826,7 +8827,7 @@
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+      _cityScene = scene.mount(host, { ...options, character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
       _citySceneKey = key;
     } catch {

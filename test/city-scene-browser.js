@@ -308,6 +308,27 @@ try {
   assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), '1', 'Existing got-it dismissal remains explicit.');
   await entry.evaluate(() => window.__oldEntryButton.click());
   assert.notEqual(await entry.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A disposed intro button cannot enter the scene.');
+  const priorEntryResources = (await state(entry)).resources;
+  try {
+    await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [2222, 22, characterId]);
+    const freshEntry = entry.waitForResponse(async response => {
+      if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+      const body = await response.json(), character = body.player?.character || body.player;
+      return character?.cash === 2222 && character.health < 30;
+    });
+    await entry.locator('#btn-refresh').evaluate(button => button.click());
+    const freshEntryBody = await (await freshEntry).json();
+    const freshEntryCharacter = freshEntryBody.player?.character || freshEntryBody.player;
+    await assertHud(entry, freshEntryCharacter);
+    await entry.locator('#map-mode-walk').click();
+    await assertEntered(entry);
+    assert.equal((await state(entry)).resources.health, freshEntryCharacter.health, 'Walk retains the latest server health projection.');
+    assert.equal((await state(entry)).resources.cash, freshEntryCharacter.cash, 'Walk retains the latest server cash projection.');
+    assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
+    assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Fresh HUD reuse retains the same renderer.');
+  } finally {
+    await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [priorEntryResources.cash, priorEntryResources.health, characterId]);
+  }
   await entry.context().close();
 
   const page = await newPage();
@@ -766,6 +787,37 @@ try {
   }
 
   // Even a missing scene module leaves existing gameplay navigation available.
+  const loadingResources = await newPage();
+  let releaseResourceEngine;
+  const resourceEngineGate = new Promise(resolve => { releaseResourceEngine = resolve; });
+  await loadingResources.route('**/vendor/phaser.js*', async route => { await resourceEngineGate; await route.continue(); });
+  const previousResourceRow = (await app.pool.query('SELECT cash, health FROM characters WHERE id=$1', [characterId])).rows[0];
+  try {
+    await loadingResources.goto(base, { waitUntil: 'networkidle' });
+    const resourceEngineRequested = loadingResources.waitForRequest(request => new URL(request.url()).pathname === '/vendor/phaser.js');
+    await selectTab(loadingResources, 'map');
+    await resourceEngineRequested;
+    await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [3333, 23, characterId]);
+    const changedResources = loadingResources.waitForResponse(async response => {
+      if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+      const body = await response.json(), character = body.player?.character || body.player;
+      return character?.cash === 3333 && character.health < 30;
+    });
+    await loadingResources.locator('#btn-refresh').evaluate(button => button.click());
+    const changedResourceBody = await (await changedResources).json();
+    const changedResourceCharacter = changedResourceBody.player?.character || changedResourceBody.player;
+    const resourceEngineLoaded = loadingResources.waitForResponse(response => new URL(response.url()).pathname === '/vendor/phaser.js');
+    releaseResourceEngine();
+    await resourceEngineLoaded;
+    await waitForCity(loadingResources);
+    await assertHud(loadingResources, changedResourceCharacter);
+    assert.match(await loadingResources.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
+  } finally {
+    releaseResourceEngine();
+    await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [previousResourceRow.cash, previousResourceRow.health, characterId]);
+    await loadingResources.context().close();
+  }
+
   const missingScene = await newPage();
   await missingScene.route('**/city-scene.js*', route => route.abort());
   await missingScene.goto(base, { waitUntil: 'networkidle' });
