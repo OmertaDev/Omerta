@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
   "sourceRevision": "cf49b27a1b28ab3032bde03101efab43da08fce3",
-  "worktreeDirty": true,
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -171933,7 +171933,7 @@
       "currentBranch": "codex/npc-goods-shared-quota-20261009",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
+      "worktreeDirty": false,
       "currentArtifactCount": 4382,
       "provenance": [
         {
