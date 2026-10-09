@@ -60,9 +60,14 @@ export async function consumeGoodsLiquidity(client, good, district, side, qty, b
     key,
   );
   assertCurrentBlock();
-  const taken = qty <= limit ? (await client.query(
-    `UPDATE goods_market_liquidity SET ${column}=${column}+$4
-       WHERE good_id=$1 AND district=$2 AND price_block=$3 AND ${column}+$4<=$5
+  const taken = qty <= limit ? (side === 'buy' ? await client.query(
+    `UPDATE goods_market_liquidity SET bought=bought+$4
+       WHERE good_id=$1 AND district=$2 AND price_block=$3 AND bought+$4<=$5
+       RETURNING price_block, bought, sold`,
+    [...key, qty, limit],
+  ) : await client.query(
+    `UPDATE goods_market_liquidity SET sold=sold+$4
+       WHERE good_id=$1 AND district=$2 AND price_block=$3 AND sold+$4<=$5
        RETURNING price_block, bought, sold`,
     [...key, qty, limit],
   )).rows[0] : null;
