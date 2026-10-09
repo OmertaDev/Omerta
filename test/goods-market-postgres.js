@@ -8,7 +8,8 @@ import { consumeGoodsLiquidity, goodsLiquidityBoard, GOODS_MARKET } from '../src
 assert(process.env.GOODS_MARKET_TEST_DATABASE_URL, 'Explicit GOODS_MARKET_TEST_DATABASE_URL required');
 const endpoint = new URL(process.env.GOODS_MARKET_TEST_DATABASE_URL);
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname), 'Only disposable loopback PostgreSQL is allowed');
-assert(endpoint.port && endpoint.port !== '5432', 'Use a disposable PostgreSQL server on an explicit nondefault port');
+assert(endpoint.port && (endpoint.port !== '5432' || process.env.CI === 'true'),
+  'Use a disposable PostgreSQL server on an explicit nondefault port; 5432 is allowed only in CI');
 assert(/^\/goods_market_test(?:_[a-z0-9]+)?$/.test(endpoint.pathname), 'Use a database named goods_market_test');
 const namespace = 'goods_market_test_' + crypto.randomBytes(8).toString('hex');
 const admin = new Pool({ connectionString: endpoint.toString(), max: 2 });
