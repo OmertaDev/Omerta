@@ -42,7 +42,7 @@ Known limits: external hosting/processor fees remain unreconciled; price quotes 
 | src/routes/resources.js | b3548f94a6f3620710498aa9f7b54f0d49ede5d5d8401de5f5fa3eae547cab15 |
 | src/resourcecontracts.js | 7fdb35a2a95c43f6b8cf29cf6ea61e023ec581f904766193cd29046a84b44867 |
 | tools/business-agent.js | b556cb869cb7581772b7086d61760899c27e894579c2f6db37174068d3aa5cfe |
-| tools/resource-economy-pilot.js | e9409149a35b7cbf7ec6b1912c6eee80f07e139576c2127a7b6fc37e781be05f |
+| tools/resource-economy-pilot.js | 115881267cd6be3f6479c765a39972619b4d3d53c792edcd7828fc484819e4c0 |
 | test/resourcebusiness.js | d2b16b4ce2e4796f3f1b4dd324e6673bd2f627a5db991c01342f4d1ec1cbfe9d |
 | test/businesspolicy.js | e93f7804adfec0a0d9aa9d78c340c31dc73049b13a9cf99d1507ea6e233bbfe4 |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |

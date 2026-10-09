@@ -71,7 +71,7 @@ try {
     assert.equal(comparison.observedDelta.settledCustomerRevenueUsdMicros, 100000);
     assert(comparison.observedDelta.settledPaidComputeCostsUsdMicros > 0);
     assert.equal(comparison.causalEffect, null);
-    assert(comparison.outcomes.some(outcome=>outcome.bountyId===bounty.id && outcome.observedState==='accepted')); 
+    assert(comparison.outcomes.some(outcome=>outcome.bountyId===bounty.id && outcome.observedState==='accepted'));
     shadowComparisons.push(comparison);
     jobs++;
   }
