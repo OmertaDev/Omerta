@@ -35,16 +35,22 @@ Static inspection followed authentication, SQL parameter binding, quote arithmet
 
 Known limits: external hosting/processor fees remain unreconciled; price quotes do not guarantee provider availability; snapshot details and provider cohorts are bounded and disclose coverage. Prior records are trusted operator observations, not signed independent evidence. No controlled model-quality experiment or organic profitability is proven. This review authorizes no live financial activation.
 
+## Bounty discovery follow-up
+
+Source base: 8947d67267e98d9947f76e02f206daadfaa6ccf4. Scope: the business snapshot bounty projection and its regression. The existing query could return already-bid or self-owned opportunities; enough such rows also hid fresh work behind the page limit. The projection now excludes the observing seller's existing immutable bids and self-owned bounties before LIMIT. A seller-specific LEFT JOIN preserves opportunities with rival bids and selects no rival bid terms. Parameterized account/time bindings, treasury serialization, read-only statements and privacy boundaries are unchanged.
+
+Memory and PostgreSQL18.4 regressions put 101 already-bid opportunities ahead of fresh work, plus self-owned/expired cases and a rival bid. Only fresh competing work remains visible; excluded rows do not mark opportunity coverage truncated. No finance actions or owner authority changes occur.
+
 ## Reviewed source hashes
 
 | File | SHA256 |
 | --- | --- |
-| src/resourcebusiness.js | d8a6158de5745156fd04b3fb29d0bae45932b79c6e7c1b93fea9720dd95a54d7 |
+| src/resourcebusiness.js | 673b8f1c7b65a50ba3fe1a5518a9e656690f37b890e61dec4ef1f3de12f4c549 |
 | src/businesspolicy.js | d01897a4dc3d1ac464e0571c1c335255d9076dbc877eba552b788c2cfe040788 |
 | src/routes/resources.js | b3548f94a6f3620710498aa9f7b54f0d49ede5d5d8401de5f5fa3eae547cab15 |
 | src/resourcecontracts.js | 7fdb35a2a95c43f6b8cf29cf6ea61e023ec581f904766193cd29046a84b44867 |
 | tools/business-agent.js | b556cb869cb7581772b7086d61760899c27e894579c2f6db37174068d3aa5cfe |
 | tools/resource-economy-pilot.js | 115881267cd6be3f6479c765a39972619b4d3d53c792edcd7828fc484819e4c0 |
-| test/resourcebusiness.js | d2b16b4ce2e4796f3f1b4dd324e6673bd2f627a5db991c01342f4d1ec1cbfe9d |
+| test/resourcebusiness.js | 580f3011e74fcce5274f9036dc66d4c1a862cfa9c6ead8aede145b0bc9f888ae |
 | test/businesspolicy.js | 84460ce04b8f9bb1aef6ab0c3e6169ba2cc862d6de69dac1dc25e23feedd85db |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |

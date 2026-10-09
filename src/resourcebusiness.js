@@ -17,7 +17,7 @@ export async function businessSnapshot(pool, account) {
     const totalRevenue = (await client.query("SELECT SUM(available_delta) AS revenue FROM resource_ledger WHERE account_id=$1 AND kind='customer_revenue'", [account])).rows[0];
     const customers = (await client.query("SELECT buyer_account,COUNT(*) AS count FROM resource_jobs WHERE seller_account=$1 AND state='accepted' GROUP BY buyer_account ORDER BY count DESC,buyer_account LIMIT 101", [account])).rows;
     const providers = (await client.query("SELECT provider_id,status,COUNT(*) AS count,SUM(cost_usd_micros) AS cost FROM resource_calls WHERE account_id=$1 AND purpose->>'kind'='paid_market_analysis' GROUP BY provider_id,status ORDER BY provider_id,status LIMIT 166", [account])).rows;
-    const bounties = (await client.query("SELECT id,buyer_account,budget_usd_micros,expires_at FROM resource_bounties WHERE state='open' AND expires_at > $1 ORDER BY created_at,id LIMIT 101", [asOf])).rows;
+    const bounties = (await client.query("SELECT b.id,b.buyer_account,b.budget_usd_micros,b.expires_at FROM resource_bounties b LEFT JOIN resource_labor_bids bid ON bid.bounty_id=b.id AND bid.seller_account=$2 WHERE b.state='open' AND b.expires_at > $1 AND b.buyer_account<>$2 AND bid.id IS NULL ORDER BY b.created_at,b.id LIMIT 101", [asOf, account])).rows;
     const day = new Date(asOf); day.setUTCHours(0, 0, 0, 0);
     const daily = (await client.query('SELECT SUM(authorized_usd_micros) AS amount FROM resource_ledger WHERE account_id=$1 AND created_at >= $2', [account, day])).rows[0];
     const jobViews = [];
