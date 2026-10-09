@@ -246,6 +246,47 @@ try {
     assert.deepEqual(requests.slice(beforeVisit).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
       'A quest destination visit does not select a branch or submit a mutation.');
   };
+  const assertEntered = async page => {
+    await page.waitForFunction(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas'));
+    const layout = await page.evaluate(() => {
+      const canvas = document.querySelector('.omerta-city__canvas canvas'), rect = canvas.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, height: innerHeight,
+        hits: [rect.top + 3, rect.top + rect.height / 2, rect.bottom - 3].map(y => document.elementFromPoint(rect.left + rect.width / 2, y) === canvas),
+        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => {
+          const node = document.getElementById(id), rect = node?.getBoundingClientRect();
+          return { id, position: node && getComputedStyle(node).position, top: rect?.top, bottom: rect?.bottom };
+        }) };
+    });
+    assert(layout.top >= 0 && layout.bottom <= layout.height + 1 && layout.hits.every(Boolean),
+      'Explicit entry reveals the ready canvas above fixed chrome: ' + JSON.stringify(layout));
+  };
+  const gameplayRequests = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
+    && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
+
+  // A first phone visit retains its help, then explicitly enters the existing local scene.
+  const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const entryRequests = [];
+  entry.on('request', request => entryRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
+  await openCity(entry);
+  assert(await entry.locator('#intro-walk').isVisible(), 'First Map help offers a separate entry control.');
+  const entryPose = (await state(entry)).position, entryHandles = await entry.evaluate(() => window.__cityHandles.length);
+  const entryStart = entryRequests.length;
+  await entry.locator('#intro-walk').click();
+  await assertEntered(entry);
+  assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), null, 'Entering does not dismiss first-visit help.');
+  await assertPosition(entry, entryPose, 'First phone entry retains pose');
+  assert.equal((await state(entry)).reducedMotion, true);
+  await entry.locator('#map-mode-walk').click();
+  await assertEntered(entry);
+  assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Repeated Walk reuses the same Phaser game.');
+  await assertPosition(entry, entryPose, 'Repeated entry retains pose');
+  assert.deepEqual(gameplayRequests(entryRequests.slice(entryStart)), [], 'Entry never submits gameplay or travel actions.');
+  await entry.evaluate(() => { window.__oldEntryButton = document.querySelector('#intro-walk'); });
+  await entry.locator('#intro-got').click();
+  assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), '1', 'Existing got-it dismissal remains explicit.');
+  await entry.evaluate(() => window.__oldEntryButton.click());
+  assert.notEqual(await entry.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A disposed intro button cannot enter the scene.');
+  await entry.context().close();
 
   const page = await newPage();
   const requests = [];
@@ -609,6 +650,7 @@ try {
   const engineRequested = delayed.waitForRequest(request => new URL(request.url()).pathname === '/vendor/phaser.js', { timeout: 10000 });
   await selectTab(delayed, 'map');
   await engineRequested;
+  await delayed.locator('#map-mode-walk').click();
   await selectTab(delayed, 'streets');
   const engineLoaded = delayed.waitForResponse(response => new URL(response.url()).pathname === '/vendor/phaser.js');
   releaseEngine();
@@ -616,6 +658,65 @@ try {
   await delayed.waitForTimeout(300);
   assert.equal(await delayed.locator('.omerta-city__canvas canvas').count(), 0, 'Delayed engine cannot mount onto an abandoned Map tab.');
   assert(await delayed.evaluate(() => window.__cityHandles.every(entry => entry.destroyed)), 'No live renderer handle survives a delayed tab departure.');
+  assert.notEqual(await delayed.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A departed entry intent cannot steal focus.');
+
+  // Later modal focus and authoritative identity changes cancel pending entry before readiness.
+  for (const reason of ['modal', 'identity', 'wheel', 'keyboard', 'touch', 'blur', 'hidden']) {
+    const waiting = await newPage();
+    let unblock;
+    const gate = new Promise(resolve => { unblock = resolve; });
+    await waiting.route('**/vendor/phaser.js*', async route => { await gate; await route.continue(); });
+    await waiting.goto(base, { waitUntil: 'networkidle' });
+    const engine = waiting.waitForRequest(request => new URL(request.url()).pathname === '/vendor/phaser.js');
+    await selectTab(waiting, 'map'); await engine;
+    await waiting.locator('#map-mode-walk').click();
+    assert.equal(await waiting.locator('#map-mode-walk').getAttribute('aria-busy'), 'true', 'Capture pending entry before ' + reason + ' cancellation.');
+    if (reason === 'modal') {
+      await waiting.keyboard.press('/');
+      await waiting.locator('#jump-q').waitFor({ state: 'visible' });
+    } else if (reason === 'identity') {
+      const alive = (await app.pool.query('SELECT generation FROM characters WHERE id=$1', [characterId])).rows[0].generation;
+      await waiting.route('**/v1/projections/player', async route => {
+        const response = await route.fetch(), reply = await response.json();
+        if (response.status() !== 200) return route.fulfill({ response });
+        (reply.player?.character || reply.player).generation = alive + 1;
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(reply) });
+      });
+      const changed = waiting.waitForResponse(async response => {
+        if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+        const reply = await response.json(); return (reply.player?.character || reply.player)?.generation === alive + 1;
+      });
+      await waiting.locator('#btn-refresh').evaluate(button => button.click()); await changed;
+    } else if (reason === 'wheel') await waiting.mouse.wheel(0, 50);
+    else if (reason === 'keyboard') await waiting.keyboard.press('PageDown');
+    else if (reason === 'touch') await waiting.evaluate(() => document.dispatchEvent(new Event('touchmove', { bubbles: true })));
+    else if (reason === 'blur') await waiting.evaluate(() => window.dispatchEvent(new Event('blur')));
+    else {
+      await waiting.evaluate(() => {
+        // Headless Chromium keeps all tabs visible. Drive the visibility contract directly,
+        // capturing cancellation synchronously before any100ms intent timer can run.
+        const before = Object.getOwnPropertyDescriptor(document, 'hidden');
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+        try {
+          document.dispatchEvent(new Event('visibilitychange'));
+          window.__entryCanceledWhenHidden = !document.querySelector('#map-mode-walk').hasAttribute('aria-busy');
+        } finally {
+          if (before) Object.defineProperty(document, 'hidden', before); else delete document.hidden;
+          document.dispatchEvent(new Event('visibilitychange'));
+        }
+      });
+      assert(await waiting.evaluate(() => window.__entryCanceledWhenHidden), 'The pending intent is canceled synchronously on page hiding.');
+    }
+    await waiting.waitForFunction(() => !document.querySelector('#map-mode-walk')?.hasAttribute('aria-busy'), null, { polling: 100, timeout: 5000 });
+    const loaded = waiting.waitForResponse(response => new URL(response.url()).pathname === '/vendor/phaser.js');
+    unblock(); await loaded;
+    if (reason === 'hidden') await waiting.bringToFront();
+    if (reason === 'modal') await waiting.waitForFunction(() => window.__cityHandles.at(-1)?.handle.getState().ready);
+    await waitForFrames(waiting, 3);
+    assert.notEqual(await waiting.evaluate(() => document.activeElement?.tagName), 'CANVAS', reason + ' cancels delayed canvas focus.');
+    if (reason === 'modal') assert.equal(await waiting.evaluate(() => document.activeElement?.id), 'jump-q');
+    await waiting.context().close();
+  }
 
   // Even a missing scene module leaves existing gameplay navigation available.
   const missingScene = await newPage();
@@ -624,6 +725,8 @@ try {
   await missingScene.waitForSelector('#screen-main:not(.hidden)');
   await selectTab(missingScene, 'map');
   await missingScene.locator('#city-scene-retry').waitFor();
+  await missingScene.locator('#map-mode-walk').click();
+  await missingScene.waitForFunction(() => document.activeElement?.id === 'city-scene-retry');
   assert.equal(await missingScene.locator('.omerta-city__canvas canvas').count(), 0, 'Failed assets never leave a partial canvas.');
   const fallbackTabs = await missingScene.locator('[data-city-jump]').evaluateAll(buttons => buttons.map(button => button.dataset.cityJump));
   for (const tab of tabs) assert(fallbackTabs.includes(tab), 'Missing scene module retains gameplay destination ' + tab);
@@ -637,6 +740,8 @@ try {
   await missingEngine.waitForSelector('#screen-main:not(.hidden)');
   await selectTab(missingEngine, 'map');
   await missingEngine.locator('.omerta-city--unavailable').waitFor();
+  await missingEngine.locator('#map-mode-walk').click();
+  await missingEngine.waitForFunction(() => document.activeElement?.dataset.destination === 'fixer');
   assert.match(await missingEngine.locator('.omerta-city__status').textContent(), /unavailable/);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 0, 'Engine failure retains no broken canvas.');
   await missingEngine.evaluate(() => window.__cityHandles.at(-1).handle.update({ npcQuests: {
