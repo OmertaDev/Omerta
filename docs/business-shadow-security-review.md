@@ -75,3 +75,18 @@ Validation: planner/analyzer and CLI regressions pass, including 100 seeded plan
 | tools/compute-experiment.js | cf6dc04f23fa672aed6c0f33bda4dab117ed3e8282ba12863d812f4bece1973d |
 | test/computeexperiment.js | 4ae0c6696efe4310cd225f70d6c5e2620f6494e868cd0f03a80df465806dba0f |
 | test/compute-experiment-cli.js | cc34e64adf538338f3ff46fad62eb0c59e973206cefef554a686b78cad96fcc7 |
+
+## Shadow compute routing follow-up
+
+Source base: `5a7dc734fe0c3c7616d6903d10e1764e3abcd877`; pre-release scope is the pure router, offline CLI and two tests below. Dependency: unchanged compute experiment analyzer and bounded file loader. Pinned policy methods were adapted to input/evidence trust boundaries, allocation traces, invariant testing and false-positive triage. No database, contracts, external calls, wallet authority or production configuration change is in scope; transaction/concurrency and Solidity proofs do not apply to this pure offline module.
+
+Independent review found no concrete blocker. Raw trials are reanalyzed, not supplied recommendations. Model mismatch, stale/future evidence, incomplete acceptance and unsupported task rubrics prevent candidate routes. Baselines consume proposed budget first; negative incremental candidate costs refund only shadow allocation. Exact totals remain within safe integer limits. Each task is unique, ordered deterministically, and all proposed totals remain within the supplied budget. Dates, task labels, grades, model identities and prices are unverified operator assertions; separate plans have no shared funds lock. No model calls, real reservations, causal inference or policy writes occur.
+
+Executed on 2026-10-09: `node test/computerouting.js` and `node test/compute-router-cli.js` pass, including 1001 budget invariants, freshness/acceptance/model/scope failures, unknown quotes, duplicate/private-field rejection and sanitized CLI errors. Existing experiment suites pass. Syntax/static source inspection reveals no concrete issue; no clean SAST verdict or formal proof is claimed. Conclusions apply to the exact hashes below; financial activation remains excluded.
+
+| File | SHA256 |
+| --- | --- |
+| src/computerouting.js | 48807d1a5b6cf6114f98fd33bbadc1e8a14d0205ff7b4c90243aa1643130c2f7 |
+| tools/compute-router.js | 40b7948e3f91813f4a2be75c92b1016f77e7d6810b18452843adbba723d98b0e |
+| test/computerouting.js | 57b876590934e62f2df7087bf8ad4906402ac31e79d08d6ca916de127cd282d6 |
+| test/compute-router-cli.js | 56f5c7882592fc8d5f6f9735123bf25480bc1522c6adb87b82fadcb4fb19c861 |
