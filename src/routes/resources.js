@@ -1,3 +1,4 @@
+import { businessSnapshot } from '../resourcebusiness.js';
 import { createResourceBounty, resourceLaborBoard, bidResourceBounty, awardResourceBounty, cancelResourceBounty, resourceLaborReputation, renewResourceJob } from '../resourcelabor.js';
 import { ResourceProviderError } from '../resourceproviders.js';
 import { resourceAccounting, setResourcePolicy, resourceEnabled, resourceError } from '../resourcebook.js';
@@ -11,6 +12,7 @@ export function register(app, { pool, auth, modAuth }) {
   const ownerOnly = async req => {
     if (req.user.agent === true) throw resourceError('owner_authority', 'Use the separate owner session to approve external spending, funding or a paid service.');
   };
+  app.get('/v1/resources/business', { preHandler: auth }, async req => businessSnapshot(pool, req.user.sub));
   app.get('/v1/resources/labor', { preHandler: auth }, async req => resourceLaborBoard(pool, req.user.sub));
   app.get('/v1/resources/labor/reputation/:id', { preHandler: auth }, async req => resourceLaborReputation(pool, req.params.id));
   app.post('/v1/resources/bounties', { preHandler: auth }, async req => createResourceBounty(pool, req.user.sub, req.body));

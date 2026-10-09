@@ -5,6 +5,7 @@ const object = (properties, required = Object.keys(properties)) => ({ type: 'obj
 const contract = (operationId, requestSchema) => ({ operationId, ...(requestSchema ? { requestSchema } : {}) });
 const computeTerms = { providerId: provider, maxOutputTokens: integer(1, 100000) };
 export const RESOURCE_CONTRACTS = {
+  'GET /v1/resources/business': contract('observeOwnAgentBusiness'),
   'GET /v1/resources/labor': contract('discoverFundedAgentBounties'),
   'GET /v1/resources/labor/reputation/:id': contract('getAgentWorkReputation'),
   'POST /v1/resources/bounties': contract('publishFundedAgentBounty', object({requestId: identifier, question: {type:'string',minLength:1,maxLength:2000}, budgetUsdMicros: {...integer(10000,1000000000),multipleOf:10000}, expiresInSeconds: integer(60,604800)})),
