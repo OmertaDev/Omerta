@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b03093274a7241c08766ec31df17dd0c614fac1c",
+  "sourceRevision": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10316,
-    "edges": 41995,
+    "nodes": 10319,
+    "edges": 42013,
     "byNodeType": {
       "Artifact": 4381,
-      "Command": 204,
-      "Commit": 2151,
+      "Command": 205,
+      "Commit": 2153,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3511,
-      "CHANGED": 16294,
+      "CHANGED": 16308,
       "CONTAINS": 4402,
-      "DECLARES": 204,
+      "DECLARES": 205,
       "DEFINED_IN": 1388,
       "DEPENDS_ON": 67,
-      "EXECUTES": 690,
+      "EXECUTES": 691,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2151,
+      "HAS_COMMIT": 2153,
       "IMPLEMENTS": 124,
       "IMPORTS": 4152,
       "INHERITS": 42,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 26701,
-      "lines": 522,
-      "version": "1ce1f7b49ffd72a0",
+      "bytes": 27404,
+      "lines": 537,
+      "version": "2b020160c69c4297",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "1ce1f7b49ffd72a0"
+          "version": "2b020160c69c4297"
         }
       ],
-      "lastChangedAt": "2026-10-09T05:38:36.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d12189ffc69b64fbb91130a6986d476bf2a20e8"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -62508,20 +62508,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 35122,
-      "lines": 233,
-      "version": "c23c04cbbb09c508",
+      "bytes": 35194,
+      "lines": 234,
+      "version": "8e8478575c529e7c",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "c23c04cbbb09c508"
+          "version": "8e8478575c529e7c"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b03093274a7241c08766ec31df17dd0c614fac1c"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:Procfile",
@@ -78081,18 +78081,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "bb07bbb44c307e56",
+      "version": "979f33a1292c71eb",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bb07bbb44c307e56"
+          "version": "979f33a1292c71eb"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b03093274a7241c08766ec31df17dd0c614fac1c"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:src/access.js",
@@ -81115,20 +81115,20 @@
       "path": "src/goodsmarket.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 4356,
-      "lines": 89,
-      "version": "7bb5c56219a58b49",
+      "bytes": 4588,
+      "lines": 94,
+      "version": "74a2b325912116ea",
       "text": true,
       "provenance": [
         {
           "file": "src/goodsmarket.js",
           "line": 1,
-          "version": "7bb5c56219a58b49"
+          "version": "74a2b325912116ea"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b03093274a7241c08766ec31df17dd0c614fac1c"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:src/goodsquote.js",
@@ -88015,20 +88015,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 286231,
+      "bytes": 286261,
       "lines": 4241,
-      "version": "d6308bc2a9b711b4",
+      "version": "e9718c0705767251",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "d6308bc2a9b711b4"
+          "version": "e9718c0705767251"
         }
       ],
-      "lastChangedAt": "2026-10-09T05:38:36.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d12189ffc69b64fbb91130a6986d476bf2a20e8"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -88291,20 +88291,20 @@
       "path": "test/goods-market-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11884,
-      "lines": 225,
-      "version": "07b4e380b0b890fe",
+      "bytes": 11945,
+      "lines": 226,
+      "version": "bbf77dc40fbc4478",
       "text": true,
       "provenance": [
         {
           "file": "test/goods-market-postgres.js",
           "line": 1,
-          "version": "07b4e380b0b890fe"
+          "version": "bbf77dc40fbc4478"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T18:05:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b03093274a7241c08766ec31df17dd0c614fac1c"
+      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
     },
     {
       "key": "Artifact:test/goods-market.js",
@@ -102134,6 +102134,19 @@
       "id": "npm:test:genesis-auction:deployment",
       "label": "npm run test:genesis-auction:deployment",
       "command": "node test/genesis-deploy-trust-checks.js && node test/genesis-auction-deployment-plan.js && node test/genesis-auction-preflight.js && node tools/build-genesis-deploy-trust.js --check",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:goods-market:postgres",
+      "type": "Command",
+      "id": "npm:test:goods-market:postgres",
+      "label": "npm run test:goods-market:postgres",
+      "command": "node test/goods-market-postgres.js",
       "provenance": [
         {
           "file": "package.json",
@@ -122790,6 +122803,22 @@
       ]
     },
     {
+      "key": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "type": "Commit",
+      "id": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "label": "Make goods quota SQL verifiable and run its PostgreSQL proofs in CI",
+      "title": "Make goods quota SQL verifiable and run its PostgreSQL proofs in CI",
+      "date": "2026-10-09T18:05:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "provenance": [
+        {
+          "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+        }
+      ]
+    },
+    {
       "key": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
       "type": "Commit",
       "id": "8da1ac08e7365552192613cd3d631d963b710e7b",
@@ -130050,6 +130079,22 @@
         {
           "commit": "c0f2a16656c69e8d4abd21c42f2edce1e72dfee4",
           "url": "https://github.com/OmertaDev/Omerta/commit/c0f2a16656c69e8d4abd21c42f2edce1e72dfee4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "type": "Commit",
+      "id": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "label": "Refresh hotfix knowledge after main snapshot update",
+      "title": "Refresh hotfix knowledge after main snapshot update",
+      "date": "2026-10-09T17:44:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "provenance": [
+        {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         }
       ]
     },
@@ -151172,12 +151217,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "bb07bbb44c307e56",
+      "version": "979f33a1292c71eb",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bb07bbb44c307e56"
+          "version": "979f33a1292c71eb"
         }
       ]
     },
@@ -158214,6 +158259,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
           "commit": "c19159d18946677bb6d9bd9be3e69272114c1ac8"
         },
         {
@@ -159082,6 +159130,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         },
         {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
@@ -160074,6 +160125,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -161064,6 +161118,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -161500,6 +161557,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         },
         {
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
@@ -162324,6 +162384,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
           "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
@@ -162840,6 +162903,9 @@
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
         },
         {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
           "commit": "c19159d18946677bb6d9bd9be3e69272114c1ac8"
         },
         {
@@ -163219,6 +163285,9 @@
         },
         {
           "commit": "c0331dd25850335421ac097e15c3907f6515cee5"
+        },
+        {
+          "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         },
         {
           "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
@@ -165921,13 +165990,13 @@
       "type": "Module",
       "id": "src/goodsmarket.js",
       "label": "src/goodsmarket.js",
-      "lines": 89,
-      "version": "7bb5c56219a58b49",
+      "lines": 94,
+      "version": "74a2b325912116ea",
       "provenance": [
         {
           "file": "src/goodsmarket.js",
           "line": 1,
-          "version": "7bb5c56219a58b49"
+          "version": "74a2b325912116ea"
         }
       ]
     },
@@ -171726,7 +171795,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b03093274a7241c08766ec31df17dd0c614fac1c",
+      "revision": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
       "currentBranch": "codex/goods-market-hotfix-20261009",
       "defaultBranch": "main",
       "visibility": "public",
@@ -203163,12 +203232,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4241,
-      "version": "d6308bc2a9b711b4",
+      "version": "e9718c0705767251",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "d6308bc2a9b711b4"
+          "version": "e9718c0705767251"
         }
       ]
     },
@@ -203342,13 +203411,13 @@
       "type": "TestSuite",
       "id": "test/goods-market-postgres.js",
       "label": "test/goods-market-postgres.js",
-      "lines": 225,
-      "version": "07b4e380b0b890fe",
+      "lines": 226,
+      "version": "bbf77dc40fbc4478",
       "provenance": [
         {
           "file": "test/goods-market-postgres.js",
           "line": 1,
-          "version": "07b4e380b0b890fe"
+          "version": "bbf77dc40fbc4478"
         }
       ]
     },
@@ -208442,13 +208511,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 522,
-      "version": "1ce1f7b49ffd72a0",
+      "lines": 537,
+      "version": "2b020160c69c4297",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "1ce1f7b49ffd72a0"
+          "version": "2b020160c69c4297"
         }
       ]
     },
@@ -311658,6 +311727,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:src/goodsmarket.js",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "to": "Artifact:test/goods-market-postgres.js",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
       "to": "Artifact:docs/OMERTA-Whitepaper.docx",
       "provenance": {
@@ -336654,6 +336771,70 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "commit": "c0f2a16656c69e8d4abd21c42f2edce1e72dfee4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
       }
     },
     {
@@ -410917,6 +411098,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:goods-market:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:test:http-idempotency:postgres",
       "provenance": {
         "file": "package.json",
@@ -428672,6 +428862,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:genesis",
       "to": "Artifact:test/genesisrelease.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:goods-market:postgres",
+      "to": "Artifact:test/goods-market-postgres.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -448265,6 +448464,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2",
+      "provenance": {
+        "commit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
       "provenance": {
         "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
@@ -451892,6 +452099,14 @@
       "to": "Commit:c0f2a16656c69e8d4abd21c42f2edce1e72dfee4",
       "provenance": {
         "commit": "c0f2a16656c69e8d4abd21c42f2edce1e72dfee4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c15dae199eaecd15fe2f1d96a05ff34eeb8c388d",
+      "provenance": {
+        "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
       }
     },
     {
