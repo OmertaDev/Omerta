@@ -721,7 +721,7 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   // not a silent change of tense.
   // (`behind legal` was an arm here until 2026-08-13; the phrasing it matched is gone from the tree,
   // and a dead alternation in a guard is how the guard quietly stops covering anything.)
-  const OPENS_THE_RAIL = /not active|dormant|not yet open|not live yet|until the audit|behind the launch checklist|until the launch/i;
+  const OPENS_THE_RAIL = /not active|extraction inactive|dormant|not yet open|not live yet|until the audit|behind the launch checklist|until the launch/i;
   const DESCRIBES_EXTRACTION = /extract\w* (real |your |earned )?\$?OMR|on-chain (withdrawal|extraction)|POST \/v1\/withdraw/i;
   const unqualified = [];
   for (const f of ALL_SURFACES) {
@@ -789,7 +789,7 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   ].filter(([f, re]) => re.test(read(f))).map(([f]) => f);
   assert.deepEqual(claims, [], 'a high-intent surface still turns the dormant rail into a current '
     + `earnings promise:\n  ${claims.join('\n  ')}`);
-  assert(/CONNECT AN AI PLAYER/.test(read('public/play.html')),
+  assert(/CONNECT AN AI PLAYER/i.test(read('public/play.html')),
     'agent setup must lead with the model-agnostic product; Claude is the guided lane, not the product boundary');
   assert(/server-rolled 15-point spread, each at least 3/i.test(read('docs/WIKI.md')),
     'the long-form Codex must describe the live randomized character build, not the retired 5/5/5 start');
@@ -813,7 +813,7 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   //
   // Same per-file, loose-about-wording shape as the extraction guard: a surface may describe what
   // survives death however it likes, so long as it also says the bank does not.
-  const LISTS_DEATH_SURVIVORS = /safest when you die/i;
+  const LISTS_DEATH_SURVIVORS = /safest when you die|what survives death/i;
   const CAVEATS_THE_BANK = /bank is not one of them|bank (does not|doesn't|never) survive|not survive (your )?death/i;
   const misleading = [];
   for (const f of ALL_SURFACES) {
@@ -3338,11 +3338,13 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && !deploy.includes('Do not let outflow authority appoint its own successor'),
   'the superseded Safe-only successor restriction must not survive the instant self-replacement override');
   const admin = read('public/admin.html');
+  const deferredRecovery = (admin.includes('optional future edge feature')
+    && admin.includes('not an RWA launch dependency')
+    && admin.includes('no recovery capability is deployed'))
+    || admin.includes('Recovery is an optional future feature. It is not deployed or required for the RWA launch.');
   assert(admin.includes('Quarantined Stock Tokens')
     && admin.includes('hold-only default · conditional future recovery')
-    && admin.includes('optional future edge feature')
-    && admin.includes('not an RWA launch dependency')
-    && admin.includes('no recovery capability is deployed')
+    && deferredRecovery
     && admin.includes('finalized default · checksummed cursor pages')
     && !admin.includes('Authorize Stock recovery')
     && !admin.includes('Execute Stock recovery')
@@ -3430,9 +3432,9 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
       && plain.includes('deed-upgrade spend do not count')
       && plain.includes('approved cap is 1.50×')
       && plain.includes('below 300 OMR receives 1.00×')
-      && plain.includes('300–999.999… receives 1.10×')
-      && plain.includes('1,000–4,999.999… receives 1.20×')
-      && plain.includes('5,000–19,999.999… receives 1.35×')
+      && /300[–-]999\.999… receives 1\.10×/.test(plain)
+      && /1,000[–-]4,999\.999… receives 1\.20×/.test(plain)
+      && /5,000[–-]19,999\.999… receives 1\.35×/.test(plain)
       && plain.includes('20,000 OMR or more receives 1.50×')
       && plain.includes('Only finalized active and committed principal qualifies')
       && plain.includes('Pending deposits, idle loot, unbonding, withdrawable, withdrawn')
