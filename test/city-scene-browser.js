@@ -416,6 +416,7 @@ try {
   assert.equal(await entry.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), '', 'Leaving phone mode removes its height override without ResizeObserver.');
   await assertPosition(entry, phonePose, 'Leaving phone mode retains the player pose');
   await app.pool.query('UPDATE characters SET cash=500,health=100,energy=50,nerve=10 WHERE id=$1', [characterId]);
+  await refreshHudFromClient(entry);
   assert.deepEqual(gameplayRequests(entryRequests.slice(entryStart)), [], 'Entry never submits gameplay or travel actions.');
   await entry.evaluate(() => { window.__oldEntryButton = document.querySelector('#intro-walk'); });
   await entry.locator('#intro-got').click();
