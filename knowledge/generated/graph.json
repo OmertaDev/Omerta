@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f6656935b3cbbef75883f594e6721a6e9702744a",
+  "sourceRevision": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10270,
-    "edges": 41787,
+    "nodes": 10273,
+    "edges": 41826,
     "byNodeType": {
       "Artifact": 4359,
       "Command": 202,
-      "Commit": 2137,
+      "Commit": 2140,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3489,
-      "CHANGED": 16193,
+      "CHANGED": 16229,
       "CONTAINS": 4380,
       "DECLARES": 202,
       "DEFINED_IN": 1387,
       "DEPENDS_ON": 67,
       "EXECUTES": 681,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2137,
+      "HAS_COMMIT": 2140,
       "IMPLEMENTS": 124,
       "IMPORTS": 4133,
       "INHERITS": 42,
@@ -7751,20 +7751,20 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 44384,
-      "lines": 701,
-      "version": "4d9f66cacdb879ce",
+      "bytes": 42483,
+      "lines": 687,
+      "version": "93576100f109cdd3",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "4d9f66cacdb879ce"
+          "version": "93576100f109cdd3"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2764488608f3f5da7c230ef3a56856894e3dc4e4"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:AGENTS.override.md",
@@ -23851,20 +23851,20 @@
       "path": "data/rules.js",
       "kind": "artifact",
       "extension": ".js",
-      "bytes": 56650,
+      "bytes": 56685,
       "lines": 472,
-      "version": "2b85b3fb78e5327a",
+      "version": "b562f5e58263214d",
       "text": true,
       "provenance": [
         {
           "file": "data/rules.js",
           "line": 1,
-          "version": "2b85b3fb78e5327a"
+          "version": "b562f5e58263214d"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:DEPLOY-CHECKLIST.md",
@@ -40112,20 +40112,20 @@
       "path": "docs/WIKI.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 232213,
-      "lines": 2823,
-      "version": "ad5e945f493cb4e6",
+      "bytes": 221479,
+      "lines": 2672,
+      "version": "30f55ef28a974743",
       "text": true,
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "ad5e945f493cb4e6"
+          "version": "30f55ef28a974743"
         }
       ],
-      "lastChangedAt": "2026-10-08T13:24:44.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0ba8d2079e538636fe253a9d92992322f8ccfeb5"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:FINAL_LAUNCH_LEDGER.md",
@@ -62577,20 +62577,20 @@
       "path": "public/admin.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 100922,
+      "bytes": 100132,
       "lines": 1164,
-      "version": "12d90acbe24d7408",
+      "version": "0dfcfc878a2ebc43",
       "text": true,
       "provenance": [
         {
           "file": "public/admin.html",
           "line": 1,
-          "version": "12d90acbe24d7408"
+          "version": "0dfcfc878a2ebc43"
         }
       ],
-      "lastChangedAt": "2026-09-25T05:32:39.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fd0e45ae0c08ba4ce81774fdcabe239fc9da98d8"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/apple-touch-icon.png",
@@ -62623,20 +62623,20 @@
       "path": "public/arena.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 16864,
+      "bytes": 16793,
       "lines": 237,
-      "version": "b12fcfc97a24d487",
+      "version": "b90c96e012a07e15",
       "text": true,
       "provenance": [
         {
           "file": "public/arena.html",
           "line": 1,
-          "version": "b12fcfc97a24d487"
+          "version": "b90c96e012a07e15"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:48:17.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1a466648a240ef0a53f38cbdb9a75d65a0d30275"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/art/agent-cover-1080.webp",
@@ -77067,20 +77067,20 @@
       "path": "public/defi.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 72400,
+      "bytes": 72025,
       "lines": 1052,
-      "version": "babdfa6fcedc1d66",
+      "version": "e962cccb51d57a2c",
       "text": true,
       "provenance": [
         {
           "file": "public/defi.html",
           "line": 1,
-          "version": "babdfa6fcedc1d66"
+          "version": "e962cccb51d57a2c"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:00:06.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/fee-flows.html",
@@ -77090,20 +77090,20 @@
       "path": "public/fee-flows.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 38426,
+      "bytes": 38105,
       "lines": 555,
-      "version": "80a62b93b975ee4b",
+      "version": "ef545cfe348cdd1f",
       "text": true,
       "provenance": [
         {
           "file": "public/fee-flows.html",
           "line": 1,
-          "version": "80a62b93b975ee4b"
+          "version": "ef545cfe348cdd1f"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:00:06.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/genesis-deploy-artifact.js",
@@ -77412,20 +77412,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1344184,
-      "lines": 13857,
-      "version": "e851514cfe6cc471",
+      "bytes": 1338873,
+      "lines": 13849,
+      "version": "eccc87ed8e56aee6",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "e851514cfe6cc471"
+          "version": "eccc87ed8e56aee6"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:38:04.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2764488608f3f5da7c230ef3a56856894e3dc4e4"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -77435,20 +77435,20 @@
       "path": "public/invite.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 10267,
+      "bytes": 10242,
       "lines": 132,
-      "version": "ef10c068c1789c6c",
+      "version": "0f810d27b2324f6b",
       "text": true,
       "provenance": [
         {
           "file": "public/invite.html",
           "line": 1,
-          "version": "ef10c068c1789c6c"
+          "version": "0f810d27b2324f6b"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -77458,20 +77458,20 @@
       "path": "public/manifest.json",
       "kind": "web-surface",
       "extension": ".json",
-      "bytes": 763,
+      "bytes": 792,
       "lines": 20,
-      "version": "ed5d8f02229518d6",
+      "version": "848c3a00c7f1f197",
       "text": true,
       "provenance": [
         {
           "file": "public/manifest.json",
           "line": 1,
-          "version": "ed5d8f02229518d6"
+          "version": "848c3a00c7f1f197"
         }
       ],
-      "lastChangedAt": "2026-08-08T14:21:12.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "c491d25463bc4328d2a5b8589ed7f3b1ffed5577"
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/omerta-ui.css",
@@ -77504,20 +77504,20 @@
       "path": "public/play.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 16296,
+      "bytes": 16190,
       "lines": 241,
-      "version": "d3d5890c33d7f876",
+      "version": "a4657dd43ffe8ae9",
       "text": true,
       "provenance": [
         {
           "file": "public/play.html",
           "line": 1,
-          "version": "d3d5890c33d7f876"
+          "version": "a4657dd43ffe8ae9"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:public/sw.js",
@@ -77550,20 +77550,20 @@
       "path": "public/wiki.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 247437,
-      "lines": 2321,
-      "version": "e97e9c56b0459a6b",
+      "bytes": 238552,
+      "lines": 2268,
+      "version": "6c459f220d89ab9a",
       "text": true,
       "provenance": [
         {
           "file": "public/wiki.html",
           "line": 1,
-          "version": "e97e9c56b0459a6b"
+          "version": "6c459f220d89ab9a"
         }
       ],
-      "lastChangedAt": "2026-10-08T13:24:44.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0ba8d2079e538636fe253a9d92992322f8ccfeb5"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:RC1_ACCEPTANCE_MATRIX.csv",
@@ -77780,20 +77780,20 @@
       "path": "src/agentgateway.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 98206,
-      "lines": 1755,
-      "version": "3d7ef59298315e85",
+      "bytes": 98245,
+      "lines": 1756,
+      "version": "969dd9b06a2672f4",
       "text": true,
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "3d7ef59298315e85"
+          "version": "969dd9b06a2672f4"
         }
       ],
-      "lastChangedAt": "2026-10-08T20:35:00.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/agentreferrals.js",
@@ -78240,20 +78240,20 @@
       "path": "src/cards.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 21570,
+      "bytes": 21558,
       "lines": 283,
-      "version": "2b8ce6d2bf372511",
+      "version": "68290db71cd56b3f",
       "text": true,
       "provenance": [
         {
           "file": "src/cards.js",
           "line": 1,
-          "version": "2b8ce6d2bf372511"
+          "version": "68290db71cd56b3f"
         }
       ],
-      "lastChangedAt": "2026-08-27T08:25:58.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/career.js",
@@ -79666,20 +79666,20 @@
       "path": "src/deeds.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 45245,
+      "bytes": 45219,
       "lines": 589,
-      "version": "05c92aee0dcda192",
+      "version": "48b8dbfccf700c1d",
       "text": true,
       "provenance": [
         {
           "file": "src/deeds.js",
           "line": 1,
-          "version": "05c92aee0dcda192"
+          "version": "48b8dbfccf700c1d"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/defi.js",
@@ -80356,20 +80356,20 @@
       "path": "src/explore.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 53537,
+      "bytes": 53347,
       "lines": 830,
-      "version": "d56b18801cd3109f",
+      "version": "44b7dd18e379fd2f",
       "text": true,
       "provenance": [
         {
           "file": "src/explore.js",
           "line": 1,
-          "version": "d56b18801cd3109f"
+          "version": "44b7dd18e379fd2f"
         }
       ],
-      "lastChangedAt": "2026-08-26T10:42:04.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a0ce79bfa8bb5702e0b8d8ffe3e76e9b4b0de6af"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/fairness.js",
@@ -80517,20 +80517,20 @@
       "path": "src/game.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 216030,
+      "bytes": 215058,
       "lines": 2745,
-      "version": "bb8d9f1b9b63c477",
+      "version": "624815f7f044912a",
       "text": true,
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "bb8d9f1b9b63c477"
+          "version": "624815f7f044912a"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:43:22.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f2424a5eaa160507fe5884926c8cf600f5e0a20b"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/genesisauction.js",
@@ -80747,20 +80747,20 @@
       "path": "src/growth.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 70620,
+      "bytes": 70510,
       "lines": 1037,
-      "version": "532dfe3ee68d6c7a",
+      "version": "5373de75dfc466d9",
       "text": true,
       "provenance": [
         {
           "file": "src/growth.js",
           "line": 1,
-          "version": "532dfe3ee68d6c7a"
+          "version": "5373de75dfc466d9"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/heists.js",
@@ -81736,20 +81736,20 @@
       "path": "src/path-funnel.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 21326,
+      "bytes": 20110,
       "lines": 379,
-      "version": "362f013683ba0cf2",
+      "version": "a5505acd93bb9483",
       "text": true,
       "provenance": [
         {
           "file": "src/path-funnel.js",
           "line": 1,
-          "version": "362f013683ba0cf2"
+          "version": "a5505acd93bb9483"
         }
       ],
-      "lastChangedAt": "2026-08-25T03:58:11.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "65ff55846667710f748c6ab91403428ecd4cea03"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/path-pages.js",
@@ -81759,20 +81759,20 @@
       "path": "src/path-pages.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 32155,
+      "bytes": 31910,
       "lines": 333,
-      "version": "4779972b0af203af",
+      "version": "19ede430f28ea733",
       "text": true,
       "provenance": [
         {
           "file": "src/path-pages.js",
           "line": 1,
-          "version": "4779972b0af203af"
+          "version": "19ede430f28ea733"
         }
       ],
-      "lastChangedAt": "2026-09-07T23:37:29.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dfd2f6ed3d0fef00beb28a7401e090e0351ad2e7"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/payroll.js",
@@ -83300,20 +83300,20 @@
       "path": "src/rules.generated.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 56888,
+      "bytes": 56923,
       "lines": 475,
-      "version": "4b991a9f5a6eab68",
+      "version": "e322ec08219d4637",
       "text": true,
       "provenance": [
         {
           "file": "src/rules.generated.js",
           "line": 1,
-          "version": "4b991a9f5a6eab68"
+          "version": "e322ec08219d4637"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:51:44.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e4a6994bfee0159714eb0386e104066b391aac21"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/rules.js",
@@ -83346,20 +83346,20 @@
       "path": "src/rules.tail.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 494893,
+      "bytes": 494851,
       "lines": 6154,
-      "version": "83b05a40c16eaa43",
+      "version": "84eeb263dcfc13cc",
       "text": true,
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "83b05a40c16eaa43"
+          "version": "84eeb263dcfc13cc"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:src/rwahealth.js",
@@ -86819,20 +86819,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 315032,
-      "lines": 4246,
-      "version": "26c93806991249be",
+      "bytes": 316159,
+      "lines": 4262,
+      "version": "6c86bbc3aa840c98",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "26c93806991249be"
+          "version": "6c86bbc3aa840c98"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-09T20:01:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -87072,20 +87072,20 @@
       "path": "test/explore.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 91618,
+      "bytes": 91605,
       "lines": 1446,
-      "version": "6ca9b768a08c28aa",
+      "version": "c48c9fc0918d4851",
       "text": true,
       "provenance": [
         {
           "file": "test/explore.js",
           "line": 1,
-          "version": "6ca9b768a08c28aa"
+          "version": "c48c9fc0918d4851"
         }
       ],
-      "lastChangedAt": "2026-08-26T10:42:04.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a0ce79bfa8bb5702e0b8d8ffe3e76e9b4b0de6af"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:test/family-operation-concurrency.js",
@@ -87877,20 +87877,20 @@
       "path": "test/growth.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 181969,
+      "bytes": 181907,
       "lines": 2253,
-      "version": "c3ab78d75c95c118",
+      "version": "972e04b2ddc4e0a2",
       "text": true,
       "provenance": [
         {
           "file": "test/growth.js",
           "line": 1,
-          "version": "c3ab78d75c95c118"
+          "version": "972e04b2ddc4e0a2"
         }
       ],
-      "lastChangedAt": "2026-09-25T01:08:25.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0f56e6b8e2322b51946e8c8d174ac31314c3dd18"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:test/hardening.js",
@@ -89280,20 +89280,20 @@
       "path": "test/path-funnel.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 15733,
+      "bytes": 15735,
       "lines": 252,
-      "version": "afafcc39fe0c109f",
+      "version": "4b9e03df705920c4",
       "text": true,
       "provenance": [
         {
           "file": "test/path-funnel.js",
           "line": 1,
-          "version": "afafcc39fe0c109f"
+          "version": "4b9e03df705920c4"
         }
       ],
-      "lastChangedAt": "2026-08-25T03:58:11.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "65ff55846667710f748c6ab91403428ecd4cea03"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:test/payroll.js",
@@ -97445,20 +97445,20 @@
       "path": "tools/public-ui.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 45962,
+      "bytes": 45963,
       "lines": 695,
-      "version": "b904b375411a31ba",
+      "version": "fa5e2a85e92e78ad",
       "text": true,
       "provenance": [
         {
           "file": "tools/public-ui.js",
           "line": 1,
-          "version": "b904b375411a31ba"
+          "version": "fa5e2a85e92e78ad"
         }
       ],
-      "lastChangedAt": "2026-10-06T16:42:57.000Z",
+      "lastChangedAt": "2026-10-09T19:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d59f449969f9aac59f08658764c401ef869848f7"
+      "lastChangedCommit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
     },
     {
       "key": "Artifact:tools/rc1-aggression-policy.js",
@@ -115714,6 +115714,22 @@
       ]
     },
     {
+      "key": "Commit:5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "type": "Commit",
+      "id": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "label": "Keep documentation checks aligned with rewritten copy",
+      "title": "Keep documentation checks aligned with rewritten copy",
+      "date": "2026-10-09T20:01:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "provenance": [
+        {
+          "commit": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420"
+        }
+      ]
+    },
+    {
       "key": "Commit:5e3764addf56567ff633f18d23b85503d2947593",
       "type": "Commit",
       "id": "5e3764addf56567ff633f18d23b85503d2947593",
@@ -122914,6 +122930,22 @@
       ]
     },
     {
+      "key": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "type": "Commit",
+      "id": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "label": "Refresh knowledge for live-base goods-market hotfix",
+      "title": "Refresh knowledge for live-base goods-market hotfix",
+      "date": "2026-10-09T19:11:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "provenance": [
+        {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        }
+      ]
+    },
+    {
       "key": "Commit:9328bc90f8eec23c669676991853cbaa5612dcd3",
       "type": "Commit",
       "id": "9328bc90f8eec23c669676991853cbaa5612dcd3",
@@ -124542,6 +124574,22 @@
         {
           "commit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c",
           "url": "https://github.com/OmertaDev/Omerta/commit/9e47d4a0a9ecc20adb55826fed0293b896ff434c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "type": "Commit",
+      "id": "9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "label": "Rewrite production site copy in plain language",
+      "title": "Rewrite production site copy in plain language",
+      "date": "2026-10-09T19:57:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "provenance": [
+        {
+          "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9e5f6475acf7655fabe880cf117e7b275ea35b2e"
         }
       ]
     },
@@ -142591,13 +142639,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 701,
-      "version": "4d9f66cacdb879ce",
+      "lines": 687,
+      "version": "93576100f109cdd3",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "4d9f66cacdb879ce"
+          "version": "93576100f109cdd3"
         }
       ]
     },
@@ -147871,13 +147919,13 @@
       "id": "docs/WIKI.md",
       "label": "docs/WIKI.md",
       "documentType": "documentation",
-      "lines": 2823,
-      "version": "ad5e945f493cb4e6",
+      "lines": 2672,
+      "version": "30f55ef28a974743",
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "ad5e945f493cb4e6"
+          "version": "30f55ef28a974743"
         }
       ]
     },
@@ -157354,6 +157402,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        },
+        {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
         },
         {
@@ -158090,6 +158141,9 @@
         },
         {
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
+        },
+        {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
         },
         {
           "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
@@ -159055,6 +159109,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        },
+        {
           "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
         },
         {
@@ -160018,6 +160075,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        },
+        {
           "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
         },
         {
@@ -160550,6 +160610,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -161245,6 +161308,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        },
+        {
           "commit": "940258a8cbad3f96bfa859e1059f3caa9341ba04"
         },
         {
@@ -161836,6 +161902,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+        },
+        {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
@@ -162260,6 +162329,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -163075,13 +163147,13 @@
       "type": "Module",
       "id": "src/agentgateway.js",
       "label": "src/agentgateway.js",
-      "lines": 1755,
-      "version": "3d7ef59298315e85",
+      "lines": 1756,
+      "version": "969dd9b06a2672f4",
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "3d7ef59298315e85"
+          "version": "969dd9b06a2672f4"
         }
       ]
     },
@@ -163376,12 +163448,12 @@
       "id": "src/cards.js",
       "label": "src/cards.js",
       "lines": 283,
-      "version": "2b8ce6d2bf372511",
+      "version": "68290db71cd56b3f",
       "provenance": [
         {
           "file": "src/cards.js",
           "line": 1,
-          "version": "2b8ce6d2bf372511"
+          "version": "68290db71cd56b3f"
         }
       ]
     },
@@ -164306,12 +164378,12 @@
       "id": "src/deeds.js",
       "label": "src/deeds.js",
       "lines": 589,
-      "version": "05c92aee0dcda192",
+      "version": "48b8dbfccf700c1d",
       "provenance": [
         {
           "file": "src/deeds.js",
           "line": 1,
-          "version": "05c92aee0dcda192"
+          "version": "48b8dbfccf700c1d"
         }
       ]
     },
@@ -164756,12 +164828,12 @@
       "id": "src/explore.js",
       "label": "src/explore.js",
       "lines": 830,
-      "version": "d56b18801cd3109f",
+      "version": "44b7dd18e379fd2f",
       "provenance": [
         {
           "file": "src/explore.js",
           "line": 1,
-          "version": "d56b18801cd3109f"
+          "version": "44b7dd18e379fd2f"
         }
       ]
     },
@@ -164861,12 +164933,12 @@
       "id": "src/game.js",
       "label": "src/game.js",
       "lines": 2745,
-      "version": "bb8d9f1b9b63c477",
+      "version": "624815f7f044912a",
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "bb8d9f1b9b63c477"
+          "version": "624815f7f044912a"
         }
       ]
     },
@@ -165011,12 +165083,12 @@
       "id": "src/growth.js",
       "label": "src/growth.js",
       "lines": 1037,
-      "version": "532dfe3ee68d6c7a",
+      "version": "5373de75dfc466d9",
       "provenance": [
         {
           "file": "src/growth.js",
           "line": 1,
-          "version": "532dfe3ee68d6c7a"
+          "version": "5373de75dfc466d9"
         }
       ]
     },
@@ -165656,12 +165728,12 @@
       "id": "src/path-funnel.js",
       "label": "src/path-funnel.js",
       "lines": 379,
-      "version": "362f013683ba0cf2",
+      "version": "a5505acd93bb9483",
       "provenance": [
         {
           "file": "src/path-funnel.js",
           "line": 1,
-          "version": "362f013683ba0cf2"
+          "version": "a5505acd93bb9483"
         }
       ]
     },
@@ -165671,12 +165743,12 @@
       "id": "src/path-pages.js",
       "label": "src/path-pages.js",
       "lines": 333,
-      "version": "4779972b0af203af",
+      "version": "19ede430f28ea733",
       "provenance": [
         {
           "file": "src/path-pages.js",
           "line": 1,
-          "version": "4779972b0af203af"
+          "version": "19ede430f28ea733"
         }
       ]
     },
@@ -166676,12 +166748,12 @@
       "id": "src/rules.generated.js",
       "label": "src/rules.generated.js",
       "lines": 475,
-      "version": "4b991a9f5a6eab68",
+      "version": "e322ec08219d4637",
       "provenance": [
         {
           "file": "src/rules.generated.js",
           "line": 1,
-          "version": "4b991a9f5a6eab68"
+          "version": "e322ec08219d4637"
         }
       ]
     },
@@ -166706,12 +166778,12 @@
       "id": "src/rules.tail.js",
       "label": "src/rules.tail.js",
       "lines": 6154,
-      "version": "83b05a40c16eaa43",
+      "version": "84eeb263dcfc13cc",
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "83b05a40c16eaa43"
+          "version": "84eeb263dcfc13cc"
         }
       ]
     },
@@ -170770,8 +170842,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f6656935b3cbbef75883f594e6721a6e9702744a",
-      "currentBranch": "codex/goods-market-live-hotfix-20261009",
+      "revision": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "currentBranch": "codex/site-copy-prod-20261009",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -201837,13 +201909,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 4246,
-      "version": "26c93806991249be",
+      "lines": 4262,
+      "version": "6c86bbc3aa840c98",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "26c93806991249be"
+          "version": "6c86bbc3aa840c98"
         }
       ]
     },
@@ -202003,12 +202075,12 @@
       "id": "test/explore.js",
       "label": "test/explore.js",
       "lines": 1446,
-      "version": "6ca9b768a08c28aa",
+      "version": "c48c9fc0918d4851",
       "provenance": [
         {
           "file": "test/explore.js",
           "line": 1,
-          "version": "6ca9b768a08c28aa"
+          "version": "c48c9fc0918d4851"
         }
       ]
     },
@@ -202378,12 +202450,12 @@
       "id": "test/growth.js",
       "label": "test/growth.js",
       "lines": 2253,
-      "version": "c3ab78d75c95c118",
+      "version": "972e04b2ddc4e0a2",
       "provenance": [
         {
           "file": "test/growth.js",
           "line": 1,
-          "version": "c3ab78d75c95c118"
+          "version": "972e04b2ddc4e0a2"
         }
       ]
     },
@@ -203278,12 +203350,12 @@
       "id": "test/path-funnel.js",
       "label": "test/path-funnel.js",
       "lines": 252,
-      "version": "afafcc39fe0c109f",
+      "version": "4b9e03df705920c4",
       "provenance": [
         {
           "file": "test/path-funnel.js",
           "line": 1,
-          "version": "afafcc39fe0c109f"
+          "version": "4b9e03df705920c4"
         }
       ]
     },
@@ -284683,6 +284755,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5e3764addf56567ff633f18d23b85503d2947593",
       "to": "Artifact:docs/rc1-family-cash-ammo-journal.md",
       "provenance": {
@@ -312851,6 +312931,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9328bc90f8eec23c669676991853cbaa5612dcd3",
       "to": "Artifact:test/rc1-native-world-workload.js",
       "provenance": {
@@ -318167,6 +318311,222 @@
       "to": "Artifact:tools/genesis-auction-operations.js",
       "provenance": {
         "commit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:data/rules.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:docs/WIKI.md",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/admin.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/arena.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/defi.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/fee-flows.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/invite.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/manifest.json",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/play.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/agentgateway.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/cards.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/deeds.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/explore.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/growth.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/path-funnel.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/path-pages.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/rules.generated.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:test/explore.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:test/growth.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:test/path-funnel.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "to": "Artifact:tools/public-ui.js",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
       }
     },
     {
@@ -442656,6 +443016,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420",
+      "provenance": {
+        "commit": "5e0b4a0d6371e2009f62c0bb7e4a788a9a34b420"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5e3764addf56567ff633f18d23b85503d2947593",
       "provenance": {
         "commit": "5e3764addf56567ff633f18d23b85503d2947593"
@@ -446256,6 +446624,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:93228a504f2449eb2ebb3ecb219b8fb984a2d40a",
+      "provenance": {
+        "commit": "93228a504f2449eb2ebb3ecb219b8fb984a2d40a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9328bc90f8eec23c669676991853cbaa5612dcd3",
       "provenance": {
         "commit": "9328bc90f8eec23c669676991853cbaa5612dcd3"
@@ -447067,6 +447443,14 @@
       "to": "Commit:9e47d4a0a9ecc20adb55826fed0293b896ff434c",
       "provenance": {
         "commit": "9e47d4a0a9ecc20adb55826fed0293b896ff434c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9e5f6475acf7655fabe880cf117e7b275ea35b2e",
+      "provenance": {
+        "commit": "9e5f6475acf7655fabe880cf117e7b275ea35b2e"
       }
     },
     {
@@ -470013,7 +470397,7 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 578
+        "line": 592
       }
     },
     {
@@ -470031,7 +470415,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4186
+        "line": 4202
       }
     },
     {
@@ -470040,7 +470424,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4187
+        "line": 4203
       }
     },
     {
@@ -470049,7 +470433,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1186
+        "line": 1200
       }
     },
     {
@@ -470058,7 +470442,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4050
+        "line": 4066
       }
     },
     {
@@ -470076,7 +470460,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 786
+        "line": 800
       }
     },
     {
@@ -470085,7 +470469,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 844
+        "line": 858
       }
     },
     {
@@ -495141,7 +495525,7 @@
       "to": "Artifact:docs/agent-business-shadow.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 700
+        "line": 686
       }
     },
     {
@@ -495150,7 +495534,7 @@
       "to": "Artifact:docs/agent-resource-economy.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 262
+        "line": 254
       }
     },
     {
@@ -495159,7 +495543,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 500
+        "line": 496
       }
     },
     {
@@ -495177,7 +495561,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 499
+        "line": 495
       }
     },
     {
@@ -495186,7 +495570,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 231
+        "line": 223
       }
     },
     {
@@ -495195,7 +495579,7 @@
       "to": "Artifact:tools/resource-agent.js",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 259
+        "line": 251
       }
     },
     {
@@ -495204,7 +495588,7 @@
       "to": "Artifact:tools/resource-economy-pilot.js",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 260
+        "line": 252
       }
     },
     {
@@ -513069,7 +513453,7 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "docs/WIKI.md",
-        "line": 2405
+        "line": 2260
       }
     },
     {
@@ -537576,7 +537960,7 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 578
+        "line": 592
       }
     },
     {
@@ -537594,7 +537978,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4186
+        "line": 4202
       }
     },
     {
@@ -537603,7 +537987,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4187
+        "line": 4203
       }
     },
     {
@@ -537612,7 +537996,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1186
+        "line": 1200
       }
     },
     {
@@ -537621,7 +538005,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4050
+        "line": 4066
       }
     },
     {
@@ -537639,7 +538023,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 786
+        "line": 800
       }
     },
     {
@@ -537648,7 +538032,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 844
+        "line": 858
       }
     },
     {
@@ -548355,10 +548739,10 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/agentgateway.js",
-      "to": "Table:referrals",
+      "to": "Table:transactions",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 1747
+        "line": 1703
       }
     },
     {
@@ -557286,7 +557670,7 @@
       "to": "Table:searches",
       "provenance": {
         "file": "src/path-funnel.js",
-        "line": 167
+        "line": 153
       }
     },
     {
