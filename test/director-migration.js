@@ -30,7 +30,7 @@ let pool, created = false;
 const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
-const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs'];
+const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 assert.equal(directorTables.length, 7);
 try {
   await admin.query(`CREATE SCHEMA ${namespace}`); created = true;
@@ -104,9 +104,9 @@ try {
   assert.equal(economyConstraints.length, 23, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
   const resourceConstraints = inventory.added.filter(row => resourceTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
-  assert.equal(resourceConstraints.length, 73, 'All resource constraints must be frozen');
+  assert.equal(resourceConstraints.length, 89, 'All resource constraints must be frozen');
   assert.deepEqual(upgradedConstraints.filter(row => resourceTables.includes(row.table_name)), resourceConstraints);
-  const resourceNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) AND is_nullable='NO' ORDER BY table_name,column_name", resourceTables)).rows;
+  const resourceNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) AND is_nullable='NO' ORDER BY table_name,column_name", resourceTables)).rows;
   assert.deepEqual(Object.fromEntries(resourceTables.map(table => [table, resourceNotNull.filter(row => row.table_name === table).map(row => row.column_name)])),
     Object.fromEntries(resourceTables.map(table => [table, inventory.notNullColumns[table]])));
   assert.deepEqual(upgradedConstraints.filter((row) => economyTables.includes(row.table_name)), economyConstraints,

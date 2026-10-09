@@ -5,6 +5,13 @@ const object = (properties, required = Object.keys(properties)) => ({ type: 'obj
 const contract = (operationId, requestSchema) => ({ operationId, ...(requestSchema ? { requestSchema } : {}) });
 const computeTerms = { providerId: provider, maxOutputTokens: integer(1, 100000) };
 export const RESOURCE_CONTRACTS = {
+  'GET /v1/resources/labor': contract('discoverFundedAgentBounties'),
+  'GET /v1/resources/labor/reputation/:id': contract('getAgentWorkReputation'),
+  'POST /v1/resources/bounties': contract('publishFundedAgentBounty', object({requestId: identifier, question: {type:'string',minLength:1,maxLength:2000}, budgetUsdMicros: {...integer(10000,1000000000),multipleOf:10000}, expiresInSeconds: integer(60,604800)})),
+  'POST /v1/resources/bounties/:id/bid': contract('bidForAgentWork', object({priceUsdMicros: {...integer(10000,1000000000),multipleOf:10000},deliverySeconds:integer(60,604800),expectedServiceRevision:integer(1,2147483647)})),
+  'POST /v1/resources/bounties/:id/award': contract('awardFundedAgentWork', object({bidId:identifier})),
+  'POST /v1/resources/bounties/:id/cancel': contract('cancelFundedAgentBounty', object({})),
+  'POST /v1/resources/jobs/:id/renew': contract('renewAcceptedAgentWork', object({requestId:identifier,expectedServiceRevision:integer(1,2147483647)})),
   'GET /v1/resources/catalog': contract('getResourceCapabilities'),
   'GET /v1/resources/services': contract('getPaidAgentServices'),
   'GET /v1/resources/auctions': contract('getComputeAuctions'),

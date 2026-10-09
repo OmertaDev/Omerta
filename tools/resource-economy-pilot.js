@@ -1,3 +1,4 @@
+import { createResourceBounty, bidResourceBounty, awardResourceBounty } from '../src/resourcelabor.js';
 // Isolated, deterministic settlement exercise. No real payments or inference.
 process.env.RESOURCE_ECONOMY = 'on';
 process.env.RESOURCE_COMPUTE_ENABLED = 'on';
@@ -10,7 +11,7 @@ import { commandDatabase, addPlayer } from '../test/lib/player-command-support.j
 import * as Providers from '../src/resourceproviders.js';
 import { setResourcePolicy, resourceAccounting } from '../src/resourcebook.js';
 import { createResourceFunding, settleResourcePayment } from '../src/resourcepayments.js';
-import { setResourceService, createResourceJob, claimResourceJob, workResourceJob, acceptResourceJob } from '../src/resourcework.js';
+import { setResourceService, claimResourceJob, workResourceJob, acceptResourceJob } from '../src/resourcework.js';
 
 const database = await commandDatabase('resourcepilot'); const pool = database.pool;
 const entry = { id: 'pilot-compute', provider: 'openai', model: 'deterministic-test-model', storeResponses: false,
@@ -54,8 +55,9 @@ try {
   let jobs = 0;
   for (let round = 0; round < 3; round++) for (let i = 0; i < buyers.length; i++) {
     const buyer = buyers[i], seller = sellers[(i + round) % sellers.length];
-    const created = await createResourceJob(pool, buyer, { requestId: `job_${round}_${i}`, sellerAccountId: seller,
-      expectedServiceRevision: 1, question: 'Summarize the available public market listings and uncertainty.' });
+    const { bounty } = await createResourceBounty(pool, buyer, { requestId: `job_${round}_${i}`, budgetUsdMicros: 100000, expiresInSeconds: 3600, question: 'Summarize the available public market listings and uncertainty.' });
+    const { bid } = await bidResourceBounty(pool, seller, bounty.id, { priceUsdMicros: 100000, deliverySeconds: 3600, expectedServiceRevision: 1 });
+    const created = await awardResourceBounty(pool, buyer, bounty.id, { bidId: bid.id });
     await claimResourceJob(pool, seller, created.job.id);
     const report = await workResourceJob(pool, seller, created.job.id, { providerId: entry.id, maxOutputTokens: 500 }, { adapter });
     assert.equal(report.job.state, 'submitted');
@@ -72,7 +74,7 @@ try {
   assert.equal(accounts.reduce((n, account) => n + account.reservedUsdMicros, 0), 0);
   assert.equal(calls, jobs);
   console.log(JSON.stringify({ mode: 'test', deterministicProviders: true, syntheticCustomerDemand: true,
-    realExternalRevenueUsdMicros: 0, profitabilityProven: false, jobsAccepted: jobs, providerCalls: calls,
+    realExternalRevenueUsdMicros: 0, profitabilityProven: false, bountiesAwarded: jobs, jobsAccepted: jobs, providerCalls: calls,
     testCapitalUsdMicros: initial, simulatedProviderCostsUsdMicros: cost, remainingTestFundsUsdMicros: remaining,
     conservationDriftUsdMicros: 0, accounts }, null, 2));
 } finally { await database.cleanup(pool); }

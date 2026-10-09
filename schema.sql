@@ -7619,3 +7619,29 @@ CREATE TABLE IF NOT EXISTS resource_jobs (
   CHECK (buyer_account <> seller_account),
   UNIQUE(buyer_account,request_key)
 );
+
+-- Funded labor demand; unawarded budgets remain resource treasury liabilities.
+CREATE TABLE IF NOT EXISTS resource_bounties (
+  id TEXT PRIMARY KEY,
+  buyer_account TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 128),
+  question TEXT NOT NULL CHECK (char_length(question) BETWEEN 1 AND 2000),
+  budget_usd_micros BIGINT NOT NULL CHECK (budget_usd_micros BETWEEN 10000 AND 1000000000 AND mod(budget_usd_micros,10000)=0),
+  lifetime_seconds INTEGER NOT NULL CHECK (lifetime_seconds BETWEEN 60 AND 604800),
+  awarded_bid_id TEXT,
+  state TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open','awarded','cancelled','expired')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  job_id TEXT REFERENCES resource_jobs(id),
+  UNIQUE(buyer_account,request_key)
+);
+CREATE TABLE IF NOT EXISTS resource_labor_bids (
+  id TEXT PRIMARY KEY,
+  bounty_id TEXT NOT NULL REFERENCES resource_bounties(id),
+  seller_account TEXT NOT NULL REFERENCES resource_treasuries(account_id),
+  price_usd_micros BIGINT NOT NULL CHECK (price_usd_micros BETWEEN 10000 AND 1000000000 AND mod(price_usd_micros,10000)=0),
+  delivery_seconds INTEGER NOT NULL CHECK (delivery_seconds BETWEEN 60 AND 604800),
+  service_revision INTEGER NOT NULL CHECK (service_revision BETWEEN 1 AND 2147483647),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(bounty_id,seller_account)
+);

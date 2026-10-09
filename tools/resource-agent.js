@@ -61,14 +61,53 @@ function safeCandidate(turn, candidate, role) {
   return recommendationOf({ ...turn, recommendedActionId: candidate.id, actions: [candidate] }, role).action === candidate;
 }
 
+export function selectLaborBids(board, catalog, { providerId, maxOutputTokens, minimumWorkMarginUsdMicros = 10000, now = Date.now() }) {
+  const service = board?.ownService;
+  if (!Number.isSafeInteger(maxOutputTokens) || maxOutputTokens < 1 || maxOutputTokens > 16384
+      || !Number.isSafeInteger(minimumWorkMarginUsdMicros) || minimumWorkMarginUsdMicros < 10000
+      || minimumWorkMarginUsdMicros > 1_000_000_000_000 || !Number.isFinite(now)) return [];
+  if (!service?.enabled || service.kind !== 'market_analysis' || !Number.isSafeInteger(service.revision) || service.revision < 1
+      || !Number.isSafeInteger(service.priceUsdMicros) || service.priceUsdMicros < 10000
+      || service.priceUsdMicros > 1_000_000_000_000 || service.priceUsdMicros % 10000 !== 0
+      || !Number.isSafeInteger(board.sellerActiveJobs) || board.sellerActiveJobs < 0 || board.sellerActiveJobs >= 3
+      || !Array.isArray(board.bounties) || board.bounties.length > 100 || !Array.isArray(catalog) || catalog.length > 32) return [];
+  const provider = catalog.find(entry => entry?.id === providerId);
+  if (!provider || ![provider.maxInputTokens, provider.maxOutputTokens, provider.inputUsdMicrosPerMillion,
+    provider.outputUsdMicrosPerMillion].every(value => Number.isSafeInteger(value) && value > 0 && value <= 1_000_000_000_000)
+      || provider.maxInputTokens > 1000000 || provider.maxOutputTokens > 100000 || maxOutputTokens > provider.maxOutputTokens) return [];
+  const quote = (BigInt(provider.maxInputTokens) * BigInt(provider.inputUsdMicrosPerMillion)
+    + BigInt(maxOutputTokens) * BigInt(provider.outputUsdMicrosPerMillion) + 999999n) / 1000000n;
+  const minimum = quote + BigInt(minimumWorkMarginUsdMicros);
+  if (minimum > 1_000_000_000_000n) return [];
+  const priceUsdMicros = Math.max(service.priceUsdMicros, Number((minimum + 9999n) / 10000n * 10000n));
+  const existing = new Set(Array.isArray(board.bids) ? board.bids.slice(0, 100).map(bid => bid.bountyId) : []);
+  for (const bounty of Array.isArray(board.ownBounties) ? board.ownBounties.slice(0, 100) : []) existing.add(bounty.id);
+  return board.bounties.filter(bounty => bounty?.state === 'open' && typeof bounty.id === 'string'
+    && /^[A-Za-z0-9_-]{1,128}$/.test(bounty.id) && !existing.has(bounty.id)
+    && Number.isSafeInteger(bounty.budgetUsdMicros) && bounty.budgetUsdMicros >= priceUsdMicros
+    && bounty.budgetUsdMicros <= 1_000_000_000_000 && Number.isFinite(Date.parse(bounty.expiresAt))
+    && Date.parse(bounty.expiresAt) - now >= 60000)
+    .map(bounty => ({ bountyId: bounty.id, priceUsdMicros, expectedServiceRevision: service.revision,
+      deliverySeconds: 3600,
+      expectedMarginUsdMicros: priceUsdMicros - Number(quote), expiresAt: bounty.expiresAt }))
+    .sort((a, b) => b.expectedMarginUsdMicros - a.expectedMarginUsdMicros
+      || Date.parse(a.expiresAt) - Date.parse(b.expiresAt) || a.bountyId.localeCompare(b.bountyId))
+    .slice(0, 3 - board.sellerActiveJobs);
+}
+
 function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputTokens,
   minExpectedGameCashGain = 100, role = 'general', maxPaidJobs = 0,
+  maxLaborBids = 0, minimumWorkMarginUsdMicros = 10000,
   requestIdFactory = crypto.randomUUID, onObservation = () => {} }, clock, cache) {
   const origin = originOf(baseUrl);
   fetchImpl = pacedTransport(origin, fetchImpl, clock, cache);
   validateOptions(providerId, maxOutputTokens, role);
   if (!Number.isFinite(minExpectedGameCashGain) || minExpectedGameCashGain < 0) throw new Error('Invalid gain threshold');
   if (!Number.isSafeInteger(maxPaidJobs) || maxPaidJobs < 0 || maxPaidJobs > 10) throw new Error('Invalid paid work limit');
+  if (!Number.isSafeInteger(maxLaborBids) || maxLaborBids < 0 || maxLaborBids > 10) throw new Error('Invalid labor bid limit');
+  if (!Number.isSafeInteger(minimumWorkMarginUsdMicros) || minimumWorkMarginUsdMicros < 10000 || minimumWorkMarginUsdMicros > 1_000_000_000_000) throw new Error('Invalid work margin');
+  const attemptedBids = new Set();
+  const laborPolledTurns = new Set();
   const attempted = new Set();
   const attemptedJobs = new Set();
   const polledTurns = new Set();
@@ -103,6 +142,34 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
           }
         }
       } catch { observe({ kind: 'paid_work_queue_unavailable', retry: false }); }
+    }
+    if (bearer && typeof turn?.turnId === 'string' && !laborPolledTurns.has(turn.turnId) && attemptedBids.size < maxLaborBids) {
+      laborPolledTurns.add(turn.turnId);
+      if (laborPolledTurns.size > 1000) laborPolledTurns.delete(laborPolledTurns.values().next().value);
+      try {
+        const authorization = headers.get('authorization');
+        const boardResponse = await fetchImpl(`${origin}/v1/resources/labor`, { headers: { authorization } });
+        const catalogResponse = await fetchImpl(`${origin}/v1/resources/catalog`, {});
+        if (boardResponse.ok && catalogResponse.ok) {
+          const board = await boardResponse.json();
+          const catalog = await catalogResponse.json();
+          for (const bid of selectLaborBids(board, catalog.capabilities, { providerId, maxOutputTokens, minimumWorkMarginUsdMicros })) {
+            if (attemptedBids.size >= maxLaborBids) break;
+            if (attemptedBids.has(bid.bountyId)) continue;
+            attemptedBids.add(bid.bountyId); // Unknown outcomes consume quota; never resubmit blindly.
+            let status = null;
+            try {
+              const result = await fetchImpl(`${origin}/v1/resources/bounties/${bid.bountyId}/bid`, {
+                method: 'POST', headers: { authorization, 'content-type': 'application/json' },
+                body: JSON.stringify({ priceUsdMicros: bid.priceUsdMicros, deliverySeconds: bid.deliverySeconds,
+                  expectedServiceRevision: bid.expectedServiceRevision }) });
+              status = result.status;
+            } catch { /* Preserve unknown submission as an attempted bid. */ }
+            observe({ kind: 'labor_bid', bountyId: bid.bountyId, priceUsdMicros: bid.priceUsdMicros,
+              expectedMarginUsdMicros: bid.expectedMarginUsdMicros, status, retry: false });
+          }
+        }
+      } catch { observe({ kind: 'labor_board_unavailable', retry: false }); }
     }
     const cash = turn?.state?.resources?.cash;
     for (let i = outcomes.length - 1; i >= 0; i--) {
@@ -199,12 +266,13 @@ export async function runPaidWork({ baseUrl, token, jobId, providerId, maxOutput
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const options = { baseUrl: process.env.OMERTA_BASE_URL || 'https://www.omerta.fun' };
   const flags = { '--base': 'baseUrl', '--session': 'sessionFile', '--report': 'reportFile', '--role': 'role',
-    '--provider': 'providerId', '--max-output-tokens': 'maxOutputTokens', '--max-actions': 'maxActions', '--max-paid-jobs': 'maxPaidJobs' };
+    '--provider': 'providerId', '--max-output-tokens': 'maxOutputTokens', '--max-actions': 'maxActions', '--max-paid-jobs': 'maxPaidJobs',
+    '--max-labor-bids': 'maxLaborBids', '--minimum-work-margin-usd-micros': 'minimumWorkMarginUsdMicros' };
   try {
     for (let i = 2; i < process.argv.length; i++) {
       const key = flags[process.argv[i]];
       if (!key || !process.argv[i + 1]) throw new Error('Invalid option');
-      options[key] = ['maxOutputTokens', 'maxActions', 'maxPaidJobs'].includes(key) ? Number(process.argv[++i]) : process.argv[++i];
+      options[key] = ['maxOutputTokens', 'maxActions', 'maxPaidJobs', 'maxLaborBids', 'minimumWorkMarginUsdMicros'].includes(key) ? Number(process.argv[++i]) : process.argv[++i];
     }
     runResourceAgent(options).then(result => process.stdout.write(`${JSON.stringify(result)}\n`))
       .catch(() => { process.stderr.write('resource_agent_error\n'); process.exitCode = 1; });

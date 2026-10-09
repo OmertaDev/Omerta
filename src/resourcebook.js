@@ -50,7 +50,7 @@ export async function moveResourceMoney(client, accountId, availableDelta, reser
   const reserved = Number(row.reserved_usd_micros) + reservedDelta;
   resourceInt(available, 'available balance', 0); resourceInt(reserved, 'reserved balance', 0);
   resourceInt(available + reserved, 'total resource balance', 0);
-  const authorized = authorizedUsdMicros ?? (['compute_reserve', 'auction_reserve', 'job_reserve'].includes(kind) ? -availableDelta : 0);
+  const authorized = authorizedUsdMicros ?? (['compute_reserve', 'auction_reserve', 'job_reserve', 'bounty_reserve'].includes(kind) ? -availableDelta : 0);
   resourceInt(authorized, 'authorized amount', 0);
   await client.query('INSERT INTO resource_ledger(id,account_id,event_key,kind,available_delta,reserved_delta,authorized_usd_micros) VALUES($1,$2,$3,$4,$5,$6,$7)',
     [crypto.randomUUID(), accountId, eventKey, kind, availableDelta, reservedDelta, authorized]);
@@ -105,8 +105,9 @@ export async function resourceAccounting(pool, accountId) {
   const bids = (await pool.query("SELECT maximum_usd_micros FROM resource_bids WHERE account_id=$1 AND status IN ('sealed','revealed')", [accountId])).rows;
   const credits = (await pool.query("SELECT price_usd_micros FROM resource_credits WHERE account_id=$1 AND status='unused'", [accountId])).rows;
   const jobs = (await pool.query("SELECT price_usd_micros FROM resource_jobs WHERE buyer_account=$1 AND state IN ('open','claimed','submitted','disputed')", [accountId])).rows;
+  const bounties = (await pool.query("SELECT budget_usd_micros FROM resource_bounties WHERE buyer_account=$1 AND state='open'", [accountId])).rows;
   const held = calls.filter(call => ['reserved','sending','unknown'].includes(call.status)).map(call => call.cap_usd_micros)
-    .concat(bids.map(bid => bid.maximum_usd_micros), credits.map(credit => credit.price_usd_micros), jobs.map(job => job.price_usd_micros));
+    .concat(bids.map(bid => bid.maximum_usd_micros), credits.map(credit => credit.price_usd_micros), jobs.map(job => job.price_usd_micros), bounties.map(bounty => bounty.budget_usd_micros));
   const liabilities = Number(held.reduce((total, value) => total + BigInt(value), 0n));
   return { mode: row.mode, availableUsdMicros: Number(row.available_usd_micros), reservedUsdMicros: Number(row.reserved_usd_micros),
     ledgerDriftUsdMicros: Math.abs(Number(row.available_usd_micros) - sum('available_delta')) + Math.abs(Number(row.reserved_usd_micros) - sum('reserved_delta')),

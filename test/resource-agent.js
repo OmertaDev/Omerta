@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { performance } from 'node:perf_hooks';
-import { createResourceAgentFetch, createResourceAgentTestFetch, runPaidWork } from '../tools/resource-agent.js';
+import { createResourceAgentFetch, createResourceAgentTestFetch, runPaidWork, selectLaborBids } from '../tools/resource-agent.js';
 
 const testFetch = options => {
   let now = 0;
@@ -179,4 +179,48 @@ try {
   assert.equal(productionStarts.length, 2);
   assert(productionStarts[1] - productionStarts[0] >= 3100, 'standalone default transport enforces production monotonic cadence');
 } finally { globalThis.fetch = originalFetch; }
-console.log('resource-agent: compute selection, bounded authority, observations, and work recovery passed');
+const laborNow = Date.now();
+const laborCatalog = [{ id: 'metered', maxInputTokens: 10000, maxOutputTokens: 1000,
+  inputUsdMicrosPerMillion: 1000000, outputUsdMicrosPerMillion: 1000000 }];
+const bounty = (id, seconds = 3600) => ({ id, state: 'open', budgetUsdMicros: 100000,
+  expiresAt: new Date(laborNow + seconds * 1000).toISOString(), question: 'private-question' });
+const laborBoard = { ownService: { enabled: true, kind: 'market_analysis', revision: 2, priceUsdMicros: 10000 },
+  sellerActiveJobs: 1, bids: [], bounties: [bounty('later', 7200), bounty('earlier'), bounty('third', 8000)] };
+const selectOptions = { providerId: 'metered', maxOutputTokens: 256, now: laborNow };
+const selections = selectLaborBids(laborBoard, laborCatalog, selectOptions);
+assert.equal(selections.length, 2, 'active backlog limits prospective work');
+assert.equal(selections[0].bountyId, 'earlier');
+assert.equal(selections[0].priceUsdMicros, 30000, 'conservative maximum input cost plus margin rounds up to cents');
+assert.equal(selections[0].expectedMarginUsdMicros, 19744);
+assert.equal(selectLaborBids({ ...laborBoard, sellerActiveJobs: 3 }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, bounties: [bounty('expired', 30)] }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, bounties: [{ ...bounty('low'), budgetUsdMicros: 20000 }] }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, bounties: Array.from({ length: 101 }, () => bounty('huge')) }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, bounties: [bounty('already')], bids: [{ bountyId: 'already' }] }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids(laborBoard, [], selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, ownService: { ...laborBoard.ownService, enabled: false } }, laborCatalog, selectOptions).length, 0);
+for (const unknownBid of [false, true]) {
+  let now = 0; let turnIndex = 0; const laborCalls = []; const observations = [];
+  const bidding = createResourceAgentTestFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256,
+    maxLaborBids: 1, onObservation: event => observations.push(event), fetchImpl: async (url, init) => {
+      laborCalls.push({ url: String(url), init, at: now });
+      if (String(url).endsWith('/v1/agent/turn')) return json({ ...turn(`labor-${turnIndex++}`), actions: [] });
+      if (String(url).endsWith('/labor')) return json(laborBoard);
+      if (String(url).endsWith('/catalog')) return json({ capabilities: laborCatalog });
+      assert(String(url).endsWith('/bounties/earlier/bid'));
+      assert.deepEqual(Object.keys(JSON.parse(init.body)).sort(), ['deliverySeconds', 'expectedServiceRevision', 'priceUsdMicros']);
+      if (unknownBid) throw new Error('unknown submission');
+      return json({ report: 'private-token' });
+    } }, { now: () => now, sleep: async ms => { now += ms; } });
+  for (let i = 0; i < 3; i++) await bidding(`${baseUrl}/v1/agent/turn`, { headers });
+  assert.equal(laborCalls.filter(call => call.url.endsWith('/bid')).length, 1, 'successful and unknown bids consume finite quota');
+  const authenticatedCalls = laborCalls.filter(call => new Headers(call.init.headers).has('authorization'));
+  for (let i = 1; i < authenticatedCalls.length; i++) assert(authenticatedCalls[i].at - authenticatedCalls[i - 1].at >= 3100);
+  assert(!JSON.stringify(observations).includes('private-question'));
+  assert(!JSON.stringify(observations).includes('private-token'));
+  assert(observations.every(event => event.retry === false));
+  assert(laborCalls.every(call => !call.url.includes('/award') && !call.url.includes('/accept')));
+}
+assert.throws(() => createResourceAgentFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, maxLaborBids: 11 }));
+assert.throws(() => createResourceAgentFetch({ baseUrl, providerId: 'metered', maxOutputTokens: 256, minimumWorkMarginUsdMicros: 0 }));
+console.log('resource-agent: compute selection, bounded authority, observations, work recovery, and labor bids passed');

@@ -1,3 +1,4 @@
+import { createResourceBounty, resourceLaborBoard, bidResourceBounty, awardResourceBounty, cancelResourceBounty, resourceLaborReputation, renewResourceJob } from '../resourcelabor.js';
 import { ResourceProviderError } from '../resourceproviders.js';
 import { resourceAccounting, setResourcePolicy, resourceEnabled, resourceError } from '../resourcebook.js';
 import { resourceComputeCatalog, resourceComputeState, runResourceCompute, reconcileResourceCompute,
@@ -10,6 +11,13 @@ export function register(app, { pool, auth, modAuth }) {
   const ownerOnly = async req => {
     if (req.user.agent === true) throw resourceError('owner_authority', 'Use the separate owner session to approve external spending, funding or a paid service.');
   };
+  app.get('/v1/resources/labor', { preHandler: auth }, async req => resourceLaborBoard(pool, req.user.sub));
+  app.get('/v1/resources/labor/reputation/:id', { preHandler: auth }, async req => resourceLaborReputation(pool, req.params.id));
+  app.post('/v1/resources/bounties', { preHandler: auth }, async req => createResourceBounty(pool, req.user.sub, req.body));
+  app.post('/v1/resources/bounties/:id/bid', { preHandler: auth }, async req => bidResourceBounty(pool, req.user.sub, req.params.id, req.body));
+  app.post('/v1/resources/bounties/:id/award', { preHandler: auth }, async req => awardResourceBounty(pool, req.user.sub, req.params.id, req.body));
+  app.post('/v1/resources/bounties/:id/cancel', { preHandler: auth }, async req => cancelResourceBounty(pool, req.user.sub, req.params.id));
+  app.post('/v1/resources/jobs/:id/renew', { preHandler: auth }, async req => renewResourceJob(pool, req.user.sub, req.params.id, req.body));
   app.get('/v1/resources/catalog', async () => ({ enabled: resourceEnabled(), capabilities: resourceComputeCatalog() }));
   app.get('/v1/resources/services', async () => ({ enabled: resourceEnabled(), ...await resourceServiceBoard(pool) }));
   app.get('/v1/resources/auctions', async () => resourceAuctionBoard(pool));

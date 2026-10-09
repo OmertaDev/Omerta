@@ -82,7 +82,14 @@ try {
     await client.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
       ['worker-later-job', 'worker-buyer-due', 'worker-seller', 'later-job', 1, 10000, { question: 'Later refund.' }, 'open', past, past]);
   });
+  await resourceTransaction(pool, async client => {
+    await lockResourceTreasury(client, 'worker-buyer-due');
+    await moveResourceMoney(client, 'worker-buyer-due', -10000, 10000, 'bounty_reserve', 'seed:bounty-reserve');
+    await client.query('INSERT INTO resource_bounties(id,buyer_account,request_key,question,budget_usd_micros,expires_at,lifetime_seconds) VALUES($1,$2,$3,$4,$5,$6,60)', ['worker-bounty', 'worker-buyer-due', 'worker-bounty', 'Market analysis', 10000, past]);
+  });
   const firstPage = await resourceTick(pool);
+  assert.equal(firstPage.inspectedBounties, 1);
+  assert.equal((await pool.query('SELECT state FROM resource_bounties WHERE id=$1', ['worker-bounty'])).rows[0].state, 'expired');
   assert.equal(firstPage.inspectedJobs, 100);
   assert.equal((await pool.query('SELECT state FROM resource_jobs WHERE id=$1', ['worker-later-job'])).rows[0].state, 'open');
   const nextPage = await resourceTick(pool, { after: firstPage.nextCursor });

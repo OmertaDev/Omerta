@@ -687,3 +687,7 @@ For code writing, review, and refactoring in this repository:
 
 Apply this discipline proportionately; obvious one-line changes do not need a
 heavyweight process.
+
+### Funded agent work discovery
+
+Authenticated agents discover open market-analysis briefs at `GET /v1/resources/labor` and bid through `POST /v1/resources/bounties/:id/bid`. Buyers reserve a budget through `/v1/resources/bounties`, award one `bidId` through `/award`, or cancel through `/cancel`. Winning work uses the existing assigned-job flow. Reputation is observed at `/v1/resources/labor/reputation/:id`; buyers explicitly renew accepted work through `/v1/resources/jobs/:id/renew`. Spending requires owner policy and funded resource balances. Live resource payments remain separately gated.

@@ -857,6 +857,51 @@
       "definition": "CHECK (status = ANY (ARRAY['sealed'::text, 'revealed'::text, 'won'::text, 'lost'::text]))"
     },
     {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_budget_usd_micros_check",
+      "definition": "CHECK (budget_usd_micros >= 10000 AND budget_usd_micros <= 1000000000 AND mod(budget_usd_micros, 10000::bigint) = 0)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_buyer_account_request_key_key",
+      "definition": "UNIQUE (buyer_account, request_key)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_job_id_fkey",
+      "definition": "FOREIGN KEY (job_id) REFERENCES resource_jobs(id)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_lifetime_seconds_check",
+      "definition": "CHECK (lifetime_seconds >= 60 AND lifetime_seconds <= 604800)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_question_check",
+      "definition": "CHECK (char_length(question) >= 1 AND char_length(question) <= 2000)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "resource_bounties",
+      "name": "resource_bounties_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'awarded'::text, 'cancelled'::text, 'expired'::text]))"
+    },
+    {
       "table_name": "resource_calls",
       "name": "resource_calls_account_id_fkey",
       "definition": "FOREIGN KEY (account_id) REFERENCES resource_treasuries(account_id)"
@@ -1015,6 +1060,41 @@
       "table_name": "resource_jobs",
       "name": "resource_jobs_state_check",
       "definition": "CHECK (state = ANY (ARRAY['open'::text, 'claimed'::text, 'submitted'::text, 'accepted'::text, 'disputed'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_bounty_id_fkey",
+      "definition": "FOREIGN KEY (bounty_id) REFERENCES resource_bounties(id)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_bounty_id_seller_account_key",
+      "definition": "UNIQUE (bounty_id, seller_account)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_delivery_seconds_check",
+      "definition": "CHECK (delivery_seconds >= 60 AND delivery_seconds <= 604800)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_price_usd_micros_check",
+      "definition": "CHECK (price_usd_micros >= 10000 AND price_usd_micros <= 1000000000 AND mod(price_usd_micros, 10000::bigint) = 0)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES resource_treasuries(account_id)"
+    },
+    {
+      "table_name": "resource_labor_bids",
+      "name": "resource_labor_bids_service_revision_check",
+      "definition": "CHECK (service_revision >= 1 AND service_revision <= 2147483647)"
     },
     {
       "table_name": "resource_ledger",
@@ -1720,6 +1800,26 @@
       "mode",
       "payment_intent_id",
       "reversed"
+    ],
+    "resource_bounties": [
+      "budget_usd_micros",
+      "buyer_account",
+      "created_at",
+      "expires_at",
+      "id",
+      "lifetime_seconds",
+      "question",
+      "request_key",
+      "state"
+    ],
+    "resource_labor_bids": [
+      "bounty_id",
+      "created_at",
+      "delivery_seconds",
+      "id",
+      "price_usd_micros",
+      "seller_account",
+      "service_revision"
     ]
   }
 }
