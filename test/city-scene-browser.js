@@ -218,6 +218,27 @@ try {
     const overlay = page.locator('#cine.on');
     if (await overlay.count()) await overlay.evaluate(element => element.click());
   };
+  const assertVenueOnscreen = async (page, checkClose = true) => {
+    const layout = await page.evaluate(checkClose => {
+      const card = document.querySelector('.omerta-city__interaction');
+      const controls = [document.activeElement, ...(checkClose ? [card.querySelector('[data-city-close]')] : [])];
+      return { card: card.getBoundingClientRect().toJSON(), height: innerHeight,
+        focusedOpen: document.activeElement.matches('[data-city-open]'),
+        controls: controls.map(control => {
+          const bounds = control.getBoundingClientRect();
+          const hits = [bounds.top + 3, bounds.bottom - 3].map(y => {
+            const hit = document.elementFromPoint(bounds.left + bounds.width / 2, y);
+            return { visible: hit === control || control.contains(hit), element: hit?.tagName, id: hit?.id, className: hit?.className };
+          });
+          return { top: bounds.top, bottom: bounds.bottom, hits };
+        }) };
+    }, checkClose);
+    assert(layout.focusedOpen, 'Opening a venue preserves its primary keyboard focus.');
+    assert(layout.card.top >= 0 && layout.card.bottom <= layout.height + 1,
+      'Venue details fit the window: ' + JSON.stringify(layout));
+    for (const control of layout.controls) assert(control.top >= 0 && control.bottom <= layout.height + 1 && control.hits.every(hit => hit.visible),
+      'Venue controls are visible and unobscured by sticky chrome: ' + JSON.stringify(layout));
+  };
   const visitQuest = async (page, venueId, requests) => {
     const guide = page.locator('.omerta-city__next-move');
     const venue = (await state(page)).destinations.find(venue => venue.id === venueId);
@@ -242,6 +263,7 @@ try {
     const beforeVisit = requests.length;
     await page.locator('[data-city-nextmove]').click();
     await page.locator('.omerta-city__interaction').waitFor({ state: 'visible' });
+    await assertVenueOnscreen(page);
     assert.equal((await state(page)).selectedVenue, venueId, 'The guide opens the currently issued destination.');
     assert.deepEqual(requests.slice(beforeVisit).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
       'A quest destination visit does not select a branch or submit a mutation.');
@@ -485,6 +507,31 @@ try {
   await page.setViewportSize({ width: 375, height: 812 });
   await dismissCelebration(page);
   await visitQuest(page, 'fixer', requests);
+  for (const height of [500, 320]) {
+    await page.keyboard.press('Escape');
+    await page.setViewportSize({ width: 375, height });
+    await page.locator('[data-destination="fixer"]').click();
+    await assertVenueOnscreen(page);
+  }
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'A short-screen venue retains keyboard close.');
+  await page.setViewportSize({ width: 375, height: 812 });
+  const beforeDirectory = requests.length;
+  await page.locator('[data-destination="directory"]').click();
+  await assertVenueOnscreen(page);
+  await page.locator('.omerta-city__interaction').evaluate(card => { card.scrollTop = 120; });
+  const readingPosition = await page.evaluate(() => ({ page: scrollY, card: document.querySelector('.omerta-city__interaction').scrollTop,
+    focused: document.activeElement.dataset.cityOpen }));
+  await page.setViewportSize({ width: 375, height: 800 });
+  await waitForFrames(page, 3);
+  assert.deepEqual(await page.evaluate(() => ({ page: scrollY, card: document.querySelector('.omerta-city__interaction').scrollTop,
+    focused: document.activeElement.dataset.cityOpen })), readingPosition, 'A small viewport resize preserves venue reading position and focus.');
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.locator('[data-destination="fixer"]').click();
+  await assertVenueOnscreen(page);
+  assert.deepEqual(requests.slice(beforeDirectory).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
+    'Revealing venue details from the destination list submits no gameplay action.');
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Nico Bellini'));
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
@@ -642,9 +689,19 @@ try {
   await missingEngine.evaluate(() => window.__cityHandles.at(-1).handle.update({ npcQuests: {
     workshop: { title: 'Listen at the Workshop', actions: [{ id: 'complete', available: true }] },
   } }));
+  await missingEngine.setViewportSize({ width: 375, height: 812 });
   await missingEngine.getByRole('button', { name: 'Visit The Workshop', exact: true }).click();
+  await assertVenueOnscreen(missingEngine);
   assert.equal((await state(missingEngine)).selectedVenue, 'workshop', 'Quest guidance opens venue details even when the engine is unavailable.');
   await missingEngine.locator('[data-city-close]').click();
+  const fallbackFocus = await missingEngine.evaluate(() => {
+    const control = document.activeElement, bounds = control.getBoundingClientRect();
+    return { destination: control.dataset.destination, visible: [bounds.top + 3, bounds.bottom - 3].every(y => {
+      const hit = document.elementFromPoint(bounds.left + bounds.width / 2, y);
+      return hit === control || control.contains(hit);
+    }) };
+  });
+  assert.deepEqual(fallbackFocus, { destination: 'workshop', visible: true }, 'Fallback close restores a visible destination control.');
   await missingEngine.locator('.omerta-city__destination[data-destination="stories"]').click();
   await missingEngine.locator('[data-city-open]').click();
   await missingEngine.waitForSelector('#tab-desk.on', { state: 'attached' });
