@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f5663a3462cf`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3d12189ffc69`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2133 |
+| Commits in clone | 2135 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Add pixel City Mode and NPC RPG quest journeys |
+| Latest commit | 2026-10-09 — Keep City RPG release checks and SQL fully verifiable |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1235 |
+| OmertaDev | 1237 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 53 |
@@ -34,27 +34,27 @@
 | [public/index.html](../../public/index.html) | 436 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
 | [SPEC.md](../../SPEC.md) | 368 | yes |
-| knowledge/generated/github-history.md | 316 | historical |
-| knowledge/generated/graph-summary.md | 316 | historical |
-| knowledge/generated/graph.json | 316 | historical |
-| knowledge/generated/inventory.md | 316 | historical |
+| knowledge/generated/github-history.md | 317 | historical |
+| knowledge/generated/graph-summary.md | 317 | historical |
+| knowledge/generated/graph.json | 317 | historical |
+| knowledge/generated/inventory.md | 317 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 238 | yes |
+| [package.json](../../package.json) | 239 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 137 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/modules.md | 122 | historical |
+| knowledge/generated/modules.md | 123 | historical |
 | [test/client.js](../../test/client.js) | 121 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [test/gates.js](../../test/gates.js) | 90 | yes |
+| [test/gates.js](../../test/gates.js) | 91 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
+| knowledge/generated/graph.mmd | 85 | historical |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| knowledge/generated/graph.mmd | 84 | historical |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
@@ -68,8 +68,8 @@
 | [src/economy.js](../../src/economy.js) | 51 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 49 | yes |
-| [src/casino.js](../../src/casino.js) | 46 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 50 | yes |
+| knowledge/generated/routes.md | 46 | historical |
 
 ## Pull requests
 
