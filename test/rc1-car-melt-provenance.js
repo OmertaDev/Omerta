@@ -3,6 +3,16 @@ import fs from 'node:fs';
 import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, CAR_MELT_BASELINE_RULES_PIN, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
 import { carMelt } from '../src/rules.js';
 
+import { assertEconomySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
+const economyText = fs.readFileSync(new URL('../src/economy.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const economyTransfer = assertEconomySourceTransfer('src/economy.js', economyText);
+assert.equal(economyTransfer.actualSha256, CAR_MELT_SOURCE_PINS['src/economy.js']);
+assert.equal(economyTransfer.baselineSha256, 'f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835');
+assert.equal(economyTransfer.goodsSourceTransfer.predecessorSha256, 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b');
+assert.equal(economyTransfer.goodsSourceTransfer.inverseChunks, 8);
+assert.equal(economyTransfer.inverseChunks, 10, 'Only eight quota changes plus the two existing quote changes are transferred');
+assert.throws(() => assertEconomySourceTransfer('src/economy.js', economyText.replace("'buy', n, block", "'buy', n + 1, block")), /source changed/);
+assert.throws(() => assertEconomySourceTransfer('src/economy.js', economyTransfer.baselineText.replace('Math.ceil(cost * 0.01)', 'Math.ceil(cost * 0.02)')), /source changed/);
 const rulesText = fs.readFileSync(new URL('../src/rules.tail.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
 const compatibility = assertCarMeltRulesCompatibility(rulesText);
 assert.equal(compatibility.actualSha256, CAR_MELT_SOURCE_PINS['src/rules.tail.js']);

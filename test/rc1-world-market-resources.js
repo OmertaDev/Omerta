@@ -1,4 +1,16 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { assertGoodsQuoteSourceTransfer, GOODS_QUOTE_CURRENT_PIN } from '../tools/rc1-deed-source-compatibility.js';
+const quoteText = readFileSync(new URL('../src/goodsquote.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const quoteTransfer = assertGoodsQuoteSourceTransfer(quoteText);
+assert.equal(quoteTransfer.actualSha256, GOODS_QUOTE_CURRENT_PIN);
+assert.equal(quoteTransfer.baselineSha256, '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74');
+assert.equal(quoteTransfer.inverseChunks, 3);
+assert.match(quoteTransfer.scope, /no shared stock or historical world qualification/);
+for (const changed of [quoteTransfer.baselineText, quoteText + quoteText,
+  quoteText.replace('subtotal * 0.01', 'subtotal * 0.02'),
+  quoteText.replace('goodPriceOf(good, district, block)', 'goodPriceOf(good, district, block + 1)')])
+  assert.throws(() => assertGoodsQuoteSourceTransfer(changed), /source changed/);
 import { reconcileMarketResources, reconcileMarketResourceChanges } from '../tools/rc1-world-market-resources.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';

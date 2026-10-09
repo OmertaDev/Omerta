@@ -215,6 +215,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === GOODS_SERVER_CURRENT_PIN) {
+    const goods = assertGoodsServerSourceTransfer(text);
+    return { ...assertDeedServerCompatibility(goods.baselineText), actualSha256: hash(text), goodsSourceTransfer: goods };
+  }
   if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertCitySourceTransfer('src/server.js', text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
@@ -429,14 +433,26 @@ export function assertCitySourceTransfer(file, text) {
 
 // Exact routing/quote inverse guards preserve historical personal-recovery and
 // car-melt evidence; they grant no depot, supplier or agent authority coverage.
+// Goods quota inverse re-attests the exact #206 economy source (29c8b418).
+// Complete predecessor bytes are reconstructed; no historical freight coverage is implied.
 export const ECONOMY_SOURCE_CURRENT_PINS = Object.freeze({
-  "src/economy.js": "c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b",
+  "src/economy.js": "d934bd109bf4599d79e6dba9ead2240b3b4c036d3f676a428941de2ca326ae91",
   "src/server.js": "2a8f9eb10ccebed5f5304230435f33cd1e39241c616a7cb4c442097002530d57"
 });
 const economySourceInverse = {
   "src/economy.js": {
     "baseline": "f563ee157adf73627e0c457be43a262151aa9ae92132aa6468ef9b63b285e835",
+    "quotaPredecessor": "c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b",
+    "quotaInverseChunks": 8,
     "changes": [
+      ["import { consumeGoodsLiquidity } from './goodsmarket.js';\n",""],
+      ["goodPriceOf, priceBlock, gearOf","goodPriceOf, gearOf"],
+      ["  const block = priceBlock();\n  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned, block);\n","  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned);\n"],
+      ["  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'buy', n, block);\n",""],
+      ["  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax, liquidity };\n","  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax };\n"],
+      ["  const block = priceBlock();\n  const ev = cityEventOf(dayOf());\n  // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)\n  const unit = Math.round(goodPriceOf(goodId, ch.loc, block) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)\n","  const ev = cityEventOf(dayOf());\n  // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)\n  const unit = Math.round(goodPriceOf(goodId, ch.loc) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)\n"],
+      ["  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'sell', n, block);\n",""],
+      ["  return { ok: true, good: goodId, unit, qty: n, earned: net, liquidity };\n","  return { ok: true, good: goodId, unit, qty: n, earned: net };\n"],
       [
         "import { goodsBuyQuote } from './goodsquote.js';\n",
         ""
@@ -476,6 +492,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === GOODS_SERVER_CURRENT_PIN) {
+  const goods = assertGoodsServerSourceTransfer(text), predecessor = assertEconomySourceTransfer(file, goods.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + 1, goodsSourceTransfer: goods };
+ }
  if (file === 'src/server.js' && hash(text) === CITY_SOURCE_CURRENT_PINS[file]) {
   const city = assertCitySourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, city.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + city.inverseChunks, citySourceTransfer: city };
@@ -484,7 +504,50 @@ export function assertEconomySourceTransfer(file, text) {
  if (hash(text) === scope.baseline) return { baselineText: text, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: 0 };
  assert.equal(hash(text), ECONOMY_SOURCE_CURRENT_PINS[file], 'Economy transfer source changed: ' + file);
  let baselineText = text;
- for (const [current, original] of scope.changes) { assert.equal(baselineText.split(current).length, 2, 'Economy source chunk is not exact and unique'); baselineText = baselineText.replace(current, original); }
+ for (const [index, [current, original]] of scope.changes.entries()) {
+  assert.equal(baselineText.split(current).length, 2, 'Economy source chunk is not exact and unique');
+  baselineText = baselineText.replace(current, original);
+  if (scope.quotaPredecessor && index + 1 === scope.quotaInverseChunks)
+   assert.equal(hash(baselineText), scope.quotaPredecessor, 'Source differs beyond exact goods quota changes');
+ }
  assert.equal(hash(baselineText), scope.baseline, 'Source differs beyond exact economy changes');
- return { baselineText, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: scope.changes.length };
+ return { baselineText, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: scope.changes.length,
+  ...(scope.quotaPredecessor ? { goodsSourceTransfer: { sourceRevision: '29c8b418ba764f6058d643e8bbe6d685ba99e5ce',
+   predecessorSha256: scope.quotaPredecessor, inverseChunks: scope.quotaInverseChunks,
+   scope: 'Unchanged recovery and car rules only; no historical goods or world qualification' } } : {}) };
+}
+
+// Only the goods-board pool argument is transferred; all historical server pins stay frozen.
+export const GOODS_SERVER_CURRENT_PIN = 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c';
+export function assertGoodsServerSourceTransfer(text) {
+ assert.equal(hash(text), GOODS_SERVER_CURRENT_PIN, 'Goods server transfer source changed');
+ const current = "  app.get('/v1/market/prices', async () => Block.marketPrices(pool));\n";
+ const original = "  app.get('/v1/market/prices', async () => Block.marketPrices());\n";
+ assert.equal(text.split(current).length, 2, 'Goods board route is not exact and unique');
+ const baselineText = text.replace(current, original);
+ assert.equal(hash(baselineText), CITY_SOURCE_CURRENT_PINS['src/server.js'], 'Server differs beyond the exact goods board change');
+ return { actualSha256: hash(text), baselineText, baselineSha256: CITY_SOURCE_CURRENT_PINS['src/server.js'],
+  sourceRevision: '29c8b418ba764f6058d643e8bbe6d685ba99e5ce', inverseChunks: 1,
+  scope: 'Unchanged historical server guards only; no goods or world qualification' };
+}
+
+// Exact quote-clock additions preserve fee and cargo equations only.
+export const GOODS_QUOTE_CURRENT_PIN = 'b191c83c4a3f254d6499fe8775025f9554d448151febb4a72573c5cbf5a44e50';
+export function assertGoodsQuoteSourceTransfer(text) {
+ assert.equal(hash(text), GOODS_QUOTE_CURRENT_PIN, 'Goods quote transfer source changed');
+ let baselineText = text;
+ const changes = [
+  ["import { goodPriceOf, priceBlock } from './rules.js';", "import { goodPriceOf } from './rules.js';"],
+  ['owned, block = priceBlock())', 'owned)'],
+  ['goodPriceOf(good, district, block)', 'goodPriceOf(good, district)'],
+ ];
+ for (const [current, original] of changes) {
+  assert.equal(baselineText.split(current).length, 2, 'Goods quote chunk is not exact and unique');
+  baselineText = baselineText.replace(current, original);
+ }
+ const baselineSha256 = '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74';
+ assert.equal(hash(baselineText), baselineSha256, 'Quote differs beyond exact goods clock changes');
+ return { actualSha256: hash(text), baselineText, baselineSha256, inverseChunks: 3,
+  sourceRevision: '29c8b418ba764f6058d643e8bbe6d685ba99e5ce',
+  scope: 'Unchanged money and cargo equations only; no shared stock or historical world qualification' };
 }
