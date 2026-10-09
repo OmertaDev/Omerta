@@ -1140,17 +1140,29 @@ async function conditionBlocker(client, actor, operation, states, condition, int
     return actor.skills.has(required) ? null : { adapter, required };
   }
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
-    const row = (await client.query(
+    let row;
+    if (lock) row = (await client.query(
       `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1${lock ? ' FOR UPDATE' : ''}`,
+        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,
+      [actor.accountId, normalized.templateId],
+    )).rows[0];
+    else row = (await client.query(
+      `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
+        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1`,
       [actor.accountId, normalized.templateId],
     )).rows[0];
     return row ? null : { adapter };
   }
   if (adapter === 'material_quantity') {
-    const row = (await client.query(
+    let row;
+    if (lock) row = (await client.query(
       `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND quality=$3${lock ? ' FOR UPDATE' : ''}`,
+        AND template_id=$2 AND quality=$3 FOR UPDATE`,
+      [actor.accountId, normalized.templateId, normalized.quality],
+    )).rows[0];
+    else row = (await client.query(
+      `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+        AND template_id=$2 AND quality=$3`,
       [actor.accountId, normalized.templateId, normalized.quality],
     )).rows[0];
     return Number(row?.quantity || 0) >= normalized.quantity

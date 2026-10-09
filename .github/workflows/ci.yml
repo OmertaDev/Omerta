@@ -228,9 +228,10 @@ jobs:
         run: npm run test:deed-upgrades:postgres
 
       - name: City RPG quests and concurrent replay (real PostgreSQL)
+        if: '!cancelled()'
         env:
           WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
-        run: node test/city-rpg.js --postgres
+        run: npm run test:city:postgres
 
       - name: pgcheck (pooling, row locks, timeouts, migration, ledger)
         env:
