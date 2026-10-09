@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "cf49b27a1b28ab3032bde03101efab43da08fce3",
+  "sourceRevision": "2a652cb6c26d9810951264b3381f8481a272a7e6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10326,
-    "edges": 42063,
+    "nodes": 10328,
+    "edges": 42072,
     "byNodeType": {
       "Artifact": 4382,
       "Command": 205,
-      "Commit": 2158,
+      "Commit": 2160,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3512,
-      "CHANGED": 16333,
+      "CHANGED": 16340,
       "CONTAINS": 4403,
       "DECLARES": 205,
       "DEFINED_IN": 1388,
       "DEPENDS_ON": 67,
       "EXECUTES": 693,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2158,
+      "HAS_COMMIT": 2160,
       "IMPLEMENTS": 124,
       "IMPORTS": 4163,
       "INHERITS": 42,
@@ -109002,6 +109002,22 @@
       ]
     },
     {
+      "key": "Commit:2a652cb6c26d9810951264b3381f8481a272a7e6",
+      "type": "Commit",
+      "id": "2a652cb6c26d9810951264b3381f8481a272a7e6",
+      "label": "chore(knowledge): record clean quota fix source snapshot",
+      "title": "chore(knowledge): record clean quota fix source snapshot",
+      "date": "2026-10-09T20:16:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a652cb6c26d9810951264b3381f8481a272a7e6",
+      "provenance": [
+        {
+          "commit": "2a652cb6c26d9810951264b3381f8481a272a7e6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a652cb6c26d9810951264b3381f8481a272a7e6"
+        }
+      ]
+    },
+    {
       "key": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "type": "Commit",
       "id": "2a67d360be1a35fad87da429a20b5cdecd50f015",
@@ -110054,6 +110070,22 @@
         {
           "commit": "318580e9f9a4248e836eb2681546a1dee32f14f3",
           "url": "https://github.com/OmertaDev/Omerta/commit/318580e9f9a4248e836eb2681546a1dee32f14f3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "type": "Commit",
+      "id": "3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "label": "chore(knowledge): refresh NPC goods quota fix artifacts",
+      "title": "chore(knowledge): refresh NPC goods quota fix artifacts",
+      "date": "2026-10-09T20:13:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "provenance": [
+        {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3187e2feec08a7423cd8ec503faa25f893bafc93"
         }
       ]
     },
@@ -158693,6 +158725,9 @@
           "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -159692,6 +159727,9 @@
           "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -160655,6 +160693,9 @@
           "commit": "29c8b418ba764f6058d643e8bbe6d685ba99e5ce"
         },
         {
+          "commit": "2a652cb6c26d9810951264b3381f8481a272a7e6"
+        },
+        {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
@@ -160689,6 +160730,9 @@
         },
         {
           "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+        },
+        {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -161534,6 +161578,9 @@
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
         },
         {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -161961,6 +162008,9 @@
         },
         {
           "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
+        },
+        {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -162834,6 +162884,9 @@
         },
         {
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
+        },
+        {
+          "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -171929,7 +171982,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "cf49b27a1b28ab3032bde03101efab43da08fce3",
+      "revision": "2a652cb6c26d9810951264b3381f8481a272a7e6",
       "currentBranch": "codex/npc-goods-shared-quota-20261009",
       "defaultBranch": "main",
       "visibility": "public",
@@ -261117,6 +261170,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2a652cb6c26d9810951264b3381f8481a272a7e6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2a652cb6c26d9810951264b3381f8481a272a7e6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -264433,6 +264494,54 @@
       "to": "Artifact:test/market.js",
       "provenance": {
         "commit": "318580e9f9a4248e836eb2681546a1dee32f14f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
       }
     },
     {
@@ -441937,6 +442046,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2a652cb6c26d9810951264b3381f8481a272a7e6",
+      "provenance": {
+        "commit": "2a652cb6c26d9810951264b3381f8481a272a7e6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2a67d360be1a35fad87da429a20b5cdecd50f015",
       "provenance": {
         "commit": "2a67d360be1a35fad87da429a20b5cdecd50f015"
@@ -442460,6 +442577,14 @@
       "to": "Commit:318580e9f9a4248e836eb2681546a1dee32f14f3",
       "provenance": {
         "commit": "318580e9f9a4248e836eb2681546a1dee32f14f3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3187e2feec08a7423cd8ec503faa25f893bafc93",
+      "provenance": {
+        "commit": "3187e2feec08a7423cd8ec503faa25f893bafc93"
       }
     },
     {
