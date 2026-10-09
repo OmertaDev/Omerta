@@ -222,7 +222,7 @@
   border-left: 3px solid var(--city-gold);
   background: #111217f5;
   box-shadow: 0 7px 28px #0009;
-  max-height: calc(100% - 32px);
+  max-height: min(calc(100% - 32px), var(--city-card-height, 100vh));
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -238,16 +238,22 @@
   font: 13px/1.55 var(--serif, Georgia, serif);
   color: var(--city-paper);
 }
+.omerta-city__interaction-controls {
+  position: sticky;
+  top: 8px;
+  height: 0;
+  z-index: 1;
+}
 .omerta-city__interaction [data-city-close] {
   position: absolute;
-  right: 8px;
-  top: 8px;
+  right: -10px;
+  top: 0;
   min-width: 44px;
   min-height: 44px;
   padding: 0;
   margin: 0;
   border: 0;
-  background: transparent;
+  background: #111217;
   color: var(--city-muted);
   font-size: 21px;
   cursor: pointer;
@@ -430,7 +436,7 @@
   bottom: auto;
   margin: 12px;
   width: calc(100% - 24px);
-  max-height: none;
+  max-height: var(--city-card-height, none);
 }
 .omerta-city--unavailable .omerta-city__instructions { display: none; }
 @media (max-width: 680px) {
