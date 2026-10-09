@@ -70,6 +70,32 @@ assert.throws(()=>normalizeBusinessPolicy({paymentFeeBps:-1}));assert.throws(()=
 assert.throws(()=>normalizeBusinessPolicy({operatingCostPerJobUsdMicros:1.5}));
 assert.throws(()=>normalizeBusinessPolicy({targetMarginBps:9000,paymentFeeBps:1000}));
 assert.equal(evaluateBusiness(snapshot(),{...policy,operatingCostPerJobUsdMicros:1000000000}).pricing.suggestedPriceUsdMicros,null,'Impossible prices are not proposed');
+const timed=snapshot();
+const timePlan=evaluateBusiness(timed,{...policy,workSecondsPerJob:600,planningHorizonSeconds:1200});
+assert.equal(timePlan.capacity.proposedWorkSlots,2,'All proposals share the same time budget');
+assert.equal(timePlan.scheduling.proposedWorkSeconds,1200);
+assert.equal(timePlan.scheduling.remainingAfterProposalsSeconds,0);
+const times=timePlan.proposals.filter(p=>p.kind==='bid');
+assert.equal(times[0].plannedFinishAt,times[1].plannedStartAt,'Proposals do not overlap');
+const commitments=snapshot();commitments.capacity.activeJobs=2;
+commitments.jobs=[{id:'later',state:'claimed',expiresAt:'2026-10-09T13:00:00Z'},{id:'earlier',state:'open',expiresAt:'2026-10-09T12:20:00Z'}];
+const workload=evaluateBusiness(commitments,{...policy,workSecondsPerJob:600,planningHorizonSeconds:1800});
+assert.deepEqual(workload.scheduling.commitments.map(j=>j.jobId),['earlier','later']);
+assert.equal(workload.scheduling.reservedWorkSeconds,1200);
+assert.equal(workload.capacity.proposedWorkSlots,1);
+assert.equal(workload.proposals.find(p=>p.kind==='bid').plannedStartAt,'2026-10-09T12:20:00.000Z');
+const impossible=snapshot();impossible.capacity.activeJobs=1;impossible.jobs=[{id:'late',state:'claimed',expiresAt:'2026-10-09T12:01:00Z'}];
+assert(evaluateBusiness(impossible,policy).riskFlags.includes('awarded_work_deadline_risk'));
+assert(!evaluateBusiness(impossible,policy).proposals.some(p=>p.kind==='bid'));
+const missing=snapshot();missing.capacity.activeJobs=1;
+assert(evaluateBusiness(missing,policy).riskFlags.includes('active_work_details_incomplete'));
+assert(!evaluateBusiness(missing,policy).proposals.some(p=>p.kind==='bid'));
+const reviewOnly=snapshot();reviewOnly.capacity.activeJobs=1;reviewOnly.jobs=[{id:'review',state:'submitted',expiresAt:'2026-10-09T13:00:00Z'}];
+assert.equal(evaluateBusiness(reviewOnly,policy).scheduling.reservedWorkSeconds,0,'Submitted work holds a slot but does not require another work execution');
+const shortAuthority=snapshot();shortAuthority.policy.expiresAt='2026-10-09T12:02:00Z';
+assert(!evaluateBusiness(shortAuthority,policy).proposals.some(p=>p.kind==='bid'),'Work must fit current authority window');
+assert.throws(()=>normalizeBusinessPolicy({workSecondsPerJob:59}));assert.throws(()=>normalizeBusinessPolicy({planningHorizonSeconds:86401}));
+assert.throws(()=>normalizeBusinessPolicy({workSecondsPerJob:1.5}));
 let state=1947;const next=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state;};
 for(let i=0;i<200;i++){
  const s=snapshot();s.catalog=[{...entry,inputUsdMicrosPerMillion:next()%100000000,outputUsdMicrosPerMillion:next()%100000000}];
@@ -84,4 +110,12 @@ for(let i=0;i<200;i++){
  const price=evaluated.pricing.suggestedPriceUsdMicros,cost=evaluated.pricing.planningComputeCostUsdMicros;
  if(price!==null){const roundedFee=(BigInt(price)*BigInt(fee)+99999999n)/100000000n*10000n;const profit=BigInt(price)-BigInt(cost)-BigInt(operating)-roundedFee;assert(profit*10000n>=BigInt(price)*BigInt(Math.min(margin,9000)));assert(profit>=10000n);assert.equal(price%10000,0);}
 }
-console.log('businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 400 pricing trials seed1947');
+for(let i=0;i<200;i++){
+ const duration=60+next()%3541,horizon=60+next()%86341;
+ const planned=evaluateBusiness(snapshot(),{...policy,workSecondsPerJob:duration,planningHorizonSeconds:horizon});
+ assert(planned.scheduling.proposedWorkSeconds<=horizon);
+ assert.equal(planned.scheduling.proposedWorkSeconds,planned.capacity.proposedWorkSlots*duration);
+ const bidPlans=planned.proposals.filter(p=>p.kind==='bid');
+ for(let n=0;n<bidPlans.length;n++){assert(Date.parse(bidPlans[n].plannedFinishAt)-Date.parse(at)<=horizon*1000);if(n)assert(Date.parse(bidPlans[n].plannedStartAt)>=Date.parse(bidPlans[n-1].plannedFinishAt));assert(bidPlans[n].eligibleToExecute===false);}
+}
+console.log('businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 400 pricing and 200 scheduling trials seed1947');

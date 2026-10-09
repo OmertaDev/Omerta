@@ -47,16 +47,24 @@ Source base: `f8aae4e6232f9c7a26231c56fefc16b13f0c9631`. Scope: pure shadow pric
 
 Independent source review and 400 deterministic pricing trials (seed1947) verify the inequalities against independently calculated rounded fees. The fixed case of 12000 compute micros, 300000 operating micros and 290 fee basis points yields a 450000 price, 20000 estimated fee and 118000 estimated contribution. Legacy zero-fee policies remain unchanged. Higher published prices preserve coverage; compute reservations still use only the compute quote. Estimates never become ledger charges and do not make outsideCostsComplete or profitabilityKnown true. Operator fees are not verified provider billing data.
 
+## Deadline scheduling follow-up
+
+Source base: c0449221530b5b26e98b8a6c7a354dee367018bd. Scope: pure business policy scheduling, CLI options, existing tests and guide. No new database/API writes, jobs, owner authority, provider calls or customer messages. Open/claimed awarded work is ordered by deadline and reserves operator-estimated sequential duration. Expired, unknown or infeasible deadlines block additional bid proposals; missing active-job details also block. Submitted/disputed jobs retain their existing slot but require no second execution in the estimate.
+
+All proposed jobs share remaining time, funds, daily authorization and slots. Starts/finishes do not overlap and must fit the planning horizon and current owner-authority expiry. Only recorded proposals advance simulated allocation. Delivery intervals are conservative and stay within existing API bounds. Independent review found no concrete blocker. Policy/observer tests pass including 400 pricing plus200 scheduling trials seed1947, deadline priority, infeasible commitments, missing details, horizon exhaustion and short authority windows. Repository gates/docs pass.
+
+Absolute plans assume the current workload and immediate award. Provider latency, delayed awards and changed commitments require re-evaluation. Duration inputs are estimates, not reservations or delivery guarantees. Outputs stay eligibleToExecute:false and financial activation is unchanged.
+
 ## Reviewed source hashes
 
 | File | SHA256 |
 | --- | --- |
 | src/resourcebusiness.js | 673b8f1c7b65a50ba3fe1a5518a9e656690f37b890e61dec4ef1f3de12f4c549 |
-| src/businesspolicy.js | ef0fa70b7616fd5ad21f48b999f58f45ef30600ecc4cbe641ec7e4d30e381f31 |
+| src/businesspolicy.js | dcada6e38e040f9b1a8bc073e9a63b19e109d5b891c0dfbaebeb754a69ba7e4f |
 | src/routes/resources.js | b3548f94a6f3620710498aa9f7b54f0d49ede5d5d8401de5f5fa3eae547cab15 |
 | src/resourcecontracts.js | 7fdb35a2a95c43f6b8cf29cf6ea61e023ec581f904766193cd29046a84b44867 |
-| tools/business-agent.js | 1d2bd59f602dd887b91101fdb6460a41cdbf8851b3851b21bc7318d8ab986df3 |
+| tools/business-agent.js | f495b28bacd521c22dd953aa3bb773ca5d7940719d81c82e3107bb8aebc0134b |
 | tools/resource-economy-pilot.js | 115881267cd6be3f6479c765a39972619b4d3d53c792edcd7828fc484819e4c0 |
 | test/resourcebusiness.js | 580f3011e74fcce5274f9036dc66d4c1a862cfa9c6ead8aede145b0bc9f888ae |
-| test/businesspolicy.js | 76a8adef67b503f76f77e7d7ec12fcad09644b33a69101f59529ec608eb2769a |
+| test/businesspolicy.js | 17082d97854b8de9b603187cdc74505ec07c35101ed8dab0b11da045493c22cd |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |

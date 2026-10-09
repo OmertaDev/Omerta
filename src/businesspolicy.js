@@ -14,7 +14,7 @@ const items = (value, max = 100) => {
 const amount = value => bounded(value ?? 0, 'amount');
 const DEFAULTS = Object.freeze({ providerId: null, maxOutputTokens: 256, targetMarginBps: 2500,
   minimumMarginUsdMicros: 10000, operatingCostPerJobUsdMicros: 0, paymentFeeBps: 0, maxActiveJobs: 3, minimumReserveUsdMicros: 0,
-  maxProposals: 5, minimumRenewalAcceptedJobs: 2 });
+  maxProposals: 5, minimumRenewalAcceptedJobs: 2, workSecondsPerJob: 300, planningHorizonSeconds: 3600 });
 export function normalizeBusinessPolicy(input = {}) {
   if (!input || Array.isArray(input) || typeof input !== 'object'
       || Object.keys(input).some(key => !Object.hasOwn(DEFAULTS, key))) throw new Error('Invalid business policy');
@@ -30,9 +30,25 @@ export function normalizeBusinessPolicy(input = {}) {
   bounded(policy.minimumReserveUsdMicros, 'reserve', 0, 1000000000000);
   bounded(policy.maxProposals, 'proposal limit', 1, 10);
   bounded(policy.minimumRenewalAcceptedJobs, 'renewal threshold', 1, 100);
+  bounded(policy.workSecondsPerJob, 'work duration estimate', 60, 3600);
+  bounded(policy.planningHorizonSeconds, 'planning horizon', 60, 86400);
   return policy;
 }
 function estimatePaymentFee(price, bps) { return Number((BigInt(price) * BigInt(bps) + 99999999n) / 100000000n * 10000n); }
+function workSchedule(jobs, active, now, policy) {
+  const visibleActive = jobs.filter(job => ['open','claimed','submitted','disputed'].includes(job.state)).length;
+  const pending = jobs.filter(job => ['open','claimed'].includes(job.state)).sort((a,b) => Date.parse(a.expiresAt)-Date.parse(b.expiresAt) || a.id.localeCompare(b.id));
+  let seconds = 0; const commitments = []; let deadlineRisk = false;
+  for (const job of pending) {
+    const deadline = Date.parse(job.expiresAt);
+    if (!Number.isFinite(deadline) || deadline <= now) { deadlineRisk = true; continue; }
+    const start = seconds; seconds += policy.workSecondsPerJob;
+    const feasible = now + seconds * 1000 <= deadline;
+    if (!feasible) deadlineRisk = true;
+    commitments.push({jobId:job.id,plannedStartAt:new Date(now+start*1000).toISOString(),plannedFinishAt:new Date(now+seconds*1000).toISOString(),estimatedSeconds:policy.workSecondsPerJob,feasibleByDeadline:feasible});
+  }
+  return {commitments,reservedWorkSeconds:seconds,remainingWorkSeconds:Math.max(0,policy.planningHorizonSeconds-seconds),deadlineRisk,activeDetailsIncomplete:visibleActive<active,assumption:'Sequential work using operator duration estimates; not a delivery guarantee'};
+}
 function metrics(totals = {}) {
   return { settledCustomerRevenueUsdMicros: amount(totals.settledCustomerRevenueUsdMicros),
     settledPaidComputeCostsUsdMicros: amount(totals.settledPaidComputeCostsUsdMicros),
@@ -56,6 +72,7 @@ export function evaluateBusiness(snapshot, input = {}) {
       unresolvedCalls: amount(job.unresolvedCalls), knownContributionUsdMicros: revenue - cost,
       netProfitKnown: false };
   });
+  const schedule = workSchedule(jobs, active, now, policy);
   const riskFlags = ['outside_costs_incomplete'];
   if (policy.operatingCostPerJobUsdMicros || policy.paymentFeeBps) riskFlags.push('operator_cost_estimates_unreconciled');
   if (snapshot.resourceMode !== 'live' || totals.simulatedPaidCalls) riskFlags.push('simulation_or_unfunded_data');
@@ -100,22 +117,30 @@ export function evaluateBusiness(snapshot, input = {}) {
   if (snapshot.treasury?.frozen) riskFlags.push('treasury_frozen');
   if (!authorityValid) riskFlags.push('owner_authority_unavailable');
   if (!slots) riskFlags.push('capacity_full');
+  if (schedule.deadlineRisk) riskFlags.push('awarded_work_deadline_risk');
+  if (schedule.activeDetailsIncomplete) riskFlags.push('active_work_details_incomplete');
+  if (schedule.remainingWorkSeconds < policy.workSecondsPerJob) riskFlags.push('work_time_capacity_full');
   if (quote !== null && quote > available - reserve) riskFlags.push('compute_funds_insufficient');
   if (quote !== null && quote > daily) riskFlags.push('daily_compute_budget_insufficient');
   const canBid = suggestedPrice !== null && snapshot.service?.enabled === true && id(policy.providerId)
     && Number.isSafeInteger(snapshot.service.revision) && snapshot.service.revision >= 1 && snapshot.service.revision <= 2147483647
     && snapshot.treasury?.frozen === false && authorityValid && quote <= amount(authority?.maxPerCallUsdMicros)
-    && totals.unresolvedPaidCalls === 0 && !riskFlags.includes('incomplete_detail_coverage');
+    && totals.unresolvedPaidCalls === 0 && !riskFlags.includes('incomplete_detail_coverage')
+    && !schedule.deadlineRisk && !schedule.activeDetailsIncomplete;
   const price = suggestedPrice === null ? null : Math.max(suggestedPrice, amount(snapshot.service?.priceUsdMicros));
-  let allocated = 0;
+  let allocated = 0; let plannedSeconds = schedule.reservedWorkSeconds;
   for (const bounty of [...bounties].sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
-    if (!canBid || allocated >= slots || quote > available - reserve || quote > daily) break;
+    if (!canBid || allocated >= slots || quote > available - reserve || quote > daily
+        || plannedSeconds + policy.workSecondsPerJob > policy.planningHorizonSeconds
+        || now + (plannedSeconds + policy.workSecondsPerJob)*1000 > Date.parse(authority.expiresAt)) break;
     if (!id(bounty.id) || bounty.buyerAccountId === snapshot.accountId || amount(bounty.budgetUsdMicros) < price
         || !Number.isFinite(Date.parse(bounty.expiresAt)) || Date.parse(bounty.expiresAt) < now + 60000) continue;
+    const plannedStartAt = new Date(now+plannedSeconds*1000).toISOString();
+    const plannedFinishAt = new Date(now+(plannedSeconds+policy.workSecondsPerJob)*1000).toISOString();
     if (!propose({ kind: 'bid', bountyId: bounty.id, priceUsdMicros: price, expectedServiceRevision: snapshot.service.revision, providerId: policy.providerId, maxOutputTokens: policy.maxOutputTokens, computeReserveUsdMicros: quote,
       expectedKnownMarginUsdMicros: price - quote, estimatedPaymentFeeUsdMicros: estimatePaymentFee(price, policy.paymentFeeBps),
-      estimatedContributionUsdMicros: price - costBasis - policy.operatingCostPerJobUsdMicros - estimatePaymentFee(price, policy.paymentFeeBps), deliverySeconds: 3600, reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
-    allocated++; available -= quote; daily -= quote;
+      estimatedContributionUsdMicros: price - costBasis - policy.operatingCostPerJobUsdMicros - estimatePaymentFee(price, policy.paymentFeeBps), deliverySeconds: Math.max(3600,plannedSeconds+policy.workSecondsPerJob), plannedStartAt, plannedFinishAt, estimatedWorkSeconds:policy.workSecondsPerJob, reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
+    allocated++; plannedSeconds += policy.workSecondsPerJob; available -= quote; daily -= quote;
   }
   if (suggestedPrice !== null && snapshot.service?.enabled === true && suggestedPrice !== snapshot.service.priceUsdMicros) {
     propose({ kind: 'service_price', priceUsdMicros: suggestedPrice, expectedServiceRevision: snapshot.service.revision, reason: 'conservative_cost_and_margin', requiresOwnerApproval: true });
@@ -134,6 +159,7 @@ export function evaluateBusiness(snapshot, input = {}) {
       estimatedPaymentFeeUsdMicros: suggestedPrice === null ? null : estimatePaymentFee(suggestedPrice, policy.paymentFeeBps),
       feeRoundingReserveUsdMicros: policy.paymentFeeBps ? 10000 : 0, basis: 'Operator estimates, not reconciled bills' },
     proposals, capacity: { activeJobs: active, reservedSlots: active, availableSlots: slots, proposedWorkSlots: allocated },
+    scheduling: { ...schedule, planningHorizonSeconds:policy.planningHorizonSeconds, proposedWorkSeconds:allocated*policy.workSecondsPerJob, remainingAfterProposalsSeconds:Math.max(0,policy.planningHorizonSeconds-plannedSeconds) },
     computeValue: { providerOutcomes, causalEffect: null, measurement: 'Descriptive outcomes; stronger models require controlled comparison.' },
     riskFlags, outsideCostsComplete: false, profitabilityKnown: false };
 }
