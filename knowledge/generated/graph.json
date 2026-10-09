@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "411c9ee0453436135b9337e570b72c81d8581e14",
+  "sourceRevision": "ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10303,
-    "edges": 41920,
+    "nodes": 10305,
+    "edges": 41926,
     "byNodeType": {
       "Artifact": 4378,
       "Command": 204,
-      "Commit": 2145,
+      "Commit": 2147,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3508,
-      "CHANGED": 16254,
+      "CHANGED": 16258,
       "CONTAINS": 4399,
       "DECLARES": 204,
       "DEFINED_IN": 1387,
       "DEPENDS_ON": 67,
       "EXECUTES": 689,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2145,
+      "HAS_COMMIT": 2147,
       "IMPLEMENTS": 124,
       "IMPORTS": 4142,
       "INHERITS": 42,
@@ -116929,6 +116929,22 @@
       ]
     },
     {
+      "key": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "type": "Commit",
+      "id": "635d2db36652d818b2246f0b00177c4a5e43808e",
+      "label": "Refresh knowledge for deterministic City input checks",
+      "title": "Refresh knowledge for deterministic City input checks",
+      "date": "2026-10-09T10:19:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/635d2db36652d818b2246f0b00177c4a5e43808e",
+      "provenance": [
+        {
+          "commit": "635d2db36652d818b2246f0b00177c4a5e43808e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/635d2db36652d818b2246f0b00177c4a5e43808e"
+        }
+      ]
+    },
+    {
       "key": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
       "type": "Commit",
       "id": "6368339e82965679c1d1aae91ecea657489a6414",
@@ -129117,6 +129133,22 @@
         {
           "commit": "ba5caa7ea9d0d7feab1a624a3030652742d84b1d",
           "url": "https://github.com/OmertaDev/Omerta/commit/ba5caa7ea9d0d7feab1a624a3030652742d84b1d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+      "type": "Commit",
+      "id": "ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+      "label": "Merge pull request #201 from OmertaDev/codex/city-rpg-release",
+      "title": "Merge pull request #201 from OmertaDev/codex/city-rpg-release",
+      "date": "2026-10-09T11:21:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+      "provenance": [
+        {
+          "commit": "ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ba69ec2e42249764e5a883dbe4f1bb94e6a942e1"
         }
       ]
     },
@@ -158543,6 +158575,9 @@
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
         },
         {
+          "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+        },
+        {
           "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
@@ -159521,6 +159556,9 @@
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
         },
         {
+          "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+        },
+        {
           "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
@@ -160497,6 +160535,9 @@
         },
         {
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
+        },
+        {
+          "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
         },
         {
           "commit": "6368339e82965679c1d1aae91ecea657489a6414"
@@ -161745,6 +161786,9 @@
         },
         {
           "commit": "630ed0f29b843ae764a74588649f9e6d8df4a56a"
+        },
+        {
+          "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
         },
         {
           "commit": "6368339e82965679c1d1aae91ecea657489a6414"
@@ -171485,8 +171529,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "411c9ee0453436135b9337e570b72c81d8581e14",
-      "currentBranch": "codex/city-rpg-release",
+      "revision": "ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -288794,6 +288838,38 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "63598c577877d2828e964cb703ff72722bd9d672"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
       }
     },
     {
@@ -444688,6 +444764,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:635d2db36652d818b2246f0b00177c4a5e43808e",
+      "provenance": {
+        "commit": "635d2db36652d818b2246f0b00177c4a5e43808e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6368339e82965679c1d1aae91ecea657489a6414",
       "provenance": {
         "commit": "6368339e82965679c1d1aae91ecea657489a6414"
@@ -450779,6 +450863,14 @@
       "to": "Commit:ba5caa7ea9d0d7feab1a624a3030652742d84b1d",
       "provenance": {
         "commit": "ba5caa7ea9d0d7feab1a624a3030652742d84b1d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ba69ec2e42249764e5a883dbe4f1bb94e6a942e1",
+      "provenance": {
+        "commit": "ba69ec2e42249764e5a883dbe4f1bb94e6a942e1"
       }
     },
     {

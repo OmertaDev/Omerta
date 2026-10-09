@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `411c9ee04534`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ba69ec2e4224`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2145 |
+| Commits in clone | 2147 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Observe City input progress without fixed frame timing |
+| Latest commit | 2026-10-09 — Merge pull request #201 from OmertaDev/codex/city-rpg-release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1246 |
+| OmertaDev | 1248 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 54 |
@@ -34,10 +34,10 @@
 | [public/index.html](../../public/index.html) | 437 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
 | [SPEC.md](../../SPEC.md) | 369 | yes |
-| knowledge/generated/github-history.md | 323 | historical |
-| knowledge/generated/graph-summary.md | 323 | historical |
-| knowledge/generated/graph.json | 323 | historical |
-| knowledge/generated/inventory.md | 323 | historical |
+| knowledge/generated/github-history.md | 324 | historical |
+| knowledge/generated/graph-summary.md | 324 | historical |
+| knowledge/generated/graph.json | 324 | historical |
+| knowledge/generated/inventory.md | 324 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 240 | yes |
