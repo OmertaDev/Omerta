@@ -3440,8 +3440,8 @@ scopedSocialContext = async function(db) {
     'the `pgcheck` job must identify each required PostgreSQL major');
   assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
     'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
-  assert.match(pgcheck, /^        image: postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
-    'each native lane must run its declared PostgreSQL server');
+  assert.match(pgcheck, /^        image: public\.ecr\.aws\/docker\/library\/postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
+    'each native lane must run its declared PostgreSQL server from the verified Docker official mirror');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [60],
