@@ -199,12 +199,13 @@
 | [src/recipe-scarcity.js](../../src/recipe-scarcity.js) | 51 | platform-core | 3 / 2 | 0 | 1 | 1 |
 | [src/regimen.js](../../src/regimen.js) | 126 | platform-core | 2 / 5 | 3 | 5 | 0 |
 | [src/resourceauction.js](../../src/resourceauction.js) | 65 | platform-core | 0 / 3 | 0 | 2 | 2 |
-| [src/resourcebook.js](../../src/resourcebook.js) | 122 | platform-core | 1 / 6 | 1 | 8 | 4 |
+| [src/resourcebook.js](../../src/resourcebook.js) | 123 | platform-core | 1 / 7 | 1 | 10 | 5 |
 | [src/resourcecompute.js](../../src/resourcecompute.js) | 277 | platform-core | 3 / 2 | 9 | 6 | 0 |
-| [src/resourcecontracts.js](../../src/resourcecontracts.js) | 38 | platform-core | 0 / 1 | 0 | 1 | 0 |
+| [src/resourcecontracts.js](../../src/resourcecontracts.js) | 45 | platform-core | 0 / 1 | 0 | 2 | 0 |
+| [src/resourcelabor.js](../../src/resourcelabor.js) | 169 | platform-core | 1 / 3 | 7 | 9 | 0 |
 | [src/resourcepayments.js](../../src/resourcepayments.js) | 130 | platform-core | 1 / 3 | 1 | 4 | 1 |
 | [src/resourceproviders.js](../../src/resourceproviders.js) | 183 | platform-core | 0 / 5 | 0 | 1 | 1 |
-| [src/resourcework.js](../../src/resourcework.js) | 215 | platform-core | 2 / 2 | 8 | 6 | 0 |
+| [src/resourcework.js](../../src/resourcework.js) | 217 | platform-core | 2 / 4 | 8 | 6 | 1 |
 | [src/restock.js](../../src/restock.js) | 78 | platform-core | 2 / 2 | 0 | 1 | 1 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |
 | [src/rivals.js](../../src/rivals.js) | 107 | social-combat | 1 / 6 | 1 | 8 | 1 |
@@ -233,7 +234,7 @@
 | [src/routes/port.js](../../src/routes/port.js) | 33 | enterprise-logistics | 2 / 1 | 11 | 1 | 0 |
 | [src/routes/projections.js](../../src/routes/projections.js) | 67 | platform-core | 10 / 2 | 2 | 0 | 1 |
 | [src/routes/races.js](../../src/routes/races.js) | 33 | vice-competition | 2 / 1 | 10 | 0 | 0 |
-| [src/routes/resources.js](../../src/routes/resources.js) | 62 | platform-core | 3 / 2 | 25 | 3 | 1 |
+| [src/routes/resources.js](../../src/routes/resources.js) | 70 | platform-core | 4 / 2 | 32 | 4 | 1 |
 | [src/routes/rwa.js](../../src/routes/rwa.js) | 294 | platform-core | 6 / 1 | 12 | 3 | 0 |
 | [src/routes/sov.js](../../src/routes/sov.js) | 22 | world-progression | 2 / 1 | 6 | 0 | 0 |
 | [src/routes/speakeasy.js](../../src/routes/speakeasy.js) | 62 | vice-competition | 2 / 1 | 13 | 2 | 0 |

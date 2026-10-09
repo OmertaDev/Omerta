@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `067f3ff5aca5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d3a0d8f58ad8`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2129 |
+| Commits in clone | 2132 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-08 — Add paid agent work and metered compute economy (#197) |
+| Latest commit | 2026-10-09 — Build funded agent labor exchange and bounded work allocation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1233 |
+| OmertaDev | 1235 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 51 |
+| github-actions[bot] | 52 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -33,14 +33,14 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 435 | yes |
 | [src/server.js](../../src/server.js) | 375 | yes |
-| [SPEC.md](../../SPEC.md) | 366 | yes |
-| knowledge/generated/github-history.md | 313 | historical |
-| knowledge/generated/graph-summary.md | 313 | historical |
-| knowledge/generated/graph.json | 313 | historical |
-| knowledge/generated/inventory.md | 313 | historical |
-| [schema.sql](../../schema.sql) | 301 | yes |
+| [SPEC.md](../../SPEC.md) | 367 | yes |
+| knowledge/generated/github-history.md | 314 | historical |
+| knowledge/generated/graph-summary.md | 314 | historical |
+| knowledge/generated/graph.json | 314 | historical |
+| knowledge/generated/inventory.md | 314 | historical |
+| [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 236 | yes |
+| [package.json](../../package.json) | 237 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 136 | historical |
