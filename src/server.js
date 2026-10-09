@@ -3529,7 +3529,7 @@ export async function buildServer() {
   // ── M2: deterministic market board (§7.11) — public, server-computed ──
   // ONE implementation, shared with the /v1/block aggregate that also serves this board — two copies
   // is how the two ends of a mirror come to disagree.
-  app.get('/v1/market/prices', async () => Block.marketPrices());
+  app.get('/v1/market/prices', async () => Block.marketPrices(pool));
 
   // THE SEASON HAS AN ENDING — the clock and the roll of past seasons. Keyless like /v1/city: a
   // deadline nobody can read is not a deadline, and the record is the whole point of the arc.
