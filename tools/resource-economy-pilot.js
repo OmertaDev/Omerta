@@ -1,3 +1,5 @@
+import { businessSnapshot } from '../src/resourcebusiness.js';
+import { evaluateBusiness, compareBusiness } from '../src/businesspolicy.js';
 import { createResourceBounty, bidResourceBounty, awardResourceBounty } from '../src/resourcelabor.js';
 // Isolated, deterministic settlement exercise. No real payments or inference.
 process.env.RESOURCE_ECONOMY = 'on';
@@ -16,6 +18,7 @@ import { setResourceService, claimResourceJob, workResourceJob, acceptResourceJo
 const database = await commandDatabase('resourcepilot'); const pool = database.pool;
 const entry = { id: 'pilot-compute', provider: 'openai', model: 'deterministic-test-model', storeResponses: false,
   inputUsdMicrosPerMillion: 100000, outputUsdMicrosPerMillion: 200000, maxInputTokens: 16000, maxOutputTokens: 500 };
+process.env.RESOURCE_COMPUTE_CATALOG = JSON.stringify([entry]);
 let calls = 0;
 const adapter = {
   providerCatalog: () => [entry], quoteCompute: Providers.quoteCompute,
@@ -52,16 +55,24 @@ try {
       maxPerCallUsdMicros: 100000, maxPerDayUsdMicros: 1000000, minimumReserveUsdMicros: 10000, expiresInSeconds: 3600 });
   }
   for (const seller of sellers) await setResourceService(pool, seller, { enabled: true, kind: 'market_analysis', expectedRevision: 0, priceUsdMicros: 100000 });
-  let jobs = 0;
+  let jobs = 0; const shadowComparisons = [];
   for (let round = 0; round < 3; round++) for (let i = 0; i < buyers.length; i++) {
     const buyer = buyers[i], seller = sellers[(i + round) % sellers.length];
     const { bounty } = await createResourceBounty(pool, buyer, { requestId: `job_${round}_${i}`, budgetUsdMicros: 100000, expiresInSeconds: 3600, question: 'Summarize the available public market listings and uncertainty.' });
+    const beforeShadow = evaluateBusiness(await businessSnapshot(pool, seller), { providerId: entry.id, maxOutputTokens: 500 });
     const { bid } = await bidResourceBounty(pool, seller, bounty.id, { priceUsdMicros: 100000, deliverySeconds: 3600, expectedServiceRevision: 1 });
     const created = await awardResourceBounty(pool, buyer, bounty.id, { bidId: bid.id });
     await claimResourceJob(pool, seller, created.job.id);
     const report = await workResourceJob(pool, seller, created.job.id, { providerId: entry.id, maxOutputTokens: 500 }, { adapter });
     assert.equal(report.job.state, 'submitted');
     await acceptResourceJob(pool, buyer, created.job.id); await acceptResourceJob(pool, buyer, created.job.id);
+    const afterShadow = await businessSnapshot(pool, seller);
+    const comparison = compareBusiness(beforeShadow, afterShadow);
+    assert.equal(comparison.observedDelta.settledCustomerRevenueUsdMicros, 100000);
+    assert(comparison.observedDelta.settledPaidComputeCostsUsdMicros > 0);
+    assert.equal(comparison.causalEffect, null);
+    assert(comparison.outcomes.some(outcome=>outcome.bountyId===bounty.id && outcome.observedState==='accepted')); 
+    shadowComparisons.push(comparison);
     jobs++;
   }
   const accounts = await Promise.all([...buyers, ...sellers].map(async account => ({ account, ...await resourceAccounting(pool, account) })));
@@ -74,7 +85,7 @@ try {
   assert.equal(accounts.reduce((n, account) => n + account.reservedUsdMicros, 0), 0);
   assert.equal(calls, jobs);
   console.log(JSON.stringify({ mode: 'test', deterministicProviders: true, syntheticCustomerDemand: true,
-    realExternalRevenueUsdMicros: 0, profitabilityProven: false, bountiesAwarded: jobs, jobsAccepted: jobs, providerCalls: calls,
+    realExternalRevenueUsdMicros: 0, profitabilityProven: false, shadowFinancialRequests: 0, shadowComparisons, bountiesAwarded: jobs, jobsAccepted: jobs, providerCalls: calls,
     testCapitalUsdMicros: initial, simulatedProviderCostsUsdMicros: cost, remainingTestFundsUsdMicros: remaining,
     conservationDriftUsdMicros: 0, accounts }, null, 2));
 } finally { await database.cleanup(pool); }
