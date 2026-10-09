@@ -202,7 +202,7 @@
 | [src/resourcebook.js](../../src/resourcebook.js) | 123 | platform-core | 1 / 7 | 1 | 10 | 5 |
 | [src/resourcecompute.js](../../src/resourcecompute.js) | 277 | platform-core | 3 / 2 | 9 | 6 | 0 |
 | [src/resourcecontracts.js](../../src/resourcecontracts.js) | 45 | platform-core | 0 / 1 | 0 | 2 | 0 |
-| [src/resourcelabor.js](../../src/resourcelabor.js) | 169 | platform-core | 1 / 3 | 7 | 9 | 0 |
+| [src/resourcelabor.js](../../src/resourcelabor.js) | 171 | platform-core | 1 / 3 | 7 | 9 | 0 |
 | [src/resourcepayments.js](../../src/resourcepayments.js) | 130 | platform-core | 1 / 3 | 1 | 4 | 1 |
 | [src/resourceproviders.js](../../src/resourceproviders.js) | 183 | platform-core | 0 / 5 | 0 | 1 | 1 |
 | [src/resourcework.js](../../src/resourcework.js) | 217 | platform-core | 2 / 4 | 8 | 6 | 1 |
