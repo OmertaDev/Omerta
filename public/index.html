@@ -7477,7 +7477,7 @@
       const file = TAB_ART[id];
       art.classList.toggle('hidden', !file);
       if (file) {
-        art.style.setProperty('--art', `url(/art/${file}.jpg)`); art.firstElementChild.textContent = TABS[id] || id;
+        art.style.setProperty('--art', `url(/art/${file}.jpg)`); art.querySelector('span').textContent = TABS[id] || id;
         // THE LIVING PLATE — when this screen's art has an ambient clip, it breathes. The still is
         // the poster underneath (::before), so a failed load leaves the photograph untouched.
         art.querySelector('.tabvid')?.remove();
