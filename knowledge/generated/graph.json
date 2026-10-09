@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b154049e7a2f130f078c97446d794f6eb989e8a0",
+  "sourceRevision": "3b41e12806c2d925b280c2b57471ff0b561b1bc3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10335,
-    "edges": 42088,
+    "nodes": 10337,
+    "edges": 42095,
     "byNodeType": {
       "Artifact": 4381,
       "Command": 205,
-      "Commit": 2169,
+      "Commit": 2171,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3511,
-      "CHANGED": 16369,
+      "CHANGED": 16374,
       "CONTAINS": 4402,
       "DECLARES": 205,
       "DEFINED_IN": 1388,
       "DEPENDS_ON": 67,
       "EXECUTES": 691,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2169,
+      "HAS_COMMIT": 2171,
       "IMPLEMENTS": 124,
       "IMPORTS": 4150,
       "INHERITS": 42,
@@ -88015,20 +88015,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 286261,
+      "bytes": 286337,
       "lines": 4241,
-      "version": "e9718c0705767251",
+      "version": "eee8ecec55ea8eb4",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "e9718c0705767251"
+          "version": "eee8ecec55ea8eb4"
         }
       ],
-      "lastChangedAt": "2026-10-09T18:05:42.000Z",
+      "lastChangedAt": "2026-10-09T21:37:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      "lastChangedCommit": "3b41e12806c2d925b280c2b57471ff0b561b1bc3"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -111555,6 +111555,22 @@
       ]
     },
     {
+      "key": "Commit:3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+      "type": "Commit",
+      "id": "3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+      "label": "Pin the native CI guard to the verified official mirror",
+      "title": "Pin the native CI guard to the verified official mirror",
+      "date": "2026-10-09T21:37:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+      "provenance": [
+        {
+          "commit": "3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3b41e12806c2d925b280c2b57471ff0b561b1bc3"
+        }
+      ]
+    },
+    {
       "key": "Commit:3b45a7bee4908816d520409e4722da945e08b358",
       "type": "Commit",
       "id": "3b45a7bee4908816d520409e4722da945e08b358",
@@ -123231,6 +123247,22 @@
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184",
           "url": "https://github.com/OmertaDev/Omerta/commit/90a07070d3efd08fe3e70d1c78def530cf79f184"
+        }
+      ]
+    },
+    {
+      "key": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "type": "Commit",
+      "id": "90d3300b05eada3188de885f587f84358b2d2666",
+      "label": "Refresh knowledge for verified City release CI",
+      "title": "Refresh knowledge for verified City release CI",
+      "date": "2026-10-09T21:29:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/90d3300b05eada3188de885f587f84358b2d2666",
+      "provenance": [
+        {
+          "commit": "90d3300b05eada3188de885f587f84358b2d2666",
+          "url": "https://github.com/OmertaDev/Omerta/commit/90d3300b05eada3188de885f587f84358b2d2666"
         }
       ]
     },
@@ -159205,6 +159237,9 @@
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
         },
         {
+          "commit": "90d3300b05eada3188de885f587f84358b2d2666"
+        },
+        {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
@@ -160219,6 +160254,9 @@
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
         },
         {
+          "commit": "90d3300b05eada3188de885f587f84358b2d2666"
+        },
+        {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
@@ -161231,6 +161269,9 @@
         },
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+        },
+        {
+          "commit": "90d3300b05eada3188de885f587f84358b2d2666"
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
@@ -162521,6 +162562,9 @@
         },
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+        },
+        {
+          "commit": "90d3300b05eada3188de885f587f84358b2d2666"
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
@@ -172156,7 +172200,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "revision": "3b41e12806c2d925b280c2b57471ff0b561b1bc3",
       "currentBranch": "codex/city-entry-focus",
       "defaultBranch": "main",
       "visibility": "public",
@@ -203593,12 +203637,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4241,
-      "version": "e9718c0705767251",
+      "version": "eee8ecec55ea8eb4",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "e9718c0705767251"
+          "version": "eee8ecec55ea8eb4"
         }
       ]
     },
@@ -270056,6 +270100,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "3b41e12806c2d925b280c2b57471ff0b561b1bc3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3b45a7bee4908816d520409e4722da945e08b358",
       "to": "Artifact:AUDIT-full-product.md",
       "provenance": {
@@ -313444,6 +313496,38 @@
       "to": "HistoricalArtifact:knowledge/generated/modules.md",
       "provenance": {
         "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "90d3300b05eada3188de885f587f84358b2d2666"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "90d3300b05eada3188de885f587f84358b2d2666"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "90d3300b05eada3188de885f587f84358b2d2666"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "90d3300b05eada3188de885f587f84358b2d2666"
       }
     },
     {
@@ -443689,6 +443773,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3b41e12806c2d925b280c2b57471ff0b561b1bc3",
+      "provenance": {
+        "commit": "3b41e12806c2d925b280c2b57471ff0b561b1bc3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3b45a7bee4908816d520409e4722da945e08b358",
       "provenance": {
         "commit": "3b45a7bee4908816d520409e4722da945e08b358"
@@ -449524,6 +449616,14 @@
       "to": "Commit:90a07070d3efd08fe3e70d1c78def530cf79f184",
       "provenance": {
         "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:90d3300b05eada3188de885f587f84358b2d2666",
+      "provenance": {
+        "commit": "90d3300b05eada3188de885f587f84358b2d2666"
       }
     },
     {
