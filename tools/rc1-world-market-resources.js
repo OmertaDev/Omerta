@@ -6,6 +6,7 @@ import { isDeepStrictEqual as equal } from 'node:util';
 import { BLACK_MARKET, GOODS } from '../src/rules.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
+import { ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer, GOODS_QUOTE_CURRENT_PIN, assertGoodsQuoteSourceTransfer } from './rc1-deed-source-compatibility.js';
 
 const rows = (state, table) => state.tables[table];
 const amount = n => exactSum([n]);
@@ -16,8 +17,8 @@ const marketRoute = path => path === '/v1/goods/buy' || /^\/v1\/market(?:\/order
 const stateHash = ({ boundary, ...state }) => sha256(state);
 const sourcePins = {
   'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
-  'src/economy.js': 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b',
-  'src/goodsquote.js': '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74',
+  'src/economy.js': ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'],
+  'src/goodsquote.js': GOODS_QUOTE_CURRENT_PIN,
 };
 let sourcesChecked = false;
 function commands(before, after, identity, evidence) {
@@ -60,7 +61,14 @@ export function reconcileMarketResources(before, after, { identity = null, recei
   }
   assert(!selected.some(command => command.request.body?.commitmentId), 'Committed delivery fees are outside this market resource scope');
   if (!sourcesChecked) {
-    for (const [file, pin] of Object.entries(sourcePins)) assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), pin, 'Market resource source changed: ' + file);
+    // Exact goods inverses preserve these money/cargo equations only; shared
+    // stock limits and world qualification require their own current proofs.
+    for (const [file, pin] of Object.entries(sourcePins)) {
+      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      assert.equal(sha256(text), pin, 'Market resource source changed: ' + file);
+      if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
+      if (file === 'src/goodsquote.js') assertGoodsQuoteSourceTransfer(text);
+    }
     sourcesChecked = true;
   }
   const old = new Map(rows(before, 'market_listings').map(row => [row.id, row])), final = new Map(rows(after, 'market_listings').map(row => [row.id, row]));

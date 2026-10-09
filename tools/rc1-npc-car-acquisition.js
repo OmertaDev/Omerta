@@ -1,3 +1,5 @@
+// Population source re-pinned for the scoped freight quota fix in 64a40437.
+// Prior source-pinned evidence remains distinct from this revision.
 // Read-only extension of the ONE native car transaction witness. No RNG
 // override, extra query, production receipt, or gameplay mutation is introduced.
 import assert from 'node:assert/strict';
@@ -7,7 +9,7 @@ import { createCarMeltCommitObserver, CAR_MELT_SOURCE_PINS, assertCarMeltRulesCo
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 
 export const NPC_CAR_SOURCE_PINS = Object.freeze({
-  'src/population.js': '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
+  'src/population.js': '7f7069c48be7b0f118f5d402cfd984e7e4622509457936a28ff3bd3d3c7c84df',
   'src/rules.js': CAR_MELT_SOURCE_PINS['src/rules.js'],
   'src/rules.tail.js': CAR_MELT_SOURCE_PINS['src/rules.tail.js'],
   'src/rules.generated.js': CAR_MELT_SOURCE_PINS['src/rules.generated.js'],

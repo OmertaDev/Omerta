@@ -1,3 +1,5 @@
+// Population source re-pinned for the scoped freight quota fix in 64a40437.
+// Prior source-pinned evidence remains distinct from this revision.
 // Test-only recording of demonstrated unordered PostgreSQL selections/orders.
 // No row can be replayed unless its complete eligible multiset still matches.
 import assert from 'node:assert/strict';
@@ -19,7 +21,7 @@ const transformedSql = `SELECT
 const populationScope = Object.freeze({
   id: 'population-jailbirds', kind: 'limited-projection', file: 'src/population.js', site: originalSql,
   source: 'src/population.js/runPopulationInner/JAILBIRDS',
-  sourceSha256: '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
+  sourceSha256: '7f7069c48be7b0f118f5d402cfd984e7e4622509457936a28ff3bd3d3c7c84df',
   sql: normalizedSql(originalSql), originalSql, eligibleSql, transformedSql,
   originalSqlSha256: sha256(originalSql), transformedSqlSha256: sha256(transformedSql), limit: 24,
   reason: 'Native restart changed the unordered LIMIT membership before the same Math.random index, jailing another resident. Production now orders by id; retain the exact selection and complete eligibility to verify that contract.',
@@ -40,7 +42,7 @@ const marketEligibleSql = marketSql.replace('SELECT id, kind, seller_character, 
 const marketTransformedSql = `SELECT
   COALESCE((SELECT json_agg(rc1_selected) FROM (${marketSql}) rc1_selected), '[]'::json) AS limited_rows,
   COALESCE((SELECT json_agg(row_to_json(rc1_eligible)::text) FROM (${marketEligibleSql}) rc1_eligible), '[]'::json) AS eligible_rows`;
-export const QUERY_ORDER_SCOPE = Object.freeze({ version: 6, storageFormat: 3,
+export const QUERY_ORDER_SCOPE = Object.freeze({ version: 7, storageFormat: 3,
   reason: 'Retained 90-day replay changed a tied seasonal champion and exchanged generated market refund/notification IDs. Record only the three exact demonstrated queries; no gameplay tiebreak or ID normalization.',
   queries: [populationScope, {
     id: 'standing-population', kind: 'complete-typed-rows', file: 'src/standing.js', site: standingSite,

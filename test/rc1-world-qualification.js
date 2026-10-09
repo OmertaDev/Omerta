@@ -1,3 +1,4 @@
+import { GOODS_SERVER_CURRENT_PIN, assertGoodsServerSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -14,15 +15,22 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
-const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
+const currentServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const goodsServerProof = assertGoodsServerSourceTransfer(currentServerText);
+const serverText = goodsServerProof.baselineText;
+const serverProof = assertDeedServerCompatibility(currentServerText);
+assert.equal(serverProof.actualSha256, GOODS_SERVER_CURRENT_PIN);
+assert.equal(goodsServerProof.baselineSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(goodsServerProof.inverseChunks, 1);
+assert.throws(() => assertGoodsServerSourceTransfer(serverText), /source changed/);
+assert.throws(() => assertGoodsServerSourceTransfer(currentServerText.replace('Block.marketPrices(pool)', 'Block.marketPrices(pool, true)')), /source changed/);
+assert.throws(() => assertGoodsServerSourceTransfer(currentServerText.replace('{ preHandler: auth }', '{}')), /source changed/);
 assert.equal(serverProof.citySourceTransfer.baselineSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER_PIN);
 const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
-  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const text = file === 'src/server.js' ? serverText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],
     { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
@@ -117,10 +125,10 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/server.js'], GOODS_SERVER_CURRENT_PIN);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 7);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 8);
 assert.equal(WORLD_RECOVERY_REVIEW.reviewedRevision, GENESIS_SNAPSHOT_REVIEWED_REVISION,
   'The City transfer does not relabel historical authority coverage as a fresh world execution review.');
 assert.deepEqual(WORLD_RECOVERY_REVIEW.citySourceReviewTransfer.predecessorPins,

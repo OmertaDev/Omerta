@@ -1,3 +1,4 @@
+import { GOODS_SERVER_CURRENT_PIN } from './rc1-deed-source-compatibility.js';
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
@@ -19,7 +20,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': CITY_SOURCE_CURRENT_PINS['src/server.js'],
+  'src/server.js': GOODS_SERVER_CURRENT_PIN,
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -29,7 +30,11 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 7, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 8, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  goodsSourceTransfer: { sourceRevision: '29c8b418ba764f6058d643e8bbe6d685ba99e5ce',
+    serverPin: GOODS_SERVER_CURRENT_PIN, serverPredecessorPin: CITY_SOURCE_CURRENT_PINS['src/server.js'], serverInverseChunks: 1,
+    economyPin: ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'], economyPredecessorPin: 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b', economyInverseChunks: 8,
+    scope: 'Exact goods board and quota inverses preserve unchanged historical guards only; no historical goods, world execution, deployment or soak qualification is inherited.' },
   citySourceReviewTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
     sourcePins: Object.fromEntries(['src/server.js', 'src/operations.js'].map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])),
     predecessorPins: Object.fromEntries(['src/server.js', 'src/operations.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])),
