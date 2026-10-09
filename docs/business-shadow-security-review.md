@@ -41,16 +41,22 @@ Source base: 8947d67267e98d9947f76e02f206daadfaa6ccf4. Scope: the business snaps
 
 Memory and PostgreSQL18.4 regressions put 101 already-bid opportunities ahead of fresh work, plus self-owned/expired cases and a rival bid. Only fresh competing work remains visible; excluded rows do not mark opportunity coverage truncated. No finance actions or owner authority changes occur.
 
+## Fee-aware planning follow-up
+
+Source base: f8aae4e64 (full revision is available in Git history). Scope: pure shadow pricing, CLI flags and their tests; no database, owner-authority or provider changes. Operating costs are bounded operator estimates and percentage fees round up to cents. A conservative one-cent buffer bounds rounding excess. Target margin plus fee percentage must remain below 100%; separate positive denominators bound both gross target margin and minimum absolute margin. Suggested prices must remain within market limits.
+
+Independent source review and 400 deterministic pricing trials (seed1947) verify the inequalities against independently calculated rounded fees. The fixed case of 12000 compute micros, 300000 operating micros and290fee basis points yields a450000 price,20000estimated fee and118000estimated contribution. Legacy zero-fee policies remain unchanged. Higher published prices preserve coverage; compute reservations still use only the compute quote. Estimates never become ledger charges and do not make outsideCostsComplete or profitabilityKnown true. Operator fees are not verified provider billing data.
+
 ## Reviewed source hashes
 
 | File | SHA256 |
 | --- | --- |
 | src/resourcebusiness.js | 673b8f1c7b65a50ba3fe1a5518a9e656690f37b890e61dec4ef1f3de12f4c549 |
-| src/businesspolicy.js | d01897a4dc3d1ac464e0571c1c335255d9076dbc877eba552b788c2cfe040788 |
+| src/businesspolicy.js | ef0fa70b7616fd5ad21f48b999f58f45ef30600ecc4cbe641ec7e4d30e381f31 |
 | src/routes/resources.js | b3548f94a6f3620710498aa9f7b54f0d49ede5d5d8401de5f5fa3eae547cab15 |
 | src/resourcecontracts.js | 7fdb35a2a95c43f6b8cf29cf6ea61e023ec581f904766193cd29046a84b44867 |
-| tools/business-agent.js | b556cb869cb7581772b7086d61760899c27e894579c2f6db37174068d3aa5cfe |
+| tools/business-agent.js | 1d2bd59f602dd887b91101fdb6460a41cdbf8851b3851b21bc7318d8ab986df3 |
 | tools/resource-economy-pilot.js | 115881267cd6be3f6479c765a39972619b4d3d53c792edcd7828fc484819e4c0 |
 | test/resourcebusiness.js | 580f3011e74fcce5274f9036dc66d4c1a862cfa9c6ead8aede145b0bc9f888ae |
-| test/businesspolicy.js | 84460ce04b8f9bb1aef6ab0c3e6169ba2cc862d6de69dac1dc25e23feedd85db |
+| test/businesspolicy.js | 76a8adef67b503f76f77e7d7ec12fcad09644b33a69101f59529ec608eb2769a |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |

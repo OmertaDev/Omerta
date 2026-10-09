@@ -58,6 +58,18 @@ assert.throws(()=>compareBusiness(result,{...later,asOf:'2020-01-01'}));
 assert.throws(()=>normalizeBusinessPolicy({execute:true}));assert.throws(()=>normalizeBusinessPolicy({targetMarginBps:10000}));
 assert.throws(()=>evaluateBusiness({...snapshot(),totals:{settledCustomerRevenueUsdMicros:Infinity}},policy));
 assert.throws(()=>evaluateBusiness({...snapshot(),bounties:Array(101).fill({})},policy));
+const feeAware=snapshot();feeAware.bounties.forEach(b=>{b.budgetUsdMicros=1000000;});
+const feePlan=evaluateBusiness(feeAware,{...policy,operatingCostPerJobUsdMicros:300000,paymentFeeBps:290});
+assert.equal(feePlan.pricing.suggestedPriceUsdMicros,450000);
+assert.equal(feePlan.pricing.estimatedPaymentFeeUsdMicros,20000);
+assert(feePlan.riskFlags.includes('operator_cost_estimates_unreconciled'));
+assert.equal(feePlan.profitabilityKnown,false);assert.equal(feePlan.outsideCostsComplete,false);
+assert.equal(feePlan.proposals.find(p=>p.kind==='bid').computeReserveUsdMicros,12000,'Estimated external costs never become treasury reservations');
+assert.equal(feePlan.proposals.find(p=>p.kind==='bid').estimatedContributionUsdMicros,118000);
+assert.throws(()=>normalizeBusinessPolicy({paymentFeeBps:-1}));assert.throws(()=>normalizeBusinessPolicy({paymentFeeBps:3001}));
+assert.throws(()=>normalizeBusinessPolicy({operatingCostPerJobUsdMicros:1.5}));
+assert.throws(()=>normalizeBusinessPolicy({targetMarginBps:9000,paymentFeeBps:1000}));
+assert.equal(evaluateBusiness(snapshot(),{...policy,operatingCostPerJobUsdMicros:1000000000}).pricing.suggestedPriceUsdMicros,null,'Impossible prices are not proposed');
 let state=1947;const next=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state;};
 for(let i=0;i<200;i++){
  const s=snapshot();s.catalog=[{...entry,inputUsdMicrosPerMillion:next()%100000000,outputUsdMicrosPerMillion:next()%100000000}];
@@ -66,4 +78,10 @@ for(let i=0;i<200;i++){
  if(price!==null){assert.equal(price%10000,0);assert(BigInt(price)*BigInt(10000-bps)>=BigInt(cost)*10000n);assert(price-cost>=min);}
  assert(evaluated.capacity.proposedWorkSlots<=3);
 }
-console.log('businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 200 pricing trials seed1947');
+for(let i=0;i<200;i++){
+ const fee=next()%3001,margin=next()%(10000-fee),operating=next()%1000000;
+ const evaluated=evaluateBusiness(snapshot(),{...policy,targetMarginBps:Math.min(margin,9000),paymentFeeBps:fee,operatingCostPerJobUsdMicros:operating});
+ const price=evaluated.pricing.suggestedPriceUsdMicros,cost=evaluated.pricing.planningComputeCostUsdMicros;
+ if(price!==null){const roundedFee=(BigInt(price)*BigInt(fee)+99999999n)/100000000n*10000n;const profit=BigInt(price)-BigInt(cost)-BigInt(operating)-roundedFee;assert(profit*10000n>=BigInt(price)*BigInt(Math.min(margin,9000)));assert(profit>=10000n);assert.equal(price%10000,0);}
+}
+console.log('businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 400 pricing trials seed1947');
