@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f8aae4e6232f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b03093274a72`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2149 |
+| Commits in clone | 2151 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Keep shadow work discovery actionable after existing bids (#202) |
+| Latest commit | 2026-10-09 — Bound goods shop supply and demand to stop repeat profit farming |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1249 |
+| OmertaDev | 1250 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 55 |
+| github-actions[bot] | 56 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,16 +31,16 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 437 | yes |
-| [src/server.js](../../src/server.js) | 376 | yes |
-| [SPEC.md](../../SPEC.md) | 369 | yes |
-| knowledge/generated/github-history.md | 326 | historical |
-| knowledge/generated/graph-summary.md | 326 | historical |
-| knowledge/generated/graph.json | 326 | historical |
-| knowledge/generated/inventory.md | 326 | historical |
-| [schema.sql](../../schema.sql) | 302 | yes |
+| [public/index.html](../../public/index.html) | 438 | yes |
+| [src/server.js](../../src/server.js) | 377 | yes |
+| [SPEC.md](../../SPEC.md) | 370 | yes |
+| knowledge/generated/github-history.md | 327 | historical |
+| knowledge/generated/graph-summary.md | 327 | historical |
+| knowledge/generated/graph.json | 327 | historical |
+| knowledge/generated/inventory.md | 327 | historical |
+| [schema.sql](../../schema.sql) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 240 | yes |
+| [package.json](../../package.json) | 241 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 139 | historical |
@@ -65,7 +65,7 @@
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
 | knowledge/generated/schema.md | 55 | historical |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
-| [src/economy.js](../../src/economy.js) | 51 | yes |
+| [src/economy.js](../../src/economy.js) | 52 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 50 | yes |
