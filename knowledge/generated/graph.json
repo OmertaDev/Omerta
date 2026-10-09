@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "42489c6ccf88b88ab55c982a9b385295e73a2073",
+  "sourceRevision": "1f48094e3140fc6d24427dd78882cfee5e08cd35",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10309,
-    "edges": 41954,
+    "nodes": 10311,
+    "edges": 41963,
     "byNodeType": {
       "Artifact": 4378,
       "Command": 204,
-      "Commit": 2151,
+      "Commit": 2153,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3508,
-      "CHANGED": 16281,
+      "CHANGED": 16288,
       "CONTAINS": 4399,
       "DECLARES": 204,
       "DEFINED_IN": 1387,
       "DEPENDS_ON": 67,
       "EXECUTES": 689,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2151,
+      "HAS_COMMIT": 2153,
       "IMPLEMENTS": 124,
       "IMPORTS": 4142,
       "INHERITS": 42,
@@ -24196,20 +24196,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 8945,
+      "bytes": 8941,
       "lines": 63,
-      "version": "ec8c552de8aeed81",
+      "version": "4b2e6d78030e3c4f",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "ec8c552de8aeed81"
+          "version": "4b2e6d78030e3c4f"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:37:32.000Z",
+      "lastChangedAt": "2026-10-09T17:39:37.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "42489c6ccf88b88ab55c982a9b385295e73a2073"
+      "lastChangedCommit": "1f48094e3140fc6d24427dd78882cfee5e08cd35"
     },
     {
       "key": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -104945,6 +104945,22 @@
       ]
     },
     {
+      "key": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "type": "Commit",
+      "id": "0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "label": "Refresh knowledge for fee-aware business planning",
+      "title": "Refresh knowledge for fee-aware business planning",
+      "date": "2026-10-09T17:38:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "provenance": [
+        {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0decd1cbe2d465e970b6feb3ca33bac403df3097"
+        }
+      ]
+    },
+    {
       "key": "Commit:0df2337ff963524bae358f4bc50369be595d7315",
       "type": "Commit",
       "id": "0df2337ff963524bae358f4bc50369be595d7315",
@@ -107437,6 +107453,22 @@
         {
           "commit": "1f16704a55c2d06f14dbaba7e3587112cfea0c97",
           "url": "https://github.com/OmertaDev/Omerta/commit/1f16704a55c2d06f14dbaba7e3587112cfea0c97"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1f48094e3140fc6d24427dd78882cfee5e08cd35",
+      "type": "Commit",
+      "id": "1f48094e3140fc6d24427dd78882cfee5e08cd35",
+      "label": "Pin full fee-aware planning review source revision",
+      "title": "Pin full fee-aware planning review source revision",
+      "date": "2026-10-09T17:39:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1f48094e3140fc6d24427dd78882cfee5e08cd35",
+      "provenance": [
+        {
+          "commit": "1f48094e3140fc6d24427dd78882cfee5e08cd35",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1f48094e3140fc6d24427dd78882cfee5e08cd35"
         }
       ]
     },
@@ -145519,12 +145551,12 @@
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
       "lines": 63,
-      "version": "ec8c552de8aeed81",
+      "version": "4b2e6d78030e3c4f",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "ec8c552de8aeed81"
+          "version": "4b2e6d78030e3c4f"
         }
       ]
     },
@@ -157862,6 +157894,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+        },
+        {
           "commit": "0fe33ebb51f387d386e03cb828026a59bbde13de"
         },
         {
@@ -158313,6 +158348,9 @@
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
+        },
+        {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
         },
         {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
@@ -159305,6 +159343,9 @@
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+        },
+        {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
@@ -160293,6 +160334,9 @@
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
+        },
+        {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
         },
         {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
@@ -161555,6 +161599,9 @@
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+        },
+        {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
@@ -162513,6 +162560,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
         },
         {
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
@@ -171638,7 +171688,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "42489c6ccf88b88ab55c982a9b385295e73a2073",
+      "revision": "1f48094e3140fc6d24427dd78882cfee5e08cd35",
       "currentBranch": "codex/shadow-fee-aware-pricing",
       "defaultBranch": "main",
       "visibility": "public",
@@ -244647,6 +244697,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0df2337ff963524bae358f4bc50369be595d7315",
       "to": "Artifact:docs/release/readiness-work/harness-worker-schedule.md",
       "provenance": {
@@ -255051,6 +255149,14 @@
       "to": "Artifact:test/underworld.js",
       "provenance": {
         "commit": "1f16704a55c2d06f14dbaba7e3587112cfea0c97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1f48094e3140fc6d24427dd78882cfee5e08cd35",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "1f48094e3140fc6d24427dd78882cfee5e08cd35"
       }
     },
     {
@@ -439065,6 +439171,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0decd1cbe2d465e970b6feb3ca33bac403df3097",
+      "provenance": {
+        "commit": "0decd1cbe2d465e970b6feb3ca33bac403df3097"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0df2337ff963524bae358f4bc50369be595d7315",
       "provenance": {
         "commit": "0df2337ff963524bae358f4bc50369be595d7315"
@@ -440308,6 +440422,14 @@
       "to": "Commit:1f16704a55c2d06f14dbaba7e3587112cfea0c97",
       "provenance": {
         "commit": "1f16704a55c2d06f14dbaba7e3587112cfea0c97"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:1f48094e3140fc6d24427dd78882cfee5e08cd35",
+      "provenance": {
+        "commit": "1f48094e3140fc6d24427dd78882cfee5e08cd35"
       }
     },
     {
