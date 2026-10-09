@@ -72,6 +72,37 @@ async function inspectPngs(page, files) {
   }, files);
 }
 
+// Browser input waits. Keep these independent of the server fixture for focused frame-delay checks.
+async function waitForInput(page, predicate, argument) {
+  try { await page.waitForFunction(predicate, argument, { timeout: 5000 }); }
+  catch (error) {
+    console.error('City input diagnostic:', JSON.stringify(await page.evaluate(() => {
+      const state = window.__cityHandles.at(-1)?.handle.getState();
+      return { hidden: document.hidden, focused: document.hasFocus(), active: document.activeElement?.id || document.activeElement?.tagName,
+        ready: state?.ready, player: state?.player, facing: state?.facing, pathLength: state?.pathLength,
+        held: Array.from(document.querySelectorAll('[data-city-move].is-held')).map(button => button.dataset.cityMove) };
+    })));
+    throw error;
+  }
+}
+async function holdKey(page, key, predicate, argument) {
+  await page.bringToFront();
+  await page.locator('.omerta-city__canvas canvas').focus();
+  try {
+    await page.keyboard.down(key);
+    await waitForInput(page, predicate, argument);
+  } finally { await page.keyboard.up(key); }
+}
+async function waitForFrames(page, frames) {
+  await page.evaluate(frames => {
+    window.__cityObservedFrames = 0;
+    const observe = () => { if (++window.__cityObservedFrames < frames) requestAnimationFrame(observe); };
+    requestAnimationFrame(observe);
+  }, frames);
+  await waitForInput(page, frames => window.__cityObservedFrames >= frames, frames);
+}
+// End browser input waits.
+
 assert(!process.env.DATABASE_URL, 'City mode browser checks require disposable pg-mem; clear DATABASE_URL.');
 const executablePath = resolveBrowser();
 assert(executablePath && fs.existsSync(executablePath), 'Set CHROMIUM_PATH to an installed Chromium/Chrome executable.');
@@ -120,12 +151,14 @@ try {
       });
     }, playerToken);
     const page = await context.newPage();
+    await page.bringToFront();
     page.on('pageerror', error => pageErrors.push(error.message));
     return page;
   };
 
   const state = page => page.evaluate(() => window.__cityHandles.at(-1)?.handle.getState());
   const selectTab = async (page, tab) => {
+    await page.bringToFront();
     await page.locator(`[data-tab="${tab}"]`).evaluate(button => button.click());
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'attached' });
   };
@@ -277,19 +310,23 @@ try {
 
   // Real input must move the player, and local walking must not submit a game action.
   const walkStart = requests.length;
-  await canvas.focus();
-  await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(450);
-  await page.keyboard.up('ArrowRight');
+  await holdKey(page, 'ArrowRight', x => {
+    const state = window.__cityHandles.at(-1).handle.getState();
+    return state.player.x > x + 20 && state.facing === 'right';
+  }, before.player.x);
   const afterKeyboard = await state(page);
   assert(afterKeyboard.player.x > before.player.x + 20, 'Focused arrow input moves the avatar.');
-  await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(1000);
-  await page.keyboard.up('ArrowRight');
-  const atBuilding = await state(page);
-  const blockingBuilding = atBuilding.obstacles.filter(obstacle => obstacle.x > before.player.x
+  const blockingBuilding = afterKeyboard.obstacles.filter(obstacle => obstacle.x > before.player.x
     && obstacle.y < before.player.y && obstacle.y + obstacle.height > before.player.y).sort((a, b) => a.x - b.x)[0];
   assert(blockingBuilding, 'A solid facade lies on the rehearsed movement ray.');
+  await page.evaluate(() => { window.__cityCollision = null; });
+  await holdKey(page, 'ArrowRight', facade => {
+    const state = window.__cityHandles.at(-1).handle.getState(), previous = window.__cityCollision;
+    const x = state.player.x;
+    window.__cityCollision = { x, frames: previous?.x === x ? previous.frames + 1 : 0 };
+    return x >= facade - 20 && state.facing === 'right' && window.__cityCollision.frames >= 12;
+  }, blockingBuilding.x);
+  const atBuilding = await state(page);
   assert(atBuilding.player.x < blockingBuilding.x, 'Arrow movement stops outside the solid building.');
   assert(atBuilding.player.x - afterKeyboard.player.x < 45, 'A held movement key cannot cross the building facade.');
   const box = await canvas.boundingBox();
@@ -299,8 +336,8 @@ try {
     x: (goal.x - camera.x) * camera.zoom * box.width / camera.width,
     y: (goal.y - camera.y) * camera.zoom * box.height / camera.height,
   } });
-  await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
-  await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
+  await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+  await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
   const afterPointer = await state(page);
   assert(Math.hypot(afterPointer.player.x - goal.x, afterPointer.player.y - goal.y) <= 16, 'Canvas tap routes the avatar to the chosen ground.');
   assert(!afterPointer.obstacles.some(obstacle => afterPointer.player.x > obstacle.x && afterPointer.player.x < obstacle.x + obstacle.width
@@ -311,11 +348,11 @@ try {
     x: (stories.x - afterPointer.camera.x) * afterPointer.camera.zoom * pointerBox.width / afterPointer.camera.width,
     y: (stories.y - afterPointer.camera.y) * afterPointer.camera.zoom * pointerBox.height / afterPointer.camera.height,
   } });
-  await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+  await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
   await page.locator('#map-mode-territory').focus();
-  await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
+  await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
   const afterBlur = await state(page);
-  await page.waitForTimeout(250);
+  await waitForFrames(page, 16);
   assert.deepEqual((await state(page)).player, afterBlur.player, 'Leaving canvas focus cancels the pending venue walk.');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'map-mode-territory', 'Cancelled arrival never steals focus from another control.');
   assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'Cancelled arrival opens no venue card.');
@@ -492,7 +529,7 @@ try {
   const reducedState = await state(mobile);
   assert.equal(reducedState.reducedMotion, true, 'Reduced-motion preference reaches the scene.');
   assert(reducedState.ambient.length > 0, 'Ambient actors are present for the reduced-motion rehearsal.');
-  await mobile.waitForTimeout(600);
+  await waitForFrames(mobile, 36);
   assert.deepEqual((await state(mobile)).ambient, reducedState.ambient, 'Reduced motion keeps cosmetic ambient actors still.');
   const mobileLayout = await mobile.evaluate(() => {
     const canvas = document.querySelector('.omerta-city__canvas canvas').getBoundingClientRect();
@@ -506,21 +543,35 @@ try {
   assert(touchBox.width >= 44 && touchBox.height >= 44, 'Mobile movement has a usable 44px touch target.');
   const touchSession = await mobile.context().newCDPSession(mobile);
   const touchPoint = { x: touchBox.x + touchBox.width / 2, y: touchBox.y + touchBox.height / 2, id: 1 };
+  await mobile.bringToFront();
   const touchStart = (await state(mobile)).player;
-  await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint] });
-  await mobile.waitForTimeout(350);
-  await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  assert((await state(mobile)).player.y > touchStart.y + 20, 'A real held touch moves the avatar.');
-  const afterRelease = (await state(mobile)).player;
-  await mobile.waitForTimeout(150);
-  assert.deepEqual((await state(mobile)).player, afterRelease, 'Touch release stops movement.');
-  await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint] });
-  await mobile.waitForTimeout(120);
-  await touchSession.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
-  const afterCancel = (await state(mobile)).player;
-  await mobile.waitForTimeout(150);
-  assert.deepEqual((await state(mobile)).player, afterCancel, 'Pointer cancellation stops held touch movement.');
-  await touchSession.detach();
+  try {
+    try {
+      await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint] });
+      await waitForInput(mobile, y => {
+        const state = window.__cityHandles.at(-1).handle.getState();
+        return state.player.y > y + 20 && state.facing === 'down'
+          && document.querySelector('[data-city-move="down"]').classList.contains('is-held');
+      }, touchStart.y);
+    } finally { await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); }
+    assert((await state(mobile)).player.y > touchStart.y + 20, 'A real held touch moves the avatar.');
+    const afterRelease = (await state(mobile)).player;
+    await waitForFrames(mobile, 10);
+    assert.deepEqual((await state(mobile)).player, afterRelease, 'Touch release stops movement.');
+    assert.equal(await mobile.locator('[data-city-move].is-held').count(), 0, 'Touch release clears the held input.');
+    try {
+      await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [touchPoint] });
+      await waitForInput(mobile, y => {
+        const state = window.__cityHandles.at(-1).handle.getState();
+        return state.player.y > y && state.facing === 'down'
+          && document.querySelector('[data-city-move="down"]').classList.contains('is-held');
+      }, afterRelease.y);
+    } finally { await touchSession.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] }); }
+    const afterCancel = (await state(mobile)).player;
+    await waitForFrames(mobile, 10);
+    assert.deepEqual((await state(mobile)).player, afterCancel, 'Pointer cancellation stops held touch movement.');
+    assert.equal(await mobile.locator('[data-city-move].is-held').count(), 0, 'Pointer cancellation clears the held input.');
+  } finally { await touchSession.detach(); }
   await mobile.locator('[data-destination="fixer"]').tap();
   await mobile.locator('[data-city-close]').tap();
   assert.equal(await mobile.locator('.omerta-city__interaction').isVisible(), false, 'Touch users can close venue details.');
@@ -535,10 +586,10 @@ try {
   const fallbackState = await state(missingArt);
   assert.deepEqual(fallbackState.art, { background: 'fallback', player: 'fallback', npcs: 'fallback' }, 'Missing generated images use the procedural fallback textures.');
   const artWalkStart = artFallbackRequests.length;
-  await missingArt.locator('.omerta-city__canvas canvas').focus();
-  await missingArt.keyboard.down('ArrowDown');
-  await missingArt.waitForTimeout(350);
-  await missingArt.keyboard.up('ArrowDown');
+  await holdKey(missingArt, 'ArrowDown', y => {
+    const state = window.__cityHandles.at(-1).handle.getState();
+    return state.player.y > y + 20 && state.facing === 'down';
+  }, fallbackState.player.y);
   assert((await state(missingArt)).player.y > fallbackState.player.y + 20, 'The fallback avatar still walks through the scene.');
   assert.deepEqual(artFallbackRequests.slice(artWalkStart).filter(request => !['GET', 'HEAD'].includes(request.method)), [], 'Fallback walking still submits no game mutation.');
   await missingArt.locator('.omerta-city__destination[data-destination="stories"]').click();
@@ -614,36 +665,43 @@ try {
   await districtRead;
   await page.waitForFunction(count => window.__cityHandles.length > count && window.__cityHandles.at(-1).handle.getState().ready, identityHandles);
   assert.deepEqual((await state(page)).player, { x: 430, y: 366 }, 'Another district starts at its own valid spawn.');
-  await page.bringToFront();
-  await page.locator('.omerta-city__canvas canvas').focus();
-  await page.keyboard.down('ArrowDown');
-  try {
-    await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().player.y > 400, null, { timeout: 5000 });
-  } finally {
-    await page.keyboard.up('ArrowDown');
-  }
+  await holdKey(page, 'ArrowDown', () => {
+    const state = window.__cityHandles.at(-1).handle.getState();
+    return state.player.y > 400 && state.facing === 'down';
+  });
   assert((await state(page)).player.y > 400, 'The old generation has a distinct pose before invalidation.');
   const generationHandles = await page.evaluate(() => window.__cityHandles.length);
   let generationReads = 0, delayedMapReads = 0;
+  let releaseOldMap;
+  const oldMapGate = new Promise(resolve => { releaseOldMap = resolve; });
+  await page.route('**/v1/map', async route => {
+    if (++delayedMapReads !== 1) return route.continue();
+    const response = await route.fetch();
+    await oldMapGate;
+    await page.waitForTimeout(250);
+    await route.fulfill({ response });
+  });
+  // Begin the stale read before changing identity. An old request still in api()'s queue can
+  // correctly be canceled without reaching HTTP, which would not exercise this response race.
+  const oldMapRequest = page.waitForRequest(request => new URL(request.url()).pathname === '/v1/map');
+  bus.emit('me:' + characterId, { type: 'city-browser-old-map' });
+  await oldMapRequest;
   await page.route('**/v1/projections/player', route => {
     if (++generationReads === 1) return route.fulfill({ status: 409, contentType: 'application/json',
       body: JSON.stringify({ error: 'contention', message: 'Refresh the view before trying again.' }) });
     return route.continue();
   });
-  await page.route('**/v1/map', async route => {
-    if (++delayedMapReads !== 1) return route.continue();
-    const response = await route.fetch();
-    await page.waitForTimeout(250);
-    await route.fulfill({ response });
-  });
-  const nextGeneration = (await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1 RETURNING generation', [characterId])).rows[0].generation;
-  const generationRead = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player' && response.status() === 409);
-  const recoveredRead = page.waitForResponse(async response => {
-    if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
-    const reply = await response.json();
-    return (reply.player?.character || reply.player)?.generation === nextGeneration;
-  });
-  bus.emit('me:' + characterId, { type: 'city-browser-generation' });
+  let generationRead, recoveredRead;
+  try {
+    const nextGeneration = (await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1 RETURNING generation', [characterId])).rows[0].generation;
+    generationRead = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player' && response.status() === 409);
+    recoveredRead = page.waitForResponse(async response => {
+      if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+      const reply = await response.json();
+      return (reply.player?.character || reply.player)?.generation === nextGeneration;
+    });
+    bus.emit('me:' + characterId, { type: 'city-browser-generation' });
+  } finally { releaseOldMap(); }
   const contentionResponse = await generationRead;
   assert.equal((await contentionResponse.json()).error, 'contention', 'Generation refresh exercises the bounded contention recovery.');
   let generationResponse = contentionResponse;
@@ -667,7 +725,8 @@ try {
     throw error;
   }
   assert.deepEqual((await state(page)).player, { x: 430, y: 366 }, 'A new generation cannot reuse the prior generation pose.');
-  assert(generationReads >= 2 && delayedMapReads >= 2, 'Contention recovery supersedes the delayed old-identity map with a fresh read.');
+  assert(generationReads >= 2 && delayedMapReads >= 2,
+    `Contention recovery supersedes the delayed old-identity map with a fresh read (player=${generationReads}, map=${delayedMapReads}).`);
   assert(await page.evaluate(count => window.__cityHandles.slice(0, count).every(entry => entry.destroyed), generationHandles),
     'All old-generation handles stay retired after the delayed map response.');
   assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'Recovery leaves exactly one current-generation canvas.');
