@@ -119,7 +119,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     '--max-output-tokens': 'maxOutputTokens', '--target-margin-bps': 'targetMarginBps',
     '--minimum-margin-usd-micros': 'minimumMarginUsdMicros', '--operating-cost-per-job-usd-micros': 'operatingCostPerJobUsdMicros',
     '--payment-fee-bps': 'paymentFeeBps', '--max-active-jobs': 'maxActiveJobs',
-    '--minimum-reserve-usd-micros': 'minimumReserveUsdMicros', '--max-proposals': 'maxProposals',
+    '--minimum-reserve-usd-micros': 'minimumReserveUsdMicros', '--max-proposals': 'maxProposals', '--work-seconds-per-job':'workSecondsPerJob', '--planning-horizon-seconds':'planningHorizonSeconds',
     '--minimum-renewal-accepted-jobs': 'minimumRenewalAcceptedJobs' };
   try {
     for (let index = 2; index < process.argv.length; index++) {

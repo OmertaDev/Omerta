@@ -21,3 +21,9 @@ Use `--operating-cost-per-job-usd-micros` for estimated fixed per-job costs (inc
 Suggested prices cover the larger of configured compute quotes and measured job compute costs, then fixed estimates, estimated percentage fees and the target margin. Percentage fees round upward to exact cents; pricing includes a conservative one-cent rounding reserve when a percentage fee is configured. If the resulting price exceeds market bounds, the planner holds rather than proposing an invalid price. `estimatedContributionUsdMicros` includes these estimates; existing known compute-only contribution stays separate.
 
 Estimates never become ledger expenses, treasury reservations or owner spending authority. Compute reservations still use the configured compute quote only. Records flag operator assumptions as unreconciled; `outsideCostsComplete` and `profitabilityKnown` remain false. Actual billing reconciliation is still required to establish net profit.
+
+## Deadline-aware work scheduling
+
+`--work-seconds-per-job` supplies an operator duration estimate (60–3600 seconds, default 300). `--planning-horizon-seconds` bounds the planning window (60–86400 seconds, default 3600). Awarded open/claimed jobs reserve sequential work time in earliest-deadline order. Submitted/disputed jobs continue occupying the existing active-job slots but do not reserve a second execution.
+
+The record shows planned starts/finishes, deadline feasibility and remaining time. New bid proposals must fit time, slot, compute-fund, daily-budget and current owner-authority limits. Missing active-job details or an expired/unachievable awarded deadline blocks additional bid proposals. These are estimates, not delivery guarantees or reservations in the live ledger. Bid delivery estimates assume immediate award and require fresh planning when a buyer actually awards work. All proposals remain shadow-only.
