@@ -1,40 +1,40 @@
 # Generated repository inventory
 
-> Source: worktree at `eb04fbdf0402`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `f3744d417704`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,356 |
-| Text lines | 1,552,529 |
-| Repository bytes inventoried | 811,732,519 |
-| Backend/route modules | 304 |
-| HTTP route registrations / unique routes | 872 / 872 |
+| Current artifacts | 4,378 |
+| Text lines | 1,557,155 |
+| Repository bytes inventoried | 814,692,955 |
+| Backend/route modules | 306 |
+| HTTP route registrations / unique routes | 873 / 873 |
 | Database tables | 388 |
 | Solidity declarations | 126 |
-| Git commits | 2,133 |
+| Git commits | 2,141 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,258 / 41,723 |
+| Graph nodes / edges | 10,299 / 41,899 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 1,194 |
-| artifact | 673 |
+| media-asset | 1,204 |
+| artifact | 674 |
 | contract-project | 646 |
-| test-suite | 460 |
+| test-suite | 463 |
 | documentation | 418 |
-| backend-module | 272 |
+| backend-module | 274 |
 | engineering-harness | 204 |
 | contract-test | 111 |
 | contract-source | 105 |
 | audit | 98 |
 | design | 82 |
 | route-module | 32 |
-| web-surface | 25 |
+| web-surface | 31 |
 | operations | 11 |
 | knowledge-base | 11 |
 | workflow | 6 |
@@ -61,14 +61,14 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 13,852 | web-surface | 2026-10-08 |
+| [public/index.html](../../public/index.html) | 14,098 | web-surface | 2026-10-09 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,462 | test-suite | 2026-10-06 |
+| [test/client.js](../../test/client.js) | 9,466 | test-suite | 2026-10-09 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,648 | data-schema | 2026-10-09 |
@@ -81,14 +81,14 @@
 
 | Extension | Files | Bytes |
 |---|---:|---:|
-| .png | 239 | 282,132,782 |
+| .png | 248 | 283,589,518 |
 | .mp4 | 208 | 273,426,998 |
 | .jpg | 326 | 63,294,254 |
 | .mp3 | 33 | 9,082,974 |
 | .svg | 153 | 7,012,049 |
 | .m4a | 10 | 6,069,278 |
 | .webp | 57 | 2,969,224 |
-| .json | 27 | 729,820 |
+| .json | 28 | 735,029 |
 | .mjs | 27 | 297,220 |
 | .html | 26 | 246,694 |
 | .md | 26 | 202,832 |
