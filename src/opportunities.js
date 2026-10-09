@@ -3,6 +3,7 @@
 // ONE endpoint instead of modelling a dozen boards. Pure aggregation over existing reads +
 // deterministic price math — read-only, moves no value, ZERO §10.4 surface. See AGENTS.md.
 import { GOODS, DISTRICTS, goodPriceOf, priceBlock } from './rules.js';
+import { goodsLiquidityBoard } from './goodsmarket.js';
 import { listContracts } from './social.js';
 import { loanBoard } from './loans.js';
 import { convoyBoard } from './convoy.js';
@@ -11,27 +12,35 @@ import { exchangeBoard } from './exchange.js';
 
 // The standing skill-loops (the "agent niches") — how an agent makes money by playing well, each
 // with a live, computable signal. This is the sanctioned agent income: SKILL, not faucets.
-function arbitrage(blk, limit = 8) {
+function arbitrage(blk, liquidity, limit = 8) {
   // Trade-goods prices are a DETERMINISTIC hash of (good, district, day) — so cross-district
   // arbitrage is a solved optimization, not a guess. For each good, find the cheapest buy district
   // and the richest sell district TODAY; rank by spread. The single highest-signal agent niche.
   const rows = [];
   for (const g of GOODS) {
-    let lo = null, hi = null;
+    let lo = null, hi = null, cheapest = null;
     for (const d of DISTRICTS) {
       const price = goodPriceOf(g.id, d.id, blk);
-      if (!lo || price < lo.price) lo = { district: d.id, price };
-      if (!hi || price > hi.price) hi = { district: d.id, price };
+      const available = liquidity.districts[d.id][g.id];
+      if (!cheapest || price < cheapest.price) cheapest = { district: d.id, price, stock: available.stock };
+      if (available.stock > 0 && (!lo || price < lo.price)) lo = { district: d.id, price, stock: available.stock };
+      if (available.buying > 0 && (!hi || price > hi.price)) hi = { district: d.id, price, buying: available.buying };
     }
+    // Held freight can still be sold when every supplier is empty. A zero-stock edge
+    // retains its buyer, while procurement plans remain capped at zero.
+    lo ||= cheapest;
+    if (!lo || !hi) continue;
     const spread = hi.price - lo.price;
     rows.push({ good: g.id, name: g.name, buyIn: lo.district, buyPrice: lo.price,
-      sellIn: hi.district, sellPrice: hi.price, spread, spreadPct: Math.round((spread / lo.price) * 1000) / 10 });
+      sellIn: hi.district, sellPrice: hi.price, stock: lo.stock, buying: hi.buying,
+      refreshAt: liquidity.refreshAt, spread, spreadPct: Math.round((spread / lo.price) * 1000) / 10 });
   }
   return rows.sort((a, b) => b.spread - a.spread).slice(0, limit);
 }
 
 export async function opportunityBoard(pool, ch) {
   const blk = priceBlock();
+  const goodsLiquidity = await goodsLiquidityBoard(pool, blk);
   // the redemption window replaced the AMM (tokenomics v2 step 2) — read the live till, not a
   // spot price for a market that no longer trades
   const window = await exchangeBoard(pool, null);
@@ -96,7 +105,7 @@ export async function opportunityBoard(pool, ch) {
 
   // 5. NICHES — the standing skill-loops with live signals (the sanctioned agent income).
   const niches = {
-    arbitrage: arbitrage(blk),
+    arbitrage: arbitrage(blk, goodsLiquidity),
     // (red-team C1, tokenomics v2) This used to advertise `POST /v1/swap` and publish an AMM spot
     // price. Cash → $OMR is gone and so is the AMM, so every clause of that was false — and this
     // board is the surface AGENTS.md tells agents to poll, so a wrong entry here is not a stale
@@ -119,7 +128,7 @@ export async function opportunityBoard(pool, ch) {
   // (a WTB fill is risk-free cash; a contract pot is the biggest but carries PvP risk); if nothing
   // discrete is open, fall to the widest arbitrage spread (the standing skill income). Honest about
   // reward vs risk — it never claims a net it can't compute.
-  const topArb = niches.arbitrage[0];
+  const topArb = niches.arbitrage.find((edge) => edge.stock > 0 && edge.buying > 0);
   const topDiscrete = opportunities.find((o) => (o.reward || 0) > 0) || null;
   let best = null;
   if (topDiscrete) {
@@ -137,6 +146,7 @@ export async function opportunityBoard(pool, ch) {
 
   return {
     updatedBlock: blk,
+    goodsLiquidity,
     best,
     summary: {
       openActions: opportunities.length,

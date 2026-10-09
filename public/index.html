@@ -10079,7 +10079,9 @@
       const rows = Object.entries(allPrices).map(([d, m]) => [d, Number(m?.[id])]).filter(([, p]) => p > 0);
       if (rows.length < 2) return null;
       rows.sort((a, b) => a[1] - b[1]);
-      const [lo, hi] = [rows[0], rows[rows.length - 1]];
+      const lo = rows.find(([d]) => (prices.liquidity?.districts[d]?.[id]?.stock ?? 1) > 0);
+      const hi = [...rows].reverse().find(([d]) => (prices.liquidity?.districts[d]?.[id]?.buying ?? 1) > 0);
+      if (!lo || !hi || hi[1] <= lo[1]) return null;
       return { lo, hi, pct: Math.round((hi[1] / lo[1] - 1) * 100) };
     };
     // the day's best play: the single widest-spread good — the hero card names it
@@ -10087,16 +10089,18 @@
       .filter((x) => x.i).sort((a, b) => b.i.pct - a.i.pct)[0];
     const goodsCards = (rules?.goods || []).map((g) => {
       const price = spot[g.id], held = cargo[g.id] || 0;
+      const available = prices.liquidity?.districts[me?.loc]?.[g.id];
       const i = goodIntel(g.id);
       const here = me?.loc;
       const flag = i && here === i.lo[0] ? '<span class="chip good">CHEAPEST HERE — buy</span>'
         : i && here === i.hi[0] ? '<span class="chip" style="border-color:var(--gold,#c9a227);color:var(--gold,#c9a227)">RICHEST HERE — sell</span>' : '';
       return `<div class="card"><img class="ico wide" loading="lazy" alt="" src="/v1/art/good/${g.id}"><span class="t">${esc(g.name)}</span> ${flag}
         <div class="d">spot here: <b>$${price != null ? fmt(price) : '—'}</b> · in trunk: ${held}</div>
+        ${available ? `<div class="d">shop stock: <b>${available.stock}</b> · buying: <b>${available.buying}</b></div>` : ''}
         ${i ? `<div class="d" style="font-size:11.5px;color:var(--dim)">cheapest: ${i.lo[0]} $${fmt(i.lo[1])} · richest: ${i.hi[0]} $${fmt(i.hi[1])} · <b>+${i.pct}%</b> spread</div>` : ''}
         <input data-gd="${g.id}" placeholder="qty" size="5">
-        <button class="act" data-gdbuy="${g.id}">buy</button>
-        <button class="act" data-gdsell="${g.id}"${held ? '' : ' disabled'}>sell</button></div>`;
+        <button class="act" data-gdbuy="${g.id}"${available?.stock === 0 ? ' disabled' : ''}>buy</button>
+        <button class="act" data-gdsell="${g.id}"${held && available?.buying !== 0 ? '' : ' disabled'}>sell</button></div>`;
     }).join('');
     const DAILY_HOWTO = {
       crime: ['Pull jobs right here on the Streets — only CLEAN (successful) ones count.', null],
@@ -10219,12 +10223,13 @@
         <div class="card">
           <img class="ico wide" loading="lazy" alt="" src="/art/interior-trade.jpg">
           <span class="t">THE FREIGHT GAME</span>
-          <div class="d">Every district posts its own prices, fresh each day. The whole racket in one line:
-          <b>buy where it's cheap, travel, sell where it's rich</b> — the spread is your margin, your trunk is your ceiling.
+          <div class="d">Every district posts its own prices, refreshed every four hours. The whole racket in one line:
+          <b>buy where it's cheap, travel, sell where it's rich</b> — the spread is your margin. Shop stock and buying demand are shared by everyone and refresh with prices; selling does not restock a shop.
           ${bestPlay ? `Today's best board: <b>${esc(bestPlay.g.name)}</b> — ${bestPlay.i.lo[0]} $${fmt(bestPlay.i.lo[1])} → ${bestPlay.i.hi[0]} $${fmt(bestPlay.i.hi[1])} (<b>+${bestPlay.i.pct}%</b>).` : ''}
           Bulk players move the same freight by <b>convoy</b> (Big Scores) and by <b>boat</b> (the Port).</div>
         </div>
         <div class="d" style="color:var(--dim);font-size:12px;margin:4px 0">🚚 your trunk holds <b>${me.cargoCap ?? 0}</b> weight of cargo. Your <b>cars</b> are for muscle &amp; melt value — to <b>haul more</b>, buy a bigger set of <b>Wheels</b> (a truck / muscle car) in <b>The Empire ▸ Assets</b>.</div>
+        ${prices.liquidity?.refreshAt ? `<div class="d">Shop stock and demand refresh at ${esc(new Date(prices.liquidity.refreshAt).toLocaleTimeString())}.</div>` : ''}
         <div class="grid">${goodsCards}</div>`)}
       ${sect('streets-second', 'Your Second', `named muscle who rides along on jobs, takes ${(sq.cutBps ?? 500) / 100}% of the take… and can DIE for good`, soldierBlock, (sq.roster || []).length > 0)}`;
     wireSects(t);

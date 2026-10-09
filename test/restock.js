@@ -57,4 +57,11 @@ for (const controlled of [{ ...owned, held: ['docks'] }, { ...owned, deedPerk: [
   assert.equal(quote.unit, Math.round(goodPriceOf('gin', 'docks') * 0.95));
   assert.equal(quote.total, quote.unit * 3 + 2 * Math.ceil(quote.unit * 3 * 0.01));
 }
-console.log('restock: procurement margins, route selection, reserve, capacity, ownership, expiry and turf quotes passed');
+const depleted = { districts: Object.fromEntries(DISTRICTS.map((d) => [d.id, { gin: { stock: 0 } }])) };
+assert.equal(restockCandidates(ch, { cargoCap: 10 }, owned, [order], policy, depleted).length, 0,
+  'an empty NPC market offers no acquisition plan');
+depleted.districts.docks.gin.stock = 3;
+const limited = restockCandidates(ch, { cargoCap: 10 }, owned, [order], policy, depleted)[0];
+assert.equal(limited.plan.quantity, 3, 'procurement respects remaining shop stock');
+assert.equal(limited.plan.source, 'docks', 'procurement selects a supplier with stock');
+console.log('restock: procurement margins, route selection, reserve, capacity, ownership, expiry, turf quotes and finite supply passed');

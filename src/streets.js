@@ -11,9 +11,8 @@
 // folded in here. The block is where the corner, the day's work and the gym are.
 //
 // TWO OF THESE DO NOT GO THROUGH `readCharacter`, and both are deliberate:
-//   · `/v1/market/prices` is KEYLESS and pure — it computes today's board off the seed with no
-//     database at all. It is in the map because the ceiling is measured in REQUESTS, so folding it in
-//     is a whole round trip saved for no server cost. Its call ignores every argument.
+//   · `/v1/market/prices` is KEYLESS and read-only. Prices come from the seed; available shop stock
+//     and demand come from the shared liquidity counters on the same read client.
 //   · `/v1/daily` reads through the pool rather than `readCharacter`. `getDaily` is two SELECTs and
 //     writes nothing, and it takes its querier as an argument — so handing it the request's own
 //     client is both correct and stricter than the route it mirrors, since that client is the one
@@ -26,12 +25,14 @@ import * as Corner from './corner.js';
 import * as Soldiers from './soldiers.js';
 import * as Clues from './clues.js';
 import { priceBlock, DISTRICTS, GOODS, DRUGS, goodPriceOf, demandOf, makingsPriceOf } from './rules.js';
+import { goodsLiquidityBoard } from './goodsmarket.js';
 
 // The price board, in ONE place. `/v1/market/prices` built this inline in its route; with a second
 // caller that becomes two implementations of one board, which is how the two ends of a mirror come to
 // disagree (the extortFront lesson). The route calls this now too.
-export const marketPrices = (block = priceBlock()) => ({
+export const marketPrices = async (client, block = priceBlock()) => ({
   block,
+  liquidity: await goodsLiquidityBoard(client, block),
   goods: Object.fromEntries(DISTRICTS.map((d) =>
     [d.id, Object.fromEntries(GOODS.map((g) => [g.id, goodPriceOf(g.id, d.id, block)]))])),
   demand: Object.fromEntries(DISTRICTS.map((d) =>
@@ -40,7 +41,7 @@ export const marketPrices = (block = priceBlock()) => ({
 });
 
 export const STREETS_BOARDS = [
-  ['prices',   '/v1/market/prices', () => marketPrices()],
+  ['prices',   '/v1/market/prices', (ch, client) => marketPrices(client)],
   ['daily',    '/v1/daily',         (ch, client) => W.getDaily(client, ch.id)],
   ['soldiers', '/v1/soldiers',      (ch, client, h) => Soldiers.soldierBoard(ch, client, h.acct)],
   ['regimen',  '/v1/regimen',       (ch, client, h) => RG.regimenBoard(ch, client, h)],

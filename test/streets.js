@@ -91,7 +91,7 @@ const me = (await call('GET', '/v1/me', { token })).body.character;
 // changing what either one returns.
 {
   const solo = (await call('GET', '/v1/market/prices', { token })).body;
-  const direct = marketPrices(solo.block);
+  const direct = await marketPrices(pool, solo.block);
   assert.deepEqual(solo, direct, 'the /v1/market/prices route and the shared core must be one implementation');
   assert(Object.keys(solo.goods).length >= 6 && Object.keys(solo.makings).length >= 1,
     'the price board is non-trivial — an empty board would satisfy the comparison above vacuously');
