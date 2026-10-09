@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { resourceTransaction, lockResourceTreasury, lockResourceTreasuries, moveResourceMoney,
-  authorizeResourceSpend, resourceInt, resourceKey, resourceIntake, resourceError } from './resourcebook.js';
+  authorizeResourceSpend, resourceInt, resourceKey, resourceIntake, resourceError, resourceAccounting } from './resourcebook.js';
 import { createResourceJob, resourceJobView } from './resourcework.js';
 
 const providerId = 'service:market-analysis';
@@ -55,7 +55,9 @@ export async function resourceLaborBoard(pool, account) {
   }
   const service = (await pool.query('SELECT * FROM resource_services WHERE account_id=$1', [account])).rows[0];
   const active = Number((await pool.query("SELECT COUNT(*) AS count FROM resource_jobs WHERE seller_account=$1 AND state IN ('open','claimed','submitted','disputed')", [account])).rows[0].count);
-  return { bounties: rows.map(row => bountyView(row, account)), ownBounties: own.map(row => bountyView(row, account)), bids: bids.map(bidView), receivedBids: buyerBids,
+  const accounting = await resourceAccounting(pool, account);
+  const policy = (await pool.query('SELECT minimum_reserve FROM resource_compute_policies WHERE account_id=$1', [account])).rows[0];
+  return { availableUsdMicros: accounting.availableUsdMicros, minimumReserveUsdMicros: Number(policy?.minimum_reserve || 0), bounties: rows.map(row => bountyView(row, account)), ownBounties: own.map(row => bountyView(row, account)), bids: bids.map(bidView), receivedBids: buyerBids,
     ownService: service ? { enabled: service.enabled, revision: Number(service.revision), priceUsdMicros: Number(service.price_usd_micros), kind: 'market_analysis' } : null,
     sellerActiveJobs: active, remainingCapacity: Math.max(0, 3 - active) };
 }

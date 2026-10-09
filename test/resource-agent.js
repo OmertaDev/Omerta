@@ -185,13 +185,20 @@ const laborCatalog = [{ id: 'metered', maxInputTokens: 10000, maxOutputTokens: 1
 const bounty = (id, seconds = 3600) => ({ id, state: 'open', budgetUsdMicros: 100000,
   expiresAt: new Date(laborNow + seconds * 1000).toISOString(), question: 'private-question' });
 const laborBoard = { ownService: { enabled: true, kind: 'market_analysis', revision: 2, priceUsdMicros: 10000 },
-  sellerActiveJobs: 1, bids: [], bounties: [bounty('later', 7200), bounty('earlier'), bounty('third', 8000)] };
+  sellerActiveJobs: 1, availableUsdMicros: 100000, minimumReserveUsdMicros: 10000,
+  bids: [], bounties: [bounty('later', 7200), bounty('earlier'), bounty('third', 8000)] };
 const selectOptions = { providerId: 'metered', maxOutputTokens: 256, now: laborNow };
 const selections = selectLaborBids(laborBoard, laborCatalog, selectOptions);
 assert.equal(selections.length, 2, 'active backlog limits prospective work');
 assert.equal(selections[0].bountyId, 'earlier');
 assert.equal(selections[0].priceUsdMicros, 30000, 'conservative maximum input cost plus margin rounds up to cents');
 assert.equal(selections[0].expectedMarginUsdMicros, 19744);
+assert.equal(selectLaborBids({ ...laborBoard, availableUsdMicros: 0 }, laborCatalog, selectOptions).length, 0);
+assert.equal(selectLaborBids({ ...laborBoard, availableUsdMicros: 20255 }, laborCatalog, selectOptions).length, 0,
+  'full conservative quote must fit after preserving the owner reserve');
+assert.equal(selectLaborBids({ ...laborBoard, availableUsdMicros: 20256 }, laborCatalog, selectOptions).length, 2,
+  'exactly funded quote is permitted');
+assert.equal(selectLaborBids({ ...laborBoard, minimumReserveUsdMicros: undefined }, laborCatalog, selectOptions).length, 0);
 assert.equal(selectLaborBids({ ...laborBoard, sellerActiveJobs: 3 }, laborCatalog, selectOptions).length, 0);
 assert.equal(selectLaborBids({ ...laborBoard, bounties: [bounty('expired', 30)] }, laborCatalog, selectOptions).length, 0);
 assert.equal(selectLaborBids({ ...laborBoard, bounties: [{ ...bounty('low'), budgetUsdMicros: 20000 }] }, laborCatalog, selectOptions).length, 0);

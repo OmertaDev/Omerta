@@ -69,6 +69,8 @@ export function selectLaborBids(board, catalog, { providerId, maxOutputTokens, m
   if (!service?.enabled || service.kind !== 'market_analysis' || !Number.isSafeInteger(service.revision) || service.revision < 1
       || !Number.isSafeInteger(service.priceUsdMicros) || service.priceUsdMicros < 10000
       || service.priceUsdMicros > 1_000_000_000_000 || service.priceUsdMicros % 10000 !== 0
+      || !Number.isSafeInteger(board.availableUsdMicros) || board.availableUsdMicros < 0 || board.availableUsdMicros > 1_000_000_000_000
+      || !Number.isSafeInteger(board.minimumReserveUsdMicros) || board.minimumReserveUsdMicros < 0 || board.minimumReserveUsdMicros > 1_000_000_000_000
       || !Number.isSafeInteger(board.sellerActiveJobs) || board.sellerActiveJobs < 0 || board.sellerActiveJobs >= 3
       || !Array.isArray(board.bounties) || board.bounties.length > 100 || !Array.isArray(catalog) || catalog.length > 32) return [];
   const provider = catalog.find(entry => entry?.id === providerId);
@@ -77,6 +79,7 @@ export function selectLaborBids(board, catalog, { providerId, maxOutputTokens, m
       || provider.maxInputTokens > 1000000 || provider.maxOutputTokens > 100000 || maxOutputTokens > provider.maxOutputTokens) return [];
   const quote = (BigInt(provider.maxInputTokens) * BigInt(provider.inputUsdMicrosPerMillion)
     + BigInt(maxOutputTokens) * BigInt(provider.outputUsdMicrosPerMillion) + 999999n) / 1000000n;
+  if (quote > BigInt(board.availableUsdMicros) - BigInt(board.minimumReserveUsdMicros)) return [];
   const minimum = quote + BigInt(minimumWorkMarginUsdMicros);
   if (minimum > 1_000_000_000_000n) return [];
   const priceUsdMicros = Math.max(service.priceUsdMicros, Number((minimum + 9999n) / 10000n * 10000n));
