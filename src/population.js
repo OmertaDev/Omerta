@@ -24,6 +24,7 @@
 // self-heals. The worker only tops up headcount and retires old bloodlines.
 import crypto from 'node:crypto';
 import { ledger, notify } from './game.js';
+import { consumeGoodsLiquidity } from './goodsmarket.js';
 import { wipeFighterAtDeath } from './boxing.js';
 import { residentEnterTournament, residentNominateFuturity } from './casino.js';
 import { residentEnterGrandPrix } from './races.js';
@@ -35,7 +36,7 @@ import { residentEnterStakes } from './stable.js';
 import { createGang, joinGang, removeMember } from './social/gangs.js';
 import { clearInboundPointers } from './social/estate.js';
 import { POPULATION, NPC_FIRST, NPC_LAST, npcBandOf, DISTRICTS, PACING, dayOf,
-         LOAN, loanOwed, GOODS, BLACK_MARKET, M3, DUELS, CASINO, CARS, goodPriceOf,
+         LOAN, loanOwed, GOODS, BLACK_MARKET, M3, DUELS, CASINO, CARS, goodPriceOf, priceBlock,
          BOXING, STABLE, stableKindOf, FIGHTER_MONIKERS, RACER_NAMES, rollRarity, FAMILY_WAR } from './rules.js';
 
 const uid = () => crypto.randomUUID();
@@ -763,10 +764,13 @@ export async function residentAct(client, r) {
     'SELECT COALESCE(SUM(qty),0) n FROM character_cargo WHERE character_id=$1', [r.id])).rows[0].n);
   if (carrying === 0) {
     const good = pick(GOODS);
-    const unit = Math.round(goodPriceOf(good.id, r.loc));
+    const block = priceBlock();
+    const unit = Math.round(goodPriceOf(good.id, r.loc, block));
     const budget = Math.min(spendable(Number(r.cash)), bps(Number(r.cash), POPULATION.MARKS.GOODS_BPS));
     const qty = Math.min(POPULATION.MARKS.GOODS_MAX_UNITS, Math.floor(budget / (unit * 1.02)));
     if (qty >= 1) {
+      // Reserve the same shared shop stock as players before settling cash or cargo.
+      await consumeGoodsLiquidity(client, good.id, r.loc, 'buy', qty, block);
       const cost = unit * qty, fee = Math.ceil(cost * 0.01), tax = Math.ceil(cost * 0.01);
       await client.query('UPDATE characters SET cash = cash - $2 WHERE id=$1', [r.id, cost + fee + tax]);
       await client.query('INSERT INTO transactions (id, character_id, currency, amount, reason) VALUES ($1,$2,$3,$4,$5)',
