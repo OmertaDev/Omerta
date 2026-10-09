@@ -43,6 +43,9 @@ assert(evaluateBusiness(expired,policy).riskFlags.includes('expired_jobs_need_re
 const retained=evaluateBusiness(snapshot(),{...policy,maxActiveJobs:1});
 assert(retained.proposals.some(p=>p.kind==='bid'));
 const repeat=snapshot();repeat.bounties=[];
+const repeatEvaluation=evaluateBusiness(repeat,policy);
+const missingCustomer={...repeat,asOf:'2026-10-09T13:00:00.000Z',customers:[],coverage:{customersTruncated:true}};
+assert.equal(compareBusiness(repeatEvaluation,missingCustomer).outcomes.find(o=>o.kind==='customer_follow_up').observedRepeatAcceptedJobs,null,'Missing customer window cannot imply lost accepted work');
 assert(evaluateBusiness(repeat,policy).proposals.some(p=>p.kind==='customer_follow_up'&&p.requiresOwnerApproval));
 const later=snapshot();later.asOf='2026-10-09T13:00:00.000Z';later.totals.settledCustomerRevenueUsdMicros=40000;
 const comparison=compareBusiness(result,later);assert.equal(comparison.observedDelta.settledCustomerRevenueUsdMicros,30000);

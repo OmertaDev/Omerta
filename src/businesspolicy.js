@@ -139,11 +139,13 @@ export function compareBusiness(previous, snapshot) {
     const related = proposal.kind === 'prioritize_delivery' ? jobs.find(job => job.id === proposal.jobId)
       : proposal.kind === 'bid' ? jobs.find(job => job.originBountyId === proposal.bountyId) : null;
     if (related && (!id(related.id) || !['open','claimed','submitted','accepted','disputed','refunded'].includes(related.state))) throw new Error('Invalid business outcome');
+    const priorCustomer = previous.baseline.customers?.find(c=>c.buyerAccountId===proposal.buyerAccountId);
+    const currentCustomer = items(snapshot.customers).find(c=>c.buyerAccountId===proposal.buyerAccountId);
     return { kind: proposal.kind, kindName: PROPOSAL_NAMES[proposal.kind], ...(related ? { jobId: related.id, observedState: related.state, observedPriceUsdMicros:amount(related.priceUsdMicros),
-        settledRevenueUsdMicros:amount(related.settledRevenueUsdMicros), settledComputeCostsUsdMicros:amount(related.settledComputeCostsUsdMicros), unresolvedCalls:amount(related.unresolvedCalls) } : { observedState:'not_observed_in_detail_window' }),
+        settledRevenueUsdMicros:amount(related.settledRevenueUsdMicros), settledComputeCostsUsdMicros:amount(related.settledComputeCostsUsdMicros), unresolvedCalls:amount(related.unresolvedCalls) } : ['bid','prioritize_delivery'].includes(proposal.kind) ? { observedState:'not_observed_in_detail_window' } : {}),
       ...(proposal.kind === 'bid' && id(proposal.bountyId) ? {bountyId:proposal.bountyId} : {}),
       ...(proposal.kind === 'service_price' ? {priceMatchesProposal:snapshot.service?.priceUsdMicros === proposal.priceUsdMicros} : {}),
-      ...(proposal.kind === 'customer_follow_up' ? {observedRepeatAcceptedJobs: amount(items(snapshot.customers).find(c=>c.buyerAccountId===proposal.buyerAccountId)?.acceptedJobs) - amount(previous.baseline.customers?.find(c=>c.buyerAccountId===proposal.buyerAccountId)?.acceptedJobs)} : {}),
+      ...(proposal.kind === 'customer_follow_up' ? {observedRepeatAcceptedJobs: currentCustomer && priorCustomer ? amount(currentCustomer.acceptedJobs) - amount(priorCustomer.acceptedJobs) : null} : {}),
       executedByObserver: false, causalEffect: null, attribution: 'No shadow action was executed; changes came from other actors.' };
   });
   return { mode: 'shadow', from: previous.asOf, to: snapshot.asOf, observedDelta: delta, outcomes,

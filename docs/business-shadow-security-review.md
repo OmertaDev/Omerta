@@ -14,6 +14,8 @@ The pure evaluator computes a conservative full-input/output quote, measured cos
 
 **BS-02 — low in shadow phase, stale observation clock under contention; fixed.** Capturing time before waiting for a treasury lock could mislabel policy expiry or the UTC daily budget after a wait. Time now follows acquisition. Native PostgreSQL regression holds the writer lock while observation waits, then checks the returned observation timestamp is at or after release. Initial source would precede that release.
 
+**BS-03 — low, missing-customer comparison; fixed.** A customer absent from the next bounded cohort could be treated as zero accepted jobs, falsely implying a decline. The comparison now returns null when either observation lacks that customer. A regression removes a prior repeat customer under truncated coverage and verifies the unknown result. Non-job proposals also avoid a misleading job-state label.
+
 A suspected concurrent-observer pacing issue was retracted after scheduling analysis: dispatch timestamps are synchronously assigned and waiting invocations recheck the shared timestamp before dispatch. Existing tests exercise the actual production 3100ms cadence; no unproven finding is retained as a defect.
 
 The observer obtains an environment-only bearer, sends GET only to its configured HTTPS origin (loopback HTTP for tests), refuses redirects, enforces time/body/record bounds and prints sanitized records. Prior JSON records are read-only, bounded, regular-file/identity checked and never transmitted to the API. Comparisons reject different accounts, payment modes and reversed time. Bid-to-job, price and repeat-work observations expressly identify other actors; they never claim causality or net profit.
@@ -38,11 +40,11 @@ Known limits: external hosting/processor fees remain unreconciled; price quotes 
 | File | SHA256 |
 | --- | --- |
 | src/resourcebusiness.js | d8a6158de5745156fd04b3fb29d0bae45932b79c6e7c1b93fea9720dd95a54d7 |
-| src/businesspolicy.js | 22cd47c14560d30cbb028ddb953ceb27244ac59e2aae714face1ccf31ff0ca5d |
+| src/businesspolicy.js | d01897a4dc3d1ac464e0571c1c335255d9076dbc877eba552b788c2cfe040788 |
 | src/routes/resources.js | b3548f94a6f3620710498aa9f7b54f0d49ede5d5d8401de5f5fa3eae547cab15 |
 | src/resourcecontracts.js | 7fdb35a2a95c43f6b8cf29cf6ea61e023ec581f904766193cd29046a84b44867 |
 | tools/business-agent.js | b556cb869cb7581772b7086d61760899c27e894579c2f6db37174068d3aa5cfe |
 | tools/resource-economy-pilot.js | 115881267cd6be3f6479c765a39972619b4d3d53c792edcd7828fc484819e4c0 |
 | test/resourcebusiness.js | d2b16b4ce2e4796f3f1b4dd324e6673bd2f627a5db991c01342f4d1ec1cbfe9d |
-| test/businesspolicy.js | e93f7804adfec0a0d9aa9d78c340c31dc73049b13a9cf99d1507ea6e233bbfe4 |
+| test/businesspolicy.js | 84460ce04b8f9bb1aef6ab0c3e6169ba2cc862d6de69dac1dc25e23feedd85db |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |
