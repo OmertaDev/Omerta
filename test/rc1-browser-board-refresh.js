@@ -13,7 +13,46 @@ const extract = (start, end, expected) => {
   const text = source.slice(source.indexOf(start), source.indexOf(end));
   assert.equal(crypto.createHash('sha256').update(text).digest('hex'), expected, 'Canonical client seam changed: review the extracted source'); return text;
 };
-const coordinator = extract('  function createProjectionRefresh(', '  // End projection refresh coordinator.', 'a693944e6e8bde4e4bee829865ce813ec588d860bf5e45fad95545fecc48b2da');
+const predecessorCoordinatorSha = 'a693944e6e8bde4e4bee829865ce813ec588d860bf5e45fad95545fecc48b2da';
+const currentCoordinatorSha = '53aa1a9767d2568e3969eb0ecb069ed9c282fcc0d873dcc0bafec318d6416125';
+const playerContentionRetry = `          if (kind === 'player' && result.code === 409 && result.body?.error === 'contention') {
+            try { result = await request(path, { ...ticket, isCurrent }); }
+            catch { result = { code: 503, body: { error: 'offline' } }; }
+            if (!isCurrent()) continue;
+          }
+`;
+const sha = text => crypto.createHash('sha256').update(text).digest('hex');
+function removePlayerRetry(text) {
+  assert.equal(text.split(playerContentionRetry).length, 2, 'The reviewed player retry has one exact inverse');
+  return text.replace(playerContentionRetry, '');
+}
+function reviewedCoordinator(text) {
+  const digest = sha(text);
+  if (digest === predecessorCoordinatorSha) return digest;
+  assert.equal(digest, currentCoordinatorSha, 'Only the exact reviewed coordinator successor is accepted');
+  assert.equal(sha(removePlayerRetry(text)), predecessorCoordinatorSha, 'The complete predecessor coordinator must reconstruct exactly');
+  return digest;
+}
+const coordinatorSource = source.slice(source.indexOf('  function createProjectionRefresh('), source.indexOf('  // End projection refresh coordinator.'));
+const coordinator = extract('  function createProjectionRefresh(', '  // End projection refresh coordinator.', reviewedCoordinator(coordinatorSource));
+// The inverse preserves the previously pinned world lane. Player recovery has separate direct
+// unit/browser coverage; this controlled world-board harness does not qualify its gameplay.
+if (sha(coordinator) === currentCoordinatorSha) {
+  const predecessor = removePlayerRetry(coordinator);
+  assert.notEqual(predecessor, coordinator);
+  assert.equal(reviewedCoordinator(predecessor), predecessorCoordinatorSha);
+  const duplicate = coordinator.replace(playerContentionRetry, playerContentionRetry.repeat(2));
+  assert.notEqual(duplicate, coordinator);
+  assert.throws(() => removePlayerRetry(duplicate), /one exact inverse/);
+  for (const tampered of [duplicate,
+    coordinator.replace("result.body?.error === 'contention'", "result.body?.error === 'anything'"),
+    coordinator.replace("if (kind === 'world' && worldPath", "if (kind === 'player' && worldPath"),
+    coordinator + '\n', predecessor.replace('apply(kind, result);', 'apply(kind, {});')]) {
+    assert.notEqual(tampered, coordinator);
+    assert.notEqual(tampered, predecessor);
+    assert.throws(() => reviewedCoordinator(tampered), /exact reviewed coordinator successor/);
+  }
+}
 const apiQueue = extract('  async function api(method,', '  async function apiNow(', '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7');
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });

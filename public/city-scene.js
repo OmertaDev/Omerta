@@ -172,6 +172,9 @@
     hud.append(resourceGrid, progressRow, readiness, journal);
     const nextMove = element('div', 'omerta-city__next-move');
     const nextCopy = element('div');
+    nextCopy.setAttribute('role', 'status');
+    nextCopy.setAttribute('aria-live', 'polite');
+    nextCopy.setAttribute('aria-atomic', 'true');
     nextCopy.append(element('span', 'omerta-city__eyebrow', 'Your next move'));
     const nextTitle = element('strong');
     const nextHint = element('p');
@@ -327,14 +330,30 @@
       readiness.dataset.tone = condition.tone;
       setText(readinessLabel, condition.label);
       setText(readinessCopy, condition.detail);
-      const coach = character.coach;
-      nextMove.hidden = !coach || (!coach.label && !coach.hint);
+      const quest = nextQuest(), coach = character.coach;
+      nextMove.hidden = !quest && (!coach || (!coach.label && !coach.hint));
+      nextMove.dataset.cityGuidance = quest ? 'quest' : 'coach';
       if (!nextMove.hidden) {
-        setText(nextTitle, String(coach.label || 'Your next move'));
-        setText(nextHint, String(coach.hint || ''));
-        nextButton.hidden = typeof coach.tab !== 'string' || !coach.tab;
+        setText(nextTitle, String(quest ? quest.title || 'Continue your quest' : coach.label || 'Your next move'));
+        setText(nextHint, quest ? 'Visit ' + quest.venue.name + ' to continue your quest.' : String(coach.hint || ''));
+        setText(nextButton, quest ? 'Visit →' : 'Go →');
+        if (quest) nextButton.setAttribute('aria-label', 'Visit ' + quest.venue.name);
+        else nextButton.removeAttribute('aria-label');
+        nextButton.hidden = !quest && (typeof coach.tab !== 'string' || !coach.tab);
+      } else {
+        setText(nextTitle, ''); setText(nextHint, '');
+        nextButton.hidden = true;
+        nextButton.removeAttribute('aria-label');
       }
       journal.hidden = !VENUES.some(v => actionsFor(v).some(action => action.tab === 'fieldwork'));
+    }
+    function nextQuest() {
+      for (const venue of VENUES) {
+        const quest = options.npcQuests?.[venue.id];
+        if (Array.isArray(quest?.actions) && quest.actions.some(action => action && typeof action.id === 'string'
+          && action.id && action.id !== 'cancel' && action.available === true)) return { ...quest, venue };
+      }
+      return null;
     }
     function actionsFor(venue) {
       const supplied = options.venueActions || {};
@@ -413,6 +432,8 @@
       }
     }
     listen(nextButton, 'click', () => {
+      const quest = nextQuest();
+      if (quest) { showVenue(quest.venue); return; }
       const tab = character.coach?.tab;
       if (typeof tab === 'string' && tab) navigate(tab, VENUES.find(v => actionsFor(v).some(a => a.tab === tab))?.id || 'directory');
     });

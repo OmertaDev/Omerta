@@ -112,7 +112,7 @@ try {
         set: value => {
           api = { ...value, mount(...args) {
             const handle = value.mount(...args);
-            const entry = { handle, destroyed: false };
+            const entry = { handle, options: args[1], destroyed: false };
             window.__cityHandles.push(entry);
             return { ...handle, destroy() { entry.destroyed = true; return handle.destroy(); } };
           } };
@@ -185,6 +185,34 @@ try {
     const overlay = page.locator('#cine.on');
     if (await overlay.count()) await overlay.evaluate(element => element.click());
   };
+  const visitQuest = async (page, venueId, requests) => {
+    const guide = page.locator('.omerta-city__next-move');
+    const venue = (await state(page)).destinations.find(venue => venue.id === venueId);
+    assert(venue, 'Quest destination is an existing public venue.');
+    const destinationName = await page.locator(`[data-destination="${venueId}"] .omerta-city__destination-name`).textContent();
+    await page.getByRole('button', { name: 'Visit ' + destinationName, exact: true }).waitFor();
+    assert.equal(await guide.getAttribute('data-city-guidance'), 'quest');
+    assert.equal(await guide.locator('[role="status"]').getAttribute('aria-live'), 'polite');
+    assert.equal(await guide.locator('[role="status"]').getAttribute('aria-atomic'), 'true');
+    await guide.scrollIntoViewIfNeeded();
+    const layout = await page.evaluate(() => {
+      const guide = document.querySelector('.omerta-city__next-move').getBoundingClientRect();
+      const map = document.querySelector('.omerta-city__viewport').getBoundingClientRect();
+      const button = document.querySelector('[data-city-nextmove]').getBoundingClientRect();
+      return { top: guide.top, bottom: guide.bottom, mapTop: map.top, buttonWidth: button.width,
+        buttonHeight: button.height, width: document.documentElement.scrollWidth, viewport: innerWidth, height: innerHeight };
+    });
+    assert(layout.top >= -1 && layout.bottom <= layout.height + 1 && layout.bottom <= layout.mapTop + 1,
+      'The current quest objective is visible above the map: ' + JSON.stringify(layout));
+    assert(layout.width <= layout.viewport + 1 && layout.buttonWidth >= 44 && layout.buttonHeight >= 44,
+      'The objective and destination control fit a phone with a usable touch target.');
+    const beforeVisit = requests.length;
+    await page.locator('[data-city-nextmove]').click();
+    await page.locator('.omerta-city__interaction').waitFor({ state: 'visible' });
+    assert.equal((await state(page)).selectedVenue, venueId, 'The guide opens the currently issued destination.');
+    assert.deepEqual(requests.slice(beforeVisit).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
+      'A quest destination visit does not select a branch or submit a mutation.');
+  };
 
   const page = await newPage();
   const requests = [];
@@ -207,6 +235,45 @@ try {
     if (expected.alpha) assert(delivered.transparent > 0, expected.file + ' is a real transparent sprite cutout.');
     else assert.equal(delivered.transparent, 0, 'The neighborhood background is opaque.');
   }
+
+  // Only issued, available actions at known venues can replace the coach. Updates must not
+  // repeatedly announce an unchanged objective or expose unavailable leads in the banner.
+  await page.evaluate(() => {
+    const entry = window.__cityHandles.at(-1);
+    window.__guidanceOriginal = { character: entry.options.character, npcQuests: entry.options.npcQuests };
+    window.__guideChanges = [];
+    window.__guideObserver = new MutationObserver(records => window.__guideChanges.push(...records.map(record => record.type)));
+    window.__guideObserver.observe(document.querySelector('.omerta-city__next-move [role="status"]'), { childList: true, subtree: true });
+    entry.handle.update({ npcQuests: window.__guidanceOriginal.npcQuests });
+  });
+  await page.waitForTimeout(50);
+  assert.deepEqual(await page.evaluate(() => window.__guideChanges), [], 'An unchanged objective does not repeat its live announcement.');
+  const guideFallback = await page.evaluate(() => {
+    const entry = window.__cityHandles.at(-1), character = { ...window.__guidanceOriginal.character,
+      coach: { label: 'Pull your first job', hint: 'Find a job on the Streets.', tab: 'streets' } };
+    const results = [];
+    for (const npcQuests of [null, {},
+      { workshop: { title: 'Unavailable lead', actions: [{ id: 'complete', available: false }] } },
+      { workshop: { title: 'Unissued lead', actions: [{ id: 'complete' }] } },
+      { workshop: { title: 'Abandon only', actions: [{ id: 'cancel', available: true }] } },
+      { secret: { title: 'Unknown venue', actions: [{ id: 'complete', available: true }] } }]) {
+      entry.handle.update({ character, npcQuests });
+      const guide = document.querySelector('.omerta-city__next-move');
+      results.push({ hidden: guide.hidden, source: guide.dataset.cityGuidance, title: guide.querySelector('strong').textContent,
+        button: guide.querySelector('button').textContent, label: guide.querySelector('button').getAttribute('aria-label') });
+    }
+    entry.handle.update({ character: { ...character, coach: null }, npcQuests: {} });
+    const hidden = document.querySelector('.omerta-city__next-move').hidden;
+    entry.handle.update({ character: { ...character, coach: { label: 'Check your progress' } }, npcQuests: {} });
+    const noTab = document.querySelector('[data-city-nextmove]').hidden;
+    entry.handle.update(window.__guidanceOriginal);
+    window.__guideObserver.disconnect();
+    return { results, hidden, noTab };
+  });
+  for (const result of guideFallback.results) assert.deepEqual(result,
+    { hidden: false, source: 'coach', title: 'Pull your first job', button: 'Go →', label: null },
+    'Missing, blocked, incomplete, cancel-only, and unknown-venue quest data preserves coach guidance.');
+  assert(guideFallback.hidden && guideFallback.noTab, 'Absent guidance stays hidden and a coach without a destination has no visit button.');
 
   // Real input must move the player, and local walking must not submit a game action.
   const walkStart = requests.length;
@@ -376,22 +443,26 @@ try {
   await waitForCity(page);
   await assertPosition(page, reloadPose, 'Reload restores the character/generation/district-scoped session position');
 
-  // The original introduction is played at NPC doors, with a real committed branch and item award.
-  await page.locator('[data-destination="fixer"]').click();
+  // On a phone the above-map guide follows the original introduction's real issued objectives.
+  // Opening a destination remains separate from explicit conversations, choices, and item award.
+  await page.setViewportSize({ width: 375, height: 812 });
+  await dismissCelebration(page);
+  await visitQuest(page, 'fixer', requests);
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Nico Bellini'));
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
   const listen = page.locator('[data-city-quest-action]').filter({ hasText: 'Listen before you act' });
   await listen.waitFor({ state: 'visible' });
   await questAction(page, listen);
-  await page.locator('[data-destination="workshop"]').click();
+  await page.waitForFunction(() => document.querySelector('.omerta-city__next-move strong')?.textContent.includes('Listen at the Workshop'));
+  await visitQuest(page, 'workshop', requests);
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Ada Ferri'));
   if (shots) {
     await dismissCelebration(page);
     await page.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-quest.png'), style: sceneShotStyle });
   }
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
-  await page.locator('[data-destination="stories"]').click();
+  await visitQuest(page, 'stories', requests);
   await page.locator('[data-city-quest-action="explore"]').waitFor({ state: 'visible' });
   await questAction(page, page.locator('[data-city-quest-action="explore"]'));
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Elena Serra'));
@@ -400,6 +471,9 @@ try {
   assert.equal(caseReply.statusCode, 200, caseReply.body);
   assert.equal(caseReply.json().status, 'completed', 'Door interactions complete the persisted quest.');
   assert(caseReply.json().choices.some(choice => choice.choiceId === 'listen'), 'The first approach is remembered by the server.');
+  await page.waitForFunction(() => document.querySelector('.omerta-city__next-move')?.dataset.cityGuidance === 'coach');
+  assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), null, 'A completed quest returns to coach guidance.');
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator('[data-city-journal]').click();
   await page.waitForSelector('#tab-fieldwork.on', { state: 'visible' });
   await page.locator('[data-fieldwork-view="inventory"]').click();
@@ -514,6 +588,12 @@ try {
   await missingEngine.locator('.omerta-city--unavailable').waitFor();
   assert.match(await missingEngine.locator('.omerta-city__status').textContent(), /unavailable/);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 0, 'Engine failure retains no broken canvas.');
+  await missingEngine.evaluate(() => window.__cityHandles.at(-1).handle.update({ npcQuests: {
+    workshop: { title: 'Listen at the Workshop', actions: [{ id: 'complete', available: true }] },
+  } }));
+  await missingEngine.getByRole('button', { name: 'Visit The Workshop', exact: true }).click();
+  assert.equal((await state(missingEngine)).selectedVenue, 'workshop', 'Quest guidance opens venue details even when the engine is unavailable.');
+  await missingEngine.locator('[data-city-close]').click();
   await missingEngine.locator('.omerta-city__destination[data-destination="stories"]').click();
   await missingEngine.locator('[data-city-open]').click();
   await missingEngine.waitForSelector('#tab-desk.on', { state: 'attached' });
@@ -523,6 +603,7 @@ try {
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 1, 'Returning after an engine load failure retries the engine successfully.');
 
   // Authoritative identity transitions must never reuse another district or generation's pose.
+  await page.bringToFront();
   const identityHandles = await page.evaluate(() => window.__cityHandles.length);
   const map = (await app.inject({ method: 'GET', url: '/v1/map', headers })).json();
   const otherDistrict = map.districts.find(district => district.id !== (resourceReply.player?.character || resourceReply.player).loc).id;
@@ -533,18 +614,65 @@ try {
   await districtRead;
   await page.waitForFunction(count => window.__cityHandles.length > count && window.__cityHandles.at(-1).handle.getState().ready, identityHandles);
   assert.deepEqual((await state(page)).player, { x: 430, y: 366 }, 'Another district starts at its own valid spawn.');
+  await page.bringToFront();
   await page.locator('.omerta-city__canvas canvas').focus();
   await page.keyboard.down('ArrowDown');
-  await page.waitForTimeout(350);
-  await page.keyboard.up('ArrowDown');
+  try {
+    await page.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().player.y > 400, null, { timeout: 5000 });
+  } finally {
+    await page.keyboard.up('ArrowDown');
+  }
   assert((await state(page)).player.y > 400, 'The old generation has a distinct pose before invalidation.');
   const generationHandles = await page.evaluate(() => window.__cityHandles.length);
-  await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1', [characterId]);
-  const generationRead = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
+  let generationReads = 0, delayedMapReads = 0;
+  await page.route('**/v1/projections/player', route => {
+    if (++generationReads === 1) return route.fulfill({ status: 409, contentType: 'application/json',
+      body: JSON.stringify({ error: 'contention', message: 'Refresh the view before trying again.' }) });
+    return route.continue();
+  });
+  await page.route('**/v1/map', async route => {
+    if (++delayedMapReads !== 1) return route.continue();
+    const response = await route.fetch();
+    await page.waitForTimeout(250);
+    await route.fulfill({ response });
+  });
+  const nextGeneration = (await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1 RETURNING generation', [characterId])).rows[0].generation;
+  const generationRead = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player' && response.status() === 409);
+  const recoveredRead = page.waitForResponse(async response => {
+    if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+    const reply = await response.json();
+    return (reply.player?.character || reply.player)?.generation === nextGeneration;
+  });
   bus.emit('me:' + characterId, { type: 'city-browser-generation' });
-  await generationRead;
-  await page.waitForFunction(count => window.__cityHandles.length > count && window.__cityHandles.at(-1).handle.getState().ready, generationHandles);
+  const contentionResponse = await generationRead;
+  assert.equal((await contentionResponse.json()).error, 'contention', 'Generation refresh exercises the bounded contention recovery.');
+  let generationResponse = contentionResponse;
+  try {
+    generationResponse = await recoveredRead;
+    await page.waitForFunction(count => window.__cityHandles.length > count && window.__cityHandles.at(-1).handle.getState().ready, generationHandles);
+  } catch (error) {
+    const reply = await generationResponse.json(), character = reply.player?.character || reply.player;
+    console.error('City generation remount diagnostic:', JSON.stringify({ countBefore: generationHandles,
+      code: generationResponse.status(), error: reply.error, message: reply.message,
+      projection: { id: character?.id, loc: character?.loc, generation: character?.generation },
+      browser: await page.evaluate(() => ({ hidden: document.hidden, focused: document.hasFocus(),
+        mapActive: document.querySelector('#tab-map')?.classList.contains('on'),
+        main: !document.querySelector('#screen-main')?.classList.contains('hidden'),
+        auth: !document.querySelector('#screen-auth')?.classList.contains('hidden'),
+        create: !document.querySelector('#screen-create')?.classList.contains('hidden'),
+        canvases: document.querySelectorAll('.omerta-city__canvas canvas').length,
+        handles: window.__cityHandles.slice(-3).map(entry => ({ destroyed: entry.destroyed,
+          identity: { id: entry.options.character?.id, loc: entry.options.character?.loc, generation: entry.options.character?.generation },
+          ready: entry.handle.getState().ready, player: entry.handle.getState().player })) })) }));
+    throw error;
+  }
   assert.deepEqual((await state(page)).player, { x: 430, y: 366 }, 'A new generation cannot reuse the prior generation pose.');
+  assert(generationReads >= 2 && delayedMapReads >= 2, 'Contention recovery supersedes the delayed old-identity map with a fresh read.');
+  assert(await page.evaluate(count => window.__cityHandles.slice(0, count).every(entry => entry.destroyed), generationHandles),
+    'All old-generation handles stay retired after the delayed map response.');
+  assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'Recovery leaves exactly one current-generation canvas.');
+  await page.unroute('**/v1/projections/player');
+  await page.unroute('**/v1/map');
   await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [characterId]);
   await page.locator('#btn-refresh').click();
   await page.waitForSelector('#screen-create:not(.hidden)');
@@ -556,13 +684,21 @@ try {
   assert.equal(authCharacter.statusCode, 200, authCharacter.body);
   const authPage = await newPage({}, authToken);
   await openCity(authPage);
+  await authPage.getByRole('button', { name: 'Visit The Fixer', exact: true }).waitFor();
+  await authPage.evaluate(() => { window.__oldQuestVisit = document.querySelector('[data-city-nextmove]'); });
   assert.equal((await app.inject({ method: 'POST', url: '/v1/auth/logout-all', headers: authHeaders })).statusCode, 200);
   await authPage.locator('#btn-refresh').click();
   await authPage.waitForSelector('#screen-auth:not(.hidden)');
   assert.equal(await authPage.locator('.omerta-city__canvas canvas').count(), 0, 'A revoked session disposes City and returns to sign-in.');
+  const retiredVisit = await authPage.evaluate(() => {
+    window.__oldQuestVisit.click();
+    return { guides: document.querySelectorAll('.omerta-city__next-move').length,
+      selected: window.__cityHandles.at(-1).handle.getState().selectedVenue };
+  });
+  assert.deepEqual(retiredVisit, { guides: 0, selected: null }, 'A retired identity cannot reopen its old quest destination.');
   assert.deepEqual(pageErrors, [], 'No uncaught browser errors.');
   for (const context of contexts) await context.close();
-  console.log('city-scene-browser: generated art/fallbacks, movement/collision, live resource HUD, all gameplay destinations, real job receipt, saved return/reload poses, NPC quest/choice/keepsake/journal, mobile touch/release/cancel, reduced motion, identity/district reset, auth cleanup, and asset recovery pass' +
+  console.log('city-scene-browser: generated art/fallbacks, movement/collision, live resource HUD, all gameplay destinations, real job receipt, saved return/reload poses, phone quest guidance/visits/coach fallback, NPC quest/choice/keepsake/journal, mobile touch/release/cancel, reduced motion, identity/district reset, auth cleanup, and asset recovery pass' +
     (shots ? '\nScreenshots: ' + path.join(shots, 'city-desktop.png') + ' and ' + path.join(shots, 'city-mobile.png') : ''));
 } finally {
   if (browser) await browser.close();

@@ -4665,6 +4665,11 @@
           try { result = await request(path, { ...ticket, isCurrent }); }
           catch { result = { code: 503, body: { error: 'offline' } }; }
           if (!isCurrent()) continue;
+          if (kind === 'player' && result.code === 409 && result.body?.error === 'contention') {
+            try { result = await request(path, { ...ticket, isCurrent }); }
+            catch { result = { code: 503, body: { error: 'offline' } }; }
+            if (!isCurrent()) continue;
+          }
           if (result.code === 401 || (kind === 'player' && result.code === 403)) { setSession(null); unauthorized(); continue; }
           if (result.code < 400 && result.body?.schemaVersion !== 1) {
             result = { code: 502, body: { error: 'projection_invalid' } };
@@ -4828,15 +4833,20 @@
         if (result.code === 404) show('screen-create');
         if (result.code < 400) {
           const previousGeneration = me?.generation;
+          const previousCityIdentity = cityIdentity();
           me = result.body.player?.character || result.body.player;
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
           }
           if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
+          const cityChanged = previousCityIdentity !== cityIdentity(me)
+            || (_citySceneOptions && cityIdentity(_citySceneOptions.character) !== cityIdentity(me));
           if (_cityScene && _citySceneKey === cityIdentity(me)) _cityScene.update({ character: { ...me }, progress: cityProgress() });
-          else if (_cityScene) destroyCityScene();
+          else if (_cityScene || cityChanged) destroyCityScene();
           syncCitySessionBar();
+          if (cityChanged && currentTab === 'map' && _mapMode === 'walk'
+            && $('#screen-main') && !$('#screen-main').classList.contains('hidden')) renderMap();
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
         }
         return;
@@ -8809,7 +8819,7 @@
     try {
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
-        || me?.id !== options.character.id || me?.loc !== options.district.id) return;
+        || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
       _cityScene = scene.mount(host, { ...options, onNavigate: navigateFromCity, onQuestAction: performCityQuest,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
       _citySceneKey = key;
