@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0f46ce6b187b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f8aae4e6232f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2151 |
+| Commits in clone | 2149 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Merge current production source into shadow opportunity fix |
+| Latest commit | 2026-10-09 — Keep shadow work discovery actionable after existing bids (#202) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1251 |
+| OmertaDev | 1249 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 55 |
