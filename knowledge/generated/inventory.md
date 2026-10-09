@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `f8aae4e6232f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `bd8c09616210`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 4,378 |
-| Text lines | 1,557,529 |
-| Repository bytes inventoried | 814,718,287 |
+| Text lines | 1,557,729 |
+| Repository bytes inventoried | 814,731,937 |
 | Backend/route modules | 306 |
 | HTTP route registrations / unique routes | 873 / 873 |
 | Database tables | 388 |
 | Solidity declarations | 126 |
-| Git commits | 2,149 |
+| Git commits | 2,151 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,307 / 41,943 |
+| Graph nodes / edges | 10,309 / 41,952 |
 
 ## Artifact kinds
 
@@ -61,14 +61,14 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 14,108 | web-surface | 2026-10-09 |
+| [public/index.html](../../public/index.html) | 14,202 | web-surface | 2026-10-09 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,466 | test-suite | 2026-10-09 |
+| [test/client.js](../../test/client.js) | 9,467 | test-suite | 2026-10-09 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,648 | data-schema | 2026-10-09 |

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f8aae4e6232f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bd8c09616210`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2149 |
+| Commits in clone | 2151 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Keep shadow work discovery actionable after existing bids (#202) |
+| Latest commit | 2026-10-09 — fix(city): enter the neighborhood directly with guarded focus |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1249 |
+| OmertaDev | 1250 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 55 |
+| github-actions[bot] | 56 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,13 +31,13 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 437 | yes |
+| [public/index.html](../../public/index.html) | 438 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
 | [SPEC.md](../../SPEC.md) | 369 | yes |
-| knowledge/generated/github-history.md | 326 | historical |
-| knowledge/generated/graph-summary.md | 326 | historical |
-| knowledge/generated/graph.json | 326 | historical |
-| knowledge/generated/inventory.md | 326 | historical |
+| knowledge/generated/github-history.md | 327 | historical |
+| knowledge/generated/graph-summary.md | 327 | historical |
+| knowledge/generated/graph.json | 327 | historical |
+| knowledge/generated/inventory.md | 327 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 240 | yes |
@@ -48,7 +48,7 @@
 | knowledge/generated/modules.md | 127 | historical |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [test/client.js](../../test/client.js) | 121 | yes |
+| [test/client.js](../../test/client.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/gates.js](../../test/gates.js) | 91 | yes |
