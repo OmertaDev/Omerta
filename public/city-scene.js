@@ -548,7 +548,7 @@
     }
     function dimensions() {
       const phone = window.innerWidth <= 680;
-      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone ? 160 : 320, Math.round(canvasHost.clientHeight)) };
+      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone ? 96 : 320, Math.round(canvasHost.clientHeight)) };
     }
     function fitWorldFrame() {
       if (destroyed) return;
@@ -568,7 +568,7 @@
         if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
         else { const pinned = parseFloat(style.top); top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom); }
       }
-      const height = Math.max(160, Math.min(440, Math.floor(bottom - top - worldHud.getBoundingClientRect().height - 16)));
+      const height = Math.max(96, Math.min(440, Math.floor(bottom - top - worldHud.getBoundingClientRect().height - 16)));
       const value = height + 'px';
       if (canvasHost.style.getPropertyValue('--city-map-height') !== value) {
         canvasHost.style.setProperty('--city-map-height', value);
@@ -586,8 +586,10 @@
       const zoom = size.width >= 720 ? Math.min(size.width / WORLD.width, size.height / WORLD.height) : 0.82;
       camera.setZoom(zoom);
       camera.setBounds(0, 0, WORLD.width, WORLD.height);
-      camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16);
-      camera.centerOn(player.x, player.y);
+      // Retain the avatar and its name above the feet in a short phone viewport.
+      const followOffsetY = size.height < 160 ? (160 - size.height) / (2 * zoom) : 0;
+      camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
+      camera.centerOn(player.x, player.y - followOffsetY);
     }
     const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitCamera) : null;
     if (resizeObserver) resizeObserver.observe(canvasHost);

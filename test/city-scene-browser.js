@@ -152,6 +152,21 @@ try {
       localStorage.setItem('omerta_tour2', '1');
       // Capture handles only in the test realm; production needs no global debug hooks.
       window.__cityHandles = [];
+      window.__cityGames = [];
+      let engine;
+      Object.defineProperty(window, 'Phaser', {
+        configurable: true,
+        get: () => engine,
+        set: value => {
+          engine = value;
+          const Game = value.Game;
+          value.Game = new Proxy(Game, { construct(target, args) {
+            const game = Reflect.construct(target, args);
+            window.__cityGames.push(game);
+            return game;
+          } });
+        },
+      });
       let api;
       Object.defineProperty(window, 'OmertaCityScene', {
         configurable: true,
@@ -289,6 +304,7 @@ try {
     const layout = await page.evaluate(() => {
       const canvas = document.querySelector('.omerta-city__canvas canvas'), rect = canvas.getBoundingClientRect();
       return { top: rect.top, bottom: rect.bottom, height: innerHeight,
+        toastTop: document.getElementById('toast').classList.contains('show') ? document.getElementById('toast').getBoundingClientRect().top : innerHeight,
         hits: [rect.top + 3, rect.top + rect.height / 2, rect.bottom - 3].map(y => document.elementFromPoint(rect.left + rect.width / 2, y) === canvas),
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => {
           const node = document.getElementById(id), rect = node?.getBoundingClientRect();
@@ -297,6 +313,7 @@ try {
     });
     assert(layout.top >= 0 && layout.bottom <= layout.height + 1 && layout.hits.every(Boolean),
       'Explicit entry reveals the ready canvas above fixed chrome: ' + JSON.stringify(layout));
+    assert(layout.bottom <= layout.toastTop + 1, 'A visible toast does not cover the entered map.');
   };
   const assertWorldHud = async page => {
     const layout = await page.evaluate(() => {
@@ -305,7 +322,17 @@ try {
       const player = { x: rect.left + (scene.player.x - scene.camera.x) * scene.camera.zoom * rect.width / scene.camera.width,
         y: rect.top + (scene.player.y - scene.camera.y) * scene.camera.zoom * rect.height / scene.camera.height };
       const controls = [...hud.querySelectorAll('[data-city-resource]'), hud.querySelector('.omerta-city__readiness')];
+      const game = window.__cityGames.find(game => game.canvas === canvas), live = game.scene.getScenes(true)[0];
+      const sprites = [live.children.list.find(node => node.texture?.key === 'city-player' || node.texture?.key?.startsWith('city-art-player-')), live.data.get('playerName')];
+      const avatar = sprites.map(node => {
+        const bounds = node.getBounds(), camera = live.cameras.main;
+        return { top: (bounds.top - camera.worldView.y) * camera.zoom * rect.height / camera.height,
+          bottom: (bounds.bottom - camera.worldView.y) * camera.zoom * rect.height / camera.height,
+          left: (bounds.left - camera.worldView.x) * camera.zoom * rect.width / camera.width,
+          right: (bounds.right - camera.worldView.x) * camera.zoom * rect.width / camera.width };
+      });
       return { hud: hudRect.toJSON(), canvas: rect.toJSON(), camera: scene.camera, player,
+        avatar, chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })),
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         visible: controls.every(control => { const b = control.getBoundingClientRect();
           const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return control === hit || control.contains(hit); }),
@@ -317,6 +344,8 @@ try {
     assert(layout.hud.bottom <= layout.canvas.top + 1, 'The HUD reserves its own space outside the playable camera.');
     assert(Math.abs(layout.camera.width - layout.canvas.width) <= 1 && Math.abs(layout.camera.height - layout.canvas.height) <= 1,
       'Phaser dimensions match the CSS viewport after compact resizing.');
+    assert(layout.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= layout.canvas.height + 1 && bounds.left >= -1 && bounds.right <= layout.canvas.width + 1),
+      'The complete avatar and name remain inside the playable camera: ' + JSON.stringify(layout));
     assert.deepEqual(layout.fields, ['cash', 'health', 'energy', 'nerve']);
     assert.equal(layout.readinessCount, 1, 'Readiness is a single live region.');
     assert.equal(await page.locator('.omerta-city__readiness').getAttribute('aria-atomic'), 'true');
@@ -361,11 +390,25 @@ try {
   if (shots) await entry.screenshot({ path: path.join(shots, 'city-world-hud-375.png') });
   for (const [width, height] of [[320, 568], [360, 780]]) {
     const beforeResize = (await state(entry)).position;
+    // Keep the observed toast overlap deterministic instead of racing its dismiss timer.
+    if (width === 320) await entry.evaluate(() => {
+      const toast = document.getElementById('toast');
+      clearTimeout(toast._h); toast.textContent = 'Updated'; toast.style.transition = 'none';
+      toast.classList.add('show');
+      // Reserve the same tall sticky-header space on platforms with different fonts.
+      const top = document.getElementById('top');
+      top.style.height = top.style.minHeight = top.style.maxHeight = '215px'; top.style.overflow = 'hidden';
+    });
     await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
     await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
     if (width === 320) {
       const initialHeight = (await state(entry)).camera.height;
+      assert(initialHeight < 160, 'Short phone space with tall chrome and a visible toast can shrink below the former minimum: ' + JSON.stringify(await entry.evaluate(() => ({
+        canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON(),
+        hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
+        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
+      }))));
       const beforeWarning = (await state(entry)).position;
       await app.pool.query('UPDATE characters SET cash=2223,health=100,safe_until=$2 WHERE id=$1', [characterId, new Date(Date.now() + 60000)]);
       const warningReply = entry.waitForResponse(async response => {
@@ -408,6 +451,10 @@ try {
       await waitForFrames(entry, 3);
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH/);
       await assertWorldHud(entry);
+      await entry.evaluate(() => {
+        const toast = document.getElementById('toast'); clearTimeout(toast._h); toast.classList.remove('show'); toast.style.transition = '';
+        const top = document.getElementById('top'); top.style.height = top.style.minHeight = top.style.maxHeight = top.style.overflow = '';
+      });
     }
   }
   const phonePose = (await state(entry)).position;
