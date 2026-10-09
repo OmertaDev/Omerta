@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `aceb2b2b8b6a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `72f8e940079f`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2151 |
+| Commits in clone | 2153 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Include operating and payment estimates in shadow business pricing (#205) |
+| Latest commit | 2026-10-09 — Add offline matched compute-value experiments |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1250 |
+| OmertaDev | 1251 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 56 |
+| github-actions[bot] | 57 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -33,14 +33,14 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 437 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
-| [SPEC.md](../../SPEC.md) | 369 | yes |
-| knowledge/generated/github-history.md | 328 | historical |
-| knowledge/generated/graph-summary.md | 328 | historical |
-| knowledge/generated/graph.json | 328 | historical |
-| knowledge/generated/inventory.md | 328 | historical |
+| [SPEC.md](../../SPEC.md) | 370 | yes |
+| knowledge/generated/github-history.md | 329 | historical |
+| knowledge/generated/graph-summary.md | 329 | historical |
+| knowledge/generated/graph.json | 329 | historical |
+| knowledge/generated/inventory.md | 329 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 240 | yes |
+| [package.json](../../package.json) | 241 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 140 | historical |
