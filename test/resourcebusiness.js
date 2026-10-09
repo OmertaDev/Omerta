@@ -27,6 +27,17 @@ try {
       [id, account, id, 'hash', 'test-provider', {}, 10, 100, cost, 1, { kind: 'paid_market_analysis', jobId: 'business-job' }, status, true, 'PRIVATE_OUTPUT']);
   }
   await pool.query("UPDATE resource_jobs SET call_id='settled',submitted_at=$2 WHERE id=$1", ['business-job', new Date()]);
+    await addPlayer(pool, 'business-other-seller');
+  await resourceTransaction(pool, async client => { await lockResourceTreasury(client, 'business-other-seller'); });
+  for (let index = 0; index < 101; index++) {
+    const id = 'already-bid-' + index;
+    await pool.query('INSERT INTO resource_bounties(id,buyer_account,request_key,question,budget_usd_micros,lifetime_seconds,expires_at,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [id,buyer,id,'PRIVATE_BOUNTY',10000,3600,new Date(Date.now()+3600000),new Date(Date.now()-60000)]);
+    await pool.query('INSERT INTO resource_labor_bids(id,bounty_id,seller_account,price_usd_micros,delivery_seconds,service_revision) VALUES($1,$2,$3,$4,$5,$6)', [id,id,account,10000,3600,1]);
+  }
+  for (const [id,owner] of [['eligible-work',buyer],['self-work',account],['expired-work',buyer]]) {
+    await pool.query('INSERT INTO resource_bounties(id,buyer_account,request_key,question,budget_usd_micros,lifetime_seconds,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7)', [id,owner,id,'PRIVATE_BOUNTY',10000,3600,new Date(Date.now()+(id==='expired-work'?-1000:3600000))]);
+  }
+  await pool.query('INSERT INTO resource_labor_bids(id,bounty_id,seller_account,price_usd_micros,delivery_seconds,service_revision) VALUES($1,$2,$3,$4,$5,$6)', ['rival-bid','eligible-work','business-other-seller',10000,3600,1]);
   const before = await counts();
   const queries = []; const connect = pool.connect;
   pool.connect = async (...args) => {
@@ -40,6 +51,8 @@ try {
   assert(queries.every(sql => /^\s*(SELECT|BEGIN|COMMIT|ROLLBACK)\b/i.test(sql)), 'Observer cannot execute mutation SQL');
   assert(queries.every(sql => !/SELECT\s+\*|\b(report|question|prompt|output|input)\b/i.test(sql)), 'Private raw data is never loaded');
   assert.deepEqual(await counts(), before);
+  assert.deepEqual(snapshot.bounties.map(b=>b.id), ['eligible-work'], 'Existing own bids, self-owned and expired bounties are filtered before the bounded page; rival bids remain eligible');
+  assert.equal(snapshot.coverage.bountiesTruncated, false, 'Excluded bids do not consume opportunity coverage');
   assert.equal(snapshot.totals.settledCustomerRevenueUsdMicros, 70000);
   assert.equal(snapshot.jobs[0].settledRevenueUsdMicros, 70000, 'Earned ledger receipt differs from advertised job price');
   assert.equal(snapshot.totals.settledPaidComputeCostsUsdMicros, 50);
