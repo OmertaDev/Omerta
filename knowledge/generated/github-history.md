@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1f48094e3140`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `aceb2b2b8b6a`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2153 |
+| Commits in clone | 2151 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Pin full fee-aware planning review source revision |
+| Latest commit | 2026-10-09 — Include operating and payment estimates in shadow business pricing (#205) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1252 |
+| OmertaDev | 1250 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 56 |
