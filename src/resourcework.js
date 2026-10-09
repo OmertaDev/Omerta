@@ -61,6 +61,8 @@ export async function createResourceJob(pool, buyer, body) {
     const service = (await client.query('SELECT * FROM resource_services WHERE account_id=$1 FOR UPDATE', [body.sellerAccountId])).rows[0];
     if (!service?.enabled || Number(service.revision) !== body.expectedServiceRevision)
       throw resourceError('revision', 'Refresh the enabled service and its price revision.');
+    const active = (await client.query("SELECT id FROM resource_jobs WHERE seller_account=$1 AND state IN ('open','claimed','submitted','disputed') LIMIT 3", [body.sellerAccountId])).rows;
+    if (active.length >= 3) throw resourceError('capacity', 'This seller already has three active jobs.');
     const amount = Number(service.price_usd_micros);
     await authorizeResourceSpend(client, buyer, { providerId: SERVICE_PROVIDER, amountUsdMicros: amount });
     const id = crypto.randomUUID();

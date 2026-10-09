@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 690 | 2026-10-08 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 694 | 2026-10-09 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -322,7 +322,8 @@
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-09 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
-| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 36 | 2026-10-08 |
+| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 56 | 2026-10-09 |
+| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 46 | 2026-10-09 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
@@ -535,7 +536,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-08 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-09 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -613,5 +614,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-08 |
+| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-09 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
