@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The OMERTÀ Codex — rules, systems, and risks</title>
-<meta name="description" content="Search the complete OMERTÀ rulebook: jobs, death, the economy, families, PvP, the law, agent play, and the dormant on-chain rail.">
+<title>The OMERTÀ Codex: rules, systems, and risks</title>
+<meta name="description" content="OMERTÀ rules and reference: jobs, death, money, families, PvP, the law, agent play, and on-chain launch status.">
 <style>
   /* The codex uses the same display face the city itself is set in, served from our own origin. */
   @font-face{font-family:'OmDisplay';src:url('/art/display.woff2') format('woff2');font-weight:600;font-display:swap}
@@ -203,7 +203,7 @@
 </nav>
 <main id="wrap">
   <aside id="nav" class="collapsed" aria-label="Codex contents">
-    <div class="search"><label for="q">Find your next move</label><div class="search-tools"><input id="q" type="search" placeholder="Search the Codex" aria-label="Search the codex" aria-describedby="search-hint" autocomplete="off"><button id="clear-search" type="button" hidden>Clear</button></div><span class="search-hint" id="search-hint">Try “heal”, “travel”, or “recruit”. Press / to search.</span></div>
+    <div class="search"><label for="q">Find a rule or action</label><div class="search-tools"><input id="q" type="search" placeholder="Search the Codex" aria-label="Search the codex" aria-describedby="search-hint" autocomplete="off"><button id="clear-search" type="button" hidden>Clear</button></div><span class="search-hint" id="search-hint">Try heal, travel, or recruit. Press / to search.</span></div>
     <div id="search-status" role="status" aria-live="polite"></div>
     <div id="search-results" aria-label="Codex search results"></div>
     <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-content">Browse sections</button>
@@ -231,13 +231,13 @@ const CODEX_GUIDES = {
   coreloop: ['Choose a job', 'Spend resources', 'Earn & improve', 'Plan the next move'],
   kitchen: ['Buy makings', 'Cook a batch', 'Collect', 'Deal or assign crew'],
   heists: ['Choose a score', 'Recruit a crew', 'Assign roles', 'Launch the heist'],
-  convoys: ['Load goods', 'Choose a route', 'Dispatch', 'Resolve the journey'],
-  paths: ['Compare Paths', 'Read the tradeoffs', 'Choose your doctrine', 'Build your skills'],
+  convoys: ['Load goods', 'Choose a route', 'Dispatch', 'Collect at arrival'],
+  paths: ['Compare Paths', 'Read the tradeoffs', 'Choose a Path', 'Build your skills'],
   contentgraph: ['Find a lead', 'Gather evidence', 'Make a choice', 'Follow the outcome'],
-  worldgraph: ['Explore', 'Discover items', 'Coordinate', 'Resolve an operation'],
-  economy: ['Cash on the street', 'OMR on the ledger', 'Funded conversion', 'Read the risks'],
-  families: ['Find your people', 'Build the treasury', 'Hold territory', 'Manage rivalries'],
-  law: ['Watch heat', 'Understand evidence', 'Face the case', 'Manage the consequences'],
+  worldgraph: ['Find items', 'Read recipes', 'Form a Crew', 'Complete an operation'],
+  economy: ['Earn cash', 'Find OMR', 'Redeem at the Window', 'Check the risks'],
+  families: ['Join a family', 'Fund the treasury', 'Hold territory', 'Choose your rivals'],
+  law: ['Watch heat', 'Check the evidence', 'Answer the case', 'Serve or reduce the sentence'],
   character: ['Build respect', 'Rise in rank', 'Risk your life', 'Continue the bloodline']
 };
 function codexPlate(section, number) {
@@ -266,21 +266,21 @@ const searchExcerpt = (text, query) => {
   return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;
 };
 const SECTIONS = [
-  { id: 'welcome', group: 'Start', title: 'Welcome to the City', tag: 'what this is',
-    html: `<p class="lead">OMERTÀ is a persistent, server-authoritative multiplayer mafia RPG. You start in the Docks with $500, build a street, and share the city with human and autonomous players. Other players can kill your character; the account and its named bloodline records continue.</p>
+  { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',
+    html: `<p class="lead">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>
       <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. "Level N" is your
-      character level. The level comes from respect: <code>level = floor(sqrt(respect/10)) + 1</code> — L5 ≈ 160 respect,
+      character level. Your level comes from respect: <code>level = floor(sqrt(respect/10)) + 1</code>. L5 ≈ 160 respect,
       L10 ≈ 810, L20 ≈ 3,610, L30 ≈ 8,410.</p>` },
 
   { id: 'coreloop', group: 'Start', title: 'The Core Loop', tag: 'how you earn and grow',
     html: `${L(`Do <b>jobs</b> for cash → <b>train</b> your stats → put your cash in the <b>bank</b> → set up <b>income
       sources</b> that pay you while you are away → increase your <b>level</b>.`)}
-      <p><b>Crimes</b> — 43 jobs, from Pickpocket (L1) to Empty the Federal Depository (L110). Each job has a level
+      <p><b>Crimes</b>: 43 jobs, from Pickpocket (L1) to Empty the Federal Depository (L110). Each job has a level
       requirement, a nerve cost, a cash range, and a chance of jail if you fail. Your success rate increases with cunning
       and speed, your family level, some districts, and your rank. Jobs can give <b>crates</b> (buy guns and make gear) and
       <b>makings</b> (Kitchen ingredients).</p>
       <p><b>Choose an approach:</b> Case It improves the success chance and shortens jail time, with a smaller payout and fewer drops. Standard is the baseline. Go Loud lowers the success chance for a larger successful take, more drops and respect, but adds 6 heat and lengthens jail time.</p>
-      <p><b>Every job has a mark, and the money comes off them.</b> A crime names a victim drawn from the NPC residents standing in your district. When that mark has money on them, <b>THE TAKE</b> moves it: the cash you earn is transferred off their pocket (up to 25% of it per job) and only the shortfall is created by the game. A job on a busy street is a robbery with a name on it; a job on an empty one still pays exactly the same, it just comes from nowhere. Marks are always NPC residents — a real player is never robbed by a stranger's crime roll, because they would get no warning and no way to answer. Taking from a real player is what the PvP asset crimes are for (rob a front, steal a car, mug their trunk), and those always tell the victim who did it.</p>
+      <p><b>Each job names an NPC mark in your district.</b> <b>THE TAKE</b> transfers up to 25% of the mark's pocket cash to you. The game creates only the shortfall, so a job pays the same on a busy street or an empty one. Crime rolls never take money from real players without warning. To rob a player's front, steal their car, or mug their trunk, use the PvP asset crimes; these always identify you to the victim.</p>
 <p><b>Energy and nerve</b> power your actions and increase again with time. <b>Heat</b> is the police attention that
       crime causes. Too much heat starts a police case. <b>Train</b> costs 10 energy (the increase becomes smaller as a
       stat becomes higher), with a shared 3-minute gym cooldown. Levelling up refills energy and nerve from a 10-refill allowance that replenishes gradually at 10 per day. <b>Heal</b> returns you to full health. <b>Check in</b> one time each day for a streak bonus
@@ -289,62 +289,62 @@ const SECTIONS = [
       ${R(`POST /v1/crimes/:id · /train/:stat · /heal · /checkin · /bank/deposit|withdraw · /travel/:district`)}` },
 
   { id: 'character', group: 'The Basics', title: 'Your Character, Death & the Heir', tag: 'respect, rank, the estate',
-    html: `<p>Each account has one living character. You start at L1, with 50 energy, 10 nerve, 100 health, $500, and a RANDOM
+    html: `<p>Each account has one living character. You start at L1, with 50 energy, 10 nerve, 100 health, $500, and a random
       stat spread (always 15 points across muscle/cunning/speed, each at least 3). <b>Respect</b> is your experience. It sets your <b>level</b> and your <b>rank</b> (benefits at L10
       Hustler, L35 Enforcer, L65 Soldier "made man", L95 Underboss, L125 Don). <b>Effective stats</b> = trained + gear +
-      assets. <b>Firepower (fp)</b> comes from your gun — you need 50 fp or more to make a lethal hit.</p>
-      ${L(`<b>Death:</b> the character dies, but the account does not die. An heir is born and inherits everything at the
+      assets. <b>Firepower (fp)</b> comes from your gun. You need 50 fp or more to make a lethal hit.</p>
+      ${L(`<b>Death:</b> your account survives the character. An heir is born and inherits everything at the
       account level.`)}
       <p><b>Lost when the character dies:</b> pocket and bank cash, stats, skills (apart from prestige-based muscle memory), businesses, the speakeasy, the Kitchen crew, the boxing fighter, territory operation control, and this season's kills. <b>Passes to the heir:</b> the remaining $OMR after the game's loot and death rules, prestige, the Estate, deeds, Store patron/pass benefits, minted status, revive tokens, account-level legends, and 25% of your Underworld standings.</p>
       <p><b>Seasons</b> last 28 days. At the end, your level converts to prestige (<code>floor(level/2)</code>) and your
       respect returns to 0. <b>Respec</b> your stats for 90 $OMR (24-hour cooldown).</p>
       ${R(`POST /v1/character · GET /v1/me · /v1/session · POST /v1/respec`)}` },
 
-  { id: 'paths', group: 'The Basics', title: 'Choose Your Route', tag: 'paths, skills, mastery, career',
-    html: `<p class="lead"><b>No two streets have to grow the same way.</b> At level 5, $10,000 declares one of six Paths. Your Path changes concrete clocks, payouts, risks, and the rate at which specific trades learn. It does not lock you out of the rest of the city.</p>
+  { id: 'paths', group: 'The Basics', title: 'Choose a Path', tag: 'paths, skills, mastery, career',
+    html: `<p class="lead">At level 5, pay $10,000 to declare one of six Paths. Your Path changes action timers, payouts, risks, and mastery XP rates for specific trades. You can still use the rest of the city's systems.</p>
       ${L(`<b>Five systems shape the character:</b> the three core attributes, one declared Path, a three-branch skill build, ten learn-by-doing mastery tracks, and a five-book account-level Career.`)}
       <p>The first Path pick costs cash and starts the switch clock. A later change burns <b>150 $OMR</b> and requires <b>7 days</b> since the previous choice. Home trades learn at <b>×1.5 mastery XP</b>, rival trades at <b>×0.6</b>, and every other trade remains at ×1.0. Skills award one point per four levels; mastery is earned only by doing the relevant work; Career claims are cash-only and survive the character.</p>
-      <p class="loop"><b>Not sure which doctrine fits?</b> <a href="/path?source=wiki">Take the seven-decision Path quiz</a>. The result shows every signed edge, handicap, home school, and rival school before the guest-play CTA.</p>
+      <p class="loop"><a href="/path?source=wiki">Compare Paths in the seven-question quiz</a>. Your result lists the Path's bonuses, penalties, home trades, and rival trades. You can then start a guest character.</p>
       <div class="diagram-series diagram-series--gameplay" aria-label="Nine-sheet code-anchored gameplay route explainer">
         <figure class="diagram-sheet diagram-sheet--wide">
           <a href="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" aria-label="Open the full-size choose-your-Path field guide">
             <img src="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" width="6480" height="4080" loading="lazy" alt="Six-way OMERTA Path selector comparing The Gun, Ledger, Kitchen, Wheel, Shadow, and Ring, including every signed edge, handicap, home trade, and rival trade.">
-          </a><figcaption>01 / 09 · SIX WAYS INTO THE CITY · EVERY EDGE HAS A COST</figcaption>
+          </a><figcaption>01 / 09 · SIX PATHS · BONUSES AND PENALTIES</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-02-the-gun.png?v=23daa219f30d" aria-label="Open the full-size Gun Path dossier">
             <img src="/art/gameplay-02-the-gun.png?v=23daa219f30d" width="6480" height="4080" loading="lazy" alt="The Gun gameplay dossier showing its street-fight, hit-contract, trade-sale, mastery, skill, and counterplay mechanics.">
-          </a><figcaption>02 / 09 · THE GUN · FORCE CREATES WINDOWS, NOT SAFETY</figcaption>
+          </a><figcaption>02 / 09 · THE GUN · FIGHTS AND HIT CONTRACTS</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" aria-label="Open the full-size Ledger Path dossier">
             <img src="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" width="6480" height="4080" loading="lazy" alt="The Ledger gameplay dossier showing its racket, front, commerce, street-power, mastery, skill, and counterplay mechanics.">
-          </a><figcaption>03 / 09 · THE LEDGER · TURN MOVEMENT INTO MARGIN</figcaption>
+          </a><figcaption>03 / 09 · THE LEDGER · RACKETS, FRONTS AND COMMERCE</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" aria-label="Open the full-size Kitchen Path dossier">
             <img src="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" width="6480" height="4080" loading="lazy" alt="The Kitchen gameplay dossier showing cook quality, dealing heat, jail time, mastery, skill, and counterplay mechanics.">
-          </a><figcaption>04 / 09 · THE KITCHEN · QUALITY UP, HEAT DOWN</figcaption>
+          </a><figcaption>04 / 09 · THE KITCHEN · COOK QUALITY AND DEALING HEAT</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" aria-label="Open the full-size Wheel Path dossier">
             <img src="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" width="6480" height="4080" loading="lazy" alt="The Wheel gameplay dossier showing convoy speed, cook-time handicap, Wheels and Seamanship mastery, skill synergies, and counterplay.">
-          </a><figcaption>05 / 09 · THE WHEEL · OWN THE CLOCK</figcaption>
+          </a><figcaption>05 / 09 · THE WHEEL · CONVOYS AND VEHICLES</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" aria-label="Open the full-size Shadow Path dossier">
             <img src="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" width="6480" height="4080" loading="lazy" alt="The Shadow gameplay dossier showing search-clock, duel and bout, Larceny and Wet Work mastery, skill synergies, and counterplay.">
-          </a><figcaption>06 / 09 · THE SHADOW · WIN BEFORE THE FIGHT STARTS</figcaption>
+          </a><figcaption>06 / 09 · THE SHADOW · SEARCHES AND LARCENY</figcaption>
         </figure>
         <figure class="diagram-sheet">
           <a href="/art/gameplay-07-the-ring.png?v=f3662833ee7f" aria-label="Open the full-size Ring Path dossier">
             <img src="/art/gameplay-07-the-ring.png?v=f3662833ee7f" width="6480" height="4080" loading="lazy" alt="The Ring gameplay dossier showing duel and bout power, Doctor-cost handicap, Fisticuffs and Gambler mastery, skill synergies, and counterplay.">
-          </a><figcaption>07 / 09 · THE RING · MAKE PRESSURE PAY</figcaption>
+          </a><figcaption>07 / 09 · THE RING · DUELS AND BOUTS</figcaption>
         </figure>
         <figure class="diagram-sheet diagram-sheet--wide">
           <a href="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" aria-label="Open the full-size character-system blueprint">
             <img src="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" width="6480" height="4080" loading="lazy" alt="Complete character blueprint linking attributes, the declared Path, skill branches, ten mastery tracks, rank milestones, virtuoso traits, inheritance, and Career progression.">
-          </a><figcaption>08 / 09 · THE CITY RECORDS WHAT YOU BECOME · FIVE INTERLOCKING SYSTEMS</figcaption>
+          </a><figcaption>08 / 09 · CHARACTER BUILD · FIVE SYSTEMS</figcaption>
         </figure>
         <figure class="diagram-sheet diagram-sheet--wide">
           <a href="/art/gameplay-09-road-to-don.png?v=a8eec12eed77" aria-label="Open the full-size road-to-Don Career map">
@@ -360,31 +360,31 @@ const SECTIONS = [
       car. A car that is listed or pledged refuses melt, fence, and repair.</p>
       <p><b>Guns and the Armory.</b> 15 guns (Rusty .25 fp3 to the 'Undertaker' fp60), bought with cash and crates.
       <b>Vests</b> (bought with $OMR) increase survival. <b>Ammo</b> costs $2000 for 50 rounds. Its price is <b>never
-      reduced</b> — it controls the cost of a kill.</p>
+      reduced</b>; it controls the cost of a kill.</p>
       <p><b>Gear</b> (about 50 items, priced in $OMR) increases stats. The built chain rail can represent extracted gear as a tradeable NFT. A fire-kill has a <b>15% chance to take one in-game gear piece</b>. Extracted gear is safe but inert. <b>Production extraction is dormant</b>, so gear cannot move on-chain yet.</p>
-      <p><b>Rarity, and the way off the board.</b> Every car and boat carries a rarity — Common, Rare, Legendary,
-      Epic — rolled by the server the moment you <b>earn</b> it, and logged so the draw can be checked. Rarity has
+      <p><b>Rarity and extraction.</b> The server rolls and records a rarity when you <b>earn</b> a car or boat: Common, Rare, Legendary,
+      or Epic. Rarity has
       bounded utility: Rare / Legendary / Epic add <b>3% / 6% / 10%</b> to a car's chassis race power, or to a
       boat's base hold and speed. Driver stats, tuning, naval upgrades, resale value and melt yield are unchanged.
       You can buy your way up the ladder with $OMR, and
-      the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. Any paid product
+      the price buys <b>exactly the next tier</b> at a fixed price. Any paid product
       that introduces a chance-based outcome must publish its own odds before purchase.</p>
       <p>Once the production rail opens, you can also take one <b>on-chain</b> through the same route gear uses. The tradeoff is:
       <b>in-game items are lootable; extracted NFTs are safe, and inert</b>. An extracted car is an ERC-1155 in your own
-      wallet — nobody can steal it, win it in a pink-slip race, chop it off your corpse or take it in a war, and it
+      wallet. Other players cannot steal it, win it in a pink-slip race, loot it after a kill, or take it in a war. It
       <b>survives your death</b> and passes down the bloodline. In exchange it never races, hauls, melts, fences or
-      earns again while it stays on-chain. The door swings both ways: whoever <b>holds</b> the NFT — you, or whoever
-      bought it on a marketplace — can <b>burn it (redeem)</b> from their wallet, and the real thing comes back into
+      earns again while it stays on-chain. Whoever <b>holds</b> the NFT, including a marketplace buyer,
+      can <b>burn it (redeem)</b> from their wallet to return the item to
       play on <i>their</i> account, fresh and stock (tune, trim and damage do not make the trip). Gear makes the same
-      round trip: burn a gear NFT and the class joins the burner's account — unless they already run the in-game copy,
+      round trip: burn a gear NFT and the class joins the burner's account, unless they already run the in-game copy,
       in which case the burn waits until that copy extracts or is lost. You must be MADE to take anything on-chain.</p>
       ${R(`POST /v1/garage/boost · /garage/:carId/melt|fence|repair · /armory/gun/:id/buy|equip · /armory/ammo · /workshop/craft/:id · GET /v1/nft · POST /v1/nft/:kind/:id/upgrade|withdraw`)}` },
 
-  { id: 'city', group: 'The Basics', title: 'The City & the Living World', tag: 'events, weather, districts, NPC families',
-    html: `<p>The city has a <b>daily background that is the same for all players</b> and can be known in advance. <b>City
-      events</b> (16, one each day) change every loop (HEAT WAVE, DOCK STRIKE, THE CRACKDOWN, BUREAU SWEEP, OPEN CITY, and
+  { id: 'city', group: 'The Basics', title: 'Districts, events & rival families', tag: 'weather and the daily forecast',
+    html: `<p>All players share the same <b>daily city conditions</b>. One of 16 <b>city
+      events</b> runs each day and changes gameplay (HEAT WAVE, DOCK STRIKE, THE CRACKDOWN, BUREAU SWEEP, OPEN CITY, and
       more). <code>GET /v1/city</code> shows the current day and a 7-day forecast. <b>Regional weather</b> changes
-      trade-good prices. A <b>day and night clock</b> increases convictions during patrol hours (UTC 13–22) and makes night
+      trade-good prices. A <b>day and night clock</b> increases convictions during patrol hours (UTC 13-22) and makes night
       raids easier.</p>
       <table><tr><th>District</th><th>Benefit</th></tr>
       <tr><td>Docks</td><td>+50% contraband · the harbor · start here</td></tr>
@@ -393,20 +393,20 @@ const SECTIONS = [
       <tr><td>Brick Yards</td><td>+2% crime success</td></tr>
       <tr><td>Canal Row</td><td>+10% crime pay</td></tr>
       <tr><td>Cathedral Hill</td><td>nerve increases two times faster</td></tr></table>
-      <p><b>NPC rival families</b> — shared cash reserves that the whole server reduces together (Dock Rats L4, Zappa L8,
-      Kryl L20, Moreau L40, Volkov L55 — the top three are crew-only raids). A raid costs energy, ammo, and heat, and pays a bonus if you reduce a family below its floor. If you
+      <p><b>NPC rival families</b>: shared cash reserves that the whole server reduces together (Dock Rats L4, Zappa L8,
+      Kryl L20, Moreau L40, Volkov L55; the top three are crew-only raids). A raid costs energy, ammo, and heat, and pays a bonus if you reduce a family below its floor. If you
       defeat a family, your family holds its outpost (the outpost pays tribute to the treasury; a rival can take it by
       paying more than your garrison).</p>
-      <p><b>The uprising</b> — the NPC families fight back. On some days (shown in advance on the forecast) a family rises up
-      (harder to raid, no tribute). At the end, it leaves a held outpost if the garrison is too small — use <b>reinforce</b>
+      <p><b>The uprising</b>: the NPC families fight back. On some days (shown in advance on the forecast) a family rises up
+      (harder to raid, no tribute). At the end, it leaves a held outpost if the garrison is too small; use <b>reinforce</b>
       from the treasury (this also protects against rival families) or lose the turf. If you keep a family weak, a small
       garrison is enough.</p>
       ${R(`GET /v1/city [public] · /v1/world · POST /v1/world/:npcId/raid · /v1/world/:npcId/reinforce · GET /v1/market/prices [public]`)}` },
 
   { id: 'canonical-market', group: 'Money', title: 'The Canonical Market', tag: 'current market · verify activation',
-    html: `<p>The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The approved launch starts with a 9% base sell fee: a fixed 2% founder/operations share, 1.6% RWA, 2.4% community and 3% protocol-owned liquidity, plus up to 1% surge. The LP swap fee is static at 0.3%, and opening buy penalties and caps are disabled. <a href="#committee-tax">Committee tax proposals</a> can change the other bounded rates prospectively through the Safe after 48 hours; the founder share and receiving addresses stay fixed. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p>` },
+    html: `<p>The ETH/OMR market is the current market model. Production trading requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The approved launch starts with a 9% base sell fee: a fixed 2% founder/operations share, 1.6% RWA, 2.4% community and 3% protocol-owned liquidity, plus up to 1% surge. The LP swap fee is static at 0.3%, and opening buy penalties and caps are disabled. <a href="#committee-tax">Committee tax proposals</a> can change the other bounded rates prospectively through the Safe after 48 hours; the founder share and receiving addresses stay fixed. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p>` },
 
-  { id: 'genesis', group: 'Money', title: 'Genesis — the ETH/OMR Auction', tag: 'approved launch terms · verify activation',
+  { id: 'genesis', group: 'Money', title: 'Genesis; the ETH/OMR Auction', tag: 'approved launch terms · verify activation',
     html: `<p>The approved launch is one five-day native ETH auction on Robinhood Chain. Own a character NFT to bid; paid and free-credit mints both qualify. There are no individual allocation caps or gameplay eligibility list. The target is around noon New York on Friday, October 9 through Wednesday, October 14, 2026. Verified native block boundaries determine the window; exact wall-clock timing is not guaranteed.</p>
       <p>Of the existing 100M OMR supply, 40M is offered, 20M funds initial liquidity and 40M stays in the Safe for later bond activation. Unsold auction tokens return to the Safe and are accounted separately. The successful-raise minimum is 10 ETH; the starting floor corresponds approximately to 10 ETH for the full 40M offered tokens.</p>
       <p>Half of accepted ETH funds liquidity with the 20M token allocation, subject to tightly bounded rounding. The pool's opening price follows these funded amounts independently of the final auction price and can be lower. All remaining accepted ETH goes to the Safe's Family Yield treasury. Holding this ETH does not activate game reward conversion or payouts.</p>
@@ -416,61 +416,46 @@ const SECTIONS = [
     html: `<p>Committee market-tax proposals are reviewed and executed by the existing Safe. The Safe queues an exact configuration, waits at least 48 hours and explicitly executes it; the delay does not execute a proposal automatically. This is a trusted Safe process, not cryptographic proof of an in-game vote.</p><p>The founder/operations share remains fixed at 2% of taxed sell value, paid to A87 (0xA87b7A7eEcB6F4C771445F5CBa5Bb0D4B29E5CED). Other tax rates and allocations may change prospectively within the 10% hook-tax ceiling. Recipients and accrued fees cannot be redirected. This authority cannot pause or upgrade the Hook, change the static 0.3% LP fee, or alter genesis proceeds, NFT eligibility, closure claims or Safe liquidity custody. Character NFT creation fees, gameplay fees and withdrawal policy remain separate. Production authority requires verified deployment and activation.</p>` },
 
   { id: 'coordination', group: 'The City & the World', title: 'The Omerta Coordination Engine', tag: 'API pilots · default off',
-    html: `<p>The Omerta Coordination Engine provides private graph runs, immutable discoveries, live sharing permissions, evidence gates, player assertions and personal reference archives. Its implemented API pilots are value-neutral and default off; they award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p>` },
+    html: `<p>The Omerta Coordination Engine runs private graph investigations with immutable discoveries, live sharing permissions, evidence requirements, player assertions and personal reference archives. Its API pilots are implemented but default off, and award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p>` },
 
-  { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
+  { id: 'economy', group: 'Money', title: 'The economy: $OMR, the Window & the Vault', tag: 'currencies, spending and staking',
     html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
       <p><b>Read the current systems:</b> the <a href="#canonical-market">canonical market</a> describes the Hook, funded inventory bonds, reserves and Turf. The <a href="#grillv2">Stock Token and custody entry</a> distinguishes implemented foundations from pending launch work.</p>
-      <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The canonical market design uses funded OMR inventory bonds with linear vesting and prefunded commitment rewards; neither mechanism mints its payouts. Market deployment, funding and production activation require separate verification.</p>
-      <p>Five ways to get some: <b>take it</b>
-      (a kill loots the victim's liquid $OMR — staked and committed $OMR is safer), <b>earn it</b> from a
-      player who pays you in it, <b>work for it</b> (the mission ladder's one-time payouts and the daily
-      all-three bonus), <b>buy it</b>, or <b>get paid out of the Bank</b>. A nightly job asserts nothing
-      unenumerated appeared, so it is a fact you can check rather than a promise.</p>
-      <p><b>The Bank's city leg</b> — the fifth way, and the only one that pays you for simply playing.
-      People who borrow from the Bank pay to use it; that profit is spent <b>buying $OMR on the open
-      market</b>, and the whole of it goes to the players who played that day. Nothing is printed — every
-      token in the split was purchased first, so it moves no supply.</p>
-      <p>Your share is your share of what the whole city did that day, <b>flat and with no cap</b> — a man
-      running ten accounts takes exactly what he would have taken running one, so there is no reward for
-      splitting yourself up. Only actions the game itself rations count (nerve, energy, a cooldown); nothing
-      you can simply buy more of. To be in a day's split you need work across <b>three different trades</b>
-      and a minimum day's score — the board shows where you stand and what you still need. It is not a rate
-      and not a promise: the size of the split is whatever the Bank actually earned.</p>
-      <p><b>The Desk</b> — where you buy it, and where it goes when you spend it. Every $OMR a sink takes
-      off you (a vanity burn, an estate tier, a jury, the Window) is <b>not destroyed</b> — it lands on the
-      desk's shelf and goes back up for sale. Once a day the desk runs a <b>descending auction</b>: it opens
-      high, the price falls for six hours toward a <b>reserve</b>, and whatever does not sell rolls to
-      tomorrow. The lot is what came home yesterday, capped at 1% of all the $OMR in player hands so a big
-      spending day can't become a dump. <b>The desk can only sell what is on its shelf</b> — it never issues
-      anything, so buying here moves no supply: those are somebody else's spent chips changing hands. There is a
-      <b>buy side</b> too: if the price falls far enough below the 30-day average the desk restocks off the open
-      market rather than waiting for the sinks — paid for out of the trading fees the game's own liquidity earns,
-      never by printing. Between the two edges it does nothing, deliberately: a desk that buys and sells at once is
-      paying fees to trade with itself. The
-      board publishes the shelf, the clock, the price and the exact list of spends that feed it. <b>$OMR
-      bought at the desk is FRESH</b> — full early-exit toll for its first 48 hours, like any other.</p>
-      <p><b>The Exchange window</b> — the ONE conversion, one way: spend $OMR, receive cash at a published
-      rate, from a till that real cash sinks fill. A short till refuses and takes nothing. 5% of every
-      redemption goes to the top families (the family yield). <b>Cash can never become $OMR</b> — there is no swap
-      and no laundering rail. <b>The early-exit tax:</b> $OMR younger than 48 hours pays
-      an extra toll when withdrawn on-chain — 50% at age zero, straight-line to 0% at 48 hours, newest tokens
-      priced first, no exemptions.</p>
-      <p><b>THE MADE MAN</b> — the recurring subscription. Pay <b>120 $OMR every 30 days</b> and you are <i>made</i>:
-      the badge, the upper compound (Country Estate and above), a club of your own, and <b>the pad pays itself</b> —
-      your fronts settle their own cash upkeep the moment you touch them, so a stretch away does not leave them cold.
-      <b>It buys capped economic capacity and convenience, never a higher combat ceiling:</b> raw combat stats and the
-      maximum combat power do not move. Operating costs stay in cash — all of them — which is the line that keeps the game free. A
-      man who never pays dues runs the whole city at full strength, and can hunt made men for their $OMR. Dues are a
-      sink like any other, so they go to <b>the Desk</b> to be sold again rather than being destroyed.</p>
-      <p><b>The access stake</b> — the Den's high-stakes room wants a seat (level 30, or the Madame's velvet rope)
-      <i>and</i> <b>300 $OMR held in a stake</b>. Held, not spent: it earns nobody anything, and its whole job is to put a
-      permanent, visible, lootable float on exactly the players worth hunting.</p>
-      ${L(`<b>The Vault (staking)</b> is <b>cheaper cover, not a safe harbour</b>. Nothing makes $OMR
-      untouchable. A killer takes <b>50%</b> of a loose or unbonding balance and <b>20%</b> of a
-      staked one — staking reduces exposure from 50% to 20%, without making you safe. Remaining principal
-      <b>unbonds for 6 hours</b> at the higher exposure rate before becoming liquid; gameplay losses reduce what returns. Staking pays the
-      staker no yield — $OMR yield goes to THE FAMILIES, through the family yield.`)}
+      <p><b>$OMR is not paid on a timer.</b> The game has no wage or inflationary yield. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The canonical market design uses funded OMR inventory bonds with linear vesting and prefunded commitment rewards; neither mechanism mints its payouts. Market deployment, funding and production activation require separate verification.</p>
+      <p>You can get $OMR by <b>looting it after a kill</b>, receiving <b>payment from another player</b>, completing
+      <b>one-time missions or all three daily tasks</b>, <b>buying it</b>, or receiving <b>the Bank's city distribution</b>.
+      Staked and committed $OMR has a lower loot rate than liquid $OMR. A nightly check flags any credit outside the enumerated rules.</p>
+      <p><b>The Bank's city distribution</b> uses all of the profit from borrowers' fees to <b>buy $OMR on the open
+      market</b> and distribute it to that day's active players. Every token is purchased first, so the distribution
+      does not increase supply.</p>
+      <p>Your share is proportional to your qualifying work across the city, <b>without a cap</b>. Splitting the same
+      work across ten accounts gives the same total share as doing it on one. Only actions limited by nerve, energy,
+      or a cooldown count; activity you can buy repeatedly does not. To qualify you need work across <b>three different
+      trades</b> and a minimum daily score. The board shows your score and remaining requirements. The distribution's
+      size depends on what the Bank actually earned.</p>
+      <p><b>The Desk</b> sells $OMR spent on vanity, estate tiers, juries, the Window, and other sinks. Spent $OMR
+      returns to its inventory instead of being destroyed. Its daily <b>descending auction</b> opens high, falls toward
+      a <b>reserve</b> over six hours, and carries unsold inventory into tomorrow. The lot uses yesterday's receipts,
+      capped at 1% of all $OMR held by players. <b>The Desk sells only inventory it holds.</b> Purchases transfer existing
+      tokens without increasing supply.</p>
+      <p>The Desk also buys from the open market when the price falls far enough below the 30-day average. Trading fees
+      earned by the game's liquidity fund these purchases. Between its buy and sell thresholds it does nothing, avoiding
+      simultaneous purchases and sales to itself. The board publishes inventory, the auction clock, price, and the spending
+      categories that supply it. <b>Desk purchases start a new 48-hour early-exit window</b> with the full initial toll.</p>
+      <p><b>The Exchange window</b> converts $OMR to cash at a published rate, using a till funded by cash spending.
+      An insufficient till rejects the request and takes nothing. The top families receive 5% of each redemption as family
+      yield. <b>Cash cannot become $OMR.</b> On-chain withdrawals of $OMR younger than 48 hours pay an additional
+      <b>early-exit tax</b>: 50% at age zero, falling linearly to 0% at 48 hours. Newest tokens are priced first; there are no exemptions. After 48 hours, the surcharge reaches zero; the 2% base withdrawal toll still applies.</p>
+      <p><b>The Made Man subscription</b> costs <b>120 $OMR every 30 days</b>. It grants the badge, access to Country
+      Estate and higher tiers, a club of your own, and automatic cash upkeep settlement when you use your fronts.
+      The subscription adds capped economic capacity and convenience. It leaves raw combat stats and maximum combat
+      power unchanged. All operating costs use cash, and players without dues retain full combat strength, including
+      the ability to hunt made players for $OMR. Holding enough $OMR reaches the same Made Ladder ceiling without dues. Subscription dues return to <b>the Desk</b> for resale.</p>
+      <p><b>The access stake:</b> the Den's high-stakes room requires level 30 or the Madame's access perk, plus
+      <b>300 $OMR staked</b>. The stake is held rather than spent, earns no personal yield, and remains visible and lootable.</p>
+      ${L(`<b>The Vault (staking):</b> a killer takes <b>50%</b> of loose or unbonding $OMR and <b>20%</b> of staked
+      $OMR. Remaining principal <b>unbonds for 6 hours</b> at the higher exposure rate before becoming liquid.
+      Gameplay losses reduce the amount returned. Staking pays no personal yield; family yield goes to families.`)}
       <p>Current gameplay staking uses the game ledger. The planned on-chain custody design requires actual deposited OMR.
       The same canonical position must drive the Made Ladder, commitment multiplier, Den access, Broker staking
       multiplier, gameplay loss, unbonding, inheritance, and public accounting. The database may mirror finalized chain
@@ -486,7 +471,7 @@ const SECTIONS = [
       <p>Only the account's verified controller wallet or the reserve-backed claim-and-stake rail may fund its position;
       a bypass transfer cannot stake for somebody else or qualify them. The position follows the permanent game account,
       not a character name, so death or respawn preserves principal and history. Depositing or committing accepts a
-      published on-chain risk-ruleset version. The vault—not the gameplay signer—enforces maximum losses of 20% for
+      published on-chain risk-ruleset version. The vault, not the gameplay signer, enforces maximum losses of 20% for
       active/committed stake and 50% for idle/unbonding OMR. The Safe may reduce or pause exposure, but a higher rate or
       new loss type requires a new public version and fresh consent.</p>
       <p>Value-taking actions move through prepared, submitted, finalized, and game-committed states. The final vault
@@ -517,7 +502,7 @@ const SECTIONS = [
       opens a public seven-day request and notifies every available account channel. The current controller may contest
       it; only the Safe may resolve a contested request against public evidence, and nobody may shorten the seven-day
       minimum. While recovery is open, withdrawals, deposits, new commitments, and more controller changes stop, but
-      existing commitments, unbonding clocks, gameplay exposure, and valid losses continue—recovery is not a temporary
+      existing commitments, unbonding clocks, gameplay exposure, and valid losses continue, recovery is not a temporary
       shield. A completed change advances the public controller generation, invalidates unfinished old-wallet
       authorizations, and never rewrites finalized history. EOA and ERC-1271 smart-contract wallets are supported and
       invalid contract-wallet responses fail closed.</p>
@@ -543,7 +528,7 @@ const SECTIONS = [
       repairs the deficit first, credits no player and creates no qualification, yield, repayment claim, or gameplay
       credit; excess becomes unattributed.</p>
       <p>Any positive custody deficit automatically pauses withdrawals as well as deposits, new commitments, and gameplay
-      debits. Every player's liability remains recorded in full—there is no haircut, pro-rata conversion, first-come
+      debits. Every player's liability remains recorded in full, there is no haircut, pro-rata conversion, first-come
       payout, operator write-off, or database adjustment. When canonical zero deficit reaches configured finality and
       the continuous public mirror synchronizes, the deficit-specific pauses clear automatically without acknowledgment
       or cooldown; unrelated pauses remain. The vault checks solvency before and after every value-changing operation.
@@ -611,43 +596,40 @@ const SECTIONS = [
       only after canonical absence is proven. Final events expose the ruleset, generations, nonce, submitter, times,
       per-bucket balances and ceilings, rounded debits, tranche consumption, killer credit, and post-settlement solvency
       totals.</p>
-      <p><b>The cycle:</b> cash costs go to the street-tax pool, and every 12 hours the whole take funds the
-      Exchange window's till — the cash players spend backs the cash $OMR redeems for. <b>Flat passive
-      income:</b> Rackets and Assets (buy one time, earn continuously). <b>Trade goods</b> — buy at a low
-      price, carry the goods, sell at a high price (the start of the market and convoys).</p>
+      <p><b>Cash circulation:</b> cash costs enter the street-tax pool. Every 12 hours the whole pool funds the
+      Exchange window's till. <b>Rackets and Assets</b> provide continuous cash income after a one-time purchase.
+      <b>Trade goods</b> can be bought, carried, and sold at another district's price through the market or convoys.</p>
       ${R(`GET /v1/window · POST /v1/window/redeem · /stake · /unstake · /rackets|assets/:id/buy · /goods/buy|sell`)}` },
 
-  { id: 'kitchen', group: 'Money', title: 'The Kitchen', tag: 'the offline drug engine',
+  { id: 'kitchen', group: 'Money', title: 'The Kitchen', tag: 'cooking, dealing and crew wages',
     html: `${L(`Buy <b>makings</b> → upgrade your <b>lab</b> → <b>cook</b> a batch → <b>collect</b> → <b>deal</b> (or let
       your <b>crew</b> sell while you are offline).`)}
       <p>Your <b>trade rank</b> controls it. There are 8 drugs (unlocked by rank). Cook produces <code>demand×12</code>,
       with a fire risk. <b>Deal</b> income = demand × quality × event × trade bonus, and <b>adds heat</b> (feeds the Law).
       A rank-0 dealer gets a +50% bonus on the corner. <b>Dealing styles:</b> Work the Regulars halves heat, doubles nerve use and adds 10% trade reputation; Hit the Corner is standard; Move Weight doubles heat, halves nerve use and reduces reputation by 10%. Dealing also uses energy. <b>Crew</b> (up to 5) sell while you are offline but cost
-      <b>$1,200 each hour in wages ("the nut")</b> whether the stash moves or not — if you do not pay for 3 days, the
+      <b>$1,200 each hour in wages ("the nut")</b> whether the stash moves or not; if you do not pay for 3 days, the
       crew becomes <b>cold</b> and stops. Offline sales cap at 8 hours' worth however long you are away, but the nut
       runs up to two days, so <b>keep them stocked and check in often</b>: three visits a day earns ~3.6× the wages even
       on the cheapest line, once a day barely clears it, three days away costs more than it makes. You can always
-      <b>let one go</b> — square up and one walks, or a cold crew walks for nothing (their buy-in is gone either way).
+      <b>let one go</b>: square up and one walks, or a cold crew walks for nothing (their buy-in is gone either way).
       <b>Lay low</b> and <b>clean papers</b> reduce heat. Above heat 60, the Bureau can raid.</p>
       ${R(`POST /v1/kitchen/makings/:drugId · /lab/upgrade · /cook · /collect · /deal · /crew/hire · /crew/wages · DELETE /v1/kitchen/crew · /laylow · /cleanpapers`)}` },
 
   { id: 'business', group: 'Money', title: 'Businesses & Fronts', tag: 'premium upgradeable venues',
-    html: `<p>Level-gated, upgradeable places (Laundromat L15 to Casino L58) that earn pocket cash — the
-      endgame personal-income engine. <code>GET /v1/catalog</code> lists them. <i>(Fronts do not launder
-      anything — cash can't become $OMR anywhere.)</i></p>
+    html: `<p>Fronts earn pocket cash and can be upgraded. They unlock by level, from the Laundromat at L15 to the
+      Casino at L58. <code>GET /v1/catalog</code> lists them. Cash cannot become $OMR through a front.</p>
       ${L(`<b>buy</b> → <b>collect</b> (24-hour limit) → <b>upgrade</b> → <b>pay the upkeep</b>.`)}
-      <p><b>A front wants an owner who shows up, and the terms say so.</b> The till holds only a <b>day</b> of
-      takings, but <b>the pad</b> — protection and wages, 20% of hourly income, climbing 5% for every extra
-      front you run — keeps running for <b>two days</b> whether you are there or not. Missed collections lose income once the till fills. Unpaid for 3 days it
+      <p>The till holds only a <b>day</b> of income. <b>The pad</b> covers protection and wages: 20% of hourly income, climbing 5% for every extra
+      front you run; keeps running for <b>two days</b> whether you are there or not. Missed collections lose income once the till fills. Unpaid for 3 days it
       goes <b>cold</b>: no income, no upgrades, until you square it out of pocket.</p>
       <p><b>Closing up</b> (<code>DELETE /v1/business/:id</code>) is the way out. You can own one of each kind,
       so a cold front you cannot carry holds that slot for the rest of your street's life. Close it and the pad
-      stops and the slot frees — permanently, tier and all.</p>
+      stops and the slot becomes available. Closing permanently removes the front and its upgrades.</p>
       <p>A front also heats up by <b>earning</b>: bank a day's income and the Bureau's file grows; past the
       threshold a raid seizes the pending take and fines you. Collect often and any raid catches less. A rival
       can <b>shakedown</b> 30% of the pending income in a stat contest, <b>rob</b> 15% of it in a stealth one,
-      attempt a <b>hostile takeover</b>, crew an <b>inside job</b> — and a killer who puts your street down can
-      <b>SACK</b> your best front and run it themselves. A passive empire is risk capital.</p>
+      attempt a <b>hostile takeover</b>, or organize an <b>inside job</b>. A player who kills your character can
+      <b>sack</b> your best front and run it themselves.</p>
       ${R(`GET /v1/catalog [public] · POST /v1/business/:kind/buy · /business/collect · /upkeep · /:id/upgrade|shakedown · DELETE /v1/business/:id`)}` },
 
   { id: 'territory', group: 'Money', title: 'Territory Rackets', tag: 'seizable family capital',
@@ -660,17 +642,17 @@ const SECTIONS = [
 
   { id: 'families', group: 'Crews & Family', title: 'Families', tag: 'groups, wars, turf, the treasury',
     html: `<p><b>Found</b> a family for $25k at L5 (maximum 20 members); you join a family immediately. Roles: boss /
-      underboss / capo / crew. <b>Tribute</b> (cash adds to the weekly task; $OMR goes to the reserve). <b>Wars</b> —
+      underboss / capo / crew. <b>Tribute</b> (cash adds to the weekly task; $OMR goes to the reserve). <b>Wars</b>:
       declare a war for $10k; it runs 30 minutes; the winner takes 20% of the treasury. A fire-kill on a war rival scores 3
-      points (a jump scores 1). <b>Turf</b> — seize a district for its benefits and its territory racket.</p>
-      <p><b>The watch.</b> A holder declares the hour their family stands ready (<code>/districts/:id/watch</code>, boss or underboss, free and changeable — the cost is having to BE there, though not once somebody is at the door: with a contest running you are held to the hour you committed to). Inside that four-hour window, taking the district is the plain price; outside it, catching them cold costs <b>1.5&times;</b>. A family that never declares a watch is dear at every hour, so declaring is what buys you the cheap window. Every declared hour is public on <code>/districts</code> — you are meant to plan around it, on both sides.</p>
-      <p><b>The sealed bid.</b> A district <i>another family holds</i> cannot be bought at a published price — it goes to a contest (<code>/districts/:id/claim</code>). Every family puts up a SECRET stake from its treasury; when the window closes the highest takes the district, <b>the holder wins ties</b>, and the winning stake becomes the new garrison. The board tells you how many families are in and never what any of them put up. A loser gets half of their stake back and forfeits the rest, so committing everything against a family that was never coming is how you lose money without losing a fight. A stake only ever goes up, and it leaves the treasury the moment you make it — you cannot bluff with money you have already spent. The watch still applies: staking outside the holder's declared window costs more just to get in.</p>
-      <p><b>The map.</b> The six core districts are not a flat set &mdash; they border each other, and <code>/districts</code> publishes which. Geography prices the door from both sides. A district a family holds is <b>dearer to come for once per bordering district that family also holds</b>, because they can reinforce across their own ground: contiguous turf genuinely defends itself. And a district <b>next to ground you already hold</b> is <b>cheaper for you</b> &mdash; your men are already on that side of the river. That is one foothold discount however many borders you share, not a bonus for encirclement. So "we cannot defend the canal, we do not hold the docks" is now a real sentence, and taking the district next to your own beats taking the rich one across town.</p>
-      <p><b>The charter &mdash; what your family IS.</b> A family is not just the sum of what it holds — the boss picks a charter, and every one of them trades an edge for a real <b>handicap</b> &mdash; a charter with only an upside would be a free upgrade everybody takes, and then nothing is asymmetric again. <b>The Syndicate</b> runs its operations 15% leaner but pays 15% over the odds for turf. <b>The Outfit</b> takes ground 15% cheaper and pays 15% more to run what it holds. <b>The Fixers</b> have the Bureau building its file 25% slower, but forfeit 25% more of a losing contest stake. Running <b>no charter</b> is a real answer &mdash; you get neither side, which is exactly the family you have today. The first pick is free; re-founding costs the family reserve and locks for a week afterwards. The two mirrors are deliberate: a Syndicate family and an Outfit family are each good at what the other is bad at, so an alliance between them is complementary rather than just twice as big.</p>
-      <p><b>The season has an ending.</b> A season runs 28 days in three phases you can read on <code>/seasons</code>: <b>The Opening</b> (days 1&ndash;7 &mdash; cheap ground, nothing settled), <b>The Long Game</b> (8&ndash;21 &mdash; build and hold), and <b>The Reckoning</b> (22&ndash;28). In the last week held turf is a quarter cheaper to challenge, contests settle in half the time and a holder's watch window is halved, so an incumbent who has been sitting on a district since week one has to defend it while the door is open. Nothing is reset or seized when the books close &mdash; instead the city REMEMBERS: the top City Standing takes the season and the family holding the most core turf goes on the permanent roll, and the champion's bloodline keeps the crown forever. That is the whole point of the arc &mdash; you are not just accumulating, you are racing a clock.</p>
-      <p><b>The posts.</b> A family fills five chairs — the Enforcer, the Caporegime, the Streetboss, the Quartermaster and the Bagman (<code>/roster</code>, boss or underboss). <b>One post per made man, one man per post</b>, so your best man can do one job and not the others; each post reads one stat, and what it is worth scales with the man in it. What makes this worth fighting over: <b>a post is dead while its holder is dead, in lockup or in the hospital</b> — put a family's Enforcer in the hospital and their turf gets cheaper to take without your ever going near the district. They can fill the chair again straight away, but only with somebody who was on the STREET; you cannot slide a man across from another post for six hours — nor stand him down and walk him into the next chair, which is the same shuffle — so answering a hit costs the family a second made man. Every post is a bonus, never a requirement — the scarcity is which chairs you fill, not that the baseline moved.</p>
+      points (a jump scores 1). <b>Turf</b>: seize a district for its benefits and its territory racket.</p>
+      <p><b>The watch.</b> A boss or underboss sets a public watch hour through <code>/districts/:id/watch</code>. It is free to change until a contest begins; then the committed hour stays fixed. Challenges inside the four-hour watch window pay the standard price. Outside it they cost <b>1.5&times;</b>. A family without a declared watch pays the higher challenge price at every hour. Check <code>/districts</code> for each family's schedule.</p>
+      <p><b>The sealed bid.</b> To take a district held by another family, enter a contest through <code>/districts/:id/claim</code>. Each family stakes treasury cash in secret. The highest stake wins at closing, <b>the holder wins ties</b>, and the winning stake becomes the garrison. The board shows the number of entrants without revealing bids. Losers recover half their stake and forfeit the rest. A stake leaves the treasury immediately and can only increase. Entering outside the holder's watch window costs more.</p>
+      <p><b>The map.</b> <code>/districts</code> lists the borders between the six core districts. Each adjacent district held by the defending family raises the challenge cost. A district next to your own turf is cheaper for you to challenge. This foothold discount applies once, regardless of how many borders you share.</p>
+      <p><b>The charter.</b> The boss can choose a charter with a bonus and a penalty. <b>The Syndicate</b> cuts operating costs by 15% but pays 15% more for turf. <b>The Outfit</b> pays 15% less for turf and 15% more for operations. <b>The Fixers</b> slow Bureau evidence growth by 25% but forfeit 25% more of a losing contest stake. <b>No charter</b> keeps the standard rates. The first choice is free; changing it costs family reserve and locks the choice for a week. Syndicate and Outfit families have complementary cost advantages when allied.</p>
+      <p><b>The season.</b> Each 28-day season has three phases, shown on <code>/seasons</code>: <b>The Opening</b> (days 1-7, cheaper turf), <b>The Long Game</b> (8-21, building and holding), and <b>The Reckoning</b> (22-28). In the final week, held turf is 25% cheaper to challenge, contests settle in half the time, and watch windows are halved. Closing the season does not reset or seize turf. The top City Standing wins the season, the family with the most core turf enters the permanent roll, and the champion's bloodline keeps its crown.</p>
+      <p><b>The posts.</b> A boss or underboss assigns the Enforcer, Caporegime, Streetboss, Quartermaster, and Bagman through <code>/roster</code>. <b>One post per made man, one man per post.</b> Each bonus scales with one stat of its holder and stops while they are dead, jailed, or hospitalized. Hospitalizing an Enforcer, for example, makes that family's turf cheaper to challenge. A vacant post can be filled immediately by an eligible member on the street. Moving between posts, including resignation followed by reassignment, requires six hours. Posts add bonuses; an empty chair leaves the standard rates in place.</p>
       <p>The reserve buys status: <b>seals</b> (Wax 150 to Obsidian 9000 $OMR) and the <b>Foundation</b> (360 to 18000 $OMR).
-      The Foundation is real power: it reduces the RICO conviction chance of every member (only members present when a case
+      The Foundation reduces the RICO conviction chance of every member (only members present when a case
       was filed). The reserve also draws the <b>family yield</b>.</p>
       ${R(`POST /v1/gangs · /gangs/:id/join · /leave · /kick · /promote · /gangs/tribute[/omr] · /war/:id · /districts/:id/seize · /gangs/foundation · /gangs/vanity/*`)}` },
 
@@ -683,8 +665,8 @@ const SECTIONS = [
       (convoys ×0.8 time), Blood Oath (kill loot ×1.25).</p>
       ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto · /override · /propose`)}` },
 
-  { id: 'worldgraph', group: 'The City & the World', title: 'The World Graph — Items, Mysteries & Crew Operations', tag: 'conserved direct play · Belladonna',
-    html: `<p>The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><p><b>The Belladonna proof is one server-authoritative route sequence.</b> Read
+  { id: 'worldgraph', group: 'The City & the World', title: 'The World Graph: items, mysteries & Crew operations', tag: 'item custody and Belladonna cases',
+    html: `<p>The World Graph tracks conserved items, recipes, individual mysteries and four-account Crew operations. Belladonna uses server-issued choices and exact instance identifiers. Direct play uses cash and has no effect on OMR; its inventory cannot be exported as NFTs.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><p><b>The Belladonna sequence is controlled by the server.</b> Read
       <code>GET /v1/worldgraph/inventory</code> and <code>GET /v1/worldgraph/recipes</code>; the recipe board
       includes current cash, material, unique-item, location, skill, level and eligible-car blockers. Salvage
       an owned eligible car, craft the declared materials and precision tool, then call
@@ -720,11 +702,10 @@ const SECTIONS = [
       content compiler and <code>content:check</code>.</p>
       ${R(`GET /v1/worldgraph/inventory · GET /v1/worldgraph/recipes · GET /v1/worldgraph/mysteries · GET /v1/worldgraph/operations`)}` },
 
-  { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'playable stories · bounded expansion',
-    html: `<p><b>The merged <code>content/</code> foundation is an authoring and verification plane, not a hidden
-      faucet or execution backdoor.</b> It models individual mysteries, Crew and Extended Family dependencies,
+  { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph: stories, crafting & seasonal hunts', tag: 'cases, workshops and activation rules',
+    html: `<p><code>content/</code> contains authored game data and the tools that verify it. It models individual mysteries, Crew and Extended Family dependencies,
       asymmetric social roles, world-state gates, raw-material sources, recipes, crafting requirements, item
-      sinks and durability, selected-item export policy, growth journeys, and achievement-triggered seasonal
+      sinks and durability, selected-item export policy, progression, and achievement-triggered seasonal
       rewards as data. Packs cannot carry JavaScript, SQL, shell commands, credentials, or publishing authority.</p>
       <p><code>npm run content:check</code> validates schemas, dependencies, source/sink conservation, social
       satisfiability, finite reward budgets, and deterministic hashes. <code>npm run content:build</code> emits an
@@ -733,20 +714,20 @@ const SECTIONS = [
       exact bundle hash. A Crew or Extended Family fills four asymmetric roles, receives only server-issued puzzles
       or choices, reveals shared evidence, and claims a value-neutral title and collectible exactly once. Every run
       is pinned to the version and hash it began with; compilation by itself never activates a pack.</p>
-      <p>The first district sampler adds six independent personal, district-gated stories: Docks — <b>The Man Who
-      Missed the Tide</b>; Canal — <b>Water in the Cellar</b>; Brick — <b>The Last Kiln</b>; Neon — <b>House
-      Lights</b>; Foundry — <b>The Furnace Ledger</b>; and Cathedral — <b>A Saint's Account</b>. Each run reveals
+      <p>Six independent personal stories require their named district: Docks: <b>The Man Who
+      Missed the Tide</b>; Canal; <b>Water in the Cellar</b>; Brick; <b>The Last Kiln</b>; Neon; <b>House
+      Lights</b>; Foundry; <b>The Furnace Ledger</b>; and Cathedral; <b>A Saint's Account</b>. Each run reveals
       one sequential action at a time, rechecks location before every mutation, records the chosen answer, and pays
-      one exactly-once gameplay-inert memento—never cash, $OMR, status, or combat power.</p>
-      <p>Seven personal <b>Don Cases</b> form the late-game spine: level 35 — <b>The Iron Election</b>;
-      50 — <b>A House Made of Glass</b>; 65 — <b>Port of No Return</b>; 80 — <b>The Empty Seat</b>;
-      95 — <b>Two Funerals</b>; 110 — <b>The Federal Ledger</b>; and 125 — <b>Don of the City</b>.
+      one memento exactly once. The memento grants no cash, $OMR, status, or combat power.</p>
+      <p>Seven personal <b>Don Cases</b> unlock at later levels: level 35: <b>The Iron Election</b>;
+      50; <b>A House Made of Glass</b>; 65; <b>Port of No Return</b>; 80; <b>The Empty Seat</b>;
+      95; <b>Two Funerals</b>; 110; <b>The Federal Ledger</b>; and 125; <b>Don of the City</b>.
       Each has five to eight sequential actions, reconnects at least three existing systems, and ends
       with an ungated method, a mastery-sensitive method, and an optional Crew method. Every method
       converges on the same value-neutral reward class: one distinct gameplay-inert memento.</p>
-      <p>Six personal <b>Path Cases</b> form the identity drop: Gun — <b>The Last Clean Contract</b>;
-      Ledger — <b>Hostile Books</b>; Kitchen — <b>The Bad Batch</b>; Wheel — <b>Black Ice</b>;
-      Shadow — <b>Nobody Saw Him Leave</b>; and Ring — <b>Twelve Rounds</b>. Each has four
+      <p>Six personal <b>Path Cases</b> follow the declared Paths: Gun: <b>The Last Clean Contract</b>;
+      Ledger; <b>Hostile Books</b>; Kitchen; <b>The Bad Batch</b>; Wheel; <b>Black Ice</b>;
+      Shadow; <b>Nobody Saw Him Leave</b>; and Ring; <b>Twelve Rounds</b>. Each has four
       investigations and a three-way resolution: an ungated baseline, a build-specialist method, and
       an Honor-or-Infamy relationship method with a named Underworld fixture. The server derives Path,
        owned skills, mastery, regimen, honor, and effective Underworld standing under the current street
@@ -823,30 +804,30 @@ const SECTIONS = [
       ${R(`GET /v1/content · POST /v1/content/:namespace/instances · POST /v1/content/:namespace/sources/:sourceId/collect · POST /v1/content/:namespace/jobs/:jobId/start · POST /v1/content/:namespace/jobs/:jobId/collect · POST /v1/content/:namespace/recipes/:recipeId/craft · POST /v1/content/:namespace/tools/:toolId/repair · POST /v1/content/:namespace/exchange/list · POST /v1/content/:namespace/exchange/:listingId/fill · POST /v1/content/:namespace/exchange/:listingId/cancel · content/README.md`)}` },
 
   { id: 'den', group: 'Money', title: 'The Den (Casino)', tag: 'gambling at the Neon Mile',
-    html: `<p>Every game at the den today is <b>cash-denominated</b> — no current den game touches $OMR. Any future
+    html: `<p>Every current Den game uses <b>cash</b> and leaves $OMR unchanged. Any future
       $OMR-denominated game would be a separately specified product with its own published terms. The server
       calculates and records every result. The house adds 1% to the
       street-tax pool from real profit only.</p>
-      <ul><li><b>Craps</b> — the pass line in one action, 1:1, edge about 1.41%, 1 nerve, up to $250k ($2M in the high-stakes room —
+      <ul><li><b>Craps</b>: the pass line in one action, 1:1, edge about 1.41%, 1 nerve, up to $250k ($2M in the high-stakes room,
       L30 or the Madame's rope, plus the 300 $OMR access stake).</li>
-      <li><b>The Numbers</b> — pick a number 0–999, one ticket each day, pays 600:1. An exact hit also claims half of the funded progressive <b>Vig Pot</b>; a near miss within five numbers (wrapping around 999 to 0) returns 5× the stake.</li>
-      <li><b>Blackjack</b> — deal, hit, stand or double. A natural pays 3:2; the dealer hits soft 17. Each new hand costs 1 nerve unless a contact perk covers it.</li>
-      <li><b>Heads-up poker</b> — list a deal limit and challenge another player for a cash stake; the winner takes the pot after rake. <b>The tournament</b> takes a $5k buy-in into escrow and pays the top places after a 5% rake. Ring Poker adds multi-player betting streets; see The Household &amp; Ring Poker.</li>
-      <li><b>Back-room PvP dice</b> — agree by listing a fade limit; the winner takes the pot minus a 5% rake.</li>
-      <li><b>The weekly Fight</b> — one $5k bet on a favorite; the Neon-holding boss can <b>fix</b> it for $50k.</li>
-      <li><b>The Track</b> — the greyhounds and the horses. A daily card (6 runners with posted odds, about 15% house
-      share); one $50–$10k win bet for each race each day; the winner comes from the daily seed; claim at the LOCKED odds.
-      If you own an animal, <b>run it in the card</b> ($5k nomination, up to 2 owner entries a race) — the town bets on
+      <li><b>The Numbers</b>: pick a number 0-999, one ticket each day, pays 600:1. An exact hit also claims half of the funded progressive <b>Vig Pot</b>; a near miss within five numbers (wrapping around 999 to 0) returns 5× the stake.</li>
+      <li><b>Blackjack</b>: deal, hit, stand or double. A natural pays 3:2; the dealer hits soft 17. Each new hand costs 1 nerve unless a contact perk covers it.</li>
+      <li><b>Heads-up poker</b>: list a deal limit and challenge another player for a cash stake; the winner takes the pot after rake. <b>The tournament</b> takes a $5k buy-in into escrow and pays the top places after a 5% rake. Ring Poker adds multi-player betting streets; see The Household &amp; Ring Poker.</li>
+      <li><b>Back-room PvP dice</b>: agree by listing a fade limit; the winner takes the pot minus a 5% rake.</li>
+      <li><b>The weekly Fight</b>: one $5k bet on a favorite; the Neon-holding boss can <b>fix</b> it for $50k.</li>
+      <li><b>The Track</b>: the greyhounds and the horses. A daily card (6 runners with posted odds, about 15% house
+      share); one $50-$10k win bet for each race each day; the winner comes from the daily seed; claim at the LOCKED odds.
+      If you own an animal, <b>run it in the card</b> ($5k nomination, up to 2 owner entries a race); the town bets on
       your animal.</li>
-      <li><b>The Futurity</b> — the major race where the Stable meets the Track. Owners <b>nominate</b> their animals ($5k
+      <li><b>The Futurity</b>: the major race where the Stable meets the Track. Owners <b>nominate</b> their animals ($5k
       fee, up to 8 in the field). The whole town bets <b>parimutuel</b>. At window close, the worker races the field on
       form; the winners share the losing pool minus a 5% share, and the winning owner takes a promoter's purse. (This is
-      different from The Stakes — that is owners competing for a pooled buy-in; the Futurity is the crowd betting on the
+      different from The Stakes; that is owners competing for a pooled buy-in; the Futurity is the crowd betting on the
       field.)</li></ul>
       ${R(`GET /v1/casino · POST /v1/casino/dice · /numbers[/claim] · /fade · /dice/:id · /fight[/claim|/fix] · /track[/claim] · /track/enter/:id · /futurity/nominate/:id · /futurity/bet · /blackjack[/hit|/stand|/double] · /poker/deal · /poker/:id · /tournament`)}` },
 
   { id: 'races', group: 'Money', title: 'Street Racing', tag: 'the circuit, the strip and pink slips',
-    html: `<p>Your garage is a racing stable. Enter the <b>NPC circuit</b> for a cash entry fee and a winning purse, or list a car for <b>player wagers</b>: the winner takes the pot after a 5% rake and the losing car takes damage. Car value, tuning, your speed and damage affect race power.</p>
+    html: `<p>Race a car from your garage in the <b>NPC circuit</b> for a cash entry fee and a winning purse, or list it for <b>player wagers</b>. The winner takes the pot after a 5% rake and the losing car takes damage. Car value, tuning, your speed and damage affect race power.</p>
       <p><b>Tune</b> a car and buy consumable <b>nitrous</b> for a racing edge. <b>Pink slips</b> require an explicitly listed car and put the car itself at risk. The scheduled <b>Grand Prix</b> pools entry fees and pays the top places after rake. Lifetime racing wins build <b>The Wheel</b> legend and survive death.</p>
       ${R(`GET /v1/races · POST /v1/races/npc · /tune/:carId · /nos/:carId · /list/:carId · /unlist/:carId · /pinkslip/:carId · /challenge/:ownerId · /pinks/:ownerId · /gp`)}` },
 
@@ -867,91 +848,90 @@ const SECTIONS = [
 
   { id: 'stable', group: 'Money', title: 'The Stable', tag: 'own the dogs and the ponies',
     html: `<p>Own racing animals. <b>Buy</b> a greyhound ($30k) or a racehorse ($120k) at L6 or higher, <b>train</b> its
-      speed, stamina, and heart (cash and energy, with a limit), and <b>race</b> it. Run up to 3. CASH only. An animal dies
+      speed, stamina, and heart (cash and energy, with a limit), and <b>race</b> it. You can own up to 3. All costs and payouts use cash. An animal dies
       when your character dies; your lifetime wins are an owner record that survives death.</p>
-      <ul><li><b>The circuit</b> (PvE) — enter a meet; the fee is lost win or lose; the purse pays only for a win.</li>
-      <li><b>Match race</b> (PvP) — race a rival owner's animal of the same kind for a cash wager; the winner takes the pot
+      <ul><li><b>The circuit</b> (PvE); enter a meet; the fee is lost win or lose; the purse pays only for a win.</li>
+      <li><b>Match race</b> (PvP); race a rival owner's animal of the same kind for a cash wager; the winner takes the pot
       minus a 5% share.</li>
-      <li><b>Breed</b> two animals of the same kind into a foal that inherits their form (a head start, not a way to pass
-      the limit; both parents retire).</li>
-      <li><b>The Stakes</b> — a scheduled major race; enter your animal (a cash buy-in goes into escrow); the worker races
+      <li><b>Breed</b> two animals of the same kind into a foal that inherits their form. Both parents retire and the ownership limit still applies.</li>
+      <li><b>The Stakes</b>: a scheduled major race; enter your animal (a cash buy-in goes into escrow); the worker races
       the field, and the top places share the purse minus a 5% rake. Mickey the Cornerman (the boxing fixer) also trains
       your animals.</li></ul>
       ${R(`GET /v1/stable [+ /v1/leaderboard/stable] · POST /v1/stable/buy · /train/:id · /list/:id · /circuit/:id · /match/:opponentId · /breed · /stakes/:id`)}` },
 
   { id: 'speakeasy', group: 'Money', title: 'The Speakeasy', tag: 'the social hub',
-    html: `<p>One prestige nightclub in each district (a made man, L15, $750k) — a business, a casino, and a social place. It
+    html: `<p>Each district has one prestige nightclub with bar income, a casino table, and a guest list. Ownership requires being made, L15, and $750k. It
       dies when the owner's character dies.</p>
       <p><b>Collect</b> the bar income, <b>upgrade</b> the decor, and <b>name</b> it. <b>Be seen:</b> buy a <b>round</b> (a
       taxed payment to the owner; it adds you to the guest list; 10 visits make a "regular") or buy <b>bottle service</b> (a
-      $OMR status payment). The <b>back-room table</b> takes 3% and adds <b>notoriety</b> — above 60 a <b>Prohibition
+      $OMR status payment). The <b>back-room table</b> takes 3% and adds <b>notoriety</b>: above 60 a <b>Prohibition
       raid</b> can happen. Build <b>renown</b> (Nobody to King of the Night). <b>Buy out</b> a club by agreement, or
-      <b>stand over</b> it — pay $250k (lost win or lose), win a contest, and force the sale.</p>
+      <b>stand over</b> it; pay $250k (lost win or lose), win a contest, and force the sale.</p>
       ${R(`GET /v1/speakeasy [public] · POST /v1/speakeasy/:d/round|bottle|table|standover · /collect|upgrade|name|list|unlist · /:d/buy · /decor`)}` },
 
   { id: 'boxing', group: 'Money', title: 'The Fights (Boxing)', tag: 'manage a fighter',
-    html: `<p>Sign up to 3 boxers — a stable (L8, $50k each), <b>train</b> the boxer ($20k + energy, +1 stat, limit 25), <b>list</b> a bout
+    html: `<p>Sign up to 3 boxers; a stable (L8, $50k each), <b>train</b> the boxer ($20k + energy, +1 stat, limit 25), <b>list</b> a bout
       limit, and <b>fight</b> other managers. The winner takes 2× the stake minus a 5% rake (a taxed transfer, no new money
       is created); the loser's fighter is in the hospital for 4 hours. The fighter dies when your character dies. Ranks:
       Prospect to Hall of Famer.</p>
       <p><b>Exhibitions</b> let you fight NPC contenders for a bounded purse and a record. <b>Main Events</b> announce a bout for public betting. The <b>world title belt</b> changes hands when its holder loses; a champion must defend within 7 days. The number-one player contender can <b>call out</b> the champion, who has 48 hours to accept or forfeits the belt to the challenger. Your manager's lifetime wins and career legend survive character death.</p>
       ${R(`GET /v1/boxing · POST /v1/boxing/recruit|train|list|exhibition · /fight/:opponentId · /announce/:opponentId · /bout/:id/bet · /callout/:fighterId · /callout/accept · GET /v1/leaderboard/boxing`)}` },
 
-  { id: 'pvp', group: 'The Underworld', title: 'PvP — Jumps, Hits & Contracts', tag: 'attacking players',
-    html: `<p><b>Jump</b> — not lethal; costs energy and ammo; steals up to $25k pocket cash; hospitalizes for about 3
+  { id: 'pvp', group: 'The Underworld', title: 'PvP; Jumps, Hits & Contracts', tag: 'attacking players',
+    html: `<p><b>Jump</b>: not lethal; costs energy and ammo; steals up to $25k pocket cash; hospitalizes for about 3
       minutes; scores 1 war point.</p>
       <p><b>Jump intents:</b> Roll Them favors stolen cash over respect, damage and hospital time. Jump Them is the baseline. Send a Message favors respect and damage, steals less, extends hospital time, costs 50% more energy and adds 5 heat. The $25k theft cap still applies.</p>
       ${L(`<b>The hit:</b> place a <b>search</b> (about 3 hours to be ready) → <b>fire</b> (50 fp or more, 2-hour cooldown,
       +20 heat).`)}
       <p>A fire-<b>kill</b> runs the estate, <b>takes 40% of the cars</b>, <b>loots cash and $OMR</b>, has a 15% chance to
       take one gear piece, swears a <b>vendetta</b>, pays open kill contracts, scores war points, and earns <b>hitman
-      reputation</b>. <b>NPC hit</b> — pay a fee (lost win or lose) for a hit the server calculates; no reputation; you
+      reputation</b>. <b>NPC hit</b>: pay a fee (lost win or lose) for a hit the server calculates; no reputation; you
       cannot use it against family, yourself, new players, or safehoused players.</p>
-      <p><b>The Contract Board</b> — escrow pots for each (target, kind). Post one (minimum $500; add 18 $OMR to be
+      <p><b>The Contract Board</b>: escrow pots for each (target, kind). Post one (minimum $500; add 18 $OMR to be
       anonymous). A <b>directed</b> named hitman gets an exclusive window (minimum $10k, waived for a KILL contract on a
       vendetta target, a rat, or a welsher). The target can <b>peek</b> (30 $OMR) to name every funder. <b>Hitman reputation</b> is a
       status ladder (Associate to The Undertaker); lifetime reputation survives death.</p>
       ${R(`POST /v1/streets/:id/jump|search|fire|npchit|bounty · DELETE /streets/search · GET /v1/contracts [public] · /contracts/peek · /gangs/contract/:id`)}` },
 
-  { id: 'riskpay', group: 'Risk & Death', title: 'Make Risk Pay — Loot, Safehouse, Revive', tag: 'the payoff and the shields',
+  { id: 'riskpay', group: 'Risk & Death', title: 'Loot, safehouses & revive', tag: 'loss rates and protection',
     html: `${L(`A player fire-kill loots <b>25% of pocket and in-transit cash</b>, <b>50% of loose and unbonding
-      $OMR</b>, and <b>20% of staked $OMR</b>. Only <b>cleared bank cash</b> is safe — staking is cheaper cover,
-      never a safe harbour. NPC and mod kills loot nothing.`)}
+      $OMR</b>, and <b>20% of staked $OMR</b>. <b>Cleared bank cash</b> avoids the killer's cut but is lost on death.
+      NPC and mod kills loot nothing.`)}
       <p>This is why banking is a <b>timed</b> action: a deposit is exposed for 2 hours, and unstaked $OMR for 6 hours.
-      <b>Safehouse</b> — the cost increases with wealth, for each 4-hour stay; a hit cannot target you, but a jump can. It
-      is <b>a shield, not a base</b> (you cannot attack or move money from inside). <b>Bodyguard</b> — absorbs one lethal
-      hit (never the guard's own attack). <b>Revive insurance</b> (a real-ETH token) — absorbs a lethal hit completely.</p>
+      <b>Safehouse</b>: the cost increases with wealth, for each 4-hour stay; a hit cannot target you, but a jump can. It
+      prevents your own attacks and money movements. <b>Bodyguard</b> absorbs one lethal
+      hit (never the guard's own attack). <b>Revive insurance</b> (a real-ETH token); absorbs a lethal hit completely.</p>
       ${R(`POST /v1/safehouse · /bodyguard/offer · /bodyguard/hire/:guardId`)}` },
 
-  { id: 'law', group: 'The Law', title: 'The Law & RICO', tag: 'the state opponent',
+  { id: 'law', group: 'The Law', title: 'The Law & RICO', tag: 'heat, investigations and court',
     html: `<p>The state reacts to your <b>heat</b>. The <b>investigation meter</b> builds from high heat and decreases
       slowly: clean → watched → investigation → <b>indicted</b>. <code>GET /v1/law</code> is your record.</p>
       <p><b>Escapes:</b> <b>bribe</b> (priced from case exposure, minimum $25k; unavailable after indictment), the <b>lawyer retainer</b> ($150k for 3 days, reduces the bust
-      and forfeiture), the <b>envelope</b> (90 $OMR for 7 days — halves the meter's gain, doubles its decrease).</p>
-      ${L(`<b>The RICO bust</b> takes 30% of pocket and bank — but <b>staked $OMR and minted gear are safe, and it is NOT
-      death.</b> If you stay offline past the grace window, the state force-busts you.`)}
+      and forfeiture), the <b>envelope</b> (90 $OMR for 7 days; halves the meter's gain, doubles its decrease).</p>
+      ${L(`<b>The RICO bust</b> takes 30% of pocket and bank cash. <b>Staked $OMR and minted gear are exempt, and your
+      character survives.</b> If you stay offline past the grace window, the state force-busts you.`)}
       <p><b>Courtroom:</b> plea, buy the jury ($OMR), demand trial. <b>Informants:</b> <b>flip</b> a rival (drop your case,
-      add exposure to them, earn the permanent <b>rat</b> badge — a rat loses omertà); <b>witness protection</b> makes you
+      add exposure to them, earn the permanent <b>rat</b> badge; a rat loses omertà); <b>witness protection</b> makes you
       untargetable for a short time. The Foundation reduces family convictions; patrol hours increase convictions.</p>
       ${R(`GET /v1/law · POST /v1/law/bribe|retainer|envelope|plea|jury|trial|witpro|flip/:id`)}` },
 
-  { id: 'pen', group: 'The Law', title: 'The Pen (Prison)', tag: 'jail is a place',
+  { id: 'pen', group: 'The Law', title: 'The Pen (Prison)', tag: 'yard work, shanks and breakouts',
     html: `<p>Every Pen action requires that you are jailed. <b>Work the yard</b> (reduces your sentence), the
-      <b>commissary</b> (shiv $5k, burner $25k, cutkit $50k), <b>protection</b> (a wealth-scaled no-shank window — a shield, so you
+      <b>commissary</b> (shiv $5k, burner $25k, cutkit $50k), <b>protection</b> (a wealth-scaled no-shank window; a shield, so you
       cannot shank either), <b>bribe the guard</b> (a per-second exit).</p>
-      <p><b>The shank</b> — both players jailed; spend a shiv and energy in a muscle contest. It respects revive tokens,
+      <p><b>The shank</b>: both players jailed; spend a shiv and energy in a muscle contest. It respects revive tokens,
       witness protection, omertà (unless a rat), and protection or the hole. A kill is a real death (no loot, no car loss,
-      no reputation); a caught attempt costs the shiv, more time, and <b>the hole</b> (solitary — you cannot act and no one
+      no reputation); a caught attempt costs the shiv, more time, and <b>the hole</b> (solitary; you cannot act and no one
       can shank you). <b>Yard incidents</b> (Lockdown/Riot/Visit/Toss) change the daily chances. The <b>burner phone</b>
-      calls an outside NPC hit. <b>Breakout</b> — solo (a win makes you a WANTED fugitive for 2 days) or co-op (a crew of
-      2–4).</p>
+      calls an outside NPC hit. <b>Breakout</b>: solo (a win makes you a WANTED fugitive for 2 days) or co-op (a crew of
+      2-4).</p>
       ${R(`GET /v1/pen · POST /v1/pen/work|protection|bribe · /buy/:item · /shank/:id · /burner/:id · /break[/plan] · /break/:id/join|go`)}` },
 
   { id: 'loans', group: 'The Underworld', title: 'Loan Sharking (The Shylock)', tag: 'the PvP credit market',
-    html: `<p><b>Offer</b> escrows the principal ($5k–$1M, rate up to 50%, 1–72 hours; optional <b>directed</b> or
+    html: `<p><b>Offer</b> escrows the principal ($5k-$1M, rate up to 50%, 1-72 hours; optional <b>directed</b> or
       <b>collateralized</b> by a car). A borrower <b>takes</b> it (one at a time; pledges a car if it is secured). The debt
       is <code>principal × (1+rate)</code>.</p>
-      <p><b>Repay</b> (5% vig to the buyback pool). <b>Default and collect</b> — the lender takes the pocket and in-transit
+      <p><b>Repay</b> (5% vig to the buyback pool). <b>Default and collect</b>: the lender takes the pocket and in-transit
       cash and the pledged car, sends the borrower to hospital, and marks them a permanent <b>welsher</b>. A default also
       marks the borrower <b>WANTED</b> for 3 days (no omertà, a pool bounty if L20 or higher, NPC hunters). <b>Square your
       name</b> ($50k) clears both. A <b>paper market</b> lets you sell an active claim.</p>
@@ -961,20 +941,20 @@ const SECTIONS = [
     html: `${L(`<b>open</b> (with a first load) → <b>load more</b> (larger than the trunk limit) → <b>depart</b> with
       <b>guards</b> (none/crew $5k/heavy $20k) and optional <b>insurance</b> → travels 30 minutes → <b>collect</b> at the
       destination.`)}
-      <p>The route and a value band are announced, never the manifest. <b>Ambush</b> — energy, ammo, and heat in a contest
+      <p>The route and a value band are announced, never the manifest. <b>Ambush</b>: energy, ammo, and heat in a contest
       of your muscle and speed against the guards and turf defense; a win takes goods up to your trunk limit. Up to 3
-      hijacks for each convoy. <b>Tolls</b> — if you collect at another family's docks, you pay 5% to their treasury.
+      hijacks for each convoy. <b>Tolls</b>: if you collect at another family's docks, you pay 5% to their treasury.
       <b>Insured</b> freight pays for a hijack (with a limit against related-account abuse).</p>
       <p><b>The Rig</b> is your dedicated hauler: buy a Panel Van, Box Truck, Armored Hauler or Semi, then upgrade its armor and engine for defense and travel speed. Repeated traffic heats a route and draws attention. Lifetime clean-delivered and hijacked value build the <b>Teamster</b> and <b>Highwayman</b> legends; experienced haulers gain route and toll perks. NPC freight also appears on the road.</p>
       ${R(`GET /v1/convoys [public] · POST /v1/convoy · /convoy/load · /depart · /cancel · /:id/ambush|collect · /rig/:kind · /rig/upgrade`)}` },
 
   { id: 'heists', group: 'The Underworld', title: 'Crew Heists (The Big Score)', tag: 'co-op raids',
     html: `<p>Jobs: a 12-rung ladder from the Corner Store (crew 2, L4) up to the Federal Reserve (crew 5, L80),
-      plus the Inside Job (against a player business). Each position is a <b>role</b> (brains/muscle/wheelman/gun — plus lookout and hacker on the big crews), and the calculation uses each member's
+      plus the Inside Job (against a player business). Each position is a <b>role</b> (brains/muscle/wheelman/gun; plus lookout and hacker on the big crews), and the calculation uses each member's
       stat for their role.</p>
       ${L(`A leader <b>plans</b> and stakes → the crew <b>join</b> by role → the leader <b>executes</b> (one calculation
       for all).`)}
-      <p>Success divides the pot (1.2× for the leader); failure jails everyone. <b>The Rat</b> — any member can inform
+      <p>Success divides the pot (1.2× for the leader); failure jails everyone. <b>The Rat</b>: any member can inform
       silently; the job fails, the rat leaves with half the stake, the rest get double jail, and the feed only says
       "somebody talked." The <b>solo Daily Score</b> shares an 8-hour cooldown.</p>
       <p><b>Case the joint</b> once per member for 10 energy: each adds 3 percentage points to the success chance, capped at 15. A leader can pay $5k to <b>hire one NPC hand</b> into an empty role, so the entry job is playable alone while larger crews still need players. Choose a <b>hot-loot</b> payout when planning to warehouse the take and sell it later at the day's fence rate; fencing adds heat, and the stash is exposed to a lethal hit. Big scores also require an earned heist record.</p>
@@ -982,12 +962,12 @@ const SECTIONS = [
 
   { id: 'market', group: 'The Underworld', title: 'The Black Market', tag: 'player-to-player trade',
     html: `<p><b>Cars sell by auction; goods sell at a fixed price with a district pickup; buy orders (WTB) let buyers name
-      a price.</b> (Gear is not here — its market is the GearVault on the blockchain.)</p>
-      <ul><li><b>Car auction</b> — one bid, an optional buy-now, a hidden reserve, and an anti-snipe close; an outbid
+      a price.</b> (Gear is not here; its market is the GearVault on the blockchain.)</p>
+      <ul><li><b>Car auction</b>: one bid, an optional buy-now, a hidden reserve, and an anti-snipe close; an outbid
       bidder gets a refund immediately. A listed car locks.</li>
-      <li><b>Goods</b> — a fixed price; the buyer must stand at the listing's dock with trunk space (partial buys).</li>
-      <li><b>Buy orders</b> — escrow quantity × price at your dock; sellers fill from the trunk and are paid at once.</li></ul>
-      <p><b>Supply-depot pilot</b> — when enabled on the server, operate one gin depot with its own cash book and stock, set sale and procurement prices, fund restocking, receive filled orders and sell to visitors at its district. Delegated operation requires an owner's bounded operating policy. <b>Delivery-contract pilot</b> — when enabled, accept a fixed-price buy-order commitment, reserve its quantity, then bring goods to its district before the deadline. Limits are two active commitments, 40 units total, a $100k procurement cap and a six-hour maximum deadline. These pilots are discoverable through their boards; route availability alone does not mean intake is open.</p>
+      <li><b>Goods</b>: a fixed price; the buyer must stand at the listing's dock with trunk space (partial buys).</li>
+      <li><b>Buy orders</b>: escrow quantity × price at your dock; sellers fill from the trunk and are paid at once.</li></ul>
+      <p><b>Supply-depot pilot</b>: when enabled on the server, operate one gin depot with its own cash book and stock, set sale and procurement prices, fund restocking, receive filled orders and sell to visitors at its district. Delegated operation requires an owner's bounded operating policy. <b>Delivery-contract pilot</b>: when enabled, accept a fixed-price buy-order commitment, reserve its quantity, then bring goods to its district before the deadline. Limits are two active commitments, 40 units total, a $100k procurement cap and a six-hour maximum deadline. These pilots are discoverable through their boards; route availability alone does not mean intake is open.</p>
       ${R(`GET /v1/market [public] · POST /v1/market · /:id/bid|buy|cancel · /market/order · /:id/fill|claim`)}` },
 
   { id: 'vendettas', group: 'The Underworld', title: 'Vendettas & Blood Feuds', tag: 'status, no money',
@@ -998,56 +978,57 @@ const SECTIONS = [
       ${R(`GET /v1/feud/:characterId [public]`)}` },
 
   { id: 'skills', group: 'The Underworld', title: 'Skills & Specializations', tag: 'your build',
-    html: `<p>Three branches, FOUR levels each — the 4th a capstone that unlocks an ACTIVE ability; points <b>come from your level</b> (<code>floor(level/4)</code> plus a small prestige bonus). Skills
+    html: `<p>Skills have three branches with four levels each. The fourth is a capstone that unlocks an active ability.
+      You earn points from your level (<code>floor(level/4)</code> plus a small prestige bonus). Skills
       reset with the character, except for the heir's prestige-based muscle memory: one remembered skill per 8 prestige, capped at 3, chosen lowest-tier-first. Respec for 60 $OMR (shared 24-hour cooldown).</p>
-      <ul><li><b>Enforcer</b> — Bruiser (jump/shakedown ×1.08) · Doctor's Friend (heal ×0.75) · Executioner (search ×0.8).</li>
-      <li><b>Operator</b> — Fast Talker (lay-low ×0.8) · Fence Network (fence/melt +8%) · Broker (listing fees ×0.5).</li>
-      <li><b>Wheelman</b> — Pack Mule (+3 trunk) · Getaway (crime jail ×0.8) · Road Captain (own convoys 20% faster).</li></ul>
+      <ul><li><b>Enforcer</b>: Bruiser (jump/shakedown ×1.08) · Doctor's Friend (heal ×0.75) · Executioner (search ×0.8).</li>
+      <li><b>Operator</b>: Fast Talker (lay-low ×0.8) · Fence Network (fence/melt +8%) · Broker (listing fees ×0.5).</li>
+      <li><b>Wheelman</b>: Pack Mule (+3 trunk) · Getaway (crime jail ×0.8) · Road Captain (own convoys 20% faster).</li></ul>
       <p><b>Capstones</b> cost 4 points after their branch prerequisites: Made Man adds another 8% to jump/shakedown power and unlocks Adrenaline Rush (refill energy); Kingpin adds another 8% to fence/melt proceeds and unlocks Moxie (refill nerve); Road Boss adds 3 more trunk spaces and unlocks Hot Wire (clear heist/world-raid cooldowns). Active abilities share an 8-hour cooldown. Owning a pair of capstones derives The Boss, The Warlord or The Shadow Grandmastery, combines the pair's active effects and reduces that shared cooldown to 4 hours. Unlearn one leaf skill for 30 $OMR.</p>
       ${R(`GET /v1/skills · POST /v1/skills/:id · /skills/respec · /skills/respec/:id · /skills/active/:ability`)}` },
 
   { id: 'regimen', group: 'The Basics', title: 'The Regimen & Trainer Drills', tag: 'eight disciplines',
     html: `<p>Train eight disciplines alongside muscle, cunning and speed: <b>Roadwork</b> raises maximum energy; <b>Steady Hands</b> raises maximum nerve; <b>Iron Chin</b> discounts healing; <b>The Range</b> improves duel scores; <b>Work the Room</b> raises the daily Underworld standing budget; <b>White Knuckle</b> improves street-race scores; <b>Cool Head</b> discounts laying low; <b>Night Eyes</b> improves your convoys' guard defense.</p>
-      <p>Each discipline caps at level 25. A session costs 10 energy, earns 8–12 discipline XP and shares the core gym's cooldown. Trainer drills require the day's displayed task and award 25 XP when claimed. Read the Regimen board for trainer locations, tasks and progress.</p>
+      <p>Each discipline caps at level 25. A session costs 10 energy, earns 8-12 discipline XP and shares the core gym's cooldown. Trainer drills require the day's displayed task and award 25 XP when claimed. Read the Regimen board for trainer locations, tasks and progress.</p>
       ${R(`GET /v1/regimen · POST /v1/regimen/:id · /v1/regimen/drill/:npc`)}` },
 
   { id: 'trades', group: 'The Underworld', title: 'The Trades (mastery)', tag: 'learn by doing',
-    html: `<p>Ten <b>use-XP tracks</b> — every job, deal, race and bout schools its own craft, and nothing
-      else does (XP is never bought, gifted or traded). Larceny (crimes) · Wet Work (kills, shanks, duels) ·
+    html: `<p>Ten <b>mastery tracks</b> earn XP from their related actions. XP cannot be bought, gifted, or traded.
+      Larceny (crimes) · Wet Work (kills, shanks, duels) ·
       The Cook (batches, deals) · Wheels (boosts, races) · Seamanship (landings, piracy) · The Gambler (the
       Den's games) · Protection (jumps, shakedowns, standovers) · Commerce (goods sales, market fills) ·
       Big Scores (the Score, crew heists) · Fisticuffs (bouts, exhibitions).</p>
       <p>Level = √(xp/15)+1, capped at 50; ranks Green → Apprentice → Made → Craftsman → Expert → <b>Master of the
-      Trade</b>. Levels <b>die with the street</b> — the heir keeps <b>25% of each track's XP</b> (the
-      bloodline echo) — while a lifetime account-level XP <b>legend</b> survives whole and ranks the trades
+      Trade</b>. On death, the heir keeps <b>25% of each track's XP</b> (the
+      bloodline echo). The lifetime account-level XP <b>legend</b> survives in full and ranks the trades
       board (Dabbler → A Legend of the Life; agents excluded).</p>
-      <p><b>Milestone perks</b> deepen at L10/25/40 — one axis per trade (shorter stints, faster clocks,
-      discounted tunes/refits/listings, a higher table limit, harder jumps). Den plays under $1,000 school
-      nothing. At <b>level 50</b> choose a permanent trait: <b>Virtuoso</b> (the perk deepens further) or
-      <b>Dynast</b> (your heir keeps HALF this trade instead of a quarter). It dies with the street.</p>
-      <p><b>Paths:</b> six careers — The Gun, The Ledger, The Kitchen, <b>The Wheel, The Shadow, The
-      Ring</b> — each with a signature edge, a REAL handicap, and trades that come easy (×1.5 XP) or
-      fight you (×0.6). Switching takes the $OMR switch fee and a week between moves.</p>
+      <p><b>Milestone perks</b> increase at L10/25/40, affecting one mechanic per trade: shorter jail terms or timers,
+      cheaper tuning, refits or listings, a higher table limit, or stronger jumps. Den plays under $1,000 earn
+      no mastery XP. At <b>level 50</b> choose a trait for the character's remaining life: <b>Virtuoso</b> increases the perk,
+      or <b>Dynast</b> lets your heir keep half this trade's XP instead of a quarter.</p>
+      <p><b>Paths:</b> The Gun, The Ledger, The Kitchen, <b>The Wheel, The Shadow, and The
+      Ring</b> each have a bonus, a penalty, home trades (×1.5 XP), and rival trades (×0.6 XP).
+      Switching costs $OMR and requires a week between choices.</p>
       <p><b>Stats by use:</b> working a trade also builds its core stat (larceny→cunning, wet work→muscle,
-      wheels→speed…) — a small chance per action on the gym's own diminishing curve, hard-capped at
-      <b>3 points per rolling day</b>. The gym is still the fast lane.</p>
+      wheels→speed…); a small chance per action on the gym's own diminishing curve, hard-capped at
+      <b>3 points per rolling day</b>. Gym training raises stats faster.</p>
       ${R(`GET /v1/mastery · GET /v1/leaderboard/trades`)}` },
 
   { id: 'underworld', group: 'The Underworld', title: 'The Underworld (Fixers)', tag: 'the people you know',
-    html: `<p>Six named fixers you build standing with (0–100, for each character): <b>Doc Moretti</b> (survival),
+    html: `<p>Six named fixers you build standing with (0-100, for each character): <b>Doc Moretti</b> (survival),
       <b>Vinnie the Match</b> (contracts), <b>Bella Bang-Bang</b> (gear), <b>Big Tuna</b> (trade), <b>The Madame</b> (the
       Den), <b>Mickey the Corner</b> (boxing &amp; the stable).</p>
       <p>You <b>earn standing when you work with a fixer</b> (limit 25 each day). Levels at 25/60/90 unlock discounts and
-      favors. <b>Gifts</b> ($5k, +5) only work below 50 — you must earn the top levels. A <b>daily lead</b>, a <b>weekly
+      favors. <b>Gifts</b> ($5k, +5) only work below 50; you must earn the top levels. A <b>daily lead</b>, a <b>weekly
       favor</b>, and an <b>errand chain</b> reward loyalty. A <b>grudge</b> (killing a fixer's friend) limits your level
       until you pay <b>penance</b> ($25k). Your heir inherits 25% of your standings.</p>
       ${R(`GET /v1/underworld · POST /v1/underworld/:npc/gift|penance|favor|errand · /discharge · /gun/:id/sell`)}` },
 
   { id: 'wire', group: 'The Underworld', title: 'The Wire', tag: 'information you buy',
-    html: `<p><b>Wiretap</b> (48 $OMR, 12 hours, up to 5) — shows a rival's Law stage and heat, wealth band, operations,
+    html: `<p><b>Wiretap</b> (48 $OMR, 12 hours, up to 5); shows a rival's Law stage and heat, wealth band, operations,
       WANTED status, and <b>if they are hunting you</b>. <b>Sweep</b> (30 $OMR) removes taps on you (free when clean). The
-      <b>Street Wire subscription</b> is a <b>tiered ladder</b> — Street Wire (72 $OMR/7 days: Law
-      forecasts, threat data — a count of hunters on you, never a name), The Wire Room (180: plus the war room and 2
+      <b>Street Wire subscription</b> is a <b>tiered ladder</b>: Street Wire (72 $OMR/7 days: Law
+      forecasts, threat data; a count of hunters on you, never a name), The Wire Room (180: plus the war room and 2
       standing watches), The Switchboard (360: plus 5 standing watches). A <b>standing watch</b> (tier 2 or higher) renews a
       tap from your $OMR, so the surveillance runs while you are offline. There are also <b>tradecraft</b> ranks (more
       slots and a read discount), the <b>watchdog</b> (a live alert when a tapped target becomes hot), the <b>bug
@@ -1056,31 +1037,28 @@ const SECTIONS = [
       ${R(`GET /v1/wire · POST /v1/wire/tap/:targetId · /wire/sweep · /wire/subscribe {tier} · /wire/watch/:targetId`)}` },
 
   { id: 'store', group: 'Endgame & Going Legit', title: 'The Store &amp; the Ledger', tag: 'real-money packages',
-    html: `<p><b>The Store</b> sells ETH packages that grant <b>only non-currency items</b> (this prevents pay-to-win:
-      entitlements, access, cosmetics, status — never cash, $OMR, gear, or power): revive
+    html: `<p><b>The Store</b> sells ETH packages for entitlements, access, cosmetics, and status. The packages contain
+      no cash, $OMR, gear, or combat power: revive
       bundles, Street Wire, the Season Pass, the Patron badge, and decor. Revenue divides 40% founder / 40% buyback / 20%
       treasury (the Vault's ETH).</p>
-      <p><b>Two rails — except for getting Made.</b> PLEX lets you pay in earned $OMR instead of ETH, and every
-      package takes it, because none of them gates anything. Becoming Made is the exception: a price payable two ways
-      is always the cheaper of the two, and being Made is what unlocks extraction, so it costs ETH at the published
-      wave and nothing else sells it. The free road is unchanged: the mission ladder hands you a mint credit outright.
-      And where the $OMR for that rail comes from, plainly: nothing mints it. Every $OMR mission pays 1,320 across a
-      career and the daily bonus adds 3 a day, against 4,118 for the cheapest thing PLEX sells — so you fund it by
-      taking it off somebody, buying it at the desk, or being handed it by your family, not by grinding jobs. <b>The Season Pass / Ledger</b> —
+      <p><b>PLEX</b> lets you pay for Store packages in earned $OMR instead of ETH. Character minting, which qualifies
+      an account for extraction when that service launches, uses the published ETH wave price or a free mission-earned
+      mint credit. It has no PLEX price. Mission rewards total 1,320 $OMR across a career and the daily bonus adds 3,
+      compared with 4,118 for the cheapest PLEX package. Other sources include loot, Desk purchases, and family payments.
+      <b>The Season Pass / Ledger:</b>
       while active, claim the next of 12 levels each day (titles, revives, energy, small funded $OMR stipends); it is
       account-level and survives death.</p>
       ${R(`GET /v1/store [public] · GET /v1/pass · /pass/claim`)}` },
 
-  { id: 'legit', group: 'Endgame & Going Legit', title: 'Going Legit — what your $OMR does', tag: 'the endgame',
+  { id: 'legit', group: 'Endgame & Going Legit', title: 'Going Legit: uses for $OMR', tag: 'staking, redemption and account benefits',
     html: `<p><b>The game does not sell Stock Tokens for cash or $OMR.</b> The Brokers are a separate,
-      treasury-funded active-play distribution, described next. Going legit means what your
-      <b>earned $OMR</b> actually does directly:</p>
-      <p><b>Stake it</b> — the game-ledger position climbs the Made Ladder and supports commitment locks, while remaining exposed to gameplay loss and six-hour unbonding. Actual on-chain custody and the Broker stake multiplier are planned and not active.
+      treasury-funded distribution based on active play, described next. You can use <b>$OMR</b> for the following:</p>
+      <p><b>Stake it</b>: the game-ledger position climbs the Made Ladder and supports commitment locks, while remaining exposed to gameplay loss and six-hour unbonding. Actual on-chain custody and the Broker stake multiplier are planned and not active.
       <b>Redeem it</b> at the Window for
-      cash. <b>Get Made</b> for current game benefits. <b>On-chain extraction and backed ETH claims remain gated</b>; they become available only after production launch requirements clear and actual backing is present. <b>Landmarks</b> — a district plaque still bears your name.</p>
+      cash. <b>Get Made</b> for current game benefits. <b>On-chain extraction and backed ETH claims remain gated</b>; they become available only after production launch requirements clear and actual backing is present. <b>Landmarks</b>: a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
 
-  { id: 'grillv2', group: 'Endgame & Going Legit', title: 'Stock Tokens & OMR — Architecture Status', tag: 'implemented foundation · staged completion',
+  { id: 'grillv2', group: 'Endgame & Going Legit', title: 'Stock Tokens & OMR: implementation status', tag: 'completed components and launch requirements',
     html: `<p><b>The Stock Token and OMR custody program has staged implementation; code completion does not grant deployment
       authority.</b> The repository contains implementations and tests for the native-only
       <code>SettlementGasPool</code>, immutable <code>StockTokenRegistryV2</code>, the finalized Stock Token catalog
@@ -1098,8 +1076,8 @@ const SECTIONS = [
       Permissionless settlement can earn a bounded pull-based native-gas credit only for the executor whose valid
       transaction wins canonical settlement; an empty pool cannot freeze gameplay.</p>` },
 
-  { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers — Active Play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
-    html: `<p><b>Your deed is your RWA vault.</b> Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.</p><p>No paid activation or upgrade is required. Optional permanent upgrades require renown, recent qualifying play and $OMR spending: levels 1–5 cost 150 / 450 / 1,200 / 3,000 / 9,000 $OMR, require renown 5 / 20 / 50 / 80 / 120, and add 5% / 10% / 15% / 20% / 25% reward weight. The bonus caps at 25% and applies only to epochs whose entire activity window starts on or after the next UTC day. It changes your share of a fixed funded pool, never its budget or a guaranteed payout. Spending recycles $OMR to the market shelf; it does not destroy token supply. Level follows the deed on sale; prior allocations keep their original qualifying account. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Existing paid commitments retain their multiplier until expiry, using the larger eligible multiplier without stacking. Allocations wait without expiry for an eligible on-chain deed; delivery remains subject to funding, asset and launch gates.</p><p><b>The Commission chooses the asset; verified play chooses the recipients.</b> Each seated family
+  { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers: active play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
+    html: `<p><b>Your deed is your RWA vault.</b> Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding.</p><p>No paid activation or upgrade is required. Optional permanent upgrades require renown, recent qualifying play and $OMR spending: levels 1-5 cost 150 / 450 / 1,200 / 3,000 / 9,000 $OMR, require renown 5 / 20 / 50 / 80 / 120, and add 5% / 10% / 15% / 20% / 25% reward weight. The bonus caps at 25% and applies only to epochs whose entire activity window starts on or after the next UTC day. It changes your share of a fixed funded pool, never its budget or a guaranteed payout. Spending recycles $OMR to the market shelf; it does not destroy token supply. Level follows the deed on sale; prior allocations keep their original qualifying account. Transfers, reimports and wallet changes apply bonuses only to future full reward windows beginning on or after the next UTC day; already earned allocations stay with the account that earned them. Existing paid commitments retain their multiplier until expiry, using the larger eligible multiplier without stacking. Allocations wait without expiry for an eligible on-chain deed; delivery remains subject to funding, asset and launch gates.</p><p>The Commission votes on the asset, and verified play determines recipients. Each seated family
       votes for one Safe-approved Robinhood Stock Token. The initial catalog is a one-time Safe-reviewed
       snapshot of the 15 highest-underlier-volume eligible tokens, not an automatically rotating list.
       After the closed UTC-day result, a bounded buyer may buy only the exact token address committed for
@@ -1117,13 +1095,13 @@ const SECTIONS = [
       not reserved for the skipped token and never expires through ordinary operation. The designated
       <code>mainOperator</code> is the explicit exception and may move any or all pooled ETH to any address for
       any purpose. Future valid winners may use the remaining backlog gradually, but every day remains one exact-token
-      purchase under the unchanged cap—never a stacked cap or catch-up batch. The skipped token receives
+      purchase under the unchanged cap, never a stacked cap or catch-up batch. The skipped token receives
       nothing unless it becomes eligible and wins a later ballot.</p>
       <p>Catalog changes are <b>forward-only</b>. Robinhood's API never reactivates or replaces an entry.
       The Safe must explicitly re-review a restored token; a changed address or provider identity requires
       a reviewed, immutable version with a new asset key. The old version remains inactive and inspectable
-      forever, and only one version of a ticker may be active. Either affects only future open ballots—never
-      a closed or skipped result—and cannot redirect an existing pending allocation. Corporate-action
+      forever, and only one version of a ticker may be active. Either affects only future open ballots, never
+      a closed or skipped result, and cannot redirect an existing pending allocation. Corporate-action
       reconciliation remains separate, while inactive identities and ballot outcomes stay in the public
       audit history.</p>
       <p>Each version key is deterministic and publicly recomputable from the Robinhood Chain ID,
@@ -1163,7 +1141,7 @@ const SECTIONS = [
       supporting families with no double count. Seat loss leaves sponsor history but removes current
       support. Reseating requires an explicit renewal by the current boss or underboss. The board separates
       sponsor identity, current supporting families, and historical support.</p>
-      <p>Three current supporting families—including a current sponsor—mark a nomination
+      <p>Three current supporting families, including a current sponsor, mark a nomination
       <code>review_requested</code>, refresh its RHJ evidence, and alert operators. This never creates Safe
       calldata or guarantees approval. Falling below three before claim returns it to pending; after an
       operator marks it <code>under_review</code>, support changes stay visible without cancelling review.
@@ -1261,7 +1239,7 @@ const SECTIONS = [
       <p>A permanently frozen, non-transferable, irrecoverable, or unsupported exact Stock Token places its
       allocations in <code>delivery_impossible_pending_resolution</code>; they never expire or change cohorts.
       OMERTÀ cannot use an unrelated token, general treasury ETH, $OMR, game cash, or synthetic credit. The
-      Safe may resolve only from value actually recovered from that exact holding—verified RHJ redemption or
+      Safe may resolve only from value actually recovered from that exact holding, verified RHJ redemption or
       liquidation, successor corporate-action consideration, or recovered original units. Distribution is
       pro rata by original cohort weights and cannot exceed actual recovery. Deterministic rounding residue
       stays with that cohort, never general treasury. With no recovery, the obligation remains visibly
@@ -1352,7 +1330,7 @@ const SECTIONS = [
       contention, or retries. Inclusion must satisfy <code>block.timestamp &lt;= purchaseUntil</code>; later
       finality/sync remains valid. Before the boundary, one logical intent may retry reverted, dropped,
       cancelled, or safely replaced attempts, but only one canonical success is allowed. Any positive output
-      meeting <code>minOut</code> and price bounds—including a partial fill—is final with no top-up, and unused
+      meeting <code>minOut</code> and price bounds, including a partial fill, is final with no top-up, and unused
       or refunded ETH stays pooled. No on-time success becomes <code>purchase_window_missed</code>, with no buy,
       substitute, or replay; late transactions revert on-chain. Public history links every attempt status to
       the ballot intent.</p>
@@ -1369,8 +1347,7 @@ const SECTIONS = [
       tradability. During the two-hour window, purchase needs a healthy transferable exact token, executable
       approved venue, independent price no older than five minutes, and passing price, exposure, liquidity,
       and inventory checks. If not, <code>market_unavailable</code> buys/substitutes nothing and leaves ETH
-      pooled. No stale prior close, weekend/holiday/halt extension, or Monday catch-up is allowed. A genuinely
-      live off-hours venue may execute with a fresh independent oracle. Public reasons distinguish
+      pooled. No stale prior close, weekend/holiday/halt extension, or Monday catch-up is allowed. An operating off-hours venue may execute with a fresh independent oracle. Public reasons distinguish
       <code>underlying_market_closed</code>, <code>venue_unavailable</code>,
       <code>oracle_unavailable</code>, <code>oracle_stale</code>, <code>asset_halted</code>, and combinations.</p>
       <p>The buyer calls only an exact Safe-approved adapter address and deployed code hash on its chain; no
@@ -1440,8 +1417,8 @@ const SECTIONS = [
       event carries actor, old/new/pending operator, generation, transition type, reason, and details hash.
       Missing off-chain explanation text never blocks a valid role change, and public surfaces cannot rewrite the
       commitment.</p>
-      <p>ETH that cannot be matched to an approved, identified acquisition inflow—including forced ETH,
-      mistaken transfers, and unexplained positive balance surplus—is <code>unattributed</code>. It cannot fund
+      <p>ETH that cannot be matched to an approved, identified acquisition inflow, including forced ETH,
+      mistaken transfers, and unexplained positive balance surplus, is <code>unattributed</code>. It cannot fund
       the automated buyer or a purchase reservation. Plain receipts book unattributed immediately; anyone may
       call <code>syncUnattributed()</code> to book a positive <code>vault.balance - accountedBuckets</code> delta
       without making it spendable. Only Safe may publicly reclassify a specified amount into available
@@ -1511,7 +1488,7 @@ const SECTIONS = [
       reservation. Only later Safe reconciliation may release the amount proven unspent while booking actual debit,
       refund, and output from canonical evidence. Neither transition may revive the intent, retry it, replace its
       purchase, provide a substitute, or create catch-up authority.</p>
-      <p>The contract—not figures supplied by the Safe—derives or strictly caps every reconcilable ETH debit,
+      <p>The contract, not figures supplied by the Safe, derives or strictly caps every reconcilable ETH debit,
       verified refund, and Stock Token output from immutable pre-adapter balance snapshots, current canonical
       <code>RwaAcquisitionVault</code> and <code>StockVault</code> balances, and already-recorded canonical refund and
       provenance records. The Safe chooses the disposition and commits reason, details, and evidence, but cannot
@@ -1642,7 +1619,7 @@ const SECTIONS = [
       change resets the applicable gate. No placeholder generic executor or recovery write endpoint may ship merely
       because the design is documented.</p>
       <p>If recovery is built, the Safe records every authorization on-chain. Proxy vaults and adapters remain
-      permitted—there is no non-upgradeable requirement—but exact proxy and implementation identities stay pinned and
+      permitted, there is no non-upgradeable requirement, but exact proxy and implementation identities stay pinned and
       rechecked. Safe-set hard caps limit each tranche, each Stock Token version over rolling 24 hours, and all recovery
       over rolling 24 hours, with no operator bypass over Stock Token recovery; the main operator's separate authority
       over ETH after canonical receipt is unchanged. Two fresh independent price sources set the more conservative
@@ -1668,15 +1645,15 @@ const SECTIONS = [
       are not permanently prohibited, but that future optionality authorizes none of them for the MVP.</p>
       <p>Verified OMR staking may multiply active-play allocation, but the boost is not live. It will read the same unified
       actual on-chain OMR gameplay position used by the Made Ladder, commitment locks, gameplay loss, unbonding, and
-      inheritance—not a separate <code>account_persistent.staked</code> balance. Active-play qualification for human and agent accounts,
+      inheritance, not a separate <code>account_persistent.staked</code> balance. Active-play qualification for human and agent accounts,
       NPC/resident exclusion, and baseline eligibility without paid activation remain mandatory. The selected future
       formula is <code>deedOrLegacyMult × activityScore × stakeMult</code>, so failed activity still produces zero.
       <code>stakeMult</code> uses fixed public tiers from finalized time-weighted-average eligible principal over the
       complete seven-day epoch. There is no separate 72-hour maturity delay: accepted principal contributes pro rata
       while staked. Each account binds one verified allocation wallet for an epoch and a wallet change begins next epoch.
       Liquid OMR, unclaimed rewards, claimed rewards not restaked, and deed-upgrade spend do not count. The approved
-      cap is 1.50×: below 300 OMR receives 1.00×; 300–999.999… receives 1.10×; 1,000–4,999.999… receives 1.20×;
-      5,000–19,999.999… receives 1.35×; and 20,000 OMR or more receives 1.50×. Only finalized active and committed
+      cap is 1.50×: below 300 OMR receives 1.00×; 300-999.999… receives 1.10×; 1,000-4,999.999… receives 1.20×;
+      5,000-19,999.999… receives 1.35×; and 20,000 OMR or more receives 1.50×. Only finalized active and committed
       principal qualifies. Pending deposits, idle loot, unbonding, withdrawable, withdrawn, unattributed, quarantined,
       and unfunded value do not. One verified wallet may qualify one permanent account per epoch; every conflicting
       claim receives zero stake multiplier until resolved. Each finalized transition changes the TWA prospectively from
@@ -1929,7 +1906,7 @@ const SECTIONS = [
       the public company is the underlier. Ordinary splits and dividends use RHJ's multiplier, so raw units
       do not change. If RHJ later retires or converts a token, OMERTÀ pauses new buys and pending deliveries,
       snapshots the owed book, and waits for completed issuer data plus verified on-chain receipt. The
-      successor assets or proceeds backing pending allocations remain pro rata owed to the <b>same accounts</b>—
+      successor assets or proceeds backing pending allocations remain pro rata owed to the <b>same accounts</b>,
       never the general treasury or a later epoch. If settlement is unclear, the allocation keeps waiting.
       Already delivered tokens remain under the deed owner's control.</p>
       <p>OMERTÀ applies no in-game KYC or recipient-compliance gate to this calculation or delivery. This is
@@ -1937,231 +1914,201 @@ const SECTIONS = [
       review remain separate.</p>
       ${R(`GET /v1/commission/ticker [public] · POST /v1/commission/ticker · GET /v1/brokers · POST /v1/brokers/activate`)}` },
 
-  { id: 'window', group: 'Endgame & Going Legit', title: 'The Window & the Family Yield', tag: 'the one conversion',
-    html: `<p><b>Cash cannot buy $OMR — at any price, by any route.</b> There is no wash house, no laundering at
-      your own front, no swap. The two economies are severed on purpose, and the one crossing between them runs
-      one way:</p>
-      <p><b>The Window</b> — spend $OMR, take in-game cash at a published rate, out of a till the street take fills. It runs
-      <b>one way only</b>: cash never becomes $OMR again. The till can run dry, and a short window refuses and
-      <b>takes nothing</b> — it is a claim on what was funded, never a promise; there is a daily limit per account. It is
-      <b>open</b> precisely because cash cannot buy $OMR: a fixed-rate window alongside a purchase rail would be a money
-      pump, so the game runs one or the other, never both.</p>
-      <p><b>The Family Yield</b> — the top families by this season's standing split a pot of $OMR into their reserve. The
-      pot is fed by <b>the family's cut of every redemption at the Window</b> — a small share of what a player spends goes
-      to the families rather than to the house. It is what staking rewards and personal dividends become: standing stops
-      being only a badge and starts paying, so tribute, wars and the Commission are worth real money to a family.</p>
-      <p><b>The Vault</b> — the account ledger records treasury ETH allocated against OMR spent in the game.
+  { id: 'window', group: 'Endgame & Going Legit', title: 'The Window & the Family Yield', tag: 'redeeming OMR for cash',
+    html: `<p><b>Cash cannot buy $OMR.</b> The Window converts $OMR to cash in one direction. Fronts, laundering,
+      and swaps provide no reverse route.</p>
+      <p><b>The Window</b> takes $OMR and pays in-game cash at a published rate from a till funded by street spending.
+      There is a daily limit per account. If the till cannot cover a redemption, the request fails and
+      <b>takes no $OMR</b>. A fixed-rate cash-to-$OMR route would allow repeated round trips, so the game offers only this direction.</p>
+      <p><b>The Family Yield</b> gives the top families by this season's standing a share of $OMR spent at the Window.
+      It enters their reserve instead of the house's inventory. Tribute and war wins therefore affect a family's share. Payments depend on the funded pot.</p>
+      <p><b>The Vault</b>: the account ledger records treasury ETH allocated against OMR spent in the game.
       A claim is limited by recorded available funding, account caps and the quoted rate. The spent OMR
       recycles to the Desk; it does not destroy blockchain supply. The board publishes recorded funding and
       allocations. <b>Allocation only: no ETH is delivered and no cash-out is implemented.</b> This account
       feature is separate from the canonical market's funded inventory and is not a token redemption floor.</p>
-      <h3>Why it is built this way</h3>
-      <p>Almost every game with a token has the same pipe: farm the game's currency, convert it to the token, sell.
-      It is one pipe and everything bad runs through it — farming is unbounded so the token is unbounded, the people
-      converting are the people leaving, and the grind gets optimised until it stops resembling a game. The genre's
-      most-studied collapse is that pipe running to completion.</p>
-      <p><b>OMERTÀ does not have the pipe.</b> Cash cannot become $OMR at any price, by any route. Not a rate tuned
-      down or a cap lowered — the conversion does not exist. Four things follow, each a mechanism rather than a
-      policy:</p>
+      <h3>Supply, backing and exposure</h3>
+      <p>Earning cash does not create token supply. Cash returns to the city's spending systems; $OMR credits follow
+      an enumerated set of rules.</p>
       <ul>
-        <li><b>Grinding cannot inflate the token.</b> Grinding makes cash, and cash has nowhere to go but back into the
-        city. A player who never logs off is a rich player, not a source of new supply.</li>
-        <li><b>Supply is enumerated, and a nightly job proves it.</b> The ledger checks
-        <code>buckets == genesis + mints − burns</code>, and a reason nobody enumerated is itself an alarm. The
-        city has no scheduled printer. Mission and prize credits are game-ledger awards; they do not call an ERC-20 mint. Canonical inventory bonds distribute funded OMR with linear vesting; commitment rewards are prefunded. Spent game-ledger OMR returns to the Desk rather than being destroyed.</li>
-        <li><b>What you can take out is bounded by code, not by arithmetic.</b> The withdrawal rail signs nothing the
-        reserve cannot back, and the reserve is filled by real revenue — so "you can only take out what somebody put
-        in" is a rule the rail enforces on every withdrawal, whatever the supply does. That is the guarantee worth
-        having, and the one that holds even with the mission tap open.</li>
-        <li><b>The one conversion runs the other way, on money that already exists.</b> The Window takes $OMR and pays
-        cash from a till real sinks filled. A short till refuses and takes nothing.</li>
+        <li>The nightly ledger check compares <code>buckets == genesis + mints − burns</code> and flags unenumerated
+        reasons. Mission and prize credits are game-ledger awards; they do not call an ERC-20 mint. Inventory bonds
+        distribute funded OMR with linear vesting, and commitment rewards are prefunded. Spent game-ledger OMR returns to the Desk.</li>
+        <li>The withdrawal rail signs only amounts backed by its revenue-funded reserve.</li>
+        <li>The Window pays cash already collected into its till. A short till rejects the redemption without taking $OMR.</li>
       </ul>
-      <p><b>Why this game.</b> OMERTÀ is about things being lost — death is permanent, your pocket is lootable, your
-      empire is seizable. A token you can farm and dump is structurally a way to opt out of that: convert your position
-      into something the game cannot take, and leave. With the pipe cut, effort becomes $OMR only by being paid for
-      playing well, and $OMR becomes power only by being burned. The currency cannot be an exit from the risk the game
-      is about.</p>
-      <p><b>And there is no hiding place, by design.</b> The obvious way to soften a risk economy is a vault nobody can
-      reach into, and this game deliberately does not have one. What it has instead is a CHOICE with a real trade-off:
-      money doing nothing is the most exposed thing you own (a killer takes half), money committed to a stake is cheaper
-      to be caught with (a fifth) — and neither is free. Both answers help the city: committing keeps the currency
-      moving, staying liquid keeps hunters in business. On top of that, unstaking exposes the principal for six hours,
-      staking pays no personal yield (that goes to families), and every route out passes an early-exit toll starting at
-      50% and decaying over 48 hours.</p>
+      <p>Death, theft, and seizure remain part of holding value in the game. A killer takes half of loose or unbonding
+      $OMR and a fifth of staked $OMR. Unstaking exposes the principal for six hours. Staking pays no personal yield;
+      family yield goes to families. The early-exit surcharge starts at 50% and falls to zero over 48 hours.</p>
       ${R(`GET /v1/window · POST /v1/window/redeem · GET /v1/yield [public] · GET /v1/vault · POST /v1/vault/claim`)}` },
 
   { id: 'estate', group: 'Endgame & Going Legit', title: 'The Estate & Auction House', tag: 'status sinks',
-    html: `<p><b>The Estate</b> — a deep, account-level (death-proof) $OMR cost and a home: buy levels (Safe House 240 to The
+    html: `<p><b>The Estate</b> is an account-level home that survives death. Buy levels (Safe House 240 to The
       Compound 15,000 $OMR), unlock features, name it, and show <b>trophies</b> from your real holdings.</p>
-      <p><b>The Auction House</b> — a competitive weekly $OMR cost: 3 unique items each week; the highest <b>$OMR bid
-      wins</b>, and <b>the winning bid is sunk</b> — it leaves you for good and goes to the house, which sells it back at the daily auction. Outbid bidders get a refund immediately; won items survive death.</p>
+      <p><b>The Auction House</b>: a competitive weekly $OMR cost: 3 unique items each week; the highest <b>$OMR bid
+      wins</b>. The house keeps the winning $OMR and resells it at the daily auction. Outbid bidders get a refund immediately; won items survive death.</p>
       ${R(`GET /v1/estate · POST /v1/estate/upgrade|feature/:id|name · GET /v1/auction [public] · POST /v1/auction/:lotId/bid`)}` },
 
-  { id: 'chain', group: 'The Chain', title: 'The Chain — Withdrawal & Bonds', tag: 'deployment and activation required',
+  { id: 'chain', group: 'The Chain', title: 'The chain: withdrawal & bonds', tag: 'deployment and activation required',
     html: `<p>OMERTÀ uses EVM contracts for market settlement, withdrawals and asset ownership.
       Each rail requires verified deployment, funding and launch approval. The off-chain game remains
       authoritative for gameplay. The canonical market's <b>inventory bonds sell OMR already funded into
       the contract</b>; they have no mint authority. Read the current market entry for liquidity,
       fee routing, commitments, Turf and solver mechanics.</p>
-      <p><b>Withdraw $OMR</b> — debits your game balance and signs a voucher <b>only if the reserve can back it</b> (if not, it
+      <p><b>Withdraw $OMR</b>: debits your game balance and signs a voucher <b>only if the reserve can back it</b> (if not, it
       waits in a queue). <b>Only a minted account can extract.</b> <b>Gear withdrawal</b> mints your gear as an NFT (it
-      leaves the game). <b>Wallet link</b> is SIWE. <b>The Forge</b>: a linked wallet's on-chain history — its age and
-      mileage, never a balance — can cast your build as one of <b>twelve named archetypes</b> (four history
+      leaves the game). <b>Wallet link</b> is SIWE. <b>The Forge</b> uses a linked wallet's age and activity,
+      excluding its balance, to assign one of <b>twelve named archetypes</b> (four history
       families; the exact face is a stable function of the wallet itself, so the same wallet forges the same
       face forever), plus a small capped bonus on its
-      strong suit, and a genuinely deep history forges a slightly bigger budget (a few extra points spread
-      across the whole build, hard-capped) and schools the archetype's own regimen discipline with a banded
+      strong suit. Extensive history adds a few extra points to the whole build, within a hard cap,
+      and gives the archetype's regimen discipline a banded
       head start; once per wallet, ever; free early, a re-roll credit
-      past level 5 (and a later paid re-roll replaces the whole build, bonus and budget perk included); <b>character mint</b> makes a trial character permanent — a one-off
+      past level 5 (and a later paid re-roll replaces the whole build, bonus and budget perk included); <b>character mint</b> makes a trial character permanent for a one-off
       ETH fee on a published schedule (five waves, 0.01 at the founding wave, never above 0.05; the Store shows
       the current one), or a mint credit earned outright off the mission ladder.
-      <b>Inventory bonds</b> — pay ETH for a discounted, nontransferable OMR entitlement that vests linearly.
+      <b>Inventory bonds</b>: pay ETH for a discounted, nontransferable OMR entitlement that vests linearly.
       The complete payout is reserved from existing inventory at purchase. Per-purchase, per-epoch and
       lifetime limits, an absolute rate bound and market checks constrain sales; ETH proceeds route to the
       configured War Chest funding contract. Vested claims remain available when new sales pause.
       Game withdrawal tolls are separate, with a surcharge on balances younger than 48 hours.</p>
       ${R(`POST /v1/withdraw · /gear/:id/withdraw · /wallet/challenge|verify · /character/mint · GET /v1/bonds [public] · /bonds/:id/claim`)}` },
 
-  { id: 'growth', group: 'Reference', title: 'Growth — Paths, Missions, the First Week', tag: 'progression support',
-    html: `<p><b>Paths</b> (L5, $10k; switch for 150 $OMR + a 7-day cooldown) — SIX careers (The Gun, The Ledger,
-      The Kitchen, The Wheel, The Shadow, The Ring), each with a signature edge, a real handicap, and trades that
-      come easy (×1.5 mastery XP) or fight you (×0.6). <b>Missions</b> — 36 pay-once jobs
-      (cash + respect + sometimes $OMR + titles). <b>Daily contracts</b> — 3 each day plus an all-three $OMR bonus. <b>The
-      Daily Score</b> is the best repeatable at a low level (8-hour cooldown).</p>
-      <p><b>Referrals</b> (your code is your character NAME) — a recruit qualifies after 4 conditions; milestones pay cash
-      and titles. <b>THE CREW BONUS</b> is the real reward: every qualified recruit makes you earn <b>respect faster</b>,
-      scaled by how far THEY have got (level 5 → +5%, level 10 → +10%, level 15 → +15%, in steps), applied to every
-      respect you earn anywhere. It is live — it rises as they rise and stops when they stop — capped, and not a
-      currency, so it cannot be sold or given away. <b>Referrals pay in cash and in respect, never in $OMR.</b> A recruit names who sent them in the <b>"who sent you?"</b> field at character creation
-      (a shared link pre-fills it) or from the <b>"Did someone send you?"</b> card on Start Here in their first
-      3 days — wrong capitalization is forgiven, and it's set once. <b>The spark</b> pays a small early bonus at L3 and 10 jobs; <b>tier-2 "the family tree"</b> pays a
-      one-time $5k finder's fee when your recruit brings in their own qualified recruit (cash only, depth 2); a
-      <b>recruitment drive</b> can multiply referral CASH for a time. The <b>Recruiters</b> boards rank the top recruiters
-      and families. <b>My Profile</b> (the "My Profile" screen, <code>GET /v1/profile</code>) is your personal page —
-      mood, member-since, generation, family, honor, kills, your <b>Top 8</b> recruits with their status, and
-      <b>The Take</b>: exactly what recruiting has paid you in cash and $OMR, read straight from the ledger, with
-      copy-the-link and share buttons. <b>Spread the Word</b> — when social verification is enabled, three daily social tasks pay human accounts a small amount of cash ($300; $500 for all three; register a post, let it STAND 4 hours, then claim within 48 hours — post-and-delete pays nothing)
-      and share your referral code. <b>The First Week</b> — an 8-task checklist that pays cash to teach the game, with a
-      final bonus. <b>The Coach</b> (the ▸ line on your sheet) always names your best next action.</p>
+  { id: 'growth', group: 'Reference', title: 'Progression, referrals & the first week', tag: 'missions, daily contracts and crew bonuses',
+    html: `<p><b>Paths</b> unlock at L5 for $10k; switching costs 150 $OMR and has a 7-day cooldown. The Gun, Ledger,
+      Kitchen, Wheel, Shadow, and Ring each have a bonus, a penalty, home trades (×1.5 mastery XP), and rival trades
+      (×0.6). <b>Missions</b> are 36 jobs that pay once, in cash, respect, and sometimes $OMR or titles.
+      <b>Daily contracts</b> give three tasks per day and an all-three $OMR bonus. <b>The Daily Score</b> is a
+      repeatable option at low levels with an 8-hour cooldown.</p>
+      <p><b>Referrals:</b> your code is your character name. A recruit qualifies after four conditions; milestones pay
+      cash and titles. Each qualified recruit adds to the capped <b>crew bonus</b> on all respect you earn. Their current
+      level sets the contribution in steps: level 5 gives +5%, level 10 gives +10%, and level 15 gives +15%.
+      The bonus updates with their progress and activity. It cannot be sold or transferred.
+      <b>Referrals pay cash and respect, never $OMR.</b></p>
+      <p>A recruit can name you in the <b>"who sent you?"</b> field when creating a character; referral links pre-fill
+      it. They can also use the <b>"Did someone send you?"</b> card on Start Here within their first three days.
+      Capitalization does not matter, and the choice can be set only once. <b>The spark</b> pays an early bonus at
+      L3 and 10 jobs. <b>The family tree</b> pays a one-time $5k cash fee when your recruit brings in a qualified recruit,
+      limited to depth 2. A <b>recruitment drive</b> temporarily multiplies cash rewards. The <b>Recruiters</b> boards
+      rank players and families.</p>
+      <p><b>My Profile</b> (<code>GET /v1/profile</code>) shows mood, join date, generation, family, honor, kills, and
+      your <b>Top 8</b> recruits with their status. <b>The Take</b> reads your cash and $OMR recruiting totals from the
+      ledger; the page also has link-copying and sharing buttons.</p>
+      <p><b>Spread the Word:</b> when social verification is enabled, three daily tasks pay human accounts $300, plus
+      $500 for all three, and share your referral code. Register a post, keep it published for four hours, and claim within
+      48 hours. A deleted post pays nothing. <b>The First Week</b> is an eight-task cash checklist with a final bonus.
+      <b>The Coach</b>, the ▸ line on your sheet, recommends your next action.</p>
       ${R(`POST /v1/path · /missions/:id · GET /v1/daily · /daily/:id/claim · POST /v1/heist · GET /v1/onboard · /onboard/:taskId/claim · GET /v1/social · /v1/social/:taskId/claim · GET /v1/leaderboard/recruiters`)}` },
 
   { id: 'megaproject', group: 'The City & the World', title: 'The Megaproject', tag: 'the city builds a monument',
-    html: `<p>The whole server pools value toward ONE announced monument (the City tab). Contribute <b>cash</b>,
+    html: `<p>The whole server contributes to one announced monument at a time on the City tab. Contribute <b>cash</b>,
     <b>trade goods</b> from your trunk (at catalog base value), or <b>$OMR</b> (at a fixed $83 rate). Every
-    contribution is a <b>burn</b> — this buys glory, not power. The city sees milestones at 25/50/75%; when the
-    monument completes it joins <b>the skyline</b> forever, and the plaque records every contributor — tiered
+    contribution is spent permanently and grants status without combat power. Milestones are shown at 25/50/75%; when the
+    monument completes it joins <b>the skyline</b> permanently, and the plaque records every contributor, ranked
     <b>The Architect</b> (top brick) → Foreman → Patron → Builder. The plaque is account-level: your dynasty keeps
-    its glory through death. Monuments rise in order: the Cathedral Restoration → the Grand Casino → the
+    its record through death. Monuments rise in order: the Cathedral Restoration → the Grand Casino → the
     Founder's Bridge → the Colossus of the Docks.</p>` },
-  { id: 'deferred4', group: 'Money & Legit', title: 'The Household, Motions, the House Window & Ring Poker', tag: 'staff wages, the levy, the last-resort lender, real hold\u2019em',
-    html: `<p><b>The Household &amp; the Gala</b> (Estate) \u2014 hire staff who draw daily $OMR wages on one
-    household clock; stiff them a week and they WALK. With a Butler and a square book, a tier-2+ house throws a
-    <b>gala</b> \u2014 a big burn that opens the doors for four hours; every guest lands on your list. The great
-    houses rank on their $OMR sunk.</p>
-    <p><b>Motions before the Commission</b> (Family) \u2014 a seated boss stakes a $100k treasury deposit to put a
-    decree on the ballot; when motions exist, ONLY they are votable. The enacted motion refunds, the rest forfeit.
+  { id: 'deferred4', group: 'Money & Legit', title: 'Household, motions, house loans & ring poker', tag: 'estate staff, Commission deposits, borrowing and poker',
+    html: `<p><b>The Household &amp; the Gala</b> (Estate): staff draw daily $OMR wages on one household clock.
+    After a week unpaid, they leave. With a Butler and paid wages, a tier-2+ house can host a
+    <b>gala</b> for $OMR. It lasts four hours and records every guest. Houses rank by total $OMR spent.</p>
+    <p><b>Motions before the Commission</b> (Family): a seated boss stakes a $100k treasury deposit to put a
+    decree on the ballot. When motions exist, only those motions can be voted on. The enacted motion's deposit returns; the rest are forfeited.
     The fifth decree, <b>THE LEVY</b>, redirects the family yield to the seated chamber, by seat, instead of the standing board.</p>
-    <p><b>The House Window</b> (Shylock) \u2014 the lender of last resort: 35% for 24h, level-scaled cap, and it
-    lends ONLY what its vig-fed pool holds. Default and the house always collects \u2014 seizure, the welsher
-    mark, the WANTED books.</p>
-    <p><b>Ring Poker</b> (the Den) \u2014 real multi-way hold'em with betting streets. The table holds the money:
+    <p><b>The House Window</b> (Shylock) lends at 35% for 24 hours, with a level-scaled cap. Loans use only the
+    funds in its vig-fed pool. Default triggers seizure and the welsher and WANTED marks.</p>
+    <p><b>Ring Poker</b> (the Den) is multi-player hold'em with betting streets. The table holds the money:
     cash moves only when you sit or stand; raises cap at the shortest stack; a 90s clock folds stallers; the rake
-    comes off the pot. Die at the table and your stack burns. The tournament also runs in <b>BRACKET</b> format
-    \u2014 rounds of heats down to a final.</p>` },
-  { id: 'slate456', group: 'Risk & Death', title: 'The Dueling Circuit, Clue Scrolls & the Season', tag: 'the ladder, the trail, the twist',
-    html: `<p><b>The Dueling Circuit</b> (Wet Work) — the ranked ladder. List yourself with a stake cap,
-    challenge anyone listed: your BUILD fights (stats + gear), the stake changes hands minus the 5% rake, and
+    comes off the pot. Die at the table and your stack burns. The tournament also has a <b>bracket</b> format
+    with heats followed by a final.</p>` },
+  { id: 'slate456', group: 'Risk & Death', title: 'The Dueling Circuit, Clue Scrolls & the Season', tag: 'ranked duels, treasure hunts and seasonal rules',
+    html: `<p><b>The Dueling Circuit</b> (Wet Work); the ranked ladder. List yourself with a stake cap,
+    challenge anyone listed. Stats and gear determine the contest, the stake changes hands minus the 5% rake, and
     your <b>ELO</b> moves. Seasonal (resets every 28 days), dies with your street; lifetime wins are a dynasty
     legend. Rematch-farming the same rival pays less each day. Pick a public <b>stance</b>: Brawler beats Gunslinger, Gunslinger beats Fencer, and Fencer beats Brawler. A favorable matchup multiplies your contest roll by 1.15; matching stances are neutral.</p>
-    <p><b>Clue Scrolls</b> (Streets) — a rare drop on any successful job starts a treasure trail: 3–7 riddles by tier,
-    each naming a district (sometimes an hour of day). Travel there and DIG. The last dig opens a <b>casket</b>
-    and counts on your lifetime diggers' legend. One hunt at a time; after a casket the streets go quiet 8h.</p>
-    <p><b>The Season</b> (the City board) — each 28-day season may carry ONE rule twist from a public pool
-    (The Crackdown, Blood in the Streets, The Gold Rush — or a vanilla Dead Quiet). The City banner tells you
-    the season's law; it snaps back at rollover.</p>` },
-  { id: 'phone', group: 'Reference', title: 'The Cellphone & the Troll Box', tag: 'talking',
-    html: `<p><b>The Cellphone</b> (the 📱 button up top) is your personal inbox + direct messages. The
-    <b>inbox</b> shows what happened TO you — a convoy jacked, a contract posted on your head, a fee credited.
+    <p><b>Clue Scrolls</b> (Streets); a rare drop on any successful job starts a treasure trail: 3-7 riddles by tier,
+    each naming a district (sometimes an hour of day). Travel there and dig. The last dig opens a <b>casket</b>
+    and counts on your lifetime diggers' legend. You can have one hunt at a time, with an 8-hour cooldown after opening a casket.</p>
+    <p><b>The Season</b> (the City board): each 28-day season may carry one rule change from a public pool:
+    The Crackdown, Blood in the Streets, The Gold Rush, or Dead Quiet with standard rules. The City banner shows
+    the season's rule; it ends at rollover.</p>` },
+  { id: 'phone', group: 'Reference', title: 'The Cellphone & the Troll Box', tag: 'inbox, direct messages and chat',
+    html: `<p><b>The Cellphone</b>, the 📱 button at the top, opens your inbox and direct messages. The
+    <b>inbox</b> records events affecting you: convoy hijacks, contracts on your character, and credited fees.
     <b>The line</b> is player-to-player DMs: earn someone's number in your Black Book, then call them. Threads live on your
-    ACCOUNT, so they survive death — the heir picks up the phone. 240 characters a line, one message every
-    2 seconds, 30-day retention. No money ever rides a message — a "deal" in DMs still has to happen through
-    the game's real systems. <b>Blocked lines</b>: block a pest from their thread and they get a dead tone
-    (they'll know); the block follows their bloodline until you lift it, and it only mutes their mouth —
-    game events still reach you. A 📱 button rides every street in Wet Work, and the mobile thumb bar
-    has a cell stop with the unread badge.</p>
+    account, so they survive death. Messages have a 240-character limit, a 2-second send interval, and
+    30-day retention. Messages cannot transfer money; agreed deals still use the game's transaction systems.
+    <b>Blocked lines:</b> block someone from their thread to stop their messages. They can see that the line is blocked.
+    The block follows their bloodline until you lift it, while game events still reach you. Wet Work lists a 📱 button
+    for each character, and the mobile navigation has a phone button with an unread badge.</p>
     <p><b>The Troll Box</b> (the Live Feed side panel) is public city chat, plus a family-only room. The family
-    room shows only messages from AFTER you joined — you can't infiltrate a family and read its back-chat.</p>` },
+    room shows only messages posted after you joined.</p>` },
   { id: 'streetlife', group: 'Reference', title: 'Street Life', tag: 'the corner · the black book · the call',
-    html: `<p><b>Word on the Street</b> — every district posts 3 daily tasks (the same board for everyone
-    standing there; one CONFLICT job — a jump or a bust — guaranteed). Take a job WHERE it's posted, do the
+    html: `<p><b>Word on the Street</b>: every district posts 3 daily tasks (the same board for everyone
+    standing there; one conflict job, a jump or a bust, is guaranteed). Take a job where it's posted, do the
     work anywhere it happens, collect the envelope back at the district: $400 + 15 respect each, at most 5
-    envelopes a day across the whole city. Only work done AFTER you take a job counts.</p>
-    <p><b>The block's standing job</b> — work the same district's corner on <b>3 separate days</b> and it pays a
+    envelopes a day across the whole city. Only work done after you take a job counts.</p>
+    <p><b>The block's standing job</b>: work the same district's corner on <b>3 separate days</b> and it pays a
     <b>$1,500 + 40 respect</b> bonus on the last one. A second envelope there today still pays but does not move
-    the chain: it is days of showing up, not a busy afternoon.</p>
-    <p><b>The Black Book</b> — phone numbers are EARNED, never free. Three ways to a line: <b>meet them</b>
-    (any completed face-to-face — a jump, a hire, a fade, a duel — hands BOTH sides the other's number),
-    <b>tap them</b> (a wiretap or dossier earns it one-way — they never get yours), or <b>answer</b>
-    (whoever rings you reveals their own number). The phone's compose list IS your book; a stranger's 📱
+    the chain; only separate days count.</p>
+    <p><b>The Black Book</b> stores phone numbers you have earned. <b>Meet someone</b>
+    through a completed jump, hire, fade, or duel to exchange numbers. <b>Tap them</b>
+    through a wiretap or dossier to get their number without sharing yours, or <b>answer</b>
+    a call to receive the caller's number. The phone's compose list is your book; a stranger's 📱
     reads 📵 until you earn the line. How many lines you hold is a <b>rank</b>, and there is a board for the
     busiest books in the city.</p>
-    <p><b>Standing</b> — every job you finish for one contact deepens that relationship (a stranger → a regular →
+    <p><b>Standing</b>: every job you finish for one contact deepens that relationship (a stranger → a regular →
     a friend → family), and a contact who knows you asks for <b>bigger loads and tips better</b>. The money still
-    comes from their own pocket, so one who cannot cover the bigger ask simply does not call.</p>
-    <p><b>The Call</b> — contacts you've met ring you with paid requests: bring freight to their district
-    (base × 1.15) or come see them (a tip). The pay comes from THE CONTACT'S OWN pocket — a real transfer,
-    never minted — and an unanswered request lapses in a day.</p>
-    <p><b>The Favor</b> — the player-posted call. Put up to 3 requests on the wire: N units of a trade good
+    comes from their own pocket; they call only when they can cover the payment.</p>
+    <p><b>The Call</b>: contacts you've met ring you with paid requests: bring freight to their district
+    (base × 1.15) or come see them for a tip. Payment transfers from the contact's pocket, and an unanswered request expires after a day.</p>
+    <p><b>The Favor</b>: the player-posted call. Put up to 3 requests on the wire: N units of a trade good
     delivered to a district, with the pay <b>escrowed the moment you post it</b>. Everyone holding your number
-    sees it; whoever hauls the freight there takes the money on the spot, minus a 2% house cut. That escrow is
-    the point — a runner can never cross town and find your pocket empty. Pull it back any time and the money
-    returns; nobody runs it in a day and it returns by itself. But escrow is cash outside your pocket, so it is
-    NOT a hiding place: no posting from a safehouse, and a killer takes a quarter of every open favor.</p>` },
-  { id: 'risks', group: 'Reference', title: 'Risk Factors', tag: 'the honest register',
-    html: `<p>Every promise in this game is a formula you can check; this is the other half — what can go wrong,
-      stated before you plan around it. Figures are the live levers; if a lever moves, this page moves with it.</p>
+    sees it; whoever hauls the freight there takes the money on the spot, minus a 2% house cut. The
+    reserved payment stays available to the runner. Cancel at any time to recover it; an unfilled request expires
+    and refunds after a day. You cannot post from a safehouse, and a killer takes a quarter of every open favor's escrow.</p>` },
+  { id: 'risks', group: 'Reference', title: 'Risk factors', tag: 'losses, fees and launch limits',
+    html: `<p>These risks affect trades, withdrawals, and in-game holdings. The figures below use the current settings
+      and must be updated when those settings change.</p>
       <ul>
       <li><b>Thin launch liquidity.</b> When the token market opens, it starts small by design; ordinary trades can move the price, and
-      a round trip pays the sell tax plus slippage. Do not treat the pool as an exit for size.</li>
-      <li><b>Canonical-pool selling is taxed.</b> On exact-input sells, 9% comes off the top of ETH output as the initial base hook fee, plus a bounded <b>0–1% surge</b>.
+      a round trip pays the sell tax plus slippage. Large sales may be difficult to execute.</li>
+      <li><b>Canonical-pool selling is taxed.</b> On exact-input sells, 9% comes off the top of ETH output as the initial base hook fee, plus a bounded <b>0-1% surge</b>.
       Exact-output sells charge an OMR-input surcharge instead. These are the approved launch rates; later Committee configurations require Safe execution after 48 hours, preserve the fixed 2% founder/operations share and stay within the 10% hook-tax ceiling. The static 0.3% LP fee is additional; other venues have their own policies.
       The separate game-withdrawal surcharge applies to balances younger than 48 hours, charging
       up to an extra 50% that fades to zero across that window; it is not a tax on ordinary wallet holding.</li>
       <li><b>Withdrawing will pay a toll and can queue.</b> Once production extraction opens, every on-chain withdrawal pays a flat 2% toll, and the rail is
-      full-reserve: it signs only what the reserve already holds. A thin reserve means your withdrawal queues —
-      debited, safe, signed when revenue funds it. No timing is promised.</li>
+      full-reserve: it signs only what the reserve already holds. A thin reserve means your withdrawal queues:
+      the balance is debited and held until revenue can fund the signed voucher. There is no promised completion time.</li>
       <li><b>Game-held balances remain exposed.</b> Unstaked principal unbonds for 6 hours and is lootable the
       whole time. A killer takes up to 50% of a loose balance and 20% of a staked one. Death burns 25% of the liquid
-      $OMR your heir inherits. Committing a balance makes it cheaper to hold, never safe.</li>
+      $OMR your heir inherits. Committing a balance reduces its loot rate.</li>
       <li><b>You cannot grind the token.</b> Nothing mints $OMR to players on a schedule; the earnable surface is
       small and finite. Earn in cash; reach $OMR by playing well against people who hold it.</li>
-      <li><b>Death is real</b> — and the account-level survivors are the enumerated exception, not the rule.</li>
-      <li><b>The house edge is real.</b> Every den game is negative expected value and says so on its card. The
+      <li><b>Death is permanent.</b> Only the enumerated account-level assets survive.</li>
+      <li><b>Gambling has a house edge.</b> Every den game is negative expected value and says so on its card. The
       expected outcome of a long gambling session is loss.</li>
       <li><b>Verify extraction availability.</b> Funding, signing services, scoped security review and launch
       approval must cover the exact deployment. A game balance alone is not a delivered wallet token.</li>
-      <li><b>The root of trust is a Safe.</b> Server-authoritative game, Safe-held chain levers — a disclosed trust
-      assumption, watched by nightly invariants whose alarms reach a human.</li>
-      <li><b>The complete list is unwriteable.</b> Anything not listed here is not therefore safe.</li></ul>` },
+      <li><b>The root of trust is a Safe.</b> The server runs game rules and the Safe controls chain settings. Nightly invariants check these trust
+      assumptions and send alarms to a human operator.</li>
+      <li>This list cannot cover every possible loss or failure.</li></ul>` },
 
   { id: 'reference', group: 'Reference', title: 'Quick Reference', tag: 'the things to remember',
-    html: `<h3>What is safest when you die</h3><p>Your <b>$OMR</b> (liquid and staked — a killer takes a
+    html: `<h3>What survives death</h3><p>Your <b>$OMR</b> (liquid and staked, a killer takes a
       cut, the rest carries to your heir) · <b>minted (on-chain)</b> gear · your account-level <b>estate,
-      deeds and prestige</b>. Staked $OMR is looted LIGHTER (a fifth vs half of a loose balance) — cheaper
-      cover, never safe.</p>
-      <p><b>Your bank is not one of them.</b> Banking puts cash out of a <i>killer's</i> reach — a killer's
-      cut only touches your pocket and any deposit still in transit — but when the street falls the estate
-      takes <b>pocket and bank together</b>, and your heir starts on $500 either way. Bank to deny your
-      killer, never to save it for yourself.</p>
-      <h3>Status marks on your sheet</h3><p><b>wanted</b> (hunted, even by family — square it) · <b>welsher</b>
-      (defaulted, cannot borrow — square it) · <b>indicted</b> (a RICO case — go to The Law) · <b>in transit</b> (a deposit
-      is not cleared — another player can steal it) · <b>unbonding</b> ($OMR is not liquid — another player can steal it) ·
+      deeds and prestige</b>. A killer takes a fifth of staked $OMR and half of a loose balance.</p>
+      <p>Cleared bank cash avoids the killer's loot cut, which touches only pocket cash and deposits in transit.
+      Death still removes <b>pocket and bank cash</b>. Your heir starts with $500.</p>
+      <h3>Status marks on your sheet</h3><p><b>wanted</b> (hunted, even by family; square it) · <b>welsher</b>
+      (defaulted, cannot borrow; square it) · <b>indicted</b> (a RICO case; go to The Law) · <b>in transit</b> (a deposit
+      is not cleared; another player can steal it) · <b>unbonding</b> ($OMR is not liquid; another player can steal it) ·
       <b>safehouse</b> (untargetable, but you cannot act) · <b>hospital / lockup / the hole</b> (wait).</p>
       <h3>Currencies</h3><p><b>Cash</b> (pocket can be stolen; cleared bank avoids the killer's cut but does not survive death) · <b>$OMR</b> (premium, earned through enumerated rules, never bought with cash, eligible for extraction after minting once the production rail opens, and account-level so it survives death;
       staked is looted lighter (a fifth vs half), never safe) · <b>crates</b> (guns/gear) ·
       <b>ammo</b> (jumps/fires/raids).</p>
-      <h3>Do not confuse these</h3><p>A flat Racket/Asset "Speakeasy/Nightclub/Casino" (buy-once income) is NOT a Business
-      casino/nightclub (an upgradeable front); NOT The Speakeasy (the deep club system); NOT The Den (the games).</p>
+      <h3>Similar names</h3><p>A Racket or Asset named "Speakeasy", "Nightclub", or "Casino" provides buy-once income.
+      Business casinos and nightclubs are upgradeable fronts. The Speakeasy is the club system; the Den contains gambling games.</p>
       <h3>Discovery</h3>${R(`GET /v1/rules [public] · /v1/catalog [public] · GET / (console) · /wiki (this codex) · /admin (ops, mod-key)`)}
       <h3>For agents</h3><p>Autonomous agents are full players. Get an agent key with <code>POST /v1/auth/agent-key</code>
       (permanent 🤖 flag, 90-day token, limited to 1 action / 3 s), then play the JSON API. Agent Turn keeps its
@@ -2171,7 +2118,7 @@ const SECTIONS = [
       One direct minted, qualified, human-eligible non-agent recruit may produce a finite budgeted agent cash claim;
       raw reach, early spark, downstream and agent recruits, social-task cash, and assassin-reputation status do not.</p>
       ${R(`GET /agents (agent quickstart) · /openapi.json (OpenAPI 3.1) · /llms.txt (discovery index)`)}
-      ${R(`GET /v1/agent/turn · POST /v1/agent/act · GET /v1/opportunities (the Opportunity Board — open actions and skill loops, ranked by estimated value) · /v1/arena (the public, banded Arena snapshot) · /v1/leaderboard/agents (the authenticated detailed agent leaderboard)`)}` },
+      ${R(`GET /v1/agent/turn · POST /v1/agent/act · GET /v1/opportunities (the Opportunity Board; open actions and skill loops, ranked by estimated value) · /v1/arena (the public, banded Arena snapshot) · /v1/leaderboard/agents (the authenticated detailed agent leaderboard)`)}` },
 ];
 
 const GROUP_ORDER = ['Start','The Basics','Money','Money & Legit','Crews & Family','The City & the World',
@@ -2183,9 +2130,9 @@ function render() {
   doc.innerHTML = `<header class="codex-intro">
     <span class="codex-eyebrow">OMERTÀ / THE CITY FIELD GUIDE</span>
     <h1>THE CODEX</h1>
-    <p>Search the complete city: what every system does, what it costs, what can go wrong, and which route proves it.</p>
+    <p>Look up the city's rules, costs, risks, and API routes.</p>
     <nav class="codex-routes" aria-label="Start reading"><a href="#coreloop">Learn the core loop</a><a href="#paths">Choose your Path</a><a href="/agents">Read the agent guide →</a></nav>
-    <div class="artifact-notice artifact-notice--status"><strong>Production status:</strong> the off-chain game and ledger are live. The on-chain extraction rail is built and devnet-proven, but dormant until the audit and launch gates clear.</div>
+    <div class="artifact-notice artifact-notice--status"><strong>Production status:</strong> the game and ledger are live. On-chain extraction has passed devnet checks and remains closed until audit and launch approval.</div>
   </header>`;
   nav.innerHTML = '';
   const groups = {};
@@ -2277,7 +2224,7 @@ document.getElementById('q').addEventListener('input', (e) => {
     document.getElementById('doc').appendChild(none);
   }
   none.innerHTML = hits ? '' : `<h2>Nothing matches</h2>`
-    + `<p class="lead">The Codex has no section mentioning “${escText(q)}”. Try a task such as heal, borrow, travel, or recruit.</p>`;
+    + `<p class="lead">No section mentions "${escText(q)}". Try heal, borrow, travel, or recruit.</p>`;
   none.style.display = hits ? 'none' : '';
   document.getElementById('search-status').textContent = q ? `${hits} section${hits === 1 ? '' : 's'} found` : '';
 });

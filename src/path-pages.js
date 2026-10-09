@@ -128,8 +128,8 @@ function pathTrack(payload){
 
 export function renderPathQuizPage({ baseUrl } = {}) {
   const origin = originOf(baseUrl);
-  const title = 'Which OMERTÀ Path Are You?';
-  const description = 'Seven decisions reveal how you would operate in OMERTÀ: Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Every result includes its exact mechanical edge and cost.';
+  const title = 'Which OMERTÀ Path suits you?';
+  const description = 'Answer seven questions to find your OMERTÀ Path: Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Compare each Path’s bonuses, costs, and mastery rates.';
   const canonical = `${origin}/path`;
   const image = `${origin}/art/gameplay-01-choose-your-path.png`;
   const questions = PATH_QUIZ_QUESTIONS.map(({ id, eyebrow, prompt, options }) => ({
@@ -144,9 +144,9 @@ ${styles}
 ${nav({ quiz: true })}
 <main id="main" class="path-shell">
   <header>
-    <p class="path-kicker">OMERTÀ // OPERATING DOCTRINE</p>
-    <h1 class="path-display">Which <mark>Path</mark> are you?</h1>
-    <p class="path-deck">Seven decisions. Six operating doctrines. One result grounded in the same signed modifiers that run the city.</p>
+    <p class="path-kicker">OMERTÀ // FIND YOUR PATH</p>
+    <h1 class="path-display">Which <mark>Path</mark> suits you?</h1>
+    <p class="path-deck">Answer seven questions to find which of the six Paths suits the way you play. Your result includes its bonuses and costs.</p>
   </header>
   <div class="quiz-frame">
     <form id="path-quiz" class="quiz-card" novalidate>
@@ -156,19 +156,19 @@ ${nav({ quiz: true })}
       <p class="quiz-error" data-quiz-error role="alert" hidden></p>
     </form>
     <aside class="quiz-aside" aria-label="Path selection rules">
-      <h2>The signed terms</h2>
-      <p>The quiz recommends a doctrine; it does not choose in-game. At level ${PATH_SELECTION_RULES.unlockLevel}, the city lets you make that choice yourself.</p>
+      <h2>Choosing a Path</h2>
+      <p>This quiz recommends a Path. You choose your character’s Path in-game at level ${PATH_SELECTION_RULES.unlockLevel}.</p>
       <dl class="quiz-terms">
         <div class="quiz-term"><dt>First choice</dt><dd>${money(PATH_SELECTION_RULES.firstPickCash)} cash</dd></div>
         <div class="quiz-term"><dt>Switching</dt><dd>${PATH_SELECTION_RULES.switchOmr} $OMR</dd></div>
-        <div class="quiz-term"><dt>Switch clock</dt><dd>${days(PATH_SELECTION_RULES.switchCooldownMs)} days</dd></div>
+        <div class="quiz-term"><dt>Switch cooldown</dt><dd>${days(PATH_SELECTION_RULES.switchCooldownMs)} days</dd></div>
         <div class="quiz-term"><dt>Home mastery</dt><dd>×${PATH_SELECTION_RULES.homeMasteryMultiplier}</dd></div>
         <div class="quiz-term"><dt>Rival mastery</dt><dd>×${PATH_SELECTION_RULES.rivalMasteryMultiplier}</dd></div>
       </dl>
-      <p class="path-fine">Want the rules before the questions? <a href="/wiki#paths">Inspect all six Paths in the Codex.</a></p>
+      <p class="path-fine"><a href="/wiki#paths">Read the rules for all six Paths in the Codex.</a></p>
     </aside>
   </div>
-  <noscript><div class="path-index"><h2>JavaScript is off — inspect each doctrine directly</h2><div class="path-index__links">${PATH_MANIFEST.map((path) => `<a href="${path.resultUrl}"><span>${esc(path.archetype)}</span><strong>${esc(path.name)}</strong></a>`).join('')}</div></div></noscript>
+  <noscript><div class="path-index"><h2>JavaScript is off. Read about each Path below.</h2><div class="path-index__links">${PATH_MANIFEST.map((path) => `<a href="${path.resultUrl}"><span>${esc(path.archetype)}</span><strong>${esc(path.name)}</strong></a>`).join('')}</div></div></noscript>
 </main>
 <script type="application/json" id="path-questions">${safeJson(questions)}</script>
 <script>
@@ -190,8 +190,8 @@ ${sessionScript()}
   function choose(question,option,button){
     if(busy)return;answers[question.id]=option.id;pathTrack({event:'answer',question:question.id,option:option.id,step:index+1}).catch(function(){});
     if(index<questions.length-1){index++;render();return}
-    busy=true;form.setAttribute('aria-busy','true');button.textContent='Reading the city…';Array.from(form.querySelectorAll('button')).forEach(function(item){item.disabled=true});error.hidden=true;
-    pathTrack({event:'complete',answers:answers,source:source}).then(function(result){if(!result.url)throw new Error('missing result');location.assign(result.url)}).catch(function(){busy=false;form.removeAttribute('aria-busy');error.textContent='The line went dead. Your answers are safe — try the final decision again.';error.hidden=false;render()});
+    busy=true;form.setAttribute('aria-busy','true');button.textContent='Finding your Path…';Array.from(form.querySelectorAll('button')).forEach(function(item){item.disabled=true});error.hidden=true;
+    pathTrack({event:'complete',answers:answers,source:source}).then(function(result){if(!result.url)throw new Error('missing result');location.assign(result.url)}).catch(function(){busy=false;form.removeAttribute('aria-busy');error.textContent='Your result could not load. Your answers are saved here. Select your final answer to try again.';error.hidden=false;render()});
   }
   back.addEventListener('click',function(){if(index>0){index--;render()}});form.addEventListener('submit',function(event){event.preventDefault()});render();
 })();
@@ -201,7 +201,7 @@ ${sessionScript()}
 
 function renderEffects(path) {
   return path.effects.map((effect, index) => `<article class="effect-card" data-impact="${effect.impact}">
-  <div class="effect-kind"><span>${effect.kind === 'additive' ? 'Additive modifier' : 'Signed multiplier'}</span><span>${effect.impact === 'edge' ? 'Edge' : 'Cost'}</span></div>
+  <div class="effect-kind"><span>${effect.kind === 'additive' ? 'Added bonus' : 'Multiplier'}</span><span>${effect.impact === 'edge' ? 'Bonus' : 'Cost'}</span></div>
   <p class="effect-value">${esc(effect.display)}</p>
   <p class="effect-label">${esc(effect.label)}</p>
   <span class="visually-hidden">Rule key ${esc(effect.key)}, value ${esc(effect.value)}, item ${index + 1}</span>
@@ -246,28 +246,28 @@ ${nav()}
         </div>
       </div>
       <aside class="result-brief">
-        <p class="result-brief__label">Your operating doctrine</p>
+        <p class="result-brief__label">How you play</p>
         <h2 class="result-brief__role">${esc(path.promise)}</h2>
         <p><strong>Best fit:</strong> ${esc(path.fit)}</p>
-        <p><strong>The cost you accept:</strong> ${esc(path.notFit)}</p>
-        <p class="secondary-result" data-secondary>Your secondary instinct is <strong data-secondary-name></strong>. It breaks ties in your style; it does not change this Path’s signed modifiers.</p>
+        <p><strong>Tradeoffs:</strong> ${esc(path.notFit)}</p>
+        <p class="secondary-result" data-secondary>Your answers also lean toward <strong data-secondary-name></strong>. This helps describe your style; your character keeps the bonuses and costs of the Path you choose.</p>
       </aside>
     </div>
   </section>
 
   <div class="path-rule"></div>
   <section aria-labelledby="mechanics-title">
-    <p class="section-label">01 / THE SIGNED MODIFIERS</p>
-    <h2 id="mechanics-title" class="section-title">Every edge. Every cost.</h2>
-    <p class="section-deck">These are not personality-test flourishes. They are the exact values inherited from the rule matrix that resolves play.</p>
+    <p class="section-label">01 / BONUSES AND COSTS</p>
+    <h2 id="mechanics-title" class="section-title">What this Path changes</h2>
+    <p class="section-deck">These values come directly from the game rules.</p>
     <div class="effect-grid">${renderEffects(path)}</div>
   </section>
 
   <div class="path-rule"></div>
   <section aria-labelledby="mastery-title">
-    <p class="section-label">02 / MASTERY PRESSURE</p>
-    <h2 id="mastery-title" class="section-title">Two schools accelerate. Two resist.</h2>
-    <p class="section-deck">Your Path changes how quickly specific mastery lanes school. It does not erase the rest of the city.</p>
+    <p class="section-label">02 / MASTERY</p>
+    <h2 id="mastery-title" class="section-title">Which skills grow faster</h2>
+    <p class="section-deck">Two mastery tracks gain XP faster and two gain it more slowly. You can still learn the other tracks.</p>
     <div class="mastery-grid">
       ${renderMasteryLane('Home schools', path.mastery.home, path.mastery.homeMultiplier)}
       ${renderMasteryLane('Rival schools', path.mastery.rival, path.mastery.rivalMultiplier, true)}
@@ -276,42 +276,42 @@ ${nav()}
 
   <div class="path-rule"></div>
   <section aria-labelledby="operations-title">
-    <p class="section-label">03 / FIELD DOCTRINE</p>
-    <h2 id="operations-title" class="section-title">Where your advantage becomes work.</h2>
+    <p class="section-label">03 / GETTING STARTED</p>
+    <h2 id="operations-title" class="section-title">Jobs that suit you</h2>
     <div class="operations-grid">
-      <article class="operations-panel"><h3>Natural loops</h3><ul class="loop-list">${path.loops.map((loop) => `<li>${esc(loop)}</li>`).join('')}</ul></article>
-      <article class="operations-panel"><h3>Three-move playbook</h3><ol class="playbook">${path.playbook.map((move) => `<li>${esc(move)}</li>`).join('')}</ol></article>
+      <article class="operations-panel"><h3>Suggested activities</h3><ul class="loop-list">${path.loops.map((loop) => `<li>${esc(loop)}</li>`).join('')}</ul></article>
+      <article class="operations-panel"><h3>Your first moves</h3><ol class="playbook">${path.playbook.map((move) => `<li>${esc(move)}</li>`).join('')}</ol></article>
     </div>
   </section>
 
   <div class="path-rule"></div>
   <section aria-labelledby="social-title">
-    <p class="section-label">04 / SOCIAL KIT</p>
-    <h2 id="social-title" class="section-title">Take your doctrine with you.</h2>
-    <p class="section-deck">Portrait and story crops carrying the same signed modifiers, mastery pressure, and opening doctrine as this dossier.</p>
+    <p class="section-label">04 / SHARE YOUR PATH</p>
+    <h2 id="social-title" class="section-title">Download your Path cards</h2>
+    <p class="section-deck">Portrait and story cards with this Path’s bonuses, costs, mastery rates, and suggested first moves.</p>
     <div class="social-grid">
       <figure class="social-card">
-        <div class="social-card__frame"><img src="${path.socialCards.portrait}" width="1080" height="1350" loading="lazy" decoding="async" alt="${esc(path.name)} portrait field card with exact modifiers, mastery lanes, and three-move playbook"></div>
-        <figcaption><span class="social-card__meta"><strong>Portrait field card</strong><span>4:5 // 1080 × 1350</span></span><a class="path-button path-button--quiet social-download" data-path-cta="download_portrait" href="${path.socialCards.portrait}" download="omerta-path-${path.id}-portrait.png">Download PNG</a></figcaption>
+        <div class="social-card__frame"><img src="${path.socialCards.portrait}" width="1080" height="1350" loading="lazy" decoding="async" alt="${esc(path.name)} portrait card with bonuses, costs, mastery rates, and suggested first moves"></div>
+        <figcaption><span class="social-card__meta"><strong>Portrait card</strong><span>4:5 // 1080 × 1350</span></span><a class="path-button path-button--quiet social-download" data-path-cta="download_portrait" href="${path.socialCards.portrait}" download="omerta-path-${path.id}-portrait.png">Download PNG</a></figcaption>
       </figure>
       <figure class="social-card">
-        <div class="social-card__frame"><img src="${path.socialCards.vertical}" width="1080" height="1920" loading="lazy" decoding="async" alt="${esc(path.name)} vertical field card with exact modifiers, mastery lanes, and three-move playbook"></div>
-        <figcaption><span class="social-card__meta"><strong>Story field card</strong><span>9:16 // 1080 × 1920</span></span><a class="path-button path-button--quiet social-download" data-path-cta="download_vertical" href="${path.socialCards.vertical}" download="omerta-path-${path.id}-story.png">Download PNG</a></figcaption>
+        <div class="social-card__frame"><img src="${path.socialCards.vertical}" width="1080" height="1920" loading="lazy" decoding="async" alt="${esc(path.name)} story card with bonuses, costs, mastery rates, and suggested first moves"></div>
+        <figcaption><span class="social-card__meta"><strong>Story card</strong><span>9:16 // 1080 × 1920</span></span><a class="path-button path-button--quiet social-download" data-path-cta="download_vertical" href="${path.socialCards.vertical}" download="omerta-path-${path.id}-story.png">Download PNG</a></figcaption>
       </figure>
     </div>
   </section>
 
   <section class="result-footer" aria-labelledby="result-cta-title">
-    <p class="section-label">YOUR RESULT IS A DOCTRINE, NOT A PROMISE</p>
+    <p class="section-label">CHOOSE YOUR PATH IN-GAME</p>
     <h2 id="result-cta-title">${esc(path.promise)}</h2>
-    <p>Choose a Path in-game at level ${PATH_SELECTION_RULES.unlockLevel} after paying ${money(PATH_SELECTION_RULES.firstPickCash)} cash. Switching costs ${PATH_SELECTION_RULES.switchOmr} $OMR and starts a ${days(PATH_SELECTION_RULES.switchCooldownMs)}-day clock. Inspect the complete rulebook before you commit.</p>
+    <p>Choose a Path in-game at level ${PATH_SELECTION_RULES.unlockLevel} for ${money(PATH_SELECTION_RULES.firstPickCash)} cash. Switching costs ${PATH_SELECTION_RULES.switchOmr} $OMR and starts a ${days(PATH_SELECTION_RULES.switchCooldownMs)}-day cooldown. Read the full rules before choosing.</p>
     <div class="path-actions">
       <a class="path-button" data-path-cta="play" href="${path.links.play}">Play as a guest</a>
-      <a class="path-button path-button--quiet" data-path-cta="codex" href="${path.links.codex}">Inspect Paths in the Codex</a>
+      <a class="path-button path-button--quiet" data-path-cta="codex" href="${path.links.codex}">Read Path rules</a>
     </div>
   </section>
 
-  <nav class="path-index" aria-label="Compare the other Paths"><h2>Compare the other doctrines</h2><div class="path-index__links">${otherPaths.map((other) => `<a href="${other.resultUrl}"><span>${esc(other.archetype)}</span><strong>${esc(other.name)}</strong></a>`).join('')}</div></nav>
+  <nav class="path-index" aria-label="Compare the other Paths"><h2>Compare the other Paths</h2><div class="path-index__links">${otherPaths.map((other) => `<a href="${other.resultUrl}"><span>${esc(other.archetype)}</span><strong>${esc(other.name)}</strong></a>`).join('')}</div></nav>
 </main>
 <script type="application/json" id="path-result-data">${safeJson({ id: path.id, canonical, shareLine: path.copy.shareLine, pathNames })}</script>
 <script>

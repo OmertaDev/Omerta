@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0a0909">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="The city has rules. The first is an invitation. Enter OMERTÀ with your launch invite.">
-  <title>An invitation to the city — OMERTÀ</title>
+  <meta name="description" content="Redeem your launch invite to join OMERTÀ, or sign in to return to your account.">
+  <title>Your invitation to OMERTÀ</title>
   <link rel="icon" href="/icon-192.png">
   <link rel="stylesheet" href="/omerta-ui.css">
   <style>
@@ -32,19 +32,19 @@
   <div class="scene" aria-hidden="true"></div>
   <header><span class="wordmark">OMERTÀ</span><span class="edition">THE OPENING NIGHT<br>INVITATION REQUIRED</span></header>
   <main>
-    <aside class="caption"><span class="eyebrow">A city built on names.</span><p>Make yours mean something.</p></aside>
+    <aside class="caption"><span class="eyebrow">Welcome to OMERTÀ</span><p>Your place in the city starts here.</p></aside>
     <section aria-labelledby="title">
       <span class="eyebrow">Someone put a word in.</span>
-      <h1 id="title">The city doesn't<br>open for everyone.</h1>
-      <p class="intro">A name. A crew. A place at the table.<br>Your invitation is the first move.</p>
+      <h1 id="title">You’re invited<br>to the city.</h1>
+      <p class="intro">Enter your code to create an account and start playing.</p>
       <form id="invite-form">
         <label for="invite-code">Your invite code</label>
         <input id="invite-code" name="inviteCode" required maxlength="128" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OMR-XXXXX-XXXXX-XXXXX-XXXXX" aria-describedby="invite-hint gate-status">
         <button id="enter" type="submit">Enter the city →</button>
-        <p class="hint" id="invite-hint">One invitation. One player. Keep yours close.<br>You can link your X account once inside.</p>
+        <p class="hint" id="invite-hint">Each code admits one player. Keep yours private.<br>You can link your X account after joining.</p>
       </form>
       <p class="status" id="gate-status" role="status" aria-live="polite"></p>
-      <div class="returning"><p>Already have a place here?</p><button class="secondary" id="return-x" type="button">Sign in with X</button>
+      <div class="returning"><p>Already have an account?</p><button class="secondary" id="return-x" type="button">Sign in with X</button>
         <details><summary>Use an existing account token</summary><form id="token-form">
           <label for="token-kind">Sign-in provider</label><select id="token-kind"><option value="omerta">OMERTÀ account token</option value="privy">Privy token</option><option value="x">X access token</option></select>
           <label for="account-token">Your existing token</label><input type="password" id="account-token" required autocomplete="off">
@@ -101,7 +101,7 @@
         }
         const result = await request('/v1/access/redeem', operation);
         await enter(result.token);
-      } catch (error) { message(error.message || 'The city did not answer. Try again with the same code.', true); button.disabled = false; }
+      } catch (error) { message(error.message || 'Your invitation could not be checked. Try again with the same code.', true); button.disabled = false; }
     };
     document.querySelector('#return-x').onclick = async () => {
       const button = document.querySelector('#return-x'); button.disabled = true; message('Connecting to X…');
@@ -122,7 +122,7 @@
       try {
         const saved = incomingToken || localStorage.getItem('omerta_token');
         if (!saved) return;
-        message('Opening your city…'); await request('/v1/access/session', {}, saved); await enter(saved);
+        message('Signing you in…'); await request('/v1/access/session', {}, saved); await enter(saved);
       } catch { message('Sign in again to return to your account, or enter an unused invitation.', true); }
     })();
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});

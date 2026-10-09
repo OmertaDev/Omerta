@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0a0909">
-<title>THE CAPITAL DESK — OMERTÀ DeFi</title>
-<meta name="description" content="Read OMERTÀ's on-chain reserve, contract readiness, fee routing, market health, and wallet-authorized staking and bond actions.">
-<meta property="og:title" content="THE CAPITAL DESK — OMERTÀ DeFi">
-<meta property="og:description" content="A finality-bound public view of OMERTÀ's on-chain capital system.">
+<title>The capital desk | OMERTÀ DeFi</title>
+<meta name="description" content="Check OMERTÀ's on-chain reserves, contracts and fee routing. Connect a wallet to review available staking and bond transactions.">
+<meta property="og:title" content="The capital desk | OMERTÀ DeFi">
+<meta property="og:description" content="Check OMERTÀ's on-chain reserves and contracts using the current chain snapshot.">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 <style>
@@ -316,9 +316,9 @@
 <main class="defi-shell" id="main" tabindex="-1">
   <section class="defi-hero" aria-labelledby="page-title">
     <div>
-      <p class="eyebrow">On-chain capital · public finality record</p>
+      <p class="eyebrow">On-chain capital · chain snapshot</p>
       <h1 id="page-title">THE CAPITAL DESK</h1>
-      <p class="lede">One ledger for protocol reserves, deployed contracts, market health, and fee destinations. Public figures are read-only. Wallet transactions remain yours to review and sign.</p>
+      <p class="lede">Check the protocol's reserves, deployed contracts and fee destinations. The server reports the chain snapshot shown below. Review and sign any wallet transaction yourself.</p>
       <p>Your deed is your RWA vault. Mint your deed to receive eligible RWA distributions funded by the protocol’s tax share. When distributions are active, assets are delivered to the on-chain vault attached to your deed. Your share depends on qualifying gameplay and available funding. Optional deed upgrades change future reward weight within the same funded pool; baseline qualification requires no paid activation. <a href="/wiki#brokers">Read the deed and distribution rules</a>.</p>
     </div>
     <dl class="hero-file" aria-label="Deployment status">
@@ -340,14 +340,14 @@
   <div class="snapshot-bar">
     <div class="snapshot-state" role="status" aria-live="polite">
       <span class="signal" id="snapshot-signal" aria-hidden="true"></span>
-      <span class="status-copy"><b id="snapshot-title">Opening the public ledger</b><span id="snapshot-detail">Reading a finalized protocol snapshot…</span></span>
+      <span class="status-copy"><b id="snapshot-title">Opening the public ledger</b><span id="snapshot-detail">Reading a protocol snapshot…</span></span>
     </div>
     <button class="control" type="button" id="refresh">Refresh snapshot</button>
   </div>
   <div class="notice" id="load-error" role="alert"></div>
 
   <section class="section" aria-labelledby="metrics-title">
-    <div class="section-head"><h2 id="metrics-title">CAPITAL AT A GLANCE</h2><p>Server-observed, finality-bound figures. A dash means the source did not publish that measurement.</p></div>
+    <div class="section-head"><h2 id="metrics-title">RESERVES &amp; MARKET</h2><p>The server reports these figures for the displayed snapshot. A dash means the measurement was not published.</p></div>
     <div class="metrics" id="metrics" aria-busy="true">
       <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
       <div class="metric metric--loading"><span class="metric__label">Loading</span></div>
@@ -357,7 +357,7 @@
   </section>
 
   <section class="section" aria-labelledby="readiness-title">
-    <div class="section-head"><h2 id="readiness-title">LIFECYCLE &amp; READINESS</h2><p id="readiness-copy">Each gate stays explicit. A deployed address alone never means a live protocol.</p></div>
+    <div class="section-head"><h2 id="readiness-title">LIFECYCLE &amp; READINESS</h2><p id="readiness-copy">Deployment, verification and activation are checked separately.</p></div>
     <div class="readiness" id="readiness" aria-busy="true">
       <article class="stage" data-index="01"><h3>Runtime code</h3><p>Checking the canonical deployment.</p></article>
       <article class="stage" data-index="02"><h3>Governance</h3><p>Checking Safe ownership.</p></article>
@@ -368,12 +368,12 @@
   </section>
 
   <section class="section" aria-labelledby="contracts-title">
-    <div class="section-head"><h2 id="contracts-title">CONTRACT DIRECTORY</h2><p>Published deployment addresses and their latest verified operating state.</p></div>
+    <div class="section-head"><h2 id="contracts-title">CONTRACT DIRECTORY</h2><p>Published contract addresses, verification results and operating status.</p></div>
     <div class="panel" id="contracts" aria-busy="true"><div class="panel-empty">Reading the deployment registry…</div></div>
   </section>
 
   <section class="section" aria-labelledby="fees-title">
-    <div class="section-head"><h2 id="fees-title">FEE ROUTING</h2><p>Where protocol fees are meant to land, shown from the same public projection.</p></div>
+    <div class="section-head"><h2 id="fees-title">FEE ROUTING</h2><p>The server's published fee destinations and allocations.</p></div>
     <div class="fee-grid" id="fees" aria-busy="true">
       <div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>—</strong><p>Waiting for the current routing table.</p></div>
       <div class="panel"><div class="panel-empty">Reading fee destinations…</div></div>
@@ -381,15 +381,15 @@
   </section>
 
   <section class="section" aria-labelledby="wallet-title">
-    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect an injected EVM wallet. The site prepares no calldata of its own; only a server-issued transaction can reach your wallet.</p></div>
+    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect a browser EVM wallet to review transactions prepared by the server.</p></div>
     <div class="panel wallet-panel">
       <aside class="wallet-sidebar">
         <div class="wallet-mark" aria-hidden="true">0x</div>
         <h3 id="wallet-heading">Wallet not connected</h3>
-        <p id="wallet-copy">Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.</p>
+        <p id="wallet-copy">Connect to check which actions are available for your account.</p>
         <div class="wallet-identity" id="wallet-identity" hidden><span>Active account</span><code id="wallet-address"></code></div>
         <button class="control primary" type="button" id="connect-wallet">Connect wallet</button>
-        <p class="wallet-caveat">Injected wallets are discovered through EIP-6963, with a browser-wallet fallback. No WalletConnect session is created here.</p>
+        <p class="wallet-caveat">Use a wallet installed in this browser. This page supports EIP-6963 discovery and a browser-wallet fallback; WalletConnect is unavailable here.</p>
       </aside>
       <div class="wallet-main">
         <div class="account-strip" id="account-strip" aria-label="Wallet position">
@@ -404,16 +404,16 @@
   </section>
 
   <section class="section" aria-labelledby="evidence-title">
-    <div class="section-head"><h2 id="evidence-title">VERIFICATION RECORD</h2><p>The accepted deployment record, pinned source revision, pool identity, and any partial-read warnings.</p></div>
+    <div class="section-head"><h2 id="evidence-title">VERIFICATION RECORD</h2><p>Deployment evidence, source revision, pool identity and warnings about incomplete reads.</p></div>
     <div class="panel" id="evidence" aria-busy="true"><div class="panel-empty">Reading verification evidence…</div></div>
   </section>
 
-  <footer class="page-foot">OMERTÀ · a server-authoritative noir economy. <a href="/">Enter the city</a> · <a href="/wiki">Read the Codex</a> · <a href="/arena">Watch the Arena</a></footer>
+  <footer class="page-foot">OMERTÀ · a noir mafia RPG. <a href="/">Enter the city</a> · <a href="/wiki">Read the Codex</a> · <a href="/arena">Watch the Arena</a></footer>
 </main>
 
 <dialog id="wallet-dialog" aria-labelledby="wallet-dialog-title">
   <div class="dialog-head"><div><p class="eyebrow">Injected wallets</p><h2 id="wallet-dialog-title">CHOOSE A WALLET</h2></div><button class="icon-btn" type="button" data-close="wallet-dialog" aria-label="Close wallet picker">×</button></div>
-  <div class="dialog-body"><p id="wallet-dialog-copy">Select one of the wallets announced by this browser.</p><div class="wallet-options" id="wallet-options"></div></div>
+  <div class="dialog-body"><p id="wallet-dialog-copy">Choose a wallet available in this browser.</p><div class="wallet-options" id="wallet-options"></div></div>
   <div class="dialog-actions"><button class="control" type="button" data-close="wallet-dialog">Cancel</button></div>
 </dialog>
 
@@ -560,18 +560,18 @@
     const stages = [
       { title: 'Configuration', state: configured ? 'good' : 'warn', copy: configured ? 'A deployment manifest is active for ' + (data.network?.name || 'the published network') + '.' : 'No active production deployment is published.' },
       { title: 'Verification', state: verificationFailed ? 'bad' : verified ? 'good' : 'warn', copy: verificationFailed ? 'At least one code or owner check failed.' : verified ? 'Published runtime code and ownership checks pass.' : 'Verification is incomplete or not reported.' },
-      { title: 'Market health', state: marketFailed ? 'bad' : marketReady ? 'good' : 'warn', copy: marketFailed ? 'Liquidity or oracle health is outside its safe gate.' : marketReady ? 'Market and oracle health are inside their published gates.' : 'Market readiness is still pending or unreported.' },
-      { title: 'Public operations', state: ready ? 'good' : 'warn', copy: ready ? 'The protocol reports its public action gate ready.' : (data.status?.reason ? humanize(data.status.reason) + '.' : 'Wallet actions remain gated.') },
+      { title: 'Market health', state: marketFailed ? 'bad' : marketReady ? 'good' : 'warn', copy: marketFailed ? 'Liquidity or oracle health failed its readiness check.' : marketReady ? 'Market and oracle health meet the published requirements.' : 'Market readiness is pending or unreported.' },
+      { title: 'Public operations', state: ready ? 'good' : 'warn', copy: ready ? 'The protocol reports that public actions are ready.' : (data.status?.reason ? humanize(data.status.reason) + '.' : 'Wallet actions are unavailable.') },
     ];
     $('readiness').innerHTML = stages.map((stage, index) => '<article class="stage ' + stage.state + '" data-index="' + String(index + 1).padStart(2, '0') + '"><h3>' + esc(stage.title) + '</h3><p>' + esc(stage.copy) + '</p></article>').join('');
     $('readiness').removeAttribute('aria-busy');
-    $('readiness-copy').textContent = data.status?.phase ? 'Current release phase: ' + humanize(data.status.phase) + '.' : 'Each gate stays explicit. A deployed address alone never means a live protocol.';
+    $('readiness-copy').textContent = data.status?.phase ? 'Current release phase: ' + humanize(data.status.phase) + '.' : 'Deployment, verification and activation are checked separately.';
   }
 
   function renderContracts(data) {
     const contracts = array(data.contracts);
     if (!contracts.length) {
-      $('contracts').innerHTML = '<div class="panel-empty"><b>No directory published</b>The current snapshot contains no contract addresses. Wallet writes stay disabled.</div>';
+      $('contracts').innerHTML = '<div class="panel-empty"><b>No directory published</b>The current snapshot contains no contract addresses. Wallet transactions are disabled.</div>';
       $('contracts').removeAttribute('aria-busy');
       return;
     }
@@ -608,7 +608,7 @@
     const routes = feeRoutes(data);
     const fees = data.feeRouting || data.fees || {};
     if (!routes.length) {
-      $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>0</strong><p>No fee-routing table is included in this snapshot.</p></div><div class="panel"><div class="panel-empty"><b>Routing unavailable</b>No destination is inferred from contract addresses or documentation. The API must publish it explicitly.</div></div>';
+      $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>0</strong><p>This snapshot has no fee-routing table.</p></div><div class="panel"><div class="panel-empty"><b>Routing unavailable</b>Fee destinations will appear when the API publishes them.</div></div>';
       $('fees').removeAttribute('aria-busy');
       return;
     }
@@ -659,10 +659,10 @@
         : projection?.configured !== true ? 'No active deployment is published.'
         : projection?.snapshot?.stale === true ? 'The action snapshot is stale. Refresh before continuing.'
         : !action ? 'The server has not published this action.'
-        : !walletAction ? 'No wallet-transaction authority was published.'
+        : !walletAction ? 'The server has not authorized a wallet transaction.'
         : blockers.length ? blockers.map(humanize).join(' · ')
-        : action.tx ? 'A concrete transaction is ready for review.'
-        : 'Your input will be sent to the server to prepare a concrete transaction.';
+        : action.tx ? 'A transaction is ready for review.'
+        : 'Enter the details, then prepare the transaction for review.';
       const field = spec.field && !action?.tx ? '<div class="field"><label for="field-' + esc(spec.id) + '">' + esc(spec.label) + '</label><input id="field-' + esc(spec.id) + '" data-field="' + esc(spec.field) + '" inputmode="' + (spec.field === 'bondId' ? 'numeric' : 'decimal') + '" autocomplete="off" placeholder="' + esc(spec.placeholder) + '"' + (enabled ? '' : ' disabled') + '></div>' : '<div></div>';
       return '<article class="wallet-action" data-action-row="' + esc(spec.id) + '"><div class="wallet-action__copy"><h3>' + esc(action?.label || spec.title) + '</h3><p>' + esc(spec.copy) + '</p></div>' + field + '<button class="control' + (enabled ? ' primary' : '') + ' wallet-action-button" type="button" data-action="' + esc(spec.id) + '" aria-describedby="state-' + esc(spec.id) + '" aria-label="' + esc((action?.tx ? 'Review ' : 'Prepare ') + (action?.label || spec.title) + ' transaction') + '"' + (enabled ? '' : ' disabled') + '>' + (action?.tx ? 'Review transaction' : 'Prepare transaction') + '</button><div class="action-state' + (blockers.length ? ' bad' : '') + '" id="state-' + esc(spec.id) + '">' + esc(reason) + '</div></article>';
     }).join('');
@@ -672,7 +672,7 @@
   function renderActivity(data) {
     const events = array(data.activity);
     if (!events.length) {
-      $('activity').innerHTML = '<div class="panel-empty"><b>No finalized activity published</b>Pending wallet transactions are never shown here.</div>';
+      $('activity').innerHTML = '<div class="panel-empty"><b>No activity published</b>Pending wallet transactions are not shown here.</div>';
       $('activity').removeAttribute('aria-busy');
       return;
     }
@@ -695,8 +695,8 @@
     const stale = snapshot.stale === true;
     const signal = $('snapshot-signal');
     signal.className = 'signal ' + (stale ? 'bad' : ready ? 'good' : data.configured === false ? 'warn' : 'warn');
-    $('snapshot-title').textContent = stale ? 'Snapshot is stale' : ready ? 'Protocol reports ready' : data.configured === false ? 'Deployment not configured' : 'Protocol gate is not ready';
-    $('snapshot-detail').textContent = stale ? 'The last finalized observation is outside its freshness window.' : data.status?.reason ? humanize(data.status.reason) : (snapshot.observedAt ? 'Finalized observation from ' + dateLabel(snapshot.observedAt) : 'The latest snapshot did not publish an observation time.');
+    $('snapshot-title').textContent = stale ? 'Snapshot is stale' : ready ? 'Protocol reports ready' : data.configured === false ? 'Deployment not configured' : 'Protocol is not ready';
+    $('snapshot-detail').textContent = stale ? 'The last observation is too old to use.' : data.status?.reason ? humanize(data.status.reason) : (snapshot.observedAt ? 'Observation from ' + dateLabel(snapshot.observedAt) : 'The latest snapshot did not publish an observation time.');
   }
 
   function render(data) {
@@ -719,7 +719,7 @@
     $('load-error').innerHTML = '';
     if (!options.quiet) {
       $('snapshot-title').textContent = projection ? 'Refreshing the public ledger' : 'Opening the public ledger';
-      $('snapshot-detail').textContent = 'Reading a finalized protocol snapshot…';
+      $('snapshot-detail').textContent = 'Reading a protocol snapshot…';
     }
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -813,12 +813,12 @@
   async function chooseWallet() {
     const options = providerOptions();
     if (!options.length) {
-      $('wallet-dialog-copy').textContent = 'No injected EVM wallet announced itself. Install or open an EIP-1193 wallet in this browser, then reload the page.';
+      $('wallet-dialog-copy').textContent = 'No browser EVM wallet was found. Install or open an EIP-1193 wallet in this browser, then reload the page.';
       $('wallet-options').innerHTML = '<div class="panel-empty"><b>No wallet detected</b>This page does not create WalletConnect sessions.</div>';
       openDialog($('wallet-dialog'));
       return;
     }
-    $('wallet-dialog-copy').textContent = options.length === 1 ? 'One injected wallet is available.' : 'Choose which injected wallet may request your account.';
+    $('wallet-dialog-copy').textContent = options.length === 1 ? 'One browser wallet is available.' : 'Choose the browser wallet you want to connect.';
     $('wallet-options').innerHTML = '';
     options.forEach((option) => {
       const button = document.createElement('button');
@@ -876,7 +876,7 @@
     activeProvider = null;
     activeAddress = null;
     $('wallet-heading').textContent = 'Wallet not connected';
-    $('wallet-copy').textContent = 'Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.';
+    $('wallet-copy').textContent = 'Connect to check which actions are available for your account.';
     $('wallet-identity').hidden = true;
     $('wallet-address').textContent = '';
     $('connect-wallet').textContent = 'Connect wallet';
@@ -943,7 +943,7 @@
       pendingActionId = id;
       showTransactionReview(spec, descriptor, tx);
       state.className = 'action-state';
-      state.textContent = 'Concrete server-issued transaction prepared. Nothing has been signed yet.';
+      state.textContent = 'The server prepared your transaction. Review it before signing.';
     } catch (error) {
       state.className = 'action-state bad';
       state.textContent = error?.message || 'The transaction could not be prepared.';
@@ -1016,7 +1016,7 @@
       if (!/^0x[0-9a-f]+$/i.test(String(hash || ''))) throw new Error('The wallet did not return a transaction hash.');
       const explorer = explorerTx(projection || {}, hash);
       const state = $('state-' + pendingActionId);
-      if (state) { state.className = 'action-state good'; state.textContent = 'Submitted to your wallet network: ' + shortHash(hash) + '. Refresh after it finalizes.'; }
+      if (state) { state.className = 'action-state good'; state.textContent = 'Submitted to your wallet network: ' + shortHash(hash) + '. Refresh after confirmation.'; }
       closeDialog($('tx-dialog'));
       toast('Transaction submitted: ' + shortHash(hash), false, explorer ? { href: explorer, label: 'View on explorer ↗' } : null);
       pendingTx = null;

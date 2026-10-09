@@ -130,7 +130,7 @@ const spec = read('SPEC.md');
     for (const craftingPack of craftingPacks) {
       assert(prose.includes(craftingPack), `${name} must list the authored workshop ${craftingPack}`);
     }
-    assert(/personal/i.test(guide) && /district-gated|location-gated/i.test(guide),
+    assert(/personal/i.test(guide) && /district-gated|location-gated|stories require their named district/i.test(guide),
       `${name} must explain personal, district-gated authored stories`);
     assert(/value-neutral|gameplay-inert/i.test(guide),
       `${name} must state that the authored rewards are gameplay-inert`);
@@ -527,14 +527,28 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   };
   walk(R, false);
   assert(live.size > 40, `expected many $OMR-denominated levers, saw ${live.size}`);
+  const missionTotal = R.MISSIONS.reduce((sum, mission) => sum + Number(mission.reward?.omr || 0), 0);
   const stale = [];
-  for (const f of ['docs/WIKI.md', 'public/wiki.html'])
+  for (const f of ['docs/WIKI.md', 'public/wiki.html']) {
+    let totalQuotes = 0;
     read(f).split('\n').forEach((line, i) => {
+      // A career reward total is derived from the mission table, not a single-item price.
+      // Exempt only its validated span; the same number quoted as a price still needs a live lever.
+      const derivedSpans = new Set();
+      for (const total of line.matchAll(/Mission rewards total ([0-9][0-9,]*) \$OMR across a career/g)) {
+        assert.equal(Number(total[1].replace(/,/g, '')), missionTotal,
+          `${f}:${i + 1} mission reward total differs from the live MISSIONS table`);
+        derivedSpans.add(total.index + 'Mission rewards total '.length);
+        totalQuotes++;
+      }
       for (const m of line.matchAll(/([0-9][0-9,]*) \$OMR/g)) {
+        if (derivedSpans.has(m.index)) continue;
         const n = Number(m[1].replace(/,/g, ''));
         if (!live.has(n)) stale.push(`${f}:${i + 1} quotes ${n} $OMR`);
       }
     });
+    assert.equal(totalQuotes, 1, `${f} must quote the live mission career reward total once`);
+  }
   assert.deepEqual(stale, [], 'a codex quotes a $OMR price that matches no live lever — the game '
     + `charges something else and the player finds out at the till:\n  ${stale.join('\n  ')}`);
 }
@@ -1188,7 +1202,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const wikiWeb = fs.readFileSync('public/wiki.html', 'utf8');
 
   // slice each codex to its OWN risk section so a matching figure elsewhere can never satisfy us
-  const mdStart = wikiMd.indexOf('Risk Factors — the honest register');
+  const mdStart = wikiMd.indexOf('Risk Factors: losses, fees and launch limits');
   assert(mdStart > 0, 'docs/WIKI.md has lost its Risk Factors section');
   const mdEnd = wikiMd.indexOf('\n## ', mdStart);
   const mdRisk = wikiMd.slice(mdStart, mdEnd > 0 ? mdEnd : undefined);

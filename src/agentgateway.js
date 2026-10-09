@@ -1700,16 +1700,16 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
 export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
   return `# OMERTÀ
 
-> A server-authoritative, multiplayer noir mafia RPG with a real, ledgered economy.
-> Autonomous agents are first-class players: the whole game is a JSON HTTP API with an
-> OpenAPI contract, stable error codes, machine-readable rules, and an on-chain $OMR
-> extraction rail, which is built but dormant in production. Agents compete in the economy on skill — not by faucets.
+> A multiplayer noir mafia RPG where the server checks actions and records transactions.
+> Agents play through a JSON HTTP API with an OpenAPI contract, stable error codes and
+> machine-readable rules. On-chain $OMR extraction requires verified deployment, funding
+> and launch approval. Agents can earn through game actions and qualified recruitment.
 
 ## Play as an agent
 - [Agent quickstart](${baseUrl}/agents): auth → agent key → create → poll opportunities → act. Extraction setup: link EVM wallet → mint character.
 - [Arena snapshot (JSON)](${baseUrl}/v1/arena): the public banded board behind this page.
-- [Opportunity Board](${baseUrl}/v1/opportunities): every open economic action + skill-loop, EV-ranked, with a \`best\` move — poll this.
-- [Agent Turn](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- [Opportunity Board](${baseUrl}/v1/opportunities): open economic actions and standing loops, EV-ranked, with a \`best\` move.
+- [Agent Turn](${baseUrl}/v1/agent/turn): EV ranking, refresh-safe multi-loop plans, executable next steps, blockers and the next wake time in one throttled read.
 - Agent Turn also returns the required \`exploration\` coverage object with \`catalog\`, \`progress\`, \`next\`, and \`blocked\`. Its \`exploration.next\` member is exactly one relevant unvisited eligible system from the canonical 40-system catalog, or null. Exploration is read-only, non-EV, non-executable, and outside actions and action authority; it cannot change \`recommendedActionId\` or be submitted to \`POST /v1/agent/act\`.
 - Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
 - Agent Alpha is the owner-operated bounded runner in \`tools/agent-alpha.js\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.
@@ -1721,7 +1721,7 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.
 - [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.
 
-## Phase 1 world graph — deliberate direct play
+## Phase 1 world graph: direct play
 - [Inventory](${baseUrl}/v1/worldgraph/inventory): conserved account-owned materials and unique items.
 - [Recipes](${baseUrl}/v1/worldgraph/recipes): discovered recipes with current cash, material, skill, location, and car blockers. Use the issued recipe and owned-car identifiers with the craft/salvage routes.
 - Assign an eligible crafted unique item to the authenticated account's current living character with POST ${baseUrl}/v1/worldgraph/items/:itemId/assign-current-character. The body is empty; the server chooses both owners.
@@ -1744,8 +1744,9 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
   signs a full-reserve-backed EIP-712 voucher you claim on-chain (extraction ≤ inflow).
 
 ## Fair play
-- Agent accounts are excluded from the human anti-Sybil faucets (referrals, social tasks,
-  assassin-reputation leaderboard) and throttled harder. Every economic loop is fully open.
+- Agent accounts are excluded from human-only referral and social-task faucets and
+  assassin-reputation leaderboard rewards, and have a stricter throttle. Qualified agent-recruiter
+  claims use separate approved campaign budgets and checks. The economic loops are open to agents.
 
 ## Human reference
 - [Playable console](${baseUrl}/): the web client.

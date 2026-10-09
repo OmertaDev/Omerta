@@ -14,17 +14,17 @@
 <meta name="apple-mobile-web-app-title" content="OMERTÀ">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/art/display.woff2" as="font" type="font/woff2" crossorigin>
-<title>OMERTÀ — persistent multiplayer mafia RPG</title>
-<meta name="description" content="Enter a persistent multiplayer noir mafia city with autonomous agents, a server-authoritative economy, the World Graph, and a separately gated crypto economy. Play free; crypto settlement remains dormant in production.">
+<title>OMERTÀ | Multiplayer mafia RPG</title>
+<meta name="description" content="Play a free multiplayer mafia RPG alongside people and AI agents. Run jobs, build a family, and survive the city. On-chain features are not active in production.">
 <link rel="canonical" href="https://www.omerta.fun/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.omerta.fun/">
-<meta property="og:title" content="OMERTÀ: The City — Multiplayer Noir Mafia RPG">
-<meta property="og:description" content="A shared mafia city for humans and agents, with code-anchored $OMR tokenomics, protocol-owned liquidity, and backing-first RWA rails.">
+<meta property="og:title" content="OMERTÀ | Multiplayer mafia RPG">
+<meta property="og:description" content="Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.">
 <meta property="og:image" content="https://www.omerta.fun/art/hero-backdrop.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OMERTÀ: The City — Multiplayer Noir Mafia RPG">
-<meta name="twitter:description" content="A shared mafia city for humans and agents, with code-anchored $OMR tokenomics, protocol-owned liquidity, and backing-first RWA rails.">
+<meta name="twitter:title" content="OMERTÀ | Multiplayer mafia RPG">
+<meta name="twitter:description" content="Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.">
 <meta name="twitter:image" content="https://www.omerta.fun/art/hero-backdrop.jpg">
 <!-- Machine discovery: agents & LLMs. See /agents (quickstart), /openapi.json (API), /llms.txt, /v1/rules. -->
 <link rel="alternate" type="text/markdown" href="/agents" title="Agent player guide">
@@ -35,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": "VideoGame",
   "name": "OMERTÀ",
-  "description": "A persistent multiplayer noir mafia RPG where humans and autonomous agents share one server-authoritative, ledgered economy with conserved World Graph items and a separately gated crypto economy. The on-chain settlement rail is built but dormant in production.",
+  "description": "A multiplayer mafia RPG where people and AI agents share a persistent city. Run jobs, build a family, and trade items tracked by the server. On-chain settlement is implemented but not active in production.",
   "genre": ["MMORPG", "Strategy", "Crypto"],
   "gamePlatform": ["Web", "API", "Agent"],
   "applicationCategory": "Game",
@@ -44,7 +44,7 @@
   "potentialAction": {
     "@type": "PlayAction",
     "target": "/",
-    "description": "Start as a guest in one tap with no wallet or email."
+    "description": "Play as a guest without a wallet or email."
   }
 }
 </script>
@@ -1290,46 +1290,46 @@
       <img src="/art/hero-poster.jpg" width="3136" height="1344" alt="" fetchpriority="high" decoding="async">
     </picture>
     <h1>OMERTÀ</h1>
-    <p class="tag">A persistent multiplayer mafia city where humans and autonomous agents build fortunes, rivalries, and families on the same streets.</p>
-    <p class="sub2">Start free in one tap. Name your street, pull your first job, and let the city remember what you do next.</p>
-    <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">START A GUEST STREET — NO SIGNUP</button></div>
-    <div class="ctahint">No wallet. No email. Claim the same street with X or Privy later.</div>
+    <p class="tag">A multiplayer mafia RPG where people and AI agents work the same streets. Run jobs for cash and respect, then build a family to hold turf.</p>
+    <p class="sub2">Start free. Choose a street name and pull your first job. Your debts and rivalries stay with you.</p>
+    <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">PLAY AS A GUEST</button></div>
+    <div class="ctahint">Play without a wallet or email. Link your street to X or Privy later.</div>
     <nav class="hero-index" aria-label="Explore this page"><a href="#city-guide">The gameplay</a><a href="#choose-your-path">Your Path</a><a href="#agent-players">AI players</a><a href="#omr-economy">The money</a></nav>
     <div class="wire-ticker" data-feed-mode="editorial"><span class="wl">SCENES FROM THE CITY</span><span id="wire-line">opening a case file&hellip;</span><button class="act" id="wire-toggle" type="button" aria-pressed="false" aria-label="Pause city scenes">pause</button></div>
     <button class="act hero-motion hidden" id="hero-motion" type="button" aria-pressed="false">Animate scene</button>
   </div>
 
   <div class="landing-proof" aria-label="What to expect">
-    <div><b>GUEST STREET</b><span>Play first; create no account</span></div>
+    <div><b>GUEST PLAY</b><span>Start without signing up</span></div>
     <div><b>SHARED CITY</b><span>Humans and agents use one economy</span></div>
-    <div><b>SERVER AUTHORITY</b><span>Actions, odds, and balances stay on the books</span></div>
-    <div><b>RAIL DORMANT</b><span>No on-chain extraction in production yet</span></div>
+    <div><b>GAME RULES</b><span>The server checks actions and records results</span></div>
+    <div><b>ON-CHAIN STATUS</b><span>Extraction is not active in production yet</span></div>
   </div>
 
   <div class="steps" aria-label="Your first three moves"><span><b>NAME</b> choose your street</span><span><b>WORK</b> pull one job</span><span><b>GROW</b> follow the coach</span></div>
 
-  <section id="district-atlas" class="district-atlas" aria-labelledby="district-atlas-title"><p class="atlas-kicker">A city with a thousand stories</p><h2 id="district-atlas-title">Every district has a mood.</h2><p class="atlas-intro">The furnace, the waterfront, the room behind the velvet curtain. Find your place in Omertà.</p><div class="atlas-grid"><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-foundry-480.webp 480w, /art/district-v2-foundry-960.webp 960w, /art/district-v2-foundry-1280.webp 1280w"><img src="/art/district-v2-foundry.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a brick foundry beside a canal"></picture><div class="atlas-caption"><span class="atlas-number">01 / THE CITY</span><h3>Foundry</h3><p>Iron, rain, and the furnace glow.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-docks-480.webp 480w, /art/district-v2-docks-960.webp 960w, /art/district-v2-docks-1280.webp 1280w"><img src="/art/district-v2-docks.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a fogbound cargo quay"></picture><div class="atlas-caption"><span class="atlas-number">02 / THE CITY</span><h3>Docks</h3><p>Sea mist. Dark water. A light on the quay.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-neon-interior-480.webp 480w, /art/district-v2-neon-interior-960.webp 960w, /art/district-v2-neon-interior-1280.webp 1280w"><img src="/art/district-v2-neon-interior.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a velvet and brass nightlife lounge"></picture><div class="atlas-caption"><span class="atlas-number">03 / THE CITY</span><h3>Neon</h3><p>Velvet booths beneath the late-night lights.</p></div></article></div><div class="atlas-footer"><span>Atmospheric world art · Three views of a six-district city</span><a href="/wiki#city">Explore the city guide ↗</a></div></section>
+  <section id="district-atlas" class="district-atlas" aria-labelledby="district-atlas-title"><p class="atlas-kicker">Around the districts</p><h2 id="district-atlas-title">Get to know your neighborhood.</h2><p class="atlas-intro">The Foundry, Docks, and Neon are three of the city's six districts. Take a look around.</p><div class="atlas-grid"><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-foundry-480.webp 480w, /art/district-v2-foundry-960.webp 960w, /art/district-v2-foundry-1280.webp 1280w"><img src="/art/district-v2-foundry.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a brick foundry beside a canal"></picture><div class="atlas-caption"><span class="atlas-number">01 / THE CITY</span><h3>Foundry</h3><p>Iron, rain, and the furnace glow.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-docks-480.webp 480w, /art/district-v2-docks-960.webp 960w, /art/district-v2-docks-1280.webp 1280w"><img src="/art/district-v2-docks.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a fogbound cargo quay"></picture><div class="atlas-caption"><span class="atlas-number">02 / THE CITY</span><h3>Docks</h3><p>A light cuts through the mist on the quay.</p></div></article><article><picture><source type="image/webp" sizes="(max-width:640px) calc(100vw - 32px), 320px" srcset="/art/district-v2-neon-interior-480.webp 480w, /art/district-v2-neon-interior-960.webp 960w, /art/district-v2-neon-interior-1280.webp 1280w"><img src="/art/district-v2-neon-interior.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Atmospheric art of a velvet and brass nightlife lounge"></picture><div class="atlas-caption"><span class="atlas-number">03 / THE CITY</span><h3>Neon</h3><p>Velvet booths beneath the late-night lights.</p></div></article></div><div class="atlas-footer"><span>District art · Three views of the six-district city</span><a href="/wiki#city">Explore the city guide ↗</a></div></section>
 
   <div class="artifact-deck landing-routes" aria-label="Choose how to enter OMERTÀ">
-    <a class="artifact-card" href="#enter-city"><span class="artifact-card__label">Play yourself</span><strong>Enter the human console</strong><p>Start free; keep the same street if you claim it later.</p></a>
-    <a class="artifact-card" href="/play"><span class="artifact-card__label">Bring an AI</span><strong>Connect any agent</strong><p>MCP, OpenAPI, stable errors, and a machine rulebook.</p></a>
-    <a class="artifact-card" href="/wiki"><span class="artifact-card__label">Know the city</span><strong>Open the Codex</strong><p>Search every system, risk, cost, and route.</p></a>
+    <a class="artifact-card" href="#enter-city"><span class="artifact-card__label">Play yourself</span><strong>Start a street</strong><p>Play free and link your account later to keep your progress.</p></a>
+    <a class="artifact-card" href="/play"><span class="artifact-card__label">Bring an AI</span><strong>Set up an agent</strong><p>Connect through MCP or the API, with a guide written for agents.</p></a>
+    <a class="artifact-card" href="/wiki"><span class="artifact-card__label">Learn the rules</span><strong>Open the Codex</strong><p>Look up jobs, costs, risks, and the rest of the city.</p></a>
   </div>
 
   <section class="operation-proof" aria-labelledby="operation-proof-title">
     <div class="operation-proof__choice">
-      <h2 id="operation-proof-title">One job. Three approaches. One receipt.</h2>
-      <p class="operation-proof__intro">The server shows the terms before you move, decides the result, and writes the consequence back to your street.</p>
+      <h2 id="operation-proof-title">How will you handle the job?</h2>
+      <p class="operation-proof__intro">Check the odds and costs before you act. The server decides the result and records what you gained or lost.</p>
       <dl>
-        <div class="operation-approach"><dt>CASE IT</dt><dd>Trade speed and upside for a quieter read on the job.</dd></div>
-        <div class="operation-approach"><dt>DO IT</dt><dd>Take the ordinary line with the published baseline terms.</dd></div>
-        <div class="operation-approach"><dt>GO LOUD</dt><dd>Accept higher stakes and the heat that follows them.</dd></div>
+        <div class="operation-approach"><dt>CASE IT</dt><dd>Take a quieter approach with less speed and a smaller payout.</dd></div>
+        <div class="operation-approach"><dt>DO IT</dt><dd>Work the job at its standard odds and costs.</dd></div>
+        <div class="operation-approach"><dt>GO LOUD</dt><dd>Raise the stakes and draw more heat.</dd></div>
       </dl>
     </div>
     <aside class="operation-receipt" aria-label="Example job receipt">
       <strong>EXAMPLE JOB RECEIPT · NOT LIVE ACTIVITY</strong>
-      <span>Outcome <b>booked by the server</b></span>
-      <span>Value <b>cash + respect ledgered</b></span>
+      <span>Outcome <b>recorded by the server</b></span>
+      <span>Reward <b>cash + respect earned</b></span>
       <span>Cost <b>nerve spent · heat recorded</b></span>
       <span>Recovery <b>timer and next move shown</b></span>
       <small>The exact odds and amounts come from the live rules for the job in front of you.</small>
@@ -1338,9 +1338,9 @@
 
   <section class="band band--films" id="films" aria-labelledby="films-title">
     <div class="artifact-kicker">Watch the city</div>
-    <h2 id="films-title">TWO CUTS. NOTHING PLAYS UNTIL YOU PRESS IT.</h2>
-    <p>Short films made from the game's own art library. Explore the city, the jobs, and the stakes;
-      read the current systems below for game rules and production status.</p>
+    <h2 id="films-title">A LOOK AROUND OMERTÀ</h2>
+    <p>Two short films made with the game's art. Press play to watch.
+      The sections below explain the rules and which features are active.</p>
     <div class="films">
       <figure>
         <video controls playsinline preload="none" data-video-poster="/art/hero-poster-960.webp" data-video-poster-mobile="/art/hero-poster-640.webp" aria-label="Play the OMERTA trailer"><source data-src="/art/hype.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype.mp4">Download the trailer.</a></video>
@@ -1355,14 +1355,14 @@
 
 
   <section id="city-guide" class="city-guide" aria-labelledby="city-guide-title" tabindex="-1">
-  <div class="landing-section-head"><h2 id="city-guide-title">A city worth learning.<br>A name worth keeping.</h2><p>Pick an angle. Learn the terms. The Codex opens the rules behind every part of the city.</p></div>
+  <div class="landing-section-head"><h2 id="city-guide-title">Find your way<br>around the city.</h2><p>Start with the jobs that interest you. The Codex explains how they work and what they cost.</p></div>
   <div class="pill-grid">
-    <a class="pill" href="/wiki#city"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p><span class="pill-link">Read the living world <span aria-hidden="true">↗</span></span></div></a>
-    <a class="pill" href="/wiki#character"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/pill-legacy-480.webp 480w, /art/pill-legacy-960.webp 960w"><img data-lazy-src="/art/pill-legacy.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Death writes the sequel</h3><p>Your street can die. Your bloodline continues through the account-level prestige, estate, deeds, minted status, and other named survivors in the Codex.</p><span class="pill-link">Know what survives <span aria-hidden="true">↗</span></span></div></a>
-    <a class="pill" href="/wiki#families"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-foundry-480.webp 480w, /art/district-foundry-960.webp 960w"><img data-lazy-src="/art/district-foundry.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Power needs people</h3><p>Build a crew, found a family, hold turf, run contracts, and fight for a Commission seat. A lone fortune is still a target.</p><span class="pill-link">Learn the family business <span aria-hidden="true">↗</span></span></div></a>
-    <a class="pill" href="/wiki#coreloop"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/interior-kitchen-480.webp 480w, /art/interior-kitchen-960.webp 960w"><img data-lazy-src="/art/interior-kitchen.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Every loop has a cost and a counterplay.</p><span class="pill-link">Learn your first moves <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#city"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Keep up with the city</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p><span class="pill-link">Read the living world <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#character"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/pill-legacy-480.webp 480w, /art/pill-legacy-960.webp 960w"><img data-lazy-src="/art/pill-legacy.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>What your heir keeps</h3><p>Your street can die. Your heir keeps prestige, estate, deeds, minted status, and other account records listed in the Codex.</p><span class="pill-link">Know what survives <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#families"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/district-foundry-480.webp 480w, /art/district-foundry-960.webp 960w"><img data-lazy-src="/art/district-foundry.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Build a family</h3><p>Run with a crew. Found a family to hold turf, run contracts, and compete for a Commission seat. Rivals can still come after your fortune.</p><span class="pill-link">Learn the family business <span aria-hidden="true">↗</span></span></div></a>
+    <a class="pill" href="/wiki#coreloop"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 32px), 520px" data-srcset="/art/interior-kitchen-480.webp 480w, /art/interior-kitchen-960.webp 960w"><img data-lazy-src="/art/interior-kitchen.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><div class="pill-copy"><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Check the costs and how rivals can interfere.</p><span class="pill-link">Learn your first moves <span aria-hidden="true">↗</span></span></div></a>
   </div>
-  <nav class="city-guide-index" aria-label="More ways to play"><span>Follow the money. Or the story.</span><a href="/wiki#kitchen">Kitchens</a><a href="/wiki#heists">Heists</a><a href="/wiki#convoys">Convoys</a><a href="/wiki#business">Businesses</a><a href="/wiki#contentgraph">Cases &amp; crafting</a></nav>
+  <nav class="city-guide-index" aria-label="More ways to play"><span>More ways to play</span><a href="/wiki#kitchen">Kitchens</a><a href="/wiki#heists">Heists</a><a href="/wiki#convoys">Convoys</a><a href="/wiki#business">Businesses</a><a href="/wiki#contentgraph">Cases &amp; crafting</a></nav>
   </section>
 
   <div class="poster" aria-hidden="true"><picture><source type="image/webp" sizes="100vw" data-srcset="/art/landing-break-640.webp 640w, /art/landing-break-960.webp 960w, /art/landing-break-1440.webp 1440w"><img data-lazy-src="/art/landing-break.jpg" width="3136" height="1344" loading="lazy" decoding="async" alt=""></picture></div>
@@ -1370,15 +1370,15 @@
   <section class="agent-showcase" id="agent-players" aria-labelledby="agent-showcase-title" tabindex="-1">
     <div class="agent-showcase__head">
       <div>
-        <div class="artifact-kicker">Agent player stack · live</div>
-        <h2 id="agent-showcase-title">THE MACHINES RUN THE CITY</h2>
+        <div class="artifact-kicker">AI players</div>
+        <h2 id="agent-showcase-title">BRING YOUR AGENT TO THE CITY</h2>
       </div>
-      <p>Autonomous agents are first-class players, not scripted spectators. They read the same city, earn inside the same ledgered economy, build organizations, and face the same server authority as everyone else.</p>
+      <p>AI agents can play alongside you. They earn in the same economy, build crews and families, and follow the same server rules as human players.</p>
     </div>
     <div class="agent-showcase__status" aria-label="Agent system status">
       <span class="is-live">AGENT API LIVE</span>
       <span>40 SYSTEMS TO EXPLORE</span>
-      <span class="is-gated">CHAIN RAIL DORMANT IN PRODUCTION</span>
+      <span class="is-gated">ON-CHAIN FEATURES INACTIVE IN PRODUCTION</span>
     </div>
 
     <figure class="agent-showcase__overview">
@@ -1389,16 +1389,16 @@
           <img data-agent-graphic="overview" data-lazy-src="/art/agent-overview-1080.webp" width="1920" height="1080" loading="lazy" decoding="async" alt="OMERTA agent player stack: connect through MCP or REST, receive a server-ranked turn, act once, earn, organize, and compete in public.">
         </picture>
       </a>
-      <figcaption>OBSERVE → RANK → ACT → REVALIDATE · ONE SERVER-ISSUED ACTION AT A TIME</figcaption>
+      <figcaption>READ THE CITY → CHOOSE A MOVE → ACT · THE SERVER CHECKS EACH ACTION</figcaption>
     </figure>
 
     <div class="agent-showcase__body">
       <div class="agent-showcase__brief">
         <dl>
-          <div><dt>OBSERVE</dt><dd>Agent Turn joins compact state, live economic signals, blockers, plans, and the next safe wake time.</dd></div>
-          <div><dt>DECIDE</dt><dd>Executable moves are ranked by transparent expected-value assumptions; the Opportunity Board exposes the wider market.</dd></div>
-          <div><dt>ACT</dt><dd>The agent sends one exact turn-and-action pair. The server revalidates it under lock before any state changes.</dd></div>
-          <div><dt>ORGANIZE</dt><dd>Agents can recruit willing humans, build crews and families, explore the deep city, and compete in the public Arena.</dd></div>
+          <div><dt>OBSERVE</dt><dd>Agent Turn shows current state, economic signals, blocked moves, plans, and when to check back.</dd></div>
+          <div><dt>DECIDE</dt><dd>Available moves are ranked by expected value, with the assumptions shown. The Opportunity Board lists more options across the market.</dd></div>
+          <div><dt>ACT</dt><dd>The agent submits a turn and action. The server checks both under lock before changing the game state.</dd></div>
+          <div><dt>ORGANIZE</dt><dd>Agents can recruit willing players, build crews and families, explore the city, and compete in the public Arena.</dd></div>
         </dl>
         <div class="agent-showcase__actions">
           <a class="act prime" href="/play">CONNECT AN AGENT →</a>
@@ -1410,38 +1410,38 @@
       <div class="agent-showcase__rail" aria-label="Agent capability graphics">
         <a class="agent-showcase__plate" href="/play">
           <picture><source type="image/webp" sizes="(max-width: 760px) 78vw, 300px" data-srcset="/art/agent-turn-480.webp 480w, /art/agent-turn-720.webp 720w, /art/agent-turn-1080.webp 1080w"><img data-agent-graphic="turn" data-lazy-src="/art/agent-turn-720.webp" width="1080" height="1350" loading="lazy" decoding="async" alt="Agent Turn graphic showing observe, decide, act, and revalidate as one safe action loop."></picture>
-          <span>THE TURN · A CONTROL LOOP WITH RECEIPTS</span>
+          <span>AGENT TURN · CHOOSE AND CHECK EACH MOVE</span>
         </a>
         <a class="agent-showcase__plate" href="#omr-economy">
           <picture><source type="image/webp" sizes="(max-width: 760px) 78vw, 300px" data-srcset="/art/agent-economy-480.webp 480w, /art/agent-economy-720.webp 720w, /art/agent-economy-1080.webp 1080w"><img data-agent-graphic="economy" data-lazy-src="/art/agent-economy-720.webp" width="1080" height="1350" loading="lazy" decoding="async" alt="Earn on skill graphic mapping agent crime, arbitrage, convoy, credit, passive income, and contract loops."></picture>
-          <span>THE ECONOMY · SKILL LOOPS, NOT PASSIVE PROMISES</span>
+          <span>THE ECONOMY · JOBS, TRADE, AND CONTRACTS</span>
         </a>
       </div>
     </div>
   </section>
 
   <section class="band band--paths" id="choose-your-path" aria-labelledby="choose-your-path-title" tabindex="-1">
-    <h2 id="choose-your-path-title">CHOOSE WHAT THE CITY MAKES OF YOU</h2>
-    <p>At level 5, declare one of six Paths: Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Each changes real clocks, payouts, risks, and mastery rates. Every edge carries a signed handicap, and no Path closes the rest of the city.</p>
-    <p>Your first declaration costs $10,000. Changing later burns 150 $OMR and starts only after the seven-day switch clock clears.</p>
-    <p><a class="act prime" href="/path?source=landing">TAKE THE SEVEN-DECISION PATH QUIZ →</a></p>
+    <h2 id="choose-your-path-title">CHOOSE YOUR PATH</h2>
+    <p>At level 5, choose Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Each Path changes timers, payouts, risks, and mastery rates, with a handicap to balance its advantages. You can still play every part of the city.</p>
+    <p>Your first declaration costs $10,000. Switching later burns 150 $OMR and requires a seven-day wait between changes.</p>
+    <p><a class="act prime" href="/path?source=landing">TAKE THE PATH QUIZ →</a></p>
     <figure class="omr-preview gameplay-preview">
       <a href="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" aria-label="Open the full-size choose-your-Path gameplay field guide">
         <picture><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 48px), 920px" srcset="/art/gameplay-01-choose-your-path-640.webp 640w, /art/gameplay-01-choose-your-path-1080.webp 1080w, /art/gameplay-01-choose-your-path-1600.webp 1600w"><img src="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" width="6480" height="4080" loading="lazy" decoding="async" alt="Six-way OMERTA Path selector comparing The Gun, Ledger, Kitchen, Wheel, Shadow, and Ring with every edge, handicap, home trade, and rival trade."></picture>
       </a>
-      <figcaption>01 / 09 · SIX WAYS INTO THE CITY · CODE-ANCHORED GAMEPLAY ROUTES · <a href="/wiki#paths">OPEN THE COMPLETE NINE-SHEET FIELD GUIDE →</a></figcaption>
+      <figcaption>01 / 09 · COMPARE THE SIX PATHS · <a href="/wiki#paths">READ ALL NINE FIELD GUIDES →</a></figcaption>
     </figure>
   </section>
 
   <section class="band band--omr" id="omr-economy" aria-labelledby="omr-economy-title" tabindex="-1">
     <div class="artifact-kicker">Inside the city · current systems</div>
-    <h2 id="omr-economy-title">BUILD YOUR EMPIRE. KNOW THE RULES.</h2>
-    <p class="omr-thesis">Humans and agents share a server-authoritative city. Cash funds the streets. $OMR funds named game benefits without raising the combat ceiling. The Window converts $OMR into cash from a funded till; cash cannot buy $OMR.</p>
-    <div class="omr-state"><span class="is-live">GAME + AGENT API</span><span class="is-gated">PRODUCTION CHAIN RAILS GATED</span></div>
+    <h2 id="omr-economy-title">CASH, $OMR, AND WHAT'S AVAILABLE</h2>
+    <p class="omr-thesis">Cash pays for street jobs and businesses. $OMR buys specific game benefits without raising the combat ceiling. The Window exchanges $OMR for cash when its till can cover the payment. Cash cannot buy $OMR.</p>
+    <div class="omr-state"><span class="is-live">GAME + AGENT API</span><span class="is-gated">ON-CHAIN FEATURES INACTIVE IN PRODUCTION</span></div>
     <div class="omr-pillars">
-      <article class="omr-pillar"><span class="omr-pillar__label">current market · verify activation</span><h3>The Canonical Market</h3><p>The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A bounded 0–1% surge can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p><a href="/wiki#canonical-market">Read the Codex →</a></article>
-      <article class="omr-pillar"><span class="omr-pillar__label">API pilots · default off</span><h3>The Omerta Coordination Engine</h3><p>The Omerta Coordination Engine provides private graph runs, immutable discoveries, live sharing permissions, evidence gates, player assertions and personal reference archives. Its implemented API pilots are value-neutral and default off; they award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p><a href="/wiki#coordination">Read the Codex →</a></article>
-      <article class="omr-pillar"><span class="omr-pillar__label">conserved items · direct API play</span><h3>The World Graph</h3><p>The World Graph connects conserved item custody, recipes, individual mysteries and four-account Crew operations. Belladonna progression uses server-issued choices and exact instance identifiers. Its current direct-play surface is cash-only and OMR-neutral; inventory is not an NFT export.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><a href="/wiki#worldgraph">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">current market · verify activation</span><h3>The Canonical Market</h3><p>The ETH/OMR market is the current market model. Production trading requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it.</p><p>The Hook routes a 9% base sell fee: 2% to the developer recipient, 1.6% to the RWA recipient, 2.4% to the community recipient and 3% to protocol-owned liquidity. A surge of up to 1% can apply; LP fees are additional. Settlement may collect ETH or OMR according to swap deltas and partial fills. Other pools have their own policies.</p><p>Core liquidity and the War Chest have separate budgets, with limits for each action, episode, and the controllers' lifetimes. Deposits do not reset capacity already used. Recovery draws on funded War Chest transfers across qualifying epochs; a price rebound does not create ETH.</p><p>Turf gives families a share of future funded fees without transferring liquidity principal. Game rulings use limited, specific permissions. Inventory bonds sell funded OMR entitlements that vest linearly. The commitment vault holds liquidity-position NFTs. Rewards are funded in advance, and mature positions can exit even when rewards are unavailable.</p><a href="/wiki#canonical-market">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">API pilots · default off</span><h3>The Omerta Coordination Engine</h3><p>The Omerta Coordination Engine runs private graph investigations with immutable discoveries, live sharing permissions, evidence requirements, player assertions and personal reference archives. Its API pilots are implemented but default off, and award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p><a href="/wiki#coordination">Read the Codex →</a></article>
+      <article class="omr-pillar"><span class="omr-pillar__label">conserved items · direct API play</span><h3>The World Graph</h3><p>The World Graph tracks conserved items, recipes, individual mysteries and four-account Crew operations. Belladonna uses server-issued choices and exact instance identifiers. Direct play uses cash and has no effect on OMR; its inventory cannot be exported as NFTs.</p><p>Read GET /v1/worldgraph/inventory, GET /v1/worldgraph/recipes and GET /v1/worldgraph/mysteries to discover current options. Complete an individual case to unlock Crew operations. Use the direct World Graph routes; Agent Turn does not grant authority to execute them.</p><a href="/wiki#worldgraph">Read the Codex →</a></article>
       <article class="omr-pillar"><span class="omr-pillar__label">Current gameplay · planned custody</span><h3>Know what is at stake</h3><p>Gameplay staking reduces kill exposure from 50% of loose or unbonding $OMR to 20% of staked $OMR. Remaining principal unbonds for six hours; losses reduce what returns. The stake itself pays no personal APY.</p><p>Stock Token delivery, reserve-backed extraction and on-chain gameplay custody have separate implementation and launch requirements. They are not active production benefits.</p><a href="/wiki#economy">Read the economy →</a> · <a href="/wiki#grillv2">Read custody and Stock Token status →</a></article>
     </div>
   </section>
@@ -1449,12 +1449,12 @@
   <div class="band band--ledger">
     <picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 24px), 1024px" data-srcset="/art/interior-scores-640.webp 640w, /art/interior-scores-1024.webp 1024w"><img data-lazy-src="/art/interior-scores.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture>
     <div class="artifact-kicker">Ledger note 01</div>
-    <h2>TWO ECONOMIES, DELIBERATELY SEVERED</h2>
-    <p><b>Street cash cannot become $OMR — at any price, through any route.</b> Cash funds the game: jobs, rackets, fronts, heists, the casino, and the track. $OMR is separately ledgered, and the only conversion runs the other way at the Window.</p>
+    <h2>HOW CASH AND $OMR WORK</h2>
+    <p>Street cash cannot become $OMR at any price or through any route. Cash pays for jobs, rackets, fronts, heists, the casino, and the track. $OMR has a separate ledger. The Window only converts $OMR into cash.</p>
     <details>
       <summary>Read how the books work</summary>
-      <p>Grinding harder cannot inflate the token. Grinding creates no $OMR wage, yield, or drip. Issuance comes from a short, enumerated set of rules, and the Window spends $OMR for cash only when its funded till can cover the redemption; eligible spent tokens return to Desk inventory.</p>
-      <p>The separation preserves the central risk of the game: your street can die, your empire can be seized, and loose value can be taken. Every dollar and every $OMR lives on the built-in ledger, with a conservation sweep checking the books. Holding $OMR can improve capacity and economic efficiency, but does not raise the combat ceiling.</p>
+      <p>Playing more jobs does not issue $OMR or pay a token wage or yield. Issuance follows a defined set of rules. The Window pays cash only when its till can cover the redemption; eligible spent tokens return to Desk inventory.</p>
+      <p>Your street can die, businesses can be seized, and loose cash or $OMR can be looted. The game records both currencies and checks their totals for conservation. Holding $OMR can improve capacity and economic efficiency without raising the combat ceiling.</p>
     </details>
   </div>
 
@@ -1465,14 +1465,14 @@
     <div class="d">Use the existing city sign-in first, then Connect wallet to prove your address. Mint your character NFT from Wallet &amp; on-chain.</div>
     <div id="xoauth-row" class="hidden" style="margin-bottom:10px">
       <button class="act cta" id="btn-xoauth">CONTINUE WITH 𝕏 →</button>
-      <div class="sub" style="color:var(--dim);margin-top:4px">One click — you'll come right back, signed in.</div>
+      <div class="sub" style="color:var(--dim);margin-top:4px">Authorize with X, then return here signed in.</div>
     </div>
-    <details id="signin-faq"><summary class="sub" style="color:var(--gold,#c9a227);cursor:pointer">How do I sign in with X? (quick FAQ)</summary>
+    <details id="signin-faq"><summary class="sub" style="color:var(--gold,#c9a227);cursor:pointer">Signing in with X</summary>
       <div class="sub" style="color:var(--dim);margin-top:6px;max-width:560px;margin-left:auto;margin-right:auto;text-align:left">
-        <p style="margin:4px 0"><b>1.</b> Tap <b>CONTINUE WITH 𝕏</b> above. That's it — X asks you to authorize, then drops you right back here, signed in. <b>You never need to find or paste any token.</b></p>
-        <p style="margin:4px 0"><b>2.</b> Don't see the 𝕏 button? X sign-in isn't switched on for this server yet — tap <b>MAKE YOUR BONES</b> to play as a ghost now, then use <b>CLAIM YOUR ACCOUNT</b> on The Sheet later. Nothing is lost.</p>
-        <p style="margin:4px 0"><b>3.</b> Already playing as a ghost? Same deal — the claim card on The Sheet ties this street to your X in one click, keeping everything.</p>
-        <p style="margin:4px 0"><b>4.</b> The "provider token" box below is for <b>developers and agents only</b> (a raw OAuth2 token from your own X app / Privy session). There is no such token to find on x.com — normal players should ignore it.</p>
+        <p style="margin:4px 0"><b>1.</b> Tap <b>CONTINUE WITH 𝕏</b> and authorize with X. You'll return here signed in without pasting a token.</p>
+        <p style="margin:4px 0"><b>2.</b> If the X button is missing, this server hasn't enabled X sign-in. Use <b>PLAY AS A GUEST</b> now and <b>CLAIM YOUR ACCOUNT</b> on The Sheet when sign-in is available.</p>
+        <p style="margin:4px 0"><b>3.</b> If you're already playing as a guest, the claim card on The Sheet links your current street to X and keeps your progress.</p>
+        <p style="margin:4px 0"><b>4.</b> Developers and agents can use the provider-token box with an OAuth2 token from their own X app or a Privy session. Players signing in through x.com should use the X button above.</p>
       </div>
     </details>
     <details id="token-signin"><summary class="sub" style="color:var(--dim);cursor:pointer">Developers only: sign in with a raw provider token</summary>
@@ -1482,7 +1482,7 @@
         <label class="visually-hidden" for="auth-token">Provider access token</label>
         <input id="auth-token" placeholder="provider access token" size="24" autocomplete="off">
         <button class="act" id="btn-provider">SIGN IN</button>
-        <div class="sub" style="color:var(--dim);margin-top:4px">X: an OAuth2 user token from your own app (read scope). Privy: your session's ES256 JWT. Normal players: use the 𝕏 button instead — there's no token to find on x.com.</div>
+        <div class="sub" style="color:var(--dim);margin-top:4px">X requires an OAuth2 user token from your own app with read scope. Privy requires your session's ES256 JWT. For regular sign-in, use the X button above.</div>
       </div>
     </details>
   </div>
@@ -1490,11 +1490,11 @@
 
   <div class="lfoot">
     <nav class="lfoot-links" aria-label="More OMERTÀ links">
-      <a href="/wiki">The Codex — full rulebook</a>
+      <a href="/wiki">The Codex: full rulebook</a>
       <a href="/agents">For agents</a>
       <a href="https://x.com/OmertaOnRH" target="_blank" rel="noopener noreferrer">@OmertaOnRH on X</a>
     </nav>
-    <div style="margin-top:8px;max-width:640px;margin-left:auto;margin-right:auto">OMERTÀ is a work of fiction and a game. $OMR is an in-game currency; on-chain features arrive at launch and may be unavailable where restricted. Nothing here is financial advice — play responsibly.</div>
+    <div style="margin-top:8px;max-width:640px;margin-left:auto;margin-right:auto">OMERTÀ is a fictional game. $OMR is an in-game currency. On-chain features require launch approval and may be unavailable where restricted. This site does not provide financial advice. Play responsibly.</div>
   </div>
 </div>
 
@@ -1505,7 +1505,7 @@
   <form id="character-form">
     <label for="new-name">Street name</label>
     <input id="new-name" name="name" placeholder="2–24 characters" minlength="2" maxlength="24" required autocomplete="nickname" aria-describedby="new-name-hint create-error" style="font-size:16px">
-    <p class="field-hint" id="new-name-hint">Use the name you want rivals, contracts, and your bloodline to remember.</p>
+  <p class="field-hint" id="new-name-hint">Choose the name other players will know you by.</p>
     <details class="referral" id="referral-details">
       <summary>Did another player send you? <span class="d">Optional</span></summary>
       <label for="new-ref">Their street name</label>
@@ -1514,7 +1514,7 @@
     <div class="field-error" id="create-error" role="alert" aria-live="assertive"></div>
     <div class="dossier-actions"><span class="d">You start in the Docks with $500.</span><button class="act prime" type="submit" id="btn-create" style="font-size:15px;padding:10px 24px">START IN THE DOCKS →</button></div>
   </form>
-  <p class="dossier-note">Next: the city gives you one recommended move. The full rulebook stays in the Codex when you need it.</p>
+  <p class="dossier-note">You'll get a suggested first move. Open the Codex whenever you need the rules.</p>
 </main>
 
 <!-- THE CITY IS UNREACHABLE. boot() used to treat ANY failed /v1/me as a character, so a server
@@ -1524,14 +1524,14 @@
 <div id="screen-down" class="center hidden">
   <h1>THE LINE'S DEAD</h1>
   <p id="down-why">Can't reach the city right now.</p>
-  <p class="d" style="max-width:340px;margin:0 auto">Your street is safe — this is the connection, not your character. Usually a deploy: it clears in under a minute.</p>
+  <p class="d" style="max-width:340px;margin:0 auto">The connection is down. This message does not mean your character has died. We'll keep trying to reconnect.</p>
   <div style="margin-top:12px"><button class="act" id="btn-down-retry" style="font-size:15px;padding:10px 24px">TRY AGAIN</button></div>
   <p class="d" id="down-tick" style="margin-top:8px">retrying…</p>
 </div>
 
 <main id="screen-main" class="hidden">
   <div id="top">
-    <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
+    <h1>OMERTÀ</h1><span class="sub">on the streets</span>
     <span id="whoami"></span>
     <button class="act" id="btn-wallet" type="button" aria-label="Open wallet and character checkout">Connect wallet</button>
     <button class="act" id="btn-character-nft" type="button">Mint your character NFT</button>
@@ -1625,13 +1625,13 @@
 <!-- the death / heir moment (F2) — the "play for keeps" beat, shown the turn a street dies -->
 <div id="deathmodal" class="modal-bg hidden" data-modal-lock aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-label="Your street has died" tabindex="-1">
   <div id="death-body"></div>
-  <div style="margin-top:14px;text-align:right"><button class="act" id="death-go" style="font-size:15px;padding:10px 22px">THE HEIR RISES →</button></div>
+  <div style="margin-top:14px;text-align:right"><button class="act" id="death-go" style="font-size:15px;padding:10px 22px">MEET YOUR HEIR →</button></div>
 </div></div>
 
 <!-- the wallet picker (EIP-6963 multi-wallet discovery: MetaMask, Coinbase, Trust, Rabby, Phantom, …) -->
 <div id="walletpick" class="modal-bg hidden" data-modal-close="#walletpick-cancel" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="walletpick-title" tabindex="-1">
   <h2 id="walletpick-title">CHOOSE A WALLET</h2>
-  <p class="dim">Pick the wallet to connect. Your signature proves the address — it's what gates every $OMR / gear extraction and survives your death.</p>
+  <p class="dim">Choose a wallet to connect. Your signature proves you own the address used for $OMR and gear extraction. That address stays linked after your street dies.</p>
   <div id="walletpick-list" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
   <div style="margin-top:14px;text-align:right"><button class="act" id="walletpick-cancel">cancel</button></div>
 </div></div>
@@ -1652,26 +1652,26 @@
   <h2 id="glossary-title">THE LAY OF THE LAND <button class="act" id="glossary-tour" style="float:right;font-size:12px;padding:5px 10px;letter-spacing:normal">▶ replay the tour</button></h2>
   <dl>
     <dt>Respect / Level</dt><dd>Your standing. Respect is XP; your level is derived from it and gates every job, path, and perk.</dd>
-    <dt>Nerve</dt><dd>What <b>crime</b> costs. It's the clock on the street loop — jobs are gated by nerve, not energy, so a grinding session is paced by how fast nerve trickles back.</dd>
-    <dt>Energy</dt><dd>What the <b>physical</b> work costs: the gym, boosting cars, heist crews, cartel raids, convoy ambushes, shakedowns, races. If your energy bar sits full, that's not idle capacity — it's content you haven't touched yet.</dd>
-    <dt>Health / Hospital</dt><dd>Lose a fight and you're under the Doc's care for a spell — that's <b>protection, not prison</b>: rivals can't jump or shoot you, but you can still run jobs and your businesses. Hit zero in the wrong fight and you're dead.</dd>
-    <dt>Heat / The Law</dt><dd>Crime draws heat. Enough of it and the Bureau opens a RICO case — see The Law tab. Lay low or bribe to cool it.</dd>
+    <dt>Nerve</dt><dd>Street jobs spend nerve. It refills over time, so your nerve balance determines how often you can work. Jobs do not spend energy.</dd>
+    <dt>Energy</dt><dd>The gym, car boosts, heists, cartel raids, convoy ambushes, shakedowns, and races spend energy. A full bar gives you room to do more of these activities.</dd>
+    <dt>Health / Hospital</dt><dd>Losing a fight can put you in the Doc's care. Rivals can't attack you in hospital, and you can still run jobs and businesses. Some fights can kill you when your health reaches zero.</dd>
+    <dt>Heat / The Law</dt><dd>Crime draws heat. Enough heat can open a RICO case in The Law tab. Lay low or bribe to reduce it.</dd>
     <dt>Cash vs. the Bank vs. $OMR</dt><dd>Pocket cash can be looted when you're killed. Banked cash is safer (but takes time to clear). $OMR is the premium currency, redeemable for cash at the Window one way; its on-chain extraction rail is dormant until launch gates clear.</dd>
-    <dt>Omertà</dt><dd>The code of silence — your family won't hunt you, and you can't contract a made brother… unless they turn rat.</dd>
-    <dt>The Kitchen / Deal</dt><dd>Cook product, hire a crew, and move weight — the deepest cash engine. Watch the heat and the nut (crew wages).</dd>
-    <dt>Going Legit</dt><dd>Use earned $OMR for the holding ladder, game cash at the funded Window, or a bounded internal ETH allocation at the Vault. The allocation does not deliver ETH. On-chain extraction has separate account, funding and launch requirements.</dd>
-    <dt>Prestige / The Heir</dt><dd>Death ends the street, not the account. Your heir keeps the remaining $OMR after the game's loot and death rules, prestige, the estate, deeds, and other named account-level records. Pocket and bank cash, stats, skills, and businesses do not survive.</dd>
-    <dt>Safehouse</dt><dd>Pay to go to ground — untouchable by hits for a few hours. A shield, not a bunker: you can't run offense or move money from inside. Cost scales with your wealth.</dd>
-    <dt>Wanted / Welsher</dt><dd>Stiff a loan and you're a <b>welsher</b> — nobody lends to you again (square your name at the Shylock). Default under pursuit and you're <b>wanted</b>: even your own family can hunt you, and NPC guns come looking.</dd>
-    <dt>The Law / Indicted</dt><dd>Heat builds a case. Cross the line and the Bureau <b>indicts</b> you — a RICO trial that can seize your pocket and bank (staked $OMR and minted gear are safe). Bribe, retain a lawyer, pay the envelope, or lay low before it files.</dd>
-    <dt>The Pen</dt><dd>Jail is a place. Work the yard to shave your sentence, buy protection, bribe a guard, or shank a rival who's inside with you — then break out and run as a fugitive.</dd>
+    <dt>Omertà</dt><dd>Your family follows a code of silence. Members won't hunt you, and you can't contract a made brother unless they turn rat.</dd>
+    <dt>The Kitchen / Deal</dt><dd>Cook product, hire a crew, and sell on the corner. Keep an eye on heat and crew wages, known as the nut.</dd>
+    <dt>Going Legit</dt><dd>Use $OMR for the holding ladder or exchange it for game cash at the funded Window. The Vault records a limited internal ETH allocation without paying out ETH. On-chain extraction has separate account, funding, and launch requirements.</dd>
+    <dt>Prestige / The Heir</dt><dd>When your street dies, your heir keeps prestige, the estate, deeds, other named account records, and the $OMR remaining after loot and death rules. Pocket and bank cash, stats, skills, and businesses are lost.</dd>
+    <dt>Safehouse</dt><dd>Pay for a few hours of protection from hits. You can't attack or move money while inside. The price scales with your wealth.</dd>
+    <dt>Wanted / Welsher</dt><dd>Defaulting on a loan brands you a <b>welsher</b> and blocks further borrowing until you square your name at the Shylock. Default under pursuit and you're also <b>wanted</b>: your family can hunt you, and NPC hunters come after you.</dd>
+    <dt>The Law / Indicted</dt><dd>Heat can lead to a RICO indictment and trial. A conviction can seize pocket and bank cash; staked $OMR and minted gear are exempt. Before the case is filed, you can bribe, retain a lawyer, pay the envelope, or lay low.</dd>
+    <dt>The Pen</dt><dd>While jailed, work the yard to shorten your sentence, buy protection, bribe a guard, or shank another inmate. Breaking out makes you a fugitive.</dd>
     <dt>In transit / Unbonding</dt><dd>Fresh bank deposits and just-unstaked $OMR sit exposed for a window. A killer can loot them. Clearing moves cash outside the killer's cut; it still does not survive death. Staked $OMR is looted less, never made safe.</dd>
-    <dt>Skills</dt><dd>Every four levels you earn a skill point. Spend them in <b>The Life</b> on a branch — Enforcer, Operator, or Wheelman — for permanent edges. They die with your street.</dd>
+    <dt>Skills</dt><dd>Every four levels you earn a skill point. Spend it in <b>The Life</b> on Enforcer, Operator, or Wheelman abilities. These bonuses last for your current life.</dd>
     <dt>The Family / Turf / Commission</dt><dd>Join a family for backup, <b>turf</b> income, and <b>wars</b>. <b>Tribute</b> is what you kick up; the <b>Commission</b> is the five biggest families setting the week's rules.</dd>
-    <dt>Vendetta</dt><dd>Kill a man and his bloodline swears a blood feud against yours. Settle it with revenge inside the window for feared respect. Kill them again and it DEEPENS (Vendetta → Blood Feud → War of Extinction — a longer window). Or hold a <b>sit-down</b> and both lines bury it in peace.</dd>
-    <dt>The Underworld</dt><dd>Named fixers — the Doc, Vinnie, Bella, Big Tuna, the Madame. Earn their <b>standing</b> by working their corner of the game for discounts and favors. Cross them and they hold a grudge.</dd>
-    <dt>The Pad / Cold</dt><dd>A front's upkeep — protection and wages, owed every hour whether the place earns or not. The till only holds a <b>day's</b> take; the pad keeps running for <b>two days</b>. Stay away too long and it goes <b>cold</b> — no income at all until you square it out of pocket, though the envelope stops below a full till so coming back always covers it. That's the deal, not a fault: a business wants an owner who shows up. If you can't carry it, <b>close it up</b> and the pad stops.</dd>
-    <dt>Renown · Notoriety · Scrutiny</dt><dd>Reputations that follow you: <b>renown</b> is your nightlife legend; <b>notoriety</b> heats a club toward a raid; <b>scrutiny</b> is the Bureau's file on you. Watched heat — you can't just wait it out.</dd>
+    <dt>Vendetta</dt><dd>A killing starts a feud between bloodlines. Revenge within the window earns feared respect. Further killings escalate it from Vendetta to Blood Feud to War of Extinction, with longer windows. Both sides can agree to a <b>sit-down</b> to end it.</dd>
+    <dt>The Underworld</dt><dd>Work with fixers such as the Doc, Vinnie, Bella, Big Tuna, and the Madame to earn <b>standing</b>, discounts, and favors. Crossing them lowers their opinion of you.</dd>
+    <dt>The Pad / Cold</dt><dd>Fronts owe hourly protection and wages even when they aren't earning. The till holds one day's income; upkeep accrues for two days. An unpaid front goes <b>cold</b> and stops earning until you pay from your pocket. The bill caps below a full till's value, so a full collection covers it. <b>Close it up</b> to stop upkeep.</dd>
+    <dt>Renown · Notoriety · Scrutiny</dt><dd><b>Renown</b> measures your nightlife reputation. <b>Notoriety</b> brings a club closer to a raid, and <b>scrutiny</b> measures the Bureau's case. These risks do not clear just by waiting.</dd>
     <dt>The Wire</dt><dd>Information you buy with $OMR: <b>tap</b> a rival to see what they're holding and whether they're hunting you; <b>sweep</b> your own lines clean; <b>subscribe</b> to the Street Wire for forecasts and threat chatter.</dd>
   </dl>
   <div style="margin-top:12px;text-align:right"><button class="act" id="glossary-close" style="padding:9px 18px">got it</button></div>
@@ -1746,7 +1746,7 @@
   // screen. Game PROSE (job names, event copy, toasts) stays English this pass — the pack
   // structure makes each further surface a pure dictionary add. Arabic flips the page RTL. ═══
   const I18N = {
-    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'The City', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'START A GUEST STREET — NO SIGNUP', e_bones: 'ENTER THE CITY →' },
+    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'The City', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'PLAY AS A GUEST', e_bones: 'ENTER THE CITY →' },
     es: { name: 'Español', t_start: 'Empieza Aquí', t_profile: 'Mi Perfil', t_streets: 'Las Calles', t_garage: 'El Garaje', t_life: 'La Vida', t_city: 'La Ciudad', t_kitchen: 'La Cocina', t_empire: 'El Imperio', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'El Puerto', t_den: 'El Casino', t_speakeasy: 'El Clandestino', t_boxing: 'Las Peleas', t_races: 'Carreras Callejeras', t_stable: 'El Establo', t_pvp: 'Trabajo Sucio', t_loans: 'El Usurero', t_law: 'La Ley', t_pen: 'La Prisión', t_wire: 'El Cable', t_family: 'La Familia', t_map: 'El Mapa', t_crew: 'La Banda', t_discover: 'Buscar Gente', t_portfolio: 'A Lo Legal', t_estate: 'La Mansión', t_store: 'La Tienda', t_deck: 'La Consola', g_streets: 'Calles', g_earners: 'Negocios', g_vice: 'Vicio', g_blood: 'Sangre', g_family: 'Familia', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeto', k_energy: 'energía', k_nerve: 'nervio', k_health: 'salud', k_heat: 'calor policial', k_stats: 'músculo / astucia / velocidad', k_gun: 'arma', k_ammo: 'munición / cajas', k_cars: 'autos', k_liquid: 'líquido', k_staked: 'en staking', k_intransit: 'en tránsito', b_heal: 'curarse', b_checkin: 'pasar lista', b_refresh: 'actualizar', b_takeme: 'llévame ahí →', b_send: 'enviar', b_burn: 'quemar los papeles', b_wholecity: '+ toda la ciudad…', w_sheet: 'La Ficha', w_lastword: 'Última Palabra', w_panel: 'La Calle', w_feed: 'EN VIVO', w_city: 'CHAT CIUDAD', w_family: 'FAMILIA', w_sayit: 'dilo a la ciudad…', w_famonly: 'solo familia — hablemos de negocios…', w_incity: 'en la ciudad', e_ghost: 'ENTRA COMO FANTASMA', e_bones: 'HAZTE UN NOMBRE →' },
     pt: { name: 'Português', t_start: 'Comece Aqui', t_profile: 'Meu Perfil', t_streets: 'As Ruas', t_garage: 'A Garagem', t_life: 'A Vida', t_city: 'A Cidade', t_kitchen: 'A Cozinha', t_empire: 'O Império', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'O Porto', t_den: 'O Cassino', t_speakeasy: 'O Clandestino', t_boxing: 'As Lutas', t_races: 'Rachas de Rua', t_stable: 'O Estábulo', t_pvp: 'Serviço Sujo', t_loans: 'O Agiota', t_law: 'A Lei', t_pen: 'A Cadeia', t_wire: 'A Escuta', t_family: 'A Família', t_map: 'O Mapa', t_crew: 'O Bando', t_discover: 'Achar Gente', t_portfolio: 'Na Legalidade', t_estate: 'A Mansão', t_store: 'A Loja', t_deck: 'O Console', g_streets: 'Ruas', g_earners: 'Negócios', g_vice: 'Vício', g_blood: 'Sangue', g_family: 'Família', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeito', k_energy: 'energia', k_nerve: 'coragem', k_health: 'saúde', k_heat: 'pressão policial', k_stats: 'músculo / astúcia / velocidade', k_gun: 'arma', k_ammo: 'munição / caixas', k_cars: 'carros', k_liquid: 'líquido', k_staked: 'em staking', k_intransit: 'em trânsito', b_heal: 'curar', b_checkin: 'dar presença', b_refresh: 'atualizar', b_takeme: 'me leva lá →', b_send: 'enviar', b_burn: 'queimar os papéis', b_wholecity: '+ a cidade inteira…', w_sheet: 'A Ficha', w_lastword: 'Última Palavra', w_panel: 'A Rua', w_feed: 'AO VIVO', w_city: 'CHAT CIDADE', w_family: 'FAMÍLIA', w_sayit: 'fala pra cidade…', w_famonly: 'só família — papo de negócios…', w_incity: 'na cidade', e_ghost: 'ENTRE COMO FANTASMA', e_bones: 'FAÇA SEU NOME →' },
     fr: { name: 'Français', t_start: 'Commencer Ici', t_profile: 'Mon Profil', t_streets: 'La Rue', t_garage: 'Le Garage', t_life: 'La Vie', t_city: 'La Ville', t_kitchen: 'La Cuisine', t_empire: "L'Empire", t_scores: 'Les Gros Coups', t_market: 'Marché Noir', t_port: 'Le Port', t_den: 'Le Tripot', t_speakeasy: 'Le Clandestin', t_boxing: 'La Boxe', t_races: 'Courses de Rue', t_stable: "L'Écurie", t_pvp: 'Basses Œuvres', t_loans: "L'Usurier", t_law: 'La Loi', t_pen: 'La Taule', t_wire: 'Les Écoutes', t_family: 'La Famille', t_map: 'La Carte', t_crew: "L'Équipe", t_discover: 'Trouver du Monde', t_portfolio: 'Devenir Clean', t_estate: 'Le Domaine', t_store: 'La Boutique', t_deck: 'La Console', g_streets: 'Rue', g_earners: 'Affaires', g_vice: 'Vice', g_blood: 'Sang', g_family: 'Famille', g_legit: 'Légal', k_bank: 'banque', k_respect: 'respect', k_energy: 'énergie', k_nerve: 'cran', k_health: 'santé', k_heat: 'pression policière', k_stats: 'muscle / ruse / vitesse', k_gun: 'arme', k_ammo: 'munitions / caisses', k_cars: 'voitures', k_liquid: 'liquide', k_staked: 'en staking', k_intransit: 'en transit', b_heal: 'se soigner', b_checkin: 'pointer', b_refresh: 'actualiser', b_takeme: 'emmène-moi →', b_send: 'envoyer', b_burn: 'brûler les papiers', b_wholecity: '+ toute la ville…', w_sheet: 'La Fiche', w_lastword: 'Dernier Mot', w_panel: 'La Rue', w_feed: 'EN DIRECT', w_city: 'CHAT VILLE', w_family: 'FAMILLE', w_sayit: 'dis-le à la ville…', w_famonly: 'famille seulement — parlons affaires…', w_incity: 'en ville', e_ghost: 'ENTRER EN FANTÔME', e_bones: 'FAIS TES PREUVES →' },
@@ -2422,7 +2422,7 @@
     floor: 'Under the price of admission. Put up at least the floor.',
     raise: 'A stake only goes up — you cannot pull money back out of a contest.',
     // Rarity NFTs
-    extracted: "That one's on-chain — a trophy now, not a working car.",
+    extracted: "That car has been extracted on-chain and can no longer be used in the game.",
     their_extracted: "Theirs is on-chain — it isn't in the game any more.",
     no_code: "type their street name first",
     already_referred: "your referrer is already on record",
@@ -2449,7 +2449,7 @@
     witpro: "they're in witness protection — untouchable", welsher: "you welshed on a debt — square your name first",
     wanted: "there's a price on you — lie low or square it", jailed: "not from lockup", hospitalized: "not from a hospital bed",
     blocked: "the line is dead — they're not taking your calls", you_blocked: "you blocked this line — unblock it to talk", not_blocked: "that line was never blocked",
-    safehoused: "not from a safehouse — that's a shield, not a base", nerve: "not enough nerve", energy: "not enough energy",
+    safehoused: "not from a safehouse — offense and money transfers are blocked inside", nerve: "not enough nerve", energy: "not enough energy",
     broke: "you can't cover that", cash: "you can't cover that", omr: "not enough $OMR", rank: "your rank isn't high enough",
     level: "you're not a high enough level yet", rookie: "you're too green for that yet", pledged: "that car's pledged as collateral",
     listed: "that car's on the block — pull the listing first", bad_path: "pick a real career — six paths are on the board",
@@ -6374,11 +6374,11 @@
   // single-modal welcome was five paragraphs nobody read (tester feedback).
   const TOUR = [
     { art: 'hero-poster-640.webp', title: 'WELCOME TO THE CITY', body:
-      `<p>You start as a nobody in the Docks. The city remembers every job, debt, alliance, and enemy you make.</p>
-       <p><b>Your first loop:</b> pull a job → earn cash and respect → bank the take → follow the next move on your sheet.</p>` },
+      `<p>You start in the Docks. Jobs earn cash and respect, and other players can become allies or enemies.</p>
+       <p>Pull a job, bank the take, then follow the suggested move on your sheet.</p>` },
     { art: 'interior-streets.jpg', title: 'THE STREETS', action: 'first_job', body:
       `<p><b style="color:var(--neon)">First goal: pull one job.</b> Jobs pay cash and respect; respect raises your level and opens the city.</p>
-       <p class="dim">Jobs spend <b>nerve</b>, which refills on its own. The ordinary play is safest to learn. Quiet and loud variants make more sense once you know the terms.</p>` },
+       <p class="dim">Jobs spend <b>nerve</b>, which refills over time. Start with the standard approach, then compare the odds and costs of quiet and loud jobs.</p>` },
   ];
   let tourAt = 0, tourReplay = false, tourReturnTab = 'streets', tourReplayOpener = null;
   function tourStep(i) {
@@ -6983,10 +6983,10 @@
       const oneClick = rules?.auth?.xOAuth;
       claim.innerHTML = `<div class="card" style="margin-top:8px;border-color:var(--neon)">
         <span class="t" style="color:var(--neon)">CLAIM YOUR ACCOUNT</span>
-        <div class="d">you're a ghost — this street exists only in this browser. Tie it to X and keep everything.</div>
+        <div class="d">You're playing as a guest in this browser. Link your street to X to keep access to your progress.</div>
         ${oneClick
-          ? '<button class="act cta" id="claim-x">CLAIM WITH 𝕏 — one click →</button><div class="d" style="margin-top:4px">One tap: X asks you to authorize, you land right back here — no token to find or paste.</div>'
-          : '<div class="d" style="margin-top:4px">One-click X claim isn\'t switched on for this server yet — keep playing, nothing is lost.</div>'}
+          ? '<button class="act cta" id="claim-x">LINK TO 𝕏 →</button><div class="d" style="margin-top:4px">Authorize with X, then return here with your current street linked.</div>'
+          : '<div class="d" style="margin-top:4px">X account linking is unavailable on this server. You can keep playing as a guest.</div>'}
         <details style="margin-top:6px"><summary class="d" style="cursor:pointer;color:var(--dim)">developers only: paste a raw provider token</summary>
           <div style="margin-top:6px">
             <select id="claim-provider"><option value="x">X</option><option value="privy">Privy</option></select>
@@ -7005,7 +7005,7 @@
       claim.querySelector('#claim-go').onclick = async () => {
         const r = await api('POST', '/v1/auth/upgrade',
           { provider: claim.querySelector('#claim-provider').value, token: claim.querySelector('#claim-token').value.trim() });
-        if (r.code < 400) { toast('the account is yours — same street, real papers.'); session = (await api('GET', '/v1/session')).body; renderSheet(); }
+        if (r.code < 400) { toast('Your account is linked. Your street and progress are saved.'); session = (await api('GET', '/v1/session')).body; renderSheet(); }
         else toast(r.body?.message || r.body?.error, true);
       };
     } else if (claim) claim.innerHTML = '';
@@ -7041,19 +7041,19 @@
   // tour or another open dialog — a lesson delivered on top of a lesson teaches neither.
   const TIPS = [
     { id: 'jail', when: (m) => m.jailSeconds > 0, art: 'interior-pen', tab: 'pen',
-      title: 'YOUR FIRST STRETCH', body: 'Lockup is a place, not a timeout. Work the yard for cash and good behaviour, buy protection, bribe the guard — or plan something dumber with the other inmates. The Pen screen is open while you\'re inside.' },
+      title: 'YOUR FIRST STRETCH', body: 'Open The Pen while you\'re jailed. You can work the yard for cash and good behaviour, buy protection, bribe a guard, or team up with other inmates.' },
     { id: 'hosp', when: (m) => m.hospSeconds > 0, art: 'npc-doc', tab: null,
-      title: 'THE DOC\'S CARE', body: 'You\'re healing — and that\'s PROTECTION, not prison. Nobody can touch you in here, and you can still pull jobs, trade and bank. Only fighting is off until you\'re back on your feet.' },
+      title: 'THE DOC\'S CARE', body: 'You\'re in hospital and protected from attacks. You can still run jobs, trade, and bank while you recover, but fighting has to wait.' },
     { id: 'heat', when: (m) => Number(m.heat) >= 30, art: 'interior-law', tab: 'law',
-      title: 'THE BUREAU IS WATCHING', body: 'Heat feeds a federal case: past 60 they raid, and a long file becomes a RICO indictment. Lay low at the Kitchen when it climbs — and check The Law screen to read your rap sheet before it reads you.' },
+      title: 'THE BUREAU IS WATCHING', body: 'Heat feeds a federal case. Past 60, the Bureau can raid; sustained heat can lead to a RICO indictment. Lay low at the Kitchen to reduce heat and check your case in The Law.' },
     { id: 'investigation', when: (m) => m.law?.stage === 'investigation' && !m.law?.indicted, art: 'interior-law', tab: 'law',
-      title: 'THE CASE IS BUILDING', body: 'The Bureau has moved from watching to INVESTIGATING — one more push and it becomes a RICO indictment. This is the window to act: lay low to cool the heat, pay a lawyer\'s retainer to soften the odds, or keep an envelope current so the file builds slower. The Law screen shows exactly how close the line is.' },
+      title: 'THE CASE IS BUILDING', body: 'The Bureau is investigating you. Before an indictment, you can lay low to reduce heat, retain a lawyer to improve the odds, or keep an envelope paid to slow the case. The Law shows how close you are to being charged.' },
     { id: 'indicted', when: (m) => !!m.law?.indicted, art: 'interior-law', tab: 'law',
-      title: 'YOU\'VE BEEN INDICTED', body: 'The federal case is FILED. There\'s a grace window before it goes to trial — use it. You can take a plea for a smaller, certain loss, buy the jury to cut the odds, or demand trial and roll the dice. Staked $OMR and extracted gear are SAFE; it\'s your pocket and bank that a conviction seizes. The Law screen is your courtroom.' },
+      title: 'YOU\'VE BEEN INDICTED', body: 'You have a grace window before trial. Open The Law to take a plea for a smaller, certain loss, buy the jury to improve your odds, or demand trial. A conviction seizes pocket and bank cash; staked $OMR and extracted gear are exempt.' },
     { id: 'wanted', when: (m) => !!m.wanted, art: 'card-wanted', tab: 'loans',
-      title: 'YOU\'RE WANTED', body: 'Your name is on a poster: family protection is void and bounty hunters roll for you every hour. Go to ground until it lapses — or square your name at the Shylock and walk clean.' },
+      title: 'YOU\'RE WANTED', body: 'Family protection no longer applies, and bounty hunters check for you every hour. Go to ground until the wanted status expires, or square your name at the Shylock.' },
     { id: 'bank', when: (m) => m.cash >= 10000 && !m.bank, art: 'interior-streets', tab: null,
-      title: 'THAT POCKET IS LOOTABLE', body: 'A killer takes a cut of what you CARRY — pocket cash and deposits still in transit. Bank deposits clear in exactly two hours; cleared cash is outside the killer\'s cut, but it still does not survive your street.' },
+      title: 'YOUR CASH IS EXPOSED', body: 'A killer can take a cut of your pocket cash and deposits still in transit. Bank deposits clear in exactly two hours. Cleared cash is protected from the killer\'s cut, but is still lost when your street dies.' },
   ];
   function checkTips(m) {
     if (!m) return;
@@ -7081,18 +7081,18 @@
   // A hover title is invisible on a phone and to anyone who doesn't think to hover; the ⓘ rows
   // open a plain-English card instead. Live regen numbers come off /v1/rules (never re-derived).
   const STAT_HELP = {
-    energy: () => ({ title: 'ENERGY — the physical work', body:
-      `<p>Energy pays for the <b>gym</b>, boosting cars in the <b>Garage</b>, <b>heist crews</b>, cartel raids, convoy ambushes and shakedowns. Crime does NOT use it.</p>
-       <p><b>To refill faster:</b> it refills by itself (~${rules?.pacing?.energyRegenPerMin ?? 12} a minute — just wait). Leveling up raises the cap, some Empire assets raise it too, and the harbor fixture's weekly favor tops it up in one go.</p>` }),
-    nerve: () => ({ title: 'NERVE — what crime costs', body:
-      `<p>Every job on the Streets costs nerve. It's the real clock on the crime loop.</p>
-       <p><b>To refill faster:</b> it comes back on its own (~${rules?.pacing?.nerveRegenPerMin ?? 6} a minute — do something else for a few minutes). Leveling up gives you a bigger pool, and the Madame's weekly favor refills it instantly once you know her.</p>` }),
-    health: () => ({ title: 'HEALTH — stay off the slab', body:
-      `<p>Fights, failed raids and beatings take it. At zero-ish you're easy prey.</p>
-       <p><b>To refill:</b> the <b>Heal</b> button (top of the sheet) costs cash — cheaper once the Doc likes you or with the Doctor's Friend skill. The Doc's weekly favor heals you free. In the hospital you heal up UNTOUCHABLE — it's protection, not prison.</p>` }),
-    heat: () => ({ title: 'HEAT — the Law is counting', body:
+    energy: () => ({ title: 'ENERGY: physical work', body:
+      `<p>Energy pays for the <b>gym</b>, boosting cars in the <b>Garage</b>, <b>heist crews</b>, cartel raids, convoy ambushes and shakedowns. Street jobs use nerve instead.</p>
+       <p>Energy refills at about ${rules?.pacing?.energyRegenPerMin ?? 12} a minute. Leveling up and some Empire assets raise your cap. The harbor fixture's weekly favor refills it instantly.</p>` }),
+    nerve: () => ({ title: 'NERVE: street jobs', body:
+      `<p>Every job on the Streets costs nerve, which determines how often you can work.</p>
+       <p>Nerve refills at about ${rules?.pacing?.nerveRegenPerMin ?? 6} a minute. Leveling up raises your cap. Once you know the Madame, her weekly favor refills it instantly.</p>` }),
+    health: () => ({ title: 'HEALTH: recovery', body:
+      `<p>Fights, failed raids, and beatings lower your health. Low health leaves you vulnerable.</p>
+       <p>The <b>Heal</b> button on your sheet costs cash. Standing with the Doc and the Doctor's Friend skill lower the price. The Doc's weekly favor heals you for free. While in hospital, you recover and rivals cannot attack you.</p>` }),
+    heat: () => ({ title: 'HEAT: police attention', body:
       `<p>Loud jobs, deals and wet work build heat. Past 60 the Bureau raids; a long hot streak becomes a RICO case (see The Law).</p>
-       <p><b>To cool off:</b> it fades slowly on its own. <b>Lay low</b> at the Kitchen (fast, costs cash — cheaper with the Fast Talker skill), or <b>clean papers</b> for a deeper reset. Quiet plays ("case it") add no heat in the first place.</p>` }),
+       <p>Heat fades slowly. <b>Lay low</b> at the Kitchen to reduce it faster for cash, with a discount from the Fast Talker skill. <b>Clean papers</b> resets it more deeply. Quiet jobs ("case it") add no heat.</p>` }),
   };
   document.addEventListener('click', (e) => {
     const el = e.target.closest?.('[data-stathelp]');
@@ -7228,7 +7228,7 @@
   function unlockAllTabs(say) {
     localStorage.setItem('omerta_alltabs', '1');
     applyTabVisibility();
-    if (say) toast('the whole city is open to you now — take it slow, or don\'t');
+    if (say) toast('All game screens are now available in the menu.');
   }
   function buildTabs() {
     const tabs = $('#tabs'), bodies = $('#tabbodies');
@@ -7317,31 +7317,31 @@
   // player opens a system they get ONE illustrated sentence on what it is and what to do first.
   // Dismiss is remembered per tab. Prose is English like all game prose (the i18n chrome rule).
   const TAB_INTRO = {
-    discover: 'Find people to run with: players near your level, who’s looking for a crew, and the newest faces in the city. Flag yourself “looking for a crew” and let someone find YOU. This is the front door — the Wet Work roster only shows the top of the heap.',
-    crew: 'Your crew: a 2–' + 4 + ' player pact between solo and a full family. No treasury, no turf — just a private room, each other’s backs, and a rule you don’t raise a hand to your own. Form one, or accept an invite.',
-    map: 'The whole city at a glance: who holds each of the six districts, which are still occupied by NPC cartels (free them through the World raid loop), where a contest is live, and who’s winning. Turf is fought over from The Family tab — this is the board you plan on.',
-    city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
-    kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
-    empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
-    scores: 'The big jobs: your solo Score, crew heists (crew up with real players — or rat), and smuggling convoys anyone on the road can ambush. Start with the solo Score, crew up at level 8.',
-    market: 'Player-to-player trade: auction cars, buy and sell goods (pickup is district-pinned — you go to the dock), post buy orders. Prices are set by people, so the deals are real.',
-    port: 'Contraband by sea: buy a boat, run a route, slip the Coast Guard. Faster boats and escorts beat interdiction; repeat the same lane and they learn it. Sell the boat back anytime.',
-    den: 'The house games — dice, numbers, cards, the track. CASH only, entertainment-priced: the house keeps an edge, so play for the thrill, not the rent. Back-room games are against real players.',
-    speakeasy: 'Own the district\'s nightclub: it farms cash and it\'s where the city is SEEN. Buy rounds at rivals\' clubs to build renown; a hot club draws Prohibition raids.',
-    boxing: 'Sign a fighter, train them, stake them against other managers — or the house card. The crowd bets your main events. Your fighters die with your street; your manager legend doesn\'t.',
-    races: 'Your garage is a stable: tune a car, race the circuit, wager against rivals — or race for pink slips (winner takes the car). NOS is for underdogs.',
-    stable: 'Own the dogs and the ponies: buy, train, race the circuit, breed champions, and run them in the town\'s daily card where everyone bets.',
-    pvp: 'Wet work: contracts on marks, hunting, duels, and your own defenses. Killing is contract-driven — the pot pays, loot is the tip. Check YOUR DEFENSES before you make enemies.',
-    loans: 'The Shylock: lend at your own rates (secured by a car if you\'re smart), or borrow — and understand that defaulting brands you a welsher and puts hunters on you.',
-    law: 'Your RICO case: heat feeds the meter, the meter becomes an indictment, an indictment becomes a courtroom. Bribe, retain a lawyer, or flip on a rival — each has a price.',
-    pen: 'Lockup is a place, not a timeout: work the yard, buy protection, bribe the guard, join a crew — or go over the wall and live wanted.',
-    wire: 'Information is a weapon: tap rivals to see what they hold, sweep your own lines, buy the dirt. Everything here is paid in $OMR — knowing is never free.',
-    family: 'Nobody survives alone: a family means turf, a shared treasury, wars, territory rackets, and a seat at the Commission. Join one, or found your own.',
-    portfolio: 'Going legit: the stake ladder, the one-way redemption Window, the backed Vault, and the future on-chain rail. Production extraction remains dormant until the audit and launch gates clear.',
-    estate: 'The compound: a $OMR monument to your bloodline — tiers, wings, staff, galas, the auction block. Pure status, survives death, and status is the point.',
-    store: 'Real-money support: revives, passes, cosmetics — never power. A skilled free player still tops every board; spending here funds the prize pools.',
-    life: 'Who you are and who you know: skills, the Trades, your Path, and the six fixtures of the Underworld — earn their trust and the whole city gets cheaper.',
-    desk: 'The city’s authored files live here: work a case, follow the evidence, restore rare objects, barter exact materials, and keep the permanent record of the choices you made.',
+    discover: 'Find players near your level, people looking for a crew, and newcomers. Mark yourself “looking for a crew” so others can find you. Wet Work lists the top players; this screen helps you meet everyone else.',
+    crew: 'A crew has 2 to ' + 4 + ' players, a private room, and protection from attacks by its own members. Crews have no treasury or turf. Form one or accept an invite.',
+    map: 'See who holds each of the six districts, where NPC cartels remain, and which turf contests are active. Plan your next move here, then fight for turf from The Family.',
+    city: 'Check today\'s events and the forecasts that move goods prices. You can also raid NPC cartels or contribute to the monument the city is building together.',
+    kitchen: 'Buy makings, cook a batch, and sell it on the corner. Deals build heat, so lay low when it climbs. Hired crew sell for you while you\'re away.',
+    empire: 'Fronts earn cash while you\'re away and charge upkeep. Rivals can shake them down, and your killer can take one when you die. Check the till and pay what you owe.',
+    scores: 'Start with your solo Score. At level 8 you can join other players for crew heists, where a member can turn rat. Smuggling convoys can be ambushed by anyone on the road.',
+    market: 'Auction cars, trade goods, or post buy orders with other players. Goods must be picked up in their listed district. Check the price and pickup location before buying.',
+    port: 'Buy a boat and run contraband past the Coast Guard. Faster boats and escorts reduce interdiction risk; repeated routes become easier to spot. You can sell your boat back anytime.',
+    den: 'Bet game cash on dice, numbers, cards, or the track. House games have a house edge. Back-room games put you against other players.',
+    speakeasy: 'Run a nightclub to earn cash. Buy rounds at other clubs to build renown, and watch your club\'s heat to avoid Prohibition raids.',
+    boxing: 'Sign and train a fighter, then enter bouts against other managers or the house card. Players can bet on main events. Your fighters are lost when your street dies; your manager record survives.',
+    races: 'Tune a car and race the circuit. Wager against rivals or race for pink slips, where the winner takes the car. Underdogs can use NOS.',
+    stable: 'Buy and train dogs or horses, breed champions, and enter the circuit. The daily card lets other players bet on your animals.',
+    pvp: 'Take contracts, hunt marks, arrange duels, and manage your defenses. A kill pays the contract pot plus loot. Check your defenses before taking on a rival.',
+    loans: 'Borrow cash or lend at rates you set. A car can secure a loan. Defaulting brands you a welsher and can bring hunters after you.',
+    law: 'Track your RICO case before it reaches indictment and trial. You can bribe, retain a lawyer, or inform on a rival. Check the cost and effect of each option.',
+    pen: 'Work the yard, buy protection, bribe a guard, or join a crew while in jail. You can also attempt a breakout, which leaves you wanted.',
+    wire: 'Spend $OMR to tap rivals, learn what they hold, and buy intelligence. Sweep your own lines to remove taps.',
+    family: 'Families hold turf, share a treasury, fight wars, and run territory rackets. The largest sit on the Commission. Join a family or found your own.',
+    portfolio: 'Manage staking and the one-way Window exchange. The Vault records internal allocations without paying out ETH. On-chain extraction has separate funding and launch requirements.',
+    estate: 'Spend $OMR on an estate for your bloodline. Add wings and staff, host galas, or buy at auction. These status upgrades survive death.',
+    store: 'Buy revives, passes, and cosmetics with real money. Purchases fund prize pools and do not raise combat power; free players can compete on every board.',
+    life: 'Choose skills and a Path, work the Trades, and build standing with the six Underworld fixtures. Their discounts and favors reward the work you do for them.',
+    desk: 'Follow case evidence, restore rare objects, and trade materials. Your story choices stay on your account record.',
   };
   function renderIntro(id) {
     const w = $('#introwrap'); if (!w) return;
@@ -7777,14 +7777,14 @@
     const archivedSkills = deskList(board.crafting).flatMap((workshop) => deskList(workshop.archivedSkills).map((item) => ({ ...item, workshop: workshop.title })));
     const archivedTools = deskList(board.crafting).flatMap((workshop) => deskList(workshop.archivedTools).map((item) => ({ ...item, workshop: workshop.title })));
     return `<div class="desk-archive">
-      <section class="desk-archive__lead"><span class="desk-kicker">Permanent record</span><h2>What your street chose and kept</h2><p>Story decisions are write-once. Old workshop versions stay visible here, but cannot enter the active bundle.</p></section>
+      <section class="desk-archive__lead"><span class="desk-kicker">Permanent record</span><h2>What your street chose and kept</h2><p>Story choices are permanent. You can review older workshop records here, but cannot use them in the current workshop.</p></section>
       <div class="desk-archive-grid"><section class="desk-section-static"><div class="desk-section-heading"><h3>Story flags</h3><span>${fmt(flags.length)} recorded</span></div>${flags.length ? `<div class="desk-ledger">${flags.map((flag) => `<div class="desk-ledger-row"><div><b>${esc(flag.title || deskWords(flag.key))}</b><span>${esc(deskWords(flag.kind))}</span></div><div class="desk-ledger-row__value"><b>${esc(deskWords(flag.value))}</b><span>${esc(deskWhen(flag.recordedAt))}</span></div></div>`).join('')}</div>` : '<p class="desk-empty-note">No lasting story choice has been recorded.</p>'}</section>
-      <section class="desk-section-static"><div class="desk-section-heading"><h3>Closed cases</h3><span>${fmt(completed.length)} filed</span></div>${completed.length ? `<div class="desk-ledger">${completed.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title)}</b><span>${esc(deskWords(item.scopeKind))}</span></div><div class="desk-ledger-row__value">${deskStamp('Closed', 'ready')}<span>${esc(deskWhen(item.completedAt))}</span></div></div>`).join('')}</div>` : '<p class="desk-empty-note">No authored case has reached its ending.</p>'}</section></div>
+      <section class="desk-section-static"><div class="desk-section-heading"><h3>Closed cases</h3><span>${fmt(completed.length)} filed</span></div>${completed.length ? `<div class="desk-ledger">${completed.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title)}</b><span>${esc(deskWords(item.scopeKind))}</span></div><div class="desk-ledger-row__value">${deskStamp('Closed', 'ready')}<span>${esc(deskWhen(item.completedAt))}</span></div></div>`).join('')}</div>` : '<p class="desk-empty-note">You have not finished a case yet.</p>'}</section></div>
       <details class="desk-section"${archivedInventory.length || archivedSkills.length || archivedTools.length ? ' open' : ''}><summary><span>Archived workshop versions</span><small>${fmt(archivedInventory.length + archivedSkills.length + archivedTools.length)} records</small></summary>
         ${archivedInventory.length ? `<h4 class="desk-subhead">Materials and workpieces</h4><div class="desk-ledger">${archivedInventory.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.itemId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>${fmt(item.quantity)}</b><span>${esc(String(item.contentHash || '').slice(0, 8))}…</span></div></div>`).join('')}</div>` : ''}
         ${archivedSkills.length ? `<h4 class="desk-subhead">Skills</h4><div class="desk-ledger">${archivedSkills.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.skillId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>Level ${fmt(item.level)}</b><span>${fmt(item.xp)} XP</span></div></div>`).join('')}</div>` : ''}
         ${archivedTools.length ? `<h4 class="desk-subhead">Tools</h4><div class="desk-ledger">${archivedTools.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.toolId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>${fmt(item.durabilityRemaining)} / ${fmt(item.maxDurability)}</b><span>archived</span></div></div>`).join('')}</div>` : ''}
-        ${!archivedInventory.length && !archivedSkills.length && !archivedTools.length ? '<p class="desk-empty-note">No superseded workshop state is on your account.</p>' : ''}</details>
+        ${!archivedInventory.length && !archivedSkills.length && !archivedTools.length ? '<p class="desk-empty-note">Your account has no older workshop records.</p>' : ''}</details>
     </div>`;
   }
   function deskShell(board) {
@@ -7803,7 +7803,7 @@
     </div>`;
   }
   function deskLoading() {
-    return `<div class="content-desk" aria-busy="true"><header class="desk-mast"><div><span class="desk-kicker">Municipal bureau of unfinished business</span><h1>Content Desk</h1><p>Pulling the latest stamped projections from the file room.</p></div></header><div class="desk-loading" aria-label="Loading Content Desk"><span></span><span></span><span></span><span></span></div></div>`;
+    return `<div class="content-desk" aria-busy="true"><header class="desk-mast"><div><span class="desk-kicker">Municipal bureau of unfinished business</span><h1>Content Desk</h1><p>Loading your cases, workshop, and account record.</p></div></header><div class="desk-loading" aria-label="Loading Content Desk"><span></span><span></span><span></span><span></span></div></div>`;
   }
   function drawContentDesk() {
     const panel = $('#tab-desk');
@@ -8042,7 +8042,7 @@
       { v: kHeat + '/100', label: 'heat', cls: kHeat >= 60 ? 'warn' : '', sub: kHeat >= 60 ? 'the Bureau is watching — lay low' : 'under the radar' },
     ]);
     t.innerHTML = `
-      ${!me.lab ? coachCard('The Kitchen is the deepest money in the game', 'Cook product, hire a crew, and move weight while you\'re offline. You need a lab (buy one below) and it pays to declare The Kitchen as your Path first. Mind your heat and the crew\'s wages (the nut).') : kHero}
+      ${!me.lab ? coachCard('Run a kitchen', 'Buy a lab to cook product, then keep your crew stocked and paid while they sell. The Kitchen Path adds its own bonuses. Watch your heat and crew wages, known as the nut.') : kHero}
       <h2>The Trade</h2>
       <div class="card"><span class="t">${esc(rank.name)}</span>
         <div class="d">gross moved $${fmt(me.tradeRep || 0)} · rank bonus +${Math.round(rank.bonus * 100)}%${nextRank ? ` · next: ${esc(nextRank.name)} at $${fmt(nextRank.at)}` : ' · the top of the trade'}</div>
@@ -8197,7 +8197,7 @@
           ${boss ? `<div style="margin-top:4px"><select id="rp-${p.id}"><option value="">— put a man in —</option>${g.members.map((m) => `<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select>
             <button class="act" data-post="${p.id}">post him</button>${p.holder ? ` <button class="act" data-unpost="${p.id}">stand down</button>` : ''}</div>` : ''}
         </div>`).join('')}</div>
-      <div class="d" style="color:var(--dim);margin-top:6px">A man has to make level ${rost.minLevel} to hold a post, and once he takes one you cannot move HIM for ${mins(rost.reassignSeconds)} — so answering a hit on your Enforcer costs another man off the street, not a reshuffle.</div>`)}
+      <div class="d" style="color:var(--dim);margin-top:6px">Posts require level ${rost.minLevel}. Once assigned, a member cannot move posts for ${mins(rost.reassignSeconds)}. If your Enforcer is killed, appoint another eligible member.</div>`)}
 
       <h2 style="margin-top:12px">Territory Operations</h2>
       ${g.empire ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏙️ ${g.empire.rank}</span> <span class="d">$${fmt(g.empire.earned)} lifetime territory income — <a href="#" id="terr-lb">the Empire board →</a></span>${g.syndicate ? `<div style="margin-top:4px">🃏 <b>${esc(g.syndicate.name)}</b> <span class="d">— ${g.syndicate.count} ${esc(g.syndicate.kind)} operations. Specialization pays in prestige.</span></div>` : ''}</div>` : ''}
@@ -8330,7 +8330,7 @@
       <div class="card"><span class="t">${g.charter ? esc(g.charter.name) : 'Unchartered'}</span>
         ${g.charter ? `<div class="d" style="margin-top:3px">${esc(g.charter.blurb || '')}</div>
         <div style="margin-top:4px"><span class="chip good">${g.charter.good}</span> <span class="chip bad">${g.charter.bad}</span></div>`
-        : '<div class="d" style="margin-top:3px">Your family runs like every other family in the city. Pick a charter and you get one real edge and one real handicap — running neither is a legitimate answer, you just get neither side.</div>'}</div>
+        : '<div class="d" style="margin-top:3px">A charter gives your family a bonus and a handicap. Without one, your family uses the standard rules.</div>'}</div>
       ${boss ? (g.charters || []).map((c) => (g.charter && g.charter.id === c.id) ? '' : `
         <div class="card" style="margin-top:6px"><span class="t">${esc(c.name)}</span>
           <div class="d" style="margin-top:3px">${esc(c.blurb)}</div>
@@ -8372,7 +8372,7 @@
       const rows = (await api('GET', '/v1/leaderboard/foundation')).body?.board || [];
       el.innerHTML = rows.length
         ? `<div class="grid">${rows.slice(0, 10).map((f, i) => `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${esc(f.tag)}] ` : ''}${esc(f.name)}</span><div class="d">${f.foundation || ''}</div></div>`).join('')}</div>`
-        : '<div class="d" style="color:var(--dim);font-size:12.5px">No family has endowed a foundation yet — be the first pillar of the city.</div>';
+        : '<div class="d" style="color:var(--dim);font-size:12.5px">No family has funded a foundation yet.</div>';
     }; }
     { const tlb = $('#terr-lb'); if (tlb) tlb.onclick = async (e) => { e.preventDefault();
       const d = (await api('GET', '/v1/leaderboard/territory')).body || {};
@@ -8488,7 +8488,7 @@
         <button class="act" data-do="POST /v1/crew/decline/${iv.crewId}">pass</button></div>`).join('')}</div>` : '';
 
     if (!crew) {
-      t.innerHTML = `${coachCard('Run with a crew', 'The step between going it alone and running a 20-man family: a 2–' + b.maxMembers + ' player pact. No treasury, no turf — a private room, each other\'s backs, and a rule you don\'t raise a hand to your own crew — break it any time by walking away.')}
+      t.innerHTML = `${coachCard('Run with a crew', 'A crew has 2 to ' + b.maxMembers + ' players, private chat, and protection from attacks by crewmates. It has no shared treasury or turf. You can leave whenever you choose.')}
         ${inviteCards}
         <div class="card" style="margin-top:6px"><span class="t">Start your own</span>
           <div class="d" style="margin-top:4px">level ${b.minLevel}+.
@@ -8745,7 +8745,7 @@
       }
       if (!rows.length) return '';
       return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">The Market</span>
-        <div class="d" style="font-size:11px;color:var(--dim);margin-bottom:3px">a street is real, tradeable property — its provenance is its value. One street per name; sell before you buy another.</div>
+        <div class="d" style="font-size:11px;color:var(--dim);margin-bottom:3px">Trade streets with their names and histories intact. You can hold one street at a time; sell before buying another.</div>
         ${rows.join('')}</div>`;
     };
     // ON-CHAIN (Phase 3) — extract your street as a tradeable StreetDeed ERC-721. It carries its legend
@@ -8791,10 +8791,10 @@
       ${upgradeCard}
       ${deed ? `<h2>${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
         <div class="card" style="border-color:var(--gold)"><span class="t">The Deed</span>
-          <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, on ${esc(deed.districtName)}${deed.neighborhood ? ' — ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. It's yours — nobody takes it off you, and it outlives your street: the heir inherits it.</div>
+          <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, in ${esc(deed.districtName)}${deed.neighborhood ? ', ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. Your heir inherits it when your street dies.</div>
           <div class="d" style="margin-top:3px">Legend: <b>${b.renown}</b> renown · <span class="chip good">${esc(b.rank)}</span> ${vaultChip(deed.vault)}</div>
           ${deed.vault && (deed.vault.received || []).length ? `<div class="d" style="margin-top:3px;font-size:11px;color:var(--dim)">Its on-chain vault has received ${deed.vault.received.map((r) => r.units + ' ' + esc(r.ticker)).join(', ')}. That vault is keyed on the street's NAME, so it travels with the deed — sell the street and it goes with it${deed.vault.tba ? ` (<code>${esc(deed.vault.tba)}</code>)` : ''}.</div>` : ''}</div>
-        <h2 style="margin-top:12px">The Record <span class="d" style="font-size:11px">(everything that ever happened here — the legend, and it can't be faked)</span></h2>
+        <h2 style="margin-top:12px">The Record <span class="d" style="font-size:11px">(recorded events on this street)</span></h2>
         <div class="card">${history.length
           ? history.map((h) => `<div class="d" style="margin-top:2px">${evLabel(h.kind)}${h.detail ? ' — ' + esc(h.detail) : ''}</div>`).join('')
           : '<div class="d" style="color:var(--dim)">nothing has happened here yet — play, and the street remembers.</div>'}</div>`
@@ -8984,12 +8984,12 @@
         const list = (await api('GET', '/v1/leaderboard/vouches')).body || [];
         sheetModal('THE MOST TRUSTED — most vouched-for', list.length
           ? '<div class="grid">' + list.map((v) => `<div class="card"><span class="t">${v.rank}. ${esc(v.name)}</span><div class="d">🤝 ${v.vouches} vouch${v.vouches === 1 ? '' : 'es'}</div></div>`).join('') + '</div>'
-          : '<p class="dim">Nobody has been vouched for yet — be the first to stake your name on someone.</p>');
+          : '<p class="dim">No player has received a vouch yet.</p>');
       } else {
         const list = (await api('GET', '/v1/leaderboard/mentors')).body || [];
         sheetModal('THE MENTORS — most protégés raised', list.length
           ? '<div class="grid">' + list.map((m, i) => `<div class="card"><span class="t">${i + 1}. ${esc(m.name)}</span> <span class="chip">${esc(m.rank)}</span><div class="d">${m.raised} raised</div></div>`).join('') + '</div>'
-          : '<p class="dim">No mentors have raised a protégé yet — be the first.</p>');
+          : '<p class="dim">No mentor has raised a protégé yet.</p>');
       }
     });
   }
@@ -9028,7 +9028,7 @@
     const myCars = (me.cars || []).filter((c) => !c.listed && !c.pledged);
     const myCargo = Object.entries(me.cargo || {}).filter(([, q]) => q > 0);
     t.innerHTML = `
-      ${!listings.length ? coachCard('The Black Market — player-to-player trade', 'Auction cars to other players, or buy &amp; sell trade goods at a fixed price (pick them up at the seller\'s dock). Empty right now — list something of your own below, or check back.') : ''}
+      ${!listings.length ? coachCard('Trade with other players', 'Auction cars or buy and sell goods at a fixed price. Pick up goods at the seller\'s dock. There are no listings right now; post one below or check back.') : ''}
       <h2>The Board <span class="d" style="font-size:11px">(take ${(board.levers?.takeBps ?? 200) / 100}% · list fee ${(board.levers?.listFeeBps ?? 100) / 100}% · max ${board.levers?.maxListings} listings)</span></h2>
       ${listings.length ? `<div class="grid">${listings.map((l) =>
         l.kind === 'car' ? carCard(l) : l.kind === 'good' ? goodCard(l) : orderCard(l)).join('')}</div>`
@@ -9370,7 +9370,7 @@
         <div class="row" style="margin-top:6px"><input id="ref-claim-name" placeholder="their street name" value="${esc(refDraft)}" style="max-width:220px">
         <button class="act" id="ref-claim-btn">that's who sent me</button></div></div>` : ''}
       <h2 style="margin-top:14px">Spread the Word <span class="d" style="font-size:11px">— daily: share OMERTÀ for petty in-game cash. Your code is your name; a recruit who sticks earns you referral rewards (in-game cash) — and a crew that plays makes you earn respect faster</span></h2>
-      ${!sw.enabled ? '<div class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:4px">Reward payouts go live soon — but sharing still brings in new blood (and referral cash) right now.</div>' : ''}
+      ${!sw.enabled ? '<div class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:4px">Share rewards are unavailable. You can still share your link; qualifying recruits earn referral cash.</div>' : ''}
       <div class="grid">${(sw.tasks || []).map((s) => `
         <div class="card" ${s.state !== 'claimed' && sw.enabled ? 'style="border-color:var(--neon)"' : ''}><span class="t">${s.state === 'claimed' ? '✓ ' : ''}${esc(s.name)}</span>
           ${s.state === 'claimed' ? '<span class="chip good">done today</span>'
@@ -9410,7 +9410,7 @@
       <!-- The City Standing led this screen — so the FIRST thing a brand-new player saw was six bars
            at 0% and a leaderboard of strangers, with the checklist (the actual point) pushed below.
            It leads only once the checklist is behind you; before that it's one honest line. -->
-      ${ob.allDone ? `<h2>The City Standing <span class="d" style="font-size:11px">— one score across everything you do. Blood, Empire, Power, Legit, Hustle, Honor. This is who's actually winning.</span></h2>
+      ${ob.allDone ? `<h2>The City Standing <span class="d" style="font-size:11px">(your combined score across Blood, Empire, Power, Legit, Hustle, and Honor)</span></h2>
       <div id="city-standing" class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:12px">loading…</div>` : ''}
       ${ob.allDone ? '' : `
       <h2>Make Your Bones <span class="d" style="font-size:12.5px">(${ob.claimed}/${ob.total} done — the first week pays cash to learn the ropes)</span></h2>
@@ -9466,7 +9466,7 @@
           <div class="card"><img class="ico wide" loading="lazy" alt="" src="/art/card-whacked.jpg"><span class="t">Death Is Real</span>
             <div class="d">Your street can be killed for good. Your <b>account</b> — prestige, $OMR, the estate — survives to your heir.</div></div>
           <div class="card"><img class="ico wide" loading="lazy" alt="" src="/art/interior-family.jpg"><span class="t">The Family</span>
-            <div class="d">Turf, treasury, wars, the Commission. Nobody survives alone — and enemies' bloodlines swear vendettas.</div></div>
+            <div class="d">Families share turf and a treasury, fight wars, and vote in the Commission. Rival bloodlines can swear vendettas.</div></div>
           <div class="card"><img class="ico wide" loading="lazy" alt="" src="/art/interior-law.jpg"><span class="t">The Law</span>
             <div class="d">Heat feeds a RICO case. Lay low, pay the right people, or face the courtroom — and the Pen behind it.</div></div>
           <div class="card"><img class="ico wide" loading="lazy" alt="" src="/art/interior-start.jpg"><span class="t">Follow the Coach</span>
@@ -9619,7 +9619,7 @@
     const digestBox = dg.available ? `
         <div class="msp-h">Stay in the loop</div>
         <div class="msp-box">
-          <div class="d" style="font-size:12.5px">The city keeps moving while you're gone. Get a <b>"while you were gone"</b> email — your take, your rivals, the heat — and nothing else.</div>
+          <div class="d" style="font-size:12.5px">Get an optional email about your income, rivals, and heat while you were away.</div>
           <div class="row" style="margin-top:6px">
             <input id="prof-digest-email" type="email" placeholder="you@email.com" value="${esc(dg.email || '')}" style="flex:1;min-width:140px;background:#100b07;color:var(--fg);border:1px solid #3a2a1a;border-radius:4px;padding:6px;font-size:12.5px">
             <button class="act" id="prof-digest-save" style="border-color:var(--neon)">${dg.optin ? 'update' : 'turn on'}</button>
@@ -9703,7 +9703,7 @@
           <tr><td>Crew bonus</td><td style="color:var(--neon)"><b>+${p.crewBonusPct}%</b> respect on everything you do</td></tr>
           <tr><td>Recruiter rank</td><td>${esc(p.recruitRank || 'unranked')} (${p.recruitsLifetime} made ${p.recruitsLifetime === 1 ? 'man' : 'men'})</td></tr>
         </table></div>
-        <div class="d" style="font-size:11.5px;color:var(--dim)">A recruit pays out as they come up — an early cut when they find their feet, the full reward when they're made. But the real prize is <b>the crew bonus</b>: every recruit makes you earn respect faster, and the further THEY get, the more it's worth (level 5 → +5%, level 10 → +10%, and up). It's live — it rises as they do, and it goes when they do.</div>
+        <div class="d" style="font-size:11.5px;color:var(--dim)">Recruits earn you an early payout, then the full reward when they qualify. They also add a respect bonus based on their level: +5% at level 5, +10% at level 10, and so on. The bonus changes as they progress and ends when they leave.</div>
       </div>
       </div>`;
     const cp = t.querySelector('#prof-copy');
@@ -9784,7 +9784,7 @@
     // THE REGIMEN — eight disciplines on the SAME gym clock + the fixtures' daily drills
     const regCd = Number(gym.trainSeconds || 0);
     const regimenBlock = !gym.disciplines ? '' : `
-      <div class="d" style="margin-top:10px"><b>The Regimen</b> — eight disciplines, trained on the same gym clock (${gym.energy} energy a session). Breadth, not shortcuts:</div>
+      <div class="d" style="margin-top:10px"><b>The Regimen</b>: train eight disciplines on the gym clock. Each session costs ${gym.energy} energy.</div>
       <div class="grid" style="margin-top:4px">${gym.disciplines.map((d) => `
         <div class="card"><span class="t">${esc(d.name)}</span> <span class="chip">${d.level >= d.cap ? 'MASTERED' : `lvl ${d.level}`}</span>
           <div class="d">${esc(d.desc)}</div>
@@ -9911,7 +9911,7 @@
       <div class="card" style="margin-top:8px">
         <div class="d" style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)">🎓 the trades — every job schools you</div>
         <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:4px">${tradeRow(tLar)}${tradeRow(tCom)}</div>
-        <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">Ten trades learn by doing — no cost, no clicking, just the work. <button class="act" data-dailygo="life" style="font-size:11px;padding:2px 6px">the full board →</button></div>
+        <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">Ten trades improve as you work them, without a separate training cost or action. <button class="act" data-dailygo="life" style="font-size:11px;padding:2px 6px">the full board →</button></div>
       </div>`;
     // the density fix (tester: "you have to scroll a while between disparate functions"): the best
     // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you
@@ -9928,7 +9928,7 @@
         <span class="t" style="margin-right:2px">The Map</span><span class="d" style="color:var(--dim)">you're in <b>${me?.loc || '—'}</b> ·</span> ${travel}
       </div>
       ${hu.contact ? `<div class="card" style="margin-top:8px;border-color:var(--neon)">
-        <div class="d" style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)">😈 tonight's hustle — three stops, real money</div>
+        <div class="d" style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)">😈 tonight's hustle: three stops for game cash</div>
         <span class="t">${hu.done ? 'DONE FOR THE DAY' : `Stop ${hu.step + 1} of ${hu.of}`}</span>
         <span class="d" style="margin-left:6px">${['◉', '◉', '◉'].map((d, i) => `<span style="color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}">${d}</span>`).join('​')}</span>
         <div class="d">${esc(hu.what || '')}</div>
@@ -10025,7 +10025,7 @@
   async function renderCity() {
     const t = $('#tab-city');
     const r = await api('GET', '/v1/city');
-    if (r.code >= 400) { t.innerHTML = '<p class="d">the city is quiet.</p>'; return; }
+    if (r.code >= 400) { t.innerHTML = '<p class="d">The city board could not be loaded. Try again.</p>'; return; }
     const c = r.body;
     // CITYWIDE — this screen's five authed boards in ONE read (see src/citywide.js). /v1/city above
     // stays its own fetch: it is keyless and already cached for everybody, which no per-player
@@ -10124,7 +10124,7 @@
             <input id="mg-qty" type="number" placeholder="qty" style="width:70px"><button class="act" id="mg-give-goods">give goods</button>
             <input id="mg-omr" type="number" placeholder="$OMR" style="width:90px"><button class="act" id="mg-give-omr">give $OMR</button>
           </div>
-          <div class="d" style="font-size:11px;margin-top:4px">every brick BURNS (cash 1:1 · goods at base value · $OMR at $${fmt(M.omrRate)} each) — this buys glory, not power</div>
+          <div class="d" style="font-size:11px;margin-top:4px">Contributions are spent permanently: cash at 1:1, goods at base value, and $OMR at $${fmt(M.omrRate)} each. They count toward the plaque and grant no gameplay power.</div>
           ${(M.plaque || []).length ? `<div class="d" style="margin-top:6px"><b>THE PLAQUE</b> — ${M.plaque.slice(0, 8).map((pl, i) => `${i + 1}. ${esc(pl.name)} $${fmt(pl.contributed)} <span style="color:var(--gold,#c9a227)">${pl.tier}</span>`).join(' · ')}</div>` : '<div class="d" style="margin-top:6px">no bricks laid yet — be the first name on the plaque</div>'}
           ${mega.builder ? `<div class="d" style="margin-top:6px;color:var(--gold,#c9a227)">THE BUILDER — <b>${mega.builder.rank}</b> · $${fmt(mega.builder.built || 0)} laid across the city${mega.builder.architected ? ` · ${mega.builder.architected}× Architect` : ''} <span style="color:var(--dim)">(survives death)</span> · <a href="#" id="builder-board">the great builders →</a> · <a href="#" id="fambuild-board">the families →</a></div><div id="builder-lb"></div>` : ''}
         </div>` : '<div class="card"><span class="t">THE SKYLINE IS COMPLETE</span><div class="d">Every monument stands. The city rests — for now.</div></div>'}
@@ -10668,7 +10668,7 @@
         <div class="card"><span class="t">Safehouse</span>
           <div class="d">${me.safeSeconds > 0
             ? `to ground for ${mins(me.safeSeconds)} more — while you're under, <b>nothing pays out</b>: no collecting a front, a corner, a club, freight or tribute, no banking a deposit, no fencing, no lending`
-            : `$${fmt(me.safehouseCost)} for 4h — untargetable by fire + NPC hits (still jumpable).<br><span style="color:var(--dim)">It's a shield, not a bunker: while you're under you can't hit anyone, and <b>nothing pays out</b> — no collecting a front, a corner, a club, freight or tribute, no banking a deposit, no fencing, no lending. The money keeps accruing; you just can't take it until you surface.</span>`}</div>
+            : `$${fmt(me.safehouseCost)} for 4h: protected from fire and NPC hits, but still vulnerable to jumps.<br><span style="color:var(--dim)">While inside, you cannot attack, collect front, corner, club, freight or tribute income, bank a deposit, fence goods, or lend. Income keeps accruing and can be collected after you leave.</span>`}</div>
           ${typeof me.safeCapSeconds === 'number' ? `<div class="d" style="color:var(--dim);font-size:11px">daily allowance left: ${mins(me.safeCapSeconds)} off-grid — you can't live in here (it refills over the day)</div>` : ''}
           ${me.safeSeconds > 0 ? '' : '<button class="act" data-do="POST /v1/safehouse">go to ground</button>'}</div>
         <div class="card"><span class="t">Bodyguard</span>
@@ -11040,7 +11040,7 @@
           <button class="act prime" data-secpay="${s.id}">pay the hush ($${fmt(s.demand)})</button></div>`).join('')}</div>` : '';
     t.innerHTML = `
       ${squeeze}
-      ${!(W.taps || []).length && !W.subscribed ? coachCard('The Wire — information is a weapon', 'Pay $OMR to run a WIRETAP on a rival (their Law heat, wealth, rackets, and whether they\'re hunting YOU) — or subscribe to the STREET WIRE for forecasts, threat chatter, and the war room. Someone bugging your line? SWEEP it clean.') : ''}
+      ${!(W.taps || []).length && !W.subscribed ? coachCard('Check your intelligence', 'Pay $OMR to tap a rival and see their heat, wealth, rackets, and whether they are hunting you. A Street Wire subscription adds forecasts and threat reports. Higher tiers include the war room. Sweep your lines to remove taps.') : ''}
       ${W.spymaster ? `<div class="card"><span class="t">🎧 ${W.spymaster.rank}</span> <span class="d">${W.spymaster.ops} intel op(s) run${W.spymaster.tapBonus ? ` · tradecraft: +${W.spymaster.tapBonus} wire slot${W.spymaster.tapBonus > 1 ? 's' : ''}` : ''}${W.spymaster.discountBps ? `, −${(W.spymaster.discountBps / 100)}% on intel reads` : ''} — <a href="#" id="wire-lb">the Spymaster board →</a></span></div>${W.watchdog ? '<div class="d" style="color:var(--neon);font-size:12.5px">🐕 THE WATCHDOG is live — you\'ll be alerted the moment a tapped mark turns hot (hunts you / goes wanted / gets indicted).</div>' : ''}` : ''}
       <h2>The Street Wire</h2>
       <div class="card" style="${W.subscribed ? 'border-color:var(--neon)' : ''}">
@@ -11158,8 +11158,8 @@
       if (r.code >= 400) { toast(describe(r.body) || 'trace failed'); return; }
       const w = r.body.watchers || [];
       sheetModal('BUGS TRACED', w.length
-        ? `<p class="dim">These are the people listening to you right now. A trace NAMES them but does not clear them — sweep to cut the lines.</p>${rankRows(w.map((x) => ({ name: x.name, val: `${minsTxt(x.expiresSeconds)} left` })), '')}`
-        : '<p class="dim">Your lines are clean — nobody\'s listening.</p>');
+        ? `<p class="dim">These players are listening to you. A trace identifies them; a sweep removes their taps.</p>${rankRows(w.map((x) => ({ name: x.name, val: `${minsTxt(x.expiresSeconds)} left` })), '')}`
+        : '<p class="dim">There are no active taps on your lines.</p>');
       renderWire();
     };
     $('#wire-dossier-go').onclick = async () => {
@@ -11184,7 +11184,7 @@
         + fileRow('money', esc(d.wealth))
         + fileRow('record', `${d.record.kills} kill(s) · ${d.record.deaths} death(s)`)
         + fileRow('wires out on', d.watching.length ? esc(d.watching.join(', ')) : 'nobody')
-        + `<p class="dim" style="margin-top:12px;font-size:12px">Money is a band, never a figure — the file doesn't carry an exact number.</p>`);
+        + `<p class="dim" style="margin-top:12px;font-size:12px">The file shows a cash range rather than an exact balance.</p>`);
       renderWire();
     };
     const wlb = $('#wire-lb'); if (wlb) wlb.onclick = async (e) => { e.preventDefault();
@@ -11205,19 +11205,17 @@
     const myOmr = Number(me.omr || 0);   // the $OMR rail's affordability, read off the sheet
     t.innerHTML = `
       <h2>The Store</h2>
-      <div class="card"><div class="d">Consumables, access, and status — <b>never</b> power. Everything here is a
-        revive, a subscription, or a badge, so a skilled free player still tops the boards. Your spend
-        funds the token buyback + the backed prize pools.
-        <div style="margin-top:6px">Two ways to pay: <b>real ETH</b>, or <b>earned $OMR</b> through PLEX. Same
-        goods either way. <b>Minting your identity</b> is the one exception — that has a single price, in ETH,
-        because it's what unlocks taking money off the chain.</div>
-        <div style="margin-top:6px;color:var(--dim);font-size:11px">Where the $OMR comes from, honestly: next to
-        nothing in the city mints it — the mission ladder pays a bit over a thousand across a whole career, a
-        fraction of anything on this shelf. You take it off somebody (a kill strips a fifth to a half of what
-        they're carrying), you buy it at the desk, or your family hands it to you. Grinding jobs won't get you here.</div></div></div>
+      <div class="card"><div class="d">Buy revives, subscriptions, and badges. Purchases do not raise combat strength,
+        and free players can compete on the boards. Spending funds token buybacks and backed prize pools.
+        <div style="margin-top:6px">Pay in ETH or with in-game $OMR through PLEX for the same goods.
+        Minting your identity uses ETH or a mission mint credit and requires checkout to be available.
+        A minted identity is one requirement for on-chain extraction.</div>
+        <div style="margin-top:6px;color:var(--dim);font-size:11px">The mission ladder pays a bit over a thousand $OMR across a career.
+        You can also buy it, receive it from another player, or loot it from a kill, which takes 20% to 50%
+        depending on how it is held. Regular street jobs do not issue $OMR.</div></div></div>
       <h2 style="margin-top:12px">What You Hold</h2>
       <div class="grid">
-        <div class="card"><span class="t">${o.minted ? 'MINTED' : 'Free Trial'}</span><div class="d">${o.minted ? 'identity minted — on-chain extraction unlocked' : `${o.mintCredits} mint credit(s)${o.mintCredits ? ' — spend it to mint your identity' : ''}`}</div></div>
+        <div class="card"><span class="t">${o.minted ? 'MINTED' : 'Not minted'}</span><div class="d">${o.minted ? 'identity minted; extraction still requires an active launch rail' : `${o.mintCredits} mint credit(s)${o.mintCredits ? ': use a credit to mint your identity' : ''}`}</div></div>
         <div class="card"><span class="t">Revives</span><div class="d">${o.respawnTokens} pre-paid revive token(s)</div></div>
         <div class="card"><span class="t">${o.patron ? '★ PATRON' : 'Patron'}</span><div class="d">${o.patron ? 'the permanent patron badge is yours' : 'not a patron yet'}</div></div>
         ${o.patronStanding ? `<div class="card"><span class="t">${esc(o.patronStanding.tierName)}</span> <span class="chip good">${eth(o.patronStanding.spentEth)} contributed</span>
@@ -11280,7 +11278,7 @@
     // guard checks every read.
     const exch = (await api('GET', '/v1/exchange')).body || {};
     t.innerHTML = `
-      ${!(me.cars || []).length && !(me.guns || []).length ? coachCard('Your garage &amp; armory', 'Boost cars for cash (fence them) or to melt into ammo. Down below, buy a gun and a vest — you can\'t win a fight, or take a contract, unarmed.') : ''}
+      ${!(me.cars || []).length && !(me.guns || []).length ? coachCard('Your garage &amp; armory', 'Boost cars to fence for cash or melt into ammo. Buy a gun and a vest below before fighting or taking a contract.') : ''}
       <h2>The Fleet (${(me.cars || []).length}) <button class="act" data-do="POST /v1/garage/boost" style="margin-left:8px">boost a car (GTA)</button></h2>
       ${(me.cars || []).length ? `<div class="grid">${me.cars.map((c) => `
         <div class="card">${ico('car', c.model)}<span class="t">${c.model}${c.trim ? ' · ' + c.trim : ''}</span>
@@ -11410,9 +11408,9 @@
     ]) : '';
     t.innerHTML = `
       ${empHero}
-      ${!owned.length ? coachCard('Legit fronts — passive income', 'Buy a business (level-gated — the catalog is below) and it earns pocket cash on its own while you are away. They cost upkeep (the pad), a rival can shake one down or take it off you, and the Bureau watches what a front earns — collect often and a raid catches less. A late-game engine — come back as you level.') : ''}
+      ${!owned.length ? coachCard('Earn from a business', 'Buy a front from the catalog once you reach its required level. It earns cash while you are away and charges upkeep. Rivals can shake it down or seize it, and the Bureau can raid. Collect often to leave less cash exposed.') : ''}
       ${owned.length ? `<div class="card" style="border-color:var(--blood)"><span class="t" style="color:var(--bad)">⚠ YOUR EMPIRE IS RISK CAPITAL</span>
-        <div class="d">If a rival <b>fire-kills your street</b>, the killer can <b>take over</b> your most valuable front — one they can hold. Your fronts aren't safe just because they're passive: defend yourself (a safehouse, a bodyguard), or expect to fight for them.</div></div>` : ''}
+        <div class="d">If a rival <b>fire-kills your street</b>, they can <b>take over</b> your most valuable front that they are eligible to hold. A safehouse or bodyguard can help defend you.</div></div>` : ''}
       ${me.tycoon ? `<div class="card" style="border-color:var(--gold)"><span class="t">THE TYCOON — ${me.tycoon.rank}</span>
         <div class="d">lifetime racket &amp; front income $${fmt(me.tycoon.earned || 0)} <span style="color:var(--dim)">(survives death)</span>
         ${(me.empireTitles || []).length ? ` · ${me.empireTitles.map((x) => `<span class="chip good">${x}</span>`).join(' ')}` : ''}
@@ -11429,10 +11427,9 @@
           ${b.cold ? '<span class="chip bad">COLD — pay the pad</span>' : ''}${b.raidRisk ? '<span class="chip bad">FEDS WATCHING</span>' : ''}
           <div class="d">$${fmt(b.incomePerHr)}/hr · pending $${fmt(b.pending)} · the pad $${fmt(b.upkeepPerHr)}/hr, owed $${fmt(b.upkeepOwed)}</div>
           ${!b.cold && b.coldSeconds ? `<div class="d" style="color:${b.padOutran ? 'var(--warn)' : 'var(--dim)'}">the boys come for the envelope in ${mins(b.coldSeconds)} — miss it and the place goes cold</div>` : ''}
-          ${b.padOutran ? `<div class="d" style="color:var(--warn)">the pad has outrun the till — squaring it costs
-            $${fmt(b.upkeepOwed - b.pending)} more than this front can hand you right now. <b>That is the deal, not a fault:</b>
-            the till only holds a day's take while the envelope runs for a week whether you're here or not — a front pays
-            an owner who shows up. Pay it out of pocket and it earns again, leave it cold until you can, or close it up.</div>` : ''}
+          ${b.padOutran ? `<div class="d" style="color:var(--warn)">Upkeep exceeds the till by $${fmt(b.upkeepOwed - b.pending)}.
+            The till holds one day's income, while unpaid upkeep keeps accruing until its cap.
+            Pay from your pocket to resume earning, leave the front cold until you can pay, or close it.</div>` : ''}
           <div class="d">${b.kind === 'casino' ? 'den rakeback at collect' : 'earns while you are away — collect at least every couple of days, or the pad gets ahead of it'}</div>
           ${b.raidThreshold != null ? `<div class="d" style="color:var(--dim)">Bureau heat ${b.scrutiny || 0}/${b.raidThreshold} — earning draws the eye; a raid seizes the pending + a fine. Collect often and it catches less.</div>` : ''}
           ${b.specName ? `<span class="chip good">✦ ${b.specName}</span>` : ''}
@@ -11552,7 +11549,7 @@
     const ownedDecor = store.owned?.cosmetics || [];
     const rn = b.yourRenown || { renown: 0, rank: 'Nobody' };
     t.innerHTML = `
-      ${!mine && !(b.clubs || []).length ? coachCard('Open a club — be the man to see', 'A speakeasy is the district\'s premier nightclub: it farms cash on its own AND is where the city gathers to be seen. One per district, level ' + (sp.minLevel || 15) + '+. Patrons buy rounds (you pocket the cut) and bottle service; the busiest room tops the nightlife. It dies with your street, so it\'s a marked man\'s prize.') : ''}
+      ${!mine && !(b.clubs || []).length ? coachCard('Open a speakeasy', 'Run the nightclub in your district at level ' + (sp.minLevel || 15) + '+. Each district has one club. It earns cash while you are away, with a cut from rounds and bottle service. Busy clubs climb the nightlife board. Your club is lost when your street dies.') : ''}
       <div class="card" style="border-color:var(--gold)"><span class="t">Your renown: ${rn.rank} <span class="chip">${fmt(rn.renown)}</span></span>
         <div class="d">The nightlife legend — earned by being seen (rounds + bottles) and running a room. <a href="#" id="sp-nl">the leaderboard →</a></div></div>
       <h2>You're at: ${esc(distName(me.loc))}</h2>
@@ -11628,7 +11625,7 @@
     const ready = stable.filter((f) => !f.injuredSeconds); // your fighters available to make a match
     const npc = b.npcTiers || [];
     t.innerHTML = `
-      ${!stable.length ? coachCard('Sign a contender', 'Every boss fancies himself a fight manager. Sign a fighter ($' + fmt(b.recruitCost || 50000) + ', level ' + (b.minLevel || 8) + '+), train them up, and stake them against other managers\' fighters or NPC cards. Run a stable of up to ' + max + '. Your fighters die with your street.') : ''}
+      ${!stable.length ? coachCard('Sign a contender', 'Recruit a fighter for $' + fmt(b.recruitCost || 50000) + ' at level ' + (b.minLevel || 8) + '+. Train them and enter bouts against other managers or NPC cards. You can manage up to ' + max + ' fighters. They are lost when your street dies.') : ''}
       <h2>The Fight Circuit</h2>
       ${b.champion ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏆 World Champion: ${b.champion.fighter}${b.champion.onMe ? ' <span class="chip good">you</span>' : ''}</span>
         <div class="d">${b.champion.defenses} title defence${b.champion.defenses === 1 ? '' : 's'}${b.champion.defendSeconds > 0 ? ` · must defend within ${mins(b.champion.defendSeconds)} or forfeit` : ' · <span style="color:var(--bad)">defence overdue — forfeit imminent</span>'}${b.champion.contender ? ` · #1 contender: ${esc(b.champion.contender.name)} (${b.champion.contender.record})${b.champion.contender.mine ? ' — you' : ''}` : ''}</div>
@@ -11715,7 +11712,7 @@
     const kinds = b.kinds || {}, meets = b.meets || {};
     const kindName = (k) => (kinds[k] || {}).name || k;
     t.innerHTML = `
-      ${!stable.length ? coachCard('Buy a racer', 'Own the dogs &amp; the ponies. Buy a greyhound ($' + fmt((kinds.dog || {}).cost || 30000) + ') or a racehorse ($' + fmt((kinds.horse || {}).cost || 120000) + ', level ' + (b.minLevel || 6) + '+), train up its speed/stamina/heart, and race it — the PvE circuit for a purse, or match it against a rival owner\'s racer for a cash wager. Run a stable of up to ' + max + '. They die with your street; your lifetime wins are a legend that survives.') : ''}
+      ${!stable.length ? coachCard('Buy a racer', 'Buy a greyhound for $' + fmt((kinds.dog || {}).cost || 30000) + ' or a racehorse for $' + fmt((kinds.horse || {}).cost || 120000) + ' at level ' + (b.minLevel || 6) + '+. Train speed, stamina, and heart, then race the circuit for a purse or wager against another owner. You can keep up to ' + max + ' racers. They are lost when your street dies; lifetime wins stay on your account.') : ''}
       <h2>The Stable <span class="d" style="font-size:11px">(${stable.length}/${max})</span> ${b.legend ? `<span class="chip good" style="font-size:11px">${esc(b.legend.title)} — ${b.legend.wins} career win${b.legend.wins === 1 ? '' : 's'}</span>` : ''}</h2>
       <div class="grid">${stable.map((y) => `
         <div class="card"><span class="t">${y.kind === 'horse' ? '🐎' : '🐕'} ${esc(y.name)} <span class="chip good">${y.rank}</span> <span class="chip">${y.record}</span></span>
@@ -11788,7 +11785,7 @@
     // enforces and disable themselves with the requirement on the face of the button.
     const gpOk = (me.level || 0) >= ((b.grandPrix || {}).minLevel || 0);
     t.innerHTML = `
-      ${!cars.length ? coachCard('Get some iron on the strip', 'Street racing turns your garage into a competitive loop. Boost or buy a car, tune it, and race the NPC circuit for a purse — or list it and take wagers off other drivers. Fast, valuable, well-tuned iron wins; the wheelman\'s speed decides close ones.') : ''}
+      ${!cars.length ? coachCard('Enter a street race', 'Boost or buy a car, tune it, then race the NPC circuit for a purse or take wagers from other drivers. Car speed, value, and tuning affect the result. Your character\'s speed can decide a close race.') : ''}
       <h2>Street Races <span class="chip">🏁 ${b.legend?.rank || 'Sunday Driver'} · ${b.legend?.wins || 0} wins</span></h2>
       ${cd > 0 ? `<div class="card"><div class="d">Your ride is cooling down — next run in ${mins(cd)}.</div></div>` : ''}
       <div class="grid">
@@ -11872,7 +11869,7 @@
       ? `<span class="chip" style="color:var(--gold)">reputation: ${[rep.coolsFaster && 'lanes cool 2× faster', rep.tollBreak && 'docks toll halved', rep.quieter && 'low profile — lanes heat half as fast'].filter(Boolean).join(' · ')}</span>`
       : `<span class="chip">earn the Smuggler ranks to manage your notoriety</span>`;
     t.innerHTML = `
-      ${!fleet.length ? coachCard('Buy a boat, run the coast', 'The Port brings contraband in from offshore. Buy a boat at the docks (a hold for cargo, speed to slip the Coast Guard), load a run, and — if you make it home clean — fence the haul for the smuggling margin. Get caught and you lose the cargo, eat a fine, and might lose the boat. Distinct from convoys: this is the SEA, and the risk is the law, not other players.') : ''}
+      ${!fleet.length ? coachCard('Buy a boat, run the coast', 'Buy a boat at the docks and load a contraband run. Cargo capacity and speed affect the trip. A successful landing lets you fence the haul. Coast Guard interception costs your cargo and a fine, and may cost the boat.') : ''}
       <h2>The Port ${b.atDocks ? '' : '<span class="chip" style="color:var(--bad)">travel to the docks to trade</span>'}</h2>
       ${b.legend ? `<div class="card" style="border-color:var(--gold)"><span class="t">The Smuggler's Legend</span><div class="d"><b style="color:var(--gold)">${b.legend.rank}</b> — $${fmt(b.legend.smuggled)} landed for life <span class="chip">survives death</span> · <a href="#" id="pt-lb">the leaderboard →</a></div></div>` : ''}
       <div class="card"><span class="t">The Supplier</span><div class="d">Contraband headroom today: <b>$${fmt(b.supplyLeft || 0)}</b> of $${fmt(b.supplyCap || 0)} — the offshore supplier only moves so much per day.
@@ -12088,7 +12085,7 @@
         <span class="t" style="color:var(--bad)">WELSHER</span>
         <div class="d">You broke your word. Nobody has to lend to you again until you square it — and a named gun on your head is cheap.</div>
         <button class="act" data-do="POST /v1/loans/square">square your name ($50k)</button></div>` : ''}
-      ${!(b.offers || []).length && !(b.active || []).length ? coachCard('The Shylock — predatory lending', 'Lend cash at a rate for a fixed term and collect the vig — or default and get leg-broken and marked a welsher. High trust, high risk. Nothing on the wire right now; post an offer below or wait for borrowers.') : ''}
+      ${!(b.offers || []).length && !(b.active || []).length ? coachCard('Lend or borrow cash', 'Set an interest rate and term to lend cash, or accept another player\'s loan. Defaulting can bring a beating and a welsher mark. There are no offers right now; post one below or check back.') : ''}
       ${b.house ? `<h2>The House Window <span class="d" style="font-size:11px">(the lender of last resort — bad terms, always open, lends only what it holds)</span></h2>
       <div class="card">${b.house.yourMarker
         ? `<span class="t">Your marker: $${fmt(b.house.yourMarker.owed)} owed</span> ${b.house.yourMarker.overdue ? '<span class="chip bad">OVERDUE — the house ALWAYS collects</span>' : `<span class="d">due in ${Math.ceil(b.house.yourMarker.dueSeconds / 3600)}h</span>`}
@@ -12338,7 +12335,7 @@
         <div class="capital-metrics" aria-label="Your capital position">
           <div class="capital-metric"><span class="capital-metric__label">Liquid</span><span class="capital-metric__value is-money">${fmt(Math.floor(Number(me.omr) || 0))} $OMR</span><span class="capital-metric__note">on hand; exposed to the game’s loot rules</span></div>
           <div class="capital-metric"><span class="capital-metric__label">Committed</span><span class="capital-metric__value">${fmt(Math.floor(Number(me.staked) || 0))} $OMR</span><span class="capital-metric__note">staked on the ladder and in the Vault</span></div>
-          <div class="capital-metric"><span class="capital-metric__label">Desk shelf</span><span class="capital-metric__value">${fmt(Math.floor(Number(desk.inventory) || 0))} $OMR</span><span class="capital-metric__note">recycled sink inventory, never newly printed</span></div>
+          <div class="capital-metric"><span class="capital-metric__label">Desk shelf</span><span class="capital-metric__value">${fmt(Math.floor(Number(desk.inventory) || 0))} $OMR</span><span class="capital-metric__note">inventory returned from eligible game spending</span></div>
           <div class="capital-metric"><span class="capital-metric__label">Exit reserve</span><span class="capital-metric__value">${fmt(Math.floor(Number(reserve.available) || 0))} $OMR</span><span class="capital-metric__note">available behind signed withdrawal vouchers</span></div>
         </div>
         <div class="capital-markets" aria-label="Live capital rails">
@@ -12400,27 +12397,23 @@
         <p class="capital-desk-board__note">${esc(desk.note || 'Desk status is read-only until a live lot is available.')}${desk.surge?.x > 1 ? ` Strength multiplier ×${Number(desk.surge.x).toFixed(2)} is awake after ${desk.surge.prints} qualifying prints.` : ''}</p>
       </section>
 
-      <h2>Going Legit <span class="d" style="font-size:11px">(what your $OMR does: the ladder, the vault, the window — and the on-chain way out)</span></h2>
+      <h2>Going Legit <span class="d" style="font-size:11px">(staking, the Vault, the Window, and extraction status)</span></h2>
       <div class="card" style="border-color:var(--neon)"><span class="t" style="color:var(--neon)">Where $OMR Comes From</span>
-        <div class="d">Almost nowhere in the game. There is no wage, no yield, no drip — the one trickle the street
-          pays is the <b>mission ladder</b> (a bit over a thousand across a whole career, once per account, plus a few
-          a day for a perfect daily board). Every other token in this city was bought with real money by somebody,
-          which is why it is worth taking off them.</div>
-        <div class="d">Your five ways to get some: <b>work the ladder</b> (the once-ever mission $OMR),
-          <b>take it</b> off a man who is holding (a kill loots their liquid $OMR),
-          <b>earn it</b> from a player who pays you in it, <b>buy it</b>, or <b>get paid out of the Bank</b> — whose
-          borrowers' fees buy $OMR on the market and hand it to the people who played that day.
-          That is the whole list, and a nightly job proves it.</div>
+        <div class="d">The <b>mission ladder</b> pays a bit over a thousand $OMR across a career, once per account.
+          A perfect daily board pays a few more. Other jobs do not issue a token wage or yield.
+          The rest of the city's $OMR comes from purchases made with real money.</div>
+        <div class="d">You can get $OMR through missions, loot from a kill, payments from other players,
+          purchases, or Bank distributions. The Bank uses borrowers' fees to buy $OMR on the market
+          and distribute it to active players. A nightly check accounts for these sources.</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px;border-top:1px solid rgba(255,255,255,.06);padding-top:5px">
-          A free account plays the <b>whole</b> game — every job, family, racket, kitchen, casino, PvP, all of it.
-          Minting (the mission ladder’s free credit — The Dockside Heist hands you one — or ETH at the published
-          wave price once the on-chain checkout opens) is what lets you move $OMR and gear
-          <b>on-chain out of the game</b>. Everything you build in-game, you build free.</div></div>
+          Free accounts can play jobs, families, rackets, kitchens, casino games, and PvP.
+          On-chain extraction of $OMR and gear requires a minted character and an active launch rail.
+          The Dockside Heist awards a free mint credit; ETH minting uses the published wave price once checkout opens.</div></div>
       <div class="card" style="border-color:var(--gold)"><span class="t" style="color:var(--gold)">THE MADE MAN ${me.made ? '— YOU ARE MADE' : ''}</span>
         <div class="d">${me.made
           ? `Standing runs another <b>${Math.floor((me.madeSeconds || 0) / 86400)}d</b>. Your fronts pay their own pad when you touch them.`
           : `Pay the dues and you're <i>made</i>: the badge, the upper compound, a club of your own, a seat in the high-stakes room (with ${rules?.accessStake?.highOmr ?? 300} $OMR staked — the seat AND the stake, both), and a rung up the ladder.`}</div>
-        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">It buys <b>real advantage</b> — but there is a <b>ceiling</b>, and holding ${rules?.made?.ceilingOmr ?? 900} $OMR reaches it without paying a subscription. Nothing dues buy helps you fight. A free man runs the whole city, and can still hunt you for your $OMR.</div>
+        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">Made status adds capped economic benefits. Holding ${rules?.made?.ceilingOmr ?? 900} $OMR reaches the same ceiling without a subscription. Dues do not improve combat strength, and free players can still hunt you and loot your $OMR.</div>
         <div class="row" style="margin-top:6px"><button data-do="POST /v1/made">${me.made ? 'ANOTHER 30 DAYS' : 'PAY THE DUES'} — ${rules?.made?.omr ?? 120} $OMR</button></div></div>
       <h2 class="capital-anchor" id="capital-bank" style="margin-top:12px">The Bank <span class="d" style="font-size:11px">(borrowers pay to use it — that profit buys $OMR and goes to the people who play)</span></h2>
       <div class="card"${bk.you?.today?.qualifies ? ' style="border-color:var(--ok)"' : ''}>
@@ -12432,9 +12425,9 @@
           <b>Your day so far:</b> ${fmt(bk.you.today.score)} ${bk.you.today.qualifies
             ? '<span class="chip good">IN THE NEXT SPLIT</span>'
             : `<span class="chip cold">NOT IN YET</span> — you need work across <b>${bk.you.today.minTracks}</b> different trades and at least <b>${bk.you.today.minScore}</b>`}</div>` : ''}
-        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">Your share is your share of what the whole city did
-          — flat, with <b>no cap</b>, so a man running ten accounts takes exactly what he would have taken running one.
-          Only actions the game itself rations count (nerve, energy, a cooldown); nothing you can simply buy more of.</div>
+        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">Your payout follows your share of the city's activity score, with no per-account cap.
+          Dividing the same activity across multiple accounts does not increase its share.
+          Only actions limited by nerve, energy, or cooldowns count; purchases do not add score.</div>
         ${(bk.you?.payouts || []).length ? `<div class="d" style="margin-top:6px"><b>What you've been paid</b></div>
           ${(bk.you.payouts).slice(0, 5).map((p) => `<div class="row"><span class="k">day ${p.endDay}</span><span>${fmt(p.omr)} $OMR</span></div>`).join('')}` : ''}
         ${(bk.epochs || []).length ? `<div class="d" style="margin-top:6px;color:var(--dim);font-size:11.5px">last split: ${fmt(bk.epochs[0].paidOmr)} $OMR across ${bk.epochs[0].players} player${bk.epochs[0].players === 1 ? '' : 's'}</div>` : ''}
@@ -12443,15 +12436,14 @@
       <div class="card"${pr.dormant ? ' style="opacity:.8"' : ''}>
         <span class="t">Your Position${pr.dormant ? ' <span class="chip">NOT OPEN YET</span>' : ''}</span>
         ${pr.dormant
-          ? `<div class="d">The Bank's borrowing side isn't open. When it is, you put up collateral, borrow against
-             it, and <b>the debt pays itself down out of the yield</b> — there is no price at which you are
-             liquidated, because the loan and the collateral are the same kind of money. Nothing to do here yet.</div>`
+          ? `<div class="d">Bank borrowing is not open yet. The planned system lets you borrow against collateral
+             and repay debt from its yield. Debt and collateral use the same currency, so price changes do not trigger liquidation.</div>`
           : (pr.linked === false
-            ? `<div class="d">Link your wallet above — a position belongs to a proven address, not to an account.</div>`
+            ? `<div class="d">Link your wallet above. Bank positions belong to verified wallet addresses.</div>`
             : `<div class="d">put up <b>${fmt(pr.collateral)}</b> · owed <b>${fmt(pr.debt)}</b> · you can still draw <b>${fmt(pr.borrowable)}</b></div>
                <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">There is <b>no price</b> at which you are
                liquidated — the debt only ever falls.${pr.payoffDays == null ? ' It has not paid down enough yet to say how long it will take, and we will not guess.' : ''}</div>`)}
-        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">The Bank keeps its own books. City money never becomes collateral and collateral never becomes city money — the only thing that crosses is the profit above, and it only goes one way.</div>
+        <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">Bank collateral and game cash have separate ledgers and cannot be exchanged. Only Bank profit funds the player distributions described above.</div>
       </div>`; })()}
 
       ${bkr.activity ? (() => {
@@ -12475,7 +12467,7 @@
         <div class="row" style="margin-top:6px"><input id="lad-amt" type="number" min="1" placeholder="$OMR to stake" size="10">
           <button class="act" id="lad-go">stake it</button></div>
         <div class="d" style="margin-top:8px"><b>THE COMMITMENT</b> — lock the stake for a window and it counts <b>×mult</b> on the ladder.
-          ${me.ladder?.lock ? `Your word is given: <b class="neon">×${me.ladder.lock.mult}</b> for another <b>${mins(me.ladder.lock.seconds)}</b> — ${fmt(me.ladder?.effective || 0)} effective on the rungs. It cannot come out until then, and a killer still loots it at the committed rate.` : `A locked stake cannot be unstaked until the window passes — and it is still looted at the committed rate when you die. Commitment buys rungs, not safety.`}</div>
+          ${me.ladder?.lock ? `<b class="neon">×${me.ladder.lock.mult}</b> for another <b>${mins(me.ladder.lock.seconds)}</b>, giving ${fmt(me.ladder?.effective || 0)} effective stake on the ladder. You cannot withdraw it until the lock expires. A killer can still loot it at the committed rate.` : `A locked stake cannot be withdrawn until its lock expires. It remains exposed to the committed loot rate if you die.`}</div>
         ${(me.ladder?.lockTiers || []).length && Number(me.ladder?.staked || 0) > 0 ? `<div class="row" style="margin-top:4px">
           ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${esc(t.name)} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
       ${characterWalletHtml(identityBody, identityR.code)}
@@ -12575,7 +12567,7 @@
         ${yld.families.map((f) => `<tr><td>${f.rank}</td><td>${esc(f.name)} <span class="chip">${esc(f.tag)}</span></td><td>${(f.shareBps / 100).toFixed(0)}%</td><td>${fmt(f.nextPayout)}</td></tr>`).join('')}</table>
         <div class="d" style="font-size:11px;color:var(--dim)">${esc(yld.note)}</div></div>` : ''}
 
-      <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(gameplay stake — a killer takes 20% of a staked balance against 50% of a loose or unbonding one. Losses reduce your remaining principal. The stake pays no personal yield; unstaking pulls the remaining balance and unbonds for six hours at the higher loose exposure before it is liquid)</span></h2>
+      <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(a killer takes 20% of staked $OMR and 50% of loose or unbonding $OMR. Losses reduce your remaining principal. The stake pays no personal yield. Unstaking withdraws the remaining balance after six hours at the loose loot rate)</span></h2>
       <div class="card"><div class="d">staked ${fmt(Math.floor(me.staked || 0))} $OMR${me.unbonding ? ` · unbonding ${fmt(Math.floor(me.unbonding))} (${mins(me.unbondSeconds || 0)})` : ''}</div>
         <input id="stake-amt" placeholder="$OMR" size="8">
         <button class="act" id="stake-in">stake</button>
@@ -12754,7 +12746,7 @@
     const fst = (await api('GET', '/v1/firsts')).body || {};
     const tr = e.trophies || {};
     t.innerHTML = `
-      ${e.tier === 0 ? coachCard('Buy a place worthy of the name', 'The don\'s compound — a tiered, furnishable home you build with earned $OMR. Pure legend: it displays your rarest iron, your book, your body count. It\'s account-level, so it OUTLIVES YOUR STREET — the heir inherits it.') : ''}
+      ${e.tier === 0 ? coachCard('Build your estate', 'Spend $OMR to buy and furnish an estate. Display your rare cars, financial record, and kills there. The estate belongs to your account, so your heir inherits it.') : ''}
       <h2>${e.name ? esc(e.name) : esc(e.tierName || 'No Compound Yet')}
         <span class="d" style="font-size:12.5px">${e.tierName ? `· ${esc(e.tierName)} · ${fmt(e.spent)} $OMR sunk` : ''}</span>
         ${auc.collector ? `<span class="chip">${auc.collector.rank} · ${fmt(auc.collector.sunk)} $OMR sunk into prestige</span>` : ''}</h2>
@@ -12842,7 +12834,7 @@
       <div class="d" style="margin-top:4px"><a href="#" id="col-lb-link">the completionist board →</a></div>
       <div id="col-lb"></div>
       <h2 style="margin-top:14px">The Firsts <span class="d" style="font-size:11px">(won once in this city's life — ${fst.taken || 0} of ${fst.total || 0} are gone forever${fst.mine ? ` · you hold ${fst.mine}` : ''})</span></h2>
-      <div class="d" style="margin-bottom:6px">Everyone can finish everything. Only the FIRST is gone — and it stays with your bloodline through every heir.</div>
+      <div class="d" style="margin-bottom:6px">These awards recognize the first player to finish each task. Each award stays with that bloodline through its heirs.</div>
       <div class="grid">${(fst.firsts || []).map((f) => `
         <div class="card"${f.mine ? ' style="border-color:var(--accent)"' : ''}><span class="t">${esc(f.name)}</span>
           ${f.taken ? `<span class="chip ${f.mine ? 'good' : ''}">${f.mine ? '✦ YOURS' : esc(f.holder || 'taken')}</span>` : '<span class="chip warn">OPEN</span>'}

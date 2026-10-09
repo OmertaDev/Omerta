@@ -546,13 +546,13 @@ export function deedPage(deed, { gameUrl } = {}) {
   if (!deed) {
     return `<!doctype html><meta charset="utf-8"><title>A Street of OMERTÀ</title>
 <body style="background:#0c0b0d;color:#c9c3d0;font-family:Georgia,serif;text-align:center;padding:80px">
-<h1 style="color:#f4f1ea">A Street of OMERTÀ</h1><p>This deed is not on-chain right now.</p>
+<h1 style="color:#f4f1ea">A Street of OMERTÀ</h1><p>This deed has no current on-chain record.</p>
 <p><a href="${esc(url)}" style="color:#c99">Enter the city →</a></p></body>`;
   }
   const rows = (deed.history || []).slice(0, 20).map((e) =>
-    `<li><b style="color:hsl(280,20%,70%)">${esc(e.kind)}</b> &mdash; ${esc(e.detail || '')}</li>`).join('');
-  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(deed.name)} — OMERTÀ</title>
-<meta property="og:title" content="${esc(deed.name)} — a Street of OMERTÀ">
+    `<li><b style="color:hsl(280,20%,70%)">${esc(e.kind)}</b>: ${esc(e.detail || '')}</li>`).join('');
+  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(deed.name)} · OMERTÀ</title>
+<meta property="og:title" content="${esc(deed.name)} · a Street of OMERTÀ">
 <meta property="og:description" content="${esc(deed.districtName || deed.district)} · ${esc(deed.rank)}. Property with a history.">
 <body style="background:#0c0b0d;color:#c9c3d0;font-family:Georgia,serif;max-width:720px;margin:0 auto;padding:48px 20px">
 <div class="deed-art" style="max-width:620px;margin:0 auto 32px;line-height:0"><style>.deed-art svg{display:block;width:100%;height:auto}</style>${deedPlateSvg(deed)}</div>
@@ -561,10 +561,10 @@ export function deedPage(deed, { gameUrl } = {}) {
   <p style="color:#8a8290;letter-spacing:4px;text-transform:uppercase;margin:8px 0">${esc(deed.districtName || deed.district)}</p>
   <p style="color:#a99;font-style:italic">${esc(deed.rank)}</p>
 </div>
-<h2 style="color:#c9c3d0;font-size:18px;letter-spacing:2px;text-transform:uppercase">The record on this block</h2>
+<h2 style="color:#c9c3d0;font-size:18px;letter-spacing:2px;text-transform:uppercase">This block's history</h2>
 <ul style="line-height:1.9;color:#b0aab8">${rows || '<li>Nothing has happened here yet.</li>'}</ul>
 <p style="text-align:center;margin-top:40px"><a href="${esc(url)}" style="color:#c99;letter-spacing:2px">ENTER THE CITY →</a></p>
-<p style="text-align:center;color:#555;font-size:13px">A Street Deed — property with a history. The market sets its price; the story is player-made.</p>
+<p style="text-align:center;color:#555;font-size:13px">Players write this street's history. Buyers and sellers set the deed's price.</p>
 </body>`;
 }
 

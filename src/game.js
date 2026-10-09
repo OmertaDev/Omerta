@@ -1482,13 +1482,13 @@ function coachLadder(ch, acct, owned) {
   const future = (t) => t && new Date(t) > new Date(now);
   const onboard = typeof acct.onboard === 'string' ? JSON.parse(acct.onboard || '{}') : (acct.onboard || {});
   const obDone = ONBOARD_TASKS.filter((t) => onboard[t.id]).length;
-  if (future(ch.jail_until) && add('You\'re in lockup', 'Sit it out — or work the Pen: bribe the guard, work the yard, watch your back.', 'pen')) return rungs;
-  if (future(ch.hosp_until) && add('Under the Doc\'s care', 'You\'re healing up and UNTOUCHABLE — rivals can\'t jump or shoot you. You can still work jobs and run your rackets; only fighting is off.', 'streets')) return rungs;
+  if (future(ch.jail_until) && add('You\'re in lockup', 'Wait out your sentence or work the Pen. You can bribe the guard and work the yard while watching your back.', 'pen')) return rungs;
+  if (future(ch.hosp_until) && add('Under the Doc\'s care', 'Rivals cannot jump or shoot you while you heal. You can still work jobs and run your rackets, though fighting is unavailable.', 'streets')) return rungs;
   if (Number(ch.health) < 30 && add('You\'re bleeding out', 'Heal up before someone finishes the job (the Heal button, top-left).', 'streets')) return rungs;
   // urgent, time-boxed threats — these cost you if you sit on them (all false for a fresh street)
-  if (future(ch.wanted_until) && add('There\'s a price on you', 'You\'re WANTED — even your family can hunt you and NPC guns are out. Square your name at the Shylock, or lie low.', 'loans')) return rungs;
-  if (ch.indicted_at && add('The Bureau indicted you', 'A RICO case is filed — the grace clock is running. Take a plea, buy the jury, or demand trial in The Law.', 'law')) return rungs;
-  if (ch.welsher && add('Your name is mud', 'You welshed on a debt — nobody lends to you. Square it at the Shylock to borrow again.', 'loans')) return rungs;
+  if (future(ch.wanted_until) && add('There\'s a price on you', 'You are wanted. Even your family can hunt you, and NPC gunmen are after you. Settle at the Shylock or lie low.', 'loans')) return rungs;
+  if (ch.indicted_at && add('The Bureau indicted you', 'A RICO case has been filed and the grace period is running out. Take a plea, buy the jury, or demand a trial in The Law.', 'law')) return rungs;
+  if (ch.welsher && add('Your name is mud', 'You defaulted on a debt and lenders will not lend to you. Settle it at the Shylock to borrow again.', 'loans')) return rungs;
   // STREET WAR step two — the city remembers who moved on you. Self-clears as the 48h window
   // rolls (the harness-F1 rule); under constant predation it stays lit, which is the news.
   // THE HEIR'S ARRIVAL (cohesion step three) — the two beats after the death modal closes. Both sit
@@ -1501,7 +1501,7 @@ function coachLadder(ch, acct, owned) {
   // and it names what settling PAYS. Fires for any vendetta holder, not just a fresh heir.
   {
     const v = (owned.vendettas || [])[0];
-    if (v && add('Blood is owed', `${v.sworn ? `${v.sworn} was put in the ground` : 'Your blood was spilled'}${v.target_name ? ` — ${v.target_name} walks the streets` : ''}. The bloodline swore vengeance: a revenge kill inside the window pays DOUBLE feared-rep, and naming a gun on their head waives the directed floor. Wet Work — before it lapses.`, 'pvp')) return rungs;
+    if (v && add('Blood is owed', `${v.sworn ? `${v.sworn} was killed` : 'Your blood was spilled'}${v.target_name ? `; ${v.target_name} is still on the streets` : ''}. Your bloodline swore a vendetta. A revenge kill before it expires pays double feared reputation. Naming a gun on the target waives the minimum directed bounty. Go to Wet Work before the vendetta lapses.`, 'pvp')) return rungs;
   }
   // (2) YOU RISE AGAIN — the heir's first minutes. The modal said what carried; this rung makes it
   // the NEXT STEP: the account survived, the street starts over, the coach picks up from here.
@@ -1513,30 +1513,30 @@ function coachLadder(ch, acct, owned) {
       owned.estate ? 'the compound' : null,
       Number(acct.prestige || 0) > 0 ? `prestige ${acct.prestige}` : null,
     ].filter(Boolean);
-    if (add('You rise again', `Generation ${ch.generation}. The street died; the BLOODLINE didn't — ${kept.length ? `the account kept ${kept.join(', ')}` : 'the account, the name and the ledger all carried'}. The street starts at level 1: pull jobs, and everything you built at the account level is still working for you.`, 'start')) return rungs;
+    if (add('You rise again', `Generation ${ch.generation}. ${kept.length ? `Your account kept ${kept.join(', ')}` : 'Your account, name, and ledger carried over'}. Your new character starts at level 1. Pull jobs to rebuild while your account holdings keep working for you.`, 'start')) return rungs;
   }
   // THE AHA MOMENT — the scripted first rival. Sits ABOVE the generic "someone moved on you" (the aha
   // IS a recorded rival event, so that rung would otherwise fire) — for a fresh player this IS the
   // specific, urgent version of it. Self-clears at stage 2 (settled): a winnable jump in Wet Work.
-  if (Number(ch.aha_stage) === 1 && add('Settle your first score', `${ch.aha_rival_name || 'Somebody'} put the word out that you're nobody — and the street is listening. Find them on the Wet Work roster and JUMP them. Hit back and you've made your bones.`, 'pvp')) return rungs;
+  if (Number(ch.aha_stage) === 1 && add('Settle your first score', `${ch.aha_rival_name || 'Somebody'} has been talking you down on the street. Find them on the Wet Work roster and press JUMP to settle it.`, 'pvp')) return rungs;
   if ((owned.recentRivals || 0) > 0
-    && add(`${owned.recentRivals > 1 ? `${owned.recentRivals} people` : 'Someone'} moved on you`, `You were robbed, jumped or hit inside the last two days and haven't answered ${owned.recentRivals > 1 ? 'them' : 'it'}. YOUR RIVALS on Wet Work names who — hit back and it pays honor. This clears when you've settled with every one of them.`, 'pvp')) return rungs;
-  if (Number(ch.lc_crime || 0) < 1 && add('Pull your first job', 'Head to the Streets. Pick any crime and press DO IT. That\'s the whole move — it pays cash and respect.', 'streets')) return rungs;
+    && add(`${owned.recentRivals > 1 ? `${owned.recentRivals} people` : 'Someone'} moved on you`, `You were robbed, jumped, or hit in the last two days and have not answered ${owned.recentRivals > 1 ? 'them' : 'it'}. Open YOUR RIVALS in Wet Work to see who attacked you. Hitting back pays honor. This reminder clears when you settle with each rival.`, 'pvp')) return rungs;
+  if (Number(ch.lc_crime || 0) < 1 && add('Pull your first job', 'Open the Streets, pick a crime, and press DO IT to earn cash and respect.', 'streets')) return rungs;
   // THE FIRST PAYOFF — the tour hands a new player to the real crime control, which leaves them on
   // Streets when the job lands. The job also makes `ob_crime` claimable, but short phones hide the
   // secondary coach plan; letting the level-5 rung lead here makes the ready cash + energy reward
   // disappear. This one-time handback clears on the existing account-level claim latch.
   if (lvl < 5 && Number(ch.lc_crime || 0) >= 1 && !onboard.ob_crime
-    && add('Claim your first-job reward', 'Your first job is done. Start Here has cash and energy waiting — collect it before the next job.', 'start')) return rungs;
+    && add('Claim your first-job reward', 'Your first job is done. Collect its cash and energy reward on Start Here before taking another job.', 'start')) return rungs;
   // ── THE ROAD TO LEVEL 5 (founder-directed: walk a brand-new player there, no exploring needed).
   // Two rungs, both clear on their own: the nerve-wait clears in minutes, the level rung at 5 —
   // so neither can mask the ladder below (the harness-F1 rule).
   if (lvl < 5) {
-    if (Number(ch.nerve) < 2 && add('Out of nerve — it comes back by itself', 'Nerve is what jobs cost, and it refills on its own (a few points a minute). While you wait: collect anything marked READY on Start Here — that\'s free money — or train at the gym on the Streets.', 'start')) return rungs;
+    if (Number(ch.nerve) < 2 && add('Out of nerve', 'Jobs cost nerve, which refills by a few points each minute. While you wait, collect rewards marked READY on Start Here or train at the gym on the Streets.', 'start')) return rungs;
     const need = Math.max(0, PACING.LEVEL_DIVISOR * 16 - Number(ch.respect));
-    if (add('Get to level 5', `Keep pulling jobs. Every job pays respect, and respect IS your level — ${need} more respect reaches level 5, where you choose your Path. That\'s the whole plan: do a job, wait for nerve, do another.`, 'streets')) return rungs;
+    if (add('Get to level 5', `You need ${need} more respect to reach level 5 and choose your Path. Keep pulling jobs to earn respect, waiting for nerve to refill between jobs.`, 'streets')) return rungs;
   }
-  if (lvl >= 5 && !ch.path && add('You\'ve made rank', 'Declare a Path — six careers are on the board, from The Gun to The Ring. It shapes how you earn.', 'streets')) return rungs;
+  if (lvl >= 5 && !ch.path && add('You\'ve made rank', 'Choose one of six Paths on the Streets. Each changes your bonuses, costs, and the way you earn.', 'streets')) return rungs;
   // (harness F1) A rung that a player can DECLINE forever, or one that RE-ARMS every few minutes,
   // must never sit above the one-time milestone rungs — it masks all of them permanently. The
   // progression harness caught exactly that: a solo player who never joined a family was pinned on
@@ -1546,7 +1546,7 @@ function coachLadder(ch, acct, owned) {
   // instead of blocking the ladder. The early band is kept: for a brand-new street, joining a family
   // genuinely IS the next thing.
   if (!owned.gangId && lvl >= 3 && lvl <= M3.COACH_FAMILY_BAND_LVL
-    && add('Nobody survives alone', 'Join a family or found your own — turf, tribute, wars, and backup.', 'family')) return rungs;
+    && add('Find a family', 'Join a family or start your own for shared turf, tribute, wars, and backup.', 'family')) return rungs;
   // (audit F1) Only the GAMEPLAY First-Week tasks gate the coach. The 3 socials + the wallet link are
   // OPTIONAL bonuses on Start Here — they throw `verify_unavailable` when SOCIAL_VERIFY_MODE is off
   // (the default), so counting them would pin the coach at "Finish your First Week" forever and mask
@@ -1563,7 +1563,7 @@ function coachLadder(ch, acct, owned) {
   // (and needs no import from verify.js, which imports game.js — the one-way rule holds).
   const obGameplayDone = obGameplay.filter((t) => onboard[t.id]).length;
   if (obGameplay.some((t) => !onboard[t.id])
-    && add(`Finish your First Week (${obGameplayDone}/${obGameplay.length})`, 'The checklist pays cash to teach you the ropes — claim what\'s ready over on Start Here.', 'start')) return rungs;
+    && add(`Finish your First Week (${obGameplayDone}/${obGameplay.length})`, 'Complete the First Week checklist and claim your cash rewards on Start Here.', 'start')) return rungs;
   // ── THE BRIDGE INTO THE DEEP GAME — a banded ladder of one-time milestones all the way to level
   // 30 (founder-directed "continue coaching… on a plethora of possible actions all the way up to
   // level 30"), so the coach never goes silent mid-game. EVERY rung self-clears by DOING the thing
@@ -1572,7 +1572,7 @@ function coachLadder(ch, acct, owned) {
   // veteran heir is never re-schooled), and mastery XP (any single action in that loop stamps it).
   const hasEarner = !!ch.lab || (owned.businesses || []).length || (owned.rackets || []).length
     || (owned.assets || []).length || (owned.fighters || []).length || !!owned.speakeasy;
-  if (!hasEarner && lvl >= 3 && add('Money while you sleep', 'Buy a racket in The Empire — cheap passive income that pays while you\'re offline. Kitchens and fronts come later.', 'empire')) return rungs;
+  if (!hasEarner && lvl >= 3 && add('Money while you sleep', 'Buy a low-cost racket in The Empire to earn income while you are offline. Kitchens and fronts unlock later.', 'empire')) return rungs;
   // (harness F1c) `owned.skills` is a SET (loadOwned:159), so `.length` is undefined and `!undefined`
   // is always true — this rung fired forever no matter how many skills you'd bought, masking the two
   // rungs below it. Count the Set properly. (Every other collection here is a real array.)
@@ -1592,17 +1592,17 @@ function coachLadder(ch, acct, owned) {
   // never-clearing class the two fixes above closed. `SKILLS.TREE.length` is the honest gate.
   const treeDone = skillSet.size >= SKILLS.TREE.length;
   if (lvl >= 4 && !treeDone && skillPts >= 1 && (skillSet.size === 0 || skillPts >= 5)
-    && add('You\'ve earned skill points', `You have ${skillPts} unspent point${skillPts === 1 ? '' : 's'}. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.`, 'life')) return rungs;
-  if (lvl >= 6 && !(owned.guns || []).length && add('Get strapped', 'The Garage ▸ Armory: buy a pistol and CARRY it. A gun backs every fight in this city — jumps, hits, standing over rivals.', 'garage')) return rungs;
-  if (lvl >= 7 && !Number(owned.mastery?.commerce || 0) && add('Learn the trade winds', 'Streets ▸ Trade Goods: buy something cheap where you stand, haul it where it\'s rich (The City ▸ Trade Winds shows the spread), sell high. This is the on-ramp to convoys and the Black Market.', 'streets')) return rungs;
-  if (!ch.lab && lvl >= 8 && !(owned.businesses || []).length && add('Cook up real money', 'Set up a Kitchen — the drug trade is the deepest earner in the game.', 'kitchen')) return rungs;
+    && add('You\'ve earned skill points', `You have ${skillPts} unspent point${skillPts === 1 ? '' : 's'}. Open The Life ▸ Skills and press LEARN on a tier-1 skill. Bruiser helps you hit harder, Fast Talker lowers the cost of laying low, and Pack Mule gives you a bigger trunk. Each costs 1 point.`, 'life')) return rungs;
+  if (lvl >= 6 && !(owned.guns || []).length && add('Get strapped', 'Open The Garage ▸ Armory, buy a pistol, and press CARRY. A gun helps in jumps, hits, and fights with rivals.', 'garage')) return rungs;
+  if (lvl >= 7 && !Number(owned.mastery?.commerce || 0) && add('Learn the trade winds', 'Buy low-priced goods on Streets ▸ Trade Goods and take them to a district that pays more. Check The City ▸ Trade Winds for price differences. This trade leads into convoys and the Black Market.', 'streets')) return rungs;
+  if (!ch.lab && lvl >= 8 && !(owned.businesses || []).length && add('Cook up real money', 'Set up a Kitchen to cook and sell product. The drug trade is the most involved earning business in the game.', 'kitchen')) return rungs;
   // MULTIPLAYER-ONLY, so BANDED (COACH_SOCIAL_BAND_LVLS): a crew score cannot be pulled alone, and on
   // a thin server this rung otherwise leads forever and masks every solo system under it.
   if (lvl >= 9 && !Number(acct.heists_pulled || 0) && inSocialBand(lvl, 9)
-    && add('Pull a crew score', 'Big Scores ▸ Crew Heists: plan a job or join one off the open board. One roll pays the whole crew — bigger than anything you can pull alone.', 'scores')) return rungs;
-  if (lvl >= 10 && !Number(owned.mastery?.gambling || 0) && add('A night at the Den', 'The Den at the Neon Mile — craps, blackjack, the numbers. Bring a real stake ($1,000+): the table doesn\'t respect small money.', 'den')) return rungs;
+    && add('Pull a crew score', 'Open Big Scores ▸ Crew Heists to plan a job or join one on the open board. The payout covers the whole crew and exceeds what you can earn on a solo job.', 'scores')) return rungs;
+  if (lvl >= 10 && !Number(owned.mastery?.gambling || 0) && add('A night at the Den', 'The Den at the Neon Mile has craps, blackjack, and the numbers. Bring a stake of at least $1,000.', 'den')) return rungs;
   if (lvl >= 12 && !(owned.fighters || []).length && !Number(acct.boxing_wins || 0) && add('Get into the fight game', 'The Fights: sign a contender, train them up, stake them against other managers\' fighters. The crowd bets your main events.', 'boxing')) return rungs;
-  if (lvl >= 14 && !Number(acct.race_wins || 0) && !Number(owned.mastery?.wheels || 0) && add('Run the streets', 'Street Races: tune a car from your garage and run the PvE circuit — fee up front, purse on a win. Fast iron finally earns.', 'races')) return rungs;
+  if (lvl >= 14 && !Number(acct.race_wins || 0) && !Number(owned.mastery?.wheels || 0) && add('Run the streets', 'Tune a car from your garage and enter the PvE circuit in Street Races. You pay an entry fee and collect a purse if you win.', 'races')) return rungs;
   // ── YOU CAN GET MADE FOR FREE. An alpha tester read the game as pay-to-win ("we can't earn OMR in
   // game anymore?"), and the mechanics say otherwise: $OMR is still earned by playing — the mission
   // ladder alone pays 220 across nine jobs — and MINTING (the gate on withdrawing and on the Street
@@ -1618,22 +1618,22 @@ function coachLadder(ch, acct, owned) {
   // the job it names exists.
   const freeMintMission = MISSIONS.find((m) => Number(m.reward?.mintCredit) > 0);
   if (freeMintMission && lvl >= (freeMintMission.req?.lvl || 14) && !acct.minted && !Number(acct.mint_credits || 0)
-    && add('You can get made for free', `Getting MADE unlocks withdrawing and the Street Wage, and it does not cost you a penny: the mission "${freeMintMission.name}" hands you the credit outright. Pull that job, then spend the credit on Going Legit ▸ Extraction. (You can also buy it with ETH — the mission is the free road.)`, 'portfolio')) return rungs;
+    && add('Earn a mint credit', `Complete "${freeMintMission.name}" to earn a mint credit. Use it on Going Legit ▸ Extraction to mint your character without paying ETH. You can also pay ETH to mint.`, 'portfolio')) return rungs;
   if (Number(acct.mint_credits || 0) > 0 && !acct.minted
-    && add('Spend your mint credit', 'You are holding a credit that makes you a MADE MAN — withdrawals and the Street Wage open the moment you spend it. It costs nothing to use. Going Legit ▸ Extraction.', 'portfolio')) return rungs;
+    && add('Spend your mint credit', 'You have a mint credit. Use it on Going Legit ▸ Extraction to mint your character at no cost.', 'portfolio')) return rungs;
   // (founder: "not obvious… the steps you need to take to buy your first business") — concrete steps,
   // priced off the live catalog so the hint can never drift from what the buy button charges.
   const firstFront = BUSINESSES.find((b) => b.kind === 'laundromat');
   if (lvl >= 15 && !(owned.businesses || []).length
-    && add('Open your first front', `The Empire ▸ The Catalog: hit BUY on the ${firstFront?.name || 'Laundromat'} ($${firstFront?.tiers?.[0]?.cost?.toLocaleString?.() || '250,000'}). It farms cash around the clock — come back daily to COLLECT, and pay the pad (upkeep) or it goes cold. Your first real empire piece.`, 'empire')) return rungs;
+    && add('Open your first front', `Open The Empire ▸ The Catalog and press BUY on the ${firstFront?.name || 'Laundromat'} ($${firstFront?.tiers?.[0]?.cost?.toLocaleString?.() || '250,000'}). It earns cash around the clock. Come back daily to COLLECT and pay the pad, its upkeep cost, to keep it earning.`, 'empire')) return rungs;
   // D11 (2026-08-05): the paper book is retired — going legit IS the stake ladder now. Moved down
   // from 27 so the earn→spend arc keeps its lvl-15 anchor; clears on staking anything.
   if (lvl >= 15 && !Number(acct.staked || 0) && Number(acct.omr || 0) >= (MADE_LADDER.RUNGS[0]?.min || 10)
-    && add('Put your $OMR to work', `$OMR you STAKE is power for holding it — ${MADE_LADDER.RUNGS[0]?.min || 10} staked reaches the ladder's first rung (a bigger trunk, deeper tanks, a bigger garage) — and a committed balance is looted at the COMMITTED rate, not the idle one, when you die. Going Legit ▸ THE LADDER.`, 'portfolio')) return rungs;
-  if (lvl >= 16 && !Number(acct.smuggled || 0) && add('Take it to the water', 'The Port at the docks: buy a boat and run contraband in from offshore. The margins beat the streets — the Coast Guard is the risk.', 'port')) return rungs;
-  if (lvl >= 18 && !Number(acct.intel_ops || 0) && Number(acct.omr || 0) >= WIRE.TAP_OMR && add('Work the wires', 'The Wire: burn a little $OMR to tap a rival — their heat, their wealth band, whether they\'re hunting YOU. Information is the sharpest weapon in the city.', 'wire')) return rungs;
+    && add('Put your $OMR to work', `Stake ${MADE_LADDER.RUNGS[0]?.min || 10} $OMR on Going Legit ▸ THE LADDER to reach the first rung. Staking expands your trunk, tanks, and garage. If you die, staked balances are looted at the committed rate rather than the idle rate.`, 'portfolio')) return rungs;
+  if (lvl >= 16 && !Number(acct.smuggled || 0) && add('Take it to the water', 'Buy a boat at The Port and bring contraband in from offshore. Margins are better than on the streets, but the Coast Guard can catch you.', 'port')) return rungs;
+  if (lvl >= 18 && !Number(acct.intel_ops || 0) && Number(acct.omr || 0) >= WIRE.TAP_OMR && add('Work the wires', 'Spend $OMR on a tap in The Wire to learn a rival\'s heat, wealth band, and whether they are hunting you.', 'wire')) return rungs;
   if (lvl >= 22 && !Number(owned.mastery?.wetwork || 0) && inSocialBand(lvl, 22)
-    && add('Blood on the ledger', 'Wet Work: the contract board pays real pots for real bodies. Start on the Dueling Circuit — challenge a listed duelist, win the stake, build the name.', 'pvp')) return rungs;
+    && add('Blood on the ledger', 'Wet Work has paid hit contracts. Start on the Dueling Circuit by challenging a listed duelist for their stake.', 'pvp')) return rungs;
   // ── THE DEEP CITY (founder-directed: "extend the coach past ~24 into the mid-game systems it
   // currently never names"). The 7-day progression harness measured a plausible solo player touching
   // 10 of 39 systems, with the milestone ladder above ending at level 22 — from there the coach fell
@@ -1644,11 +1644,11 @@ function coachLadder(ch, acct, owned) {
   // whose action costs money gates on HOLDING the price (the work-the-wires rule), so a broke street
   // is never pinned on advice it cannot act on (the harness-F1 masking rule).
   if (lvl >= 24 && !Number(acct.freight_delivered || 0)
-    && add('Put a truck on the road', 'Big Scores ▸ Convoys: load trade goods, hire guards, send the shipment across the map. Bulk freight beats anything your trunk can carry — and collecting at the far end starts the Teamster legend. Bandits are the risk; guards are the answer.', 'scores')) return rungs;
+    && add('Put a truck on the road', 'Open Big Scores ▸ Convoys to load trade goods and send a shipment across the map. Convoys carry more than your trunk. Hire guards to defend against bandits, then collect at the destination to start the Teamster legend.', 'scores')) return rungs;
   // gate on the CHEAP animal's price — the hint quotes the live catalog (the first-front rule:
   // price off the live surface or don't state a price), so a retune can never make the copy a lie.
   if (lvl >= 25 && !Number(acct.racer_wins || 0) && Number(ch.cash) + Number(ch.bank) >= STABLE.KINDS.dog.cost
-    && add('Own the animals', `The Stable: buy a ${STABLE.KINDS.dog.name} ($${STABLE.KINDS.dog.cost.toLocaleString()}), train its legs, and run the circuit until it takes a purse. A racer you own can even run in the town's daily card — the whole city bets on your animal.`, 'stable')) return rungs;
+    && add('Own the animals', `Buy a ${STABLE.KINDS.dog.name} at The Stable for $${STABLE.KINDS.dog.cost.toLocaleString()}. Train it and enter races to earn a purse. You can also enter the daily card, where the city bets on your racer.`, 'stable')) return rungs;
   // ── THE EARN→SPEND ARC (founder-directed pairing: "so the earn to spend arc closes"). $OMR's
   // sinks are all built — but a player was never routed from HOLDING $OMR to SPENDING it on
   // something they want, so the token read as a number with nowhere to go. Two rungs close it:
@@ -1657,20 +1657,20 @@ function coachLadder(ch, acct, owned) {
   // HOLDING). Both $OMR-gated on holding the price (the work-the-wires rule); both self-clear on
   // an account-level signal (made_until / staked — both survive death).
   if (lvl >= 26 && !isMade(acct) && Number(acct.omr || 0) >= MADE.OMR
-    && add('You can afford your dues', `${MADE.OMR} $OMR a month makes you a MADE MAN: the badge, the upper compound, a club of your own, a seat in the high-stakes room, and your fronts pay their own pad. You're holding the price — Going Legit ▸ THE MADE MAN.`, 'portfolio')) return rungs;
+    && add('You can afford your dues', `You have enough for the ${MADE.OMR} $OMR monthly dues on Going Legit ▸ THE MADE MAN. Membership brings a badge, upper-compound access, the right to open a club, a seat in the high-stakes room, and fronts that pay their own upkeep.`, 'portfolio')) return rungs;
   // one club per district, so on a full map this could linger — acceptable on a thin alpha (six
   // districts, and residents never open clubs); the cash gate keeps it off a broke street's plan,
   // and the MADE gate mirrors openSpeakeasy's own D8=D door — without it an unmade funded player
   // would be pinned on a rung the server refuses forever (the refuse-on-press class, as a mask).
   if (lvl >= 26 && !owned.speakeasy && isMade(acct) && Number(ch.cash) + Number(ch.bank) >= SPEAKEASY.OPEN_COST
-    && add('Open a club of your own', `The Speakeasy: as a made man, $${SPEAKEASY.OPEN_COST.toLocaleString()} opens a nightclub in any free district. The bar take drips around the clock, and every round a patron buys is buying YOUR prestige — the nightlife board ranks the city's clubs.`, 'speakeasy')) return rungs;
+    && add('Open a club of your own', `As a made man, you can pay $${SPEAKEASY.OPEN_COST.toLocaleString()} at The Speakeasy to open a nightclub in a free district. The bar earns around the clock and patrons add to your prestige. Check the nightlife board to see how your club ranks.`, 'speakeasy')) return rungs;
   if (lvl >= 28 && !Number(acct.monument_built || 0)
-    && add('Put your name on the skyline', 'The City is raising a monument, and every dollar you brick in goes on the plaque FOREVER — it survives your death, your heir\'s death, everything. The cheapest immortality in town, and the whole base builds it together.', 'city')) return rungs;
+    && add('Put your name on the skyline', 'Contribute cash to the monument on The City. Your contribution is recorded on the plaque and stays there across generations. The whole city can help build it.', 'city')) return rungs;
   // the $OMR-sink arc (estate → auction block) — gated on HOLDING tier 1's price, read live off the
   // catalog. Clears by buying the first place; the estate row is account-level so an heir who
   // inherits the compound is never re-schooled.
   if (lvl >= 30 && !owned.estate && Number(acct.omr || 0) >= (ESTATE.TIERS[0]?.omr || 40)
-    && add('Buy the compound', `The Estate: ${ESTATE.TIERS[0]?.omr || 40} $OMR buys the ${ESTATE.TIERS[0]?.name || 'Safe House'} — a home that survives death, mounts your trophies, and gives your $OMR something permanent to become. The Auction Block next door sells one-of-a-kind pieces weekly.`, 'estate')) return rungs;
+    && add('Buy the compound', `Pay ${ESTATE.TIERS[0]?.omr || 40} $OMR at The Estate for the ${ESTATE.TIERS[0]?.name || 'Safe House'}. The compound stays with your account after death and displays your trophies. The Auction Block sells unique pieces each week.`, 'estate')) return rungs;
   // ── THE RECURRING NUDGES ── (COACH_NUDGES) Everything above is a ONE-TIME milestone that clears
   // for good once done. These three never clear, so they live down here where they fill the quiet
   // moments instead of masking the ladder. The SAME rule orders the tail itself: most-clearable
@@ -1683,7 +1683,7 @@ function coachLadder(ch, acct, owned) {
   {
     const cold = (owned.businesses || []).filter((b) => b.cold);
     if (cold.length && add(`${cold.length === 1 ? 'A front has' : `${cold.length} fronts have`} gone cold`,
-      `${cold.length === 1 ? `Your ${cold[0].name} pays` : 'They pay'} nothing until the pad is square — and the pad keeps running whether ${cold.length === 1 ? 'it earns' : 'they earn'} or not. Pay it (The Empire ▸ pay the pad) or close ${cold.length === 1 ? 'it' : 'them'} up and stop the bleeding.`,
+      `${cold.length === 1 ? `Your ${cold[0].name} earns` : 'They earn'} nothing until you pay the upkeep, which keeps accruing whether ${cold.length === 1 ? 'it earns' : 'they earn'} or not. Pay the pad in The Empire or close ${cold.length === 1 ? 'the front' : 'the fronts'} to stop the cost.`,
       'empire')) return rungs;
   }
   // THE BUREAU, before the indictment. The urgent rung at the top of the ladder fires only once a
@@ -1693,7 +1693,7 @@ function coachLadder(ch, acct, owned) {
   // the cold-front class exactly: reactive, actionable, recurring by nature, so it lives in the
   // tail where it can fill a quiet moment without masking a milestone.
   if (!ch.indicted_at && rapStageOf(ch.heat_exposure, null) === 'investigation'
-    && add('The Bureau is building a case', 'Your file is thick and getting thicker — cross the line and they indict. The Law: pay a bribe to thin the file, put a lawyer on retainer, or run quiet until it cools. Once a case is FILED the price goes way up.', 'law')) return rungs;
+    && add('The Bureau is building a case', 'Your exposure is rising toward an indictment. Open The Law to pay a bribe or retain a lawyer, or keep a low profile until the case cools. Costs rise sharply after a case is filed.', 'law')) return rungs;
   // ── THE WORK BOARD (omerta-early-game-design.md F1) ──
   // The rungs above are one-time milestones, so a player who follows the coach clears the last of
   // them around level 22 — at exactly the level the CONTENT thins out too (7 of the levels from 17
@@ -1713,7 +1713,7 @@ function coachLadder(ch, acct, owned) {
     // moment it comes off cooldown it is the best thing on the board, every time.
     const missionReady = !ch.mission_at || Date.now() - new Date(ch.mission_at).getTime() >= PACING.MISSION_CD_MS;
     if (missionReady && lvl >= 2
-      && add('A job came in from the family', 'The story missions pay the biggest respect in the game and one just came off cooldown. Take it — it is the fastest level you will get today.', 'start')) return rungs;
+      && add('A job came in from the family', 'A story mission is off cooldown. These missions pay the most respect in the game, so take the job to gain levels quickly.', 'start')) return rungs;
     // Count only what this player can actually FINISH. A drawn `tribute` contract is dead to a
     // family-less street (dailyBlockedFor), and a rung that says "1 of today's contracts unclaimed"
     // while pointing at a card they can never clear sits at the head of the tail all day and masks
@@ -1723,17 +1723,17 @@ function coachLadder(ch, acct, owned) {
     const dailyJob = dailyJobs.find((j) => Number(w.dailyCounters?.[j.k] || 0) >= j.n) || dailyJobs[0];
     const dailyReady = dailyJob && Number(w.dailyCounters?.[dailyJob.k] || 0) >= dailyJob.n;
     const dailyGuide = dailyGuidanceFor(dailyJob);
-    if (dailyReady && add(`${dailyJob.name} — ready to collect`,
+    if (dailyReady && add(`${dailyJob.name}: ready to collect`,
       'This contract is ready to collect. Collect it on the Daily Work card before the day rolls over.', 'streets')) return rungs;
     if (dailyJob && dailyGuide && add(dailyJob.name, dailyGuide.how, dailyGuide.tab)) return rungs;
     if (w.hustleStep !== 3 && add(w.hustleStep === null ? "Tonight's hustle is waiting" : 'Your hustle is half-finished',
-      'Three stops, three districts, one payoff that scales with your level — and it walks you round the map while it pays. It resets at the end of the day whether you finish it or not.', 'streets')) return rungs;
+      'Visit three stops in three districts for a payout based on your level. The hustle resets at the end of the day, including unfinished runs.', 'streets')) return rungs;
     if ((w.cornerOpen || []).length && add(`The corner has an envelope for you`,
-      'You took work on a corner and it is still open. Finish it and collect — corner jobs are the only daily work that pays RESPECT as well as cash.', 'streets')) return rungs;
+      'You have an unfinished corner job. Complete it and collect. Corner jobs are the only daily work that pays respect as well as cash.', 'streets')) return rungs;
     if (w.clue && add(`You're carrying a clue scroll (step ${w.clue.step} of ${w.clue.steps})`,
-      'Somebody left you a trail. Follow it to the end and the casket pays — and it costs nothing but the walking.', 'streets')) return rungs;
+      'Follow the clue trail to collect the casket at the end. You pay no fee to follow it; you just need to travel.', 'streets')) return rungs;
     if ((w.drillsTaken || 0) < 2 && lvl >= 3
-      && add('The trainers have work for you', 'Every fixture in town sets a job each day. Do theirs and they school you for it — free discipline XP, and it lifts caps the rest of your game runs on.', 'life')) return rungs;
+      && add('The trainers have work for you', 'Each fixture sets a daily job. Complete one to earn free discipline XP and raise your caps.', 'life')) return rungs;
     // F6 — THE TRADES, named at the moment they pay off. Mastery XP accrues from level 1 on every
     // action and the perks at 10/25/40 are real, but the board lives on the Life tab and the coach
     // has never once mentioned it — so 200 crime clicks read as repetition rather than a ladder.
@@ -1744,22 +1744,22 @@ function coachLadder(ch, acct, owned) {
         return MASTERY.MILESTONES.includes(l + 1) ? { t, at: l + 1 } : null; })
       .filter(Boolean)[0];
     if (near && add(`One level off a ${near.t.name} perk`,
-      `Keep working that trade — at ${near.t.name} L${near.at} it starts paying you in ${MASTERY.PERKS[near.t.id]?.what || 'a standing edge'}. The Trades board on The Life tab shows every track you're building.`, 'life')) return rungs;
+      `Keep working ${near.t.name} to reach L${near.at} and gain ${MASTERY.PERKS[near.t.id]?.what || 'a lasting bonus'}. The Trades board on The Life tab shows your progress in each track.`, 'life')) return rungs;
   }
   if (Number(ch.cash) > CONSTANTS.COACH_BANK_NUDGE && Number(ch.cash) > Number(ch.bank)
-    && add('You\'re carrying too much', 'Bank your pocket cash before someone jumps you for it — the streets are watching.', 'streets')) return rungs;
+    && add('You\'re carrying too much', 'Deposit your pocket cash at the bank to protect it from a jump.', 'streets')) return rungs;
   // (harness) A street player runs on NERVE, never energy — the bar sits full ~94% of the time, so
   // a full tank isn't idle capacity, it's UNSPENT ACCESS to the physical content. Name what spends
   // it, or the bar reads as broken.
-  if (Number(ch.energy) >= maxEnergy * 0.75 && add('Full tank', 'Crime runs on nerve — energy is what the PHYSICAL work costs: the gym, boosting cars, heist crews, cartel raids, convoy ambushes, shakedowns. You\'ve got a full tank going unspent.', 'streets')) return rungs;
+  if (Number(ch.energy) >= maxEnergy * 0.75 && add('Full tank', 'You have plenty of energy to spend at the gym, boosting cars, or on heist crews, cartel raids, convoy ambushes, and shakedowns. Crimes spend nerve instead.', 'streets')) return rungs;
   // The two BANDED multiplayer milestones, demoted here rather than dropped: still worth saying, but
   // below every rung a player can act on by themselves. They clear for good the moment they're done.
   if (lvl > 9 + M3.COACH_SOCIAL_BAND_LVLS && !Number(acct.heists_pulled || 0)
-    && add('Find a crew', 'You still haven\'t pulled a crew score. Big Scores ▸ Crew Heists — the pot beats anything you can take alone, but it takes a second body.', 'scores')) return rungs;
+    && add('Find a crew', 'Open Big Scores ▸ Crew Heists to plan or join your first crew score. It needs at least two players and pays more than a solo job.', 'scores')) return rungs;
   if (lvl > 22 + M3.COACH_SOCIAL_BAND_LVLS && !Number(owned.mastery?.wetwork || 0)
-    && add('No blood on your ledger', 'You\'ve never taken a contract. Wet Work — the Dueling Circuit is the way in, when somebody\'s listed.', 'pvp')) return rungs;
+    && add('No blood on your ledger', 'You have yet to take a contract. Start in Wet Work on the Dueling Circuit when a rival is listed.', 'pvp')) return rungs;
   // the one a player can decline forever — so it sits at the very bottom, never masking anything
-  if (!owned.gangId && lvl >= 3 && add('Still running solo', 'You can play the whole game alone, but a family is turf, tribute, wars and backup — worth a look.', 'family')) return rungs;
+  if (!owned.gangId && lvl >= 3 && add('Still running solo', 'A family gives you access to shared turf, tribute, wars, and backup. You can also keep playing solo.', 'family')) return rungs;
   return rungs; // possibly empty — an established player who knows the ropes gets no nag
 }
 

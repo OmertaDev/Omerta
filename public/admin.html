@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OMERTÀ Operations — the books</title>
+<title>The books | OMERTÀ operations</title>
 <meta name="robots" content="noindex,nofollow">
 <style>
   :root { --bg:#0b0b0e; --panel:#131318; --panel2:#17171e; --line:#26262f; --ink:#d6d2c4;
@@ -125,7 +125,7 @@
 <main id="login" class="center" tabindex="-1">
   <div class="artifact-kicker">Restricted operator access</div>
   <h1>THE BOOKS</h1>
-  <p>Live operations for the whole city: system health, economy integrity, player state, and guarded moderation actions. No city data loads until the moderator key is accepted.</p>
+  <p>Check system health, reconcile the economy and manage players. Enter the moderator key to load city data and moderation controls.</p>
   <form id="login-form">
     <div class="login-field"><label for="mkey">Moderator key</label><div class="login-actions"><input id="mkey" type="password" placeholder="Enter the key" size="26" autocomplete="current-password" style="font-size:14px">
       <button id="enter" type="submit" style="font-size:14px;padding:8px 18px">OPEN THE LEDGER</button></div></div>
@@ -151,27 +151,27 @@
   <div class="grid">
     <section class="panel panel--wide" id="p-rwa" aria-labelledby="rwa-title">
       <header class="rwa-head">
-        <div><div class="rwa-kicker">Real-world assets · operator console</div><h2 id="rwa-title">The Acquisition Desk</h2>
-          <div class="note">One view from approved catalog to Street Deed delivery. Safe authority stays outside this browser.</div></div>
+        <div><div class="rwa-kicker">Real-world assets · operator console</div><h2 id="rwa-title">The acquisition desk</h2>
+          <div class="note">Check approved assets, acquisitions and Street Deed deliveries. Sign Safe transactions separately.</div></div>
         <span class="rwa-status" id="rwa-health">loading</span>
       </header>
       <div class="body">…</div>
     </section>
     <div class="panel" id="p-integrations"><h2>Integrations</h2><div class="body">…</div></div>
-    <div class="panel" id="p-chainparams"><h2>The Control Room — on-chain parameters</h2><div class="body">…</div></div>
+    <div class="panel" id="p-chainparams"><h2>On-chain parameters</h2><div class="body">…</div></div>
     <div class="panel" id="p-backups"><h2>Backups</h2><div class="body">…</div></div>
     <div class="panel" id="p-social"><h2>Growth loop</h2><div class="body">…</div></div>
     <div class="panel" id="p-integrity"><h2>§10.4 Integrity</h2><div class="body">…</div></div>
-    <div class="panel" id="p-economy"><h2>The Economy</h2><div class="body">…</div></div>
+    <div class="panel" id="p-economy"><h2>Economy</h2><div class="body">…</div></div>
     <div class="panel" id="p-players"><h2>Players</h2><div class="body">…</div></div>
-    <div class="panel" id="p-funnel"><h2>Onboarding Funnel</h2><div class="body">…</div></div>
-    <div class="panel" id="p-coach"><h2>Where the Coach Has Them</h2><div class="body">…</div></div>
-    <div class="panel" id="p-engage"><h2>Engagement &amp; Retention</h2><div class="body">…</div></div>
+    <div class="panel" id="p-funnel"><h2>Onboarding progress</h2><div class="body">…</div></div>
+    <div class="panel" id="p-coach"><h2>Current coach prompts</h2><div class="body">…</div></div>
+    <div class="panel" id="p-engage"><h2>Engagement &amp; retention</h2><div class="body">…</div></div>
     <div class="panel" id="p-top"><h2>The Powerful</h2><div class="body">…</div></div>
     <div class="panel" id="p-chain"><h2>Chain · Reserve · Vig</h2><div class="body">…</div></div>
-    <div class="panel" id="p-tokenhealth"><h2>Token Health</h2><div class="body">…</div></div>
-    <div class="panel" id="p-router"><h2>Where a Dollar Goes</h2><div class="body">…</div></div>
-    <div class="panel" id="p-activity"><h2>Live Activity</h2><div class="feed body">…</div></div>
+    <div class="panel" id="p-tokenhealth"><h2>Token health</h2><div class="body">…</div></div>
+    <div class="panel" id="p-router"><h2>Fee routing</h2><div class="body">…</div></div>
+    <div class="panel" id="p-activity"><h2>Live activity</h2><div class="feed body">…</div></div>
     <div class="panel" id="p-mod"><h2>Moderation</h2><div class="body"></div></div>
   </div>
 </main>
@@ -307,12 +307,12 @@
     const dbn = $('#dbbanner');
     if (down.length >= 3) {                       // a couple of 503s is a slow route; all of them is the database
       dbn.className = 'banner bad';
-      dbn.innerHTML = 'THE DATABASE IS UNREACHABLE — the game is down for players right now.'
+      dbn.innerHTML = 'DATABASE UNREACHABLE: the game is down for players.'
         + '<div style="letter-spacing:0;font-size:13px;opacity:.85;margin-top:6px">'
-        + 'The game server is alive (it answered this page) and will recover on its own the moment the '
-        + 'database comes back — you do NOT need to redeploy. Check your database host\'s status page '
-        + 'first. Numbers below are stale.</div>';
-      $('#stamp').textContent = 'STALE — database unreachable';
+        + 'The game server is running and will recover when the database returns. '
+        + 'Check your database host\'s status page first. A redeploy is unnecessary. '
+        + 'Numbers below are stale.</div>';
+      $('#stamp').textContent = 'STALE: database unreachable';
       $('#status').textContent = 'database unreachable';
       return;                                     // do not paint stale numbers as if they were live
     }
@@ -354,18 +354,18 @@
     const alerts = rows.filter((r) => r.alert);
     el.innerHTML =
       (cp.configured
-        ? '<div class="note">Live values read from chain. Changes are prepared here and <b>signed in the Safe</b> — this panel cannot send a transaction, which is what bounds a compromised admin session.</div>'
-        : '<div class="note" style="color:var(--warn)"><b>Chain dormant</b> — ' + esc(cp.why) + '</div>')
-      + alerts.map((r) => '<div style="margin:8px 0;padding:8px;border:1px solid var(--bad);border-radius:5px;color:var(--bad)"><b>RELATION BROKEN — ' + esc(r.label) + '</b><div class="note" style="color:var(--bad)">' + esc(r.alert) + '</div></div>').join('')
+        ? '<div class="note">Values are read from chain. Prepare changes here, then <b>sign them in the Safe</b>. This panel cannot send a transaction.</div>'
+        : '<div class="note" style="color:var(--warn)"><b>Chain dormant:</b> ' + esc(cp.why) + '</div>')
+      + alerts.map((r) => '<div style="margin:8px 0;padding:8px;border:1px solid var(--bad);border-radius:5px;color:var(--bad)"><b>PARAMETER MISMATCH: ' + esc(r.label) + '</b><div class="note" style="color:var(--bad)">' + esc(r.alert) + '</div></div>').join('')
       + rows.map((r) => {
         const fields = r.args.map((a) => '<input id="cp-' + r.key + '-' + a + '" placeholder="' + a + '" style="width:130px;margin:2px 3px 2px 0">').join('');
         return '<div style="margin:10px 0;padding:9px;border:1px solid var(--line);border-radius:5px">'
           + '<div class="row"><span class="k"><b>' + esc(r.label) + '</b> <span style="opacity:.55;font-size:11px">' + esc(r.contract) + '.' + esc(r.setter) + '</span></span>'
           + '<span class="v">' + (r.live !== null && r.live !== undefined ? esc(r.live) + ' <span style="opacity:.55;font-size:11px">' + esc(r.unit || '') + '</span>'
               : '<span style="opacity:.5">' + (r.readError ? 'unreadable' : (!cp.configured ? 'chain dormant' : (!r.address ? 'not deployed' : (r.setter && !r.hasGetter ? 'no getter' : 'not deployed')))) + '</span>') + '</span></div>'
-          + (r.mirror ? '<div class="note" style="margin-top:4px"><b>Must agree with:</b> ' + esc(r.mirror.label) + ' — <b>' + esc(r.mirror.value) + '</b></div>' : '')
+          + (r.mirror ? '<div class="note" style="margin-top:4px"><b>Must agree with:</b> ' + esc(r.mirror.label) + ': <b>' + esc(r.mirror.value) + '</b></div>' : '')
           + '<div class="note" style="margin-top:4px">' + esc(r.why) + '</div>'
-          + '<div class="note" style="margin-top:3px;color:var(--warn)"><b>Wall:</b> ' + esc(r.wall) + '</div>'
+          + '<div class="note" style="margin-top:3px;color:var(--warn)"><b>Limit:</b> ' + esc(r.wall) + '</div>'
           + (r.hint ? '<div class="note" style="margin-top:3px">' + esc(r.hint) + '</div>' : '')
           + '<div style="margin-top:6px">' + fields
           + '<button onclick="buildTx(\'' + r.key + '\')">prepare for the Safe</button></div>'
@@ -405,7 +405,7 @@
             <div class="note" style="margin-top:3px"><b>To switch on:</b> ${x.steps}</div>`}
           ${x.caveat ? `<div class="note" style="margin-top:3px;color:var(--bad)"><b>⚠</b> ${x.caveat}</div>` : ''}
         </div>`).join('')
-      + '<div class="note" style="margin-top:6px">These are env-config switches (no code deploy). Set them in the SHARED env group and redeploy BOTH services — several are read by the worker (web push signs and sends there; the email digest runs there entirely), so setting them on the API alone can read LIVE here and still do nothing. Secrets never leave the server — this panel reads presence only.</div>'
+      + '<div class="note" style="margin-top:6px">Set these switches in the shared environment group and redeploy both services. Web push and email digests run in the worker, so an API-only change can show LIVE here without enabling them. No code change is needed. This panel checks whether secrets are set and never displays their values.</div>'
       + capacityLine(ig && ig.capacity);
   }
 
@@ -418,7 +418,7 @@
     return `<div style="margin-top:10px;padding:8px;border:1px solid var(--line);border-radius:5px">
       <div class="row"><span class="k"><b>DB connection pool</b> <span style="opacity:.6;font-size:11px">capacity</span></span>
         <span class="v" style="color:var(--${ok ? 'ok' : 'bad'})">${c.poolMax}${c.declared ? '' : ' (default)'}</span></div>
-      <div class="note" style="margin-top:4px">${c.note || 'Above the measured cliff — at 20 the same load served 30 req/s with nine 503s; clear of it, 284 req/s with none.'}</div>
+      <div class="note" style="margin-top:4px">${c.note || 'In the same load test, a pool of 20 served 30 req/s with nine 503s. A larger pool served 284 req/s with none.'}</div>
     </div>`;
   }
 
@@ -433,11 +433,11 @@
       + rowHtml('post checks (Spread the Word)', yes(s.posts))
       + rowHtml('follow check (First Week · X)', yes(s.x))
       + (live
-        ? '<div class="note">Word-of-mouth rewards are being paid. A check a provider can\'t perform means '
-          + 'that task is dropped from the First-Week checklist rather than shown and refused.</div>'
-        : `<div class="note">The Spread-the-Word cash faucet is <b>inert</b> — players can share, but nobody
+        ? '<div class="note">Word-of-mouth rewards are being paid. The First-Week checklist omits '
+          + 'tasks that the provider cannot verify.</div>'
+        : `<div class="note">Spread-the-Word rewards are <b>off</b>. Players can share, but nobody
            gets paid.${s.mode === 'live' ? ' Mode is <code>live</code> but <code>X_BEARER_TOKEN</code> is not set: '
-          + 'add it (plus <code>X_TARGET_USER_ID</code> for the follow check) to switch the loop on.'
+          + 'add it (plus <code>X_TARGET_USER_ID</code> for the follow check) to enable rewards.'
           : ' Set <code>SOCIAL_VERIFY_MODE=live</code> plus the X tokens to switch it on.'}</div>`);
   }
 
@@ -451,25 +451,25 @@
     // whether your alerts work has nothing to do with whether this database exposes archiver stats —
     // put it only after that return and it vanishes on precisely the setups least able to spare it.
     const alertRow = rowHtml('alerts reach you', wh
-      ? '<span style="color:var(--ok)">yes — webhook set</span>'
-      : '<span style="color:var(--bad)">NO — log only</span>')
+      ? '<span style="color:var(--ok)">yes, webhook set</span>'
+      : '<span style="color:var(--bad)">no, log only</span>')
       + (wh ? '' : '<div class="note">Set <code>INVARIANT_WEBHOOK_URL</code> (a Slack or Discord webhook) so a '
-        + 'failing backup or a drifting ledger reaches your phone instead of a log nobody reads. '
-        + 'Then use <b>send test alert</b> under Mod Tools to prove it arrives.</div>');
+        + 'failing backup or a drifting ledger sends an alert. '
+        + 'Then use <b>send test alert</b> under Moderation to check delivery.</div>');
     const bn = $('#bkbanner');
     if (!b.state || b.state === 'unsupported') {
       bn.className = 'banner hidden';
       el.innerHTML = '<div class="note">This database does not expose archiver stats (pg-mem in dev, or a '
-        + 'restricted role). Nothing to report — not a problem, just not visible from here.</div>' + alertRow;
+        + 'restricted role). Check backup status with your database provider.</div>' + alertRow;
       return;
     }
     const ago = (s) => s == null ? 'never' : (s < 90 ? s + 's ago' : s < 5400 ? Math.round(s / 60) + 'm ago' : Math.round(s / 3600) + 'h ago');
     if (b.state === 'failing') {
       bn.className = 'banner bad';
-      bn.textContent = '\u26a0 BACKUPS ARE FAILING — the game is fine, but RESTORING it may not be. Take a manual dump.';
+      bn.textContent = '\u26a0 BACKUPS ARE FAILING. Recovery may be affected. Take a manual dump.';
     } else if (b.state === 'off') {
       bn.className = 'banner bad';
-      bn.textContent = '\u26a0 BACKUPS ARE SWITCHED OFF — there is no recovery chain at all. Take a manual dump.';
+      bn.textContent = '\u26a0 BACKUPS ARE SWITCHED OFF. There is no recovery chain. Take a manual dump.';
     } else {
       bn.className = 'banner hidden';
     }
@@ -484,12 +484,12 @@
       + `<div class="note">${good
         ? 'Write-ahead logs are shipping. Point-in-time recovery is being maintained.'
         : b.state === 'stale'
-          ? 'No failures, but nothing has shipped in a while. Normal on a quiet database (no writes, no logs to ship).'
+          ? 'No failures reported, but no logs have shipped recently. A database with no writes has no new logs to ship.'
           : b.state === 'off'
-            ? 'archive_mode is off — this database has no point-in-time recovery at all. Zero failures here means nothing is even being attempted. Run tools/backup.sh, and check with your database host.'
-            : 'The last thing that happened was a FAILURE. Run tools/backup.sh for an independent dump, and raise it with your database host.'}</div>`
+            ? 'archive_mode is off. This database has no point-in-time recovery, and the archiver is not attempting backups. Run tools/backup.sh and check with your database host.'
+            : 'The latest archive attempt failed. Run tools/backup.sh for an independent dump and contact your database host.'}</div>`
       + (b.failedCount > 0 && good
-        ? '<div class="note">Past failures are recorded here forever — what matters is that the most recent event was a success.</div>' : '')
+        ? '<div class="note">The failure count includes past attempts. The most recent archive attempt succeeded.</div>' : '')
       + alertRow;
   }
 
@@ -497,7 +497,7 @@
     const checks = inv?.checks || [];
     const ok = !!inv?.ok;
     $('#banner').className = 'banner ' + (ok ? 'ok' : 'bad');
-    $('#banner').textContent = ok ? '§10.4 HOLDS — the books balance' : '⚠ LEDGER DRIFT DETECTED — investigate now';
+    $('#banner').textContent = ok ? '§10.4 HOLDS: the books balance' : '⚠ LEDGER DRIFT DETECTED: investigate now';
     $('#p-integrity').querySelector('.body').innerHTML = checks.map((c) =>
       `<div class="chk"><span>${c.name}</span><span class="${c.ok ? 'g' : 'b'}">${c.ok ? '✓' : 'drift ' + fmt(c.drift)}</span></div>`).join('')
       + (checks.find((c) => c.name === 'reason vocabulary' && (c.unknown || []).length)
@@ -507,7 +507,7 @@
   function renderEconomy(ov, em) {
     const e = ov?.economy || {};
     $('#p-economy').querySelector('.body').innerHTML =
-      `<div class="big">$${fmt(e.ammPrice)} <span class="note">per $OMR (the frozen AMM reserves ratio — no live market)</span></div>`
+      `<div class="big">$${fmt(e.ammPrice)} <span class="note">per $OMR (frozen AMM reserve ratio; this is not a live quote)</span></div>`
       + rowHtml('$OMR supply', `${fmt(e.omrSupply)} (${fmt(e.omrStaked)} staked)`)
       + rowHtml('AMM pool', `$${fmt(e.ammCash)} / ${fmt(e.ammOmr)} $OMR`)
       + rowHtml('street-tax pool', `$${fmt(e.taxPool)} <span class="note">→ the redemption window</span>`)
@@ -542,7 +542,7 @@
     }).join('');
     $('#p-coach').querySelector('.body').innerHTML =
       `<div class="note">${fmt(c.surveyed)} active players surveyed (last ${c.activeWindowDays}d) · ${fmt(c.silent)} with a quiet coach</div>`
-      + (rows || '<div class="note">nobody active in the window yet — this fills the moment testers play</div>');
+      + (rows || '<div class="note">No players were active during this window.</div>');
   }
   function renderFunnel(fn) {
     if (!fn) return;
@@ -556,7 +556,7 @@
       + barRow('declared a Path', pr.declared_path || 0)
       + barRow('in a family', pr.in_a_family || 0)
       + barRow('linked a wallet', pr.linked_wallet || 0)
-      + `<div class="note" style="margin-top:6px">levels — 1–4: ${fmt(lv.lvl_1_4)} · 5–9: ${fmt(lv.lvl_5_9)} · 10–19: ${fmt(lv.lvl_10_19)} · 20+: ${fmt(lv.lvl_20_plus)}</div>`
+      + `<div class="note" style="margin-top:6px">levels: 1-4: ${fmt(lv.lvl_1_4)} · 5-9: ${fmt(lv.lvl_5_9)} · 10-19: ${fmt(lv.lvl_10_19)} · 20+: ${fmt(lv.lvl_20_plus)}</div>`
       + `<div class="note">first-week capstones: ${fmt(fw.capstone)}</div>`
       + renderCareer(fn.career)
       + renderBroadcast(fn.broadcast)
@@ -574,7 +574,7 @@
     const rows = tiers.map((t) =>
       `<div class="row"><span class="k">${t}</span><span class="v">${fmt(cr.reached[t])} reached · ${fmt(cr.completed[t])} finished</span></div>`).join('');
     const cold = Object.entries(cr.tasks || {}).filter(([, n]) => !n).map(([k]) => k);
-    return `<div class="note" style="margin-top:8px;color:var(--neon)">THE CAREER — ${fmt(cr.started)} account(s) on the ladder · $${fmt(cr.cashPaid)} paid out</div>`
+    return `<div class="note" style="margin-top:8px;color:var(--neon)">Career: ${fmt(cr.started)} account(s) on the ladder · $${fmt(cr.cashPaid)} paid out</div>`
       + rows
       + (cold.length ? `<div class="note" style="color:var(--dim)">never claimed by anyone (${cold.length}): ${cold.join(' · ')}</div>` : '');
   }
@@ -586,12 +586,12 @@
   // and "nobody opens it" and "they open it and do nothing" want different fixes.
   function renderScreens(sr) {
     if (!sr || !sr.reporters) {
-      return `<div class="note" style="margin-top:8px;color:var(--dim)">SCREEN REACH — no reports yet `
+      return `<div class="note" style="margin-top:8px;color:var(--dim)">Screen reach: no reports yet `
         + `<span>(players on a client older than the beacon send nothing)</span></div>`;
     }
     const rows = Object.entries(sr.reach || {}).sort((a, b) => a[1] - b[1]);
     const cold = rows.filter(([, p]) => p < 25).map(([s]) => s);
-    return `<div class="note" style="margin-top:8px;color:var(--neon)">SCREEN REACH — of ${fmt(sr.reporters)} reporting players</div>`
+    return `<div class="note" style="margin-top:8px;color:var(--neon)">Screen reach: ${fmt(sr.reporters)} reporting players</div>`
       + rows.map(([s, pct]) =>
         `<div class="row"><span class="k">${s}</span><span class="v">${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div>`).join('')
       + (cold.length ? `<div class="note" style="color:var(--bad)">under 25%: ${cold.join(', ')}</div>` : '');
@@ -609,12 +609,12 @@
     const top = live.slice(0, 12).map((s) =>
       `<div class="row"><span class="k">${s.system}</span><span class="v">${fmt(s.accounts)} player(s) · ${fmt(s.events)} events</span></div>`).join('');
     const deadList = e.dead.length
-      ? `<div class="note" style="margin-top:10px;color:var(--bad)">NEVER TOUCHED BY A PLAYER (${e.dead.length}/${e.systems.length}): ${e.dead.join(' · ')}</div>`
+      ? `<div class="note" style="margin-top:10px;color:var(--bad)">Unused systems (${e.dead.length}/${e.systems.length}): ${e.dead.join(' · ')}</div>`
       : '<div class="note" style="margin-top:10px;color:var(--ok)">every tracked system has been used by at least one player</div>';
     const untracked = e.untracked.length
-      ? `<div class="note" style="color:var(--dim)">untracked (no telemetry declared, so no verdict): ${e.untracked.join(' · ')}</div>` : '';
+      ? `<div class="note" style="color:var(--dim)">Untracked systems (no telemetry declared): ${e.untracked.join(' · ')}</div>` : '';
     const uncat = e.uncatalogued.length
-      ? `<div class="note" style="color:var(--bad)">${e.uncatalogued.length} event type(s) no system claims — the catalog in src/engagement.js is behind the code</div>` : '';
+      ? `<div class="note" style="color:var(--bad)">${e.uncatalogued.length} event type(s) have no assigned system. Update the catalog in src/engagement.js.</div>` : '';
     $('#p-engage').querySelector('.body').innerHTML =
       `<div class="row"><span class="k">humans / agents</span><span class="v">${fmt(p.humans)} / ${fmt(p.agents)}</span></div>`
       + `<div class="row"><span class="k">active in ${e.window}d</span><span class="v">${fmt(p.activeInWindow)} <span style="color:var(--dim)">(${fmt(p.neverActive)} never played)</span></span></div>`
@@ -627,7 +627,7 @@
   function renderBroadcast(bc) {
     if (!bc) return '';
     const kinds = Object.entries(bc.byKind || {}).map(([k, n]) => `${k} ${fmt(n)}`).join(' · ') || '—';
-    return `<div class="note" style="margin-top:8px;color:var(--neon)">THE BROADCAST — ${fmt(bc.shares)} share intents from ${fmt(bc.sharers)} players <span style="color:var(--dim)">(the top of the organic funnel)</span></div>`
+    return `<div class="note" style="margin-top:8px;color:var(--neon)">Shares: ${fmt(bc.shares)} share intents from ${fmt(bc.sharers)} players</div>`
       + `<div class="row"><span class="k">by kind</span><span class="v">${kinds}</span></div>`
       + `<div class="row"><span class="k">referred / share</span><span class="v">${bc.referredPerShare} <span style="color:var(--dim)">signups per share</span></span></div>`;
   }
@@ -635,7 +635,7 @@
     if (!rf) return '';
     const acc = Math.max(1, rf.accounts || 1);
     const pct = (n) => Math.round(100 * n / acc);
-    return `<div class="note" style="margin-top:8px;color:var(--neon)">REFERRAL FUNNEL — K-factor ${rf.kFactor} <span style="color:var(--dim)">(qualified recruits / account; &gt;1 compounds)</span></div>`
+    return `<div class="note" style="margin-top:8px;color:var(--neon)">Referrals: K-factor ${rf.kFactor} <span style="color:var(--dim)">(qualified recruits per account; &gt;1 indicates growth)</span></div>`
       + `<div class="row"><span class="k">came in on a code</span><span class="v">${fmt(rf.referred)} (${pct(rf.referred)}%)</span></div>`
       + `<div class="row"><span class="k">sparked (early payout)</span><span class="v">${fmt(rf.sparked)}</span></div>`
       + `<div class="row"><span class="k">qualified (full)</span><span class="v">${fmt(rf.qualified)} · spark→qual ${rf.sparkToQualified}</span></div>`
@@ -678,7 +678,7 @@
         + rowHtml('operations / buyback / rwa', `Ξ${fmt(rev.founderEth)} · Ξ${fmt(rev.buybackEth)} · Ξ${fmt(rev.rwaEth)}`)
         + rowHtml('treasury', `Ξ${fmt(rev.rwaEth)} <span class="note">held as ETH</span>`)
         + (rev.pendingLinks ? rowHtml('pending links', `${rev.pendingLinks} unclaimed purchase(s)`) : '') : '')
-      + (tre && tre.code !== 401 ? `<div class="note" style="margin-top:8px">THE VAULT — what the treasury owes players</div>`
+      + (tre && tre.code !== 401 ? `<div class="note" style="margin-top:8px">Treasury obligations to players</div>`
         + rowHtml('held / owed', `Ξ${fmt(tre.body?.totalEth)} held · Ξ${fmt(tre.body?.allocatedEth)} allocated`)
         // The one number a human has to reconcile by hand. The ledger proves the vault never owes
         // more than the books say arrived; only a look at the real Safe proves the ETH is still there.
@@ -715,21 +715,21 @@
       + (bnd ? (`<div class="note" style="margin-top:8px">the daily bond offering</div>`
           + rowHtml('today', bnd.daily
             ? `${fmt(bnd.daily.offeredOmr)} $OMR on offer · ${fmt(bnd.daily.quotedOmr)} quoted · <b>${fmt(bnd.daily.remainingOmr)} left</b>`
-            : `<span class="note">CLOSED — POST /v1/mod/bond/offer {omr} opens today's window</span>`)) : '')
+            : `<span class="note">CLOSED: POST /v1/mod/bond/offer {omr} opens today's window</span>`)) : '')
       // THE TRANCHE SCHEDULE (Shape D) — tier progress; a boundary is executed BY HAND (one Safe
       // setFees tx + the two env values), so an off-schedule live pair is flagged loudly.
       + (ov && ov.mintTier ? (`<div class="note" style="margin-top:8px">the mint tranche (published schedule)</div>`
           + rowHtml('tier', `${ov.mintTier.tier} of ${ov.mintTier.of} · ${fmt(ov.mintTier.minted)} minted`
-            + (ov.mintTier.flat ? ' · <span class="note">flat tail — the published table is fully minted</span>'
+            + (ov.mintTier.flat ? ' · <span class="note">the published table is fully minted</span>'
                                 : ` of ${fmt(ov.mintTier.through)}`))
           + rowHtml('price', ov.mintTier.offSchedule
-            ? `<span style="color:var(--bad)">⚠ OFF SCHEDULE</span> — live Ξ${ov.mintTier.liveEth} / ${ov.mintTier.liveOmr} $OMR, the table says Ξ${ov.mintTier.priceEth} / ${ov.mintTier.priceOmr}`
+            ? `<span style="color:var(--bad)">⚠ OFF SCHEDULE</span>: live Ξ${ov.mintTier.liveEth} / ${ov.mintTier.liveOmr} $OMR; scheduled Ξ${ov.mintTier.priceEth} / ${ov.mintTier.priceOmr}`
             : `Ξ${ov.mintTier.priceEth} / ${ov.mintTier.priceOmr} $OMR <span class="note">both rails on schedule</span>`)) : '')
       // THE BANK'S CITY LEG — borrowers' profit buys $OMR and the players who play receive it.
       // RULE 1 (`distributed <= bought`) is the wall; the rest is books. It is on THIS screen for the
       // same reason every sibling runner is: the nightly alarm fires into alertDrift, and an alarm
       // with nowhere to look at 2am is the failure mode this dashboard exists to prevent.
-      + (bk && !bk.error ? (`<div class="note" style="margin-top:8px">the Bank — the city leg</div>`
+      + (bk && !bk.error ? (`<div class="note" style="margin-top:8px">Bank distributions to the city</div>`
           + rowHtml('bought / paid out', `${fmt(bk.summary?.bought)} / ${fmt(bk.summary?.paidTotal)} $OMR`)
           + rowHtml('waiting for the next split', `${fmt(bk.summary?.balance)} $OMR`)
           + rowHtml('the books', bk.ok
@@ -738,9 +738,9 @@
       // THE FAMILY BUYBACK — community revenue → hard $OMR → the family yield pot. Phase 1 ships
       // with every slice lever at 0, so "quiet" here is the expected state until the flip; what must
       // never read quiet is a red runner (credited != bought / overspend / a comp that moved money).
-      + (com && !com.error ? (`<div class="note" style="margin-top:8px">the family buyback — community revenue</div>`
+      + (com && !com.error ? (`<div class="note" style="margin-top:8px">Family buyback from community revenue</div>`
           + rowHtml('arrived / spent', `${esc(Object.entries(com.summary?.revenue || {}).map(([c, v]) => `${fmt(v)} ${c}`).join(' · ') || 'nothing yet')} / ${esc(Object.entries(com.summary?.spent || {}).map(([c, v]) => `${fmt(v)} ${c}`).join(' · ') || '0')}`)
-          + rowHtml('the wallet must hold', `<b>${fmt(com.summary?.walletMustHold)} $OMR</b> <span class="note">bought for the family pot — attest against the community-buyback wallet</span>`)
+          + rowHtml('the wallet must hold', `<b>${fmt(com.summary?.walletMustHold)} $OMR</b> <span class="note">check the community-buyback wallet against this amount bought for the family pot</span>`)
           + rowHtml('the books', com.ok
             ? '<span style="color:var(--ok)">✓ every token credited was bought</span>'
             : `<span style="color:var(--bad)">⚠ ${esc((com.checks || []).filter((c) => !c.ok).map((c) => c.name).join(' · '))}</span>`)) : '');
@@ -756,10 +756,10 @@
     if (!th || th.error) { el.innerHTML = `<div class="note">${esc(th?.error || 'unreachable')}</div>`; return; }
     const tone = { ok: 'var(--ok)', watch: 'var(--warn)', act: 'var(--bad)', dormant: 'inherit' };
     const head = th.verdict === 'dormant'
-      ? '<div class="note">No market yet — these read <b>dormant</b> rather than zero, because a structural zero is not an alarm. They come alive with the pool.</div>'
+      ? '<div class="note">These readings are <b>dormant</b> until the market pool is active.</div>'
       : th.verdict === 'ok'
         ? '<div style="color:var(--ok)">✓ every reading inside its band</div>'
-        : `<div style="color:${th.verdict === 'act' ? 'var(--bad)' : 'var(--warn)'};font-weight:bold">${th.verdict === 'act' ? '⚠ ACT' : '⚠ WATCH'} — ${esc(th.kpis.filter((k) => k.state === th.verdict).map((k) => k.label).join(' · '))}</div>`;
+        : `<div style="color:${th.verdict === 'act' ? 'var(--bad)' : 'var(--warn)'};font-weight:bold">${th.verdict === 'act' ? '⚠ ACT' : '⚠ WATCH'}: ${esc(th.kpis.filter((k) => k.state === th.verdict).map((k) => k.label).join(' · '))}</div>`;
     el.innerHTML = head
       + `<div class="note" style="margin-top:6px">trailing ${th.window.days} days</div>`
       + th.kpis.map((k) => '<div style="margin:9px 0;padding:8px;border:1px solid var(--line);border-radius:5px">'
@@ -773,7 +773,7 @@
       + '<div class="note" style="margin-top:8px">the float</div>'
       + rowHtml('players hold', `${fmt(th.float.player.total)} $OMR <span class="note">${fmt(th.float.player.liquid)} liquid · ${fmt(th.float.player.staked)} staked · ${fmt(th.float.player.unbonding)} unbonding · ${fmt(th.float.player.gangReserves)} family</span>`)
       + rowHtml('the house holds', `${fmt(th.float.system.total)} $OMR <span class="note">${fmt(th.float.system.shelf)} on the desk shelf · ${fmt(th.float.system.familyPot)} family pot · ${fmt(th.float.system.eventFund)} event fund · ${fmt(th.float.system.devFund)} operations</span>`)
-      + '<div class="note" style="margin-top:8px">who is spending — humans vs agents</div>'
+      + '<div class="note" style="margin-top:8px">Spending by humans and agents</div>'
       + rowHtml('sink volume', `${fmt(th.sinks.byCohort.human)} human / ${fmt(th.sinks.byCohort.agent)} agent <span class="note">${th.players.humans} human · ${th.players.agents} agent active</span>`)
       + ((th.sinks.topSinks || []).length
           ? '<div class="note" style="margin-top:4px">' + th.sinks.topSinks.slice(0, 6).map((t) =>
@@ -792,8 +792,8 @@
     const badChecks = (inv.checks || []).filter((c) => !c.ok);
     el.innerHTML =
       (inv.ok === false
-        ? `<div style="color:var(--bad);font-weight:bold">⚠ ROUTER DRIFT — ${badChecks.map((c) => esc(c.name)).join(' · ')}</div>`
-        : `<div style="color:var(--ok)">✓ every inflow routed inside the declared waterfall (${(inv.checks || []).length} checks)</div>`)
+        ? `<div style="color:var(--bad);font-weight:bold">⚠ ROUTER DRIFT: ${badChecks.map((c) => esc(c.name)).join(' · ')}</div>`
+        : `<div style="color:var(--ok)">✓ All inflows match the declared allocations (${(inv.checks || []).length} checks)</div>`)
       + (rt.waterfall || []).map((src) => {
         const lf = life[src.id] || {};
         const unit = src.currency === 'omr' ? '$OMR ' : 'Ξ';
@@ -805,7 +805,7 @@
           + rowHtml('split', slices)
           + rowHtml('lifetime', `${lf.gross !== undefined ? `gross ${unit}${fmt(lf.gross)} → ` : ''}${nums || '—'}`);
       }).join('')
-      + `<div class="note" style="margin-top:8px">* implicit remainder — computed, never stored (the on-chain wallet holds it)</div>`;
+      + `<div class="note" style="margin-top:8px">* The remainder is calculated from the split. The wallet holds it on-chain without a separate ledger entry.</div>`;
   }
 
   // THE ACQUISITION DESK — a graphical operator layer over the RWA routes that already exist.
@@ -839,26 +839,26 @@
           <section class="rwa-card" aria-labelledby="rwa-actions-title">
             <div class="rwa-card-head"><h3 id="rwa-actions-title">Live operating actions</h3><span>existing authenticated routes</span></div>
             <div class="rwa-card-body rwa-actions">
-              <div class="rwa-action"><h4>1 · Freeze a broker epoch</h4><p>Publishes play-weighted ownership for a closed window. Re-running the same window is idempotent.</p>
+              <div class="rwa-action"><h4>1 · Freeze a broker epoch</h4><p>Publishes play-weighted ownership for a closed window. Running it again for the same window leaves the result unchanged.</p>
                 <div class="rwa-form"><label>End day · UTC integer<input id="rwa-epoch-day" inputmode="numeric" placeholder="blank = yesterday"></label><button id="rwa-epoch-go">publish weights</button></div></div>
-              <div class="rwa-action"><h4>2 · Record the keeper acquisition</h4><p>Applies the spendable-budget and price-continuity walls. A tx hash is accepted as real only when the server's explicit real-revenue gate is on; otherwise this is a zero-value QA record.</p>
+              <div class="rwa-action"><h4>2 · Record the keeper acquisition</h4><p>Checks the spendable budget and price continuity. The server books a transaction hash as real revenue only when the real-revenue switch is enabled. Otherwise it records a zero-value test.</p>
                 <div class="rwa-form"><label>Ticker<select id="rwa-buy-ticker"></select></label><label>Achieved ETH / unit<input id="rwa-buy-price" inputmode="decimal" placeholder="0.0001"></label><label>Maximum ETH<input id="rwa-buy-max" inputmode="decimal" placeholder="blank = budget"></label><label>Reference<input id="rwa-buy-ref" placeholder="optional idempotent ref"></label><label class="wide">Observed transaction hash<input id="rwa-buy-tx" placeholder="optional · 0x…" autocomplete="off"></label><button class="wide danger" id="rwa-buy-go">run acquisition keeper</button></div></div>
-              <div class="rwa-action"><h4>3 · Distribute an acquisition</h4><p>Splits one real acquisition across the latest epoch published before that acquisition. The reference latch is consumed once.</p>
+              <div class="rwa-action"><h4>3 · Distribute an acquisition</h4><p>Splits one real acquisition using the latest epoch published before it. Each acquisition reference can be processed once.</p>
                 <div class="rwa-form"><label>Acquisition reference<input id="rwa-dist-ref" placeholder="txHash:logIndex" autocomplete="off"></label><button class="danger" id="rwa-dist-go">distribute units</button></div></div>
-              <div class="rwa-action"><h4>4 · Run the delivery keeper</h4><p>Stages and sends every currently deliverable allocation to its Street Deed TBA. Accounts without a deed remain owed and wait.</p>
+              <div class="rwa-action"><h4>4 · Run the delivery keeper</h4><p>Stages and sends each deliverable allocation to its Street Deed TBA. Allocations for accounts without a deed remain pending.</p>
                 <button class="danger" id="rwa-deliveries-go">run delivery keeper</button></div>
               <div id="rwa-out" class="rwa-out" role="status" aria-live="polite">No RWA action sent in this session.</div>
             </div>
             <details><summary>Advanced ingest &amp; single-delivery controls</summary><div class="rwa-card-body rwa-actions">
-              <div class="rwa-action"><h4>Record a fill directly</h4><p>Backstop ingest for an observed acquisition. The first real print for a ticker requires the explicit bootstrap flag.</p>
+              <div class="rwa-action"><h4>Record a fill directly</h4><p>Records an observed acquisition directly. The first real price for a ticker requires the bootstrap flag.</p>
                 <div class="rwa-form"><label>Reference<input id="rwa-fill-ref" placeholder="txHash:logIndex"></label><label>Ticker<select id="rwa-fill-ticker"></select></label><label>Units<input id="rwa-fill-units" inputmode="decimal"></label><label>ETH spent<input id="rwa-fill-eth" inputmode="decimal"></label><label class="wide">Observed transaction hash<input id="rwa-fill-tx" placeholder="optional · 0x…"></label><label class="rwa-check"><input id="rwa-fill-bootstrap" type="checkbox">Seed the first real price anchor deliberately</label><button class="wide danger" id="rwa-fill-go">record observed fill</button></div></div>
-              <div class="rwa-action"><h4>Record one delivery</h4><p>Targets one allocation. Without a gated real transaction hash the server records a simulation and does not settle the allocation.</p>
+              <div class="rwa-action"><h4>Record one delivery</h4><p>Targets one allocation. The server settles it only when a real transaction hash is supplied and real-revenue recording is enabled. Otherwise it records a simulation.</p>
                 <div class="rwa-form"><label>Epoch ID<input id="rwa-one-epoch" autocomplete="off"></label><label>Account ID<input id="rwa-one-account" autocomplete="off"></label><label>Ticker<select id="rwa-deliver-ticker"></select></label><label>Units<input id="rwa-one-units" inputmode="decimal"></label><label class="wide">Observed transaction hash<input id="rwa-one-tx" placeholder="optional · 0x…"></label><button class="wide danger" id="rwa-one-go">record single delivery</button></div></div>
             </div></details>
           </section>
           <section class="rwa-card" aria-labelledby="rwa-vault-title">
             <div class="rwa-card-head"><h3 id="rwa-vault-title">Acquisition vault controls</h3><span style="color:var(--warn)">designed · not mounted</span></div>
-            <div class="rwa-card-body"><div class="note" style="margin-bottom:9px">These controls reflect the approved architecture, including deterministic reconciliation accounting and incident disclosure. Quarantined Stock Tokens default to hold-only; recovery is an optional future edge feature, not an RWA launch dependency, and no recovery capability is deployed.</div>
+            <div class="rwa-card-body"><div class="note" style="margin-bottom:9px">These controls follow the approved design for reconciliation accounting and incident reporting. Quarantined Stock Tokens are held by default. Recovery is an optional future feature. It is not deployed or required for the RWA launch.</div>
               <div class="rwa-locked">
                 <button disabled>Pause new purchases<small>Safe or current mainOperator</small></button>
                 <button disabled>Resume purchases<small>Safe only</small></button>
@@ -1099,7 +1099,7 @@
       <div class="mod-row"><div class="mod-field"><label for="m-fund">$OMR to reserve</label><input id="m-fund" inputmode="decimal" size="10"></div><button id="m-fund-go">fund reserve</button></div>
       <div class="mod-row"><div class="mod-field"><label for="m-push-h">Hours</label><input id="m-push-h" inputmode="numeric" size="5" value="48"></div><div class="mod-field"><label for="m-push-m">Cash multiplier</label><input id="m-push-m" inputmode="decimal" size="5" value="2"></div><button id="m-push-go">start recruit drive</button></div>
       <div class="mod-row"><button id="m-alert-go">send test alert</button>
-        <span class="note">proves INVARIANT_WEBHOOK_URL works on THIS service (the API) — which is the one that pages when the worker is gone</span></div>
+        <span class="note">Checks INVARIANT_WEBHOOK_URL on the API service, which sends alerts when the worker is unavailable.</span></div>
       <div id="m-out" class="note" role="status" aria-live="polite"></div>`;
     const out = (m, bad) => { const el = $('#m-out'); el.textContent = m; el.style.color = bad ? 'var(--bad)' : 'var(--dim)'; };
     $('#m-invite').onclick = async () => {
@@ -1121,12 +1121,12 @@
         body: `Character ${id} will die. The estate runs and an heir rises. This is irreversible.`,
         confirmText: id, yes: 'mod-kill' })) return;
       const r = await j('POST', '/v1/mod/kill', { characterId: id });
-      out(r.code === 200 ? `retired — heir ${r.body.heirId}` : `error: ${r.body.message || r.code}`, r.code !== 200); refreshAll();
+      out(r.code === 200 ? `retired; heir ${r.body.heirId}` : `error: ${r.body.message || r.code}`, r.code !== 200); refreshAll();
     };
     $('#m-ban').onclick = async () => {
       const id = $('#m-ban-id').value.trim(); if (!id) return out('account id?', true);
       if (!await confirmAction({ title: 'Ban this account?',
-        body: `Account ${id} will lose access to the city. This does not silently delete its ledger history.`,
+        body: `Account ${id} will lose access to the city. Its ledger history will remain.`,
         confirmText: id, yes: 'ban account' })) return;
       const r = await j('POST', '/v1/mod/ban', { accountId: id });
       out(r.code === 200 ? 'banned.' : `error: ${r.body.message || r.code}`, r.code !== 200);

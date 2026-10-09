@@ -748,7 +748,7 @@ assert(/respect/.test(rm.coach.hint) && rm.coach.tab === 'streets', 'quoting the
 // itself in minutes, so it can never mask the ladder — the harness-F1 rule)
 await seedCh(rook.id, 'nerve=0');
 rm = (await call('GET', '/v1/me', { token: rook.token })).body.character;
-assert.equal(rm.coach?.label, 'Out of nerve — it comes back by itself', 'an empty pool coaches the productive wait');
+assert.equal(rm.coach?.label, 'Out of nerve', 'an empty pool coaches the productive wait');
 assert.equal(rm.coach.tab, 'start', 'and points at Start Here (claim what\'s READY while nerve refills)');
 // (harness F1) THE COACH MUST NOT DEAD-END. THREE separate rungs could never clear for a solo
 // player, each masking every rung below it — the harness caught it by reporting the same coach line
@@ -807,7 +807,7 @@ await pool.query(`UPDATE account_persistent SET race_wins=1 WHERE account_id='${
 // real and was simply never said. Since 2026-08-10 the rung states a FACT rather than a price: the
 // mission it names hands over the credit, so it must NAME that job and clear on being minted.
 const made = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
-assert.equal(made?.label, 'You can get made for free', 'lvl 14+ unminted → the free route to being made');
+assert.equal(made?.label, 'Earn a mint credit', 'lvl 14+ unminted → the free route to minting');
 const freeJob = MISSIONS.find((m) => Number(m.reward?.mintCredit) > 0);
 assert(made.hint.includes(freeJob.name), 'the rung names the job that hands over the credit');
 assert(!/\d+ \$OMR/.test(made.hint), 'and states no price — a quoted figure would be a lie at the till');
@@ -815,7 +815,7 @@ assert(!/\d+ \$OMR/.test(made.hint), 'and states no price — a quoted figure wo
 await pool.query(`UPDATE account_persistent SET mint_credits=1 WHERE account_id='${rookAid}'`);
 assert.equal(await coachOf(), 'Spend your mint credit', 'a credit in hand → spend it');
 await pool.query(`UPDATE account_persistent SET mint_credits=0, minted=true WHERE account_id='${rookAid}'`);
-assert.notEqual(await coachOf(), 'You can get made for free', 'being minted clears it — it cannot nag a made man');
+assert.notEqual(await coachOf(), 'Earn a mint credit', 'being minted clears the credit recommendation');
 // (founder: "not obvious… the steps to buy your first business") — concrete, priced off the catalog
 let front = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
 assert.equal(front?.label, 'Open your first front', 'lvl 15+ no front → the Empire walkthrough');
@@ -948,7 +948,7 @@ await pool.query(`INSERT INTO daily_progress (character_id, day, counters, claim
   ON CONFLICT (character_id, day) DO UPDATE SET counters=EXCLUDED.counters, claimed='[]'`,
   [rook.id, cday, JSON.stringify({ [liveDaily.k]: liveDaily.n })]);
 coachedDaily = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
-assert.equal(coachedDaily.label, `${liveDaily.name} — ready to collect`, 'the coach names the completed live contract as claim-ready');
+assert.equal(coachedDaily.label, `${liveDaily.name}: ready to collect`, 'the coach names the completed live contract as claim-ready');
 assert.match(coachedDaily.hint, /ready to collect.*Daily Work card/i, 'the coach explicitly says to collect its completed contract');
 assert.equal(coachedDaily.tab, 'streets', 'a completed live daily routes to the Streets claim card');
 // the REAL drawn ids — the count subtracts what this player has actually claimed, so a placeholder
@@ -1043,7 +1043,7 @@ const band = await mk('Band Benny');
 await seedCh(band.id, `respect=${10 * 5 * 5}, path='gun'`);   // level 6 — inside the 3..12 band
 for (let i = 0; i < 20; i++) { const c = await call('POST', '/v1/crimes/pick', { token: band.token }); if (c.body.success) break; await seedCh(band.id, 'nerve=50, jail_until=NULL'); }
 const bandCoach = (await call('GET', '/v1/me', { token: band.token })).body.character.coach;
-assert.equal(bandCoach?.label, 'Nobody survives alone', 'inside the band a gangless street IS nudged to a family');
+assert.equal(bandCoach?.label, 'Find a family', 'inside the band a gangless street IS nudged to a family');
 assert.equal(bandCoach.tab, 'family', 'and pointed at the Family tab');
 // the funnel (mod-gated): counts characters + first-week claims, refuses without the key
 assert.equal((await call('GET', '/v1/mod/funnel', { token: rook.token })).code, 401, 'the funnel needs the mod key');

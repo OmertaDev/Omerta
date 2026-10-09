@@ -126,7 +126,7 @@ const mug = (cx, cy) => `<g transform="translate(${cx} ${cy})" stroke="${GOLD}" 
 // ── the cards ──
 export function card(type, d, ref) {
   const cta = ref ? `${esc(ref)} sent you  ·  claim your street at omertà` : 'claim your street  ·  omertà';
-  const fam = d.gang ? `${esc(d.gang)}${d.tag ? ` [${esc(d.tag)}]` : ''}` : 'no family — a lone wolf';
+  const fam = d.gang ? `${esc(d.gang)}${d.tag ? ` [${esc(d.tag)}]` : ''}` : 'no family';
   if (type === 'wanted') {
     const price = d.bounty > 0 ? `$${Number(d.bounty).toLocaleString('en-US')} ON THEIR HEAD`
       : d.wanted ? 'MARKED FOR THE RIVER' : 'A NAME WORTH KNOWING';
@@ -175,7 +175,7 @@ export function beefCard(d, ref) {
     return frame(`
       <text x="${W / 2}" y="240" text-anchor="middle" fill="${BLOOD}" font-size="64" letter-spacing="8">NO BLOOD SPILLED</text>
       <text x="${W / 2}" y="330" text-anchor="middle" fill="${INK}" font-size="40">${esc(d.a?.name || '?')} &amp; ${esc(d.b?.name || '?')}</text>
-      <text x="${W / 2}" y="386" text-anchor="middle" fill="${DIM}" font-size="26">— not yet, anyway.</text>`,
+      <text x="${W / 2}" y="386" text-anchor="middle" fill="${DIM}" font-size="26">Settle it in the city.</text>`,
       { accent: BLOOD, cta, plate: 'whacked' });
   }
   const nameOf = (x) => `${esc(x.name)}${x.tag ? ` [${esc(x.tag)}]` : ''}`;
@@ -213,10 +213,10 @@ export function profilePage(d, baseUrl, ref) {
   // falling back to SVG bytes if no rasterizer is installed).
   const cardUrl = `${baseUrl}/card/legend/${encodeURIComponent(d.name)}.png`;
   const enter = `${baseUrl}/?ref=${encodeURIComponent(ref || d.name)}`;
-  const title = d.found ? `${d.name} — ${d.hitmanRank}` : 'OMERTÀ — the city';
+  const title = d.found ? `${d.name} · ${d.hitmanRank}` : 'OMERTÀ · the city';
   const desc = d.found
-    ? `${d.hitmanRank} · Level ${d.level} · ${d.kills} ${d.kills === 1 ? 'kill' : 'kills'} · ${d.gang ? d.gang : (d.crew ? d.crew : 'a lone wolf')}${d.dynasty ? ` · the ${d.dynasty} dynasty` : ''}${d.wanted ? ' · WANTED' : ''}. Come take the city.`
-    : 'A noir mob RPG. Build a family, run the rackets, and try to survive the street.';
+    ? `${d.hitmanRank} · Level ${d.level} · ${d.kills} ${d.kills === 1 ? 'kill' : 'kills'} · ${d.gang ? d.gang : (d.crew ? d.crew : 'a lone wolf')}${d.dynasty ? ` · the ${d.dynasty} dynasty` : ''}${d.wanted ? ' · WANTED' : ''}. View their record in OMERTÀ.`
+    : 'A noir mafia RPG where you run rackets and fight for turf with your family.';
   const inline = d.found ? card('legend', d, ref || d.name) : card('join', { name: 'The City', gang: null }, ref);
   return `<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -244,10 +244,10 @@ ${d.found ? `<div class="dossier">
 </div>` : ''}
 ${d.found && d.bio ? `<p class="share-copy share-copy--bio">“${esc(d.bio)}”</p>` : ''}
 <a class="share-cta" href="${esc(enter)}">ENTER THE CITY →</a>
-<p class="share-copy">${d.found ? `You're looking at ${esc(d.name)}'s sheet. Start your own street — free, no wallet needed${ref || d.name ? `, and ${esc(ref || d.name)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
-${d.found ? `<p class="share-copy share-copy--story">A noir mafia RPG. Pull jobs, run a kitchen, take turf, and put a rival in the river —
-  or <b>go legit</b> and die in bed. <b>Death is real</b>: your street dies, but the bloodline carries on.
-Everything runs on one honest ledger, and the city never stops moving.</p>` : ''}
+<p class="share-copy">${d.found ? `This is ${esc(d.name)}'s record. Start your own street for free. You can play without a wallet.${ref || d.name ? ` ${esc(ref || d.name)} gets credit for bringing you in.` : ''}` : 'A noir mafia RPG where you run rackets and fight for turf with your family.'}</p>
+${d.found ? `<p class="share-copy share-copy--story">Pull jobs to pay for your next move. Run a kitchen or take turf from a rival.
+You can also go legit and retire. Death ends your street; your bloodline carries on.
+The city keeps running while you're away, and every transaction goes in the ledger.</p>` : ''}
 </div></main></body></html>`;
 }
 
@@ -257,10 +257,10 @@ export function beefPage(d, baseUrl, ref) {
   const A = d.a?.name || '?', B = d.b?.name || '?';
   const cardUrl = `${baseUrl}/card/beef/${encodeURIComponent(A)}/${encodeURIComponent(B)}.png`;
   const enter = `${baseUrl}/?ref=${encodeURIComponent(ref || A)}`;
-  const title = `${A} vs ${B} — a feud in OMERTÀ`;
+  const title = `${A} vs ${B} · a feud in OMERTÀ`;
   const desc = d.found
-    ? `${d.total} ${d.total === 1 ? 'body' : 'bodies'} between them${d.leader === 'even' ? ' — dead even' : ` · ${(d.leader === 'a' ? d.a : d.b).name} is ahead`}. Pick a side.`
-    : `${A} and ${B} — no blood spilled yet. Start something.`;
+    ? `${d.total} ${d.total === 1 ? 'body' : 'bodies'} between them${d.leader === 'even' ? ' · dead even' : ` · ${(d.leader === 'a' ? d.a : d.b).name} is ahead`}. Pick a side.`
+    : `${A} and ${B} have yet to spill blood. Pick a side.`;
   const inline = beefCard(d, ref || A);
   return `<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -277,6 +277,6 @@ ${shareNav(enter)}
 <h1 class="share-heading share-heading--blood"><span class="visually-hidden">${esc(A)} versus ${esc(B)}: </span>Omertà · blood between them</h1>
 <div class="share-card" aria-hidden="true">${inline}</div>
 <a class="share-cta" href="${esc(enter)}">ENTER THE CITY →</a>
-<p class="share-copy">${d.found ? `${esc(A)} and ${esc(B)} have a feud in OMERTÀ — ${d.total} ${d.total === 1 ? 'body' : 'bodies'} and counting. Start your own street — free, no wallet needed${ref ? `, and ${esc(ref)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
+<p class="share-copy">${d.found ? `${esc(A)} and ${esc(B)} have a feud in OMERTÀ, with ${d.total} ${d.total === 1 ? 'body' : 'bodies'} between them so far. Start your own street for free. You can play without a wallet.${ref ? ` ${esc(ref)} gets credit for bringing you in.` : ''}` : 'A noir mafia RPG where you run rackets and fight for turf with your family.'}</p>
 </div></main></body></html>`;
 }
