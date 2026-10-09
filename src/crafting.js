@@ -645,6 +645,33 @@ export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTE
     });
 }
 
+/** Safe UI choices include exact eligible garage cars; consuming a car still requires salvageCar. */
+export function recipeActionCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTEXT) {
+  const runtime = contextOf(craftingContext), preview = previewContext(ctx);
+  return recipeCatalog(ctx, craftingContext).map(entry => {
+    if (entry.blockedBy.some(blocker => blocker.adapter === 'discovery')) return { ...entry, actions: [] };
+    const recipe = CRAFTING_DEFINITIONS.get(runtime).get(entry.id);
+    const base = '/v1/worldgraph/recipes/' + encodeURIComponent(entry.id);
+    const cars = inputsOf(recipe).some(input => input.assetType === 'car');
+    let actions;
+    if (cars) {
+      actions = preview.cars.filter(car => !recipeBlockers(recipe, preview, { selectedCarId: car.id })
+        .some(blocker => blocker.adapter === 'owns_car')).map(car => {
+        const blockedBy = [...entry.blockedBy.filter(blocker => blocker.adapter !== 'owns_car'),
+          ...recipeBlockers(recipe, preview, { selectedCarId: car.id })
+            .filter(blocker => blocker.adapter === 'owns_car')];
+        return { id: 'salvage:' + car.id, label: 'Salvage ' + car.modelId,
+          method: 'POST', path: base + '/salvage/' + encodeURIComponent(car.id), body: {},
+          available: blockedBy.length === 0, blockedBy,
+          consequence: 'This permanently consumes this exact car and the listed costs. It cannot be undone.' };
+      });
+    } else actions = [{ id: 'craft:' + entry.id, label: 'Craft this recipe', method: 'POST',
+      path: base + '/craft', body: {}, available: entry.available, blockedBy: entry.blockedBy,
+      consequence: 'This consumes the listed materials and cash to produce the listed output.' }];
+    return { ...entry, actions };
+  });
+}
+
 async function actorContext(client, accountId) {
   const character = (await client.query(
     `SELECT id, account_id, loc, respect, cash, alive
@@ -920,7 +947,8 @@ export async function recipeCatalogForPlayer(client, accountId, craftingContext,
   const inventory = await inventoryBoard(client, actor.owner);
   actor.inventory = inventory;
   const selected = new Set(recipes.map((recipe) => recipe.id));
-  return recipeCatalog(actor, context).filter((recipe) => selected.has(recipe.id));
+  const catalog = recipeCatalog(actor, context);
+  return catalog.filter((recipe) => selected.has(recipe.id));
 }
 
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */

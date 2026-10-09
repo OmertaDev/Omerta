@@ -1,0 +1,166 @@
+{
+  "id": "neighborhood-initiation",
+  "version": 1,
+  "season": "core",
+  "dependsOn": [],
+  "nodes": [
+    {
+      "id": "mystery:neighborhood-fixer",
+      "type": "mystery_step",
+      "version": 1,
+      "visibility": "public",
+      "conditions": [
+        { "adapter": "explicit_interaction", "interactionId": "meet_neighborhood_fixer" }
+      ],
+      "metadata": {
+        "title": "A Name Worth Remembering",
+        "description": "Nico Bellini, the fixer: Before I trust a newcomer with an address, I want to know how they read a street. Ada at the workshop has a delivery that never arrived. Find out what happened, then give Elena at the newsroom an account she can stand behind.",
+        "lore": "Speak with Nico to accept his introduction. These visits are explicit conversations and inspections; walking across the map does not complete an objective."
+      }
+    },
+    {
+      "id": "choice:neighborhood-approach",
+      "type": "choice",
+      "version": 1,
+      "visibility": "public",
+      "requires": ["mystery:neighborhood-fixer"],
+      "conditions": [
+        { "adapter": "explicit_interaction", "interactionId": "choose_neighborhood_approach" }
+      ],
+      "options": [
+        {
+          "id": "listen",
+          "title": "Listen before you act",
+          "excludes": ["mystery:neighborhood-ask"],
+          "effects": [
+            { "adapter": "discover", "nodeId": "mystery:neighborhood-listen" }
+          ]
+        },
+        {
+          "id": "ask",
+          "title": "Ask who needs help",
+          "excludes": ["mystery:neighborhood-listen"],
+          "effects": [
+            { "adapter": "discover", "nodeId": "mystery:neighborhood-ask" }
+          ]
+        }
+      ],
+      "metadata": {
+        "title": "Choose Your First Approach",
+        "description": "Nico: You can listen to what a room leaves unsaid, or ask someone directly what they need. Both can get you an answer. Tell me how you intend to approach Ada.",
+        "lore": "Your choice is remembered and opens a different workshop conversation. It cannot be changed within this introduction."
+      }
+    },
+    {
+      "id": "mystery:neighborhood-listen",
+      "type": "mystery_step",
+      "version": 1,
+      "visibility": "discovered",
+      "requires": ["choice:neighborhood-approach"],
+      "excludes": ["mystery:neighborhood-ask"],
+      "conditions": [
+        { "adapter": "explicit_interaction", "interactionId": "inspect_neighborhood_watch" }
+      ],
+      "effects": [
+        { "adapter": "evidence_grant", "nodeId": "evidence:neighborhood-timing" }
+      ],
+      "metadata": {
+        "title": "Listen at the Workshop",
+        "description": "Ada Ferri, the mechanic: Hear that clock? It stops whenever the ferry horn blows. Everyone swears the delivery was late, but they all read the same broken clock. Inspect its stuck minute hand and the receipt pinned beside it.",
+        "lore": "Inspect Ada's clock and receipt. The mismatch gives you an account based on what you observed, rather than on the loudest rumor."
+      }
+    },
+    {
+      "id": "mystery:neighborhood-ask",
+      "type": "mystery_step",
+      "version": 1,
+      "visibility": "discovered",
+      "requires": ["choice:neighborhood-approach"],
+      "excludes": ["mystery:neighborhood-listen"],
+      "conditions": [
+        { "adapter": "explicit_interaction", "interactionId": "inspect_neighborhood_delivery" }
+      ],
+      "effects": [
+        { "adapter": "evidence_grant", "nodeId": "evidence:neighborhood-route" }
+      ],
+      "metadata": {
+        "title": "Ask at the Workshop",
+        "description": "Ada Ferri, the mechanic: Finally, someone asks. The courier took the parcel to the old workshop entrance; we moved it last winter. Inspect the crossed-out address on my delivery book. I need a correction, not another accusation.",
+        "lore": "Inspect Ada's delivery book and hear her account. The old address explains why the delivery vanished without blaming the courier."
+      }
+    },
+    {
+      "id": "evidence:neighborhood-timing",
+      "type": "evidence",
+      "version": 1,
+      "visibility": "discovered",
+      "requires": ["mystery:neighborhood-listen"],
+      "metadata": {
+        "title": "The Stopped Workshop Clock",
+        "description": "The receipt predates the ferry horn; the clock's stuck hand made an on-time delivery look late."
+      }
+    },
+    {
+      "id": "evidence:neighborhood-route",
+      "type": "evidence",
+      "version": 1,
+      "visibility": "discovered",
+      "requires": ["mystery:neighborhood-ask"],
+      "metadata": {
+        "title": "The Old Workshop Entrance",
+        "description": "Ada's delivery book still sends couriers to the old entrance. The parcel went to the wrong door."
+      }
+    },
+    {
+      "id": "mystery:neighborhood-newsroom",
+      "type": "mystery_step",
+      "version": 1,
+      "visibility": "discovered",
+      "requires": ["mystery:neighborhood-fixer", "choice:neighborhood-approach"],
+      "requiresAny": [
+        ["mystery:neighborhood-listen", "mystery:neighborhood-ask"],
+        ["evidence:neighborhood-timing", "evidence:neighborhood-route"]
+      ],
+      "conditions": [
+        { "adapter": "explicit_interaction", "interactionId": "publish_neighborhood_note" }
+      ],
+      "effects": [
+        { "adapter": "unique_item_award", "templateId": "item:neighborhood_notebook" },
+        { "adapter": "status_award", "nodeId": "reward:neighborhood-trusted-face" }
+      ],
+      "metadata": {
+        "title": "Set the Record Straight",
+        "description": "Elena Serra, the editor: Nico sent word that a newcomer was doing the legwork. Put Ada's account beside your evidence. We can print a correction without turning an ordinary mistake into a feud. Tell me what you found, and sign the note.",
+        "lore": "Finish your introduction at the newsroom. Elena gives you a neighborhood notebook to remember your first case. The notebook is a cosmetic keepsake with no economic or combat benefit.",
+        "terminal": true
+      }
+    },
+    {
+      "id": "item:neighborhood_notebook",
+      "type": "item_template",
+      "version": 1,
+      "visibility": "hidden",
+      "metadata": {
+        "title": "Neighborhood Notebook",
+        "description": "A worn notebook with Elena's correction tucked inside. A cosmetic keepsake of your first neighborhood introduction.",
+        "inventoryClass": "unique",
+        "inert": true,
+        "tradeable": false,
+        "exportEligible": false
+      }
+    },
+    {
+      "id": "reward:neighborhood-trusted-face",
+      "type": "reward",
+      "version": 1,
+      "visibility": "hidden",
+      "requires": ["mystery:neighborhood-newsroom"],
+      "metadata": {
+        "title": "A Familiar Face",
+        "description": "Nico, Ada, and Elena remember the newcomer who checked a rumor before passing it on.",
+        "inert": true,
+        "rewardType": "status"
+      }
+    }
+  ]
+}

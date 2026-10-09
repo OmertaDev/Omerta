@@ -1121,7 +1121,7 @@ async function abandonIfInvalid(client, operation, mutation, authority) {
   return { ok: true, ...operationProjection(abandoned), releasedEscrowCount };
 }
 
-async function conditionBlocker(client, actor, operation, states, condition, interactionId) {
+async function conditionBlocker(client, actor, operation, states, condition, interactionId, { lock = true } = {}) {
   const normalized = normalizeOperationCondition(condition, 'Operation runtime');
   const { adapter } = normalized;
   if (adapter === 'graph_dependency') {
@@ -1142,7 +1142,7 @@ async function conditionBlocker(client, actor, operation, states, condition, int
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
     const row = (await client.query(
       `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,
+        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1${lock ? ' FOR UPDATE' : ''}`,
       [actor.accountId, normalized.templateId],
     )).rows[0];
     return row ? null : { adapter };
@@ -1150,7 +1150,7 @@ async function conditionBlocker(client, actor, operation, states, condition, int
   if (adapter === 'material_quantity') {
     const row = (await client.query(
       `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND quality=$3 FOR UPDATE`,
+        AND template_id=$2 AND quality=$3${lock ? ' FOR UPDATE' : ''}`,
       [actor.accountId, normalized.templateId, normalized.quality],
     )).rows[0];
     return Number(row?.quantity || 0) >= normalized.quantity
@@ -1584,6 +1584,148 @@ function maySeeNode(node, states, roleId = null) {
   if (node.visibility === 'role_private') return roleId === node.metadata?.roleId;
   if (node.visibility === 'public') return true;
   return states.get(node.id)?.state === 'completed';
+}
+
+// Snapshot eligibility for the human client. This does not reserve a role, mutate lifecycle state,
+// or acquire item/participant locks; every issued action is re-authorized by its mutation handler.
+async function operationUiParticipants(client, operation, accountId) {
+  const assignments = await roleRows(client, operation.id);
+  const candidate = (await client.query(
+    `SELECT id FROM characters WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`,
+    [accountId],
+  )).rows[0];
+  const characterById = new Map();
+  for (const id of [...new Set([
+    ...assignments.map(row => row.character_id), ...(candidate ? [candidate.id] : []),
+  ])].sort()) {
+    const row = (await client.query(
+      'SELECT id,account_id,loc,respect,alive FROM characters WHERE id=$1', [id],
+    )).rows[0];
+    if (row) characterById.set(id, row);
+  }
+  const membershipByAccount = new Map();
+  for (const id of [...new Set([...assignments.map(row => row.account_id), accountId])].sort()) {
+    const row = (await client.query(
+      'SELECT account_id,crew_id FROM crew_members WHERE account_id=$1', [id],
+    )).rows[0];
+    if (row) membershipByAccount.set(id, row);
+  }
+  const dead = assignments.some(assignment => {
+    const character = characterById.get(assignment.character_id);
+    return !character || character.account_id !== assignment.account_id || character.alive !== true;
+  });
+  const moved = assignments.some(assignment => membershipByAccount.get(assignment.account_id)?.crew_id !== operation.crew_id);
+  return {
+    assignments, characterById, membershipByAccount, candidateCharacterId: candidate?.id || null,
+    invalidReason: dead ? 'participant_dead' : moved ? 'crew_changed' : null,
+  };
+}
+
+/** Issued actions for an already authorized board; private interactions stay in the owning role. */
+export async function operationUiActions(client, contextValue, operationIdValue, { visibleNodeIds = [] } = {}) {
+  const context = contextOf(contextValue);
+  await awaitItemReadBarrier(client);
+  const authority = await authorizeOperation(client, context, operationIdValue, { requireCrew: false });
+  const { row, root, assignment } = authority;
+  const participants = await operationUiParticipants(client, row, context.accountId);
+  const states = stateMap(await stateRows(client, row.id));
+  const visible = new Set(visibleNodeIds);
+  const baseBlockers = [];
+  let actor = null;
+  if (participants.invalidReason) baseBlockers.push({ code: participants.invalidReason });
+  try { actor = await candidateActor(client, row, context.accountId, participants); }
+  catch (error) {
+    if (!['no_character', 'no_crew', 'operation_forbidden'].includes(error?.code)) throw error;
+    baseBlockers.push({ code: error.code === 'operation_forbidden' ? 'crew_changed' : error.code });
+  }
+  const prefix = '/v1/worldgraph/operations/' + encodeURIComponent(row.id);
+  const action = (id, label, suffix, body, blockedBy, consequence = '') => ({
+    id, label, method: 'POST', path: prefix + suffix, body,
+    available: blockedBy.length === 0, blockedBy, ...(consequence ? { consequence } : {}),
+  });
+  const previewConditions = async (conditions, interactionId) => {
+    if (!actor) return [];
+    const result = [];
+    for (const condition of conditions || []) {
+      const blocker = await conditionBlocker(client, actor, row, states, condition, interactionId, { lock: false });
+      if (blocker) result.push(blocker);
+    }
+    return result;
+  };
+  const actions = [];
+  if (row.opened_by_account_id === context.accountId) {
+    const blockedBy = ['forming', 'active'].includes(row.status) ? [] : [{ code: 'operation_closed' }];
+    actions.push(action('cancel', 'Cancel operation', '/cancel', {}, blockedBy,
+      'Ends this operation and returns each escrowed item to its recorded depositor.'));
+  }
+  if (assignment?.role_id === root.metadata?.closerRoleId) {
+    const blockedBy = [...baseBlockers];
+    if (row.status !== 'active') blockedBy.push({ code: 'operation_not_active' });
+    if (participants.assignments.length !== rolesOf(root).length
+      || completionRequires(root).some(id => states.get(id)?.state !== 'completed')) {
+      blockedBy.push({ code: 'operation_incomplete' });
+    }
+    if (actor && actor.id !== assignment.character_id) blockedBy.push({ code: 'operation_participant_changed' });
+    actions.push(action('complete', 'Complete operation', '/complete', {}, blockedBy,
+      'Closes the completed operation, applies its recorded rewards and returns its escrow.'));
+  }
+  const roles = [];
+  for (const role of rolesOf(root)) {
+    const blockedBy = [...baseBlockers];
+    if (!['forming', 'active'].includes(row.status)) blockedBy.push({ code: 'operation_closed' });
+    if (participants.assignments.some(entry => entry.role_id === role.id)) blockedBy.push({ code: 'operation_role_taken' });
+    if (assignment) blockedBy.push({ code: 'operation_distinct_account' });
+    blockedBy.push(...await previewConditions(role.conditions, null));
+    roles.push({ roleId: role.id, actions: [action('role:' + role.id,
+      'Take ' + (role.title || role.id) + ' role', '/roles/' + encodeURIComponent(role.id), {}, blockedBy)] });
+  }
+  const nodes = [];
+  for (const id of visible) {
+    const node = nodeOf(context.registry, id);
+    if (!node || node.packageId !== row.graph_id || node.metadata?.operationId !== root.id
+      || !maySeeNode(node, states, assignment?.role_id || null)) continue;
+    const nodeActions = [], blockedBy = [];
+    if (node.type === 'operation_step' && node.visibility !== 'hidden'
+      && assignment?.role_id === node.metadata?.roleId) {
+      blockedBy.push(...baseBlockers);
+      if (row.status !== 'active') blockedBy.push({ code: 'operation_not_active' });
+      if (actor && actor.id !== assignment.character_id) blockedBy.push({ code: 'operation_participant_changed' });
+      if (['completed', 'excluded'].includes(states.get(node.id)?.state)) blockedBy.push({ code: 'operation_branch_closed' });
+      if ((node.requires || []).some(required => states.get(required)?.state !== 'completed')
+        || (node.requiresAny || []).some(group => !group.some(required => states.get(required)?.state === 'completed'))
+        || (node.excludes || []).some(excluded => states.get(excluded)?.state === 'completed')) {
+        blockedBy.push({ code: 'operation_prerequisite' });
+      }
+      const order = node.metadata?.order;
+      if (order !== undefined && [...context.registry.nodes.values()].some(prior => (
+        prior.packageId === row.graph_id && prior.type === 'operation_step' && prior.metadata?.operationId === root.id
+        && Number.isInteger(prior.metadata?.order) && prior.metadata.order < order
+        && states.get(prior.id)?.state !== 'completed'
+      ))) blockedBy.push({ code: 'operation_order' });
+      const interactions = [...new Set((node.conditions || []).map(condition => normalizeOperationCondition(condition, 'Operation UI'))
+        .filter(condition => condition.adapter === 'explicit_interaction').map(condition => condition.interactionId))];
+      const interactionId = interactions.length === 1 ? interactions[0] : null;
+      if (interactions.length > 1) blockedBy.push({ adapter: 'explicit_interaction' });
+      blockedBy.push(...await previewConditions(node.conditions, interactionId));
+      if (actor) {
+        for (const effect of node.effects || []) {
+          if (effect.adapter !== 'item_escrow') continue;
+          const item = (await client.query(
+            `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
+              AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1`,
+            [actor.accountId, effect.templateId],
+          )).rows[0];
+          if (!item) blockedBy.push({ adapter: 'item_ownership' });
+        }
+      }
+      const escrow = (node.effects || []).some(effect => effect.adapter === 'item_escrow');
+      nodeActions.push(action('contribute:' + node.id, node.metadata?.title || 'Contribute this step',
+        '/contributions/' + encodeURIComponent(node.id), interactionId ? { interactionId } : {}, blockedBy,
+        escrow ? 'Commits the required item to this operation until completion or cancellation releases it.' : ''));
+    }
+    nodes.push({ id: node.id, actions: nodeActions, blockedBy });
+  }
+  return { actions, roles, nodes };
 }
 
 /** Safe shared projection: role slots and public progress, never account/character/Crew identities. */

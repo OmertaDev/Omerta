@@ -448,6 +448,7 @@ const CATALOGS = {
 // somebody added a catalog-backed literal and it would otherwise be skipped in silence, which is
 // exactly how `{path:'earner'}` survived. Catalog it, or declare it here as not-an-API-value.
 const NOT_API = new Set([
+  'venueId', // City scene navigation/breadcrumb context; never an executable mutation body.
   'block',      // scrollIntoView({block:'nearest'})
   'error',      // the client's own {error:'offline'} shape
   'inline',     // scrollIntoView({inline:'center'})
@@ -1266,6 +1267,9 @@ const charId = meRes.body.character.id;
 // fixture exists to REACH boards, not to earn its way there. Seeded directly; check 4 asserts no
 // ledger identity, so this cannot mask an economy defect the way seeding in the sim would.
 await app.pool.query('UPDATE characters SET cash=50000000, respect=500000, loc=$2 WHERE id=$1', [charId, 'neon']);
+const journalFixture = await app.inject({ method: 'POST', url: '/v1/worldgraph/mysteries/neighborhood-initiation/start',
+  headers: { authorization: 'Bearer ' + token, 'idempotency-key': 'client-mirror-neighborhood-quest' }, payload: {} });
+assert.equal(journalFixture.statusCode, 200, 'The client mirror reads a genuinely started quest.');
 // Routes whose path carries an id cannot be fetched without one. Each is listed with how to get a
 // real one, and the list must COVER them — an unlisted param route fails the run rather than being
 // counted as unverifiable, the same rule check 1b applies to runtime-built paths.

@@ -18,6 +18,7 @@ import {
   openOperation,
   operationBoard,
   operationDefinitions,
+  operationUiActions,
   roleBoard,
 } from '../src/operations.js';
 import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
@@ -603,6 +604,11 @@ try {
   assert.equal(opened.status, 'forming');
   assert(!safeJson(opened).includes(CREW_ID));
   assert(!ACCOUNTS.some((id) => safeJson(opened).includes(id)));
+  const formingUi = await operationUiActions(pool, contexts[0], opened.operationId);
+  assert.equal(formingUi.roles.find(({ roleId }) => roleId === 'investigator').actions[0].available, true);
+  assert.equal(formingUi.actions.find(({ id }) => id === 'cancel').available, true);
+  assert(!ACCOUNTS.some(id => safeJson(formingUi).includes(id)), 'UI actions contain no account identities');
+  assert(!safeJson(formingUi).includes(CREW_ID), 'UI actions contain no Crew identity');
 
   const firstAssignment = await act(0, assignRole, opened.operationId, 'investigator', {
     idempotencyKey: 'op-assign-investigator',
@@ -648,6 +654,21 @@ try {
   const investigatorBefore = await roleBoard(pool, contexts[0], opened.operationId);
   assert(investigatorBefore.nodes.some(({ id }) => id === 'op:investigate'));
   assert(!investigatorBefore.nodes.some(({ id }) => id === 'op:mechanic'));
+  const uiTrace = [];
+  const uiClient = { query(sql, params) { uiTrace.push(String(sql)); return pool.query(sql, params); } };
+  const investigatorUi = await operationUiActions(uiClient, contexts[0], opened.operationId, {
+    visibleNodeIds: [...investigatorBefore.nodes.map(({ id }) => id), 'op:mechanic', 'op:hidden-decoy'],
+  });
+  assert(!uiTrace.some(sql => /FOR UPDATE|FOR NO KEY UPDATE/i.test(sql)), 'UI eligibility acquires no mutation locks');
+  assert(uiTrace.every(sql => /^\s*SELECT\b/i.test(sql)), 'UI eligibility is a pure snapshot read');
+  assert(!safeJson(investigatorUi).includes('op:mechanic'), 'An injected other-role node never gains a descriptor');
+  assert(!safeJson(investigatorUi).includes('op:hidden-decoy'), 'Hidden nodes never gain a descriptor');
+  const investigateAction = investigatorUi.nodes.find(({ id }) => id === 'op:investigate').actions[0];
+  assert.equal(investigateAction.available, true);
+  assert.deepEqual(investigateAction.body, { interactionId: 'read_cipher' }, 'Own visible step issues its exact interaction');
+  assert(investigateAction.path.endsWith('/contributions/op%3Ainvestigate'), 'Visible contribution path segments are encoded');
+  assert.equal(investigatorUi.actions.find(({ id }) => id === 'complete').available, false, 'Closer waits for all required contributions');
+  assert(investigatorUi.roles.every(role => role.actions[0].available === false), 'Assigned account cannot claim a second role');
   const unavailableErrors = [];
   for (const candidate of ['op:does-not-exist', 'op:hidden-decoy', 'op:mechanic']) {
     try {
@@ -685,6 +706,12 @@ try {
   const mechanicPrivate = await roleBoard(pool, contexts[2], opened.operationId);
   assert(!mechanicPrivate.nodes.some(({ id }) => id === 'evidence:investigator'));
   assert(mechanicPrivate.nodes.some(({ id }) => id === 'op:mechanic'));
+  const mechanicBlockedUi = await operationUiActions(pool, contexts[2], opened.operationId, {
+    visibleNodeIds: mechanicPrivate.nodes.map(({ id }) => id),
+  });
+  assert.equal(mechanicBlockedUi.nodes.find(({ id }) => id === 'op:mechanic').actions[0].available, false,
+    'An escrow contribution is unavailable without the actual account-held item');
+  assert(!safeJson(mechanicBlockedUi).includes('read_cipher'), 'Other roles never receive the investigator interaction');
 
   await assert.rejects(
     act(2, contribute, opened.operationId, 'op:mechanic', {
@@ -696,6 +723,11 @@ try {
     client, { scope: 'account', id: ACCOUNTS[2] }, 'item:operation_tool',
     'crafted', 'op-seed-tool-main',
   ));
+  const mechanicReadyUi = await operationUiActions(pool, contexts[2], opened.operationId, {
+    visibleNodeIds: mechanicPrivate.nodes.map(({ id }) => id),
+  });
+  assert.equal(mechanicReadyUi.nodes.find(({ id }) => id === 'op:mechanic').actions[0].available, true,
+    'Resource-ready ordered contribution becomes actionable');
   const mechanicContribution = await act(2, contribute, opened.operationId, 'op:mechanic', {
     idempotencyKey: 'op-contribute-mechanic',
   });
@@ -772,6 +804,10 @@ try {
     act(1, completeOperation, opened.operationId, { idempotencyKey: 'op-wrong-closer' }),
     (error) => error?.code === 'operation_completion_role',
   );
+  const closerUi = await operationUiActions(pool, contexts[0], opened.operationId);
+  assert.equal(closerUi.actions.find(({ id }) => id === 'complete').available, true);
+  const nonCloserUi = await operationUiActions(pool, contexts[1], opened.operationId);
+  assert(!nonCloserUi.actions.some(({ id }) => id === 'complete'), 'Only the graph closer receives completion action');
   const [closeOne, closeTwo] = await Promise.all([
     act(0, completeOperation, opened.operationId, { idempotencyKey: 'op-complete-main-a' }),
     act(0, completeOperation, opened.operationId, { idempotencyKey: 'op-complete-main-b' }),
@@ -819,6 +855,11 @@ try {
     idempotencyKey: 'op-death-contribute-investigator',
   });
   await pool.query('UPDATE characters SET alive=false WHERE id=$1', [CHARACTERS[2]]);
+  const invalidUi = await operationUiActions(pool, contexts[0], death.operationId);
+  assert(invalidUi.roles.every(role => !role.actions[0].available), 'A dead pinned participant disables new role work');
+  assert.equal(invalidUi.actions.find(({ id }) => id === 'cancel').available, true, 'Stored opener retains release-only cancellation');
+  assert.equal((await pool.query('SELECT status FROM world_operations WHERE id=$1', [death.operationId])).rows[0].status, 'active',
+    'Preview never performs the mutation-owned abandonment transition');
   const abandoned = await act(1, assignRole, death.operationId, 'driver', {
     idempotencyKey: 'op-trigger-abandonment',
   });
@@ -1035,6 +1076,13 @@ try {
     (error) => error?.code === 'materials',
     'minimumQuantity greater than one cannot degrade to a default quantity',
   );
+  const aliasTrace = [];
+  const aliasUi = await operationUiActions({ query(sql, params) { aliasTrace.push(String(sql)); return pool.query(sql, params); } },
+    contexts[2], aliases.operationId, { visibleNodeIds: ['aliases:mechanic'] });
+  assert.equal(aliasUi.nodes[0].actions[0].available, false);
+  assert(aliasUi.nodes[0].blockedBy.some(({ adapter, required }) => adapter === 'material_quantity' && required === 2),
+    'UI previews use the same normalized quantity requirement as execution');
+  assert(!aliasTrace.some(sql => /FOR UPDATE|FOR NO KEY UPDATE/i.test(sql)), 'Item and material previews are lock-free');
   await tx((client) => grantStack(
     client, { scope: 'account', id: ACCOUNTS[2] }, 'mat:operation_condition', 1,
     'standard', 'op aliases mechanic material', 'op-aliases-mechanic-material-two',

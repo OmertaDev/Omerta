@@ -1720,6 +1720,7 @@ function publicNode(node, row, blockers) {
     type: node.type,
     title: node.metadata?.title || node.id,
     ...(typeof node.metadata?.description === 'string' ? { description: node.metadata.description } : {}),
+    ...(typeof node.metadata?.lore === 'string' ? { dialogue: node.metadata.lore } : {}),
     status,
     available: actionable && status !== 'excluded' && status !== 'failed'
       && status !== 'completed' && blockers.length === 0,
@@ -1749,6 +1750,51 @@ function publicBlocker(context, states, blocker) {
     else delete projection.nodeIds;
   }
   return projection;
+}
+
+// Eligible undiscovered leads are selected server-side; a GET never publishes their identifiers.
+async function readyDiscoveries({ client, context, owner, actor, instance, states, lock = false, knowledgeResolved = false }) {
+  if (!actor || instance.status !== 'active') return [];
+  const candidates = [...context.registry.nodes.values()].filter(node => {
+    const state = states.get(node.id);
+    return node.packageId === instance.graph_id && !['public', 'role_private'].includes(node.visibility)
+      && ['mystery_step', 'world_gate', 'choice'].includes(node.type) && !state?.discovered_at
+      && !['completed', 'excluded', 'failed'].includes(state?.state);
+  });
+  // Preserve the newest engine's one sorted knowledge/prerequisite proof for the entire request.
+  if (!knowledgeResolved) await resolveMysteryKnowledge(client, context, actor, candidates, { readOnly: !lock });
+  const ready = [];
+  for (const node of candidates) {
+    const interactions = (node.conditions || []).map(condition => normalizeMysteryCondition(
+      context.registry, node, condition, { timeWindows: context.timeWindows },
+    )).filter(condition => condition.adapter === 'explicit_interaction').map(condition => condition.target);
+    if (new Set(interactions).size > 1) continue;
+    const interactionId = interactions[0] || null;
+    const blockers = await nodeBlockers({ client, context, owner, actor, instance, states, node,
+      interactionId, lock, knowledgeResolved: true });
+    if (!blockers.length) ready.push({ node, interactionId });
+  }
+  return ready;
+}
+
+export async function exploreMystery(client, contextValue, ownerValue, graphIdValue, optionsValue) {
+  const context = contextOf(contextValue), owner = ownerOf(ownerValue);
+  const graphId = canonical(graphIdValue, 'Mystery graph id'), options = mutationOptions(optionsValue);
+  const authority = await actionAuthority(client, context, owner, graphId);
+  return withItemMutation(client, owner, 'mystery_action', options.idempotencyKey, {
+    action: 'explore', graph: graphIdentity(authority.pkg),
+    itemAuthority: { operations: [authority.instance.id] },
+  }, async () => {
+    const actor = await actorOf(client, context, owner);
+    const instance = await lockedActionInstance(client, authority, context);
+    const candidates = await readyDiscoveries({ client, context, owner, actor, instance,
+      states: stateMap(await stateRows(client, instance.id)), lock: true });
+    const candidate = candidates[0];
+    if (!candidate) fail('mystery_node_unavailable', 'There is no new lead to investigate right now.');
+    const row = await setNodeState(client, instance.id, candidate.node.id, 'discovered');
+    return { ok: true, instanceId: instance.id,
+      node: { id: candidate.node.id, status: 'discovered', discoveredAt: dateString(row.discovered_at) } };
+  });
 }
 
 /** Read a safe board. Hidden nodes require discovery; role-private nodes belong to Task 6. */
@@ -1859,6 +1905,8 @@ async function prepareMysteryBoard(client, contextValue, ownerValue, graphIdValu
     nodes,
     choices,
     ...(affordances ? { actions } : {}),
+    explorationAvailable: (await readyDiscoveries({ client, context, owner, actor: readActor,
+      instance, states, knowledgeResolved: true })).length > 0,
   };
   } };
 }
