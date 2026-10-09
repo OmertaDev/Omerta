@@ -3,7 +3,7 @@ import { goodsBuyQuote } from './goodsquote.js';
 
 // Plans spend the supplier's cash against an existing customer's escrow. They reserve
 // neither demand nor prices: every next step is recomputed by Agent Turn before execution.
-export function restockCandidates(ch, sheet, owned, orders, policy) {
+export function restockCandidates(ch, sheet, owned, orders, policy, liquidity = null) {
   if (jailed(ch)) return [];
   const cargo = owned.cargo || {};
   const free = Math.max(0, Number(sheet.cargoCap) - Object.values(cargo).reduce((n, q) => n + Number(q), 0));
@@ -35,7 +35,8 @@ export function restockCandidates(ch, sheet, owned, orders, policy) {
           + (district.id === order.district ? 0 : CONSTANTS.TRAVEL_COST);
         const spendable = Number(ch.cash) - policy.cashReserve - fares;
         const unit = goodsBuyQuote(order.good, district.id, 1, owned).unit;
-        let qty = Math.min(free, Number(order.wanted), Math.floor(spendable / (unit * 1.02)));
+        const stock = liquidity?.districts[district.id]?.[order.good]?.stock ?? Infinity;
+        let qty = Math.min(free, stock, Number(order.wanted), Math.floor(spendable / (unit * 1.02)));
         while (qty > 0 && goodsBuyQuote(order.good, district.id, qty, owned).total > spendable) qty--;
         if (qty <= 0) continue;
         const cost = goodsBuyQuote(order.good, district.id, qty, owned).total;

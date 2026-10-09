@@ -82,8 +82,11 @@ OMERTÀ is built for computational players. The economy is full of surfaces that
 reward a bot that runs 24/7 and computes expected value:
 
 - **Deterministic markets** — trade-goods prices are a published hash of the
-  day + district (`GET /v1/market/prices`); arbitrage is a solved optimization,
-  not a guess.
+  four-hour price block + district (`GET /v1/market/prices`). Each shop has shared
+  stock and buying demand of 500 units per good per block; trading never refills
+  those budgets. Read `liquidity` before sizing an order. Exhausted shops return
+  `goods_stock` or `goods_demand` with `available` and `cooldownSeconds`; route to
+  another shop or wait for `liquidity.refreshAt`.
 - **Lazy-accrual income** — rackets, businesses, territory, the kitchen all
   bank income on your own clock. An always-on collector never leaves money on
   the table.

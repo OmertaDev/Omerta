@@ -148,7 +148,7 @@ function arbitragePlans(ch, sheet, owned, niches) {
   const plans = [];
   const actions = [];
   for (const edge of niches || []) {
-    const held = Number(owned.cargo?.[edge.good] || 0);
+    const held = Math.min(Number(owned.cargo?.[edge.good] || 0), edge.buying);
     const id = `arbitrage:${edge.good}:${edge.buyIn}:${edge.sellIn}`;
     if (held > 0) {
       const atSeller = ch.loc === edge.sellIn;
@@ -183,7 +183,7 @@ function arbitragePlans(ch, sheet, owned, niches) {
     const preBuyTravel = ch.loc === edge.buyIn ? 0 : CONSTANTS.TRAVEL_COST;
     const sellTravel = edge.buyIn === edge.sellIn ? 0 : CONSTANTS.TRAVEL_COST;
     const spendable = Number(ch.cash) - POLICY.cashReserve - preBuyTravel - sellTravel;
-    let quantity = Math.min(capacity, Math.floor(spendable / Math.max(1, edge.buyPrice * 1.02)));
+    let quantity = Math.min(capacity, edge.stock, edge.buying, Math.floor(spendable / Math.max(1, edge.buyPrice * 1.02)));
     while (quantity > 0 && buyCost(edge.buyPrice, quantity) > spendable) quantity--;
     if (quantity <= 0) continue;
     const acquisition = buyCost(edge.buyPrice, quantity);
@@ -523,7 +523,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const depot = await depotState(db, ch, { acct, owned });
   const commitments = await deliveryBoard(db, ch);
   const arbitrage = arbitragePlans(ch, sheet, owned, opportunities.niches.arbitrage);
-  const restock = restockCandidates(ch, sheet, owned, opportunities.opportunities, POLICY);
+  const restock = restockCandidates(ch, sheet, owned, opportunities.opportunities, POLICY, opportunities.goodsLiquidity);
   const activeDeliveries = commitments.filter((c) => c.supplierId === ch.id && c.status === 'accepted');
   if (deliveryIntakeEnabled()) for (const candidate of restock) {
     const order = opportunities.opportunities.find((o) => o.listingId === candidate.plan.listingId);
@@ -564,7 +564,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
     const available = contract.maxProcurementCash - contract.spent;
     const choices = restockCandidates({ ...ch, cash: Math.min(Number(ch.cash), available + POLICY.cashReserve) }, sheet, owned,
       [{ type: 'order', listingId: contract.orderId, posterId: contract.buyerId, good: contract.good,
-        wanted: contract.remaining, unitPrice: contract.unitPrice, district: contract.district, expiresAt: contract.deadline }], POLICY);
+        wanted: contract.remaining, unitPrice: contract.unitPrice, district: contract.district, expiresAt: contract.deadline }], POLICY, opportunities.goodsLiquidity);
     if (!choices.length) continue;
     const choice = choices[0];
     const action = valued({ ...choice.action, id: `delivery:${contract.id}:${choice.plan.status}`, planId: `delivery:${contract.id}`,

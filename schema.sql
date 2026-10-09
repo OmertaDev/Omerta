@@ -304,6 +304,15 @@ CREATE TABLE IF NOT EXISTS character_cargo (
   qty INT NOT NULL DEFAULT 0,
   PRIMARY KEY (character_id, good_id)
 );
+-- Shared goods-shop supply and demand refresh with the four-hour price block.
+CREATE TABLE IF NOT EXISTS goods_market_liquidity (
+  good_id TEXT NOT NULL,
+  district TEXT NOT NULL,
+  price_block INT NOT NULL CHECK (price_block >= 0),
+  bought INT NOT NULL DEFAULT 0 CHECK (bought >= 0),
+  sold INT NOT NULL DEFAULT 0 CHECK (sold >= 0),
+  PRIMARY KEY (good_id, district)
+);
 -- NFT gear is ACCOUNT-side (survives death, spec §3.2)
 CREATE TABLE IF NOT EXISTS account_gear (
   account_id TEXT NOT NULL,
