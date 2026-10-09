@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `72f8e940079f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5a7dc734fe0c`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2153 |
+| Commits in clone | 2155 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Add offline matched compute-value experiments |
+| Latest commit | 2026-10-09 — Merge pull request #209 from OmertaDev/codex/offline-compute-experiments |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1251 |
+| OmertaDev | 1253 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 57 |
@@ -34,17 +34,17 @@
 | [public/index.html](../../public/index.html) | 437 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
 | [SPEC.md](../../SPEC.md) | 370 | yes |
-| knowledge/generated/github-history.md | 329 | historical |
-| knowledge/generated/graph-summary.md | 329 | historical |
-| knowledge/generated/graph.json | 329 | historical |
-| knowledge/generated/inventory.md | 329 | historical |
+| knowledge/generated/github-history.md | 330 | historical |
+| knowledge/generated/graph-summary.md | 330 | historical |
+| knowledge/generated/graph.json | 330 | historical |
+| knowledge/generated/inventory.md | 330 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 241 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 140 | historical |
-| knowledge/generated/modules.md | 128 | historical |
+| knowledge/generated/documents.md | 141 | historical |
+| knowledge/generated/modules.md | 129 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
@@ -53,7 +53,7 @@
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/gates.js](../../test/gates.js) | 91 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
-| knowledge/generated/graph.mmd | 87 | historical |
+| knowledge/generated/graph.mmd | 88 | historical |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
