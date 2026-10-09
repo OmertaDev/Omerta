@@ -31,6 +31,7 @@ const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
+const goodsMarketTables = ['goods_market_liquidity'];
 assert.equal(directorTables.length, 7);
 try {
   await admin.query(`CREATE SCHEMA ${namespace}`); created = true;
@@ -86,6 +87,8 @@ try {
     JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname=current_schema() AND c.contype<>'n'
     ORDER BY t.relname,c.conname`)).rows;
   const oldRows = await capture(canonicalTables), oldConstraints = await constraints();
+  assert.equal(oldConstraints.filter((row) => goodsMarketTables.includes(row.table_name)).length, 0,
+    'The pinned baseline predates the goods-market liquidity table');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
   const migrate = async () => {
     const client = await pool.connect();
@@ -97,8 +100,14 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name)), oldConstraints,
+  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
+  assert.deepEqual(upgradedConstraints.filter((row) => goodsMarketTables.includes(row.table_name)), [
+    { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_bought_check', definition: 'CHECK (bought >= 0)' },
+    { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_pkey', definition: 'PRIMARY KEY (good_id, district)' },
+    { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_price_block_check', definition: 'CHECK (price_block >= 0)' },
+    { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_sold_check', definition: 'CHECK (sold >= 0)' },
+  ], 'Goods-market migration installs exactly its four reviewed constraints, without waiving existing preservation');
   const economyConstraints = inventory.added.filter((row) => economyTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
   assert.equal(economyConstraints.length, 23, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');

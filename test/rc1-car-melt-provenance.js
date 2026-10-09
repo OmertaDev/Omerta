@@ -1,7 +1,59 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, CAR_MELT_BASELINE_RULES_PIN, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, CAR_MELT_BASELINE_RULES_PIN,
+  CAR_MELT_SOURCE_REVIEW_TRANSFER, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
+import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION,
+  GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
+  assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
+  assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility } from '../tools/rc1-deed-source-compatibility.js';
 import { carMelt } from '../src/rules.js';
+
+const hash = text => createHash('sha256').update(text).digest('hex');
+assert.equal(CAR_MELT_SOURCE_REVIEW_TRANSFER.predecessorEconomySha256, ECONOMY_SOURCE_CURRENT_PINS['src/economy.js']);
+assert.match(CAR_MELT_SOURCE_REVIEW_TRANSFER.scope, /New goods availability, reachability, bucket\/counter accounting and authority.*outside/);
+const currentSources = new Map();
+for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
+  const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const current = execFileSync('git', ['show', GOODS_SOURCE_REVIEWED_REVISION + ':' + file],
+    { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  const previous = execFileSync('git', ['show', GOODS_SOURCE_PREDECESSOR_REVISION + ':' + file],
+    { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  const proof = assertGoodsSourceTransfer(file, text);
+  assert.equal(text, current, 'The goods transfer targets exact independent Git source bytes.');
+  assert.equal(proof.baselineText, previous, 'Every inverse restores the complete independent Git predecessor.');
+  assert.equal(hash(current), GOODS_SOURCE_CURRENT_PINS[file]);
+  assert.equal(hash(previous), GOODS_SOURCE_PREDECESSOR_PINS[file]);
+  assert.equal(proof.inverseChunks, file === 'src/economy.js' ? 5 : 1);
+  currentSources.set(file, text);
+}
+const economyText = currentSources.get('src/economy.js');
+const economyProof = assertEconomySourceTransfer('src/economy.js', economyText);
+assert.equal(economyProof.goodsSourceTransfer.baselineSha256, ECONOMY_SOURCE_CURRENT_PINS['src/economy.js']);
+assert.equal(assertEconomySourceTransfer('src/economy.js', economyProof.goodsSourceTransfer.baselineText).actualSha256,
+  ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'], 'The prior economy pin remains accepted by its unchanged historical guard.');
+for (const [file, before, after] of [
+  ['src/economy.js', "import { consumeGoodsLiquidity } from './goodsmarket.js';", "import { consumeGoodsLiquidity } from './goodsmarket.js';\nimport { consumeGoodsLiquidity } from './goodsmarket.js';"],
+  ['src/economy.js', "await consumeGoodsLiquidity(client, goodId, ch.loc, 'buy', n, block)", 'Promise.resolve({})'],
+  ['src/economy.js', "await consumeGoodsLiquidity(client, goodId, ch.loc, 'sell', n, block)", 'Promise.resolve({})'],
+  ['src/economy.js', 'const block = priceBlock();', 'const block = priceBlock() + 1;'],
+  ['src/economy.js', 'if (Number(ch.cash) < cost + fee + tax)', 'if (false)'],
+  ['src/economy.js', "DELETE FROM cars WHERE id=$1", "DELETE FROM cars WHERE id<>$1"],
+  ['src/goodsquote.js', 'block = priceBlock()', 'block = 0'],
+  ['src/goodsquote.js', 'Math.ceil(subtotal * 0.01)', 'Math.ceil(subtotal * 0.02)'],
+  ['src/server.js', 'Block.marketPrices(pool)', 'Block.marketPrices(req.query.pool)'],
+  ['src/server.js', "app.get('/v1/market/prices'", "app.post('/v1/market/prices'"],
+  ['src/server.js', 'await Chain.assertChainId();', 'await Promise.resolve();'],
+]) {
+  const text = currentSources.get(file), changed = text.replace(before, after);
+  assert.notEqual(changed, text, 'Tamper control must alter actual settlement, car authority, quote or route bytes: ' + before);
+  assert.throws(() => assertGoodsSourceTransfer(file, changed), /source changed/);
+  if (file === 'src/economy.js') assert.throws(() => assertEconomySourceTransfer(file, changed), /source changed/);
+  if (file === 'src/server.js') for (const guard of [assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
+    assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility]) assert.throws(() => guard(changed), /source changed/);
+}
+for (const [file, text] of currentSources) assert.throws(() => assertGoodsSourceTransfer(file, text + '\n// unsupported authority change\n'), /source changed/);
 
 const rulesText = fs.readFileSync(new URL('../src/rules.tail.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
 const compatibility = assertCarMeltRulesCompatibility(rulesText);

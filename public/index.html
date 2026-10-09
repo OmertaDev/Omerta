@@ -7369,8 +7369,11 @@
     if (!it || localStorage.getItem('omerta_seen_' + id)) { w.innerHTML = ''; return; }
     w.innerHTML = `<div class="intro-card"><img alt="" src="/art/${TAB_ART[id] || 'interior-streets'}.jpg">
       <div style="flex:1;min-width:180px"><span class="t2">FIRST TIME HERE</span><p>${it}</p></div>
+      ${id === 'map' ? '<button class="act" id="intro-walk">Enter neighborhood →</button>' : ''}
       <button class="act" id="intro-got">got it</button></div>`;
     w.querySelector('#intro-got').onclick = () => { localStorage.setItem('omerta_seen_' + id, '1'); w.innerHTML = ''; };
+    const walk = w.querySelector('#intro-walk');
+    if (walk) walk.onclick = event => enterNeighborhood(event.currentTarget);
   }
   // ── THE SPOTLIGHT — "take me there" should land on the CONTROL, not just the right screen.
   // Per-tab: the one control a coached newcomer is most likely being sent to. A missing selector
@@ -7436,6 +7439,7 @@
   let characterCheckoutOnly = false;
   function setTab(id, { characterOnly = false } = {}) {
     if (!TABS[id]) return;
+    cancelCityEntry();
     if (id !== 'map') destroyCityScene();
     if (id !== 'fieldwork') destroyFieldwork();
     characterCheckoutOnly = id === 'portfolio' && characterOnly;
@@ -7473,7 +7477,7 @@
       const file = TAB_ART[id];
       art.classList.toggle('hidden', !file);
       if (file) {
-        art.style.setProperty('--art', `url(/art/${file}.jpg)`); art.firstElementChild.textContent = TABS[id] || id;
+        art.style.setProperty('--art', `url(/art/${file}.jpg)`); art.querySelector('span').textContent = TABS[id] || id;
         // THE LIVING PLATE — when this screen's art has an ambient clip, it breathes. The still is
         // the poster underneath (::before), so a failed load leaves the photograph untouched.
         art.querySelector('.tabvid')?.remove();
@@ -8647,6 +8651,7 @@
   let _cityScene = null, _citySceneKey = null, _citySceneEpoch = 0, _citySceneAssets = null;
   let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
   let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map();
+  let _cityEntry = null;
   let _fieldwork = null, _fieldworkEpoch = 0;
   const CITY_VENUE_TABS = {
     fixer: ['streets', 'scores', 'pvp', 'law', 'pen', 'wire'],
@@ -8682,7 +8687,7 @@
     if (!bar && $('#tabbodies')) {
       bar = el('<nav id="city-session-bar" class="city-session-bar" aria-label="Neighborhood session" hidden><button type="button" id="city-return">← Return to neighborhood</button><span id="city-session-label"></span><button type="button" id="city-journal">Quest journal</button></nav>');
       $('#tabbodies').before(bar);
-      $('#city-return').onclick = () => { _mapMode = 'walk'; setTab('map'); };
+      $('#city-return').onclick = () => { _mapMode = 'walk'; setTab('map'); enterNeighborhood(); };
       $('#city-journal').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory' });
     }
     if (!bar) return;
@@ -8750,6 +8755,7 @@
     } finally { _cityQuestPending = false; }
   }
   function destroyCityScene() {
+    if (_cityEntry && _cityEntry.epoch !== null) cancelCityEntry();
     _citySceneEpoch++;
     if (_cityScene && _citySceneKey) rememberCityPosition(_citySceneKey, _cityScene.getState?.().player
       ? { ..._cityScene.getState().player, facing: _cityScene.getState().facing } : null);
@@ -8811,7 +8817,8 @@
     const host = $('#city-scene-host'), options = _citySceneOptions;
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
-    if (_cityScene && _citySceneKey === key) { _cityScene.update?.(options); return; }
+    if (key !== cityIdentity()) return;
+    if (_cityScene && _citySceneKey === key) { _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() }); return; }
     destroyCityScene();
     const epoch = _citySceneEpoch;
     host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
@@ -8820,7 +8827,7 @@
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+      _cityScene = scene.mount(host, { ...options, character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
       _citySceneKey = key;
     } catch {
@@ -8839,6 +8846,94 @@
     $('#map-mode-walk').setAttribute('aria-pressed', String(walk));
     $('#map-mode-territory').setAttribute('aria-pressed', String(!walk));
     if (walk) mountCityNeighborhood(); else destroyCityScene();
+  }
+  function cancelCityEntry() {
+    const intent = _cityEntry;
+    if (!intent) return;
+    _cityEntry = null;
+    clearTimeout(intent.timer);
+    document.removeEventListener('focusin', intent.onFocus);
+    document.removeEventListener('pointerdown', intent.onPointer, true);
+    document.removeEventListener('keydown', intent.onKey);
+    document.removeEventListener('wheel', intent.onScroll, true);
+    document.removeEventListener('touchmove', intent.onScroll, true);
+    document.removeEventListener('visibilitychange', intent.onVisibility);
+    window.removeEventListener('blur', intent.onScroll);
+    if (intent.label !== null && intent.trigger.isConnected) {
+      intent.trigger.textContent = intent.label;
+      intent.trigger.removeAttribute('aria-busy');
+    }
+  }
+  function revealCityEntry(target, focus = true) {
+    const height = window.innerHeight;
+    let top = 0, bottom = height;
+    for (const id of ['top', 'vitals', 'bnav', 'toast']) {
+      const chrome = $('#' + id);
+      const style = chrome && getComputedStyle(chrome);
+      if (!chrome || !['fixed', 'sticky'].includes(style.position)
+        || (id === 'toast' && !chrome.classList.contains('show'))) continue;
+      const bounds = chrome.getBoundingClientRect();
+      if (!bounds.height || bounds.bottom <= 0 || bounds.top >= height) continue;
+      if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
+      else {
+        const pinnedTop = parseFloat(style.top);
+        top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinnedTop) ? pinnedTop + bounds.height : bounds.bottom);
+      }
+    }
+    target.style.scrollMarginTop = (top + 8) + 'px';
+    target.style.scrollMarginBottom = (height - bottom + 8) + 'px';
+    target.scrollIntoView({ block: 'center', behavior: 'instant' });
+    if (focus) { if (!target.hasAttribute('tabindex')) target.tabIndex = -1; target.focus({ preventScroll: true }); }
+  }
+  function enterNeighborhood(trigger = $('#map-mode-walk')) {
+    if (currentTab !== 'map' || !me?.id || $('#screen-main').classList.contains('hidden') || topModal()
+      || (trigger && (!trigger.isConnected || trigger.closest('.hidden, [hidden]')))) return;
+    cancelCityEntry();
+    const intent = { trigger, focus: document.activeElement, identity: cityIdentity(), navigation: navigationRevision,
+      stamp: projections.snapshot(), epoch: null, deadline: performance.now() + 15000, timer: null, loading: null,
+      label: trigger?.matches('button') ? trigger.textContent : null };
+    _cityEntry = intent;
+    intent.onFocus = event => { if (event.target !== intent.focus) cancelCityEntry(); };
+    intent.onPointer = event => { if (event.target !== intent.trigger) cancelCityEntry(); };
+    intent.onKey = event => {
+      if (['Escape', 'PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) cancelCityEntry();
+    };
+    intent.onScroll = () => cancelCityEntry();
+    intent.onVisibility = () => { if (document.hidden) cancelCityEntry(); };
+    document.addEventListener('focusin', intent.onFocus);
+    document.addEventListener('pointerdown', intent.onPointer, true);
+    document.addEventListener('keydown', intent.onKey);
+    document.addEventListener('wheel', intent.onScroll, { capture: true, passive: true });
+    document.addEventListener('touchmove', intent.onScroll, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', intent.onVisibility);
+    window.addEventListener('blur', intent.onScroll);
+    if (intent.label !== null) { trigger.textContent = 'Opening neighborhood…'; trigger.setAttribute('aria-busy', 'true'); }
+    _mapMode = 'walk';
+    syncMapMode();
+    function check() {
+      if (_cityEntry !== intent) return;
+      if (currentTab !== 'map' || _mapMode !== 'walk' || $('#screen-main').classList.contains('hidden') || document.hidden
+        || topModal() || !projections.current(intent.stamp) || intent.identity !== cityIdentity()
+        || intent.navigation !== navigationRevision || (trigger && !trigger.isConnected)
+        || (intent.epoch !== null && intent.epoch !== _citySceneEpoch)) { cancelCityEntry(); return; }
+      const host = $('#city-scene-host');
+      if (_cityScene && _citySceneKey === intent.identity && intent.epoch === null) intent.epoch = _citySceneEpoch;
+      const canvas = host?.querySelector('.omerta-city__canvas canvas');
+      const ready = _cityScene?.getState?.().ready && _citySceneKey === intent.identity;
+      const failed = host?.querySelector('.omerta-city--unavailable, #city-scene-retry');
+      if (ready || failed || performance.now() >= intent.deadline) {
+        const target = ready && canvas ? canvas : host?.querySelector('#city-scene-retry')
+          || host?.querySelector('[data-destination]') || host?.querySelector('[data-city-jump]') || host?.querySelector('[role="status"]');
+        cancelCityEntry();
+        if (ready) host?.querySelector('.omerta-city__interaction:not([hidden]) [data-city-close]')?.click();
+        if (target?.isConnected) revealCityEntry(target);
+        return;
+      }
+      const status = host?.querySelector('.omerta-city__status') || host?.querySelector('[role="status"]');
+      if (status && intent.loading !== status) { intent.loading = status; revealCityEntry(status, false); }
+      intent.timer = setTimeout(check, 100);
+    }
+    check();
   }
   async function renderMap() {
     const t = $('#tab-map');
@@ -8885,7 +8980,7 @@
         <button class="act" id="city-travel-open">Travel to another district →</button>
       </div><div id="map-neighborhood"><div id="city-scene-host"></div></div>
       <div id="map-territory-board" hidden></div>`;
-      $('#map-mode-walk').onclick = () => { _mapMode = 'walk'; syncMapMode(); };
+      $('#map-mode-walk').onclick = event => enterNeighborhood(event.currentTarget);
       $('#map-mode-territory').onclick = () => { _mapMode = 'territory'; syncMapMode(); };
       $('#city-travel-open').onclick = () => setTab('city');
     }
@@ -10079,7 +10174,9 @@
       const rows = Object.entries(allPrices).map(([d, m]) => [d, Number(m?.[id])]).filter(([, p]) => p > 0);
       if (rows.length < 2) return null;
       rows.sort((a, b) => a[1] - b[1]);
-      const [lo, hi] = [rows[0], rows[rows.length - 1]];
+      const lo = rows.find(([d]) => (prices.liquidity?.districts[d]?.[id]?.stock ?? 1) > 0);
+      const hi = [...rows].reverse().find(([d]) => (prices.liquidity?.districts[d]?.[id]?.buying ?? 1) > 0);
+      if (!lo || !hi || hi[1] <= lo[1]) return null;
       return { lo, hi, pct: Math.round((hi[1] / lo[1] - 1) * 100) };
     };
     // the day's best play: the single widest-spread good — the hero card names it
@@ -10087,16 +10184,18 @@
       .filter((x) => x.i).sort((a, b) => b.i.pct - a.i.pct)[0];
     const goodsCards = (rules?.goods || []).map((g) => {
       const price = spot[g.id], held = cargo[g.id] || 0;
+      const available = prices.liquidity?.districts[me?.loc]?.[g.id];
       const i = goodIntel(g.id);
       const here = me?.loc;
       const flag = i && here === i.lo[0] ? '<span class="chip good">CHEAPEST HERE — buy</span>'
         : i && here === i.hi[0] ? '<span class="chip" style="border-color:var(--gold,#c9a227);color:var(--gold,#c9a227)">RICHEST HERE — sell</span>' : '';
       return `<div class="card"><img class="ico wide" loading="lazy" alt="" src="/v1/art/good/${g.id}"><span class="t">${esc(g.name)}</span> ${flag}
         <div class="d">spot here: <b>$${price != null ? fmt(price) : '—'}</b> · in trunk: ${held}</div>
+        ${available ? `<div class="d">shop stock: <b>${available.stock}</b> · buying: <b>${available.buying}</b></div>` : ''}
         ${i ? `<div class="d" style="font-size:11.5px;color:var(--dim)">cheapest: ${i.lo[0]} $${fmt(i.lo[1])} · richest: ${i.hi[0]} $${fmt(i.hi[1])} · <b>+${i.pct}%</b> spread</div>` : ''}
         <input data-gd="${g.id}" placeholder="qty" size="5">
-        <button class="act" data-gdbuy="${g.id}">buy</button>
-        <button class="act" data-gdsell="${g.id}"${held ? '' : ' disabled'}>sell</button></div>`;
+        <button class="act" data-gdbuy="${g.id}"${available?.stock === 0 ? ' disabled' : ''}>buy</button>
+        <button class="act" data-gdsell="${g.id}"${held && available?.buying !== 0 ? '' : ' disabled'}>sell</button></div>`;
     }).join('');
     const DAILY_HOWTO = {
       crime: ['Pull jobs right here on the Streets — only CLEAN (successful) ones count.', null],
@@ -10219,12 +10318,13 @@
         <div class="card">
           <img class="ico wide" loading="lazy" alt="" src="/art/interior-trade.jpg">
           <span class="t">THE FREIGHT GAME</span>
-          <div class="d">Every district posts its own prices, fresh each day. The whole racket in one line:
-          <b>buy where it's cheap, travel, sell where it's rich</b> — the spread is your margin, your trunk is your ceiling.
+          <div class="d">Every district posts its own prices, refreshed every four hours. The whole racket in one line:
+          <b>buy where it's cheap, travel, sell where it's rich</b> — the spread is your margin. Shop stock and buying demand are shared by everyone and refresh with prices; selling does not restock a shop.
           ${bestPlay ? `Today's best board: <b>${esc(bestPlay.g.name)}</b> — ${bestPlay.i.lo[0]} $${fmt(bestPlay.i.lo[1])} → ${bestPlay.i.hi[0]} $${fmt(bestPlay.i.hi[1])} (<b>+${bestPlay.i.pct}%</b>).` : ''}
           Bulk players move the same freight by <b>convoy</b> (Big Scores) and by <b>boat</b> (the Port).</div>
         </div>
         <div class="d" style="color:var(--dim);font-size:12px;margin:4px 0">🚚 your trunk holds <b>${me.cargoCap ?? 0}</b> weight of cargo. Your <b>cars</b> are for muscle &amp; melt value — to <b>haul more</b>, buy a bigger set of <b>Wheels</b> (a truck / muscle car) in <b>The Empire ▸ Assets</b>.</div>
+        ${prices.liquidity?.refreshAt ? `<div class="d">Shop stock and demand refresh at ${esc(new Date(prices.liquidity.refreshAt).toLocaleTimeString())}.</div>` : ''}
         <div class="grid">${goodsCards}</div>`)}
       ${sect('streets-second', 'Your Second', `named muscle who rides along on jobs, takes ${(sq.cutBps ?? 500) / 100}% of the take… and can DIE for good`, soldierBlock, (sq.roster || []).length > 0)}`;
     wireSects(t);
@@ -10454,7 +10554,7 @@
       if (fb) fb.onclick = async (e) => { e.preventDefault();
         const r = (await api('GET', '/v1/leaderboard/family-build')).body?.families || [];
         t.querySelector('#builder-lb').innerHTML = `<div class="grid" style="margin-top:4px">${r.map((k) => `<div class="card"><span class="t">#${k.pos} [${esc(k.tag)}] ${esc(k.name)}</span><div class="d">$${fmt(k.built)} for the city</div></div>`).join('') || '<span class="d">no families ranked yet</span>'}</div>`; }; }
-    $('#city-walk-open').onclick = () => { _mapMode = 'walk'; setTab('map'); };
+    $('#city-walk-open').onclick = () => { _mapMode = 'walk'; setTab('map'); enterNeighborhood(); };
     t.querySelectorAll('[data-raid]').forEach((b) => b.onclick = () => act('POST', `/v1/world/${b.dataset.raid}/raid`, {}).then(() => renderCity()));
     t.querySelectorAll('[data-familyraid]').forEach((b) => b.onclick = () => act('POST', `/v1/npcfamily/${b.dataset.familyraid}/raid`, {}).then(() => renderCity()));
     const fwlb = $('#fw-lb'); if (fwlb) fwlb.onclick = async (e) => { e.preventDefault();

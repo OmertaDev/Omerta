@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { reconcileMarketResources, reconcileMarketResourceChanges } from '../tools/rc1-world-market-resources.js';
+import { reconcileMarketResources, reconcileMarketResourceChanges, MARKET_RESOURCE_SOURCE_TRANSFER } from '../tools/rc1-world-market-resources.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';
 
@@ -15,6 +15,10 @@ const cases = [], controls = [];
 function run(name, before, after, event, kind) {
   const result = reconcileMarketResources(before, after, { identity: event, receipts: after.tables.transactions });
   assert.equal(result.movements.length, 1); assert.equal(result.movements[0].kind, kind);
+  assert.equal(result.checks[0].goodsLiquidityQualified, false);
+  assert.equal(result.checks[0].quoteEligibilityQualified, false);
+  assert.equal(result.checks[0].qualificationScope, MARKET_RESOURCE_SOURCE_TRANSFER.scope);
+  assert.match(result.checks[0].qualificationScope, /does not qualify goods buy\/sell availability, reachability, bucket\/counter accounting/);
   const item = { name, before, after, identity: event }; cases.push(item); return item;
 }
 function corrupt(item, name, edit) {

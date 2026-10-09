@@ -4,15 +4,15 @@
 
 ## Census
 
-10,335 nodes and 42,049 edges at `63dea0144b88`.
+10,356 nodes and 42,158 edges at `4fa641f9d145`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 4387 |
-| Command | 208 |
-| Commit | 2157 |
+| Artifact | 4386 |
+| Command | 207 |
+| Commit | 2179 |
 | Contract | 126 |
 | Document | 702 |
 | Domain | 13 |
@@ -23,7 +23,7 @@
 | Repository | 1 |
 | Route | 873 |
 | Subsystem | 8 |
-| Table | 388 |
+| Table | 389 |
 | TestSuite | 578 |
 | Workflow | 6 |
 
@@ -31,23 +31,23 @@
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 3516 |
-| CHANGED | 16320 |
-| CONTAINS | 4408 |
-| DECLARES | 208 |
-| DEFINED_IN | 1387 |
+| BELONGS_TO | 3515 |
+| CHANGED | 16405 |
+| CONTAINS | 4407 |
+| DECLARES | 207 |
+| DEFINED_IN | 1388 |
 | DEPENDS_ON | 67 |
-| EXECUTES | 699 |
+| EXECUTES | 696 |
 | HANDLED_BY | 766 |
-| HAS_COMMIT | 2157 |
+| HAS_COMMIT | 2179 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 4152 |
+| IMPORTS | 4153 |
 | INHERITS | 42 |
 | REFERENCES | 3137 |
 | REPRESENTS | 1594 |
-| TESTS | 1420 |
+| TESTS | 1423 |
 | TRACKS | 126 |
-| USES_TABLE | 1926 |
+| USES_TABLE | 1929 |
 
 ## Provenance contract
 

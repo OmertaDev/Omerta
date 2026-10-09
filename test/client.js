@@ -450,6 +450,7 @@ const CATALOGS = {
 const NOT_API = new Set([
   'venueId', // City scene navigation/breadcrumb context; never an executable mutation body.
   'block',      // scrollIntoView({block:'nearest'})
+  'behavior',   // scrollIntoView({behavior:'instant'}), a browser option, never an API body.
   'error',      // the client's own {error:'offline'} shape
   'inline',     // scrollIntoView({inline:'center'})
   'method',     // window.ethereum.request({method:'personal_sign'}) — EIP-1193, not our API
