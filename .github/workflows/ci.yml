@@ -149,6 +149,9 @@ jobs:
       - name: Invite gate and Crew invitation controls in the browser
         run: npm run test:invites:browser
 
+      - name: City Mode and RPG desktop/mobile journeys
+        run: npm run test:city:browser
+
       - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)
         env:
           JWT_SECRET: ci-jwt-secret-not-a-real-one
@@ -223,6 +226,12 @@ jobs:
         env:
           DEED_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
         run: npm run test:deed-upgrades:postgres
+
+      - name: City RPG quests and concurrent replay (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          WORLD_KERNEL_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:city:postgres
 
       - name: pgcheck (pooling, row locks, timeouts, migration, ledger)
         env:

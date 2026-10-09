@@ -299,13 +299,13 @@ assert(gitDates.some(([, date]) => date.endsWith('Z')), 'THE TOOLCHAIN-INDEPENDE
 
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
 const worldGraphRoutes = model.routes.filter(({ url }) => url.startsWith('/v1/worldgraph'));
-assert.equal(worldGraphRoutes.length, 26,
+assert.equal(worldGraphRoutes.length, 27,
   'the knowledge graph must retain the complete Phase 1 world-graph route surface');
 assert.equal(worldGraphRoutes.every(({ access }) => access === 'authenticated'), true,
   'every Phase 1 world-graph route must be represented as authenticated');
 const worldGraphMutations = worldGraphRoutes.filter(({ method }) => method === 'POST');
-assert.equal(worldGraphMutations.length, 15,
-  'the world-graph route surface has exactly fifteen mutations, including the opt-in kernel');
+assert.equal(worldGraphMutations.length, 16,
+  'the world-graph route surface has exactly sixteen mutations, including exploration and the opt-in kernel');
 assert.equal(worldGraphMutations.every(({ mutationAuthenticated, idempotentMutation }) => (
   mutationAuthenticated === true && idempotentMutation === true
 )), true, 'every world-graph mutation must derive both auth and idempotency from its verified local wrapper');

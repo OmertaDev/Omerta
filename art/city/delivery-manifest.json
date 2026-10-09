@@ -1,0 +1,171 @@
+{
+  "provider": "fal.ai",
+  "version": 1,
+  "world": {
+    "width": 960,
+    "height": 640
+  },
+  "sprite": {
+    "width": 38,
+    "height": 60,
+    "footX": 19,
+    "footY": 58
+  },
+  "assets": [
+    {
+      "file": "city-neighborhood-v1.png",
+      "source": "neighborhood-v1",
+      "model": "openai/gpt-image-2.5/sunburst/edit",
+      "requestId": "01a11ea8-810c-74a2-a6de-379d396aa8ec",
+      "sourceSha256": "e33aa9d19125866bd278d9f2c12839f5d5b46f1549397ba58b823e8e45fc0987",
+      "width": 960,
+      "height": 640,
+      "bytes": 1433758,
+      "sha256": "0a8ea803eda9b2be4684d0578ed27eee0d09a60ae0948de9326babe11b0769cd"
+    },
+    {
+      "file": "city-player-down-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 3155,
+      "sha256": "aa396f0656c0d524c49d0b0151a3fd073644aeb333134827d844e1dbd25f976d",
+      "cell": 0,
+      "sourceBounds": {
+        "left": 141,
+        "top": 79,
+        "width": 197,
+        "height": 410
+      }
+    },
+    {
+      "file": "city-player-up-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 2606,
+      "sha256": "2019f7de5ae5a05d802714eebfe69684736ee41b6ea24bad79c526ef0b64bade",
+      "cell": 1,
+      "sourceBounds": {
+        "left": 476,
+        "top": 74,
+        "width": 182,
+        "height": 411
+      }
+    },
+    {
+      "file": "city-player-left-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 2342,
+      "sha256": "7acb2988102ea987421861d3f13ab6c097d1af6913768f4fbda1ce71611d90f0",
+      "cell": 2,
+      "sourceBounds": {
+        "left": 846,
+        "top": 81,
+        "width": 144,
+        "height": 416
+      }
+    },
+    {
+      "file": "city-player-right-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 2152,
+      "sha256": "ef9bfcac080bfea270a664da79d1330cb4db3b9236e972ffe3a885e00699e702",
+      "cell": 3,
+      "sourceBounds": {
+        "left": 1195,
+        "top": 78,
+        "width": 143,
+        "height": 419
+      }
+    },
+    {
+      "file": "city-fixer-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 3228,
+      "sha256": "7d42a326e9491dcee4327b9150d48b359065f7a70efb3977f105f894f30f6dad",
+      "cell": 4,
+      "sourceBounds": {
+        "left": 132,
+        "top": 558,
+        "width": 218,
+        "height": 408
+      }
+    },
+    {
+      "file": "city-worker-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 3417,
+      "sha256": "aa04486a7ca6025c3b55ed564578f6423956611d7d3806e1d6d117231c08b25b",
+      "cell": 5,
+      "sourceBounds": {
+        "left": 457,
+        "top": 575,
+        "width": 215,
+        "height": 386
+      }
+    },
+    {
+      "file": "city-neighbor-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 3266,
+      "sha256": "e7e42b28cf5a0b22b549aa716a510b903c679e6d6bc9b2e7e08ac8f1fee0dd60",
+      "cell": 6,
+      "sourceBounds": {
+        "left": 803,
+        "top": 572,
+        "width": 206,
+        "height": 401
+      }
+    },
+    {
+      "file": "city-player-step-v1.png",
+      "source": "characters-v1",
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "requestId": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "sourceSha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7",
+      "width": 38,
+      "height": 60,
+      "bytes": 2812,
+      "sha256": "2e632c1e88ea4a7eacc5426908374b7ff9b2436d0e79adf183aa320c2656e9a4",
+      "cell": 7,
+      "sourceBounds": {
+        "left": 1158,
+        "top": 567,
+        "width": 204,
+        "height": 418
+      }
+    }
+  ]
+}

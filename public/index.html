@@ -1227,6 +1227,8 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
+<link rel="stylesheet" href="/city-scene.css?v=20261009-game-1">
+<link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -2965,7 +2967,7 @@
     if (body && body.ok && body.divorced)
       return `\u{1F494} it's over — you called it, so you wear it: ${body.honor} honor${
         body.honorNow !== undefined ? ` (you're at ${body.honorNow})` : ''}. The lines are strangers again.`;
-    if (body && body.ok && body.withdrawn) return 'the offer is off the table — nothing was signed';
+    if (body && body.ok && body.dynasty === 'withdrawn' && body.withdrawn === true) return 'the offer is off the table — nothing was signed';
     if (body && body.ok && body.advising !== undefined)
       return body.advising ? `\u{1F3A9} you counsel ${txt(body.advising)}'s house now` : 'you advise nobody now';
     if (body && body.ok && (body.consigliere === 'dismissed' || body.consigliere === 'resigned'))
@@ -4663,6 +4665,11 @@
           try { result = await request(path, { ...ticket, isCurrent }); }
           catch { result = { code: 503, body: { error: 'offline' } }; }
           if (!isCurrent()) continue;
+          if (kind === 'player' && result.code === 409 && result.body?.error === 'contention') {
+            try { result = await request(path, { ...ticket, isCurrent }); }
+            catch { result = { code: 503, body: { error: 'offline' } }; }
+            if (!isCurrent()) continue;
+          }
           if (result.code === 401 || (kind === 'player' && result.code === 403)) { setSession(null); unauthorized(); continue; }
           if (result.code < 400 && result.body?.schemaVersion !== 1) {
             result = { code: 502, body: { error: 'projection_invalid' } };
@@ -4799,6 +4806,9 @@
       ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
       : api('GET', '/v1/commands' + path.slice('/v1/commands'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
+      if (['session', 'character', 'player'].includes(kind)) {
+        destroyCityScene(); destroyFieldwork(); _citySession = null; _citySceneOptions = null; _cityNpcActions = new Map(); syncCitySessionBar();
+      }
       worldChoiceConfirmation?.();
       worldProjection = null; worldFeedback = null;
       worldStatus = 'Refreshing your street…';
@@ -4823,12 +4833,20 @@
         if (result.code === 404) show('screen-create');
         if (result.code < 400) {
           const previousGeneration = me?.generation;
+          const previousCityIdentity = cityIdentity();
           me = result.body.player?.character || result.body.player;
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
           }
           if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
+          const cityChanged = previousCityIdentity !== cityIdentity(me)
+            || (_citySceneOptions && cityIdentity(_citySceneOptions.character) !== cityIdentity(me));
+          if (_cityScene && _citySceneKey === cityIdentity(me)) _cityScene.update({ character: { ...me }, progress: cityProgress() });
+          else if (_cityScene || cityChanged) destroyCityScene();
+          syncCitySessionBar();
+          if (cityChanged && currentTab === 'map' && _mapMode === 'walk'
+            && $('#screen-main') && !$('#screen-main').classList.contains('hidden')) renderMap();
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
         }
         return;
@@ -5935,6 +5953,7 @@
     landingMenu.querySelector('summary').focus();
   });
   function show(id) {
+    if (id !== 'screen-main') { destroyCityScene(); destroyFieldwork(); _citySession = null; syncCitySessionBar(); }
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
@@ -7110,7 +7129,7 @@
   // tab labels come from the language packs (T falls back to English if a pack misses a key)
   const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire',
     'speakeasy', 'boxing', 'races', 'stable', 'scores', 'loans', 'portfolio', 'estate', 'life', 'pen', 'law',
-    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'deck'].map((id) => [id, T('t_' + id)]));
+    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'fieldwork', 'deck'].map((id) => [id, id === 'fieldwork' ? 'Quest Journal' : T('t_' + id)]));
   // Player language, not implementation taxonomy. Quick jump accepts the job somebody has in mind.
   const TAB_SEARCH = {
     start: ['now', 'today', 'next move', 'home', 'missions'],
@@ -7135,7 +7154,7 @@
     pen: ['jail', 'lockup', 'break out', 'yard', 'sentence'],
     wire: ['intel', 'wiretap', 'tap rival', 'threats', 'forecast'],
     family: ['organization', 'gang', 'tribute', 'commission', 'war'],
-    map: ['turf', 'territory', 'district control', 'family map'],
+    map: ['turf', 'territory', 'district control', 'family map', 'walk', 'neighborhood', 'city mode'],
     deeds: ['property', 'street deed', 'auction deed'],
     crew: ['recruit crew', 'crew objective', 'crew room'],
     discover: ['find player', 'find people', 'recruit', 'who is online'],
@@ -7143,6 +7162,7 @@
     estate: ['safe assets', 'legacy', 'heir', 'country estate'],
     store: ['buy omr', 'shop', 'made man', 'subscription'],
     desk: ['story', 'case', 'content', 'workshop', 'crafting', 'material exchange', 'archive', 'memento'],
+    fieldwork: ['inventory', 'bag', 'recipe', 'quest', 'journal', 'npc dialogue', 'fieldwork', 'mystery', 'crew operation'],
     world: ['world objects', 'knowledge', 'evidence', 'provenance', 'cooperative operation', 'foundry archive'],
     deck: ['raw json', 'api response', 'console', 'developer'],
   };
@@ -7155,7 +7175,7 @@
     ['Blood', ['pvp', 'loans', 'law', 'pen', 'wire']],
     ['Family', ['family', 'world', 'map', 'deeds', 'crew', 'discover', 'profile']],
     ['Legit', ['portfolio', 'estate', 'store']],
-    ['Desk', ['desk']],
+    ['Desk', ['desk', 'fieldwork']],
     ['', ['deck']],
   ];
   // THE SCREEN PLATES — one image per screen (public/art, served by GET /art/:file). A screen that
@@ -7188,7 +7208,7 @@
   // (the choice sticks per browser). Veterans are untouched. My Profile stays visible in simple
   // mode ON PURPOSE — it carries the referral share link, and hiding it from exactly the new
   // players who should be sharing it defeats the growth loop.
-  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'family', 'world', 'desk'];
+  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'map', 'family', 'world', 'desk'];
   const simpleMode = () => !localStorage.getItem('omerta_alltabs') && (me?.level || 1) < 8;
   // THE TWO-TIER NAV (tester feedback): full mode shows the GROUP rail + only the active group's
   // screens beneath it — never all 24 at once. Simple mode keeps the flat five-tab starter rail
@@ -7312,14 +7332,14 @@
     garage: renderGarage, empire: renderEmpire, speakeasy: renderSpeakeasy, boxing: renderBoxing,
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
-    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld };
+    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld, fieldwork: renderFieldwork };
   // ── FIRST-VISIT SYSTEM INTROS — the tutorial, scaled across the whole city: the first time a
   // player opens a system they get ONE illustrated sentence on what it is and what to do first.
   // Dismiss is remembered per tab. Prose is English like all game prose (the i18n chrome rule).
   const TAB_INTRO = {
     discover: 'Find people to run with: players near your level, who’s looking for a crew, and the newest faces in the city. Flag yourself “looking for a crew” and let someone find YOU. This is the front door — the Wet Work roster only shows the top of the heap.',
     crew: 'Your crew: a 2–' + 4 + ' player pact between solo and a full family. No treasury, no turf — just a private room, each other’s backs, and a rule you don’t raise a hand to your own. Form one, or accept an invite.',
-    map: 'The whole city at a glance: who holds each of the six districts, which are still occupied by NPC cartels (free them through the World raid loop), where a contest is live, and who’s winning. Turf is fought over from The Family tab — this is the board you plan on.',
+    map: 'Walk your current neighborhood to find jobs, training, your garage, crew, and stories. Switch to the territory board to see who holds the city. District travel is available from The City.',
     city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
     kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
     empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
@@ -7416,6 +7436,8 @@
   let characterCheckoutOnly = false;
   function setTab(id, { characterOnly = false } = {}) {
     if (!TABS[id]) return;
+    if (id !== 'map') destroyCityScene();
+    if (id !== 'fieldwork') destroyFieldwork();
     characterCheckoutOnly = id === 'portfolio' && characterOnly;
     clearTimeout(_reRenderT);
     _reRenderNeeded = false; _reRenderAfterAction = false;
@@ -7425,6 +7447,7 @@
     rememberTab(id);
     noteScreen(id);
     currentTab = id;
+    syncCitySessionBar();
     activeGroup = groupOf(id);
     lastTabIn[activeGroup] = id;
     applyTabVisibility(); // the sub-row follows the group (a coach jump lands with the right rail lit)
@@ -8621,9 +8644,212 @@
   const MAP_STATE = { // tile accent + label per control state
     mine: ['var(--neon)', 'YOURS'], held: ['var(--gold)', 'HELD'], contested: ['#e0a800', 'CONTESTED'],
     occupied: ['var(--bad)', 'OCCUPIED'], open: ['var(--line)', 'UP FOR GRABS'] };
+  let _cityScene = null, _citySceneKey = null, _citySceneEpoch = 0, _citySceneAssets = null;
+  let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
+  let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map();
+  let _fieldwork = null, _fieldworkEpoch = 0;
+  const CITY_VENUE_TABS = {
+    fixer: ['streets', 'scores', 'pvp', 'law', 'pen', 'wire'],
+    workshop: ['garage', 'market', 'kitchen', 'empire', 'fieldwork'],
+    training: ['life', 'streets', 'boxing', 'races', 'stable'],
+    clubhouse: ['crew', 'family', 'world', 'discover', 'deeds', 'loans', 'speakeasy', 'den'],
+    stories: ['desk', 'start', 'profile', 'portfolio', 'estate', 'store'],
+    waterfront: ['city', 'port', 'map'], directory: ['start', 'fieldwork', 'deck'],
+  };
+  const CITY_VENUE_NAMES = { fixer: 'The Fixer', workshop: 'The Workshop', training: 'The Training Room',
+    clubhouse: 'The Clubhouse', stories: 'The Newsroom', waterfront: 'The Waterfront', directory: 'City Directory' };
+  function cityVenueActions() {
+    return Object.fromEntries(Object.entries(CITY_VENUE_TABS).map(([venue, tabs]) => [venue,
+      tabs.map(tab => ({ tab, label: venue === 'training' && tab === 'streets' ? 'Train at the gym' : TABS[tab],
+        detail: venue === 'training' && tab === 'streets' ? 'Core stats · disciplines · regimen' : (TAB_SEARCH[tab] || []).slice(0, 3).join(' · ') }))]));
+  }
+  function cityIdentity(character = me) { return character?.id && character?.loc
+    ? `${character.id}:${character.generation}:${character.loc}` : ''; }
+  function cityProgress() {
+    const divisor = Number(rules?.pacing?.levelDivisor), level = Number(me?.level || 1);
+    return divisor > 0 ? { respect: Number(me.respect), floor: divisor * (level - 1) ** 2,
+      next: divisor * level ** 2, level } : null;
+  }
+  function rememberCityPosition(key, position) {
+    if (!key || !position || !Number.isFinite(position.x) || !Number.isFinite(position.y)) return;
+    try { sessionStorage.setItem('omerta_city_pose:' + key, JSON.stringify(position)); } catch { /* cosmetic state is optional */ }
+  }
+  function savedCityPosition(key) {
+    try { return JSON.parse(sessionStorage.getItem('omerta_city_pose:' + key) || 'null'); } catch { return null; }
+  }
+  function syncCitySessionBar() {
+    let bar = $('#city-session-bar');
+    if (!bar && $('#tabbodies')) {
+      bar = el('<nav id="city-session-bar" class="city-session-bar" aria-label="Neighborhood session" hidden><button type="button" id="city-return">← Return to neighborhood</button><span id="city-session-label"></span><button type="button" id="city-journal">Quest journal</button></nav>');
+      $('#tabbodies').before(bar);
+      $('#city-return').onclick = () => { _mapMode = 'walk'; setTab('map'); };
+      $('#city-journal').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory' });
+    }
+    if (!bar) return;
+    if (_citySession && _citySession.key !== cityIdentity()) _citySession = null;
+    bar.hidden = !_citySession || currentTab === 'map' || $('#screen-main')?.classList.contains('hidden');
+    if (!bar.hidden) $('#city-session-label').textContent = (CITY_VENUE_NAMES[_citySession.venueId] || 'The neighborhood') + ' · ' + (TABS[currentTab] || '');
+  }
+  function destroyFieldwork() { _fieldworkEpoch++; _fieldwork?.destroy(); _fieldwork = null; }
+  async function renderFieldwork() {
+    const host = $('#tab-fieldwork');
+    if (!host || currentTab !== 'fieldwork') return;
+    const options = { api, act, refresh, confirm: ask, character: { ...me }, onNavigate: navigateFromCity,
+      isActive: () => currentTab === 'fieldwork' && !$('#screen-main').classList.contains('hidden') };
+    if (_fieldwork) { _fieldwork.update(options); return; }
+    const epoch = ++_fieldworkEpoch, identity = cityIdentity();
+    host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
+    try {
+      await loadCityScript('/world-fieldwork.js?v=20261009-game-1', () => !!window.OmertaFieldwork);
+      if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
+      _fieldwork = window.OmertaFieldwork.mount(host, options);
+    } catch {
+      if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork') return;
+      host.innerHTML = '<div class="card"><p role="status">Your journal could not open. Your other game screens are still available.</p><button class="act" id="fieldwork-retry">Try again</button></div>';
+      $('#fieldwork-retry').onclick = renderFieldwork;
+    }
+  }
+  async function cityQuestProjection(stamp = projections.snapshot()) {
+    const reply = await api('GET', '/v1/worldgraph/mysteries', undefined, { isCurrent: () => projections.current(stamp) });
+    const entry = reply.body?.mysteries?.find(quest => quest.graphId === 'neighborhood-initiation');
+    if (!entry) return { quests: {}, actions: new Map() };
+    const quests = {}, actions = new Map();
+    function add(venueId, title, dialogue, entries) {
+      const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
+        && /^\/v1\/worldgraph\/mysteries\/neighborhood-initiation\/(?:start|cancel|explore|nodes\/[^/?#]+\/complete|choices\/[^/?#]+)$/.test(action.path));
+      if (!valid.length) return;
+      const quest = quests[venueId] || (quests[venueId] = { title, dialogue: '', actions: [] });
+      if (dialogue) quest.dialogue += (quest.dialogue ? '\n\n' : '') + dialogue;
+      for (const action of valid) {
+        actions.set(venueId + ':' + action.id, action);
+        quest.actions.push({ id: action.id, label: action.label, available: action.available,
+          blockedBy: action.blockedBy || [] });
+      }
+    }
+    if (!entry.started) add(entry.startVenueId || 'fixer', entry.title, entry.description, entry.uiActions ?? entry.actions);
+    else if (entry.status === 'active') {
+      const detail = await api('GET', '/v1/worldgraph/mysteries/neighborhood-initiation', undefined, { isCurrent: () => projections.current(stamp) });
+      for (const action of detail.body?.uiActions ?? detail.body?.actions ?? []) if (action.id === 'explore' && action.venueId) {
+        add(action.venueId, entry.title, 'Follow the available lead to continue your investigation.', [action]);
+      }
+      for (const node of detail.body?.nodes || []) if (node.venueId && node.status !== 'excluded') {
+        add(node.venueId, node.title, node.dialogue || node.description, node.uiActions ?? node.actions);
+      }
+    }
+    return { quests, actions };
+  }
+  async function performCityQuest(venueId, actionId) {
+    const action = _cityNpcActions.get(venueId + ':' + actionId), identity = cityIdentity();
+    if (!action?.available || _cityQuestPending || currentTab !== 'map') return;
+    _cityQuestPending = true;
+    try {
+      if (action.consequence && !await ask(action.label, action.consequence, { yes: 'Confirm', danger: action.id === 'cancel' })) return;
+      if (currentTab !== 'map' || identity !== cityIdentity()) return;
+      await act(action.method, action.path, action.body || {}, { label: action.label });
+      if (currentTab === 'map' && identity === cityIdentity()) await renderMap();
+    } finally { _cityQuestPending = false; }
+  }
+  function destroyCityScene() {
+    _citySceneEpoch++;
+    if (_cityScene && _citySceneKey) rememberCityPosition(_citySceneKey, _cityScene.getState?.().player
+      ? { ..._cityScene.getState().player, facing: _cityScene.getState().facing } : null);
+    _cityScene?.destroy();
+    _cityScene = null; _citySceneKey = null;
+  }
+  function loadCityScript(src, ready) {
+    if (ready()) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      const timeout = setTimeout(() => finish(new Error('Scene loading timed out')), 12000);
+      function finish(error) {
+        clearTimeout(timeout);
+        script.onload = script.onerror = null;
+        if (error) { script.remove(); reject(error); } else resolve();
+      }
+      script.src = src; script.async = true;
+      script.onload = () => finish(ready() ? null : new Error('Scene asset unavailable'));
+      script.onerror = () => finish(new Error('Scene asset unavailable'));
+      document.head.append(script);
+    });
+  }
+  function loadCityAssets() {
+    if (!_citySceneAssets) {
+      _citySceneAssets = Promise.allSettled([
+        loadCityScript('/city-scene.js?v=20261009-game-1', () => !!window.OmertaCityScene),
+        loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
+      ]).then(([scene, engine]) => {
+        if (scene.status === 'rejected') throw scene.reason;
+        if (engine.status === 'rejected') _citySceneAssets = null;
+        // The scene module also provides accessible destinations when the engine cannot load.
+        return window.OmertaCityScene;
+      }).catch((error) => { _citySceneAssets = null; throw error; });
+    }
+    return _citySceneAssets;
+  }
+  function citySceneFallback(message) {
+    return `<div class="card"><p class="d" role="status">${esc(message)}</p>
+      ${Object.entries(CITY_VENUE_TABS).map(([venue, tabs]) => `<details class="city-fallback-place"${venue === 'fixer' ? ' open' : ''}>
+        <summary>${esc(CITY_VENUE_NAMES[venue])}</summary><div class="row" style="flex-wrap:wrap">${tabs.map(tab =>
+          `<button class="act" data-city-jump="${tab}" data-city-place="${venue}">${esc(TABS[tab])}</button>`).join('')}</div></details>`).join('')}</div>`;
+  }
+  function navigateFromCity(tab, context = {}) {
+    if (!Object.hasOwn(TABS, tab)) return;
+    const gym = context.venueId === 'training' && tab === 'streets';
+    if (gym) localStorage.setItem('omerta_sect_streets-train', '1');
+    _citySession = { key: cityIdentity(), venueId: context.venueId || _citySession?.venueId || 'directory' };
+    if (tab === 'map') _mapMode = context.venueId === 'waterfront' ? 'territory' : 'walk';
+    setTab(tab);
+    if (gym) spotlight('[data-sect="streets-train"]');
+    $('#tab-' + tab)?.focus({ preventScroll: true });
+  }
+  function bindCityFallback(host) {
+    host.querySelectorAll('[data-city-jump]').forEach((button) => {
+      button.onclick = () => navigateFromCity(button.dataset.cityJump, { venueId: button.dataset.cityPlace });
+    });
+  }
+  async function mountCityNeighborhood() {
+    const host = $('#city-scene-host'), options = _citySceneOptions;
+    if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
+    const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
+    if (_cityScene && _citySceneKey === key) { _cityScene.update?.(options); return; }
+    destroyCityScene();
+    const epoch = _citySceneEpoch;
+    host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
+    bindCityFallback(host);
+    try {
+      const scene = await loadCityAssets();
+      if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
+        || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
+      _cityScene = scene.mount(host, { ...options, onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+        position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
+      _citySceneKey = key;
+    } catch {
+      if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;
+      host.innerHTML = citySceneFallback('The neighborhood could not open. Your game actions are still available.')
+        + '<button class="act" id="city-scene-retry">Try the neighborhood again</button>';
+      bindCityFallback(host);
+      $('#city-scene-retry').onclick = () => mountCityNeighborhood();
+    }
+  }
+  function syncMapMode() {
+    const walk = _mapMode === 'walk';
+    const neighborhood = $('#map-neighborhood'), territory = $('#map-territory-board');
+    if (!neighborhood || !territory) return;
+    neighborhood.hidden = !walk; territory.hidden = walk;
+    $('#map-mode-walk').setAttribute('aria-pressed', String(walk));
+    $('#map-mode-territory').setAttribute('aria-pressed', String(!walk));
+    if (walk) mountCityNeighborhood(); else destroyCityScene();
+  }
   async function renderMap() {
     const t = $('#tab-map');
-    const b = (await api('GET', '/v1/map')).body || {};
+    const revision = ++_mapReadRevision, navigation = navigationRevision;
+    const stamp = projections.snapshot(), identity = cityIdentity();
+    const questPromise = cityQuestProjection(stamp).catch(() => ({ quests: {}, actions: new Map() }));
+    const reply = await api('GET', '/v1/map', undefined, { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
+    const quest = await questPromise;
+    if (currentTab !== 'map' || revision !== _mapReadRevision || navigation !== navigationRevision
+      || !projections.current(stamp) || identity !== cityIdentity()) return;
+    const b = reply.body || {};
     const districts = b.districts || [], powers = b.powers || [], season = b.season || {}, mine = b.mine || {};
     const seasonBanner = season.reckoning
       ? `<div class="card" style="border-color:#e0a800;background:linear-gradient(180deg,rgba(224,168,0,.08),transparent)"><span class="t">⚔ THE RECKONING</span> <span class="d">— the last week. Turf is cheap to challenge and contests settle fast — whatever you hold when the books close is what the city remembers.</span></div>`
@@ -8652,10 +8878,36 @@
     const powerBoard = powers.length ? `<div class="card" style="margin-top:8px"><span class="t">Who holds the city</span>
       ${powers.map((p, i) => `<div class="d" style="margin-top:3px">${i + 1}. <b style="color:${p.mine ? 'var(--neon)' : 'inherit'}">${esc(p.tag || p.name)}</b> — ${p.districts} district${p.districts === 1 ? '' : 's'} <span class="chip">$${fmt(p.treasury)} treasury</span></div>`).join('')}</div>`
       : `<div class="card" style="margin-top:8px"><span class="t">Who holds the city</span> <div class="d" style="color:var(--dim);margin-top:3px">No family holds any core district yet — five are still occupied by NPC cartels. Free one through the World raid loop and plant your flag.</div></div>`;
-    t.innerHTML = `${seasonBanner}
+    if (!t.querySelector('#map-neighborhood')) {
+      t.innerHTML = `<div class="row" aria-label="City view" style="gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="act" id="map-mode-walk" aria-pressed="true">Walk the neighborhood</button>
+        <button class="act" id="map-mode-territory" aria-pressed="false">Territory board</button>
+        <button class="act" id="city-travel-open">Travel to another district →</button>
+      </div><div id="map-neighborhood"><div id="city-scene-host"></div></div>
+      <div id="map-territory-board" hidden></div>`;
+      $('#map-mode-walk').onclick = () => { _mapMode = 'walk'; syncMapMode(); };
+      $('#map-mode-territory').onclick = () => { _mapMode = 'territory'; syncMapMode(); };
+      $('#city-travel-open').onclick = () => setTab('city');
+    }
+    $('#map-territory-board').innerHTML = reply.code >= 400
+      ? '<div class="card"><p class="d" role="status">The territory board is temporarily unavailable. Try Refresh.</p></div>'
+      : `${seasonBanner}
       <div class="grid" style="margin-top:8px">${tiles}</div>
       ${powerBoard}
       <div class="d" style="font-size:11px;color:var(--dim);margin-top:8px">Fight for turf from <b>The Family</b> tab — seize, declare a watch, or stake a sealed bid on contested ground.</div>`;
+    if (me?.loc) {
+      const district = districts.find((d) => d.id === me.loc)
+        || { id: me.loc, name: me.loc.replace(/[-_]/g, ' '), state: null };
+      _cityNpcActions = quest.actions;
+      _citySceneOptions = { district, character: { ...me }, progress: cityProgress(),
+        venueActions: cityVenueActions(), npcQuests: quest.quests };
+    } else {
+      _citySceneOptions = null;
+      destroyCityScene();
+      $('#city-scene-host').innerHTML = citySceneFallback('Create or restore your character to explore the neighborhood.');
+      bindCityFallback($('#city-scene-host'));
+    }
+    syncMapMode();
   }
 
   // ── STREET DEEDS — the map as property (the Monopoly layer). Claim a named, mapped plot of the world
@@ -10043,6 +10295,9 @@
     const spreadPct = cheap && rich ? Math.round((rich[1] / cheap[1] - 1) * 100) : 0;
     const tkb = c.tickerBallot;
     t.innerHTML = `
+      <div class="card"><span class="t">Your neighborhood</span>
+        <p class="d">Explore the streets around you and find your next move.</p>
+        <button class="act" id="city-walk-open">Walk this district →</button></div>
       ${shp.material ? `<div class="card"><span class="t" style="color:var(--neon)">📦 THE SHIPMENT — ${esc(shp.material)}</span>
         <div class="d">It lands at <b>${esc(shp.districtName || shp.district || '')}</b> today. First come — the whole city shares
           ${shp.cityCap} crates a day and nobody takes more than ${shp.perPlayer}. It's the one thing money can't just buy:
@@ -10199,6 +10454,7 @@
       if (fb) fb.onclick = async (e) => { e.preventDefault();
         const r = (await api('GET', '/v1/leaderboard/family-build')).body?.families || [];
         t.querySelector('#builder-lb').innerHTML = `<div class="grid" style="margin-top:4px">${r.map((k) => `<div class="card"><span class="t">#${k.pos} [${esc(k.tag)}] ${esc(k.name)}</span><div class="d">$${fmt(k.built)} for the city</div></div>`).join('') || '<span class="d">no families ranked yet</span>'}</div>`; }; }
+    $('#city-walk-open').onclick = () => { _mapMode = 'walk'; setTab('map'); };
     t.querySelectorAll('[data-raid]').forEach((b) => b.onclick = () => act('POST', `/v1/world/${b.dataset.raid}/raid`, {}).then(() => renderCity()));
     t.querySelectorAll('[data-familyraid]').forEach((b) => b.onclick = () => act('POST', `/v1/npcfamily/${b.dataset.familyraid}/raid`, {}).then(() => renderCity()));
     const fwlb = $('#fw-lb'); if (fwlb) fwlb.onclick = async (e) => { e.preventDefault();

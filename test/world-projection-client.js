@@ -24,6 +24,96 @@ function setup() {
   controller.setSession('A');
   return { controller, calls, applied, cleared, revoked: () => unauthorized };
 }
+const contention = { code: 409, body: { error: 'contention' } };
+{
+  const h = setup(), pending = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  assert.equal(h.calls.length, 2, 'player contention gets one immediate serialized read retry');
+  assert.equal(h.calls[1].path, '/v1/projections/player');
+  assert.equal(h.calls[1].ticket.version, h.calls[0].ticket.version, 'the retry belongs to the same ticket');
+  assert.equal(h.applied.length, 0, 'transient contention is not applied before recovery');
+  h.calls[1].resolve(player('recovered')); await pending;
+  assert.equal(h.applied.length, 1);
+  assert.equal(h.applied[0].result.body.player.id, 'recovered');
+}
+{
+  const h = setup(), pending = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  h.calls[1].resolve(contention); const result = await pending; await flush();
+  assert.equal(result.code, 409);
+  assert.equal(h.calls.length, 2, 'a second contention response is terminal, not an automatic loop');
+  assert.equal(h.applied.length, 1);
+}
+for (const response of [{ code: 409, body: { error: 'unavailable' } },
+  { code: 503, body: { error: 'offline' } }, { code: 404, body: { error: 'no_character' } },
+  { code: 401, body: { error: 'unauthorized' } }, { code: 403, body: { error: 'forbidden' } }]) {
+  const h = setup(), pending = h.controller.player();
+  h.calls[0].resolve(response); await pending; await flush();
+  assert.equal(h.calls.length, 1, 'other player failures retain existing terminal handling');
+  if (response.code === 404) assert(h.cleared.includes('player'));
+  if ([401, 403].includes(response.code)) assert.equal(h.revoked(), 1);
+}
+{
+  const h = setup(), pending = h.controller.world();
+  h.calls[0].resolve(contention); await pending; await flush();
+  assert.equal(h.calls.length, 1, 'world-lane contention is not retried');
+  assert.equal(h.applied[0].result.code, 409);
+}
+{
+  const h = setup(), first = h.controller.player(), newer = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  assert.equal(h.calls.length, 2);
+  assert(h.calls[1].ticket.version > h.calls[0].ticket.version, 'superseded contention starts only the newer ticket');
+  h.calls[1].resolve(player('newer')); await Promise.all([first, newer]);
+  assert.equal(h.applied.length, 1);
+  assert.equal(h.applied[0].result.body.player.id, 'newer');
+}
+{
+  const h = setup(), first = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  const newer = h.controller.player();
+  assert.equal(h.calls[1].ticket.isCurrent(), false, 'a new refresh invalidates the in-flight retry immediately');
+  h.calls[1].resolve(player('obsolete retry')); await flush();
+  h.calls[2].resolve(player('newer')); await Promise.all([first, newer]);
+  assert.equal(h.applied.length, 1);
+  assert.equal(h.applied[0].result.body.player.id, 'newer');
+}
+for (const session of ['B', null]) {
+  const h = setup(), old = h.controller.player();
+  h.controller.setSession(session);
+  h.calls[0].resolve(contention); await old; await flush();
+  assert.equal(h.calls.length, 1, 'a replaced or revoked ticket does not start a retry');
+  assert.equal(h.applied.length, 0);
+}
+{
+  const h = setup(), old = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  h.controller.setSession('B'); const fresh = h.controller.player();
+  h.calls[1].resolve({ code: 401, body: { error: 'revoked' } }); await old; await flush();
+  assert.equal(h.revoked(), 0, 'an old retry cannot revoke a replacement session');
+  h.calls[2].resolve(player('B')); await fresh;
+  assert.equal(h.controller.snapshot().token, 'B');
+  assert.equal(h.applied.length, 1);
+}
+{
+  const h = setup(), old = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  h.controller.setSession(null);
+  assert.equal(h.calls[1].ticket.isCurrent(), false);
+  h.calls[1].resolve(player('revoked private body')); await old; await flush();
+  assert.equal(h.applied.length, 0, 'revoking during a retry discards its delayed body');
+  assert.equal(h.calls.length, 2);
+}
+{
+  const h = setup(), pending = h.controller.player();
+  h.calls[0].resolve(contention); await flush();
+  h.calls[1].resolve({ code: 404, body: { error: 'no_character' } }); await pending;
+  assert(h.cleared.includes('player'), 'no-character recovery after contention uses existing clearing');
+  const revoked = h.controller.player(); h.calls[2].resolve(contention); await flush();
+  h.calls[3].resolve({ code: 401, body: { error: 'unauthorized' } }); await revoked;
+  assert.equal(h.revoked(), 1, 'auth loss after contention uses existing revocation');
+  assert.equal(h.controller.snapshot().token, null);
+}
 {
   const h = setup();
   const first = h.controller.player(), newest = h.controller.player();
@@ -169,4 +259,4 @@ assert(main.includes('worldRetry = null; worldBusy = false;'), 'replacement clea
 assert(!main.includes("api('GET', '/v1/me')"), 'all production player refreshes use the player projection');
 assert(main.indexOf("if (ev.channel === 'projection')") < main.indexOf("feedLine(ev.channel || '?', ev)"));
 assert(/socket\.onopen[^\n]+projections\.world\(worldSelection, worldMysterySelection\)/.test(main), 'reconnect refreshes both selections to recover missed invalidations');
-console.log('world-projection-client: stale/session/selection/revocation queues and queued mutation isolation PASS');
+console.log('world-projection-client: bounded player-contention recovery, stale/session/selection/revocation queues and queued mutation isolation PASS');

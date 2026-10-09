@@ -2,6 +2,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { buildOpenApi } from '../src/agentgateway.js';
 import { buildServer } from '../src/server.js';
 import { register as registerWorldGraphRoutes } from '../src/routes/worldgraph.js';
@@ -17,6 +19,7 @@ const routeTable = [
   ['GET', '/v1/worldgraph/mysteries'],
   ['POST', '/v1/worldgraph/mysteries/:graphId/start'],
   ['GET', '/v1/worldgraph/mysteries/:graphId'],
+  ['POST', '/v1/worldgraph/mysteries/:graphId/explore'],
   ['POST', '/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover'],
   ['POST', '/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/complete'],
   ['POST', '/v1/worldgraph/mysteries/:graphId/choices/:nodeId'],
@@ -134,6 +137,40 @@ assert.doesNotMatch(publishedWorldGraph,
   /accountId|account_id|characterId|character_id|crewId|crew_id|authorityAccount|depositor/i,
   'the machine contract has no client or response field for raw ownership authority');
 
+// Validate the actual HTTP projections against the same closed schemas published by OpenAPI.
+// Fastify's existing validator dependencies provide formats without adding another test runtime.
+const schemaValidator = new Ajv({ strict: false, allErrors: true });
+addFormats(schemaValidator);
+const worldGraphSchemas = Object.fromEntries(Object.entries(spec.components.schemas)
+  .filter(([name]) => name.startsWith('WorldGraph')));
+const compileProjection = (reference) => schemaValidator.compile({
+  $ref: reference, components: { schemas: worldGraphSchemas },
+});
+const typedReads = routeTable.filter(([method]) => method === 'GET').map(([, rawPath]) => {
+  const path = rawPath.replace(/:([A-Za-z0-9_]+)/g, '{$1}');
+  const reference = spec.paths[path].get.responses[200].content['application/json'].schema.$ref;
+  return { match: new RegExp('^' + rawPath.replace(/:[A-Za-z0-9_]+/g, '[^/]+') + '$'),
+    name: reference.split('/').at(-1), validate: compileProjection(reference), count: 0 };
+});
+const validateIssuedAction = compileProjection('#/components/schemas/WorldGraphIssuedAction');
+const sampleAction = { id: 'complete:test', label: 'Complete step', method: 'POST',
+  path: '/v1/worldgraph/mysteries/test/nodes/step/complete', body: { interactionId: 'inspect' },
+  available: false, blockedBy: [{ adapter: 'level', required: 2, current: 1 }] };
+assert.equal(validateIssuedAction(sampleAction), true);
+for (const forbidden of ['accountId', 'characterId', 'crewId', 'owner', 'amount']) {
+  assert.equal(validateIssuedAction({ ...sampleAction, body: { ...sampleAction.body, [forbidden]: 'injected' } }), false,
+    `issued action bodies reject undeclared ${forbidden}`);
+}
+assert.equal(validateIssuedAction({ ...sampleAction, blockedBy: [{ code: 'operation_closed' }] }), true);
+assert.equal(validateIssuedAction({ ...sampleAction, blockedBy: [{}] }), false);
+assert.equal(validateIssuedAction({ ...sampleAction, blockedBy: [{ adapter: 'level', ownerId: 'injected' }] }), false);
+assert.equal(validateIssuedAction({ ...sampleAction, method: 'GET' }), false);
+assert.equal(validateIssuedAction({ ...sampleAction, path: '/v1/mod/characters' }), false);
+const validateRecovery = compileProjection('#/components/schemas/WorldGraphRecoverableOperation');
+assert.equal(validateRecovery({ operationId: 'recover', graphId: 'graph', version: 1, status: 'active',
+  title: 'Historical operation', actions: [], roles: [] }), false,
+'recovery entries never expose current crew role projections');
+
 const app = await buildServer();
 const call = async (method, url, { token, body, key } = {}) => {
   const headers = {};
@@ -144,6 +181,13 @@ const call = async (method, url, { token, body, key } = {}) => {
   const response = await app.inject(request);
   let parsed;
   try { parsed = response.json(); } catch { parsed = response.body; }
+  if (method === 'GET' && response.statusCode === 200 && url.startsWith('/v1/worldgraph/')) {
+    const typed = typedReads.find(entry => entry.match.test(url));
+    assert(typed, `a typed projection exists for ${url}`);
+    assert.equal(typed.validate(parsed), true,
+      `${url} matches ${typed.name}: ${JSON.stringify(typed.validate.errors)}`);
+    typed.count++;
+  }
   return { code: response.statusCode, body: parsed, headers: response.headers };
 };
 const mutate = (url, token, key, body) => call('POST', url, { token, key, body });
@@ -279,7 +323,7 @@ assert.equal(malformedCancel.code, 400, 'historical cancel requires the exact se
 
 const recipeFrom = (response, id) => response.body.recipes.find((entry) => entry.id === id);
 const recipes = await call('GET', '/v1/worldgraph/recipes', { token: players[0].token });
-assert.equal(recipes.code, 200);
+assert.equal(recipes.code, 200, JSON.stringify(recipes.body));
 assert.deepEqual(recipes.body.recipes.map(({ id }) => id), [
   'recipe:car_salvage_basic', 'recipe:hardened_steel', 'recipe:precision_lock_tool',
 ]);
@@ -459,6 +503,27 @@ assert.equal(JSON.stringify(inventory.body).includes(players[0].accountId), fals
 const discovery = await call('GET', '/v1/worldgraph/mysteries', { token: players[0].token });
 assert.equal(discovery.code, 200);
 assert.equal(discovery.body.mysteries.some(({ graphId }) => graphId === 'belladonna-demo'), true);
+const introduction = discovery.body.mysteries.find(({ graphId }) => graphId === 'neighborhood-initiation');
+assert(introduction && introduction.actions.length && introduction.description);
+assert.equal(introduction.ownerScope, 'character');
+assert.equal(introduction.startVenueId, 'fixer');
+assert.equal(introduction.exploreVenueId, 'stories');
+assert.equal(introduction.rewardTitle, 'Neighborhood Notebook');
+assert.equal((await mutate('/v1/worldgraph/mysteries/neighborhood-initiation/start',
+  players[1].token, 'api-schema-neighborhood-start')).code, 200);
+let introductionBoard = await call('GET', '/v1/worldgraph/mysteries/neighborhood-initiation', { token: players[1].token });
+const visibleFixer = introductionBoard.body.nodes.find(({ id }) => id === 'mystery:neighborhood-fixer');
+assert.equal(visibleFixer.venueId, 'fixer');
+assert.match(visibleFixer.dialogue, /Nico Bellini/);
+assert(visibleFixer.description && visibleFixer.uiActions.length);
+assert.equal(typeof introductionBoard.body.explorationAvailable, 'boolean');
+const conversation = visibleFixer.uiActions.find(({ available }) => available);
+assert(conversation);
+assert.equal((await mutate(conversation.path, players[1].token, 'api-schema-neighborhood-fixer', conversation.body)).code, 200);
+introductionBoard = await call('GET', '/v1/worldgraph/mysteries/neighborhood-initiation', { token: players[1].token });
+assert.equal(introductionBoard.body.progress.completed, 1);
+assert(introductionBoard.body.nodes.find(({ type }) => type === 'choice').uiActions
+  .every(action => action.body.optionId && action.body.interactionId));
 
 const startUrl = '/v1/worldgraph/mysteries/belladonna-demo/start';
 const start = await mutate(startUrl, players[0].token, 'api-mystery-start');
@@ -660,6 +725,12 @@ await app.pool.query(
   'UPDATE world_operations SET graph_version=2 WHERE id=$1',
   [recoverableOperation.body.operationId],
 );
+const recoveryDiscovery = await call('GET', '/v1/worldgraph/operations', { token: players[0].token });
+const recoveryEntry = recoveryDiscovery.body.recoverableOperations
+  .find(({ operationId }) => operationId === recoverableOperation.body.operationId);
+assert(recoveryEntry && recoveryEntry.actions.length);
+assert.equal(recoveryEntry.version, 2);
+assert.equal(Object.hasOwn(recoveryEntry, 'roles'), false);
 const foreignOperationCancel = await mutate(
   `/v1/worldgraph/operations/${recoverableOperation.body.operationId}/cancel`,
   players[1].token, 'api-foreign-operation-cancel',
@@ -888,6 +959,10 @@ const replacementDiscovery = await call('GET', '/v1/worldgraph/mysteries', {
   token: players[3].token,
 });
 assert.equal(replacementDiscovery.code, 200);
+const historicalEntry = replacementDiscovery.body.historicalInstances
+  .find(({ instanceId }) => instanceId === historicalInstanceId);
+assert(historicalEntry && historicalEntry.actions.length);
+assert.equal(historicalEntry.actions[0].body.instanceId, historicalInstanceId);
 const replacementCurrent = replacementDiscovery.body.mysteries
   .find(({ graphId }) => graphId === 'belladonna-demo');
 assert.deepEqual({
@@ -1021,5 +1096,6 @@ assert.deepEqual(deathLedger, [{
 }].sort(deathLedgerOrder),
 'the additional value rows belong only to the explicitly driven legacy production estate');
 
-console.log('✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed');
+assert(typedReads.every(({ count }) => count > 0), 'every documented WorldGraph GET schema validates a real server response');
+console.log('✅ world-graph Phase 1 HTTP authority, replay, privacy, economy, and typed UI projection contract passed');
 await app.close();
