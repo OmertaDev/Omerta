@@ -38,12 +38,13 @@ try {
   app.get('/fieldwork-browser-fixture.css', (_req, reply) => reply.type('text/css').send(fs.readFileSync(new URL('../public/world-fieldwork.css', import.meta.url), 'utf8')));
   app.get('/fieldwork-browser-fixture', (_req, reply) => reply.type('text/html').send(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fieldwork-browser-fixture.css"><style>body{margin:0;padding:16px;background:#282a25}#fieldwork{max-width:1100px;margin:auto}</style></head><body><main id="fieldwork"></main><script src="/fieldwork-browser-fixture.js"></script><script>
     const token=${JSON.stringify(players[0].token)};
-    window.__fieldworkCalls=[]; window.__failNextResponse=false; window.__navigate=[];
+    window.__fieldworkCalls=[]; window.__fieldworkReads=[]; window.__failNextResponse=false; window.__navigate=[];
     let queue=Promise.resolve();
     function api(method,url,body,requestOptions={}) {
       const task=queue.then(async()=>{
         const response=await fetch(url,{method,headers:{authorization:'Bearer '+token,...(body!==undefined?{'content-type':'application/json'}:{}),...(method==='POST'?{'idempotency-key':requestOptions.idempotencyKey||crypto.randomUUID()}: {})},body:body===undefined?undefined:JSON.stringify(body)});
         const result={code:response.status,body:await response.json()};
+        if(method==='GET')window.__fieldworkReads.push(url);
         if(method==='POST')window.__fieldworkCalls.push({url,body,key:requestOptions.idempotencyKey,result});
         return result;
       }); queue=task.catch(()=>{}); return task;
@@ -84,10 +85,126 @@ try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
   const page = await context.newPage(), errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  const idle = () => page.locator('.fieldwork-body[aria-busy="false"]').waitFor();
+  const settled = target => target.locator('[data-fieldwork-refresh]:not([disabled])').waitFor();
+  const idle = () => settled(page);
   const confirm = async () => { await page.locator('[data-fieldwork-confirm]').click(); await idle(); };
   const activate = async selector => { await page.locator(selector).click(); if (await page.locator('[data-fieldwork-confirm]').count()) await confirm(); else await idle(); };
   const refresh = async () => { await page.locator('[data-fieldwork-refresh]').click(); await idle(); };
+
+  // A failed Crafting read must leave the independent Journal and Crew reads available.
+  const panePage = await context.newPage();
+  panePage.on('pageerror', error => errors.push(error.message));
+  const recipesPath = '**/v1/worldgraph/recipes';
+  const unavailable = route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ message: 'Crafting temporarily unavailable.' }) });
+  await panePage.route(recipesPath, unavailable);
+  await panePage.goto(base + '/fieldwork-browser-fixture'); await settled(panePage);
+  await panePage.locator('[data-fieldwork-view="mysteries"]').click();
+  assert.equal(await panePage.locator('[data-fieldwork-case="' + NEIGHBORHOOD_QUEST_GRAPH_ID + '"]').count(), 1, 'Crafting failure does not hide the real starter quest.');
+  const readsAfterFailure = await panePage.evaluate(() => window.__fieldworkReads);
+  assert(readsAfterFailure.includes('/v1/worldgraph/mysteries') && readsAfterFailure.includes('/v1/worldgraph/operations'), 'Later independent panes still load after a failed read.');
+  await panePage.locator('[data-fieldwork-view="recipes"]').click();
+  assert.match(await panePage.locator('.fieldwork-pane-error').textContent(), /Crafting could not load/);
+  assert(!(await panePage.locator('.fieldwork-body').textContent()).includes('No recipes are currently issued'), 'A failed read is never presented as successful empty data.');
+  assert.deepEqual(await panePage.evaluate(() => window.__fieldworkCalls), [], 'Browsing and retries never dispatch game mutations.');
+  await panePage.setViewportSize({ width: 375, height: 812 });
+  assert(await panePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Scoped error and retry controls fit a phone width.');
+  await panePage.unroute(recipesPath, unavailable);
+  const beforePaneRetry = await panePage.evaluate(() => window.__fieldworkReads.length);
+  await panePage.getByRole('button', { name: 'Retry Crafting', exact: true }).focus();
+  await panePage.keyboard.press('Enter'); await settled(panePage);
+  assert.deepEqual(await panePage.evaluate(index => window.__fieldworkReads.slice(index), beforePaneRetry), ['/v1/worldgraph/recipes'], 'Pane retry fetches only its own board.');
+  assert.equal(await panePage.getByRole('button', { name: 'Salvage junker', exact: true }).isEnabled(), true, 'Successful retry restores current issued actions.');
+  assert.equal(await panePage.evaluate(() => document.activeElement.dataset.fieldworkView), 'recipes', 'Keyboard retry returns focus to the current pane when its retry control disappears.');
+  await panePage.route(recipesPath, unavailable);
+  await panePage.locator('[data-fieldwork-refresh]').click(); await settled(panePage);
+  assert.match(await panePage.locator('.fieldwork-pane-error').textContent(), /last loaded record/);
+  assert.equal(await panePage.getByRole('button', { name: 'Salvage junker', exact: true }).isDisabled(), true, 'Cached Crafting data remains readable but cannot dispatch a stale action.');
+  await panePage.locator('[data-fieldwork-view="mysteries"]').click();
+  assert.equal(await panePage.locator('[data-fieldwork-case="' + NEIGHBORHOOD_QUEST_GRAPH_ID + '"] [data-fieldwork-action]').isEnabled(), true, 'Healthy Journal actions remain available after the failed refresh finishes.');
+  await panePage.evaluate(() => window.__fieldwork.destroy()); await panePage.close();
+
+  // Authentication and missing-character failures stop further reads and clear cached private data.
+  for (const failure of [{ status: 401, error: 'token_revoked' }, { status: 400, error: 'no_character' }]) {
+    const sessionPage = await context.newPage();
+    sessionPage.on('pageerror', error => errors.push(error.message));
+    await sessionPage.route(recipesPath, route => route.fulfill({ status: failure.status, contentType: 'application/json', body: JSON.stringify({ error: failure.error, message: 'Restore your session.' }) }));
+    await sessionPage.route('**/v1/me', route => route.fulfill({ status: failure.status === 401 ? 401 : 404, contentType: 'application/json', body: JSON.stringify({ error: failure.error }) }));
+    await sessionPage.goto(base + '/fieldwork-browser-fixture');
+    await sessionPage.waitForFunction(() => window.__fieldworkReads.includes('/v1/me'));
+    assert.match(await sessionPage.locator('.fieldwork-body').textContent(), /Restore your session/);
+    assert.equal(await sessionPage.locator('[data-fieldwork-action]').count(), 0, 'Session failure removes cached mutation controls.');
+    const sessionReads = await sessionPage.evaluate(() => window.__fieldworkReads);
+    assert(!sessionReads.includes('/v1/worldgraph/mysteries') && !sessionReads.includes('/v1/worldgraph/operations'), 'No later pane reads continue after session failure.');
+    assert.deepEqual(await sessionPage.evaluate(() => window.__fieldworkCalls), []);
+    await sessionPage.evaluate(() => window.__fieldwork.destroy()); await sessionPage.close();
+  }
+
+  const restoredPage = await context.newPage();
+  restoredPage.on('pageerror', error => errors.push(error.message));
+  const expired = route => route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'token_revoked', message: 'Restore your session.' }) });
+  await restoredPage.route(recipesPath, expired);
+  // The production bridge returns a player projection envelope, rather than /me's legacy body.
+  await restoredPage.route('**/v1/me', route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ player: { character: { id: players[0].characterId, name: 'Field Tester 0' } } }) }));
+  await restoredPage.goto(base + '/fieldwork-browser-fixture');
+  await restoredPage.waitForFunction(() => document.querySelector('.fieldwork-notice')?.textContent.includes('Reload your records'));
+  const restoredReads = await restoredPage.evaluate(() => window.__fieldworkReads.length);
+  await restoredPage.evaluate(id => window.__fieldwork.update({ character: { id } }), players[0].characterId);
+  await restoredPage.waitForTimeout(100);
+  assert.equal(await restoredPage.evaluate(() => window.__fieldworkReads.length), restoredReads, 'Same-character parent updates do not loop failed authentication reads.');
+  await restoredPage.unroute(recipesPath, expired);
+  await restoredPage.locator('[data-fieldwork-view="recipes"]').click();
+  await restoredPage.getByRole('button', { name: 'Retry Crafting', exact: true }).click(); await settled(restoredPage);
+  assert.equal(await restoredPage.getByRole('button', { name: 'Salvage junker', exact: true }).isEnabled(), true, 'A restored same-character session can reload the pane without a new controller.');
+  assert.deepEqual(await restoredPage.evaluate(() => window.__fieldworkCalls), []);
+  await restoredPage.evaluate(() => window.__fieldwork.destroy()); await restoredPage.close();
+
+  // A delayed old-character response cannot overwrite the replacement character's fresh panes.
+  const stalePage = await context.newPage();
+  stalePage.on('pageerror', error => errors.push(error.message));
+  await stalePage.goto(base + '/fieldwork-browser-fixture'); await settled(stalePage);
+  await stalePage.evaluate(() => {
+    window.__fieldwork.destroy();
+    const board = name => ({ code: 200, body: { stacks: [], items: [{ id: name, title: name, state: 'active', actions: [] }] } });
+    window.__fieldwork = OmertaFieldwork.mount(document.getElementById('fieldwork'), { character: { id: 'old-character' }, isActive: () => true,
+      api: () => new Promise(resolve => { window.__releaseOldPane = () => resolve(board('Old private record')); }), act: () => { throw new Error('Unexpected mutation'); } });
+    window.__fieldwork.update({ character: { id: 'replacement-character' }, api: async (_method, url) => url.endsWith('/inventory') ? board('Fresh current record')
+      : { code: 200, body: { [url.split('/').at(-1)]: [] } } });
+  });
+  await settled(stalePage); await stalePage.evaluate(() => window.__releaseOldPane());
+  await stalePage.waitForTimeout(50);
+  assert.match(await stalePage.locator('.fieldwork-body').textContent(), /Fresh current record/);
+  assert(!(await stalePage.locator('.fieldwork-body').textContent()).includes('Old private record'), 'Old-generation data never reaches the current UI.');
+  await stalePage.evaluate(() => {
+    window.__fieldwork.destroy(); window.__sessionReadCount = 0;
+    window.__fieldwork = OmertaFieldwork.mount(document.getElementById('fieldwork'), { character: { id: 'session-old-character' }, isActive: () => true,
+      api: async (_method, url) => url.endsWith('/inventory') ? { code: 200, body: { stacks: [], items: [] } }
+        : { code: 401, body: { error: 'token_revoked' } },
+      refresh: () => new Promise(resolve => { window.__releaseOldSession = () => resolve({ code: 200, body: { player: { character: { id: 'session-old-character' } } } }); }),
+      act: () => { throw new Error('Unexpected mutation'); } });
+  });
+  await stalePage.waitForFunction(() => typeof window.__releaseOldSession === 'function');
+  await stalePage.evaluate(() => window.__fieldwork.update({ character: { id: 'session-new-character' }, api: async (_method, url) => {
+    window.__sessionReadCount++;
+    return { code: 200, body: url.endsWith('/inventory') ? { stacks: [], items: [{ id: 'session-new-item', title: 'Replacement session record', state: 'active', actions: [] }] }
+      : { [url.split('/').at(-1)]: [] } };
+  } }));
+  await settled(stalePage);
+  const currentSessionReads = await stalePage.evaluate(() => window.__sessionReadCount);
+  await stalePage.evaluate(() => window.__releaseOldSession()); await stalePage.waitForTimeout(50);
+  assert.equal(await stalePage.evaluate(() => window.__sessionReadCount), currentSessionReads, 'A delayed old session check does not restart the replacement generation.');
+  assert.match(await stalePage.locator('.fieldwork-body').textContent(), /Replacement session record/);
+  await stalePage.evaluate(() => {
+    window.__fieldwork.destroy(); window.__destroyedReads = [];
+    window.__fieldwork = OmertaFieldwork.mount(document.getElementById('fieldwork'), { character: { id: 'dispose-character' }, isActive: () => true,
+      api: (_method, url) => { window.__destroyedReads.push(url); return new Promise(resolve => { window.__releaseDestroyedPane = () => resolve({ code: 200, body: { stacks: [], items: [] } }); }); },
+      act: () => { throw new Error('Unexpected mutation'); } });
+    window.__fieldwork.destroy(); window.__releaseDestroyedPane();
+  });
+  await stalePage.waitForTimeout(50);
+  assert.equal(await stalePage.locator('.world-fieldwork').count(), 0, 'A late pane cannot recreate destroyed UI.');
+  assert.deepEqual(await stalePage.evaluate(() => window.__destroyedReads), ['/v1/worldgraph/inventory'], 'Destroyed loads stop before other panes.');
+  await stalePage.close();
+
   await page.goto(base + '/fieldwork-browser-fixture'); await idle();
   assert.deepEqual(await page.evaluate(() => window.__fieldworkCalls), [], 'Opening the module performs no mutation.');
   await page.locator('[data-fieldwork-view="recipes"]').click();
@@ -233,6 +350,6 @@ try {
   await page.evaluate(() => window.__fieldwork.destroy());
   assert.equal(await page.locator('.world-fieldwork').count(), 0, 'Destroy removes module UI.');
   assert.deepEqual(errors, [], 'No uncaught browser errors.');
-  console.log('world-fieldwork-browser: confirmation/cancel, salvage/crafting/carry, exact-key recovery, hidden-lead discovery/replay, journal completion, four-account operation/private clue, old-Crew escrow recovery/privacy, mobile layout and historical cancellation pass' + (shots ? '\nScreenshots: ' + shots + '/fieldwork-desktop.png and fieldwork-mobile.png' : ''));
+  console.log('world-fieldwork-browser: pane failure isolation/retry, cached action guards, session clearing, stale-generation/teardown, confirmation/cancel, salvage/crafting/carry, exact-key recovery, hidden-lead discovery/replay, journal completion, four-account operation/private clue, old-Crew escrow recovery/privacy, mobile layout and historical cancellation pass' + (shots ? '\nScreenshots: ' + shots + '/fieldwork-desktop.png and fieldwork-mobile.png' : ''));
   await context.close();
 } finally { if (browser) await browser.close(); await app.close(); }

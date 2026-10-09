@@ -39,6 +39,9 @@
 .fieldwork-notice { padding: 14px 20px; color: #344a35; background: #dee5d1; border-bottom: 1px solid #b5c2a8; font-size: 13px; }
 .fieldwork-notice--error { color: #733d31; background: #f0dbcf; border-color: #d5b7a8; }
 .fieldwork-notice button { margin: 7px 8px 0 0; }
+.fieldwork-pane-error { padding: 16px; margin-bottom: 18px; border: 1px solid #cba38c; border-radius: 6px; background: #f0dbcf; color: #733d31; font-size: 13px; }
+.fieldwork-pane-error p { margin: 7px 0; }
+.fieldwork-pane-error button { margin-top: 6px; }
 .fieldwork-case { margin-top: 26px; padding-top: 22px; border-top: 1px solid #c4b291; }
 .fieldwork-node { margin-top: 13px; }
 .fieldwork-node--complete { background: #e5e3cf; border-color: #b8bd9f; }

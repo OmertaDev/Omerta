@@ -407,6 +407,8 @@ for (const vp of VIEWPORTS) {
   // its three live working modes so a refactor cannot leave Cases polished while Workshop or the
   // Exchange silently overflows, empties, or drops its exact-hash controls.
   await page.click('#grouprail [data-group="desk"]');
+  // The Desk group also contains Fieldwork and remembers its last visited screen.
+  await page.click('#tabs [data-tab="desk"]');
   await page.waitForSelector('#tab-desk .desk-file', { state: 'visible', timeout: 20000 });
   const cases = await page.evaluate(() => ({
     title: document.querySelector('#tab-desk #desk-case-title')?.textContent || '',

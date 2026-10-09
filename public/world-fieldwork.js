@@ -43,11 +43,12 @@
   }
 
   function mount(host, initialOptions) {
-    let options = { ...initialOptions }, destroyed = false, busy = false, loading = false, revision = 0;
+    let options = { ...initialOptions }, destroyed = false, busy = false, loading = false, revision = 0, sessionUnavailable = false, recoveryRequired = false;
     let view = 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
     let notice = '', noticeBad = false, retry = null, cancelConfirmation = null;
     let characterId = options.character && options.character.id;
     const boards = {}, actions = new Map();
+    const panes = Object.fromEntries(VIEWS.map(([key]) => [key, { loading: false, error: '' }]));
     let actionSequence = 0;
     const root = document.createElement('section');
     root.className = 'world-fieldwork';
@@ -65,7 +66,7 @@
         const key = String(++actionSequence);
         actions.set(key, { action, context });
         return '<div class="fieldwork-action"><button type="button" data-fieldwork-action="' + key + '"'
-          + (busy || action.available === false ? ' disabled' : '') + '>' + escape(action.label || 'Continue') + '</button>'
+          + (busy || loading || panes[view].error || sessionUnavailable || action.available === false ? ' disabled' : '') + '>' + escape(action.label || 'Continue') + '</button>'
           + (action.consequence ? '<p class="fieldwork-consequence">' + escape(action.consequence) + '</p>' : '')
           + (action.available === false ? blockers(list(action.blockedBy).filter(blocker => !shown.has(blockerText(blocker)))) : '') + '</div>';
       }).join('');
@@ -157,56 +158,123 @@
     function draw() {
       if (destroyed) return;
       actions.clear(); actionSequence = 0;
+      const pane = panes[view], label = VIEWS.find(([key]) => key === view)[1];
       const content = view === 'recipes' ? recipesView() : view === 'mysteries' ? mysteriesView() : view === 'operations' ? operationsView() : inventoryView();
+      const paneNotice = pane.error ? '<div class="fieldwork-pane-error" role="alert"><b>' + escape(label) + ' could not load.</b><p>' + escape(pane.error) + '</p>'
+        + (boards[view] ? '<p>Your last loaded record is shown. Retry to use current actions.</p>' : '')
+        + '<button type="button" data-fieldwork-pane-retry="' + view + '"' + (loading || busy ? ' disabled' : '') + '>Retry ' + escape(label) + '</button></div>' : '';
       root.innerHTML = '<header class="fieldwork-mast"><div><span>Inventory &amp; fieldwork</span><h1>The field office</h1><p>Your materials, investigations and shared work in one place.</p></div><button type="button" data-fieldwork-city' + (busy ? ' disabled' : '') + '>Return to the neighborhood</button></header>'
-        + '<div class="fieldwork-toolbar"><nav aria-label="Fieldwork sections">' + VIEWS.map(([id, label]) => '<button type="button" data-fieldwork-view="' + id + '" aria-pressed="' + String(view === id) + '"' + (busy ? ' disabled' : '') + '>' + label + '</button>').join('') + '</nav><button type="button" data-fieldwork-refresh' + (loading || busy ? ' disabled' : '') + '>' + (loading ? 'Updating…' : 'Refresh') + '</button></div>'
+        + '<div class="fieldwork-toolbar"><nav aria-label="Fieldwork sections">' + VIEWS.map(([id, label]) => '<button type="button" data-fieldwork-view="' + id + '" aria-pressed="' + String(view === id) + '"' + (busy ? ' disabled' : '') + '>' + label + '</button>').join('') + '</nav><button type="button" data-fieldwork-refresh' + (loading || busy || sessionUnavailable ? ' disabled' : '') + '>' + (loading ? 'Updating…' : 'Refresh') + '</button></div>'
         + (notice ? '<div class="fieldwork-notice' + (noticeBad ? ' fieldwork-notice--error' : '') + '" role="' + (noticeBad ? 'alert' : 'status') + '">' + escape(notice)
-          + (retry ? '<button type="button" data-fieldwork-retry' + (busy ? ' disabled' : '') + '>Retry this same action</button><button type="button" data-fieldwork-dismiss>Dismiss</button>' : '') + '</div>' : '')
-        + (loading && !boards[view] ? '<div class="fieldwork-empty" role="status">Opening the current record…</div>' : '<div class="fieldwork-body" aria-busy="' + String(busy || loading) + '">' + content + '</div>');
+          + (retry ? '<button type="button" data-fieldwork-retry' + (busy || loading ? ' disabled' : '') + '>Retry this same action</button><button type="button" data-fieldwork-dismiss>Dismiss</button>' : '') + '</div>' : '')
+        + '<div class="fieldwork-body" aria-busy="' + String(busy || pane.loading) + '">'
+        + (sessionUnavailable ? '<div class="fieldwork-empty" role="status">Restore your session to read your records.</div>' : paneNotice
+          + (boards[view] ? content : pane.loading ? '<div class="fieldwork-empty" role="status">Opening ' + escape(label) + '…</div>' : '')) + '</div>';
       root.querySelectorAll('[data-fieldwork-view]').forEach(button => { button.onclick = () => { view = button.dataset.fieldworkView; draw(); }; });
       root.querySelector('[data-fieldwork-city]').onclick = () => { if (options.onNavigate) options.onNavigate('map'); };
-      root.querySelector('[data-fieldwork-refresh]').onclick = () => load();
+      root.querySelector('[data-fieldwork-refresh]').onclick = () => { recoveryRequired = false; load(); };
+      root.querySelector('[data-fieldwork-pane-retry]')?.addEventListener('click', async event => {
+        const button = event.currentTarget, key = view, identity = characterId;
+        recoveryRequired = false; await load([key]);
+        if (active() && key === view && identity === characterId && document.activeElement === document.body) {
+          (root.querySelector('[data-fieldwork-pane-retry]') || root.querySelector('[data-fieldwork-view="' + key + '"]'))?.focus({ preventScroll: true });
+        }
+      });
       root.querySelector('[data-fieldwork-retry]')?.addEventListener('click', () => run(retry.entry, retry.key, true));
       root.querySelector('[data-fieldwork-dismiss]')?.addEventListener('click', () => { retry = null; notice = ''; draw(); });
       root.querySelectorAll('[data-fieldwork-action]').forEach(button => { button.onclick = () => { const entry = actions.get(button.dataset.fieldworkAction); if (entry) run(entry); }; });
-      root.querySelectorAll('[data-fieldwork-mystery]').forEach(button => { button.onclick = () => { selectedMystery = button.dataset.fieldworkMystery; mysteryDetail = null; load(); }; });
-      root.querySelectorAll('[data-fieldwork-operation]').forEach(button => { button.onclick = () => { selectedOperation = button.dataset.fieldworkOperation; operationDetail = roleDetail = null; load(); }; });
+      root.querySelectorAll('[data-fieldwork-mystery]').forEach(button => { button.onclick = () => { selectedMystery = button.dataset.fieldworkMystery; mysteryDetail = null; load(['mysteries']); }; });
+      root.querySelectorAll('[data-fieldwork-operation]').forEach(button => { button.onclick = () => { selectedOperation = button.dataset.fieldworkOperation; operationDetail = roleDetail = null; load(['operations']); }; });
     }
+
+    function readError(response) {
+      const error = new Error(response?.body?.message || 'The record could not be read. Retry to try again.');
+      error.status = response?.code; error.code = response?.body?.error;
+      return error;
+    }
+    const sessionError = error => error.status === 401 || ['no_character', 'token_revoked'].includes(error.code);
 
     async function read(path, token) {
       const response = await options.api('GET', path);
       if (destroyed || token !== revision) return null;
-      if (!response || response.code >= 400) throw new Error(response?.body?.message || 'The record could not be read. Refresh to try again.');
+      if (!response || response.code >= 400) throw readError(response);
+      if (!response.body || typeof response.body !== 'object' || Array.isArray(response.body)) throw new Error('The record is incomplete. Retry to read it again.');
       return response.body;
     }
 
-    async function load() {
-      if (!active()) return;
+    async function restoreSession(error) {
+      sessionUnavailable = true; revision++; loading = false;
+      for (const key of Object.keys(boards)) delete boards[key];
+      for (const pane of Object.values(panes)) { pane.loading = false; pane.error = ''; }
+      selectedMystery = selectedOperation = ''; mysteryDetail = operationDetail = roleDetail = null;
+      retry = null; cancelConfirmation?.(); notice = error.message; noticeBad = true; draw();
+      const token = revision;
+      // The existing session refresh owns logout and character-recovery screens.
+      try {
+        const refreshed = options.refresh ? await options.refresh() : null;
+        if (!active() || token !== revision) return;
+        const who = refreshed?.body?.player?.character || refreshed?.body?.player || refreshed?.body?.character || refreshed?.body;
+        if (refreshed?.code < 400 && typeof who?.id === 'string') {
+          const changed = who.id !== characterId;
+          options.character = who; characterId = who.id; sessionUnavailable = false; recoveryRequired = !changed;
+          notice = changed ? '' : 'Your session is available. Reload your records to continue.'; noticeBad = false;
+          if (changed) await load();
+          else {
+            for (const pane of Object.values(panes)) pane.error = 'Retry this record after the session check.';
+            draw();
+          }
+        }
+      } catch { /* records remain hidden until the session is restored */ }
+    }
+
+    async function load(requested = Object.keys(READS)) {
+      if (!active() || sessionUnavailable) return;
       const token = ++revision;
+      const keys = [...new Set(requested)].filter(key => Object.hasOwn(READS, key));
+      for (const pane of Object.values(panes)) pane.loading = false;
+      for (const key of keys) { panes[key].loading = true; panes[key].error = ''; }
       loading = true; draw();
       try {
-        for (const [key, path] of Object.entries(READS)) {
-          const board = await read(path, token);
-          if (!board) return;
-          boards[key] = board;
+        for (const key of keys) {
+          try {
+            const board = await read(READS[key], token);
+            if (!board) return;
+            const fields = key === 'inventory' ? ['stacks', 'items'] : [key];
+            if (fields.some(field => !Array.isArray(board[field]))) throw new Error('The record is incomplete. Retry to read it again.');
+            boards[key] = board;
+            if (key === 'mysteries') {
+              if (!selectedMystery) selectedMystery = board.mysteries.find(item => item.instanceId)?.graphId || '';
+              if (selectedMystery && board.mysteries.some(item => item.graphId === selectedMystery && item.instanceId)) {
+                const detail = await read('/v1/worldgraph/mysteries/' + encodeURIComponent(selectedMystery), token);
+                if (!detail) return;
+                if (!Array.isArray(detail.nodes)) throw new Error('The journal is incomplete. Retry to read it again.');
+                mysteryDetail = detail;
+              } else mysteryDetail = null;
+            }
+            if (key === 'operations') {
+              if (!selectedOperation) selectedOperation = board.operations.find(item => item.operationId)?.operationId || '';
+              if (selectedOperation && board.operations.some(item => item.operationId === selectedOperation)) {
+                const detail = await read('/v1/worldgraph/operations/' + encodeURIComponent(selectedOperation), token);
+                if (!detail) return;
+                if (!Array.isArray(detail.nodes) || !Array.isArray(detail.roles)) throw new Error('The operation is incomplete. Retry to read it again.');
+                operationDetail = detail;
+                const role = await options.api('GET', '/v1/worldgraph/operations/' + encodeURIComponent(selectedOperation) + '/role');
+                if (destroyed || token !== revision) return;
+                if (sessionError(readError(role))) throw readError(role);
+                if (!role || (role.code >= 400 && !([400, 403].includes(role.code) && role.body?.error === 'operation_unavailable'))) throw readError(role);
+                if (role.code < 400 && !Array.isArray(role.body?.nodes)) throw new Error('The role record is incomplete. Retry to read it again.');
+                roleDetail = role.code < 400 ? role.body : null;
+              } else operationDetail = roleDetail = null;
+            }
+            panes[key].error = '';
+          } catch (error) {
+            if (token !== revision || destroyed) return;
+            if (sessionError(error)) { await restoreSession(error); return; }
+            panes[key].error = error.message || 'The record could not be read.';
+          } finally {
+            if (token === revision && !destroyed) { panes[key].loading = false; draw(); }
+          }
         }
-        if (!selectedMystery) selectedMystery = list(boards.mysteries.mysteries).find(item => item.instanceId)?.graphId || '';
-        if (selectedMystery && list(boards.mysteries.mysteries).some(item => item.graphId === selectedMystery && item.instanceId)) {
-          const detail = await read('/v1/worldgraph/mysteries/' + encodeURIComponent(selectedMystery), token);
-          if (!detail) return;
-          mysteryDetail = detail;
-        } else mysteryDetail = null;
-        if (!selectedOperation) selectedOperation = list(boards.operations.operations).find(item => item.operationId)?.operationId || '';
-        if (selectedOperation && list(boards.operations.operations).some(item => item.operationId === selectedOperation)) {
-          const detail = await read('/v1/worldgraph/operations/' + encodeURIComponent(selectedOperation), token);
-          if (!detail) return;
-          operationDetail = detail;
-          const role = await options.api('GET', '/v1/worldgraph/operations/' + encodeURIComponent(selectedOperation) + '/role');
-          if (destroyed || token !== revision) return;
-          roleDetail = role.code < 400 ? role.body : null;
-        } else operationDetail = roleDetail = null;
-      } catch (error) {
-        if (token === revision && !destroyed) { notice = error.message || 'The record could not be read.'; noticeBad = true; }
       } finally {
         if (token === revision && !destroyed) { loading = false; draw(); }
       }
@@ -242,7 +310,8 @@
     }
 
     async function run(entry, retainedKey, alreadyConfirmed = false) {
-      if (!active() || busy || !entry || !validAction(entry.action) || entry.action.available === false) return;
+      if (!active() || sessionUnavailable || busy || loading || !entry || !validAction(entry.action) || entry.action.available === false
+        || (!alreadyConfirmed && panes[view].error)) return;
       const action = entry.action;
       const key = retainedKey || crypto.randomUUID();
       const attemptedCharacter = characterId;
@@ -253,6 +322,7 @@
         const response = await options.act(action.method, action.path, action.body || {}, { label: action.label || entry.context, idempotencyKey: key });
         if (destroyed) return;
         if (attemptedCharacter !== characterId) { await load(); return; }
+        if (sessionError(readError(response))) { await restoreSession(readError(response)); return; }
         if (!response || response.code >= 400) {
           notice = response?.body?.message || 'The action was not confirmed. Refresh the record before deciding what to do next.';
           noticeBad = true;
@@ -285,10 +355,12 @@
         if (nextId && nextId !== characterId) {
           characterId = nextId; revision++; selectedMystery = selectedOperation = ''; mysteryDetail = operationDetail = roleDetail = null;
           for (const key of Object.keys(boards)) delete boards[key];
+          for (const pane of Object.values(panes)) { pane.loading = false; pane.error = ''; }
+          sessionUnavailable = false; recoveryRequired = false;
           retry = null; cancelConfirmation?.();
           loading = false; load(); return;
         }
-        if (!busy && !loading) load();
+        if (!busy && !loading && !recoveryRequired) load();
       },
       destroy() { destroyed = true; revision++; cancelConfirmation?.(); actions.clear(); root.remove(); },
     };

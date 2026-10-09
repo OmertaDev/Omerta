@@ -81,6 +81,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCitySourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
+  }
   if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertEconomySourceTransfer('src/server.js', text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
@@ -122,6 +126,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCitySourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
+  }
   if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertEconomySourceTransfer('src/server.js', text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
@@ -184,6 +192,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCitySourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
+  }
   if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertEconomySourceTransfer('src/server.js', text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
@@ -203,6 +215,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCitySourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
+  }
   if (hash(text) === ECONOMY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertEconomySourceTransfer('src/server.js', text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), economyTransfer: transfer };
@@ -242,6 +258,173 @@ export function assertCarMeltRulesCompatibility(text) {
   const baselineText = text.slice(0, -deedUpgradeLiteral.length).replace(deedSinkLine, baselineSinkLine);
   assert.equal(hash(baselineText), CAR_MELT_BASELINE_RULES_PIN, 'Car rules differ from frozen baseline beyond approved deed additions');
   return { actualSha256, baselineSha256: CAR_MELT_BASELINE_RULES_PIN, baselineText };
+}
+
+// Source-specific inverse transfers for the reviewed City assets, UI reads, recipes and mystery routes.
+// This preserves predecessor recovery guards only: GUI, RPG, exploration and new projection authority are not
+// inherited from historical execution evidence. Complete current and predecessor bytes stay pinned.
+export const CITY_SOURCE_REVIEWED_REVISION = '3e825926d8d78aad8634bb865ee12dbc99fef2e6';
+export const CITY_SOURCE_PREDECESSOR_REVISION = '46341d551fa5626c13d0662b6f93c06319b83555';
+export const CITY_SOURCE_CURRENT_PINS = Object.freeze({
+  'src/server.js': '647908de3e63520de306e91e8c34ff1152364fe0c7b3f97f9807cfddf2e016b8',
+  'src/operations.js': '175882731792bfd24f2cb7ff0ecd62dc3bb7273b817a77b8bcd5cb7817fdf679',
+  'src/mysteries.js': '6fa63eb5239eb22a7a8fb7545a8310ed66dcc80506c893871d332d835c42ad49',
+  'src/crafting.js': 'a96d3117c5d03b47573eb4a2de7af769b29ade82e5e8a9e9f54300472073d5be',
+  'src/routes/worldgraph.js': 'bfec86de2c0fac2132308115c366b30e0eda057fbe6570d46ac0afa01bfb938a',
+});
+export const CITY_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  'src/server.js': '2a8f9eb10ccebed5f5304230435f33cd1e39241c616a7cb4c442097002530d57',
+  'src/operations.js': '689b0e9f9274fd26128c0067ca133a95361587a0aa4bce4b94f4869fc858d70f',
+  'src/mysteries.js': 'c520c727c15bd5829c1b2467511260c61e01b73038bce42ba9a48a8a55c6d070',
+  'src/crafting.js': '2eeaa2eb1378fdc2c237727226d132a85b8b009d0890485e18fa7b6290251012',
+  'src/routes/worldgraph.js': '5a96afa156930a5cb6cd6656fe1fb92fc716eeddd5243d954a46cf5a619b96c7',
+});
+const cityStaticAssets =
+  '  // City scenes are optional local assets; gameplay remains authoritative through the API.\n'
+  + '  for (const [file, type] of [\n'
+  + "    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'],\n"
+  + "    ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],\n"
+  + "    ['vendor/phaser.js', 'application/javascript'], ['vendor/phaser.js.LICENSE.txt', 'text/plain'],\n"
+  + '  ]) {\n'
+  + '    let asset = null;\n'
+  + "    try { asset = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', file)); } catch { /* headless */ }\n"
+  + "    app.get('/' + file, async (req, reply) => asset\n"
+  + "      ? reply.type(type + '; charset=utf-8').header('cache-control', 'no-cache').send(asset)\n"
+  + "      : reply.code(404).send({ error: 'asset_unavailable' }));\n"
+  + '  }\n';
+const operationReadInverse = [
+  ['async function conditionBlocker(client, actor, operation, states, condition, interactionId, { lock = true } = {}) {\n',
+    'async function conditionBlocker(client, actor, operation, states, condition, interactionId) {\n'],
+  [
+    '    let row;\n    if (lock) row = (await client.query(\n'
+      + "      `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1\n"
+      + "        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,\n"
+      + '      [actor.accountId, normalized.templateId],\n    )).rows[0];\n'
+      + '    else row = (await client.query(\n'
+      + "      `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1\n"
+      + "        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1`,\n"
+      + '      [actor.accountId, normalized.templateId],\n    )).rows[0];\n',
+    '    const row = (await client.query(\n'
+      + "      `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1\n"
+      + "        AND template_id=$2 AND state='active' AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,\n"
+      + '      [actor.accountId, normalized.templateId],\n    )).rows[0];\n',
+  ],
+  [
+    '    let row;\n    if (lock) row = (await client.query(\n'
+      + "      `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1\n"
+      + '        AND template_id=$2 AND quality=$3 FOR UPDATE`,\n'
+      + '      [actor.accountId, normalized.templateId, normalized.quality],\n    )).rows[0];\n'
+      + '    else row = (await client.query(\n'
+      + "      `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1\n"
+      + '        AND template_id=$2 AND quality=$3`,\n'
+      + '      [actor.accountId, normalized.templateId, normalized.quality],\n    )).rows[0];\n',
+    '    const row = (await client.query(\n'
+      + "      `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1\n"
+      + '        AND template_id=$2 AND quality=$3 FOR UPDATE`,\n'
+      + '      [actor.accountId, normalized.templateId, normalized.quality],\n    )).rows[0];\n',
+  ],
+];
+const operationUiStart = '// Snapshot eligibility for the human client. This does not reserve a role, mutate lifecycle state,\n';
+const operationUiEnd = '/** Safe shared projection: role slots and public progress, never account/character/Crew identities. */\n';
+const operationUiPin = 'd063c9e975a4d595a830b59b970a636c2d478f4574240030e9e31f3e9c870423';
+// Exact reviewed diff hunks retain unchanged context; every inverse must match once.
+const cityExtensionInverse = {
+  "src/mysteries.js": [
+    [
+      "    type: node.type,\n    title: node.metadata?.title || node.id,\n    ...(typeof node.metadata?.description === 'string' ? { description: node.metadata.description } : {}),\n    ...(typeof node.metadata?.lore === 'string' ? { dialogue: node.metadata.lore } : {}),\n    status,\n    available: actionable && status !== 'excluded' && status !== 'failed'\n      && status !== 'completed' && blockers.length === 0,\n",
+      "    type: node.type,\n    title: node.metadata?.title || node.id,\n    ...(typeof node.metadata?.description === 'string' ? { description: node.metadata.description } : {}),\n    status,\n    available: actionable && status !== 'excluded' && status !== 'failed'\n      && status !== 'completed' && blockers.length === 0,\n"
+    ],
+    [
+      "  return projection;\n}\n\n// Eligible undiscovered leads are selected server-side; a GET never publishes their identifiers.\nasync function readyDiscoveries({ client, context, owner, actor, instance, states, lock = false, knowledgeResolved = false }) {\n  if (!actor || instance.status !== 'active') return [];\n  const candidates = [...context.registry.nodes.values()].filter(node => {\n    const state = states.get(node.id);\n    return node.packageId === instance.graph_id && !['public', 'role_private'].includes(node.visibility)\n      && ['mystery_step', 'world_gate', 'choice'].includes(node.type) && !state?.discovered_at\n      && !['completed', 'excluded', 'failed'].includes(state?.state);\n  });\n  // Preserve the newest engine's one sorted knowledge/prerequisite proof for the entire request.\n  if (!knowledgeResolved) await resolveMysteryKnowledge(client, context, actor, candidates, { readOnly: !lock });\n  const ready = [];\n  for (const node of candidates) {\n    const interactions = (node.conditions || []).map(condition => normalizeMysteryCondition(\n      context.registry, node, condition, { timeWindows: context.timeWindows },\n    )).filter(condition => condition.adapter === 'explicit_interaction').map(condition => condition.target);\n    if (new Set(interactions).size > 1) continue;\n    const interactionId = interactions[0] || null;\n    const blockers = await nodeBlockers({ client, context, owner, actor, instance, states, node,\n      interactionId, lock, knowledgeResolved: true });\n    if (!blockers.length) ready.push({ node, interactionId });\n  }\n  return ready;\n}\n\nexport async function exploreMystery(client, contextValue, ownerValue, graphIdValue, optionsValue) {\n  const context = contextOf(contextValue), owner = ownerOf(ownerValue);\n  const graphId = canonical(graphIdValue, 'Mystery graph id'), options = mutationOptions(optionsValue);\n  const authority = await actionAuthority(client, context, owner, graphId);\n  return withItemMutation(client, owner, 'mystery_action', options.idempotencyKey, {\n    action: 'explore', graph: graphIdentity(authority.pkg),\n    itemAuthority: { operations: [authority.instance.id] },\n  }, async () => {\n    const actor = await actorOf(client, context, owner);\n    const instance = await lockedActionInstance(client, authority, context);\n    const candidates = await readyDiscoveries({ client, context, owner, actor, instance,\n      states: stateMap(await stateRows(client, instance.id)), lock: true });\n    const candidate = candidates[0];\n    if (!candidate) fail('mystery_node_unavailable', 'There is no new lead to investigate right now.');\n    const row = await setNodeState(client, instance.id, candidate.node.id, 'discovered');\n    return { ok: true, instanceId: instance.id,\n      node: { id: candidate.node.id, status: 'discovered', discoveredAt: dateString(row.discovered_at) } };\n  });\n}\n\n/** Read a safe board. Hidden nodes require discovery; role-private nodes belong to Task 6. */\nexport async function mysteryBoard(client, contextValue, ownerValue, graphIdValue) {\n  return withItemRead(client, async (reader) => (await prepareMysteryBoard(reader, contextValue, ownerValue, graphIdValue)).render());\n",
+      "  return projection;\n}\n\n/** Read a safe board. Hidden nodes require discovery; role-private nodes belong to Task 6. */\nexport async function mysteryBoard(client, contextValue, ownerValue, graphIdValue) {\n  return withItemRead(client, async (reader) => (await prepareMysteryBoard(reader, contextValue, ownerValue, graphIdValue)).render());\n"
+    ],
+    [
+      "    nodes,\n    choices,\n    ...(affordances ? { actions } : {}),\n    explorationAvailable: (await readyDiscoveries({ client, context, owner, actor: readActor,\n      instance, states, knowledgeResolved: true })).length > 0,\n  };\n  } };\n}\n",
+      "    nodes,\n    choices,\n    ...(affordances ? { actions } : {}),\n  };\n  } };\n}\n"
+    ]
+  ],
+  "src/crafting.js": [
+    [
+      "    });\n}\n\n/** Safe UI choices include exact eligible garage cars; consuming a car still requires salvageCar. */\nexport function recipeActionCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTEXT) {\n  const runtime = contextOf(craftingContext), preview = previewContext(ctx);\n  return recipeCatalog(ctx, craftingContext).map(entry => {\n    if (entry.blockedBy.some(blocker => blocker.adapter === 'discovery')) return { ...entry, actions: [] };\n    const recipe = CRAFTING_DEFINITIONS.get(runtime).get(entry.id);\n    const base = '/v1/worldgraph/recipes/' + encodeURIComponent(entry.id);\n    const cars = inputsOf(recipe).some(input => input.assetType === 'car');\n    let actions;\n    if (cars) {\n      actions = preview.cars.filter(car => !recipeBlockers(recipe, preview, { selectedCarId: car.id })\n        .some(blocker => blocker.adapter === 'owns_car')).map(car => {\n        const blockedBy = [...entry.blockedBy.filter(blocker => blocker.adapter !== 'owns_car'),\n          ...recipeBlockers(recipe, preview, { selectedCarId: car.id })\n            .filter(blocker => blocker.adapter === 'owns_car')];\n        return { id: 'salvage:' + car.id, label: 'Salvage ' + car.modelId,\n          method: 'POST', path: base + '/salvage/' + encodeURIComponent(car.id), body: {},\n          available: blockedBy.length === 0, blockedBy,\n          consequence: 'This permanently consumes this exact car and the listed costs. It cannot be undone.' };\n      });\n    } else actions = [{ id: 'craft:' + entry.id, label: 'Craft this recipe', method: 'POST',\n      path: base + '/craft', body: {}, available: entry.available, blockedBy: entry.blockedBy,\n      consequence: 'This consumes the listed materials and cash to produce the listed output.' }];\n    return { ...entry, actions };\n  });\n}\n\nasync function actorContext(client, accountId) {\n  const character = (await client.query(\n    `SELECT id, account_id, loc, respect, cash, alive\n",
+      "    });\n}\n\nasync function actorContext(client, accountId) {\n  const character = (await client.query(\n    `SELECT id, account_id, loc, respect, cash, alive\n"
+    ],
+    [
+      "  const inventory = await inventoryBoard(client, actor.owner);\n  actor.inventory = inventory;\n  const selected = new Set(recipes.map((recipe) => recipe.id));\n  const catalog = recipeCatalog(actor, context);\n  return catalog.filter((recipe) => selected.has(recipe.id));\n}\n\n/** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */\n",
+      "  const inventory = await inventoryBoard(client, actor.owner);\n  actor.inventory = inventory;\n  const selected = new Set(recipes.map((recipe) => recipe.id));\n  return recipeCatalog(actor, context).filter((recipe) => selected.has(recipe.id));\n}\n\n/** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */\n"
+    ]
+  ],
+  "src/routes/worldgraph.js": [
+    [
+      "import * as G from '../game.js';\nimport {\n  createCraftingContext,\n  recipeActionCatalog,\n  craftWorldGraphRecipe,\n  salvageCar,\n} from '../crafting.js';\n",
+      "import * as G from '../game.js';\nimport {\n  createCraftingContext,\n  recipeCatalog,\n  craftWorldGraphRecipe,\n  salvageCar,\n} from '../crafting.js';\n"
+    ],
+    [
+      "  completeNode,\n  createMysteryContext,\n  discoverNode,\n  exploreMystery,\n  mysteryBoard,\n  startMystery,\n} from '../mysteries.js';\n",
+      "  completeNode,\n  createMysteryContext,\n  discoverNode,\n  mysteryBoard,\n  startMystery,\n} from '../mysteries.js';\n"
+    ],
+    [
+      "  createOperationContext,\n  openOperation,\n  operationBoard,\n  operationUiActions,\n  operationDefinitions,\n  roleBoard,\n} from '../operations.js';\nimport { loadAndValidatePhase1WorldGraph } from '../content/phase1-validation.js';\nimport { coreProgressionContent } from '../content/core-progression.js';\nimport { compileWorldObjects } from '../world-kernel.js';\nimport { issuedAction, inventoryUi, mysteryStartActions, mysteryUi, segment } from '../worldgraph-ui.js';\n\n// Module initialization is the server boot boundary: the same complete graph, executable adapter,\n// and economy-policy gate used by CI must pass before these routes can be registered.\n",
+      "  createOperationContext,\n  openOperation,\n  operationBoard,\n  operationDefinitions,\n  roleBoard,\n} from '../operations.js';\nimport { loadAndValidatePhase1WorldGraph } from '../content/phase1-validation.js';\nimport { coreProgressionContent } from '../content/core-progression.js';\nimport { compileWorldObjects } from '../world-kernel.js';\n\n// Module initialization is the server boot boundary: the same complete graph, executable adapter,\n// and economy-policy gate used by CI must pass before these routes can be registered.\n"
+    ],
+    [
+      "  registry: PHASE1_WORLD_GRAPH, accountId, now: new Date().toISOString(),\n});\n\nasync function withOperationActions(client, accountId, operationId, board) {\n  const issued = await operationUiActions(client, operationContext(accountId), operationId,\n    { visibleNodeIds: board.nodes.map(node => node.id) });\n  const nodes = new Map(issued.nodes.map(node => [node.id, node]));\n  const roles = new Map(issued.roles.map(role => [role.roleId, role]));\n  return { ...board, actions: issued.actions,\n    nodes: board.nodes.map(node => ({ ...node, ...(nodes.get(node.id) || {}) })),\n    ...(board.roles ? { roles: board.roles.map(role => ({ ...role, actions: roles.get(role.roleId)?.actions || [] })) } : {}) };\n}\n\nasync function mutate(pool, reply, action, { allowPrivateEvidence = false } = {}) {\n  try {\n    const receipt = await withItemTransaction(pool, action);\n",
+      "  registry: PHASE1_WORLD_GRAPH, accountId, now: new Date().toISOString(),\n});\n\nasync function mutate(pool, reply, action, { allowPrivateEvidence = false } = {}) {\n  try {\n    const receipt = await withItemTransaction(pool, action);\n"
+    ],
+    [
+      "    )));\n\n  app.get('/v1/worldgraph/inventory', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client) => {\n      const account = inventoryUi(await inventoryBoard(client, { scope: 'account', id: req.user.sub }),\n        registryFor(req.user.sub), { assignable: true });\n      const carried = inventoryUi(await inventoryBoard(client, { scope: 'character', id: ch.id }), registryFor(req.user.sub));\n      return { ...account, currentCharacterItems: carried.items, currentCharacterStacks: carried.stacks };\n    }));\n\n  app.get('/v1/worldgraph/recipes', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client, h) => ({\n      recipes: recipeActionCatalog({\n        character: ch,\n        cash: Number(ch.cash),\n        owned: h.owned,\n",
+      "    )));\n\n  app.get('/v1/worldgraph/inventory', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (_ch, client) => safeInventory(\n      await inventoryBoard(client, { scope: 'account', id: req.user.sub }),\n    )));\n\n  app.get('/v1/worldgraph/recipes', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client, h) => ({\n      recipes: recipeCatalog({\n        character: ch,\n        cash: Number(ch.cash),\n        owned: h.owned,\n"
+    ],
+    [
+      "    )));\n\n  app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client) => {\n      const historicalInstances = (await client.query(\n        `SELECT id,graph_id,graph_version,status FROM mystery_instances\n         WHERE authority_account_id=$1 AND owner_scope='character' AND owner_id<>$2 ORDER BY created_at DESC`,\n        [req.user.sub, ch.id],\n      )).rows.map(row => ({ instanceId: row.id, graphId: row.graph_id, version: Number(row.graph_version),\n        status: row.status, title: row.graph_id,\n        actions: row.status === 'active' ? [issuedAction('cancel:' + row.id, 'Recover held items and close',\n          '/v1/worldgraph/mysteries/' + segment(row.graph_id) + '/cancel', { instanceId: row.id }, [],\n          'Closes this historical quest. Held items return to their exact original depositor; they do not pass to your heir.')] : [] }));\n      return { mysteries: (await mysteryDiscovery(client, req.user.sub, ch.id, registryFor(req.user.sub))).map(mysteryStartActions),\n        historicalInstances };\n    }));\n\n  app.post('/v1/worldgraph/mysteries/:graphId/start', mutationOptions(auth), async (req, reply) =>\n    mutate(pool, reply, async (client) => {\n",
+      "    )));\n\n  app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client) => ({\n      mysteries: await mysteryDiscovery(client, req.user.sub, ch.id, registryFor(req.user.sub)),\n    })));\n\n  app.post('/v1/worldgraph/mysteries/:graphId/start', mutationOptions(auth), async (req, reply) =>\n    mutate(pool, reply, async (client) => {\n"
+    ],
+    [
+      "    if (progressionFor(req.user.sub)) {\n      reply.header('cache-control', 'no-store');\n      try {\n        return await withItemRead(pool, async (client) => safeValue(mysteryUi(await mysteryBoard(client,\n          mysteryContext(req.user.sub), await currentCharacterOwner(client, req.user.sub), req.params.graphId), registryFor(req.user.sub))));\n      } catch (error) { throw publicError(error); }\n    }\n    return readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(mysteryUi(await mysteryBoard(\n      client, mysteryContext(req.user.sub), { scope: 'character', id: ch.id }, req.params.graphId,\n    ), registryFor(req.user.sub))), { locked: true });\n  });\n\n  app.post('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(auth), async (req, reply) =>\n    mutate(pool, reply, async (client) => exploreMystery(client, mysteryContext(req.user.sub),\n      await currentCharacterOwner(client, req.user.sub), req.params.graphId,\n      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) })));\n\n  app.post('/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover',\n    mutationOptions(auth, INTERACTION_BODY), async (req, reply) => mutate(pool, reply, async (client) => {\n      const owner = await currentCharacterOwner(client, req.user.sub);\n",
+      "    if (progressionFor(req.user.sub)) {\n      reply.header('cache-control', 'no-store');\n      try {\n        return await withItemRead(pool, async (client) => safeValue(await mysteryBoard(client,\n          mysteryContext(req.user.sub), await currentCharacterOwner(client, req.user.sub), req.params.graphId)));\n      } catch (error) { throw publicError(error); }\n    }\n    return readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(await mysteryBoard(\n      client, mysteryContext(req.user.sub), { scope: 'character', id: ch.id }, req.params.graphId,\n    )), { locked: true });\n  });\n\n  app.post('/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover',\n    mutationOptions(auth, INTERACTION_BODY), async (req, reply) => mutate(pool, reply, async (client) => {\n      const owner = await currentCharacterOwner(client, req.user.sub);\n"
+    ],
+    [
+      "    }));\n\n  app.get('/v1/worldgraph/operations', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client) => {\n      const operations = (await operationDiscovery(client, req.user.sub, ch.id)).map(entry => ({ ...entry,\n        actions: entry.operationId ? [] : [issuedAction('open:' + entry.operationNodeId, 'Open this crew operation',\n          '/v1/worldgraph/operations/' + segment(entry.graphId) + '/' + segment(entry.operationNodeId) + '/open',\n          {}, entry.blockedBy, 'This opens an operation for your current crew. Each role needs a different account.')] }));\n      const visible = new Set(operations.map(entry => entry.operationId));\n      const recoverableOperations = (await client.query(\n        `SELECT id,graph_id,graph_version,status FROM world_operations\n         WHERE opened_by_account_id=$1 AND status IN ('forming','active') ORDER BY created_at DESC`, [req.user.sub],\n      )).rows.filter(row => !visible.has(row.id)).map(row => ({ operationId: row.id, graphId: row.graph_id,\n        version: Number(row.graph_version), status: row.status, title: row.graph_id,\n        actions: [issuedAction('cancel:' + row.id, 'Close this operation and recover held items',\n          '/v1/worldgraph/operations/' + segment(row.id) + '/cancel', {}, [],\n          'Only its original opener can cancel. Held items return to their recorded depositors, even after crew or character changes.')] }));\n      return { operations, recoverableOperations };\n    }));\n\n  app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),\n    async (req, reply) => mutate(pool, reply, (client) => {\n",
+      "    }));\n\n  app.get('/v1/worldgraph/operations', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (ch, client) => ({\n      operations: await operationDiscovery(client, req.user.sub, ch.id),\n    })));\n\n  app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),\n    async (req, reply) => mutate(pool, reply, (client) => {\n"
+    ],
+    [
+      "  app.get('/v1/worldgraph/operations/:operationId', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (_ch, client) => {\n      await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);\n      const board = await operationBoard(\n        client, operationContext(req.user.sub), req.params.operationId,\n      );\n      return safeValue(await withOperationActions(client, req.user.sub, req.params.operationId, board));\n    }));\n\n  app.get('/v1/worldgraph/operations/:operationId/role', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (_ch, client) => {\n      await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);\n      const board = await roleBoard(\n        client, operationContext(req.user.sub), req.params.operationId,\n      );\n      return safeValue(await withOperationActions(client, req.user.sub, req.params.operationId, board), { allowPrivateEvidence: true });\n    }));\n\n  app.post('/v1/worldgraph/operations/:operationId/roles/:roleId', mutationOptions(auth),\n",
+      "  app.get('/v1/worldgraph/operations/:operationId', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (_ch, client) => {\n      await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);\n      return safeValue(await operationBoard(\n        client, operationContext(req.user.sub), req.params.operationId,\n      ));\n    }));\n\n  app.get('/v1/worldgraph/operations/:operationId/role', { preHandler: auth }, async (req) =>\n    readForPlayer(pool, req.user.sub, async (_ch, client) => {\n      await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);\n      return safeValue(await roleBoard(\n        client, operationContext(req.user.sub), req.params.operationId,\n      ), { allowPrivateEvidence: true });\n    }));\n\n  app.post('/v1/worldgraph/operations/:operationId/roles/:roleId', mutationOptions(auth),\n"
+    ]
+  ]
+};
+export function assertCitySourceTransfer(file, text) {
+  assert(Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file), 'Unknown City transfer source');
+  assert.equal(hash(text), CITY_SOURCE_CURRENT_PINS[file], 'City transfer source changed: ' + file);
+  let baselineText = text;
+  if (file === 'src/server.js') {
+    assert.equal(text.split(cityStaticAssets).length, 2, 'City asset registration is not exact and unique');
+    baselineText = text.replace(cityStaticAssets, '');
+  } else if (file === 'src/operations.js') {
+    for (const [current, original] of operationReadInverse) {
+      assert.equal(baselineText.split(current).length, 2, 'Operation read-path inverse is not exact and unique');
+      baselineText = baselineText.replace(current, original);
+    }
+    // Bound the large projection by unique exact anchors and its complete digest, never a loose
+    // regex/function-name deletion. The reconstructed whole predecessor digest is checked below.
+    assert.equal(baselineText.split(operationUiStart).length, 2, 'Operation UI projection start is not exact and unique');
+    assert.equal(baselineText.split(operationUiEnd).length, 2, 'Operation UI projection end is not exact and unique');
+    const start = baselineText.indexOf(operationUiStart), end = baselineText.indexOf(operationUiEnd, start);
+    assert(end > start, 'Operation UI projection boundaries changed');
+    const projection = baselineText.slice(start, end);
+    assert.equal(hash(projection), operationUiPin, 'Operation UI projection source changed');
+    baselineText = baselineText.slice(0, start) + baselineText.slice(end);
+  } else {
+    for (const [current, original] of cityExtensionInverse[file]) {
+      assert.equal(baselineText.split(current).length, 2, 'City extension inverse is not exact and unique');
+      baselineText = baselineText.replace(current, original);
+    }
+  }
+  assert.equal(hash(baselineText), CITY_SOURCE_PREDECESSOR_PINS[file], 'Source differs beyond exact City changes');
+  return { baselineText, baselineSha256: CITY_SOURCE_PREDECESSOR_PINS[file], actualSha256: hash(text),
+    sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
+    inverseChunks: file === 'src/server.js' ? 1 : file === 'src/operations.js' ? 4 : cityExtensionInverse[file].length,
+    ...(file === 'src/server.js' ? { publicGetRoutes: 6 } : file === 'src/operations.js'
+      ? { projectionSha256: operationUiPin, mutationLockDefault: true } : {}) };
 }
 
 // Exact routing/quote inverse guards preserve historical personal-recovery and
@@ -293,6 +476,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === CITY_SOURCE_CURRENT_PINS[file]) {
+  const city = assertCitySourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, city.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + city.inverseChunks, citySourceTransfer: city };
+ }
  const scope = economySourceInverse[file]; assert(scope, 'Unknown economy transfer source');
  if (hash(text) === scope.baseline) return { baselineText: text, baselineSha256: scope.baseline, actualSha256: hash(text), inverseChunks: 0 };
  assert.equal(hash(text), ECONOMY_SOURCE_CURRENT_PINS[file], 'Economy transfer source changed: ' + file);
