@@ -117,7 +117,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const options = { policy: {} };
   const flags = { '--base': 'baseUrl', '--samples': 'samples', '--previous': 'previousFile', '--provider': 'providerId',
     '--max-output-tokens': 'maxOutputTokens', '--target-margin-bps': 'targetMarginBps',
-    '--minimum-margin-usd-micros': 'minimumMarginUsdMicros', '--max-active-jobs': 'maxActiveJobs',
+    '--minimum-margin-usd-micros': 'minimumMarginUsdMicros', '--operating-cost-per-job-usd-micros': 'operatingCostPerJobUsdMicros',
+    '--payment-fee-bps': 'paymentFeeBps', '--max-active-jobs': 'maxActiveJobs',
     '--minimum-reserve-usd-micros': 'minimumReserveUsdMicros', '--max-proposals': 'maxProposals',
     '--minimum-renewal-accepted-jobs': 'minimumRenewalAcceptedJobs' };
   try {

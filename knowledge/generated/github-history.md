@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bd8c09616210`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `aceb2b2b8b6a`.
 
 ## Repository
 
@@ -13,7 +13,7 @@
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — fix(city): enter the neighborhood directly with guarded focus |
+| Latest commit | 2026-10-09 — Include operating and payment estimates in shadow business pricing (#205) |
 
 ## Commit authors
 
@@ -31,24 +31,24 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 438 | yes |
+| [public/index.html](../../public/index.html) | 437 | yes |
 | [src/server.js](../../src/server.js) | 376 | yes |
 | [SPEC.md](../../SPEC.md) | 369 | yes |
-| knowledge/generated/github-history.md | 327 | historical |
-| knowledge/generated/graph-summary.md | 327 | historical |
-| knowledge/generated/graph.json | 327 | historical |
-| knowledge/generated/inventory.md | 327 | historical |
+| knowledge/generated/github-history.md | 328 | historical |
+| knowledge/generated/graph-summary.md | 328 | historical |
+| knowledge/generated/graph.json | 328 | historical |
+| knowledge/generated/inventory.md | 328 | historical |
 | [schema.sql](../../schema.sql) | 302 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 240 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 139 | historical |
+| knowledge/generated/documents.md | 140 | historical |
+| knowledge/generated/modules.md | 128 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
-| knowledge/generated/modules.md | 127 | historical |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [test/client.js](../../test/client.js) | 122 | yes |
+| [test/client.js](../../test/client.js) | 121 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/gates.js](../../test/gates.js) | 91 | yes |

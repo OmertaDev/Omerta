@@ -23,7 +23,7 @@
 | [src/brokers.js](../../src/brokers.js) | 253 | platform-core | 4 / 6 | 5 | 11 | 3 |
 | [src/bulletin.js](../../src/bulletin.js) | 89 | engagement-growth | 2 / 1 | 1 | 2 | 0 |
 | [src/business.js](../../src/business.js) | 683 | enterprise-logistics | 6 / 7 | 13 | 7 | 1 |
-| [src/businesspolicy.js](../../src/businesspolicy.js) | 154 | platform-core | 1 / 3 | 0 | 1 | 1 |
+| [src/businesspolicy.js](../../src/businesspolicy.js) | 165 | platform-core | 1 / 3 | 0 | 1 | 1 |
 | [src/campaigns.js](../../src/campaigns.js) | 107 | platform-core | 3 / 1 | 4 | 1 | 0 |
 | [src/cardpng.js](../../src/cardpng.js) | 57 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/cards.js](../../src/cards.js) | 283 | platform-core | 1 / 4 | 5 | 10 | 1 |

@@ -13,7 +13,7 @@ const items = (value, max = 100) => {
 };
 const amount = value => bounded(value ?? 0, 'amount');
 const DEFAULTS = Object.freeze({ providerId: null, maxOutputTokens: 256, targetMarginBps: 2500,
-  minimumMarginUsdMicros: 10000, maxActiveJobs: 3, minimumReserveUsdMicros: 0,
+  minimumMarginUsdMicros: 10000, operatingCostPerJobUsdMicros: 0, paymentFeeBps: 0, maxActiveJobs: 3, minimumReserveUsdMicros: 0,
   maxProposals: 5, minimumRenewalAcceptedJobs: 2 });
 export function normalizeBusinessPolicy(input = {}) {
   if (!input || Array.isArray(input) || typeof input !== 'object'
@@ -23,12 +23,16 @@ export function normalizeBusinessPolicy(input = {}) {
   bounded(policy.maxOutputTokens, 'output limit', 1, 16384);
   bounded(policy.targetMarginBps, 'target margin', 0, 9000);
   bounded(policy.minimumMarginUsdMicros, 'minimum margin', 0, 1000000000);
+  bounded(policy.operatingCostPerJobUsdMicros, 'operating estimate', 0, 1000000000);
+  bounded(policy.paymentFeeBps, 'payment fee estimate', 0, 3000);
+  if (policy.targetMarginBps + policy.paymentFeeBps >= 10000) throw new Error('Business margin and fee estimates must leave positive cost coverage');
   bounded(policy.maxActiveJobs, 'capacity', 0, 3);
   bounded(policy.minimumReserveUsdMicros, 'reserve', 0, 1000000000000);
   bounded(policy.maxProposals, 'proposal limit', 1, 10);
   bounded(policy.minimumRenewalAcceptedJobs, 'renewal threshold', 1, 100);
   return policy;
 }
+function estimatePaymentFee(price, bps) { return Number((BigInt(price) * BigInt(bps) + 99999999n) / 100000000n * 10000n); }
 function metrics(totals = {}) {
   return { settledCustomerRevenueUsdMicros: amount(totals.settledCustomerRevenueUsdMicros),
     settledPaidComputeCostsUsdMicros: amount(totals.settledPaidComputeCostsUsdMicros),
@@ -53,6 +57,7 @@ export function evaluateBusiness(snapshot, input = {}) {
       netProfitKnown: false };
   });
   const riskFlags = ['outside_costs_incomplete'];
+  if (policy.operatingCostPerJobUsdMicros || policy.paymentFeeBps) riskFlags.push('operator_cost_estimates_unreconciled');
   if (snapshot.resourceMode !== 'live' || totals.simulatedPaidCalls) riskFlags.push('simulation_or_unfunded_data');
   if (totals.unresolvedPaidCalls) riskFlags.push('unresolved_compute_costs');
   if (Object.values(snapshot.coverage || {}).some(value => value === true)) riskFlags.push('incomplete_detail_coverage');
@@ -67,9 +72,12 @@ export function evaluateBusiness(snapshot, input = {}) {
   const costBasis = quote === null ? null : Math.max(quote, knownCostBasis);
   let suggestedPrice = null;
   if (costBasis !== null) {
-    const cost = BigInt(costBasis), denominator = BigInt(10000 - policy.targetMarginBps);
+    const roundingReserve = policy.paymentFeeBps ? 10000n : 0n;
+    const cost = BigInt(costBasis) + BigInt(policy.operatingCostPerJobUsdMicros) + roundingReserve;
+    const denominator = BigInt(10000 - policy.targetMarginBps - policy.paymentFeeBps);
     const marginPrice = (cost * 10000n + denominator - 1n) / denominator;
-    const floor = cost + BigInt(policy.minimumMarginUsdMicros);
+    const feeDenominator = BigInt(10000 - policy.paymentFeeBps);
+    const floor = ((cost + BigInt(policy.minimumMarginUsdMicros)) * 10000n + feeDenominator - 1n) / feeDenominator;
     const cents = ((marginPrice > floor ? marginPrice : floor) + 9999n) / 10000n * 10000n;
     if (cents >= 10000n && cents <= 1000000000n) suggestedPrice = Number(cents);
     else riskFlags.push('price_outside_market_limit');
@@ -105,7 +113,8 @@ export function evaluateBusiness(snapshot, input = {}) {
     if (!id(bounty.id) || bounty.buyerAccountId === snapshot.accountId || amount(bounty.budgetUsdMicros) < price
         || !Number.isFinite(Date.parse(bounty.expiresAt)) || Date.parse(bounty.expiresAt) < now + 60000) continue;
     if (!propose({ kind: 'bid', bountyId: bounty.id, priceUsdMicros: price, expectedServiceRevision: snapshot.service.revision, providerId: policy.providerId, maxOutputTokens: policy.maxOutputTokens, computeReserveUsdMicros: quote,
-      expectedKnownMarginUsdMicros: price - quote, deliverySeconds: 3600, reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
+      expectedKnownMarginUsdMicros: price - quote, estimatedPaymentFeeUsdMicros: estimatePaymentFee(price, policy.paymentFeeBps),
+      estimatedContributionUsdMicros: price - costBasis - policy.operatingCostPerJobUsdMicros - estimatePaymentFee(price, policy.paymentFeeBps), deliverySeconds: 3600, reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
     allocated++; available -= quote; daily -= quote;
   }
   if (suggestedPrice !== null && snapshot.service?.enabled === true && suggestedPrice !== snapshot.service.priceUsdMicros) {
@@ -121,7 +130,9 @@ export function evaluateBusiness(snapshot, input = {}) {
     settledCallCount: amount(row.settledCallCount), failedCallCount: amount(row.failedCallCount), unknownCallCount: amount(row.unknownCallCount),
     costUsdMicros: amount(row.costUsdMicros), acceptedJobs: amount(row.acceptedJobs), disputedJobs: amount(row.disputedJobs), onTimeJobs: amount(row.onTimeJobs), causalEffect: null }));
   return { version: 1, mode: 'shadow', asOf: snapshot.asOf, accountId: snapshot.accountId, policy, baseline: { accountId: snapshot.accountId, resourceMode: snapshot.resourceMode ?? null, totals, servicePriceUsdMicros: snapshot.service ? amount(snapshot.service.priceUsdMicros) : null, customers: customers.filter(c => id(c.buyerAccountId)).map(c => ({buyerAccountId:c.buyerAccountId,acceptedJobs:amount(c.acceptedJobs)})) }, jobEconomics,
-    pricing: { knownCostBasisUsdMicros: knownCostBasis, conservativeQuoteUsdMicros: quote, suggestedPriceUsdMicros: suggestedPrice },
+    pricing: { knownCostBasisUsdMicros: knownCostBasis, planningComputeCostUsdMicros: costBasis, conservativeQuoteUsdMicros: quote, suggestedPriceUsdMicros: suggestedPrice, estimatedOperatingCostUsdMicros: policy.operatingCostPerJobUsdMicros,
+      estimatedPaymentFeeUsdMicros: suggestedPrice === null ? null : estimatePaymentFee(suggestedPrice, policy.paymentFeeBps),
+      feeRoundingReserveUsdMicros: policy.paymentFeeBps ? 10000 : 0, basis: 'Operator estimates, not reconciled bills' },
     proposals, capacity: { activeJobs: active, reservedSlots: active, availableSlots: slots, proposedWorkSlots: allocated },
     computeValue: { providerOutcomes, causalEffect: null, measurement: 'Descriptive outcomes; stronger models require controlled comparison.' },
     riskFlags, outsideCostsComplete: false, profitabilityKnown: false };
