@@ -60,3 +60,18 @@ Independent source review and 400 deterministic pricing trials (seed1947) verify
 | test/resourcebusiness.js | 580f3011e74fcce5274f9036dc66d4c1a862cfa9c6ead8aede145b0bc9f888ae |
 | test/businesspolicy.js | 76a8adef67b503f76f77e7d7ec12fcad09644b33a69101f59529ec608eb2769a |
 | test/business-agent.js | 883921509232ea469f53dd560a12ad9644ca59238791590724d29406d94a1a74 |
+
+## Offline compute experiment follow-up
+
+Source base: `c0449221530b5b26e98b8a6c7a354dee367018bd`. Scope: offline planner/analyzer, bounded file CLI and two regression suites; pre-release source review. No network, database, provider invocation, financial activation or policy writes are introduced.
+
+Independent review found no concrete blocker. Fixed weighted scores use BigInt before exact integer threshold comparisons; bounded 100-pair cost totals stay within safe integer range. Strict schemas reject duplicate task hashes, altered assignment metadata, mismatched models/orders/graders and private report fields. The CLI rejects symlinks and oversized files and closes file handles. Declared blind grading and input hashes remain unverified operator assertions. Both observed orders do not establish equal allocation, statistical significance or causality. Known failed-attempt costs remain in totals; incomplete or failed pairs block review recommendations. Missing acceptance and outside costs are disclosed. Execution remains disabled even for review_candidate.
+
+Validation: planner/analyzer and CLI regressions pass, including 100 seeded plans, exact fractional thresholds, failure/unknown costs, negative acceptance, privacy rejection, bounded input and credential isolation. Existing business policy/observer tests and repository gates pass. No formal proof or clean SAST verdict is claimed. These conclusions apply only to the files below and authorize no live financial activation.
+
+| File | SHA256 |
+| --- | --- |
+| src/computeexperiment.js | 22c825cc8250ce44af227f9531b290dfbbf2f3265b2b2bba8466851ec5797907 |
+| tools/compute-experiment.js | cf6dc04f23fa672aed6c0f33bda4dab117ed3e8282ba12863d812f4bece1973d |
+| test/computeexperiment.js | 4ae0c6696efe4310cd225f70d6c5e2620f6494e868cd0f03a80df465806dba0f |
+| test/compute-experiment-cli.js | cc34e64adf538338f3ff46fad62eb0c59e973206cefef554a686b78cad96fcc7 |
