@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `730f0eb3334b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cf49b27a1b28`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2155 |
+| Commits in clone | 2158 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Register additive goods liquidity constraints in migration proof |
+| Latest commit | 2026-10-09 — test(goods): re-attest quota source guards without inheriting qualification |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1254 |
+| OmertaDev | 1257 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 56 |
@@ -33,14 +33,14 @@
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 438 | yes |
 | [src/server.js](../../src/server.js) | 377 | yes |
-| [SPEC.md](../../SPEC.md) | 372 | yes |
-| knowledge/generated/github-history.md | 329 | historical |
-| knowledge/generated/graph-summary.md | 329 | historical |
-| knowledge/generated/graph.json | 329 | historical |
-| knowledge/generated/inventory.md | 329 | historical |
+| [SPEC.md](../../SPEC.md) | 373 | yes |
+| knowledge/generated/github-history.md | 330 | historical |
+| knowledge/generated/graph-summary.md | 330 | historical |
+| knowledge/generated/graph.json | 330 | historical |
+| knowledge/generated/inventory.md | 330 | historical |
 | [schema.sql](../../schema.sql) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 242 | yes |
+| [package.json](../../package.json) | 243 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 140 | historical |
