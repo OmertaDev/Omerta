@@ -6,6 +6,8 @@ import { isDeepStrictEqual as equal } from 'node:util';
 import { BLACK_MARKET, GOODS } from '../src/rules.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
+import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION,
+  GOODS_SOURCE_PREDECESSOR_REVISION, assertGoodsSourceTransfer } from './rc1-deed-source-compatibility.js';
 
 const rows = (state, table) => state.tables[table];
 const amount = n => exactSum([n]);
@@ -14,11 +16,16 @@ const omit = (row, fields) => Object.fromEntries(Object.entries(row).filter(([fi
 const cargoKey = (owner, good) => JSON.stringify([owner, good]);
 const marketRoute = path => path === '/v1/goods/buy' || /^\/v1\/market(?:\/order|\/[^/]+\/(?:buy|fill|claim|cancel))?$/.test(path);
 const stateHash = ({ boundary, ...state }) => sha256(state);
-const sourcePins = {
+export const MARKET_RESOURCE_SOURCE_PINS = Object.freeze({
   'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
-  'src/economy.js': 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b',
-  'src/goodsquote.js': '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74',
-};
+  'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
+  'src/goodsquote.js': GOODS_SOURCE_CURRENT_PINS['src/goodsquote.js'],
+});
+export const MARKET_RESOURCE_SOURCE_TRANSFER = Object.freeze({
+  sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
+  predecessorPins: Object.fromEntries(['src/economy.js', 'src/goodsquote.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])),
+  scope: 'Only unchanged, observed committed cash/cargo/tax and personal market custody equations transfer. This does not qualify goods buy/sell availability, reachability, bucket/counter accounting, quote eligibility or new goods authority.' });
+const sourcePins = MARKET_RESOURCE_SOURCE_PINS;
 let sourcesChecked = false;
 function commands(before, after, identity, evidence) {
   const context = identity?.context || identity || {};
@@ -60,7 +67,11 @@ export function reconcileMarketResources(before, after, { identity = null, recei
   }
   assert(!selected.some(command => command.request.body?.commitmentId), 'Committed delivery fees are outside this market resource scope');
   if (!sourcesChecked) {
-    for (const [file, pin] of Object.entries(sourcePins)) assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), pin, 'Market resource source changed: ' + file);
+    for (const [file, pin] of Object.entries(sourcePins)) {
+      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      assert.equal(sha256(text), pin, 'Market resource source changed: ' + file);
+      if (Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file)) assertGoodsSourceTransfer(file, text);
+    }
     sourcesChecked = true;
   }
   const old = new Map(rows(before, 'market_listings').map(row => [row.id, row])), final = new Map(rows(after, 'market_listings').map(row => [row.id, row]));
@@ -173,7 +184,8 @@ export function reconcileMarketResources(before, after, { identity = null, recei
   }
   result.checks.push({ kind: 'market-custody-equations', resource: 'cash-and-goods', drift: '0', authority: [
     ...[...result.usedReceipts].map(id => ({ table: 'transactions', id })), ...[...result.listingIds].map(id => ({ table: 'market_listings', id }))],
-    listingIds: [...result.listingIds], cargoKeys: [...result.cargoKeys], streetTaxIncrease: String(tax), internalCommitOrder: false });
+    listingIds: [...result.listingIds], cargoKeys: [...result.cargoKeys], streetTaxIncrease: String(tax), internalCommitOrder: false,
+    qualificationScope: MARKET_RESOURCE_SOURCE_TRANSFER.scope, goodsLiquidityQualified: false, quoteEligibilityQualified: false });
   return result;
 }
 
