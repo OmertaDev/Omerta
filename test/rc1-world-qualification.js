@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DEED_SERVER_BASELINE_PIN,
   DEED_SERVER_CURRENT_PIN, HTTP_RECEIPT_SERVER_PIN, HTTP_RECEIPT_HELPER_PIN } from '../tools/rc1-deed-source-compatibility.js';
 import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   GENESIS_SERVER_WRAPPER_SOURCE_REVISION, assertGenesisSnapshotServerCompatibility,
   GENESIS_SNAPSHOT_SERVER_PIN, GENESIS_SNAPSHOT_MODULE_PINS,
-  GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
+  GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer,
+  CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
+  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
@@ -13,8 +16,67 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(serverProof.actualSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(serverProof.citySourceTransfer.baselineSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER_PIN);
+const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
+const cityProofs = new Map();
+for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
+  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const proof = assertCitySourceTransfer(file, text);
+  const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],
+    { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  const reviewed = execFileSync('git', ['show', `${CITY_SOURCE_REVIEWED_REVISION}:${file}`],
+    { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  assert.equal(text, reviewed, 'The transfer targets independently pinned reviewed commit bytes.');
+  assert.equal(proof.baselineText, predecessor, 'The inverse restores the complete independent Git predecessor.');
+  assert.equal(sha256(predecessor), CITY_SOURCE_PREDECESSOR_PINS[file]);
+  assert.equal(proof.sourceRevision, CITY_SOURCE_REVIEWED_REVISION);
+  assert.equal(proof.predecessorRevision, CITY_SOURCE_PREDECESSOR_REVISION);
+  cityProofs.set(file, proof);
+}
+assert.equal(cityProofs.get('src/server.js').inverseChunks, 1);
+assert.equal(cityProofs.get('src/server.js').publicGetRoutes, 6);
+assert.equal(cityProofs.get('src/operations.js').inverseChunks, 4);
+assert.equal(cityProofs.get('src/operations.js').mutationLockDefault, true);
+assert.equal(assertDeedServerCompatibility(cityProofs.get('src/server.js').baselineText).actualSha256,
+  ECONOMY_SOURCE_CURRENT_PINS['src/server.js'], 'The predecessor remains accepted by its unchanged historical transfer.');
+const assetStart = '  // City scenes are optional local assets; gameplay remains authoritative through the API.\n';
+const assetEnd = '  // WEB PUSH service worker — must be served from the origin ROOT so it can control the whole scope.\n';
+const assetBlock = serverText.slice(serverText.indexOf(assetStart), serverText.indexOf(assetEnd));
+assert.equal((assetBlock.match(/\n/g) || []).length, 12, 'Exactly the reviewed asset block is removed.');
+for (const changed of [
+  serverText.replace(assetBlock, assetBlock + assetBlock),
+  serverText.replace("['city-scene.js', 'application/javascript']", "['../schema.sql', 'text/plain']"),
+  serverText.replace("app.get('/' + file, async (req, reply) => asset", "app.post('/' + file, async (req, reply) => asset"),
+  serverText.replace("'public', file));", "'public', req.query.path));"),
+  serverText.replace(".header('cache-control', 'no-cache').send(asset)", ".header('cache-control', 'public').send(asset)"),
+  serverText + "\napp.post('/v1/unreviewed-authority', async () => ({}));\n",
+  serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"),
+]) {
+  assert.notEqual(changed, serverText, 'The negative control changes actual server bytes.');
+  assert.throws(() => assertCitySourceTransfer('src/server.js', changed), /source changed/);
+  for (const guard of [assertGenesisSnapshotServerCompatibility, assertGenesisWrapperServerCompatibility,
+    assertHttpReceiptServerCompatibility, assertDeedServerCompatibility]) assert.throws(() => guard(changed), /source changed/);
+}
+const projectionStart = '// Snapshot eligibility for the human client. This does not reserve a role, mutate lifecycle state,\n';
+const projectionEnd = '/** Safe shared projection: role slots and public progress, never account/character/Crew identities. */\n';
+const projection = operationText.slice(operationText.indexOf(projectionStart), operationText.indexOf(projectionEnd));
+assert.equal(sha256(projection), cityProofs.get('src/operations.js').projectionSha256);
+for (const changed of [
+  operationText.replace(projection, projection + projection),
+  operationText.replace('{ lock = true } = {})', '{ lock = false } = {})'),
+  operationText.replace("AND definition_hash IS NULL LIMIT 1 FOR UPDATE`,", "AND definition_hash IS NULL LIMIT 1`,"),
+  operationText.replace('      client, actor, operation, states, condition, interactionId,\n',
+    '      client, actor, operation, states, condition, interactionId, { lock: false },\n'),
+  operationText.replace('|| !maySeeNode(node, states, assignment?.role_id || null)', '|| false'),
+  operationText.replace('await authorizeOperation(client, context, operationId, { lock: true })',
+    'await authorizeOperation(client, context, operationId, { lock: false })'),
+  operationText + '\n// unreviewed operation authority change\n',
+]) {
+  assert.notEqual(changed, operationText, 'The negative control changes actual read or mutation authority bytes.');
+  assert.throws(() => assertCitySourceTransfer('src/operations.js', changed), /source changed/);
+}
 for (const file of ['src/server.js', 'src/economy.js']) {
  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
  const proof = assertEconomySourceTransfer(file, text);
@@ -55,9 +117,15 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/server.js'], CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 6);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 7);
+assert.equal(WORLD_RECOVERY_REVIEW.reviewedRevision, GENESIS_SNAPSHOT_REVIEWED_REVISION,
+  'The City transfer does not relabel historical authority coverage as a fresh world execution review.');
+assert.deepEqual(WORLD_RECOVERY_REVIEW.citySourceReviewTransfer.predecessorPins,
+  Object.fromEntries(['src/server.js', 'src/operations.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])));
+assert.match(WORLD_RECOVERY_REVIEW.citySourceReviewTransfer.scope, /no new City, GUI, RPG, projection authority/);
 assert.equal(WORLD_RECOVERY_REVIEW.genesisSnapshotSourceTransfer.predecessorServerSha256, GENESIS_SERVER_WRAPPER_PIN);
 for (const [file, pin] of Object.entries(GENESIS_SNAPSHOT_MODULE_PINS)) {
   assert.equal(source.sourceFiles[file], pin, 'Actual reviewed genesis module digest must be attested');

@@ -5,17 +5,19 @@ import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { canonicalRecoveryWitnesses, joinWorldCheckpointAssertions, verifyWorldRecoverySources } from './rc1-world-qualification.js';
 import { compileCoordinationGraph } from '../src/coordination/graph.js';
 import { CONSTANTS, levelOf, PACING, M3, CRIMES, CITY_EVENTS } from '../src/rules.js';
+import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
+  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from './rc1-deed-source-compatibility.js';
 
 const hash = value => sha256(canonicalJson(value));
 const EXTENSION_PINS = Object.freeze({
-  'src/mysteries.js': 'c520c727c15bd5829c1b2467511260c61e01b73038bce42ba9a48a8a55c6d070',
-  'src/crafting.js': '2eeaa2eb1378fdc2c237727226d132a85b8b009d0890485e18fa7b6290251012',
+  'src/mysteries.js': CITY_SOURCE_CURRENT_PINS['src/mysteries.js'],
+  'src/crafting.js': CITY_SOURCE_CURRENT_PINS['src/crafting.js'],
   'src/items.js': '0172726d784cc9faa430280e91374b5f2296cb5294adfac19ae91f307c9f107a',
   'src/recipe-scarcity.js': '5fc404a872d946360dc9d523c34dadc5d96dff19d807be83bfe3d19855c7a7a9',
   'src/coordination/graph.js': '4d5de1c54159048710b1b4695617710965074fd886f2b3b7fb87a08a0e8b545f',
   'src/coordination/runtime.js': 'a965a4ec667f3faec243e19f90bd501d13981dd6abcf421f39b15b9c38a0eb0e',
   'src/routes/coordination.js': '7902665fad7db1dedee8a92c8d6d4ac6c8f7076658da1da81cc8880264a59198',
-  'src/routes/worldgraph.js': '5a96afa156930a5cb6cd6656fe1fb92fc716eeddd5243d954a46cf5a619b96c7',
+  'src/routes/worldgraph.js': CITY_SOURCE_CURRENT_PINS['src/routes/worldgraph.js'],
   'src/world-prerequisites.js': 'c6548363a93bb481b44e4528ea78e6b77c1f694546d6a6229784b40b1ea8587d',
   'src/world-knowledge.js': '73a5f37738dcd73e2299643f5e23422b1770ee04a890142fafbca49f864daeda',
   'src/crew.js': 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed',
@@ -26,7 +28,18 @@ const EXTENSION_PINS = Object.freeze({
 });
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   format: 1, sourcePins: EXTENSION_PINS,
+  citySourceReviewTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
+    sourcePins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])),
+    predecessorPins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])),
+    inverseChunks: { 'src/mysteries.js': 3, 'src/crafting.js': 2, 'src/routes/worldgraph.js': 9 },
+    scope: 'Exact reviewed projection, recipe preview, exploration and route inverses reconstruct the complete prior approved source bytes. Only unchanged original mutation, owner, choice, recipe and cancellation guards transfer. New GUI, RPG and exploration authority or reachability requires separate evidence and is not inherited.' },
   catalogSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
+  cityCatalogTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION,
+    actualSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
+    predecessorSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
+    packageId: 'neighborhood-initiation', addedNodes: 9,
+    addedNodesSha256: '2d00465740ddb06c513d53e1dd2a5395c321b4b34166049fe8a256bfe59fa53a',
+    scope: 'Only the exact nine reviewed newcomer nodes are removed to reconstruct the complete historical catalog. New RPG reachability and completion remain UNKNOWN to these historical sufficient paths.' },
   scope: 'Current eligible roster and one compatible meaningful/recovery/authorized-propagation path per required subject. Verified empty-escrow mystery and discovery cancellation has no item/Knowledge prerequisite. Optional authored completion branches retain a separate supplemental inventory; simultaneous completion of every optional branch is not a frozen gate. No hypothetical path is claimed executed.',
   materialPath: 'Original boostCar has a positive success/junker branch, consumes10 energy, and creates an owned unlisted/unpledged/unminted/unraced car. One250-cash journey to foundry plus original car_salvage_basic produces6 scrap,2 wire,2 salvage parts. This is existential reachability, not a guaranteed finite number of random attempts. No OMR faucet or fixture item is transferred into the proof.',
   baseKnowledge: 'Docks manifest/ledger/register claims use original discover/complete actions; furnace manifest and dock tide admissions use the original free own mystery node. Countermark/chart additionally need the exact crafted key/seal. Fresh account-target tokens use an eligible coactor public character name; current claim owner and ACL revision authorize sharing, without Crew/Family membership.',
@@ -35,12 +48,26 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
 });
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
-  for (const [file, expected] of Object.entries(EXTENSION_PINS)) assert.equal(sha256(String(await input.readFile(file)).replace(/\r\n/g, '\n')), expected, 'Checkpoint review source changed: ' + file);
+  for (const [file, expected] of Object.entries(EXTENSION_PINS)) {
+    const text = String(await input.readFile(file)).replace(/\r\n/g, '\n');
+    assert.equal(sha256(text), expected, 'Checkpoint review source changed: ' + file);
+    if (Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file)) assertCitySourceTransfer(file, text);
+  }
   return { ...base, checkpointReviewSha256: hash(CHECKPOINT_RECOVERY_REVIEW), extensionPins: { ...EXTENSION_PINS } };
 }
 export function recoveryCatalog(content) {
   return { nodes: [...content.registry.nodes.values()], graphs: content.coordinationRegistry.graphs,
     operations: content.operations, objects: content.objects };
+}
+export function historicalRecoveryCatalog(catalog) {
+  const transfer = CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer;
+  if (hash(catalog) !== transfer.actualSha256) return catalog;
+  const added = catalog.nodes.filter(node => node.packageId === transfer.packageId);
+  assert.equal(added.length, transfer.addedNodes, 'City catalog additions changed');
+  assert.equal(hash(added), transfer.addedNodesSha256, 'City catalog addition source changed');
+  const predecessor = { ...catalog, nodes: catalog.nodes.filter(node => node.packageId !== transfer.packageId) };
+  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Historical recovery catalog differs beyond exact City additions');
+  return predecessor;
 }
 const parse = value => typeof value === 'string' ? JSON.parse(value) : value;
 const knownRoots = new Set(['docks.manifest', 'foundry.impression', 'docks.canal-register', 'docks.shipping-register',
@@ -60,6 +87,7 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
   assert.equal(source.checkpointReviewSha256, hash(CHECKPOINT_RECOVERY_REVIEW)); assert.deepEqual(source.extensionPins, EXTENSION_PINS);
   const bound = { sourceRevision: source.sourceRevision, ...checkpoint };
   assert.deepEqual(configurationEvidence.binding, { sourceRevision: source.sourceRevision, configurationSha256: checkpoint.configurationSha256 });
+  catalog = historicalRecoveryCatalog(catalog);
   const fullCatalog = hash(catalog) === CHECKPOINT_RECOVERY_REVIEW.catalogSha256;
   const enabled = fullCatalog && configurationEvidence.coreProgression === true && configurationEvidence.coordination === true
     && configurationEvidence.knowledge === true && configurationEvidence.sharing === true && configurationEvidence.unrestrictedCohort === true;
@@ -114,10 +142,12 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       const ownerMatches = instance && account && (instance.owner_scope === 'account' ? instance.owner_id === accountId : ch?.account_id === accountId);
       // Custody-bearing recovery remains the existing escrow proof's responsibility.
       const emptyEscrow = !table('operation_escrow').some(row => row.operation_id === subject.id);
-      const reachable = ownerMatches && instance.status === 'active' && emptyEscrow;
+      const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId;
+      const reachable = !newRpg && ownerMatches && instance.status === 'active' && emptyEscrow;
       emit('objectives', obligation, reachable ? 'REACHABLE' : 'UNKNOWN', reachable
         ? 'Original cancellation binds immutable stored owner/account/graph/version; no recipe, current definition or living-character completion gate; this instance has no escrow.'
-        : 'Stored cancellation owner/status or custody recovery requires an additional exact proof.', { instance: instance || null,
+        : newRpg ? 'New RPG reachability is outside the historical sufficient-path review.'
+          : 'Stored cancellation owner/status or custody recovery requires an additional exact proof.', { instance: instance || null,
         canonicalRequest: instance ? { method: 'POST', path: '/v1/worldgraph/mysteries/' + instance.graph_id + '/cancel', body: { instanceId: instance.id } } : null });
       const nodes = catalog.nodes.filter(node => node.packageId === instance?.graph_id);
       if (!fullCatalog || !nodes.length || !roster.includes(accountId)) {

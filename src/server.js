@@ -526,6 +526,18 @@ export async function buildServer() {
   try { uiCss = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'omerta-ui.css'), 'utf8'); } catch { /* headless */ }
   app.get('/omerta-ui.css', async (req, reply) => reply.type('text/css; charset=utf-8')
     .header('cache-control', 'no-cache').send(uiCss));
+  // City scenes are optional local assets; gameplay remains authoritative through the API.
+  for (const [file, type] of [
+    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'],
+    ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
+    ['vendor/phaser.js', 'application/javascript'], ['vendor/phaser.js.LICENSE.txt', 'text/plain'],
+  ]) {
+    let asset = null;
+    try { asset = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', file)); } catch { /* headless */ }
+    app.get('/' + file, async (req, reply) => asset
+      ? reply.type(type + '; charset=utf-8').header('cache-control', 'no-cache').send(asset)
+      : reply.code(404).send({ error: 'asset_unavailable' }));
+  }
   // WEB PUSH service worker — must be served from the origin ROOT so it can control the whole scope.
   let swJs = '';
   try { swJs = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sw.js'), 'utf8'); } catch { /* headless */ }

@@ -9,7 +9,7 @@ import crypto from 'node:crypto';
 import * as G from '../game.js';
 import {
   createCraftingContext,
-  recipeCatalog,
+  recipeActionCatalog,
   craftWorldGraphRecipe,
   salvageCar,
 } from '../crafting.js';
@@ -26,6 +26,7 @@ import {
   completeNode,
   createMysteryContext,
   discoverNode,
+  exploreMystery,
   mysteryBoard,
   startMystery,
 } from '../mysteries.js';
@@ -37,12 +38,14 @@ import {
   createOperationContext,
   openOperation,
   operationBoard,
+  operationUiActions,
   operationDefinitions,
   roleBoard,
 } from '../operations.js';
 import { loadAndValidatePhase1WorldGraph } from '../content/phase1-validation.js';
 import { coreProgressionContent } from '../content/core-progression.js';
 import { compileWorldObjects } from '../world-kernel.js';
+import { issuedAction, inventoryUi, mysteryStartActions, mysteryUi, segment } from '../worldgraph-ui.js';
 
 // Module initialization is the server boot boundary: the same complete graph, executable adapter,
 // and economy-policy gate used by CI must pass before these routes can be registered.
@@ -427,6 +430,16 @@ const operationContext = (accountId) => createOperationContext({
   registry: PHASE1_WORLD_GRAPH, accountId, now: new Date().toISOString(),
 });
 
+async function withOperationActions(client, accountId, operationId, board) {
+  const issued = await operationUiActions(client, operationContext(accountId), operationId,
+    { visibleNodeIds: board.nodes.map(node => node.id) });
+  const nodes = new Map(issued.nodes.map(node => [node.id, node]));
+  const roles = new Map(issued.roles.map(role => [role.roleId, role]));
+  return { ...board, actions: issued.actions,
+    nodes: board.nodes.map(node => ({ ...node, ...(nodes.get(node.id) || {}) })),
+    ...(board.roles ? { roles: board.roles.map(role => ({ ...role, actions: roles.get(role.roleId)?.actions || [] })) } : {}) };
+}
+
 async function mutate(pool, reply, action, { allowPrivateEvidence = false } = {}) {
   try {
     const receipt = await withItemTransaction(pool, action);
@@ -469,13 +482,16 @@ export function register(app, { pool, auth }) {
     )));
 
   app.get('/v1/worldgraph/inventory', { preHandler: auth }, async (req) =>
-    readForPlayer(pool, req.user.sub, async (_ch, client) => safeInventory(
-      await inventoryBoard(client, { scope: 'account', id: req.user.sub }),
-    )));
+    readForPlayer(pool, req.user.sub, async (ch, client) => {
+      const account = inventoryUi(await inventoryBoard(client, { scope: 'account', id: req.user.sub }),
+        registryFor(req.user.sub), { assignable: true });
+      const carried = inventoryUi(await inventoryBoard(client, { scope: 'character', id: ch.id }), registryFor(req.user.sub));
+      return { ...account, currentCharacterItems: carried.items, currentCharacterStacks: carried.stacks };
+    }));
 
   app.get('/v1/worldgraph/recipes', { preHandler: auth }, async (req) =>
     readForPlayer(pool, req.user.sub, async (ch, client, h) => ({
-      recipes: recipeCatalog({
+      recipes: recipeActionCatalog({
         character: ch,
         cash: Number(ch.cash),
         owned: h.owned,
@@ -498,9 +514,19 @@ export function register(app, { pool, auth }) {
     )));
 
   app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>
-    readForPlayer(pool, req.user.sub, async (ch, client) => ({
-      mysteries: await mysteryDiscovery(client, req.user.sub, ch.id, registryFor(req.user.sub)),
-    })));
+    readForPlayer(pool, req.user.sub, async (ch, client) => {
+      const historicalInstances = (await client.query(
+        `SELECT id,graph_id,graph_version,status FROM mystery_instances
+         WHERE authority_account_id=$1 AND owner_scope='character' AND owner_id<>$2 ORDER BY created_at DESC`,
+        [req.user.sub, ch.id],
+      )).rows.map(row => ({ instanceId: row.id, graphId: row.graph_id, version: Number(row.graph_version),
+        status: row.status, title: row.graph_id,
+        actions: row.status === 'active' ? [issuedAction('cancel:' + row.id, 'Recover held items and close',
+          '/v1/worldgraph/mysteries/' + segment(row.graph_id) + '/cancel', { instanceId: row.id }, [],
+          'Closes this historical quest. Held items return to their exact original depositor; they do not pass to your heir.')] : [] }));
+      return { mysteries: (await mysteryDiscovery(client, req.user.sub, ch.id, registryFor(req.user.sub))).map(mysteryStartActions),
+        historicalInstances };
+    }));
 
   app.post('/v1/worldgraph/mysteries/:graphId/start', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, async (client) => {
@@ -517,14 +543,19 @@ export function register(app, { pool, auth }) {
     if (progressionFor(req.user.sub)) {
       reply.header('cache-control', 'no-store');
       try {
-        return await withItemRead(pool, async (client) => safeValue(await mysteryBoard(client,
-          mysteryContext(req.user.sub), await currentCharacterOwner(client, req.user.sub), req.params.graphId)));
+        return await withItemRead(pool, async (client) => safeValue(mysteryUi(await mysteryBoard(client,
+          mysteryContext(req.user.sub), await currentCharacterOwner(client, req.user.sub), req.params.graphId), registryFor(req.user.sub))));
       } catch (error) { throw publicError(error); }
     }
-    return readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(await mysteryBoard(
+    return readForPlayer(pool, req.user.sub, async (ch, client) => safeValue(mysteryUi(await mysteryBoard(
       client, mysteryContext(req.user.sub), { scope: 'character', id: ch.id }, req.params.graphId,
-    )), { locked: true });
+    ), registryFor(req.user.sub))), { locked: true });
   });
+
+  app.post('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(auth), async (req, reply) =>
+    mutate(pool, reply, async (client) => exploreMystery(client, mysteryContext(req.user.sub),
+      await currentCharacterOwner(client, req.user.sub), req.params.graphId,
+      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) })));
 
   app.post('/v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover',
     mutationOptions(auth, INTERACTION_BODY), async (req, reply) => mutate(pool, reply, async (client) => {
@@ -570,9 +601,22 @@ export function register(app, { pool, auth }) {
     }));
 
   app.get('/v1/worldgraph/operations', { preHandler: auth }, async (req) =>
-    readForPlayer(pool, req.user.sub, async (ch, client) => ({
-      operations: await operationDiscovery(client, req.user.sub, ch.id),
-    })));
+    readForPlayer(pool, req.user.sub, async (ch, client) => {
+      const operations = (await operationDiscovery(client, req.user.sub, ch.id)).map(entry => ({ ...entry,
+        actions: entry.operationId ? [] : [issuedAction('open:' + entry.operationNodeId, 'Open this crew operation',
+          '/v1/worldgraph/operations/' + segment(entry.graphId) + '/' + segment(entry.operationNodeId) + '/open',
+          {}, entry.blockedBy, 'This opens an operation for your current crew. Each role needs a different account.')] }));
+      const visible = new Set(operations.map(entry => entry.operationId));
+      const recoverableOperations = (await client.query(
+        `SELECT id,graph_id,graph_version,status FROM world_operations
+         WHERE opened_by_account_id=$1 AND status IN ('forming','active') ORDER BY created_at DESC`, [req.user.sub],
+      )).rows.filter(row => !visible.has(row.id)).map(row => ({ operationId: row.id, graphId: row.graph_id,
+        version: Number(row.graph_version), status: row.status, title: row.graph_id,
+        actions: [issuedAction('cancel:' + row.id, 'Close this operation and recover held items',
+          '/v1/worldgraph/operations/' + segment(row.id) + '/cancel', {}, [],
+          'Only its original opener can cancel. Held items return to their recorded depositors, even after crew or character changes.')] }));
+      return { operations, recoverableOperations };
+    }));
 
   app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),
     async (req, reply) => mutate(pool, reply, (client) => {
@@ -588,17 +632,19 @@ export function register(app, { pool, auth }) {
   app.get('/v1/worldgraph/operations/:operationId', { preHandler: auth }, async (req) =>
     readForPlayer(pool, req.user.sub, async (_ch, client) => {
       await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);
-      return safeValue(await operationBoard(
+      const board = await operationBoard(
         client, operationContext(req.user.sub), req.params.operationId,
-      ));
+      );
+      return safeValue(await withOperationActions(client, req.user.sub, req.params.operationId, board));
     }));
 
   app.get('/v1/worldgraph/operations/:operationId/role', { preHandler: auth }, async (req) =>
     readForPlayer(pool, req.user.sub, async (_ch, client) => {
       await requireCurrentCrewOperation(client, req.user.sub, req.params.operationId);
-      return safeValue(await roleBoard(
+      const board = await roleBoard(
         client, operationContext(req.user.sub), req.params.operationId,
-      ), { allowPrivateEvidence: true });
+      );
+      return safeValue(await withOperationActions(client, req.user.sub, req.params.operationId, board), { allowPrivateEvidence: true });
     }));
 
   app.post('/v1/worldgraph/operations/:operationId/roles/:roleId', mutationOptions(auth),

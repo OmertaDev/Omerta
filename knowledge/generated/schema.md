@@ -262,7 +262,7 @@
 | `resource_compute_policies` | [L7504](../../schema.sql#L7504) | [resourcebook.js](../../src/resourcebook.js), [resourcebusiness.js](../../src/resourcebusiness.js), [resourcecompute.js](../../src/resourcecompute.js), [resourcelabor.js](../../src/resourcelabor.js), [routes/resources.js](../../src/routes/resources.js) |
 | `resource_credits` | [L7540](../../schema.sql#L7540) | [resourcebook.js](../../src/resourcebook.js), [resourcecompute.js](../../src/resourcecompute.js) |
 | `resource_jobs` | [L7603](../../schema.sql#L7603) | [resourcebook.js](../../src/resourcebook.js), [resourcebusiness.js](../../src/resourcebusiness.js), [resourcelabor.js](../../src/resourcelabor.js), [resourcework.js](../../src/resourcework.js) |
-| `resource_labor_bids` | [L7638](../../schema.sql#L7638) | [resourcebusiness.js](../../src/resourcebusiness.js), [resourcelabor.js](../../src/resourcelabor.js) |
+| `resource_labor_bids` | [L7638](../../schema.sql#L7638) | [resourcelabor.js](../../src/resourcelabor.js) |
 | `resource_ledger` | [L7493](../../schema.sql#L7493) | [resourcebook.js](../../src/resourcebook.js), [resourcebusiness.js](../../src/resourcebusiness.js), [resourcepayments.js](../../src/resourcepayments.js) |
 | `resource_payment_intents` | [L7590](../../schema.sql#L7590) | [resourcepayments.js](../../src/resourcepayments.js) |
 | `resource_payments` | [L7575](../../schema.sql#L7575) | [resourcepayments.js](../../src/resourcepayments.js), [routes/resources.js](../../src/routes/resources.js) |

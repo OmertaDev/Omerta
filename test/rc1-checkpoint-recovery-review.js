@@ -2,7 +2,9 @@ import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
-import { verifyCheckpointRecoverySources, recoveryCatalog, reviewCanonicalCheckpoint } from '../tools/rc1-checkpoint-recovery-review.js';
+import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
+  reviewCanonicalCheckpoint } from '../tools/rc1-checkpoint-recovery-review.js';
+import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
 
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
@@ -15,6 +17,63 @@ const source = await verifyCheckpointRecoverySources({ readFile: file => fs.read
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file), sourceRevision: source.sourceRevision }));
+const extensionFiles = ['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'];
+assert.deepEqual(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.sourcePins,
+  Object.fromEntries(extensionFiles.map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])));
+assert.deepEqual(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.predecessorPins,
+  Object.fromEntries(extensionFiles.map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])));
+assert.match(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.scope, /New GUI, RPG and exploration authority or reachability.*not inherited/);
+const sourceTexts = Object.fromEntries(await Promise.all(extensionFiles.map(async file =>
+  [file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')])));
+for (const [file, before, after] of [
+  ['src/mysteries.js', 'row.account_id !== context.accountId', 'false'],
+  ['src/mysteries.js', 'existing.choice_id !== choiceId', 'false'],
+  ['src/mysteries.js', "!['public', 'role_private'].includes(node.visibility)", "node.visibility !== 'public'"],
+  ['src/mysteries.js', "action: 'explore', graph: graphIdentity(authority.pkg)", "action: 'complete', graph: graphIdentity(authority.pkg)"],
+  ['src/mysteries.js', 'const instance = await lockedActionInstance(client, authority, context);', 'const instance = authority.instance;'],
+  ['src/mysteries.js', 'export async function exploreMystery(', 'export async function exploreUnreviewedMystery('],
+  ['src/crafting.js', 'actor.character.id !== h.expectedCharacterId', 'false'],
+  ['src/crafting.js', 'actor.character.cash < cashCost', 'false'],
+  ['src/crafting.js', 'recipeScarcityAvailable(client, recipe, context, asOf)', 'Promise.resolve(true)'],
+  ['src/crafting.js', 'await reserveRecipeScarcity(client, recipe, actor, asOf);', '// removed scarcity mutation guard'],
+  ['src/crafting.js', 'normalized.listed || normalized.pledged || normalized.mintedOnchain', 'false'],
+  ['src/crafting.js', "blocker.adapter === 'discovery'", 'false'],
+  ['src/crafting.js', "available: entry.available, blockedBy: entry.blockedBy", 'available: true, blockedBy: []'],
+  ['src/routes/worldgraph.js', "return { scope: 'character', id: row.id };", "return { scope: 'account', id: accountId };"],
+  ['src/routes/worldgraph.js', "app.post('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(auth)", "app.get('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(auth)"],
+  ['src/routes/worldgraph.js', "app.post('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(auth)", "app.post('/v1/worldgraph/mysteries/:graphId/explore', mutationOptions(null)"],
+  ['src/routes/worldgraph.js', "app.post('/v1/worldgraph/mysteries/:graphId/cancel', mutationOptions(auth, MYSTERY_CANCEL_BODY)", "app.post('/v1/worldgraph/mysteries/:graphId/cancel', mutationOptions(null, MYSTERY_CANCEL_BODY)"],
+  ['src/routes/worldgraph.js', "innerIdempotencyKey(req.user.sub, req.headers['idempotency-key'])", "innerIdempotencyKey(req.user.sub, 'fixed-key')"],
+]) {
+  const text = sourceTexts[file], changed = text.replace(before, after);
+  assert.notEqual(changed, text, 'Negative control must alter real owner, choice, recipe, exploration or route bytes: ' + before);
+  assert.throws(() => assertCitySourceTransfer(file, changed), /source changed/);
+  await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
+    readFile: candidate => candidate === file ? changed : fs.readFile(candidate) }), /source changed/);
+}
+for (const file of extensionFiles) {
+  const text = sourceTexts[file];
+  assert.throws(() => assertCitySourceTransfer(file, text + '\n// unsupported authority change\n'), /source changed/);
+}
+{
+  const file = 'src/mysteries.js', text = sourceTexts[file];
+  const start = text.indexOf('export async function exploreMystery(');
+  const end = text.indexOf('/** Read a safe board.', start);
+  assert(start > 0 && end > start);
+  const block = text.slice(start, end);
+  assert.throws(() => assertCitySourceTransfer(file, text.replace(block, block + block)), /source changed/);
+}
+const historicalCatalog = historicalRecoveryCatalog(catalog);
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
+assert.equal(hash(historicalCatalog), CHECKPOINT_RECOVERY_REVIEW.catalogSha256,
+  'Exact additive City catalog inverse retains the complete independently reviewed historical catalog hash.');
+assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 9);
+assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'neighborhood-initiation')),
+  CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.addedNodesSha256);
+assert.equal(historicalRecoveryCatalog(historicalCatalog), historicalCatalog);
+assert(!historicalCatalog.nodes.some(node => node.packageId === 'neighborhood-initiation'));
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256,
+  'The catalog inverse must not mutate the current content catalog.');
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 const logicalAt = Date.parse('2026-09-24T00:00:00Z'), configurationSha256 = hash('effective isolated configuration');
 const ref = path => ({ path, sha256: hash(path) });
@@ -57,6 +116,35 @@ assert.equal(reviewed.joined.permanentDeadlocks, null);
 assert.equal(reviewed.matrixQualifying, false);
 assert(reviewed.details.some(row => row.id === 'resource:a0:item:furnace_archive_key' && row.status === 'REACHABLE'));
 assert(reviewed.details.some(row => row.id === 'shared-canal-path' && row.ok));
+{
+  const historical = fixture(data); historical.catalog = historicalCatalog;
+  assert.deepEqual(reviewCanonicalCheckpoint(historical).joined, reviewed.joined,
+    'The exact City catalog inverse preserves all prior reviewed original subjects.');
+  const changed = clone(data);
+  changed.mystery_instances.push({ id: 'new-rpg', graph_id: 'neighborhood-initiation', graph_version: 1,
+    owner_scope: 'character', owner_id: 'c0', authority_account_id: 'a0', status: 'active' });
+  const result = reviewCanonicalCheckpoint(fixture(changed));
+  assert.equal(result.witnesses.find(row => row.id === 'mystery:new-rpg').status, 'UNKNOWN');
+  assert.match(result.details.find(row => row.id === 'mystery:new-rpg').reason, /outside the historical sufficient-path review/);
+  for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN',
+    'New RPG authority cannot inherit historical ' + scope + ' coverage.');
+  assert.equal(result.witnesses.find(row => row.id === 'mystery:m1').status, 'REACHABLE');
+}
+for (const mutate of [
+  changed => changed.nodes.find(node => node.packageId === 'neighborhood-initiation').metadata.description = 'tampered dialogue',
+  changed => changed.nodes.push(clone(changed.nodes.find(node => node.packageId === 'neighborhood-initiation'))),
+  changed => changed.nodes.push({ ...clone(changed.nodes[0]), id: 'unreviewed:node', packageId: 'unreviewed-package' }),
+  changed => changed.nodes[0].version++,
+  changed => changed.operations.push({ id: 'unreviewed-operation' }),
+]) {
+  const changed = clone(catalog); mutate(changed);
+  assert.notEqual(hash(changed), hash(catalog));
+  assert.equal(historicalRecoveryCatalog(changed), changed, 'Unfamiliar catalogs must not receive a partial allowlist inverse.');
+  const input = fixture(data); input.catalog = changed;
+  const result = reviewCanonicalCheckpoint(input);
+  assert.equal(result.catalogApplicable, false);
+  assert.equal(result.joined.scopes.knowledge.status, 'UNKNOWN', 'Unreviewed content remains outside sufficient-path coverage.');
+}
 for (const mutate of [
   changed => changed.mystery_instances[0].authority_account_id = 'a1',
   changed => changed.operation_escrow.push({ operation_id: 'm1', item_id: 'held' }),
@@ -127,4 +215,4 @@ for (const population of [25, 50, 100, 250, 1000]) {
   const full = rows(); full.coordination_claims = Array.from({ length: 2048 }, (_, i) => ({ id: 'owned-' + i, owner_account_id: 'a0' }));
   assert.equal(reviewCanonicalCheckpoint(fixture(full)).joined.scopes.knowledge.status, 'UNKNOWN', 'Actual owned issuance bound is not waived');
 }
-console.log('PASS rc1-checkpoint-recovery-review: exact native checkpoint/configuration/source joins; owner/definition/revision/custody recovery; original material/Knowledge prerequisites; unknown preservation; all5 populations; no native world run');
+console.log('PASS rc1-checkpoint-recovery-review: exact source and catalog inverses; owner/choice/exploration/recipe/route tamper rejection; new RPG UNKNOWN boundary; native checkpoint/configuration joins; original material/Knowledge prerequisites; all5 populations; no native world run');

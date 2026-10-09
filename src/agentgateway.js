@@ -490,6 +490,7 @@ const OPERATION_CONTRACTS = {
   'GET /v1/worldgraph/mysteries/:graphId': worldGraphRead(
     'getWorldGraphMystery', '#/components/schemas/WorldGraphMysteryBoard',
   ),
+  'POST /v1/worldgraph/mysteries/:graphId/explore': worldGraphMutation('exploreWorldGraphMystery'),
   'POST /v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover': worldGraphMutation(
     'discoverWorldGraphMysteryNode', WORLDGRAPH_INTERACTION_BODY,
   ),
@@ -1210,11 +1211,48 @@ const AGENT_SCHEMAS = {
       message: { type: 'string' },
     },
   },
+  WorldGraphActionBlocker: {
+    type: 'object', additionalProperties: false,
+    anyOf: [{ required: ['adapter'] }, { required: ['code'] }],
+    properties: {
+      adapter: { type: 'string' }, code: { type: 'string' }, message: { type: 'string' },
+      required: { type: ['string', 'number', 'null'] },
+      current: { type: ['string', 'number', 'null'] },
+      templateId: { type: 'string' }, quality: { type: 'string' },
+      carId: { type: ['string', 'null'] }, nodeId: { type: 'string' },
+      nodeIds: { type: 'array', items: { type: 'string' } }, windowId: { type: 'string' },
+    },
+  },
+  WorldGraphIssuedAction: {
+    type: 'object', additionalProperties: false,
+    required: ['id', 'label', 'method', 'path', 'body', 'available', 'blockedBy'],
+    properties: {
+      id: { type: 'string', minLength: 1 }, label: { type: 'string' },
+      method: { type: 'string', const: 'POST' },
+      path: { type: 'string', pattern: '^/v1/worldgraph/' },
+      body: { type: 'object', additionalProperties: false, properties: {
+        optionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+        interactionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+        instanceId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+      } },
+      available: { type: 'boolean' },
+      blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphActionBlocker' } },
+      consequence: { type: 'string' }, venueId: { type: 'string' },
+    },
+  },
+  WorldGraphMysteryAffordance: {
+    type: 'object', additionalProperties: false, required: ['kind', 'nodeId'],
+    properties: {
+      kind: { type: 'string', enum: ['discover', 'complete', 'choice'] },
+      nodeId: { type: 'string' }, interactionId: { type: 'string' }, optionId: { type: 'string' },
+    },
+  },
   WorldGraphInventoryStack: {
     type: 'object', additionalProperties: false,
     required: ['templateId', 'quality', 'qty', 'createdAt', 'updatedAt'],
     properties: {
       templateId: { type: 'string' }, quality: { type: 'string' },
+      title: { type: 'string' },
       qty: { type: 'integer', minimum: 1 },
       createdAt: { type: 'string', format: 'date-time' },
       updatedAt: { type: 'string', format: 'date-time' },
@@ -1225,6 +1263,8 @@ const AGENT_SCHEMAS = {
     required: ['id', 'templateId', 'state', 'escrowed', 'createdAt', 'updatedAt'],
     properties: {
       id: { type: 'string' }, templateId: { type: 'string' }, state: { type: 'string' },
+      title: { type: 'string' }, description: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
       escrowed: { type: 'boolean' },
       createdAt: { type: 'string', format: 'date-time' },
       updatedAt: { type: 'string', format: 'date-time' },
@@ -1235,6 +1275,8 @@ const AGENT_SCHEMAS = {
     properties: {
       stacks: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryStack' } },
       items: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryItem' } },
+      currentCharacterStacks: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryStack' } },
+      currentCharacterItems: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryItem' } },
     },
   },
   WorldGraphRecipeEntry: {
@@ -1270,6 +1312,7 @@ const AGENT_SCHEMAS = {
       outputs: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipeEntry' } },
       cashCost: { type: 'integer', minimum: 0 }, available: { type: 'boolean' },
       blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipeBlocker' } },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
     },
   },
   WorldGraphRecipeCatalog: {
@@ -1283,19 +1326,40 @@ const AGENT_SCHEMAS = {
       graphId: { type: 'string' }, version: { type: 'integer', minimum: 1 },
       season: { type: ['string', 'null'] }, title: { type: 'string' },
       started: { type: 'boolean' }, status: { type: 'string' }, instanceId: { type: 'string' },
+      description: { type: 'string' }, startVenueId: { type: 'string' }, exploreVenueId: { type: 'string' },
+      ownerScope: { type: 'string', enum: ['character'] }, deathPolicy: { type: 'string' },
+      rewardTitle: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
+    },
+  },
+  WorldGraphHistoricalMystery: {
+    type: 'object', additionalProperties: false,
+    required: ['instanceId', 'graphId', 'version', 'status', 'title', 'actions'],
+    properties: {
+      instanceId: { type: 'string' }, graphId: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+      status: { type: 'string' }, title: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
     },
   },
   WorldGraphMysteryDiscovery: {
     type: 'object', additionalProperties: false, required: ['mysteries'],
-    properties: { mysteries: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMysterySummary' } } },
+    properties: {
+      mysteries: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMysterySummary' } },
+      historicalInstances: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphHistoricalMystery' } },
+    },
   },
   WorldGraphMysteryNode: {
     type: 'object', additionalProperties: false,
     required: ['id', 'type', 'title', 'status', 'available', 'blockedBy'],
     properties: {
       id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
+      description: { type: 'string' }, dialogue: { type: 'string' }, venueId: { type: 'string' },
       status: { type: 'string' }, available: { type: 'boolean' },
-      blockedBy: { type: 'array', items: { type: 'object' } },
+      blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphActionBlocker' } },
+      actions: { type: 'array', items: { oneOf: [
+        { $ref: '#/components/schemas/WorldGraphIssuedAction' }, { $ref: '#/components/schemas/WorldGraphMysteryAffordance' },
+      ] } },
+      uiActions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
       options: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['id', 'title'], properties: { id: { type: 'string' }, title: { type: 'string' } } } },
     },
@@ -1314,6 +1378,14 @@ const AGENT_SCHEMAS = {
       completedAt: { type: ['string', 'null'], format: 'date-time' },
       failedAt: { type: ['string', 'null'], format: 'date-time' },
       canceledAt: { type: ['string', 'null'], format: 'date-time' },
+      explorationAvailable: { type: 'boolean' },
+      actions: { type: 'array', items: { oneOf: [
+        { $ref: '#/components/schemas/WorldGraphIssuedAction' }, { $ref: '#/components/schemas/WorldGraphMysteryAffordance' },
+      ] } },
+      uiActions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
+      progress: { type: 'object', additionalProperties: false, required: ['completed', 'total'], properties: {
+        completed: { type: 'integer', minimum: 0 }, total: { type: 'integer', minimum: 0 },
+      } },
       nodes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMysteryNode' } },
       choices: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['nodeId', 'choiceId'], properties: {
@@ -1337,11 +1409,24 @@ const AGENT_SCHEMAS = {
       blockedBy: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['code'], properties: { code: { type: 'string' } } } },
       operationId: { type: 'string' }, status: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
+    },
+  },
+  WorldGraphRecoverableOperation: {
+    type: 'object', additionalProperties: false,
+    required: ['operationId', 'graphId', 'version', 'status', 'title', 'actions'],
+    properties: {
+      operationId: { type: 'string' }, graphId: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+      status: { type: 'string' }, title: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
     },
   },
   WorldGraphOperationDiscovery: {
     type: 'object', additionalProperties: false, required: ['operations'],
-    properties: { operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } } },
+    properties: {
+      operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } },
+      recoverableOperations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecoverableOperation' } },
+    },
   },
   WorldGraphOperationNode: {
     type: 'object', additionalProperties: false,
@@ -1350,6 +1435,8 @@ const AGENT_SCHEMAS = {
       id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
       status: { type: 'string' }, completedAt: { type: ['string', 'null'], format: 'date-time' },
       privateEvidence: { type: 'string' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
+      blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphActionBlocker' } },
     },
   },
   WorldGraphOperationGraph: {
@@ -1371,10 +1458,12 @@ const AGENT_SCHEMAS = {
       completedAt: { type: ['string', 'null'], format: 'date-time' },
       canceledAt: { type: ['string', 'null'], format: 'date-time' },
       abandonedAt: { type: ['string', 'null'], format: 'date-time' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
       roles: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['roleId', 'title', 'filled', 'contributions'], properties: {
           roleId: { type: 'string' }, title: { type: 'string' }, filled: { type: 'boolean' },
           contributions: { type: 'integer', minimum: 0 },
+          actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
         } } },
       filledRoleCount: { type: 'integer', minimum: 0 },
       requiredRoleCount: { type: 'integer', minimum: 1 },
@@ -1393,6 +1482,7 @@ const AGENT_SCHEMAS = {
       completedAt: { type: ['string', 'null'], format: 'date-time' },
       canceledAt: { type: ['string', 'null'], format: 'date-time' },
       abandonedAt: { type: ['string', 'null'], format: 'date-time' },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
       role: { type: 'object', additionalProperties: false, required: ['roleId'],
         properties: { roleId: { type: 'string' } } },
       nodes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationNode' } },
