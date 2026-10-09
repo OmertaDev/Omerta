@@ -12,15 +12,21 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const json = value => JSON.parse(JSON.stringify(value));
 const canonical = value => Array.isArray(value) ? '[' + value.map(canonical).join(',') + ']'
   : value && typeof value === 'object' ? '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}' : JSON.stringify(value);
-import { assertCarMeltRulesCompatibility, assertEconomySourceTransfer, ECONOMY_SOURCE_CURRENT_PINS } from './rc1-deed-source-compatibility.js';
+import { assertCarMeltRulesCompatibility, assertEconomySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
+  GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION } from './rc1-deed-source-compatibility.js';
 export { assertCarMeltRulesCompatibility, CAR_MELT_BASELINE_RULES_PIN } from './rc1-deed-source-compatibility.js';
 export const CAR_MELT_SOURCE_PINS = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
-  'src/economy.js': ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'],
+  'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.tail.js': '83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
 });
+export const CAR_MELT_SOURCE_REVIEW_TRANSFER = Object.freeze({
+  sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
+  economySha256: GOODS_SOURCE_CURRENT_PINS['src/economy.js'], predecessorEconomySha256: GOODS_SOURCE_PREDECESSOR_PINS['src/economy.js'],
+  inverseChunks: 5,
+  scope: 'Exact inverse reconstructs the complete prior economy bytes. Only unchanged car acquisition, melt and custody paths transfer. New goods availability, reachability, bucket/counter accounting and authority are outside this historical qualification.' });
 let shapes;
 export function carMeltQueryShapes() { assertCarMeltSources(); return { ...shapes }; }
 export function assertCarMeltSources() {

@@ -8,18 +8,19 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   GENESIS_SERVER_WRAPPER_SOURCE_REVISION, GENESIS_SNAPSHOT_SERVER_PIN,
   GENESIS_SNAPSHOT_MODULE_PINS, GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
-  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from './rc1-deed-source-compatibility.js';
+  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS,
+  GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
-  'src/economy.js': ECONOMY_SOURCE_CURRENT_PINS['src/economy.js'],
+  'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
   'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': CITY_SOURCE_CURRENT_PINS['src/server.js'],
+  'src/server.js': GOODS_SOURCE_CURRENT_PINS['src/server.js'],
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -29,7 +30,12 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 7, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 8, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  goodsSourceReviewTransfer: { sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
+    sourcePins: Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_CURRENT_PINS[file]])),
+    predecessorPins: Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])),
+    inverseChunks: { 'src/economy.js': 5, 'src/server.js': 1 },
+    scope: 'Exact goods settlement and public-board read inverses reconstruct complete prior sources. Only unchanged check-in, ammunition, Family, car and other original recovery guards transfer. Goods buy/sell availability, reachability, bucket/counter accounting and new authority remain outside historical qualification; fresh goods proofs are separate.' },
   citySourceReviewTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
     sourcePins: Object.fromEntries(['src/server.js', 'src/operations.js'].map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])),
     predecessorPins: Object.fromEntries(['src/server.js', 'src/operations.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])),

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5a7dc734fe0c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7f8dd86cd256`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2155 |
+| Commits in clone | 2177 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-09 — Merge pull request #209 from OmertaDev/codex/offline-compute-experiments |
+| Latest commit | 2026-10-09 — Integrate current offline analysis without changing City runtime |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1253 |
+| OmertaDev | 1274 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 57 |
+| github-actions[bot] | 58 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,29 +31,29 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 437 | yes |
-| [src/server.js](../../src/server.js) | 376 | yes |
-| [SPEC.md](../../SPEC.md) | 370 | yes |
-| knowledge/generated/github-history.md | 330 | historical |
-| knowledge/generated/graph-summary.md | 330 | historical |
-| knowledge/generated/graph.json | 330 | historical |
-| knowledge/generated/inventory.md | 330 | historical |
-| [schema.sql](../../schema.sql) | 302 | yes |
+| [public/index.html](../../public/index.html) | 441 | yes |
+| [src/server.js](../../src/server.js) | 377 | yes |
+| [SPEC.md](../../SPEC.md) | 373 | yes |
+| knowledge/generated/github-history.md | 339 | historical |
+| knowledge/generated/graph-summary.md | 339 | historical |
+| knowledge/generated/graph.json | 339 | historical |
+| knowledge/generated/inventory.md | 339 | historical |
+| [schema.sql](../../schema.sql) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 241 | yes |
+| [package.json](../../package.json) | 243 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 141 | historical |
-| knowledge/generated/modules.md | 129 | historical |
+| knowledge/generated/documents.md | 143 | historical |
+| knowledge/generated/modules.md | 132 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [test/client.js](../../test/client.js) | 121 | yes |
+| [test/client.js](../../test/client.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [test/gates.js](../../test/gates.js) | 91 | yes |
+| [test/gates.js](../../test/gates.js) | 93 | yes |
+| knowledge/generated/graph.mmd | 90 | historical |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
-| knowledge/generated/graph.mmd | 88 | historical |
 | [test/social.js](../../test/social.js) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
@@ -63,12 +63,12 @@
 | [README.md](../../README.md) | 60 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
-| knowledge/generated/schema.md | 55 | historical |
+| knowledge/generated/schema.md | 57 | historical |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
-| [src/economy.js](../../src/economy.js) | 51 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 52 | yes |
+| [src/economy.js](../../src/economy.js) | 52 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 50 | yes |
 | knowledge/generated/routes.md | 48 | historical |
 
 ## Pull requests

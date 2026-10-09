@@ -200,6 +200,8 @@
     close.type = 'button';
     close.setAttribute('data-city-close', '');
     close.setAttribute('aria-label', 'Close venue details');
+    const cardControls = element('div', 'omerta-city__interaction-controls');
+    cardControls.append(close);
     const actionList = element('div', 'omerta-city__actions');
     actionList.setAttribute('aria-label', 'Venue operations');
     const questCard = element('div', 'omerta-city__dialogue');
@@ -209,7 +211,7 @@
     questCard.append(questTitle, questDialogue, questButtons);
     questCard.hidden = true;
     let renderedActionSignature = '', renderedQuestSignature = '';
-    card.append(cardTitle, cardText, close, questCard, open, actionList);
+    card.append(cardControls, cardTitle, cardText, questCard, open, actionList);
     viewport.append(canvasHost, status, card);
     const instructions = element('p', 'omerta-city__instructions');
     const walking = element('span');
@@ -459,8 +461,28 @@
       renderActions(venue);
       renderQuest(venue);
       card.hidden = false;
+      card.scrollTop = 0;
       for (const [id, button] of buttons) button.setAttribute('aria-expanded', String(id === venue.id));
+      revealVenue();
       open.focus({ preventScroll: true });
+      open.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    }
+    function revealVenue(target = card, scroll = true) {
+      const height = window.innerHeight;
+      let top = 0, bottom = height;
+      for (const id of ['top', 'vitals', 'bnav', 'toast']) {
+        const chrome = document.getElementById(id);
+        if (!chrome || !['fixed', 'sticky'].includes(window.getComputedStyle(chrome).position)) continue;
+        if (id === 'toast' && !chrome.classList.contains('show')) continue;
+        const bounds = chrome.getBoundingClientRect();
+        if (!bounds.height || bounds.bottom <= 0 || bounds.top >= height) continue;
+        if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
+        else top = Math.max(top, bounds.bottom);
+      }
+      card.style.setProperty('--city-card-height', Math.max(88, bottom - top - 16) + 'px');
+      target.style.scrollMarginTop = (top + 8) + 'px';
+      target.style.scrollMarginBottom = (height - bottom + 8) + 'px';
+      if (scroll) target.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
     function hideVenue(focusCanvas) {
       const previousVenue = selected;
@@ -468,7 +490,11 @@
       selected = null;
       for (const button of buttons.values()) button.setAttribute('aria-expanded', 'false');
       if (focusCanvas && game && game.canvas) game.canvas.focus({ preventScroll: true });
-      else if (focusCanvas && previousVenue) buttons.get(previousVenue.id).focus({ preventScroll: true });
+      else if (focusCanvas && previousVenue) {
+        const destination = buttons.get(previousVenue.id);
+        revealVenue(destination);
+        destination.focus({ preventScroll: true });
+      }
     }
     listen(open, 'click', () => {
       if (selected) navigate(selected.tab, selected.id);
@@ -476,6 +502,11 @@
     listen(close, 'click', () => hideVenue(true));
     listen(card, 'keydown', event => {
       if (event.key === 'Escape') { event.preventDefault(); hideVenue(true); }
+    });
+    listen(window, 'resize', () => {
+      if (card.hidden || !selected) return;
+      // Address-bar and keyboard resizes must preserve the player's reading position.
+      revealVenue(card, false);
     });
     function unavailable() {
       ready = false;

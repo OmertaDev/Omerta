@@ -8,7 +8,8 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   GENESIS_SNAPSHOT_SERVER_PIN, GENESIS_SNAPSHOT_MODULE_PINS,
   GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
-  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
+  CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
+  GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
@@ -16,13 +17,15 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const serverProof = assertDeedServerCompatibility(serverText);
-assert.equal(serverProof.actualSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(serverProof.actualSha256, GOODS_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(serverProof.goodsSourceTransfer.baselineSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.citySourceTransfer.baselineSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER_PIN);
 const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
-  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const actual = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const text = Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file) ? assertGoodsSourceTransfer(file, actual).baselineText : actual;
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],
     { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
@@ -117,10 +120,15 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/server.js'], GOODS_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 7);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 8);
+assert.equal(WORLD_RECOVERY_REVIEW.goodsSourceReviewTransfer.sourceRevision, GOODS_SOURCE_REVIEWED_REVISION);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.goodsSourceReviewTransfer.predecessorPins,
+  Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])));
+assert.match(WORLD_RECOVERY_REVIEW.goodsSourceReviewTransfer.scope, /Goods buy\/sell availability, reachability, bucket\/counter accounting and new authority.*outside historical qualification/);
 assert.equal(WORLD_RECOVERY_REVIEW.reviewedRevision, GENESIS_SNAPSHOT_REVIEWED_REVISION,
   'The City transfer does not relabel historical authority coverage as a fresh world execution review.');
 assert.deepEqual(WORLD_RECOVERY_REVIEW.citySourceReviewTransfer.predecessorPins,

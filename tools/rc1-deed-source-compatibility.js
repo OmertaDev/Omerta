@@ -81,6 +81,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertGoodsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertCitySourceTransfer('src/server.js', text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
@@ -126,6 +130,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertGoodsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertCitySourceTransfer('src/server.js', text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
@@ -192,6 +200,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertGoodsSourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertCitySourceTransfer('src/server.js', text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
@@ -215,6 +227,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertGoodsSourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertCitySourceTransfer('src/server.js', text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySourceTransfer: transfer };
@@ -427,6 +443,72 @@ export function assertCitySourceTransfer(file, text) {
       ? { projectionSha256: operationUiPin, mutationLockDefault: true } : {}) };
 }
 
+// Exact source transfer for the separately tested finite goods market. This reconstructs
+// complete prior bytes and qualifies unchanged car/recovery and committed cash/cargo equations
+// only; new goods eligibility, bucket/counter accounting and authority do not inherit evidence.
+export const GOODS_SOURCE_REVIEWED_REVISION = '29c8b418ba764f6058d643e8bbe6d685ba99e5ce';
+export const GOODS_SOURCE_PREDECESSOR_REVISION = '7d4b1ffce56136bafddb46bb6bc609233b21712b';
+export const GOODS_SOURCE_CURRENT_PINS = Object.freeze({
+  'src/economy.js': 'd934bd109bf4599d79e6dba9ead2240b3b4c036d3f676a428941de2ca326ae91',
+  'src/server.js': 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c',
+  'src/goodsquote.js': 'b191c83c4a3f254d6499fe8775025f9554d448151febb4a72573c5cbf5a44e50',
+});
+export const GOODS_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  'src/economy.js': 'c47bdfc17770ab3f47f9f5396547bdc408902fa3bdec1ba9ceb2e0934df0651b',
+  'src/server.js': '647908de3e63520de306e91e8c34ff1152364fe0c7b3f97f9807cfddf2e016b8',
+  'src/goodsquote.js': '16d9eccf4ed823c0c07db6f8a0d8d140246398fa9a693667dcd318b063923c74',
+});
+const goodsSourceInverse = {
+  "src/economy.js": [
+    [
+      "// row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.\nimport crypto from 'node:crypto';\nimport { goodsBuyQuote } from './goodsquote.js';\nimport { consumeGoodsLiquidity } from './goodsmarket.js';\nimport { logCollect } from './collection.js';\nimport { registerItemTransactionUndo } from './items.js';\n// (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL\n// boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.\nimport { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';\nimport { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, priceBlock, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';\n\nconst uid = () => crypto.randomUUID();\nconst cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);\n",
+      "// row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.\nimport crypto from 'node:crypto';\nimport { goodsBuyQuote } from './goodsquote.js';\nimport { logCollect } from './collection.js';\nimport { registerItemTransactionUndo } from './items.js';\n// (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL\n// boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.\nimport { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';\nimport { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';\n\nconst uid = () => crypto.randomUUID();\nconst cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);\n"
+    ],
+    [
+      "  const cap = trunkCap(h);\n  if (cargoCount(h.owned.cargo) + n > cap) throw new GameError('cargo', `The trunk holds ${cap} units. Better Wheels carry more.`);\n  // STREET DEEDS 2C — controlled corners count for the ±5% turf price edge (set-union → OR, once)\n  const block = priceBlock();\n  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned, block);\n  if (Number(ch.cash) < cost + fee + tax) throw new GameError('cash', `That runs ${usd(cost + fee + tax)} with the 2% house take.`);\n  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'buy', n, block);\n  ch.cash = Number(ch.cash) - cost - fee - tax;\n  const have = (h.owned.cargo[goodId] || 0) + n;\n  h.owned.cargo[goodId] = have;\n",
+      "  const cap = trunkCap(h);\n  if (cargoCount(h.owned.cargo) + n > cap) throw new GameError('cargo', `The trunk holds ${cap} units. Better Wheels carry more.`);\n  // STREET DEEDS 2C — controlled corners count for the ±5% turf price edge (set-union → OR, once)\n  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned);\n  if (Number(ch.cash) < cost + fee + tax) throw new GameError('cash', `That runs ${usd(cost + fee + tax)} with the 2% house take.`);\n  ch.cash = Number(ch.cash) - cost - fee - tax;\n  const have = (h.owned.cargo[goodId] || 0) + n;\n  h.owned.cargo[goodId] = have;\n"
+    ],
+    [
+      "  // WAVE 59 — ten goods lines and one sentence: \"bought 2 at $190 a unit\" named nothing, so the\n  // cheapest crate and the dearest read identically but for the figure. The id is enough here — the\n  // client resolves it through goodName off the published /v1/rules catalog.\n  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax, liquidity };\n}\n\nexport async function sellGood(ch, goodId, qty, client, h) {\n",
+      "  // WAVE 59 — ten goods lines and one sentence: \"bought 2 at $190 a unit\" named nothing, so the\n  // cheapest crate and the dearest read identically but for the figure. The id is enough here — the\n  // client resolves it through goodName off the published /v1/rules catalog.\n  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax };\n}\n\nexport async function sellGood(ch, goodId, qty, client, h) {\n"
+    ],
+    [
+      "  const have = h.owned.cargo[goodId] || 0;\n  const n = Math.min(Math.max(1, Math.floor(Number(qty) || 0)), have);\n  if (n <= 0) throw new GameError('none', 'Nothing of that in the trunk.');\n  const block = priceBlock();\n  const ev = cityEventOf(dayOf());\n  // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)\n  const unit = Math.round(goodPriceOf(goodId, ch.loc, block) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)\n  const gross = unit * n, fee = Math.ceil(gross * 0.01), tax = Math.ceil(gross * 0.01);\n  const net = gross - fee - tax;\n  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'sell', n, block);\n  ch.cash = Number(ch.cash) + net;\n  const left = have - n;\n  h.owned.cargo[goodId] = left;\n",
+      "  const have = h.owned.cargo[goodId] || 0;\n  const n = Math.min(Math.max(1, Math.floor(Number(qty) || 0)), have);\n  if (n <= 0) throw new GameError('none', 'Nothing of that in the trunk.');\n  const ev = cityEventOf(dayOf());\n  // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)\n  const unit = Math.round(goodPriceOf(goodId, ch.loc) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)\n  const gross = unit * n, fee = Math.ceil(gross * 0.01), tax = Math.ceil(gross * 0.01);\n  const net = gross - fee - tax;\n  ch.cash = Number(ch.cash) + net;\n  const left = have - n;\n  h.owned.cargo[goodId] = left;\n"
+    ],
+    [
+      "  await takeHouse(client, tax);\n  await h.bumpDaily(client, ch.id, 'goods');\n  await bumpMastery(client, h, ch, 'commerce', 'sell'); // THE TRADES — goods moved at a margin is commerce\n  return { ok: true, good: goodId, unit, qty: n, earned: net, liquidity };\n}\n\n// ═══════════════════ RACKETS & ASSETS (§5.4) ═══════════════════\n",
+      "  await takeHouse(client, tax);\n  await h.bumpDaily(client, ch.id, 'goods');\n  await bumpMastery(client, h, ch, 'commerce', 'sell'); // THE TRADES — goods moved at a margin is commerce\n  return { ok: true, good: goodId, unit, qty: n, earned: net };\n}\n\n// ═══════════════════ RACKETS & ASSETS (§5.4) ═══════════════════\n"
+    ]
+  ],
+  "src/server.js": [
+    [
+      "  // ── M2: deterministic market board (§7.11) — public, server-computed ──\n  // ONE implementation, shared with the /v1/block aggregate that also serves this board — two copies\n  // is how the two ends of a mirror come to disagree.\n  app.get('/v1/market/prices', async () => Block.marketPrices(pool));\n\n  // THE SEASON HAS AN ENDING — the clock and the roll of past seasons. Keyless like /v1/city: a\n  // deadline nobody can read is not a deadline, and the record is the whole point of the arc.\n",
+      "  // ── M2: deterministic market board (§7.11) — public, server-computed ──\n  // ONE implementation, shared with the /v1/block aggregate that also serves this board — two copies\n  // is how the two ends of a mirror come to disagree.\n  app.get('/v1/market/prices', async () => Block.marketPrices());\n\n  // THE SEASON HAS AN ENDING — the clock and the roll of past seasons. Keyless like /v1/city: a\n  // deadline nobody can read is not a deadline, and the record is the whole point of the arc.\n"
+    ]
+  ],
+  "src/goodsquote.js": [
+    [
+      "import { goodPriceOf, priceBlock } from './rules.js';\n\n// Shared by procurement observations and settlement: round the turf-adjusted unit price\n// first, then round each of the two cash takes independently.\nexport function goodsBuyQuote(good, district, quantity, owned, block = priceBlock()) {\n  const controlled = [...(owned.held || []), ...(owned.deedPerk || [])].includes(district);\n  const unit = Math.round(goodPriceOf(good, district, block) * (controlled ? 0.95 : 1));\n  const subtotal = unit * quantity;\n  const fee = Math.ceil(subtotal * 0.01);\n  const tax = Math.ceil(subtotal * 0.01);\n",
+      "import { goodPriceOf } from './rules.js';\n\n// Shared by procurement observations and settlement: round the turf-adjusted unit price\n// first, then round each of the two cash takes independently.\nexport function goodsBuyQuote(good, district, quantity, owned) {\n  const controlled = [...(owned.held || []), ...(owned.deedPerk || [])].includes(district);\n  const unit = Math.round(goodPriceOf(good, district) * (controlled ? 0.95 : 1));\n  const subtotal = unit * quantity;\n  const fee = Math.ceil(subtotal * 0.01);\n  const tax = Math.ceil(subtotal * 0.01);\n"
+    ]
+  ]
+};
+export function assertGoodsSourceTransfer(file, text) {
+  assert(Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file), 'Unknown goods transfer source');
+  assert.equal(hash(text), GOODS_SOURCE_CURRENT_PINS[file], 'Goods transfer source changed: ' + file);
+  let baselineText = text;
+  for (const [current, original] of goodsSourceInverse[file]) {
+    assert.equal(baselineText.split(current).length, 2, 'Goods source inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  assert.equal(hash(baselineText), GOODS_SOURCE_PREDECESSOR_PINS[file], 'Source differs beyond exact goods changes');
+  return { actualSha256: hash(text), baselineText, baselineSha256: GOODS_SOURCE_PREDECESSOR_PINS[file],
+    sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
+    inverseChunks: goodsSourceInverse[file].length };
+}
+
+
 // Exact routing/quote inverse guards preserve historical personal-recovery and
 // car-melt evidence; they grant no depot, supplier or agent authority coverage.
 export const ECONOMY_SOURCE_CURRENT_PINS = Object.freeze({
@@ -476,6 +558,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (hash(text) === GOODS_SOURCE_CURRENT_PINS[file]) {
+  const goods = assertGoodsSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, goods.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + goods.inverseChunks, goodsSourceTransfer: goods };
+ }
  if (file === 'src/server.js' && hash(text) === CITY_SOURCE_CURRENT_PINS[file]) {
   const city = assertCitySourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, city.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + city.inverseChunks, citySourceTransfer: city };

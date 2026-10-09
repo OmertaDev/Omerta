@@ -3440,8 +3440,8 @@ scopedSocialContext = async function(db) {
     'the `pgcheck` job must identify each required PostgreSQL major');
   assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
     'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
-  assert.match(pgcheck, /^        image: postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
-    'each native lane must run its declared PostgreSQL server');
+  assert.match(pgcheck, /^        image: public\.ecr\.aws\/docker\/library\/postgres:\$\{\{ matrix\.postgres \}\}\s*$/m,
+    'each native lane must run its declared PostgreSQL server from the verified Docker official mirror');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [60],
@@ -3525,7 +3525,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

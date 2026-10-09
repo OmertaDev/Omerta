@@ -3,12 +3,13 @@
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
 import { goodsBuyQuote } from './goodsquote.js';
+import { consumeGoodsLiquidity } from './goodsmarket.js';
 import { logCollect } from './collection.js';
 import { registerItemTransactionUndo } from './items.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
 // boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.
 import { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';
-import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
+import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, priceBlock, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
@@ -382,8 +383,10 @@ export async function buyGood(ch, goodId, qty, client, h) {
   const cap = trunkCap(h);
   if (cargoCount(h.owned.cargo) + n > cap) throw new GameError('cargo', `The trunk holds ${cap} units. Better Wheels carry more.`);
   // STREET DEEDS 2C — controlled corners count for the ±5% turf price edge (set-union → OR, once)
-  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned);
+  const block = priceBlock();
+  const { unit, subtotal: cost, fee, tax } = goodsBuyQuote(goodId, ch.loc, n, h.owned, block);
   if (Number(ch.cash) < cost + fee + tax) throw new GameError('cash', `That runs ${usd(cost + fee + tax)} with the 2% house take.`);
+  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'buy', n, block);
   ch.cash = Number(ch.cash) - cost - fee - tax;
   const have = (h.owned.cargo[goodId] || 0) + n;
   h.owned.cargo[goodId] = have;
@@ -398,7 +401,7 @@ export async function buyGood(ch, goodId, qty, client, h) {
   // WAVE 59 — ten goods lines and one sentence: "bought 2 at $190 a unit" named nothing, so the
   // cheapest crate and the dearest read identically but for the figure. The id is enough here — the
   // client resolves it through goodName off the published /v1/rules catalog.
-  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax };
+  return { ok: true, good: goodId, unit, qty: n, spent: cost + fee + tax, liquidity };
 }
 
 export async function sellGood(ch, goodId, qty, client, h) {
@@ -407,11 +410,13 @@ export async function sellGood(ch, goodId, qty, client, h) {
   const have = h.owned.cargo[goodId] || 0;
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || 0)), have);
   if (n <= 0) throw new GameError('none', 'Nothing of that in the trunk.');
+  const block = priceBlock();
   const ev = cityEventOf(dayOf());
   // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)
-  const unit = Math.round(goodPriceOf(goodId, ch.loc) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)
+  const unit = Math.round(goodPriceOf(goodId, ch.loc, block) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)
   const gross = unit * n, fee = Math.ceil(gross * 0.01), tax = Math.ceil(gross * 0.01);
   const net = gross - fee - tax;
+  const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'sell', n, block);
   ch.cash = Number(ch.cash) + net;
   const left = have - n;
   h.owned.cargo[goodId] = left;
@@ -420,7 +425,7 @@ export async function sellGood(ch, goodId, qty, client, h) {
   await takeHouse(client, tax);
   await h.bumpDaily(client, ch.id, 'goods');
   await bumpMastery(client, h, ch, 'commerce', 'sell'); // THE TRADES — goods moved at a margin is commerce
-  return { ok: true, good: goodId, unit, qty: n, earned: net };
+  return { ok: true, good: goodId, unit, qty: n, earned: net, liquidity };
 }
 
 // ═══════════════════ RACKETS & ASSETS (§5.4) ═══════════════════
