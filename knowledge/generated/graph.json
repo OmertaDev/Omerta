@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6e5c84ad995c63ca3067f0dad86d9fb1c5706188",
+  "sourceRevision": "b154049e7a2f130f078c97446d794f6eb989e8a0",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10333,
-    "edges": 42075,
+    "nodes": 10335,
+    "edges": 42088,
     "byNodeType": {
       "Artifact": 4381,
       "Command": 205,
-      "Commit": 2167,
+      "Commit": 2169,
       "Contract": 126,
       "Document": 701,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3511,
-      "CHANGED": 16358,
+      "CHANGED": 16369,
       "CONTAINS": 4402,
       "DECLARES": 205,
       "DEFINED_IN": 1388,
       "DEPENDS_ON": 67,
       "EXECUTES": 691,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2167,
+      "HAS_COMMIT": 2169,
       "IMPLEMENTS": 124,
       "IMPORTS": 4150,
       "INHERITS": 42,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 27404,
+      "bytes": 27434,
       "lines": 537,
-      "version": "2b020160c69c4297",
+      "version": "7ccad58cbcd8ed6c",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "2b020160c69c4297"
+          "version": "7ccad58cbcd8ed6c"
         }
       ],
-      "lastChangedAt": "2026-10-09T18:05:42.000Z",
+      "lastChangedAt": "2026-10-09T21:28:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8d9f4d3b4fc03224fab2c4f719287f3f5ce125e2"
+      "lastChangedCommit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -7544,20 +7544,20 @@
       "path": ".github/workflows/forge.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 10253,
+      "bytes": 10283,
       "lines": 197,
-      "version": "b4c3aa132175a7e2",
+      "version": "f6fff143537742f9",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "b4c3aa132175a7e2"
+          "version": "f6fff143537742f9"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:43:13.000Z",
+      "lastChangedAt": "2026-10-09T21:28:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bfeebfe7977617262cff2a121214d82972bde1e3"
+      "lastChangedCommit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
     },
     {
       "key": "Artifact:.github/workflows/knowledge-refresh.yml",
@@ -7590,20 +7590,20 @@
       "path": ".github/workflows/liquidity-postgres.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 2253,
+      "bytes": 2283,
       "lines": 59,
-      "version": "8c8c740f46b14d0a",
+      "version": "e8fe00ede90f7215",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/liquidity-postgres.yml",
           "line": 1,
-          "version": "8c8c740f46b14d0a"
+          "version": "e8fe00ede90f7215"
         }
       ],
-      "lastChangedAt": "2026-09-09T15:41:10.000Z",
+      "lastChangedAt": "2026-10-09T21:28:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
+      "lastChangedCommit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
     },
     {
       "key": "Artifact:.github/workflows/publish-mcp.yml",
@@ -126051,6 +126051,22 @@
       ]
     },
     {
+      "key": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "type": "Commit",
+      "id": "a3b4204d9697199fbe194a24690196d3e14a1074",
+      "label": "Refresh knowledge for integrated City and goods release",
+      "title": "Refresh knowledge for integrated City and goods release",
+      "date": "2026-10-09T21:13:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a3b4204d9697199fbe194a24690196d3e14a1074",
+      "provenance": [
+        {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a3b4204d9697199fbe194a24690196d3e14a1074"
+        }
+      ]
+    },
+    {
       "key": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "type": "Commit",
       "id": "a3e3a53d45a184b6849c4b8058c2923c71363253",
@@ -127951,6 +127967,22 @@
         {
           "commit": "b14b70fce597bff28c07005239911fd05c5af175",
           "url": "https://github.com/OmertaDev/Omerta/commit/b14b70fce597bff28c07005239911fd05c5af175"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "type": "Commit",
+      "id": "b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "label": "Use verified official PostgreSQL mirror in release CI",
+      "title": "Use verified official PostgreSQL mirror in release CI",
+      "date": "2026-10-09T21:28:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "provenance": [
+        {
+          "commit": "b154049e7a2f130f078c97446d794f6eb989e8a0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b154049e7a2f130f078c97446d794f6eb989e8a0"
         }
       ]
     },
@@ -158429,6 +158461,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
           "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         },
         {
@@ -159249,6 +159284,9 @@
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
+        },
+        {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -160262,6 +160300,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -161273,6 +161314,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -161793,6 +161837,9 @@
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
+        },
+        {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
         },
         {
           "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
@@ -162557,6 +162604,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -163148,6 +163198,9 @@
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
           "commit": "a4a3b9a683c90bd0429e87272eff0dd294cdf850"
         },
         {
@@ -163569,6 +163622,9 @@
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
+        },
+        {
+          "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
         },
         {
           "commit": "a8101834df0e19afb218429142526d347fc74602"
@@ -172100,7 +172156,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6e5c84ad995c63ca3067f0dad86d9fb1c5706188",
+      "revision": "b154049e7a2f130f078c97446d794f6eb989e8a0",
       "currentBranch": "codex/city-entry-focus",
       "defaultBranch": "main",
       "visibility": "public",
@@ -208817,12 +208873,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 537,
-      "version": "2b020160c69c4297",
+      "version": "7ccad58cbcd8ed6c",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "2b020160c69c4297"
+          "version": "7ccad58cbcd8ed6c"
         }
       ]
     },
@@ -208832,12 +208888,12 @@
       "id": ".github/workflows/forge.yml",
       "label": ".github/workflows/forge.yml",
       "lines": 197,
-      "version": "b4c3aa132175a7e2",
+      "version": "f6fff143537742f9",
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "b4c3aa132175a7e2"
+          "version": "f6fff143537742f9"
         }
       ]
     },
@@ -208862,12 +208918,12 @@
       "id": ".github/workflows/liquidity-postgres.yml",
       "label": ".github/workflows/liquidity-postgres.yml",
       "lines": 59,
-      "version": "8c8c740f46b14d0a",
+      "version": "e8fe00ede90f7215",
       "provenance": [
         {
           "file": ".github/workflows/liquidity-postgres.yml",
           "line": 1,
-          "version": "8c8c740f46b14d0a"
+          "version": "e8fe00ede90f7215"
         }
       ]
     },
@@ -322056,6 +322112,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -327052,6 +327172,30 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "b14b70fce597bff28c07005239911fd05c5af175"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "commit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "to": "Artifact:.github/workflows/liquidity-postgres.yml",
+      "provenance": {
+        "commit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
       }
     },
     {
@@ -450793,6 +450937,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a3b4204d9697199fbe194a24690196d3e14a1074",
+      "provenance": {
+        "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "provenance": {
         "commit": "a3e3a53d45a184b6849c4b8058c2923c71363253"
@@ -451740,6 +451892,14 @@
       "to": "Commit:b14b70fce597bff28c07005239911fd05c5af175",
       "provenance": {
         "commit": "b14b70fce597bff28c07005239911fd05c5af175"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b154049e7a2f130f078c97446d794f6eb989e8a0",
+      "provenance": {
+        "commit": "b154049e7a2f130f078c97446d794f6eb989e8a0"
       }
     },
     {
