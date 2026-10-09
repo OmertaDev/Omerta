@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5a7dc734fe0c3c7616d6903d10e1764e3abcd877",
+  "sourceRevision": "63dea0144b886ff305770f5b4fed81c3790f36a3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,42 +43,42 @@
     ]
   },
   "census": {
-    "nodes": 10324,
-    "edges": 42008,
+    "nodes": 10335,
+    "edges": 42049,
     "byNodeType": {
-      "Artifact": 4383,
-      "Command": 206,
-      "Commit": 2155,
+      "Artifact": 4387,
+      "Command": 208,
+      "Commit": 2157,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
       "ExternalDependency": 30,
       "HistoricalArtifact": 424,
-      "Module": 307,
+      "Module": 308,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 873,
       "Subsystem": 8,
       "Table": 388,
-      "TestSuite": 576,
+      "TestSuite": 578,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3512,
-      "CHANGED": 16307,
-      "CONTAINS": 4404,
-      "DECLARES": 206,
+      "BELONGS_TO": 3516,
+      "CHANGED": 16320,
+      "CONTAINS": 4408,
+      "DECLARES": 208,
       "DEFINED_IN": 1387,
       "DEPENDS_ON": 67,
-      "EXECUTES": 694,
+      "EXECUTES": 699,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2155,
+      "HAS_COMMIT": 2157,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4145,
+      "IMPORTS": 4152,
       "INHERITS": 42,
       "REFERENCES": 3137,
-      "REPRESENTS": 1591,
-      "TESTS": 1419,
+      "REPRESENTS": 1594,
+      "TESTS": 1420,
       "TRACKS": 126,
       "USES_TABLE": 1926
     }
@@ -24196,20 +24196,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 10864,
-      "lines": 78,
-      "version": "2a0d701bd444ca7b",
+      "bytes": 13016,
+      "lines": 93,
+      "version": "ecceed5c50a86902",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "2a0d701bd444ca7b"
+          "version": "ecceed5c50a86902"
         }
       ],
-      "lastChangedAt": "2026-10-09T20:01:42.000Z",
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -24219,20 +24219,20 @@
       "path": "docs/compute-value-experiments.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3314,
-      "lines": 32,
-      "version": "622376d321e95ac7",
+      "bytes": 6484,
+      "lines": 50,
+      "version": "c7f550f9114576a8",
       "text": true,
       "provenance": [
         {
           "file": "docs/compute-value-experiments.md",
           "line": 1,
-          "version": "622376d321e95ac7"
+          "version": "c7f550f9114576a8"
         }
       ],
-      "lastChangedAt": "2026-10-09T20:01:42.000Z",
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -40643,18 +40643,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "42c8d470a524eee7",
+      "version": "ec3a9ef5820cd024",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "42c8d470a524eee7"
+          "version": "ec3a9ef5820cd024"
         }
       ],
-      "lastChangedAt": "2026-10-09T20:01:42.000Z",
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -62531,20 +62531,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 35333,
-      "lines": 235,
-      "version": "39e72eafa3bf83cd",
+      "bytes": 35553,
+      "lines": 237,
+      "version": "752afb5530ca39da",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "39e72eafa3bf83cd"
+          "version": "752afb5530ca39da"
         }
       ],
-      "lastChangedAt": "2026-10-09T20:01:42.000Z",
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:Procfile",
@@ -78104,18 +78104,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "82cace20c508d4f9",
+      "version": "891325c04b3b1bf8",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "82cace20c508d4f9"
+          "version": "891325c04b3b1bf8"
         }
       ],
-      "lastChangedAt": "2026-10-09T20:01:42.000Z",
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:src/access.js",
@@ -78990,6 +78990,29 @@
       "lastChangedAt": "2026-10-09T20:01:42.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+    },
+    {
+      "key": "Artifact:src/computerouting.js",
+      "type": "Artifact",
+      "id": "src/computerouting.js",
+      "label": "computerouting.js",
+      "path": "src/computerouting.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 5962,
+      "lines": 65,
+      "version": "bbd6e4fb848e5f38",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/computerouting.js",
+          "line": 1,
+          "version": "bbd6e4fb848e5f38"
+        }
+      ],
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:src/contacts.js",
@@ -86076,6 +86099,29 @@
       "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
     },
     {
+      "key": "Artifact:test/compute-router-cli.js",
+      "type": "Artifact",
+      "id": "test/compute-router-cli.js",
+      "label": "compute-router-cli.js",
+      "path": "test/compute-router-cli.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 2809,
+      "lines": 47,
+      "version": "56f5c7882592fc8d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/compute-router-cli.js",
+          "line": 1,
+          "version": "56f5c7882592fc8d"
+        }
+      ],
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+    },
+    {
       "key": "Artifact:test/computeexperiment.js",
       "type": "Artifact",
       "id": "test/computeexperiment.js",
@@ -86097,6 +86143,29 @@
       "lastChangedAt": "2026-10-09T20:01:42.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
+    },
+    {
+      "key": "Artifact:test/computerouting.js",
+      "type": "Artifact",
+      "id": "test/computerouting.js",
+      "label": "computerouting.js",
+      "path": "test/computerouting.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 4164,
+      "lines": 32,
+      "version": "2dcd3b3dfbcc52ad",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/computerouting.js",
+          "line": 1,
+          "version": "2dcd3b3dfbcc52ad"
+        }
+      ],
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
     },
     {
       "key": "Artifact:test/content-api.js",
@@ -96633,6 +96702,29 @@
       "lastChangedCommit": "72f8e940079fc6bf201d395921ea340997dd7c7f"
     },
     {
+      "key": "Artifact:tools/compute-router.js",
+      "type": "Artifact",
+      "id": "tools/compute-router.js",
+      "label": "compute-router.js",
+      "path": "tools/compute-router.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 828,
+      "lines": 16,
+      "version": "40b7948e3f91813f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/compute-router.js",
+          "line": 1,
+          "version": "40b7948e3f91813f"
+        }
+      ],
+      "lastChangedAt": "2026-10-09T22:14:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+    },
+    {
       "key": "Artifact:tools/concurrency.js",
       "type": "Artifact",
       "id": "tools/concurrency.js",
@@ -101759,6 +101851,19 @@
       ]
     },
     {
+      "key": "Command:npm:route:compute:shadow",
+      "type": "Command",
+      "id": "npm:route:compute:shadow",
+      "label": "npm run route:compute:shadow",
+      "command": "node tools/compute-router.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:scale",
       "type": "Command",
       "id": "npm:scale",
@@ -101841,7 +101946,7 @@
       "type": "Command",
       "id": "npm:test",
       "label": "npm run test",
-      "command": "node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js",
+      "command": "node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/compute-router-cli.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js",
       "provenance": [
         {
           "file": "package.json",
@@ -101946,6 +102051,19 @@
       "id": "npm:test:compute:experiments",
       "label": "npm run test:compute:experiments",
       "command": "node test/computeexperiment.js && node test/compute-experiment-cli.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:compute:routing",
+      "type": "Command",
+      "id": "npm:test:compute:routing",
+      "label": "npm run test:compute:routing",
+      "command": "node test/computerouting.js && node test/compute-router-cli.js",
       "provenance": [
         {
           "file": "package.json",
@@ -105146,6 +105264,22 @@
         {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e",
           "url": "https://github.com/OmertaDev/Omerta/commit/0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "type": "Commit",
+      "id": "0e495189416f510b84277b5887d06640750446e5",
+      "label": "chore(knowledge): refresh generated artifacts for 5a7dc734",
+      "title": "chore(knowledge): refresh generated artifacts for 5a7dc734",
+      "date": "2026-10-09T21:38:59.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0e495189416f510b84277b5887d06640750446e5",
+      "provenance": [
+        {
+          "commit": "0e495189416f510b84277b5887d06640750446e5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0e495189416f510b84277b5887d06640750446e5"
         }
       ]
     },
@@ -117194,6 +117328,22 @@
         {
           "commit": "63ca1748ce6b035ddb33c225b348dd365a4c1e5b",
           "url": "https://github.com/OmertaDev/Omerta/commit/63ca1748ce6b035ddb33c225b348dd365a4c1e5b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "type": "Commit",
+      "id": "63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "label": "Add evidence-gated shadow compute routing",
+      "title": "Add evidence-gated shadow compute routing",
+      "date": "2026-10-09T22:14:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "provenance": [
+        {
+          "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/63dea0144b886ff305770f5b4fed81c3790f36a3"
         }
       ]
     },
@@ -145723,13 +145873,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 78,
-      "version": "2a0d701bd444ca7b",
+      "lines": 93,
+      "version": "ecceed5c50a86902",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "2a0d701bd444ca7b"
+          "version": "ecceed5c50a86902"
         }
       ]
     },
@@ -145739,13 +145889,13 @@
       "id": "docs/compute-value-experiments.md",
       "label": "docs/compute-value-experiments.md",
       "documentType": "documentation",
-      "lines": 32,
-      "version": "622376d321e95ac7",
+      "lines": 50,
+      "version": "c7f550f9114576a8",
       "provenance": [
         {
           "file": "docs/compute-value-experiments.md",
           "line": 1,
-          "version": "622376d321e95ac7"
+          "version": "c7f550f9114576a8"
         }
       ]
     },
@@ -149084,12 +149234,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "42c8d470a524eee7",
+      "version": "ec3a9ef5820cd024",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "42c8d470a524eee7"
+          "version": "ec3a9ef5820cd024"
         }
       ]
     },
@@ -151324,12 +151474,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "82cace20c508d4f9",
+      "version": "891325c04b3b1bf8",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "82cace20c508d4f9"
+          "version": "891325c04b3b1bf8"
         }
       ]
     },
@@ -158545,6 +158695,9 @@
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
+          "commit": "0e495189416f510b84277b5887d06640750446e5"
+        },
+        {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
@@ -159544,6 +159697,9 @@
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
         },
         {
+          "commit": "0e495189416f510b84277b5887d06640750446e5"
+        },
+        {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
@@ -160541,6 +160697,9 @@
         },
         {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+        },
+        {
+          "commit": "0e495189416f510b84277b5887d06640750446e5"
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
@@ -161813,6 +161972,9 @@
         },
         {
           "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+        },
+        {
+          "commit": "0e495189416f510b84277b5887d06640750446e5"
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
@@ -164732,6 +164894,21 @@
           "file": "src/computeexperiment.js",
           "line": 1,
           "version": "b9ffce0d68944667"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/computerouting.js",
+      "type": "Module",
+      "id": "src/computerouting.js",
+      "label": "src/computerouting.js",
+      "lines": 65,
+      "version": "bbd6e4fb848e5f38",
+      "provenance": [
+        {
+          "file": "src/computerouting.js",
+          "line": 1,
+          "version": "bbd6e4fb848e5f38"
         }
       ]
     },
@@ -171925,12 +172102,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5a7dc734fe0c3c7616d6903d10e1764e3abcd877",
-      "currentBranch": "main",
+      "revision": "63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "currentBranch": "codex/shadow-compute-routing",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4383,
+      "currentArtifactCount": 4387,
       "provenance": [
         {
           "file": "README.md",
@@ -202214,6 +202391,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/compute-router-cli.js",
+      "type": "TestSuite",
+      "id": "test/compute-router-cli.js",
+      "label": "test/compute-router-cli.js",
+      "lines": 47,
+      "version": "56f5c7882592fc8d",
+      "provenance": [
+        {
+          "file": "test/compute-router-cli.js",
+          "line": 1,
+          "version": "56f5c7882592fc8d"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/computeexperiment.js",
       "type": "TestSuite",
       "id": "test/computeexperiment.js",
@@ -202225,6 +202417,21 @@
           "file": "test/computeexperiment.js",
           "line": 1,
           "version": "3d7d260f324b71a0"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/computerouting.js",
+      "type": "TestSuite",
+      "id": "test/computerouting.js",
+      "label": "test/computerouting.js",
+      "lines": 32,
+      "version": "2dcd3b3dfbcc52ad",
+      "provenance": [
+        {
+          "file": "test/computerouting.js",
+          "line": 1,
+          "version": "2dcd3b3dfbcc52ad"
         }
       ]
     },
@@ -223904,6 +224111,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/computerouting.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/computerouting.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/contacts.js",
       "to": "Domain:engagement-growth",
       "provenance": {
@@ -226676,10 +226892,28 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/compute-router-cli.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/compute-router-cli.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/computeexperiment.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/computeexperiment.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/computerouting.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/computerouting.js",
         "line": 1
       }
     },
@@ -230802,6 +231036,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/compute-experiment.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/compute-router.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/compute-router.js",
         "line": 1
       }
     },
@@ -245204,6 +245447,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "0e2fef3f3c0269ecfe1f70b76274d692d6462e0e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0e495189416f510b84277b5887d06640750446e5"
       }
     },
     {
@@ -289556,6 +289831,78 @@
       "to": "Artifact:src/sov.js",
       "provenance": {
         "commit": "63ca1748ce6b035ddb33c225b348dd365a4c1e5b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:docs/compute-value-experiments.md",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:test/compute-router-cli.js",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:test/computerouting.js",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "to": "Artifact:tools/compute-router.js",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
       }
     },
     {
@@ -371200,6 +371547,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "file": "src/computerouting.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "src/contacts.js",
@@ -393516,9 +393872,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/compute-router-cli.js",
+      "provenance": {
+        "file": "test/compute-router-cli.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/computeexperiment.js",
       "provenance": {
         "file": "test/computeexperiment.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/computerouting.js",
+      "provenance": {
+        "file": "test/computerouting.js",
         "line": 1
       }
     },
@@ -397542,6 +397916,15 @@
       "to": "Artifact:tools/compute-experiment.js",
       "provenance": {
         "file": "tools/compute-experiment.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/compute-router.js",
+      "provenance": {
+        "file": "tools/compute-router.js",
         "line": 1
       }
     },
@@ -410932,6 +411315,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:route:compute:shadow",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:scale",
       "provenance": {
         "file": "package.json",
@@ -411059,6 +411451,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:compute:experiments",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:compute:routing",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -424739,7 +425140,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1136
+      "weight": 1138
     },
     {
       "type": "DEPENDS_ON",
@@ -426804,6 +427205,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:route:compute:shadow",
+      "to": "Artifact:tools/compute-router.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:scale",
       "to": "Artifact:tools/scale.js",
       "provenance": {
@@ -427111,7 +427521,25 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test",
+      "to": "Artifact:test/compute-router-cli.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
       "to": "Artifact:test/computeexperiment.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/computerouting.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -428372,6 +428800,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:compute:experiments",
       "to": "Artifact:test/computeexperiment.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:compute:routing",
+      "to": "Artifact:test/compute-router-cli.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:compute:routing",
+      "to": "Artifact:test/computerouting.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -439766,6 +440212,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0e495189416f510b84277b5887d06640750446e5",
+      "provenance": {
+        "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0e696a889caa1b9b6c53df6e8a3ebb6824ea3479",
       "provenance": {
         "commit": "0e696a889caa1b9b6c53df6e8a3ebb6824ea3479"
@@ -445785,6 +446239,14 @@
       "to": "Commit:63ca1748ce6b035ddb33c225b348dd365a4c1e5b",
       "provenance": {
         "commit": "63ca1748ce6b035ddb33c225b348dd365a4c1e5b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:63dea0144b886ff305770f5b4fed81c3790f36a3",
+      "provenance": {
+        "commit": "63dea0144b886ff305770f5b4fed81c3790f36a3"
       }
     },
     {
@@ -458861,6 +459323,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/computerouting.js",
+      "to": "Artifact:src/computeexperiment.js",
+      "provenance": {
+        "file": "src/computerouting.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/contacts.js",
       "to": "Artifact:src/game.js",
       "provenance": {
@@ -470750,10 +471221,46 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/compute-router-cli.js",
+      "to": "Artifact:tools/compute-experiment.js",
+      "provenance": {
+        "file": "test/compute-router-cli.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/compute-router-cli.js",
+      "to": "Artifact:tools/compute-router.js",
+      "provenance": {
+        "file": "test/compute-router-cli.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/computeexperiment.js",
       "to": "Artifact:src/computeexperiment.js",
       "provenance": {
         "file": "test/computeexperiment.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/computerouting.js",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "file": "test/computerouting.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/computerouting.js",
+      "to": "Artifact:tools/compute-experiment.js",
+      "provenance": {
+        "file": "test/computerouting.js",
         "line": 2
       }
     },
@@ -489781,6 +490288,24 @@
       "provenance": {
         "file": "tools/compute-experiment.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/compute-router.js",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "file": "tools/compute-router.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/compute-router.js",
+      "to": "Artifact:tools/compute-experiment.js",
+      "provenance": {
+        "file": "tools/compute-router.js",
+        "line": 5
       }
     },
     {
@@ -529781,6 +530306,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/computerouting.js",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "file": "src/computerouting.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/contacts.js",
       "to": "Artifact:src/contacts.js",
       "provenance": {
@@ -533543,10 +534077,28 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/compute-router-cli.js",
+      "to": "Artifact:test/compute-router-cli.js",
+      "provenance": {
+        "file": "test/compute-router-cli.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/computeexperiment.js",
       "to": "Artifact:test/computeexperiment.js",
       "provenance": {
         "file": "test/computeexperiment.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/computerouting.js",
+      "to": "Artifact:test/computerouting.js",
+      "provenance": {
+        "file": "test/computerouting.js",
         "line": 1
       }
     },
@@ -538840,6 +539392,15 @@
       "provenance": {
         "file": "test/computeexperiment.js",
         "line": 2
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/computerouting.js",
+      "to": "Artifact:src/computerouting.js",
+      "provenance": {
+        "file": "test/computerouting.js",
+        "line": 3
       }
     },
     {
