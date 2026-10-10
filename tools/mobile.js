@@ -399,6 +399,10 @@ for (const vp of VIEWPORTS) {
       walked.push(id);
       await page.evaluate(() => window.scrollTo(0, 0));   // judge the fold from the top, as a player arrives
       await check(page, id, vp, { contentMustShow: true });
+      if (id === 'map' && await page.locator('body.city-player-view').count()) {
+        await page.click('#btn-dashboard-view');
+        if (await page.locator('#btn-dashboard-view').getAttribute('aria-pressed') !== 'true') fail('(view switch)', vp, 'The visible view switch did not restore dashboard navigation.');
+      }
     }
   }
 
@@ -1015,6 +1019,10 @@ for (const vp of VIEWPORTS) {
       const id = await t.getAttribute('data-tab');
       await t.click();
       await probeScreen(id);
+      if (id === 'map' && await page.locator('body.city-player-view').count()) {
+        await page.click('#btn-dashboard-view');
+        if (await page.locator('#btn-dashboard-view').getAttribute('aria-pressed') !== 'true') fail('(xss view switch)', vp, 'The XSS walk did not restore dashboard navigation through the visible control.');
+      }
     }
   }
   // The cellphone modal renders names too (threads, the black book) and sits outside every tab.

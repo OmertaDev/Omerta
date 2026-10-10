@@ -9,13 +9,56 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
-  GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
+  GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
+  CITY_PRESENCE_SOURCE_REVIEWED_REVISION, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
+  assertCityPresenceServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const serverText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const currentServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const presenceProof = assertCityPresenceServerTransfer(currentServerText);
+const serverText = presenceProof.baselineText;
+assert.equal(presenceProof.actualSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(presenceProof.baselineSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
+assert.equal(CITY_PRESENCE_SERVER_PREDECESSOR_PIN, GOODS_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(presenceProof.sourceRevision, CITY_PRESENCE_SOURCE_REVIEWED_REVISION);
+assert.equal(presenceProof.predecessorRevision, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION);
+assert.equal(presenceProof.inverseChunks, 2);
+assert.equal(currentServerText, execFileSync('git', ['show', `${CITY_PRESENCE_SOURCE_REVIEWED_REVISION}:src/server.js`],
+  { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'), 'The complete current server matches the reviewed Git source.');
+assert.equal(serverText, execFileSync('git', ['show', `${CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION}:src/server.js`],
+  { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'), 'The inverse restores the complete immediate Git predecessor.');
+const presenceImport = "import { registerCity } from './routes/city.js';\n";
+const presenceRegistration = '  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });\n';
+for (const chunk of [presenceImport, presenceRegistration]) assert.equal(currentServerText.split(chunk).length, 2);
+const serverGuards = [assertGenesisSnapshotServerCompatibility, assertGenesisWrapperServerCompatibility,
+  assertHttpReceiptServerCompatibility, assertDeedServerCompatibility];
+for (const guard of serverGuards) {
+  const actual = guard(currentServerText), previous = guard(serverText);
+  const { actualSha256, cityPresenceSourceTransfer, ...retained } = actual;
+  const { actualSha256: predecessorSha256, ...historical } = previous;
+  assert.equal(actualSha256, CITY_PRESENCE_SERVER_PIN); assert.equal(predecessorSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
+  assert.deepEqual(cityPresenceSourceTransfer, presenceProof); assert.deepEqual(retained, historical, 'Every old transfer/qualification field is preserved.');
+}
+for (const changed of [
+  currentServerText.replace(presenceImport, presenceImport.repeat(2)),
+  currentServerText.replace(presenceRegistration, presenceRegistration.repeat(2)),
+  currentServerText.replace(presenceImport, ''),
+  currentServerText.replace(presenceRegistration, ''),
+  currentServerText.replace("'./routes/city.js'", "'./routes/unreviewed-city.js'"),
+  currentServerText.replace(presenceRegistration, presenceRegistration.replace('pool, auth,', 'pool, auth: null,')),
+  currentServerText.replace('[...wsClients.keys()]', '[]'),
+  currentServerText + "\nimport './unreviewed-authority.js';\n",
+  currentServerText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"),
+]) {
+  assert.notEqual(changed, currentServerText); assert.notEqual(changed, serverText);
+  assert.throws(() => assertCityPresenceServerTransfer(changed), /source changed/);
+  for (const guard of serverGuards) assert.throws(() => guard(changed), /source changed/);
+  assert.throws(() => assertEconomySourceTransfer('src/server.js', changed), /source changed/);
+}
 const serverProof = assertDeedServerCompatibility(serverText);
 assert.equal(serverProof.actualSha256, GOODS_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.goodsSourceTransfer.baselineSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
@@ -24,7 +67,7 @@ assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER
 const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
-  const actual = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const actual = file === 'src/server.js' ? serverText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
   const text = Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file) ? assertGoodsSourceTransfer(file, actual).baselineText : actual;
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],
@@ -120,11 +163,17 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], GOODS_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/server.js'], CITY_PRESENCE_SERVER_PIN);
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 8);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 9);
+assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.actualServerSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.sourceRevision, CITY_PRESENCE_SOURCE_REVIEWED_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.predecessorRevision, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.inverseChunks, 2);
+assert.match(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.scope, /New City roster, intel, encounter, private progression, death\/retirement authority and reachability are not inherited/);
 assert.equal(WORLD_RECOVERY_REVIEW.goodsSourceReviewTransfer.sourceRevision, GOODS_SOURCE_REVIEWED_REVISION);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.goodsSourceReviewTransfer.predecessorPins,
   Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])));

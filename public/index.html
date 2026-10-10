@@ -114,6 +114,17 @@
   #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }
   #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }
   #whoami b { color: var(--ink); }
+  #player-view-switch { display: inline-flex; flex: 0 0 auto; gap: 4px; padding: 3px;
+    border: 1px solid var(--gold); border-radius: var(--r-md); background: var(--panel2); }
+  #top #player-view-switch button { min-height: 44px; padding: 8px 10px; font-size: 12px; }
+  #player-view-switch button[aria-pressed="true"] { background: var(--neon); color: #17130b; border-color: var(--neon); }
+  body.city-player-view #top { position: sticky; top: 0; }
+  body.city-player-view #top > :not(h1):not(#whoami):not(#player-view-switch):not(#btn-refresh),
+  body.city-player-view #coachwrap, body.city-player-view #vitals,
+  body.city-player-view #leftcol, body.city-player-view #wirepanel,
+  body.city-player-view #grouprail, body.city-player-view #tabs,
+  body.city-player-view #tabart, body.city-player-view #bnav { display: none; }
+  body.city-player-view #layout { grid-template-columns: minmax(0, 1fr); padding-bottom: 14px; }
 
   /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */
   #vitals { display: none; }
@@ -519,6 +530,8 @@
     #top h1 { letter-spacing: 2px; font-size: 17px; }
     #top #btn-logout { font-size: 0; padding: 7px 10px; }
     #top #btn-logout::after { content: '⏻'; font-size: 15px; line-height: 1; }
+    #top #btn-character-nft { font-size: 0; }
+    #top #btn-character-nft::after { content: 'Character NFT'; font-size: 12px; }
     /* the two scroll rails were chopping mid-character ("V…", "The…"), which reads as
        broken rather than as scrollable. A mask fades the cut instead. */
     #grouprail, #tabs { -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 26px), transparent 100%);
@@ -1534,9 +1547,13 @@
 <main id="screen-main" class="hidden">
   <div id="top">
     <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
+    <div id="player-view-switch" role="group" aria-label="Game view">
+      <button class="act" id="btn-player-view" type="button" aria-pressed="false" aria-controls="tab-map">Player view</button>
+      <button class="act" id="btn-dashboard-view" type="button" aria-pressed="true">Dashboard</button>
+    </div>
     <span id="whoami"></span>
     <button class="act" id="btn-wallet" type="button" aria-label="Open wallet and character checkout">Connect wallet</button>
-    <button class="act" id="btn-character-nft" type="button">Mint your character NFT</button>
+    <button class="act" id="btn-character-nft" type="button" aria-label="Mint your character NFT">Mint your character NFT</button>
     <button class="act capital-trigger" id="btn-capital" type="button" aria-label="Open the $OMR finance dashboard" title="the capital desk — launch, staking, bonds, the Desk and the on-chain rail">
       <span class="capital-trigger__mark">$OMR</span><span class="capital-trigger__label">finance</span><span class="capital-trigger__balance" id="capital-balance">—</span>
     </button>
@@ -4731,6 +4748,7 @@
     const run = async () => {
       const neutral = { ignored: true, code: 499, body: { error: 'session_changed' } };
       if (!valid()) return neutral;
+      if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true, code: 499, body: {} };
       const result = await apiNow(method, path, body, { ...options, authToken });
       return valid() ? result : neutral;
     };
@@ -4826,6 +4844,7 @@
         try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
       }
       if (kind === 'player') me = null;
+      clearScopedOperations();
       paintWorld();
     },
     apply: (kind, result) => {
@@ -4835,6 +4854,7 @@
           const previousGeneration = me?.generation;
           const previousCityIdentity = cityIdentity();
           me = result.body.player?.character || result.body.player;
+          clearScopedOperations();
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
@@ -5231,6 +5251,19 @@
   let operationSeq = 0;
   let operationPending = null;
   const operationReceipts = [];
+  let _operationResponseCurrent = null;
+  function clearScopedOperations() {
+    if (_operationResponseCurrent && !_operationResponseCurrent()) {
+      $('#resp').textContent = ''; _operationResponseCurrent = null;
+    }
+    let changed = false;
+    for (let i = operationReceipts.length - 1; i >= 0; i--) {
+      if (operationReceipts[i].isCurrent && !operationReceipts[i].isCurrent()) {
+        operationReceipts.splice(i, 1); changed = true;
+      }
+    }
+    if (changed) renderOperationFeed();
+  }
   const operationSnapshot = (m) => m ? ({
     cash: Number(m.cash || 0), bank: Number(m.bank || 0), omr: Number(m.omr || 0),
     energy: Number(m.energy || 0), nerve: Number(m.nerve || 0), health: Number(m.health || 0),
@@ -5271,17 +5304,21 @@
   function operationRecovery(result, context) {
     const code = result.body?.error;
     const retrySame = () => act(context.method, context.path, context.body,
-      { idempotencyKey: context.idempotencyKey, label: context.label });
+      { idempotencyKey: context.idempotencyKey, label: context.label, beforeDispatch: context.beforeDispatch,
+        isCurrent: context.isCurrent, onReceipt: context.onReceipt });
     if (code === 'in_progress') return {
+      sameKey: true,
       text: 'The server may still be recording this move. Retry safely with the same request key; it cannot charge twice.',
       label: 'retry same move', run: retrySame,
     };
     if (code === 'idempotency_key_reuse') return {
       text: 'That protected request key belongs to a different move. Start this move once with a fresh key.',
       label: 'start as a new move',
-      run: () => act(context.method, context.path, context.body, { label: context.label }),
+      run: () => act(context.method, context.path, context.body, { label: context.label,
+        beforeDispatch: context.beforeDispatch, isCurrent: context.isCurrent, onReceipt: context.onReceipt }),
     };
     if (['offline', 'db_down', 'internal', 'contention', 'again'].includes(code)) return {
+      sameKey: true,
       text: code === 'offline'
         ? 'No response reached you. Retry the same move; its request key protects against a duplicate.'
         : 'Nothing new is confirmed. Retry the same move with its protected request key.',
@@ -5339,8 +5376,9 @@
     </article>`;
   }
   function operationFeedMarkup() {
-    if (!operationReceipts.length) return '<p class="operation-feed__empty">No moves recorded this session.</p>';
-    const [latest, ...older] = operationReceipts;
+    const visible = operationReceipts.filter(receipt => !receipt.isCurrent || receipt.isCurrent());
+    if (!visible.length) return '<p class="operation-feed__empty">No moves recorded this session.</p>';
+    const [latest, ...older] = visible;
     return operationReceiptMarkup(latest) + (older.length ? `<details class="operation-feed__earlier">
       <summary>Earlier this session (${older.length})</summary>${older.map(operationReceiptMarkup).join('')}</details>` : '');
   }
@@ -5365,19 +5403,21 @@
     line.textContent = operationPending ? `Working: ${operationPending}…` : '';
     line.classList.toggle('hidden', !operationPending);
   }
-  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey }) {
+  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt }) {
     const failed = result.code >= 400;
     const receipt = {
+      ...(isCurrent ? { isCurrent } : {}),
       id: ++operationSeq, state: failed ? 'error' : 'success', label,
       summary: describe(result.body, result.code),
       delta: failed ? 'No state change confirmed.' : operationDelta(before, after),
       at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       atIso: new Date().toISOString(),
     };
-    if (failed) receipt.recovery = operationRecovery(result, { label, method, path, body, idempotencyKey });
+    if (failed) receipt.recovery = operationRecovery(result, { label, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt });
     operationReceipts.unshift(receipt);
     operationReceipts.splice(6);
     renderOperationFeed();
+    return receipt;
   }
   // one money move at a time — a global in-flight lock is the double-tap guard (buttons re-render
   // after each act, so a per-button disable is redundant; this covers every call site at once).
@@ -5425,10 +5465,12 @@
     renderOperationPending();
     busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
-      const r = await api(method, path, body, { idempotencyKey });
+      const r = await api(method, path, body, { idempotencyKey, beforeDispatch: options.beforeDispatch, isCurrent: options.isCurrent });
+      if ((options.beforeDispatch || options.isCurrent) && r.ignored) return r;
       // the "Last Word" viewer shows the ACTION result (written here, before refresh's GET /v1/me
       // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).
       $('#resp').textContent = `${method} ${path}\n` + JSON.stringify(r.body, null, 2);
+      _operationResponseCurrent = options.isCurrent || null;
       // a location refusal comes back naming the district (GameError data) — offer the ride rather
       // than leaving the player to find the travel control on one screen out of 25
       const goHere = r.code >= 400 && r.body?.error === 'district' && r.body?.district;
@@ -5465,9 +5507,15 @@
         const bt = bragText(r.body); if (bt) { haptic('big'); showBrag(bt); }
       } else if (r.code >= 400) { shake(); sfx('bad'); }
       const stateRefresh = await refresh();
-      recordOperation({ label, result: r, before,
+      if (options.isCurrent && !options.isCurrent()) {
+        $('#resp').textContent = '';
+        return { ignored: true, code: 499, body: {} };
+      }
+      const receipt = recordOperation({ label, result: r, before,
         after: stateRefresh?.code < 400 ? operationSnapshot(me) : null,
-        method, path, body, idempotencyKey });
+        method, path, body, idempotencyKey, beforeDispatch: options.retryBeforeDispatch || options.beforeDispatch,
+        isCurrent: options.isCurrent, onReceipt: options.onReceipt });
+      if (options.onReceipt) options.onReceipt(receipt);
       // …and re-render the BOARD you are looking at, not just the sheet. `refresh()` only redraws the
       // left column, so until now the screen you just acted on kept showing the old state until a WS
       // event or the 30s poll happened along: you paid the pad and the front still said COLD, you let
@@ -5953,9 +6001,10 @@
     landingMenu.querySelector('summary').focus();
   });
   function show(id) {
-    if (id !== 'screen-main') { destroyCityScene(); destroyFieldwork(); _citySession = null; syncCitySessionBar(); }
+    if (id !== 'screen-main') { destroyCityScene(); destroyFieldwork(); _citySession = null; clearCityPeople(); clearScopedOperations(); syncCitySessionBar(); }
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
+    syncPlayerView();
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
   }
   // Atmosphere is optional: a deliberate Play starts the transfer; Pause stops the motion.
@@ -6256,7 +6305,12 @@
     token = null; projections.setSession(null);
     localStorage.removeItem('omerta_token'); location.reload();
   };
-  $('#btn-refresh').onclick = () => refresh();
+  $('#btn-refresh').onclick = async () => {
+    const stamp = projections.snapshot(), identity = cityIdentity(), navigation = navigationRevision;
+    const result = await refresh();
+    if (result.code < 400 && projections.current(stamp) && identity === cityIdentity()
+      && navigation === navigationRevision && currentTab === 'map') renderActive({ afterAction: true });
+  };
   // the glossary (the ? up top) + the first-session welcome (shown once per browser)
   $('#btn-help').onclick = () => $('#glossary').classList.remove('hidden');
   // THE SOUNDTRACK toggle — the label IS the state; muting persists across sessions
@@ -7439,6 +7493,7 @@
   let characterCheckoutOnly = false;
   function setTab(id, { characterOnly = false } = {}) {
     if (!TABS[id]) return;
+    if (id === 'map' && currentTab !== 'map' && _mapMode === 'walk') rememberDashboardView();
     cancelCityEntry();
     if (id !== 'map') destroyCityScene();
     if (id !== 'fieldwork') destroyFieldwork();
@@ -7451,6 +7506,7 @@
     rememberTab(id);
     noteScreen(id);
     currentTab = id;
+    syncPlayerView();
     syncCitySessionBar();
     activeGroup = groupOf(id);
     lastTabIn[activeGroup] = id;
@@ -8652,6 +8708,134 @@
   let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
   let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map();
   let _cityEntry = null;
+  let _cityPeople = null, _cityIntel = null, _cityPeopleRevision = 0, _cityEncounterPending = false, _cityEncounterReceipt = null;
+  function clearCityPeople() { _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityPeopleRevision++; }
+  function cityBoardCurrent(board) {
+    return board?.viewer?.characterId === me?.id && board.viewer.generation === me?.generation
+      && board.viewer.district === me?.loc;
+  }
+  function cityPeopleOptions() {
+    const key = cityIdentity();
+    const receipt = _cityEncounterReceipt?.key === key && _cityEncounterReceipt.current() ? _cityEncounterReceipt.receipt : null;
+    return { actors: _cityPeople?.key === key ? _cityPeople.actors : [],
+      hasMore: _cityPeople?.key === key && _cityPeople.hasMore,
+      intel: _cityIntel?.key === key ? _cityIntel.journal : [],
+      objectives: _cityIntel?.key === key ? _cityIntel.objectives : [],
+      encounterRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery?.run === 'function',
+      encounterReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
+        recoveryLabel: receipt.recovery?.sameKey === true ? receipt.recovery.label : '', recoveryText: receipt.recovery?.text || '' } : null };
+  }
+  function publishCityPeople() {
+    if (currentTab !== 'map' || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
+    Object.assign(_citySceneOptions, cityPeopleOptions());
+    _cityScene?.update?.({ ...cityPeopleOptions(), character: { ...me } });
+  }
+  function acceptCityIntel(board) {
+    if (!cityBoardCurrent(board) || !Number.isSafeInteger(board.progress?.totalEncounters) || board.progress.totalEncounters < 0) return false;
+    if (_cityIntel?.key === cityIdentity() && _cityIntel.totalEncounters > board.progress.totalEncounters) return false;
+    _cityIntel = { key: cityIdentity(), journal: Array.isArray(board.journal) ? board.journal : [],
+      objectives: Array.isArray(board.objectives) ? board.objectives : [], totalEncounters: board.progress.totalEncounters };
+    return true;
+  }
+  function acceptCityPeoplePage(key, pageIndex, cursor, board) {
+    const pages = _cityPeople?.key === key ? [...(_cityPeople.pages || [])] : [];
+    if (pages[pageIndex] && pages[pageIndex].cursor !== board.nextCursor) pages.length = pageIndex + 1;
+    pages[pageIndex] = { start: cursor, actors: board.actors || [], cursor: board.nextCursor, hasMore: board.hasMore === true };
+    const actors = new Map();
+    for (const page of pages) for (const actor of page?.actors || []) actors.set(actor.id, actor);
+    const last = pages.at(-1);
+    _cityPeople = { key, pages, actors: [...actors.values()], cursor: last?.cursor, hasMore: last?.hasMore === true };
+  }
+  async function loadCityPeoplePage() {
+    if (!_cityPeople?.hasMore || !_cityPeople.cursor || _cityPeople.key !== cityIdentity()) return;
+    const stamp = projections.snapshot(), key = cityIdentity(), revision = ++_cityPeopleRevision;
+    const cursor = _cityPeople.cursor, pageIndex = _cityPeople.pages?.length || 0;
+    const result = await api('GET', '/v1/city/presence?cursor=' + encodeURIComponent(cursor), undefined,
+      { isCurrent: () => projections.current(stamp) && key === cityIdentity() && currentTab === 'map' });
+    if (result.code >= 400 || revision !== _cityPeopleRevision || !cityBoardCurrent(result.body)) return result;
+    acceptCityPeoplePage(key, pageIndex, cursor, result.body);
+    publishCityPeople();
+    return result;
+  }
+  async function performCityEncounter(actorId, actionId) {
+    const actor = _cityPeople?.key === cityIdentity() ? _cityPeople.actors.find(actor => actor.id === actorId) : null;
+    const action = actor?.actions?.find(action => action.id === actionId);
+    if (!action?.available || _cityEncounterPending || cityPeopleOptions().encounterRecovery || currentTab !== 'map' || _mapMode !== 'walk'
+      || action.method !== 'POST' || action.path !== '/v1/city/encounters/' + encodeURIComponent(actorId)
+      || !cityBoardCurrent({ viewer: action.body })) return { code: 409, body: { error: 'city_actor_unavailable' } };
+    const scene = _cityScene, opening = scene?.getState?.().actorOpening, key = cityIdentity(), stamp = projections.snapshot();
+    const ownerCurrent = () => projections.current(stamp) && key === cityIdentity();
+    const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
+      && scene?.getState?.().selectedActor === actorId && scene.getState().actorOpening === opening;
+    _cityEncounterPending = true;
+    try {
+      const result = await act(action.method, action.path, action.body, { label: 'Collect intel from ' + actor.name,
+        beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
+        onReceipt: receipt => { if (ownerCurrent()) {
+          _cityEncounterReceipt = { key, current: ownerCurrent, receipt }; publishCityPeople();
+        } } });
+      if (ownerCurrent() && result.code < 400 && cityBoardCurrent(result.body)) {
+        if (acceptCityIntel(result.body)) _cityPeopleRevision++;
+        publishCityPeople();
+      }
+      return result;
+    } finally { _cityEncounterPending = false; }
+  }
+  async function retryCityEncounter() {
+    const pending = _cityEncounterReceipt;
+    if (_cityEncounterPending || pending?.key !== cityIdentity() || !pending.current()
+      || pending.receipt.recovery?.sameKey !== true || !pending.receipt.recovery.run) {
+      return { code: 499, ignored: true, body: {} };
+    }
+    _cityEncounterPending = true;
+    try {
+      const result = await pending.receipt.recovery.run();
+      if (pending.current() && result.code < 400 && cityBoardCurrent(result.body)) {
+        if (acceptCityIntel(result.body)) _cityPeopleRevision++;
+        publishCityPeople();
+      }
+      return result;
+    } finally { _cityEncounterPending = false; }
+  }
+  function performCityIntelAction() { return { code: 409, body: { error: 'city_objective_progresses_by_encounters' } }; }
+  let _dashboardView = null;
+  const _playerRefreshHome = { parent: $('#btn-refresh').parentNode, next: $('#btn-refresh').nextSibling };
+  function rememberDashboardView() {
+    _dashboardView = { owner: me?.id, generation: me?.generation, tab: currentTab,
+      territory: _mapMode === 'territory', scroll: window.scrollY };
+  }
+  function syncPlayerView() {
+    const player = currentTab === 'map' && _mapMode === 'walk' && !!me?.id
+      && !$('#screen-main').classList.contains('hidden');
+    document.body.classList.toggle('city-player-view', player);
+    const refreshButton = $('#btn-refresh');
+    if (player && refreshButton.parentNode !== $('#top')) $('#top').append(refreshButton);
+    else if (!player && refreshButton.parentNode !== _playerRefreshHome.parent) {
+      _playerRefreshHome.parent.insertBefore(refreshButton,
+        _playerRefreshHome.next?.parentNode === _playerRefreshHome.parent ? _playerRefreshHome.next : null);
+    }
+    $('#btn-player-view').setAttribute('aria-pressed', String(player));
+    $('#btn-dashboard-view').setAttribute('aria-pressed', String(!player));
+    $('#btn-player-view').disabled = !me?.id;
+  }
+  $('#btn-player-view').onclick = event => {
+    if (!me?.id || $('#screen-main').classList.contains('hidden') || topModal()) return;
+    if (currentTab !== 'map' || _mapMode !== 'walk') rememberDashboardView();
+    _mapMode = 'walk';
+    if (currentTab !== 'map') setTab('map');
+    syncPlayerView();
+    enterNeighborhood(event.currentTarget);
+  };
+  $('#btn-dashboard-view').onclick = () => {
+    if (!document.body.classList.contains('city-player-view') || topModal()) return;
+    const previous = _dashboardView?.owner === me?.id && _dashboardView?.generation === me?.generation
+      && Object.hasOwn(TABS, _dashboardView.tab) ? _dashboardView : null;
+    _mapMode = previous?.tab === 'map' && previous.territory ? 'territory' : 'walk';
+    setTab(previous?.tab || 'start');
+    if (currentTab === 'map') syncMapMode();
+    $('#tab-' + currentTab)?.focus({ preventScroll: true });
+    window.scrollTo({ top: previous?.scroll || 0, behavior: 'instant' });
+  };
   let _fieldwork = null, _fieldworkEpoch = 0;
   const CITY_VENUE_TABS = {
     fixer: ['streets', 'scores', 'pvp', 'law', 'pen', 'wire'],
@@ -8828,7 +9012,9 @@
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
       _cityScene = scene.mount(host, { ...options, character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
-        position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED });
+        position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED,
+        onPresencePage: loadCityPeoplePage, onEncounter: performCityEncounter, onIntelAction: performCityIntelAction,
+        onEncounterRetry: retryCityEncounter });
       _citySceneKey = key;
     } catch {
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;
@@ -8839,6 +9025,7 @@
     }
   }
   function syncMapMode() {
+    syncPlayerView();
     const walk = _mapMode === 'walk';
     const neighborhood = $('#map-neighborhood'), territory = $('#map-territory-board');
     if (!neighborhood || !territory) return;
@@ -8944,10 +9131,25 @@
     const revision = ++_mapReadRevision, navigation = navigationRevision;
     const stamp = projections.snapshot(), identity = cityIdentity();
     const questPromise = cityQuestProjection(stamp).catch(() => ({ quests: {}, actions: new Map() }));
+    const peopleRevision = ++_cityPeopleRevision;
+    const actorPage = _cityPeople?.key === identity ? _cityScene?.getState?.().actorPage || 0 : 0;
+    const peoplePage = Math.min(actorPage, Math.max(0, (_cityPeople?.pages?.length || 1) - 1));
+    const peopleCursor = _cityPeople?.key === identity ? _cityPeople.pages?.[peoplePage]?.start : null;
     const reply = await api('GET', '/v1/map', undefined, { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
+    const peopleReply = await api('GET', peopleCursor ? '/v1/city/presence?cursor=' + encodeURIComponent(peopleCursor) : '/v1/city/presence',
+      undefined, { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
+    const intelReply = await api('GET', '/v1/city/intel', undefined,
+      { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
+    const people = peopleReply.body || {}, intel = intelReply.body || {};
     const quest = await questPromise;
     if (currentTab !== 'map' || revision !== _mapReadRevision || navigation !== navigationRevision
       || !projections.current(stamp) || identity !== cityIdentity()) return;
+    if (peopleRevision === _cityPeopleRevision) {
+      if (peopleReply.code < 400 && cityBoardCurrent(people)) {
+        acceptCityPeoplePage(identity, peoplePage, peopleCursor, people);
+      } else _cityPeople = null;
+      if (intelReply.code < 400) acceptCityIntel(intel);
+    }
     const b = reply.body || {};
     const districts = b.districts || [], powers = b.powers || [], season = b.season || {}, mine = b.mine || {};
     const seasonBanner = season.reckoning
@@ -8999,7 +9201,7 @@
         || { id: me.loc, name: me.loc.replace(/[-_]/g, ' '), state: null };
       _cityNpcActions = quest.actions;
       _citySceneOptions = { district, character: { ...me }, progress: cityProgress(),
-        venueActions: cityVenueActions(), npcQuests: quest.quests };
+        venueActions: cityVenueActions(), npcQuests: quest.quests, ...cityPeopleOptions() };
     } else {
       _citySceneOptions = null;
       destroyCityScene();

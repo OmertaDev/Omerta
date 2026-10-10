@@ -43,6 +43,8 @@
     { x: 864, y: 428, width: 48, height: 50 },
     { x: 832, y: 502, width: 32, height: 34 }
   ]);
+  const ACTOR_PAGE_SIZE = 24;
+  let instanceSequence = 0;
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -109,6 +111,10 @@
     let destroyed = false, ready = false, game = null, scene = null, bootTimer = null;
     let player = null, selected = null, pendingVenue = null, path = [];
     let pathInk = null, destinationInk = null;
+    const actorSprites = new Map();
+    let actorPage = 0, selectedActor = null, pendingActor = null, actorOpening = 0, actorView = '', actorReturn = null;
+    let paging = false, encounterPending = false, pagingNotice = '', actorNotice = '', actorRenderSignature = '', presenceSignature = '';
+    const sceneIdentity = () => [character.id, character.generation, district.id].join(':');
     const requestedPosition = options.position || {};
     const validPosition = traversable(requestedPosition.x, requestedPosition.y);
     const initialPosition = validPosition
@@ -178,6 +184,9 @@
     journal.setAttribute('data-city-journal', '');
     hud.append(resourceGrid, progressRow, journal);
     worldHud.append(worldResources, readiness);
+    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
+    presenceCaption.hidden = true;
+    worldHud.append(presenceCaption);
     const nextMove = element('div', 'omerta-city__next-move');
     const nextCopy = element('div');
     nextCopy.setAttribute('role', 'status');
@@ -222,7 +231,18 @@
     let renderedActionSignature = '', renderedQuestSignature = '';
     card.append(cardControls, cardTitle, cardText, questCard, open, actionList);
     mapLayer.append(canvasHost, status, card);
-    viewport.append(worldHud, mapLayer);
+    const actorDock = element('section', 'omerta-city__actor-dock');
+    actorDock.hidden = true;
+    actorDock.setAttribute('aria-label', 'People and street intel');
+    const actorDockControls = element('div', 'omerta-city__actor-controls');
+    const actorClose = element('button', '', '×');
+    actorClose.type = 'button'; actorClose.setAttribute('data-city-actor-close', '');
+    actorClose.setAttribute('aria-label', 'Close people and intel');
+    actorDockControls.append(actorClose);
+    const actorBody = element('div', 'omerta-city__actor-body');
+    actorBody.tabIndex = -1;
+    actorDock.append(actorDockControls, actorBody);
+    viewport.append(worldHud, mapLayer, actorDock);
     const instructions = element('p', 'omerta-city__instructions');
     const walking = element('span');
     walking.append(element('strong', '', 'Tap to walk.'), document.createTextNode(' Focus the map for WASD / arrows.'));
@@ -263,12 +283,15 @@
     interact.type = 'button';
     interact.disabled = true;
     interact.setAttribute('data-city-interact', '');
+    const nearbyCopy = element('span', 'omerta-city__nearby', 'Move near a person or place to interact.');
+    nearbyCopy.id = 'city-nearby-' + (++instanceSequence);
+    interact.setAttribute('aria-describedby', nearbyCopy.id);
     const cancel = element('button', '', 'Stop walking');
     cancel.type = 'button';
     cancel.setAttribute('data-city-cancel', '');
-    controlActions.append(interact, cancel, element('span', '', 'Hold an arrow to walk.'));
+    controlActions.append(interact, cancel, nearbyCopy, element('span', '', 'Hold an arrow to walk.'));
     controls.append(dpad, controlActions);
-    listen(interact, 'click', () => { const venue = nearVenue(); if (venue) showVenue(venue); });
+    listen(interact, 'click', () => inspectNearby());
     listen(cancel, 'click', () => { stopMovement(); hideVenue(false); reportPosition(true); });
     const destinations = element('nav', 'omerta-city__destinations');
     destinations.setAttribute('aria-label', 'Neighborhood destinations');
@@ -286,9 +309,248 @@
       buttons.set(venue.id, button);
       listen(button, 'click', () => showVenue(venue));
     }
-    root.append(header, hud, nextMove, viewport, instructions, controls, destinations);
+    const presence = element('section', 'omerta-city__presence');
+    presence.setAttribute('aria-label', 'People reported in this district');
+    const presenceHead = element('div', 'omerta-city__presence-heading');
+    const presenceTitle = element('h4', '', 'People in this district');
+    presenceTitle.tabIndex = -1;
+    const intelOpen = element('button', '', 'Street intel & objectives');
+    intelOpen.type = 'button'; intelOpen.setAttribute('data-city-intel-open', '');
+    presenceHead.append(presenceTitle, intelOpen);
+    const placement = element('p', 'omerta-city__placement', 'District presence · marker positions are approximate, not live walking locations.');
+    const actorList = element('div', 'omerta-city__actor-list');
+    const actorPager = element('div', 'omerta-city__actor-pager');
+    const actorsPrevious = element('button', '', 'Previous people');
+    actorsPrevious.type = 'button'; actorsPrevious.setAttribute('data-city-actors-previous', '');
+    const actorsMore = element('button', '', 'More people');
+    actorsMore.type = 'button'; actorsMore.setAttribute('data-city-actors-more', '');
+    const actorCount = element('span');
+    actorCount.setAttribute('role', 'status');
+    actorPager.append(actorsPrevious, actorCount, actorsMore);
+    presence.append(presenceHead, placement, actorList, actorPager);
+    root.append(header, hud, nextMove, viewport, instructions, controls, destinations, presence);
+    renderPresence();
     host.replaceChildren(root);
     updateHud();
+
+    function publicActors() {
+      const result = new Map();
+      for (const actor of Array.isArray(options.actors) ? options.actors : []) {
+        if (!actor || typeof actor.id !== 'string' || !actor.id || actor.id === character.id
+          || !['npc', 'agent', 'player'].includes(actor.kind) || actor.district !== district.id) continue;
+        result.set(actor.id, actor);
+      }
+      return Array.from(result.values());
+    }
+    function pageActors() { return publicActors().slice(actorPage * ACTOR_PAGE_SIZE, (actorPage + 1) * ACTOR_PAGE_SIZE); }
+    function findActor(id) { return publicActors().find(actor => actor.id === id); }
+    function actorActions(actor) {
+      return (Array.isArray(actor?.actions) ? actor.actions : []).filter(action => action && typeof action.id === 'string'
+        && action.method === 'POST' && action.path === '/v1/city/encounters/' + encodeURIComponent(actor.id));
+    }
+    function renderPresence() {
+      presence.hidden = !('actors' in options || 'intel' in options || 'objectives' in options);
+      const actors = publicActors();
+      presenceCaption.hidden = actors.length === 0;
+      actorPage = Math.min(actorPage, Math.max(0, Math.ceil(actors.length / ACTOR_PAGE_SIZE) - 1));
+      const signature = JSON.stringify([pageActors(), selectedActor, actorDock.hidden]);
+      if (signature !== presenceSignature) {
+        presenceSignature = signature;
+        const focused = actorList.contains(document.activeElement) ? document.activeElement.dataset.cityActor : null;
+        actorList.replaceChildren();
+        for (const actor of pageActors()) {
+          const button = element('button', 'omerta-city__actor');
+          button.type = 'button'; button.dataset.cityActor = actor.id;
+          button.setAttribute('aria-expanded', String(selectedActor === actor.id && !actorDock.hidden));
+          button.append(element('strong', '', String(actor.name || 'Unnamed person')),
+            element('span', '', actor.kind.toUpperCase() + (Number.isFinite(Number(actor.level)) ? ' · Level ' + actor.level : '')));
+          actorList.append(button);
+        }
+        if (!actors.length) actorList.append(element('p', '', 'No public people have been reported in this district.'));
+        if (focused) (Array.from(actorList.children).find(button => button.dataset.cityActor === focused) || presenceTitle).focus({ preventScroll: true });
+      }
+      actorsPrevious.disabled = paging || actorPage === 0;
+      actorsMore.disabled = paging || (actorPage + 1) * ACTOR_PAGE_SIZE >= actors.length && !options.hasMore;
+      actorsMore.textContent = paging ? 'Loading people…' : 'More people';
+      actorCount.textContent = pagingNotice || (actors.length ? (actorPage * ACTOR_PAGE_SIZE + 1) + '–' + Math.min(actors.length, (actorPage + 1) * ACTOR_PAGE_SIZE)
+        + ' of ' + actors.length + ' loaded' : '0 reported people');
+      syncActorSprites();
+    }
+    function actorSlots() {
+      const slots = [];
+      for (let y = 224; y <= 532; y += 44) for (let x = 64; x < 930; x += 44) {
+        if (traversable(x, y) && Math.hypot(x - initialPosition.x, y - initialPosition.y) > 54
+          && !VENUES.some(venue => Math.hypot(x - venue.x, y - venue.y) < 42)) slots.push({ x, y });
+      }
+      return slots;
+    }
+    function syncActorSprites() {
+      if (!scene || !ready) return;
+      const actors = pageActors(), ids = new Set(actors.map(actor => actor.id)), slots = actorSlots(), used = new Set();
+      for (const [id, marker] of actorSprites) if (!ids.has(id)) {
+        marker.sprite.destroy(); marker.name.destroy(); marker.ring.destroy(); actorSprites.delete(id);
+      }
+      if (!slots.length) return;
+      for (const actor of actors) {
+        let hash = 0; for (const char of actor.id) hash = (Math.imul(hash, 31) + char.charCodeAt(0)) >>> 0;
+        let index = hash % slots.length;
+        while (used.has(index)) index = (index + 1) % slots.length;
+        used.add(index); const position = slots[index];
+        let marker = actorSprites.get(actor.id);
+        if (!marker) {
+          const base = actor.kind === 'npc' ? 'worker' : actor.kind === 'agent' ? 'fixer' : 'neighbor';
+          const generated = scene.textures.exists('city-art-' + base);
+          const sprite = scene.add.sprite(position.x, position.y, generated ? 'city-art-' + base : 'city-' + base)
+            .setOrigin(0.5, generated ? 58 / 60 : 0.85);
+          const name = scene.add.text(position.x, position.y - 73, '', {
+            fontFamily: 'monospace', fontSize: 10, resolution: 2, align: 'center', color: '#d8e7e0', stroke: '#151d1e', strokeThickness: 3
+          }).setOrigin(0.5);
+          const ring = scene.add.graphics();
+          ring.lineStyle(1, actor.kind === 'agent' ? 0x9ec5ef : actor.kind === 'npc' ? 0xc6b696 : 0xa5d9c6, 0.8).strokeEllipse(0, 0, 28, 10);
+          marker = { sprite, name, ring }; actorSprites.set(actor.id, marker);
+        }
+        marker.x = position.x; marker.y = position.y; marker.actor = actor;
+        marker.sprite.setPosition(position.x, position.y).setDepth(position.y);
+        marker.name.setPosition(position.x, position.y - 73).setText(actor.kind.toUpperCase()).setDepth(position.y + 1);
+        marker.ring.setPosition(position.x, position.y).setDepth(position.y - 1);
+      }
+    }
+    function renderActorDock() {
+      if (actorDock.hidden) return;
+      const actor = findActor(selectedActor);
+      const journalEntries = Array.isArray(options.intel) ? options.intel : options.intel?.journal || [];
+      const objectives = Array.isArray(options.objectives) ? options.objectives : [];
+      const signature = JSON.stringify([actorView, actor, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
+      if (signature === actorRenderSignature) return;
+      actorRenderSignature = signature;
+      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || '' : null;
+      const scroll = actorDock.scrollTop;
+      actorBody.replaceChildren();
+      if (actorView === 'person') {
+        actorBody.append(element('h4', '', actor ? String(actor.name || 'Unnamed person') : 'This person is no longer on the current district list.'));
+        if (actor) {
+          actorBody.append(element('p', 'omerta-city__actor-facts', actor.kind.toUpperCase() + ' · Reported in ' + String(district.name || district.id)
+            + (Number.isFinite(Number(actor.level)) ? ' · Level ' + actor.level : '') + (actor.gangTag ? ' · ' + actor.gangTag : '')));
+          actorBody.append(element('p', '', 'Collect a neighborhood clue and advance your intel objectives.'));
+          for (const action of actorActions(actor)) {
+            const button = element('button', '', String(action.label || 'Collect intel'));
+            button.type = 'button'; button.dataset.cityEncounter = action.id;
+            button.disabled = action.available !== true || encounterPending || options.encounterRecovery === true || typeof options.onEncounter !== 'function';
+            actorBody.append(button);
+          }
+          const nextObjective = objectives.find(objective => objective?.status === 'available');
+          if (nextObjective) {
+            const guidance = element('aside', 'omerta-city__objective');
+            guidance.append(element('strong', '', 'Next objective: ' + String(nextObjective.title || 'Follow the next lead')),
+              element('p', '', String(nextObjective.description || '')));
+            actorBody.append(guidance);
+          } else if (objectives.length && objectives.every(objective => objective?.status === 'completed')) {
+            actorBody.append(element('p', '', 'Your issued encounter objectives are complete.'));
+          }
+        }
+      } else {
+        actorBody.append(element('h4', '', 'Street intel & objectives'));
+        actorBody.append(element('p', '', 'Public world tips collected through confirmed encounters. Objectives advance through later encounters, not by reading this journal.'));
+        for (const objective of objectives.filter(Boolean)) {
+          const item = element('article', 'omerta-city__objective'); item.dataset.cityObjective = String(objective.id || '');
+          item.append(element('strong', '', String(objective.title || 'Objective')), element('span', '', String(objective.status || '')),
+            element('p', '', String(objective.description || '')));
+          for (const action of Array.isArray(objective.actions) ? objective.actions : []) if (action && typeof action.id === 'string' && action.method === 'POST') {
+            const button = element('button', '', String(action.label || 'Continue'));
+            button.type = 'button'; button.dataset.cityIntelAction = action.id;
+            button.disabled = action.available !== true || typeof options.onIntelAction !== 'function'; item.append(button);
+          }
+          actorBody.append(item);
+        }
+        if (!journalEntries.length) actorBody.append(element('p', '', 'No intel collected yet. Inspect a reported person, then explicitly record the encounter.'));
+        for (const entry of Array.isArray(journalEntries) ? journalEntries.filter(Boolean) : []) {
+          const item = element('article', 'omerta-city__intel'); item.dataset.cityIntel = String(entry.id || '');
+          item.append(element('strong', '', String(entry.title || 'World tip')), element('p', '', String(entry.description || '')));
+          if (Number.isInteger(entry.sequence)) item.append(element('small', '', 'Intel #' + entry.sequence));
+          if (entry.source) item.append(element('small', '', 'Source: ' + String(entry.source.name || 'Unnamed person') + ' · ' + String(entry.source.kind || '') + ' · ' + String(entry.source.district || '')));
+          actorBody.append(item);
+        }
+      }
+      const receipt = options.encounterReceipt;
+      if (receipt) {
+        const region = element('section', 'omerta-city__encounter-receipt');
+        region.setAttribute('data-city-encounter-receipt', ''); region.setAttribute('aria-label', 'Encounter receipt');
+        region.append(element('strong', '', String(receipt.label || 'Encounter result')), element('p', '', String(receipt.summary || '')));
+        if (typeof receipt.delta === 'string' && receipt.delta) region.append(element('p', '', receipt.delta));
+        else if (Array.isArray(receipt.delta) && receipt.delta.length) region.append(element('p', '', receipt.delta.map(String).join(' · ')));
+        if (receipt.recoveryText) region.append(element('p', '', String(receipt.recoveryText)));
+        if (options.encounterRecovery === true && typeof options.onEncounterRetry === 'function') {
+          const retry = element('button', '', String(receipt.recoveryLabel || 'Recover previous encounter'));
+          retry.type = 'button'; retry.setAttribute('data-city-encounter-retry', ''); retry.disabled = encounterPending; region.append(retry);
+        }
+        actorBody.append(region);
+      }
+      if (actorNotice) { const notice = element('p', 'omerta-city__actor-notice', actorNotice); notice.setAttribute('role', 'status'); actorBody.append(notice); }
+      actorDock.scrollTop = scroll;
+      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus)) || actorBody).focus({ preventScroll: true });
+    }
+    function showActor(id, trigger) {
+      if (destroyed || !findActor(id)) return;
+      stopMovement(); hideVenue(false); selectedActor = id; actorView = 'person'; actorOpening++;
+      actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);
+      actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
+      renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);
+      actorBody.focus({ preventScroll: true }); syncPointerBounds();
+    }
+    function showIntel() {
+      if (destroyed) return;
+      stopMovement(); hideVenue(false); selectedActor = null; actorView = 'journal'; actorOpening++;
+      actorReturn = intelOpen; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
+      renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
+    }
+    function hideActor(focus) {
+      if (actorDock.hidden) return;
+      const previousActor = selectedActor;
+      actorDock.hidden = true; selectedActor = null; actorView = ''; actorOpening++; actorRenderSignature = '';
+      actorBody.replaceChildren(); renderPresence(); fitWorldFrame();
+      if (focus) {
+        const currentButton = Array.from(actorList.children).find(button => button.dataset.cityActor === previousActor);
+        const target = game?.canvas || currentButton || (actorReturn?.isConnected ? actorReturn : intelOpen);
+        revealVenue(game?.canvas ? viewport : target); target.focus({ preventScroll: true });
+      }
+      syncPointerBounds();
+    }
+    listen(actorList, 'click', event => { const button = event.target.closest('[data-city-actor]'); if (button && actorList.contains(button)) showActor(button.dataset.cityActor, button); });
+    listen(actorClose, 'click', () => hideActor(true));
+    listen(intelOpen, 'click', showIntel);
+    listen(actorDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideActor(true); } });
+    listen(actorsPrevious, 'click', () => { if (actorPage && !paging) { actorPage--; renderPresence(); } });
+    listen(actorsMore, 'click', async () => {
+      if (paging || destroyed) return;
+      const count = publicActors().length;
+      if ((actorPage + 1) * ACTOR_PAGE_SIZE < count) { actorPage++; renderPresence(); return; }
+      if (!options.hasMore || typeof options.onPresencePage !== 'function') return;
+      const identity = sceneIdentity(); pagingNotice = ''; paging = true; renderPresence();
+      try { await options.onPresencePage(); }
+      catch { pagingNotice = 'People could not load. Try More people again.'; }
+      finally { if (!destroyed && identity === sceneIdentity()) { paging = false; if (publicActors().length > count) actorPage++; renderPresence(); } }
+    });
+    listen(actorBody, 'click', async event => {
+      const button = event.target.closest('[data-city-encounter], [data-city-intel-action], [data-city-encounter-retry]');
+      if (!button || button.disabled || !actorBody.contains(button) || encounterPending || destroyed) return;
+      const actor = findActor(selectedActor), action = actorActions(actor).find(entry => entry.id === button.dataset.cityEncounter);
+      if (button.dataset.cityEncounter && (!action?.available || typeof options.onEncounter !== 'function')) return;
+      if (button.dataset.cityIntelAction && typeof options.onIntelAction !== 'function') return;
+      const retrying = button.hasAttribute('data-city-encounter-retry');
+      if (retrying && (options.encounterRecovery !== true || typeof options.onEncounterRetry !== 'function')) return;
+      const identity = sceneIdentity(), opening = actorOpening; encounterPending = true;
+      actorNotice = retrying ? 'Recovering the previous encounter…' : 'Recording the encounter…'; renderActorDock();
+      try {
+        const result = retrying ? await options.onEncounterRetry() : button.dataset.cityEncounter
+          ? await options.onEncounter(actor.id, action.id) : await options.onIntelAction(button.dataset.cityIntelAction);
+        if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = options.encounterRecovery === true
+          ? 'This encounter is not confirmed. Recover the previous encounter before recording another.' : result?.code >= 400
+          ? String(result.body?.message || 'The encounter could not be recorded. Check the current requirements and retry.')
+          : result?.body?.intel ? 'Intel recorded: ' + String(result.body.intel.title || 'World tip') : 'Review your journal for the encounter result.';
+      } catch {
+        if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = 'The encounter result is unavailable. Use the game receipt to recover it safely.';
+      } finally { if (!destroyed && identity === sceneIdentity()) { encounterPending = false; renderActorDock(); fitWorldFrame(); } }
+    });
 
     function listen(target, event, callback, config) {
       target.addEventListener(event, callback, config);
@@ -427,7 +689,7 @@
       if (focused) (Array.from(questButtons.children).find(button => button.dataset.cityQuestAction === focused && !button.disabled) || open).focus({ preventScroll: true });
     }
     function stopMovement() {
-      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null;
+      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null;
       for (const button of moveButtons.values()) button.classList.remove('is-held');
       redrawPath();
     }
@@ -463,6 +725,7 @@
     });
     function showVenue(venue) {
       if (destroyed) return;
+      hideActor(false);
       selected = venue;
       pendingVenue = null;
       stopMovement();
@@ -546,13 +809,34 @@
       if (!player) return null;
       return VENUES.find(v => Math.hypot(v.x - player.x, v.y - player.y) < 42) || null;
     }
+    function nearActor() {
+      if (!player) return null;
+      let nearest = null, distance = 42;
+      for (const [id, marker] of actorSprites) {
+        const next = Math.hypot(marker.x - player.x, marker.y - player.y);
+        if (next < distance) { nearest = { id, ...marker }; distance = next; }
+      }
+      return nearest;
+    }
+    function nearTarget() {
+      const venue = nearVenue(), actor = nearActor();
+      if (actor && (!venue || Math.hypot(actor.x - player.x, actor.y - player.y) < Math.hypot(venue.x - player.x, venue.y - player.y))) return { actor };
+      return venue ? { venue } : null;
+    }
+    function inspectNearby() { const target = nearTarget(); if (target?.actor) showActor(target.actor.id); else if (target?.venue) showVenue(target.venue); }
     function dimensions() {
       const phone = window.innerWidth <= 680;
-      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone ? 96 : 320, Math.round(canvasHost.clientHeight)) };
+      const fitted = !!canvasHost.style.getPropertyValue('--city-map-height');
+      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone || fitted ? 96 : 320, Math.round(canvasHost.clientHeight)) };
     }
+    function syncPointerBounds() { if (game?.canvas) game.scale.updateBounds(); }
     function fitWorldFrame() {
       if (destroyed) return;
-      if (window.innerWidth > 680) {
+      const phone = window.innerWidth <= 680;
+      const inspecting = !actorDock.hidden && document.body.classList.contains('city-player-view');
+      viewport.classList.toggle('is-inspecting', inspecting);
+      if (!phone && !inspecting) {
+        actorDock.style.removeProperty('--city-actor-height');
         if (canvasHost.style.getPropertyValue('--city-map-height')) {
           canvasHost.style.removeProperty('--city-map-height');
           fitCamera();
@@ -568,15 +852,19 @@
         if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
         else { const pinned = parseFloat(style.top); top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom); }
       }
-      const height = Math.max(96, Math.min(440, Math.floor(bottom - top - worldHud.getBoundingClientRect().height - 16)));
+      const available = bottom - top - worldHud.getBoundingClientRect().height - 16;
+      if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
+      const maximum = phone ? 440 : Math.min(620, canvasHost.clientWidth * 2 / 3);
+      const height = Math.max(96, Math.min(maximum, Math.floor(available - (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height))));
       const value = height + 'px';
       if (canvasHost.style.getPropertyValue('--city-map-height') !== value) {
         canvasHost.style.setProperty('--city-map-height', value);
         fitCamera();
       }
+      syncPointerBounds();
     }
     const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;
-    if (hudObserver) hudObserver.observe(worldHud);
+    if (hudObserver) { hudObserver.observe(worldHud); hudObserver.observe(actorDock); }
     listen(window, 'resize', fitWorldFrame);
     function fitCamera() {
       if (!scene || !game || !player) return;
@@ -586,10 +874,11 @@
       const zoom = size.width >= 720 ? Math.min(size.width / WORLD.width, size.height / WORLD.height) : 0.82;
       camera.setZoom(zoom);
       camera.setBounds(0, 0, WORLD.width, WORLD.height);
-      // Retain the avatar and its name above the feet in a short phone viewport.
+      // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = size.height < 160 ? (160 - size.height) / (2 * zoom) : 0;
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
       camera.centerOn(player.x, player.y - followOffsetY);
+      syncPointerBounds();
     }
     const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitCamera) : null;
     if (resizeObserver) resizeObserver.observe(canvasHost);
@@ -603,7 +892,7 @@
           width: size.width, height: size.height, parent: canvasHost,
           backgroundColor: '#273238', pixelArt: true, roundPixels: true,
           banner: false, audio: { noAudio: true },
-          input: { keyboard: false, mouse: { preventDefaultWheel: false }, touch: { capture: false } },
+          input: { keyboard: false, mouse: { preventDefaultWheel: false }, touch: { capture: true } },
           loader: { timeout: 8000, maxRetries: 0, maxParallelDownloads: 9 },
           scene: {
             preload: function () {
@@ -860,8 +1149,8 @@
           event.preventDefault();
           keys.add(key); heldMoves.clear(); path = []; pendingVenue = null; redrawPath();
         } else if (key === 'e' || key === 'enter') {
-          event.preventDefault(); const venue = nearVenue(); if (venue) showVenue(venue);
-        } else if (key === 'escape') { event.preventDefault(); stopMovement(); hideVenue(false); }
+          event.preventDefault(); inspectNearby();
+        } else if (key === 'escape') { event.preventDefault(); stopMovement(); hideVenue(false); hideActor(false); }
       });
       listen(canvas, 'keyup', event => {
         const key = event.key.toLowerCase();
@@ -873,10 +1162,18 @@
         if (document.hidden) stopMovement();
       });
       s.input.on('pointerdown', pointer => {
+        const point = s.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        hideActor(false);
         canvas.focus({ preventScroll: true });
         hideVenue(false);
         stopMovement();
-        const point = s.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        const actor = Array.from(actorSprites, ([id, marker]) => ({ id, ...marker })).find(marker => marker.sprite.getBounds().contains(point.x, point.y));
+        if (actor) {
+          pointer.event?.stopPropagation();
+          if (Math.hypot(player.x - actor.x, player.y - actor.y) < 42) showActor(actor.id);
+          else { pendingActor = actor.id; path = route(player, actor); redrawPath(); }
+          return;
+        }
         const venue = VENUES.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
           (v.building && point.x >= v.building.x && point.x <= v.building.x + v.building.width &&
            point.y >= v.building.y && point.y <= v.building.y + v.building.height));
@@ -887,6 +1184,7 @@
         redrawPath();
       });
       ready = true;
+      syncActorSprites();
       for (const button of moveButtons.values()) button.disabled = false;
       if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
       status.textContent = '';
@@ -917,12 +1215,12 @@
         if (distance < SPEED * dt + 0.25) {
           player.setPosition(point.x, point.y);
           path.shift();
-          if (!path.length) { redrawPath(); if (pendingVenue) showVenue(pendingVenue); }
+          if (!path.length) { redrawPath(); if (pendingActor) showActor(pendingActor); else if (pendingVenue) showVenue(pendingVenue); }
         } else {
           const nextX = player.x + (point.x - player.x) / distance * SPEED * dt;
           const nextY = player.y + (point.y - player.y) / distance * SPEED * dt;
           if (traversable(nextX, nextY)) player.setPosition(nextX, nextY);
-          else { path = []; pendingVenue = null; redrawPath(); }
+          else { path = []; pendingVenue = null; pendingActor = null; redrawPath(); }
         }
         moving = true;
       }
@@ -954,10 +1252,17 @@
           if (!npc.title) npc.sprite.x = npc.x + Math.sin(time / 2300 + i) * 13;
         });
       }
-      const nearby = nearVenue();
+      const target = nearTarget(), nearby = target?.venue || target?.actor;
       interact.disabled = !nearby;
-      interact.textContent = nearby ? 'Talk at ' + nearby.name : 'Interact';
-      const nextStatus = nearby && card.hidden ? nearby.name + ' · Press E / Enter or tap to open' : '';
+      const nearbyName = target?.actor ? target.actor.actor.name : target?.venue?.name;
+      for (const [id, marker] of actorSprites) {
+        const copy = id === selectedActor || id === target?.actor?.id
+          ? String(marker.actor.name || 'Unnamed person').slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
+        if (marker.name.text !== copy) marker.name.setText(copy);
+      }
+      const nearbyText = nearbyName ? 'Nearby: ' + nearbyName : 'Move near a person or place to interact.';
+      if (nearbyCopy.textContent !== nearbyText) nearbyCopy.textContent = nearbyText;
+      const nextStatus = nearby && card.hidden && actorDock.hidden ? nearbyName + ' · Press E / Enter or tap to inspect' : '';
       if (status.textContent !== nextStatus) status.textContent = nextStatus;
       reportPosition(false);
     }
@@ -965,15 +1270,22 @@
     return {
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
+        const identity = sceneIdentity();
         if (nextOptions.district) district = nextOptions.district;
         if (nextOptions.character) character = nextOptions.character;
+        if (identity !== sceneIdentity()) {
+          hideActor(false); actorPage = 0; actorNotice = ''; paging = false; encounterPending = false;
+          options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
+        }
         if (typeof nextOptions.onNavigate === 'function') options.onNavigate = nextOptions.onNavigate;
         if (typeof nextOptions.onPositionChange === 'function') options.onPositionChange = nextOptions.onPositionChange;
         if (typeof nextOptions.onQuestAction === 'function') options.onQuestAction = nextOptions.onQuestAction;
-        for (const key of ['venueActions', 'progress', 'npcQuests']) if (key in nextOptions) options[key] = nextOptions[key];
+        for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
+        for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         updateLabels();
         updateHud();
         if (selected) { renderActions(selected); renderQuest(selected); }
+        renderPresence(); renderActorDock(); fitWorldFrame();
       },
       destroy: function () {
         if (destroyed) return;
@@ -983,7 +1295,10 @@
         if (resizeObserver) resizeObserver.disconnect();
         if (hudObserver) hudObserver.disconnect();
         listeners.forEach(remove => remove());
-        keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null;
+        keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null; pendingActor = null;
+        selectedActor = null; actorOpening++; actorBody.replaceChildren(); options.intel = []; options.objectives = []; options.actors = [];
+        options.encounterReceipt = null; options.encounterRecovery = false;
+        actorSprites.clear();
         if (game) { game.destroy(true); game = null; }
         player = null; scene = null;
         root.remove();
@@ -993,6 +1308,8 @@
         return {
           ready, reducedMotion, art: { ...artState }, facing: playerFacing,
           resources: resourceState(), position: positionState(), selectedVenue: selected?.id || null,
+          selectedActor, actorOpening, actorPage,
+          actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })),
           actions: Object.fromEntries(VENUES.map(v => [v.id, actionsFor(v)])),
           player: player ? { x: player.x, y: player.y } : null,
           destinations: VENUES.map(v => ({ id: v.id, x: v.x, y: v.y, tab: v.tab })),

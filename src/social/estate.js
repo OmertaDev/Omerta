@@ -73,6 +73,8 @@ export async function bearGrudges(client, h, killerCh, victimNpc) {
 // life F1/F2/F4). Deliberately NOT bounty escrow: a gone target's pots resolve via the expiry sweep
 // (a refund), which is fairer than a death-burn for a retirement, and stays §10.4-exact either way.
 export async function clearInboundPointers(client, charId, accountId) {
+  // Private encounter progress ends with its owner; other journals keep their source snapshots.
+  await client.query('DELETE FROM city_intel_progress WHERE character_id=$1', [charId]);
   // a paid bodyguard whose principal is this character: released — and the stale pointer no longer
   // BLOCKS the principal hiring a replacement for the rest of the window (paid, unprotected, locked
   // out — the audit-F8 class). A killer who hired their own victim as guard is mirrored in memory by
