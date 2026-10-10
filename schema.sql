@@ -7669,3 +7669,13 @@ CREATE TABLE IF NOT EXISTS agent_company_profiles (
     WHEN premises_kind='street' THEN premises_key IS NOT NULL AND premises_district IS NOT NULL
     ELSE false END)
 );
+
+-- Private encounter cards and three nonfinancial objectives; no successor inheritance.
+CREATE TABLE IF NOT EXISTS city_intel_progress (
+  character_id TEXT NOT NULL REFERENCES characters(id),
+  generation INTEGER NOT NULL CHECK (generation >= 1),
+  sequence BIGINT NOT NULL CHECK (sequence BETWEEN 1 AND 9007199254740991),
+  journal JSONB NOT NULL,
+  objectives JSONB NOT NULL,
+  PRIMARY KEY (character_id,generation)
+);

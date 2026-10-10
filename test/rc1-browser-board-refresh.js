@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import http from 'node:http';
 import crypto from 'node:crypto';
+import vm from 'node:vm';
 import { chromium } from 'playwright-core';
 import { browserControls } from './lib/rc1-browser-controls.js';
 
@@ -53,7 +54,73 @@ if (sha(coordinator) === currentCoordinatorSha) {
     assert.throws(() => reviewedCoordinator(tampered), /exact reviewed coordinator successor/);
   }
 }
-const apiQueue = extract('  async function api(method,', '  async function apiNow(', '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7');
+const predecessorApiQueueSha = '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7';
+const currentApiQueueSha = '0a1714c6aa971e3d16365f390eb03005a820dc19312c8f904c87a7471e2e22fd';
+const beforeDispatchGuard = `      if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true, code: 499, body: {} };
+`;
+function removeBeforeDispatchGuard(text) {
+  assert.equal(text.split(beforeDispatchGuard).length, 2, 'The reviewed dispatch guard has one exact inverse');
+  return text.replace(beforeDispatchGuard, '');
+}
+function reviewedApiQueue(text) {
+  const digest = sha(text);
+  if (digest === predecessorApiQueueSha) return digest;
+  assert.equal(digest, currentApiQueueSha, 'Only the exact reviewed API queue successor is accepted');
+  assert.equal(sha(removeBeforeDispatchGuard(text)), predecessorApiQueueSha, 'The complete predecessor API queue must reconstruct exactly');
+  return digest;
+}
+const apiQueueSource = source.slice(source.indexOf('  async function api(method,'), source.indexOf('  async function apiNow('));
+const apiQueue = extract('  async function api(method,', '  async function apiNow(', reviewedApiQueue(apiQueueSource));
+// The only successor addition is an opt-in check before apiNow. The world-board
+// reads below do not opt in and keep the exact predecessor queue/token behavior.
+// These bounded transport probes qualify the hook's timing, not City gameplay.
+async function probeApiQueue(text, phase) {
+  let release, entered;
+  const held = new Promise(resolve => { release = resolve; }), started = new Promise(resolve => { entered = resolve; });
+  const calls = [], view = { open: true, current: true };
+  const scope = { token: 'first', projections: { invalidate() {} }, apiNow: async (method, path) => {
+    calls.push({ method, path }); entered(); await held; return { code: 200, body: { ok: true } };
+  } };
+  vm.runInNewContext('let _authQueue = Promise.resolve();\n' + text + '\nthis.call = api;', scope);
+  let first;
+  if (['queued', 'default'].includes(phase)) { first = scope.call('GET', '/held'); await started; }
+  const pending = scope.call('POST', '/controlled-action', {}, phase === 'default' ? {}
+    : { beforeDispatch: () => view.open, isCurrent: () => view.current });
+  if (!first) await started;
+  view.open = false;
+  if (phase === 'revoked') scope.token = 'replacement';
+  if (phase === 'owner-revoked') view.current = false;
+  release(); if (first) await first;
+  return { reply: await pending, posts: calls.filter(call => call.method === 'POST').length };
+}
+if (sha(apiQueue) === currentApiQueueSha) {
+  const predecessor = removeBeforeDispatchGuard(apiQueue);
+  assert.notEqual(predecessor, apiQueue);
+  assert.equal(reviewedApiQueue(predecessor), predecessorApiQueueSha);
+  const duplicate = apiQueue.replace(beforeDispatchGuard, beforeDispatchGuard.repeat(2));
+  assert.notEqual(duplicate, apiQueue);
+  assert.throws(() => removeBeforeDispatchGuard(duplicate), /one exact inverse/);
+  const afterSend = predecessor.replace('      return valid() ? result : neutral;', beforeDispatchGuard + '      return valid() ? result : neutral;');
+  for (const tampered of [duplicate, afterSend,
+    apiQueue.replace('!options.beforeDispatch()', 'options.beforeDispatch()'),
+    apiQueue.replace('token === authToken', 'token !== authToken'),
+    apiQueue.replace('return valid() ? result : neutral;', 'return result;'),
+    apiQueue.replace("projections.invalidate('world')", "projections.invalidate('player')"),
+    apiQueue + '\n', predecessor.replace('return valid() ? result : neutral;', 'return result;')]) {
+    assert.notEqual(tampered, apiQueue); assert.notEqual(tampered, predecessor);
+    assert.throws(() => reviewedApiQueue(tampered), /exact reviewed API queue successor/);
+  }
+  for (const phase of ['queued', 'dispatched', 'revoked', 'owner-revoked', 'default']) {
+    const { reply, posts } = await probeApiQueue(apiQueue, phase);
+    assert.equal(reply.code, ['queued', 'revoked', 'owner-revoked'].includes(phase) ? 499 : 200, phase + ' preserves dispatch/privacy semantics');
+    assert.equal(posts, phase === 'queued' ? 0 : 1, phase + ' reaches the expected actual transport count');
+  }
+  const oldQueued = await probeApiQueue(predecessor, 'queued'), lateQueued = await probeApiQueue(afterSend, 'queued');
+  assert.equal(oldQueued.posts, 1, 'The actual predecessor dispatches without the opt-in hook');
+  assert.equal(oldQueued.reply.code, 200);
+  assert.equal(lateQueued.posts, 1, 'Moving the hook after apiNow cannot cancel a queued dispatch');
+  assert.equal(lateQueued.reply.code, 499);
+}
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });
 const html = `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1">

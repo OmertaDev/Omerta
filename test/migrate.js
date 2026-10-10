@@ -551,6 +551,7 @@ const DISPOSITION = {
   npc_favors: 'wiped', npc_gain: 'wiped', npc_grudges: 'wiped', npc_leads: 'wiped', npc_standing: 'wiped',
   wage_snapshots: 'wiped', // the Street Wage baseline dies with the street — the heir enrolls fresh (no inherited gain window)
   campaign_progress: 'wiped', // FIVE PILLARS #4: a fresh street walks the stories again (the roguelike spine)
+  city_intel_progress: 'wiped', // private encounter clues/objectives die with their owner; action receipts remain separate
   soldiers: 'wiped', // XCOM soldiers die with the street — a fresh street hires fresh muscle (memorial included)
   digs: 'wiped', // secret-dig cooldowns die with the digger (secrets themselves are holder_character-keyed, wiped in runEstate)
   family_aggro: 'wiped', // THE MANHUNT: a dead raider isn't hunted — the pending family retaliation on them is cleared in runEstate

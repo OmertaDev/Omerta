@@ -97,6 +97,8 @@ try {
     'The pinned baseline predates the goods-market liquidity table');
   assert.equal(oldConstraints.filter(row => companyTables.includes(row.table_name)).length, 0,
     'The pinned baseline predates the company registry');
+  assert.equal(oldConstraints.filter((row) => row.table_name === 'city_intel_progress').length, 0,
+    'The pinned baseline predates the private City intel table');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
   const migrate = async () => {
     const client = await pool.connect();
@@ -108,8 +110,37 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  assert.deepEqual(upgradedConstraints.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
+  verifyPreservedConstraints(upgradedConstraints);
+  const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
+  assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');
+  const verifyCityConstraints = (rows) => assert.deepEqual(rows.filter((row) => row.table_name === 'city_intel_progress'), cityConstraints,
+    'City migration installs exactly its reviewed constraints, without waiving existing preservation');
+  verifyCityConstraints(upgradedConstraints);
+  const cityColumns = inventory.notNullColumns.city_intel_progress;
+  assert.equal(cityColumns.length, 5, 'All five reviewed City columns must remain non-null');
+  const verifyCityNotNull = (columns) => assert.deepEqual(columns, cityColumns, 'City migration preserves exact reviewed nullability');
+  const cityNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_intel_progress' AND is_nullable='NO' ORDER BY column_name")).rows.map((row) => row.column_name);
+  verifyCityNotNull(cityNotNull);
+  const mutateConstraint = (table, name, change) => {
+    const rows = upgradedConstraints.map((row) => ({ ...row })), index = rows.findIndex((row) => row.table_name === table && row.name === name);
+    assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
+  };
+  const rejected = (verify, label, candidate) => assert.throws(() => verify(candidate), (error) => error?.code === 'ERR_ASSERTION', label);
+  rejected(verifyPreservedConstraints, 'legacy character identity removed', mutateConstraint('characters', 'characters_pkey',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifyPreservedConstraints, 'legacy character identity altered', mutateConstraint('characters', 'characters_pkey',
+    (rows, index) => { rows[index].definition = 'PRIMARY KEY (account_id)'; }));
+  rejected(verifyPreservedConstraints, 'unreviewed City table added', [...upgradedConstraints,
+    { table_name: 'city_unreviewed', name: 'city_unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
+  rejected(verifyCityConstraints, 'City character ownership removed', mutateConstraint('city_intel_progress', 'city_intel_progress_character_id_fkey',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifyCityConstraints, 'City generation identity weakened', mutateConstraint('city_intel_progress', 'city_intel_progress_pkey',
+    (rows, index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected(verifyCityConstraints, 'City safe sequence bound weakened', mutateConstraint('city_intel_progress', 'city_intel_progress_sequence_check',
+    (rows, index) => { rows[index].definition = rows[index].definition.replace('9007199254740991', '9007199254740992'); }));
+  for (const column of cityColumns) rejected(verifyCityNotNull, 'City '+column+' nullability removed', cityColumns.filter((name) => name !== column));
   assert.deepEqual(upgradedConstraints.filter((row) => goodsMarketTables.includes(row.table_name)), [
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_bought_check', definition: 'CHECK (bought >= 0)' },
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_pkey', definition: 'PRIMARY KEY (good_id, district)' },
@@ -175,7 +206,7 @@ try {
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });
   await assert.rejects(pool.query('INSERT INTO director_receipts SELECT * FROM director_receipts LIMIT 1'), { code: '23505' });
-  console.log(`director-migration: populated ${BASELINE}, two production migrations, canonical/Director receipt preservation and exact 17-constraint catalog PASS (PostgreSQL ${serverVersion})`);
+  console.log(`director-migration: populated ${BASELINE}, two production migrations, canonical/Director receipt preservation and exact 17-constraint catalog plus four City constraints/five non-null columns PASS (PostgreSQL ${serverVersion})`);
 } finally {
   if (pool) await pool.end();
   if (created) await admin.query(`DROP SCHEMA ${namespace} CASCADE`);

@@ -354,6 +354,51 @@ try {
   const gameplayRequests = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
 
+  // Player view is a visible switch, including for users starting in the dashboard.
+  for (const viewport of [{ width: 375, height: 812 }, { width: 1440, height: 1000 }]) {
+    const toggle = await newPage({ viewport, reducedMotion: 'reduce',
+      ...(viewport.width === 375 ? { isMobile: true, hasTouch: true } : {}) });
+    const toggleRequests = [];
+    toggle.on('request', request => toggleRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
+    await openCity(toggle);
+    const originalPose = (await state(toggle)).position;
+    const assertSwitch = async player => {
+      assert.equal(await toggle.locator('#btn-player-view').getAttribute('aria-pressed'), String(player));
+      assert.equal(await toggle.locator('#btn-dashboard-view').getAttribute('aria-pressed'), String(!player));
+      for (const id of ['btn-player-view', 'btn-dashboard-view']) {
+        const rect = await toggle.locator('#' + id).boundingBox();
+        assert(rect && rect.height >= 44 && rect.x >= 0 && rect.x + rect.width <= viewport.width + 1,
+          'Both view choices remain prominent usable controls at ' + viewport.width);
+        assert(await toggle.locator('#' + id).evaluate(button => {
+          const r = button.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+          return hit === button || button.contains(hit);
+        }), 'The view switch remains reachable above the active player scene.');
+      }
+    };
+    await toggle.locator('#map-mode-walk').click(); await assertEntered(toggle);
+    await assertSwitch(true);
+    const repeatedHandles = await toggle.evaluate(() => window.__cityHandles.length);
+    await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
+    assert.equal(await toggle.evaluate(() => window.__cityHandles.length), repeatedHandles, 'Repeated Player view reuses the scene.');
+    await toggle.locator('#btn-dashboard-view').click(); await assertSwitch(false);
+    const dashboard = await toggle.locator('#tabbodies > .on').getAttribute('id');
+    assert.equal(await toggle.locator('#btn-refresh').evaluate(button => button.closest('#leftcol') !== null), true,
+      'Dashboard restores the same manual Refresh control to its original toolbar.');
+    await toggle.locator('#btn-player-view').focus(); await toggle.keyboard.press('Enter'); await assertEntered(toggle);
+    await assertSwitch(true); await assertPosition(toggle, originalPose, 'Dashboard to Player view retains saved pose');
+    assert.equal(await toggle.locator('#btn-refresh').evaluate(button => button.parentNode.id), 'top', 'Player view keeps Refresh reachable.');
+    await toggle.locator('#btn-dashboard-view').click();
+    assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to the previous screen.');
+    await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
+    await toggle.locator('#map-mode-territory').click(); await assertSwitch(false);
+    await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
+    await toggle.locator('#btn-dashboard-view').click();
+    assert.equal(await toggle.locator('#map-mode-territory').getAttribute('aria-pressed'), 'true', 'Returning restores the prior territory board.');
+    assert.deepEqual(gameplayRequests(toggleRequests), [], 'View switching never submits gameplay or rewards.');
+    if (shots) await toggle.screenshot({ path: path.join(shots, 'player-view-toggle-' + viewport.width + '.png') });
+    await toggle.close();
+  }
+
   // A first phone visit retains its help, then explicitly enters the existing local scene.
   const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   // The scene's live layout must remain correct without optional resize observation.
@@ -737,6 +782,33 @@ try {
     await page.locator('[data-destination="fixer"]').click();
     await assertVenueOnscreen(page);
   }
+  // A tall real header forces the existing 96px map floor and 64px venue cap.
+  // The sticky close must fit that cap after focusing/scrolling the primary action.
+  const tightVenuePose = (await state(page)).position, tightVenueReads = requests.length;
+  const previousHeaderStyle = await page.locator('#top').getAttribute('style');
+  try {
+    await page.keyboard.press('Escape');
+    await page.locator('#top').evaluate(header => { header.style.height = '180px'; header.style.minHeight = '180px'; header.style.maxHeight = '180px'; dispatchEvent(new Event('resize')); });
+    await page.waitForFunction(() => document.querySelector('.omerta-city__canvas canvas')?.height === 96);
+    await page.locator('[data-destination="fixer"]').click();
+    assert.equal(await page.locator('.omerta-city__interaction').evaluate(card => card.getBoundingClientRect().height), 64, 'The regression reaches the actual minimum-map venue cap.');
+    await assertVenueOnscreen(page);
+    const formerCloseOffset = await page.addStyleTag({ content: '.omerta-city__interaction-controls { top: 8px !important; }' });
+    try {
+      await assert.rejects(assertVenueOnscreen(page), /Venue controls are visible and unobscured/, 'The former sticky offset clips the actual 44px close in this same card.');
+    } finally { await formerCloseOffset.evaluate(node => node.remove()); }
+    await assertVenueOnscreen(page);
+    await assertPosition(page, tightVenuePose, 'Short-card inspection retains exploration pose');
+    assert.deepEqual(gameplayRequests(requests.slice(tightVenueReads)), [], 'Short-card opening and inspection submit no gameplay.');
+    if (process.env.CITY_SCENE_SHOTS) await page.screenshot({ path: path.join(process.env.CITY_SCENE_SHOTS, 'city-venue-close-375x320.png') });
+    await page.locator('[data-city-close]').click();
+    assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'The complete close target works at the minimum card height.');
+    await page.waitForFunction(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas'));
+  } finally {
+    await page.locator('#top').evaluate((header, saved) => { if (saved === null) header.removeAttribute('style'); else header.setAttribute('style', saved); dispatchEvent(new Event('resize')); }, previousHeaderStyle);
+  }
+  await page.locator('[data-destination="fixer"]').click();
+  await assertVenueOnscreen(page);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'A short-screen venue retains keyboard close.');
   await page.setViewportSize({ width: 375, height: 812 });

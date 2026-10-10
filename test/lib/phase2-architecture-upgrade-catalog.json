@@ -2,6 +2,26 @@
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
     {
+      "table_name": "city_intel_progress",
+      "name": "city_intel_progress_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "city_intel_progress",
+      "name": "city_intel_progress_generation_check",
+      "definition": "CHECK (generation >= 1)"
+    },
+    {
+      "table_name": "city_intel_progress",
+      "name": "city_intel_progress_pkey",
+      "definition": "PRIMARY KEY (character_id, generation)"
+    },
+    {
+      "table_name": "city_intel_progress",
+      "name": "city_intel_progress_sequence_check",
+      "definition": "CHECK (sequence >= 1 AND sequence <= '9007199254740991'::bigint)"
+    },
+    {
       "table_name": "coordination_archive_entries",
       "name": "coordination_archive_entries_archive_id_claim_id_key",
       "definition": "UNIQUE (archive_id, claim_id)"
@@ -1315,6 +1335,13 @@
     }
   ],
   "notNullColumns": {
+    "city_intel_progress": [
+      "character_id",
+      "generation",
+      "journal",
+      "objectives",
+      "sequence"
+    ],
     "director_action_intents": [
       "account_id",
       "action_id",

@@ -2,6 +2,29 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+export const CITY_PRESENCE_SERVER_PIN = 'f4a8eece717448482ac55998c68df89e45344c208b6ea9d4c910be3ea281b1e1';
+export const CITY_PRESENCE_SERVER_PREDECESSOR_PIN = 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c';
+export const CITY_PRESENCE_SOURCE_REVIEWED_REVISION = '83479446113cc3acffef1ee857a5d8d8e9fdc52c';
+export const CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION = '6485e8d0a01a3fb18417ec5eeded7cc1c62238b9';
+const cityPresenceServerChunks = [
+  "import { registerCity } from './routes/city.js';\n",
+  '  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });\n',
+];
+// This exact registration inverse preserves only the previously reviewed paths.
+// City encounter, private progress and lifecycle authority have separate current-source proofs.
+export function assertCityPresenceServerTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CITY_PRESENCE_SERVER_PIN, 'City presence transfer source changed: src/server.js');
+  let baselineText = text;
+  for (const chunk of cityPresenceServerChunks) {
+    assert.equal(baselineText.split(chunk).length, 2, 'City presence inverse is not exact and unique');
+    baselineText = baselineText.replace(chunk, '');
+  }
+  assert.equal(hash(baselineText), CITY_PRESENCE_SERVER_PREDECESSOR_PIN, 'Server differs beyond exact City presence registration');
+  return { actualSha256, baselineText, baselineSha256: CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
+    sourceRevision: CITY_PRESENCE_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
+    inverseChunks: cityPresenceServerChunks.length };
+}
 export const DEED_RULES_CURRENT_PIN = '83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb';
 export const DEED_SERVER_BASELINE_PIN = '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff';
 export const DEED_SERVER_CURRENT_PIN = 'bbbeb137b8b1baeff09985331bc70a57670ddb723925057ffa858f840880e453';
@@ -81,6 +104,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
+    const transfer = assertCityPresenceServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
+  }
   if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertGoodsSourceTransfer('src/server.js', text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
@@ -130,6 +157,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
+    const transfer = assertCityPresenceServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
+  }
   if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertGoodsSourceTransfer('src/server.js', text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
@@ -200,6 +231,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
+    const transfer = assertCityPresenceServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
+  }
   if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertGoodsSourceTransfer('src/server.js', text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
@@ -227,6 +262,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
+    const transfer = assertCityPresenceServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
+  }
   if (hash(text) === GOODS_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertGoodsSourceTransfer('src/server.js', text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), goodsSourceTransfer: transfer };
@@ -558,6 +597,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === CITY_PRESENCE_SERVER_PIN) {
+  const presence = assertCityPresenceServerTransfer(text), predecessor = assertEconomySourceTransfer(file, presence.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + presence.inverseChunks, cityPresenceSourceTransfer: presence };
+ }
  if (hash(text) === GOODS_SOURCE_CURRENT_PINS[file]) {
   const goods = assertGoodsSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, goods.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + goods.inverseChunks, goodsSourceTransfer: goods };

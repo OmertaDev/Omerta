@@ -9,7 +9,9 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   GENESIS_SNAPSHOT_MODULE_PINS, GENESIS_SNAPSHOT_REVIEWED_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertEconomySourceTransfer,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS,
-  GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION } from './rc1-deed-source-compatibility.js';
+  GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION,
+  CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
+  CITY_PRESENCE_SOURCE_REVIEWED_REVISION, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION } from './rc1-deed-source-compatibility.js';
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
@@ -20,7 +22,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': GOODS_SOURCE_CURRENT_PINS['src/server.js'],
+  'src/server.js': CITY_PRESENCE_SERVER_PIN,
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -30,7 +32,10 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 8, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 9, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  cityPresenceSourceReviewTransfer: { sourceRevision: CITY_PRESENCE_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
+    actualServerSha256: CITY_PRESENCE_SERVER_PIN, predecessorServerSha256: CITY_PRESENCE_SERVER_PREDECESSOR_PIN, inverseChunks: 2,
+    scope: 'Exact authenticated City import/registration inverse reconstructs the complete prior server. Only unchanged historical deed, genesis, HTTP and recovery guards transfer. New City roster, intel, encounter, private progression, death/retirement authority and reachability are not inherited; separate current-source City proofs remain required. No historical execution, deployment or onchain qualification is added.' },
   goodsSourceReviewTransfer: { sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
     sourcePins: Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_CURRENT_PINS[file]])),
     predecessorPins: Object.fromEntries(['src/economy.js', 'src/server.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])),

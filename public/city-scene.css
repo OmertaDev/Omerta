@@ -180,11 +180,62 @@
 .omerta-city__viewport {
   background: #1b2429;
 }
+body.city-player-view .omerta-city__viewport { max-width: 960px; margin-inline: auto; }
+body.city-player-view .omerta-city:not(.omerta-city--unavailable) .omerta-city__viewport.is-inspecting .omerta-city__map-layer { min-height: 96px; }
+body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+  height: var(--city-map-height); min-height: 96px; aspect-ratio: auto;
+}
+@media (min-width: 681px) {
+  body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+    width: min(100%, max(680px, calc(var(--city-map-height) * 1.5))); margin-inline: auto;
+  }
+}
 .omerta-city__map-layer {
   position: relative;
   background: #1b2429;
   min-height: 320px;
   isolation: isolate;
+}
+.omerta-city__presence-caption { margin: 0; padding: 3px 10px; color: #aaa58f; font: 9px/1.4 var(--mono, monospace); }
+.omerta-city__actor-dock {
+  position: relative; max-height: var(--city-actor-height, 240px); overflow: auto;
+  background: #1c211f; border-top: 1px solid #625644; color: var(--city-paper); scrollbar-gutter: stable;
+}
+.omerta-city__actor-controls { position: sticky; top: 2px; height: 0; z-index: 2; }
+.omerta-city__actor-controls button {
+  position: absolute; top: 0; right: 2px; min-width: 44px; min-height: 44px; margin: 0;
+  border: 1px solid #78603c; border-radius: 3px; background: #24221d; color: var(--city-gold); font-size: 22px; cursor: pointer;
+}
+.omerta-city__actor-body { padding: 10px 58px 12px 12px; font: 11px/1.5 var(--mono, monospace); overflow-wrap: anywhere; }
+.omerta-city__actor-body h4 { margin: 0 0 6px; font-size: 14px; color: var(--city-gold); }
+.omerta-city__actor-body p { margin: 4px 0 8px; }
+.omerta-city__actor-body button, .omerta-city__presence button { min-height: 44px; cursor: pointer; }
+.omerta-city__actor-body button { padding: 8px 12px; margin: 3px 0; }
+.omerta-city__actor-facts, .omerta-city__placement { color: #c0baa4; }
+.omerta-city__actor-notice { color: #e8d5a8; border-left: 2px solid #bfa46c; padding-left: 8px; }
+.omerta-city__presence { padding: 12px 14px; background: #151817; border-top: 1px solid #625644; }
+.omerta-city__presence-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.omerta-city__presence h4 { margin: 0; font: 13px/1.4 var(--mono, monospace); color: var(--city-gold); }
+.omerta-city__presence-heading button { padding: 6px 10px; }
+.omerta-city__placement { margin: 8px 0; font: 10px/1.5 var(--mono, monospace); }
+.omerta-city__actor-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.omerta-city__actor { display: grid; gap: 4px; padding: 9px 10px; min-width: 0; text-align: left; overflow-wrap: anywhere; }
+.omerta-city__actor strong { font-size: 12px; color: var(--city-paper); }
+.omerta-city__actor span { font: 10px/1.4 var(--mono, monospace); color: #b7c1b5; }
+.omerta-city__actor-pager { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; }
+.omerta-city__actor-pager button { padding: 6px 10px; }
+.omerta-city__actor-pager span { font: 10px/1.4 var(--mono, monospace); color: var(--city-muted); }
+.omerta-city__intel, .omerta-city__objective, .omerta-city__encounter-receipt { margin: 8px 0; padding: 8px; border: 1px solid #414a40; background: #141916; }
+.omerta-city__intel strong, .omerta-city__objective strong { color: #e8d5a8; }
+.omerta-city__objective>span { margin-left: 8px; color: #bdc9b7; font-size: 10px; }
+.omerta-city__intel small { display: block; color: #b7bdaf; }
+.omerta-city__nearby { font: 10px/1.4 var(--mono, monospace); color: #c6c2ac; }
+.omerta-city__actor-body:focus-visible, .omerta-city__presence button:focus-visible, .omerta-city__actor-dock button:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
+@media (max-width: 680px) {
+  .omerta-city__actor-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .omerta-city__presence { padding: 10px; }
+  .omerta-city__presence-heading { align-items: flex-start; }
+  .omerta-city__actor-body { font-size: 10px; }
 }
 .omerta-city__canvas {
   width: 100%;
@@ -250,7 +301,7 @@
 }
 .omerta-city__interaction-controls {
   position: sticky;
-  top: 8px;
+  top: 0;
   height: 0;
   z-index: 1;
 }
