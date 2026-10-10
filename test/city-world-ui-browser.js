@@ -66,6 +66,9 @@ try {
     await page.evaluate(() => window.__ui.update({ trackerVisible: true }));
     await click('[data-city-world-tools]');
     assert.equal(await page.locator('[data-city-minimap]').count(), 1);
+    await page.locator('.city-world__content').focus();
+    await page.evaluate(() => window.__ui.update({}));
+    assert.equal(await page.locator('.city-world__content').evaluate(node => document.activeElement === node), true, 'A passive update retains anonymous content focus rather than choosing an unrelated unkeyed tab.');
     assert.deepEqual(await page.evaluate(() => window.__reads), [], 'Opening a local minimap does not request or mutate gameplay.');
     await click('[data-city-waypoint="training"]');
     assert.deepEqual(await page.evaluate(() => window.__waypoints), ['training']);

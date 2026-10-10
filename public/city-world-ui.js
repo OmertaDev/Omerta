@@ -328,7 +328,7 @@
         }
       }
       if (focused) {
-        const target = Array.from(dock.querySelectorAll('button,input,select')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) || content;
+        const target = (focusKey ? Array.from(dock.querySelectorAll('button,input,select')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) : null) || content;
         target.focus({ preventScroll: true }); if (selection && target.matches('input[type="text"]')) target.setSelectionRange(...selection);
       }
       changed();
