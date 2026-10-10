@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0",
+  "sourceRevision": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10425,
-    "edges": 42454,
+    "nodes": 10427,
+    "edges": 42462,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2220,
+      "Commit": 2222,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16556,
+      "CHANGED": 16562,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2220,
+      "HAS_COMMIT": 2222,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -111336,6 +111336,22 @@
       ]
     },
     {
+      "key": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "type": "Commit",
+      "id": "362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "label": "chore(knowledge): refresh awarded delivery planning artifacts",
+      "title": "chore(knowledge): refresh awarded delivery planning artifacts",
+      "date": "2026-10-10T08:20:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "provenance": [
+        {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/362a9bf2b1e24e39633e670408db2f25349d1cc3"
+        }
+      ]
+    },
+    {
       "key": "Commit:3634432020a73cd903650c524bc07214640cdb23",
       "type": "Commit",
       "id": "3634432020a73cd903650c524bc07214640cdb23",
@@ -136584,6 +136600,22 @@
       ]
     },
     {
+      "key": "Commit:eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+      "type": "Commit",
+      "id": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+      "label": "Merge pull request #218 from OmertaDev/codex/awarded-delivery-budget",
+      "title": "Merge pull request #218 from OmertaDev/codex/awarded-delivery-budget",
+      "date": "2026-10-10T09:02:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+      "provenance": [
+        {
+          "commit": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eb89fae7a6f10f0f5ff8a38e044784d63557a320"
+        }
+      ]
+    },
+    {
       "key": "Commit:eb99a9a8ff465715b52105e372e7be6f24a18501",
       "type": "Commit",
       "id": "eb99a9a8ff465715b52105e372e7be6f24a18501",
@@ -159619,6 +159651,9 @@
           "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
         },
         {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+        },
+        {
           "commit": "36d5bb2f549adedb207d6627a2197ec550f8db4e"
         },
         {
@@ -160211,6 +160246,9 @@
         },
         {
           "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
+        },
+        {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -161299,6 +161337,9 @@
           "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
         },
         {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+        },
+        {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
         },
         {
@@ -162383,6 +162424,9 @@
         },
         {
           "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
+        },
+        {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -163765,6 +163809,9 @@
           "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
         },
         {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+        },
+        {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
         },
         {
@@ -164693,6 +164740,9 @@
         },
         {
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
+        },
+        {
+          "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -173896,8 +173946,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0",
-      "currentBranch": "codex/awarded-delivery-budget",
+      "revision": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -268650,6 +268700,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "36156ace3f4e4600badc8394a205d0e10432d227"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
       }
     },
     {
@@ -447345,6 +447443,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
+      "provenance": {
+        "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3634432020a73cd903650c524bc07214640cdb23",
       "provenance": {
         "commit": "3634432020a73cd903650c524bc07214640cdb23"
@@ -459964,6 +460070,14 @@
       "to": "Commit:eb78a396da19ad233dbcfbc268923fccee368b3a",
       "provenance": {
         "commit": "eb78a396da19ad233dbcfbc268923fccee368b3a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+      "provenance": {
+        "commit": "eb89fae7a6f10f0f5ff8a38e044784d63557a320"
       }
     },
     {
