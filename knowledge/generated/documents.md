@@ -373,7 +373,7 @@
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 67 | 2026-10-08 |
-| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 26 | 2026-10-10 |
+| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 38 | 2026-10-10 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
