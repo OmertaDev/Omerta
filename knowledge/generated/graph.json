@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c405ae8b9f8afa17de183757d7020c8b67f4e277",
+  "sourceRevision": "499751dee970e8e1869896a8b738c5a251f15998",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10388,
-    "edges": 42281,
+    "nodes": 10390,
+    "edges": 42287,
     "byNodeType": {
       "Artifact": 4391,
       "Command": 209,
-      "Commit": 2200,
+      "Commit": 2202,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3520,
-      "CHANGED": 16474,
+      "CHANGED": 16478,
       "CONTAINS": 4412,
       "DECLARES": 209,
       "DEFINED_IN": 1388,
       "DEPENDS_ON": 67,
       "EXECUTES": 703,
       "HANDLED_BY": 766,
-      "HAS_COMMIT": 2200,
+      "HAS_COMMIT": 2202,
       "IMPLEMENTS": 124,
       "IMPORTS": 4161,
       "INHERITS": 42,
@@ -114205,6 +114205,22 @@
       ]
     },
     {
+      "key": "Commit:499751dee970e8e1869896a8b738c5a251f15998",
+      "type": "Commit",
+      "id": "499751dee970e8e1869896a8b738c5a251f15998",
+      "label": "Merge pull request #212 from OmertaDev/codex/city-world-hud",
+      "title": "Merge pull request #212 from OmertaDev/codex/city-world-hud",
+      "date": "2026-10-10T01:57:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/499751dee970e8e1869896a8b738c5a251f15998",
+      "provenance": [
+        {
+          "commit": "499751dee970e8e1869896a8b738c5a251f15998",
+          "url": "https://github.com/OmertaDev/Omerta/commit/499751dee970e8e1869896a8b738c5a251f15998"
+        }
+      ]
+    },
+    {
       "key": "Commit:49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
       "type": "Commit",
       "id": "49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
@@ -118569,6 +118585,22 @@
         {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8",
           "url": "https://github.com/OmertaDev/Omerta/commit/6c59995e7b8af1dea38ef846751a1e072dacbba8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "type": "Commit",
+      "id": "6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "label": "Regenerate knowledge for integrated City HUD",
+      "title": "Regenerate knowledge for integrated City HUD",
+      "date": "2026-10-10T01:13:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "provenance": [
+        {
+          "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6c84da2d97573f5336a690533d017aa1603b0fa5"
         }
       ]
     },
@@ -159891,6 +159923,9 @@
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
+          "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+        },
+        {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
         },
         {
@@ -160947,6 +160982,9 @@
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
+          "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+        },
+        {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
         },
         {
@@ -162001,6 +162039,9 @@
         },
         {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
+        },
+        {
+          "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
         },
         {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
@@ -163348,6 +163389,9 @@
         },
         {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
+        },
+        {
+          "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
         },
         {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
@@ -173187,8 +173231,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c405ae8b9f8afa17de183757d7020c8b67f4e277",
-      "currentBranch": "codex/city-world-hud",
+      "revision": "499751dee970e8e1869896a8b738c5a251f15998",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -295911,6 +295955,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
       }
     },
     {
@@ -447134,6 +447210,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:499751dee970e8e1869896a8b738c5a251f15998",
+      "provenance": {
+        "commit": "499751dee970e8e1869896a8b738c5a251f15998"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
       "provenance": {
         "commit": "49b855c57b5a69d2f4cad00e81b5c119a9a2b019"
@@ -449313,6 +449397,14 @@
       "to": "Commit:6c59995e7b8af1dea38ef846751a1e072dacbba8",
       "provenance": {
         "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
+      "provenance": {
+        "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
       }
     },
     {
