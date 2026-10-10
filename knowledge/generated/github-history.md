@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `755657a1aafc`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7da77f7d13e8`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2245 |
+| Commits in clone | 2247 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Integrate reviewed awarded-delivery planning changes |
+| Latest commit | 2026-10-10 — Observe historical intel replay at its causal boundary |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1334 |
+| OmertaDev | 1336 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 66 |
@@ -34,17 +34,17 @@
 | [public/index.html](../../public/index.html) | 443 | yes |
 | [src/server.js](../../src/server.js) | 378 | yes |
 | [SPEC.md](../../SPEC.md) | 377 | yes |
-| knowledge/generated/github-history.md | 370 | historical |
-| knowledge/generated/graph-summary.md | 370 | historical |
-| knowledge/generated/graph.json | 370 | historical |
-| knowledge/generated/inventory.md | 370 | historical |
+| knowledge/generated/github-history.md | 371 | historical |
+| knowledge/generated/graph-summary.md | 371 | historical |
+| knowledge/generated/graph.json | 371 | historical |
+| knowledge/generated/inventory.md | 371 | historical |
 | [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 160 | historical |
-| knowledge/generated/modules.md | 144 | historical |
+| knowledge/generated/documents.md | 161 | historical |
+| knowledge/generated/modules.md | 145 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
