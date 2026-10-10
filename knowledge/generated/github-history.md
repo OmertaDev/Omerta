@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f1babe0f7122`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `767510b53efc`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2187 |
+| Commits in clone | 2189 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Reconcile shadow compute routes with observed task outcomes |
+| Latest commit | 2026-10-10 — Merge pull request #213 from OmertaDev/codex/shadow-routing-outcomes |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1282 |
+| OmertaDev | 1284 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 60 |
@@ -34,24 +34,24 @@
 | [public/index.html](../../public/index.html) | 441 | yes |
 | [src/server.js](../../src/server.js) | 377 | yes |
 | [SPEC.md](../../SPEC.md) | 375 | yes |
-| knowledge/generated/github-history.md | 344 | historical |
-| knowledge/generated/graph-summary.md | 344 | historical |
-| knowledge/generated/graph.json | 344 | historical |
-| knowledge/generated/inventory.md | 344 | historical |
+| knowledge/generated/github-history.md | 345 | historical |
+| knowledge/generated/graph-summary.md | 345 | historical |
+| knowledge/generated/graph.json | 345 | historical |
+| knowledge/generated/inventory.md | 345 | historical |
 | [schema.sql](../../schema.sql) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 245 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 145 | historical |
-| knowledge/generated/modules.md | 134 | historical |
+| knowledge/generated/documents.md | 146 | historical |
+| knowledge/generated/modules.md | 135 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [test/client.js](../../test/client.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| knowledge/generated/graph.mmd | 93 | historical |
+| knowledge/generated/graph.mmd | 94 | historical |
 | [test/gates.js](../../test/gates.js) | 93 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
