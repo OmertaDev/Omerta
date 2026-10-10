@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `68ab32f8c851`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e69e74f339d5`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2249 |
+| Commits in clone | 2255 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Keep phone warning fixtures independent of elapsed accrual |
+| Latest commit | 2026-10-10 — Merge current main pending-bid safeguards into City release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1338 |
+| OmertaDev | 1343 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 66 |
+| github-actions[bot] | 67 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -34,17 +34,17 @@
 | [public/index.html](../../public/index.html) | 443 | yes |
 | [src/server.js](../../src/server.js) | 378 | yes |
 | [SPEC.md](../../SPEC.md) | 377 | yes |
-| knowledge/generated/github-history.md | 372 | historical |
-| knowledge/generated/graph-summary.md | 372 | historical |
-| knowledge/generated/graph.json | 372 | historical |
-| knowledge/generated/inventory.md | 372 | historical |
+| knowledge/generated/github-history.md | 375 | historical |
+| knowledge/generated/graph-summary.md | 375 | historical |
+| knowledge/generated/graph.json | 375 | historical |
+| knowledge/generated/inventory.md | 375 | historical |
 | [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 162 | historical |
-| knowledge/generated/modules.md | 145 | historical |
+| knowledge/generated/documents.md | 164 | historical |
+| knowledge/generated/modules.md | 146 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |

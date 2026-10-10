@@ -23,7 +23,7 @@
 | [src/brokers.js](../../src/brokers.js) | 253 | platform-core | 4 / 6 | 5 | 11 | 3 |
 | [src/bulletin.js](../../src/bulletin.js) | 89 | engagement-growth | 2 / 1 | 1 | 2 | 0 |
 | [src/business.js](../../src/business.js) | 683 | enterprise-logistics | 6 / 7 | 13 | 7 | 1 |
-| [src/businesspolicy.js](../../src/businesspolicy.js) | 182 | platform-core | 1 / 3 | 0 | 1 | 1 |
+| [src/businesspolicy.js](../../src/businesspolicy.js) | 199 | platform-core | 1 / 3 | 0 | 1 | 1 |
 | [src/campaigns.js](../../src/campaigns.js) | 107 | platform-core | 3 / 1 | 4 | 1 | 0 |
 | [src/cardpng.js](../../src/cardpng.js) | 57 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/cards.js](../../src/cards.js) | 283 | platform-core | 1 / 4 | 5 | 10 | 1 |
@@ -206,7 +206,7 @@
 | [src/regimen.js](../../src/regimen.js) | 126 | platform-core | 2 / 5 | 3 | 5 | 0 |
 | [src/resourceauction.js](../../src/resourceauction.js) | 65 | platform-core | 0 / 3 | 0 | 2 | 2 |
 | [src/resourcebook.js](../../src/resourcebook.js) | 123 | platform-core | 1 / 13 | 1 | 10 | 8 |
-| [src/resourcebusiness.js](../../src/resourcebusiness.js) | 73 | platform-core | 2 / 3 | 1 | 9 | 1 |
+| [src/resourcebusiness.js](../../src/resourcebusiness.js) | 79 | platform-core | 2 / 3 | 1 | 9 | 1 |
 | [src/resourcecompute.js](../../src/resourcecompute.js) | 277 | platform-core | 3 / 2 | 9 | 6 | 0 |
 | [src/resourcecontracts.js](../../src/resourcecontracts.js) | 48 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/resourcelabor.js](../../src/resourcelabor.js) | 171 | platform-core | 1 / 3 | 7 | 9 | 0 |

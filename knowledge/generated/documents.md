@@ -322,14 +322,14 @@
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-09 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
-| [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 26 | 2026-10-10 |
+| [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 30 | 2026-10-10 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 56 | 2026-10-09 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 46 | 2026-10-09 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
-| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 165 | 2026-10-10 |
+| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 177 | 2026-10-10 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
