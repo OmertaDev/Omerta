@@ -47,7 +47,10 @@ export function evaluateBusiness(snapshot, input = {}) {
   const jobs = items(snapshot.jobs), bounties = items(snapshot.bounties), customers = items(snapshot.customers);
   const catalog = items(snapshot.catalog, 32), outcomes = items(snapshot.providerOutcomes, 32);
   const active = amount(snapshot.capacity?.activeJobs);
-  const slots = Math.max(0, policy.maxActiveJobs - active);
+  const pendingAwardBids = snapshot.commitments?.pendingAwardBids ?? null;
+  if (pendingAwardBids !== null) bounded(pendingAwardBids, 'pending award bids');
+  const remainingSlots = pendingAwardBids === null ? 0n : BigInt(policy.maxActiveJobs) - BigInt(active) - BigInt(pendingAwardBids);
+  const slots = remainingSlots > 0n ? Number(remainingSlots) : 0;
   const jobEconomics = jobs.map(job => {
     if (!id(job.id) || !['open','claimed','submitted','accepted','disputed','refunded'].includes(job.state)) throw new Error('Invalid business job');
     const revenue = amount(job.settledRevenueUsdMicros), cost = amount(job.settledComputeCostsUsdMicros);
@@ -58,6 +61,7 @@ export function evaluateBusiness(snapshot, input = {}) {
   });
   if (new Set(jobs.map(job => job.id)).size !== jobs.length) throw new Error('Invalid business duplicate jobs');
   const riskFlags = ['outside_costs_incomplete'];
+  if (pendingAwardBids === null) riskFlags.push('pending_bid_commitments_unknown');
   if (jobs.filter(job => ['open','claimed','submitted','disputed'].includes(job.state)).length !== active) riskFlags.push('active_job_detail_mismatch');
   if (policy.operatingCostPerJobUsdMicros || policy.paymentFeeBps) riskFlags.push('operator_cost_estimates_unreconciled');
   if (snapshot.resourceMode !== 'live' || totals.simulatedPaidCalls) riskFlags.push('simulation_or_unfunded_data');
@@ -111,6 +115,18 @@ export function evaluateBusiness(snapshot, input = {}) {
   if (deliveryBudget.cashCovered === false) riskFlags.push('awarded_delivery_funds_insufficient');
   if (deliveryBudget.dailyBudgetCovered === false) riskFlags.push('awarded_delivery_daily_budget_insufficient');
   if (protectedCompute !== null) { available -= protectedCompute; daily -= protectedCompute; }
+  let protectedBidCompute = null;
+  if (pendingAwardBids !== null && quote !== null && protectedCompute !== null && totals.unresolvedPaidCalls === 0) {
+    const total = BigInt(quote) * BigInt(pendingAwardBids);
+    if (total + BigInt(protectedCompute) <= BigInt(MAX)) protectedBidCompute = Number(total);
+    else riskFlags.push('pending_bid_budget_outside_exact_bounds');
+  }
+  const bidCommitmentBudget = { pendingAwardBids, protectedComputeUsdMicros: protectedBidCompute,
+    cashCovered: protectedBidCompute === null ? null : BigInt(available) - BigInt(reserve) >= BigInt(protectedBidCompute),
+    dailyBudgetCovered: protectedBidCompute === null ? null : BigInt(daily) >= BigInt(protectedBidCompute) };
+  if (bidCommitmentBudget.cashCovered === false) riskFlags.push('pending_bid_funds_insufficient');
+  if (bidCommitmentBudget.dailyBudgetCovered === false) riskFlags.push('pending_bid_daily_budget_insufficient');
+  if (protectedBidCompute !== null) { available -= protectedBidCompute; daily -= protectedBidCompute; }
   const authorityValid = authority?.enabled === true && Number.isFinite(Date.parse(authority.expiresAt))
     && Date.parse(authority.expiresAt) > now && Array.isArray(authority.providers) && authority.providers.includes(policy.providerId)
     && !(entry?.storeResponses && authority.allowStoredResponses !== true);
@@ -122,7 +138,7 @@ export function evaluateBusiness(snapshot, input = {}) {
   const canBid = suggestedPrice !== null && snapshot.service?.enabled === true && id(policy.providerId)
     && Number.isSafeInteger(snapshot.service.revision) && snapshot.service.revision >= 1 && snapshot.service.revision <= 2147483647
     && snapshot.treasury?.frozen === false && authorityValid && quote <= amount(authority?.maxPerCallUsdMicros)
-    && totals.unresolvedPaidCalls === 0 && deliveryDetailsSafe && protectedCompute !== null;
+    && totals.unresolvedPaidCalls === 0 && deliveryDetailsSafe && protectedCompute !== null && protectedBidCompute !== null;
   const price = suggestedPrice === null ? null : Math.max(suggestedPrice, amount(snapshot.service?.priceUsdMicros));
   let allocated = 0;
   for (const bounty of [...bounties].sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
@@ -150,7 +166,8 @@ export function evaluateBusiness(snapshot, input = {}) {
     pricing: { knownCostBasisUsdMicros: knownCostBasis, planningComputeCostUsdMicros: costBasis, conservativeQuoteUsdMicros: quote, suggestedPriceUsdMicros: suggestedPrice, estimatedOperatingCostUsdMicros: policy.operatingCostPerJobUsdMicros,
       estimatedPaymentFeeUsdMicros: suggestedPrice === null ? null : estimatePaymentFee(suggestedPrice, policy.paymentFeeBps),
       feeRoundingReserveUsdMicros: policy.paymentFeeBps ? 10000 : 0, basis: 'Operator estimates, not reconciled bills' },
-    proposals, deliveryBudget, capacity: { activeJobs: active, reservedSlots: active, availableSlots: slots, proposedWorkSlots: allocated },
+    proposals, deliveryBudget, bidCommitmentBudget, capacity: { activeJobs: active, reservedSlots: active,
+      pendingAwardSlots: pendingAwardBids, availableSlots: slots, proposedWorkSlots: allocated },
     computeValue: { providerOutcomes, causalEffect: null, measurement: 'Descriptive outcomes; stronger models require controlled comparison.' },
     riskFlags, outsideCostsComplete: false, profitabilityKnown: false };
 }
