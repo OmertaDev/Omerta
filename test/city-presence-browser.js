@@ -45,7 +45,7 @@ try {
   await app.listen({ host: '127.0.0.1', port: 0 });
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
-  const newPage = async (viewport, { noResizeObserver = false } = {}) => {
+  const newPage = async (viewport, { noResizeObserver = false, capturePlayer = false } = {}) => {
     const context = await browser.newContext({ viewport, serviceWorkers: 'block', isMobile: viewport.width <= 680, hasTouch: viewport.width <= 680 });
     if (noResizeObserver) await context.addInitScript(() => { window.ResizeObserver = undefined; });
     await context.addInitScript(token => {
@@ -85,6 +85,7 @@ try {
     }, viewer.token);
     const page = await context.newPage(); await page.bringToFront();
     page.on('pageerror', error => errors.push(error.message));
+    const playerReply = capturePlayer ? page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/projections/player' && reply.status() === 200) : null;
     const requests = []; page.on('request', request => requests.push({ method: request.method(), path: new URL(request.url()).pathname }));
     // Test-only access to the existing read coordinator.
     // Responses remain from the real server; source files are never modified.
@@ -100,7 +101,7 @@ try {
     await page.locator('#btn-player-view').click();
     await page.waitForFunction(() => window.__presenceHandles.at(-1)?.handle.getState().ready);
     await page.waitForSelector('[data-city-actor]');
-    return { page, context, requests };
+    return { page, context, requests, playerReply: playerReply ? await playerReply : null };
   };
   const state = page => page.evaluate(() => window.__presenceHandles.at(-1).handle.getState());
   const frames = page => page.evaluate(() => new Promise(resolve => { let observed = 0; const next = () => ++observed < 8 ? requestAnimationFrame(next) : resolve(); requestAnimationFrame(next); }));
@@ -429,7 +430,13 @@ try {
   await context.close();
 
   for (const viewport of [{ width: 375, height: 812 }, { width: 320, height: 568 }]) {
-    const mobile = await newPage(viewport), phone = mobile.page;
+    // Health regenerates 20/min. Each phone gets its own bounded accrual hold,
+    // so this warning/geometry scenario does not depend on earlier test speed.
+    const previousVitals = (await app.pool.query('SELECT health,energy,last_accrued_at,cash,bank FROM characters WHERE id=$1', [viewer.id])).rows[0];
+    await app.pool.query('UPDATE characters SET health=22,energy=31,last_accrued_at=$2 WHERE id=$1', [viewer.id, new Date(Date.now() + 600000)]);
+    const mobile = await newPage(viewport, { capturePlayer: true }), phone = mobile.page;
+    const playerBody = await mobile.playerReply.json(), projectedPlayer = playerBody.player?.character || playerBody.player;
+    assert.equal(projectedPlayer.health, 22, 'The real winning phone player GET carries the controlled low-health fixture.');
     await inspect(phone, npc.id); await frames(phone);
     await phone.locator('[data-city-encounter]').scrollIntoViewIfNeeded();
     const geometry = await phone.evaluate(() => {
@@ -441,6 +448,8 @@ try {
     assert(geometry.close.height >= 44 && geometry.action.height >= 44 && geometry.hits.every(Boolean), JSON.stringify(geometry));
     assert(geometry.canvas.top >= geometry.header.bottom && geometry.canvas.bottom <= viewport.height, JSON.stringify(geometry));
     assert(Math.abs(geometry.engine.height - geometry.canvas.height) <= 1 && Math.abs(geometry.engine.width - geometry.canvas.width) <= 1);
+    assert.equal((await state(phone)).resources.health, projectedPlayer.health, 'The scene health comes from the actual phone player projection.');
+    assert.equal((await phone.locator('[data-city-resource="health"] dd').textContent()).replace(/\s+/g, ''), '22/100');
     assert.match(await phone.locator('.omerta-city__readiness').textContent(), /LOW HEALTH/);
     const shots = process.env.CITY_PRESENCE_SHOTS;
     if (shots) { fs.mkdirSync(shots, { recursive: true }); await phone.screenshot({ path: path.join(shots, 'city-people-' + viewport.width + '.png') }); }
@@ -480,6 +489,9 @@ try {
       assert.equal(mutations(mobile.requests).length, beforeTouch, 'Native touch scrolling remains usable outside the canvas.');
     }
     await mobile.context.close();
+    const afterPhone = (await app.pool.query('SELECT cash,bank FROM characters WHERE id=$1', [viewer.id])).rows[0];
+    assert.equal(Number(afterPhone.cash), Number(previousVitals.cash)); assert.equal(Number(afterPhone.bank), Number(previousVitals.bank));
+    await app.pool.query('UPDATE characters SET health=$2,energy=$3,last_accrued_at=$4 WHERE id=$1', [viewer.id, previousVitals.health, previousVitals.energy, previousVitals.last_accrued_at]);
   }
 
   // Engine failure leaves the same public roster and explicit server actions usable.
