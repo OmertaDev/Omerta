@@ -1,0 +1,72 @@
+.city-world__toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; width: 100%; }
+.omerta-city .city-world__toolbar button { min-height: 44px; }
+.city-world__tools { font-weight: 750; white-space: nowrap; }
+.city-world__tracker { flex: 1 1 160px; min-width: 0; text-align: left; color: #e9c37b; overflow-wrap: anywhere; }
+.city-world__gains { color: #aed8a3; font-size: 12px; font-weight: 650; }
+.city-world__gains:empty { display: none; }
+.city-world__dialogue { flex-basis: 100%; color: #e2d7b8; font-size: 11px; line-height: 1.4; }
+.city-world__dialogue[hidden] { display: none; }
+.city-world__dock { min-width: 0; max-height: var(--city-world-height, 240px); overflow: auto; overscroll-behavior: contain; background: #182528; border: 1px solid #8c7655; border-radius: 6px; padding: 0 12px 12px; box-sizing: border-box; scrollbar-gutter: stable; }
+.city-world__dock[hidden], .city-world__speech[hidden] { display: none; }
+.city-world__dock-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; background: #182528; border-bottom: 1px solid #4b5146; }
+.omerta-city .city-world__close { min-height: 44px; min-width: 44px; padding: 0; font-size: 22px; border: 0; }
+.city-world__tabs { display: flex; gap: 4px; flex-wrap: wrap; padding: 6px 0; }
+.omerta-city .city-world__tabs button { min-height: 44px; flex: 1 1 72px; font-size: 12px; padding: 4px 8px; }
+.city-world__tabs button[aria-pressed="true"], .city-world__look[aria-pressed="true"] { color: #fff1c1; border-color: #e8b34b; background: #3d3d2b; }
+.city-world__content { min-width: 0; outline-offset: -2px; }
+.city-world__dock.is-compact { padding-block: 8px; }
+.city-world__dock.is-compact .city-world__dock-bar { height: 0; min-height: 0; border: 0; background: none; }
+.city-world__dock.is-compact .city-world__dock-bar > strong { display: none; }
+.city-world__dock.is-compact .city-world__close { position: absolute; right: 0; top: 0; z-index: 4; background: #182528; }
+.city-world__dock.is-compact .city-world__tabs, .city-world__dock.is-compact .city-world__content, .city-world__dock.is-compact .city-world__notice, .city-world__dock.is-compact .city-world__receipt { padding-right: 52px; }
+.city-world__dock.is-compact .city-world__tabs { padding-block: 0; }
+.city-world__content h4 { margin: 6px 0; font-size: 14px; }
+.city-world__content p { margin: 5px 0 8px; }
+.city-world__hint, .city-world__notice { color: #bdc2b1; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.city-world__notice:empty { display: none; }
+.city-world__minimap { display: block; width: min(100%, 360px); height: auto; image-rendering: pixelated; margin: 8px auto; border: 2px solid #766a50; border-radius: 3px; }
+.city-world__destination-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.omerta-city .city-world__destination-grid button { min-height: 44px; white-space: normal; }
+.city-world__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 8px 0; }
+.city-world__stats > div { padding: 8px; border: 1px solid #48554b; border-radius: 4px; }
+.city-world__stats dt { font-size: 11px; text-transform: capitalize; color: #b8c1b1; }
+.city-world__stats dd { margin: 4px 0 0; color: #f0d390; font: 700 17px ui-monospace, monospace; overflow-wrap: anywhere; }
+.city-world__level { display: block; width: 100%; accent-color: #e3b355; }
+.city-world__item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #475248; }
+.city-world__item strong { font-size: 13px; overflow-wrap: anywhere; }
+.omerta-city .city-world__item button { min-height: 44px; }
+.city-world__item-copy { font-size: 12px; overflow-wrap: anywhere; }
+.city-world__room { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); aspect-ratio: 1.3; max-width: 340px; margin: 10px auto; position: relative; background: #302f26; border: 6px solid #655441; border-top: 22px solid #4c5a4c; box-shadow: inset 0 0 0 2px #b0996b; }
+.city-world__floor { border: 1px solid #736348; background: repeating-linear-gradient(0deg, #a08a61 0 7px, #957d58 7px 8px); }
+.city-world__floor:nth-child(3n) { filter: brightness(.92); }
+.city-world__room-player { grid-column: 4; grid-row: 5; z-index: 2; width: 100%; height: 150%; object-fit: contain; align-self: end; image-rendering: pixelated; pointer-events: none; }
+.city-world__furniture { align-self: center; justify-self: center; z-index: 1; width: 100%; height: 100%; position: relative; pointer-events: none; }
+.city-world__furniture::before { content: ''; display: block; width: 65%; height: 65%; margin: auto; background: #785644; box-shadow: inset 0 0 0 3px #c69d69, 3px 4px #3b3227; }
+.city-world__furniture--chair::before { height: 40%; border-top: 10px solid #513d30; }
+.city-world__furniture--lamp::before { width: 35%; background: #e6cf80; border-radius: 45% 45% 0 0; box-shadow: 0 8px #75614b; }
+.city-world__furniture--lamp.is-used::before { background: #fff1a1; box-shadow: 0 0 20px #e6cf80; }
+.city-world__furniture--window::before { background: linear-gradient(90deg, transparent 42%, #785644 42% 57%, transparent 57%), linear-gradient(0deg, transparent 42%, #785644 42% 57%, transparent 57%), #7fabb2; border: 3px solid #a88d63; box-shadow: 2px 2px #3b3227; }
+.city-world__room-controls { display: flex; flex-wrap: wrap; gap: 6px; }
+.city-world__room-controls select { flex: 1 1 100px; }
+.city-world__room-controls input { width: 48px; }
+.city-world__room-controls input, .city-world__room-controls select { box-sizing: border-box; min-height: 44px; background: #152025; color: #e7e1cf; border: 1px solid #6d765e; border-radius: 3px; }
+.city-world__looks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.omerta-city .city-world__look { display: flex; flex-direction: column; align-items: center; padding: 6px; font-size: 11px; min-width: 0; min-height: 44px; box-shadow: inset 0 3px var(--look-color, #a89c7b); }
+.city-world__look img { width: 35px; height: 60px; object-fit: contain; image-rendering: pixelated; background: var(--look-color, transparent); background-blend-mode: multiply; }
+.city-world__emotes { display: flex; flex-wrap: wrap; gap: 6px; }
+.omerta-city .city-world__emotes button { min-height: 44px; }
+.city-world__chat-feed { list-style: none; margin: 8px 0; padding: 0; }
+.city-world__chat-feed li { margin: 4px 0; padding: 7px; background: #202f2e; border-radius: 3px; font-size: 12px; overflow-wrap: anywhere; }
+.city-world__chat-feed strong { color: #e6c58c; }
+.city-world__chat-form { display: flex; gap: 6px; }
+.city-world__chat-form input { flex: 1; min-width: 0; min-height: 44px; box-sizing: border-box; background: #101e23; color: #f1ecdb; border: 1px solid #718068; border-radius: 3px; padding: 6px; }
+.omerta-city .city-world__chat-form button { min-height: 44px; }
+.city-world__speech { position: absolute; top: 8px; left: 8px; z-index: 5; max-width: min(240px, calc(100% - 24px)); padding: 9px 12px; border: 1px solid #ab9568; border-radius: 5px; background: #f0e8cd; color: #253431; pointer-events: none; box-shadow: 2px 3px #15252580; }
+.city-world__speech strong { display: block; font: 700 10px ui-monospace, monospace; letter-spacing: .05em; margin-bottom: 4px; }
+.city-world__speech span { font-size: 12px; line-height: 1.35; }
+.city-world__speech.is-inline { top: auto; bottom: 4px; left: 4px; padding: 4px 8px; max-width: calc(100% - 24px); }
+.city-world__speech.is-inline span { font-size: 10px; }
+.city-world__speech.is-inline strong { display: none; }
+@media (max-width: 680px) { .city-world__toolbar { gap: 4px; } .city-world__tracker { font-size: 11px; flex-basis: 130px; } .city-world__dock { padding-inline: 8px; } .city-world__tabs { gap: 3px; } .city-world__room { max-width: 300px; } }
+@media (prefers-reduced-motion: no-preference) { .city-world__speech { animation: city-world-arrive 180ms ease-out; } }
+@keyframes city-world-arrive { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }

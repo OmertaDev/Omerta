@@ -22,6 +22,26 @@
       "definition": "CHECK (sequence >= 1 AND sequence <= '9007199254740991'::bigint)"
     },
     {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_generation_check",
+      "definition": "CHECK (generation >= 1)"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_outfit_check",
+      "definition": "CHECK (outfit = ANY (ARRAY['classic'::text, 'moss'::text, 'wine'::text, 'ink'::text]))"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_pkey",
+      "definition": "PRIMARY KEY (character_id, generation)"
+    },
+    {
       "table_name": "coordination_archive_entries",
       "name": "coordination_archive_entries_archive_id_claim_id_key",
       "definition": "UNIQUE (archive_id, claim_id)"
@@ -1335,6 +1355,13 @@
     }
   ],
   "notNullColumns": {
+    "city_social_preferences": [
+      "character_id",
+      "chat_enabled",
+      "generation",
+      "outfit",
+      "room_layout"
+    ],
     "city_intel_progress": [
       "character_id",
       "generation",

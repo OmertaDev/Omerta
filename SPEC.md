@@ -12,18 +12,18 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **315** files, **111102** lines (recursive source inventory) |
-| Test suites | **477** files, **145546** lines (recursive source inventory) |
-| HTTP routes | **887** registrations (**887** unique; 838 under `/v1`) |
-| Database tables | **391** (`schema.sql`, 7681 lines) |
-| Client | **14413** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
+| Backend modules | **317** files, **111462** lines (recursive source inventory) |
+| Test suites | **480** files, **147161** lines (recursive source inventory) |
+| HTTP routes | **893** registrations (**893** unique; 842 under `/v1`) |
+| Database tables | **392** (`schema.sql`, 7693 lines) |
+| Client | **14707** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **718** markdown files, **136473** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **719** markdown files, **136542** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **62** checks — **56** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
-Roughly **262,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **277,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 

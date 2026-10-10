@@ -7679,3 +7679,15 @@ CREATE TABLE IF NOT EXISTS city_intel_progress (
   objectives JSONB NOT NULL,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Per-street free cosmetics and explicit district chat consent. No currency, gear or protection.
+CREATE TABLE IF NOT EXISTS city_social_preferences (
+  character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  generation INTEGER NOT NULL CHECK (generation >= 1),
+  outfit TEXT NOT NULL DEFAULT 'classic' CHECK (outfit IN ('classic','moss','wine','ink')),
+  chat_enabled BOOLEAN NOT NULL DEFAULT false,
+  chat_district TEXT,
+  room_layout JSONB NOT NULL DEFAULT '[]',
+  last_chat_at TIMESTAMPTZ,
+  PRIMARY KEY (character_id,generation)
+);

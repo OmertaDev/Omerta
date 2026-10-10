@@ -99,6 +99,8 @@ try {
     'The pinned baseline predates the company registry');
   assert.equal(oldConstraints.filter((row) => row.table_name === 'city_intel_progress').length, 0,
     'The pinned baseline predates the private City intel table');
+  assert.equal(oldConstraints.filter((row) => row.table_name === 'city_social_preferences').length, 0,
+    'The pinned baseline predates opt-in City social preferences');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
   const migrate = async () => {
     const client = await pool.connect();
@@ -110,7 +112,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   verifyPreservedConstraints(upgradedConstraints);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
@@ -123,6 +125,16 @@ try {
   const verifyCityNotNull = (columns) => assert.deepEqual(columns, cityColumns, 'City migration preserves exact reviewed nullability');
   const cityNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_intel_progress' AND is_nullable='NO' ORDER BY column_name")).rows.map((row) => row.column_name);
   verifyCityNotNull(cityNotNull);
+  const socialConstraints = inventory.added.filter(row => row.table_name === 'city_social_preferences');
+  assert.equal(socialConstraints.length, 4, 'Four independently reviewed social owner/identity/generation/outfit constraints are required');
+  const verifySocialConstraints = rows => assert.deepEqual(rows.filter(row => row.table_name === 'city_social_preferences'), socialConstraints,
+    'Social migration installs exactly its reviewed constraints and never alters predecessor rows');
+  verifySocialConstraints(upgradedConstraints);
+  const socialColumns = inventory.notNullColumns.city_social_preferences;
+  assert.deepEqual(socialColumns, ['character_id', 'chat_enabled', 'generation', 'outfit', 'room_layout']);
+  const verifySocialNotNull = columns => assert.deepEqual(columns, socialColumns, 'All five social ownership/consent/presentation columns remain non-null');
+  const socialNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_social_preferences' AND is_nullable='NO' ORDER BY column_name")).rows.map(row => row.column_name);
+  verifySocialNotNull(socialNotNull);
   const mutateConstraint = (table, name, change) => {
     const rows = upgradedConstraints.map((row) => ({ ...row })), index = rows.findIndex((row) => row.table_name === table && row.name === name);
     assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
@@ -141,6 +153,15 @@ try {
   rejected(verifyCityConstraints, 'City safe sequence bound weakened', mutateConstraint('city_intel_progress', 'city_intel_progress_sequence_check',
     (rows, index) => { rows[index].definition = rows[index].definition.replace('9007199254740991', '9007199254740992'); }));
   for (const column of cityColumns) rejected(verifyCityNotNull, 'City '+column+' nullability removed', cityColumns.filter((name) => name !== column));
+  rejected(verifySocialConstraints, 'Social owner foreign key removed', mutateConstraint('city_social_preferences', 'city_social_preferences_character_id_fkey',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifySocialConstraints, 'Social owner generation identity weakened', mutateConstraint('city_social_preferences', 'city_social_preferences_pkey',
+    (rows, index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected(verifySocialConstraints, 'Social generation minimum removed', mutateConstraint('city_social_preferences', 'city_social_preferences_generation_check',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifySocialConstraints, 'Social free outfit catalog widened', mutateConstraint('city_social_preferences', 'city_social_preferences_outfit_check',
+    (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  for (const column of socialColumns) rejected(verifySocialNotNull, 'Social '+column+' nullability removed', socialColumns.filter(name => name !== column));
   assert.deepEqual(upgradedConstraints.filter((row) => goodsMarketTables.includes(row.table_name)), [
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_bought_check', definition: 'CHECK (bought >= 0)' },
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_pkey', definition: 'PRIMARY KEY (good_id, district)' },

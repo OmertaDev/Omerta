@@ -117,6 +117,10 @@
   #player-view-switch { display: inline-flex; flex: 0 0 auto; gap: 4px; padding: 3px;
     border: 1px solid var(--gold); border-radius: var(--r-md); background: var(--panel2); }
   #top #player-view-switch button { min-height: 44px; padding: 8px 10px; font-size: 12px; }
+  #top #player-view-switch.has-world-tools button { padding-inline: 6px; font-size: 11px; }
+  #top #btn-player-view[aria-busy="true"] { padding-inline-end: 10px !important; }
+  #top #player-view-switch.has-world-tools #btn-player-view[aria-busy="true"] { padding-inline-end: 6px !important; }
+  #top #btn-player-view[aria-busy="true"]::after { display: none; }
   #player-view-switch button[aria-pressed="true"] { background: var(--neon); color: #17130b; border-color: var(--neon); }
   body.city-player-view #top { position: sticky; top: 0; }
   body.city-player-view #top > :not(h1):not(#whoami):not(#player-view-switch):not(#btn-refresh),
@@ -491,6 +495,9 @@
     opacity: 0; transform: translate(-50%, 14px) scale(.97); pointer-events: none;
     transition: opacity .22s var(--ease), transform .22s var(--ease); }
   #toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  body.city-player-view #toast { max-height: 56px; padding: 4px 10px; overflow-y: auto; align-items: flex-start; overscroll-behavior: contain; }
+  body.city-player-view #toast > span:not(.ti) { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+  body.city-player-view #toast:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   #toast.bad { border-color: var(--blood); box-shadow: var(--shadow-pop), 0 0 24px rgba(192,57,43,.18); }
   #toast .ti { flex: 0 0 auto; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%;
     font-size: 11px; color: #14120a; background: var(--neon); font-family: var(--mono); }
@@ -1241,6 +1248,7 @@
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <link rel="stylesheet" href="/city-scene.css?v=20261009-game-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261010-world-1">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
@@ -1703,7 +1711,7 @@
   <div style="margin-top:12px;text-align:right"><button class="act" id="phone-close" style="padding:9px 18px">hang up</button></div>
 </div></div>
 
-<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true" inert></div>
 <div id="brag" class="hidden"></div>
 
 <script>
@@ -3461,6 +3469,8 @@
       return `the place has a name now — ${txt(body.name)}${body.omr ? ` · ${fmt(body.omr)} $OMR${body.spent ? `, ${fmt(body.spent)} sunk into it all told` : ''}` : ''}`;
     if (!body || typeof body !== 'object') return code < 400 ? 'done.' : 'no dice.';
     if (code >= 400) { const e = body.error; return body.message || (e && ERRMAP[e]) || (e ? e.replace(/_/g, ' ') : `the city said no (${code})`); }
+    if (body.chat === 'sent' && body.message && typeof body.message === 'object' && ['text', 'emote'].includes(body.message.kind))
+      return body.message.kind === 'emote' ? 'Emote shared with nearby players.' : 'Message sent to nearby players.';
     const bits = [];
     // hoisted to the head of the accumulator: it was declared 160 lines down, so every branch above
     // it sat in the TDZ and could not ask whether the money had already been said (the $dist class).
@@ -5157,10 +5167,33 @@
   // are not standing in leaves the player hunting for the travel control, and a 3.4s toast is the
   // wrong place to put an action anyway — so when there IS one, the toast STAYS until it is used or
   // dismissed. A refusal you can act on is worth more than one that merely explains itself.
+  function dismissToast() {
+    const t = $('#toast'), focused = t.contains(document.activeElement), previous = t._return;
+    clearTimeout(t._h); t.classList.remove('show'); t.inert = true; t.tabIndex = -1;
+    if (focused) {
+      if (previous?.isConnected && !previous.closest('.hidden, [hidden], [inert]')) previous.focus({ preventScroll: true });
+      else document.activeElement?.blur();
+    }
+  }
   function toast(msg, bad = false, action = null) {
     const t = $('#toast');
+    t.inert = false;
     t.setAttribute('role', bad ? 'alert' : 'status');
     t.setAttribute('aria-live', bad ? 'assertive' : 'polite');
+    t.tabIndex = document.body.classList.contains('city-player-view') ? 0 : -1;
+    t.onfocus = event => {
+      if (!document.body.classList.contains('city-player-view')) return;
+      clearTimeout(t._h);
+      if (!t.contains(event.relatedTarget)) t._return = event.relatedTarget;
+    };
+    t.onblur = event => {
+      if (!action && document.body.classList.contains('city-player-view') && !t.contains(event.relatedTarget) && t.classList.contains('show'))
+        t._h = setTimeout(dismissToast, 3400);
+    };
+    t.onkeydown = event => {
+      if (!document.body.classList.contains('city-player-view') || event.key !== 'Escape') return;
+      event.preventDefault(); event.stopPropagation(); dismissToast();
+    };
     t.innerHTML = '';
     const ic = document.createElement('span'); ic.className = 'ti'; ic.textContent = bad ? '✕' : '✓';
     const tx = document.createElement('span'); tx.textContent = msg;
@@ -5168,16 +5201,16 @@
     if (action) {
       const b = document.createElement('button');
       b.className = 'toast-act'; b.textContent = action.label;
-      b.onclick = () => { t.classList.remove('show'); action.run(); };
+      b.onclick = () => { if (t.inert || !t.classList.contains('show') || !t.contains(b)) return; dismissToast(); action.run(); };
       const x = document.createElement('button');
       x.className = 'toast-x'; x.textContent = '✕'; x.title = 'dismiss'; x.setAttribute('aria-label', 'Dismiss message');
-      x.onclick = () => t.classList.remove('show');
+      x.onclick = dismissToast;
       t.append(b, x);
     }
     t.classList.toggle('bad', bad); t.classList.add('show');
     haptic(bad ? 'error' : 'success');
     clearTimeout(t._h);
-    if (!action) t._h = setTimeout(() => t.classList.remove('show'), 3400);
+    if (!action && !t.contains(document.activeElement)) t._h = setTimeout(dismissToast, 3400);
   }
 
   // THE TRAVEL PICKER — reachable from anywhere, because "where can I even move?" turned out to be
@@ -5317,7 +5350,7 @@
       run: () => act(context.method, context.path, context.body, { label: context.label,
         beforeDispatch: context.beforeDispatch, isCurrent: context.isCurrent, onReceipt: context.onReceipt }),
     };
-    if (['offline', 'db_down', 'internal', 'contention', 'again'].includes(code)) return {
+    if (['offline', 'db_down', 'internal', 'contention', 'again', 'item_commit_unknown', 'item_recovery_required'].includes(code)) return {
       sameKey: true,
       text: code === 'offline'
         ? 'No response reached you. Retry the same move; its request key protects against a duplicate.'
@@ -8708,8 +8741,11 @@
   let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
   let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map();
   let _cityEntry = null;
+  let _cityTrainingReceipt = null;
+  let _cityFixerReceipt = null;
+  let _cityWorldData = null, _cityWorldReceipt = null, _cityWorldPending = false;
   let _cityPeople = null, _cityIntel = null, _cityPeopleRevision = 0, _cityEncounterPending = false, _cityEncounterReceipt = null;
-  function clearCityPeople() { _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityPeopleRevision++; }
+  function clearCityPeople() { _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityPeopleRevision++; }
   function cityBoardCurrent(board) {
     return board?.viewer?.characterId === me?.id && board.viewer.generation === me?.generation
       && board.viewer.district === me?.loc;
@@ -8859,6 +8895,275 @@
     return divisor > 0 ? { respect: Number(me.respect), floor: divisor * (level - 1) ** 2,
       next: divisor * level ** 2, level } : null;
   }
+  function coreTrainingMarkup({ termsId = 'streets-gym-terms', compact = false } = {}) {
+    const gymCd = Number(me?.trainSeconds || 0), trainEnergy = Number(rules?.pacing?.trainEnergy || 10);
+    const gymBlock = Number(me?.jailSeconds || 0) > 0 ? 'No gym in lockup.'
+      : gymCd > 0 ? `Gym reopens in ${compact ? minsTxt(gymCd) : mins(gymCd)}.`
+      : Number(me?.energy || 0) < trainEnergy ? `Needs ${trainEnergy} energy. You have ${fmt(me?.energy || 0)}.` : '';
+    const train = (rules?.stats || []).filter(s => ['muscle', 'cunning', 'speed'].includes(s)).map((s) =>
+      `<button class="act" data-operation-label="train ${s}" aria-describedby="${termsId}" ${compact ? `data-city-train="${s}"` : `data-do="POST /v1/train/${s}"`}${gymBlock ? ` disabled aria-disabled="true" title="${esc(gymBlock)}"` : ''}>${s}${compact ? ` <b>${fmt(me?.stats?.[s])}</b>` : ''}</button>`).join('');
+    const terms = compact
+      ? `<div class="d operation-terms" id="${termsId}">${trainEnergy} energy · ${minsTxt(rules?.pacing?.trainCooldownSeconds || 0)} recovery${gymBlock ? ` · <b>${esc(gymBlock)}</b>` : ''}</div>`
+      : `<div class="d operation-terms" id="${termsId}" style="margin-bottom:4px"><b>CORE TRAINING</b> · ${trainEnergy} energy per session · raises the chosen stat · shares a ${mins(rules?.pacing?.trainCooldownSeconds || 0)} recovery clock with the Regimen.${gymBlock ? ` <b>BLOCKED:</b> ${esc(gymBlock)}` : ''}</div>`;
+    return { train, terms, gymBlock };
+  }
+  function renderCityTraining(host, key, epoch) {
+    const ownerCurrent = () => key === cityIdentity() && epoch === _citySceneEpoch && _citySceneKey === key
+      && _cityScene && currentTab === 'map' && _mapMode === 'walk' && !$('#screen-main')?.classList.contains('hidden');
+    const active = button => ownerCurrent() && host.isConnected && !host.closest('.omerta-city__training')?.hidden
+      && (!button || button.isConnected && host.contains(button));
+    const model = coreTrainingMarkup({ termsId: 'city-gym-terms', compact: true });
+    const receipt = _cityTrainingReceipt?.key === key && projections.current(_cityTrainingReceipt.stamp) ? _cityTrainingReceipt.receipt : null;
+    const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
+    const html = `${model.terms}<div class="omerta-city__training-stats">${model.train || '<span role="status">Core training is unavailable. Refresh to check your session.</span>'}</div>
+      ${readableReceipt ? `<div tabindex="-1" data-city-training-result role="region" aria-label="Training result">${operationReceiptMarkup(readableReceipt)}
+        ${receipt.recovery?.sameKey === true && receipt.recovery?.run ? `<button class="act" data-city-training-retry>${esc(receipt.recovery.label || 'Check the move')}</button>` : ''}</div>` : ''}
+      <button class="act omerta-city__training-full" data-city-training-full>Full gym &amp; regimen →</button>`;
+    if (host.dataset.trainingContent !== html) {
+      const focused = host.contains(document.activeElement), stat = document.activeElement?.dataset.cityTrain;
+      host.innerHTML = html; host.dataset.trainingContent = html;
+      if (focused) {
+        const same = stat && host.querySelector(`[data-city-train="${stat}"]`);
+        (same && !same.disabled ? same : host.querySelector('[data-city-training-result]') || host).focus({ preventScroll: true });
+      }
+    }
+    host.querySelectorAll('[data-city-train]').forEach(button => {
+      button.disabled = !!model.gymBlock || host.dataset.trainingPending === '1' || receipt?.recovery?.sameKey === true;
+      button.onclick = event => { event.stopPropagation(); run(button, button.dataset.cityTrain); };
+    });
+    const retry = host.querySelector('[data-city-training-retry]');
+    if (retry) { retry.disabled = host.dataset.trainingPending === '1'; retry.onclick = () => run(retry, null); }
+    host.querySelector('[data-city-training-full]').onclick = event => {
+      if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'training' });
+    };
+    async function run(button, stat) {
+      if (!active(button) || button.disabled || host.dataset.trainingPending === '1') return;
+      if (stat && (!['muscle', 'cunning', 'speed'].includes(stat) || !(rules?.stats || []).includes(stat) || coreTrainingMarkup().gymBlock)) return;
+      if (!stat && (receipt?.recovery?.sameKey !== true || !receipt?.recovery?.run)) return;
+      host.dataset.trainingPending = '1';
+      const stamp = projections.snapshot();
+      const retryCurrent = () => projections.current(stamp) && key === cityIdentity();
+      const opening = host.dataset.trainingOpening;
+      _cityScene.update({});
+      try {
+        if (stat) await act('POST', '/v1/train/' + stat, {}, { label: 'train ' + stat,
+          beforeDispatch: () => retryCurrent() && active() && host.dataset.trainingOpening === opening, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
+          onReceipt: receipt => { if (retryCurrent()) { _cityTrainingReceipt = { key, stamp, receipt }; if (_citySceneKey === key) _cityScene?.update?.({}); } } });
+        else await receipt.recovery.run();
+      } finally {
+        delete host.dataset.trainingPending;
+        if (ownerCurrent()) _cityScene.update({ character: { ...me }, progress: cityProgress() });
+      }
+    }
+  }
+  function coreCrimeMarkup(crime, { termsId = `crime-${crime.id}-terms`, compact = false } = {}) {
+    const blocked = Number(me?.jailSeconds || 0) > 0 ? 'No street jobs in lockup.'
+      : Number(me?.level || 1) < crime.lvl ? `Requires level ${crime.lvl}. You are level ${me?.level || 1}.`
+      : Number(me?.nerve || 0) < crime.nerve ? `Needs ${crime.nerve} nerve. You have ${fmt(me?.nerve || 0)}.` : '';
+    const approaches = Object.fromEntries((rules?.crimeApproaches || []).map(approach => [approach.id, approach]));
+    const quiet = approaches.quiet || {}, loud = approaches.loud || {};
+    const terms = `<div id="${termsId}" class="operation-action-terms">
+      <div class="d operation-terms"><b>COST</b> ${crime.nerve} nerve · <b>BASELINE WIN</b> $${fmt(crime.cash[0])}–$${fmt(crime.cash[1])}${compact ? ' (not guaranteed)' : ''} · ${crime.jail ? 'jail on a miss' : 'no jail term'}</div>
+      <${compact ? 'details' : 'div'} class="d operation-choice-terms">${compact ? '<summary>Approaches &amp; outcomes</summary>' : ''}<b>QUIET</b> ${quiet.successMult ? `${Math.round((quiet.successMult - 1) * 100)}% safer, ` : ''}${quiet.heat || 0} added heat${quiet.payMult ? `, ${Math.round((1 - quiet.payMult) * 100)}% smaller win` : ''}${quiet.jailMult ? `, ${Math.round((1 - quiet.jailMult) * 100)}% shorter jail` : ''}
+        · <b>STANDARD</b> baseline odds and take
+        · <b>LOUD</b> ${loud.payMult ? `${Math.round((loud.payMult - 1) * 100)}% larger win, ` : ''}+${loud.heat || 0} heat${loud.jailMult ? `, ${Math.round((loud.jailMult - 1) * 100)}% longer jail` : ''}
+      ${compact ? '<p>Pay is not guaranteed. Your roll, approach, stats and perks determine the outcome.</p>' : ''}</${compact ? 'details' : 'div'}>
+      ${blocked ? `<div class="d operation-terms"><b>BLOCKED:</b> ${esc(blocked)}</div>` : ''}</div>`;
+    const choices = [['quiet', 'case it', ''], ['standard', 'do it', 'prime'], ['loud', 'go loud', 'risk']].map(([approach, label, style]) =>
+      `<button class="act ${style}" data-operation-label="${esc(crime.name)}: ${approach}" aria-describedby="${termsId}" ${compact
+        ? `data-city-crime="${crime.id}" data-city-approach="${approach}"`
+        : `data-do="POST /v1/crimes/${crime.id}" data-body='{"approach":"${approach}"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled="true" title="${esc(blocked || 'Refresh to load job terms.')}"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');
+    return { terms, choices, blocked };
+  }
+  function renderCityFixer(host, key, epoch) {
+    const ownerCurrent = () => key === cityIdentity() && epoch === _citySceneEpoch && _citySceneKey === key
+      && _cityScene && currentTab === 'map' && _mapMode === 'walk' && !$('#screen-main')?.classList.contains('hidden');
+    const active = control => ownerCurrent() && host.isConnected && !host.closest('.omerta-city__gameplay')?.hidden
+      && host.closest('.omerta-city__gameplay')?.dataset.cityGameplay === 'fixer' && (!control || control.isConnected && host.contains(control));
+    const crimes = (rules?.crimes || []).filter(crime => /^[a-z0-9_]+$/.test(crime.id)).sort((a, b) => a.lvl - b.lvl);
+    const crime = crimes.find(crime => crime.id === host.dataset.fixerCrime)
+      || crimes.filter(crime => crime.lvl <= Number(me?.level || 1)).at(-1) || crimes[0];
+    if (crime) host.dataset.fixerCrime = crime.id;
+    const model = crime ? coreCrimeMarkup(crime, { termsId: 'city-fixer-terms', compact: true }) : null;
+    const receipt = _cityFixerReceipt?.key === key && projections.current(_cityFixerReceipt.stamp) ? _cityFixerReceipt.receipt : null;
+    const recovery = receipt?.recovery?.sameKey === true && typeof receipt.recovery.run === 'function';
+    const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
+    const html = `<label class="d" for="city-fixer-job">Street job</label><select id="city-fixer-job" data-city-crime-select>${crimes.map(entry =>
+      `<option value="${entry.id}"${entry.id === crime?.id ? ' selected' : ''}>${esc(entry.name)} · level ${entry.lvl}</option>`).join('')}</select>
+      ${model ? `${model.terms}<div class="omerta-city__training-stats">${model.choices}</div>` : '<p role="status">Job terms are unavailable. Refresh to check your session.</p>'}
+      ${readableReceipt ? `<div tabindex="-1" data-city-fixer-result role="region" aria-label="Job result">${operationReceiptMarkup(readableReceipt)}
+        ${recovery ? `<button class="act" data-city-fixer-retry>${esc(receipt.recovery.label)}</button>` : ''}</div>` : ''}
+      <button class="act omerta-city__training-full" data-city-fixer-full>All street jobs &amp; hustle →</button>`;
+    if (host.dataset.fixerContent !== html) {
+      const focused = host.contains(document.activeElement), approach = document.activeElement?.dataset.cityApproach;
+      const choosing = document.activeElement?.hasAttribute('data-city-crime-select');
+      host.innerHTML = html; host.dataset.fixerContent = html;
+      if (focused) (choosing ? host.querySelector('[data-city-crime-select]') : host.querySelector(`[data-city-approach="${approach}"]:not(:disabled)`)
+        || host.querySelector('[data-city-fixer-result]') || host).focus({ preventScroll: true });
+    }
+    host.querySelector('[data-city-crime-select]').onchange = event => {
+      if (!active(event.currentTarget)) return;
+      host.dataset.fixerCrime = event.currentTarget.value; _cityScene.update({});
+    };
+    host.querySelectorAll('[data-city-crime]').forEach(button => {
+      button.disabled = !!model?.blocked || recovery || host.dataset.fixerPending === '1';
+      button.onclick = event => { event.stopPropagation(); run(button, button.dataset.cityApproach); };
+    });
+    const retry = host.querySelector('[data-city-fixer-retry]');
+    if (retry) { retry.disabled = host.dataset.fixerPending === '1'; retry.onclick = () => run(retry, null); }
+    host.querySelector('[data-city-fixer-full]').onclick = event => { if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'fixer' }); };
+    async function run(button, approach) {
+      if (!active(button) || button.disabled || host.dataset.fixerPending === '1') return;
+      if (approach && (!crime || !['quiet', 'standard', 'loud'].includes(approach) || !(rules?.crimeApproaches || []).some(entry => entry.id === approach) || coreCrimeMarkup(crime).blocked)) return;
+      if (!approach && !recovery) return;
+      host.dataset.fixerPending = '1';
+      const stamp = projections.snapshot(), opening = host.dataset.fixerOpening;
+      const retryCurrent = () => projections.current(stamp) && key === cityIdentity();
+      _cityScene.update({});
+      try {
+        if (approach) await act('POST', '/v1/crimes/' + encodeURIComponent(crime.id), { approach }, { label: crime.name + ': ' + approach,
+          beforeDispatch: () => retryCurrent() && active() && host.dataset.fixerOpening === opening && host.dataset.fixerCrime === crime.id, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
+          onReceipt: receipt => { if (retryCurrent()) { _cityFixerReceipt = { key, stamp, receipt }; if (_citySceneKey === key) _cityScene?.update?.({}); } } });
+        else await receipt.recovery.run();
+      } finally {
+        delete host.dataset.fixerPending;
+        if (ownerCurrent()) _cityScene.update({ character: { ...me }, progress: cityProgress() });
+      }
+    }
+  }
+  function cityWorldOptions() {
+    const key = cityIdentity(), data = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData : null;
+    const receipt = _cityWorldReceipt?.key === key && _cityWorldReceipt.current() ? _cityWorldReceipt.receipt : null;
+    return { worldScopeKey: String(projections.snapshot().epoch), rules,
+      worldSocial: data?.social || null, worldChat: data?.chat || null,
+      worldRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery.run === 'function',
+      worldReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
+        recovery: receipt.recovery ? { sameKey: receipt.recovery.sameKey === true, label: receipt.recovery.label, text: receipt.recovery.text } : null } : null };
+  }
+  function publishCityWorld() {
+    if (currentTab !== 'map' || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
+    Object.assign(_citySceneOptions, cityWorldOptions());
+    _cityScene?.update?.({ ...cityWorldOptions(), character: { ...me } });
+  }
+  async function readCityWorld(kind, context = {}) {
+    if (!['inventory', 'social', 'chat'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
+    const stamp = projections.snapshot(), key = cityIdentity(), scene = _cityScene;
+    const current = () => projections.current(stamp) && key === cityIdentity() && scene === _cityScene
+      && currentTab === 'map' && _mapMode === 'walk' && (!context.isCurrent || context.isCurrent());
+    if (!_cityWorldData || _cityWorldData.key !== key || !projections.current(_cityWorldData.stamp)) _cityWorldData = { key, stamp, tickets: {} };
+    const cache = _cityWorldData, ticket = (cache.tickets[kind] || 0) + 1; cache.tickets[kind] = ticket;
+    const socialAtDispatch = cache.social, socialTicketAtDispatch = cache.tickets.social || 0;
+    let chatQuery;
+    if (kind === 'chat') {
+      const social = cache.social;
+      if (!cityBoardCurrent(social) || social.preferences?.chatEnabled !== true || social.chat?.available !== true) return { code: 409, body: { error: 'city_chat_opt_in_required' } };
+      chatQuery = new URLSearchParams({ characterId: me.id, generation: String(me.generation), district: me.loc });
+      const expected = '/v1/city/nearby-chat?' + chatQuery;
+      if (social.chat.readPath !== expected) return { code: 409, body: { error: 'city_chat_unavailable' } };
+    }
+    const result = kind === 'inventory' ? await api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current })
+      : kind === 'social' ? await api('GET', '/v1/city/social', undefined, { isCurrent: current })
+      : await api('GET', '/v1/city/nearby-chat?' + chatQuery, undefined, { isCurrent: current });
+    if (!current() || cache !== _cityWorldData || cache.tickets[kind] !== ticket) return { ignored: true, code: 499, body: {} };
+    if (result.code === 401 || (result.code === 403 && result.body?.error === 'banned')) {
+      projections.setSession(null); token = null; localStorage.removeItem('omerta_token');
+      if (ws) { ws.close(); ws = null; }
+      show('screen-auth');
+      return result;
+    }
+    if (result.code === 409 && result.body?.error === 'city_social_identity_changed'
+      || result.code < 400 && kind !== 'inventory' && !cityBoardCurrent(result.body)) {
+      delete cache.social; delete cache.chat;
+      _cityWorldReceipt = null;
+      cache.tickets.social = (cache.tickets.social || 0) + 1; cache.tickets.chat = (cache.tickets.chat || 0) + 1;
+      publishCityWorld();
+      await refresh();
+      return result.code < 400 ? { ignored: true, code: 499, body: {} } : result;
+    }
+    if (kind === 'chat' && result.code === 403 && result.body?.error === 'city_chat_opt_in_required') {
+      if (cache.social !== socialAtDispatch || cache.tickets.social !== socialTicketAtDispatch) return { ignored: true, code: 499, body: {} };
+      delete cache.chat; cache.tickets.chat++;
+      delete cache.social; cache.tickets.social = (cache.tickets.social || 0) + 1;
+      publishCityWorld();
+      await readCityWorld('social', context);
+      return result;
+    }
+    if (kind === 'chat' && result.code < 400 && (!cityBoardCurrent(cache.social) || cache.social.preferences?.chatEnabled !== true)) return { ignored: true, code: 499, body: {} };
+    if (result.code < 400 && (kind === 'inventory' || cityBoardCurrent(result.body))) {
+      cache[kind] = result.body;
+      if (kind === 'social' && result.body.preferences?.chatEnabled === false) { delete cache.chat; cache.tickets.chat = (cache.tickets.chat || 0) + 1; }
+      publishCityWorld();
+    }
+    return result;
+  }
+  async function performCityWorld(kind, payload, context = {}) {
+    if (_cityWorldPending || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk' || cityWorldOptions().worldRecovery
+      || !payload || typeof payload !== 'object' || Array.isArray(payload)) return { code: 409, body: { error: 'city_world_unavailable' } };
+    const key = cityIdentity(), stamp = projections.snapshot(), scene = _cityScene;
+    const ownerCurrent = () => projections.current(stamp) && key === cityIdentity();
+    const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
+      && (!context.isCurrent || context.isCurrent()) && (!context.beforeDispatch || context.beforeDispatch());
+    let body, label;
+    if (kind === 'equip') {
+      if (Object.keys(payload).some(field => field !== 'id') || payload.id !== null && (typeof payload.id !== 'string' || !(me.guns || []).includes(payload.id))) return { code: 409, body: { error: 'city_equipment_unavailable' } };
+      body = {}; label = payload.id === null ? 'Put away your weapon' : 'Equip ' + payload.id;
+    } else {
+      const social = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData.social : null;
+      if (!cityBoardCurrent(social)) return { code: 409, body: { error: 'city_world_refresh_required' } };
+      const ids = { outfit: 'outfit:' + payload.outfit, 'chat-consent': payload.enabled === true ? 'chat:enable' : payload.enabled === false ? 'chat:disable' : '',
+        room: 'room:save', 'send-chat': 'chat:send', emote: 'emote:' + payload.emoteId };
+      const fields = { outfit: ['outfit'], 'chat-consent': ['enabled'], room: ['furniture'], 'send-chat': ['text'], emote: ['emoteId'] };
+      if (!fields[kind] || Object.keys(payload).some(field => !fields[kind].includes(field))) return { code: 409, body: { error: 'city_world_unavailable' } };
+      const action = (social.actions || []).find(action => action.id === ids[kind]);
+      const expectedPath = ['send-chat', 'emote'].includes(kind) ? '/v1/city/nearby-chat' : '/v1/city/social/preferences';
+      if (!action?.available || action.method !== 'POST' || action.path !== expectedPath || !cityBoardCurrent({ viewer: action.body })) return { code: 409, body: { error: 'city_world_unavailable' } };
+      body = { ...action.body }; label = action.label;
+      if (kind === 'room') {
+        if (!action.inputFields?.includes('room') || !Array.isArray(payload.furniture) || payload.furniture.length > 12) return { code: 409, body: { error: 'bad_city_room' } };
+        const occupied = new Set();
+        for (const item of payload.furniture) {
+          if (!item || Object.keys(item).some(field => !['id', 'x', 'y', 'rotation'].includes(field)) || !(social.furniture || []).some(entry => entry.id === item.id)
+            || !Number.isInteger(item.x) || item.x < 0 || item.x > 5 || !Number.isInteger(item.y) || item.y < 0 || item.y > 5
+            || item.rotation !== undefined && ![0, 1, 2, 3].includes(item.rotation) || occupied.has(item.x + ':' + item.y)) return { code: 409, body: { error: 'bad_city_room' } };
+          occupied.add(item.x + ':' + item.y);
+        }
+        body.room = { furniture: payload.furniture.map(item => ({ ...item })) };
+      }
+      if (kind === 'send-chat') {
+        if (!action.inputFields?.includes('text') || typeof payload.text !== 'string' || !payload.text.trim() || payload.text.length > 240) return { code: 409, body: { error: 'bad_city_chat' } };
+        body.text = payload.text;
+      }
+    }
+    _cityWorldPending = true;
+    try {
+      const dispatchOptions = { label, beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
+        onReceipt: receipt => { if (ownerCurrent()) { _cityWorldReceipt = { key, current: ownerCurrent, kind, receipt }; publishCityWorld(); } } };
+      const result = kind === 'equip' ? payload.id === null ? await act('POST', '/v1/armory/unequip', body, dispatchOptions)
+        : await act('POST', `/v1/armory/gun/${encodeURIComponent(payload.id)}/equip`, body, dispatchOptions)
+        : ['send-chat', 'emote'].includes(kind) ? await act('POST', '/v1/city/nearby-chat', body, dispatchOptions)
+        : await act('POST', '/v1/city/social/preferences', body, dispatchOptions);
+      if (ownerCurrent() && result.code < 400) {
+        // A replay is a historical receipt. Only a fresh GET can replace the
+        // current preferences or messages, including a committed closed panel.
+        await readCityWorld(kind === 'equip' ? 'inventory' : 'social');
+        if (ownerCurrent() && ['send-chat', 'emote'].includes(kind)) await readCityWorld('chat');
+      }
+      return result;
+    } finally { _cityWorldPending = false; }
+  }
+  async function retryCityWorld() {
+    const pending = _cityWorldReceipt;
+    if (_cityWorldPending || pending?.key !== cityIdentity() || !pending.current() || pending.receipt.recovery?.sameKey !== true || !pending.receipt.recovery.run) return { ignored: true, code: 499, body: {} };
+    _cityWorldPending = true;
+    try {
+      const result = await pending.receipt.recovery.run();
+      if (pending.current() && result.code < 400) {
+        await readCityWorld(pending.kind === 'equip' ? 'inventory' : 'social');
+        if (pending.current() && ['send-chat', 'emote'].includes(pending.kind)) await readCityWorld('chat');
+      }
+      return result;
+    } finally { _cityWorldPending = false; }
+  }
   function rememberCityPosition(key, position) {
     if (!key || !position || !Number.isFinite(position.x) || !Number.isFinite(position.y)) return;
     try { sessionStorage.setItem('omerta_city_pose:' + key, JSON.stringify(position)); } catch { /* cosmetic state is optional */ }
@@ -8967,9 +9272,10 @@
       _citySceneAssets = Promise.allSettled([
         loadCityScript('/city-scene.js?v=20261009-game-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-      ]).then(([scene, engine]) => {
+        loadCityScript('/city-world-ui.js?v=20261010-world-1', () => !!window.OmertaCityWorldUI),
+      ]).then(([scene, engine, world]) => {
         if (scene.status === 'rejected') throw scene.reason;
-        if (engine.status === 'rejected') _citySceneAssets = null;
+        if (engine.status === 'rejected' || world.status === 'rejected') _citySceneAssets = null;
         // The scene module also provides accessible destinations when the engine cannot load.
         return window.OmertaCityScene;
       }).catch((error) => { _citySceneAssets = null; throw error; });
@@ -8989,7 +9295,7 @@
     _citySession = { key: cityIdentity(), venueId: context.venueId || _citySession?.venueId || 'directory' };
     if (tab === 'map') _mapMode = context.venueId === 'waterfront' ? 'territory' : 'walk';
     setTab(tab);
-    if (gym) spotlight('[data-sect="streets-train"]');
+    if (gym) spotlight('#streets-gym-terms');
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
   function bindCityFallback(host) {
@@ -9011,10 +9317,11 @@
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+      _cityScene = scene.mount(host, { ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED,
         onPresencePage: loadCityPeoplePage, onEncounter: performCityEncounter, onIntelAction: performCityIntelAction,
-        onEncounterRetry: retryCityEncounter });
+        onEncounterRetry: retryCityEncounter, renderTraining: body => renderCityTraining(body, key, epoch),
+        renderFixer: body => renderCityFixer(body, key, epoch), onWorldRead: readCityWorld, onWorldAction: performCityWorld, onWorldRetry: retryCityWorld });
       _citySceneKey = key;
     } catch {
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;
@@ -9070,6 +9377,14 @@
     target.style.scrollMarginTop = (top + 8) + 'px';
     target.style.scrollMarginBottom = (height - bottom + 8) + 'px';
     target.scrollIntoView({ block: 'center', behavior: 'instant' });
+    const guidance = target.matches('.omerta-city__viewport') && document.body.classList.contains('city-player-view')
+      ? target.parentElement.querySelector('.omerta-city__next-move:not([hidden])') : null;
+    if (guidance) {
+      const bounds = guidance.getBoundingClientRect(), frame = target.getBoundingClientRect();
+      if (frame.bottom - bounds.top <= bottom - top - 16 && bounds.top < top + 8) {
+        window.scrollBy({ top: bounds.top - top - 8, behavior: 'instant' });
+      }
+    }
     if (focus) { if (!target.hasAttribute('tabindex')) target.tabIndex = -1; target.focus({ preventScroll: true }); }
   }
   function enterNeighborhood(trigger = $('#map-mode-walk')) {
@@ -9094,7 +9409,7 @@
     document.addEventListener('touchmove', intent.onScroll, { capture: true, passive: true });
     document.addEventListener('visibilitychange', intent.onVisibility);
     window.addEventListener('blur', intent.onScroll);
-    if (intent.label !== null) { trigger.textContent = 'Opening neighborhood…'; trigger.setAttribute('aria-busy', 'true'); }
+    if (intent.label !== null) { if (trigger.id !== 'btn-player-view') trigger.textContent = 'Opening neighborhood…'; trigger.setAttribute('aria-busy', 'true'); }
     _mapMode = 'walk';
     syncMapMode();
     function check() {
@@ -10294,26 +10609,9 @@
     // D6a — THE APPROACH: every job takes a risk/reward choice. Case It = safer, low-heat, soft bust
     // (play it when you're hot or can't afford lockup); Go Loud = bigger single score + more contraband,
     // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.
-    const crimeApproaches = Object.fromEntries((rules?.crimeApproaches || []).map((a) => [a.id, a]));
-    const quiet = crimeApproaches.quiet || {}, loud = crimeApproaches.loud || {};
-    const approachTerms = `<b>QUIET</b> ${quiet.successMult ? `${Math.round((quiet.successMult - 1) * 100)}% safer, ` : ''}${quiet.heat || 0} added heat${quiet.jailMult ? `, ${Math.round((1 - quiet.jailMult) * 100)}% shorter jail` : ''}
-      · <b>STANDARD</b> baseline odds and take
-      · <b>LOUD</b> ${loud.payMult ? `${Math.round((loud.payMult - 1) * 100)}% larger win, ` : ''}+${loud.heat || 0} heat${loud.jailMult ? `, ${Math.round((loud.jailMult - 1) * 100)}% longer jail` : ''}`;
-    const crimeGate = (c) => (me?.level || 1) < c.lvl
-      ? ` disabled aria-disabled="true" title="Requires level ${c.lvl}. You are level ${me?.level || 1}."` : '';
     const crimeCard = (c) => {
-      const termsId = `crime-${c.id}-terms`;
-      return `
-      <div class="card">${aart('crime', c.id)}<span class="t">${esc(c.name)}</span>
-        <div id="${termsId}" class="operation-action-terms">
-          <div class="d operation-terms"><b>COST</b> ${c.nerve} nerve · <b>PAY</b> $${fmt(c.cash[0])}–$${fmt(c.cash[1])} · <b>RISK</b> ${c.jail ? 'jail on a miss' : 'no jail term'}</div>
-          <div class="d operation-choice-terms">${approachTerms}</div>
-        </div>
-        <div class="verbrow">
-          <button class="act" style="opacity:.8" data-operation-label="${esc(c.name)}: quiet" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"quiet"}'${crimeGate(c)}>case it</button>
-          <button class="act prime" data-operation-label="${esc(c.name)}: standard" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"standard"}'${crimeGate(c)}>do it</button>
-          <button class="act risk" data-operation-label="${esc(c.name)}: loud" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"loud"}'${crimeGate(c)}>go loud</button>
-        </div></div>`;
+      const { terms, choices } = coreCrimeMarkup(c);
+      return `<div class="card">${aart('crime', c.id)}<span class="t">${esc(c.name)}</span>${terms}<div class="verbrow">${choices}</div></div>`;
     };
     const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);
     const lvl = me?.level || 1;
@@ -10329,11 +10627,7 @@
       `<button class="act" data-do="POST /v1/travel/${d.id || d}">${esc(d.name || d.id || d)}</button>`).join('');
     // PACING: the gym runs on a cooldown now, so show the live timer rather than letting the player
     // click into a bare `cooldown` error.
-    const gymCd = Number(me?.trainSeconds || 0), trainEnergy = Number(rules?.pacing?.trainEnergy || 10);
-    const gymBlock = gymCd > 0 ? `Gym reopens in ${mins(gymCd)}.`
-      : Number(me?.energy || 0) < trainEnergy ? `Needs ${trainEnergy} energy. You have ${fmt(me?.energy || 0)}.` : '';
-    const train = (rules?.stats || []).map((s) =>
-      `<button class="act" data-operation-label="train ${s}" aria-describedby="streets-gym-terms" data-do="POST /v1/train/${s}"${gymBlock ? ` disabled aria-disabled="true" title="${esc(gymBlock)}"` : ''}>${s}</button>`).join('');
+    const { train, terms: gymTerms } = coreTrainingMarkup();
     // THE REGIMEN — eight disciplines on the SAME gym clock + the fixtures' daily drills
     const regCd = Number(gym.trainSeconds || 0);
     const regimenBlock = !gym.disciplines ? '' : `
@@ -10516,7 +10810,7 @@
       <div id="clue-slot"></div>
       ${sect('streets-daily', 'Daily Work', '3 contracts a day (all three pays a $OMR bonus) + the Daily Score', `<div class="grid">${dailyCards}</div>`, dailyReady)}
       ${sect('streets-train', 'The Gym &amp; The Regimen', 'raise your core stats + eight trainable disciplines · daily drills from the fixtures', `
-        <div class="d operation-terms" id="streets-gym-terms" style="margin-bottom:4px"><b>CORE TRAINING</b> · ${trainEnergy} energy per session · raises the chosen stat · shares a ${mins(rules?.pacing?.trainCooldownSeconds || 0)} recovery clock with the Regimen.${gymBlock ? ` <b>BLOCKED:</b> ${esc(gymBlock)}` : ''}</div>
+        ${gymTerms}
         <div class="d" style="margin-bottom:4px">Muscle powers fights, cunning powers schemes, and speed powers wheels.</div>
         <div>${train}</div>
         ${regimenBlock}`)}
