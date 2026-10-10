@@ -36,6 +36,8 @@ CP-07: the changed-page regression exposed that explicit Refresh only refreshed 
 
 The final legacy City journey and visible-toggle regressions also passed on these GUI sources, alongside client/projection, Fieldwork and 179 global phone checks. Independent final renderer/test review found no actionable issue at scene blob `bd3e29120308d99f8474c0d96205a0b398522a3f`, CSS `a1641f6ef8c23e91a573bb1b89d9a514bb4f6992`, and presence browser test `46f9b61c9125d190b9ae0982a2d29999a25c645c`. Receipt strings and names render as text; controlled player fixtures are disposable and no production gameplay was performed.
 
+Current-main integration target `a3e5125fa7e7b55dac07cda879e68162067e6cf8` was independently reviewed. It changes no City, schema, server, gateway, public GUI, chain, economy or worker source. Incoming resource read routes use distinct paths. Integration unions package test chains (including both native producer chains), retains the intentional public storefront route exception, and refreshes measured census facts. GUI and encounter producer blobs remain unchanged; native release evidence must qualify the resulting integrated head.
+
 | Working-tree file | SHA256 |
 | --- | --- |
 | src/city-presence.js | fca0bc8398a47a469eee8f832e9df46b286023366cb15e82752ecbd867b1544a |

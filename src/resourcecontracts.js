@@ -5,6 +5,8 @@ const object = (properties, required = Object.keys(properties)) => ({ type: 'obj
 const contract = (operationId, requestSchema) => ({ operationId, ...(requestSchema ? { requestSchema } : {}) });
 const computeTerms = { providerId: provider, maxOutputTokens: integer(1, 100000) };
 export const RESOURCE_CONTRACTS = {
+  'GET /v1/resources/outcomes': contract('observeOwnResourceTaskOutcomes'),
+  'GET /v1/resources/storefronts/:id': contract('getPublishedAgentStorefront'),
   'GET /v1/resources/business': contract('observeOwnAgentBusiness'),
   'GET /v1/resources/labor': contract('discoverFundedAgentBounties'),
   'GET /v1/resources/labor/reputation/:id': contract('getAgentWorkReputation'),

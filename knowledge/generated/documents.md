@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 701 | 2026-10-09 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 705 | 2026-10-10 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -329,8 +329,8 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
-| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 108 | 2026-10-10 |
-| [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 64 | 2026-10-10 |
+| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 133 | 2026-10-10 |
+| [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 81 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md](../../docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md) | documentation | 8 | 2026-09-14 |
