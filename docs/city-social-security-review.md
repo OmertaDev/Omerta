@@ -8,7 +8,7 @@ The pinned methods in `omerta-contracts/SECURITY-REVIEW-POLICY.md` were adapted 
 
 The authentication subject selects the current living character. Supplied character ID, generation and district are freshness preconditions, never owner or room authority. Actor and preference rows are locked for writes. A composed read selects one private snapshot. Real agents are labelled separately, and NPC classification takes precedence; NPCs cannot manufacture participant speech. Existing bearer revocation, account bans, read/write rate buckets and the shared chat flood map are reused. Both-direction phone blocks filter the new room. No separate server mute mechanism exists to inherit.
 
-Preferences are private and keyed by character plus generation. Defaults are Classic, chat off and an empty decorative room. Four free outfits, three finite emotes and four furniture kinds are allowlisted. The room is six by six, contains at most twelve decorations, and rejects duplicate cells, out-of-bounds positions and unsupported rotations. These settings do not grant protection, equipment, inventory, stats or money. A stored district consent is effective only while the character is currently in that district; travelling elsewhere requires joining that district, and a new generation starts off. The existing shared lifecycle helper deletes all preference generations of its owner, preserving other owners and historical message/HTTP receipts.
+Preferences are private and keyed by character plus generation. Defaults are Classic, chat off and an empty decorative room. Four free outfits, three finite emotes and four furniture kinds are allowlisted. The room is six by six, contains at most twelve decorations, and rejects duplicate cells, out-of-bounds positions and unsupported rotations. These settings do not grant protection, equipment, inventory, stats or money. A stored district consent is effective only while the character is currently in that district. Returning to the last explicitly joined district resumes that consent; leaving chat disables it, and joining another district replaces it. No cross-district reads or sharing are allowed while away, and a new generation starts off. This is a persistent district subscription, not a reset on every trip. The existing shared lifecycle helper deletes all preference generations of its owner, preserving other owners and historical message/HTTP receipts.
 
 Nearby messages use only the server-derived `nearby:<current district>` channel in the existing `chat_messages` table. The body is a strict bounded versioned JSON envelope preserving the real sender generation and the actual text/emote command. It contains no account ID. Text uses the existing sanitizer and is stored/returned at most 240 characters. Reads return at most fifty chronological messages and forty joined real participants, omit account IDs and exact coordinates, hide banned/blocked actors, and skip malformed envelopes. The latest real emote is presented for at most ten seconds. Participant placement is explicitly approximate. No message is emitted on the global chat bus; legacy global/family/crew channels and WebSocket subscription semantics are unchanged. Existing seven-day worker retention applies to all channels, including nearby.
 
@@ -44,12 +44,12 @@ The first independent pass cleared the original six runtime pins, then reopened 
 | Reviewed working-tree file | SHA256 |
 | --- | --- |
 | src/city-social.js | 2ac9d8cad9b0e940f9ab177c4d6228566aff31e0a3f31e42bfc581048d748434 |
-| src/city-social-contract.js | b4b50de645045893f3b2fed82d90c71b44bcafafa3a32606b91a3008a1f035a4 |
+| src/city-social-contract.js | 2bce36dddc2c14ff04d52a1a02ed78ffcccb50811d4c814ff9c5e84e0f6f7452 |
 | src/server.js | 2589383b275bdda57d5bb34e47afe526a222d197f9c41463a1af8d8ebd86cc1d |
 | schema.sql | cb90b686e2db8c0c74cbcb970a6529c9b945584a7c4837f3ab59d0afd971677c |
 | src/agentgateway.js | 64b8dff4b0899f7cb6cc7c5dbe01d840ff61415730c3d0b61f5b1414bbe9f995 |
 | src/social/estate.js | f5fa5b680983cf2b773a13ffaf6517255c3370f81c7cc0d6b7cebf8fd5b4b2a2 |
-| test/city-social-api.js | 13cb5b04cfd930b4de253363ee278c6d2436ce9311035ebded3402e38a2c6606 |
+| test/city-social-api.js | bbda40cad2867dc73b1e2579df0453484e5683b285cfb35e5c42180a68bcba17 |
 | test/director-migration.js | a28a458d83d9a7a8258cc10b3404219259f4c3a97a0215733be04f1b1369a61c |
 | test/lib/phase2-architecture-upgrade-catalog.json | 6008213ec79cee2ba9b6a2ebfdc40d48c5f78ccfa79160c8518dd6ded20d40f6 |
 | test/migrate.js | 7b8aeea00058d95309bd54f3f361afe220dc67838dfc37c43183c36804e3f8b6 |

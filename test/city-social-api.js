@@ -257,6 +257,13 @@ try {
   assert.equal((await post(a, '/v1/city/nearby-chat', { ...av, text: 'Old room' })).statusCode, 409);
   const foundry = await social(a); assert.equal(foundry.preferences.chatEnabled, false); assert.equal(foundry.preferences.outfit, 'moss');
   assert.equal((await get(a, foundry.chat.readPath)).statusCode, 403);
+  await app.pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [a.id]);
+  const returned = await social(a);
+  assert.equal(returned.preferences.chatEnabled, true, 'Returning to the last explicitly joined district resumes that stored consent.');
+  assert.equal((await get(a, returned.chat.readPath)).statusCode, 200);
+  assert.equal((await get(a, foundry.chat.readPath)).statusCode, 409, 'Resumed consent never permits a different district feed.');
+  await app.pool.query("UPDATE characters SET loc='foundry' WHERE id=$1", [a.id]);
+  assert.equal((await social(a)).preferences.chatEnabled, false);
   await join(a);
   assert.deepEqual((await get(a, (await social(a)).chat.readPath)).json().messages, [], 'Different districts never share history.');
   await app.pool.query('UPDATE characters SET generation=2 WHERE id=$1', [a.id]);

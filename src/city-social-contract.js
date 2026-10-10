@@ -27,7 +27,7 @@ const furnitureItem = { type: 'object', additionalProperties: false, required: [
 const room = { type: 'object', additionalProperties: false, required: ['furniture'], properties: {
   furniture: { type: 'array', maxItems: 12, items: furnitureItem },
 } };
-const preferences = { outfit, chatEnabled: { type: 'boolean' }, room };
+const preferences = { outfit, chatEnabled: { type: 'boolean', description: 'Consent applies to the last explicitly joined district: off while away, resumed on return until disabled or replaced by joining elsewhere.' }, room };
 const text = { type: 'string', minLength: 1, maxLength: 2000,
   description: 'Plain text; the stored and returned message is sanitized and capped at 240 characters.' };
 export const CITY_PREFERENCES_BODY = { type: 'object', additionalProperties: false,
