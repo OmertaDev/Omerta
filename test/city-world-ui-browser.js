@@ -149,6 +149,11 @@ try {
     await page.evaluate(() => { window.__chat403 = false; });
     await click('[data-city-chat-consent]');
     await page.waitForFunction(() => window.__ui.getState().chatJoined && !!document.querySelector('[data-city-nearby-feed]'));
+    await page.evaluate(() => window.__ui.update({ social: null, chat: null }));
+    assert.equal(await page.evaluate(() => window.__ui.getState().chatJoined), false);
+    assert.equal(await page.locator('[data-city-nearby-feed]').count(), 0, 'Explicit null model retirement clears a previously joined room.');
+    assert.equal(await page.locator('.city-world__speech').textContent(), '');
+    await page.evaluate(() => window.__ui.update({ social: structuredClone(window.__social) }));
     await page.evaluate(() => window.__ui.open('style'));
     await page.waitForFunction(() => !!document.querySelector('[data-city-outfit="moss"]'));
     await click('[data-city-outfit="moss"]');
@@ -200,6 +205,16 @@ try {
     await page.evaluate(() => window.__ui.destroy());
     assert.equal(await page.locator('.city-world__dock').count(), 0); assert.equal(await page.locator('.city-world__toolbar').count(), 0);
     assert.equal(await page.locator('#tools-host button').count(), 0); assert.equal(await page.locator('#guidance button').count(), 0, 'External controls are disposed with their scene.');
+    const hydrated = await page.evaluate(() => {
+      const colors = [], ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        scopeKey: 'cached-session', character: { id: 'cached-owner', generation: 2 }, district: { id: 'harbor' },
+        viewport: document.querySelector('#viewport'), toolbar: document.querySelector('#toolbar'),
+        social: { preferences: { outfit: 'wine', chatEnabled: true, room: { furniture: [] } } },
+        chat: { messages: [] }, onLook: preset => colors.push(preset)
+      });
+      const state = ui.getState(); ui.destroy(); return { joined: state.chatJoined, colors };
+    });
+    assert.deepEqual(hydrated, { joined: true, colors: ['wine'] }, 'Mount consumes the current host-supplied cached preference without reverting a saved look or consent.');
     assert.deepEqual(errors, []); await context.close();
   }
   console.log('City world UI PASS: map, equipment, queued/dispatched lifecycle, same-key receipt recovery, default-off chat/XSS, furniture targets, confirmed gains and owner teardown on phone/desktop.');

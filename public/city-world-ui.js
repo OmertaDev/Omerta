@@ -370,7 +370,7 @@
     }
     tools.setAttribute('aria-expanded', 'false');
     renderTracker();
-    return {
+    const handle = {
       update(next) {
         if (destroyed || !next) return;
         options = { ...options, ...next }; const owner = identity();
@@ -387,8 +387,16 @@
           if (changes.length) { gains.textContent = changes.join(' · '); gains.dataset.celebrate = String(Date.now()); }
           lastCharacter = { ...character, stats: { ...character.stats } };
         }
-        if (next.social) { boards.social = next.social; options.onLook?.(socialPreferences().outfit || 'classic'); if (socialPreferences().chatEnabled !== true) { delete boards.chat; options.chat = null; readTickets.chat = (readTickets.chat || 0) + 1; stopPolling(); clearSpeech(); } else startPolling(); }
-        if (next.chat && socialPreferences().chatEnabled === true) boards.chat = next.chat;
+        if (Object.hasOwn(next, 'social')) {
+          if (next.social) { boards.social = next.social; options.onLook?.(socialPreferences().outfit || 'classic'); }
+          else { delete boards.social; options.social = null; }
+          if (socialPreferences().chatEnabled !== true) { delete boards.chat; options.chat = null; readTickets.chat = (readTickets.chat || 0) + 1; stopPolling(); clearSpeech(); }
+          else startPolling();
+        }
+        if (Object.hasOwn(next, 'chat')) {
+          if (next.chat && socialPreferences().chatEnabled === true) boards.chat = next.chat;
+          else { delete boards.chat; options.chat = null; clearSpeech(); }
+        }
         renderTracker(); if (panel) render();
       },
       frame(frame) {
@@ -410,6 +418,8 @@
       getState: () => ({ panel, opening, pending, scope, chatJoined: socialPreferences().chatEnabled === true }),
       destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
     };
+    handle.update(input);
+    return handle;
   }
   window.OmertaCityWorldUI = { mount, ambientPose };
 })();
