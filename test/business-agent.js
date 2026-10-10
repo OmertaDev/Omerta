@@ -14,7 +14,7 @@ const fixture = {
   policy: { enabled: true, revision: 1, providers: [], dailyAuthorizedUsdMicros: 0,
     maxPerCallUsdMicros: 100000, maxPerDayUsdMicros: 1000000, minimumReserveUsdMicros: 0,
     expiresAt: new Date(Date.now() + 86400000).toISOString() },
-  service: null, capacity: { activeJobs: 0, remainingCapacity: 3 }, bounties: [],
+  service: null, capacity: { activeJobs: 0, remainingCapacity: 3 }, commitments: { pendingAwardBids: 0 }, bounties: [],
   jobs: [], calls: [], customers: [], catalog: [], providerOutcomes: [],
   totals: { jobsByState: {}, settledCustomerRevenueUsdMicros: 0, settledPaidComputeCostsUsdMicros: 0,
     heldPaidComputeUsdMicros: 0, unresolvedPaidCalls: 0, simulatedPaidCalls: 0, outsideCostsComplete: false },

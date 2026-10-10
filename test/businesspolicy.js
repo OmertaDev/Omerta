@@ -7,7 +7,7 @@ const snapshot = () => ({ version: 1, mode: 'shadow', accountId: 'seller', resou
   treasury: { availableUsdMicros: 100000, reservedUsdMicros: 0, frozen: false },
   policy: { enabled: true, providers: ['cheap'], maxPerCallUsdMicros: 100000, maxPerDayUsdMicros: 100000,
     dailyAuthorizedUsdMicros: 0, minimumReserveUsdMicros: 5000, expiresAt: '2026-10-10T12:00:00.000Z' },
-  service: { enabled: true, revision: 1, priceUsdMicros: 20000 }, capacity: { activeJobs: 0 },
+  service: { enabled: true, revision: 1, priceUsdMicros: 20000 }, capacity: { activeJobs: 0 }, commitments: { pendingAwardBids: 0 },
   totals: { settledCustomerRevenueUsdMicros: 10000, settledPaidComputeCostsUsdMicros: 5000,
     heldPaidComputeUsdMicros: 0, unresolvedPaidCalls: 0, simulatedPaidCalls: 1 },
   jobs: [], calls: [], customers: [{ buyerAccountId: 'repeat-buyer', acceptedJobs: 2 }],
@@ -92,6 +92,58 @@ for(const state of ['submitted','accepted','disputed','refunded']){
  assert.equal(evaluateBusiness(s,policy).deliveryBudget.protectedComputeUsdMicros,0,'Delivery protection excludes terminal and submitted work');
 }
 assert.equal(JSON.stringify(original),encoded,'Delivery budgeting preserves snapshot and owner authority');
+const pendingBid=snapshot();pendingBid.commitments.pendingAwardBids=1;pendingBid.treasury.availableUsdMicros=28999;
+const pendingBidView=evaluateBusiness(pendingBid,policy);
+assert.equal(pendingBidView.capacity.proposedWorkSlots,0);
+assert.equal(pendingBidView.capacity.pendingAwardSlots,1);
+assert.equal(pendingBidView.capacity.availableSlots,2);
+assert.equal(pendingBidView.capacity.reservedSlots,0,'Potential awards do not become active jobs');
+assert.deepEqual(pendingBidView.bidCommitmentBudget,{pendingAwardBids:1,protectedComputeUsdMicros:12000,cashCovered:true,dailyBudgetCovered:true});
+pendingBid.treasury.availableUsdMicros=29000;
+assert.equal(evaluateBusiness(pendingBid,policy).capacity.proposedWorkSlots,1,'Exact funds boundary protects pending award before one new bid');
+pendingBid.policy.maxPerDayUsdMicros=23999;
+assert.equal(evaluateBusiness(pendingBid,policy).capacity.proposedWorkSlots,0);
+pendingBid.policy.maxPerDayUsdMicros=24000;
+assert.equal(evaluateBusiness(pendingBid,policy).capacity.proposedWorkSlots,1);
+const fullPending=snapshot();fullPending.commitments.pendingAwardBids=3;
+const fullPendingView=evaluateBusiness(fullPending,policy);
+assert.equal(fullPendingView.capacity.availableSlots,0);assert.equal(fullPendingView.capacity.proposedWorkSlots,0);
+assert.equal(fullPendingView.bidCommitmentBudget.protectedComputeUsdMicros,36000);
+const manyPending=snapshot();manyPending.commitments.pendingAwardBids=101;
+assert.equal(evaluateBusiness(manyPending,policy).bidCommitmentBudget.protectedComputeUsdMicros,1212000,
+ 'Complete pending count protects commitments beyond any 100-row detail window');
+const underfundedBid=snapshot();underfundedBid.commitments.pendingAwardBids=1;
+underfundedBid.treasury.availableUsdMicros=16999;underfundedBid.policy.maxPerDayUsdMicros=11999;
+const underfundedBidView=evaluateBusiness(underfundedBid,policy);
+assert.equal(underfundedBidView.bidCommitmentBudget.cashCovered,false);
+assert.equal(underfundedBidView.bidCommitmentBudget.dailyBudgetCovered,false);
+assert(underfundedBidView.riskFlags.includes('pending_bid_funds_insufficient'));
+assert(underfundedBidView.riskFlags.includes('pending_bid_daily_budget_insufficient'));
+const bothPending=pending();bothPending.commitments.pendingAwardBids=1;bothPending.treasury.availableUsdMicros=41000;
+const bothPendingView=evaluateBusiness(bothPending,policy);
+assert.equal(bothPendingView.deliveryBudget.protectedComputeUsdMicros,12000);
+assert.equal(bothPendingView.bidCommitmentBudget.protectedComputeUsdMicros,12000);
+assert.equal(bothPendingView.capacity.availableSlots,1);assert.equal(bothPendingView.capacity.proposedWorkSlots,1);
+bothPending.treasury.availableUsdMicros=40999;
+assert.equal(evaluateBusiness(bothPending,policy).capacity.proposedWorkSlots,0);
+const missingCommitments=snapshot();delete missingCommitments.commitments;
+const missingCommitmentsView=evaluateBusiness(missingCommitments,policy);
+assert.deepEqual(missingCommitmentsView.bidCommitmentBudget,{pendingAwardBids:null,protectedComputeUsdMicros:null,cashCovered:null,dailyBudgetCovered:null});
+assert.equal(missingCommitmentsView.capacity.pendingAwardSlots,null);
+assert.equal(missingCommitmentsView.capacity.proposedWorkSlots,0);
+assert(missingCommitmentsView.riskFlags.includes('pending_bid_commitments_unknown'));
+const overflowingCommitments=snapshot();overflowingCommitments.commitments.pendingAwardBids=Number.MAX_SAFE_INTEGER;
+const overflowingView=evaluateBusiness(overflowingCommitments,policy);
+assert.equal(overflowingView.bidCommitmentBudget.protectedComputeUsdMicros,null);
+assert.equal(overflowingView.capacity.proposedWorkSlots,0);
+assert(overflowingView.riskFlags.includes('pending_bid_budget_outside_exact_bounds'));
+for(const count of [-1,1.5,Infinity,Number.MAX_SAFE_INTEGER+1,'1',true]){
+ const s=snapshot();s.commitments.pendingAwardBids=count;assert.throws(()=>evaluateBusiness(s,policy),/pending award/);
+}
+const unknownBidQuote=snapshot();unknownBidQuote.commitments.pendingAwardBids=1;unknownBidQuote.catalog=[];
+assert.equal(evaluateBusiness(unknownBidQuote,policy).bidCommitmentBudget.protectedComputeUsdMicros,null);
+const unknownBidCosts=snapshot();unknownBidCosts.commitments.pendingAwardBids=1;unknownBidCosts.totals.unresolvedPaidCalls=1;
+assert.equal(evaluateBusiness(unknownBidCosts,policy).bidCommitmentBudget.protectedComputeUsdMicros,null);
 const retained=evaluateBusiness(snapshot(),{...policy,maxActiveJobs:1});
 assert(retained.proposals.some(p=>p.kind==='bid'));
 const repeat=snapshot();repeat.bounties=[];
