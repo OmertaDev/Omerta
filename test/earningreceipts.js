@@ -42,6 +42,20 @@ for (const buyerFrozen of [null, true]) {
   assert.equal(result.receipts[0].fundingFrozen, buyerFrozen);
   assert.deepEqual(result.receipts[0].issues, [buyerFrozen ? 'buyer_funding_frozen' : 'buyer_funding_status_unknown']); closed(result);
 }
+for (const side of ['credit', 'debit']) {
+  const candidate = row();
+  candidate[side].availableDelta = 1000000001;
+  const result = reconcile([candidate]);
+  assert.equal(result.matchedPageRevenueUsdMicros, 0);
+  assert.equal(result.receipts[0].balancedTransfer, false);
+  assert.deepEqual(result.receipts[0].issues, [`${side}_mismatch`]); closed(result);
+  candidate[side].availableDelta = 1000000000000;
+  assert.equal(reconcile([candidate]).matchedPageRevenueUsdMicros, 0);
+  for (const delta of [1000000000001, -1000000000001]) {
+    candidate[side].availableDelta = delta;
+    assert.throws(() => reconcile([candidate]), TypeError);
+  }
+}
 for (const mutate of [r => { r.id = 'x'.repeat(129); }, r => { r.id = '\n'; },
   r => { r.credit = []; }, r => { delete r.debit; }, r => { r.credit.availableDelta = Number.MAX_SAFE_INTEGER + 1; },
   r => { r.credit.reservedDelta = NaN; }, r => { r.buyerFrozen = 'false'; }, r => { r.fulfillment = 'unknown'; },

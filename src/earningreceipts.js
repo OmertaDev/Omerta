@@ -12,7 +12,7 @@ function edge(value) {
   requireInput(typeof value.eventKey === 'string' && /^[A-Za-z0-9_:-]{1,256}$/.test(value.eventKey));
   requireInput(typeof value.kind === 'string' && /^[a-z_]{1,64}$/.test(value.kind));
   for (const delta of [value.availableDelta, value.reservedDelta])
-    requireInput(Number.isSafeInteger(delta) && Math.abs(delta) <= 1000000000);
+    requireInput(Number.isSafeInteger(delta) && Math.abs(delta) <= 1000000000000);
 }
 
 // This verifies supplied internal ledger edges, never provenance or cash-out authority.
