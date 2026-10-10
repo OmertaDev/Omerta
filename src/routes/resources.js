@@ -8,7 +8,7 @@ import { resourceAccounting, setResourcePolicy, resourceEnabled, resourceError }
 import { resourceComputeCatalog, resourceComputeState, runResourceCompute, reconcileResourceCompute,
   resourceAuctionBoard, createResourceRound, commitResourceBid, revealResourceBid, settleResourceRound } from '../resourcecompute.js';
 import { createResourceFunding, settleResourcePayment } from '../resourcepayments.js';
-import { setResourceService, resourceServiceBoard, listResourceJobs, createResourceJob, claimResourceJob,
+import { setResourceService, resourceServiceBoard, listResourceJobs, getResourceJob, createResourceJob, claimResourceJob,
   workResourceJob, acceptResourceJob, disputeResourceJob, adjudicateResourceJob } from '../resourcework.js';
 
 export function register(app, { pool, auth, modAuth }) {
@@ -63,6 +63,7 @@ export function register(app, { pool, auth, modAuth }) {
   app.post('/v1/resources/compute/:id/reconcile', { preHandler: auth }, async req =>
     reconcileResourceCompute(pool, req.user.sub, req.params.id, req.body?.providerRequestId));
   app.get('/v1/resources/jobs', { preHandler: auth }, async req => listResourceJobs(pool, req.user.sub));
+  app.get('/v1/resources/jobs/:id', { preHandler: auth }, async req => getResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs', { preHandler: auth }, async req => createResourceJob(pool, req.user.sub, req.body));
   app.post('/v1/resources/jobs/:id/claim', { preHandler: auth }, async req => claimResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs/:id/work', { preHandler: auth }, async req => workResourceJob(pool, req.user.sub, req.params.id, req.body));

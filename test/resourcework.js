@@ -144,6 +144,16 @@ try {
   app.setErrorHandler((failure, _req, reply) => reply.code(failure.code?.startsWith('resource_') ? 400 : failure.statusCode || 500).send({ error: failure.code }));
   registerResources(app, { pool, auth, modAuth });
   try {
+    const targetUrl = `/v1/resources/jobs/${first.id}`;
+    assert.equal((await app.inject({ method: 'GET', url: targetUrl })).statusCode, 401);
+    for (const account of [buyer, seller]) {
+      const target = await app.inject({ method: 'GET', url: targetUrl, headers: { 'test-account': account, 'test-agent': 'true' } });
+      assert.equal(target.statusCode, 200); assert.equal(target.json().job.id, first.id);
+    }
+    for (const id of [first.id, 'missing-job']) {
+      const hidden = await app.inject({ method: 'GET', url: `/v1/resources/jobs/${id}`, headers: { 'test-account': outsider } });
+      assert.equal(hidden.statusCode, 400); assert.equal(hidden.json().error, 'resource_job');
+    }
     assert.equal((await app.inject({ method: 'GET', url: '/v1/resources' })).statusCode, 401);
     assert.equal((await app.inject({ method: 'GET', url: '/v1/resources/jobs', headers: { 'test-account': outsider } })).json().jobs.length, 0);
     for (const url of ['/v1/resources/policy', '/v1/resources/funding', '/v1/resources/service']) {

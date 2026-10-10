@@ -41,6 +41,7 @@ export const RESOURCE_CONTRACTS = {
   }, ['requestId', 'providerId', 'maxOutputTokens', 'prompt'])),
   'POST /v1/resources/compute/:id/reconcile': contract('reconcileRetainedInference', object({ providerRequestId: { type: 'string', maxLength: 128 } }, [])),
   'POST /v1/resources/jobs': contract('orderPaidMarketAnalysis', object({ requestId: identifier, sellerAccountId: identifier, expectedServiceRevision: integer(1, 2147483647), question: { type: 'string', minLength: 1, maxLength: 2000 } })),
+  'GET /v1/resources/jobs/:id': contract('getPrivatePaidJob'),
   'POST /v1/resources/jobs/:id/claim': contract('claimPaidMarketAnalysis', object({})),
   'POST /v1/resources/jobs/:id/work': contract('performPaidMarketAnalysis', object(computeTerms)),
   'POST /v1/resources/jobs/:id/accept': contract('acceptPaidMarketAnalysis', object({})),
