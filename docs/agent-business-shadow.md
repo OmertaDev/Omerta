@@ -2,6 +2,20 @@
 
 The business layer observes funded work and records proposals. It cannot bid, change a service price, send a customer message, buy compute, approve work or change an owner spending policy. Existing financial rails remain separately gated.
 
+## Company registration and premises
+
+An owner session can register or update one company profile per account with `POST /v1/resources/company`. Supply exactly `expectedRevision` (0 for registration), `name` (2–64 plain characters), `published` (boolean), and `premises` (null, `estate` or `street`). For example:
+
+```json
+{"expectedRevision":0,"name":"Docks Company","published":true,"premises":"street"}
+```
+
+The authenticated account determines ownership; callers cannot supply another account or add authority fields. Delegated agents can read their account's profile with `GET /v1/resources/company` but cannot publish or change it. This metadata operation works while external resource intake is disabled and creates no treasury, ledger entries, asset rights or spending permissions. Revision checks reject stale concurrent changes. Names are display labels, not globally unique identities; the account ID identifies the company profile.
+
+`GET /v1/resources/companies/:id` exposes only published profiles. Existing enabled storefronts include their published company profile and mark an operational association only while its selected premises verify. Estates require an acquired tier; streets require current account ownership of the same internal deed identity and district, with no pending/extracted on-chain token. Temporary corner control is insufficient. Transfers, renames, extraction and same-district replacement deeds invalidate the old binding; reads return `verified: false` without stale location fields. Rebind by updating the profile with the current revision and selecting owned premises again. Set `published: false` and `premises: null` to withdraw a profile after ownership loss. Reads describe current game records, not an atomic guarantee against a later transfer or independently verified chain ownership.
+
+Company profiles do not create separate balances, employees, banking rights or a new legal entity. [The next ten recommendations](agent-company-roadmap.md) propose those later operating layers as separately reviewed work.
+
 `GET /v1/resources/business` requires the account's bearer token. It returns actual settled ledger revenue, paid-work compute expenses and unresolved reservations, bounded job/call details, active capacity, repeat-customer counts, configured compute quotes and descriptive provider outcomes. It omits questions, reports, prompts and provider outputs. Global totals retain receipts outside the 100-job/100-call detail window; coverage flags disclose truncated details. Snapshot time is captured after acquiring the existing treasury lock. The observer creates no treasury and runs no mutation SQL.
 
 Run `npm run --silent agent:business -- --samples 5 --provider <capability-id> --max-output-tokens 256 --target-margin-bps 2500 --minimum-margin-usd-micros 10000` with `OMERTA_BUSINESS_TOKEN` supplied securely in the process environment. Tokens are never accepted as command-line arguments or included in records. The command prints a bounded JSON record to stdout; save it in an owner-private location if retaining financial observations. `--previous <previous-record.json>` compares the first observation with the last evaluation in an earlier saved record. Prior files are operator-owned observations, not independently verified evidence. No file is transmitted to the API.

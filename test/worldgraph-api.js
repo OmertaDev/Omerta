@@ -194,7 +194,7 @@ const mutate = (url, token, key, body) => call('POST', url, { token, key, body }
 
 const liveSpec = await call('GET', '/openapi.json');
 assert.equal(liveSpec.code, 200);
-assert.equal(liveSpec.body.info.version, '1.2.0');
+assert.equal(liveSpec.body.info.version, '1.3.0');
 assert(liveSpec.body.paths['/v1/worldgraph/operations/{operationId}/role']?.get,
   'the mounted server publishes the role-private board in its live OpenAPI document');
 for (const [method, rawPath] of routeTable) {

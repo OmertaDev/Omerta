@@ -32,6 +32,12 @@ const directorTables = Object.keys(inventory.notNullColumns).filter((name) => na
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 const goodsMarketTables = ['goods_market_liquidity'];
+const companyTables = ['agent_company_profiles'];
+const companyConstraints = inventory.added.filter(row => companyTables.includes(row.table_name))
+  .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
+assert.equal(companyConstraints.length, 6, 'All company PK/FK/CHECK constraints must be frozen');
+const verifyCompanyConstraints = rows => assert.deepEqual(rows.filter(row => companyTables.includes(row.table_name)), companyConstraints,
+  'Company migration installs exactly its frozen ownership and premises constraints');
 assert.equal(directorTables.length, 7);
 try {
   await admin.query(`CREATE SCHEMA ${namespace}`); created = true;
@@ -89,6 +95,8 @@ try {
   const oldRows = await capture(canonicalTables), oldConstraints = await constraints();
   assert.equal(oldConstraints.filter((row) => goodsMarketTables.includes(row.table_name)).length, 0,
     'The pinned baseline predates the goods-market liquidity table');
+  assert.equal(oldConstraints.filter(row => companyTables.includes(row.table_name)).length, 0,
+    'The pinned baseline predates the company registry');
   assert.equal(oldConstraints.filter((row) => row.table_name === 'city_intel_progress').length, 0,
     'The pinned baseline predates the private City intel table');
   assert.equal(oldConstraints.filter((row) => row.table_name === 'city_social_preferences').length, 0,
@@ -104,7 +112,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   verifyPreservedConstraints(upgradedConstraints);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
@@ -167,6 +175,15 @@ try {
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
   assert.equal(resourceConstraints.length, 89, 'All resource constraints must be frozen');
   assert.deepEqual(upgradedConstraints.filter(row => resourceTables.includes(row.table_name)), resourceConstraints);
+  verifyCompanyConstraints(upgradedConstraints);
+  assert.throws(() => verifyCompanyConstraints(upgradedConstraints.filter(row => row.name !== 'agent_company_profiles_account_id_fkey')),
+    error => error.code === 'ERR_ASSERTION', 'Company ownership foreign key removal must fail the exact group verifier');
+  assert.throws(() => verifyCompanyConstraints(upgradedConstraints.map(row => row.table_name === 'agent_company_profiles' && row.name === 'agent_company_profiles_check'
+    ? { ...row, definition: 'CHECK (true)' } : row)), error => error.code === 'ERR_ASSERTION',
+  'Company premises binding weakening must fail the exact group verifier');
+  const companyNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name=$1 AND is_nullable='NO' ORDER BY column_name", companyTables)).rows;
+  assert.deepEqual(companyNotNull.map(row => row.column_name), inventory.notNullColumns.agent_company_profiles,
+    'Company required columns match the frozen inventory on every PostgreSQL version');
   const resourceNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) AND is_nullable='NO' ORDER BY table_name,column_name", resourceTables)).rows;
   assert.deepEqual(Object.fromEntries(resourceTables.map(table => [table, resourceNotNull.filter(row => row.table_name === table).map(row => row.column_name)])),
     Object.fromEntries(resourceTables.map(table => [table, inventory.notNullColumns[table]])));

@@ -5,6 +5,9 @@ const object = (properties, required = Object.keys(properties)) => ({ type: 'obj
 const contract = (operationId, requestSchema) => ({ operationId, ...(requestSchema ? { requestSchema } : {}) });
 const computeTerms = { providerId: provider, maxOutputTokens: integer(1, 100000) };
 export const RESOURCE_CONTRACTS = {
+  'GET /v1/resources/company': contract('getOwnAgentCompany'),
+  'POST /v1/resources/company': contract('setOwnerApprovedAgentCompany', { ...object({ expectedRevision: integer(0, 2147483646), name: { type: 'string', minLength: 2, maxLength: 64 }, published: { type: 'boolean' }, premises: { enum: [null, 'estate', 'street'] } }), additionalProperties: false }),
+  'GET /v1/resources/companies/:id': contract('getPublishedAgentCompany'),
   'GET /v1/resources/outcomes': contract('observeOwnResourceTaskOutcomes'),
   'GET /v1/resources/storefronts/:id': contract('getPublishedAgentStorefront'),
   'GET /v1/resources/business': contract('observeOwnAgentBusiness'),

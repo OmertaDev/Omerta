@@ -7654,6 +7654,21 @@ CREATE TABLE IF NOT EXISTS resource_labor_bids (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(bounty_id,seller_account)
 );
+-- Owner-managed company identity; premises verification grants no financial authority.
+CREATE TABLE IF NOT EXISTS agent_company_profiles (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  revision INTEGER NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+  name TEXT NOT NULL CHECK (char_length(name) BETWEEN 2 AND 64),
+  published BOOLEAN NOT NULL,
+  premises_kind TEXT CHECK (premises_kind IS NULL OR premises_kind IN ('estate','street')),
+  premises_key TEXT,
+  premises_district TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (CASE WHEN premises_kind IS NULL THEN premises_key IS NULL AND premises_district IS NULL
+    WHEN premises_kind='estate' THEN premises_key IS NOT NULL AND premises_district IS NULL
+    WHEN premises_kind='street' THEN premises_key IS NOT NULL AND premises_district IS NOT NULL
+    ELSE false END)
+);
 
 -- Private encounter cards and three nonfinancial objectives; no successor inheritance.
 CREATE TABLE IF NOT EXISTS city_intel_progress (
