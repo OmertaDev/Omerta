@@ -115,7 +115,7 @@ export function createBusinessObserverForTest(options, timing) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const options = { policy: {} };
-  const flags = { '--base': 'baseUrl', '--samples': 'samples', '--previous': 'previousFile', '--provider': 'providerId',
+  const flags = { '--base': 'baseUrl', '--samples': 'samples', '--previous': 'previousFile', '--provider': 'providerId', '--duty': 'duty',
     '--max-output-tokens': 'maxOutputTokens', '--target-margin-bps': 'targetMarginBps',
     '--minimum-margin-usd-micros': 'minimumMarginUsdMicros', '--operating-cost-per-job-usd-micros': 'operatingCostPerJobUsdMicros',
     '--payment-fee-bps': 'paymentFeeBps', '--max-active-jobs': 'maxActiveJobs',
@@ -126,7 +126,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const key = flags[process.argv[index]]; const value = process.argv[++index];
       if (!key || !value) throw new Error('Invalid business option');
       if (key === 'baseUrl' || key === 'samples' || key === 'previousFile') options[key] = key === 'samples' ? Number(value) : value;
-      else options.policy[key] = key === 'providerId' ? value : Number(value);
+      else options.policy[key] = key === 'providerId' || key === 'duty' ? value : Number(value);
     }
     Promise.resolve(options.previousFile ? readBusinessRecord(options.previousFile) : null)
       .then(previousEvaluation => createBusinessObserver({ ...options, previousEvaluation })())

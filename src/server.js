@@ -2628,10 +2628,14 @@ export async function buildServer() {
   // Execute only the descriptor the server just issued. Validation is repeated while holding the
   // same character lock used by the mutation, so parallel requests cannot both consume one turn.
   // The client submits no method/path/body — those come solely from the freshly recomputed turn.
-  const performAgentAction = async (action, ch, client, h, lender = null) => {
+  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {
     const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;
     switch (action.kind) {
       case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);
+      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\/buy$/, ''), client, h);
+      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,
+        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });
+      case 'business_upgrade': return Business.upgradeBusiness(ch, tail('/v1/business/').replace(/\/upgrade$/, ''), client, h);
       case 'market_fill': return Market.fillOrder(ch, tail('/v1/market/').replace(/\/fill$/, ''), action.body?.qty, client, h);
       case 'restock_buy':
       case 'arbitrage_buy': return E.buyGood(ch, action.body?.goodId, action.body?.qty, client, h);
@@ -2679,7 +2683,7 @@ export async function buildServer() {
   };
   const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {
     const { action, current } = await authorizeAgentAction(client, ch, h, turnId, actionId);
-    const result = await performAgentAction(action, ch, client, h, lender);
+    const result = await performAgentAction(action, ch, client, h, lender, current.policy);
     const blockerCodes = [...new Set(current.blockedActions.flatMap((candidate) =>
       (candidate.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort();
     // Operational evidence belongs to the same transaction as the canonical mutation. A thrown
