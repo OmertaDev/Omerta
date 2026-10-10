@@ -25,7 +25,7 @@ export function register(app, { pool, auth, modAuth }) {
   app.post('/v1/resources/bounties/:id/cancel', { preHandler: auth }, async req => cancelResourceBounty(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs/:id/renew', { preHandler: auth }, async req => renewResourceJob(pool, req.user.sub, req.params.id, req.body));
   app.get('/v1/resources/catalog', async () => ({ enabled: resourceEnabled(), capabilities: resourceComputeCatalog() }));
-  app.get('/v1/resources/services', async () => ({ enabled: resourceEnabled(), ...await resourceServiceBoard(pool) }));
+  app.get('/v1/resources/services', async req => ({ enabled: resourceEnabled(), ...await resourceServiceBoard(pool, req.query) }));
   app.get('/v1/resources/auctions', async () => resourceAuctionBoard(pool));
   app.get('/v1/resources', { preHandler: auth }, async req => ({
     enabled: resourceEnabled(), accounting: await resourceAccounting(pool, req.user.sub),

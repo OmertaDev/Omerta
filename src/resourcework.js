@@ -36,9 +36,30 @@ export async function setResourceService(pool, sellerAccount, body) {
     return { resourceAction: 'service', service: { sellerAccountId: sellerAccount, kind: 'market_analysis', revision: values[1], enabled: body.enabled, priceUsdMicros: body.priceUsdMicros } };
   });
 }
-export async function resourceServiceBoard(pool) {
-  const rows = (await pool.query('SELECT account_id,revision,price_usd_micros FROM resource_services WHERE enabled=true ORDER BY account_id LIMIT 100')).rows;
-  return { services: rows.map(row => ({ sellerAccountId: row.account_id, kind: 'market_analysis', revision: Number(row.revision), priceUsdMicros: Number(row.price_usd_micros) })) };
+export async function resourceServiceBoard(pool, query = {}) {
+  if (!query || typeof query !== 'object' || Array.isArray(query)
+      || Object.keys(query).some(key => !['afterAccountId', 'limit', 'availableOnly'].includes(key)))
+    throw resourceError('terms', 'Use supported service discovery filters.');
+  const after = query.afterAccountId;
+  if (after !== undefined && (typeof after !== 'string' || !after.length || after.length > 128))
+    throw resourceError('terms', 'Use a nonempty account cursor of at most 128 characters.');
+  const rawLimit = query.limit === undefined ? 100 : query.limit;
+  const limit = typeof rawLimit === 'string' && /^[1-9][0-9]{0,2}$/.test(rawLimit) ? Number(rawLimit) : rawLimit;
+  resourceInt(limit, 'service page limit', 1, 100);
+  const available = query.availableOnly === undefined ? false
+    : query.availableOnly === 'true' ? true : query.availableOnly === 'false' ? false : query.availableOnly;
+  if (typeof available !== 'boolean') throw resourceError('terms', 'Use true or false for availableOnly.');
+  const rows = (await pool.query(`SELECT offers.account_id,offers.revision,offers.price_usd_micros,offers.active_jobs FROM (
+    SELECT s.account_id,s.revision,s.price_usd_micros,COUNT(j.id) AS active_jobs
+    FROM resource_services s LEFT JOIN resource_jobs j ON j.seller_account=s.account_id AND j.state IN ('open','claimed','submitted','disputed')
+    WHERE s.enabled=true AND ($1::text IS NULL OR s.account_id > $1)
+    GROUP BY s.account_id,s.revision,s.price_usd_micros) offers
+    WHERE ($2::boolean=false OR offers.active_jobs < 3)
+    ORDER BY offers.account_id LIMIT $3`, [after ?? null, available, limit + 1])).rows;
+  const visible = rows.slice(0, limit), hasMore = rows.length > limit;
+  return { services: visible.map(row => ({ sellerAccountId: row.account_id, kind: 'market_analysis', revision: Number(row.revision), priceUsdMicros: Number(row.price_usd_micros),
+    capacity: { activeJobs: Number(row.active_jobs), maxActiveJobs: 3, remainingCapacity: Math.max(0, 3 - Number(row.active_jobs)) } })),
+    pagination: { nextAfterAccountId: hasMore ? visible.at(-1).account_id : null, hasMore, limit } };
 }
 export async function createResourceJob(pool, buyer, body) {
   resourceIntake();
