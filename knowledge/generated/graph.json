@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "afe47db7a3a54c8e151260b7016e880dcef72816",
+  "sourceRevision": "6b688ebe2ced833e9e6460fd6ba6d6826296018e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10421,
-    "edges": 42436,
+    "nodes": 10423,
+    "edges": 42444,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2216,
+      "Commit": 2218,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16542,
+      "CHANGED": 16548,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2216,
+      "HAS_COMMIT": 2218,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -107720,6 +107720,22 @@
       ]
     },
     {
+      "key": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "type": "Commit",
+      "id": "1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "label": "chore(knowledge): refresh service discovery artifacts",
+      "title": "chore(knowledge): refresh service discovery artifacts",
+      "date": "2026-10-10T06:09:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "provenance": [
+        {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1d28dda9c934b80b5dfd248dff90dc318504895b"
+        }
+      ]
+    },
+    {
       "key": "Commit:1d333b79f43c427ebc9d6733df79a124fe82fe0d",
       "type": "Commit",
       "id": "1d333b79f43c427ebc9d6733df79a124fe82fe0d",
@@ -118692,6 +118708,22 @@
         {
           "commit": "6b54ffca251759fcc633e168454d743f4a9d3392",
           "url": "https://github.com/OmertaDev/Omerta/commit/6b54ffca251759fcc633e168454d743f4a9d3392"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+      "type": "Commit",
+      "id": "6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+      "label": "Merge pull request #217 from OmertaDev/codex/service-discovery-pagination",
+      "title": "Merge pull request #217 from OmertaDev/codex/service-discovery-pagination",
+      "date": "2026-10-10T07:07:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+      "provenance": [
+        {
+          "commit": "6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6b688ebe2ced833e9e6460fd6ba6d6826296018e"
         }
       ]
     },
@@ -159510,6 +159542,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+        },
+        {
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
@@ -160027,6 +160062,9 @@
         },
         {
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
+        },
+        {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
@@ -161109,6 +161147,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+        },
+        {
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
@@ -162187,6 +162228,9 @@
         },
         {
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
+        },
+        {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
@@ -163563,6 +163607,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+        },
+        {
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
@@ -164560,6 +164607,9 @@
         },
         {
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
+        },
+        {
+          "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
@@ -173802,8 +173852,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "afe47db7a3a54c8e151260b7016e880dcef72816",
-      "currentBranch": "codex/service-discovery-pagination",
+      "revision": "6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -256660,6 +256710,54 @@
       "to": "Artifact:tools/knowledge.js",
       "provenance": {
         "commit": "1d0de64b654d2f0cb8fc8f93d44ed2419338b35c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
       }
     },
     {
@@ -445331,6 +445429,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1d28dda9c934b80b5dfd248dff90dc318504895b",
+      "provenance": {
+        "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1d333b79f43c427ebc9d6733df79a124fe82fe0d",
       "provenance": {
         "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
@@ -450814,6 +450920,14 @@
       "to": "Commit:6b54ffca251759fcc633e168454d743f4a9d3392",
       "provenance": {
         "commit": "6b54ffca251759fcc633e168454d743f4a9d3392"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6b688ebe2ced833e9e6460fd6ba6d6826296018e",
+      "provenance": {
+        "commit": "6b688ebe2ced833e9e6460fd6ba6d6826296018e"
       }
     },
     {
