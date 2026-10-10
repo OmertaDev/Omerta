@@ -20,7 +20,7 @@ export async function resourceEarnings(pool, accountId, query = {}) {
     // Lock only the existing seller treasury; this observation never creates funding.
     const treasury = (await client.query('SELECT mode FROM resource_treasuries WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
     const asOf = new Date().toISOString();
-    const jobs = (await client.query(`SELECT id,buyer_account,seller_account,state,price_usd_micros,call_id FROM resource_jobs
+    const jobs = (await client.query(`SELECT id,buyer_account,seller_account,state,price_usd_micros,COALESCE(input->>'fulfillment','compute') AS fulfillment FROM resource_jobs
       WHERE seller_account=$1 AND state='accepted' AND ($2::text IS NULL OR id>$2) ORDER BY id LIMIT $3`, [accountId, afterJobId, limit + 1])).rows;
     const rows = [];
     for (const job of jobs.slice(0, limit)) {
@@ -31,7 +31,7 @@ export async function resourceEarnings(pool, accountId, query = {}) {
       const edge = entry => entry ? { accountId: entry.account_id, eventKey: entry.event_key, kind: entry.kind,
         availableDelta: exact(entry.available_delta), reservedDelta: exact(entry.reserved_delta) } : null;
       rows.push({ id: job.id, buyerAccountId: job.buyer_account, sellerAccountId: job.seller_account,
-        state: job.state, priceUsdMicros: exact(job.price_usd_micros), fulfillment: job.call_id ? 'compute' : 'authored',
+        state: job.state, priceUsdMicros: exact(job.price_usd_micros), fulfillment: job.fulfillment,
         credit: edge(ledger.find(row => row.account_id === accountId)),
         debit: edge(ledger.find(row => row.account_id === job.buyer_account)), buyerFrozen: buyer?.frozen ?? null });
     }

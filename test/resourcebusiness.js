@@ -148,6 +148,8 @@ try {
   assert.equal(tampered.receipts[0].fulfillment, 'compute');
   assert(tampered.receipts[0].issues.includes('credit_mismatch'));
   assert(tampered.receipts[0].issues.includes('debit_missing'));
+  await pool.query('UPDATE resource_jobs SET call_id=NULL WHERE id=$1', ['business-job']);
+  assert.equal((await resourceEarnings(earningsPool, account)).receipts[0].fulfillment, 'compute', 'Legacy accepted work without a compute receipt retains its contracted compute fulfillment');
   await pool.query("UPDATE resource_ledger SET available_delta=100000 WHERE account_id=$1 AND event_key='job_revenue:business-job'", [account]);
   await resourceTransaction(pool, async client => {
     await lockResourceTreasury(client, buyer);
@@ -163,7 +165,8 @@ try {
   assert.equal((await resourceEarnings(earningsPool, account)).matchedPageRevenueUsdMicros, 100000, 'Recovery is current observation, not historical accounting authority');
   assert.equal((await resourceEarnings(earningsPool, buyer)).receipts.length, 0, 'Buyer cannot read seller statement');
   assert(earningsQueries.every(sql => /^\s*(SELECT|BEGIN|COMMIT|ROLLBACK)\b/i.test(sql)));
-  assert(earningsQueries.every(sql => !/SELECT\s+\*|\b(report|question|prompt|output|input|available_usd_micros|reserved_usd_micros)\b/i.test(sql)));
+  assert(earningsQueries.every(sql => !/SELECT\s+\*|\b(report|question|prompt|output|available_usd_micros|reserved_usd_micros)\b/i.test(sql)));
+  assert(earningsQueries.filter(sql => /\binput\b/.test(sql)).every(sql => sql.includes("COALESCE(input->>'fulfillment','compute') AS fulfillment")), 'Only contracted fulfillment scalar is read, never raw inputs');
   assert(!JSON.stringify(balanced).includes('PRIVATE_'));
   assert.deepEqual(await counts(), { ...earningsBefore, resource_ledger: earningsBefore.resource_ledger + 2 });
   await resourceTransaction(pool, async client => {
@@ -197,7 +200,7 @@ try {
   for (let index = 0; index < 101; index++) {
     const id = `earnings-${String(index).padStart(3, '0')}`;
     await pool.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at) VALUES($1,$2,$3,$4,1,10000,$5,$6,$7)',
-      [id, buyer, account, id, { question: 'PRIVATE_EARNINGS' }, 'accepted', new Date()]);
+      [id, buyer, account, id, { question: 'PRIVATE_EARNINGS', fulfillment: 'authored' }, 'accepted', new Date()]);
   }
   const firstPage = await resourceEarnings(earningsPool, account, { limit: '100' });
   assert.equal(firstPage.receipts.length, 100); assert.equal(firstPage.pagination.hasMore, true);
