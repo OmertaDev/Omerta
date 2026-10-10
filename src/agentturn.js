@@ -6,11 +6,11 @@ import crypto from 'node:crypto';
 import { restockCandidates } from './restock.js';
 import { depotState, depotPilotEnabled } from './depot.js';
 import { deliveryBoard, deliveryIntakeEnabled, DELIVERY } from './delivery.js';
-import { BLACK_MARKET, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
+import { BLACK_MARKET, BUSINESSES, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
 import { view } from './game.js';
 import { opportunityBoard } from './opportunities.js';
 import { chainConfig } from './chain.js';
-import { businessesOf } from './business.js';
+import { businessesOf, upkeepPerHr } from './business.js';
 import { territoryOf } from './territory.js';
 import { convoyBoard } from './convoy.js';
 import { loanBoard } from './loans.js';
@@ -320,12 +320,51 @@ function convoyPlans(ch, sheet, owned, board) {
 
 async function businessActions(db, ch) {
   if (safeHoused(ch)) return [];
-  const fronts = (await businessesOf(db, ch.id)).filter((front) => !front.cold && Number(front.pending) > 0);
+  const owned = await businessesOf(db, ch.id);
+  const actions = [];
+  const cash = Number(ch.cash), owed = owned.reduce((sum, front) => sum + Number(front.upkeepOwed), 0);
+  const upkeepQuantum = Math.max(100, owned.reduce((sum, front) => sum + front.upkeepPerHr, 0));
+  const upkeepMaximum = Math.ceil(owed / upkeepQuantum) * upkeepQuantum;
+  const maintenanceDue = owned.some(front => front.cold || front.coldSeconds <= 3600)
+    || owed > 0 && owed >= owned.reduce((sum, front) => sum + front.upkeepPerHr, 0);
+  if (owed > 0 && maintenanceDue && cash - upkeepMaximum >= POLICY.cashReserve) actions.push(valued({
+    id: 'business:upkeep', kind: 'business_upkeep', label: 'Pay all business upkeep',
+    method: 'POST', path: '/v1/business/upkeep', body: {}, executable: true,
+    cost: { cash: upkeepMaximum }, reward: { restoredOperatingFronts: owned.filter(front => front.cold).length, maximumUpkeepSpend: upkeepMaximum }, risk: { level: 'low' },
+  }, { cash: -upkeepMaximum, confidence: 1, basis: 'Upkeep planning maximum rounded up by at least 100 cash or one hour of aggregate upkeep; actual debit is bounded by this allowance and the cash reserve. Creates no immediate cash income.' }));
+  const level = levelOf(Number(ch.respect));
+  if (!jailed(ch) && !maintenanceDue && !owned.some(front => front.cold || front.raidRisk)) for (const business of BUSINESSES) {
+    if (level < business.lvl || owned.some(front => front.kind === business.kind)) continue;
+    const tier = business.tiers[0], count = owned.length + 1;
+    const upkeep = upkeepPerHr(tier, count);
+    const aggregateUpkeep = upkeep + owned.reduce((sum, front) => sum + upkeepPerHr({ incomePerHr: front.incomePerHr }, count), 0);
+    const portfolioNetGain = tier.incomePerHr - aggregateUpkeep + owned.reduce((sum, front) => sum + front.upkeepPerHr, 0);
+    if (portfolioNetGain <= 0 || cash - tier.cost - owed - aggregateUpkeep * 24 < POLICY.cashReserve) continue;
+    actions.push(valued({ id: `business:buy:${business.kind}`, kind: 'business_buy', label: `Open ${business.name}`,
+      method: 'POST', path: `/v1/business/${business.kind}/buy`, body: {}, executable: true,
+      cost: { cash: tier.cost }, reward: { incomePerHr: tier.incomePerHr, upkeepPerHr: upkeep, projectedNetPerHr: tier.incomePerHr - upkeep, projectedPortfolioNetGainPerHr: portfolioNetGain },
+      risk: { level: 'medium', requiresActiveCollection: true, incomeCapHours: CONSTANTS.BUSINESS_CAP_MS / 3600000 },
+    }, { cash: -tier.cost, confidence: 1, basis: 'Immediate setup cash cost; projected hourly income requires active collection and excludes raids. Reserves one day of aggregate upkeep.' }));
+  }
+  for (const front of owned) {
+    const next = front.nextTier;
+    if (!next || jailed(ch) || front.cold || front.raidRisk || maintenanceDue) continue;
+    const nextUpkeep = upkeepPerHr(next, owned.length);
+    const netGain = next.incomePerHr - nextUpkeep - (front.incomePerHr - front.upkeepPerHr);
+    const aggregateUpkeep = nextUpkeep + owned.filter(other => other.id !== front.id).reduce((sum, other) => sum + other.upkeepPerHr, 0);
+    if (netGain <= 0 || cash - next.cost - owed - aggregateUpkeep * 24 < POLICY.cashReserve) continue;
+    actions.push(valued({ id: `business:upgrade:${front.id}`, kind: 'business_upgrade', label: `Upgrade ${front.name}`,
+      method: 'POST', path: `/v1/business/${front.id}/upgrade`, body: {}, executable: true,
+      cost: { cash: next.cost }, reward: { nextTier: next.tier, projectedNetIncomeGainPerHr: netGain },
+      risk: { level: 'medium', requiresActiveCollection: true },
+    }, { cash: -next.cost, confidence: 1, basis: 'Immediate upgrade cost without spending uncertain pending income; positive projected net hourly gain and one day upkeep reserve.' }));
+  }
+  const fronts = owned.filter((front) => !front.cold && Number(front.pending) > 0);
   const pending = fronts.reduce((sum, front) => sum + Number(front.pending), 0);
-  if (pending <= 0) return [];
+  if (pending <= 0) return actions;
   const hot = fronts.filter((front) => front.raidRisk);
   const riskAdjustment = hot.length ? 0.5 : 1;
-  return [valued({
+  actions.push(valued({
     id: 'business:collect', kind: 'business_collect', label: 'Collect all business income',
     method: 'POST', path: '/v1/business/collect', body: {}, executable: true,
     cost: {}, reward: { cash: { pending } },
@@ -336,7 +375,8 @@ async function businessActions(db, ch) {
     basis: hot.length
       ? 'Live pending take discounted 50% because at least one front is currently raid-eligible.'
       : 'Live server-computed pending take across operating fronts.',
-  })];
+  }));
+  return actions;
 }
 
 function depotActions(ch, depot) {

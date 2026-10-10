@@ -70,6 +70,8 @@ Hosted38078473835 native matrices/recovery passed, then the docs gate caught two
 
 ## Authored delivery runner and private target read — 2026-10-10
 
+Dependency integration: reviewed authored-deliverables commit `c05e8a32359c006bcf602c90760e8481364f23d0` brings the current-main integration and inherited business safeguards. Independent delivery review at `84e663d5fc740cc380ba0e6152af0b1fca5f52fd` remains applicable to the unchanged delivery runner, private target handler and authored integration tests; inherited server changes are scoped to the main integration evidence rather than represented as unchanged server bytes. Source census is remeasured, both delivery and existing suite gates are preserved, and focused delivery/resourcework/routes/gates/docs checks and clean-source knowledge regeneration gate the combined head. No execution, provider or financial activation is authorized by integration.
+
 Release test discovery refinement: `package.json` invokes `node test/resource-deliver.js` explicitly in `pretest`; the incidental import in `test/resource-agent.js` was removed to avoid running it twice. Runtime and backend source are unchanged. Separate delivery, resource-agent, resourcework, route and documentation suites pass after this wiring change; the generated knowledge gate is rerun against the final clean source revision. The dependency branch was verified at `6e7ea76791d620e9878af6e707ef08ca2a0b8be2` and is already included.
 
 The first documentation rerun caught the draft suite count at278 while explicit discovery now counts279. Corrected that current public draft figure and reran the documentation gate; historical reports and runtime hashes remain unchanged.

@@ -3,6 +3,8 @@ import { performance } from 'node:perf_hooks';
 import { mkdtemp, writeFile, unlink, rmdir, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createServer } from 'node:http';
+import { spawn } from 'node:child_process';
 import { createBusinessObserver, createBusinessObserverForTest, readBusinessRecord } from '../tools/business-agent.js';
 
 const token = 'private-business-test-token';
@@ -88,4 +90,36 @@ const productionStarts = [];
 await createBusinessObserver({ baseUrl: 'http://127.0.0.1:8080', token, samples: 2,
   fetchImpl: async () => { productionStarts.push(performance.now()); return json(fixture); } })();
 assert(productionStarts[1] - productionStarts[0] >= 3100, 'production cadence cannot be overridden by options');
+let cliRequests = 0;
+const server = createServer((req, res) => {
+  cliRequests++;
+  assert.equal(req.method, 'GET');
+  assert.equal(req.url, '/v1/resources/business');
+  assert.equal(req.headers.authorization, `Bearer ${token}`);
+  res.writeHead(200, { 'content-type': 'application/json' });
+  res.end(JSON.stringify(fixture));
+});
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+const cli = duty => new Promise((resolve, reject) => {
+  const child = spawn(process.execPath, ['tools/business-agent.js', '--base', `http://127.0.0.1:${server.address().port}`, '--duty', duty],
+    { env: { ...process.env, OMERTA_BUSINESS_TOKEN: token }, stdio: ['ignore', 'pipe', 'pipe'] });
+  let stdout = '', stderr = '';
+  child.stdout.on('data', data => { stdout += data; });
+  child.stderr.on('data', data => { stderr += data; });
+  child.on('error', reject);
+  child.on('close', code => resolve({ code, stdout, stderr }));
+});
+try {
+  const focused = await cli('fulfillment');
+  assert.equal(focused.code, 0, focused.stderr);
+  const record = JSON.parse(focused.stdout);
+  assert.equal(record.financialRequests, 0);
+  assert.equal(record.samples[0].evaluation.policy.duty, 'fulfillment');
+  assert(!focused.stdout.includes(token));
+  const invalid = await cli('procurement');
+  assert.equal(invalid.code, 1);
+  assert.equal(invalid.stdout, '');
+  assert.equal(invalid.stderr.trim(), 'business_agent_error');
+  assert.equal(cliRequests, 1, 'invalid duty fails before any request');
+} finally { await new Promise(resolve => server.close(resolve)); }
 console.log('business-agent: finite read-only sampling, pacing, credential boundaries and bounded responses passed');
