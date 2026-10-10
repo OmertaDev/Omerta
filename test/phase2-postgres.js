@@ -349,6 +349,18 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     (rows,index) => rows.splice(index,1)));
   rejected('resource payment session identity altered',mutate('resource_payments','resource_payments_session_id_key',
     (rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('city character ownership foreign key removed',mutate('city_intel_progress','city_intel_progress_character_id_fkey',
+    (rows,index) => rows.splice(index,1)));
+  rejected('city generation identity weakened',mutate('city_intel_progress','city_intel_progress_pkey',
+    (rows,index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected('city generation minimum removed',mutate('city_intel_progress','city_intel_progress_generation_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('city intel safe sequence bound weakened',mutate('city_intel_progress','city_intel_progress_sequence_check',
+    (rows,index) => { rows[index].definition = rows[index].definition.replace('9007199254740991','9007199254740992'); }));
+  if (serverVersionNum >= 180000) for (const column of ['character_id','generation','journal','objectives','sequence']) {
+    rejected('city '+column+' nullability removed',mutate('city_intel_progress',`city_intel_progress_${column}_not_null`,
+      (rows,index) => rows.splice(index,1)));
+  }
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');
