@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "57aed65617761ca1a8c45c10c093e35a34949ae4",
+  "sourceRevision": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 10511,
-    "edges": 42845,
+    "nodes": 10521,
+    "edges": 42886,
     "byNodeType": {
-      "Artifact": 4411,
+      "Artifact": 4412,
       "Command": 212,
-      "Commit": 2271,
+      "Commit": 2278,
       "Contract": 126,
       "Document": 706,
       "Domain": 13,
       "ExternalDependency": 30,
       "HistoricalArtifact": 424,
-      "Module": 316,
+      "Module": 317,
       "PullRequest": 126,
       "Repository": 1,
-      "Route": 881,
+      "Route": 882,
       "Subsystem": 8,
       "Table": 391,
       "TestSuite": 589,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3544,
-      "CHANGED": 16773,
-      "CONTAINS": 4432,
+      "BELONGS_TO": 3546,
+      "CHANGED": 16789,
+      "CONTAINS": 4433,
       "DECLARES": 212,
-      "DEFINED_IN": 1398,
+      "DEFINED_IN": 1399,
       "DEPENDS_ON": 67,
       "EXECUTES": 721,
-      "HANDLED_BY": 774,
-      "HAS_COMMIT": 2271,
+      "HANDLED_BY": 775,
+      "HAS_COMMIT": 2278,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4207,
+      "IMPORTS": 4213,
       "INHERITS": 42,
       "REFERENCES": 3140,
-      "REPRESENTS": 1617,
-      "TESTS": 1446,
+      "REPRESENTS": 1618,
+      "TESTS": 1448,
       "TRACKS": 126,
-      "USES_TABLE": 1951
+      "USES_TABLE": 1955
     }
   },
   "nodes": [
@@ -26864,20 +26864,20 @@
       "path": "docs/earning-receipts-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 4822,
-      "lines": 26,
-      "version": "933e29c7eae2e906",
+      "bytes": 7970,
+      "lines": 38,
+      "version": "3b1dade59dc65a42",
       "text": true,
       "provenance": [
         {
           "file": "docs/earning-receipts-security-review.md",
           "line": 1,
-          "version": "933e29c7eae2e906"
+          "version": "3b1dade59dc65a42"
         }
       ],
-      "lastChangedAt": "2026-10-10T19:27:42.000Z",
+      "lastChangedAt": "2026-10-10T19:43:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "57aed65617761ca1a8c45c10c093e35a34949ae4"
+      "lastChangedCommit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
     },
     {
       "key": "Artifact:docs/economy-pilot-review.json",
@@ -40735,18 +40735,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "65967fff4bebe016",
+      "version": "45281c0c106539bc",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "65967fff4bebe016"
+          "version": "45281c0c106539bc"
         }
       ],
-      "lastChangedAt": "2026-10-10T13:36:33.000Z",
+      "lastChangedAt": "2026-10-10T19:43:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "082dda3b700dc89553f5f5d84673aad85c9ef0c5"
+      "lastChangedCommit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -78196,18 +78196,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "7af3eb681bf4755b",
+      "version": "3864d2a82f96e2ca",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "7af3eb681bf4755b"
+          "version": "3864d2a82f96e2ca"
         }
       ],
-      "lastChangedAt": "2026-10-10T19:27:42.000Z",
+      "lastChangedAt": "2026-10-10T19:43:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "57aed65617761ca1a8c45c10c093e35a34949ae4"
+      "lastChangedCommit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
     },
     {
       "key": "Artifact:src/access.js",
@@ -82978,20 +82978,43 @@
       "path": "src/resourcecontracts.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 5138,
-      "lines": 51,
-      "version": "476ee42a2b84b692",
+      "bytes": 5209,
+      "lines": 52,
+      "version": "524c8d1fb3765c4b",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcecontracts.js",
           "line": 1,
-          "version": "476ee42a2b84b692"
+          "version": "524c8d1fb3765c4b"
         }
       ],
-      "lastChangedAt": "2026-10-10T13:36:33.000Z",
+      "lastChangedAt": "2026-10-10T19:19:59.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "082dda3b700dc89553f5f5d84673aad85c9ef0c5"
+      "lastChangedCommit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+    },
+    {
+      "key": "Artifact:src/resourceearnings.js",
+      "type": "Artifact",
+      "id": "src/resourceearnings.js",
+      "label": "resourceearnings.js",
+      "path": "src/resourceearnings.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 4640,
+      "lines": 50,
+      "version": "5a05b49ede4652ed",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/resourceearnings.js",
+          "line": 1,
+          "version": "5a05b49ede4652ed"
+        }
+      ],
+      "lastChangedAt": "2026-10-10T19:30:11.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "6f269dcba93f816ddfe06ce6e102349498e0f8da"
     },
     {
       "key": "Artifact:src/resourcelabor.js",
@@ -83829,20 +83852,20 @@
       "path": "src/routes/resources.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 8475,
-      "lines": 91,
-      "version": "ca05ed1556354c1e",
+      "bytes": 8655,
+      "lines": 93,
+      "version": "7d791197cb8d3a57",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/resources.js",
           "line": 1,
-          "version": "ca05ed1556354c1e"
+          "version": "7d791197cb8d3a57"
         }
       ],
-      "lastChangedAt": "2026-10-10T13:36:33.000Z",
+      "lastChangedAt": "2026-10-10T19:19:59.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "082dda3b700dc89553f5f5d84673aad85c9ef0c5"
+      "lastChangedCommit": "4caf81ab9a1f883938f995448429449ec03fedb6"
     },
     {
       "key": "Artifact:src/routes/rwa.js",
@@ -94869,20 +94892,20 @@
       "path": "test/resourcebusiness.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11048,
-      "lines": 128,
-      "version": "148796adbd301616",
+      "bytes": 19071,
+      "lines": 232,
+      "version": "21901772fbc2c472",
       "text": true,
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "148796adbd301616"
+          "version": "21901772fbc2c472"
         }
       ],
-      "lastChangedAt": "2026-10-10T12:22:54.000Z",
+      "lastChangedAt": "2026-10-10T19:30:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      "lastChangedCommit": "6f269dcba93f816ddfe06ce6e102349498e0f8da"
     },
     {
       "key": "Artifact:test/resourcecompute.js",
@@ -109008,6 +109031,22 @@
       ]
     },
     {
+      "key": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "type": "Commit",
+      "id": "244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "label": "Refresh knowledge for earning receipt graph",
+      "title": "Refresh knowledge for earning receipt graph",
+      "date": "2026-10-10T19:32:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "provenance": [
+        {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/244a255a3176793dbc110b3d8206a84d72ced2cc"
+        }
+      ]
+    },
+    {
       "key": "Commit:246c66b808b52cc1e0d5f7d3971b008c617ffaf0",
       "type": "Commit",
       "id": "246c66b808b52cc1e0d5f7d3971b008c617ffaf0",
@@ -115360,6 +115399,22 @@
       ]
     },
     {
+      "key": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "type": "Commit",
+      "id": "4caf81ab9a1f883938f995448429449ec03fedb6",
+      "label": "Add private bounded earnings statements",
+      "title": "Add private bounded earnings statements",
+      "date": "2026-10-10T19:19:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4caf81ab9a1f883938f995448429449ec03fedb6",
+      "provenance": [
+        {
+          "commit": "4caf81ab9a1f883938f995448429449ec03fedb6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4caf81ab9a1f883938f995448429449ec03fedb6"
+        }
+      ]
+    },
+    {
       "key": "Commit:4cb06b2ace406a8e5b2ff9e489832c48fa6f3070",
       "type": "Commit",
       "id": "4cb06b2ace406a8e5b2ff9e489832c48fa6f3070",
@@ -117628,6 +117683,22 @@
         {
           "commit": "5e3764addf56567ff633f18d23b85503d2947593",
           "url": "https://github.com/OmertaDev/Omerta/commit/5e3764addf56567ff633f18d23b85503d2947593"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5e589eead6ea36499227d5a492fa81af2fe21514",
+      "type": "Commit",
+      "id": "5e589eead6ea36499227d5a492fa81af2fe21514",
+      "label": "Integrate reviewed receipt graph release dependency",
+      "title": "Integrate reviewed receipt graph release dependency",
+      "date": "2026-10-10T19:32:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5e589eead6ea36499227d5a492fa81af2fe21514",
+      "provenance": [
+        {
+          "commit": "5e589eead6ea36499227d5a492fa81af2fe21514",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5e589eead6ea36499227d5a492fa81af2fe21514"
         }
       ]
     },
@@ -120032,6 +120103,22 @@
       ]
     },
     {
+      "key": "Commit:6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "type": "Commit",
+      "id": "6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "label": "Read earnings fulfillment from contracted job terms",
+      "title": "Read earnings fulfillment from contracted job terms",
+      "date": "2026-10-10T19:30:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "provenance": [
+        {
+          "commit": "6f269dcba93f816ddfe06ce6e102349498e0f8da",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6f269dcba93f816ddfe06ce6e102349498e0f8da"
+        }
+      ]
+    },
+    {
       "key": "Commit:6f41563273c5faa06fc09b9f4e04affbfdcacda5",
       "type": "Commit",
       "id": "6f41563273c5faa06fc09b9f4e04affbfdcacda5",
@@ -120364,6 +120451,22 @@
         {
           "commit": "71c40397b928928d381dd4eda1ffc6eea94f5bcb",
           "url": "https://github.com/OmertaDev/Omerta/commit/71c40397b928928d381dd4eda1ffc6eea94f5bcb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf",
+      "type": "Commit",
+      "id": "71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf",
+      "label": "Integrate reviewed earning receipt dependency",
+      "title": "Integrate reviewed earning receipt dependency",
+      "date": "2026-10-10T19:17:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf",
+      "provenance": [
+        {
+          "commit": "71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf"
         }
       ]
     },
@@ -127212,6 +127315,22 @@
         {
           "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
           "url": "https://github.com/OmertaDev/Omerta/commit/9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9ed0b42c863fb9d2233a9564d9065ee853e2ba51",
+      "type": "Commit",
+      "id": "9ed0b42c863fb9d2233a9564d9065ee853e2ba51",
+      "label": "Align receipt validation with native ledger bounds",
+      "title": "Align receipt validation with native ledger bounds",
+      "date": "2026-10-10T19:19:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9ed0b42c863fb9d2233a9564d9065ee853e2ba51",
+      "provenance": [
+        {
+          "commit": "9ed0b42c863fb9d2233a9564d9065ee853e2ba51",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9ed0b42c863fb9d2233a9564d9065ee853e2ba51"
         }
       ]
     },
@@ -135788,6 +135907,22 @@
         {
           "commit": "dc43d863536c0bff9c514248f75803ec677f2f77",
           "url": "https://github.com/OmertaDev/Omerta/commit/dc43d863536c0bff9c514248f75803ec677f2f77"
+        }
+      ]
+    },
+    {
+      "key": "Commit:dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "type": "Commit",
+      "id": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "label": "Retain private earnings consumer review and measured census",
+      "title": "Retain private earnings consumer review and measured census",
+      "date": "2026-10-10T19:43:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "provenance": [
+        {
+          "commit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
         }
       ]
     },
@@ -149005,13 +149140,13 @@
       "id": "docs/earning-receipts-security-review.md",
       "label": "docs/earning-receipts-security-review.md",
       "documentType": "documentation",
-      "lines": 26,
-      "version": "933e29c7eae2e906",
+      "lines": 38,
+      "version": "3b1dade59dc65a42",
       "provenance": [
         {
           "file": "docs/earning-receipts-security-review.md",
           "line": 1,
-          "version": "933e29c7eae2e906"
+          "version": "3b1dade59dc65a42"
         }
       ]
     },
@@ -151726,12 +151861,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "65967fff4bebe016",
+      "version": "45281c0c106539bc",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "65967fff4bebe016"
+          "version": "45281c0c106539bc"
         }
       ]
     },
@@ -153966,12 +154101,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "7af3eb681bf4755b",
+      "version": "3864d2a82f96e2ca",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "7af3eb681bf4755b"
+          "version": "3864d2a82f96e2ca"
         }
       ]
     },
@@ -154537,6 +154672,10 @@
         {
           "file": "test/projection-events.js",
           "line": 5
+        },
+        {
+          "file": "test/resourcebusiness.js",
+          "line": 6
         },
         {
           "file": "test/resourceoutcomes.js",
@@ -160789,6 +160928,9 @@
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -161384,6 +161526,9 @@
         },
         {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -162541,6 +162686,9 @@
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -163696,6 +163844,9 @@
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -164731,6 +164882,9 @@
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+        },
+        {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
         },
         {
@@ -165155,6 +165309,9 @@
         },
         {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
         },
         {
           "commit": "24788d5e57d959ba59eb66d5b992334b18e33ec7"
@@ -166211,6 +166368,9 @@
         },
         {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
+        },
+        {
+          "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
         },
         {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
@@ -170758,13 +170918,28 @@
       "type": "Module",
       "id": "src/resourcecontracts.js",
       "label": "src/resourcecontracts.js",
-      "lines": 51,
-      "version": "476ee42a2b84b692",
+      "lines": 52,
+      "version": "524c8d1fb3765c4b",
       "provenance": [
         {
           "file": "src/resourcecontracts.js",
           "line": 1,
-          "version": "476ee42a2b84b692"
+          "version": "524c8d1fb3765c4b"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/resourceearnings.js",
+      "type": "Module",
+      "id": "src/resourceearnings.js",
+      "label": "src/resourceearnings.js",
+      "lines": 50,
+      "version": "5a05b49ede4652ed",
+      "provenance": [
+        {
+          "file": "src/resourceearnings.js",
+          "line": 1,
+          "version": "5a05b49ede4652ed"
         }
       ]
     },
@@ -171313,13 +171488,13 @@
       "type": "Module",
       "id": "src/routes/resources.js",
       "label": "src/routes/resources.js",
-      "lines": 91,
-      "version": "ca05ed1556354c1e",
+      "lines": 93,
+      "version": "7d791197cb8d3a57",
       "provenance": [
         {
           "file": "src/routes/resources.js",
           "line": 1,
-          "version": "ca05ed1556354c1e"
+          "version": "7d791197cb8d3a57"
         }
       ]
     },
@@ -175558,12 +175733,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "57aed65617761ca1a8c45c10c093e35a34949ae4",
-      "currentBranch": "codex/earning-receipt-graph",
+      "revision": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "currentBranch": "codex/private-earnings-api",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4411,
+      "currentArtifactCount": 4412,
       "provenance": [
         {
           "file": "README.md",
@@ -181897,13 +182072,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 45
+          "line": 47
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 45
+          "line": 47
         }
       ]
     },
@@ -181921,13 +182096,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 44
+          "line": 46
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 44
+          "line": 46
         }
       ]
     },
@@ -181945,13 +182120,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 71
+          "line": 73
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 71
+          "line": 73
         }
       ]
     },
@@ -181969,13 +182144,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 34
+          "line": 35
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 34
+          "line": 35
         }
       ]
     },
@@ -181993,13 +182168,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 42
+          "line": 44
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 42
+          "line": 44
         }
       ]
     },
@@ -182017,13 +182192,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 31
+          "line": 32
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 31
+          "line": 32
         }
       ]
     },
@@ -182041,13 +182216,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 18
+          "line": 19
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 18
+          "line": 19
         }
       ]
     },
@@ -182065,13 +182240,37 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 58
+          "line": 60
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 58
+          "line": 60
+        }
+      ]
+    },
+    {
+      "key": "Route:GET /v1/resources/earnings",
+      "type": "Route",
+      "id": "GET /v1/resources/earnings",
+      "label": "GET /v1/resources/earnings",
+      "method": "GET",
+      "url": "/v1/resources/earnings",
+      "access": "authenticated",
+      "domain": "platform-core",
+      "mutationAuthenticated": false,
+      "idempotentMutation": false,
+      "definitions": [
+        {
+          "file": "src/routes/resources.js",
+          "line": 36
+        }
+      ],
+      "provenance": [
+        {
+          "file": "src/routes/resources.js",
+          "line": 36
         }
       ]
     },
@@ -182089,13 +182288,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 53
+          "line": 55
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 53
+          "line": 55
         }
       ]
     },
@@ -182113,13 +182312,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 65
+          "line": 67
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 65
+          "line": 67
         }
       ]
     },
@@ -182137,13 +182336,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 35
+          "line": 37
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 35
+          "line": 37
         }
       ]
     },
@@ -182161,13 +182360,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 36
+          "line": 38
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 36
+          "line": 38
         }
       ]
     },
@@ -182185,13 +182384,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 32
+          "line": 33
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 32
+          "line": 33
         }
       ]
     },
@@ -182209,13 +182408,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 49
+          "line": 51
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 49
+          "line": 51
         }
       ]
     },
@@ -182233,13 +182432,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 43
+          "line": 45
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 43
+          "line": 45
         }
       ]
     },
@@ -182257,13 +182456,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 33
+          "line": 34
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 33
+          "line": 34
         }
       ]
     },
@@ -191353,13 +191552,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 74
+          "line": 76
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 74
+          "line": 76
         }
       ]
     },
@@ -191377,13 +191576,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 75
+          "line": 77
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 75
+          "line": 77
         }
       ]
     },
@@ -191401,13 +191600,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 76
+          "line": 78
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 76
+          "line": 78
         }
       ]
     },
@@ -193177,13 +193376,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 72
+          "line": 74
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 72
+          "line": 74
         }
       ]
     },
@@ -193201,13 +193400,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 73
+          "line": 75
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 73
+          "line": 75
         }
       ]
     },
@@ -193225,13 +193424,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 37
+          "line": 39
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 37
+          "line": 39
         }
       ]
     },
@@ -193249,13 +193448,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 39
+          "line": 41
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 39
+          "line": 41
         }
       ]
     },
@@ -193273,13 +193472,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 38
+          "line": 40
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 38
+          "line": 40
         }
       ]
     },
@@ -193297,13 +193496,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 40
+          "line": 42
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 40
+          "line": 42
         }
       ]
     },
@@ -193321,13 +193520,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 19
+          "line": 20
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 19
+          "line": 20
         }
       ]
     },
@@ -193345,13 +193544,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 59
+          "line": 61
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 59
+          "line": 61
         }
       ]
     },
@@ -193369,13 +193568,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 63
+          "line": 65
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 63
+          "line": 65
         }
       ]
     },
@@ -193393,13 +193592,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 56
+          "line": 58
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 56
+          "line": 58
         }
       ]
     },
@@ -193417,13 +193616,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 66
+          "line": 68
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 66
+          "line": 68
         }
       ]
     },
@@ -193441,13 +193640,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 69
+          "line": 71
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 69
+          "line": 71
         }
       ]
     },
@@ -193465,13 +193664,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 67
+          "line": 69
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 67
+          "line": 69
         }
       ]
     },
@@ -193489,13 +193688,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 70
+          "line": 72
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 70
+          "line": 72
         }
       ]
     },
@@ -193513,13 +193712,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 41
+          "line": 43
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 41
+          "line": 43
         }
       ]
     },
@@ -193537,13 +193736,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 68
+          "line": 70
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 68
+          "line": 70
         }
       ]
     },
@@ -193561,13 +193760,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 82
+          "line": 84
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 82
+          "line": 84
         }
       ]
     },
@@ -193585,13 +193784,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 52
+          "line": 54
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 52
+          "line": 54
         }
       ]
     },
@@ -193609,13 +193808,13 @@
       "definitions": [
         {
           "file": "src/routes/resources.js",
-          "line": 57
+          "line": 59
         }
       ],
       "provenance": [
         {
           "file": "src/routes/resources.js",
-          "line": 57
+          "line": 59
         }
       ]
     },
@@ -211467,13 +211666,13 @@
       "type": "TestSuite",
       "id": "test/resourcebusiness.js",
       "label": "test/resourcebusiness.js",
-      "lines": 128,
-      "version": "148796adbd301616",
+      "lines": 232,
+      "version": "21901772fbc2c472",
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "148796adbd301616"
+          "version": "21901772fbc2c472"
         }
       ]
     },
@@ -229508,6 +229707,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/resourcelabor.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -239124,7 +239332,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 45
+        "line": 47
       }
     },
     {
@@ -239133,7 +239341,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 44
+        "line": 46
       }
     },
     {
@@ -239142,7 +239350,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 71
+        "line": 73
       }
     },
     {
@@ -239151,7 +239359,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -239160,7 +239368,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 42
+        "line": 44
       }
     },
     {
@@ -239169,7 +239377,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -239178,7 +239386,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -239187,39 +239395,12 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 58
+        "line": 60
       }
     },
     {
       "type": "BELONGS_TO",
-      "from": "Route:GET /v1/resources/funding",
-      "to": "Domain:platform-core",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 53
-      }
-    },
-    {
-      "type": "BELONGS_TO",
-      "from": "Route:GET /v1/resources/jobs",
-      "to": "Domain:platform-core",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 65
-      }
-    },
-    {
-      "type": "BELONGS_TO",
-      "from": "Route:GET /v1/resources/labor",
-      "to": "Domain:platform-core",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 35
-      }
-    },
-    {
-      "type": "BELONGS_TO",
-      "from": "Route:GET /v1/resources/labor/reputation/:id",
+      "from": "Route:GET /v1/resources/earnings",
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
@@ -239228,11 +239409,47 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Route:GET /v1/resources/funding",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 55
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Route:GET /v1/resources/jobs",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 67
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Route:GET /v1/resources/labor",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 37
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Route:GET /v1/resources/labor/reputation/:id",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Route:GET /v1/resources/outcomes",
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -239241,7 +239458,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 49
+        "line": 51
       }
     },
     {
@@ -239250,7 +239467,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 43
+        "line": 45
       }
     },
     {
@@ -239259,7 +239476,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -242670,7 +242887,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 74
+        "line": 76
       }
     },
     {
@@ -242679,7 +242896,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 75
+        "line": 77
       }
     },
     {
@@ -242688,7 +242905,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 76
+        "line": 78
       }
     },
     {
@@ -243354,7 +243571,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 72
+        "line": 74
       }
     },
     {
@@ -243363,7 +243580,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 73
+        "line": 75
       }
     },
     {
@@ -243372,7 +243589,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 37
+        "line": 39
       }
     },
     {
@@ -243381,7 +243598,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -243390,7 +243607,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 38
+        "line": 40
       }
     },
     {
@@ -243399,7 +243616,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 40
+        "line": 42
       }
     },
     {
@@ -243408,7 +243625,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -243417,7 +243634,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 59
+        "line": 61
       }
     },
     {
@@ -243426,7 +243643,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 63
+        "line": 65
       }
     },
     {
@@ -243435,7 +243652,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 56
+        "line": 58
       }
     },
     {
@@ -243444,7 +243661,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 66
+        "line": 68
       }
     },
     {
@@ -243453,7 +243670,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 69
+        "line": 71
       }
     },
     {
@@ -243462,7 +243679,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 67
+        "line": 69
       }
     },
     {
@@ -243471,7 +243688,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 70
+        "line": 72
       }
     },
     {
@@ -243480,7 +243697,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -243489,7 +243706,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 68
+        "line": 70
       }
     },
     {
@@ -243498,7 +243715,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 82
+        "line": 84
       }
     },
     {
@@ -243507,7 +243724,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 52
+        "line": 54
       }
     },
     {
@@ -243516,7 +243733,7 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 57
+        "line": 59
       }
     },
     {
@@ -261374,6 +261591,62 @@
       "to": "Artifact:tools/rc1-resource-proof.js",
       "provenance": {
         "commit": "240ebefec6e4d363fb2562b418ced9e83a98b198"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
       }
     },
     {
@@ -283010,6 +283283,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "to": "Artifact:src/resourcecontracts.js",
+      "provenance": {
+        "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "to": "Artifact:test/resourcebusiness.js",
+      "provenance": {
+        "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4cb06b2ace406a8e5b2ff9e489832c48fa6f3070",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -300942,6 +301247,22 @@
       "to": "Artifact:test/security.js",
       "provenance": {
         "commit": "6eff1bc4af2999bae71c114358c7e4aab2e84214"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "commit": "6f269dcba93f816ddfe06ce6e102349498e0f8da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "to": "Artifact:test/resourcebusiness.js",
+      "provenance": {
+        "commit": "6f269dcba93f816ddfe06ce6e102349498e0f8da"
       }
     },
     {
@@ -355658,6 +355979,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "to": "Artifact:docs/earning-receipts-security-review.md",
+      "provenance": {
+        "commit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -380805,6 +381150,15 @@
       "to": "Artifact:src/resourcecontracts.js",
       "provenance": {
         "file": "src/resourcecontracts.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "file": "src/resourceearnings.js",
         "line": 1
       }
     },
@@ -424083,7 +424437,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 45
+        "line": 47
       }
     },
     {
@@ -424092,7 +424446,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 44
+        "line": 46
       }
     },
     {
@@ -424101,7 +424455,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 71
+        "line": 73
       }
     },
     {
@@ -424110,7 +424464,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -424119,7 +424473,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 42
+        "line": 44
       }
     },
     {
@@ -424128,7 +424482,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -424137,7 +424491,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -424146,39 +424500,12 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 58
+        "line": 60
       }
     },
     {
       "type": "DEFINED_IN",
-      "from": "Route:GET /v1/resources/funding",
-      "to": "Artifact:src/routes/resources.js",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 53
-      }
-    },
-    {
-      "type": "DEFINED_IN",
-      "from": "Route:GET /v1/resources/jobs",
-      "to": "Artifact:src/routes/resources.js",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 65
-      }
-    },
-    {
-      "type": "DEFINED_IN",
-      "from": "Route:GET /v1/resources/labor",
-      "to": "Artifact:src/routes/resources.js",
-      "provenance": {
-        "file": "src/routes/resources.js",
-        "line": 35
-      }
-    },
-    {
-      "type": "DEFINED_IN",
-      "from": "Route:GET /v1/resources/labor/reputation/:id",
+      "from": "Route:GET /v1/resources/earnings",
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
@@ -424187,11 +424514,47 @@
     },
     {
       "type": "DEFINED_IN",
+      "from": "Route:GET /v1/resources/funding",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 55
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Route:GET /v1/resources/jobs",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 67
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Route:GET /v1/resources/labor",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 37
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Route:GET /v1/resources/labor/reputation/:id",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 38
+      }
+    },
+    {
+      "type": "DEFINED_IN",
       "from": "Route:GET /v1/resources/outcomes",
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -424200,7 +424563,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 49
+        "line": 51
       }
     },
     {
@@ -424209,7 +424572,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 43
+        "line": 45
       }
     },
     {
@@ -424218,7 +424581,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -427629,7 +427992,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 74
+        "line": 76
       }
     },
     {
@@ -427638,7 +428001,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 75
+        "line": 77
       }
     },
     {
@@ -427647,7 +428010,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 76
+        "line": 78
       }
     },
     {
@@ -428313,7 +428676,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 72
+        "line": 74
       }
     },
     {
@@ -428322,7 +428685,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 73
+        "line": 75
       }
     },
     {
@@ -428331,7 +428694,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 37
+        "line": 39
       }
     },
     {
@@ -428340,7 +428703,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -428349,7 +428712,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 38
+        "line": 40
       }
     },
     {
@@ -428358,7 +428721,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 40
+        "line": 42
       }
     },
     {
@@ -428367,7 +428730,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -428376,7 +428739,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 59
+        "line": 61
       }
     },
     {
@@ -428385,7 +428748,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 63
+        "line": 65
       }
     },
     {
@@ -428394,7 +428757,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 56
+        "line": 58
       }
     },
     {
@@ -428403,7 +428766,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 66
+        "line": 68
       }
     },
     {
@@ -428412,7 +428775,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 69
+        "line": 71
       }
     },
     {
@@ -428421,7 +428784,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 67
+        "line": 69
       }
     },
     {
@@ -428430,7 +428793,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 70
+        "line": 72
       }
     },
     {
@@ -428439,7 +428802,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -428448,7 +428811,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 68
+        "line": 70
       }
     },
     {
@@ -428457,7 +428820,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 82
+        "line": 84
       }
     },
     {
@@ -428466,7 +428829,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 52
+        "line": 54
       }
     },
     {
@@ -428475,7 +428838,7 @@
       "to": "Artifact:src/routes/resources.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 57
+        "line": 59
       }
     },
     {
@@ -433234,7 +433597,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1162
+      "weight": 1164
     },
     {
       "type": "DEPENDS_ON",
@@ -442226,7 +442589,7 @@
       "symbol": "resourceAuctionBoard",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 44
+        "line": 46
       }
     },
     {
@@ -442236,7 +442599,7 @@
       "symbol": "resourceAuctionBoard",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 71
+        "line": 73
       }
     },
     {
@@ -442246,7 +442609,7 @@
       "symbol": "businessSnapshot",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -442256,7 +442619,7 @@
       "symbol": "getAgentCompany",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -442266,7 +442629,7 @@
       "symbol": "ownAgentCompany",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -442276,7 +442639,17 @@
       "symbol": "resourceComputeState",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 58
+        "line": 60
+      }
+    },
+    {
+      "type": "HANDLED_BY",
+      "from": "Route:GET /v1/resources/earnings",
+      "to": "Artifact:src/resourceearnings.js",
+      "symbol": "resourceEarnings",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 36
       }
     },
     {
@@ -442286,7 +442659,7 @@
       "symbol": "listResourceJobs",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 65
+        "line": 67
       }
     },
     {
@@ -442296,7 +442669,7 @@
       "symbol": "resourceLaborBoard",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 35
+        "line": 37
       }
     },
     {
@@ -442306,7 +442679,7 @@
       "symbol": "resourceLaborReputation",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 36
+        "line": 38
       }
     },
     {
@@ -442316,7 +442689,7 @@
       "symbol": "resourceOutcomes",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -442326,7 +442699,7 @@
       "symbol": "resourceStorefront",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -445746,7 +446119,7 @@
       "symbol": "createResourceRound",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 74
+        "line": 76
       }
     },
     {
@@ -445756,7 +446129,7 @@
       "symbol": "settleResourceRound",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 75
+        "line": 77
       }
     },
     {
@@ -445766,7 +446139,7 @@
       "symbol": "adjudicateResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 76
+        "line": 78
       }
     },
     {
@@ -446506,7 +446879,7 @@
       "symbol": "commitResourceBid",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 72
+        "line": 74
       }
     },
     {
@@ -446516,7 +446889,7 @@
       "symbol": "revealResourceBid",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 73
+        "line": 75
       }
     },
     {
@@ -446526,7 +446899,7 @@
       "symbol": "createResourceBounty",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 37
+        "line": 39
       }
     },
     {
@@ -446536,7 +446909,7 @@
       "symbol": "awardResourceBounty",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 39
+        "line": 41
       }
     },
     {
@@ -446546,7 +446919,7 @@
       "symbol": "bidResourceBounty",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 38
+        "line": 40
       }
     },
     {
@@ -446556,7 +446929,7 @@
       "symbol": "cancelResourceBounty",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 40
+        "line": 42
       }
     },
     {
@@ -446566,7 +446939,7 @@
       "symbol": "setAgentCompany",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -446576,7 +446949,7 @@
       "symbol": "runResourceCompute",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 59
+        "line": 61
       }
     },
     {
@@ -446586,7 +446959,7 @@
       "symbol": "reconcileResourceCompute",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 63
+        "line": 65
       }
     },
     {
@@ -446596,7 +446969,7 @@
       "symbol": "createResourceFunding",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 56
+        "line": 58
       }
     },
     {
@@ -446606,7 +446979,7 @@
       "symbol": "createResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 66
+        "line": 68
       }
     },
     {
@@ -446616,7 +446989,7 @@
       "symbol": "acceptResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 69
+        "line": 71
       }
     },
     {
@@ -446626,7 +446999,7 @@
       "symbol": "claimResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 67
+        "line": 69
       }
     },
     {
@@ -446636,7 +447009,7 @@
       "symbol": "disputeResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 70
+        "line": 72
       }
     },
     {
@@ -446646,7 +447019,7 @@
       "symbol": "renewResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -446656,7 +447029,7 @@
       "symbol": "workResourceJob",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 68
+        "line": 70
       }
     },
     {
@@ -446666,7 +447039,7 @@
       "symbol": "setResourcePolicy",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 52
+        "line": 54
       }
     },
     {
@@ -446676,7 +447049,7 @@
       "symbol": "setResourceService",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 57
+        "line": 59
       }
     },
     {
@@ -450152,6 +450525,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:244a255a3176793dbc110b3d8206a84d72ced2cc",
+      "provenance": {
+        "commit": "244a255a3176793dbc110b3d8206a84d72ced2cc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:246c66b808b52cc1e0d5f7d3971b008c617ffaf0",
       "provenance": {
         "commit": "246c66b808b52cc1e0d5f7d3971b008c617ffaf0"
@@ -453328,6 +453709,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
+      "provenance": {
+        "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4cb06b2ace406a8e5b2ff9e489832c48fa6f3070",
       "provenance": {
         "commit": "4cb06b2ace406a8e5b2ff9e489832c48fa6f3070"
@@ -454459,6 +454848,14 @@
       "to": "Commit:5e3764addf56567ff633f18d23b85503d2947593",
       "provenance": {
         "commit": "5e3764addf56567ff633f18d23b85503d2947593"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5e589eead6ea36499227d5a492fa81af2fe21514",
+      "provenance": {
+        "commit": "5e589eead6ea36499227d5a492fa81af2fe21514"
       }
     },
     {
@@ -455664,6 +456061,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6f269dcba93f816ddfe06ce6e102349498e0f8da",
+      "provenance": {
+        "commit": "6f269dcba93f816ddfe06ce6e102349498e0f8da"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6f41563273c5faa06fc09b9f4e04affbfdcacda5",
       "provenance": {
         "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
@@ -455827,6 +456232,14 @@
       "to": "Commit:71c40397b928928d381dd4eda1ffc6eea94f5bcb",
       "provenance": {
         "commit": "71c40397b928928d381dd4eda1ffc6eea94f5bcb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf",
+      "provenance": {
+        "commit": "71c8d9bea9e2f343dbf86cc2fa3ac26ce77c4ccf"
       }
     },
     {
@@ -459251,6 +459664,14 @@
       "to": "Commit:9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
       "provenance": {
         "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9ed0b42c863fb9d2233a9564d9065ee853e2ba51",
+      "provenance": {
+        "commit": "9ed0b42c863fb9d2233a9564d9065ee853e2ba51"
       }
     },
     {
@@ -463539,6 +463960,14 @@
       "to": "Commit:dc43d863536c0bff9c514248f75803ec677f2f77",
       "provenance": {
         "commit": "dc43d863536c0bff9c514248f75803ec677f2f77"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:dc5bee7ae01ff079be27f2ebc6f9331e3536de84",
+      "provenance": {
+        "commit": "dc5bee7ae01ff079be27f2ebc6f9331e3536de84"
       }
     },
     {
@@ -473476,6 +473905,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Artifact:src/earningreceipts.js",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Artifact:src/resourcebook.js",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/resourcelabor.js",
       "to": "Artifact:src/resourcework.js",
       "provenance": {
@@ -474785,7 +475232,7 @@
       "to": "Artifact:src/resourcebook.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -474800,10 +475247,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/routes/resources.js",
-      "to": "Artifact:src/resourcelabor.js",
+      "to": "Artifact:src/resourceearnings.js",
       "provenance": {
         "file": "src/routes/resources.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/routes/resources.js",
+      "to": "Artifact:src/resourcelabor.js",
+      "provenance": {
+        "file": "src/routes/resources.js",
+        "line": 6
       }
     },
     {
@@ -474821,7 +475277,7 @@
       "to": "Artifact:src/resourcepayments.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -474830,7 +475286,7 @@
       "to": "Artifact:src/resourceproviders.js",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -496004,10 +496460,37 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/resourcebusiness.js",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "file": "test/resourcebusiness.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/resourcebusiness.js",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "test/resourcebusiness.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/resourcebusiness.js",
       "to": "Artifact:test/lib/player-command-support.js",
       "provenance": {
         "file": "test/resourcebusiness.js",
         "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/resourcebusiness.js",
+      "to": "ExternalDependency:fastify",
+      "provenance": {
+        "file": "test/resourcebusiness.js",
+        "line": 6
       }
     },
     {
@@ -541669,6 +542152,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/resourceearnings.js",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/resourcelabor.js",
       "to": "Artifact:src/resourcelabor.js",
       "provenance": {
@@ -557896,6 +558388,24 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/resourcebusiness.js",
+      "to": "Artifact:src/resourceearnings.js",
+      "provenance": {
+        "file": "test/resourcebusiness.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/resourcebusiness.js",
+      "to": "Artifact:src/routes/resources.js",
+      "provenance": {
+        "file": "test/resourcebusiness.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/resourcecompute.js",
       "to": "Artifact:src/resourceauction.js",
       "provenance": {
@@ -572849,7 +573359,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/resourcecontracts.js",
-        "line": 23
+        "line": 24
       }
     },
     {
@@ -572858,7 +573368,43 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/resourcecontracts.js",
-        "line": 16
+        "line": 17
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Table:resource_calls",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 40
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Table:resource_jobs",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Table:resource_ledger",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 27
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourceearnings.js",
+      "to": "Table:resource_treasuries",
+      "provenance": {
+        "file": "src/resourceearnings.js",
+        "line": 21
       }
     },
     {
@@ -573794,7 +574340,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 44
+        "line": 46
       }
     },
     {
@@ -573803,7 +574349,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 37
+        "line": 39
       }
     },
     {
@@ -573812,7 +574358,7 @@
       "to": "Table:resource_compute_policies",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 50
+        "line": 52
       }
     },
     {
@@ -573821,7 +574367,7 @@
       "to": "Table:resource_payments",
       "provenance": {
         "file": "src/routes/resources.js",
-        "line": 54
+        "line": 56
       }
     },
     {
