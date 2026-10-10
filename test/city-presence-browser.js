@@ -322,6 +322,8 @@ try {
     await page.setViewportSize(viewport);
     await page.locator('[data-city-actor-close]').click(); await frames(page);
     const closed = await page.locator('.omerta-city__canvas canvas').boundingBox();
+    const closedFit = await page.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height'));
+    assert(Number.isFinite(parseFloat(closedFit)) && parseFloat(closedFit) >= 96, 'The closed Player map has a measured desktop fit.');
     await page.locator('[data-city-intel-open]').click();
     await assertDockFrame(page);
     assert.deepEqual((await state(page)).position, pose); assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
@@ -332,7 +334,7 @@ try {
     assert(button.height >= 44 && button.visible, JSON.stringify(button));
     if (shots) await page.screenshot({ path: path.join(shots, 'city-people-actor-' + viewport.width + '.png') });
     await page.locator('[data-city-actor-close]').click(); await frames(page);
-    assert.equal(await page.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), '', 'Closing restores the original desktop map sizing.');
+    assert.equal(await page.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), closedFit, 'Closing restores the original measured desktop map fit.');
     const restored = await page.locator('.omerta-city__canvas canvas').evaluate(node => ({ ...node.getBoundingClientRect().toJSON(), engineWidth: node.width, engineHeight: node.height }));
     assert(Math.abs(restored.width - closed.width) <= 1 && Math.abs(restored.height - closed.height) <= 1, 'Closing restores actual original desktop dimensions: ' + JSON.stringify({ closed, restored }));
     assert(Math.abs(restored.engineWidth - restored.width) <= 1 && Math.abs(restored.engineHeight - restored.height) <= 1, 'Closing restores matching Phaser dimensions.');
