@@ -13,16 +13,17 @@ const job = (state = 'open') => ({ id: 'job-1', assignedToYou: true, fulfillment
   expiresAt: new Date(epoch + 100000).toISOString(), callId: null,
   ...(['submitted', 'accepted'].includes(state) ? { report: { source: 'account_authored', text, costUsdMicros: null } } : {}) });
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
-function fixture({ initial = job(), queue, claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response } = {}) {
+function fixture({ initial = job(), claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response } = {}) {
   let now = 0; const calls = [];
   const run = createResourceDeliveryTestRunner({ baseUrl: 'https://omerta.test', jobId: 'job-1', file, token,
     fetchImpl: async (url, init) => {
       calls.push({ url, init, now });
+      if (calls.length === 1) assert.equal(new URL(url).pathname, '/v1/resources/jobs/job-1');
       assert.equal(init.redirect, 'error'); assert.equal(init.headers.authorization, `Bearer ${token}`);
       assert(init.signal);
       if (fail === calls.length) throw new Error(`${token} ${text}`);
       if (response) return response();
-      return json(calls.length === 1 ? queue || { assignedJobs: [initial] } : { job: calls.length === 2 && initial.state === 'open' ? claim : submit }, httpStatus || 200);
+      return json({ job: calls.length === 1 ? initial : calls.length === 2 && initial.state === 'open' ? claim : submit }, httpStatus || 200);
     } }, { now: () => now, sleep: async ms => { now += ms; }, wallNow: () => epoch + now });
   return { run, calls };
 }
@@ -34,7 +35,7 @@ try {
     received.push({ path: req.url, authorization: req.headers.authorization, body });
     res.setHeader('content-type', 'application/json');
     res.end(JSON.stringify(req.url.endsWith('/claim') ? { resourceAction: 'claim', job: job('claimed') }
-      : req.url.endsWith('/submit') ? { resourceAction: 'submit', job: job('submitted') } : { jobs: [job()] }));
+      : req.url.endsWith('/submit') ? { resourceAction: 'submit', job: job('submitted') } : { job: job() }));
   });
   await new Promise(done => server.listen(0, '127.0.0.1', done));
   try {
@@ -43,6 +44,7 @@ try {
       { now: () => localNow, sleep: async ms => { localNow += ms; }, wallNow: () => epoch + localNow });
     assert.equal((await local()).state, 'submitted');
     assert.equal(received.length, 3); assert.equal(received[0].authorization, `Bearer ${token}`);
+    assert.equal(received[0].path, '/v1/resources/jobs/job-1');
     assert.deepEqual(JSON.parse(received[2].body), { text });
     server.removeAllListeners('request'); server.on('request', (_req, res) => { res.writeHead(302, { location: 'https://other.test/' }); res.end(); });
     const redirect = createResourceDeliveryTestRunner({ baseUrl: `http://127.0.0.1:${server.address().port}`, jobId: 'job-1', file, token },
@@ -53,7 +55,7 @@ try {
       server.on('request', (_req, res) => {
         res.setHeader('content-type', 'application/json');
         if (_req.url.endsWith('/submit')) { res.statusCode = status; res.end(status === 200 ? '{broken' : '{}'); }
-        else res.end(JSON.stringify({ assignedJobs: [job('claimed')], jobs: [job('claimed')] }));
+        else res.end(JSON.stringify({ job: job('claimed') }));
       });
       const result = await new Promise((done, reject) => {
         const child = spawn(process.execPath, ['tools/resource-deliver.js', '--base', `http://127.0.0.1:${server.address().port}`, '--job', 'job-1', '--file', file],
@@ -75,9 +77,9 @@ try {
   assert.deepEqual(JSON.parse(good.calls[2].init.body), { text });
   await good.run(); assert.equal(good.calls.length, 3);
   for (const state of ['submitted', 'accepted']) {
-    const history = fixture({ queue: { assignedJobs: [], jobs: [job(state)] } });
+    const history = fixture({ initial: job(state) });
     assert.equal((await history.run()).confirmed, true); assert.equal(history.calls.length, 1);
-    const changedHistory = fixture({ queue: { assignedJobs: [], jobs: [{ ...job(state), report: { ...job(state).report, text: 'changed' } }] } });
+    const changedHistory = fixture({ initial: { ...job(state), report: { ...job(state).report, text: 'changed' } } });
     assert.equal((await changedHistory.run()).confirmed, false); assert.equal(changedHistory.calls.length, 1);
     const replay = fixture({ initial: job(state) });
     assert.equal((await replay.run()).stage, 'reconcile'); assert.equal(replay.calls.length, 1);
@@ -85,7 +87,7 @@ try {
     assert.equal((await conflict.run()).stage, 'conflict'); assert.equal(conflict.calls.length, 1);
   }
   const claimed = fixture({ initial: job('claimed') }); assert.equal((await claimed.run()).state, 'submitted'); assert.equal(claimed.calls.length, 2);
-  for (const initial of [{ ...job(), assignedToYou: false }, { ...job(), fulfillment: 'compute' }, { ...job(), fulfillment: undefined },
+  for (const initial of [null, { ...job(), id: 'foreign-job' }, { ...job(), assignedToYou: false }, { ...job(), fulfillment: 'compute' }, { ...job(), fulfillment: undefined },
     { ...job(), expiresAt: new Date(epoch - 1).toISOString() }, job('disputed'), { ...job(), expiresAt: 'invalid' }]) {
     const refused = fixture({ initial }); await refused.run(); assert.equal(refused.calls.length, 1);
   }

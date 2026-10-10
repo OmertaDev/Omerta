@@ -79,12 +79,8 @@ function runner({ baseUrl, jobId, file, token = process.env.OMERTA_RESOURCE_TOKE
     try {
       const text = await readAuthoredText(file);
       stage = 'read';
-      const queue = await request('/v1/resources/jobs');
-      const views = [queue?.jobs, queue?.assignedJobs].filter(value => value !== undefined);
-      if (!views.length || views.some(value => !Array.isArray(value) || value.length > 100)) throw new Error('Invalid jobs');
-      const matches = views.flat().filter(item => item?.id === jobId);
-      let job = matches[0];
-      if (matches.some(item => item.state !== job.state || item.fulfillment !== job.fulfillment || item.assignedToYou !== job.assignedToYou)) throw new Error('Inconsistent jobs');
+      const current = await request(`/v1/resources/jobs/${jobId}`);
+      let job = current?.job;
       if (!valid(job)) return receipt(false);
       state = ['open', 'claimed', 'submitted', 'accepted', 'disputed', 'refunded', 'expired'].includes(job.state) ? job.state : null;
       if (['submitted', 'accepted'].includes(job.state)) {
