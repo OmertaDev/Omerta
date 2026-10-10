@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d5e251d0bbce`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `dffa6984dd67`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2230 |
+| Commits in clone | 2232 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Pin company constraints in native upgrade catalog checks |
+| Latest commit | 2026-10-10 — Verify company metadata in pinned Director migration checks |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1318 |
+| OmertaDev | 1320 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 67 |
@@ -34,16 +34,16 @@
 | [public/index.html](../../public/index.html) | 442 | yes |
 | [SPEC.md](../../SPEC.md) | 377 | yes |
 | [src/server.js](../../src/server.js) | 377 | yes |
-| knowledge/generated/github-history.md | 364 | historical |
-| knowledge/generated/graph-summary.md | 364 | historical |
-| knowledge/generated/graph.json | 364 | historical |
-| knowledge/generated/inventory.md | 364 | historical |
+| knowledge/generated/github-history.md | 365 | historical |
+| knowledge/generated/graph-summary.md | 365 | historical |
+| knowledge/generated/graph.json | 365 | historical |
+| knowledge/generated/inventory.md | 365 | historical |
 | [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 153 | historical |
+| knowledge/generated/documents.md | 154 | historical |
 | knowledge/generated/modules.md | 141 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
