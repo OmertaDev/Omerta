@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+  "sourceRevision": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10449,
-    "edges": 42555,
+    "nodes": 10451,
+    "edges": 42564,
     "byNodeType": {
       "Artifact": 4405,
       "Command": 211,
-      "Commit": 2226,
+      "Commit": 2228,
       "Contract": 126,
       "Document": 704,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3537,
-      "CHANGED": 16592,
+      "CHANGED": 16599,
       "CONTAINS": 4426,
       "DECLARES": 211,
       "DEFINED_IN": 1394,
       "DEPENDS_ON": 67,
       "EXECUTES": 718,
       "HANDLED_BY": 771,
-      "HAS_COMMIT": 2226,
+      "HAS_COMMIT": 2228,
       "IMPLEMENTS": 124,
       "IMPORTS": 4191,
       "INHERITS": 42,
@@ -24219,20 +24219,20 @@
       "path": "docs/city-presence-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 12726,
-      "lines": 60,
-      "version": "0afbc58e51a7ccd2",
+      "bytes": 13863,
+      "lines": 62,
+      "version": "2f13bb8e30d73065",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "0afbc58e51a7ccd2"
+          "version": "2f13bb8e30d73065"
         }
       ],
-      "lastChangedAt": "2026-10-10T05:54:12.000Z",
+      "lastChangedAt": "2026-10-10T06:29:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+      "lastChangedCommit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
     },
     {
       "key": "Artifact:docs/city-presence.md",
@@ -87509,20 +87509,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14412,
-      "lines": 167,
-      "version": "0e8228fd6b29a1ca",
+      "bytes": 17714,
+      "lines": 198,
+      "version": "f98cfb718b6854ad",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "0e8228fd6b29a1ca"
+          "version": "f98cfb718b6854ad"
         }
       ],
-      "lastChangedAt": "2026-10-09T18:31:52.000Z",
+      "lastChangedAt": "2026-10-10T06:29:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "730f0eb3334b9ac55fa923f1dc4bb02f223b0bf8"
+      "lastChangedCommit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -125369,6 +125369,22 @@
       ]
     },
     {
+      "key": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "type": "Commit",
+      "id": "96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "label": "Refresh knowledge for complete City constraint proof",
+      "title": "Refresh knowledge for complete City constraint proof",
+      "date": "2026-10-10T05:58:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "provenance": [
+        {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/96e373d7d7a9c213f406e014ad5444de64cca3d8"
+        }
+      ]
+    },
+    {
       "key": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
       "type": "Commit",
       "id": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
@@ -127605,6 +127621,22 @@
         {
           "commit": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
           "url": "https://github.com/OmertaDev/Omerta/commit/a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "type": "Commit",
+      "id": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "label": "Verify City additions alongside Director constraint preservation",
+      "title": "Verify City additions alongside Director constraint preservation",
+      "date": "2026-10-10T06:29:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "provenance": [
+        {
+          "commit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
         }
       ]
     },
@@ -147446,13 +147478,13 @@
       "id": "docs/city-presence-security-review.md",
       "label": "docs/city-presence-security-review.md",
       "documentType": "documentation",
-      "lines": 60,
-      "version": "0afbc58e51a7ccd2",
+      "lines": 62,
+      "version": "2f13bb8e30d73065",
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "0afbc58e51a7ccd2"
+          "version": "2f13bb8e30d73065"
         }
       ]
     },
@@ -160059,6 +160091,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+        },
+        {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
         },
         {
@@ -160897,6 +160932,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
         },
         {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
@@ -161991,6 +162029,9 @@
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+        },
+        {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
         },
         {
@@ -163081,6 +163122,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
         },
         {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
@@ -164470,6 +164514,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
         },
         {
           "commit": "97d19e5ca1a83d7e5c40301737fe83951255d471"
@@ -174270,7 +174317,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "revision": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
       "currentBranch": "codex/player-view-toggle",
       "defaultBranch": "main",
       "visibility": "public",
@@ -205514,13 +205561,13 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 167,
-      "version": "0e8228fd6b29a1ca",
+      "lines": 198,
+      "version": "f98cfb718b6854ad",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "0e8228fd6b29a1ca"
+          "version": "f98cfb718b6854ad"
         }
       ]
     },
@@ -319731,6 +319778,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
       "to": "Artifact:docs/release/readiness-work/harness-resource-pressure-artifact-index.json",
       "provenance": {
@@ -326655,6 +326742,22 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "commit": "a65e78f184d28727cf59fcc927ed587517facb9e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "to": "Artifact:docs/city-presence-security-review.md",
+      "provenance": {
+        "commit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
       }
     },
     {
@@ -455333,6 +455436,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:96e373d7d7a9c213f406e014ad5444de64cca3d8",
+      "provenance": {
+        "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:96e5a3d855f133580f7e4b10b1da093b5fbd38d0",
       "provenance": {
         "commit": "96e5a3d855f133580f7e4b10b1da093b5fbd38d0"
@@ -456448,6 +456559,14 @@
       "to": "Commit:a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be",
       "provenance": {
         "commit": "a66bba1f60f9e7aeb6c508dfcccaad2b5e1e00be"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a670a76d89e41a4db1e37a8f960bae5f6bbfa81c",
+      "provenance": {
+        "commit": "a670a76d89e41a4db1e37a8f960bae5f6bbfa81c"
       }
     },
     {
