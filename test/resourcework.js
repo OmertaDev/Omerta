@@ -167,5 +167,45 @@ try {
     assert.equal(ordinary.statusCode, 200); assert.equal(ordinary.json().service.enabled, false);
     const catalog = await app.inject({ method: 'GET', url: '/v1/resources/catalog' }); assert.equal(catalog.statusCode, 200);
   } finally { delete process.env.RESOURCE_STRIPE_WEBHOOK_SECRET; await app.close(); }
-  console.log('resourcework: owner service authority, escrow conservation, private jobs, receipt proofs, disputes and expiry checks passed');
+  for (let index = 0; index < 105; index++) {
+    const account = `discovery-${String(index).padStart(3, '0')}`;
+    await addPlayer(pool, account);
+    await resourceTransaction(pool, client => lockResourceTreasury(client, account));
+    await pool.query('INSERT INTO resource_services(account_id,revision,enabled,price_usd_micros) VALUES($1,1,true,100000)', [account]);
+    if (index < 3) for (let active = 0; active < 3; active++) {
+      await pool.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at) VALUES($1,$2,$3,$4,1,100000,$5,$6,$7)',
+        [`discovery-job-${index}-${active}`, buyer, account, `discovery-request-${index}-${active}`, { question: 'PRIVATE_DISCOVERY_QUESTION' }, ['open','claimed','disputed'][active], new Date(Date.now() + 3600000)]);
+    }
+  }
+  const firstPage = await resourceServiceBoard(pool);
+  assert.equal(firstPage.services.length, 100); assert.equal(firstPage.pagination.hasMore, true);
+  assert.equal(firstPage.pagination.nextAfterAccountId, 'discovery-099');
+  const lastPage = await resourceServiceBoard(pool, { afterAccountId: firstPage.pagination.nextAfterAccountId });
+  assert.equal(lastPage.services.length, 5); assert.equal(lastPage.pagination.hasMore, false);
+  assert.equal(lastPage.pagination.nextAfterAccountId, null);
+  assert.equal(firstPage.services[0].capacity.remainingCapacity, 0);
+  const available = await resourceServiceBoard(pool, { limit: '2', availableOnly: 'true' });
+  assert.deepEqual(available.services.map(row => row.sellerAccountId), ['discovery-003','discovery-004']);
+  await pool.query("UPDATE resource_jobs SET state='submitted' WHERE id='discovery-job-0-2'");
+  assert.equal((await resourceServiceBoard(pool, { limit: 1, availableOnly: true })).services[0].sellerAccountId, 'discovery-003');
+  await pool.query("UPDATE resource_jobs SET state='accepted' WHERE id='discovery-job-0-2'");
+  assert.equal((await resourceServiceBoard(pool, { limit: 1, availableOnly: true })).services[0].sellerAccountId, 'discovery-000');
+  await pool.query("UPDATE resource_jobs SET state='refunded' WHERE id='discovery-job-1-2'");
+  assert.equal((await resourceServiceBoard(pool, { afterAccountId: 'discovery-000', limit: 1, availableOnly: true })).services[0].sellerAccountId, 'discovery-001');
+  await pool.query("UPDATE resource_services SET enabled=false WHERE account_id='discovery-104'");
+  assert.equal((await resourceServiceBoard(pool, { afterAccountId: 'discovery-103' })).services.length, 0);
+  for (const filters of [{ limit: null }, { limit: 0 }, { limit: 101 }, { limit: '1e2' }, { limit: '2x' }, { limit: '01' }, { limit: '' }, { availableOnly: 'yes' }, { availableOnly: 1 }, { afterAccountId: '' }, { afterAccountId: 'x'.repeat(129) }, { afterAccountId: [] }, { unknown: true }])
+    await assert.rejects(resourceServiceBoard(pool, filters), error('terms'));
+  const discoveryQueries = [];
+  const projection = await resourceServiceBoard({ query: async (sql, values) => { discoveryQueries.push(sql); return pool.query(sql, values); } }, { limit: 2 });
+  assert.equal(discoveryQueries.length, 1); assert(/^SELECT/.test(discoveryQueries[0]));
+  assert(!/\b(input|report|output|buyer_account|resource_treasuries|resource_calls)\b/i.test(discoveryQueries[0]));
+  assert(!JSON.stringify(projection).includes('PRIVATE_DISCOVERY_QUESTION'));
+  const discoveryApp = Fastify();
+  registerResources(discoveryApp, { pool, auth: async () => {}, modAuth: async () => {} });
+  try {
+    const response = await discoveryApp.inject('/v1/resources/services?limit=2&availableOnly=true&afterAccountId=discovery-001');
+    assert.equal(response.statusCode, 200); assert.equal(response.json().services[0].sellerAccountId, 'discovery-003');
+  } finally { await discoveryApp.close(); }
+  console.log('resourcework: owner service authority, escrow conservation, private jobs, receipt proofs, disputes, expiry and capacity-filtered keyset discovery checks passed');
 } finally { await database.cleanup(pool); }
