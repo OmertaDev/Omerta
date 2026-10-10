@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
+import { withTwoCharacters } from '../src/game.js';
+import { runEstate } from '../src/social/estate.js';
 import { NEIGHBORHOOD_QUEST_GRAPH_ID, NEIGHBORHOOD_INITIATION_PACKAGE } from '../src/content/neighborhood-initiation.js';
 
 assert(!process.env.DATABASE_URL, 'City presence HTTP fixtures require disposable pg-mem.');
@@ -74,5 +76,37 @@ try {
   const historical = await app.inject({ method: action.method, url: action.path, headers, payload: action.body });
   assert.equal(historical.body, first.body); assert.equal(historical.json().viewer.generation, originalGeneration);
   assert.deepEqual((await app.inject({ url: '/v1/city/intel', headers: me.headers })).json().journal, []);
+  const collect = async (owner, target) => {
+    const roster = await app.inject({ url: '/v1/city/presence?limit=40', headers: owner.headers });
+    assert.equal(roster.statusCode, 200, roster.body);
+    const issued = roster.json().actors.find(a => a.id === target.id).actions[0];
+    const boundHeaders = { ...owner.headers, 'Idempotency-Key': crypto.randomUUID() };
+    const response = await app.inject({ method: issued.method, url: issued.path, headers: boundHeaders, payload: issued.body });
+    assert.equal(response.statusCode, 200, response.body);
+    return { issued, headers: boundHeaders, response };
+  };
+  const doomedReceipt = await collect(me, npc), witnessReceipt = await collect(human, me);
+  const witnessBoard = (await app.inject({ url: '/v1/city/intel', headers: human.headers })).body;
+  await app.pool.query('UPDATE characters SET last_accrued_at=$1 WHERE id IN ($2,$3)', [new Date(Date.now() + 86400000), me.id, agent.id]);
+  const executorAccount = app.jwt.verify(agent.headers.authorization.slice(7)).sub;
+  const estate = await withTwoCharacters(app.pool, executorAccount, me.id,
+    (_ch, victim, client, h) => runEstate(client, h, victim, 'City HTTP lifecycle proof'), { meet: false });
+  assert.equal(Number((await app.pool.query('SELECT COUNT(*) AS count FROM city_intel_progress WHERE character_id=$1', [me.id])).rows[0].count), 0);
+  for (const recorded of [doomedReceipt, witnessReceipt]) {
+    const replayed = await app.inject({ method: recorded.issued.method, url: recorded.issued.path, headers: recorded.headers, payload: recorded.issued.body });
+    assert.equal(replayed.statusCode, 200, replayed.body); assert.equal(replayed.body, recorded.response.body);
+    assert.equal(replayed.headers['x-idempotent-replay'], 'true');
+  }
+  assert.equal((await app.inject({ url: '/v1/city/intel', headers: human.headers })).body, witnessBoard, 'Another player retains the exact card about the deceased source.');
+  const heirBoard = (await app.inject({ url: '/v1/city/intel', headers: me.headers })).json();
+  assert.equal(heirBoard.viewer.characterId, estate.heirId); assert.equal(heirBoard.progress.totalEncounters, 0); assert.deepEqual(heirBoard.objectives, []);
+  const oldFresh = await app.inject({ method: doomedReceipt.issued.method, url: doomedReceipt.issued.path,
+    headers: { ...me.headers, 'Idempotency-Key': crypto.randomUUID() }, payload: doomedReceipt.issued.body });
+  assert.equal(oldFresh.statusCode, 400); assert.equal(oldFresh.json().error, 'city_identity_changed');
+  const heirReceipt = await collect(me, npc);
+  const heirReplay = await app.inject({ method: heirReceipt.issued.method, url: heirReceipt.issued.path, headers: heirReceipt.headers, payload: heirReceipt.issued.body });
+  assert.equal(heirReplay.body, heirReceipt.response.body);
+  assert.equal((await app.inject({ url: '/v1/city/intel', headers: me.headers })).json().progress.totalEncounters, 1, 'Only one new heir encounter grants intel.');
   console.log('city-presence-api PASS: authenticated DTOs, exact HTTP replay/body binding, generic bypass denial, private generation state, OpenAPI, neutral resources');
+  console.log('city-presence-api lifecycle PASS: actual estate, owner wipe, other-source cards, immutable historical HTTP receipts and one fresh heir grant');
 } finally { await app.close(); }

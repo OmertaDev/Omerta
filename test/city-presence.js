@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { commandDatabase, postgres } from './lib/player-command-support.js';
 import { cityPresence, cityIntel, recordCityEncounter, CITY_JOURNAL_LIMIT } from '../src/city-presence.js';
+import { withTwoCharacters } from '../src/game.js';
+import { runEstate } from '../src/social/estate.js';
+import { retireResident } from '../src/population.js';
+import { M3 } from '../src/rules.js';
 
 const db = await commandDatabase('city_presence'), pool = db.pool;
 const uuid = () => crypto.randomUUID();
@@ -138,5 +142,93 @@ try {
   await assert.rejects(encounter(me, npc, firstKey), e => e.code === 'city_identity_changed');
   await assert.rejects(encounter(heir, npc, firstKey), e => e.code === 'idempotency_conflict');
   assert.equal((await encounter(heir, npc)).journal.length, 1, 'A successor begins its own progression.');
+  const rows = async (sql, params = []) => JSON.parse(JSON.stringify((await pool.query(sql, params)).rows));
+  const cityGuards = () => rows("SELECT * FROM item_mutation_guards WHERE idempotency_key LIKE 'city:intel:v1:%' ORDER BY idempotency_key");
+  const lifecycleSnapshot = async () => ({
+    characters: await rows('SELECT * FROM characters ORDER BY id'),
+    accounts: await rows('SELECT * FROM account_persistent ORDER BY account_id'),
+    ledger: await rows('SELECT * FROM transactions ORDER BY id'),
+    progress: await rows('SELECT * FROM city_intel_progress ORDER BY character_id,generation'),
+    guards: await cityGuards(),
+  });
+  for (const retirement of [false, true]) {
+    const departing = await actor(retirement ? 'Retiring city resident' : 'Doomed city owner', retirement ? 'npc' : 'player');
+    const witness = await actor(retirement ? 'Retirement witness' : 'Estate witness');
+    // Disable pre-transaction accrual in these controlled lifecycle fixtures.
+    await pool.query('UPDATE characters SET last_accrued_at=$1 WHERE id IN ($2,$3)', [new Date(Date.now() + 86400000), departing.id, witness.id]);
+    await pool.query('UPDATE characters SET generation=2 WHERE id=$1', [departing.id]); departing.generation = 2;
+    if (retirement) await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [departing.account]);
+    else await pool.query('UPDATE account_persistent SET prestige=2 WHERE account_id=$1', [departing.account]);
+    const departedKey = uuid(), witnessKey = uuid();
+    await encounter(departing, npc, departedKey);
+    const sourceReceipt = await encounter(witness, departing, witnessKey);
+    // A previous generation's bounded state must also be removed for this owner.
+    await pool.query('INSERT INTO city_intel_progress(character_id,generation,sequence,journal,objectives) SELECT character_id,1,sequence,journal,objectives FROM city_intel_progress WHERE character_id=$1 AND generation=2', [departing.id]);
+    const otherProgress = await rows('SELECT * FROM city_intel_progress WHERE character_id<>$1 ORDER BY character_id,generation', [departing.id]);
+    const unrelatedResources = async () => ({
+      characters: await rows('SELECT id,cash,bank,respect,health,energy,nerve,heat,muscle,cunning,speed,train_at FROM characters WHERE account_id<>$1 ORDER BY id', [departing.account]),
+      balances: await rows('SELECT account_id,omr FROM account_persistent WHERE account_id<>$1 ORDER BY account_id', [departing.account]),
+    });
+    const guardsBefore = await cityGuards(), unrelatedBefore = await unrelatedResources();
+    const ownRows = async client => Number((await client.query('SELECT COUNT(*) AS count FROM city_intel_progress WHERE character_id=$1', [departing.id])).rows[0].count);
+    const execute = async (failLate = false) => {
+      if (!retirement) return withTwoCharacters(pool, witness.account, departing.id, async (_actor, victim, client, h) => {
+        const result = await runEstate(client, h, victim, 'City lifecycle proof');
+        assert.equal(await ownRows(client), 0, 'The actual estate removes every owner generation.');
+        assert.equal((await client.query('SELECT alive FROM characters WHERE id=$1', [result.heirId])).rows[0].alive, true);
+        if (failLate) throw new Error('injected late City lifecycle interruption');
+        return result;
+      }, { meet: false });
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const result = await retireResident(client, departing.id); assert(result);
+        assert.equal(await ownRows(client), 0, 'Actual NPC retirement removes every owner generation.');
+        assert.equal((await client.query('SELECT alive FROM characters WHERE id=$1', [departing.id])).rows[0].alive, false);
+        if (failLate) throw new Error('injected late City lifecycle interruption');
+        await client.query('COMMIT'); return result;
+      } catch (error) { await client.query('ROLLBACK'); throw error; }
+      finally { client.release(); }
+    };
+    if (postgres) {
+      const beforeLifecycle = await lifecycleSnapshot();
+      await assert.rejects(execute(true), /injected late City lifecycle interruption/);
+      assert.deepEqual(await lifecycleSnapshot(), beforeLifecycle, 'Native late failure restores real owner rows, character/estate state, money and receipts.');
+    }
+    const result = await execute();
+    assert.equal(await ownRows(pool), 0);
+    assert.deepEqual(await rows('SELECT * FROM city_intel_progress WHERE character_id<>$1 ORDER BY character_id,generation', [departing.id]), otherProgress,
+      'Other owners retain exact historical source cards and objectives.');
+    assert.deepEqual(await cityGuards(), guardsBefore, 'Death/retirement preserves original encounter receipts.');
+    assert.deepEqual(await unrelatedResources(), unrelatedBefore, 'Other accounts retain exact money, stats and resources through owner cleanup.');
+    const reason = retirement ? 'npc:retire' : 'death:estate';
+    assert.equal(Number((await pool.query('SELECT SUM(amount) AS amount FROM transactions WHERE character_id=$1 AND currency=$2 AND reason=$3', [departing.id, 'cash', reason])).rows[0].amount), -333,
+      'The existing lifecycle burns the departing cash+bank exactly.');
+    const afterLifecycle = await neutral();
+    assert.deepEqual(await encounter(witness, departing, witnessKey), sourceReceipt);
+    assert.deepEqual(await neutral(), afterLifecycle, 'Historical source replay grants no new intel or currency.');
+    assert.deepEqual(await rows('SELECT * FROM city_intel_progress WHERE character_id<>$1 ORDER BY character_id,generation', [departing.id]), otherProgress);
+    assert.equal(await ownRows(pool), 0);
+    if (retirement) {
+      assert.equal(Number((await pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [departing.account])).rows[0].omr), 777);
+      await assert.rejects(cityIntel(pool, departing.account), e => e.code === 'no_character');
+      const client = await pool.connect();
+      try { await client.query('BEGIN'); assert.equal(await retireResident(client, departing.id), null); await client.query('COMMIT'); }
+      finally { client.release(); }
+      assert.deepEqual(await neutral(), afterLifecycle, 'Repeated retirement creates no second burn.');
+    } else {
+      const next = { ...departing, id: result.heirId, generation: 3 };
+      const heirRow = (await pool.query('SELECT cash,generation FROM characters WHERE id=$1', [next.id])).rows[0];
+      assert.equal(Number(heirRow.cash), 700); assert.equal(heirRow.generation, 3);
+      assert.equal(Number((await pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [departing.account])).rows[0].omr), 777 - Math.floor(777 * M3.DEATH_DUTY_RATE));
+      const fresh = await cityIntel(pool, next.account); assert.equal(fresh.progress.totalEncounters, 0); assert.deepEqual(fresh.objectives, []);
+      await assert.rejects(encounter(departing, npc, departedKey), e => e.code === 'city_identity_changed');
+      await assert.rejects(encounter(next, npc, departedKey), e => e.code === 'idempotency_conflict');
+      assert.equal((await cityIntel(pool, next.account)).progress.totalEncounters, 0, 'An old receipt never grants a successor progress.');
+      assert.equal((await encounter(next, npc)).progress.totalEncounters, 1);
+      assert.deepEqual(await neutral(), afterLifecycle, 'Fresh heir intel adds no economic/stat/resource effect.');
+    }
+  }
   console.log('city-presence PASS: public types/pagination, scoped32-card intel, encounter objectives, replay/isolation/rollback, neutral resources' + (postgres ? ', real concurrent replay and opposite-target locks' : ' (pg-mem; native locking not claimed)'));
+  console.log('city-presence lifecycle PASS: actual estate/retirement wipe all owner generations, retain other source cards/receipts and preserve existing economics' + (postgres ? ', native late rollback and retry' : ' (native lifecycle rollback not claimed)'));
 } finally { await db.cleanup(pool); }
