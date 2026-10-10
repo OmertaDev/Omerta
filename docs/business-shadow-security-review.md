@@ -105,3 +105,26 @@ Executed 2026-10-09: routing, reconciliation and CLI suites pass, including 201 
 | tools/compute-router.js | 3de3a69b483e9c0a04983bd9ef426a524a13c341cd4fa353e1859bf5bb82a3f5 |
 | test/computeoutcomes.js | 2e7317275538f48e94af01bcbdae22782c6b2d7394d1c29e1e3186e9c4b19ec3 |
 | test/compute-router-cli.js | 8fb01c8c1320178369c5e2ea25e2bb06f3fc271ebfa06387b3f3243bd8579b2a |
+
+## Authenticated outcomes and public storefront review
+
+Source base: `f053b822a79fb82e73ab8511a207fc7a2ff1b215`; pre-release scope: resourceOutcomes, resourceStorefront, outcome record validation/observer/bridge, missing-latency reconciliation, two routes/contracts and tests. Dependencies are existing resource transaction locks, job/call records, bounded file loader and shadow planner. Pinned policy methods adapt access/control and data-provenance traces, accounting and invariant tests, static query triage and exploit hypothesis retests. No schema, provider execution, external settlement, spending policy or owner authority change occurs; Solidity and new transaction-write proofs do not apply.
+
+The authenticated feed binds seller ownership, call account and paid-market-analysis job purpose. Selected calls repeat that binding. Full aggregates include known failed costs beyond detail windows; null costs remain unknown. Named projections exclude task questions/reports/output, buyer identities, raw configuration and provider request IDs. Details cap at 100 jobs, 100 attempts/job and 1000 overall; selected projections can remain separately available outside truncated detail. Public storefronts require an enabled existing offering and expose service/capacity/descriptive acceptance counts only. Existing treasury locks serialize funded writes; reads create no treasury. A configured model is a stored identity, not independently verified response quality; no measured inference latency exists.
+
+RO1 (low, resolved): malformed observer records could supply fully covered totals inconsistent with visible attempts or conflicting selected details. RO2 (low, resolved): a selected attempt could be absent from a purportedly complete detail array. Neither reproduced against consistent server-generated records or enabled financial execution. Exact complete totals/global sums, selected detail equality/membership and cross-job attempt identities now reject these traces. Regression and independent retest pass. Truncated aggregates remain trusted server assertions, not independent billing proofs.
+
+Executed 2026-10-09, Node24.19.0 and isolated PostgreSQL18.4 localhost54839: outcome/storefront memory and native tests pass, including Fastify401/account/delegated-agent/query-forgery cases, ownership/purpose binding, 1215-call totals beyond 1000 detail, null/failed costs and no mutation/private SQL projection. Existing business snapshot native tests pass. Observer and reconciliation tests pass, including encoded credential echoes, redirect/origin/body bounds, private/unknown fields, recorded retry totals and latency-unobserved holds. Routes/auth, docs, repository gates and development preflight pass. Native helper was stopped after tests. Static SQL inspection retains no concrete blocker; no clean SAST verdict or formal proof is claimed. Conclusions apply to these hashes, exclude live financial activation and do not implement banks or new property yield.
+
+| File | SHA256 |
+| --- | --- |
+| src/resourceoutcomes.js | f8a6f109e9ec7c0d6313c1e8dba6bd1ae0adbdc529b32137fcee5e839df97f57 |
+| src/resourcestorefront.js | 10a98171cc8ec259c42828040502b7d79a6d496d79157305cd948262d7a23ae6 |
+| src/resourceoutcomeobserver.js | 9e341abe7072554b69d6a1c535c330b522a3ee896b5210368120a0f05acbecca |
+| tools/resource-outcome-observer.js | 5040eadf3da4f4b0cac1a0efd51100e5f36ac265013da0a7a59b4d31527d8b36 |
+| src/routes/resources.js | f0e5b1b283e2c63a9214e9137527394008ec79293090e893b49d702d58a2ffda |
+| src/resourcecontracts.js | d8436d3e2d0eeab30c478eba02f5b9cf791ac0be48673d7535374afda4900cce |
+| src/computerouting.js | a6cf01e032c983f8a4ce7bc7f1a674ba9b19ab33e98891b4bc8bb7b751ca55b5 |
+| test/resourceoutcomes.js | 10601a1c4efd900b1ee428df4430ee40df67b142393a76ea837d3597cfb0b683 |
+| test/resourcestorefront.js | 030e8bd1e2c4d59ff1f7c3208fe548b8220807e76e0a01b0a52442504e6dd300 |
+| test/resourceoutcomeobserver.js | 409a9112f21b803179730101709cc20eb0b03f5a0f53423df5ae7d915db39e9e |
