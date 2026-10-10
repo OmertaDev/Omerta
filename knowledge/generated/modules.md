@@ -213,7 +213,7 @@
 | [src/resourceoutcomes.js](../../src/resourceoutcomes.js) | 61 | platform-core | 1 / 2 | 1 | 3 | 1 |
 | [src/resourcepayments.js](../../src/resourcepayments.js) | 130 | platform-core | 1 / 3 | 1 | 4 | 1 |
 | [src/resourceproviders.js](../../src/resourceproviders.js) | 183 | platform-core | 0 / 7 | 0 | 1 | 1 |
-| [src/resourcestorefront.js](../../src/resourcestorefront.js) | 20 | platform-core | 1 / 2 | 1 | 3 | 1 |
+| [src/resourcestorefront.js](../../src/resourcestorefront.js) | 26 | platform-core | 1 / 2 | 1 | 5 | 1 |
 | [src/resourcework.js](../../src/resourcework.js) | 217 | platform-core | 2 / 4 | 8 | 6 | 1 |
 | [src/restock.js](../../src/restock.js) | 79 | platform-core | 2 / 2 | 0 | 1 | 1 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |

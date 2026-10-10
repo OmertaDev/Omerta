@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "95e59d02e73eab78271abc6c35757b3b17826648",
+  "sourceRevision": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10415,
-    "edges": 42403,
+    "nodes": 10417,
+    "edges": 42415,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2210,
+      "Commit": 2212,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16518,
+      "CHANGED": 16526,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2210,
+      "HAS_COMMIT": 2212,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -80,7 +80,7 @@
       "REPRESENTS": 1604,
       "TESTS": 1432,
       "TRACKS": 126,
-      "USES_TABLE": 1935
+      "USES_TABLE": 1937
     }
   },
   "nodes": [
@@ -24196,20 +24196,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 19828,
-      "lines": 133,
-      "version": "cc1b0d64cb85bddc",
+      "bytes": 22056,
+      "lines": 143,
+      "version": "d866764234652871",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "cc1b0d64cb85bddc"
+          "version": "d866764234652871"
         }
       ],
-      "lastChangedAt": "2026-10-10T02:55:44.000Z",
+      "lastChangedAt": "2026-10-10T04:16:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
+      "lastChangedCommit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -24219,20 +24219,20 @@
       "path": "docs/compute-value-experiments.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 11804,
-      "lines": 81,
-      "version": "41dd0e2ca495a3a8",
+      "bytes": 12328,
+      "lines": 83,
+      "version": "435000c8e5b8ce51",
       "text": true,
       "provenance": [
         {
           "file": "docs/compute-value-experiments.md",
           "line": 1,
-          "version": "41dd0e2ca495a3a8"
+          "version": "435000c8e5b8ce51"
         }
       ],
-      "lastChangedAt": "2026-10-10T02:04:03.000Z",
+      "lastChangedAt": "2026-10-10T04:16:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78745d74a754af52798d08534bd950d353bb5920"
+      "lastChangedCommit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
     },
     {
       "key": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -82955,20 +82955,20 @@
       "path": "src/resourcestorefront.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 1616,
-      "lines": 20,
-      "version": "10a98171cc8ec259",
+      "bytes": 2284,
+      "lines": 26,
+      "version": "9e97769b58b05f5f",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcestorefront.js",
           "line": 1,
-          "version": "10a98171cc8ec259"
+          "version": "9e97769b58b05f5f"
         }
       ],
-      "lastChangedAt": "2026-10-10T02:04:03.000Z",
+      "lastChangedAt": "2026-10-10T04:16:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78745d74a754af52798d08534bd950d353bb5920"
+      "lastChangedCommit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
     },
     {
       "key": "Artifact:src/resourcework.js",
@@ -94731,20 +94731,20 @@
       "path": "test/resourcestorefront.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3162,
-      "lines": 42,
-      "version": "030e8bd1e2c4d59f",
+      "bytes": 5084,
+      "lines": 59,
+      "version": "9bc80ee51c0887df",
       "text": true,
       "provenance": [
         {
           "file": "test/resourcestorefront.js",
           "line": 1,
-          "version": "030e8bd1e2c4d59f"
+          "version": "9bc80ee51c0887df"
         }
       ],
-      "lastChangedAt": "2026-10-10T02:04:03.000Z",
+      "lastChangedAt": "2026-10-10T04:16:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78745d74a754af52798d08534bd950d353bb5920"
+      "lastChangedCommit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
     },
     {
       "key": "Artifact:test/resourcework.js",
@@ -110820,6 +110820,22 @@
         {
           "commit": "32e999d6d7e89a3ceaca9f539c78635cd8ef5be8",
           "url": "https://github.com/OmertaDev/Omerta/commit/32e999d6d7e89a3ceaca9f539c78635cd8ef5be8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "type": "Commit",
+      "id": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "label": "Show current game property ownership on agent storefronts",
+      "title": "Show current game property ownership on agent storefronts",
+      "date": "2026-10-10T04:16:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "provenance": [
+        {
+          "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/32faec181d50451cb65d6b7266e6bdcd55e711f9"
         }
       ]
     },
@@ -126900,6 +126916,22 @@
         {
           "commit": "a3e3a53d45a184b6849c4b8058c2923c71363253",
           "url": "https://github.com/OmertaDev/Omerta/commit/a3e3a53d45a184b6849c4b8058c2923c71363253"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "type": "Commit",
+      "id": "a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "label": "chore(knowledge): refresh generated artifacts for 95e59d02",
+      "title": "chore(knowledge): refresh generated artifacts for 95e59d02",
+      "date": "2026-10-10T03:56:27.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "provenance": [
+        {
+          "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a3e5125fa7e7b55dac07cda879e68162067e6cf8"
         }
       ]
     },
@@ -147013,13 +147045,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 133,
-      "version": "cc1b0d64cb85bddc",
+      "lines": 143,
+      "version": "d866764234652871",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "cc1b0d64cb85bddc"
+          "version": "d866764234652871"
         }
       ]
     },
@@ -147029,13 +147061,13 @@
       "id": "docs/compute-value-experiments.md",
       "label": "docs/compute-value-experiments.md",
       "documentType": "documentation",
-      "lines": 81,
-      "version": "41dd0e2ca495a3a8",
+      "lines": 83,
+      "version": "435000c8e5b8ce51",
       "provenance": [
         {
           "file": "docs/compute-value-experiments.md",
           "line": 1,
-          "version": "41dd0e2ca495a3a8"
+          "version": "435000c8e5b8ce51"
         }
       ]
     },
@@ -160482,6 +160514,9 @@
           "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
         },
         {
+          "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -161553,6 +161588,9 @@
           "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
         },
         {
+          "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -162622,6 +162660,9 @@
         },
         {
           "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
+          "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -163987,6 +164028,9 @@
         },
         {
           "commit": "a3b4204d9697199fbe194a24690196d3e14a1074"
+        },
+        {
+          "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -168966,13 +169010,13 @@
       "type": "Module",
       "id": "src/resourcestorefront.js",
       "label": "src/resourcestorefront.js",
-      "lines": 20,
-      "version": "10a98171cc8ec259",
+      "lines": 26,
+      "version": "9e97769b58b05f5f",
       "provenance": [
         {
           "file": "src/resourcestorefront.js",
           "line": 1,
-          "version": "10a98171cc8ec259"
+          "version": "9e97769b58b05f5f"
         }
       ]
     },
@@ -173661,8 +173705,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "95e59d02e73eab78271abc6c35757b3b17826648",
-      "currentBranch": "main",
+      "revision": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "currentBranch": "codex/storefront-owned-premises",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -209420,13 +209464,13 @@
       "type": "TestSuite",
       "id": "test/resourcestorefront.js",
       "label": "test/resourcestorefront.js",
-      "lines": 42,
-      "version": "030e8bd1e2c4d59f",
+      "lines": 59,
+      "version": "9bc80ee51c0887df",
       "provenance": [
         {
           "file": "test/resourcestorefront.js",
           "line": 1,
-          "version": "030e8bd1e2c4d59f"
+          "version": "9bc80ee51c0887df"
         }
       ]
     },
@@ -267187,6 +267231,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "to": "Artifact:docs/compute-value-experiments.md",
+      "provenance": {
+        "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "to": "Artifact:src/resourcestorefront.js",
+      "provenance": {
+        "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "to": "Artifact:test/resourcestorefront.js",
+      "provenance": {
+        "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:334da672b7aaf2140d562444f2edad1a52e4f562",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -324759,6 +324835,38 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "a3e3a53d45a184b6849c4b8058c2923c71363253"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
       }
     },
     {
@@ -446550,6 +446658,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:32faec181d50451cb65d6b7266e6bdcd55e711f9",
+      "provenance": {
+        "commit": "32faec181d50451cb65d6b7266e6bdcd55e711f9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:334da672b7aaf2140d562444f2edad1a52e4f562",
       "provenance": {
         "commit": "334da672b7aaf2140d562444f2edad1a52e4f562"
@@ -454585,6 +454701,14 @@
       "to": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "provenance": {
         "commit": "a3e3a53d45a184b6849c4b8058c2923c71363253"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a3e5125fa7e7b55dac07cda879e68162067e6cf8",
+      "provenance": {
+        "commit": "a3e5125fa7e7b55dac07cda879e68162067e6cf8"
       }
     },
     {
@@ -567233,6 +567357,15 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/resourcestorefront.js",
+      "to": "Table:estates",
+      "provenance": {
+        "file": "src/resourcestorefront.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourcestorefront.js",
       "to": "Table:resource_jobs",
       "provenance": {
         "file": "src/resourcestorefront.js",
@@ -567255,6 +567388,15 @@
       "provenance": {
         "file": "src/resourcestorefront.js",
         "line": 7
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/resourcestorefront.js",
+      "to": "Table:street_deeds",
+      "provenance": {
+        "file": "src/resourcestorefront.js",
+        "line": 16
       }
     },
     {
