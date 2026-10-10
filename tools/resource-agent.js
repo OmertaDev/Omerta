@@ -137,6 +137,7 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
           for (const job of jobs) {
             if (attemptedJobs.size >= maxPaidJobs) break;
             if (job?.assignedToYou !== true || !['open', 'claimed'].includes(job.state)
+                || job.fulfillment !== undefined && job.fulfillment !== 'compute'
                 || typeof job.id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(job.id) || attemptedJobs.has(job.id)) continue;
             attemptedJobs.add(job.id); // Unknown outcomes consume this run's quota and never retry.
             const result = await runPaidWork({ baseUrl: origin, token: bearer[1], jobId: job.id, providerId, maxOutputTokens, fetchImpl });

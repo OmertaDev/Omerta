@@ -115,6 +115,8 @@ async function queueFixture({ maxPaidJobs = 1, unknown = false, pending = false 
       if (String(url).endsWith('/v1/agent/turn')) return json({ ...turn(`queue-${index++}`), actions: [] });
       assert.equal(init.headers.authorization, headers.authorization);
       if (String(url).endsWith('/v1/resources/jobs')) return json({ jobs: [{ id: 'completed-history', assignedToYou: true, state: 'accepted' }], assignedJobs: [
+        { id: 'authored-job', assignedToYou: true, state: 'open', fulfillment: 'authored' },
+        { id: 'unknown-method', assignedToYou: true, state: 'claimed', fulfillment: 'unknown' },
         { id: 'foreign', assignedToYou: false, state: 'open' },
         { id: 'submitted', assignedToYou: true, state: 'submitted' },
         { id: 'own-1', assignedToYou: true, state: 'open' },
@@ -136,6 +138,7 @@ for (const settings of [{}, { unknown: true }, { pending: true }]) {
   assert.equal(queue.calls.filter(c => c.url.endsWith('/claim')).length, 1);
   assert.equal(queue.calls.filter(c => c.url.endsWith('/work')).length, settings.unknown || settings.pending ? 0 : 1);
   assert(queue.calls.every(c => !c.url.includes('foreign') && !c.url.includes('/accept')));
+  assert(queue.calls.every(c => !c.url.includes('authored-job') && !c.url.includes('unknown-method')), 'The compute runner skips other fulfillment methods before consuming quota');
   assert(!JSON.stringify(queue.events).includes('private-token'), 'raw work output is never telemetry');
   assert(queue.events.every(e => e.retry === false));
 }

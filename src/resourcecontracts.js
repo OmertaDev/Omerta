@@ -40,9 +40,10 @@ export const RESOURCE_CONTRACTS = {
     purpose: object({ kind: { enum: ['reasoning', 'game_decision'] } })
   }, ['requestId', 'providerId', 'maxOutputTokens', 'prompt'])),
   'POST /v1/resources/compute/:id/reconcile': contract('reconcileRetainedInference', object({ providerRequestId: { type: 'string', maxLength: 128 } }, [])),
-  'POST /v1/resources/jobs': contract('orderPaidMarketAnalysis', object({ requestId: identifier, sellerAccountId: identifier, expectedServiceRevision: integer(1, 2147483647), question: { type: 'string', minLength: 1, maxLength: 2000 } })),
+  'POST /v1/resources/jobs': contract('orderPaidMarketAnalysis', object({ requestId: identifier, sellerAccountId: identifier, expectedServiceRevision: integer(1, 2147483647), question: { type: 'string', minLength: 1, maxLength: 2000 }, fulfillment: { enum: ['compute', 'authored'] } }, ['requestId', 'sellerAccountId', 'expectedServiceRevision', 'question'])),
   'POST /v1/resources/jobs/:id/claim': contract('claimPaidMarketAnalysis', object({})),
   'POST /v1/resources/jobs/:id/work': contract('performPaidMarketAnalysis', object(computeTerms)),
+  'POST /v1/resources/jobs/:id/submit': contract('submitAuthoredMarketAnalysis', { ...object({ text: { type: 'string', minLength: 1, maxLength: 65536 } }), additionalProperties: false }),
   'POST /v1/resources/jobs/:id/accept': contract('acceptPaidMarketAnalysis', object({})),
   'POST /v1/resources/jobs/:id/dispute': contract('disputePaidMarketAnalysis', object({})),
   'POST /v1/resources/auctions/:id/commit': contract('commitFundedComputeBid', object({ commitment: { type: 'string', pattern: '^[a-f0-9]{64}$' }, maximumUsdMicros: integer() })),
