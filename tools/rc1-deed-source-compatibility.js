@@ -6,6 +6,36 @@ export const CITY_PRESENCE_SERVER_PIN = 'f4a8eece717448482ac55998c68df89e45344c2
 export const CITY_PRESENCE_SERVER_PREDECESSOR_PIN = 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c';
 export const CITY_PRESENCE_SOURCE_REVIEWED_REVISION = '83479446113cc3acffef1ee857a5d8d8e9fdc52c';
 export const CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION = '6485e8d0a01a3fb18417ec5eeded7cc1c62238b9';
+export const BUSINESS_SERVER_PIN = '3e7a9ca662681aadf6cc0aaca515d0cbbc011287346223580288e83a9363e5df';
+export const BUSINESS_SOURCE_REVIEWED_REVISION = '9db9b9a4d740c9faced0edece981145028f3f6c5';
+export const BUSINESS_SOURCE_PREDECESSOR_REVISION = '16a55ff2f30c2f583ba8f3bbe5e409b4a126d9ec';
+const businessServerChanges = [
+  [
+    "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n",
+    "  const performAgentAction = async (action, ch, client, h, lender = null) => {\n"
+  ],
+  [
+    "      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n      case 'business_upgrade': return Business.upgradeBusiness(ch, tail('/v1/business/').replace(/\\/upgrade$/, ''), client, h);\n",
+    ""
+  ],
+  [
+    "    const result = await performAgentAction(action, ch, client, h, lender, current.policy);\n",
+    "    const result = await performAgentAction(action, ch, client, h, lender);\n"
+  ]
+];
+// Exact inverse only: new business execution retains its separate current-source proofs.
+export function assertBusinessServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, BUSINESS_SERVER_PIN, 'Business transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of businessServerChanges) {
+  assert.equal(baselineText.split(current).length, 2, 'Business inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), CITY_PRESENCE_SERVER_PIN, 'Server differs beyond exact business dispatch');
+ return { actualSha256, baselineText, baselineSha256: CITY_PRESENCE_SERVER_PIN,
+  sourceRevision: BUSINESS_SOURCE_REVIEWED_REVISION, predecessorRevision: BUSINESS_SOURCE_PREDECESSOR_REVISION, inverseChunks: 3 };
+}
 const cityPresenceServerChunks = [
   "import { registerCity } from './routes/city.js';\n",
   '  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });\n',
@@ -104,6 +134,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === BUSINESS_SERVER_PIN) {
+    const transfer = assertBusinessServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
@@ -157,6 +191,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === BUSINESS_SERVER_PIN) {
+    const transfer = assertBusinessServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
@@ -231,6 +269,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === BUSINESS_SERVER_PIN) {
+    const transfer = assertBusinessServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
@@ -262,6 +304,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === BUSINESS_SERVER_PIN) {
+    const transfer = assertBusinessServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityPresenceSourceTransfer: transfer };
@@ -597,6 +643,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === BUSINESS_SERVER_PIN) {
+  const transfer = assertBusinessServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + 3, businessSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === CITY_PRESENCE_SERVER_PIN) {
   const presence = assertCityPresenceServerTransfer(text), predecessor = assertEconomySourceTransfer(file, presence.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + presence.inverseChunks, cityPresenceSourceTransfer: presence };

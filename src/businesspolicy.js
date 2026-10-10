@@ -1,6 +1,7 @@
 import { quoteCompute } from './resourceproviders.js';
 
 const PROPOSAL_NAMES = Object.freeze({ bid: 'Bid for funded work', service_price: 'Review service price', customer_follow_up: 'Review customer follow-up', prioritize_delivery: 'Prioritize awarded delivery', hold: 'Hold new work' });
+const PROPOSAL_DUTIES = Object.freeze({ bid: 'sales', service_price: 'sales', customer_follow_up: 'sales', prioritize_delivery: 'fulfillment' });
 const MAX = Number.MAX_SAFE_INTEGER;
 const bounded = (value, name, min = 0, max = MAX) => {
   if (!Number.isSafeInteger(value) || value < min || value > max) throw new Error(`Invalid business ${name}`);
@@ -12,13 +13,14 @@ const items = (value, max = 100) => {
   return value;
 };
 const amount = value => bounded(value ?? 0, 'amount');
-const DEFAULTS = Object.freeze({ providerId: null, maxOutputTokens: 256, targetMarginBps: 2500,
+const DEFAULTS = Object.freeze({ duty: 'general', providerId: null, maxOutputTokens: 256, targetMarginBps: 2500,
   minimumMarginUsdMicros: 10000, operatingCostPerJobUsdMicros: 0, paymentFeeBps: 0, maxActiveJobs: 3, minimumReserveUsdMicros: 0,
   maxProposals: 5, minimumRenewalAcceptedJobs: 2 });
 export function normalizeBusinessPolicy(input = {}) {
   if (!input || Array.isArray(input) || typeof input !== 'object'
       || Object.keys(input).some(key => !Object.hasOwn(DEFAULTS, key))) throw new Error('Invalid business policy');
   const policy = { ...DEFAULTS, ...input };
+  if (!['general','sales','fulfillment'].includes(policy.duty)) throw new Error('Invalid business duty');
   if (policy.providerId !== null && !id(policy.providerId)) throw new Error('Invalid business provider');
   bounded(policy.maxOutputTokens, 'output limit', 1, 16384);
   bounded(policy.targetMarginBps, 'target margin', 0, 9000);
@@ -89,7 +91,13 @@ export function evaluateBusiness(snapshot, input = {}) {
     else riskFlags.push('price_outside_market_limit');
   }
   const proposals = [];
-  const propose = value => { if (proposals.length >= policy.maxProposals) return false; proposals.push({ ...value, kindName: PROPOSAL_NAMES[value.kind], mode: 'shadow', eligibleToExecute: false }); return true; };
+  const propose = value => {
+    const duty = PROPOSAL_DUTIES[value.kind] || policy.duty;
+    if (value.kind !== 'hold' && policy.duty !== 'general' && duty !== policy.duty) return false;
+    if (proposals.length >= policy.maxProposals) return false;
+    proposals.push({ ...value, duty, kindName: PROPOSAL_NAMES[value.kind], mode: 'shadow', eligibleToExecute: false });
+    return true;
+  };
   for (const job of jobs.filter(job => ['open','claimed'].includes(job.state)
     && Number.isFinite(Date.parse(job.expiresAt)) && Date.parse(job.expiresAt) > now && Date.parse(job.expiresAt) <= now + 3600000)
     .sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
@@ -158,7 +166,8 @@ export function evaluateBusiness(snapshot, input = {}) {
       propose({ kind: 'customer_follow_up', buyerAccountId: customer.buyerAccountId, acceptedJobs: customer.acceptedJobs,
         reason: 'repeat_accepted_work', requiresOwnerApproval: true });
   }
-  if (!proposals.length) propose({ kind: 'hold', reason: quote === null ? 'compute_quote_unavailable' : 'no_safe_work_capacity', requiresOwnerApproval: false });
+  if (!proposals.length) propose({ kind: 'hold', reason: policy.duty === 'fulfillment' ? 'no_awarded_delivery_priority'
+    : quote === null ? 'compute_quote_unavailable' : 'no_safe_work_capacity', requiresOwnerApproval: false });
   const providerOutcomes = outcomes.filter(row => id(row.providerId)).map(row => ({ providerId: row.providerId,
     settledCallCount: amount(row.settledCallCount), failedCallCount: amount(row.failedCallCount), unknownCallCount: amount(row.unknownCallCount),
     costUsdMicros: amount(row.costUsdMicros), acceptedJobs: amount(row.acceptedJobs), disputedJobs: amount(row.disputedJobs), onTimeJobs: amount(row.onTimeJobs), causalEffect: null }));
@@ -176,6 +185,7 @@ export function compareBusiness(previous, snapshot) {
       || !snapshot || snapshot.mode !== 'shadow' || previous.baseline?.accountId !== snapshot.accountId
       || previous.baseline?.resourceMode !== (snapshot.resourceMode ?? null) || !Number.isFinite(Date.parse(snapshot.asOf)) || Date.parse(snapshot.asOf) < Date.parse(previous.asOf))
     throw new Error('Invalid business comparison');
+  const originatingDuty = normalizeBusinessPolicy({ duty: previous.policy?.duty ?? 'general' }).duty;
   const before = metrics(previous.baseline?.totals), after = metrics(snapshot.totals);
   const delta = Object.fromEntries(Object.keys(after).map(key => [key, after[key] - before[key]]));
   const jobs = items(snapshot.jobs);
@@ -186,13 +196,13 @@ export function compareBusiness(previous, snapshot) {
     if (related && (!id(related.id) || !['open','claimed','submitted','accepted','disputed','refunded'].includes(related.state))) throw new Error('Invalid business outcome');
     const priorCustomer = previous.baseline.customers?.find(c=>c.buyerAccountId===proposal.buyerAccountId);
     const currentCustomer = items(snapshot.customers).find(c=>c.buyerAccountId===proposal.buyerAccountId);
-    return { kind: proposal.kind, kindName: PROPOSAL_NAMES[proposal.kind], ...(related ? { jobId: related.id, observedState: related.state, observedPriceUsdMicros:amount(related.priceUsdMicros),
+    return { kind: proposal.kind, duty: PROPOSAL_DUTIES[proposal.kind] || originatingDuty, kindName: PROPOSAL_NAMES[proposal.kind], ...(related ? { jobId: related.id, observedState: related.state, observedPriceUsdMicros:amount(related.priceUsdMicros),
         settledRevenueUsdMicros:amount(related.settledRevenueUsdMicros), settledComputeCostsUsdMicros:amount(related.settledComputeCostsUsdMicros), unresolvedCalls:amount(related.unresolvedCalls) } : ['bid','prioritize_delivery'].includes(proposal.kind) ? { observedState:'not_observed_in_detail_window' } : {}),
       ...(proposal.kind === 'bid' && id(proposal.bountyId) ? {bountyId:proposal.bountyId} : {}),
       ...(proposal.kind === 'service_price' ? {priceMatchesProposal:snapshot.service?.priceUsdMicros === proposal.priceUsdMicros} : {}),
       ...(proposal.kind === 'customer_follow_up' ? {observedRepeatAcceptedJobs: currentCustomer && priorCustomer ? amount(currentCustomer.acceptedJobs) - amount(priorCustomer.acceptedJobs) : null} : {}),
       executedByObserver: false, causalEffect: null, attribution: 'No shadow action was executed; changes came from other actors.' };
   });
-  return { mode: 'shadow', from: previous.asOf, to: snapshot.asOf, observedDelta: delta, outcomes,
+  return { mode: 'shadow', originatingDuty, from: previous.asOf, to: snapshot.asOf, observedDelta: delta, outcomes,
     outsideCostsComplete: false, profitabilityKnown: false, causalEffect: null };
 }

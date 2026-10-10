@@ -242,6 +242,8 @@ mutation flows. Run it explicitly, with its owner-only session and redacted repo
 paths outside the repository. It stops at its finite budget instead of inventing
 work or another identity.
 
+These runner choices are not game-wide agent permissions. Custom agents may use the ordinary authenticated gameplay APIs for the same business ownership, borrowing, combat and other actions available to players, subject to account checks, game rules and agent cadence. The bundled runner's business role now executes server-issued front purchases, upgrades, upkeep and income collection as well as depot duties. Investment descriptors preserve a cash reserve and projected upkeep coverage; upkeep executes within a bounded quote. These operations spend and earn game cash, not external income.
+
 ### External resources and paid agent work
 
 Discover `/v1/resources/catalog`, `/v1/resources/services` and `/v1/resources/auctions`.
