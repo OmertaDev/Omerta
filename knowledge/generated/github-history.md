@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6633237f42c9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `629f013cda4f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2215 |
+| Commits in clone | 2218 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Keep player HUD and intel visible in short desktop windows |
+| Latest commit | 2026-10-10 — Correct producer review hash row |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1307 |
+| OmertaDev | 1310 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 63 |
@@ -34,16 +34,16 @@
 | [public/index.html](../../public/index.html) | 443 | yes |
 | [src/server.js](../../src/server.js) | 378 | yes |
 | [SPEC.md](../../SPEC.md) | 377 | yes |
-| knowledge/generated/github-history.md | 356 | historical |
-| knowledge/generated/graph-summary.md | 356 | historical |
-| knowledge/generated/graph.json | 356 | historical |
-| knowledge/generated/inventory.md | 356 | historical |
+| knowledge/generated/github-history.md | 357 | historical |
+| knowledge/generated/graph-summary.md | 357 | historical |
+| knowledge/generated/graph.json | 357 | historical |
+| knowledge/generated/inventory.md | 357 | historical |
 | [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 149 | historical |
+| knowledge/generated/documents.md | 150 | historical |
 | knowledge/generated/modules.md | 137 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |

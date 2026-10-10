@@ -32,7 +32,7 @@
 | [src/chain.js](../../src/chain.js) | 1801 | chain-economy | 12 / 28 | 17 | 29 | 21 |
 | [src/chainparams.js](../../src/chainparams.js) | 354 | platform-core | 1 / 2 | 2 | 1 | 1 |
 | [src/circle.js](../../src/circle.js) | 91 | engagement-growth | 1 / 2 | 1 | 5 | 1 |
-| [src/city-presence.js](../../src/city-presence.js) | 168 | platform-core | 3 / 2 | 3 | 7 | 1 |
+| [src/city-presence.js](../../src/city-presence.js) | 169 | platform-core | 3 / 2 | 3 | 7 | 1 |
 | [src/citymap.js](../../src/citymap.js) | 123 | world-progression | 2 / 1 | 1 | 7 | 0 |
 | [src/citywide.js](../../src/citywide.js) | 32 | world-progression | 5 / 3 | 1 | 0 | 1 |
 | [src/citywire.js](../../src/citywire.js) | 96 | platform-core | 1 / 2 | 0 | 1 | 1 |

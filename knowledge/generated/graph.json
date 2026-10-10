@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6633237f42c9c86da9ee7b0f32a6042620459b3c",
+  "sourceRevision": "629f013cda4f7135a91dcb394dba3ecb3914c885",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10438,
-    "edges": 42503,
+    "nodes": 10441,
+    "edges": 42514,
     "byNodeType": {
       "Artifact": 4405,
       "Command": 211,
-      "Commit": 2215,
+      "Commit": 2218,
       "Contract": 126,
       "Document": 704,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3537,
-      "CHANGED": 16553,
+      "CHANGED": 16561,
       "CONTAINS": 4426,
       "DECLARES": 211,
       "DEFINED_IN": 1394,
       "DEPENDS_ON": 67,
       "EXECUTES": 718,
       "HANDLED_BY": 771,
-      "HAS_COMMIT": 2215,
+      "HAS_COMMIT": 2218,
       "IMPLEMENTS": 124,
       "IMPORTS": 4191,
       "INHERITS": 42,
@@ -24219,20 +24219,20 @@
       "path": "docs/city-presence-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 10138,
-      "lines": 54,
-      "version": "f41f3ccfb67662c6",
+      "bytes": 11059,
+      "lines": 56,
+      "version": "a12a8b130ea42cd4",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "f41f3ccfb67662c6"
+          "version": "a12a8b130ea42cd4"
         }
       ],
-      "lastChangedAt": "2026-10-10T05:04:31.000Z",
+      "lastChangedAt": "2026-10-10T05:18:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6633237f42c9c86da9ee7b0f32a6042620459b3c"
+      "lastChangedCommit": "629f013cda4f7135a91dcb394dba3ecb3914c885"
     },
     {
       "key": "Artifact:docs/city-presence.md",
@@ -78815,20 +78815,20 @@
       "path": "src/city-presence.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 13297,
-      "lines": 168,
-      "version": "fca0bc8398a47a46",
+      "bytes": 13373,
+      "lines": 169,
+      "version": "07c68efe5a68139d",
       "text": true,
       "provenance": [
         {
           "file": "src/city-presence.js",
           "line": 1,
-          "version": "fca0bc8398a47a46"
+          "version": "07c68efe5a68139d"
         }
       ],
-      "lastChangedAt": "2026-10-10T04:48:10.000Z",
+      "lastChangedAt": "2026-10-10T05:16:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6b7580299ec0012de702186de96ea5166ce2793"
+      "lastChangedCommit": "1728469a1d900ea459f70fa6f15ee643f16d351d"
     },
     {
       "key": "Artifact:src/citymap.js",
@@ -107081,6 +107081,22 @@
       ]
     },
     {
+      "key": "Commit:1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "type": "Commit",
+      "id": "1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "label": "Expose City query branches to PostgreSQL validation",
+      "title": "Expose City query branches to PostgreSQL validation",
+      "date": "2026-10-10T05:16:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "provenance": [
+        {
+          "commit": "1728469a1d900ea459f70fa6f15ee643f16d351d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1728469a1d900ea459f70fa6f15ee643f16d351d"
+        }
+      ]
+    },
+    {
       "key": "Commit:1764bc6be113a0ed97f59c61ef19b7e0233dd6d8",
       "type": "Commit",
       "id": "1764bc6be113a0ed97f59c61ef19b7e0233dd6d8",
@@ -117689,6 +117705,22 @@
       ]
     },
     {
+      "key": "Commit:629f013cda4f7135a91dcb394dba3ecb3914c885",
+      "type": "Commit",
+      "id": "629f013cda4f7135a91dcb394dba3ecb3914c885",
+      "label": "Correct producer review hash row",
+      "title": "Correct producer review hash row",
+      "date": "2026-10-10T05:18:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/629f013cda4f7135a91dcb394dba3ecb3914c885",
+      "provenance": [
+        {
+          "commit": "629f013cda4f7135a91dcb394dba3ecb3914c885",
+          "url": "https://github.com/OmertaDev/Omerta/commit/629f013cda4f7135a91dcb394dba3ecb3914c885"
+        }
+      ]
+    },
+    {
       "key": "Commit:62a7d1685075098cf5924993997dc4d98e096844",
       "type": "Commit",
       "id": "62a7d1685075098cf5924993997dc4d98e096844",
@@ -117877,6 +117909,22 @@
         {
           "commit": "636c82e18664191cd0bb4c33144cab0539e8318e",
           "url": "https://github.com/OmertaDev/Omerta/commit/636c82e18664191cd0bb4c33144cab0539e8318e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "type": "Commit",
+      "id": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "label": "Refresh knowledge for fitted player intel view",
+      "title": "Refresh knowledge for fitted player intel view",
+      "date": "2026-10-10T05:06:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "provenance": [
+        {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
         }
       ]
     },
@@ -147270,13 +147318,13 @@
       "id": "docs/city-presence-security-review.md",
       "label": "docs/city-presence-security-review.md",
       "documentType": "documentation",
-      "lines": 54,
-      "version": "f41f3ccfb67662c6",
+      "lines": 56,
+      "version": "a12a8b130ea42cd4",
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "f41f3ccfb67662c6"
+          "version": "a12a8b130ea42cd4"
         }
       ]
     },
@@ -159814,6 +159862,9 @@
           "commit": "6368339e82965679c1d1aae91ecea657489a6414"
         },
         {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -160490,6 +160541,9 @@
         },
         {
           "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
+        },
+        {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -161569,6 +161623,9 @@
           "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
         },
         {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+        },
+        {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
@@ -162644,6 +162701,9 @@
         },
         {
           "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
+        },
+        {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -164018,6 +164078,9 @@
         },
         {
           "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
+        },
+        {
+          "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
         },
         {
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
@@ -166567,13 +166630,13 @@
       "type": "Module",
       "id": "src/city-presence.js",
       "label": "src/city-presence.js",
-      "lines": 168,
-      "version": "fca0bc8398a47a46",
+      "lines": 169,
+      "version": "07c68efe5a68139d",
       "provenance": [
         {
           "file": "src/city-presence.js",
           "line": 1,
-          "version": "fca0bc8398a47a46"
+          "version": "07c68efe5a68139d"
         }
       ]
     },
@@ -174007,7 +174070,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6633237f42c9c86da9ee7b0f32a6042620459b3c",
+      "revision": "629f013cda4f7135a91dcb394dba3ecb3914c885",
       "currentBranch": "codex/player-view-toggle",
       "defaultBranch": "main",
       "visibility": "public",
@@ -251972,6 +252035,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "to": "Artifact:docs/city-presence-security-review.md",
+      "provenance": {
+        "commit": "1728469a1d900ea459f70fa6f15ee643f16d351d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "to": "Artifact:src/city-presence.js",
+      "provenance": {
+        "commit": "1728469a1d900ea459f70fa6f15ee643f16d351d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1764bc6be113a0ed97f59c61ef19b7e0233dd6d8",
       "to": "Artifact:public/genesis-deploy-client.js",
       "provenance": {
@@ -290524,6 +290603,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:629f013cda4f7135a91dcb394dba3ecb3914c885",
+      "to": "Artifact:docs/city-presence-security-review.md",
+      "provenance": {
+        "commit": "629f013cda4f7135a91dcb394dba3ecb3914c885"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:62a7d1685075098cf5924993997dc4d98e096844",
       "to": "Artifact:test/gates.js",
       "provenance": {
@@ -292248,6 +292335,46 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
       }
     },
     {
@@ -445614,6 +445741,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1728469a1d900ea459f70fa6f15ee643f16d351d",
+      "provenance": {
+        "commit": "1728469a1d900ea459f70fa6f15ee643f16d351d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1764bc6be113a0ed97f59c61ef19b7e0233dd6d8",
       "provenance": {
         "commit": "1764bc6be113a0ed97f59c61ef19b7e0233dd6d8"
@@ -450918,6 +451053,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:629f013cda4f7135a91dcb394dba3ecb3914c885",
+      "provenance": {
+        "commit": "629f013cda4f7135a91dcb394dba3ecb3914c885"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:62a7d1685075098cf5924993997dc4d98e096844",
       "provenance": {
         "commit": "62a7d1685075098cf5924993997dc4d98e096844"
@@ -451009,6 +451152,14 @@
       "to": "Commit:636c82e18664191cd0bb4c33144cab0539e8318e",
       "provenance": {
         "commit": "636c82e18664191cd0bb4c33144cab0539e8318e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:636cfca5acf7f7e1ef44eb2306b5d3727817e92d",
+      "provenance": {
+        "commit": "636cfca5acf7f7e1ef44eb2306b5d3727817e92d"
       }
     },
     {
@@ -559310,7 +559461,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/city-presence.js",
-        "line": 97
+        "line": 99
       }
     },
     {
@@ -559346,7 +559497,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/city-presence.js",
-        "line": 98
+        "line": 100
       }
     },
     {
@@ -559355,7 +559506,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/city-presence.js",
-        "line": 98
+        "line": 100
       }
     },
     {
