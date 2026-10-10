@@ -12,13 +12,27 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
   CITY_PRESENCE_SOURCE_REVIEWED_REVISION, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
-  assertCityPresenceServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
+  assertCityPresenceServerTransfer, CITY_SOCIAL_SERVER_PIN, CITY_SOCIAL_SERVER_PREDECESSOR_PIN,
+  CITY_SOCIAL_SOURCE_REVIEWED_REVISION, CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION,
+  assertCitySocialServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckpointAssertions,
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const currentServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const socialServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const socialProof = assertCitySocialServerTransfer(socialServerText);
+const currentServerText = socialProof.baselineText;
+assert.equal(socialProof.actualSha256, CITY_SOCIAL_SERVER_PIN);
+assert.equal(socialProof.baselineSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
+assert.equal(CITY_SOCIAL_SERVER_PREDECESSOR_PIN, CITY_PRESENCE_SERVER_PIN);
+assert.equal(socialProof.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);
+assert.equal(socialProof.predecessorRevision, CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION);
+assert.equal(socialProof.inverseChunks, 3);
+assert.equal(socialServerText, execFileSync('git', ['show', CITY_SOCIAL_SOURCE_REVIEWED_REVISION + ':src/server.js'],
+  { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'The complete canonical current server equals independent Git bytes.');
+assert.equal(currentServerText, execFileSync('git', ['show', CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION + ':src/server.js'],
+  { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'The three-chunk inverse restores the complete independent Git predecessor bytes.');
 const presenceProof = assertCityPresenceServerTransfer(currentServerText);
 const serverText = presenceProof.baselineText;
 assert.equal(presenceProof.actualSha256, CITY_PRESENCE_SERVER_PIN);
@@ -36,6 +50,40 @@ const presenceRegistration = '  registerCity(app, { pool, auth, onlineIds: () =>
 for (const chunk of [presenceImport, presenceRegistration]) assert.equal(currentServerText.split(chunk).length, 2);
 const serverGuards = [assertGenesisSnapshotServerCompatibility, assertGenesisWrapperServerCompatibility,
   assertHttpReceiptServerCompatibility, assertDeedServerCompatibility];
+const economyServerGuard = text => assertEconomySourceTransfer('src/server.js', text);
+for (const guard of [...serverGuards, economyServerGuard]) {
+  const actual = guard(socialServerText), previous = guard(currentServerText);
+  const { actualSha256, citySocialSourceTransfer, ...retained } = actual;
+  const { actualSha256: predecessorSha256, ...historical } = previous;
+  assert.equal(actualSha256, CITY_SOCIAL_SERVER_PIN); assert.equal(predecessorSha256, CITY_PRESENCE_SERVER_PIN);
+  assert.deepEqual(citySocialSourceTransfer, socialProof);
+  if (guard === economyServerGuard) {
+    assert.equal(retained.inverseChunks, historical.inverseChunks + socialProof.inverseChunks, 'The existing cumulative inverse count includes exactly three new chunks.');
+    retained.inverseChunks -= socialProof.inverseChunks;
+  }
+  assert.deepEqual(retained, historical, 'The social inverse retains every previous qualification field without extending coverage.');
+}
+const socialImport = "import { registerCitySocial } from './city-social.js';\n";
+const socialRegistration = '  registerCitySocial(app, { pool, auth, onlineIds: () => [...wsClients.keys()], lastChatAt, capMap });\n';
+const socialAssets = "    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n";
+for (const chunk of [socialImport, socialRegistration, socialAssets]) assert.equal(socialServerText.split(chunk).length, 2);
+for (const changed of [
+  ...[socialImport, socialRegistration, socialAssets].flatMap(chunk => [socialServerText.replace(chunk, chunk.repeat(2)), socialServerText.replace(chunk, '')]),
+  socialServerText.replace(socialImport, socialImport.replace('./city-social.js', './unreviewed-social.js')),
+  socialServerText.replace(socialRegistration, socialRegistration.replace('pool, auth,', 'pool, auth: null,')),
+  socialServerText.replace(socialRegistration, socialRegistration.replace('lastChatAt, capMap', 'lastChatAt: new Map(), capMap')),
+  socialServerText.replace(socialAssets, socialAssets.replace('city-world-ui.css', 'unreviewed-ui.css')),
+  socialServerText.replace(socialAssets, socialAssets.replace('application/javascript', 'text/html')),
+  socialServerText.replace('row.response === reservationToken', 'true'),
+  socialServerText.replace('await Chain.assertChainId();', 'await Promise.resolve();'),
+  socialServerText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"),
+  socialServerText + "\napp.post('/v1/unreviewed-social-authority', async () => ({}));\n",
+]) {
+  assert.notEqual(changed, socialServerText); assert.notEqual(changed, currentServerText);
+  assert.throws(() => assertCitySocialServerTransfer(changed), /source changed/);
+  for (const guard of serverGuards) assert.throws(() => guard(changed), /source changed/);
+  assert.throws(() => assertEconomySourceTransfer('src/server.js', changed), /source changed/);
+}
 for (const guard of serverGuards) {
   const actual = guard(currentServerText), previous = guard(serverText);
   const { actualSha256, cityPresenceSourceTransfer, ...retained } = actual;
@@ -163,11 +211,18 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_PRESENCE_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], CITY_SOCIAL_SERVER_PIN);
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 9);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 10);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorRevision, CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.inverseChunks, 3);
+assert.match(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.scope, /New cosmetics, chat, district consent, owner lifecycle and reachability are not inherited/);
+assert.match(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.scope, /No current execution, deployment or onchain qualification is added/);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.actualServerSha256, CITY_PRESENCE_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.sourceRevision, CITY_PRESENCE_SOURCE_REVIEWED_REVISION);
