@@ -4,7 +4,7 @@
 
 ## Census
 
-10,506 nodes and 42,852 edges at `aede207442b0`.
+10,517 nodes and 42,919 edges at `84ca3c92dd07`.
 
 ### Nodes
 
@@ -12,7 +12,7 @@
 |---|---:|
 | Artifact | 4408 |
 | Command | 212 |
-| Commit | 2271 |
+| Commit | 2282 |
 | Contract | 126 |
 | Document | 705 |
 | Domain | 13 |
@@ -32,22 +32,22 @@
 | Type | Count |
 |---|---:|
 | BELONGS_TO | 3543 |
-| CHANGED | 16786 |
+| CHANGED | 16837 |
 | CONTAINS | 4429 |
 | DECLARES | 212 |
 | DEFINED_IN | 1399 |
 | DEPENDS_ON | 67 |
 | EXECUTES | 721 |
 | HANDLED_BY | 775 |
-| HAS_COMMIT | 2271 |
+| HAS_COMMIT | 2282 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 4206 |
+| IMPORTS | 4208 |
 | INHERITS | 42 |
 | REFERENCES | 3140 |
 | REPRESENTS | 1614 |
-| TESTS | 1446 |
+| TESTS | 1448 |
 | TRACKS | 126 |
-| USES_TABLE | 1951 |
+| USES_TABLE | 1952 |
 
 ## Provenance contract
 
