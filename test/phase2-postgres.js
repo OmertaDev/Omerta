@@ -349,6 +349,10 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     (rows,index) => rows.splice(index,1)));
   rejected('resource payment session identity altered',mutate('resource_payments','resource_payments_session_id_key',
     (rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('company account ownership foreign key removed',mutate('agent_company_profiles','agent_company_profiles_account_id_fkey',
+    (rows,index) => rows.splice(index,1)));
+  rejected('company premises binding guard weakened',mutate('agent_company_profiles','agent_company_profiles_check',
+    (rows,index) => { rows[index].definition = 'CHECK (true)'; }));
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');
