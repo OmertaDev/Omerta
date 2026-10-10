@@ -1,12 +1,73 @@
 // Real authenticated HTTP, replay and private social projections. --postgres uses an isolated local schema.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { CITY_SOCIAL_SCHEMAS } from '../src/city-social-contract.js';
 import { withTwoCharacters, bus } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { sendNearbyCityChat } from '../src/city-social.js';
+
+function interceptedConnect(connect, intercept) {
+  return function (...args) {
+    // pg.Pool.query uses connect(callback), whose return value is deliberately undefined.
+    if (typeof args[0] === 'function') return connect.apply(this, args);
+    return Promise.resolve(connect.apply(this, args)).then(client => new Proxy(client, { get(target, property) {
+      if (property === 'query') return (sql, params) => intercept(sql, params, () => target.query(sql, params));
+      const value = target[property]; return typeof value === 'function' ? value.bind(target) : value;
+    } }));
+  };
+}
+async function verifyConnectProtocol() {
+  const { Pool } = await import('pg');
+  const client = new EventEmitter(), calls = [];
+  let intercepted = 0, releases = 0;
+  const result = { rows: [{ protocol: 'actual pg.Pool.query' }] };
+  client.query = function (sql, params, callback) {
+    assert.equal(this, client);
+    if (callback) { queueMicrotask(() => callback(null, result)); return; }
+    return Promise.resolve(result);
+  };
+  client.release = function () { assert.equal(this, client); releases++; };
+  const pool = { Promise, log() {}, query: Pool.prototype.query, connect(...args) {
+    assert.equal(this, pool); calls.push(args);
+    if (typeof args[0] === 'function') { queueMicrotask(() => args[0](null, client, client.release)); return; }
+    return Promise.resolve(client);
+  } };
+  const original = pool.connect;
+  pool.connect = interceptedConnect(original, async (sql, _params, run) => {
+    intercepted++;
+    if (sql === 'INJECTED FAULT') throw new Error('protocol transaction fault');
+    return run();
+  });
+  const callbackReturn = value => assert.equal(value, undefined, 'Callback connect preserves the actual pg-pool return protocol.');
+  let observed;
+  const callback = (error, connected, release) => { assert.equal(error, null); observed = [connected, release]; };
+  const extra = { protocol: 'unchanged arguments' };
+  callbackReturn(pool.connect(callback, extra));
+  await new Promise(resolve => queueMicrotask(resolve));
+  assert.deepEqual(calls[0], [callback, extra]); assert.deepEqual(observed, [client, client.release]);
+  assert.deepEqual(await pool.query('SELECT protocol', []), result, 'The installed pg-pool query path actually consumes callback connect.');
+  assert.equal(intercepted, 0, 'Only Promise-form transaction clients are fault-intercepted.');
+  assert.equal(releases, 1);
+  const transaction = await pool.connect();
+  assert.notEqual(transaction, client);
+  assert.deepEqual(await transaction.query('COMMIT', []), result);
+  await assert.rejects(transaction.query('INJECTED FAULT', []), /protocol transaction fault/);
+  transaction.release(); assert.equal(releases, 2); assert.equal(intercepted, 2);
+  // Causal control: the previous async adapter violates the same callback oracle and proxies undefined.
+  const previous = async function (...args) {
+    const connected = await original.apply(this, args);
+    return new Proxy(connected, {});
+  };
+  const invalidReturn = previous.call(pool, callback, extra);
+  assert.throws(() => callbackReturn(invalidReturn), { name: 'AssertionError' });
+  await assert.rejects(invalidReturn, { name: 'TypeError' });
+  console.log('city-social connect protocol PASS: installed pg-pool callback query, untouched callback return/receiver/arguments, transactional Promise interception and old-adapter rejection (no database)');
+}
+await verifyConnectProtocol();
+if (process.argv.includes('--protocol')) process.exit(0);
 
 const postgres = process.argv.includes('--postgres');
 let basePool, namespace;
@@ -22,6 +83,9 @@ if (postgres) {
   await basePool.query(`CREATE SCHEMA ${namespace}`);
   endpoint.searchParams.set('options', `-c search_path=${namespace} -c lock_timeout=8000 -c statement_timeout=20000`);
   process.env.DATABASE_URL = endpoint.toString();
+  // Real-DB fixtures must satisfy production preflight with fresh process-local test credentials.
+  for (const key of ['JWT_SECRET', 'MOD_KEY', 'MARKET_SEED']) process.env[key] = crypto.randomBytes(32).toString('hex');
+  process.env.SOCIAL_VERIFY_MODE = 'off';
 } else assert(!process.env.DATABASE_URL, 'Without --postgres, require disposable pg-mem.');
 process.env.RATE_LIMIT = 'off';
 process.env.INVITE_MODE = 'off';
@@ -66,13 +130,7 @@ const snapshot = async () => ({ prefs: (await app.pool.query('SELECT * FROM city
 const pause = () => new Promise(resolve => setTimeout(resolve, 2100));
 async function interceptedQueries(action, intercept) {
   const connect = app.pool.connect;
-  app.pool.connect = async function (...args) {
-    const client = await connect.apply(this, args);
-    return new Proxy(client, { get(target, property) {
-      if (property === 'query') return (sql, params) => intercept(sql, params, () => target.query(sql, params));
-      const value = target[property]; return typeof value === 'function' ? value.bind(target) : value;
-    } });
-  };
+  app.pool.connect = interceptedConnect(connect, intercept);
   try { return await action(); } finally { app.pool.connect = connect; }
 }
 try {

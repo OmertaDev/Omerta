@@ -32,6 +32,16 @@ Executed locally with Node `v24.19.0` on 2026-10-10:
 
 **Open native verification:** `node test/city-social-api.js --postgres` is wired into the required existing City native aggregate and must execute on both hosted PostgreSQL 16 and 18.4 lanes against the final integrated head. No local native endpoint/server executable is available. This branch owns an explicitly disposable loopback schema, tests actual owner locks/concurrent HTTP requests, post-insert rollback, both after-COMMIT ACK-loss/retry cases and late estate rollback, then drops only that generated schema. No native result is claimed yet.
 
+### Native fixture correction after the first hosted run
+
+At integrated head `4cd8c62d86d157865567bd1a958115156df328ec`, both [PostgreSQL 16](https://github.com/OmertaDev/Omerta/actions/runs/38073978232/job/114276988832) and [PostgreSQL 18.4](https://github.com/OmertaDev/Omerta/actions/runs/38073978232/job/114276988806) logs show the Social HTTP test failing at `buildServer` before any Social assertions: its real-DB fixture omitted the required JWT, market, moderator and explicit social-verification configuration. The preceding City RPG and presence tests passed. Later executed native steps passed independently; skipped `pgcheck` and Director steps do not qualify. The old normal and Forge runs completed cancellation, with no unfinished jobs, before this test-only repair.
+
+CS-03, native fixture startup: the `--postgres` setup now generates three independent process-local 32-byte random test values for `JWT_SECRET`, `MOD_KEY` and `MARKET_SEED` and explicitly chooses `SOCIAL_VERIFY_MODE=off`, following the established native HTTP receipt fixture. It does not change `NODE_ENV`, production preflight, chain configuration, signers, runtime authority or credentials outside the test process.
+
+CS-04, test adapter protocol: the previous async `pool.connect` override also violated the installed `pg-pool` callback contract: callback form returns `undefined`, which the override awaited and attempted to proxy. The normal-function adapter now forwards callback receiver, arguments and return untouched, and wraps only Promise-form transaction clients. A DB-free proof uses the installed `pg.Pool.prototype.query` with a bounded no-network client, checks successful query/release and Promise-form fault interception, and rejects the old async adapter through the same callback-return oracle and its actual `Proxy(undefined)` error.
+
+Correction source pin: `test/city-social-api.js` Git blob `15391c1dda44e1cb356a572d32af3ee800aee0bd` (working-tree SHA256 `8c6fbc7fdbe7897e086a4a9857feec951fd5c3356b6dddc140d94f03a1a5849a`), based on `4cd8c62d86d157865567bd1a958115156df328ec`. `node test/city-social-api.js --protocol`, the full memory API test, syntax and scoped whitespace checks pass. Every actual receipt interruption, row-count-zero rollback, post-COMMIT ACK-loss, byte-exact recovery, changed-body rejection and native estate assertion remains unchanged. No PostgreSQL run of this correction is claimed; both required hosted lanes must execute its native cases on the new final head.
+
 The Phase 2 and Director oracles retain all predecessor assertions, classify exactly the new table, require its four FK/identity/generation/outfit constraints and five non-null columns, and add causal removal/weakening controls. Actual native catalog descriptor equality and all existing qualification gates remain open until those hosted lanes run. Test limits, workflow timeouts, interpolation ceilings and predecessor source inventories were not relaxed. New social authority is excluded from inherited deed/recovery qualification; source transfer qualification is a separate release check. The shared estate helper is also in the worker closure, so the final reviewed API and worker runtimes require deployment verification after the additive table is applied.
 
 ## Findings and disposition
@@ -45,7 +55,7 @@ SG-01, test-only catalog-ledger classification: the required gate initially trea
 
 `node test/gates.js` passed the full suite locally: 166 catalog fields, all 29 existing declared handles, and exactly two classified City sites. Same-matcher causal controls reject a removed outfit name, missing actual factory label, lost finite kind validation, a post-validation kind overwrite, and additional unlabelled outfit/kind literals. Syntax and whitespace checks passed. Independent review cleared gate blob `14b9a3338f8921301dab24a363bbd062fa13a724`. No runtime, API, authoritative fields or receipts changed; this is static gate evidence, not native transaction qualification. The root's separately committed documentation census passed its actual docs test; final integrated client/gate/docs and native release checks remain separate.
 
-| Reviewed working-tree file | SHA256 |
+| Earlier reviewed working-tree file | SHA256 |
 | --- | --- |
 | src/city-social.js | 2ac9d8cad9b0e940f9ab177c4d6228566aff31e0a3f31e42bfc581048d748434 |
 | src/city-social-contract.js | 2bce36dddc2c14ff04d52a1a02ed78ffcccb50811d4c814ff9c5e84e0f6f7452 |
