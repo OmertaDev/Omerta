@@ -42,7 +42,7 @@
 | [src/commission.js](../../src/commission.js) | 1394 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 221 | engagement-growth | 3 / 8 | 2 | 9 | 2 |
 | [src/computeexperiment.js](../../src/computeexperiment.js) | 63 | platform-core | 0 / 3 | 0 | 0 | 1 |
-| [src/computerouting.js](../../src/computerouting.js) | 103 | platform-core | 1 / 3 | 0 | 0 | 2 |
+| [src/computerouting.js](../../src/computerouting.js) | 104 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
 | [src/content/activation-policy.js](../../src/content/activation-policy.js) | 56 | platform-core | 2 / 6 | 0 | 0 | 4 |
 | [src/content/artifact-storage.js](../../src/content/artifact-storage.js) | 260 | platform-core | 6 / 3 | 0 | 2 | 1 |
@@ -204,13 +204,16 @@
 | [src/recipe-scarcity.js](../../src/recipe-scarcity.js) | 51 | platform-core | 3 / 2 | 0 | 1 | 1 |
 | [src/regimen.js](../../src/regimen.js) | 126 | platform-core | 2 / 5 | 3 | 5 | 0 |
 | [src/resourceauction.js](../../src/resourceauction.js) | 65 | platform-core | 0 / 3 | 0 | 2 | 2 |
-| [src/resourcebook.js](../../src/resourcebook.js) | 123 | platform-core | 1 / 9 | 1 | 10 | 6 |
+| [src/resourcebook.js](../../src/resourcebook.js) | 123 | platform-core | 1 / 13 | 1 | 10 | 8 |
 | [src/resourcebusiness.js](../../src/resourcebusiness.js) | 73 | platform-core | 2 / 3 | 1 | 9 | 1 |
 | [src/resourcecompute.js](../../src/resourcecompute.js) | 277 | platform-core | 3 / 2 | 9 | 6 | 0 |
-| [src/resourcecontracts.js](../../src/resourcecontracts.js) | 46 | platform-core | 0 / 1 | 0 | 2 | 0 |
+| [src/resourcecontracts.js](../../src/resourcecontracts.js) | 48 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/resourcelabor.js](../../src/resourcelabor.js) | 171 | platform-core | 1 / 3 | 7 | 9 | 0 |
+| [src/resourceoutcomeobserver.js](../../src/resourceoutcomeobserver.js) | 52 | platform-core | 1 / 3 | 0 | 0 | 2 |
+| [src/resourceoutcomes.js](../../src/resourceoutcomes.js) | 61 | platform-core | 1 / 2 | 1 | 3 | 1 |
 | [src/resourcepayments.js](../../src/resourcepayments.js) | 130 | platform-core | 1 / 3 | 1 | 4 | 1 |
 | [src/resourceproviders.js](../../src/resourceproviders.js) | 183 | platform-core | 0 / 7 | 0 | 1 | 1 |
+| [src/resourcestorefront.js](../../src/resourcestorefront.js) | 20 | platform-core | 1 / 2 | 1 | 3 | 1 |
 | [src/resourcework.js](../../src/resourcework.js) | 217 | platform-core | 2 / 4 | 8 | 6 | 1 |
 | [src/restock.js](../../src/restock.js) | 79 | platform-core | 2 / 2 | 0 | 1 | 1 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |
@@ -240,7 +243,7 @@
 | [src/routes/port.js](../../src/routes/port.js) | 33 | enterprise-logistics | 2 / 1 | 11 | 1 | 0 |
 | [src/routes/projections.js](../../src/routes/projections.js) | 67 | platform-core | 10 / 2 | 2 | 0 | 1 |
 | [src/routes/races.js](../../src/routes/races.js) | 33 | vice-competition | 2 / 1 | 10 | 0 | 0 |
-| [src/routes/resources.js](../../src/routes/resources.js) | 72 | platform-core | 5 / 2 | 33 | 4 | 1 |
+| [src/routes/resources.js](../../src/routes/resources.js) | 76 | platform-core | 7 / 3 | 35 | 4 | 2 |
 | [src/routes/rwa.js](../../src/routes/rwa.js) | 294 | platform-core | 6 / 1 | 12 | 3 | 0 |
 | [src/routes/sov.js](../../src/routes/sov.js) | 22 | world-progression | 2 / 1 | 6 | 0 | 0 |
 | [src/routes/speakeasy.js](../../src/routes/speakeasy.js) | 62 | vice-competition | 2 / 1 | 13 | 2 | 0 |
