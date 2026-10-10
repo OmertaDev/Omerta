@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "082dda3b700dc89553f5f5d84673aad85c9ef0c5",
+  "sourceRevision": "d5e251d0bbcea1bc1936ae793b1de77114f4adda",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10444,
-    "edges": 42543,
+    "nodes": 10446,
+    "edges": 42557,
     "byNodeType": {
       "Artifact": 4401,
       "Command": 212,
-      "Commit": 2228,
+      "Commit": 2230,
       "Contract": 126,
       "Document": 703,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3534,
-      "CHANGED": 16598,
+      "CHANGED": 16610,
       "CONTAINS": 4422,
       "DECLARES": 212,
       "DEFINED_IN": 1394,
       "DEPENDS_ON": 67,
       "EXECUTES": 715,
       "HANDLED_BY": 771,
-      "HAS_COMMIT": 2228,
+      "HAS_COMMIT": 2230,
       "IMPLEMENTS": 124,
       "IMPORTS": 4187,
       "INHERITS": 42,
@@ -24219,20 +24219,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 34430,
-      "lines": 191,
-      "version": "374c62be56a3829c",
+      "bytes": 35528,
+      "lines": 193,
+      "version": "ecf271c5ae16c3fe",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "374c62be56a3829c"
+          "version": "ecf271c5ae16c3fe"
         }
       ],
-      "lastChangedAt": "2026-10-10T13:36:33.000Z",
+      "lastChangedAt": "2026-10-10T13:59:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "082dda3b700dc89553f5f5d84673aad85c9ef0c5"
+      "lastChangedCommit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -89119,20 +89119,20 @@
       "path": "test/lib/phase2-architecture-upgrade-catalog.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 60414,
-      "lines": 1826,
-      "version": "9330a25789b91544",
+      "bytes": 61949,
+      "lines": 1863,
+      "version": "bd6ae9f57f3553ca",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-architecture-upgrade-catalog.json",
           "line": 1,
-          "version": "9330a25789b91544"
+          "version": "bd6ae9f57f3553ca"
         }
       ],
-      "lastChangedAt": "2026-10-09T03:43:06.000Z",
+      "lastChangedAt": "2026-10-10T13:59:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "df0ee2bf53bfa214a7da63a08a18028a9fdc407a"
+      "lastChangedCommit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
     },
     {
       "key": "Artifact:test/lib/phase2-definition-fixtures.js",
@@ -90407,20 +90407,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 70642,
-      "lines": 768,
-      "version": "4e9d16a8767826a4",
+      "bytes": 71004,
+      "lines": 772,
+      "version": "3249241cd2fd30f0",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "4e9d16a8767826a4"
+          "version": "3249241cd2fd30f0"
         }
       ],
-      "lastChangedAt": "2026-10-08T20:35:00.000Z",
+      "lastChangedAt": "2026-10-10T13:59:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
+      "lastChangedCommit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -106918,6 +106918,22 @@
         {
           "commit": "167c8ee9dd887330f24f751d98d0a625d6a62a07",
           "url": "https://github.com/OmertaDev/Omerta/commit/167c8ee9dd887330f24f751d98d0a625d6a62a07"
+        }
+      ]
+    },
+    {
+      "key": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "type": "Commit",
+      "id": "16a129baf1822131633425fd13fa4e8026b77f35",
+      "label": "chore(knowledge): refresh company registry artifacts",
+      "title": "chore(knowledge): refresh company registry artifacts",
+      "date": "2026-10-10T13:38:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/16a129baf1822131633425fd13fa4e8026b77f35",
+      "provenance": [
+        {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35",
+          "url": "https://github.com/OmertaDev/Omerta/commit/16a129baf1822131633425fd13fa4e8026b77f35"
         }
       ]
     },
@@ -133914,6 +133930,22 @@
       ]
     },
     {
+      "key": "Commit:d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "type": "Commit",
+      "id": "d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "label": "Pin company constraints in native upgrade catalog checks",
+      "title": "Pin company constraints in native upgrade catalog checks",
+      "date": "2026-10-10T13:59:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "provenance": [
+        {
+          "commit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d5e251d0bbcea1bc1936ae793b1de77114f4adda"
+        }
+      ]
+    },
+    {
       "key": "Commit:d5f649584698fb45c41bcf89ef1794104f922ed9",
       "type": "Commit",
       "id": "d5f649584698fb45c41bcf89ef1794104f922ed9",
@@ -147399,13 +147431,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 191,
-      "version": "374c62be56a3829c",
+      "lines": 193,
+      "version": "ecf271c5ae16c3fe",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "374c62be56a3829c"
+          "version": "ecf271c5ae16c3fe"
         }
       ]
     },
@@ -159783,6 +159815,9 @@
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "16b671a45965157ce10124b2e7bfdd2796942cb7"
         },
         {
@@ -160294,6 +160329,9 @@
         },
         {
           "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+        },
+        {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
         },
         {
           "commit": "16b671a45965157ce10124b2e7bfdd2796942cb7"
@@ -161394,6 +161432,9 @@
           "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "16b671a45965157ce10124b2e7bfdd2796942cb7"
         },
         {
@@ -162492,6 +162533,9 @@
           "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "16b671a45965157ce10124b2e7bfdd2796942cb7"
         },
         {
@@ -163527,6 +163571,9 @@
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "1764bc6be113a0ed97f59c61ef19b7e0233dd6d8"
         },
         {
@@ -163882,6 +163929,9 @@
         },
         {
           "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+        },
+        {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
         },
         {
           "commit": "16b671a45965157ce10124b2e7bfdd2796942cb7"
@@ -164922,6 +164972,9 @@
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
@@ -165342,6 +165395,9 @@
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
         },
         {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+        },
+        {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
@@ -165499,6 +165555,9 @@
         },
         {
           "commit": "130af4a29b277ea724aa182ea187993c98a4c387"
+        },
+        {
+          "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
@@ -174201,7 +174260,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "082dda3b700dc89553f5f5d84673aad85c9ef0c5",
+      "revision": "d5e251d0bbcea1bc1936ae793b1de77114f4adda",
       "currentBranch": "codex/agent-company-registry",
       "defaultBranch": "main",
       "visibility": "public",
@@ -207200,13 +207259,13 @@
       "type": "TestSuite",
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
-      "lines": 768,
-      "version": "4e9d16a8767826a4",
+      "lines": 772,
+      "version": "3249241cd2fd30f0",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "4e9d16a8767826a4"
+          "version": "3249241cd2fd30f0"
         }
       ]
     },
@@ -251857,6 +251916,78 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "commit": "167c8ee9dd887330f24f751d98d0a625d6a62a07"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
       }
     },
     {
@@ -349309,6 +349440,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "to": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
+      "provenance": {
+        "commit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d5f649584698fb45c41bcf89ef1794104f922ed9",
       "to": "Artifact:test/gates.js",
       "provenance": {
@@ -446017,6 +446172,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:16a129baf1822131633425fd13fa4e8026b77f35",
+      "provenance": {
+        "commit": "16a129baf1822131633425fd13fa4e8026b77f35"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:16a74ee507250e31771eb2c90bd26e382391f3c4",
       "provenance": {
         "commit": "16a74ee507250e31771eb2c90bd26e382391f3c4"
@@ -459508,6 +459671,14 @@
       "to": "Commit:d5daa2a206e4bd430f90a66a697bf18a700660c8",
       "provenance": {
         "commit": "d5daa2a206e4bd430f90a66a697bf18a700660c8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d5e251d0bbcea1bc1936ae793b1de77114f4adda",
+      "provenance": {
+        "commit": "d5e251d0bbcea1bc1936ae793b1de77114f4adda"
       }
     },
     {
@@ -483888,7 +484059,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 429
+        "line": 433
       }
     },
     {
@@ -483906,7 +484077,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 427
+        "line": 431
       }
     },
     {
@@ -483915,7 +484086,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 481
+        "line": 485
       }
     },
     {
@@ -483924,7 +484095,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 426
+        "line": 430
       }
     },
     {
@@ -483933,7 +484104,7 @@
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 476
+        "line": 480
       }
     },
     {
@@ -483960,7 +484131,7 @@
       "to": "Artifact:test/lib/phase2-item-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 425
+        "line": 429
       }
     },
     {
@@ -483987,7 +484158,7 @@
       "to": "Artifact:test/phase2-lots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 428
+        "line": 432
       }
     },
     {
@@ -551028,7 +551199,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 429
+        "line": 433
       }
     },
     {
@@ -551046,7 +551217,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 427
+        "line": 431
       }
     },
     {
@@ -551055,7 +551226,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 481
+        "line": 485
       }
     },
     {
@@ -551064,7 +551235,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 426
+        "line": 430
       }
     },
     {
