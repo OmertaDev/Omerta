@@ -23,3 +23,11 @@ Nodev24.19.0: node test/earningreceipts.js passes unit/adversarial/privacy/input
 Ready within this exact pure reconciliation scope, subject to fresh required hosted checks before merge. It does not authorize a payout, establish customer funding provenance, certify quality or promise real income. Live payments, real compute purchases and financial activation remain disabled.
 
 Reviewed working-tree SHA256 after ER1: source796891bdf47497355035397e1913ac33ce789a04129c2c46a8ca278ad7a43a3f; testef4f39d26f7bdd4855e66ec21b404f426dcc1677ae0d059a24078774c85570e5. Initial documentation check detected the newly added module/test counts; SPEC was remeasured and the required guard then passed without relaxation.
+
+## PR224 CI gate repair and retest
+
+Hosted run [38080208609](https://github.com/OmertaDev/Omerta/actions/runs/38080208609) failed the unchanged suite inventory guard at test/gates.js:3402: test/earningreceipts.js was imported by resourcework but was not explicitly invoked by an npm script. Both native PostgreSQL lanes passed; full pg-mem success is not claimed for that failed head.
+
+After integrating origin/main (including PR221) in merge commit 09a43211, package.json now invokes node test/earningreceipts.js directly in pretest. The redundant resourcework side-effect import was removed. No test guard, receipt source, economic authority or CI timeout was relaxed. The newly visible script increased the measured npm suite count from 278 to 279; MARKETING-POSTS.md was corrected after the unchanged documentation guard detected that difference.
+
+Local Node v24.19.0 retest: receipt unit/adversarial/privacy tests and 500 conservation pages (seed 0x5eed1234), resourcework, gates, chainparams and playthrough-truth passed. The suite inventory reports all 462 suites run or declared. Documentation and generated knowledge checks are rerun after the count correction and clean authored commit; fresh hosted checks remain required for the repaired exact head. Generated merge conflicts are resolved by rebuilding from that clean source, not by weakening compatibility guards or hand-editing graph content.
