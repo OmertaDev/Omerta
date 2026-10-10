@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { createResourceDeliveryTestRunner, readAuthoredText } from '../tools/resource-deliver.js';
 
@@ -13,7 +13,7 @@ const job = (state = 'open') => ({ id: 'job-1', assignedToYou: true, fulfillment
   expiresAt: new Date(epoch + 100000).toISOString(), callId: null,
   ...(['submitted', 'accepted'].includes(state) ? { report: { source: 'account_authored', text, costUsdMicros: null } } : {}) });
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
-function fixture({ initial = job(), claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response } = {}) {
+function fixture({ initial = job(), queue, claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response } = {}) {
   let now = 0; const calls = [];
   const run = createResourceDeliveryTestRunner({ baseUrl: 'https://omerta.test', jobId: 'job-1', file, token,
     fetchImpl: async (url, init) => {
@@ -22,7 +22,7 @@ function fixture({ initial = job(), claim = job('claimed'), submit = job('submit
       assert(init.signal);
       if (fail === calls.length) throw new Error(`${token} ${text}`);
       if (response) return response();
-      return json(calls.length === 1 ? { assignedJobs: [initial] } : { job: calls.length === 2 && initial.state === 'open' ? claim : submit }, httpStatus || 200);
+      return json(calls.length === 1 ? queue || { assignedJobs: [initial] } : { job: calls.length === 2 && initial.state === 'open' ? claim : submit }, httpStatus || 200);
     } }, { now: () => now, sleep: async ms => { now += ms; }, wallNow: () => epoch + now });
   return { run, calls };
 }
@@ -48,14 +48,37 @@ try {
     const redirect = createResourceDeliveryTestRunner({ baseUrl: `http://127.0.0.1:${server.address().port}`, jobId: 'job-1', file, token },
       { now: () => 0, sleep: async () => {}, wallNow: () => epoch });
     assert.equal((await redirect()).pending, false);
+    for (const status of [400, 200]) {
+      server.removeAllListeners('request');
+      server.on('request', (_req, res) => {
+        res.setHeader('content-type', 'application/json');
+        if (_req.url.endsWith('/submit')) { res.statusCode = status; res.end(status === 200 ? '{broken' : '{}'); }
+        else res.end(JSON.stringify({ assignedJobs: [job('claimed')], jobs: [job('claimed')] }));
+      });
+      const result = await new Promise((done, reject) => {
+        const child = spawn(process.execPath, ['tools/resource-deliver.js', '--base', `http://127.0.0.1:${server.address().port}`, '--job', 'job-1', '--file', file],
+          { env: { ...process.env, OMERTA_RESOURCE_TOKEN: token } });
+        let stdout = ''; let stderr = '';
+        child.stdout.on('data', chunk => { stdout += chunk; }); child.stderr.on('data', chunk => { stderr += chunk; });
+        child.on('error', reject); child.on('close', code => done({ code, stdout, stderr }));
+      });
+      assert.equal(result.code, 1);
+      const rejected = JSON.parse(result.stdout);
+      assert.equal(rejected.confirmed, false); assert.equal(rejected.pending, status === 200);
+      assert(!`${result.stdout}${result.stderr}`.includes(token)); assert(!`${result.stdout}${result.stderr}`.includes(text));
+    }
   } finally { await new Promise(done => server.close(done)); }
   assert.equal(await readAuthoredText(file), text);
   const good = fixture(); const receipt = await good.run();
-  assert.deepEqual(receipt, { jobId: 'job-1', state: 'submitted', stage: 'submit', status: 200, pending: false, retry: false });
+  assert.deepEqual(receipt, { jobId: 'job-1', state: 'submitted', stage: 'submit', status: 200, confirmed: true, pending: false, retry: false });
   assert.deepEqual(good.calls.map(call => call.now), [0, 3100, 6200]);
   assert.deepEqual(JSON.parse(good.calls[2].init.body), { text });
   await good.run(); assert.equal(good.calls.length, 3);
   for (const state of ['submitted', 'accepted']) {
+    const history = fixture({ queue: { assignedJobs: [], jobs: [job(state)] } });
+    assert.equal((await history.run()).confirmed, true); assert.equal(history.calls.length, 1);
+    const changedHistory = fixture({ queue: { assignedJobs: [], jobs: [{ ...job(state), report: { ...job(state).report, text: 'changed' } }] } });
+    assert.equal((await changedHistory.run()).confirmed, false); assert.equal(changedHistory.calls.length, 1);
     const replay = fixture({ initial: job(state) });
     assert.equal((await replay.run()).stage, 'reconcile'); assert.equal(replay.calls.length, 1);
     const conflict = fixture({ initial: { ...job(state), report: { ...job(state).report, text: 'changed' } } });
@@ -67,7 +90,9 @@ try {
     const refused = fixture({ initial }); await refused.run(); assert.equal(refused.calls.length, 1);
   }
   const expiresDuringPacing = fixture({ initial: { ...job(), expiresAt: new Date(epoch + 1000).toISOString() } });
-  await expiresDuringPacing.run(); assert.equal(expiresDuringPacing.calls.length, 1);
+  assert.equal((await expiresDuringPacing.run()).pending, false); assert.equal(expiresDuringPacing.calls.length, 1);
+  const expiresBeforeSubmit = fixture({ claim: { ...job('claimed'), expiresAt: new Date(epoch + 4000).toISOString() } });
+  assert.equal((await expiresBeforeSubmit.run()).pending, false); assert.equal(expiresBeforeSubmit.calls.length, 2);
   for (const fail of [1, 2, 3]) {
     const unknown = fixture({ fail }); const result = await unknown.run();
     assert.equal(result.pending, fail > 1); assert.equal(unknown.calls.length, fail);

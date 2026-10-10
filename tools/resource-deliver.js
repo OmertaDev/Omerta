@@ -41,11 +41,12 @@ function runner({ baseUrl, jobId, file, token = process.env.OMERTA_RESOURCE_TOKE
   if (jobId.includes(token)) throw new Error('Invalid job');
   let started = -Infinity; let used = false;
   return async () => {
-    let stage = 'file'; let status = null; let state = null; let mutation = false;
-    const receipt = pending => ({ jobId, state, stage, status, pending, retry: false });
+    let stage = 'file'; let status = null; let state = null; let mutationDispatched = false; let confirmed = false;
+    const receipt = pending => ({ jobId, state, stage, status, confirmed, pending, retry: false });
     if (used) return receipt(false);
     used = true;
     const request = async (path, body, beforeDispatch = () => {}) => {
+      mutationDispatched = false;
       const target = new URL(path, url.origin);
       if (target.origin !== url.origin) throw new Error('Invalid origin');
       while (timing.now() - started < 3100) await timing.sleep(3100 - (timing.now() - started));
@@ -53,6 +54,7 @@ function runner({ baseUrl, jobId, file, token = process.env.OMERTA_RESOURCE_TOKE
       started = timing.now();
       const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 30000);
       try {
+        mutationDispatched = body !== undefined;
         const response = await fetchImpl(target.href, { method: body === undefined ? 'GET' : 'POST', redirect: 'error',
           headers: { authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'content-type': 'application/json' }) },
           ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: controller.signal });
@@ -78,31 +80,33 @@ function runner({ baseUrl, jobId, file, token = process.env.OMERTA_RESOURCE_TOKE
       const text = await readAuthoredText(file);
       stage = 'read';
       const queue = await request('/v1/resources/jobs');
-      const jobs = queue?.assignedJobs ?? queue?.jobs;
-      if (!Array.isArray(jobs) || jobs.length > 100) throw new Error('Invalid jobs');
-      let job = jobs.find(item => item?.id === jobId);
+      const views = [queue?.jobs, queue?.assignedJobs].filter(value => value !== undefined);
+      if (!views.length || views.some(value => !Array.isArray(value) || value.length > 100)) throw new Error('Invalid jobs');
+      const matches = views.flat().filter(item => item?.id === jobId);
+      let job = matches[0];
+      if (matches.some(item => item.state !== job.state || item.fulfillment !== job.fulfillment || item.assignedToYou !== job.assignedToYou)) throw new Error('Inconsistent jobs');
       if (!valid(job)) return receipt(false);
       state = ['open', 'claimed', 'submitted', 'accepted', 'disputed', 'refunded', 'expired'].includes(job.state) ? job.state : null;
       if (['submitted', 'accepted'].includes(job.state)) {
         stage = 'reconcile';
-        if (job.report?.source === 'account_authored' && job.report.text === text && job.report.costUsdMicros === null && !job.callId) return receipt(false);
+        if (job.report?.source === 'account_authored' && job.report.text === text && job.report.costUsdMicros === null && !job.callId) { confirmed = true; return receipt(false); }
         stage = 'conflict'; return receipt(false);
       }
       if (!active(job)) { stage = 'refused'; return receipt(false); }
       if (job.state === 'open') {
-        stage = 'claim'; status = null; mutation = true;
+        stage = 'claim'; status = null;
         const claimed = await request(`/v1/resources/jobs/${jobId}/claim`, {}, () => { if (!active(job)) throw new Error('Expired job'); });
         job = claimed?.job;
         if (!active(job) || job.state !== 'claimed') throw new Error('Invalid claim');
         state = 'claimed';
       }
-      stage = 'submit'; status = null; mutation = true;
+      stage = 'submit'; status = null;
       const result = await request(`/v1/resources/jobs/${jobId}/submit`, { text }, () => { if (!active(job)) throw new Error('Expired job'); });
       job = result?.job;
       if (!valid(job) || !['submitted', 'accepted'].includes(job.state) || job.report?.source !== 'account_authored'
           || job.report.text !== text || job.report.costUsdMicros !== null || job.callId) throw new Error('Invalid submission');
-      state = job.state; return receipt(false);
-    } catch { return receipt(mutation && (status === null || status >= 500 || status >= 200 && status < 300)); }
+      state = job.state; confirmed = true; return receipt(false);
+    } catch { return receipt(mutationDispatched && (status === null || status >= 500 || status >= 200 && status < 300)); }
   };
 }
 
@@ -121,6 +125,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     }
     const result = await runAuthoredDelivery(options);
     process.stdout.write(`${JSON.stringify(result)}\n`);
-    if (!['submit', 'reconcile'].includes(result.stage) || result.pending) process.exitCode = 1;
+    if (!result.confirmed || result.pending) process.exitCode = 1;
   } catch { process.stderr.write('Authored delivery unavailable\n'); process.exitCode = 1; }
 }
