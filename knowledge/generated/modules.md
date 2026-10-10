@@ -117,6 +117,7 @@
 | [src/drop.js](../../src/drop.js) | 349 | engagement-growth | 3 / 2 | 9 | 5 | 0 |
 | [src/duels.js](../../src/duels.js) | 213 | social-combat | 2 / 2 | 5 | 8 | 0 |
 | [src/dynasty.js](../../src/dynasty.js) | 249 | chain-economy | 3 / 4 | 7 | 10 | 1 |
+| [src/earningreceipts.js](../../src/earningreceipts.js) | 67 | platform-core | 0 / 1 | 0 | 0 | 1 |
 | [src/economy.js](../../src/economy.js) | 746 | economy-ledger | 6 / 19 | 26 | 18 | 16 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
 | [src/engagement.js](../../src/engagement.js) | 374 | engagement-growth | 1 / 5 | 1 | 8 | 2 |
