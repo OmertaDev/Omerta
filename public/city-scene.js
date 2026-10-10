@@ -945,6 +945,11 @@
       const inspecting = Boolean((!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen()) && document.body.classList.contains('city-player-view'));
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
+      if (!phone || !inspecting) {
+        worldHud.style.removeProperty('--city-hud-height');
+        worldHud.removeAttribute('tabindex');
+        worldHud.setAttribute('aria-label', 'Walking resources and readiness');
+      }
       if (!phone && !document.body.classList.contains('city-player-view')) {
         actorDock.style.removeProperty('--city-actor-height');
         gameDock.style.removeProperty('--city-training-height');
@@ -962,6 +967,14 @@
         if (!bounds.height || bounds.bottom <= 0 || bounds.top >= window.innerHeight) continue;
         if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
         else { const pinned = parseFloat(style.top); top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom); }
+      }
+      if (phone && inspecting) {
+        // Reserve the real map and dock floors before measuring the HUD. Long
+        // warnings and confirmed feedback remain available by keyboard scroll.
+        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - 96 - 64) + 'px');
+        const overflow = worldHud.scrollHeight > worldHud.clientHeight;
+        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
+        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
       const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
         ? nextMove.getBoundingClientRect().height : 0;

@@ -147,7 +147,9 @@ try {
         header: rect(document.querySelector('#top')), tools: rect(tools), toolsHit: hit(tools), guidance: rect(guidance),
         close: close && !close.closest('[hidden]') ? { bounds: rect(close), hit: hit(close) } : null, dock: dock && !dock.hidden ? rect(dock) : null, width: innerWidth, height: innerHeight,
         overflow: document.documentElement.scrollWidth, tint: sprite.tintTopLeft, bottom,
-        hud: rect(document.querySelector('.omerta-city__world-hud')), readiness: document.querySelector('.omerta-city__readiness').textContent };
+        hud: rect(document.querySelector('.omerta-city__world-hud')), readiness: document.querySelector('.omerta-city__readiness').textContent,
+        resources: rect(document.querySelector('.omerta-city__resources--walking')), warning: rect(document.querySelector('.omerta-city__readiness')),
+        hudScroll: document.querySelector('.omerta-city__world-hud').scrollTop };
     });
   };
   const assertFrame = async page => {
@@ -412,10 +414,58 @@ try {
   const decorations = await state(page);
   assert(decorations.ambient.every(point => !decorations.obstacles.some(box => point.x > box.x && point.x < box.x + box.width && point.y > box.y && point.y < box.y + box.height)), 'Decorative routines remain outside solid buildings.');
   assert.equal(await page.evaluate(() => window.__worldHandles.length), handles);
+  // Exercise the actual wider declared fallback font and CI's header height,
+  // with real confirmed gains and the full 56px outcome toast still present.
+  const shortFont = await page.addStyleTag({ content: '@media (max-width: 320px) { :root { --mono: "Courier New", monospace; } body.city-player-view #top { height: 177.75px; box-sizing: border-box; } }' });
   for (const viewport of [{ width: 320, height: 568 }, { width: 1366, height: 600 }]) {
     await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await assertFrame(page);
     await panel(page, 'map'); await assertFrame(page);
     if (viewport.width === 320) {
+      const hud = page.locator('.omerta-city__world-hud'), gainCopy = await page.locator('.city-world__gains').textContent();
+      assert.match(gainCopy, /Level 2 reached/);
+      const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
+      assert.equal(frameBeforeReading.header.height, 177.75);
+      assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
+      assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
+        'Resources and the complete warning are initially visible in the supported CI geometry.');
+      assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
+        'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
+      await hud.focus(); await page.keyboard.press('End');
+      const feedbackVisible = () => {
+        const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
+        return gain.top >= hud.top && gain.bottom <= hud.bottom;
+      };
+      await page.waitForFunction(feedbackVisible);
+      assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
+      assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
+      const reading = await hud.evaluate(node => ({ outer: scrollY, inner: node.scrollTop, focused: document.activeElement === node }));
+      await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+      const readingFrames = await page.evaluate(() => new Promise(resolve => { const values = []; const sample = () => {
+        const hud = document.querySelector('.omerta-city__world-hud'); values.push({ outer: scrollY, inner: hud.scrollTop, focused: document.activeElement === hud });
+        if (values.length === 30) resolve(values); else requestAnimationFrame(sample);
+      }; requestAnimationFrame(sample); }));
+      assert(readingFrames.every(frame => frame.outer === reading.outer && frame.inner === reading.inner && frame.focused),
+        'Passive fitting preserves both reading positions and focus without ResizeObserver.');
+      await page.locator('#toast.show').focus();
+      await page.locator('[data-city-world-close]').click();
+      assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
+      await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
+      await panel(page, 'map'); const pressure = await assertFrame(page);
+      assert.equal(pressure.header.height, 215);
+      assert(await hud.evaluate(node => Math.abs(node.getBoundingClientRect().height - 51) < 1), 'The cap is derived from real chrome, never a second minimum-height floor.');
+      await hud.focus(); await page.keyboard.press('End'); await page.waitForFunction(feedbackVisible);
+      await page.keyboard.press('ArrowUp');
+      await page.waitForFunction(() => {
+        const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
+        return warning.top >= hud.top && warning.bottom <= hud.bottom;
+      });
+      assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness, 'The complete warning remains keyboard-readable when all rows cannot fit simultaneously.');
+      assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
+      assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
+      assert.deepEqual((await state(page)).position, walkingPose);
+      await page.locator('#toast.show').focus(); await page.locator('[data-city-world-close]').click();
+      await shortFont.evaluate(node => { node.textContent = node.textContent.replace('215px', '177.75px'); });
+      await panel(page, 'map'); await assertFrame(page);
       const toastBox = await page.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height,
         scroll: node.scrollHeight, client: node.clientHeight, tabIndex: node.tabIndex, live: node.getAttribute('aria-live') }));
       assert(toastBox.height <= 56 && toastBox.scroll > toastBox.client && toastBox.tabIndex === 0 && toastBox.live,
@@ -432,8 +482,10 @@ try {
       await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
     }
     await page.locator('[data-city-world-close]').click();
+    assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
     assert.deepEqual((await state(page)).position, walkingPose);
   }
+  await shortFont.evaluate(node => node.remove());
   const still = await newPage({ width: 375, height: 812 }, { reducedMotion: 'reduce' });
   const frozen = (await state(still.page)).ambient; await frames(still.page); assert.deepEqual((await state(still.page)).ambient, frozen);
   await still.context.close(); await page.bringToFront();

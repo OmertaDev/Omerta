@@ -71,7 +71,8 @@
   overflow-wrap: anywhere;
 }
 .omerta-city__hud { background: #17171b; border-bottom: 1px solid #34343a; }
-.omerta-city__world-hud { background: #17171b; border-bottom: 1px solid #625644; }
+.omerta-city__world-hud { background: #17171b; border-bottom: 1px solid #625644; max-height: var(--city-hud-height, none); overflow-y: auto; overscroll-behavior: contain; }
+.omerta-city__world-hud:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
 .omerta-city__resources {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
