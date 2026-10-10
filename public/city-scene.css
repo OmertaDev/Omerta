@@ -181,12 +181,12 @@
   background: #1b2429;
 }
 body.city-player-view .omerta-city__viewport { max-width: 960px; margin-inline: auto; }
-body.city-player-view .omerta-city:not(.omerta-city--unavailable) .omerta-city__viewport.is-inspecting .omerta-city__map-layer { min-height: 96px; }
-body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+body.city-player-view .omerta-city:not(.omerta-city--unavailable) .omerta-city__viewport .omerta-city__map-layer { min-height: 96px; }
+body.city-player-view .omerta-city__viewport .omerta-city__canvas {
   height: var(--city-map-height); min-height: 96px; aspect-ratio: auto;
 }
 @media (min-width: 681px) {
-  body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+  body.city-player-view .omerta-city__viewport .omerta-city__canvas {
     width: min(100%, max(680px, calc(var(--city-map-height) * 1.5))); margin-inline: auto;
   }
 }
@@ -244,6 +244,48 @@ body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas 
   min-height: 400px;
   max-height: 620px;
   overflow: hidden;
+}
+.omerta-city__training {
+  position: relative;
+  max-height: var(--city-training-height, 240px);
+  overflow: auto;
+  background: #202019;
+  border-top: 1px solid #625644;
+  color: var(--city-paper);
+  scrollbar-gutter: stable;
+}
+.omerta-city__training-controls { position: sticky; top: 2px; height: 0; z-index: 2; }
+.omerta-city__training-controls button {
+  position: absolute; right: 2px; top: 0;
+  min-width: 44px; min-height: 44px; margin: 0;
+  border: 1px solid #78603c; border-radius: 3px;
+  background: #24221d; color: var(--city-gold); font-size: 22px; cursor: pointer;
+}
+.omerta-city__training-body { padding: 2px 50px 4px 8px; }
+.omerta-city__training-body .operation-terms { font: 10px/1.4 var(--mono, monospace); margin-bottom: 2px; }
+.omerta-city__world-hud > .city-world__toolbar:not(:has(.city-world__gains:not(:empty), .city-world__dialogue:not([hidden]))) { display: none; }
+.omerta-city__training-body .operation-choice-terms { font: 11px/1.35 var(--mono, monospace); }
+.omerta-city__training-body .operation-choice-terms summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.omerta-city__training-body select { min-height: 44px; width: 100%; margin: 2px 0; font-size: 12px; }
+.omerta-city__training-stats { display: flex; flex-wrap: wrap; gap: 3px; }
+.omerta-city__training-stats button {
+  flex: 1 1 60px; min-width: 60px; min-height: 44px; margin: 0; padding: 4px;
+  font: 11px/1.3 var(--mono, monospace); overflow-wrap: anywhere;
+}
+.omerta-city__training-full { min-height: 44px; margin: 4px 0 0; font-size: 11px; }
+.omerta-city__training-stats small { display: block; font-size: 9px; line-height: 1.3; }
+.omerta-city__training [data-city-training-result], .omerta-city__training [data-city-fixer-result] { margin-top: 5px; }
+.omerta-city__training .operation-receipt { margin: 0; padding: 7px; }
+.omerta-city__training .operation-receipt__summary, .omerta-city__training .operation-receipt__delta { font-size: 11px; }
+.omerta-city__training button:focus-visible, .omerta-city__training [tabindex]:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
+@media (max-width: 680px) {
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__resources--walking .omerta-city__resource { padding: 2px; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__resources--walking dt { margin-bottom: 0; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__resources--walking dd { margin: 0; font-size: 11px; line-height: 1.2; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__resource:not([data-city-resource="cash"]) dd { white-space: nowrap; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__resource-meter { display: none; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__readiness { display: block; padding: 3px 8px; line-height: 1.3; }
+  .omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__readiness strong { margin-right: 6px; }
 }
 .omerta-city__canvas canvas {
   display: block;

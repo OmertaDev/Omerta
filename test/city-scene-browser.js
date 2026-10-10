@@ -10,6 +10,43 @@ import { buildServer } from '../src/server.js';
 // Cached options must never update or destroy a different current identity while its read is pending.
 const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
 const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
+// The view predicate is checked only before an authenticated queued call dispatches.
+// Closing a dock after dispatch must retain the actual reply; token changes retain
+// the existing privacy rule even after a request has reached the server.
+const apiSource = clientSource.slice(clientSource.indexOf('  let _authQueue = Promise.resolve();'), clientSource.indexOf('  async function apiNow('));
+for (const phase of ['queued', 'dispatched', 'revoked', 'default']) {
+  let release, entered;
+  const held = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { entered = resolve; });
+  const calls = [], view = { open: true };
+  const scope = { token: 'first', projections: { invalidate() {} }, apiNow: async (method, path) => {
+    calls.push({ method, path }); entered();
+    if (path === '/held' || phase !== 'default') await held;
+    return { code: 200, body: { ok: true } };
+  } };
+  vm.runInNewContext(apiSource + '\nthis.call = api;', scope);
+  let first;
+  if (phase === 'queued') { first = scope.call('GET', '/held'); await started; }
+  const pending = scope.call('POST', '/v1/train/muscle', {}, phase === 'default' ? {} : { beforeDispatch: () => view.open });
+  if (phase !== 'queued' && phase !== 'default') await started;
+  view.open = false;
+  if (phase === 'revoked') scope.token = 'replacement';
+  release(); if (first) await first;
+  const reply = await pending;
+  assert.equal(reply.code, ['queued', 'revoked'].includes(phase) ? 499 : 200, phase + ' preserves dispatch/privacy semantics');
+  assert.equal(calls.filter(call => call.method === 'POST').length, phase === 'queued' ? 0 : 1);
+}
+const trainingRenderSource = clientSource.slice(clientSource.indexOf('  function renderCityTraining('), clientSource.indexOf('  function coreCrimeMarkup('));
+for (const current of [true, false]) {
+  const host = { dataset: {}, isConnected: true, innerHTML: '', contains: () => false,
+    querySelectorAll: () => [], querySelector: selector => selector.includes('training-full') ? {} : null };
+  const scope = { _cityTrainingReceipt: { key: 'same:1:docks', stamp: { epoch: 1, token: 'old' }, receipt: { summary: 'private receipt' } },
+    projections: { current: () => current }, coreTrainingMarkup: () => ({ terms: 'public terms', train: 'public stats', gymBlock: '' }),
+    operationReceiptMarkup: receipt => receipt.summary, document: { activeElement: null }, esc: String };
+  vm.runInNewContext(trainingRenderSource + '\nthis.render = renderCityTraining;', scope);
+  scope.render(host, 'same:1:docks', 1);
+  assert.equal(host.innerHTML.includes('private receipt'), current, 'The same character identity cannot inherit a receipt from another session.');
+}
 for (const current of [{ id: 'current', generation: 2, loc: 'docks' }, { id: 'replacement', generation: 1, loc: 'docks' }]) {
   const cached = { character: { id: 'current', generation: 1 }, district: { id: 'docks' } };
   let reused = 0;
@@ -233,6 +270,7 @@ try {
     await page.locator('#btn-refresh').click();
     const me = await (await reply).json();
     await assertHud(page, me.player?.character || me.player);
+    return me.player?.character || me.player;
   };
   const questAction = async (page, button) => {
     const reply = page.waitForResponse(response => response.request().method() === 'POST'
@@ -322,7 +360,7 @@ try {
       const player = { x: rect.left + (scene.player.x - scene.camera.x) * scene.camera.zoom * rect.width / scene.camera.width,
         y: rect.top + (scene.player.y - scene.camera.y) * scene.camera.zoom * rect.height / scene.camera.height };
       const controls = [...hud.querySelectorAll('[data-city-resource]'), hud.querySelector('.omerta-city__readiness')];
-      const game = window.__cityGames.find(game => game.canvas === canvas), live = game.scene.getScenes(true)[0];
+      const game = window.__cityGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length), live = game.scene.getScenes(true)[0];
       const sprites = [live.children.list.find(node => node.texture?.key === 'city-player' || node.texture?.key?.startsWith('city-art-player-')), live.data.get('playerName')];
       const avatar = sprites.map(node => {
         const bounds = node.getBounds(), camera = live.cameras.main;
@@ -399,6 +437,54 @@ try {
     await toggle.close();
   }
 
+  const openCoreTraining = async page => {
+    await page.locator('[data-destination="training"]').click();
+    await page.locator('[data-city-action="streets"]').click();
+    await page.locator('.omerta-city__training').waitFor({ state: 'visible' });
+    await waitForFrames(page, 2);
+  };
+  const openFixer = async page => {
+    await page.locator('[data-destination="fixer"]').click();
+    await page.locator('[data-city-open]').click();
+    await page.locator('[data-city-gameplay="fixer"]').waitFor({ state: 'visible' });
+    await waitForFrames(page, 2);
+  };
+  const assertCoreStats = async (page, character) => {
+    for (const stat of ['muscle', 'cunning', 'speed']) assert.equal(
+      Number((await page.locator(`[data-city-train="${stat}"] b`).textContent()).replace(/,/g, '')),
+      Number(character.stats[stat]), 'Core training mirrors the issued ' + stat + ' stat.');
+  };
+  const assertCoreTrainingLayout = async page => {
+    await assertWorldHud(page);
+    const layout = await page.locator('.omerta-city__training').evaluate(panel => ({
+      panel: panel.getBoundingClientRect().toJSON(), viewport: innerHeight,
+      controls: [...panel.querySelectorAll('[data-city-train], [data-city-crime]'), panel.querySelector('[data-city-training-close]')].map(button => {
+        const bounds = button.getBoundingClientRect();
+        return { rect: bounds.toJSON(), hits: [bounds.top + 3, bounds.bottom - 3].map(y => {
+          const hit = document.elementFromPoint(bounds.left + bounds.width / 2, y); return hit === button || button.contains(hit);
+        }) };
+      })
+    }));
+    assert(layout.panel.top >= 0 && layout.panel.bottom <= layout.viewport + 1, 'Core training remains in the visible frame: ' + JSON.stringify(layout));
+    for (const control of layout.controls) assert(control.rect.height >= 44 && control.rect.width >= 44 && control.hits.every(Boolean),
+      'Training and close controls stay touchable above app chrome: ' + JSON.stringify(layout));
+    const avatar = await page.evaluate(() => {
+      const node = document.querySelector('.omerta-city__canvas canvas'), canvas = node.getBoundingClientRect();
+      const game = window.__cityGames.findLast(game => game.canvas === node && game.scene?.getScenes(true).length), scene = game.scene.getScenes(true)[0], camera = scene.cameras.main;
+      const sprite = scene.children.list.find(node => node.texture?.key === 'city-player' || node.texture?.key?.startsWith('city-art-player-'));
+      const rectangles = { sprite: sprite.getBounds(), name: scene.data.get('playerName').getBounds() };
+      return Object.fromEntries(Object.entries(rectangles).map(([name, bounds]) => [name, {
+        top: (bounds.y - camera.worldView.y) * camera.zoom * canvas.height / camera.height,
+        bottom: (bounds.y + bounds.height - camera.worldView.y) * camera.zoom * canvas.height / camera.height,
+        left: (bounds.x - camera.worldView.x) * camera.zoom * canvas.width / camera.width,
+        right: (bounds.x + bounds.width - camera.worldView.x) * camera.zoom * canvas.width / camera.width,
+        width: canvas.width, height: canvas.height
+      }]));
+    });
+    for (const bounds of Object.values(avatar)) assert(bounds.top >= -1 && bounds.bottom <= bounds.height + 1 && bounds.left >= -1 && bounds.right <= bounds.width + 1,
+      'The complete avatar and name remain inside the smallest active map: ' + JSON.stringify(avatar));
+  };
+
   // A first phone visit retains its help, then explicitly enters the existing local scene.
   const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   // The scene's live layout must remain correct without optional resize observation.
@@ -433,18 +519,21 @@ try {
   assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Current-health reuse keeps the same scene handle.');
   assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
   if (shots) await entry.screenshot({ path: path.join(shots, 'city-world-hud-375.png') });
-  for (const [width, height] of [[320, 568], [360, 780]]) {
+  for (const [width, height] of [[375, 812], [320, 568], [360, 780]]) {
     const beforeResize = (await state(entry)).position;
     // Keep the observed toast overlap deterministic instead of racing its dismiss timer.
     if (width === 320) await entry.evaluate(() => {
       const toast = document.getElementById('toast');
-      clearTimeout(toast._h); toast.textContent = 'Updated'; toast.style.transition = 'none';
+      clearTimeout(toast._h); toast.textContent = 'Updated. Your current street view is ready. Check your next move before spending resources.'; toast.style.transition = 'none';
+      toast.inert = false;
       toast.classList.add('show');
       // Reserve the same tall sticky-header space on platforms with different fonts.
       const top = document.getElementById('top');
       top.style.height = top.style.minHeight = top.style.maxHeight = '215px'; top.style.overflow = 'hidden';
     });
     await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
+    if (width === 320) assert.deepEqual(await entry.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height, text: node.textContent, inert: node.inert })),
+      { height: 56, text: 'Updated. Your current street view is ready. Check your next move before spending resources.', inert: false }, 'The short-frame fixture reaches the actual bounded toast and retains all its text.');
     await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
     if (width === 320) {
@@ -466,11 +555,76 @@ try {
       await assertHud(entry, warningPlayer?.character || warningPlayer);
       await waitForFrames(entry, 3);
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
-      assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver.');
+      assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
+        initial, camera: window.__cityHandles.at(-1).handle.getState().camera, classes: document.querySelector('.omerta-city').className,
+        hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(), hudText: document.querySelector('.omerta-city__world-hud').textContent,
+        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
+      }), initialHeight)));
       await assertWorldHud(entry);
       await assertPosition(entry, beforeWarning, 'Live warning wrapping retains the player pose');
       assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'A HUD resize keeps the existing Phaser game.');
     }
+    const corePose = (await state(entry)).position, normalCamera = (await state(entry)).camera, beforeCore = entryRequests.length;
+    await openCoreTraining(entry); await assertCoreTrainingLayout(entry);
+    const coreProjection = (await app.inject({ method: 'GET', url: '/v1/projections/player', headers })).json().player;
+    await assertCoreStats(entry, coreProjection.character || coreProjection);
+    assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Opening core training keeps the same map handle.');
+    await assertPosition(entry, corePose, 'Opening core training keeps the exploration pose');
+    assert.deepEqual(gameplayRequests(entryRequests.slice(beforeCore)), [], 'Opening core training issues no gameplay action.');
+    if (shots) await entry.screenshot({ path: path.join(shots, 'city-core-training-' + width + '.png') });
+    if (width === 320) {
+      const panel = entry.locator('.omerta-city__training'), bounds = await panel.boundingBox();
+      const beforeScroll = await panel.evaluate(node => node.scrollTop);
+      const touch = await entry.context().newCDPSession(entry), x = bounds.x + 5, y = bounds.y + bounds.height - 8;
+      await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+      for (const distance of [12, 24, 40]) {
+        await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - distance }] });
+        await waitForFrames(entry, 1);
+      }
+      await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await entry.waitForFunction(before => document.querySelector('.omerta-city__training').scrollTop > before, beforeScroll);
+      assert.equal((await state(entry)).trainingOpen, true, 'Touch scrolling outside the canvas leaves the dock open.');
+      await touch.detach();
+    }
+    await entry.keyboard.press('Escape'); await assertEntered(entry); await assertWorldHud(entry);
+    await waitForFrames(entry, 2);
+    const restoredCamera = (await state(entry)).camera;
+    for (const field of ['x', 'y', 'width', 'height', 'zoom']) assert(Math.abs(restoredCamera[field] - normalCamera[field]) <= 1, 'Closing restores original camera ' + field);
+    assert.equal((await state(entry)).trainingOpen, false, 'Escape closes the dock and restores the canvas.');
+    await assertPosition(entry, corePose, 'Closing core training keeps the exploration pose');
+    await openFixer(entry); await assertCoreTrainingLayout(entry);
+    await assertPosition(entry, corePose, 'Opening Fixer jobs keeps the same phone pose');
+    assert.equal(await entry.locator('[data-city-crime]').count(), 3);
+    assert.match(await entry.locator('#city-fixer-terms').textContent(), /Pay is not guaranteed/);
+    assert.deepEqual(gameplayRequests(entryRequests.slice(beforeCore)), [], 'Inspecting the Gym and Fixer submits no gameplay action.');
+    if (shots) await entry.screenshot({ path: path.join(shots, 'city-fixer-' + width + '.png') });
+    await entry.keyboard.press('Escape');
+    await openCoreTraining(entry);
+    const activeFrame = await state(entry), activeBox = await entry.locator('.omerta-city__canvas canvas').boundingBox();
+    const activeGoal = { x: activeFrame.player.x - 16, y: activeFrame.player.y + 16 };
+    await entry.evaluate(() => {
+      window.__coreTapEvents = { touch: 0, mouse: 0 };
+      const canvas = document.querySelector('.omerta-city__canvas canvas');
+      window.__coreTouchListener = () => window.__coreTapEvents.touch++;
+      window.__coreMouseListener = () => window.__coreTapEvents.mouse++;
+      canvas.addEventListener('touchstart', window.__coreTouchListener);
+      canvas.addEventListener('mousedown', window.__coreMouseListener);
+    });
+    await entry.locator('.omerta-city__canvas canvas').tap({ position: {
+      x: (activeGoal.x - activeFrame.camera.x) * activeFrame.camera.zoom * activeBox.width / activeFrame.camera.width,
+      y: (activeGoal.y - activeFrame.camera.y) * activeFrame.camera.zoom * activeBox.height / activeFrame.camera.height,
+    } });
+    await waitForInput(entry, goal => {
+      const state = window.__cityHandles.at(-1).handle.getState();
+      return !state.trainingOpen && state.pathLength === 0 && Math.hypot(state.player.x - goal.x, state.player.y - goal.y) <= 16;
+    }, activeGoal);
+    assert.deepEqual(await entry.evaluate(() => window.__coreTapEvents), { touch: 1, mouse: 0 }, 'A real touch has no duplicate compatibility mouse intent across dock resize.');
+    await entry.evaluate(() => {
+      const canvas = document.querySelector('.omerta-city__canvas canvas');
+      canvas.removeEventListener('touchstart', window.__coreTouchListener);
+      canvas.removeEventListener('mousedown', window.__coreMouseListener);
+    });
+    await assertWorldHud(entry);
     const walking = await state(entry), box = await entry.locator('.omerta-city__canvas canvas').boundingBox();
     const goal = { x: walking.player.x + 16, y: walking.player.y + 16 };
     await entry.locator('.omerta-city__canvas canvas').tap({ position: {
@@ -503,9 +657,14 @@ try {
     }
   }
   const phonePose = (await state(entry)).position;
+  const phoneHeightOverride = await entry.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height'));
   await entry.setViewportSize({ width: 1440, height: 1000 }); await waitForFrames(entry, 3);
   await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
-  assert.equal(await entry.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), '', 'Leaving phone mode removes its height override without ResizeObserver.');
+  const desktopFit = await entry.locator('.omerta-city__canvas').evaluate(node => ({ override: node.style.getPropertyValue('--city-map-height'),
+    height: node.getBoundingClientRect().height, width: node.getBoundingClientRect().width, engineHeight: node.querySelector('canvas').height, engineWidth: node.querySelector('canvas').width }));
+  assert.notEqual(desktopFit.override, phoneHeightOverride, 'Leaving phone mode recomputes the measured Player frame without ResizeObserver.');
+  assert(Math.abs(desktopFit.height - desktopFit.engineHeight) <= 1 && Math.abs(desktopFit.width - desktopFit.engineWidth) <= 1,
+    'The recomputed desktop CSS/Phaser frame agrees: ' + JSON.stringify(desktopFit));
   await assertPosition(entry, phonePose, 'Leaving phone mode retains the player pose');
   await app.pool.query('UPDATE characters SET cash=500,health=100,energy=50,nerve=10 WHERE id=$1', [characterId]);
   await refreshHudFromClient(entry);
@@ -692,6 +851,8 @@ try {
     const resourcesBeforeJob = (await state(page)).resources;
     await page.locator(`.omerta-city__destination[data-destination="${destination}"]`).click();
     await page.locator('[data-city-open]').click();
+    if (destination === 'fixer') await page.locator('[data-city-fixer-full]').click();
+    if (destination === 'training') { await page.locator('[data-city-training-close]').click(); await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="life"]').click(); }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'attached' });
     assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), `${destination} navigation destroys the old scene.`);
     assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Tab switch removes the previous canvas.');
@@ -719,19 +880,133 @@ try {
     }
   }
 
-  // The training-room doorway opens the actual gym, then submits its existing authoritative action.
-  await app.pool.query('UPDATE characters SET energy=65,train_at=NULL WHERE id=$1', [characterId]);
+  // Fixer jobs keep the neighborhood and use the existing core-crime contract.
+  const crimeRulesReply = await app.inject({ method: 'GET', url: '/v1/rules' });
+  assert.equal(crimeRulesReply.statusCode, 200);
+  const crimeRules = crimeRulesReply.json(), coreCrime = crimeRules.crimes.filter(crime => crime.lvl === 1).sort((a, b) => a.nerve - b.nerve)[0];
+  assert(coreCrime);
+  await app.pool.query('UPDATE characters SET nerve=12,heat=0,respect=0,jail_until=NULL,last_accrued_at=$2 WHERE id=$1', [characterId, new Date(Date.now() + 600000)]);
   await refreshHudFromClient(page);
+  const fixerPose = (await state(page)).position, fixerHandles = await page.evaluate(() => window.__cityHandles.length), fixerReads = requests.length;
+  await openFixer(page); await assertCoreTrainingLayout(page);
+  await page.locator('[data-city-crime-select]').selectOption(coreCrime.id);
+  assert.deepEqual(gameplayRequests(requests.slice(fixerReads)), [], 'Choosing a job and inspecting its terms never submits it.');
+  assert.equal(await page.evaluate(() => window.__cityHandles.length), fixerHandles);
+  let dispatchedBefore, dispatchedAfter;
+  await page.route('**/v1/crimes/' + coreCrime.id, async route => {
+    // Observe the real mutation while its reply holds the authenticated queue.
+    // This removes elapsed-time regeneration from the exact action-cost proof.
+    await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [characterId, new Date(Date.now() + 600000)]);
+    dispatchedBefore = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
+    const reply = await route.fetch();
+    dispatchedAfter = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
+    await route.fulfill({ response: reply });
+  });
+  for (const approach of ['quiet', 'standard', 'loud']) {
+    const fundedNerve = coreCrime.nerve * 2;
+    await app.pool.query('UPDATE characters SET nerve=$2,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
+    const fundedRead = page.waitForResponse(async reply => {
+      if (new URL(reply.url()).pathname !== '/v1/projections/player' || reply.status() !== 200) return false;
+      const body = await reply.json(), character = body.player?.character || body.player;
+      return character?.nerve === fundedNerve;
+    });
+    await page.locator('#btn-refresh').click();
+    const fundedBody = (await (await fundedRead).json()).player;
+    await assertHud(page, fundedBody?.character || fundedBody);
+    const response = page.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/crimes/' + coreCrime.id);
+    const random = Math.random;
+    let reply;
+    try { Math.random = () => 0; await page.locator(`[data-city-approach="${approach}"]`).click(); reply = await response; }
+    finally { Math.random = random; }
+    assert.equal(reply.status(), 200);
+    assert.deepEqual(reply.request().postDataJSON(), { approach });
+    const outcome = await reply.json();
+    assert.equal(outcome.success, true); assert.equal(outcome.approach, approach);
+    const prior = dispatchedBefore, after = dispatchedAfter;
+    assert.equal(Number(after.nerve), Number(prior.nerve) - coreCrime.nerve, 'The explicit job spends its server nerve cost once.');
+    assert.equal(Number(after.cash), Number(prior.cash) + outcome.take, 'Cash reflects the real outcome rather than a promised baseline.');
+    const terms = crimeRules.crimeApproaches.find(entry => entry.id === approach);
+    assert.equal(Number(after.heat), Math.min(100, Number(prior.heat) + Number(terms.heat || 0)), 'Heat follows the chosen authoritative approach.');
+    await page.locator('[data-city-fixer-result] .operation-receipt--success').waitFor({ state: 'attached' });
+    await page.waitForFunction(() => document.querySelector('.omerta-city__training-body').dataset.fixerPending !== '1');
+    const replay = await app.inject({ method: 'POST', url: '/v1/crimes/' + coreCrime.id,
+      headers: { ...headers, 'Idempotency-Key': reply.request().headers()['idempotency-key'] }, payload: { approach } });
+    assert.equal(replay.statusCode, 200); assert.deepEqual(replay.json(), outcome);
+    assert.deepEqual((await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0], after);
+    assert.equal(await page.locator('[data-city-approach="standard"]').isDisabled(), false, 'Core jobs introduce no cooldown when the next nerve cost is funded.');
+    await assertPosition(page, fixerPose, 'A committed job keeps the same City pose');
+  }
+  await page.unroute('**/v1/crimes/' + coreCrime.id);
+  for (const gate of ['nerve', 'level', 'jail']) {
+    if (gate === 'nerve') await app.pool.query('UPDATE characters SET nerve=0 WHERE id=$1', [characterId]);
+    if (gate === 'jail') {
+      await app.pool.query('UPDATE characters SET nerve=12,jail_until=$2 WHERE id=$1', [characterId, new Date(Date.now() + 600000)]);
+      const jailedRead = page.waitForResponse(async reply => {
+        if (new URL(reply.url()).pathname !== '/v1/projections/player' || reply.status() !== 200) return false;
+        const body = await reply.json(), character = body.player?.character || body.player;
+        return character?.jailSeconds > 0;
+      });
+      await page.locator('#btn-refresh').click(); await jailedRead;
+      await page.waitForSelector('#tab-pen.on');
+      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'A fresh sentence retains the existing Pen landing.');
+      const admissionDialog = page.locator('.modal-bg[data-managed-dialog]');
+      if (await admissionDialog.count()) {
+        assert.equal((await admissionDialog.last().locator('h2').textContent()).trim(), 'YOUR FIRST STRETCH');
+        await page.keyboard.press('Escape');
+      }
+      await returnToCity(page); await openFixer(page);
+    }
+    if (gate === 'level') {
+      await app.pool.query('UPDATE characters SET nerve=12 WHERE id=$1', [characterId]);
+      const level = (await state(page)).resources.level, locked = crimeRules.crimes.find(crime => crime.lvl > level);
+      assert(locked); await page.locator('[data-city-crime-select]').selectOption(locked.id);
+    }
+    if (gate !== 'jail') await refreshHudFromClient(page);
+    assert.equal(await page.locator('[data-city-crime]:disabled').count(), 3, gate + ' blocks every approach using the current player projection.');
+  }
+  await app.pool.query('UPDATE characters SET nerve=12,jail_until=NULL WHERE id=$1', [characterId]);
+  await refreshHudFromClient(page); await page.keyboard.press('Escape');
+
+  // Core training stays in the neighborhood; the full Gym/Regimen remains a second door.
+  await app.pool.query('UPDATE characters SET energy=45,train_at=NULL WHERE id=$1', [characterId]);
+  const gymCharacter = await refreshHudFromClient(page);
   const gymPose = (await state(page)).position, energyBeforeGym = (await state(page)).resources.energy;
-  await page.locator('[data-destination="training"]').click();
-  await page.locator('[data-city-action="streets"]').click();
-  const gym = page.locator('details[data-sect="streets-train"]');
-  await gym.waitFor({ state: 'visible' });
-  await page.waitForFunction(() => document.querySelector('details[data-sect="streets-train"]')?.open === true);
-  assert.equal(await gym.evaluate(details => details.open), true, 'Training-room navigation expands the existing gym section.');
+  const gymHandleCount = await page.evaluate(() => window.__cityHandles.length), beforeGym = requests.length;
+  await openCoreTraining(page); await assertCoreTrainingLayout(page);
+  await assertCoreStats(page, gymCharacter);
+  const gym = page.locator('.omerta-city__training');
+  assert.equal(await page.evaluate(() => window.__cityHandles.length), gymHandleCount);
+  await assertPosition(page, gymPose, 'Core training opens in the existing scene');
+  assert.deepEqual(gameplayRequests(requests.slice(beforeGym)), []);
+
+  // Closing a queued intent prevents dispatch, without weakening in-flight reply handling.
+  let releaseQueuedRead;
+  const queuedReadGate = new Promise(resolve => { releaseQueuedRead = resolve; });
+  await page.route('**/v1/projections/player*', async route => { await queuedReadGate; await route.continue(); });
+  const queuedRead = page.waitForRequest(request => new URL(request.url()).pathname === '/v1/projections/player');
+  await page.locator('#btn-refresh').evaluate(button => button.click()); await queuedRead;
+  const queuedStart = requests.length;
+  await gym.locator('[data-city-train="muscle"]').click();
+  await page.waitForFunction(() => document.querySelector('.omerta-city__training-body')?.dataset.trainingPending === '1');
+  await gym.locator('[data-city-training-close]').click();
+  await openCoreTraining(page);
+  releaseQueuedRead();
+  await page.waitForFunction(() => document.querySelector('.omerta-city__training-body')?.dataset.trainingPending !== '1');
+  await page.unroute('**/v1/projections/player*');
+  assert.deepEqual(requests.slice(queuedStart).filter(request => request.path === '/v1/train/muscle'), [], 'Closing and reopening cannot revive the original queued move.');
+  await assertPosition(page, gymPose, 'Queued cancellation retains exploration pose');
+  await openCoreTraining(page);
+
+  let releaseTraining, trainingCommitted;
+  const trainingGate = new Promise(resolve => { releaseTraining = resolve; });
+  const committed = new Promise(resolve => { trainingCommitted = resolve; });
+  await page.route('**/v1/train/muscle', async route => {
+    const reply = await route.fetch(); trainingCommitted(); await trainingGate; await route.fulfill({ response: reply });
+  });
   const trainingReply = page.waitForResponse(response => response.request().method() === 'POST'
     && new URL(response.url()).pathname === '/v1/train/muscle');
-  await gym.locator('[data-do="POST /v1/train/muscle"]').click();
+  await gym.locator('[data-city-train="muscle"]').click(); await committed;
+  await gym.locator('[data-city-training-close]').click(); releaseTraining();
   const trainingResponse = await trainingReply;
   assert.equal(trainingResponse.status(), 200, 'The gym executes the existing train route.');
   const trained = await trainingResponse.json();
@@ -739,10 +1014,48 @@ try {
   assert(trained.gain > 0, 'The real gym action improves the chosen stat.');
   assert(trainingResponse.request().headers()['idempotency-key'], 'Training retains its mutation retry key.');
   await page.locator('[data-operation-receipt].operation-receipt--success').filter({ hasText: /muscle/i }).first().waitFor({ state: 'attached' });
+  await page.waitForFunction(() => document.querySelector('.omerta-city__training-body')?.dataset.trainingPending !== '1');
+  await page.unroute('**/v1/train/muscle');
+  assert.equal((await state(page)).trainingOpen, false, 'A dispatched success does not reopen a closed dock.');
+  assert.equal(await page.evaluate(() => window.__cityHandles.length), gymHandleCount, 'Training completion keeps the same scene.');
+  await assertPosition(page, gymPose, 'Dispatched training keeps the same exploration pose');
+  await openCoreTraining(page);
+  await gym.locator('[data-operation-receipt].operation-receipt--success').waitFor({ state: 'attached' });
+  await assertCoreStats(page, trained.character);
+  assert.equal(await gym.locator('[data-city-train]:disabled').count(), 3, 'The winning projection disables all stats on the shared recovery clock.');
+  const beforeReplay = (await app.pool.query('SELECT energy,muscle,train_at FROM characters WHERE id=$1', [characterId])).rows[0];
+  const replay = await app.inject({ method: 'POST', url: '/v1/train/muscle', headers: { ...headers, 'Idempotency-Key': trainingResponse.request().headers()['idempotency-key'] }, payload: {} });
+  assert.equal(replay.statusCode, 200); assert.deepEqual(replay.json(), trained, 'The actual training key replays its recorded result.');
+  assert.deepEqual((await app.pool.query('SELECT energy,muscle,train_at FROM characters WHERE id=$1', [characterId])).rows[0], beforeReplay, 'Replay cannot spend energy or grant a second stat gain.');
+  await gym.locator('[data-city-training-full]').click();
+  const fullGym = page.locator('details[data-sect="streets-train"]');
+  await page.waitForFunction(() => document.querySelector('details[data-sect="streets-train"]')?.open);
+  assert.equal(await fullGym.locator('[data-do^="POST /v1/train/"]').count(), 3, 'Full Gym/Regimen remains reachable.');
   await returnToCity(page);
   await refreshHudFromClient(page);
   assert((await state(page)).resources.energy < energyBeforeGym, 'The returned City HUD reflects energy spent at the gym.');
   await assertPosition(page, gymPose, 'Training returns to the same exploration pose');
+
+  // An uncertain move retains its global same-key recovery after the dock is closed.
+  await app.pool.query('UPDATE characters SET energy=45,train_at=NULL WHERE id=$1', [characterId]);
+  await refreshHudFromClient(page); await openCoreTraining(page);
+  await page.route('**/v1/train/muscle', route => route.abort());
+  const lost = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === '/v1/train/muscle');
+  await page.locator('[data-city-train="muscle"]').click();
+  const lostKey = (await lost).headers()['idempotency-key'];
+  await gym.locator('[data-city-training-retry]').waitFor();
+  await gym.locator('[data-city-training-close]').click();
+  await selectTab(page, 'streets'); await page.unroute('**/v1/train/muscle');
+  const checkedMove = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/train/muscle');
+  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--error').filter({ hasText: /train muscle/i }).first().locator('[data-operation-retry]').click();
+  const checkedReply = await checkedMove;
+  assert.equal(checkedReply.status(), 200);
+  assert.equal(checkedReply.request().headers()['idempotency-key'], lostKey, 'Global recovery after dock retirement preserves the original request key.');
+  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--success').filter({ hasText: /train muscle/i }).first().waitFor();
+  await returnToCity(page); await openCoreTraining(page);
+  await gym.locator('[data-operation-receipt].operation-receipt--success').waitFor({ state: 'attached' });
+  await assertCoreStats(page, (await checkedReply.json()).character);
+  await gym.locator('[data-city-training-close]').click();
 
   // The scene directory covers every human gameplay panel, including the new Fieldwork journal.
   const tabs = await page.locator('#tabs [data-tab]').evaluateAll(buttons => buttons.map(button => button.dataset.tab).filter(tab => tab !== 'deck'));
@@ -759,6 +1072,8 @@ try {
     const action = page.locator(`[data-city-action="${tab}"]`);
     if (await action.count()) await action.click();
     else await page.locator('[data-city-open]').click();
+    if (tab === 'streets' && entry.venueId === 'fixer') await page.locator('[data-city-fixer-full]').click();
+    if (tab === 'streets' && entry.venueId === 'training') await page.locator('[data-city-training-full]').click();
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible' });
     await page.waitForFunction(tab => document.querySelector('#tab-' + tab)?.textContent.trim().length > 0, tab);
     assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, tab + ' disposes the exploration renderer.');
@@ -1120,6 +1435,11 @@ try {
   });
   assert((await state(page)).player.y > 400, 'The old generation has a distinct pose before invalidation.');
   const generationHandles = await page.evaluate(() => window.__cityHandles.length);
+  await app.pool.query('UPDATE characters SET energy=45,train_at=NULL WHERE id=$1', [characterId]);
+  await refreshHudFromClient(page); await openCoreTraining(page);
+  await page.evaluate(() => { window.__oldTrainingStat = document.querySelector('[data-city-train="muscle"]'); });
+  assert.equal(await page.locator('[data-city-train="muscle"]').isDisabled(), false);
+  await page.locator('[data-city-training-close]').click();
   let generationReads = 0, delayedMapReads = 0;
   let releaseOldMap;
   const oldMapGate = new Promise(resolve => { releaseOldMap = resolve; });
@@ -1179,6 +1499,13 @@ try {
   assert(await page.evaluate(count => window.__cityHandles.slice(0, count).every(entry => entry.destroyed), generationHandles),
     'All old-generation handles stay retired after the delayed map response.');
   assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'Recovery leaves exactly one current-generation canvas.');
+  const retiredStatStart = requests.length;
+  await page.evaluate(() => window.__oldTrainingStat.click());
+  await waitForFrames(page, 2);
+  assert.deepEqual(requests.slice(retiredStatStart).filter(request => request.path.startsWith('/v1/train/')), [], 'An actionable old-generation control cannot dispatch under its replacement.');
+  await openCoreTraining(page);
+  assert.equal(await page.locator('.omerta-city__training [data-operation-receipt]').count(), 0, 'The new generation cannot inherit the previous training receipt.');
+  await page.locator('[data-city-training-close]').click();
   await page.unroute('**/v1/projections/player');
   await page.unroute('**/v1/map');
   await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [characterId]);
