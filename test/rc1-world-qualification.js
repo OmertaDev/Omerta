@@ -10,6 +10,8 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, BUSINESS_SOURCE_PREDECESSOR_REVISION, assertBusinessServerTransfer,
+  CITY_SOCIAL_BUSINESS_SERVER_PIN, CITY_SOCIAL_BUSINESS_SERVER_BLOB, CITY_SOCIAL_BUSINESS_SOURCE_PARENTS, assertCitySocialBusinessServerTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
   CITY_PRESENCE_SOURCE_REVIEWED_REVISION, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
   assertCityPresenceServerTransfer, CITY_SOCIAL_SERVER_PIN, CITY_SOCIAL_SERVER_PREDECESSOR_PIN,
@@ -20,7 +22,44 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const socialServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const composedServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const composedProof = assertCitySocialBusinessServerTransfer(composedServerText);
+assert.equal(composedServerText, execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'The complete combined runtime matches its immutable staged Git blob.');
+assert.equal(composedProof.actualSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(composedProof.baselineSha256, CITY_SOCIAL_SERVER_PIN);
+assert.equal(composedProof.sourceBlob, CITY_SOCIAL_BUSINESS_SERVER_BLOB);
+assert.deepEqual(composedProof.sourceParents, CITY_SOCIAL_BUSINESS_SOURCE_PARENTS);
+assert.equal(composedProof.inverseChunks, 3);
+const socialServerText = composedProof.baselineText;
+assert.equal(socialServerText, execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SOURCE_PARENTS[0] + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'Composition restores the complete reviewed Social parent.');
+const businessServerText = execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SOURCE_PARENTS[1] + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
+const businessProof = assertBusinessServerTransfer(businessServerText);
+const businessCityServerText = businessProof.baselineText;
+assert.equal(businessProof.actualSha256, BUSINESS_SERVER_PIN);
+assert.equal(businessProof.baselineSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(businessProof.inverseChunks, 3);
+for (const [text, revision] of [[businessServerText, BUSINESS_SOURCE_REVIEWED_REVISION], [businessCityServerText, BUSINESS_SOURCE_PREDECESSOR_REVISION]])
+  assert.equal(text, execFileSync('git', ['show', revision + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+for (const [chunk] of [
+  [
+    "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n",
+    "  const performAgentAction = async (action, ch, client, h, lender = null) => {\n"
+  ],
+  [
+    "      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n      case 'business_upgrade': return Business.upgradeBusiness(ch, tail('/v1/business/').replace(/\\/upgrade$/, ''), client, h);\n",
+    ""
+  ],
+  [
+    "    const result = await performAgentAction(action, ch, client, h, lender, current.policy);\n",
+    "    const result = await performAgentAction(action, ch, client, h, lender);\n"
+  ]
+]) {
+  for (const changed of [businessServerText.replace(chunk, ''), businessServerText.replace(chunk, chunk.repeat(2))])
+    assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
+}
+for (const changed of [businessServerText.replace('minimumReserve: policy.cashReserve', 'minimumReserve: 0'), businessServerText + '\n// unreviewed\n'])
+  assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
+
 const socialProof = assertCitySocialServerTransfer(socialServerText);
 const currentServerText = socialProof.baselineText;
 assert.equal(socialProof.actualSha256, CITY_SOCIAL_SERVER_PIN);
@@ -52,6 +91,22 @@ const serverGuards = [assertGenesisSnapshotServerCompatibility, assertGenesisWra
   assertHttpReceiptServerCompatibility, assertDeedServerCompatibility];
 const economyServerGuard = text => assertEconomySourceTransfer('src/server.js', text);
 for (const guard of [...serverGuards, economyServerGuard]) {
+  for (const [text, predecessor, field, proof, pin, priorPin] of [
+    [composedServerText, socialServerText, 'citySocialBusinessSourceTransfer', composedProof, CITY_SOCIAL_BUSINESS_SERVER_PIN, CITY_SOCIAL_SERVER_PIN],
+    [businessServerText, currentServerText, 'businessSourceTransfer', businessProof, BUSINESS_SERVER_PIN, CITY_PRESENCE_SERVER_PIN],
+  ]) {
+    const actual = guard(text), previous = guard(predecessor);
+    const { actualSha256, [field]: transfer, ...retained } = actual;
+    const { actualSha256: priorSha256, ...historical } = previous;
+    assert.equal(actualSha256, pin); assert.equal(priorSha256, priorPin); assert.deepEqual(transfer, proof);
+    if (guard === economyServerGuard) {
+      assert.equal(retained.inverseChunks, historical.inverseChunks + proof.inverseChunks);
+      retained.inverseChunks -= proof.inverseChunks;
+    }
+    assert.deepEqual(retained, historical, 'Each parent and composed layer preserves every historical qualification field.');
+  }
+}
+for (const guard of [...serverGuards, economyServerGuard]) {
   const actual = guard(socialServerText), previous = guard(currentServerText);
   const { actualSha256, citySocialSourceTransfer, ...retained } = actual;
   const { actualSha256: predecessorSha256, ...historical } = previous;
@@ -66,6 +121,35 @@ for (const guard of [...serverGuards, economyServerGuard]) {
 const socialImport = "import { registerCitySocial } from './city-social.js';\n";
 const socialRegistration = '  registerCitySocial(app, { pool, auth, onlineIds: () => [...wsClients.keys()], lastChatAt, capMap });\n';
 const socialAssets = "    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n";
+const businessChunks = [
+  [
+    "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n",
+    "  const performAgentAction = async (action, ch, client, h, lender = null) => {\n"
+  ],
+  [
+    "      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n      case 'business_upgrade': return Business.upgradeBusiness(ch, tail('/v1/business/').replace(/\\/upgrade$/, ''), client, h);\n",
+    ""
+  ],
+  [
+    "    const result = await performAgentAction(action, ch, client, h, lender, current.policy);\n",
+    "    const result = await performAgentAction(action, ch, client, h, lender);\n"
+  ]
+].map(([chunk]) => chunk);
+for (const changed of [
+  ...[...businessChunks, socialImport, socialRegistration, socialAssets].flatMap(chunk => [composedServerText.replace(chunk, ''), composedServerText.replace(chunk, chunk.repeat(2))]),
+  composedServerText.replace('minimumReserve: policy.cashReserve', 'minimumReserve: 0'),
+  composedServerText.replace('maxCash: action.cost.cash', 'maxCash: 999999999'),
+  composedServerText.replace(socialRegistration, socialRegistration.replace('pool, auth,', 'pool, auth: null,')),
+  composedServerText.replace(socialAssets, socialAssets.replace('application/javascript', 'text/html')),
+  composedServerText.replace('row.response === reservationToken', 'true'),
+  composedServerText.replace('await Chain.assertChainId();', 'await Promise.resolve();'),
+  composedServerText.replace("app.post('/v1/agent/act', { preHandler: auth }", "app.post('/v1/agent/act', { preHandler: null }"),
+  composedServerText + "\napp.post('/v1/unreviewed-composed-authority', async () => ({}));\n",
+]) {
+  assert.notEqual(changed, composedServerText); assert.notEqual(changed, socialServerText); assert.notEqual(changed, businessServerText);
+  assert.throws(() => assertCitySocialBusinessServerTransfer(changed), /source changed/);
+  for (const guard of [...serverGuards, economyServerGuard]) assert.throws(() => guard(changed), /source changed/);
+}
 for (const chunk of [socialImport, socialRegistration, socialAssets]) assert.equal(socialServerText.split(chunk).length, 2);
 for (const changed of [
   ...[socialImport, socialRegistration, socialAssets].flatMap(chunk => [socialServerText.replace(chunk, chunk.repeat(2)), socialServerText.replace(chunk, '')]),
@@ -104,6 +188,7 @@ for (const changed of [
 ]) {
   assert.notEqual(changed, currentServerText); assert.notEqual(changed, serverText);
   assert.throws(() => assertCityPresenceServerTransfer(changed), /source changed/);
+  assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
   for (const guard of serverGuards) assert.throws(() => guard(changed), /source changed/);
   assert.throws(() => assertEconomySourceTransfer('src/server.js', changed), /source changed/);
 }
@@ -211,11 +296,22 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_SOCIAL_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.actualServerSha256, BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.inverseChunks, 3);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.sourceRevision, BUSINESS_SOURCE_REVIEWED_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.predecessorRevision, BUSINESS_SOURCE_PREDECESSOR_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.sourceBlob, CITY_SOCIAL_BUSINESS_SERVER_BLOB);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.sourceParents, CITY_SOCIAL_BUSINESS_SOURCE_PARENTS);
+assert.equal(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.inverseChunks, 3);
+assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope, /none inherit historical execution, financial, native, deployment or onchain qualification/);
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 10);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 11);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);

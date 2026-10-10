@@ -8,6 +8,8 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, assertBusinessServerTransfer,
+  CITY_SOCIAL_BUSINESS_SERVER_PIN, CITY_SOCIAL_BUSINESS_SERVER_BLOB, CITY_SOCIAL_BUSINESS_SOURCE_PARENTS, assertCitySocialBusinessServerTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN, assertCityPresenceServerTransfer,
   CITY_SOCIAL_SERVER_PIN, CITY_SOCIAL_SERVER_PREDECESSOR_PIN, CITY_SOCIAL_SOURCE_REVIEWED_REVISION,
   CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION, assertCitySocialServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
@@ -20,14 +22,27 @@ const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const social = file === 'src/server.js' ? assertCitySocialServerTransfer(actual) : null;
+  const composed = file === 'src/server.js' ? assertCitySocialBusinessServerTransfer(actual) : null;
+  const socialText = composed ? composed.baselineText : actual;
+  if (composed) {
+    assert.equal(hash(actual), CITY_SOCIAL_BUSINESS_SERVER_PIN);
+    assert.equal(composed.baselineSha256, CITY_SOCIAL_SERVER_PIN); assert.equal(composed.inverseChunks, 3);
+    assert.equal(actual, execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }));
+    assert.equal(socialText, execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SOURCE_PARENTS[0] + ':' + file], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }));
+    const businessText = execFileSync('git', ['show', BUSINESS_SOURCE_REVIEWED_REVISION + ':' + file], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
+    const business = assertBusinessServerTransfer(businessText);
+    assert.equal(hash(businessText), BUSINESS_SERVER_PIN);
+    assert.equal(business.baselineSha256, CITY_PRESENCE_SERVER_PIN); assert.equal(business.inverseChunks, 3);
+    assert.equal(business.baselineText, assertCitySocialServerTransfer(socialText).baselineText, 'Both exact parent inverses restore the same complete City predecessor.');
+  }
+  const social = file === 'src/server.js' ? assertCitySocialServerTransfer(socialText) : null;
   const presenceText = social ? social.baselineText : actual;
   if (social) {
-    assert.equal(hash(actual), CITY_SOCIAL_SERVER_PIN);
+    assert.equal(hash(socialText), CITY_SOCIAL_SERVER_PIN);
     assert.equal(social.baselineSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
     assert.equal(social.baselineSha256, CITY_PRESENCE_SERVER_PIN);
     assert.equal(social.inverseChunks, 3);
-    assert.equal(actual, execFileSync('git', ['show', CITY_SOCIAL_SOURCE_REVIEWED_REVISION + ':' + file],
+    assert.equal(socialText, execFileSync('git', ['show', CITY_SOCIAL_SOURCE_REVIEWED_REVISION + ':' + file],
       { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'The social wrapper matches complete independent Git bytes.');
     assert.equal(presenceText, execFileSync('git', ['show', CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION + ':' + file],
       { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'Social restores the complete Git Presence predecessor before Goods qualification.');
