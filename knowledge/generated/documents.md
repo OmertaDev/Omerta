@@ -324,7 +324,7 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 44 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
-| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 68 | 2026-10-10 |
+| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 70 | 2026-10-10 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 50 | 2026-10-10 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
