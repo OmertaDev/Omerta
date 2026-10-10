@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d1449b3f5e46766b3f9cd057019d96e2d2521cd3",
+  "sourceRevision": "ea4ca9bede5a1686a1f3cad40683faac0291d5be",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10411,
-    "edges": 42388,
+    "nodes": 10413,
+    "edges": 42396,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2206,
+      "Commit": 2208,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16507,
+      "CHANGED": 16513,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2206,
+      "HAS_COMMIT": 2208,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -24196,20 +24196,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 19062,
-      "lines": 131,
-      "version": "6942950060dffd65",
+      "bytes": 19828,
+      "lines": 133,
+      "version": "cc1b0d64cb85bddc",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "6942950060dffd65"
+          "version": "cc1b0d64cb85bddc"
         }
       ],
-      "lastChangedAt": "2026-10-10T02:04:03.000Z",
+      "lastChangedAt": "2026-10-10T02:55:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "78745d74a754af52798d08534bd950d353bb5920"
+      "lastChangedCommit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -94892,20 +94892,20 @@
       "path": "test/routes.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 40481,
-      "lines": 527,
-      "version": "f99f8b91a04a16af",
+      "bytes": 40676,
+      "lines": 528,
+      "version": "0fcc461e71af7d73",
       "text": true,
       "provenance": [
         {
           "file": "test/routes.js",
           "line": 1,
-          "version": "f99f8b91a04a16af"
+          "version": "0fcc461e71af7d73"
         }
       ],
-      "lastChangedAt": "2026-10-08T20:35:00.000Z",
+      "lastChangedAt": "2026-10-10T02:55:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
+      "lastChangedCommit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
     },
     {
       "key": "Artifact:test/rules.js",
@@ -133816,6 +133816,22 @@
       ]
     },
     {
+      "key": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "type": "Commit",
+      "id": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "label": "Refresh knowledge for integrated resource outcome release",
+      "title": "Refresh knowledge for integrated resource outcome release",
+      "date": "2026-10-10T02:08:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "provenance": [
+        {
+          "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+        }
+      ]
+    },
+    {
       "key": "Commit:d7f15047043e4fff594e7e1207eaf923fff81aed",
       "type": "Commit",
       "id": "d7f15047043e4fff594e7e1207eaf923fff81aed",
@@ -136212,6 +136228,22 @@
         {
           "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c",
           "url": "https://github.com/OmertaDev/Omerta/commit/ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "type": "Commit",
+      "id": "ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "label": "Declare intentional public storefront in mounted route guard",
+      "title": "Declare intentional public storefront in mounted route guard",
+      "date": "2026-10-10T02:55:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "provenance": [
+        {
+          "commit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ea4ca9bede5a1686a1f3cad40683faac0291d5be"
         }
       ]
     },
@@ -146949,13 +146981,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 131,
-      "version": "6942950060dffd65",
+      "lines": 133,
+      "version": "cc1b0d64cb85bddc",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "6942950060dffd65"
+          "version": "cc1b0d64cb85bddc"
         }
       ]
     },
@@ -160619,6 +160651,9 @@
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
         },
         {
+          "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+        },
+        {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
         },
         {
@@ -161684,6 +161719,9 @@
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
         },
         {
+          "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+        },
+        {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
         },
         {
@@ -162747,6 +162785,9 @@
         },
         {
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
+        },
+        {
+          "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
         },
         {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
@@ -164106,6 +164147,9 @@
         },
         {
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
+        },
+        {
+          "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
         },
         {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
@@ -173570,7 +173614,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d1449b3f5e46766b3f9cd057019d96e2d2521cd3",
+      "revision": "ea4ca9bede5a1686a1f3cad40683faac0291d5be",
       "currentBranch": "codex/authenticated-resource-outcomes",
       "defaultBranch": "main",
       "visibility": "public",
@@ -209434,13 +209478,13 @@
       "type": "TestSuite",
       "id": "test/routes.js",
       "label": "test/routes.js",
-      "lines": 527,
-      "version": "f99f8b91a04a16af",
+      "lines": 528,
+      "version": "0fcc461e71af7d73",
       "provenance": [
         {
           "file": "test/routes.js",
           "line": 1,
-          "version": "f99f8b91a04a16af"
+          "version": "0fcc461e71af7d73"
         }
       ]
     },
@@ -348704,6 +348748,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d7f15047043e4fff594e7e1207eaf923fff81aed",
       "to": "Artifact:.env.example",
       "provenance": {
@@ -360388,6 +360464,22 @@
       "to": "HistoricalArtifact:omerta-tokenomics-v2-design.md",
       "provenance": {
         "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "to": "Artifact:test/routes.js",
+      "provenance": {
+        "commit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
       }
     },
     {
@@ -457867,6 +457959,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3",
+      "provenance": {
+        "commit": "d7a6c1fd4fe5668cdbd2995d4fff285fc12321b3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d7f15047043e4fff594e7e1207eaf923fff81aed",
       "provenance": {
         "commit": "d7f15047043e4fff594e7e1207eaf923fff81aed"
@@ -459062,6 +459162,14 @@
       "to": "Commit:ea1f4de76331bc04ee4756d377e5d473f91cd21c",
       "provenance": {
         "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ea4ca9bede5a1686a1f3cad40683faac0291d5be",
+      "provenance": {
+        "commit": "ea4ca9bede5a1686a1f3cad40683faac0291d5be"
       }
     },
     {
