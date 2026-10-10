@@ -42,9 +42,11 @@ CP-08: final desktop previews exposed a dock that could scroll resource values b
 
 Serving worker revision `95e59d02e73eab78271abc6c35757b3b17826648` was checked for compatibility with integrated producer source `29909d4dafcf2e3479317221327aa013bb05c145`. Its 172-module local import closure, worker/start scripts, package dependencies, lockfile, chain and contracts are byte-identical. The API must apply the additive table before encounter writes; the existing worker does not access it. A worker rollout solely for generated metadata is unnecessary. This is compatibility evidence, not a deployment or native-proof claim.
 
+CP-09: hosted run `38026513183` at `636cfca5acf7f7e1ef44eb2306b5d3727817e92d` failed the PostgreSQL query scanner on both versions: 41 non-literal query sites exceeded its unchanged ceiling of 40. Both completed City steps executed the actual native encounter suite and passed concurrent exact replay, opposite-target locks, rollback and neutral resources; the remaining workflow was cancelled before repair, so full-lane success is not claimed. The four existing City SQL strings now appear directly in their query calls, with identical parameters, ordering and lock predicates. Independent review cleared producer blob `6fa041d3bf20c220a2842ce6b2d6229a626947c3`; scanner coverage is 5117 readable, 168 interpolated and 39 unreadable, with no unreadable City site. Local backend/API and gates passed again. Guard ceilings remain unchanged, and fresh required native/full-workflow checks must qualify the repaired head.
+
 | Working-tree file | SHA256 |
 | --- | --- |
-| src/city-presence.js | fca0bc8398a47a469eee8f832e9df46b286023366cb15e82752ecbd867b1544a |
+$107c68efe5a68139d0c0b3d9c7471934117b2e66788b43642f4177a889578c66a |
 | src/routes/city.js | 32d11e341078fd5b157b19e397aa16ed99b91b6842cd039cbd615d95fc065504 |
 | schema.sql | 2d67703172d303ba301db764c8e4f410c3bd797db0b28bd511343b837061400b |
 | src/server.js | 14a3d2e291bbe99ead54d8850850703a319ad3926d1941d34469e135f8c23820 |

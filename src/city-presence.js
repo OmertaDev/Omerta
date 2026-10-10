@@ -54,10 +54,12 @@ function receiptKey(accountId, key) {
   return 'city:intel:v1:' + crypto.createHash('sha256').update(JSON.stringify([accountId, key])).digest('hex');
 }
 async function progressRow(client, viewer, lock = false) {
-  const sql = lock
-    ? 'SELECT sequence,journal,objectives FROM city_intel_progress WHERE character_id=$1 AND generation=$2 FOR UPDATE'
-    : 'SELECT sequence,journal,objectives FROM city_intel_progress WHERE character_id=$1 AND generation=$2';
-  return (await client.query(sql, [viewer.characterId, viewer.generation])).rows[0] || null;
+  const result = lock
+    ? await client.query('SELECT sequence,journal,objectives FROM city_intel_progress WHERE character_id=$1 AND generation=$2 FOR UPDATE',
+      [viewer.characterId, viewer.generation])
+    : await client.query('SELECT sequence,journal,objectives FROM city_intel_progress WHERE character_id=$1 AND generation=$2',
+      [viewer.characterId, viewer.generation]);
+  return result.rows[0] || null;
 }
 function projectBoard(viewer, row) {
   const state = row ? clone(parseJson(row.objectives)) : {};
@@ -93,17 +95,16 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
       if (cursor.characterId !== viewer.characterId || cursor.generation !== viewer.generation || cursor.district !== viewer.district) fail('city_cursor_stale', 'Your neighborhood changed. Refresh the roster.');
       after = cursor.after;
     }
-    const sql = after ? `SELECT c.id,c.account_id,c.name,c.generation,c.loc,c.respect,c.is_npc,a.agent_flag,g.tag
+    const rows = after ? (await client.query(`SELECT c.id,c.account_id,c.name,c.generation,c.loc,c.respect,c.is_npc,a.agent_flag,g.tag
       FROM characters c LEFT JOIN account_persistent a ON a.account_id=c.account_id
       LEFT JOIN gang_members m ON m.character_id=c.id LEFT JOIN gangs g ON g.id=m.gang_id
-      WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 AND c.id>$3 ORDER BY c.id LIMIT $4`
-      : `SELECT c.id,c.account_id,c.name,c.generation,c.loc,c.respect,c.is_npc,a.agent_flag,g.tag
+      WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 AND c.id>$3 ORDER BY c.id LIMIT $4`,
+      [viewer.district, accountId, after, limit + 1])).rows
+      : (await client.query(`SELECT c.id,c.account_id,c.name,c.generation,c.loc,c.respect,c.is_npc,a.agent_flag,g.tag
       FROM characters c LEFT JOIN account_persistent a ON a.account_id=c.account_id
       LEFT JOIN gang_members m ON m.character_id=c.id LEFT JOIN gangs g ON g.id=m.gang_id
-      WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 ORDER BY c.id LIMIT $3`;
-    const rows = (await client.query(sql, after
-      ? [viewer.district, accountId, after, limit + 1]
-      : [viewer.district, accountId, limit + 1])).rows;
+      WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 ORDER BY c.id LIMIT $3`,
+        [viewer.district, accountId, limit + 1])).rows;
     const online = new Set(onlineIds), more = rows.length > limit;
     const actors = rows.slice(0, limit).map(row => ({ ...actorOf(row, online), actions: [{
       id: 'encounter:' + row.id, label: 'Collect intel', method: 'POST',
