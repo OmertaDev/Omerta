@@ -329,8 +329,8 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
-| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 93 | 2026-10-09 |
-| [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 50 | 2026-10-09 |
+| [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 108 | 2026-10-10 |
+| [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 64 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md](../../docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md) | documentation | 8 | 2026-09-14 |
@@ -539,7 +539,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-09 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-10 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -617,5 +617,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-09 |
+| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-10 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

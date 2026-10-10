@@ -42,7 +42,7 @@
 | [src/commission.js](../../src/commission.js) | 1394 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 221 | engagement-growth | 3 / 8 | 2 | 9 | 2 |
 | [src/computeexperiment.js](../../src/computeexperiment.js) | 63 | platform-core | 0 / 3 | 0 | 0 | 1 |
-| [src/computerouting.js](../../src/computerouting.js) | 65 | platform-core | 1 / 2 | 0 | 0 | 1 |
+| [src/computerouting.js](../../src/computerouting.js) | 103 | platform-core | 1 / 3 | 0 | 0 | 2 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
 | [src/content/activation-policy.js](../../src/content/activation-policy.js) | 56 | platform-core | 2 / 6 | 0 | 0 | 4 |
 | [src/content/artifact-storage.js](../../src/content/artifact-storage.js) | 260 | platform-core | 6 / 3 | 0 | 2 | 1 |
