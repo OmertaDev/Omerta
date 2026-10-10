@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { computeExperimentDemo } from '../tools/compute-experiment.js';
+import { planShadowComputeRoutes } from '../src/computerouting.js';
+const policy = {taskType:'market_analysis',baselineModel:'fixture-baseline',candidateModel:'fixture-candidate',minimumPairs:5,minQualityGainBps:500,maxIncrementalCostUsdMicros:10000,maxAdditionalLatencyMs:5000,maxEvidenceAgeMs:1000,maxTaskCostUsdMicros:1000};
+const fixture = () => {
+ const {plan}=computeExperimentDemo();
+ const trials=plan.assignments.flatMap(p=>['baseline','candidate'].map(condition=>({pairId:p.pairId,condition,model:plan[condition+'Model'],order:p[condition+'Order'],graderId:'grader',graderBlind:true,status:'succeeded',costUsdMicros:condition==='baseline'?100:200,latencyMs:100,scores:Object.fromEntries(['accuracy','evidence','relevance','uncertainty'].map(k=>[k,condition==='baseline'?7000:8000])),accepted:true})));
+ return {version:1,nowMs:2000,availableBudgetUsdMicros:400,policies:[{...policy}],evidence:[{taskType:'market_analysis',observedAtMs:1500,dataset:{version:1,plan,trials}}],tasks:['a','b','c'].map((taskId,i)=>({taskId,taskType:'market_analysis',priority:100-i,baselineQuoteUsdMicros:100,candidateQuoteUsdMicros:200}))};
+};
+const run=(change=()=>{})=>{const v=fixture();change(v);return planShadowComputeRoutes(v);};
+const input=fixture(),before=JSON.stringify(input),r=planShadowComputeRoutes(input);
+assert.equal(JSON.stringify(input),before);assert.deepEqual(r.decisions.map(d=>d.route),['candidate','baseline','baseline']);assert.equal(r.proposedTotalCostUsdMicros,400);assert.equal(r.remainingBudgetUsdMicros,0);assert.equal(r.eligibleToExecute,false);assert.equal(r.policyChanged,false);assert.equal(r.financialRequests,0);
+assert.deepEqual(run(v=>v.tasks.reverse()),r);
+assert.equal(run(v=>v.evidence=[]).decisions[0].reason,'missing_evidence');
+assert.equal(run(v=>v.evidence[0].observedAtMs=999).decisions[0].reason,'evidence_stale_or_future');
+assert.equal(run(v=>v.evidence[0].observedAtMs=2001).decisions[0].reason,'evidence_stale_or_future');
+assert.equal(run(v=>v.policies[0].candidateModel='other').decisions[0].reason,'evidence_model_mismatch');
+assert.equal(run(v=>v.evidence[0].dataset.trials[1].accepted=false).decisions[0].reason,'evidence_gates_failed');
+assert.equal(run(v=>v.evidence[0].dataset.trials[1].accepted=null).decisions[0].reason,'acceptance_unobserved');
+assert.equal(run(v=>v.evidence[0].dataset.trials.pop()).decisions[0].reason,'evidence_gates_failed');
+assert.equal(run(v=>v.tasks[0].candidateQuoteUsdMicros=null).decisions[0].reason,'candidate_quote_unknown');
+assert.equal(run(v=>v.tasks[0].candidateQuoteUsdMicros=1001).decisions[0].reason,'candidate_task_cap');
+assert.equal(run(v=>v.policies[0].maxIncrementalCostUsdMicros=99).decisions[0].reason,'evidence_gates_failed');
+assert.equal(run(v=>v.tasks[0].candidateQuoteUsdMicros=10100).decisions[0].reason,'candidate_task_cap');
+assert.equal(run(v=>v.availableBudgetUsdMicros=299).decisions[2].route,'defer');
+assert.equal(run(v=>v.tasks[0].baselineQuoteUsdMicros=null).decisions[0].reason,'baseline_quote_unknown');
+assert.equal(run(v=>{v.policies[0].taskType='gameplay';v.evidence=[];v.tasks.forEach(t=>t.taskType='gameplay');}).decisions[0].reason,'task_rubric_unavailable');
+assert.equal(run(v=>v.tasks[0].candidateQuoteUsdMicros=0).decisions[0].proposedCostUsdMicros,0);
+for(const change of [v=>v.execute=true,v=>v.tasks.push(v.tasks[0]),v=>v.evidence.push(v.evidence[0]),v=>v.policies[0].minimumPairs=1,v=>v.tasks[0].priority=Infinity,v=>v.tasks[0].report='private',v=>v.evidence[0].dataset.recommendation='review_candidate'])assert.throws(()=>run(change));
+for(let budget=0;budget<=1000;budget++) {const v=fixture();v.availableBudgetUsdMicros=budget;const a=planShadowComputeRoutes(v);assert(a.proposedTotalCostUsdMicros<=budget);assert.equal(a.proposedTotalCostUsdMicros+a.remainingBudgetUsdMicros,budget);assert.equal(a.decisions.reduce((s,d)=>s+d.proposedCostUsdMicros,0),a.proposedTotalCostUsdMicros);}
+console.log('computerouting PASS: raw evidence, scope/freshness/acceptance gates, baseline-first budgets and 1001 budget invariants');
