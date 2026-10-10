@@ -32,6 +32,7 @@ const app = await buildServer();
 // reason. Now an entry costs a sentence, so the cheapest way past this test is to add `auth`.
 const PUBLIC = {
   'GET /v1/resources/catalog': 'public capability prices and limits; no credentials, policies or balances',
+  'GET /v1/resources/storefronts/:id': 'public enabled seller offering, price/revision, capacity and descriptive accepted/disputed counts; no buyer identities, balances or private task content',
   'GET /v1/resources/services': 'public seller offers with prices and service revisions; private jobs require authentication',
   'GET /v1/resources/auctions': 'public compute round windows and completed clearing results; sealed bids remain private',
   'POST /v1/resources/payments/webhook': 'Stripe authenticates exact raw bytes with its signing secret; only matched signed provider settlements can credit balances',

@@ -128,3 +128,5 @@ Executed 2026-10-09, Node24.19.0 and isolated PostgreSQL18.4 localhost54839: out
 | test/resourceoutcomes.js | 10601a1c4efd900b1ee428df4430ee40df67b142393a76ea837d3597cfb0b683 |
 | test/resourcestorefront.js | 030e8bd1e2c4d59ff1f7c3208fe548b8220807e76e0a01b0a52442504e6dd300 |
 | test/resourceoutcomeobserver.js | 409a9112f21b803179730101709cc20eb0b03f5a0f53423df5ae7d915db39e9e |
+
+Route-guard retest: hosted run `38015879249` passed Forge, both PostgreSQL jobs and recovery, but failed the mounted-route guard because the intended public storefront lacked its explicit PUBLIC rationale. The earlier batched local command continued after that failure; the earlier statement that routes passed was incorrect. The guard now declares only the enabled-service projection and its privacy rationale. `node test/routes.js` passes independently with 881 registrations and 48 deliberate public routes. Runtime route/authentication behavior is unchanged; the authenticated outcome feed remains private. Fresh checks are required for the updated revision. Failed hosted diagnostics are retained in the run and local `output/resource-outcomes-ci-failed.log`.
