@@ -5172,7 +5172,7 @@
     clearTimeout(t._h); t.classList.remove('show'); t.inert = true; t.tabIndex = -1;
     if (focused) {
       if (previous?.isConnected && !previous.closest('.hidden, [hidden], [inert]')) previous.focus({ preventScroll: true });
-      else document.activeElement?.blur();
+      if (t.contains(document.activeElement)) document.activeElement?.blur();
     }
   }
   function toast(msg, bad = false, action = null) {

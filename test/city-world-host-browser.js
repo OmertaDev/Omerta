@@ -48,7 +48,7 @@ try {
     await context.addInitScript(({ token, noResizeObserver }) => {
       localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_tour2', '1');
       if (noResizeObserver) window.ResizeObserver = undefined;
-      window.__worldGames = []; window.__worldHandles = []; window.__worldReads = [];
+      window.__worldGames = []; window.__worldHandles = []; window.__worldReads = []; window.__worldReadResults = [];
       let engine, module;
       Object.defineProperty(window, 'Phaser', { configurable: true, get: () => engine, set: value => {
         engine = value; value.Game = new Proxy(value.Game, { construct(target, args) {
@@ -58,7 +58,16 @@ try {
       Object.defineProperty(window, 'OmertaCityScene', { configurable: true, get: () => module, set: value => {
         module = { ...value, mount(...args) {
           const read = args[1].onWorldRead;
-          args[1] = { ...args[1], onWorldRead: (kind, context) => { window.__worldReads.push(kind); return read(kind, context); } };
+          args[1] = { ...args[1], onWorldRead: async (kind, context) => {
+            window.__worldReads.push(kind);
+            const resultRecord = { kind, scene: window.__worldHandles.length, settled: false };
+            window.__worldReadResults.push(resultRecord);
+            const result = await read(kind, context);
+            Object.assign(resultRecord, { code: result?.code, ignored: result?.ignored === true });
+            // The module's await/render continuation settles before this marker.
+            queueMicrotask(() => queueMicrotask(() => { resultRecord.settled = true; resultRecord.current = context.isCurrent(); }));
+            return result;
+          } };
           const handle = value.mount(...args), record = { handle, destroyed: false };
           window.__worldHandles.push(record);
           return { ...handle, destroy() { record.destroyed = true; handle.destroy(); } };
@@ -417,74 +426,108 @@ try {
   // Exercise the actual wider declared fallback font and CI's header height,
   // with real confirmed gains and the full 56px outcome toast still present.
   const shortFont = await page.addStyleTag({ content: '@media (max-width: 320px) { :root { --mono: "Courier New", monospace; } body.city-player-view #top { height: 177.75px; box-sizing: border-box; } }' });
-  for (const viewport of [{ width: 320, height: 568 }, { width: 1366, height: 600 }]) {
-    await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await assertFrame(page);
-    await panel(page, 'map'); await assertFrame(page);
-    if (viewport.width === 320) {
-      const hud = page.locator('.omerta-city__world-hud'), gainCopy = await page.locator('.city-world__gains').textContent();
-      assert.match(gainCopy, /Level 2 reached/);
-      const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
-      assert.equal(frameBeforeReading.header.height, 177.75);
-      assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
-      assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
-        'Resources and the complete warning are initially visible in the supported CI geometry.');
-      assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
-        'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
-      await hud.focus(); await page.keyboard.press('End');
-      const feedbackVisible = () => {
-        const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
-        return gain.top >= hud.top && gain.bottom <= hud.bottom;
-      };
-      await page.waitForFunction(feedbackVisible);
-      assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
-      assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
-      const reading = await hud.evaluate(node => ({ outer: scrollY, inner: node.scrollTop, focused: document.activeElement === node }));
-      await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-      const readingFrames = await page.evaluate(() => new Promise(resolve => { const values = []; const sample = () => {
-        const hud = document.querySelector('.omerta-city__world-hud'); values.push({ outer: scrollY, inner: hud.scrollTop, focused: document.activeElement === hud });
-        if (values.length === 30) resolve(values); else requestAnimationFrame(sample);
-      }; requestAnimationFrame(sample); }));
-      assert(readingFrames.every(frame => frame.outer === reading.outer && frame.inner === reading.inner && frame.focused),
-        'Passive fitting preserves both reading positions and focus without ResizeObserver.');
-      await page.locator('#toast.show').focus();
-      await page.locator('[data-city-world-close]').click();
-      assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
-      await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
-      await panel(page, 'map'); const pressure = await assertFrame(page);
-      assert.equal(pressure.header.height, 215);
-      assert(await hud.evaluate(node => Math.abs(node.getBoundingClientRect().height - 51) < 1), 'The cap is derived from real chrome, never a second minimum-height floor.');
-      await hud.focus(); await page.keyboard.press('End'); await page.waitForFunction(feedbackVisible);
-      await page.keyboard.press('ArrowUp');
-      await page.waitForFunction(() => {
-        const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
-        return warning.top >= hud.top && warning.bottom <= hud.bottom;
-      });
-      assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness, 'The complete warning remains keyboard-readable when all rows cannot fit simultaneously.');
-      assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
-      assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
-      assert.deepEqual((await state(page)).position, walkingPose);
-      await page.locator('#toast.show').focus(); await page.locator('[data-city-world-close]').click();
-      await shortFont.evaluate(node => { node.textContent = node.textContent.replace('215px', '177.75px'); });
+  const restoreToastClock = () => page.locator('#toast').evaluate(node => {
+    if (!Object.hasOwn(node, '__layoutBlur')) return;
+    node.onblur = node.__layoutBlur; delete node.__layoutBlur;
+  });
+  await page.locator('#toast.show').evaluate((node, text) => {
+    if (node.inert || node.querySelector('span:not(.ti)').textContent !== text) throw Error('The actual outcome must be visible before the pressure fixture.');
+    node.__layoutBlur = node.onblur;
+    node.onblur = event => { node.__layoutBlur?.call(node, event); clearTimeout(node._h); };
+    clearTimeout(node._h);
+  }, fullToast);
+  try {
+    for (const viewport of [{ width: 320, height: 568 }, { width: 1366, height: 600 }]) {
+      await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await assertFrame(page);
       await panel(page, 'map'); await assertFrame(page);
-      const toastBox = await page.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height,
-        scroll: node.scrollHeight, client: node.clientHeight, tabIndex: node.tabIndex, live: node.getAttribute('aria-live') }));
-      assert(toastBox.height <= 56 && toastBox.scroll > toastBox.client && toastBox.tabIndex === 0 && toastBox.live,
-        'The complete outcome stays scrollable and keyboard accessible inside a bounded Player toast: ' + JSON.stringify(toastBox));
-      assert.equal(await page.locator('#toast > span:not(.ti)').textContent(), fullToast, 'Presentation preserves the full actual outcome text.');
-      await page.locator('#toast').focus(); await page.keyboard.press('ArrowDown');
-      await page.waitForFunction(() => document.querySelector('#toast').scrollTop > 0);
-      await new Promise(resolve => setTimeout(resolve, 3500));
-      assert(await page.locator('#toast.show').isVisible(), 'The existing dismiss clock pauses while the player reads the focused toast.');
-      await page.keyboard.press('Escape');
-      assert.equal(await page.locator('#toast.show').count(), 0); assert.equal((await state(page)).worldUI.panel, 'map', 'Dismissing the focused toast does not close the gameplay panel.');
-      assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1 && !node.contains(document.activeElement)),
-        'Escape retires the toast and all descendant focus targets.');
-      await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
+      if (viewport.width === 320) {
+        const pressureToast = await page.locator('#toast').evaluate(node => ({ shown: node.classList.contains('show'), inert: node.inert,
+          text: node.querySelector('span:not(.ti)').textContent, height: node.getBoundingClientRect().height }));
+        assert(pressureToast.shown && !pressureToast.inert && pressureToast.text === fullToast && Math.abs(pressureToast.height - 56) < 1,
+          'The HUD pressure case retains the complete actual outcome inside its 56px visible cap: ' + JSON.stringify(pressureToast));
+        const hud = page.locator('.omerta-city__world-hud'), gainCopy = await page.locator('.city-world__gains').textContent();
+        const readHudEnd = async () => {
+          await hud.evaluate(node => {
+            node.__endSettled = new Promise(resolve => {
+              const atEnd = () => node.scrollTop >= node.scrollHeight - node.clientHeight - 1;
+              if (atEnd()) return resolve();
+              const done = () => { if (atEnd()) { node.removeEventListener('scrollend', done); resolve(); } };
+              node.addEventListener('scrollend', done);
+            });
+          });
+          await page.keyboard.press('End'); await bounded(hud.evaluate(node => node.__endSettled), 'native HUD End scroll settlement');
+        };
+        assert.match(gainCopy, /Level 2 reached/);
+        const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
+        assert.equal(frameBeforeReading.header.height, 177.75);
+        assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
+        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
+          'Resources and the complete warning are initially visible in the supported CI geometry.');
+        assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
+          'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
+        await hud.focus(); await readHudEnd();
+        const feedbackVisible = () => {
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
+          return gain.top >= hud.top && gain.bottom <= hud.bottom;
+        };
+        await page.waitForFunction(feedbackVisible);
+        assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
+        assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
+        const reading = await hud.evaluate(node => ({ outer: scrollY, inner: node.scrollTop, focused: document.activeElement === node }));
+        await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+        const readingFrames = await page.evaluate(() => new Promise(resolve => { const values = []; const sample = () => {
+          const hud = document.querySelector('.omerta-city__world-hud'); values.push({ outer: scrollY, inner: hud.scrollTop, focused: document.activeElement === hud });
+          if (values.length === 30) resolve(values); else requestAnimationFrame(sample);
+        }; requestAnimationFrame(sample); }));
+        assert(readingFrames.every(frame => frame.outer === reading.outer && frame.inner === reading.inner && frame.focused),
+          'Passive fitting preserves both reading positions and focus without ResizeObserver.');
+        await page.locator('#toast.show').focus();
+        await page.locator('[data-city-world-close]').click();
+        assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
+        await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
+        await panel(page, 'map'); const pressure = await assertFrame(page);
+        assert.equal(pressure.header.height, 215);
+        assert(await hud.evaluate(node => Math.abs(node.getBoundingClientRect().height - 51) < 1), 'The cap is derived from real chrome, never a second minimum-height floor.');
+        await hud.focus(); await readHudEnd(); await page.waitForFunction(feedbackVisible);
+        await page.keyboard.press('ArrowUp');
+        await page.waitForFunction(() => {
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
+          return warning.top >= hud.top && warning.bottom <= hud.bottom;
+        });
+        assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness, 'The complete warning remains keyboard-readable when all rows cannot fit simultaneously.');
+        assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
+        assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
+        assert.deepEqual((await state(page)).position, walkingPose);
+        await page.locator('#toast.show').focus(); await page.locator('[data-city-world-close]').click();
+        await shortFont.evaluate(node => { node.textContent = node.textContent.replace('215px', '177.75px'); });
+        await panel(page, 'map'); await assertFrame(page);
+        const toastBox = await page.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height,
+          scroll: node.scrollHeight, client: node.clientHeight, tabIndex: node.tabIndex, live: node.getAttribute('aria-live') }));
+        assert(Math.abs(toastBox.height - 56) < 1 && toastBox.scroll > toastBox.client && toastBox.tabIndex === 0 && toastBox.live,
+          'The complete outcome stays scrollable and keyboard accessible inside a bounded Player toast: ' + JSON.stringify(toastBox));
+        assert.equal(await page.locator('#toast > span:not(.ti)').textContent(), fullToast, 'Presentation preserves the full actual outcome text.');
+        await restoreToastClock();
+        // Restore the real blur clock and arm it before focus pauses it again.
+        await page.locator('#toast.show').focus();
+        const heldDismissalHandle = await page.locator('#toast').evaluate(node => node._h);
+        await hud.focus();
+        assert(await page.locator('#toast').evaluate((node, old) => !!node._h && node._h !== old && !Object.hasOwn(node, '__layoutBlur'), heldDismissalHandle),
+          'The restored real blur handler arms a fresh dismiss clock before the focus-pause proof.');
+        await page.locator('#toast').focus(); await page.keyboard.press('ArrowDown');
+        await page.waitForFunction(() => document.querySelector('#toast').scrollTop > 0);
+        await new Promise(resolve => setTimeout(resolve, 3500));
+        assert(await page.locator('#toast.show').isVisible(), 'The existing dismiss clock pauses while the player reads the focused toast.');
+        await page.keyboard.press('Escape');
+        assert.equal(await page.locator('#toast.show').count(), 0); assert.equal((await state(page)).worldUI.panel, 'map', 'Dismissing the focused toast does not close the gameplay panel.');
+        assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1 && !node.contains(document.activeElement)),
+          'Escape retires the toast and all descendant focus targets.');
+        await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
+      }
+      await page.locator('[data-city-world-close]').click();
+      assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
+      assert.deepEqual((await state(page)).position, walkingPose);
     }
-    await page.locator('[data-city-world-close]').click();
-    assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
-    assert.deepEqual((await state(page)).position, walkingPose);
-  }
+  } finally { await restoreToastClock(); }
   await shortFont.evaluate(node => node.remove());
   const still = await newPage({ width: 375, height: 812 }, { reducedMotion: 'reduce' });
   const frozen = (await state(still.page)).ambient; await frames(still.page); assert.deepEqual((await state(still.page)).ambient, frozen);
@@ -500,9 +543,18 @@ try {
   await page.locator('#btn-refresh').focus(); await page.keyboard.press('Tab');
   assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false, 'A timed-out message is absent from keyboard navigation.');
   await page.evaluate(() => { window.__toastActions = 0; window.__toastProof.toast('Action feedback', false,
-    { label: 'Read this clue', run: () => { window.__toastActions++; } }); });
+    { label: 'Read this clue', run: () => {
+      window.__toastActions++;
+      const node = document.querySelector('#toast');
+      window.__toastActionRetired = { inert: node.inert, tabIndex: node.tabIndex, focusOutside: !node.contains(document.activeElement) };
+    } }); });
+  assert(await page.locator('#toast').evaluate(node => node._return === document.querySelector('.omerta-city__world-hud')
+    && node._return.isConnected && node._return.tabIndex < 0 && !node._return.closest('.hidden, [hidden], [inert]')),
+  'The actual previously focused HUD remains connected after its phone-only reading target retires.');
   await page.locator('#toast .toast-act').focus(); await page.keyboard.press('Enter');
   assert.equal(await page.evaluate(() => window.__toastActions), 1);
+  assert.deepEqual(await page.evaluate(() => window.__toastActionRetired), { inert: true, tabIndex: -1, focusOutside: true },
+    'The action resumes only after toast focus retires, even when its connected return target is no longer focusable.');
   assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1 && !node.contains(document.activeElement)));
   await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false, 'An activated message retires its action button.');
   await page.evaluate(() => window.__toastProof.toast('Dismissible feedback', false, { label: 'Read this clue', run: () => { window.__toastActions++; } }));
@@ -634,7 +686,37 @@ try {
   await authPage.page.unroute('**/v1/city/social');
   await authPage.page.waitForFunction(count => window.__worldHandles.length > count && window.__worldHandles.at(-1).handle.getState().ready, authHandleCount);
   assert(await authPage.page.locator('#screen-main:not(.hidden)').isVisible(), 'A retired scene denial cannot sign out the current restored session.');
+  // A cached Wine control renders before the restored scene's fresh read has
+  // settled. Drain actual current reads before revoking: otherwise a queued
+  // player401 can correctly retire the session before Social is dispatched.
+  let releaseRestored, observedRestored, fulfilledRestored;
+  const restoredGate = new Promise(resolve => { releaseRestored = resolve; });
+  const restoredObserved = new Promise(resolve => { observedRestored = resolve; });
+  const restoredFulfilled = new Promise(resolve => { fulfilledRestored = resolve; });
+  const restoredAt = authPage.requests.length;
+  const restoredRead = authPage.page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/city/social' && reply.status() === 200);
+  let restoredOnce = false;
+  await authPage.page.route('**/v1/city/social', async route => {
+    if (restoredOnce) return route.continue(); restoredOnce = true;
+    const reply = await route.fetch(); assert.equal(reply.status(), 200);
+    assert.equal((await reply.json()).viewer.characterId, authActor.character.id);
+    observedRestored(); await restoredGate; await route.fulfill({ response: reply }); fulfilledRestored();
+  });
   await panel(authPage.page, 'style'); await authPage.page.locator('[data-city-outfit="wine"]').waitFor();
+  await bounded(restoredObserved, 'the real restored Social200 behind cached Wine');
+  assert.equal(await authPage.page.evaluate(() => window.__worldReadResults.at(-1).settled), false);
+  const restoredPlayer = authPage.page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/projections/player' && reply.status() === 200);
+  const restoredInventory = authPage.page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/worldgraph/inventory' && reply.status() === 200);
+  await authPage.page.locator('#btn-refresh').click(); await panel(authPage.page, 'bag');
+  releaseRestored(); await restoredRead; await restoredPlayer; await restoredInventory;
+  await bounded(restoredFulfilled, 'the restored Social route completion'); await authPage.page.unroute('**/v1/city/social');
+  const settledReadAt = await authPage.page.evaluate(() => window.__worldReadResults.length);
+  await panel(authPage.page, 'style');
+  await authPage.page.waitForFunction(start => window.__worldReadResults.slice(start).some(read => read.kind === 'social'
+    && read.scene === window.__worldHandles.length && read.settled && read.current && read.code === 200 && !read.ignored), settledReadAt);
+  assert.equal((await state(authPage.page)).worldUI.panel, 'style');
+  assert.equal((await state(authPage.page)).look, 'wine');
+  assert.deepEqual(mutations(authPage.requests.slice(restoredAt)), [], 'Restoration and its read queue are read-only before real revocation.');
   await authPage.page.locator('[data-city-world-close]').click();
   await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1', [authActor.character.account_id]);
   const revokedResponse = authPage.page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/city/social' && reply.status() === 401);
