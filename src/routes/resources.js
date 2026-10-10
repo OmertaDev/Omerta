@@ -1,4 +1,5 @@
 import { resourceOutcomes } from '../resourceoutcomes.js';
+import { setAgentCompany, ownAgentCompany, getAgentCompany } from '../agentcompany.js';
 import { resourceStorefront } from '../resourcestorefront.js';
 import { businessSnapshot } from '../resourcebusiness.js';
 import { createResourceBounty, resourceLaborBoard, bidResourceBounty, awardResourceBounty, cancelResourceBounty, resourceLaborReputation, renewResourceJob } from '../resourcelabor.js';
@@ -14,6 +15,20 @@ export function register(app, { pool, auth, modAuth }) {
   const ownerOnly = async req => {
     if (req.user.agent === true) throw resourceError('owner_authority', 'Use the separate owner session to approve external spending, funding or a paid service.');
   };
+  app.get('/v1/resources/company', { preHandler: auth }, async req => ownAgentCompany(pool, req.user.sub));
+  app.post('/v1/resources/company', { preHandler: [auth, ownerOnly], preValidation: async req => {
+    const body = req.body;
+    if (!body || typeof body !== 'object' || Array.isArray(body)
+        || Object.keys(body).some(key => !['expectedRevision', 'name', 'published', 'premises'].includes(key))
+        || !Number.isInteger(body.expectedRevision) || typeof body.name !== 'string' || typeof body.published !== 'boolean'
+        || ![null, 'estate', 'street'].includes(body.premises)) throw resourceError('terms', 'Use explicit company metadata without extra account or authority fields.');
+  }, schema: { body: {
+    type: 'object', additionalProperties: false, required: ['expectedRevision', 'name', 'published', 'premises'],
+    properties: { expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 },
+      name: { type: 'string', minLength: 2, maxLength: 64 }, published: { type: 'boolean' },
+      premises: { enum: [null, 'estate', 'street'] } }
+  } } }, async req => setAgentCompany(pool, req.user.sub, req.body));
+  app.get('/v1/resources/companies/:id', async req => getAgentCompany(pool, req.params.id));
   app.get('/v1/resources/outcomes', { preHandler: auth }, async req => resourceOutcomes(pool, req.user.sub));
   app.get('/v1/resources/storefronts/:id', async req => resourceStorefront(pool, req.params.id));
   app.get('/v1/resources/business', { preHandler: auth }, async req => businessSnapshot(pool, req.user.sub));

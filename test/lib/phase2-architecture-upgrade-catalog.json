@@ -1285,6 +1285,36 @@
       "table_name": "resource_treasuries",
       "name": "resource_treasuries_reserved_usd_micros_check",
       "definition": "CHECK (reserved_usd_micros >= 0 AND reserved_usd_micros <= '1000000000000'::bigint)"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_check",
+      "definition": "CHECK (\nCASE\n    WHEN premises_kind IS NULL THEN premises_key IS NULL AND premises_district IS NULL\n    WHEN premises_kind = 'estate'::text THEN premises_key IS NOT NULL AND premises_district IS NULL\n    WHEN premises_kind = 'street'::text THEN premises_key IS NOT NULL AND premises_district IS NOT NULL\n    ELSE false\nEND)"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_name_check",
+      "definition": "CHECK (char_length(name) >= 2 AND char_length(name) <= 64)"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_premises_kind_check",
+      "definition": "CHECK (premises_kind IS NULL OR (premises_kind = ANY (ARRAY['estate'::text, 'street'::text])))"
+    },
+    {
+      "table_name": "agent_company_profiles",
+      "name": "agent_company_profiles_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
     }
   ],
   "removed": [
@@ -1847,6 +1877,13 @@
       "price_usd_micros",
       "seller_account",
       "service_revision"
+    ],
+    "agent_company_profiles": [
+      "account_id",
+      "name",
+      "published",
+      "revision",
+      "updated_at"
     ]
   }
 }

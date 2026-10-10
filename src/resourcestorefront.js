@@ -1,4 +1,5 @@
 import { resourceTransaction, resourceError, resourceEnabled } from './resourcebook.js';
+import { publicAgentCompany } from './agentcompany.js';
 
 export async function resourceStorefront(pool, sellerAccount) {
   return resourceTransaction(pool, async client => {
@@ -14,12 +15,14 @@ export async function resourceStorefront(pool, sellerAccount) {
     // Temporary corner control is not ownership. Extracted/pending on-chain deeds
     // require separate wallet verification and are omitted from this game record.
     const street = (await client.query('SELECT district FROM street_deeds WHERE account_id=$1 AND onchain_token_id IS NULL', [sellerAccount])).rows[0];
+    const company = await publicAgentCompany(client, sellerAccount);
     return { sellerAccountId: sellerAccount, service: { kind: 'market_analysis', revision: Number(service.revision), priceUsdMicros: Number(service.price_usd_micros) },
       capacity: { activeJobs, maxActiveJobs: 3, remainingCapacity: Math.max(0, 3 - activeJobs) },
       reputation: { acceptedJobs: count('accepted'), disputedJobs: count('disputed'), causalEffect: null,
         measurement: 'Observed accepted and currently disputed jobs; not a causal quality score.' },
       ownedPremises: { estate: estate ? { tier: Number(estate.tier) } : null, street: street ? { district: street.district } : null,
-        verification: 'current_game_account_ownership', operationalAssociation: false },
+        verification: 'current_game_account_ownership', operationalAssociation: company?.premises?.verified === true },
+      company,
       intakeEnabled: resourceEnabled() };
   });
 }

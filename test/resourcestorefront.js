@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { commandDatabase, addPlayer, postgres } from './lib/player-command-support.js';
 import { resourceTransaction, lockResourceTreasury } from '../src/resourcebook.js';
 import { resourceStorefront } from '../src/resourcestorefront.js';
+import { setAgentCompany } from '../src/agentcompany.js';
 
 const database = await commandDatabase('resourcestorefront'); const pool = database.pool;
 const seller = 'storefront-seller', buyer = 'private-buyer';
@@ -44,6 +45,7 @@ try {
     return { query: async (sql, values) => { queries.push(sql); return client.query(sql, values); }, release: () => client.release() };
   } };
   const storefront = await resourceStorefront(countedPool, seller);
+  assert.equal(storefront.company, null);
   assert.equal(storefront.service.priceUsdMicros, 100000);
   assert.equal(storefront.reputation.acceptedJobs, 2); assert.equal(storefront.reputation.disputedJobs, 1);
   assert.equal(storefront.capacity.activeJobs, 4); assert.equal(storefront.capacity.remainingCapacity, 0);
@@ -52,6 +54,15 @@ try {
   for (const secret of [buyer, 'PRIVATE_', 'treasury', 'revenue', 'question', 'report', 'calls', 'spent_omr', 'controller_account']) assert(!serialized.includes(secret));
   assert(queries.every(sql => /^(SELECT|BEGIN|COMMIT|ROLLBACK)\b/.test(sql)), 'Snapshot makes no writes');
   assert(queries.every(sql => !/SELECT\s+\*|\b(input|report|output|buyer_account|available_usd_micros)\b/i.test(sql)), 'Snapshot does not load private fields');
+  await setAgentCompany(pool, seller, { expectedRevision: 0, name: 'Verified Company', published: true, premises: 'estate' });
+  const associated = await resourceStorefront(pool, seller);
+  assert.equal(associated.company.name, 'Verified Company');
+  assert.equal(associated.ownedPremises.operationalAssociation, true);
+  await pool.query('UPDATE estates SET tier=0 WHERE account_id=$1', [seller]);
+  assert.equal((await resourceStorefront(pool, seller)).ownedPremises.operationalAssociation, false, 'Premises removal invalidates company association');
+  await setAgentCompany(pool, seller, { expectedRevision: 1, name: 'Private Draft', published: false, premises: null });
+  const unpublished = await resourceStorefront(pool, seller);
+  assert.equal(unpublished.company, null); assert.equal(unpublished.ownedPremises.operationalAssociation, false);
   await pool.query('UPDATE resource_services SET enabled=false WHERE account_id=$1', [seller]);
   await assert.rejects(resourceStorefront(pool, seller), error => error.code === 'resource_not_found');
   console.log(`resourcestorefront PASS (${postgres ? 'PostgreSQL' : 'memory'}) publication privacy, capacity and read-only observations`);
