@@ -152,6 +152,7 @@ import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard } from './opportunities.js';
 import { arenaBoard } from './arena.js';
 import { registerCity } from './routes/city.js';
+import { registerCitySocial } from './city-social.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
@@ -530,6 +531,7 @@ export async function buildServer() {
   // City scenes are optional local assets; gameplay remains authoritative through the API.
   for (const [file, type] of [
     ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'],
+    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
     ['vendor/phaser.js', 'application/javascript'], ['vendor/phaser.js.LICENSE.txt', 'text/plain'],
   ]) {
@@ -3090,6 +3092,7 @@ export async function buildServer() {
   app.get('/v1/gangs/chat', { preHandler: auth }, async (req) => readChat(req, 'family'));
   app.post('/v1/crew/chat', { preHandler: auth }, async (req) => postChat(req, 'crew'));
   app.get('/v1/crew/chat', { preHandler: auth }, async (req) => readChat(req, 'crew'));
+  registerCitySocial(app, { pool, auth, onlineIds: () => [...wsClients.keys()], lastChatAt, capMap });
 
   // ── THE CELLPHONE (founder request) — inbox + player-to-player DMs. Pure talk, zero §10.4;
   // account-keyed threads survive death (the heir inherits the phone). src/phone.js. ──

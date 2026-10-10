@@ -361,6 +361,18 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     rejected('city '+column+' nullability removed',mutate('city_intel_progress',`city_intel_progress_${column}_not_null`,
       (rows,index) => rows.splice(index,1)));
   }
+  rejected('social character ownership foreign key removed',mutate('city_social_preferences','city_social_preferences_character_id_fkey',
+    (rows,index) => rows.splice(index,1)));
+  rejected('social generation identity weakened',mutate('city_social_preferences','city_social_preferences_pkey',
+    (rows,index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected('social generation minimum removed',mutate('city_social_preferences','city_social_preferences_generation_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('social outfit catalog widened',mutate('city_social_preferences','city_social_preferences_outfit_check',
+    (rows,index) => { rows[index].definition = 'CHECK (true)'; }));
+  if (serverVersionNum >= 180000) for (const column of ['character_id','chat_enabled','generation','outfit','room_layout']) {
+    rejected('social '+column+' nullability removed',mutate('city_social_preferences',`city_social_preferences_${column}_not_null`,
+      (rows,index) => rows.splice(index,1)));
+  }
 }
 async function constraints(pool) {
   console.log('phase2-postgres: beginning direct constraints');
