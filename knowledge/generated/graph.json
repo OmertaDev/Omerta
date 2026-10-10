@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "072d43b74c8cc8cadc1de81bbb96516a02df0f66",
+  "sourceRevision": "4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10508,
-    "edges": 42872,
+    "nodes": 10510,
+    "edges": 42879,
     "byNodeType": {
       "Artifact": 4408,
       "Command": 212,
-      "Commit": 2274,
+      "Commit": 2276,
       "Contract": 126,
       "Document": 705,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3542,
-      "CHANGED": 16803,
+      "CHANGED": 16808,
       "CONTAINS": 4429,
       "DECLARES": 212,
       "DEFINED_IN": 1398,
       "DEPENDS_ON": 67,
       "EXECUTES": 721,
       "HANDLED_BY": 774,
-      "HAS_COMMIT": 2274,
+      "HAS_COMMIT": 2276,
       "IMPLEMENTS": 124,
       "IMPORTS": 4207,
       "INHERITS": 42,
@@ -115099,6 +115099,22 @@
       ]
     },
     {
+      "key": "Commit:4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+      "type": "Commit",
+      "id": "4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+      "label": "Merge pull request #221 from OmertaDev/codex/company-operating-roles",
+      "title": "Merge pull request #221 from OmertaDev/codex/company-operating-roles",
+      "date": "2026-10-10T20:22:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+      "provenance": [
+        {
+          "commit": "4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330"
+        }
+      ]
+    },
+    {
       "key": "Commit:4a6682dcd42077048bc93ee02136352c854bf1fc",
       "type": "Commit",
       "id": "4a6682dcd42077048bc93ee02136352c854bf1fc",
@@ -129511,6 +129527,22 @@
         {
           "commit": "afbdbbad9c19b46fc42035a73cba7cc26f8b677d",
           "url": "https://github.com/OmertaDev/Omerta/commit/afbdbbad9c19b46fc42035a73cba7cc26f8b677d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "type": "Commit",
+      "id": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "label": "Refresh knowledge for RC1 business transfer proof",
+      "title": "Refresh knowledge for RC1 business transfer proof",
+      "date": "2026-10-10T19:38:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "provenance": [
+        {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
         }
       ]
     },
@@ -161016,6 +161048,9 @@
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
         },
         {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+        },
+        {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
@@ -161989,6 +162024,9 @@
         },
         {
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
+        },
+        {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
         },
         {
           "commit": "b079d75b5f8f95e06be2f4d66003be5cbf816d94"
@@ -163152,6 +163190,9 @@
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
         },
         {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+        },
+        {
           "commit": "b079d75b5f8f95e06be2f4d66003be5cbf816d94"
         },
         {
@@ -164311,6 +164352,9 @@
         },
         {
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
+        },
+        {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
         },
         {
           "commit": "b079d75b5f8f95e06be2f4d66003be5cbf816d94"
@@ -165781,6 +165825,9 @@
         },
         {
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
+        },
+        {
+          "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
         },
         {
           "commit": "b079d75b5f8f95e06be2f4d66003be5cbf816d94"
@@ -175551,8 +175598,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "072d43b74c8cc8cadc1de81bbb96516a02df0f66",
-      "currentBranch": "codex/company-operating-roles",
+      "revision": "4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -332906,6 +332953,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:afe47db7a3a54c8e151260b7016e880dcef72816",
       "to": "Artifact:docs/business-shadow-security-review.md",
       "provenance": {
@@ -453405,6 +453492,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330",
+      "provenance": {
+        "commit": "4a64d9dea4c3b0d6b6ef2a8ada5a71cdeffdd330"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4a6682dcd42077048bc93ee02136352c854bf1fc",
       "provenance": {
         "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
@@ -460608,6 +460703,14 @@
       "to": "Commit:afbdbbad9c19b46fc42035a73cba7cc26f8b677d",
       "provenance": {
         "commit": "afbdbbad9c19b46fc42035a73cba7cc26f8b677d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1",
+      "provenance": {
+        "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
       }
     },
     {
