@@ -180,6 +180,16 @@
 .omerta-city__viewport {
   background: #1b2429;
 }
+body.city-player-view .omerta-city__viewport { max-width: 960px; margin-inline: auto; }
+body.city-player-view .omerta-city:not(.omerta-city--unavailable) .omerta-city__viewport.is-inspecting .omerta-city__map-layer { min-height: 96px; }
+body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+  height: var(--city-map-height); min-height: 96px; aspect-ratio: auto;
+}
+@media (min-width: 681px) {
+  body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas {
+    width: min(100%, max(680px, calc(var(--city-map-height) * 1.5))); margin-inline: auto;
+  }
+}
 .omerta-city__map-layer {
   position: relative;
   background: #1b2429;

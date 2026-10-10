@@ -45,10 +45,18 @@ try {
   await app.listen({ host: '127.0.0.1', port: 0 });
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
-  const newPage = async viewport => {
+  const newPage = async (viewport, { noResizeObserver = false } = {}) => {
     const context = await browser.newContext({ viewport, serviceWorkers: 'block', isMobile: viewport.width <= 680, hasTouch: viewport.width <= 680 });
+    if (noResizeObserver) await context.addInitScript(() => { window.ResizeObserver = undefined; });
     await context.addInitScript(token => {
       localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_tour2', '1');
+      window.__presenceGames = []; let engine;
+      Object.defineProperty(window, 'Phaser', { configurable: true, get: () => engine, set: value => {
+        engine = value; const Game = value.Game;
+        value.Game = new Proxy(Game, { construct(target, args) {
+          const game = Reflect.construct(target, args); window.__presenceGames.push(game); return game;
+        } });
+      } });
       window.__presenceHandles = []; let api;
       Object.defineProperty(window, 'OmertaCityScene', { configurable: true, get: () => api, set: value => {
         api = { ...value, mount(...args) {
@@ -83,6 +91,52 @@ try {
   const frames = page => page.evaluate(() => new Promise(resolve => { let observed = 0; const next = () => ++observed < 8 ? requestAnimationFrame(next) : resolve(); requestAnimationFrame(next); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
+  const assertDockFrame = async page => {
+    await frames(page);
+    const geometry = await page.evaluate(() => {
+      const rect = node => node.getBoundingClientRect().toJSON(), hit = node => {
+        const r = rect(node), target = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return node === target || node.contains(target);
+      };
+      const canvas = document.querySelector('.omerta-city__canvas canvas'), hud = document.querySelector('.omerta-city__world-hud');
+      const dock = document.querySelector('.omerta-city__actor-dock'), close = dock.querySelector('[data-city-actor-close]');
+      const game = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length), live = game.scene.getScenes(true)[0];
+      const camera = live.cameras.main, box = rect(canvas);
+      const avatar = [live.children.list.find(node => node.texture?.key === 'city-player' || node.texture?.key?.startsWith('city-art-player-')), live.data.get('playerName')].map(node => {
+        const bounds = node.getBounds();
+        return { top: (bounds.top - camera.worldView.y) * camera.zoom * box.height / camera.height,
+          bottom: (bounds.bottom - camera.worldView.y) * camera.zoom * box.height / camera.height,
+          left: (bounds.left - camera.worldView.x) * camera.zoom * box.width / camera.width,
+          right: (bounds.right - camera.worldView.x) * camera.zoom * box.width / camera.width };
+      });
+      const controls = [...hud.querySelectorAll('[data-city-resource] dd'), hud.querySelector('.omerta-city__readiness')];
+      const toast = document.querySelector('#toast'), toastBox = toast?.classList.contains('show') ? rect(toast) : null;
+      const toastTop = toastBox && toastBox.bottom > 0 && toastBox.top < innerHeight ? toastBox.top : innerHeight;
+      return { hud: rect(hud), canvas: box, dock: rect(dock), close: rect(close), header: rect(document.querySelector('#top')),
+        engine: { width: canvas.width, height: canvas.height }, avatar, viewport: rect(document.querySelector('.omerta-city__viewport')),
+        worldWidth: 960 * camera.zoom, height: innerHeight, toastTop, controlsVisible: controls.every(hit), closeVisible: hit(close),
+        canvasVisible: [box.top + 3, box.top + box.height / 2, box.bottom - 3].every(y => document.elementFromPoint(box.left + box.width / 2, y) === canvas) };
+    });
+    const detail = JSON.stringify(geometry);
+    assert(geometry.hud.top >= geometry.header.bottom && geometry.controlsVisible, 'Current resource values and readiness stay below sticky chrome: ' + detail);
+    assert(geometry.canvasVisible && geometry.dock.bottom <= Math.min(geometry.height, geometry.toastTop) + 1, 'The map and reserved dock fit the usable window: ' + detail);
+    assert(geometry.close.height >= 44 && geometry.closeVisible, 'The dock close control remains reachable: ' + detail);
+    assert(Math.abs(geometry.engine.width - geometry.canvas.width) <= 1 && Math.abs(geometry.engine.height - geometry.canvas.height) <= 1, 'CSS and Phaser share actual viewport geometry: ' + detail);
+    assert(geometry.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= geometry.canvas.height + 1 && bounds.left >= -1 && bounds.right <= geometry.canvas.width + 1), 'The complete actual avatar and name remain in the map: ' + detail);
+    assert(geometry.viewport.width <= 960 && Math.abs(geometry.viewport.left - (page.viewportSize().width - geometry.viewport.width) / 2) <= 1, 'Wide Player maps are centered at the world width: ' + detail);
+    assert(geometry.canvas.width <= geometry.worldWidth + 1 && Math.abs(geometry.canvas.left - (page.viewportSize().width - geometry.canvas.width) / 2) <= 1, 'The centered canvas does not extend into empty space beyond the world: ' + detail);
+    return geometry;
+  };
+  const assertFallbackMap = async page => {
+    const layout = await page.locator('.omerta-city__map-layer').evaluate(node => {
+      const status = node.querySelector('.omerta-city__status'), style = getComputedStyle(status);
+      return { minimum: getComputedStyle(node).minHeight, height: node.getBoundingClientRect().height,
+        statusHeight: status.getBoundingClientRect().height, margins: parseFloat(style.marginTop) + parseFloat(style.marginBottom),
+        canvasDisplay: getComputedStyle(node.querySelector('.omerta-city__canvas')).display };
+    });
+    assert.equal(layout.minimum, '0px', JSON.stringify(layout)); assert.equal(layout.canvasDisplay, 'none', JSON.stringify(layout));
+    assert(layout.height <= layout.statusHeight + layout.margins + 1, 'Fallback reserves its real status message without an empty map strip: ' + JSON.stringify(layout));
+  };
   const inspect = async (page, id) => {
     if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
     while (!await page.locator('[data-city-actors-previous]').isDisabled()) await page.locator('[data-city-actors-previous]').click();
@@ -229,6 +283,41 @@ try {
   assert.equal(new Set(board.journal.map(entry => entry.id)).size, 7);
   assert.deepEqual((await state(page)).position, pose);
   await page.locator('[data-city-actor-close]').click(); await page.locator('[data-city-intel-open]').click();
+  // Actor/journal panels reserve desktop space rather than scrolling resource
+  // values under sticky chrome, including a short landscape window.
+  const desktopReads = requests.length;
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 1366, height: 600 }]) {
+    await page.setViewportSize(viewport);
+    await page.locator('[data-city-actor-close]').click(); await frames(page);
+    const closed = await page.locator('.omerta-city__canvas canvas').boundingBox();
+    await page.locator('[data-city-intel-open]').click();
+    await assertDockFrame(page);
+    assert.deepEqual((await state(page)).position, pose); assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+    const shots = process.env.CITY_PRESENCE_SHOTS;
+    if (shots) { fs.mkdirSync(shots, { recursive: true }); await page.screenshot({ path: path.join(shots, 'city-people-journal-' + viewport.width + '.png') }); }
+    await inspect(page, npc.id); await assertDockFrame(page);
+    const button = await page.locator('[data-city-encounter]').evaluate(node => { const r = node.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return { height: r.height, visible: node === hit || node.contains(hit) }; });
+    assert(button.height >= 44 && button.visible, JSON.stringify(button));
+    if (shots) await page.screenshot({ path: path.join(shots, 'city-people-actor-' + viewport.width + '.png') });
+    await page.locator('[data-city-actor-close]').click(); await frames(page);
+    assert.equal(await page.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), '', 'Closing restores the original desktop map sizing.');
+    const restored = await page.locator('.omerta-city__canvas canvas').evaluate(node => ({ ...node.getBoundingClientRect().toJSON(), engineWidth: node.width, engineHeight: node.height }));
+    assert(Math.abs(restored.width - closed.width) <= 1 && Math.abs(restored.height - closed.height) <= 1, 'Closing restores actual original desktop dimensions: ' + JSON.stringify({ closed, restored }));
+    assert(Math.abs(restored.engineWidth - restored.width) <= 1 && Math.abs(restored.engineHeight - restored.height) <= 1, 'Closing restores matching Phaser dimensions.');
+    assert.deepEqual((await state(page)).position, pose);
+    await page.locator('[data-city-intel-open]').click();
+  }
+  assert.deepEqual(mutations(requests.slice(desktopReads)), [], 'Desktop journal/actor opening and resizing never submit gameplay.');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.locator('[data-city-actor-close]').click(); await page.locator('[data-city-intel-open]').click();
+  const noObserver = await newPage({ width: 1366, height: 600 }, { noResizeObserver: true });
+  const noObserverPose = (await state(noObserver.page)).position;
+  await noObserver.page.locator('[data-city-intel-open]').click(); await assertDockFrame(noObserver.page);
+  await inspect(noObserver.page, npc.id); await assertDockFrame(noObserver.page);
+  assert.deepEqual((await state(noObserver.page)).position, noObserverPose);
+  assert.deepEqual(mutations(noObserver.requests), []);
+  await noObserver.context.close();
+  await page.bringToFront();
   assert.equal(await page.locator('[data-city-intel]').count(), 7);
   assert.equal(await page.locator('[data-city-objective]').count(), 3);
   assert.equal(await page.locator('[data-city-intel-action]').count(), 0, 'Reading the journal cannot complete an encounter objective.');
@@ -372,6 +461,11 @@ try {
   await fallback.waitForSelector('.omerta-city--unavailable [data-city-actor]');
   const fallbackCalls = []; fallback.on('request', request => fallbackCalls.push({ method: request.method(), path: new URL(request.url()).pathname }));
   await fallback.locator('[data-city-actor]').first().click();
+  await assertFallbackMap(fallback);
+  await fallback.setViewportSize({ width: 1366, height: 600 });
+  await fallback.locator('[data-city-actor-close]').click(); await fallback.locator('[data-city-actor]').first().click();
+  await assertFallbackMap(fallback);
+  await fallback.setViewportSize({ width: 375, height: 812 });
   assert.deepEqual(mutations(fallbackCalls), []);
   await fallback.locator('[data-city-encounter]').click();
   await fallback.waitForFunction(() => document.querySelector('.omerta-city__actor-notice')?.textContent.startsWith('Intel recorded:'));

@@ -38,6 +38,10 @@ The final legacy City journey and visible-toggle regressions also passed on thes
 
 Current-main integration target `a3e5125fa7e7b55dac07cda879e68162067e6cf8` was independently reviewed. It changes no City, schema, server, gateway, public GUI, chain, economy or worker source. Incoming resource read routes use distinct paths. Integration unions package test chains (including both native producer chains), retains the intentional public storefront route exception, and refreshes measured census facts. GUI and encounter producer blobs remain unchanged; native release evidence must qualify the resulting integrated head.
 
+CP-08: final desktop previews exposed a dock that could scroll resource values behind the sticky header, followed by an unreadably small world on a short window. Desktop Player inspection now shares measured fitted dimensions between CSS and Phaser and centers the bounded canvas. Closing restores its dimensions; phone floors, zoom formula, world pose, collision and authority are unchanged. Full presence browser verification passed at 1440×1000, 1366×600 and short desktop without ResizeObserver, retaining all earlier privacy/replay/phone checks. Tests measure actual HUD, complete live sprite/name, 44px controls, pointer geometry and fallback status content. Independent final review cleared scene `6ba665b2514098929c0a039d488517d27cdc530f`, CSS `bece7dc21e088505d4c8ee1ab2dd6f2184feabd7`, and browser test `e8ba332c5111582e1cdbabbc467dbc49abb04b45`.
+
+Serving worker revision `95e59d02e73eab78271abc6c35757b3b17826648` was checked for compatibility with integrated producer source `29909d4dafcf2e3479317221327aa013bb05c145`. Its 172-module local import closure, worker/start scripts, package dependencies, lockfile, chain and contracts are byte-identical. The API must apply the additive table before encounter writes; the existing worker does not access it. A worker rollout solely for generated metadata is unnecessary. This is compatibility evidence, not a deployment or native-proof claim.
+
 | Working-tree file | SHA256 |
 | --- | --- |
 | src/city-presence.js | fca0bc8398a47a469eee8f832e9df46b286023366cb15e82752ecbd867b1544a |

@@ -826,12 +826,16 @@
     function inspectNearby() { const target = nearTarget(); if (target?.actor) showActor(target.actor.id); else if (target?.venue) showVenue(target.venue); }
     function dimensions() {
       const phone = window.innerWidth <= 680;
-      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone ? 96 : 320, Math.round(canvasHost.clientHeight)) };
+      const fitted = !!canvasHost.style.getPropertyValue('--city-map-height');
+      return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone || fitted ? 96 : 320, Math.round(canvasHost.clientHeight)) };
     }
     function syncPointerBounds() { if (game?.canvas) game.scale.updateBounds(); }
     function fitWorldFrame() {
       if (destroyed) return;
-      if (window.innerWidth > 680) {
+      const phone = window.innerWidth <= 680;
+      const inspecting = !actorDock.hidden && document.body.classList.contains('city-player-view');
+      viewport.classList.toggle('is-inspecting', inspecting);
+      if (!phone && !inspecting) {
         actorDock.style.removeProperty('--city-actor-height');
         if (canvasHost.style.getPropertyValue('--city-map-height')) {
           canvasHost.style.removeProperty('--city-map-height');
@@ -850,7 +854,8 @@
       }
       const available = bottom - top - worldHud.getBoundingClientRect().height - 16;
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
-      const height = Math.max(96, Math.min(440, Math.floor(available - (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height))));
+      const maximum = phone ? 440 : Math.min(620, canvasHost.clientWidth * 2 / 3);
+      const height = Math.max(96, Math.min(maximum, Math.floor(available - (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height))));
       const value = height + 'px';
       if (canvasHost.style.getPropertyValue('--city-map-height') !== value) {
         canvasHost.style.setProperty('--city-map-height', value);
@@ -869,7 +874,7 @@
       const zoom = size.width >= 720 ? Math.min(size.width / WORLD.width, size.height / WORLD.height) : 0.82;
       camera.setZoom(zoom);
       camera.setBounds(0, 0, WORLD.width, WORLD.height);
-      // Retain the avatar and its name above the feet in a short phone viewport.
+      // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = size.height < 160 ? (160 - size.height) / (2 * zoom) : 0;
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
       camera.centerOn(player.x, player.y - followOffsetY);
