@@ -330,7 +330,7 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
 | [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 155 | 2026-10-10 |
-| [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 64 | 2026-10-10 |
+| [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 66 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
