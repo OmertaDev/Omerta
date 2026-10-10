@@ -40,6 +40,58 @@ assert.equal(prioritised.proposals[0].kind,'prioritize_delivery');assert.equal(p
 const expired=snapshot();expired.jobs=[{id:'expired',state:'claimed',expiresAt:at}];
 assert(!evaluateBusiness(expired,policy).proposals.some(p=>p.kind==='prioritize_delivery'));
 assert(evaluateBusiness(expired,policy).riskFlags.includes('expired_jobs_need_recovery'));
+const pending = (count = 1) => {
+ const s=snapshot();s.capacity.activeJobs=count;
+ s.jobs=Array.from({length:count},(_,i)=>({id:`pending-${i}`,state:i%2?'open':'claimed',expiresAt:'2026-10-09T14:00:00.000Z',settledComputeCostsUsdMicros:12000}));
+ return s;
+};
+const deliveryCash=pending();deliveryCash.treasury.availableUsdMicros=27000;
+const cashProtection=evaluateBusiness(deliveryCash,policy);
+assert.equal(cashProtection.deliveryBudget.protectedComputeUsdMicros,12000);
+assert.equal(cashProtection.deliveryBudget.pendingJobs,1);
+assert.equal(cashProtection.deliveryBudget.cashCovered,true);
+assert.equal(cashProtection.capacity.proposedWorkSlots,0,'Existing awarded delivery is protected before new work');
+assert(cashProtection.riskFlags.includes('compute_funds_insufficient'));
+deliveryCash.treasury.availableUsdMicros=29000;
+assert.equal(evaluateBusiness(deliveryCash,policy).capacity.proposedWorkSlots,1,'Exact cash boundary funds one new bid after delivery and reserve');
+const deliveryDay=pending();deliveryDay.policy.maxPerDayUsdMicros=23999;
+assert.equal(evaluateBusiness(deliveryDay,policy).capacity.proposedWorkSlots,0);
+deliveryDay.policy.maxPerDayUsdMicros=24000;
+assert.equal(evaluateBusiness(deliveryDay,policy).capacity.proposedWorkSlots,1,'Daily authorization protects delivery before new work');
+const multipleDelivery=pending(2);multipleDelivery.treasury.availableUsdMicros=40999;
+assert.equal(evaluateBusiness(multipleDelivery,policy).deliveryBudget.protectedComputeUsdMicros,24000);
+assert.equal(evaluateBusiness(multipleDelivery,policy).capacity.proposedWorkSlots,0);
+multipleDelivery.treasury.availableUsdMicros=41000;
+assert.equal(evaluateBusiness(multipleDelivery,policy).capacity.proposedWorkSlots,1);
+for(const deadline of [at,'2026-10-09T11:59:59.000Z','invalid',null]){
+ const s=pending();s.jobs[0].expiresAt=deadline;
+ const held=evaluateBusiness(s,policy);
+ assert.equal(held.capacity.proposedWorkSlots,0,'Expired or invalid awarded deadline must hold new bids');
+ assert.equal(held.deliveryBudget.protectedComputeUsdMicros,null,'Unsafe deadline cannot fabricate obligation affordability');
+ assert(held.riskFlags.some(flag=>['expired_jobs_need_recovery','invalid_delivery_deadline'].includes(flag)));
+}
+const unknownDelivery=pending();unknownDelivery.catalog=[];
+assert.deepEqual(evaluateBusiness(unknownDelivery,policy).deliveryBudget,{pendingJobs:1,protectedComputeUsdMicros:null,cashCovered:null,dailyBudgetCovered:null});
+const incompleteDelivery=pending();incompleteDelivery.coverage.jobsTruncated=true;
+assert.equal(evaluateBusiness(incompleteDelivery,policy).deliveryBudget.protectedComputeUsdMicros,null);
+const missingActive=pending();missingActive.jobs=[];
+const missingActiveView=evaluateBusiness(missingActive,policy);
+assert.equal(missingActiveView.capacity.proposedWorkSlots,0);
+assert(missingActiveView.riskFlags.includes('active_job_detail_mismatch'));
+assert.equal(missingActiveView.deliveryBudget.protectedComputeUsdMicros,null);
+const inconsistentActive=pending();inconsistentActive.capacity.activeJobs=0;
+assert.equal(evaluateBusiness(inconsistentActive,policy).capacity.proposedWorkSlots,0);
+const duplicateDelivery=pending(2);duplicateDelivery.jobs[1].id=duplicateDelivery.jobs[0].id;
+assert.throws(()=>evaluateBusiness(duplicateDelivery,policy),/duplicate/);
+const underfundedDelivery=pending();underfundedDelivery.treasury.availableUsdMicros=16999;underfundedDelivery.policy.maxPerDayUsdMicros=11999;
+const heldDelivery=evaluateBusiness(underfundedDelivery,policy);
+assert.equal(heldDelivery.deliveryBudget.cashCovered,false);assert.equal(heldDelivery.deliveryBudget.dailyBudgetCovered,false);
+assert(heldDelivery.riskFlags.includes('awarded_delivery_funds_insufficient'));assert(heldDelivery.riskFlags.includes('awarded_delivery_daily_budget_insufficient'));
+for(const state of ['submitted','accepted','disputed','refunded']){
+ const s=pending();s.jobs[0].state=state;s.capacity.activeJobs=['submitted','disputed'].includes(state)?1:0;
+ assert.equal(evaluateBusiness(s,policy).deliveryBudget.protectedComputeUsdMicros,0,'Delivery protection excludes terminal and submitted work');
+}
+assert.equal(JSON.stringify(original),encoded,'Delivery budgeting preserves snapshot and owner authority');
 const retained=evaluateBusiness(snapshot(),{...policy,maxActiveJobs:1});
 assert(retained.proposals.some(p=>p.kind==='bid'));
 const repeat=snapshot();repeat.bounties=[];
