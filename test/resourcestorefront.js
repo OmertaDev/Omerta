@@ -15,6 +15,23 @@ try {
   await pool.query('INSERT INTO resource_services(account_id,revision,enabled,price_usd_micros) VALUES($1,$2,$3,$4)', [seller, 1, false, 100000]);
   await assert.rejects(resourceStorefront(pool, seller), error => error.code === 'resource_not_found');
   await pool.query('UPDATE resource_services SET enabled=true WHERE account_id=$1', [seller]);
+  assert.deepEqual((await resourceStorefront(pool, seller)).ownedPremises, {
+    estate: null, street: null, verification: 'current_game_account_ownership', operationalAssociation: false });
+  await pool.query('INSERT INTO estates(account_id,name,tier,spent_omr) VALUES($1,$2,$3,$4)', [seller, 'PRIVATE_ESTATE', 0, 99999]);
+  await pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,controller_account,control_until) VALUES($1,$2,$3,$4,$5,$6)',
+    [buyer, 'PRIVATE_STREET', 'private-street', 'docks', seller, new Date(Date.now() + 3600000)]);
+  assert.equal((await resourceStorefront(pool, seller)).ownedPremises.estate, null, 'Tier zero is not acquired premises');
+  assert.equal((await resourceStorefront(pool, seller)).ownedPremises.street, null, 'Controlling another account corner does not establish ownership');
+  await pool.query('UPDATE estates SET tier=2 WHERE account_id=$1', [seller]);
+  await pool.query('UPDATE street_deeds SET account_id=$2,controller_account=$3 WHERE account_id=$1', [buyer, seller, buyer]);
+  const owned = (await resourceStorefront(pool, seller)).ownedPremises;
+  assert.deepEqual(owned.estate, { tier: 2 });
+  assert.deepEqual(owned.street, { district: 'docks' }, 'Owner remains owner when a rival controls the corner');
+  await pool.query('UPDATE street_deeds SET account_id=$2 WHERE account_id=$1', [seller, buyer]);
+  assert.equal((await resourceStorefront(pool, seller)).ownedPremises.street, null, 'Transfer removes the previous owner proof');
+  await pool.query('UPDATE street_deeds SET account_id=$2,onchain_token_id=$3 WHERE account_id=$1', [buyer, seller, '123']);
+  assert.equal((await resourceStorefront(pool, seller)).ownedPremises.street, null, 'Extracted or pending on-chain ownership requires separate verification');
+  await pool.query('UPDATE street_deeds SET onchain_token_id=NULL WHERE account_id=$1', [seller]);
   let index = 0;
   for (const state of ['accepted','accepted','disputed','open','claimed','submitted','refunded']) {
     index++;
@@ -32,7 +49,7 @@ try {
   assert.equal(storefront.capacity.activeJobs, 4); assert.equal(storefront.capacity.remainingCapacity, 0);
   assert.equal(storefront.reputation.causalEffect, null);
   const serialized = JSON.stringify(storefront);
-  for (const secret of [buyer, 'PRIVATE_', 'treasury', 'revenue', 'question', 'report', 'calls']) assert(!serialized.includes(secret));
+  for (const secret of [buyer, 'PRIVATE_', 'treasury', 'revenue', 'question', 'report', 'calls', 'spent_omr', 'controller_account']) assert(!serialized.includes(secret));
   assert(queries.every(sql => /^(SELECT|BEGIN|COMMIT|ROLLBACK)\b/.test(sql)), 'Snapshot makes no writes');
   assert(queries.every(sql => !/SELECT\s+\*|\b(input|report|output|buyer_account|available_usd_micros)\b/i.test(sql)), 'Snapshot does not load private fields');
   await pool.query('UPDATE resource_services SET enabled=false WHERE account_id=$1', [seller]);
