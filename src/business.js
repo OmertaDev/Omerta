@@ -265,12 +265,14 @@ export async function collectBusiness(ch, client, h) {
 // copies of this loop is exactly the drift that produced the sackEmpire rake-cursor bug, so there is
 // one. Caller must already hold the rows FOR UPDATE. Mutates `r.upkeep_at` in memory as well as in
 // the row, so a caller that reads isCold(r) immediately afterwards sees the squared clock.
-async function settlePad(ch, rows, client, h) {
+async function settlePad(ch, rows, client, h, limits = null) {
   let paid = 0; const settled = []; let stillOwed = 0;
   for (const r of rows) {
     const owed = upkeepOwed(r, rows.length); // L1b: the pad rate scales with the empire's front count
     if (owed <= 0) continue;
     if (Number(ch.cash) >= owed) {
+      if (limits && (paid + owed > limits.maxCash || Number(ch.cash) - owed < limits.minimumReserve))
+        throw new GameError('business_budget', 'Refresh the business upkeep quote before spending beyond its bound.');
       ch.cash = Number(ch.cash) - owed;
       paid += owed;
       await client.query('UPDATE businesses SET upkeep_at=now() WHERE id=$1', [r.id]);
@@ -282,10 +284,13 @@ async function settlePad(ch, rows, client, h) {
   return { paid, settled, stillOwed };
 }
 
-export async function payBusinessUpkeep(ch, client, h) {
+export async function payBusinessUpkeep(ch, client, h, limits = null) {
+  if (limits && (!Number.isSafeInteger(limits.maxCash) || limits.maxCash < 0
+      || !Number.isSafeInteger(limits.minimumReserve) || limits.minimumReserve < 0))
+    throw new GameError('business_budget', 'Use bounded upkeep spending limits.');
   const rows = (await client.query('SELECT * FROM businesses WHERE character_id=$1 FOR UPDATE', [ch.id])).rows;
   if (!rows.length) throw new GameError('none', 'You run no fronts — no pad to pay.');
-  const { paid, settled, stillOwed } = await settlePad(ch, rows, client, h);
+  const { paid, settled, stillOwed } = await settlePad(ch, rows, client, h, limits);
   // `upkeep` names the system — the family's TERRITORY pad is a byte-shape twin of this reply
   // (`{paid, fronts, stillOwed}`), so both sides carry a marker rather than one of them relying on
   // the other's absence, which holds only until a sibling adds the field. See territory.js.

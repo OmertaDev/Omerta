@@ -847,7 +847,14 @@ try {
   await questAction(page, page.locator('[data-city-quest-action="explore"]'));
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Elena Serra'));
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
-  const caseReply = await app.inject({ method: 'GET', url: '/v1/worldgraph/mysteries/neighborhood-initiation', headers });
+  let caseReply;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    caseReply = await app.inject({ method: 'GET', url: '/v1/worldgraph/mysteries/neighborhood-initiation', headers });
+    // The UI also refreshes after the final action. Retry only this read's explicit
+    // contention response; mutations and the completed-quest assertions stay unchanged.
+    if (caseReply.statusCode !== 400 || caseReply.json().error !== 'contention') break;
+    if (attempt < 2) await page.waitForTimeout(100);
+  }
   assert.equal(caseReply.statusCode, 200, caseReply.body);
   assert.equal(caseReply.json().status, 'completed', 'Door interactions complete the persisted quest.');
   assert(caseReply.json().choices.some(choice => choice.choiceId === 'listen'), 'The first approach is remembered by the server.');
