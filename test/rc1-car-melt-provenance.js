@@ -7,7 +7,8 @@ import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, C
 import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION,
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
-  assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility } from '../tools/rc1-deed-source-compatibility.js';
+  assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN, assertCityPresenceServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { carMelt } from '../src/rules.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
@@ -15,7 +16,16 @@ assert.equal(CAR_MELT_SOURCE_REVIEW_TRANSFER.predecessorEconomySha256, ECONOMY_S
 assert.match(CAR_MELT_SOURCE_REVIEW_TRANSFER.scope, /New goods availability, reachability, bucket\/counter accounting and authority.*outside/);
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  // Goods/car history binds the reconstructed predecessor, never new City authority.
+  const presence = file === 'src/server.js' ? assertCityPresenceServerTransfer(actual) : null;
+  const text = presence ? presence.baselineText : actual;
+  if (presence) {
+    assert.equal(hash(actual), CITY_PRESENCE_SERVER_PIN);
+    assert.equal(presence.baselineSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
+    assert.equal(presence.baselineSha256, GOODS_SOURCE_CURRENT_PINS[file]);
+    assert.equal(presence.inverseChunks, 2);
+  }
   const current = execFileSync('git', ['show', GOODS_SOURCE_REVIEWED_REVISION + ':' + file],
     { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   const previous = execFileSync('git', ['show', GOODS_SOURCE_PREDECESSOR_REVISION + ':' + file],
