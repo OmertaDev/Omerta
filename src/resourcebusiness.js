@@ -10,6 +10,11 @@ export async function businessSnapshot(pool, account) {
     const asOf = new Date();
     const policy = (await client.query('SELECT enabled,revision,providers,max_per_call,max_per_day,minimum_reserve,allow_stored_responses,expires_at FROM resource_compute_policies WHERE account_id=$1', [account])).rows[0];
     const service = (await client.query('SELECT enabled,revision,price_usd_micros FROM resource_services WHERE account_id=$1', [account])).rows[0];
+    const pendingBids = (await client.query(`SELECT COUNT(bid.id) AS count FROM resource_labor_bids bid
+      JOIN resource_bounties b ON b.id=bid.bounty_id
+      JOIN resource_services s ON s.account_id=bid.seller_account
+      WHERE bid.seller_account=$1 AND b.buyer_account<>$1 AND b.state='open' AND b.expires_at>$2
+        AND s.enabled=true AND s.revision=bid.service_revision`, [account, asOf])).rows[0];
     const states = (await client.query('SELECT state,COUNT(*) AS count FROM resource_jobs WHERE seller_account=$1 GROUP BY state', [account])).rows;
     const jobs = (await client.query('SELECT j.id,j.buyer_account,j.state,j.price_usd_micros,j.created_at,j.expires_at,j.submitted_at,b.id AS bounty_id FROM resource_jobs j LEFT JOIN resource_bounties b ON b.job_id=j.id WHERE j.seller_account=$1 ORDER BY j.created_at DESC,j.id LIMIT 100', [account])).rows;
     const callTotals = (await client.query("SELECT status,simulated,COUNT(*) AS count,SUM(cost_usd_micros) AS cost,SUM(cap_usd_micros) AS cap FROM resource_calls WHERE account_id=$1 AND purpose->>'kind'='paid_market_analysis' GROUP BY status,simulated", [account])).rows;
@@ -55,6 +60,7 @@ export async function businessSnapshot(pool, account) {
         dailyAuthorizedUsdMicros: number(daily?.amount), maxPerCallUsdMicros: number(policy.max_per_call), maxPerDayUsdMicros: number(policy.max_per_day), minimumReserveUsdMicros: number(policy.minimum_reserve), expiresAt: time(policy.expires_at) } : null,
       service: service ? { enabled: service.enabled, revision: number(service.revision), priceUsdMicros: number(service.price_usd_micros) } : null,
       capacity: { activeJobs, remainingCapacity: Math.max(0, 3 - activeJobs) },
+      commitments: { pendingAwardBids: number(pendingBids?.count) },
       totals: { jobsByState: Object.fromEntries(states.map(row => [row.state, number(row.count)])),
         settledCustomerRevenueUsdMicros: number(totalRevenue?.revenue),
         settledPaidComputeCostsUsdMicros: callTotals.filter(row => row.status === 'succeeded').reduce((sum, row) => sum + number(row.cost), 0),

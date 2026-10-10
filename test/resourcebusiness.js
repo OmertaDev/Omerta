@@ -76,6 +76,35 @@ try {
   assert.equal(bounded.coverage.jobsTotal, 102); assert.equal(bounded.coverage.callsTotal, 103);
   assert.equal(bounded.coverage.jobsTruncated, true); assert.equal(bounded.coverage.callsTruncated, true);
   assert.equal(bounded.totals.settledPaidComputeCostsUsdMicros, 151, 'Global costs retain receipts beyond the bounded detail window');
+  assert.equal(bounded.commitments.pendingAwardBids, 0);
+  await pool.query('INSERT INTO resource_services(account_id,revision,enabled,price_usd_micros) VALUES($1,1,true,100000)', [account]);
+  await pool.query('INSERT INTO resource_services(account_id,revision,enabled,price_usd_micros) VALUES($1,1,true,100000)', [buyer]);
+  for (let index = 0; index < 106; index++) {
+    const id = `commitment-${index}`;
+    await pool.query('INSERT INTO resource_bounties(id,buyer_account,request_key,question,budget_usd_micros,lifetime_seconds,state,expires_at) VALUES($1,$2,$3,$4,100000,3600,$5,$6)',
+      [id, buyer, id, 'PRIVATE_COMMITMENT_QUESTION', index === 102 ? 'awarded' : index === 103 ? 'cancelled' : 'open', new Date(Date.now() + (index === 101 ? -3600000 : 3600000))]);
+    await pool.query('INSERT INTO resource_labor_bids(id,bounty_id,seller_account,price_usd_micros,delivery_seconds,service_revision) VALUES($1,$2,$3,100000,3600,$4)',
+      [`bid-${id}`, id, index === 104 ? buyer : account, index === 105 ? 2 : 1]);
+  }
+  const commitmentQueries = [];
+  const readPool = { connect: async () => {
+    const client = await pool.connect();
+    return { query: async (sql, values) => { commitmentQueries.push(sql); return client.query(sql, values); }, release: () => client.release() };
+  } };
+  const beforeCommitments = await counts();
+  const committed = await businessSnapshot(readPool, account);
+  assert.equal(committed.commitments.pendingAwardBids, 202, 'Count includes both existing and new commitments beyond the 100-entry detail window');
+  assert.deepEqual(await counts(), beforeCommitments);
+  const countSql = commitmentQueries.find(sql => /COUNT\(bid.id\).*resource_labor_bids/.test(sql));
+  assert(countSql && !/LIMIT|question|report|output|resource_compute_policies|resource_ledger/i.test(countSql));
+  assert(commitmentQueries.every(sql => /^(SELECT|BEGIN|COMMIT|ROLLBACK)\b/.test(sql)));
+  assert(!JSON.stringify(committed.commitments).includes('PRIVATE_'));
+  assert.equal((await businessSnapshot(pool, buyer)).commitments.pendingAwardBids, 0, 'Own-buyer bid is excluded and another seller is isolated');
+  await pool.query('UPDATE resource_services SET revision=2 WHERE account_id=$1', [account]);
+  assert.equal((await businessSnapshot(pool, account)).commitments.pendingAwardBids, 1, 'Only current service revision can be awarded');
+  await pool.query('UPDATE resource_services SET enabled=false WHERE account_id=$1', [account]);
+  assert.equal((await businessSnapshot(pool, account)).commitments.pendingAwardBids, 0);
+  await pool.query('UPDATE resource_services SET enabled=true,revision=1 WHERE account_id=$1', [account]);
   if (postgres) {
     const writer = await pool.connect(); await writer.query('BEGIN');
     await writer.query('SELECT account_id FROM resource_treasuries WHERE account_id=$1 FOR UPDATE', [account]);
