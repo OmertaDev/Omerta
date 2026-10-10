@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './resource-deliver.js';
 import { performance } from 'node:perf_hooks';
 import { createResourceAgentFetch, createResourceAgentTestFetch, runPaidWork, selectLaborBids } from '../tools/resource-agent.js';
 
