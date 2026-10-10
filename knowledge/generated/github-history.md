@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `eb89fae7a6f1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8fe866de4161`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2222 |
+| Commits in clone | 2224 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Merge pull request #218 from OmertaDev/codex/awarded-delivery-budget |
+| Latest commit | 2026-10-10 — Protect pending bid commitments in agent business plans |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1312 |
+| OmertaDev | 1313 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 65 |
+| github-actions[bot] | 66 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -34,10 +34,10 @@
 | [public/index.html](../../public/index.html) | 442 | yes |
 | [src/server.js](../../src/server.js) | 377 | yes |
 | [SPEC.md](../../SPEC.md) | 376 | yes |
-| knowledge/generated/github-history.md | 360 | historical |
-| knowledge/generated/graph-summary.md | 360 | historical |
-| knowledge/generated/graph.json | 360 | historical |
-| knowledge/generated/inventory.md | 360 | historical |
+| knowledge/generated/github-history.md | 361 | historical |
+| knowledge/generated/graph-summary.md | 361 | historical |
+| knowledge/generated/graph.json | 361 | historical |
+| knowledge/generated/inventory.md | 361 | historical |
 | [schema.sql](../../schema.sql) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 246 | yes |

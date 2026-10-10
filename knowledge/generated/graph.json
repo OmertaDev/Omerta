@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
+  "sourceRevision": "8fe866de41613b44986ea55e5380b6f7f982dc6a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10427,
-    "edges": 42462,
+    "nodes": 10429,
+    "edges": 42475,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2222,
+      "Commit": 2224,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16562,
+      "CHANGED": 16573,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2222,
+      "HAS_COMMIT": 2224,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -24012,20 +24012,20 @@
       "path": "docs/agent-business-shadow.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 5897,
-      "lines": 26,
-      "version": "af46d22407c442db",
+      "bytes": 7036,
+      "lines": 30,
+      "version": "0f951a9ca75efd42",
       "text": true,
       "provenance": [
         {
           "file": "docs/agent-business-shadow.md",
           "line": 1,
-          "version": "af46d22407c442db"
+          "version": "0f951a9ca75efd42"
         }
       ],
-      "lastChangedAt": "2026-10-10T08:19:30.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:docs/agent-economy-pilot-results.json",
@@ -24196,20 +24196,20 @@
       "path": "docs/business-shadow-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 27670,
-      "lines": 165,
-      "version": "8e94bde73b7f73d7",
+      "bytes": 30767,
+      "lines": 177,
+      "version": "052753f9ff163713",
       "text": true,
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "8e94bde73b7f73d7"
+          "version": "052753f9ff163713"
         }
       ],
-      "lastChangedAt": "2026-10-10T08:19:30.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -78562,20 +78562,20 @@
       "path": "src/businesspolicy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 16284,
-      "lines": 182,
-      "version": "1c496571051025a8",
+      "bytes": 17784,
+      "lines": 199,
+      "version": "ed9c6e0699ada6de",
       "text": true,
       "provenance": [
         {
           "file": "src/businesspolicy.js",
           "line": 1,
-          "version": "1c496571051025a8"
+          "version": "ed9c6e0699ada6de"
         }
       ],
-      "lastChangedAt": "2026-10-10T08:19:30.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:src/campaigns.js",
@@ -82771,20 +82771,20 @@
       "path": "src/resourcebusiness.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 9858,
-      "lines": 73,
-      "version": "673b8f1c7b65a50b",
+      "bytes": 10339,
+      "lines": 79,
+      "version": "b0b15c3a66110f0a",
       "text": true,
       "provenance": [
         {
           "file": "src/resourcebusiness.js",
           "line": 1,
-          "version": "673b8f1c7b65a50b"
+          "version": "b0b15c3a66110f0a"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:31:01.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:src/resourcecompute.js",
@@ -85715,20 +85715,20 @@
       "path": "test/business-agent.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6243,
+      "bytes": 6281,
       "lines": 92,
-      "version": "883921509232ea46",
+      "version": "f1d1e83c12383f1e",
       "text": true,
       "provenance": [
         {
           "file": "test/business-agent.js",
           "line": 1,
-          "version": "883921509232ea46"
+          "version": "f1d1e83c12383f1e"
         }
       ],
-      "lastChangedAt": "2026-10-09T06:20:39.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:test/businesspolicy.js",
@@ -85738,20 +85738,20 @@
       "path": "test/businesspolicy.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12708,
-      "lines": 140,
-      "version": "f6c1f8cc3b2e1c90",
+      "bytes": 17111,
+      "lines": 192,
+      "version": "825fdf740a8a5a2c",
       "text": true,
       "provenance": [
         {
           "file": "test/businesspolicy.js",
           "line": 1,
-          "version": "f6c1f8cc3b2e1c90"
+          "version": "825fdf740a8a5a2c"
         }
       ],
-      "lastChangedAt": "2026-10-10T08:19:30.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2ec31685c2cb4d354d955d318e18a6a2ad15ba0"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:test/campaign-network-journey.js",
@@ -94570,20 +94570,20 @@
       "path": "test/resourcebusiness.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8396,
-      "lines": 99,
-      "version": "580f3011e74fcce5",
+      "bytes": 11048,
+      "lines": 128,
+      "version": "148796adbd301616",
       "text": true,
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "580f3011e74fcce5"
+          "version": "148796adbd301616"
         }
       ],
-      "lastChangedAt": "2026-10-09T17:31:01.000Z",
+      "lastChangedAt": "2026-10-10T12:22:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
+      "lastChangedCommit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
     },
     {
       "key": "Artifact:test/resourcecompute.js",
@@ -109576,6 +109576,22 @@
       ]
     },
     {
+      "key": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "type": "Commit",
+      "id": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "label": "chore(knowledge): refresh generated artifacts for eb89fae7",
+      "title": "chore(knowledge): refresh generated artifacts for eb89fae7",
+      "date": "2026-10-10T09:04:16.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "provenance": [
+        {
+          "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+        }
+      ]
+    },
+    {
       "key": "Commit:2aa56887b09dbae60eac16de295077cf2f085319",
       "type": "Commit",
       "id": "2aa56887b09dbae60eac16de295077cf2f085319",
@@ -123988,6 +124004,22 @@
         {
           "commit": "8fac36bd4cd77372a77048e9a622879314206340",
           "url": "https://github.com/OmertaDev/Omerta/commit/8fac36bd4cd77372a77048e9a622879314206340"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "type": "Commit",
+      "id": "8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "label": "Protect pending bid commitments in agent business plans",
+      "title": "Protect pending bid commitments in agent business plans",
+      "date": "2026-10-10T12:22:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "provenance": [
+        {
+          "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8fe866de41613b44986ea55e5380b6f7f982dc6a"
         }
       ]
     },
@@ -147093,13 +147125,13 @@
       "id": "docs/agent-business-shadow.md",
       "label": "docs/agent-business-shadow.md",
       "documentType": "documentation",
-      "lines": 26,
-      "version": "af46d22407c442db",
+      "lines": 30,
+      "version": "0f951a9ca75efd42",
       "provenance": [
         {
           "file": "docs/agent-business-shadow.md",
           "line": 1,
-          "version": "af46d22407c442db"
+          "version": "0f951a9ca75efd42"
         }
       ]
     },
@@ -147205,13 +147237,13 @@
       "id": "docs/business-shadow-security-review.md",
       "label": "docs/business-shadow-security-review.md",
       "documentType": "documentation",
-      "lines": 165,
-      "version": "8e94bde73b7f73d7",
+      "lines": 177,
+      "version": "052753f9ff163713",
       "provenance": [
         {
           "file": "docs/business-shadow-security-review.md",
           "line": 1,
-          "version": "8e94bde73b7f73d7"
+          "version": "052753f9ff163713"
         }
       ]
     },
@@ -160188,6 +160220,9 @@
           "commit": "29c8b418ba764f6058d643e8bbe6d685ba99e5ce"
         },
         {
+          "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+        },
+        {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
@@ -161277,6 +161312,9 @@
           "commit": "29c8b418ba764f6058d643e8bbe6d685ba99e5ce"
         },
         {
+          "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+        },
+        {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
@@ -162364,6 +162402,9 @@
         },
         {
           "commit": "29c8b418ba764f6058d643e8bbe6d685ba99e5ce"
+        },
+        {
+          "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
         },
         {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
@@ -163747,6 +163788,9 @@
         },
         {
           "commit": "29c8b418ba764f6058d643e8bbe6d685ba99e5ce"
+        },
+        {
+          "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
         },
         {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
@@ -166401,13 +166445,13 @@
       "type": "Module",
       "id": "src/businesspolicy.js",
       "label": "src/businesspolicy.js",
-      "lines": 182,
-      "version": "1c496571051025a8",
+      "lines": 199,
+      "version": "ed9c6e0699ada6de",
       "provenance": [
         {
           "file": "src/businesspolicy.js",
           "line": 1,
-          "version": "1c496571051025a8"
+          "version": "ed9c6e0699ada6de"
         }
       ]
     },
@@ -169131,13 +169175,13 @@
       "type": "Module",
       "id": "src/resourcebusiness.js",
       "label": "src/resourcebusiness.js",
-      "lines": 73,
-      "version": "673b8f1c7b65a50b",
+      "lines": 79,
+      "version": "b0b15c3a66110f0a",
       "provenance": [
         {
           "file": "src/resourcebusiness.js",
           "line": 1,
-          "version": "673b8f1c7b65a50b"
+          "version": "b0b15c3a66110f0a"
         }
       ]
     },
@@ -173946,8 +173990,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "eb89fae7a6f10f0f5ff8a38e044784d63557a320",
-      "currentBranch": "main",
+      "revision": "8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "currentBranch": "codex/pending-bid-commitments",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -203991,12 +204035,12 @@
       "id": "test/business-agent.js",
       "label": "test/business-agent.js",
       "lines": 92,
-      "version": "883921509232ea46",
+      "version": "f1d1e83c12383f1e",
       "provenance": [
         {
           "file": "test/business-agent.js",
           "line": 1,
-          "version": "883921509232ea46"
+          "version": "f1d1e83c12383f1e"
         }
       ]
     },
@@ -204005,13 +204049,13 @@
       "type": "TestSuite",
       "id": "test/businesspolicy.js",
       "label": "test/businesspolicy.js",
-      "lines": 140,
-      "version": "f6c1f8cc3b2e1c90",
+      "lines": 192,
+      "version": "825fdf740a8a5a2c",
       "provenance": [
         {
           "file": "test/businesspolicy.js",
           "line": 1,
-          "version": "f6c1f8cc3b2e1c90"
+          "version": "825fdf740a8a5a2c"
         }
       ]
     },
@@ -209600,13 +209644,13 @@
       "type": "TestSuite",
       "id": "test/resourcebusiness.js",
       "label": "test/resourcebusiness.js",
-      "lines": 99,
-      "version": "580f3011e74fcce5",
+      "lines": 128,
+      "version": "148796adbd301616",
       "provenance": [
         {
           "file": "test/resourcebusiness.js",
           "line": 1,
-          "version": "580f3011e74fcce5"
+          "version": "148796adbd301616"
         }
       ]
     },
@@ -263872,6 +263916,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2aa56887b09dbae60eac16de295077cf2f085319",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -315716,6 +315792,62 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "8fac36bd4cd77372a77048e9a622879314206340"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:docs/agent-business-shadow.md",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:docs/business-shadow-security-review.md",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:src/businesspolicy.js",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:src/resourcebusiness.js",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:test/business-agent.js",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:test/businesspolicy.js",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "to": "Artifact:test/resourcebusiness.js",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
       }
     },
     {
@@ -446563,6 +446695,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71",
+      "provenance": {
+        "commit": "2a98c2382aabe8e4cecbf35cf4878aba5ddc2f71"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2aa56887b09dbae60eac16de295077cf2f085319",
       "provenance": {
         "commit": "2aa56887b09dbae60eac16de295077cf2f085319"
@@ -453766,6 +453906,14 @@
       "to": "Commit:8fac36bd4cd77372a77048e9a622879314206340",
       "provenance": {
         "commit": "8fac36bd4cd77372a77048e9a622879314206340"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8fe866de41613b44986ea55e5380b6f7f982dc6a",
+      "provenance": {
+        "commit": "8fe866de41613b44986ea55e5380b6f7f982dc6a"
       }
     },
     {
@@ -567672,7 +567820,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/resourcebusiness.js",
-        "line": 20
+        "line": 25
       }
     },
     {
@@ -567690,7 +567838,7 @@
       "to": "Table:resource_calls",
       "provenance": {
         "file": "src/resourcebusiness.js",
-        "line": 15
+        "line": 20
       }
     },
     {
@@ -567708,7 +567856,7 @@
       "to": "Table:resource_jobs",
       "provenance": {
         "file": "src/resourcebusiness.js",
-        "line": 13
+        "line": 18
       }
     },
     {
@@ -567717,7 +567865,7 @@
       "to": "Table:resource_labor_bids",
       "provenance": {
         "file": "src/resourcebusiness.js",
-        "line": 20
+        "line": 13
       }
     },
     {
@@ -567726,7 +567874,7 @@
       "to": "Table:resource_ledger",
       "provenance": {
         "file": "src/resourcebusiness.js",
-        "line": 17
+        "line": 22
       }
     },
     {
