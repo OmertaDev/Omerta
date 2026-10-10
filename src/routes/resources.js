@@ -2,6 +2,7 @@ import { resourceOutcomes } from '../resourceoutcomes.js';
 import { setAgentCompany, ownAgentCompany, getAgentCompany } from '../agentcompany.js';
 import { resourceStorefront } from '../resourcestorefront.js';
 import { businessSnapshot } from '../resourcebusiness.js';
+import { resourceEarnings } from '../resourceearnings.js';
 import { createResourceBounty, resourceLaborBoard, bidResourceBounty, awardResourceBounty, cancelResourceBounty, resourceLaborReputation, renewResourceJob } from '../resourcelabor.js';
 import { ResourceProviderError } from '../resourceproviders.js';
 import { resourceAccounting, setResourcePolicy, resourceEnabled, resourceError } from '../resourcebook.js';
@@ -32,6 +33,7 @@ export function register(app, { pool, auth, modAuth }) {
   app.get('/v1/resources/outcomes', { preHandler: auth }, async req => resourceOutcomes(pool, req.user.sub));
   app.get('/v1/resources/storefronts/:id', async req => resourceStorefront(pool, req.params.id));
   app.get('/v1/resources/business', { preHandler: auth }, async req => businessSnapshot(pool, req.user.sub));
+  app.get('/v1/resources/earnings', { preHandler: auth }, async req => resourceEarnings(pool, req.user.sub, req.query));
   app.get('/v1/resources/labor', { preHandler: auth }, async req => resourceLaborBoard(pool, req.user.sub));
   app.get('/v1/resources/labor/reputation/:id', { preHandler: auth }, async req => resourceLaborReputation(pool, req.params.id));
   app.post('/v1/resources/bounties', { preHandler: auth }, async req => createResourceBounty(pool, req.user.sub, req.body));
