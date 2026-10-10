@@ -62,3 +62,41 @@ export function planShadowComputeRoutes(input) {
   }
   return { version: 1, mode: 'shadow', decisions, proposedTotalCostUsdMicros: input.availableBudgetUsdMicros - remaining, remainingBudgetUsdMicros: remaining, eligibleToExecute: false, financialRequests: 0, independentlyVerified: false, policyChanged: false, riskFlags: ['operator_supplied_evidence_unverified', 'quotes_unverified', 'outside_costs_incomplete'], measurement: 'Offline routing proposals only; no provider calls, budget reservation, policy write or proven causal uplift.' };
 }
+
+export function reconcileShadowComputeOutcomes(input) {
+  exact(input, ['version', 'routingInput', 'observations']);
+  if (input.version !== 1 || !Array.isArray(input.observations) || input.observations.length > 100) fail();
+  const plan = planShadowComputeRoutes(input.routingInput);
+  const decisions = new Map(plan.decisions.map(d => [d.taskId, d]));
+  const observed = new Map();
+  let knownCostUsdMicros = 0, unknownCosts = 0;
+  for (const row of input.observations) {
+    exact(row, ['taskId', 'model', 'status', 'costUsdMicros', 'latencyMs', 'accepted']);
+    if (!decisions.has(row.taskId) || observed.has(row.taskId) || !id(row.model) || !['succeeded', 'failed', 'unknown'].includes(row.status) || row.costUsdMicros !== null && !integer(row.costUsdMicros, 1000000000000) || row.latencyMs !== null && !integer(row.latencyMs, 86400000) || row.accepted !== null && typeof row.accepted !== 'boolean') fail();
+    if (row.status === 'succeeded' && (row.costUsdMicros === null || row.latencyMs === null) || row.status !== 'succeeded' && row.accepted !== null) fail();
+    observed.set(row.taskId, row);
+    if (row.costUsdMicros === null) unknownCosts++; else knownCostUsdMicros += row.costUsdMicros;
+  }
+  let missingOutcomes = 0, mismatchedModels = 0, unexpectedExecutions = 0, unsuccessfulOutcomes = 0, acceptanceUnobserved = 0, rejectedOutcomes = 0, taskCostOverruns = 0;
+  const outcomes = plan.decisions.map(d => {
+    const row = observed.get(d.taskId);
+    if (!row) {
+      if (d.route !== 'defer') missingOutcomes++;
+      return { taskId: d.taskId, plannedRoute: d.route, proposedModel: d.recommendedModel, status: 'unobserved', proposedCostUsdMicros: d.proposedCostUsdMicros, observedCostUsdMicros: null, costDeltaUsdMicros: null, latencyMs: null, accepted: null, flags: d.route === 'defer' ? [] : ['outcome_missing'] };
+    }
+    const flags = [];
+    if (d.route === 'defer') { unexpectedExecutions++; flags.push('deferred_task_executed'); }
+    else if (row.model !== d.recommendedModel) { mismatchedModels++; flags.push('model_mismatch'); }
+    if (row.status !== 'succeeded') { unsuccessfulOutcomes++; flags.push('unsuccessful_or_unknown'); }
+    if (row.accepted === null) { acceptanceUnobserved++; flags.push('acceptance_unobserved'); }
+    if (row.accepted === false) { rejectedOutcomes++; flags.push('outcome_rejected'); }
+    if (row.costUsdMicros === null) flags.push('cost_unknown');
+    const delta = row.costUsdMicros === null ? null : row.costUsdMicros - d.proposedCostUsdMicros;
+    if (delta > 0) { taskCostOverruns++; flags.push('proposed_cost_exceeded'); }
+    return { taskId: d.taskId, plannedRoute: d.route, proposedModel: d.recommendedModel, observedModel: row.model, status: row.status, proposedCostUsdMicros: d.proposedCostUsdMicros, observedCostUsdMicros: row.costUsdMicros, costDeltaUsdMicros: delta, latencyMs: row.latencyMs, accepted: row.accepted, flags };
+  });
+  const budgetExceeded = knownCostUsdMicros > input.routingInput.availableBudgetUsdMicros;
+  const complete = !missingOutcomes && !unknownCosts && !unsuccessfulOutcomes;
+  const concerns = missingOutcomes + unknownCosts + unsuccessfulOutcomes + mismatchedModels + unexpectedExecutions + acceptanceUnobserved + rejectedOutcomes + taskCostOverruns;
+  return { version: 1, mode: 'shadow', outcomes, summary: { plannedTasks: plan.decisions.length, observedTasks: observed.size, missingOutcomes, mismatchedModels, unexpectedExecutions, unsuccessfulOutcomes, acceptanceUnobserved, rejectedOutcomes, taskCostOverruns, unknownCosts, proposedTotalCostUsdMicros: plan.proposedTotalCostUsdMicros, observedKnownCostUsdMicros: knownCostUsdMicros, observedCostDeltaUsdMicros: complete ? knownCostUsdMicros - plan.proposedTotalCostUsdMicros : null, budgetExceeded, observationCoverageComplete: complete }, recommendation: observed.size && !concerns && !budgetExceeded ? 'review_recorded_outcomes' : 'hold_for_more_evidence', eligibleToExecute: false, financialRequests: 0, policyChanged: false, independentlyVerified: false, causalEffect: null, profitabilityKnown: false, riskFlags: ['operator_supplied_outcomes_unverified', 'attempt_history_unverified', 'outside_costs_incomplete'], measurement: 'One operator-supplied outcome per task; costs include known failed outcomes but are not verified billing or complete attempt history. No policy changes or provider calls.' };
+}

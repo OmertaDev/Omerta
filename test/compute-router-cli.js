@@ -18,6 +18,12 @@ try {
   const planned = await runComputeRouterCli(['--plan', paths[2]]);
   assert.equal(planned.mode, 'shadow'); assert.equal(planned.eligibleToExecute, false);
   assert.equal(planned.financialRequests, 0); assert.deepEqual(planned.decisions, []);
+  await writeFile(paths[2], JSON.stringify({version:1,routingInput:{version:1,nowMs:1947,availableBudgetUsdMicros:10000,policies:[],evidence:[],tasks:[]},observations:[]}));
+  const reconciled = await runComputeRouterCli(['--reconcile', paths[2]]);
+  assert.equal(reconciled.financialRequests,0); assert.equal(reconciled.recommendation,'hold_for_more_evidence');
+  const reconcileCli = await execute(process.execPath,['tools/compute-router.js','--reconcile',paths[2]],{cwd:process.cwd()});
+  assert.equal(reconcileCli.stdout,computeExperimentJson(reconciled)); assert.equal(reconcileCli.stderr,'');
+  await writeFile(paths[2],JSON.stringify({version:1,nowMs:1947,availableBudgetUsdMicros:10000,policies:[],evidence:[],tasks:[]}));
   const serialized = computeExperimentJson(planned);
   assert(Buffer.byteLength(serialized) <= 1048576);
   const success = await execute(process.execPath, ['tools/compute-router.js', '--plan', paths[2]], { cwd: process.cwd() });

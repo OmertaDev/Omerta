@@ -47,3 +47,17 @@ A candidate requires matching model identifiers, fresh evidence, every analyzer 
 Tasks sort by descending priority then task ID. The tool first proposes baseline work within caps and available budget, then considers upgrades in that order using the remaining budget. This protects funded routine work from upgrades; deferred work is not reconsidered using later estimated savings. Unknown baseline prices, missing policies or exhausted funds defer tasks. Reservations and costs are proposals only and do not alter wallets or owner authority. Supply a budget dedicated to this plan; independent plans do not share or lock funds. Live latency, availability, outside fees and eventual outcomes are not guaranteed by historical trials or operator quotes.
 
 Output gives each task's recommended model, route, reason and proposed cost, plus aggregate cost and remaining budget. Execution, financial requests and policy changes remain disabled. Save snapshots privately to compare proposals against later task outcomes; this layer does not infer causality, persist outcomes or automatically promote models. The CLI retains the same bounded file and sanitized error behavior as the experiment tool.
+
+## Reconciling observed outcomes
+
+Run `npm run --silent route:compute:shadow -- --reconcile outcomes.json`. Input contains exactly `version` (1), the original `routingInput` and `observations`. The tool regenerates the plan, never trusting an edited result or recommendation. Observations allow one record per planned task, at most 100:
+
+```json
+{"taskId":"market_1","model":"baseline","status":"succeeded","costUsdMicros":100,"latencyMs":1000,"accepted":true}
+```
+
+Each record has exactly the fields shown. Status is `succeeded`, `failed` or `unknown`. Successful records require known nonnegative integer cost and latency; acceptance can be true, false or null. Failed/unknown records require null acceptance and may have null cost/latency. Extra fields, duplicate task records and unplanned task IDs are rejected. This schema describes one summarized outcome per task; it cannot establish complete retry history or verified provider billing.
+
+Output aligns observations to deterministic plan order. Missing outcomes for funded tasks, actual model mismatches, executions of deferred tasks, unknown/unsuccessful results, unobserved or rejected acceptance, and costs above proposals are explicit. Known costs include failed and unexpected executions. Aggregate known cost above the supplied plan budget is flagged even when other costs are unknown. The aggregate cost difference is null if any funded outcome is missing, unsuccessful or has unknown cost. Deferred tasks without an observation do not require an outcome. Coverage means the funded tasks have successful observations and known costs; it does not authenticate models, acceptance or billing.
+
+`review_recorded_outcomes` requires at least one observation and no flagged concern; it is a request for human review, not model promotion. Missing or negative evidence produces `hold_for_more_evidence`. Results include latency observations without interpreting them as causal gains. The tool never calls providers, purchases compute, changes policy or persists outcomes. Operator-supplied costs exclude unverified outside costs, and neither profitability nor causal uplift is established. Save original routing inputs and outcomes privately for replay.
