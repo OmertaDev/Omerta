@@ -137,6 +137,22 @@ const WORLDGRAPH_KEY_REUSE_RESPONSE = {
   content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphKeyReuseError' } } },
 };
 const WORLDGRAPH_EMPTY_BODY = { type: 'object', additionalProperties: false, properties: {} };
+const CITY_ENCOUNTER_BODY = {
+  type: 'object', additionalProperties: false,
+  required: ['characterId', 'generation', 'district', 'targetGeneration'],
+  properties: {
+    characterId: { type: 'string', minLength: 1, maxLength: 200 },
+    generation: { type: 'integer', minimum: 1, maximum: Number.MAX_SAFE_INTEGER },
+    district: { type: 'string', minLength: 1, maxLength: 200 },
+    targetGeneration: { type: 'integer', minimum: 1, maximum: Number.MAX_SAFE_INTEGER },
+  },
+};
+const CITY_BOARD = { type: 'object', required: ['viewer', 'journal', 'objectives', 'progress'], properties: {
+  viewer: { type: 'object', required: ['characterId', 'generation', 'district'] },
+  journal: { type: 'array', maxItems: 32, items: { type: 'object' } },
+  objectives: { type: 'array', maxItems: 3, items: { type: 'object' } },
+  progress: { type: 'object' },
+} };
 const WORLDGRAPH_INTERACTION_BODY = {
   type: 'object', additionalProperties: false, properties: {
     interactionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
@@ -483,6 +499,27 @@ const OPERATION_CONTRACTS = {
   ),
   'POST /v1/worldgraph/recipes/:recipeId/craft': worldGraphMutation('craftWorldGraphRecipe'),
   'POST /v1/worldgraph/recipes/:recipeId/salvage/:carId': worldGraphMutation('salvageCarWithWorldGraphRecipe'),
+  'GET /v1/city/presence': {
+    operationId: 'getCityPresence',
+    requestParameters: [
+      { name: 'cursor', in: 'query', required: false, schema: { type: 'string', maxLength: 512 } },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 40, default: 24 } },
+    ],
+    responseSchema: { type: 'object', required: ['viewer', 'district', 'actors', 'nextCursor', 'hasMore', 'placement'], properties: {
+      actors: { type: 'array', maxItems: 40, items: { type: 'object' } },
+      placement: { type: 'string', const: 'approximate_district' },
+    } },
+  },
+  'GET /v1/city/intel': { operationId: 'getCityIntel', responseSchema: CITY_BOARD },
+  'POST /v1/city/encounters/:actorId': {
+    operationId: 'recordCityEncounter', requestSchema: CITY_ENCOUNTER_BODY,
+    requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 128, pattern: '^[!-~]+$' } }],
+    pathSchemas: { actorId: { type: 'string', format: 'uuid' } },
+    responseSchema: { ...CITY_BOARD, required: [...CITY_BOARD.required, 'ok', 'intel', 'encounteredActor'],
+      properties: { ...CITY_BOARD.properties, ok: { const: true }, intel: { type: 'object' }, encounteredActor: { type: 'object' } } },
+    responseHeaders: WORLDGRAPH_REPLAY_HEADER,
+  },
   'GET /v1/worldgraph/mysteries': worldGraphRead(
     'getWorldGraphMysteries', '#/components/schemas/WorldGraphMysteryDiscovery',
   ),

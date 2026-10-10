@@ -151,6 +151,7 @@ import { PATH_IDS, PATH_QUIZ_QUESTIONS, scorePathQuiz } from './path-funnel.js';
 import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard } from './opportunities.js';
 import { arenaBoard } from './arena.js';
+import { registerCity } from './routes/city.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
@@ -2226,6 +2227,7 @@ export async function buildServer() {
   registerContent(app, { pool, auth, modAuth });
   registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
+  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerProjections(app, { pool, auth,
