@@ -333,7 +333,7 @@
 | [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 197 | 2026-10-10 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
-| [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 72 | 2026-10-10 |
+| [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |

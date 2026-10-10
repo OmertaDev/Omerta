@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "051cf10ad95bf94f8c93eeb9a402194b7685116c",
+  "sourceRevision": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10536,
-    "edges": 42965,
+    "nodes": 10538,
+    "edges": 42975,
     "byNodeType": {
       "Artifact": 4416,
       "Command": 216,
-      "Commit": 2283,
+      "Commit": 2285,
       "Contract": 126,
       "Document": 706,
       "Domain": 13,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3549,
-      "CHANGED": 16817,
+      "CHANGED": 16824,
       "CONTAINS": 4437,
       "DECLARES": 216,
       "DEFINED_IN": 1399,
       "DEPENDS_ON": 67,
       "EXECUTES": 730,
       "HANDLED_BY": 774,
-      "HAS_COMMIT": 2283,
+      "HAS_COMMIT": 2285,
       "IMPLEMENTS": 124,
       "IMPORTS": 4225,
       "INHERITS": 42,
-      "REFERENCES": 3143,
+      "REFERENCES": 3144,
       "REPRESENTS": 1620,
       "TESTS": 1452,
       "TRACKS": 126,
@@ -24288,20 +24288,20 @@
       "path": "docs/city-social-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 15536,
-      "lines": 72,
-      "version": "95d7cfdacab1e931",
+      "bytes": 16736,
+      "lines": 74,
+      "version": "0e3643cef406c54d",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-social-security-review.md",
           "line": 1,
-          "version": "95d7cfdacab1e931"
+          "version": "0e3643cef406c54d"
         }
       ],
-      "lastChangedAt": "2026-10-10T18:17:01.000Z",
+      "lastChangedAt": "2026-10-10T19:13:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "051cf10ad95bf94f8c93eeb9a402194b7685116c"
+      "lastChangedCommit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -86497,20 +86497,20 @@
       "path": "test/coldstart.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9142,
-      "lines": 136,
-      "version": "b214f3b026cd045a",
+      "bytes": 12420,
+      "lines": 177,
+      "version": "659b641a75d9e479",
       "text": true,
       "provenance": [
         {
           "file": "test/coldstart.js",
           "line": 1,
-          "version": "b214f3b026cd045a"
+          "version": "659b641a75d9e479"
         }
       ],
-      "lastChangedAt": "2026-10-07T05:51:25.000Z",
+      "lastChangedAt": "2026-10-10T19:13:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ba80c248b59981e133e389073337079754c7c2b8"
+      "lastChangedCommit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
     },
     {
       "key": "Artifact:test/collision.js",
@@ -123335,6 +123335,22 @@
       ]
     },
     {
+      "key": "Commit:82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "type": "Commit",
+      "id": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "label": "test: exercise issued nearby chat cold-start contract",
+      "title": "test: exercise issued nearby chat cold-start contract",
+      "date": "2026-10-10T19:13:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "provenance": [
+        {
+          "commit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
+        }
+      ]
+    },
+    {
       "key": "Commit:82d87cefdf8fc900954f3b2fc2e888395785ecfb",
       "type": "Commit",
       "id": "82d87cefdf8fc900954f3b2fc2e888395785ecfb",
@@ -136535,6 +136551,22 @@
       ]
     },
     {
+      "key": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "type": "Commit",
+      "id": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "label": "chore(knowledge): refresh native City fixture retest artifacts",
+      "title": "chore(knowledge): refresh native City fixture retest artifacts",
+      "date": "2026-10-10T18:20:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "provenance": [
+        {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+        }
+      ]
+    },
+    {
       "key": "Commit:e0ada62b14ef9684d837001c6a7219d3855104a4",
       "type": "Commit",
       "id": "e0ada62b14ef9684d837001c6a7219d3855104a4",
@@ -148724,13 +148756,13 @@
       "id": "docs/city-social-security-review.md",
       "label": "docs/city-social-security-review.md",
       "documentType": "documentation",
-      "lines": 72,
-      "version": "95d7cfdacab1e931",
+      "lines": 74,
+      "version": "0e3643cef406c54d",
       "provenance": [
         {
           "file": "docs/city-social-security-review.md",
           "line": 1,
-          "version": "95d7cfdacab1e931"
+          "version": "0e3643cef406c54d"
         }
       ]
     },
@@ -161538,6 +161570,9 @@
           "commit": "dfa5d6ae750df870b9716cfc44325bb5645f8b46"
         },
         {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -162622,6 +162657,9 @@
         },
         {
           "commit": "e0005795eb58c23c31480fca7617477d9718e3cc"
+        },
+        {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
@@ -163782,6 +163820,9 @@
           "commit": "e0005795eb58c23c31480fca7617477d9718e3cc"
         },
         {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -164938,6 +164979,9 @@
         },
         {
           "commit": "e0005795eb58c23c31480fca7617477d9718e3cc"
+        },
+        {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
@@ -166405,6 +166449,9 @@
         },
         {
           "commit": "e0005795eb58c23c31480fca7617477d9718e3cc"
+        },
+        {
+          "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
@@ -175983,7 +176030,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "051cf10ad95bf94f8c93eeb9a402194b7685116c",
+      "revision": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
       "currentBranch": "codex/city-world-expansion",
       "defaultBranch": "main",
       "visibility": "public",
@@ -206570,13 +206617,13 @@
       "type": "TestSuite",
       "id": "test/coldstart.js",
       "label": "test/coldstart.js",
-      "lines": 136,
-      "version": "b214f3b026cd045a",
+      "lines": 177,
+      "version": "659b641a75d9e479",
       "provenance": [
         {
           "file": "test/coldstart.js",
           "line": 1,
-          "version": "b214f3b026cd045a"
+          "version": "659b641a75d9e479"
         }
       ]
     },
@@ -313976,6 +314023,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "to": "Artifact:docs/city-social-security-review.md",
+      "provenance": {
+        "commit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "to": "Artifact:test/coldstart.js",
+      "provenance": {
+        "commit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:82d87cefdf8fc900954f3b2fc2e888395785ecfb",
       "to": "Artifact:test/rc1-native-omr-journal.js",
       "provenance": {
@@ -360996,6 +361059,46 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "commit": "e04756b02764f545ec5ccfbeae9cfab0f8fa52b8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
       }
     },
     {
@@ -458273,6 +458376,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae",
+      "provenance": {
+        "commit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:82d87cefdf8fc900954f3b2fc2e888395785ecfb",
       "provenance": {
         "commit": "82d87cefdf8fc900954f3b2fc2e888395785ecfb"
@@ -464868,6 +464979,14 @@
       "to": "Commit:e04756b02764f545ec5ccfbeae9cfab0f8fa52b8",
       "provenance": {
         "commit": "e04756b02764f545ec5ccfbeae9cfab0f8fa52b8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c",
+      "provenance": {
+        "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
       }
     },
     {
@@ -481889,7 +482008,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/coldstart.js",
-        "line": 25
+        "line": 26
       }
     },
     {
@@ -516490,6 +516609,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/city-social-security-review.md",
+      "to": "Artifact:test/coldstart.js",
+      "provenance": {
+        "file": "docs/city-social-security-review.md",
+        "line": 45
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/coordination-engine/ARCHITECTURE.md",
       "to": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "provenance": {
@@ -550685,7 +550813,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/coldstart.js",
-        "line": 25
+        "line": 26
       }
     },
     {
