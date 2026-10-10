@@ -44,6 +44,8 @@ Serving worker revision `95e59d02e73eab78271abc6c35757b3b17826648` was checked f
 
 CP-09: hosted run `38026513183` at `636cfca5acf7f7e1ef44eb2306b5d3727817e92d` failed the PostgreSQL query scanner on both versions: 41 non-literal query sites exceeded its unchanged ceiling of 40. Both completed City steps executed the actual native encounter suite and passed concurrent exact replay, opposite-target locks, rollback and neutral resources; the remaining workflow was cancelled before repair, so full-lane success is not claimed. The four existing City SQL strings now appear directly in their query calls, with identical parameters, ordering and lock predicates. Independent review cleared producer blob `6fa041d3bf20c220a2842ce6b2d6229a626947c3`; scanner coverage is 5117 readable, 168 interpolated and 39 unreadable, with no unreadable City site. Local backend/API and gates passed again. Guard ceilings remain unchanged, and fresh required native/full-workflow checks must qualify the repaired head.
 
+Subsequent main `ca73a1952440b7ddaf09eafffab06e9ffedc88bc` adds two bound storefront ownership reads and matching privacy/ownership tests, without City, schema, public GUI, worker, package or guard changes. Independent compatibility review cleared the exact source/test transfer; only generated knowledge conflicted and is regenerated from committed source. The transferred storefront test passed locally. The merged SQL inventory is 5119 readable, 168 interpolated and 39 unreadable. This does not replace fresh integrated-head release checks.
+
 | Working-tree file | SHA256 |
 | --- | --- |
 | src/city-presence.js | 07c68efe5a68139d0c0b3d9c7471934117b2e66788b43642f4177a889578c66a |
