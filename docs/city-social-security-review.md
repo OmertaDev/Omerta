@@ -41,6 +41,10 @@ The Phase 2 and Director oracles retain all predecessor assertions, classify exa
 
 The first independent pass cleared the original six runtime pins, then reopened replay review when CS-02 was identified. The final independent pass cleared the replacement social/server pins below, the authenticated reservation tuple, same-transaction completion, strict row count, compensation ordering and retained byte-exact recovery controls. It ran no duplicate tests and identified no remaining concrete concern in the correction. No unresolved concrete ownership/privacy finding is identified in this backend scope. This package is pre-release evidence, not production or native clearance, and must be attached to the release manifest by content hash after integration.
 
+SG-01, test-only catalog-ledger classification: the required gate initially treated an issued action body's `outfit: outfit.id` and the decoded message `kind: data.kind` as unnamed narrative catalog fields. The outfit selector already carries `Wear <catalog name>` in its enclosing issued action, with names in the private catalog and a verified tint resolver; its closed request body must not acquire a redundant display field. Message kind is validated as only `text|emote`, and the client branches to fixed Nearby/Emote labels while rendering the actual plain text. Two exact field-bound classifications now require that named action/factory shape or the unique bounded decoder return. No file-wide City waiver was added. The original return/notify extractor, raw-field regex, corpus floor, existing waiver ledger and all other naming rules remain.
+
+`node test/gates.js` passed the full suite locally: 166 catalog fields, all 29 existing declared handles, and exactly two classified City sites. Same-matcher causal controls reject a removed outfit name, missing actual factory label, lost finite kind validation, a post-validation kind overwrite, and additional unlabelled outfit/kind literals. Syntax and whitespace checks passed. Independent review cleared gate blob `14b9a3338f8921301dab24a363bbd062fa13a724`. No runtime, API, authoritative fields or receipts changed; this is static gate evidence, not native transaction qualification. The root's separately committed documentation census passed its actual docs test; final integrated client/gate/docs and native release checks remain separate.
+
 | Reviewed working-tree file | SHA256 |
 | --- | --- |
 | src/city-social.js | 2ac9d8cad9b0e940f9ab177c4d6228566aff31e0a3f31e42bfc581048d748434 |
@@ -54,3 +58,4 @@ The first independent pass cleared the original six runtime pins, then reopened 
 | test/lib/phase2-architecture-upgrade-catalog.json | 6008213ec79cee2ba9b6a2ebfdc40d48c5f78ccfa79160c8518dd6ded20d40f6 |
 | test/migrate.js | 7b8aeea00058d95309bd54f3f361afe220dc67838dfc37c43183c36804e3f8b6 |
 | test/phase2-postgres.js | 68159e4536078b8adb0a3dedeb1da6a9949caada5c509edaaba03e056bea5f03 |
+| test/gates.js | cbf44b9aea2d4cf787b4df150c3ccd1b422d7ff2a5f8823c648a88abb19aba6e |
