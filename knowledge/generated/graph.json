@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
+  "sourceRevision": "84a02ce954804637a6c2033c7baad476fdb97f23",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10417,
-    "edges": 42415,
+    "nodes": 10419,
+    "edges": 42424,
     "byNodeType": {
       "Artifact": 4398,
       "Command": 211,
-      "Commit": 2212,
+      "Commit": 2214,
       "Contract": 126,
       "Document": 702,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3529,
-      "CHANGED": 16526,
+      "CHANGED": 16533,
       "CONTAINS": 4419,
       "DECLARES": 211,
       "DEFINED_IN": 1390,
       "DEPENDS_ON": 67,
       "EXECUTES": 712,
       "HANDLED_BY": 768,
-      "HAS_COMMIT": 2212,
+      "HAS_COMMIT": 2214,
       "IMPLEMENTS": 124,
       "IMPORTS": 4179,
       "INHERITS": 42,
@@ -108104,6 +108104,22 @@
       ]
     },
     {
+      "key": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "type": "Commit",
+      "id": "204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "label": "chore(knowledge): refresh storefront ownership artifacts",
+      "title": "chore(knowledge): refresh storefront ownership artifacts",
+      "date": "2026-10-10T04:18:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "provenance": [
+        {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+          "url": "https://github.com/OmertaDev/Omerta/commit/204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+        }
+      ]
+    },
+    {
       "key": "Commit:2063c8b41954dbd61c7888ac9824572dc5840f9a",
       "type": "Commit",
       "id": "2063c8b41954dbd61c7888ac9824572dc5840f9a",
@@ -122500,6 +122516,22 @@
         {
           "commit": "847991f714ef7f9d3f135b8f2eb8ebe5c3eb1cd8",
           "url": "https://github.com/OmertaDev/Omerta/commit/847991f714ef7f9d3f135b8f2eb8ebe5c3eb1cd8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:84a02ce954804637a6c2033c7baad476fdb97f23",
+      "type": "Commit",
+      "id": "84a02ce954804637a6c2033c7baad476fdb97f23",
+      "label": "Merge pull request #215 from OmertaDev/codex/storefront-owned-premises",
+      "title": "Merge pull request #215 from OmertaDev/codex/storefront-owned-premises",
+      "date": "2026-10-10T05:16:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/84a02ce954804637a6c2033c7baad476fdb97f23",
+      "provenance": [
+        {
+          "commit": "84a02ce954804637a6c2033c7baad476fdb97f23",
+          "url": "https://github.com/OmertaDev/Omerta/commit/84a02ce954804637a6c2033c7baad476fdb97f23"
         }
       ]
     },
@@ -159449,6 +159481,9 @@
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+        },
+        {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
@@ -159969,6 +160004,9 @@
         },
         {
           "commit": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7"
+        },
+        {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
@@ -161045,6 +161083,9 @@
           "commit": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7"
         },
         {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -162117,6 +162158,9 @@
         },
         {
           "commit": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7"
+        },
+        {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
@@ -163487,6 +163531,9 @@
           "commit": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7"
         },
         {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -164474,6 +164521,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+        },
+        {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
         },
         {
@@ -165024,6 +165074,9 @@
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+        },
+        {
+          "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
         },
         {
           "commit": "22a7e39fe4c8aff51081aba5e4584e65fd632caa"
@@ -173705,8 +173758,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "32faec181d50451cb65d6b7266e6bdcd55e711f9",
-      "currentBranch": "codex/storefront-owned-premises",
+      "revision": "84a02ce954804637a6c2033c7baad476fdb97f23",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -257771,6 +257824,62 @@
       "to": "Artifact:docs/release/readiness-work/authority-final-review.md",
       "provenance": {
         "commit": "2028d3d77d9c9358a1b3cc00d4343d8f2c48cb86"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
       }
     },
     {
@@ -445298,6 +445407,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:204dafd58797aec02586fbd82f8d4b6a7f45fc66",
+      "provenance": {
+        "commit": "204dafd58797aec02586fbd82f8d4b6a7f45fc66"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2063c8b41954dbd61c7888ac9824572dc5840f9a",
       "provenance": {
         "commit": "2063c8b41954dbd61c7888ac9824572dc5840f9a"
@@ -452493,6 +452610,14 @@
       "to": "Commit:847991f714ef7f9d3f135b8f2eb8ebe5c3eb1cd8",
       "provenance": {
         "commit": "847991f714ef7f9d3f135b8f2eb8ebe5c3eb1cd8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:84a02ce954804637a6c2033c7baad476fdb97f23",
+      "provenance": {
+        "commit": "84a02ce954804637a6c2033c7baad476fdb97f23"
       }
     },
     {
