@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2125a2cc99ac`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3e60f1d44e32`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2224 |
+| Commits in clone | 2226 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Integrate reviewed storefront ownership release |
+| Latest commit | 2026-10-10 — Pin City intel constraints in complete migration catalog |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1315 |
+| OmertaDev | 1317 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 64 |
@@ -34,17 +34,17 @@
 | [public/index.html](../../public/index.html) | 443 | yes |
 | [src/server.js](../../src/server.js) | 378 | yes |
 | [SPEC.md](../../SPEC.md) | 377 | yes |
-| knowledge/generated/github-history.md | 360 | historical |
-| knowledge/generated/graph-summary.md | 360 | historical |
-| knowledge/generated/graph.json | 360 | historical |
-| knowledge/generated/inventory.md | 360 | historical |
+| knowledge/generated/github-history.md | 361 | historical |
+| knowledge/generated/graph-summary.md | 361 | historical |
+| knowledge/generated/graph.json | 361 | historical |
+| knowledge/generated/inventory.md | 361 | historical |
 | [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/documents.md | 152 | historical |
-| knowledge/generated/modules.md | 139 | historical |
+| knowledge/generated/documents.md | 153 | historical |
+| knowledge/generated/modules.md | 140 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
@@ -59,7 +59,7 @@
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 65 | yes |
-| knowledge/generated/schema.md | 60 | historical |
+| knowledge/generated/schema.md | 61 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |

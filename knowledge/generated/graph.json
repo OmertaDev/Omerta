@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2125a2cc99ac560d15e7de157acc4532fb10373e",
+  "sourceRevision": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10447,
-    "edges": 42543,
+    "nodes": 10449,
+    "edges": 42555,
     "byNodeType": {
       "Artifact": 4405,
       "Command": 211,
-      "Commit": 2224,
+      "Commit": 2226,
       "Contract": 126,
       "Document": 704,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3537,
-      "CHANGED": 16582,
+      "CHANGED": 16592,
       "CONTAINS": 4426,
       "DECLARES": 211,
       "DEFINED_IN": 1394,
       "DEPENDS_ON": 67,
       "EXECUTES": 718,
       "HANDLED_BY": 771,
-      "HAS_COMMIT": 2224,
+      "HAS_COMMIT": 2226,
       "IMPLEMENTS": 124,
       "IMPORTS": 4191,
       "INHERITS": 42,
@@ -24219,20 +24219,20 @@
       "path": "docs/city-presence-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 11605,
-      "lines": 58,
-      "version": "8a5c7e4a6ac6c81f",
+      "bytes": 12726,
+      "lines": 60,
+      "version": "0afbc58e51a7ccd2",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "8a5c7e4a6ac6c81f"
+          "version": "0afbc58e51a7ccd2"
         }
       ],
-      "lastChangedAt": "2026-10-10T05:18:27.000Z",
+      "lastChangedAt": "2026-10-10T05:54:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "629f013cda4f7135a91dcb394dba3ecb3914c885"
+      "lastChangedCommit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
     },
     {
       "key": "Artifact:docs/city-presence.md",
@@ -89211,20 +89211,20 @@
       "path": "test/lib/phase2-architecture-upgrade-catalog.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 60414,
-      "lines": 1826,
-      "version": "9330a25789b91544",
+      "bytes": 61242,
+      "lines": 1853,
+      "version": "391c2cc337624dc4",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/phase2-architecture-upgrade-catalog.json",
           "line": 1,
-          "version": "9330a25789b91544"
+          "version": "391c2cc337624dc4"
         }
       ],
-      "lastChangedAt": "2026-10-09T03:43:06.000Z",
+      "lastChangedAt": "2026-10-10T05:54:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "df0ee2bf53bfa214a7da63a08a18028a9fdc407a"
+      "lastChangedCommit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
     },
     {
       "key": "Artifact:test/lib/phase2-definition-fixtures.js",
@@ -90499,20 +90499,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 70642,
-      "lines": 768,
-      "version": "4e9d16a8767826a4",
+      "bytes": 71695,
+      "lines": 780,
+      "version": "7adc66941446189d",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "4e9d16a8767826a4"
+          "version": "7adc66941446189d"
         }
       ],
-      "lastChangedAt": "2026-10-08T20:35:00.000Z",
+      "lastChangedAt": "2026-10-10T05:54:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
+      "lastChangedCommit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -112825,6 +112825,22 @@
       ]
     },
     {
+      "key": "Commit:3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "type": "Commit",
+      "id": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "label": "Pin City intel constraints in complete migration catalog",
+      "title": "Pin City intel constraints in complete migration catalog",
+      "date": "2026-10-10T05:54:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "provenance": [
+        {
+          "commit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+        }
+      ]
+    },
+    {
       "key": "Commit:3e6ef0ad75930f137305baaf1dd970ad8c901dfd",
       "type": "Commit",
       "id": "3e6ef0ad75930f137305baaf1dd970ad8c901dfd",
@@ -124629,6 +124645,22 @@
         {
           "commit": "924083a0b586ae134b0dca22ce19b8e769ae99c9",
           "url": "https://github.com/OmertaDev/Omerta/commit/924083a0b586ae134b0dca22ce19b8e769ae99c9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "type": "Commit",
+      "id": "92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "label": "Refresh knowledge for current-main City integration",
+      "title": "Refresh knowledge for current-main City integration",
+      "date": "2026-10-10T05:30:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "provenance": [
+        {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/92410735f6f9e9148c383d2ecb6d32a383d338b2"
         }
       ]
     },
@@ -147414,13 +147446,13 @@
       "id": "docs/city-presence-security-review.md",
       "label": "docs/city-presence-security-review.md",
       "documentType": "documentation",
-      "lines": 58,
-      "version": "8a5c7e4a6ac6c81f",
+      "lines": 60,
+      "version": "0afbc58e51a7ccd2",
       "provenance": [
         {
           "file": "docs/city-presence-security-review.md",
           "line": 1,
-          "version": "8a5c7e4a6ac6c81f"
+          "version": "0afbc58e51a7ccd2"
         }
       ]
     },
@@ -160021,6 +160053,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+        },
+        {
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
@@ -160838,6 +160873,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
         },
         {
           "commit": "927f4f1736f01f5b2337f73e62b9b8a699935132"
@@ -161929,6 +161967,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+        },
+        {
           "commit": "927f4f1736f01f5b2337f73e62b9b8a699935132"
         },
         {
@@ -163016,6 +163057,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
         },
         {
           "commit": "927f4f1736f01f5b2337f73e62b9b8a699935132"
@@ -164404,6 +164448,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+        },
+        {
           "commit": "927f4f1736f01f5b2337f73e62b9b8a699935132"
         },
         {
@@ -165091,6 +165138,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+        },
+        {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
@@ -165557,6 +165607,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -174217,7 +174270,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2125a2cc99ac560d15e7de157acc4532fb10373e",
+      "revision": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
       "currentBranch": "codex/player-view-toggle",
       "defaultBranch": "main",
       "visibility": "public",
@@ -207246,13 +207299,13 @@
       "type": "TestSuite",
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
-      "lines": 768,
-      "version": "4e9d16a8767826a4",
+      "lines": 780,
+      "version": "7adc66941446189d",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "4e9d16a8767826a4"
+          "version": "7adc66941446189d"
         }
       ]
     },
@@ -274726,6 +274779,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "to": "Artifact:docs/city-presence-security-review.md",
+      "provenance": {
+        "commit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "to": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
+      "provenance": {
+        "commit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3e6ef0ad75930f137305baaf1dd970ad8c901dfd",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation-task2-authority.md",
       "provenance": {
@@ -317906,6 +317983,62 @@
       "to": "Artifact:test/explore.js",
       "provenance": {
         "commit": "924083a0b586ae134b0dca22ce19b8e769ae99c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
       }
     },
     {
@@ -448928,6 +449061,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3e60f1d44e32da7af54d0b2cba8c7211c096c5d6",
+      "provenance": {
+        "commit": "3e60f1d44e32da7af54d0b2cba8c7211c096c5d6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3e6ef0ad75930f137305baaf1dd970ad8c901dfd",
       "provenance": {
         "commit": "3e6ef0ad75930f137305baaf1dd970ad8c901dfd"
@@ -454827,6 +454968,14 @@
       "to": "Commit:924083a0b586ae134b0dca22ce19b8e769ae99c9",
       "provenance": {
         "commit": "924083a0b586ae134b0dca22ce19b8e769ae99c9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:92410735f6f9e9148c383d2ecb6d32a383d338b2",
+      "provenance": {
+        "commit": "92410735f6f9e9148c383d2ecb6d32a383d338b2"
       }
     },
     {
@@ -483900,7 +484049,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 429
+        "line": 441
       }
     },
     {
@@ -483918,7 +484067,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 427
+        "line": 439
       }
     },
     {
@@ -483927,7 +484076,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 481
+        "line": 493
       }
     },
     {
@@ -483936,7 +484085,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 426
+        "line": 438
       }
     },
     {
@@ -483945,7 +484094,7 @@
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 476
+        "line": 488
       }
     },
     {
@@ -483972,7 +484121,7 @@
       "to": "Artifact:test/lib/phase2-item-fixtures.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 425
+        "line": 437
       }
     },
     {
@@ -483999,7 +484148,7 @@
       "to": "Artifact:test/phase2-lots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 428
+        "line": 440
       }
     },
     {
@@ -551076,7 +551225,7 @@
       "to": "Artifact:src/item-lock-trace.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 429
+        "line": 441
       }
     },
     {
@@ -551094,7 +551243,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 427
+        "line": 439
       }
     },
     {
@@ -551103,7 +551252,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 481
+        "line": 493
       }
     },
     {
@@ -551112,7 +551261,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/phase2-postgres.js",
-        "line": 426
+        "line": 438
       }
     },
     {
