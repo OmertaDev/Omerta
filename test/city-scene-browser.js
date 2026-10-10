@@ -3,8 +3,24 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../src/server.js';
+
+// Cached options must never update or destroy a different current identity while its read is pending.
+const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
+const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
+for (const current of [{ id: 'current', generation: 2, loc: 'docks' }, { id: 'replacement', generation: 1, loc: 'docks' }]) {
+  const cached = { character: { id: 'current', generation: 1 }, district: { id: 'docks' } };
+  let reused = 0;
+  const scope = { $: () => ({}), currentTab: 'map', _mapMode: 'walk', _citySceneOptions: cached,
+    _citySceneKey: 'current:1:docks', _cityScene: { update: () => reused++ },
+    cityIdentity: () => `${current.id}:${current.generation}:${current.loc}`,
+    destroyCityScene: () => assert.fail('Stale cached options cannot destroy the current scene before authoritative read completion.') };
+  vm.runInNewContext(mountSource + '\nthis.mount = mountCityNeighborhood;', scope);
+  await scope.mount();
+  assert.equal(reused, 0, 'Stale generation/character options cannot reuse a current scene.');
+}
 
 const CITY_ART = [
   { file: '/art/city-neighborhood-v1.png', width: 960, height: 640, alpha: false },
@@ -136,6 +152,21 @@ try {
       localStorage.setItem('omerta_tour2', '1');
       // Capture handles only in the test realm; production needs no global debug hooks.
       window.__cityHandles = [];
+      window.__cityGames = [];
+      let engine;
+      Object.defineProperty(window, 'Phaser', {
+        configurable: true,
+        get: () => engine,
+        set: value => {
+          engine = value;
+          const Game = value.Game;
+          value.Game = new Proxy(Game, { construct(target, args) {
+            const game = Reflect.construct(target, args);
+            window.__cityGames.push(game);
+            return game;
+          } });
+        },
+      });
       let api;
       Object.defineProperty(window, 'OmertaCityScene', {
         configurable: true,
@@ -273,6 +304,7 @@ try {
     const layout = await page.evaluate(() => {
       const canvas = document.querySelector('.omerta-city__canvas canvas'), rect = canvas.getBoundingClientRect();
       return { top: rect.top, bottom: rect.bottom, height: innerHeight,
+        toastTop: document.getElementById('toast').classList.contains('show') ? document.getElementById('toast').getBoundingClientRect().top : innerHeight,
         hits: [rect.top + 3, rect.top + rect.height / 2, rect.bottom - 3].map(y => document.elementFromPoint(rect.left + rect.width / 2, y) === canvas),
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => {
           const node = document.getElementById(id), rect = node?.getBoundingClientRect();
@@ -281,12 +313,51 @@ try {
     });
     assert(layout.top >= 0 && layout.bottom <= layout.height + 1 && layout.hits.every(Boolean),
       'Explicit entry reveals the ready canvas above fixed chrome: ' + JSON.stringify(layout));
+    assert(layout.bottom <= layout.toastTop + 1, 'A visible toast does not cover the entered map.');
+  };
+  const assertWorldHud = async page => {
+    const layout = await page.evaluate(() => {
+      const hud = document.querySelector('.omerta-city__world-hud'), canvas = document.querySelector('.omerta-city__canvas canvas');
+      const scene = window.__cityHandles.at(-1).handle.getState(), rect = canvas.getBoundingClientRect(), hudRect = hud.getBoundingClientRect();
+      const player = { x: rect.left + (scene.player.x - scene.camera.x) * scene.camera.zoom * rect.width / scene.camera.width,
+        y: rect.top + (scene.player.y - scene.camera.y) * scene.camera.zoom * rect.height / scene.camera.height };
+      const controls = [...hud.querySelectorAll('[data-city-resource]'), hud.querySelector('.omerta-city__readiness')];
+      const game = window.__cityGames.find(game => game.canvas === canvas), live = game.scene.getScenes(true)[0];
+      const sprites = [live.children.list.find(node => node.texture?.key === 'city-player' || node.texture?.key?.startsWith('city-art-player-')), live.data.get('playerName')];
+      const avatar = sprites.map(node => {
+        const bounds = node.getBounds(), camera = live.cameras.main;
+        return { top: (bounds.top - camera.worldView.y) * camera.zoom * rect.height / camera.height,
+          bottom: (bounds.bottom - camera.worldView.y) * camera.zoom * rect.height / camera.height,
+          left: (bounds.left - camera.worldView.x) * camera.zoom * rect.width / camera.width,
+          right: (bounds.right - camera.worldView.x) * camera.zoom * rect.width / camera.width };
+      });
+      return { hud: hudRect.toJSON(), canvas: rect.toJSON(), camera: scene.camera, player,
+        avatar, chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })),
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        visible: controls.every(control => { const b = control.getBoundingClientRect();
+          const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return control === hit || control.contains(hit); }),
+        playerVisible: document.elementFromPoint(player.x, player.y) === canvas,
+        fields: controls.slice(0, -1).map(control => control.dataset.cityResource),
+        readinessCount: document.querySelectorAll('.omerta-city__readiness[role="status"]').length };
+    });
+    assert(!layout.overflow && layout.visible && layout.playerVisible, 'Walking HUD and player are visible without covering the canvas: ' + JSON.stringify(layout));
+    assert(layout.hud.bottom <= layout.canvas.top + 1, 'The HUD reserves its own space outside the playable camera.');
+    assert(Math.abs(layout.camera.width - layout.canvas.width) <= 1 && Math.abs(layout.camera.height - layout.canvas.height) <= 1,
+      'Phaser dimensions match the CSS viewport after compact resizing.');
+    assert(layout.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= layout.canvas.height + 1 && bounds.left >= -1 && bounds.right <= layout.canvas.width + 1),
+      'The complete avatar and name remain inside the playable camera: ' + JSON.stringify(layout));
+    assert.deepEqual(layout.fields, ['cash', 'health', 'energy', 'nerve']);
+    assert.equal(layout.readinessCount, 1, 'Readiness is a single live region.');
+    assert.equal(await page.locator('.omerta-city__readiness').getAttribute('aria-atomic'), 'true');
+    for (const field of ['cash', 'health', 'energy', 'nerve', 'heat', 'level']) assert.equal(await page.locator(`[data-city-resource="${field}"]`).count(), 1, field + ' has one projection-backed value.');
   };
   const gameplayRequests = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
 
   // A first phone visit retains its help, then explicitly enters the existing local scene.
   const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  // The scene's live layout must remain correct without optional resize observation.
+  await entry.context().addInitScript(() => { window.ResizeObserver = undefined; });
   const entryRequests = [];
   entry.on('request', request => entryRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
   await openCity(entry);
@@ -295,6 +366,7 @@ try {
   const entryStart = entryRequests.length;
   await entry.locator('#intro-walk').click();
   await assertEntered(entry);
+  await assertWorldHud(entry);
   assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), null, 'Entering does not dismiss first-visit help.');
   await assertPosition(entry, entryPose, 'First phone entry retains pose');
   assert.equal((await state(entry)).reducedMotion, true);
@@ -302,6 +374,96 @@ try {
   await assertEntered(entry);
   assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Repeated Walk reuses the same Phaser game.');
   await assertPosition(entry, entryPose, 'Repeated entry retains pose');
+  await app.pool.query('UPDATE characters SET cash=2222,health=22,energy=31,nerve=4 WHERE id=$1', [characterId]);
+  const liveHud = entry.waitForResponse(async response => {
+    if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+    const reply = await response.json(), character = reply.player?.character || reply.player;
+    return character?.cash === 2222 && character.health < 30;
+  });
+  await entry.locator('#btn-refresh').evaluate(button => button.click());
+  const projected = (await (await liveHud).json()).player;
+  await assertHud(entry, projected?.character || projected);
+  await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+  assert.equal((await state(entry)).resources.health, (projected?.character || projected).health, 'Walk retains the current GET health instead of stale cached values.');
+  assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Current-health reuse keeps the same scene handle.');
+  assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
+  if (shots) await entry.screenshot({ path: path.join(shots, 'city-world-hud-375.png') });
+  for (const [width, height] of [[320, 568], [360, 780]]) {
+    const beforeResize = (await state(entry)).position;
+    // Keep the observed toast overlap deterministic instead of racing its dismiss timer.
+    if (width === 320) await entry.evaluate(() => {
+      const toast = document.getElementById('toast');
+      clearTimeout(toast._h); toast.textContent = 'Updated'; toast.style.transition = 'none';
+      toast.classList.add('show');
+      // Reserve the same tall sticky-header space on platforms with different fonts.
+      const top = document.getElementById('top');
+      top.style.height = top.style.minHeight = top.style.maxHeight = '215px'; top.style.overflow = 'hidden';
+    });
+    await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
+    await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+    await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
+    if (width === 320) {
+      const initialHeight = (await state(entry)).camera.height;
+      assert(initialHeight < 160, 'Short phone space with tall chrome and a visible toast can shrink below the former minimum: ' + JSON.stringify(await entry.evaluate(() => ({
+        canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON(),
+        hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
+        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
+      }))));
+      const beforeWarning = (await state(entry)).position;
+      await app.pool.query('UPDATE characters SET cash=2223,health=100,safe_until=$2 WHERE id=$1', [characterId, new Date(Date.now() + 60000)]);
+      const warningReply = entry.waitForResponse(async response => {
+        if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+        const reply = await response.json(), character = reply.player?.character || reply.player;
+        return character?.cash === 2223 && character.safeSeconds > 0;
+      });
+      await entry.locator('#btn-refresh').evaluate(button => button.click());
+      const warningPlayer = (await (await warningReply).json()).player;
+      await assertHud(entry, warningPlayer?.character || warningPlayer);
+      await waitForFrames(entry, 3);
+      assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
+      assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver.');
+      await assertWorldHud(entry);
+      await assertPosition(entry, beforeWarning, 'Live warning wrapping retains the player pose');
+      assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'A HUD resize keeps the existing Phaser game.');
+    }
+    const walking = await state(entry), box = await entry.locator('.omerta-city__canvas canvas').boundingBox();
+    const goal = { x: walking.player.x + 16, y: walking.player.y + 16 };
+    await entry.locator('.omerta-city__canvas canvas').tap({ position: {
+      x: (goal.x - walking.camera.x) * walking.camera.zoom * box.width / walking.camera.width,
+      y: (goal.y - walking.camera.y) * walking.camera.zoom * box.height / walking.camera.height,
+    } });
+    await waitForInput(entry, goal => {
+      const state = window.__cityHandles.at(-1).handle.getState();
+      return state.pathLength === 0 && Math.hypot(state.player.x - goal.x, state.player.y - goal.y) <= 16;
+    }, goal);
+    await assertWorldHud(entry);
+    if (shots) await entry.screenshot({ path: path.join(shots, 'city-world-hud-' + width + '.png') });
+    if (width === 320) {
+      await app.pool.query('UPDATE characters SET cash=2222,health=22,safe_until=NULL WHERE id=$1', [characterId]);
+      const clearedReply = entry.waitForResponse(async response => {
+        if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
+        const reply = await response.json(), character = reply.player?.character || reply.player;
+        return character?.cash === 2222 && character.health < 30 && character.safeSeconds === 0;
+      });
+      await entry.locator('#btn-refresh').evaluate(button => button.click());
+      const clearedPlayer = (await (await clearedReply).json()).player;
+      await assertHud(entry, clearedPlayer?.character || clearedPlayer);
+      await waitForFrames(entry, 3);
+      assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH/);
+      await assertWorldHud(entry);
+      await entry.evaluate(() => {
+        const toast = document.getElementById('toast'); clearTimeout(toast._h); toast.classList.remove('show'); toast.style.transition = '';
+        const top = document.getElementById('top'); top.style.height = top.style.minHeight = top.style.maxHeight = top.style.overflow = '';
+      });
+    }
+  }
+  const phonePose = (await state(entry)).position;
+  await entry.setViewportSize({ width: 1440, height: 1000 }); await waitForFrames(entry, 3);
+  await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+  assert.equal(await entry.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), '', 'Leaving phone mode removes its height override without ResizeObserver.');
+  await assertPosition(entry, phonePose, 'Leaving phone mode retains the player pose');
+  await app.pool.query('UPDATE characters SET cash=500,health=100,energy=50,nerve=10 WHERE id=$1', [characterId]);
+  await refreshHudFromClient(entry);
   assert.deepEqual(gameplayRequests(entryRequests.slice(entryStart)), [], 'Entry never submits gameplay or travel actions.');
   await entry.evaluate(() => { window.__oldEntryButton = document.querySelector('#intro-walk'); });
   await entry.locator('#intro-got').click();
@@ -839,6 +1001,7 @@ try {
   await missingEngine.waitForSelector('#screen-main:not(.hidden)');
   await selectTab(missingEngine, 'map');
   await missingEngine.locator('.omerta-city--unavailable').waitFor();
+  assert.equal(await missingEngine.locator('.omerta-city__world-hud').count(), 1, 'Engine fallback preserves projection-backed walking status.');
   await missingEngine.locator('#map-mode-walk').click();
   await missingEngine.waitForFunction(() => document.activeElement?.dataset.destination === 'fixer');
   assert.match(await missingEngine.locator('.omerta-city__status').textContent(), /unavailable/);

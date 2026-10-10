@@ -8926,7 +8926,11 @@
           || host?.querySelector('[data-destination]') || host?.querySelector('[data-city-jump]') || host?.querySelector('[role="status"]');
         cancelCityEntry();
         if (ready) host?.querySelector('.omerta-city__interaction:not([hidden]) [data-city-close]')?.click();
-        if (target?.isConnected) revealCityEntry(target);
+        if (target?.isConnected) {
+          revealCityEntry(ready && canvas ? canvas.closest('.omerta-city__viewport') : target, false);
+          if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+        }
         return;
       }
       const status = host?.querySelector('.omerta-city__status') || host?.querySelector('[role="status"]');

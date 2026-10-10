@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `78745d74a754`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `499751dee970`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,398 |
-| Text lines | 1,559,657 |
-| Repository bytes inventoried | 814,908,304 |
-| Backend/route modules | 312 |
-| HTTP route registrations / unique routes | 875 / 875 |
+| Current artifacts | 4,391 |
+| Text lines | 1,559,479 |
+| Repository bytes inventoried | 814,879,483 |
+| Backend/route modules | 309 |
+| HTTP route registrations / unique routes | 873 / 873 |
 | Database tables | 389 |
 | Solidity declarations | 126 |
-| Git commits | 2,191 |
+| Git commits | 2,202 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,396 / 42,336 |
+| Graph nodes / edges | 10,390 / 42,287 |
 
 ## Artifact kinds
 
@@ -25,10 +25,10 @@
 | media-asset | 1,204 |
 | artifact | 674 |
 | contract-project | 646 |
-| test-suite | 473 |
+| test-suite | 470 |
 | documentation | 419 |
-| backend-module | 280 |
-| engineering-harness | 207 |
+| backend-module | 277 |
+| engineering-harness | 206 |
 | contract-test | 111 |
 | contract-source | 105 |
 | audit | 98 |
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 14,208 | web-surface | 2026-10-09 |
+| [public/index.html](../../public/index.html) | 14,212 | web-surface | 2026-10-09 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
