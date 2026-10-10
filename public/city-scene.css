@@ -301,7 +301,7 @@ body.city-player-view .omerta-city__viewport.is-inspecting .omerta-city__canvas 
 }
 .omerta-city__interaction-controls {
   position: sticky;
-  top: 8px;
+  top: 0;
   height: 0;
   z-index: 1;
 }

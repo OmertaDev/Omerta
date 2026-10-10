@@ -782,6 +782,33 @@ try {
     await page.locator('[data-destination="fixer"]').click();
     await assertVenueOnscreen(page);
   }
+  // A tall real header forces the existing 96px map floor and 64px venue cap.
+  // The sticky close must fit that cap after focusing/scrolling the primary action.
+  const tightVenuePose = (await state(page)).position, tightVenueReads = requests.length;
+  const previousHeaderStyle = await page.locator('#top').getAttribute('style');
+  try {
+    await page.keyboard.press('Escape');
+    await page.locator('#top').evaluate(header => { header.style.height = '180px'; header.style.minHeight = '180px'; header.style.maxHeight = '180px'; dispatchEvent(new Event('resize')); });
+    await page.waitForFunction(() => document.querySelector('.omerta-city__canvas canvas')?.height === 96);
+    await page.locator('[data-destination="fixer"]').click();
+    assert.equal(await page.locator('.omerta-city__interaction').evaluate(card => card.getBoundingClientRect().height), 64, 'The regression reaches the actual minimum-map venue cap.');
+    await assertVenueOnscreen(page);
+    const formerCloseOffset = await page.addStyleTag({ content: '.omerta-city__interaction-controls { top: 8px !important; }' });
+    try {
+      await assert.rejects(assertVenueOnscreen(page), /Venue controls are visible and unobscured/, 'The former sticky offset clips the actual 44px close in this same card.');
+    } finally { await formerCloseOffset.evaluate(node => node.remove()); }
+    await assertVenueOnscreen(page);
+    await assertPosition(page, tightVenuePose, 'Short-card inspection retains exploration pose');
+    assert.deepEqual(gameplayRequests(requests.slice(tightVenueReads)), [], 'Short-card opening and inspection submit no gameplay.');
+    if (process.env.CITY_SCENE_SHOTS) await page.screenshot({ path: path.join(process.env.CITY_SCENE_SHOTS, 'city-venue-close-375x320.png') });
+    await page.locator('[data-city-close]').click();
+    assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'The complete close target works at the minimum card height.');
+    await page.waitForFunction(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas'));
+  } finally {
+    await page.locator('#top').evaluate((header, saved) => { if (saved === null) header.removeAttribute('style'); else header.setAttribute('style', saved); dispatchEvent(new Event('resize')); }, previousHeaderStyle);
+  }
+  await page.locator('[data-destination="fixer"]').click();
+  await assertVenueOnscreen(page);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'A short-screen venue retains keyboard close.');
   await page.setViewportSize({ width: 375, height: 812 });
