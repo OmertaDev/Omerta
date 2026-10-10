@@ -59,11 +59,26 @@ try {
       } });
       window.__presenceHandles = []; let api;
       Object.defineProperty(window, 'OmertaCityScene', { configurable: true, get: () => api, set: value => {
+        // Capture after the root retry and the scene's awaited notice/finally
+        // have settled, before an unrelated debounced board refresh can run.
+        const observeRetry = retry => async (...params) => {
+          const result = await retry(...params);
+          if (window.__presenceHistoricalRetry) queueMicrotask(() => queueMicrotask(() => {
+            window.__historicalRetryCompletion = { code: result.code, revision: window.__presenceRevision(),
+              journal: window.__presenceModel.intel.map(entry => entry.sequence),
+              completed: window.__presenceModel.objectives.filter(objective => objective.status === 'completed').length,
+              notice: document.querySelector('.omerta-city__actor-notice')?.textContent };
+          }));
+          return result;
+        };
+        const observeOptions = options => typeof options.onEncounterRetry === 'function'
+          ? { ...options, onEncounterRetry: observeRetry(options.onEncounterRetry) } : options;
         api = { ...value, mount(...args) {
+          args[1] = observeOptions(args[1]);
           const handle = value.mount(...args), record = { handle, destroyed: false, character: { ...args[1].character }, retry: args[1].onEncounterRetry };
           window.__presenceHandles.push(record);
           window.__presenceModel = { ...args[1] };
-          return { ...handle, update(options) { Object.assign(window.__presenceModel, options); const result = handle.update(options); window.__presenceReceiptHook?.(options); return result; },
+          return { ...handle, update(options) { options = observeOptions(options); Object.assign(window.__presenceModel, options); const result = handle.update(options); window.__presenceReceiptHook?.(options); return result; },
             destroy() { record.destroyed = true; return handle.destroy(); } };
         } };
       } });
@@ -243,12 +258,16 @@ try {
   assert.equal(await page.evaluate(() => window.__presenceModel.objectives.filter(objective => objective.status === 'completed').length), 1);
   await page.locator('[data-city-actor-close]').click(); await inspect(page, human.id);
   assert(await page.locator('[data-city-encounter]').isDisabled(), 'Uncertainty blocks fresh moves even after inspecting another source.');
-  const latest = await otherClientEncounter(agent.id);
-  assert.equal(latest.progress.totalEncounters, 4); assert.equal(latest.progress.completedObjectives, 2);
-  let releaseNewRead, startedNewRead;
+  // Earlier legitimate reads can still publish board 3. Commit board 4 only
+  // after the replay has installed its newer-read barrier and that real GET
+  // is queued, so an unheld background read cannot win board 4 prematurely.
+  let releaseFourthEncounter, queuedNewRead, releaseNewRead, startedNewRead;
+  const fourthEncounterGate = new Promise(resolve => { releaseFourthEncounter = resolve; });
+  const newReadQueued = new Promise(resolve => { queuedNewRead = resolve; });
   const newReadGate = new Promise(resolve => { releaseNewRead = resolve; }), newReadStarted = new Promise(resolve => { startedNewRead = resolve; });
   await page.route('**/v1/city/intel', async route => {
     if (await page.evaluate(() => window.__holdHistoricalRead === true)) {
+      queuedNewRead(); await fourthEncounterGate;
       const reply = await route.fetch(); assert.equal((await reply.json()).progress.totalEncounters, 4);
       startedNewRead(); await newReadGate; await route.fulfill({ response: reply });
     } else await route.continue();
@@ -256,7 +275,7 @@ try {
   await page.evaluate(() => {
     window.__presenceReceiptHook = options => {
       if (options.encounterReceipt?.state !== 'success') return;
-      window.__presenceReceiptHook = null; window.__holdHistoricalRead = true;
+      window.__presenceReceiptHook = null; window.__holdHistoricalRead = true; window.__presenceHistoricalRetry = true;
       window.__pendingHistoricalRead = window.__presenceRead();
       window.__historicalReadRevision = window.__presenceRevision();
     };
@@ -266,9 +285,21 @@ try {
   assert.equal(recoveredReply.status(), 200); assert.deepEqual(await recoveredReply.json(), lostBody);
   assert.equal(recoveredReply.request().headers()['idempotency-key'], lostRequest.key);
   assert.deepEqual(recoveredReply.request().postDataJSON(), lostRequest.body);
+  assert.equal(attempts, 2, 'The lost request and its same-key replay are the only browser encounter attempts.');
   await page.unroute('**/v1/city/encounters/' + npc.id);
+  await page.waitForFunction(() => window.__historicalRetryCompletion);
+  const retryCompletion = await page.evaluate(() => window.__historicalRetryCompletion);
+  assert.equal(retryCompletion.code, 200);
+  assert(retryCompletion.notice?.startsWith('Intel recorded:'), 'The replay boundary follows the scene notice and action cleanup.');
+  assert.equal(retryCompletion.revision, await page.evaluate(() => window.__historicalReadRevision), 'An old replay receipt does not invalidate the newer read ticket.');
+  assert.deepEqual(retryCompletion.journal, [3, 2, 1], 'Historical receipt retains the exact winning journal after its model effects settle.');
+  assert.equal(retryCompletion.completed, 1);
+  await page.evaluate(() => { window.__presenceHistoricalRetry = false; });
+  await newReadQueued;
+  const latest = await otherClientEncounter(agent.id);
+  assert.equal(latest.progress.totalEncounters, 4); assert.equal(latest.progress.completedObjectives, 2);
+  releaseFourthEncounter();
   await newReadStarted;
-  assert.equal(await page.evaluate(() => window.__presenceRevision()), await page.evaluate(() => window.__historicalReadRevision), 'An old replay receipt does not invalidate the newer read ticket.');
   assert.equal(await page.evaluate(() => window.__presenceModel.intel.length), 3, 'Historical receipt cannot roll back the winning journal.');
   assert.equal(await page.evaluate(() => window.__presenceModel.objectives.filter(objective => objective.status === 'completed').length), 1);
   await page.evaluate(() => { window.__holdHistoricalRead = false; }); releaseNewRead();
