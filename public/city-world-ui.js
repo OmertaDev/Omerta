@@ -138,8 +138,8 @@
       else if (socialPreferences().chatEnabled === true) startPolling();
     }
     function close(focus = true) {
-      clearSpeech();
       if (dock.hidden) return;
+      clearSpeech();
       stopPolling(); opening++; readTickets = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
       tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
@@ -354,10 +354,18 @@
     }
     function showSpeech(name, copy, now) {
       const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      const wasInline = !dialogue.hidden;
       speech.replaceChildren(el('strong', '', name), el('span', '', copy)); speech.hidden = !roomy;
       dialogue.textContent = name + ': ' + copy; dialogue.hidden = roomy; speechUntil = now + 6500;
+      if (!roomy || wasInline) changed();
     }
-    function clearSpeech() { speech.hidden = true; dialogue.hidden = true; speech.replaceChildren(); dialogue.textContent = ''; speechUntil = 0; }
+    function clearSpeech() { const wasInline = !dialogue.hidden; speech.hidden = true; dialogue.hidden = true; speech.replaceChildren(); dialogue.textContent = ''; speechUntil = 0; if (wasInline) changed(); }
+    function fitSpeech() {
+      if (!speechUntil || !speech.childNodes.length) return;
+      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      if (dialogue.hidden === roomy && speech.hidden === !roomy) return;
+      speech.hidden = !roomy; dialogue.hidden = roomy; changed();
+    }
     function showChatMessage(message, own = false) {
       if (!message?.id || message.id === lastChatId || socialPreferences().chatEnabled !== true) return;
       const source = list(boards.chat?.participants, 40).find(actor => actor.id === message.characterId && actor.generation === message.generation);
@@ -401,6 +409,7 @@
       },
       frame(frame) {
         if (destroyed) return; lastFrame = frame;
+        fitSpeech();
         const now = performance.now();
         if (panel === 'map' && now - lastMapPaint > 100) { lastMapPaint = now; paintMap(); }
         const pose = frame?.position || frame?.player;

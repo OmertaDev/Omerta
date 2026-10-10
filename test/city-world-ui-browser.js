@@ -71,6 +71,12 @@ try {
     assert.deepEqual(await page.evaluate(() => window.__waypoints), ['training']);
     assert.equal(await page.evaluate(() => window.__ui.getState().panel), '');
     await click('[data-city-objective-tracker]'); assert.equal(await page.evaluate(() => window.__intelOpened), true);
+    await page.evaluate(() => { window.__ui.frame({ position: { x: 606, y: 504 } }); window.__ui.close(false); });
+    assert.match(await page.locator('.city-world__speech').innerText(), /THE TRAINER/, 'Closing an already hidden tool panel does not erase an arrival dialogue.');
+    await page.evaluate(() => { document.querySelector('#map').style.height = '96px'; window.__ui.frame({ position: { x: 606, y: 504 } }); });
+    assert.equal(await page.locator('.city-world__speech').isVisible(), false);
+    assert.match(await page.locator('.city-world__dialogue').innerText(), /THE TRAINER/, 'An active cue moves outside a newly short map instead of obscuring the avatar.');
+    await page.evaluate(() => { document.querySelector('#map').style.height = '280px'; });
 
     await page.evaluate(() => window.__ui.open('bag'));
     await page.waitForFunction(() => window.__reads.includes('inventory'));
