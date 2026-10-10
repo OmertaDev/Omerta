@@ -56,7 +56,9 @@ export function evaluateBusiness(snapshot, input = {}) {
       unresolvedCalls: amount(job.unresolvedCalls), knownContributionUsdMicros: revenue - cost,
       netProfitKnown: false };
   });
+  if (new Set(jobs.map(job => job.id)).size !== jobs.length) throw new Error('Invalid business duplicate jobs');
   const riskFlags = ['outside_costs_incomplete'];
+  if (jobs.filter(job => ['open','claimed','submitted','disputed'].includes(job.state)).length !== active) riskFlags.push('active_job_detail_mismatch');
   if (policy.operatingCostPerJobUsdMicros || policy.paymentFeeBps) riskFlags.push('operator_cost_estimates_unreconciled');
   if (snapshot.resourceMode !== 'live' || totals.simulatedPaidCalls) riskFlags.push('simulation_or_unfunded_data');
   if (totals.unresolvedPaidCalls) riskFlags.push('unresolved_compute_costs');
@@ -89,11 +91,26 @@ export function evaluateBusiness(snapshot, input = {}) {
     .sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
     propose({ kind: 'prioritize_delivery', jobId: job.id, reason: 'awarded_job_deadline', requiresOwnerApproval: false });
   }
-  if (jobs.some(job => ['open','claimed'].includes(job.state) && Date.parse(job.expiresAt) <= now)) riskFlags.push('expired_jobs_need_recovery');
+  const pendingJobs = jobs.filter(job => ['open','claimed'].includes(job.state));
+  if (pendingJobs.some(job => Date.parse(job.expiresAt) <= now)) riskFlags.push('expired_jobs_need_recovery');
+  if (pendingJobs.some(job => !Number.isFinite(Date.parse(job.expiresAt)))) riskFlags.push('invalid_delivery_deadline');
   const authority = snapshot.policy;
   let available = amount(snapshot.treasury?.availableUsdMicros);
   const reserve = Math.max(policy.minimumReserveUsdMicros, amount(authority?.minimumReserveUsdMicros));
   let daily = authority ? Math.max(0, amount(authority.maxPerDayUsdMicros) - amount(authority.dailyAuthorizedUsdMicros)) : 0;
+  let protectedCompute = null;
+  const deliveryDetailsSafe = !riskFlags.some(flag => ['incomplete_detail_coverage','active_job_detail_mismatch','expired_jobs_need_recovery','invalid_delivery_deadline'].includes(flag));
+  if (quote !== null && deliveryDetailsSafe) {
+    const total = BigInt(quote) * BigInt(pendingJobs.length);
+    if (total <= BigInt(MAX)) protectedCompute = Number(total);
+    else riskFlags.push('delivery_budget_outside_exact_bounds');
+  }
+  const deliveryBudget = { pendingJobs: pendingJobs.length, protectedComputeUsdMicros: protectedCompute,
+    cashCovered: protectedCompute === null ? null : BigInt(available) - BigInt(reserve) >= BigInt(protectedCompute),
+    dailyBudgetCovered: protectedCompute === null ? null : daily >= protectedCompute };
+  if (deliveryBudget.cashCovered === false) riskFlags.push('awarded_delivery_funds_insufficient');
+  if (deliveryBudget.dailyBudgetCovered === false) riskFlags.push('awarded_delivery_daily_budget_insufficient');
+  if (protectedCompute !== null) { available -= protectedCompute; daily -= protectedCompute; }
   const authorityValid = authority?.enabled === true && Number.isFinite(Date.parse(authority.expiresAt))
     && Date.parse(authority.expiresAt) > now && Array.isArray(authority.providers) && authority.providers.includes(policy.providerId)
     && !(entry?.storeResponses && authority.allowStoredResponses !== true);
@@ -105,7 +122,7 @@ export function evaluateBusiness(snapshot, input = {}) {
   const canBid = suggestedPrice !== null && snapshot.service?.enabled === true && id(policy.providerId)
     && Number.isSafeInteger(snapshot.service.revision) && snapshot.service.revision >= 1 && snapshot.service.revision <= 2147483647
     && snapshot.treasury?.frozen === false && authorityValid && quote <= amount(authority?.maxPerCallUsdMicros)
-    && totals.unresolvedPaidCalls === 0 && !riskFlags.includes('incomplete_detail_coverage');
+    && totals.unresolvedPaidCalls === 0 && deliveryDetailsSafe && protectedCompute !== null;
   const price = suggestedPrice === null ? null : Math.max(suggestedPrice, amount(snapshot.service?.priceUsdMicros));
   let allocated = 0;
   for (const bounty of [...bounties].sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
@@ -133,7 +150,7 @@ export function evaluateBusiness(snapshot, input = {}) {
     pricing: { knownCostBasisUsdMicros: knownCostBasis, planningComputeCostUsdMicros: costBasis, conservativeQuoteUsdMicros: quote, suggestedPriceUsdMicros: suggestedPrice, estimatedOperatingCostUsdMicros: policy.operatingCostPerJobUsdMicros,
       estimatedPaymentFeeUsdMicros: suggestedPrice === null ? null : estimatePaymentFee(suggestedPrice, policy.paymentFeeBps),
       feeRoundingReserveUsdMicros: policy.paymentFeeBps ? 10000 : 0, basis: 'Operator estimates, not reconciled bills' },
-    proposals, capacity: { activeJobs: active, reservedSlots: active, availableSlots: slots, proposedWorkSlots: allocated },
+    proposals, deliveryBudget, capacity: { activeJobs: active, reservedSlots: active, availableSlots: slots, proposedWorkSlots: allocated },
     computeValue: { providerOutcomes, causalEffect: null, measurement: 'Descriptive outcomes; stronger models require controlled comparison.' },
     riskFlags, outsideCostsComplete: false, profitabilityKnown: false };
 }
