@@ -13,7 +13,7 @@ const job = (state = 'open') => ({ id: 'job-1', assignedToYou: true, fulfillment
   expiresAt: new Date(epoch + 100000).toISOString(), callId: null,
   ...(['submitted', 'accepted'].includes(state) ? { report: { source: 'account_authored', text, costUsdMicros: null } } : {}) });
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status });
-function fixture({ initial = job(), claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response } = {}) {
+function fixture({ initial = job(), claim = job('claimed'), submit = job('submitted'), fail, httpStatus, response, pendingStage, pendingStatus = 200, pendingBody = false } = {}) {
   let now = 0; const calls = [];
   const run = createResourceDeliveryTestRunner({ baseUrl: 'https://omerta.test', jobId: 'job-1', file, token,
     fetchImpl: async (url, init) => {
@@ -23,6 +23,8 @@ function fixture({ initial = job(), claim = job('claimed'), submit = job('submit
       assert(init.signal);
       if (fail === calls.length) throw new Error(`${token} ${text}`);
       if (response) return response();
+      const stage = url.endsWith('/claim') ? 'claim' : url.endsWith('/submit') ? 'submit' : 'read';
+      if (stage === pendingStage) return json({ job: stage === 'claim' ? claim : submit, ...(pendingBody ? { pending: true } : {}) }, pendingStatus);
       return json({ job: calls.length === 1 ? initial : calls.length === 2 && initial.state === 'open' ? claim : submit }, httpStatus || 200);
     } }, { now: () => now, sleep: async ms => { now += ms; }, wallNow: () => epoch + now });
   return { run, calls };
@@ -50,11 +52,11 @@ try {
     const redirect = createResourceDeliveryTestRunner({ baseUrl: `http://127.0.0.1:${server.address().port}`, jobId: 'job-1', file, token },
       { now: () => 0, sleep: async () => {}, wallNow: () => epoch });
     assert.equal((await redirect()).pending, false);
-    for (const status of [400, 200]) {
+    for (const status of [400, 200, 202]) {
       server.removeAllListeners('request');
       server.on('request', (_req, res) => {
         res.setHeader('content-type', 'application/json');
-        if (_req.url.endsWith('/submit')) { res.statusCode = status; res.end(status === 200 ? '{broken' : '{}'); }
+        if (_req.url.endsWith('/submit')) { res.statusCode = status; res.end(status === 200 ? '{broken' : status === 202 ? JSON.stringify({ job: job('submitted') }) : '{}'); }
         else res.end(JSON.stringify({ job: job('claimed') }));
       });
       const result = await new Promise((done, reject) => {
@@ -66,7 +68,7 @@ try {
       });
       assert.equal(result.code, 1);
       const rejected = JSON.parse(result.stdout);
-      assert.equal(rejected.confirmed, false); assert.equal(rejected.pending, status === 200);
+      assert.equal(rejected.confirmed, false); assert.equal(rejected.pending, status !== 400);
       assert(!`${result.stdout}${result.stderr}`.includes(token)); assert(!`${result.stdout}${result.stderr}`.includes(text));
     }
   } finally { await new Promise(done => server.close(done)); }
@@ -87,6 +89,14 @@ try {
     assert.equal((await conflict.run()).stage, 'conflict'); assert.equal(conflict.calls.length, 1);
   }
   const claimed = fixture({ initial: job('claimed') }); assert.equal((await claimed.run()).state, 'submitted'); assert.equal(claimed.calls.length, 2);
+  for (const pendingStage of ['claim', 'submit']) {
+    for (const config of [{ pendingStatus: 202 }, { pendingBody: true }]) {
+      const pending = fixture({ pendingStage, ...config }); const result = await pending.run();
+      assert.equal(result.pending, true); assert.equal(result.confirmed, false);
+      assert.equal(pending.calls.length, pendingStage === 'claim' ? 2 : 3);
+      await pending.run(); assert.equal(pending.calls.length, pendingStage === 'claim' ? 2 : 3);
+    }
+  }
   for (const initial of [null, { ...job(), id: 'foreign-job' }, { ...job(), assignedToYou: false }, { ...job(), fulfillment: 'compute' }, { ...job(), fulfillment: undefined },
     { ...job(), expiresAt: new Date(epoch - 1).toISOString() }, job('disputed'), { ...job(), expiresAt: 'invalid' }]) {
     const refused = fixture({ initial }); await refused.run(); assert.equal(refused.calls.length, 1);

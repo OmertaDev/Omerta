@@ -92,12 +92,14 @@ function runner({ baseUrl, jobId, file, token = process.env.OMERTA_RESOURCE_TOKE
       if (job.state === 'open') {
         stage = 'claim'; status = null;
         const claimed = await request(`/v1/resources/jobs/${jobId}/claim`, {}, () => { if (!active(job)) throw new Error('Expired job'); });
+        if (status === 202 || claimed?.pending === true) return receipt(true);
         job = claimed?.job;
         if (!active(job) || job.state !== 'claimed') throw new Error('Invalid claim');
         state = 'claimed';
       }
       stage = 'submit'; status = null;
       const result = await request(`/v1/resources/jobs/${jobId}/submit`, { text }, () => { if (!active(job)) throw new Error('Expired job'); });
+      if (status === 202 || result?.pending === true) return receipt(true);
       job = result?.job;
       if (!valid(job) || !['submitted', 'accepted'].includes(job.state) || job.report?.source !== 'account_authored'
           || job.report.text !== text || job.report.costUsdMicros !== null || job.callId) throw new Error('Invalid submission');
