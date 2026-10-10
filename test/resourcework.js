@@ -1,6 +1,7 @@
 process.env.RESOURCE_ECONOMY = 'on';
 process.env.RESOURCE_PAYMENTS_MODE = 'test';
 import assert from 'node:assert/strict';
+import './earningreceipts.js';
 import crypto from 'node:crypto';
 import Fastify from 'fastify';
 import { register as registerResources } from '../src/routes/resources.js';
