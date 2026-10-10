@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `95e59d02e73e`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `29909d4dafcf`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2210 |
+| Commits in clone | 2213 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-10 — Merge pull request #214 from OmertaDev/codex/authenticated-resource-outcomes |
+| Latest commit | 2026-10-10 — Integrate current main and preserve both native test chains |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1303 |
+| OmertaDev | 1305 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 62 |
+| github-actions[bot] | 63 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,16 +31,16 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 442 | yes |
-| [src/server.js](../../src/server.js) | 377 | yes |
-| [SPEC.md](../../SPEC.md) | 376 | yes |
-| knowledge/generated/github-history.md | 354 | historical |
-| knowledge/generated/graph-summary.md | 354 | historical |
-| knowledge/generated/graph.json | 354 | historical |
-| knowledge/generated/inventory.md | 354 | historical |
-| [schema.sql](../../schema.sql) | 303 | yes |
+| [public/index.html](../../public/index.html) | 443 | yes |
+| [src/server.js](../../src/server.js) | 378 | yes |
+| [SPEC.md](../../SPEC.md) | 377 | yes |
+| knowledge/generated/github-history.md | 355 | historical |
+| knowledge/generated/graph-summary.md | 355 | historical |
+| knowledge/generated/graph.json | 355 | historical |
+| knowledge/generated/inventory.md | 355 | historical |
+| [schema.sql](../../schema.sql) | 304 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 246 | yes |
+| [package.json](../../package.json) | 247 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/documents.md | 148 | historical |
