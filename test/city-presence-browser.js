@@ -107,6 +107,69 @@ try {
   const frames = page => page.evaluate(() => new Promise(resolve => { let observed = 0; const next = () => ++observed < 8 ? requestAnimationFrame(next) : resolve(); requestAnimationFrame(next); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
+  const markerFrame = async page => {
+    const { position, camera, actorPage, selectedActor, actorOpening, actorMarkers, pathLength } = await state(page);
+    return { current: { position, camera, actorPage, selectedActor, actorOpening, actorMarkers, pathLength },
+      box: await page.locator('.omerta-city__canvas canvas').boundingBox() };
+  };
+  const visibleMarker = ({ current, box }) => current.actorMarkers.find(marker => {
+    const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
+    return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
+  });
+  const preparePhoneMarker = async (page, viewport) => {
+    let view = await markerFrame(page);
+    if (!visibleMarker(view)) {
+      // Approximate UUID slots are not reserved near the phone camera. Use an
+      // actual larger map and its real walking path before the phone tap proof.
+      console.log('Phone actor navigation setup:', JSON.stringify({ viewport, ...view }));
+      const handles = await page.evaluate(() => window.__presenceHandles.length), initial = view.current.position;
+      if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
+      await page.setViewportSize({ width: 1440, height: 1400 });
+      await page.locator('#btn-player-view').click(); await frames(page);
+      let wide = await markerFrame(page);
+      assert.deepEqual(wide.current.position, initial, 'Resizing the same scene does not move the player.');
+      assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+      if (!visibleMarker(wide)) {
+        // A fitted 680px map can still crop the far-right district slots. Walk
+        // into the open upper street, then let the ordinary follow camera pan.
+        await page.locator('.omerta-city__canvas canvas').focus();
+        await page.keyboard.down('ArrowUp');
+        try { await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().position.y <= 272, undefined, { timeout: 3000 }); }
+        finally { await page.keyboard.up('ArrowUp'); }
+        await page.keyboard.down('ArrowRight');
+        try {
+          await page.waitForFunction(() => {
+            const current = window.__presenceHandles.at(-1).handle.getState(), box = document.querySelector('.omerta-city__canvas canvas').getBoundingClientRect();
+            return current.actorMarkers.some(marker => {
+              const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
+              return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
+            });
+          }, undefined, { timeout: 5000 });
+        } finally { await page.keyboard.up('ArrowRight'); }
+        await frames(page); wide = await markerFrame(page);
+      }
+      const actor = visibleMarker(wide);
+      assert(actor, 'The actual larger map and normal camera pan must expose a published marker: ' + JSON.stringify(wide));
+      await page.locator('.omerta-city__canvas canvas').tap({ position: {
+        x: (actor.x - wide.current.camera.x) * wide.current.camera.zoom,
+        y: (actor.y - 15 - wide.current.camera.y) * wide.current.camera.zoom } });
+      assert((await state(page)).pathLength > 0, 'The real marker tap starts a walking path rather than relocating the player.');
+      await page.waitForFunction(id => {
+        const current = window.__presenceHandles.at(-1).handle.getState();
+        return current.selectedActor === id && current.pathLength === 0;
+      }, actor.id, { timeout: 15000 });
+      const arrival = (await state(page)).position;
+      assert(Math.hypot(arrival.x - actor.x, arrival.y - actor.y) < 42, 'The actual path arrives beside the inspected actor.');
+      assert.notDeepEqual(arrival, initial);
+      await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await frames(page);
+      if (viewport.width === 320) { await page.locator('[data-city-actor-close]').click(); await frames(page); }
+      view = await markerFrame(page);
+      assert.deepEqual(view.current.position, arrival, 'Restoring the phone preserves the actual arrival pose.');
+      assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles, 'The same scene survives the navigation setup.');
+    }
+    assert(visibleMarker(view), 'At least one real actor marker is visible on the phone: ' + JSON.stringify({ viewport, ...view }));
+    return view;
+  };
   const assertDockFrame = async page => {
     await frames(page);
     const geometry = await page.evaluate(() => {
@@ -455,16 +518,13 @@ try {
     assert.match(await phone.locator('.omerta-city__readiness').textContent(), /LOW HEALTH/);
     const shots = process.env.CITY_PRESENCE_SHOTS;
     if (shots) { fs.mkdirSync(shots, { recursive: true }); await phone.screenshot({ path: path.join(shots, 'city-people-' + viewport.width + '.png') }); }
-    const beforeTouch = mutations(mobile.requests).length;
-    // A 96px inspector map can legitimately crop every other person. Use its
-    // closed map for the 320px touch setup; 375px still tests resize during the tap.
+    const beforeNavigation = mutations(mobile.requests).length;
+    // Keep the 375px inspector open for resize-on-tap; the 320px tap uses the
+    // closed map. Neither camera is guaranteed to contain a random actor slot.
     if (viewport.width === 320) { await phone.locator('[data-city-actor-close]').click(); await frames(phone); }
-    const current = await state(phone), box = await phone.locator('.omerta-city__canvas canvas').boundingBox();
-    const marker = current.actorMarkers.find(marker => {
-      const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
-      return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
-    });
-    assert(marker, 'At least one real actor marker is visible on the phone.');
+    const view = await preparePhoneMarker(phone, viewport), current = view.current, marker = visibleMarker(view);
+    assert.equal(mutations(mobile.requests).length, beforeNavigation, 'Marker navigation setup performs no gameplay POST.');
+    const beforeTouch = mutations(mobile.requests).length;
     const opening = current.actorOpening;
     await phone.locator('.omerta-city__canvas canvas').tap({ position: { x: (marker.x - current.camera.x) * current.camera.zoom, y: (marker.y - 15 - current.camera.y) * current.camera.zoom } });
     await phone.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, marker.id, { timeout: 15000 });
