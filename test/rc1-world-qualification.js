@@ -10,6 +10,7 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, BUSINESS_SOURCE_PREDECESSOR_REVISION, assertBusinessServerTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
   CITY_PRESENCE_SOURCE_REVIEWED_REVISION, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
   assertCityPresenceServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
@@ -19,7 +20,33 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const currentServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
-const presenceProof = assertCityPresenceServerTransfer(currentServerText);
+const businessProof = assertBusinessServerTransfer(currentServerText);
+const cityServerText = businessProof.baselineText;
+assert.equal(businessProof.actualSha256, BUSINESS_SERVER_PIN);
+assert.equal(businessProof.baselineSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(businessProof.inverseChunks, 3);
+for (const [text, revision] of [[currentServerText, BUSINESS_SOURCE_REVIEWED_REVISION], [cityServerText, BUSINESS_SOURCE_PREDECESSOR_REVISION]])
+  assert.equal(text, execFileSync('git', ['show', revision + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+for (const [chunk] of [
+  [
+    "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n",
+    "  const performAgentAction = async (action, ch, client, h, lender = null) => {\n"
+  ],
+  [
+    "      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n      case 'business_upgrade': return Business.upgradeBusiness(ch, tail('/v1/business/').replace(/\\/upgrade$/, ''), client, h);\n",
+    ""
+  ],
+  [
+    "    const result = await performAgentAction(action, ch, client, h, lender, current.policy);\n",
+    "    const result = await performAgentAction(action, ch, client, h, lender);\n"
+  ]
+]) {
+  for (const changed of [currentServerText.replace(chunk, ''), currentServerText.replace(chunk, chunk.repeat(2))])
+    assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
+}
+for (const changed of [currentServerText.replace('minimumReserve: policy.cashReserve', 'minimumReserve: 0'), currentServerText + '\n// unreviewed\n'])
+  assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
+const presenceProof = assertCityPresenceServerTransfer(cityServerText);
 const serverText = presenceProof.baselineText;
 assert.equal(presenceProof.actualSha256, CITY_PRESENCE_SERVER_PIN);
 assert.equal(presenceProof.baselineSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
@@ -27,7 +54,7 @@ assert.equal(CITY_PRESENCE_SERVER_PREDECESSOR_PIN, GOODS_SOURCE_CURRENT_PINS['sr
 assert.equal(presenceProof.sourceRevision, CITY_PRESENCE_SOURCE_REVIEWED_REVISION);
 assert.equal(presenceProof.predecessorRevision, CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION);
 assert.equal(presenceProof.inverseChunks, 2);
-assert.equal(currentServerText, execFileSync('git', ['show', `${CITY_PRESENCE_SOURCE_REVIEWED_REVISION}:src/server.js`],
+assert.equal(cityServerText, execFileSync('git', ['show', `${CITY_PRESENCE_SOURCE_REVIEWED_REVISION}:src/server.js`],
   { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'), 'The complete current server matches the reviewed Git source.');
 assert.equal(serverText, execFileSync('git', ['show', `${CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION}:src/server.js`],
   { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'), 'The inverse restores the complete immediate Git predecessor.');
@@ -38,24 +65,30 @@ const serverGuards = [assertGenesisSnapshotServerCompatibility, assertGenesisWra
   assertHttpReceiptServerCompatibility, assertDeedServerCompatibility];
 for (const guard of serverGuards) {
   const actual = guard(currentServerText), previous = guard(serverText);
-  const { actualSha256, cityPresenceSourceTransfer, ...retained } = actual;
+  const { actualSha256, businessSourceTransfer, cityPresenceSourceTransfer, ...retained } = actual;
+  assert.deepEqual(businessSourceTransfer, businessProof);
+  const { actualSha256: citySha256, ...cityFields } = guard(cityServerText);
+  assert.equal(citySha256, CITY_PRESENCE_SERVER_PIN);
+  assert.deepEqual({ cityPresenceSourceTransfer, ...retained }, cityFields);
   const { actualSha256: predecessorSha256, ...historical } = previous;
-  assert.equal(actualSha256, CITY_PRESENCE_SERVER_PIN); assert.equal(predecessorSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
+  assert.equal(actualSha256, BUSINESS_SERVER_PIN); assert.equal(predecessorSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
   assert.deepEqual(cityPresenceSourceTransfer, presenceProof); assert.deepEqual(retained, historical, 'Every old transfer/qualification field is preserved.');
 }
 for (const changed of [
-  currentServerText.replace(presenceImport, presenceImport.repeat(2)),
-  currentServerText.replace(presenceRegistration, presenceRegistration.repeat(2)),
-  currentServerText.replace(presenceImport, ''),
-  currentServerText.replace(presenceRegistration, ''),
-  currentServerText.replace("'./routes/city.js'", "'./routes/unreviewed-city.js'"),
-  currentServerText.replace(presenceRegistration, presenceRegistration.replace('pool, auth,', 'pool, auth: null,')),
-  currentServerText.replace('[...wsClients.keys()]', '[]'),
-  currentServerText + "\nimport './unreviewed-authority.js';\n",
-  currentServerText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"),
+  cityServerText.replace(presenceImport, presenceImport.repeat(2)),
+  cityServerText.replace(presenceRegistration, presenceRegistration.repeat(2)),
+  cityServerText.replace(presenceImport, ''),
+  cityServerText.replace(presenceRegistration, ''),
+  cityServerText.replace("'./routes/city.js'", "'./routes/unreviewed-city.js'"),
+  cityServerText.replace(presenceRegistration, presenceRegistration.replace('pool, auth,', 'pool, auth: null,')),
+  cityServerText.replace('[...wsClients.keys()]', '[]'),
+  cityServerText + "\nimport './unreviewed-authority.js';\n",
+  cityServerText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"),
 ]) {
-  assert.notEqual(changed, currentServerText); assert.notEqual(changed, serverText);
+  assert.notEqual(changed, cityServerText); assert.notEqual(changed, serverText);
   assert.throws(() => assertCityPresenceServerTransfer(changed), /source changed/);
+  assert.throws(() => assertBusinessServerTransfer(changed), /source changed/);
+  // The original City inverse remains strict on its canonical pinned source.
   for (const guard of serverGuards) assert.throws(() => guard(changed), /source changed/);
   assert.throws(() => assertEconomySourceTransfer('src/server.js', changed), /source changed/);
 }
@@ -163,11 +196,14 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_PRESENCE_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.actualServerSha256, BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.inverseChunks, 3);
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 9);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 10);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.actualServerSha256, CITY_PRESENCE_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityPresenceSourceReviewTransfer.sourceRevision, CITY_PRESENCE_SOURCE_REVIEWED_REVISION);

@@ -16,6 +16,7 @@ import Fastify from 'fastify';
 import { buildServer } from '../src/server.js';
 import {
   createAgentAlphaTestRunner,
+  recommendationOf,
   runAgentAlpha as runAgentAlphaProduction,
 } from '../tools/agent-alpha.js';
 
@@ -1003,6 +1004,7 @@ const ALLOWED_KINDS = [
   'convoy_travel', 'market_fill', 'arbitrage_buy', 'arbitrage_sell',
   'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
   'depot_restock', 'depot_receive', 'depot_travel',
+  'business_buy', 'business_upkeep', 'business_upgrade',
   'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
 ];
 
@@ -1071,7 +1073,7 @@ async function restrictedRoleRecoveryTest() {
     assert.deepEqual(summary, { status: 'complete', actions: 0 });
     assert.equal(idleApi.state.actCalls, 0, 'business profile never farms a crime recommendation');
   });
-  const api = await actionApi({ kinds: ['depot_restock'] });
+  const api = await actionApi({ kinds: ['business_buy'] });
   await withReadySession(api, 'omerta-alpha-role-recovery-', async ({ sessionFile, reportFile }) => {
     let cached;
     await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, role: 'business',
@@ -1126,6 +1128,31 @@ async function exactAllowlistTest() {
     assert.deepEqual(delays, Array(ALLOWED_KINDS.length).fill(3100),
       'every real mutation attempt observes the conservative 3100ms cadence, including process starts');
   });
+}
+
+async function businessPropertyRoleTest() {
+  const kinds = ['business_buy','business_upkeep','business_upgrade','business_collect'];
+  const api = await actionApi({ kinds });
+  await withReadySession(api, 'omerta-alpha-business-property-', async ({ sessionFile, reportFile }) => {
+    const summary = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: kinds.length, role: 'business' });
+    assert.deepEqual(summary, { status: 'complete', actions: kinds.length });
+    assert.deepEqual(api.state.actBodies, kinds.map((_, index) => ({ turnId: `turn-${index}`, actionId: `action-${index}` })),
+      'Business property actions execute only through server-issued turn/action identifiers');
+    const recorded = await readFile(reportFile, 'utf8');
+    assert(!recorded.includes('never trust or report action bodies'));
+    assert(!recorded.includes('/v1/forbidden-direct-mutation'));
+  });
+  for (const kind of kinds) {
+    const turn = { recommendedActionId: 'property-action', policy: POLICY, actions: [{ id: 'property-action', kind, executable: true }] };
+    assert.equal(recommendationOf(turn, 'business').action.kind, kind);
+    assert.equal(recommendationOf({ ...turn, actions: [{ ...turn.actions[0], executable: false }] }, 'business').action, null);
+    assert.equal(recommendationOf({ ...turn, policy: { ...POLICY, allowBorrowing: true } }, 'business').errorCode, 'policy_mismatch');
+    assert.equal(recommendationOf(turn, 'supplier').action, null, 'Property expansion cannot broaden supplier authority');
+  }
+  for (const kind of ['business_rob','business_shakedown','loan_take','wallet_withdraw']) {
+    assert.equal(recommendationOf({ recommendedActionId: 'excluded', policy: POLICY,
+      actions: [{ id: 'excluded', kind, executable: true }] }, 'business').action, null);
+  }
 }
 
 async function safetyRefusalTest() {
@@ -2417,6 +2444,10 @@ async function realElapsedCadenceTest() {
   }
 }
 
+if (process.argv.includes('--business-properties')) {
+  await businessPropertyRoleTest();
+  await restrictedRoleRecoveryTest();
+} else {
 await distinctPhysicalTargetsTest();
 await guestBootstrapServerRecoveryTest();
 await initialGuestCrashRecoveryTest();
@@ -2431,6 +2462,7 @@ await lifecycleTest();
 await failClosedSessionTest();
 await orphanedLockMetadataTest();
 await exactAllowlistTest();
+await businessPropertyRoleTest();
 await restrictedRoleRecoveryTest();
 await safetyRefusalTest();
 await boundsTest();
@@ -2449,4 +2481,5 @@ await danglingReportToFutureLockTest();
 await danglingSessionAliasCreateTest();
 await unrelatedLegacyPortTest();
 await realElapsedCadenceTest();
+}
 console.log('agent-alpha tests passed');
