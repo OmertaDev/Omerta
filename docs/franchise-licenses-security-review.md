@@ -57,3 +57,13 @@ feature tables present in the frozen catalog, compares exact constraints and
 nullability, and preserves the pinned baseline plus unknown-addition controls.
 Native PostgreSQL 18.4 full-stack and new causal-negative retests passed;
 partial-stack native PostgreSQL 16/18.4 hosted retests remain release gates.
+
+Hosted revision `7b2f6c668f95aaac5ec14e5ab7f0f3e97c7252ad` reached
+successful native load assertions in both PostgreSQL lanes, but both jobs hit
+their twenty-minute execution limit before finishing. They remain unqualified.
+CI-only repair `644f63f67a56adfa41e3fc816dd7c42a644d3a48` gives the expanded
+native lane a thirty-minute bound and updates its exact gate. It preserves every
+command, environment, matrix entry and condition; suite/browser bounds remain
+sixty/twenty minutes. Full source gates passed; missing, duplicate and widened
+native bounds each failed at the intended guard. Fresh complete hosted checks
+are required on the integrated revision; partial logs are not release approval.

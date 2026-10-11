@@ -380,7 +380,7 @@
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
-| [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 60 | 2026-10-11 |
+| [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
@@ -535,7 +535,7 @@
 | [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 56 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 63 | 2026-10-11 |
-| [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 60 | 2026-10-11 |
+| [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |

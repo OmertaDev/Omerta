@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { CRIMES, CAMPAIGNS } from '../src/rules.js';
 import { exactDecimal, exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { qualifyLoanCancelSource } from './rc1-loan-source-compatibility.js';
 
 const DAY = 86400000;
 const clone = value => structuredClone(value);
@@ -56,7 +57,8 @@ export function loanRefundCustodyFromJournal(journal) {
   if (!refundSourceChecked) {
     for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS)) {
       const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
-      const baseline = file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
+      const baseline = file === 'src/loans.js' ? qualifyLoanCancelSource(text).baselineText
+        : file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
         ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
       assert.equal(sha256(baseline), expected, 'Loan refund source changed: ' + file);
     }
