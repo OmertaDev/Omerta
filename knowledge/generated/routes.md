@@ -1,6 +1,6 @@
 # Generated HTTP route catalog
 
-> 883 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
+> 885 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
 
 ## Route groups
 
@@ -9,7 +9,7 @@
 | mod | 79 |
 | leaderboard | 46 |
 | web | 39 |
-| resources | 37 |
+| resources | 38 |
 | casino | 28 |
 | worldgraph | 27 |
 | gangs | 22 |
@@ -17,7 +17,7 @@
 | coordination | 18 |
 | content | 16 |
 | crew | 16 |
-| depot | 13 |
+| depot | 14 |
 | speakeasy | 13 |
 | kitchen | 12 |
 | rwa | 12 |
@@ -438,20 +438,21 @@
 | GET | `/v1/deliveries` | authenticated | platform-core | [src/routes/delivery.js:4](../../src/routes/delivery.js#L4) | `Delivery.deliveryBoard` |
 | POST | `/v1/deliveries/:id/deliver` | authenticated | platform-core | [src/routes/delivery.js:8](../../src/routes/delivery.js#L8) | `Delivery.deliverCommitment` |
 | POST | `/v1/deliveries/:id/expire` | authenticated | platform-core | [src/routes/delivery.js:10](../../src/routes/delivery.js#L10) | `Delivery.expireCommitment` |
-| GET | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:16](../../src/routes/depot.js#L16) | `Depot.depotState` |
-| POST | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:18](../../src/routes/depot.js#L18) | `Depot.openDepot` |
-| POST | `/v1/depot/:id/buy` | authenticated | platform-core | [src/routes/depot.js:38](../../src/routes/depot.js#L38) | `Depot.buyFromDepot` |
-| POST | `/v1/depot/:id/close` | authenticated | platform-core | [src/routes/depot.js:36](../../src/routes/depot.js#L36) | `controlled` |
-| POST | `/v1/depot/:id/configure` | authenticated | platform-core | [src/routes/depot.js:20](../../src/routes/depot.js#L20) | `controlled` |
-| POST | `/v1/depot/:id/external-costs` | authenticated | platform-core | [src/routes/depot.js:13](../../src/routes/depot.js#L13) | `G.withCharacter` |
-| POST | `/v1/depot/:id/fund` | authenticated | platform-core | [src/routes/depot.js:22](../../src/routes/depot.js#L22) | `controlled` |
-| POST | `/v1/depot/:id/orders/:orderId/cancel` | authenticated | platform-core | [src/routes/depot.js:32](../../src/routes/depot.js#L32) | `controlled` |
-| POST | `/v1/depot/:id/orders/:orderId/receive` | authenticated | platform-core | [src/routes/depot.js:29](../../src/routes/depot.js#L29) | `Depot.receiveDepot` |
-| POST | `/v1/depot/:id/policy` | authenticated | platform-core | [src/routes/depot.js:11](../../src/routes/depot.js#L11) | `G.withCharacter` |
-| POST | `/v1/depot/:id/restock` | authenticated | platform-core | [src/routes/depot.js:26](../../src/routes/depot.js#L26) | `Depot.restockDepot` |
-| POST | `/v1/depot/:id/stock/withdraw` | authenticated | platform-core | [src/routes/depot.js:34](../../src/routes/depot.js#L34) | `controlled` |
-| POST | `/v1/depot/:id/withdraw` | authenticated | platform-core | [src/routes/depot.js:24](../../src/routes/depot.js#L24) | `controlled` |
-| GET | `/v1/depots` | public | platform-core | [src/routes/depot.js:15](../../src/routes/depot.js#L15) | `Depot.depotPilotEnabled` |
+| GET | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:19](../../src/routes/depot.js#L19) | `Depot.depotState` |
+| POST | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:21](../../src/routes/depot.js#L21) | `Depot.openDepot` |
+| POST | `/v1/depot/:id/buy` | authenticated | platform-core | [src/routes/depot.js:41](../../src/routes/depot.js#L41) | `Depot.buyFromDepot` |
+| POST | `/v1/depot/:id/close` | authenticated | platform-core | [src/routes/depot.js:39](../../src/routes/depot.js#L39) | `controlled` |
+| POST | `/v1/depot/:id/configure` | authenticated | platform-core | [src/routes/depot.js:23](../../src/routes/depot.js#L23) | `controlled` |
+| POST | `/v1/depot/:id/external-costs` | authenticated | platform-core | [src/routes/depot.js:16](../../src/routes/depot.js#L16) | `G.withCharacter` |
+| POST | `/v1/depot/:id/fund` | authenticated | platform-core | [src/routes/depot.js:25](../../src/routes/depot.js#L25) | `controlled` |
+| POST | `/v1/depot/:id/orders/:orderId/cancel` | authenticated | platform-core | [src/routes/depot.js:35](../../src/routes/depot.js#L35) | `controlled` |
+| POST | `/v1/depot/:id/orders/:orderId/receive` | authenticated | platform-core | [src/routes/depot.js:32](../../src/routes/depot.js#L32) | `Depot.receiveDepot` |
+| POST | `/v1/depot/:id/policy` | authenticated | platform-core | [src/routes/depot.js:12](../../src/routes/depot.js#L12) | `G.withCharacter` |
+| POST | `/v1/depot/:id/restock` | authenticated | platform-core | [src/routes/depot.js:29](../../src/routes/depot.js#L29) | `Depot.restockDepot` |
+| POST | `/v1/depot/:id/stock/withdraw` | authenticated | platform-core | [src/routes/depot.js:37](../../src/routes/depot.js#L37) | `controlled` |
+| POST | `/v1/depot/:id/supply-contract` | authenticated | platform-core | [src/routes/depot.js:14](../../src/routes/depot.js#L14) | `G.withCharacter` |
+| POST | `/v1/depot/:id/withdraw` | authenticated | platform-core | [src/routes/depot.js:27](../../src/routes/depot.js#L27) | `controlled` |
+| GET | `/v1/depots` | public | platform-core | [src/routes/depot.js:18](../../src/routes/depot.js#L18) | `Depot.depotPilotEnabled` |
 | GET | `/v1/desk` | public | platform-core | [src/server.js:1722](../../src/server.js#L1722) | `Desk.deskBoard` |
 | GET | `/v1/digest` | authenticated | engagement-growth | [src/server.js:3274](../../src/server.js#L3274) | `Dispatch.getDigestPrefs` |
 | POST | `/v1/digest` | authenticated | engagement-growth | [src/server.js:3275](../../src/server.js#L3275) | `Dispatch.setDigestPrefs` |
@@ -736,9 +737,9 @@
 | GET | `/v1/mod/reserve` | moderator | chain-economy | [src/routes/modtools.js:309](../../src/routes/modtools.js#L309) | `Chain.reserveStatus` |
 | POST | `/v1/mod/reserve/claimed` | moderator | chain-economy | [src/routes/modtools.js:310](../../src/routes/modtools.js#L310) | `Chain.markClaimed` |
 | POST | `/v1/mod/reserve/fund` | moderator | chain-economy | [src/routes/modtools.js:308](../../src/routes/modtools.js#L308) | `Chain.fundReserve` |
-| POST | `/v1/mod/resources/auctions` | moderator | platform-core | [src/routes/resources.js:80](../../src/routes/resources.js#L80) | `createResourceRound` |
-| POST | `/v1/mod/resources/auctions/:id/settle` | moderator | platform-core | [src/routes/resources.js:81](../../src/routes/resources.js#L81) | `settleResourceRound` |
-| POST | `/v1/mod/resources/jobs/:id/adjudicate` | moderator | platform-core | [src/routes/resources.js:82](../../src/routes/resources.js#L82) | `adjudicateResourceJob` |
+| POST | `/v1/mod/resources/auctions` | moderator | platform-core | [src/routes/resources.js:82](../../src/routes/resources.js#L82) | `createResourceRound` |
+| POST | `/v1/mod/resources/auctions/:id/settle` | moderator | platform-core | [src/routes/resources.js:83](../../src/routes/resources.js#L83) | `settleResourceRound` |
+| POST | `/v1/mod/resources/jobs/:id/adjudicate` | moderator | platform-core | [src/routes/resources.js:84](../../src/routes/resources.js#L84) | `adjudicateResourceJob` |
 | GET | `/v1/mod/revenue` | moderator | platform-core | [src/routes/modtools.js:366](../../src/routes/modtools.js#L366) | `Store.revenueStatus` |
 | POST | `/v1/mod/revoke` | moderator | platform-core | [src/routes/modtools.js:54](../../src/routes/modtools.js#L54) | `G.GameError` |
 | GET | `/v1/mod/router` | moderator | platform-core | [src/routes/modtools.js:370](../../src/routes/modtools.js#L370) | `Router.routerBoard` |
@@ -846,43 +847,44 @@
 | GET | `/v1/regimen` | authenticated | platform-core | [src/server.js:1610](../../src/server.js#L1610) | `RG.regimenBoard` |
 | POST | `/v1/regimen/:id` | authenticated | platform-core | [src/server.js:1612](../../src/server.js#L1612) | `RG.trainDiscipline` |
 | POST | `/v1/regimen/drill/:npc` | authenticated | platform-core | [src/server.js:1614](../../src/server.js#L1614) | `RG.claimDrill` |
-| GET | `/v1/resources` | authenticated | platform-core | [src/routes/resources.js:45](../../src/routes/resources.js#L45) | — |
-| GET | `/v1/resources/auctions` | public | platform-core | [src/routes/resources.js:44](../../src/routes/resources.js#L44) | `resourceAuctionBoard` |
-| POST | `/v1/resources/auctions/:id/commit` | authenticated | platform-core | [src/routes/resources.js:78](../../src/routes/resources.js#L78) | `commitResourceBid` |
-| POST | `/v1/resources/auctions/:id/reveal` | authenticated | platform-core | [src/routes/resources.js:79](../../src/routes/resources.js#L79) | `revealResourceBid` |
-| GET | `/v1/resources/auctions/mine` | authenticated | platform-core | [src/routes/resources.js:77](../../src/routes/resources.js#L77) | `resourceAuctionBoard` |
-| POST | `/v1/resources/bounties` | authenticated | platform-core | [src/routes/resources.js:37](../../src/routes/resources.js#L37) | `createResourceBounty` |
-| POST | `/v1/resources/bounties/:id/award` | authenticated | platform-core | [src/routes/resources.js:39](../../src/routes/resources.js#L39) | `awardResourceBounty` |
-| POST | `/v1/resources/bounties/:id/bid` | authenticated | platform-core | [src/routes/resources.js:38](../../src/routes/resources.js#L38) | `bidResourceBounty` |
-| POST | `/v1/resources/bounties/:id/cancel` | authenticated | platform-core | [src/routes/resources.js:40](../../src/routes/resources.js#L40) | `cancelResourceBounty` |
-| GET | `/v1/resources/business` | authenticated | platform-core | [src/routes/resources.js:34](../../src/routes/resources.js#L34) | `businessSnapshot` |
-| GET | `/v1/resources/catalog` | public | platform-core | [src/routes/resources.js:42](../../src/routes/resources.js#L42) | — |
-| GET | `/v1/resources/companies/:id` | public | platform-core | [src/routes/resources.js:31](../../src/routes/resources.js#L31) | `getAgentCompany` |
-| GET | `/v1/resources/company` | authenticated | platform-core | [src/routes/resources.js:18](../../src/routes/resources.js#L18) | `ownAgentCompany` |
-| POST | `/v1/resources/company` | authenticated | platform-core | [src/routes/resources.js:19](../../src/routes/resources.js#L19) | `setAgentCompany` |
-| GET | `/v1/resources/compute` | authenticated | platform-core | [src/routes/resources.js:58](../../src/routes/resources.js#L58) | `resourceComputeState` |
-| POST | `/v1/resources/compute` | authenticated | platform-core | [src/routes/resources.js:59](../../src/routes/resources.js#L59) | `runResourceCompute` |
-| POST | `/v1/resources/compute/:id/reconcile` | authenticated | platform-core | [src/routes/resources.js:63](../../src/routes/resources.js#L63) | `reconcileResourceCompute` |
-| GET | `/v1/resources/funding` | authenticated | platform-core | [src/routes/resources.js:53](../../src/routes/resources.js#L53) | — |
-| POST | `/v1/resources/funding` | authenticated | platform-core | [src/routes/resources.js:56](../../src/routes/resources.js#L56) | `createResourceFunding` |
-| GET | `/v1/resources/jobs` | authenticated | platform-core | [src/routes/resources.js:65](../../src/routes/resources.js#L65) | `listResourceJobs` |
-| POST | `/v1/resources/jobs` | authenticated | platform-core | [src/routes/resources.js:67](../../src/routes/resources.js#L67) | `createResourceJob` |
-| GET | `/v1/resources/jobs/:id` | authenticated | platform-core | [src/routes/resources.js:66](../../src/routes/resources.js#L66) | `getResourceJob` |
-| POST | `/v1/resources/jobs/:id/accept` | authenticated | platform-core | [src/routes/resources.js:75](../../src/routes/resources.js#L75) | `acceptResourceJob` |
-| POST | `/v1/resources/jobs/:id/claim` | authenticated | platform-core | [src/routes/resources.js:68](../../src/routes/resources.js#L68) | `claimResourceJob` |
-| POST | `/v1/resources/jobs/:id/dispute` | authenticated | platform-core | [src/routes/resources.js:76](../../src/routes/resources.js#L76) | `disputeResourceJob` |
-| POST | `/v1/resources/jobs/:id/renew` | authenticated | platform-core | [src/routes/resources.js:41](../../src/routes/resources.js#L41) | `renewResourceJob` |
-| POST | `/v1/resources/jobs/:id/submit` | authenticated | platform-core | [src/routes/resources.js:70](../../src/routes/resources.js#L70) | `submitResourceJob` |
-| POST | `/v1/resources/jobs/:id/work` | authenticated | platform-core | [src/routes/resources.js:69](../../src/routes/resources.js#L69) | `workResourceJob` |
-| GET | `/v1/resources/labor` | authenticated | platform-core | [src/routes/resources.js:35](../../src/routes/resources.js#L35) | `resourceLaborBoard` |
-| GET | `/v1/resources/labor/reputation/:id` | authenticated | platform-core | [src/routes/resources.js:36](../../src/routes/resources.js#L36) | `resourceLaborReputation` |
-| GET | `/v1/resources/outcomes` | authenticated | platform-core | [src/routes/resources.js:32](../../src/routes/resources.js#L32) | `resourceOutcomes` |
-| POST | `/v1/resources/payments/webhook` | public | platform-core | [src/routes/resources.js:88](../../src/routes/resources.js#L88) | — |
-| GET | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:49](../../src/routes/resources.js#L49) | — |
-| POST | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:52](../../src/routes/resources.js#L52) | `setResourcePolicy` |
-| POST | `/v1/resources/service` | authenticated | platform-core | [src/routes/resources.js:57](../../src/routes/resources.js#L57) | `setResourceService` |
-| GET | `/v1/resources/services` | public | platform-core | [src/routes/resources.js:43](../../src/routes/resources.js#L43) | — |
-| GET | `/v1/resources/storefronts/:id` | public | platform-core | [src/routes/resources.js:33](../../src/routes/resources.js#L33) | `resourceStorefront` |
+| GET | `/v1/resources` | authenticated | platform-core | [src/routes/resources.js:47](../../src/routes/resources.js#L47) | — |
+| GET | `/v1/resources/auctions` | public | platform-core | [src/routes/resources.js:46](../../src/routes/resources.js#L46) | `resourceAuctionBoard` |
+| POST | `/v1/resources/auctions/:id/commit` | authenticated | platform-core | [src/routes/resources.js:80](../../src/routes/resources.js#L80) | `commitResourceBid` |
+| POST | `/v1/resources/auctions/:id/reveal` | authenticated | platform-core | [src/routes/resources.js:81](../../src/routes/resources.js#L81) | `revealResourceBid` |
+| GET | `/v1/resources/auctions/mine` | authenticated | platform-core | [src/routes/resources.js:79](../../src/routes/resources.js#L79) | `resourceAuctionBoard` |
+| POST | `/v1/resources/bounties` | authenticated | platform-core | [src/routes/resources.js:39](../../src/routes/resources.js#L39) | `createResourceBounty` |
+| POST | `/v1/resources/bounties/:id/award` | authenticated | platform-core | [src/routes/resources.js:41](../../src/routes/resources.js#L41) | `awardResourceBounty` |
+| POST | `/v1/resources/bounties/:id/bid` | authenticated | platform-core | [src/routes/resources.js:40](../../src/routes/resources.js#L40) | `bidResourceBounty` |
+| POST | `/v1/resources/bounties/:id/cancel` | authenticated | platform-core | [src/routes/resources.js:42](../../src/routes/resources.js#L42) | `cancelResourceBounty` |
+| GET | `/v1/resources/business` | authenticated | platform-core | [src/routes/resources.js:35](../../src/routes/resources.js#L35) | `businessSnapshot` |
+| GET | `/v1/resources/catalog` | public | platform-core | [src/routes/resources.js:44](../../src/routes/resources.js#L44) | — |
+| GET | `/v1/resources/companies/:id` | public | platform-core | [src/routes/resources.js:32](../../src/routes/resources.js#L32) | `getAgentCompany` |
+| GET | `/v1/resources/company` | authenticated | platform-core | [src/routes/resources.js:19](../../src/routes/resources.js#L19) | `ownAgentCompany` |
+| POST | `/v1/resources/company` | authenticated | platform-core | [src/routes/resources.js:20](../../src/routes/resources.js#L20) | `setAgentCompany` |
+| GET | `/v1/resources/compute` | authenticated | platform-core | [src/routes/resources.js:60](../../src/routes/resources.js#L60) | `resourceComputeState` |
+| POST | `/v1/resources/compute` | authenticated | platform-core | [src/routes/resources.js:61](../../src/routes/resources.js#L61) | `runResourceCompute` |
+| POST | `/v1/resources/compute/:id/reconcile` | authenticated | platform-core | [src/routes/resources.js:65](../../src/routes/resources.js#L65) | `reconcileResourceCompute` |
+| GET | `/v1/resources/earnings` | authenticated | platform-core | [src/routes/resources.js:36](../../src/routes/resources.js#L36) | `resourceEarnings` |
+| GET | `/v1/resources/funding` | authenticated | platform-core | [src/routes/resources.js:55](../../src/routes/resources.js#L55) | — |
+| POST | `/v1/resources/funding` | authenticated | platform-core | [src/routes/resources.js:58](../../src/routes/resources.js#L58) | `createResourceFunding` |
+| GET | `/v1/resources/jobs` | authenticated | platform-core | [src/routes/resources.js:67](../../src/routes/resources.js#L67) | `listResourceJobs` |
+| POST | `/v1/resources/jobs` | authenticated | platform-core | [src/routes/resources.js:69](../../src/routes/resources.js#L69) | `createResourceJob` |
+| GET | `/v1/resources/jobs/:id` | authenticated | platform-core | [src/routes/resources.js:68](../../src/routes/resources.js#L68) | `getResourceJob` |
+| POST | `/v1/resources/jobs/:id/accept` | authenticated | platform-core | [src/routes/resources.js:77](../../src/routes/resources.js#L77) | `acceptResourceJob` |
+| POST | `/v1/resources/jobs/:id/claim` | authenticated | platform-core | [src/routes/resources.js:70](../../src/routes/resources.js#L70) | `claimResourceJob` |
+| POST | `/v1/resources/jobs/:id/dispute` | authenticated | platform-core | [src/routes/resources.js:78](../../src/routes/resources.js#L78) | `disputeResourceJob` |
+| POST | `/v1/resources/jobs/:id/renew` | authenticated | platform-core | [src/routes/resources.js:43](../../src/routes/resources.js#L43) | `renewResourceJob` |
+| POST | `/v1/resources/jobs/:id/submit` | authenticated | platform-core | [src/routes/resources.js:72](../../src/routes/resources.js#L72) | `submitResourceJob` |
+| POST | `/v1/resources/jobs/:id/work` | authenticated | platform-core | [src/routes/resources.js:71](../../src/routes/resources.js#L71) | `workResourceJob` |
+| GET | `/v1/resources/labor` | authenticated | platform-core | [src/routes/resources.js:37](../../src/routes/resources.js#L37) | `resourceLaborBoard` |
+| GET | `/v1/resources/labor/reputation/:id` | authenticated | platform-core | [src/routes/resources.js:38](../../src/routes/resources.js#L38) | `resourceLaborReputation` |
+| GET | `/v1/resources/outcomes` | authenticated | platform-core | [src/routes/resources.js:33](../../src/routes/resources.js#L33) | `resourceOutcomes` |
+| POST | `/v1/resources/payments/webhook` | public | platform-core | [src/routes/resources.js:90](../../src/routes/resources.js#L90) | — |
+| GET | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:51](../../src/routes/resources.js#L51) | — |
+| POST | `/v1/resources/policy` | authenticated | platform-core | [src/routes/resources.js:54](../../src/routes/resources.js#L54) | `setResourcePolicy` |
+| POST | `/v1/resources/service` | authenticated | platform-core | [src/routes/resources.js:59](../../src/routes/resources.js#L59) | `setResourceService` |
+| GET | `/v1/resources/services` | public | platform-core | [src/routes/resources.js:45](../../src/routes/resources.js#L45) | — |
+| GET | `/v1/resources/storefronts/:id` | public | platform-core | [src/routes/resources.js:34](../../src/routes/resources.js#L34) | `resourceStorefront` |
 | POST | `/v1/respec` | authenticated | engagement-growth | [src/server.js:3306](../../src/server.js#L3306) | `W.respec` |
 | GET | `/v1/results` | public | platform-core | [src/server.js:3206](../../src/server.js#L3206) | — |
 | GET | `/v1/rivals` | authenticated | social-combat | [src/server.js:2587](../../src/server.js#L2587) | `Rivals.rivalsBoard` |
