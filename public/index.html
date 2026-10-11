@@ -9274,7 +9274,7 @@
       _citySceneAssets = Promise.allSettled([
         loadCityScript('/city-scene.js?v=20261011-walk-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261011-tools-2', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261011-panel-1', () => !!window.OmertaCityWorldUI),
       ]).then(([scene, engine, world]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if (engine.status === 'rejected' || world.status === 'rejected') _citySceneAssets = null;

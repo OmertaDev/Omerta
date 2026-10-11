@@ -30,7 +30,7 @@
   function number(value) { const n = Number(value); return Number.isFinite(n) ? n : 0; }
   function caption(value) { return String(value || '').replace(/[_-]/g, ' '); }
   function mount(root, input) {
-    let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), pending = false, pollTimer = null;
+    let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -69,12 +69,33 @@
       const node = el('button', className, label); node.type = 'button'; node.dataset.worldControl = label; onRender(node, 'click', action); return node;
     }
     function changed() { if (typeof options.onPanelChange === 'function') options.onPanelChange(); }
-    function setNotice(value) { notice = String(value || ''); state.textContent = notice; }
+    function setNotice(value) { notice = String(value || ''); paintReadState(); }
     function current(token, owner) { return !destroyed && token === opening && owner === scope && owner === identity(); }
+    function paintReadState() {
+      let kinds = [];
+      if (panel === 'bag') kinds = ['inventory'];
+      else if (['room', 'style'].includes(panel)) kinds = ['social'];
+      else if (panel === 'chat') kinds = ['social', 'chat'];
+      const missing = panel === 'chat' ? !Object.hasOwn(boards, 'social') || (socialPreferences().chatEnabled === true && !Object.hasOwn(boards, 'chat'))
+        : kinds.some(kind => !Object.hasOwn(boards, kind));
+      const loading = !!(missing && kinds.some(kind => {
+        const marker = readPending[kind];
+        return marker && current(marker.token, marker.owner) && marker.ticket === readTickets[kind];
+      }));
+      const label = PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
+      const heading = label + (loading ? ' · Loading…' : ''), busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
+      const altered = title.textContent !== heading || content.getAttribute('aria-busy') !== busy || state.textContent !== copy;
+      if (title.textContent !== heading) title.textContent = heading;
+      if (content.getAttribute('aria-busy') !== busy) content.setAttribute('aria-busy', busy);
+      if (state.textContent !== copy) state.textContent = copy;
+      return altered;
+    }
     function resultBody(result) { return result?.body && typeof result.body === 'object' ? result.body : {}; }
     async function read(kind, token = opening) {
       if (typeof options.onRead !== 'function') return null;
       const owner = scope, socialAtStart = boards.social, ticket = (readTickets[kind] || 0) + 1; readTickets[kind] = ticket;
+      const marker = { token, owner, ticket }; readPending[kind] = marker;
+      if (panel && paintReadState()) changed();
       try {
         const result = await options.onRead(kind, { isCurrent: () => !destroyed && owner === scope && owner === identity() });
         if (!current(token, owner) || ticket !== readTickets[kind] || result?.ignored) return null;
@@ -101,7 +122,12 @@
           if (latest) showChatMessage(latest);
         }
         render(); return boards[kind];
-      } catch { if (current(token, owner)) setNotice('Could not refresh this panel. Try again.'); return null; }
+      } catch { if (current(token, owner) && ticket === readTickets[kind]) setNotice('Could not refresh this panel. Try again.'); return null; }
+      finally {
+        if (current(token, owner) && readPending[kind] === marker) {
+          delete readPending[kind]; if (panel && paintReadState()) changed();
+        }
+      }
     }
     async function action(kind, payload) {
       if (pending || destroyed || !panel || typeof options.onAction !== 'function') return;
@@ -132,7 +158,7 @@
     function open(id = 'map') {
       if (destroyed || !tabs.has(id)) return;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
-      stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
+      stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
       setNotice(''); render(); changed(); content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
       if (['room', 'style', 'chat'].includes(id)) read('social');
@@ -141,7 +167,7 @@
     function close(focus = true) {
       if (dock.hidden) return;
       clearSpeech();
-      stopPolling(); opening++; readTickets = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
+      stopPolling(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren(); paintReadState();
       tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
     }
@@ -295,7 +321,7 @@
       for (const message of list(boards.chat?.messages, 50)) {
         const row = el('li'); row.append(el('strong', '', String(message.who || message.name || message.sender?.name || 'Someone')), document.createTextNode(' · ' + String(message.text || message.body || ''))); feed.append(row);
       }
-      if (!feed.children.length) feed.append(el('li', 'city-world__hint', 'The room is quiet. Say hello.'));
+      if (!feed.children.length) feed.append(el('li', 'city-world__hint', Object.hasOwn(boards, 'chat') ? 'The room is quiet. Say hello.' : 'Messages have not loaded yet.'));
       content.append(feed);
       const form = el('form', 'city-world__chat-form'), text = el('input');
       text.type = 'text'; text.maxLength = 240; text.autocomplete = 'off'; text.placeholder = 'Say something to the neighborhood…'; text.setAttribute('aria-label', 'Message to nearby chat'); text.dataset.cityNearbyInput = '';
@@ -312,13 +338,12 @@
       const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), field.value]) : []);
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
-      title.textContent = PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
       if (panel === 'map') renderMap(); else if (panel === 'bag') renderBag(); else if (panel === 'skills') renderSkills();
       else if (panel === 'room') renderRoom(); else if (panel === 'style') renderStyle(); else if (panel === 'chat') renderChat();
       for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) field.value = drafts.get(field.getAttribute('aria-label'));
       renderedOpening = opening;
-      state.textContent = notice; dock.scrollTop = scroll;
+      paintReadState(); dock.scrollTop = scroll;
       if (options.receipt) {
         receiptBox.append(el('strong', '', options.receipt.label || 'World action'), el('p', '', options.receipt.summary || ''));
         if (options.receipt.delta) receiptBox.append(el('p', '', options.receipt.delta));
