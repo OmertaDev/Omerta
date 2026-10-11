@@ -112,6 +112,10 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+assert(g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:logistics coverage escrow' && edge.to === 'Reason:coverage:%'),
+  'Funded coverage must reconcile actual escrow against its cash ledger');
+
 // An advance is metadata over canonical loan escrow, not another cash bucket.
 // Pin the real debt/receipt checks and retain the underlying monetary edge.
 assert.match(invariantSource, /const financeRequests = .*SELECT \* FROM delivery_loan_requests/);
