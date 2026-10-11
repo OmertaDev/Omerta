@@ -60,3 +60,23 @@ After integrating current main in 5d4dd61f, an unmodified focused City presence 
 This instrumentation prepares an exact hosted reproduction and leaves the timeout unresolved pending that evidence. Earnings APIs, authored routes, runtime authority and financial activation remain unchanged. Generated artifacts and hosted validation require a fresh clean-source rebuild before publication.
 
 Reviewer correction: the passive event observer now guards a missing current handle and non-Element event target, and catches getState/observation failures as a bounded unavailable marker. Teardown cannot turn diagnostic observation into a page error. The original click, selection assertion and timeout remain unchanged. The focused browser suite is rerun once after this narrow correction before a clean-source generated rebuild and fresh hosted reproduction.
+
+## City integration refresh — 2026-10-11
+
+Integrated main `1c1300fe` with the separately reviewed City social revision.
+Private earnings, resource route, receipt reconciliation and resourcebusiness test
+bytes remain identical to reviewed branch source `b3cce295`; no privacy, balance,
+permission, native treasury lock or financial activation semantics changed.
+Conflicts were limited to shared census/public route counts and generated artifacts.
+The combined inventory measures 319 source files, 482 test files, 895 public
+registrations (844 under `/v1`), 392 tables and 720 Markdown files.
+
+Node v24.19.0: `node test/docs.js`, `node test/gates.js`,
+`node test/resourcebusiness.js` and `node test/city-presence-browser.js` all
+returned exit status 0. The focused browser run retained actual selection and
+touch/keyboard geometry assertions while the diagnostic observer coexisted with
+the current City runtime. A local pass does not invalidate the retained historical
+hosted failure or prove its production cause. Native earnings proofs retain their
+prior exact source scope; this integration adds no native earnings behavior.
+Clean authored-source knowledge regeneration and exact-head hosted checks remain
+required before merge or deployment.

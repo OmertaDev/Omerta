@@ -4,6 +4,7 @@
 // what's actually mounted). Read-only, keyless, zero §10.4 surface.
 import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
+import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
@@ -282,6 +283,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...CITY_SOCIAL_CONTRACTS,
   ...DEPOT_CONTRACTS,
   ...RESOURCE_CONTRACTS,
   ...knowledgeContracts(coordinationContract),
@@ -567,6 +569,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...CITY_SOCIAL_SCHEMAS,
   ...COORDINATION_SCHEMAS,
   ContentGateState: {
     type: 'object', additionalProperties: false,
