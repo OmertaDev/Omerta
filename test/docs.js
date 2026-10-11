@@ -4187,7 +4187,10 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const { runLedgerInvariants } = await import('../src/invariants.js');
   const db = await makeDb();
   const { checks } = await runLedgerInvariants(db.pool || db, { alert: false });
-  const named = checks.filter((c) => !/ conservation$/.test(c.name)).length;
+  // Royalty pairing reconciles two internal journal legs, not a whole currency
+  // or asset supply. It remains a named check while all checks are still counted.
+  const named = checks.filter((c) => !/ conservation$/.test(c.name)
+    || c.name === 'franchise royalty conservation').length;
   const conservation = checks.length - named;
   assert(checks.length > 20, `the §10.4 sweep emitted only ${checks.length} checks on an empty server`);
 

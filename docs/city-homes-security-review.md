@@ -3,10 +3,10 @@
 Date: 2026-10-11. Phase: working-tree source review and disposable memory proof.
 Initial authored source: `98c48c5abc68ffc8ac8c04ee793a11b0721f9eb5` on base
 `1b63dfd8625a102fe57f36eafcb39f330a140d8c`.
-Integrated predecessor: `df6b3e160648eebe1ceb063fa981646d1c0aae5e`.
-The new server blob is `3bbab2eb5b1ac4cf66d61fd6c4dc11da05e13cdf`;
+Integrated predecessor: `0d39ddd64a1e8828980124bfc2be50fcf2e7aa15`.
+The new server blob is `00fa216036671347c0817c98bb3ab8d696b8f98c`;
 two exact import/registration inverses restore the complete preceding server
-`7b32de9531c3d47ced6654175ec492afc81cc5cb`. The source base names the parent,
+`6fc8c1d21e4b346d52d9e8214ce723f7a92d7a7a`. The source base names the parent,
 not a fictional committed revision of the new code. Release commits, independent
 review, native qualification and deployed revision verification remain separate.
 
@@ -15,9 +15,9 @@ lines, the additive closed Gateway contract and `test/city-homes-api.js`.
 Historical qualification helpers transfer only unchanged predecessor guards.
 They explicitly exclude this new authenticated projection and its native snapshot.
 The authored homes delta changes no schema, index, deed/travel mutation, receipt,
-worker loop, signer or financial rail. Incoming Warehouse and Crew source, schema, estate
+worker loop, signer or financial rail. Incoming Warehouse, Crew and Franchise source, schema, estate
 and native proof inputs are retained from the independently reviewed predecessor;
-its authority is not qualified by this read-surface review. All three sets of exact
+its authority is not qualified by this read-surface review. All four sets of exact
 server inverses and authority exclusions remain composed in the combined source.
 
 `GET /v1/city/homes` requires existing bearer authentication and a living caller.
@@ -91,8 +91,8 @@ Normalized LF SHA-256 runtime pins:
 | --- | --- |
 | src/cityhomes.js | 4748763673b2f1896459921c88bf4162dcc6f78bf3230388a1825ea062caba98 |
 | src/routes/cityhomes.js | 24c40a06a9a82a93cfbacca476b928544af5f03d1897a120d85be65786c3dd6d |
-| src/server.js | ac4d2d324d27f585477b29b1ee58031cfa8892d22ffbc4aa639e869dc8f01ab6 |
-| src/agentgateway.js | 84b4dfbf47b78ec3470bd1bcd9521fc82688e5efcf2fa639d878c75134e6b644 |
+| src/server.js | b4f3b05696f97697e119e806fec327ec2201ccb5a6e40dac3fe1d0823f43e26d |
+| src/agentgateway.js | 9d07b2e1cd1a29931ee17c129f2d502834c570370296a15132185258a27b8d2a |
 
 The authored new HTTP surface uses package minor 1.4.0 under the existing Gateway
 convention. Package/lock alignment, current client wiring, gates and measured
@@ -131,7 +131,7 @@ after integration and the measured 44px Map-mode target correction.
 
 The incoming reviewed Crew release adds its required native step and changes the
 native limit from 20 to 30 minutes after recorded timeout evidence. This integration
-retains that existing policy and its closed 50-step ledger; the homes proof remains
+retains that existing policy and the current closed 51-step ledger; the homes proof remains
 inside the original City command, with its explicit disposable database URL. The
 GUI slice does not waive assertions, SQL ceilings or proof steps. Fresh combined
 PostgreSQL 16 and 18.4 execution is still required.

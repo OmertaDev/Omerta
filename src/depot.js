@@ -6,6 +6,7 @@ import { bookDepot, refundDepotOrder } from './depotbook.js';
 import { reservedQuantity } from './deliverybook.js';
 import { latestPolicy, policyLive, policyTermsMatch, policyView, requirePolicy } from './operatingpolicy.js';
 import { warehouseReservedUnits } from './warehouseleases.js';
+import { prepareFranchiseSale, settleFranchiseSale } from './franchiselicenses.js';
 import { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';
 
 export const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });
@@ -156,8 +157,9 @@ export async function cancelDepotOrder(ch, id, orderId, client, h) {
 export async function buyFromDepot(ch, owner, id, quantity, maxUnitPrice, client, h) {
   intake(); mobile(ch); quantity = integer(quantity, 1, DEPOT.capacity, 'qty');
   maxUnitPrice = integer(maxUnitPrice, 50, 1000000, 'maxUnitPrice');
-  const row = (await client.query("SELECT * FROM business_depots WHERE id=$1 AND status='open' FOR UPDATE", [id])).rows[0];
-  if (!row || row.owner_character !== owner.id || !owner.alive) throw new GameError('no_depot', 'That business is not operating.');
+  const prepared = await prepareFranchiseSale(client, id);
+  const row = prepared.operator;
+  if (!row || row.status !== 'open' || row.owner_character !== owner.id || !owner.alive) throw new GameError('no_depot', 'That business is not operating.');
   if (row.owner_character === ch.id) throw new GameError('own', 'Withdraw your inventory through its owner route.');
   atDock(ch, row);
   if (Number(row.sale_price) > maxUnitPrice) throw new GameError('price_changed', 'The current unit price exceeds your purchase limit. Refresh the business quote.');
@@ -167,7 +169,8 @@ export async function buyFromDepot(ch, owner, id, quantity, maxUnitPrice, client
   const gross = quantity * Number(row.sale_price), take = Math.ceil(gross * BLACK_MARKET.TAKE_BPS / 10000), net = gross - take;
   if (Number(ch.cash) < gross) throw new GameError('cash', 'Not enough cash for this order.');
   const cost = Math.ceil(Number(row.stock_cost) * quantity / Number(row.stock));
-  await bookDepot(client, row, 'sale', { cash: net, stock: -quantity, cost: -cost, customerId: ch.id });
+  const saleJournalId = await bookDepot(client, row, 'sale', { cash: net, stock: -quantity, cost: -cost, customerId: ch.id });
+  await settleFranchiseSale(client, prepared.context, saleJournalId);
   ch.cash = Number(ch.cash) - gross;
   cargo[DEPOT.good] = Number(cargo[DEPOT.good] || 0) + quantity;
   await client.query('DELETE FROM character_cargo WHERE character_id=$1 AND good_id=$2', [ch.id, DEPOT.good]);
@@ -211,6 +214,8 @@ export async function depotState(client, ch, h) {
   const revenue = sales.reduce((n, entry) => n + Number(entry.cash_delta), 0);
   const rentalRevenue = journal.filter((entry) => entry.reason === 'warehouse_rent')
     .reduce((n, entry) => n + Number(entry.cash_delta), 0);
+  const royaltyRevenue = journal.filter((entry) => entry.reason === 'royalty_income')
+    .reduce((n, entry) => n + Number(entry.cash_delta), 0);
   const cogs = -sales.reduce((n, entry) => n + Number(entry.cost_delta), 0);
   const expenses = journal.reduce((n, entry) => n + Number(entry.expense), 0);
   const slots = Number((await client.query("SELECT COUNT(*) n FROM market_listings WHERE seller_character=$1 AND (status='live' OR (kind='order' AND filled_qty>0))", [ch.id])).rows[0].n);
@@ -228,8 +233,8 @@ export async function depotState(client, ch, h) {
     stockCost: Number(row.stock_cost), salePrice: Number(row.sale_price), bidPrice: Number(row.bid_price),
     reorderAt: Number(row.reorder_at), targetStock: Number(row.target_stock), restockBudget: Number(row.restock_budget),
     capacity: DEPOT.capacity, cashReserve: DEPOT.cashReserve,
-    customerRevenue: revenue, rentalRevenue, costOfGoodsSold: cogs, operatingExpenses: expenses,
-    operatingProfit: revenue + rentalRevenue - cogs - expenses,
+    customerRevenue: revenue, rentalRevenue, royaltyRevenue, costOfGoodsSold: cogs, operatingExpenses: expenses,
+    operatingProfit: revenue + rentalRevenue + royaltyRevenue - cogs - expenses,
     warehouse: { enabled: row.warehouse_enabled === true, revision: Number(row.warehouse_revision),
       offeredSlots: Number(row.warehouse_slots), cashPerUnitDay: Number(row.warehouse_cash_per_unit_day), reservedUnits: warehouseReserved },
     unitsSold: -sales.reduce((n, entry) => n + Number(entry.stock_delta), 0),

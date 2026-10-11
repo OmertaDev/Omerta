@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -37,15 +38,18 @@ for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
   const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(actual) : null;
-  const crewInput = homes ? homes.baselineText : actual;
+  const franchiseInput = homes ? homes.baselineText : actual;
   if (homes) {
     assert.equal(hash(actual), CITY_HOMES_SERVER_PIN);
     assert.equal(homes.sourceBlob, CITY_HOMES_SERVER_BLOB);
-    assert.equal(homes.baselineSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']);
+    assert.equal(homes.baselineSha256, FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']);
     assert.equal(homes.inverseChunks, 2);
-    assert.equal(crewInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-    assert.equal(crewInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(franchiseInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(franchiseInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
+  const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, franchiseInput) : null;
+  if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
+  const crewInput = franchise ? franchise.baselineText : franchiseInput;
   const crew = file === 'src/server.js' ? assertCrewLogisticsSourceTransfer(file, crewInput) : null;
   const warehouseInput = crew ? crew.baselineText : crewInput;
   if (crew) {
