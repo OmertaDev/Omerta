@@ -11,9 +11,9 @@ if (postgres) {
   assert(['postgres:', 'postgresql:'].includes(endpoint.protocol)
     && endpoint.hostname === '127.0.0.1'
     && /^\/logistics_coverage_api_[a-z0-9_]+$/.test(endpoint.pathname)
-    && !endpoint.search && !endpoint.hash && !endpoint.password
-    && ((endpoint.port === '35439' && endpoint.username === 'pilot_runner')
-      || (endpoint.port === '5432' && endpoint.username === 'postgres')),
+    && !endpoint.search && !endpoint.hash
+    && ((endpoint.port === '35439' && endpoint.username === 'pilot_runner' && !endpoint.password)
+      || (endpoint.port === '5432' && endpoint.username === 'postgres' && endpoint.password === 'pgcheck')),
   'Use an explicit empty isolated local logistics_coverage_api_ PostgreSQL database.');
   const { default: pg } = await import('pg');
   const preflight = new pg.Pool({ connectionString: endpoint.href });
