@@ -32,8 +32,8 @@ export async function strategyLicenseFaults(pool) {
     if (v.outcome == null) {
       if (v.sample || v.sample_started_at || v.resolved_at) faults++;
     } else if (!['correct','incorrect','unknown'].includes(v.outcome) || !v.resolved_at) faults++;
-    else if (v.outcome === 'unknown') {
-      if (v.sample || v.sample_started_at) faults++;
+    else if (v.outcome === 'unknown' && !v.sample) {
+      if (v.sample_started_at || new Date(v.resolved_at).getTime() < target) faults++;
     } else {
       const started = new Date(v.sample_started_at).getTime(), resolved = new Date(v.resolved_at).getTime();
       if (!v.sample || !Number.isFinite(started) || started < target || started > target + 30000 || resolved < started || resolved > target + 30000
