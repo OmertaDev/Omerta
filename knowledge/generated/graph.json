@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ad16932258d4970a54b1a3385cbed200b233cb3a",
+  "sourceRevision": "66268c30133b897646a1900c609efe3c934d47f6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10568,
-    "edges": 43138,
+    "nodes": 10570,
+    "edges": 43150,
     "byNodeType": {
       "Artifact": 4417,
       "Command": 216,
-      "Commit": 2312,
+      "Commit": 2314,
       "Contract": 126,
       "Document": 706,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3551,
-      "CHANGED": 16937,
+      "CHANGED": 16947,
       "CONTAINS": 4438,
       "DECLARES": 216,
       "DEFINED_IN": 1400,
       "DEPENDS_ON": 67,
       "EXECUTES": 731,
       "HANDLED_BY": 775,
-      "HAS_COMMIT": 2312,
+      "HAS_COMMIT": 2314,
       "IMPLEMENTS": 124,
       "IMPORTS": 4233,
       "INHERITS": 42,
@@ -78242,18 +78242,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "3ce64661bf381116",
+      "version": "cd344c216f2538df",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3ce64661bf381116"
+          "version": "cd344c216f2538df"
         }
       ],
-      "lastChangedAt": "2026-10-10T22:08:43.000Z",
+      "lastChangedAt": "2026-10-11T02:44:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7b7fed4b68ab753ea7e666a342377e371fb8c7e0"
+      "lastChangedCommit": "66268c30133b897646a1900c609efe3c934d47f6"
     },
     {
       "key": "Artifact:src/access.js",
@@ -86356,20 +86356,20 @@
       "path": "test/city-world-host-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 64630,
-      "lines": 734,
-      "version": "081290da21e8fa3f",
+      "bytes": 69891,
+      "lines": 790,
+      "version": "c58f0c7190418e0b",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "081290da21e8fa3f"
+          "version": "c58f0c7190418e0b"
         }
       ],
-      "lastChangedAt": "2026-10-10T21:17:32.000Z",
+      "lastChangedAt": "2026-10-11T02:44:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b7c1f137a108cfecedbd39ff5043d9b5d7878222"
+      "lastChangedCommit": "66268c30133b897646a1900c609efe3c934d47f6"
     },
     {
       "key": "Artifact:test/city-world-ui-browser.js",
@@ -109451,6 +109451,22 @@
       ]
     },
     {
+      "key": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "type": "Commit",
+      "id": "24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "label": "Refresh City expansion knowledge after authored integration",
+      "title": "Refresh City expansion knowledge after authored integration",
+      "date": "2026-10-11T01:13:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "provenance": [
+        {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        }
+      ]
+    },
+    {
       "key": "Commit:250f73a113c4431183223b475a6b7de72a503460",
       "type": "Commit",
       "id": "250f73a113c4431183223b475a6b7de72a503460",
@@ -119287,6 +119303,22 @@
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863",
           "url": "https://github.com/OmertaDev/Omerta/commit/661a14645aa937ab6c8ccbb2a1169b523340d863"
+        }
+      ]
+    },
+    {
+      "key": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
+      "type": "Commit",
+      "id": "66268c30133b897646a1900c609efe3c934d47f6",
+      "label": "Verify current chat consent with queued polls",
+      "title": "Verify current chat consent with queued polls",
+      "date": "2026-10-11T02:44:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/66268c30133b897646a1900c609efe3c934d47f6",
+      "provenance": [
+        {
+          "commit": "66268c30133b897646a1900c609efe3c934d47f6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/66268c30133b897646a1900c609efe3c934d47f6"
         }
       ]
     },
@@ -154809,12 +154841,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "3ce64661bf381116",
+      "version": "cd344c216f2538df",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3ce64661bf381116"
+          "version": "cd344c216f2538df"
         }
       ]
     },
@@ -161672,6 +161704,9 @@
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
         },
         {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        },
+        {
           "commit": "29d7c6c92f78d4f65aa4657c10adfe6ea2135acf"
         },
         {
@@ -162306,6 +162341,9 @@
         },
         {
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
+        },
+        {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
         },
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
@@ -163505,6 +163543,9 @@
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
         },
         {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        },
+        {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
@@ -164702,6 +164743,9 @@
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
         },
         {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        },
+        {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
@@ -165770,6 +165814,9 @@
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
         },
         {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        },
+        {
           "commit": "26af16cb261f693d6f08f71349b3a61e495b6214"
         },
         {
@@ -166218,6 +166265,9 @@
         },
         {
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
+        },
+        {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
         },
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
@@ -167309,6 +167359,9 @@
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
         },
         {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+        },
+        {
           "commit": "26af16cb261f693d6f08f71349b3a61e495b6214"
         },
         {
@@ -167751,6 +167804,9 @@
         },
         {
           "commit": "24b273778331e3b5fb9d434965fd34afd5d34504"
+        },
+        {
+          "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
@@ -176702,7 +176758,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ad16932258d4970a54b1a3385cbed200b233cb3a",
+      "revision": "66268c30133b897646a1900c609efe3c934d47f6",
       "currentBranch": "codex/city-world-expansion",
       "defaultBranch": "main",
       "visibility": "public",
@@ -207223,13 +207279,13 @@
       "type": "TestSuite",
       "id": "test/city-world-host-browser.js",
       "label": "test/city-world-host-browser.js",
-      "lines": 734,
-      "version": "081290da21e8fa3f",
+      "lines": 790,
+      "version": "c58f0c7190418e0b",
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "081290da21e8fa3f"
+          "version": "c58f0c7190418e0b"
         }
       ]
     },
@@ -263352,6 +263408,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:250f73a113c4431183223b475a6b7de72a503460",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -299988,6 +300108,22 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "66268c30133b897646a1900c609efe3c934d47f6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "commit": "66268c30133b897646a1900c609efe3c934d47f6"
       }
     },
     {
@@ -453094,6 +453230,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:24da5fdf9704844b2efdf31d51472e82311c3e2f",
+      "provenance": {
+        "commit": "24da5fdf9704844b2efdf31d51472e82311c3e2f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:250f73a113c4431183223b475a6b7de72a503460",
       "provenance": {
         "commit": "250f73a113c4431183223b475a6b7de72a503460"
@@ -458009,6 +458153,14 @@
       "to": "Commit:661a14645aa937ab6c8ccbb2a1169b523340d863",
       "provenance": {
         "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
+      "provenance": {
+        "commit": "66268c30133b897646a1900c609efe3c934d47f6"
       }
     },
     {
