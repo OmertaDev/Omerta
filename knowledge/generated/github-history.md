@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `183520c81ecc`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7ea5b73102f4`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2478 |
+| Commits in clone | 2484 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Integrate released City panel discovery without losing supplier history |
+| Latest commit | 2026-10-11 — Integrate reviewed City navigation changes before supplier history release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1551 |
+| OmertaDev | 1556 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 82 |
+| github-actions[bot] | 83 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,11 +31,11 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 446 | yes |
-| knowledge/generated/github-history.md | 445 | historical |
-| knowledge/generated/graph-summary.md | 445 | historical |
-| knowledge/generated/graph.json | 445 | historical |
-| knowledge/generated/inventory.md | 445 | historical |
+| knowledge/generated/github-history.md | 448 | historical |
+| knowledge/generated/graph-summary.md | 448 | historical |
+| knowledge/generated/graph.json | 448 | historical |
+| knowledge/generated/inventory.md | 448 | historical |
+| [public/index.html](../../public/index.html) | 447 | yes |
 | [SPEC.md](../../SPEC.md) | 396 | yes |
 | [src/server.js](../../src/server.js) | 381 | yes |
 | [schema.sql](../../schema.sql) | 307 | yes |
