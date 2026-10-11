@@ -6,6 +6,7 @@ import { reservedQuantity } from './deliverybook.js';
 import { buyGood } from './economy.js';
 import { goodsBuyQuote } from './goodsquote.js';
 import { DEPOT, buyFromDepot } from './depot.js';
+import { prepareFranchiseSale } from './franchiselicenses.js';
 
 export const DELIVERY = Object.freeze({ maxActive: 2, maxUnits: 40, maxSpend: 100000, maxSeconds: 21600 });
 export const deliveryIntakeEnabled = () => process.env.DELIVERY_CONTRACTS === 'on';
@@ -76,8 +77,8 @@ export async function buyCommittedFromDepot(ch, owner, id, depotId, body, client
   if (jailed(ch) || safeHoused(ch)) throw new GameError('status', 'Surface before procuring a delivery.');
   if (!integer(body?.qty, 1, DELIVERY.maxUnits) || !integer(body?.maxUnitPrice, 50, 1000000))
     throw new GameError('delivery_terms', 'Provide bounded quantity and maximum unit price.');
-  const depot = (await client.query("SELECT * FROM business_depots WHERE id=$1 AND status='open' FOR UPDATE", [depotId])).rows[0];
-  if (!depot || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');
+  const depot = (await prepareFranchiseSale(client, depotId)).operator;
+  if (!depot || depot.status !== 'open' || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');
   const c = await lockedCommitment(ch, id, client);
   if (c.good_id !== DEPOT.good || c.depot_id === depot.id || c.buyer_character === owner.id
       || body.qty + Number(h.owned.cargo[c.good_id] || 0) > Number(c.remaining))
