@@ -7625,6 +7625,7 @@ CREATE TABLE IF NOT EXISTS resource_calls (
   settled_at TIMESTAMPTZ,
   UNIQUE(account_id,request_key)
 );
+ALTER TABLE resource_calls ADD COLUMN IF NOT EXISTS decision_execution_receipt JSONB;
 CREATE TABLE IF NOT EXISTS resource_payments (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),

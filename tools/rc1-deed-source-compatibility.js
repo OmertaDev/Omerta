@@ -2,6 +2,72 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+export const DECISION_CALL_SERVER_PIN = '7e599c49c28b6549182cb72f9e3ed7178b40549dea872bc7178ebb67a240ac8c';
+export const DECISION_CALL_SOURCE_REVIEWED_REVISION = 'cd048a8940fb524af1320bcb4b3cd40d8e547820';
+export const DECISION_CALL_SERVER_BLOB = '79771473a82bc7a088921dc254031b5e6a10801e';
+export const DECISION_CALL_PREDECESSOR_SERVER_BLOB = '0a5053e000198230ca9e7e036233611c1ab44c8e';
+export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { validateDecisionCall, recordDecisionExecution } from './decisionproofs.js';\n",
+    ""
+  ],
+  [
+    "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null) => {\n",
+    "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {\n"
+  ],
+  [
+    "    const decision = decisionCallId === null ? null : await validateDecisionCall(client, {\n      callId: decisionCallId, accountId: ch.account_id, characterId: ch.id,\n      generation: Number(ch.generation), turnId, actionId,\n    });\n",
+    ""
+  ],
+  [
+    "    const decisionProof = decision ? await recordDecisionExecution(client, decision, { actionKind: action.kind, result }) : null;\n",
+    ""
+  ],
+  [
+    "    return { ...result, ...(decisionProof ? { decisionProof } : {}) };\n",
+    "    return result;\n"
+  ],
+  [
+    "    const decisionCallId = req.body?.decisionCallId === undefined ? null : req.body.decisionCallId;\n    if (decisionCallId !== null && (typeof decisionCallId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(decisionCallId)))\n      throw new G.GameError('decision_call', 'Provide a valid decision call identifier.');\n",
+    ""
+  ],
+  [
+    "            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId));\n",
+    "            executeAgentAction(client, ch, h, turnId, actionId, owner));\n"
+  ],
+  [
+    "            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);\n",
+    "            executeAgentAction(client, ch, h, turnId, actionId), agentActionLocks);\n"
+  ],
+  [
+    "            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId);\n",
+    "            return executeAgentAction(client, ch, h, turnId, actionId, lender);\n"
+  ],
+  [
+    "            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n",
+    "            return executeAgentAction(client, ch, h, turnId, actionId);\n"
+  ],
+  [
+    "          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n",
+    "          return executeAgentAction(client, ch, h, turnId, actionId);\n"
+  ],
+  [
+    "    const { decisionProof, ...actionResult } = result;\n    return { actionId, result: actionResult, turn, refreshRequired: !turn,\n      ...(decisionProof ? { decisionProof } : {}) };\n",
+    "    return { actionId, result, turn, refreshRequired: !turn };\n"
+  ]
+]);
+// Only unchanged historical guards transfer; receipt execution retains separate native proof.
+export function assertDecisionCallServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, DECISION_CALL_SERVER_PIN, 'Decision call transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of DECISION_CALL_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(current).length, 2, 'Decision call inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), STOREFRONT_CITY_SERVER_PIN, 'Server differs beyond exact decision receipt hook');
+ return { actualSha256, baselineText, baselineSha256: STOREFRONT_CITY_SERVER_PIN, sourceRevision: DECISION_CALL_SOURCE_REVIEWED_REVISION, sourceBlob: DECISION_CALL_SERVER_BLOB, predecessorServerBlob: DECISION_CALL_PREDECESSOR_SERVER_BLOB, inverseChunks: 12 };
+}
 export const CITY_PRESENCE_SERVER_PIN = 'f4a8eece717448482ac55998c68df89e45344c208b6ea9d4c910be3ea281b1e1';
 export const CITY_PRESENCE_SERVER_PREDECESSOR_PIN = 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c';
 export const CITY_PRESENCE_SOURCE_REVIEWED_REVISION = '83479446113cc3acffef1ee857a5d8d8e9fdc52c';
@@ -220,6 +286,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -293,6 +363,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -387,6 +461,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -438,6 +516,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -793,6 +875,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === DECISION_CALL_SERVER_PIN) {
+  const transfer = assertDecisionCallServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, decisionCallSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === STOREFRONT_CITY_SERVER_PIN) {
   const transfer = assertStorefrontCityServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontCitySourceTransfer: transfer };

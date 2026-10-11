@@ -115,13 +115,25 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
   const attemptedJobs = new Set();
   const polledTurns = new Set();
   const outcomes = [];
+  const decisions = new Map();
   const observe = event => { try { onObservation(event); } catch { /* Telemetry cannot change gameplay. */ } };
   return async (input, init = {}) => {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
     const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
     if (url.origin !== origin && headers.has('authorization')) throw new Error('Credential origin mismatch');
-    const response = await fetchImpl(input, { ...init, redirect: 'error' });
     const method = (init.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+    let requestInit = init;
+    if (url.origin === origin && url.pathname === '/v1/agent/act' && !url.search
+        && method === 'POST' && typeof init.body === 'string') {
+      try {
+        const body = JSON.parse(init.body);
+        if (body && typeof body === 'object' && !Array.isArray(body) && body.decisionCallId === undefined) {
+          const callId = decisions.get(JSON.stringify([body.turnId, body.actionId]));
+          if (callId) requestInit = { ...init, body: JSON.stringify({ ...body, decisionCallId: callId }) };
+        }
+      } catch { /* Malformed requests retain their ordinary server validation. */ }
+    }
+    const response = await fetchImpl(input, { ...requestInit, redirect: 'error' });
     if (url.origin !== origin || url.pathname !== '/v1/agent/turn' || url.search || method !== 'GET' || !response.ok) return response;
     let turn;
     try { turn = await response.clone().json(); } catch { return response; }
@@ -216,6 +228,8 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
       if (!choice || Array.isArray(choice) || Object.keys(choice).length !== 1 || typeof choice.actionId !== 'string') return response;
       const chosen = candidates.find(candidate => candidate.id === choice.actionId);
       if (!chosen || !safeCandidate(turn, chosen, role)) return response;
+      decisions.set(JSON.stringify([turn.turnId, chosen.id]), call.id);
+      if (decisions.size > 1000) decisions.delete(decisions.keys().next().value);
       const modified = { ...turn, recommendedActionId: chosen.id, actions: [chosen, ...turn.actions.filter(c => c !== chosen)] };
       const responseHeaders = new Headers(response.headers);
       responseHeaders.delete('content-length');
