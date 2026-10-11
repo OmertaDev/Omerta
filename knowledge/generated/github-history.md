@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4fa6299dbb8b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4e04964ddd24`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2492 |
+| Commits in clone | 2494 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Retain hosted fixture failure and controlled client repair evidence |
+| Latest commit | 2026-10-11 — Merge pull request #234 from OmertaDev/codex/supplier-history-integration |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1563 |
+| OmertaDev | 1565 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 84 |
@@ -31,17 +31,17 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| knowledge/generated/github-history.md | 451 | historical |
-| knowledge/generated/graph-summary.md | 451 | historical |
-| knowledge/generated/graph.json | 451 | historical |
-| knowledge/generated/inventory.md | 451 | historical |
+| knowledge/generated/github-history.md | 452 | historical |
+| knowledge/generated/graph-summary.md | 452 | historical |
+| knowledge/generated/graph.json | 452 | historical |
+| knowledge/generated/inventory.md | 452 | historical |
 | [public/index.html](../../public/index.html) | 448 | yes |
 | [SPEC.md](../../SPEC.md) | 396 | yes |
 | [src/server.js](../../src/server.js) | 381 | yes |
 | [schema.sql](../../schema.sql) | 307 | yes |
 | [package.json](../../package.json) | 256 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/documents.md | 207 | historical |
+| knowledge/generated/documents.md | 208 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
 | knowledge/generated/modules.md | 173 | historical |

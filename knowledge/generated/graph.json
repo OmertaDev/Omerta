@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4fa6299dbb8b733758818d093fbdb3d36cd7f769",
+  "sourceRevision": "4e04964ddd248050b5678d0c3acace6c35d5b398",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10796,
-    "edges": 43944,
+    "nodes": 10798,
+    "edges": 43951,
     "byNodeType": {
       "Artifact": 4439,
       "Command": 216,
-      "Commit": 2492,
+      "Commit": 2494,
       "Contract": 126,
       "Document": 713,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3570,
-      "CHANGED": 17405,
+      "CHANGED": 17410,
       "CONTAINS": 4460,
       "DECLARES": 216,
       "DEFINED_IN": 1405,
       "DEPENDS_ON": 67,
       "EXECUTES": 740,
       "HANDLED_BY": 779,
-      "HAS_COMMIT": 2492,
+      "HAS_COMMIT": 2494,
       "IMPLEMENTS": 124,
       "IMPORTS": 4261,
       "INHERITS": 42,
@@ -117429,6 +117429,22 @@
       ]
     },
     {
+      "key": "Commit:4e04964ddd248050b5678d0c3acace6c35d5b398",
+      "type": "Commit",
+      "id": "4e04964ddd248050b5678d0c3acace6c35d5b398",
+      "label": "Merge pull request #234 from OmertaDev/codex/supplier-history-integration",
+      "title": "Merge pull request #234 from OmertaDev/codex/supplier-history-integration",
+      "date": "2026-10-11T18:20:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4e04964ddd248050b5678d0c3acace6c35d5b398",
+      "provenance": [
+        {
+          "commit": "4e04964ddd248050b5678d0c3acace6c35d5b398",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4e04964ddd248050b5678d0c3acace6c35d5b398"
+        }
+      ]
+    },
+    {
       "key": "Commit:4e1c663ebead7cd39edb0f6101a1246e59197e87",
       "type": "Commit",
       "id": "4e1c663ebead7cd39edb0f6101a1246e59197e87",
@@ -142789,6 +142805,22 @@
       ]
     },
     {
+      "key": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "type": "Commit",
+      "id": "f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "label": "Refresh supplier release artifacts after deterministic fixture repair",
+      "title": "Refresh supplier release artifacts after deterministic fixture repair",
+      "date": "2026-10-11T17:16:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "provenance": [
+        {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f2db3d462de0f38d96171e526c653b34f5cd7549"
+        }
+      ]
+    },
+    {
       "key": "Commit:f2e4f45b5b7fbcc1d9308e8018cd720ef59b332e",
       "type": "Commit",
       "id": "f2e4f45b5b7fbcc1d9308e8018cd720ef59b332e",
@@ -165666,6 +165698,9 @@
           "commit": "f2bd053e0a75b53f31bb815aaca645686f99a782"
         },
         {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+        },
+        {
           "commit": "f2fb393a317b2515e568fd5159d533893bc8307a"
         },
         {
@@ -166996,6 +167031,9 @@
         },
         {
           "commit": "f2bd053e0a75b53f31bb815aaca645686f99a782"
+        },
+        {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
         },
         {
           "commit": "f2fb393a317b2515e568fd5159d533893bc8307a"
@@ -168360,6 +168398,9 @@
           "commit": "f2bd053e0a75b53f31bb815aaca645686f99a782"
         },
         {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+        },
+        {
           "commit": "f2fb393a317b2515e568fd5159d533893bc8307a"
         },
         {
@@ -169720,6 +169761,9 @@
         },
         {
           "commit": "f2bd053e0a75b53f31bb815aaca645686f99a782"
+        },
+        {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
         },
         {
           "commit": "f2fb393a317b2515e568fd5159d533893bc8307a"
@@ -171463,6 +171507,9 @@
         },
         {
           "commit": "f2bd053e0a75b53f31bb815aaca645686f99a782"
+        },
+        {
+          "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
         },
         {
           "commit": "f2fb393a317b2515e568fd5159d533893bc8307a"
@@ -181233,8 +181280,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4fa6299dbb8b733758818d093fbdb3d36cd7f769",
-      "currentBranch": "codex/supplier-history-integration",
+      "revision": "4e04964ddd248050b5678d0c3acace6c35d5b398",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -380264,6 +380311,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f2fb393a317b2515e568fd5159d533893bc8307a",
       "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
       "provenance": {
@@ -465874,6 +465961,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4e04964ddd248050b5678d0c3acace6c35d5b398",
+      "provenance": {
+        "commit": "4e04964ddd248050b5678d0c3acace6c35d5b398"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4e1c663ebead7cd39edb0f6101a1246e59197e87",
       "provenance": {
         "commit": "4e1c663ebead7cd39edb0f6101a1246e59197e87"
@@ -478549,6 +478644,14 @@
       "to": "Commit:f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f",
       "provenance": {
         "commit": "f2c7fa65f1def15a4bcfd0cc62b1f7bf4305ee7f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f2db3d462de0f38d96171e526c653b34f5cd7549",
+      "provenance": {
+        "commit": "f2db3d462de0f38d96171e526c653b34f5cd7549"
       }
     },
     {
