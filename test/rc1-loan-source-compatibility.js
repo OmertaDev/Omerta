@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { invoiceSourceBaseline } from '../tools/rc1-invoice-source-compatibility.js';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { assertLoanCancelMarkerTransfer, qualifyLoanCancelSource, LOAN_CANCEL_BASELINE_PIN, LOAN_CANCEL_MARKER_PIN,
@@ -6,9 +7,10 @@ import { assertLoanCancelMarkerTransfer, qualifyLoanCancelSource, LOAN_CANCEL_BA
 import { BACKLOG_SOURCE_PINS } from '../tools/rc1-world-backlog-review.js';
 import { LOAN_REFUND_METRIC_SOURCE_PINS } from '../tools/rc1-world-economy-metrics.js';
 const gitText = blob => execFileSync('git', ['show', blob], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n');
-const current = fs.readFileSync('src/loans.js', 'utf8').replaceAll('\r\n', '\n');
+const actualCurrent = fs.readFileSync('src/loans.js', 'utf8').replaceAll('\r\n', '\n');
+assert.equal(actualCurrent, gitText('HEAD:src/loans.js'));
+const current = invoiceSourceBaseline('src/loans.js', actualCurrent);
 assert.equal(current, gitText(LOAN_CANCEL_MARKER_BLOB), 'runtime source remains byte-identical to the reviewed marker blob');
-assert.equal(current, gitText('HEAD:src/loans.js'));
 const proof = assertLoanCancelMarkerTransfer(current), baseline = gitText(LOAN_CANCEL_BASELINE_BLOB);
 assert.equal(proof.baselineText, baseline, 'one exact return-line inverse reconstructs the complete original source');
 assert.equal(proof.actualSha256, LOAN_CANCEL_MARKER_PIN); assert.equal(proof.baselineSha256, LOAN_CANCEL_BASELINE_PIN); assert.equal(proof.inverseChunks, 1);

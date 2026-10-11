@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 // Storage-only treasury boundary. Callers hold character → depot → order locks.
 // Absolute writes keep pg-mem and PostgreSQL accounting identical.
 export async function bookDepot(client, row, reason, { cash = 0, stock = 0, cost = 0, expense = 0, orderId = null, policyId = null, customerId = null,
-  leaseId = null, leaseStock = 0, leaseStockAfter = null } = {}) {
+  leaseId = null, leaseStock = 0, leaseStockAfter = null, sourceJournalId = null, franchiseLicenseId = null } = {}) {
   const next = { cash: Number(row.treasury) + cash, stock: Number(row.stock) + stock,
     cost: Number(row.stock_cost) + cost };
   if (![cash, stock, cost, expense, ...Object.values(next)].every(Number.isSafeInteger)
@@ -20,12 +20,12 @@ export async function bookDepot(client, row, reason, { cash = 0, stock = 0, cost
   // when several journal writes share one transaction's timestamp.
   const leaseSequence = leaseId ? Number((await client.query(
     'SELECT MAX(lease_sequence) sequence FROM business_depot_journal WHERE lease_id=$1', [leaseId])).rows[0].sequence || 0) + 1 : null;
-  // Death coverage observes the authoritative burn after custody locks, not BEGIN time.
-  // Ordinary and historical journal entries retain an unknown (NULL) event clock.
-  await client.query("INSERT INTO business_depot_journal (id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,order_id,policy_id,customer_character,stock_after,lease_id,lease_stock_delta,lease_stock_after,warehouse_rent_lease_id,lease_sequence,event_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,CASE WHEN $3='warehouse_tenant_death' THEN clock_timestamp() ELSE NULL END)",
-    [crypto.randomUUID(), row.id, reason, cash, stock, cost, expense, orderId, policyId, customerId, next.stock,
-      leaseId, leaseStock, leaseStockAfter, reason === 'warehouse_rent' ? leaseId : null, leaseSequence]);
+  const journalId = crypto.randomUUID();
+  await client.query("INSERT INTO business_depot_journal (id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,order_id,policy_id,customer_character,stock_after,lease_id,lease_stock_delta,lease_stock_after,warehouse_rent_lease_id,lease_sequence,source_journal_id,franchise_license_id,event_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,CASE WHEN $3='warehouse_tenant_death' THEN clock_timestamp() ELSE NULL END)",
+    [journalId, row.id, reason, cash, stock, cost, expense, orderId, policyId, customerId, next.stock,
+      leaseId, leaseStock, leaseStockAfter, reason === 'warehouse_rent' ? leaseId : null, leaseSequence, sourceJournalId, franchiseLicenseId]);
   row.treasury = next.cash; row.stock = next.stock; row.stock_cost = next.cost;
+  return journalId;
 }
 
 export async function refundDepotOrder(client, listing, amount) {

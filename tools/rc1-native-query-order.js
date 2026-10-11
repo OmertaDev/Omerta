@@ -1,3 +1,4 @@
+import { invoiceSourceBaseline } from './rc1-invoice-source-compatibility.js';
 // Test-only recording of demonstrated unordered PostgreSQL selections/orders.
 // No row can be replayed unless its complete eligible multiset still matches.
 import assert from 'node:assert/strict';
@@ -105,7 +106,7 @@ export function replayCompleteProjection({ eligibleRows, nativeRows, recordedEli
 export function createRecordedQueryOrder({ replay = null, replayDirectory, artifact, root = new URL('../', import.meta.url) } = {}) {
   const sources = QUERY_ORDER_SCOPE.queries.map(scope => {
     const source = fs.readFileSync(new URL(scope.file, root), 'utf8').replace(/\r\n/g, '\n');
-    assert.equal(sha256(source), scope.sourceSha256, `${scope.id} query source differs from pinned source`);
+    assert.equal(sha256(invoiceSourceBaseline(scope.file, source)), scope.sourceSha256, `${scope.id} query source differs from pinned source`);
     assert.equal(source.split(scope.site).length - 1, 1, `${scope.id} query instrumentation site differs`);
     return { file: scope.file, original: source, sha256: sha256(source) };
   });

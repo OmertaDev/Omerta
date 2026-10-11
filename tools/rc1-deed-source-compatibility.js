@@ -1,7 +1,187 @@
+import { INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER, qualifyInvoiceSource } from './rc1-invoice-source-compatibility.js';
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+// Franchise additions transfer only unchanged historical assertions by full-file reconstruction.
+export const FRANCHISE_SOURCE_REVIEWED_REVISION = 'f6dddbfa6b3a475b94b21bb308b91ea8a77d2329';
+export const FRANCHISE_SOURCE_PREDECESSOR_REVISION = '89646ae613a86c7c5a3558487788a54a57817f36';
+export const FRANCHISE_SOURCE_CURRENT_PINS = Object.freeze({
+  "src/server.js": "aa03980dbba6a9f5f0a8da96e69c94031f930ffb75950851e166d5db51d288d2",
+  "src/depot.js": "87ecc31f935fae40b09820cdcd6bccd7226c2f10dc71ada9e2479a2cac4e4eb7",
+  "src/invariants.js": "10d8f60e89dab8ffc1494cbe3953fe0a5c18106722b84e1e7817294ac6fa0016",
+  "src/delivery.js": "3322ec74f770ca89259c35f3dfc9d772f407f10d43e4c283920df2b57cd2081f"
+});
+export const FRANCHISE_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  "src/server.js": "ca911a40235992e6e938eeab5a622a82133499fe9ac723bf61845477ab4fb113",
+  "src/depot.js": "417a00fe6283ed404e37970cc5bb6951bb324e8fb28bdf5219dc12712bc1684f",
+  "src/invariants.js": "851df4ddbcc20a7a947c1b3c07821b5d0ff3a0fe9655cb59578aa7019680fb99",
+  "src/delivery.js": "f3fe045cf3836edf68ed598c41a09e377e5df848d165a3fe32305cbe5e68fbcc"
+});
+export const FRANCHISE_SOURCE_CURRENT_BLOBS = Object.freeze({
+  "src/server.js": "6fc8c1d21e4b346d52d9e8214ce723f7a92d7a7a",
+  "src/depot.js": "6011e6d9be973b26c2f3c9ce6aad5b149e5309ed",
+  "src/invariants.js": "31084671f54e09e03c2b366d0e053ef74fb2d27d",
+  "src/delivery.js": "311cad308598dd6a8f57cd3a9f8d16cad23d23b2"
+});
+export const FRANCHISE_SOURCE_PREDECESSOR_BLOBS = Object.freeze({
+  "src/server.js": "7b32de9531c3d47ced6654175ec492afc81cc5cb",
+  "src/depot.js": "945165dab07398c5eeb4d15ced5038885e36d5f5",
+  "src/invariants.js": "e4671955f894edef3ae655a0e199da8e8afa2ebf",
+  "src/delivery.js": "cf01d7605ada91b4f589935707d23238382a20b2"
+});
+export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
+  "src/server.js": [
+    [
+      "import { register as registerFranchises } from './routes/franchises.js';\n",
+      ""
+    ],
+    [
+      "  registerFranchises(app, { pool, auth });\n",
+      ""
+    ]
+  ],
+  "src/depot.js": [
+    [
+      "import { prepareFranchiseSale, settleFranchiseSale } from './franchiselicenses.js';\n",
+      ""
+    ],
+    [
+      "  const prepared = await prepareFranchiseSale(client, id);\n  const row = prepared.operator;\n  if (!row || row.status !== 'open' || row.owner_character !== owner.id || !owner.alive) throw new GameError('no_depot', 'That business is not operating.');\n",
+      "  const row = (await client.query(\"SELECT * FROM business_depots WHERE id=$1 AND status='open' FOR UPDATE\", [id])).rows[0];\n  if (!row || row.owner_character !== owner.id || !owner.alive) throw new GameError('no_depot', 'That business is not operating.');\n"
+    ],
+    [
+      "  const saleJournalId = await bookDepot(client, row, 'sale', { cash: net, stock: -quantity, cost: -cost, customerId: ch.id });\n  await settleFranchiseSale(client, prepared.context, saleJournalId);\n",
+      "  await bookDepot(client, row, 'sale', { cash: net, stock: -quantity, cost: -cost, customerId: ch.id });\n"
+    ],
+    [
+      "  const royaltyRevenue = journal.filter((entry) => entry.reason === 'royalty_income')\n    .reduce((n, entry) => n + Number(entry.cash_delta), 0);\n",
+      ""
+    ],
+    [
+      "    customerRevenue: revenue, rentalRevenue, royaltyRevenue, costOfGoodsSold: cogs, operatingExpenses: expenses,\n    operatingProfit: revenue + rentalRevenue + royaltyRevenue - cogs - expenses,\n",
+      "    customerRevenue: revenue, rentalRevenue, costOfGoodsSold: cogs, operatingExpenses: expenses,\n    operatingProfit: revenue + rentalRevenue - cogs - expenses,\n"
+    ]
+  ],
+  "src/invariants.js": [
+    [
+      "  const depotJournal = (await pool.query('SELECT id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence,source_journal_id,franchise_license_id FROM business_depot_journal')).rows;\n  const franchiseLicenses = (await pool.query('SELECT * FROM depot_brand_licenses')).rows;\n",
+      "  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;\n"
+    ],
+    [
+      "  push('franchise royalty conservation', -depotCash('royalty_expense'), depotCash('royalty_income'), 0);\n  const royaltyEntries = depotJournal.filter(j => j.franchise_license_id || j.source_journal_id || ['royalty_expense', 'royalty_income'].includes(j.reason));\n  let royaltyFaults = 0;\n  const royaltySources = new Map();\n  for (const j of royaltyEntries) {\n    if (!j.franchise_license_id || !j.source_journal_id || !['royalty_expense', 'royalty_income'].includes(j.reason)) royaltyFaults++;\n    const sourceLicenses = royaltySources.get(j.source_journal_id) || new Set();\n    sourceLicenses.add(j.franchise_license_id); royaltySources.set(j.source_journal_id, sourceLicenses);\n    if (!franchiseLicenses.some(l => l.id === j.franchise_license_id)) royaltyFaults++;\n  }\n  royaltyFaults += [...royaltySources.values()].filter(ids => ids.size !== 1).length;\n  for (const license of franchiseLicenses) {\n    const entries = royaltyEntries.filter(j => j.franchise_license_id === license.id);\n    let earned = 0, paid = 0;\n    for (const sourceId of new Set(entries.map(j => j.source_journal_id))) {\n      const pair = entries.filter(j => j.source_journal_id === sourceId);\n      const debit = pair.find(j => j.reason === 'royalty_expense'), credit = pair.find(j => j.reason === 'royalty_income');\n      const sale = depotJournal.find(j => j.id === sourceId);\n      if (pair.length !== 2 || !debit || !credit || !sale || sale.reason !== 'sale' || sale.depot_id !== license.operator_depot_id\n          || !sale.customer_character || Number(sale.cash_delta) <= 0 || Number(sale.stock_delta) >= 0\n          || debit.depot_id !== license.operator_depot_id || credit.depot_id !== license.recipient_depot_id\n          || Number(credit.cash_delta) < 0 || Number(debit.cash_delta) !== -Number(credit.cash_delta)\n          || Number(debit.expense) !== Number(credit.cash_delta) || Number(credit.expense) !== 0\n          || pair.some(j => Number(j.stock_delta) !== 0 || Number(j.cost_delta) !== 0)) royaltyFaults++;\n      if (sale?.reason === 'sale') earned += Number(sale.cash_delta);\n      if (credit) paid += Number(credit.cash_delta);\n    }\n    if (!depots.some(d => d.id === license.operator_depot_id && d.owner_character === license.operator_character)\n        || !depots.some(d => d.id === license.recipient_depot_id && d.owner_character === license.licensor_character)) royaltyFaults++;\n    push(`franchise paid:${license.id}`, Number(license.paid), paid, 0);\n    push(`franchise earned:${license.id}`, Number(license.earned_net), earned, 0);\n    const expected = Number(BigInt(earned) * BigInt(license.royalty_bps) / 10000n);\n    push(`franchise rounding:${license.id}`, paid, Math.min(Number(license.royalty_cap), expected), 0);\n  }\n  push('franchise royalty provenance', royaltyFaults, 0, 0);\n",
+      ""
+    ]
+  ],
+  "src/delivery.js": [
+    [
+      "import { prepareFranchiseSale } from './franchiselicenses.js';\n",
+      ""
+    ],
+    [
+      "  const depot = (await prepareFranchiseSale(client, depotId)).operator;\n  if (!depot || depot.status !== 'open' || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');\n",
+      "  const depot = (await client.query(\"SELECT * FROM business_depots WHERE id=$1 AND status='open' FOR UPDATE\", [depotId])).rows[0];\n  if (!depot || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');\n"
+    ]
+  ]
+});
+export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  assert(FRANCHISE_SOURCE_CURRENT_PINS[file], 'Unknown franchise compatibility source');
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file], 'Franchise source changed: ' + file);
+  let baselineText = text;
+  for (const [current, original] of FRANCHISE_SOURCE_INVERSES[file]) {
+    assert.equal(baselineText.split(current).length, 2, 'Franchise inverse is not exact and unique: ' + file);
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = FRANCHISE_SOURCE_PREDECESSOR_PINS[file];
+  assert.equal(hash(baselineText), baselineSha256, 'Source differs beyond exact Franchise changes: ' + file);
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: FRANCHISE_SOURCE_REVIEWED_REVISION,
+    sourceBlob: FRANCHISE_SOURCE_CURRENT_BLOBS[file], predecessorBlob: FRANCHISE_SOURCE_PREDECESSOR_BLOBS[file],
+    inverseChunks: FRANCHISE_SOURCE_INVERSES[file].length };
+}
+// Crew logistics changes transfer unchanged historical guards by full-file reconstruction only.
+export const CREW_LOGISTICS_SOURCE_REVIEWED_REVISION = '5f6d9b83496ddce31811d61c168d1ddd3cfb5896';
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION = 'e3b5586c9887d980bc03c709841804b66e36752b';
+export const CREW_LOGISTICS_SOURCE_CURRENT_PINS = Object.freeze({
+  "src/server.js": "ca911a40235992e6e938eeab5a622a82133499fe9ac723bf61845477ab4fb113",
+  "src/game.js": "8c299023ed047d5ff97125044e4e45e1052289bc82b470a08709b33d0402266c",
+  "src/crew.js": "28f8646f59cc6e21c69055092d2b5c9ca4766df73a06f636f26dd31dfc063c09"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  "src/server.js": "62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361",
+  "src/game.js": "bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05",
+  "src/crew.js": "e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed"
+});
+export const CREW_LOGISTICS_SOURCE_CURRENT_BLOBS = Object.freeze({
+  "src/server.js": "7b32de9531c3d47ced6654175ec492afc81cc5cb",
+  "src/game.js": "48e9c5ab0df52d00ab27b2077cf38dbde2fc1d2f",
+  "src/crew.js": "1f3121bd1ea60f54575d47522a48fbf76d1296ce"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS = Object.freeze({
+  "src/server.js": "2e340c1069979debd62ef9f9190c76d1490caadd",
+  "src/game.js": "8edf3e3370f8a7aec006acfe286074ad045be71b",
+  "src/crew.js": "6556caa35fceb784761f14a14d8fbce3c8a5dcb7"
+});
+export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
+  "src/server.js": [
+    [
+      "import { register as registerCrewLogistics } from './routes/crewlogistics.js';\n",
+      ""
+    ],
+    [
+      "  registerCrewLogistics(app, { pool, auth });\n",
+      ""
+    ]
+  ],
+  "src/game.js": [
+    [
+      "// Serialized private projections use no accrual or persistence. Hooks establish the\n// membership boundary before actor/account locks; the callback cannot write or lock.\nexport async function withCharacterReadLocked(pool, accountId, fn, lockHooks = null) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n    const prelockState = lockHooks?.beforeCharacterLock\n      ? await lockHooks.beforeCharacterLock(client, accountId) : null;\n    let r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) throw new GameError('no_character', 'Create a character first.');\n    const ch = r.rows[0];\n    await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR SHARE', [accountId]);\n    if (lockHooks?.afterAccountLock) await lockHooks.afterAccountLock(client, accountId, ch, prelockState);\n    const result = await fn(ch, readOnlyClient(client));\n    await client.query('COMMIT');\n    return result;\n  } catch (e) {\n    await client.query('ROLLBACK').catch(() => {});\n    throw deadlockToRetry(e);\n  } finally { client.release(); }\n}\n\n",
+      ""
+    ],
+    [
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+(?:key\\s+)?share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n",
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n"
+    ]
+  ],
+  "src/crew.js": [
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, ch.account_id]);\n",
+      ""
+    ],
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, t.account_id]);\n",
+      ""
+    ]
+  ]
+});
+export function assertCrewLogisticsSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  assert(CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Unknown Crew logistics compatibility source');
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Crew logistics source changed: ' + file);
+  let baselineText = text;
+  for (const [current, original] of CREW_LOGISTICS_SOURCE_INVERSES[file]) {
+    assert.equal(baselineText.split(current).length, 2, 'Crew logistics inverse is not exact and unique: ' + file);
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file];
+  assert.equal(hash(baselineText), baselineSha256, 'Source differs beyond exact Crew logistics changes: ' + file);
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION,
+    sourceBlob: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file], predecessorBlob: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file],
+    inverseChunks: CREW_LOGISTICS_SOURCE_INVERSES[file].length };
+}
 // Exact warehouse source reconstruction transfers unchanged historical guards only.
 export const WAREHOUSE_SOURCE_REVIEWED_REVISION = '7220e8b088921fcb277ecf7863fb724f113041b8';
 export const WAREHOUSE_SERVER_PIN = '62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361';
@@ -18,6 +198,10 @@ export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_SERVER_PIN, 'Warehouse server source changed');
   let baselineText = text;
@@ -51,6 +235,10 @@ export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseInvariantTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/invariants.js']) {
+    const transfer = qualifyInvoiceSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_INVARIANT_PIN, 'Warehouse invariant source changed');
   let baselineText = text;
@@ -76,6 +264,10 @@ export const WAREHOUSE_ESTATE_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseEstateSourceChange(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/social/estate.js']) {
+    const transfer = qualifyIntelSource('src/social/estate.js', text), predecessor = assertWarehouseEstateSourceChange(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_ESTATE_PIN, 'Warehouse estate source changed');
   let baselineText = text;
@@ -97,6 +289,10 @@ export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
 ]);
 // Registration transfers unchanged recovery guards, never new tender execution.
 export function assertSupplyTenderServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, SUPPLY_TENDER_SERVER_PIN, 'Supply tender transfer source changed: src/server.js');
  let baselineText = text;
@@ -163,6 +359,10 @@ export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
 ]);
 // Only unchanged historical guards transfer; receipt execution retains separate native proof.
 export function assertDecisionCallServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, DECISION_CALL_SERVER_PIN, 'Decision call transfer source changed: src/server.js');
  let baselineText = text;
@@ -201,6 +401,10 @@ export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
 ]);
 // Composition preserves both independently pinned parent qualification scopes.
 export function assertStorefrontCityServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, STOREFRONT_CITY_SERVER_PIN, 'Composed storefront/City transfer source changed: src/server.js');
  let baselineText = text;
@@ -213,6 +417,10 @@ export function assertStorefrontCityServerTransfer(text) {
 }
 // New storefront execution retains separate current-source accounting and native proofs.
 export function assertStorefrontServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, STOREFRONT_SERVER_PIN, 'Storefront transfer source changed: src/server.js');
  let baselineText = text;
@@ -239,6 +447,10 @@ const businessServerChanges = [
 ];
 // Exact inverse only: new business execution retains its separate current-source proofs.
 export function assertBusinessServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, BUSINESS_SERVER_PIN, 'Business transfer source changed: src/server.js');
  let baselineText = text;
@@ -257,6 +469,10 @@ const cityPresenceServerChunks = [
 // This exact registration inverse preserves only the previously reviewed paths.
 // City encounter, private progress and lifecycle authority have separate current-source proofs.
 export function assertCityPresenceServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_PRESENCE_SERVER_PIN, 'City presence transfer source changed: src/server.js');
   let baselineText = text;
@@ -278,6 +494,10 @@ export const CITY_SOCIAL_BUSINESS_SOURCE_PARENTS = Object.freeze([
 // A separate closed composition: both parent transfers retain their original complete pins.
 // This inverse qualifies only unchanged historical guards, never either new execution authority.
 export function assertCitySocialBusinessServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN, 'City social/business transfer source changed: src/server.js');
   let baselineText = text;
@@ -301,6 +521,10 @@ const citySocialServerChunks = [
 ];
 // Only unchanged historical guards transfer; new social authority and execution do not.
 export function assertCitySocialServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_SOCIAL_SERVER_PIN, 'City social transfer source changed: src/server.js');
   let baselineText = text;
@@ -352,6 +576,18 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (file === 'src/invariants.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text) === WAREHOUSE_INVARIANT_PIN) {
     const transfer = assertWarehouseInvariantTransfer(text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -395,6 +631,22 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertFranchiseSourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -480,6 +732,22 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertFranchiseSourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -586,6 +854,22 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertFranchiseSourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -649,6 +933,22 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertFranchiseSourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -867,6 +1167,10 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   assert(Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file), 'Unknown City transfer source');
   assert.equal(hash(text), CITY_SOURCE_CURRENT_PINS[file], 'City transfer source changed: ' + file);
   let baselineText = text;
@@ -953,6 +1257,10 @@ const goodsSourceInverse = {
   ]
 };
 export function assertGoodsSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   assert(Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file), 'Unknown goods transfer source');
   assert.equal(hash(text), GOODS_SOURCE_CURRENT_PINS[file], 'Goods transfer source changed: ' + file);
   let baselineText = text;
@@ -1016,6 +1324,22 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
+  if (file === 'src/server.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };
+  }
+ if (file === 'src/server.js' && hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]) {
+  const transfer = assertCrewLogisticsSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, crewLogisticsSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === WAREHOUSE_SERVER_PIN) {
   const transfer = assertWarehouseServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, warehouseSourceTransfer: transfer };

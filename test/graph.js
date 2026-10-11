@@ -22,6 +22,7 @@ import {
   EDGE_TYPES,
   isMainModule,
   normalizeText,
+  extractIntelHelperReconciliations,
 } from '../tools/graph.js';
 
 // The graph is a developer-facing CLI as well as an importable module. Pin the two Windows failure
@@ -61,10 +62,13 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
+  'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
   'family operation custody',
   'family operation history',
+  'franchise royalty conservation',
+  'franchise royalty provenance',
   'reason vocabulary',
   'warehouse journal ownership',
   'world graph object transitions',
@@ -107,6 +111,56 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+// An advance is metadata over canonical loan escrow, not another cash bucket.
+// Pin the real debt/receipt checks and retain the underlying monetary edge.
+assert.match(invariantSource, /const financeRequests = .*SELECT \* FROM delivery_loan_requests/);
+assert.match(invariantSource, /loan\.borrower_character !== request\.supplier_character/);
+assert.match(invariantSource, /repayment\.paid !== owed \|\| repayment\.vig !== loanVig\(owed\)/);
+assert.match(invariantSource, /push\('delivery finance bindings', financeFaults, 0, 0\)/);
+assert(g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:loan escrow' && edge.to === 'Reason:loan:offer'));
+const intelHelperSource = fs.readFileSync(new URL('../src/intelforecastinvariants.js', import.meta.url), 'utf8');
+const intelTerms = extractIntelHelperReconciliations(invariantSource, intelHelperSource);
+assert.deepEqual(intelTerms.map(term => [term.check, term.reason]), [
+  ['intel forecast escrow', 'intel_job:%'], ['intel forecast receipts', 'intel_job:%'],
+]);
+for (const term of intelTerms) {
+  const edge = g.edges.find(edge => edge.type === 'RECONCILES'
+    && edge.from === `Check:${term.check}` && edge.to === `Reason:${term.reason}`);
+  assert(edge, 'actual imported Intel cash accounting must reconcile its SQL prefix');
+  assert.equal(edge.prov.file, 'src/intelforecastinvariants.js');
+  assert(edge.prov.hash && edge.prov.binding.hash, 'helper and call binding need whole-source provenance');
+}
+for (const source of [
+  invariantSource.replace(/import \{ intelForecastAccounting \} from [^;]+;/, ''),
+  invariantSource.replace('await intelForecastAccounting(pool)', 'await unrelatedAccounting(pool)'),
+]) assert.deepEqual(extractIntelHelperReconciliations(source, intelHelperSource), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace("reason LIKE 'intel_job:%'", "reason = 'intel_job:post'")), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace("currency='cash'", "currency='rep'")), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace('return { escrow, expected, invalid }', 'return { unrelated }')), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace('export async function intelForecastAccounting', 'export async function unrelatedAccounting')), []);
+assert.deepEqual(extractIntelHelperReconciliations(
+  invariantSource.replace('intelForecasts.escrow, intelForecasts.expected', 'intelForecasts.unrelated, intelForecasts.expected'),
+  intelHelperSource).map(term => term.check), ['intel forecast receipts']);
+assert.deepEqual(extractIntelHelperReconciliations(
+  invariantSource.replace('intelForecasts.invalid', 'unrelated.invalid'), intelHelperSource).map(term => term.check),
+['intel forecast escrow']);
+// Franchise royalties move cash inside depot journals, not transaction reasons.
+// Keep this finite monetary classification separate from noncurrency checks.
+for (const name of ['franchise royalty conservation', 'franchise royalty provenance']) {
+  assert(g.nodes.has(`Check:${name}`));
+  assert.equal(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === `Check:${name}`), false);
+}
+assert.match(invariantSource, /const depotCash = \(reason\) => depotJournal\.filter\(\(entry\) => entry\.reason === reason\)\.reduce\(\(n, entry\) => n \+ Number\(entry\.cash_delta\), 0\)/);
+assert.match(invariantSource, /push\('franchise royalty conservation', -depotCash\('royalty_expense'\), depotCash\('royalty_income'\), 0\)/);
+assert.match(invariantSource, /pair\.length !== 2 \|\| !debit \|\| !credit \|\| !sale \|\| sale\.reason !== 'sale'/);
+assert.match(invariantSource, /debit\.depot_id !== license\.operator_depot_id \|\| credit\.depot_id !== license\.recipient_depot_id/);
+assert.match(invariantSource, /Number\(debit\.cash_delta\) !== -Number\(credit\.cash_delta\)/);
+assert.match(invariantSource, /push\('franchise royalty provenance', royaltyFaults, 0, 0\)/);
 for (const reason of ['deposit', 'refund', 'spend', 'forfeit']) {
   assert(invariantSource.includes(`'coordination:capital:${reason}'`), `Family capital vocabulary lost ${reason}`);
 }

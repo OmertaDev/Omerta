@@ -248,6 +248,93 @@ try {
     return view;
   };
 
+  const assertPanelLoading = async (page, label) => {
+    await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'true'
+      && document.querySelector('.city-world__dock-bar strong').textContent === label + ' · Loading…', label);
+    const loading = await page.locator('.city-world__dock').evaluate(dock => {
+      const title = dock.querySelector('.city-world__dock-bar strong'), content = dock.querySelector('.city-world__content');
+      const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
+      const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+      return { copy: notice.textContent, busy: content.getAttribute('aria-busy'), outsideBusy: !content.contains(notice),
+        visible: bounds.height > 0 && bounds.top >= box.top && bounds.bottom <= box.bottom && (hit === title || title.contains(hit)) };
+    });
+    assert.equal(loading.copy, 'Loading ' + label + '…'); assert.equal(loading.busy, 'true');
+    assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content.');
+    await assertFrame(page);
+  };
+  const assertPanelReadFeedback = async viewport => {
+    const activate = (page, selector) => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    for (const scenario of ['active', 'map', 'close']) {
+      const fixture = await newPage(viewport, { noResizeObserver: viewport.width === 320 }), { page, requests } = fixture;
+      const handle = await page.evaluateHandle(() => window.__worldHandles.at(-1)), position = (await state(page)).position;
+      const queues = new Map(), holds = [];
+      const hold = url => {
+        let entered, release, fulfilled;
+        const observed = new Promise(resolve => { entered = resolve; }), gate = new Promise(resolve => { release = resolve; });
+        const finished = new Promise(resolve => { fulfilled = resolve; });
+        const item = { observed, gate, entered, release, finished, fulfilled };
+        queues.get(url).push(item); holds.push(item); return item;
+      };
+      const settled = start => page.waitForFunction(start => window.__worldReadResults[start]?.settled === true, start);
+      const clear = async label => {
+        await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false'
+          && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
+        assert.equal(await page.locator('.city-world__notice').textContent(), '');
+      };
+      try {
+        for (const url of ['/v1/city/social', '/v1/worldgraph/inventory']) {
+          queues.set(url, []);
+          await page.route('**' + url, async route => {
+            const item = queues.get(url).shift();
+            if (!item) return route.continue();
+            const reply = await route.fetch(); assert.equal(reply.status(), 200);
+            item.entered(await reply.json()); await item.gate;
+            await route.fulfill({ response: reply }); item.fulfilled();
+          });
+        }
+        const first = hold('/v1/city/social'), firstRead = await page.evaluate(() => window.__worldReadResults.length);
+        await activate(page, '[data-city-world-tools]'); await activate(page, '[data-city-world-panel="style"]');
+        const issued = await bounded(first.observed, 'the first actual Style board'); assert.equal(issued.outfits.length, 4);
+        assert.equal(await page.locator('[data-city-outfit]').count(), 0);
+        await assertPanelLoading(page, 'Style');
+        if (scenario === 'active') {
+          if (process.env.CITY_WORLD_SHOTS) {
+            fs.mkdirSync(process.env.CITY_WORLD_SHOTS, { recursive: true });
+            await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-loading-' + viewport.width + '.png') });
+          }
+          first.release(); await first.finished; await settled(firstRead); await clear('Style');
+          assert.equal(await page.locator('[data-city-outfit]').count(), 4, 'The real winning board supplies all four looks.');
+          await assertFrame(page);
+          await activate(page, '[data-city-world-close]'); await activate(page, '[data-city-world-tools]');
+          const cached = hold('/v1/city/social'), cachedRead = await page.evaluate(() => window.__worldReadResults.length);
+          await activate(page, '[data-city-world-panel="style"]'); await bounded(cached.observed, 'the cached Style refresh');
+          await clear('Style');
+          assert.equal(await page.locator('[data-city-outfit]').count(), 4);
+          assert(await page.locator('[data-city-outfit]').evaluateAll(nodes => nodes.every(node => !node.disabled)), 'Cached looks stay usable during their refresh.');
+          const bag = hold('/v1/worldgraph/inventory'), bagRead = await page.evaluate(() => window.__worldReadResults.length);
+          await activate(page, '[data-city-world-panel="bag"]'); await assertPanelLoading(page, 'Bag');
+          cached.release(); await cached.finished; await settled(cachedRead);
+          await bounded(bag.observed, 'the actual Bag board queued after Style');
+          await assertPanelLoading(page, 'Bag');
+          assert.equal((await state(page)).worldUI.panel, 'bag', 'An old Social read cannot clear the current Bag loader.');
+          bag.release(); await bag.finished; await settled(bagRead); await clear('Bag'); await assertFrame(page);
+        } else {
+          await activate(page, scenario === 'map' ? '[data-city-world-panel="map"]' : '[data-city-world-close]');
+          await clear(scenario === 'map' ? 'Map' : 'World tools');
+          assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
+          first.release(); await first.finished; await settled(firstRead); await clear(scenario === 'map' ? 'Map' : 'World tools');
+          assert.equal((await state(page)).worldUI.panel, scenario === 'map' ? 'map' : '', 'A retired read cannot reopen or retitle the current panel.');
+          assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
+        }
+        assert(await page.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, handle));
+        assert.deepEqual((await state(page)).position, position, 'Panel reads retain the actual renderer and walking pose.');
+        assert.deepEqual(mutations(requests), [], 'Opening, refreshing and retiring panels never submits gameplay.');
+      } finally {
+        holds.forEach(item => item.release()); await handle.dispose(); await fixture.context.close();
+      }
+    }
+  };
+
   // Real delayed art keeps the explicit entry pending while Tools is already
   // usable. Canceling that entry must not move the clicked header button.
   const pending = await newPage(undefined, { pendingEntry: true });
@@ -269,6 +356,8 @@ try {
     assert(await pending.page.evaluate(() => document.querySelector('.city-world__dock').contains(document.activeElement)), 'Canceled entry cannot steal focus from the selected tools panel.');
     assert.deepEqual(mutations(pending.requests.slice(pendingMutations)), [], 'Pending entry and Tools inspection remain read-only.');
   } finally { pending.releaseArt(); await pending.context.close(); }
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 375, height: 812 }, { width: 320, height: 568 }]) await assertPanelReadFeedback(viewport);
+  console.log('world host: actual first-load feedback, cached controls and retired per-panel reads pass on desktop and phones');
   const { page, requests } = await newPage(undefined, { noResizeObserver: true });
   const pose = (await state(page)).position, handles = await page.evaluate(() => window.__worldHandles.length), initial = requests.length;
   let view = await assertFrame(page);
@@ -883,6 +972,88 @@ try {
   await authPage.page.evaluate(() => window.__retiredAuthChoice.click()); await frames(authPage.page);
   assert.deepEqual(mutations(authPage.requests.slice(afterAuth)), [], 'Known revocation retires private controls before another auth refresh.');
   await authPage.context.close();
+
+  // Keep the original default-off and consent fixtures above unchanged. This
+  // existing living account joins and writes real history before the new page.
+  await preferences(neighbor, { chatEnabled: true });
+  const chatSetup = (await app.inject({ method: 'GET', url: '/v1/city/social', headers: neighbor.headers })).json();
+  const sendHistory = chatSetup.actions.find(action => action.id === 'chat:send'); assert(sendHistory?.available);
+  const historyText = 'Saved loading regression history';
+  const historyReply = await app.inject({ method: sendHistory.method, url: sendHistory.path,
+    headers: { ...neighbor.headers, 'idempotency-key': crypto.randomUUID() }, payload: { ...sendHistory.body, text: historyText } });
+  assert.equal(historyReply.statusCode, 200, historyReply.body);
+  const joinedLoader = await newPage(undefined, { actor: neighbor });
+  const joinedHandle = await joinedLoader.page.evaluateHandle(() => window.__worldHandles.at(-1));
+  const joinedPosition = (await state(joinedLoader.page)).position;
+  let releaseSocial, observedSocial, releaseChat, observedChat, releaseCached, observedCached;
+  const socialGate = new Promise(resolve => { releaseSocial = resolve; }), socialObserved = new Promise(resolve => { observedSocial = resolve; });
+  const chatGate = new Promise(resolve => { releaseChat = resolve; }), chatObserved = new Promise(resolve => { observedChat = resolve; });
+  const cachedGate = new Promise(resolve => { releaseCached = resolve; }), cachedObserved = new Promise(resolve => { observedCached = resolve; });
+  try {
+    const joinedStyle = joinedLoader.page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
+      && reply.status() === 200 && (await reply.json()).preferences.chatEnabled === true);
+    await joinedLoader.page.locator('[data-city-world-tools]').tap();
+    await joinedLoader.page.locator('[data-city-world-panel="style"]').tap(); await joinedStyle;
+    await joinedLoader.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().worldUI.chatJoined
+      && document.querySelectorAll('[data-city-outfit]').length === 4 && document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false');
+    assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0,
+      'The fresh joined Style board has not populated Chat through its normal background poll.');
+    let socialOnce = false, chatOnce = false;
+    await joinedLoader.page.route('**/v1/city/social', async route => {
+      if (socialOnce) return route.continue(); socialOnce = true;
+      const reply = await route.fetch(); assert.equal(reply.status(), 200); assert.equal((await reply.json()).preferences.chatEnabled, true);
+      observedSocial(); await socialGate; await route.fulfill({ response: reply });
+    });
+    await joinedLoader.page.route('**/v1/city/nearby-chat?*', async route => {
+      if (chatOnce) return route.continue(); chatOnce = true;
+      const reply = await route.fetch(); assert.equal(reply.status(), 200);
+      assert((await reply.json()).messages.some(message => message.text === historyText));
+      observedChat(); await chatGate; await route.fulfill({ response: reply });
+    });
+    await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap();
+    await bounded(socialObserved, 'the joined Chat opening\'s actual Social200');
+    assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0);
+    await assertPanelLoading(joinedLoader.page, 'Nearby chat');
+    assert.equal(await joinedLoader.page.locator('[data-city-nearby-feed]').textContent(), 'Messages have not loaded yet.');
+    await joinedLoader.page.evaluate(() => {
+      window.__chatLoaderTrace = [];
+      window.__chatLoaderObserver = new MutationObserver(records => {
+        const dock = document.querySelector('.city-world__dock');
+        window.__chatLoaderTrace.push({ busy: dock.querySelector('.city-world__content').getAttribute('aria-busy'),
+          title: dock.querySelector('.city-world__dock-bar strong').textContent, feed: dock.querySelector('[data-city-nearby-feed]')?.textContent,
+          cleared: records.some(record => record.attributeName === 'aria-busy' && record.oldValue === 'false') });
+      });
+      window.__chatLoaderObserver.observe(document.querySelector('.city-world__dock'), { childList: true, subtree: true, attributes: true, attributeOldValue: true, attributeFilter: ['aria-busy'] });
+    });
+    releaseSocial(); await bounded(chatObserved, 'the dependent actual Chat200');
+    await assertPanelLoading(joinedLoader.page, 'Nearby chat');
+    const handoff = await joinedLoader.page.evaluate(() => { window.__chatLoaderObserver.disconnect(); return window.__chatLoaderTrace; });
+    assert(handoff.length > 0 && handoff.every(frame => frame.busy === 'true' && frame.title === 'Nearby chat · Loading…'
+      && frame.feed === 'Messages have not loaded yet.' && !frame.cleared), 'The real Social-to-Chat handoff never becomes quiet or falsely complete: ' + JSON.stringify(handoff));
+    releaseChat();
+    await joinedLoader.page.waitForFunction(text => document.querySelector('[data-city-nearby-feed]')?.textContent.includes(text)
+      && document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false', historyText);
+    assert.equal(await joinedLoader.page.locator('.city-world__dock-bar strong').textContent(), 'Nearby chat');
+    await joinedLoader.page.unroute('**/v1/city/social'); await joinedLoader.page.unroute('**/v1/city/nearby-chat?*');
+    await joinedLoader.page.locator('[data-city-world-close]').tap(); await joinedLoader.page.locator('[data-city-world-tools]').tap();
+    await joinedLoader.page.route('**/v1/city/social', async route => {
+      const reply = await route.fetch(); assert.equal(reply.status(), 200); observedCached(); await cachedGate; await route.fulfill({ response: reply });
+    });
+    await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap(); await bounded(cachedObserved, 'the complete-history cached Social refresh');
+    assert.equal(await joinedLoader.page.locator('.city-world__content').getAttribute('aria-busy'), 'false');
+    assert.equal(await joinedLoader.page.locator('.city-world__dock-bar strong').textContent(), 'Nearby chat');
+    assert((await joinedLoader.page.locator('[data-city-nearby-feed]').textContent()).includes(historyText));
+    releaseCached(); await joinedLoader.page.waitForFunction(() => window.__worldReadResults.every(read => read.settled));
+    assert(await joinedLoader.page.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, joinedHandle));
+    assert.deepEqual((await state(joinedLoader.page)).position, joinedPosition);
+    assert.deepEqual(mutations(joinedLoader.requests), [], 'Joined Chat loading and cached opening send no message or consent mutation.');
+    await assertFrame(joinedLoader.page);
+    console.log('world host: real joined Social-to-Chat loading handoff and cached history pass');
+  } finally {
+    releaseSocial(); releaseChat(); releaseCached();
+    await joinedLoader.page.evaluate(() => { window.__chatLoaderObserver?.disconnect(); delete window.__chatLoaderObserver; delete window.__chatLoaderTrace; });
+    await joinedHandle.dispose(); await joinedLoader.context.close();
+  }
   assert.deepEqual(errors, []);
   for (const context of contexts) await context.close();
   console.log('city-world-host-browser: actual tools/header, shared objective, equipment/outfit/room, waypoint walking, base-stat feedback, consented two-message chat, decorative routines, reduced motion and responsive camera pass');

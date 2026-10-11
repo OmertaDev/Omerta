@@ -8,6 +8,11 @@ import { CONSTANTS, levelOf, PACING, M3, CRIMES, CITY_EVENTS } from '../src/rule
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from './rc1-deed-source-compatibility.js';
 
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+export const CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/crew.js',
+  actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/crew.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/crew.js'], inverseChunks: 2,
+  evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
+  scope: 'Exact full Crew inverse preserves unchanged checkpoint recovery eligibility; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 const hash = value => sha256(canonicalJson(value));
 const EXTENSION_PINS = Object.freeze({
   'src/mysteries.js': CITY_SOURCE_CURRENT_PINS['src/mysteries.js'],
@@ -27,7 +32,7 @@ const EXTENSION_PINS = Object.freeze({
   'src/world-kernel.js': '141f71783dd1f9126b74c78123d1fccfd403dc4a87c2eb8b6536f9ad8190c810',
 });
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
-  format: 1, sourcePins: EXTENSION_PINS,
+  format: 1, sourcePins: EXTENSION_PINS, crewSourceReviewTransfer: CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER,
   citySourceReviewTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
     sourcePins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])),
     predecessorPins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])),
@@ -50,7 +55,9 @@ export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
   for (const [file, expected] of Object.entries(EXTENSION_PINS)) {
     const text = String(await input.readFile(file)).replace(/\r\n/g, '\n');
-    assert.equal(sha256(text), expected, 'Checkpoint review source changed: ' + file);
+    const baseline = file === 'src/crew.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
+      ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
+    assert.equal(sha256(baseline), expected, 'Checkpoint review source changed: ' + file);
     if (Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file)) assertCitySourceTransfer(file, text);
   }
   return { ...base, checkpointReviewSha256: hash(CHECKPOINT_RECOVERY_REVIEW), extensionPins: { ...EXTENSION_PINS } };

@@ -4,6 +4,11 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
 import { assertCarMeltRulesCompatibility, DEED_RULES_CURRENT_PIN } from './rc1-deed-source-compatibility.js';
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+export const NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/game.js',
+  actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], inverseChunks: 2,
+  evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
+  scope: 'Exact full game inverse preserves unchanged NPC Family formation provenance; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 export const NPC_FAMILY_SOURCE_PINS = Object.freeze({
   'src/population.js': '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
@@ -48,7 +53,9 @@ function captureFrames() {
 export function assertNpcFamilySourcePins() {
   for (const [file, pin] of Object.entries(NPC_FAMILY_SOURCE_PINS)) {
     const text = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
-    assert.equal(hash(text), pin, `NPC provenance source changed: ${file}`);
+    const baseline = file === 'src/game.js' && hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
+      ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
+    assert.equal(hash(baseline), pin, `NPC provenance source changed: ${file}`);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
   }
 }

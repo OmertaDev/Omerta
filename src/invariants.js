@@ -10,7 +10,9 @@ import { withItemRead } from './items.js';
 import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { definitionByHash } from './itemdefinitions.js';
 import { canonicalBytes } from './content/canonical.js';
-import { DESK, DESK_RECYCLE_REASON } from './rules.js';
+import { intelForecastAccounting } from './intelforecastinvariants.js';
+import { deliveryFinanceTerms } from './deliveryfinanceterms.js';
+import { DESK, DESK_RECYCLE_REASON, loanOwed, loanVig } from './rules.js';
 import {
   PHASE1_HARDENING_CASH_COST,
   PHASE1_HARDENING_CASH_REASON,
@@ -101,6 +103,7 @@ const KNOWN_REASONS = {
     // `favor:refund` cancel/expiry, `favor:loot`/`favor:death` the dead poster's escrow. Reconciled
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
+    'intel_job:',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -554,7 +557,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   // Pilot business custody is independently journaled. Cash funding/withdrawals and
   // customer receipts must also reconcile with the existing character ledger.
   const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;
-  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;
+  const depotJournal = (await pool.query('SELECT id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence,source_journal_id,franchise_license_id FROM business_depot_journal')).rows;
+  const franchiseLicenses = (await pool.query('SELECT * FROM depot_brand_licenses')).rows;
   const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;
   const warehouseNow = Date.now();
   const depotOrders = (await pool.query("SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)")).rows;
@@ -573,6 +577,41 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('depot funding', depotCash('fund'), -(await sum(pool, "currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL")), 0);
   push('depot withdrawals', -depotCash('withdraw'), await sum(pool, "currency='cash' AND reason='depot:withdraw' AND character_id IS NOT NULL"), 0);
   push('depot sales', depotCash('sale'), -(await sum(pool, "currency='cash' AND reason='depot:buy'")) + await sum(pool, "currency='cash' AND reason='depot:take'"), 0);
+  push('franchise royalty conservation', -depotCash('royalty_expense'), depotCash('royalty_income'), 0);
+  const royaltyEntries = depotJournal.filter(j => j.franchise_license_id || j.source_journal_id || ['royalty_expense', 'royalty_income'].includes(j.reason));
+  let royaltyFaults = 0;
+  const royaltySources = new Map();
+  for (const j of royaltyEntries) {
+    if (!j.franchise_license_id || !j.source_journal_id || !['royalty_expense', 'royalty_income'].includes(j.reason)) royaltyFaults++;
+    const sourceLicenses = royaltySources.get(j.source_journal_id) || new Set();
+    sourceLicenses.add(j.franchise_license_id); royaltySources.set(j.source_journal_id, sourceLicenses);
+    if (!franchiseLicenses.some(l => l.id === j.franchise_license_id)) royaltyFaults++;
+  }
+  royaltyFaults += [...royaltySources.values()].filter(ids => ids.size !== 1).length;
+  for (const license of franchiseLicenses) {
+    const entries = royaltyEntries.filter(j => j.franchise_license_id === license.id);
+    let earned = 0, paid = 0;
+    for (const sourceId of new Set(entries.map(j => j.source_journal_id))) {
+      const pair = entries.filter(j => j.source_journal_id === sourceId);
+      const debit = pair.find(j => j.reason === 'royalty_expense'), credit = pair.find(j => j.reason === 'royalty_income');
+      const sale = depotJournal.find(j => j.id === sourceId);
+      if (pair.length !== 2 || !debit || !credit || !sale || sale.reason !== 'sale' || sale.depot_id !== license.operator_depot_id
+          || !sale.customer_character || Number(sale.cash_delta) <= 0 || Number(sale.stock_delta) >= 0
+          || debit.depot_id !== license.operator_depot_id || credit.depot_id !== license.recipient_depot_id
+          || Number(credit.cash_delta) < 0 || Number(debit.cash_delta) !== -Number(credit.cash_delta)
+          || Number(debit.expense) !== Number(credit.cash_delta) || Number(credit.expense) !== 0
+          || pair.some(j => Number(j.stock_delta) !== 0 || Number(j.cost_delta) !== 0)) royaltyFaults++;
+      if (sale?.reason === 'sale') earned += Number(sale.cash_delta);
+      if (credit) paid += Number(credit.cash_delta);
+    }
+    if (!depots.some(d => d.id === license.operator_depot_id && d.owner_character === license.operator_character)
+        || !depots.some(d => d.id === license.recipient_depot_id && d.owner_character === license.licensor_character)) royaltyFaults++;
+    push(`franchise paid:${license.id}`, Number(license.paid), paid, 0);
+    push(`franchise earned:${license.id}`, Number(license.earned_net), earned, 0);
+    const expected = Number(BigInt(earned) * BigInt(license.royalty_bps) / 10000n);
+    push(`franchise rounding:${license.id}`, paid, Math.min(Number(license.royalty_cap), expected), 0);
+  }
+  push('franchise royalty provenance', royaltyFaults, 0, 0);
   push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL")), 0);
   push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
   push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);
@@ -636,6 +675,53 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const loanLoot = -(await sum(pool, "currency='cash' AND reason='loan:loot'"));
   push('loan escrow', loanEscrow, loanOffered - loanTaken - loanRefunded - loanDeath - loanLoot);
 
+  // Advances add no cash bucket. Verify their consent/receipt binding to the
+  // canonical debt; loan escrow and character cash still reconcile all value.
+  const financeRequests = (await pool.query('SELECT * FROM delivery_loan_requests')).rows;
+  const financeLoans = (await pool.query('SELECT * FROM loans')).rows;
+  const financeCommitments = (await pool.query('SELECT * FROM delivery_commitments')).rows;
+  let financeFaults = 0;
+  for (const request of financeRequests) {
+    try {
+      const terms = deliveryFinanceTerms(request.terms), quote = request.quote;
+      const loan = financeLoans.find(row => row.id === request.loan_id);
+      const commitment = financeCommitments.find(row => row.id === request.commitment_id);
+      const owed = loanOwed(terms.principal, terms.rate), gross = quote.quantity * quote.unitPrice;
+      if (quote.eligible !== true || quote.good !== 'gin' || !Number.isSafeInteger(quote.quantity) || quote.quantity < 1 || quote.quantity > 40
+          || !Number.isSafeInteger(quote.unitPrice) || quote.unitPrice < 50 || quote.unitPrice > 1000000
+          || !Number.isSafeInteger(quote.takeBps) || quote.takeBps < 0 || quote.takeBps > 10000
+          || quote.gross !== gross || quote.take !== Math.ceil(gross * quote.takeBps / 10000)
+          || quote.fullSettlementNet !== gross - quote.take || quote.fullSettlementNet < owed
+          || quote.owed !== owed || quote.vig !== loanVig(owed)
+          || quote.projectedLenderReceipt !== owed - loanVig(owed)
+          || quote.projectedCashRemainder !== quote.fullSettlementNet - owed) throw new Error('quote');
+      if (terms.supplierId !== request.supplier_character || terms.lenderId !== request.requested_lender_character
+          || terms.commitmentId !== request.commitment_id || quote.supplierId !== terms.supplierId
+          || quote.lenderId !== terms.lenderId || quote.commitmentId !== terms.commitmentId
+          || quote.buyerId !== request.buyer_character || quote.orderId !== request.order_id
+          || quote.principal !== terms.principal || quote.rate !== terms.rate || quote.hours !== terms.hours
+          || quote.fundsReserved !== false || quote.guaranteedIncome !== false) throw new Error('binding');
+      if (commitment && (commitment.order_id !== request.order_id || commitment.supplier_character !== request.supplier_character
+          || commitment.buyer_character !== request.buyer_character || Number(commitment.quantity) !== quote.quantity
+          || Number(commitment.unit_price) !== quote.unitPrice || Number(commitment.take_bps) !== quote.takeBps)) throw new Error('commitment');
+      if (loan && (Number(loan.principal) !== terms.principal || Number(loan.rate) !== terms.rate
+          || Number(loan.hours) !== terms.hours || Number(loan.collateral_min) !== 0 || Number(loan.collateral_omr) !== 0
+          || loan.collateral_car || (loan.status === 'open' && loan.offered_to !== request.supplier_character)
+          || (loan.borrower_character && loan.borrower_character !== request.supplier_character))) throw new Error('debt');
+      if (loan && ((request.state === 'offered' && loan.status === 'active')
+          || (request.state === 'active' && loan.status === 'open')
+          || (request.state === 'closed' && ['open', 'active'].includes(loan.status)))) throw new Error('state');
+      if (request.state === 'settled') {
+        const { delivery, repayment } = request.settlement || {}, owed = loanOwed(terms.principal, terms.rate);
+        if (!delivery || !repayment || delivery.delivered !== quote.quantity || delivery.earned !== quote.fullSettlementNet
+            || delivery.earned < owed || repayment.paid !== owed || repayment.vig !== loanVig(owed)
+            || repayment.toLender !== owed - loanVig(owed) || (loan && loan.status !== 'repaid')
+            || (commitment && (commitment.status !== 'delivered' || Number(commitment.remaining) !== 0))) throw new Error('receipt');
+      }
+    } catch { financeFaults++; }
+  }
+  push('delivery finance bindings', financeFaults, 0, 0);
+
   // (f4b) Drop 5 (B) — THE $OMR PLEDGE ESCROW: active pledged $OMR == pledged in − returned − seized
   // − death-looted. Every pledge row is a single-leg transfer (the auction:bid shape): loan:pledge is
   // the borrower's negative debit into the row, the three exits are positive credits out of it
@@ -670,6 +756,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const fvDeath = -(await sum(pool, "currency='cash' AND reason='favor:death'"));
   const fvLoot = -(await sum(pool, "currency='cash' AND reason='favor:loot'"));
   push('favor escrow', favorEscrow, fvPosted - fvPaid - fvTakes - fvRefunded - fvDeath - fvLoot);
+
+  const intelForecasts = await intelForecastAccounting(pool);
+  push('intel forecast escrow', intelForecasts.escrow, intelForecasts.expected, 0);
+  push('intel forecast receipts', intelForecasts.invalid, 0, 0);
 
   // (f4c) THE TURF CONTEST ESCROW (the strategy package's sealed bid) — the market-escrow shape on
   // the family side. Every open stake sits in district_bids, not a treasury, so the open pot must
