@@ -14,6 +14,7 @@ import { promisify } from 'node:util';
 import Fastify from 'fastify';
 
 import { buildServer } from '../src/server.js';
+import { createResourceAgentTestFetch } from '../tools/resource-agent.js';
 import {
   createAgentAlphaTestRunner,
   recommendationOf,
@@ -1908,7 +1909,7 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
     sockets.add(socket);
     socket.once('close', () => sockets.delete(socket));
   });
-  const state = { sessionCalls: 0, turnCalls: 0, actKeys: [], actBodies: [], executions: 0 };
+  const state = { sessionCalls: 0, turnCalls: 0, actKeys: [], actBodies: [], executions: 0, computeCalls: 0 };
   const committed = new Map();
   let receivedFirst;
   const firstReceived = new Promise((resolveFirst) => { receivedFirst = resolveFirst; });
@@ -1929,14 +1930,17 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
     state.turnCalls += 1;
     return {
       turnId: 'hard-crash-turn',
-      recommendedActionId: 'hard-crash-action',
+      recommendedActionId: decisionCall ? 'hard-crash-baseline' : 'hard-crash-action',
       policy: POLICY,
-      actions: [{
+      actions: [...(decisionCall ? [{ id: 'hard-crash-baseline', kind: 'crime', executable: true, ev: { cash: 200 } }] : []), {
         id: 'hard-crash-action', kind: 'crime', method: 'POST', path: '/ignored',
-        body: { prompt: 'never persist this' }, executable: true,
-        ...(decisionCall ? { decisionCall: { callId: 'call-hard-crash', turnId: 'hard-crash-turn', actionId: 'hard-crash-action' } } : {}),
+        body: { prompt: 'never persist this' }, executable: true, ev: { cash: 200 },
       }],
     };
+  });
+  app.post('/v1/resources/compute', async () => {
+    state.computeCalls++;
+    return { call: { id: 'call-hard-crash', costUsdMicros: 1, output: '{"actionId":"hard-crash-action"}' } };
   });
   app.post('/v1/agent/act', async (req, reply) => {
     state.actKeys.push(req.headers['idempotency-key']);
@@ -1976,8 +1980,10 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
   await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
 
   const runnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/agent-alpha.js', import.meta.url))).href;
+  const resourceRunnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/resource-agent.js', import.meta.url))).href;
   const childCode = `
     import { createAgentAlphaTestRunner } from ${JSON.stringify(runnerUrl)};
+    import { createResourceAgentTestFetch } from ${JSON.stringify(resourceRunnerUrl)};
     let now = 0;
     const runAgentAlpha = createAgentAlphaTestRunner({
       now: () => now,
@@ -1990,6 +1996,9 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
       maxActions: 1,
       intervalMs: 3100,
       sleep: async () => {},
+      ...(process.env.TEST_DECISION === 'on' ? { fetchImpl: createResourceAgentTestFetch({ baseUrl: process.env.TEST_BASE,
+        providerId: 'fixture', maxOutputTokens: 256, maxPaidJobs: 0, maxLaborBids: 0 },
+        { now: () => now, sleep: async (ms) => { now += ms; } }) } : {}),
     });
   `;
   const child = spawn(process.execPath, ['--input-type=module', '--eval', childCode], {
@@ -1998,6 +2007,7 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
       TEST_BASE: baseUrl,
       TEST_SESSION: sessionFile,
       TEST_REPORT: reportFile,
+      TEST_DECISION: decisionCall ? 'on' : 'off',
     },
     stdio: ['ignore', 'ignore', 'pipe'],
   });
@@ -2043,6 +2053,8 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
       maxActions: 1,
       intervalMs: 3100,
       sleep: async () => {},
+      ...(decisionCall ? { fetchImpl: createResourceAgentTestFetch({ baseUrl, providerId: 'fixture', maxOutputTokens: 256,
+        maxPaidJobs: 0, maxLaborBids: 0 }, { now: () => testNow, sleep: async (ms) => { testNow += ms; } }) } : {}),
     });
     assert.deepEqual(resumed, { status: 'complete', actions: 1 },
       'restart reclaims the dead owner and confirms the one pending logical action');
@@ -2055,6 +2067,7 @@ async function hardCrashReplayTest({ decisionCall = false } = {}) {
     assert.deepEqual(state.actBodies[0], state.actBodies[1],
       'hard-crash restart reuses the exact journaled turn/action body');
     assert.equal(state.executions, 1, 'fresh process confirms cached success without another mutation');
+    assert.equal(state.computeCalls, decisionCall ? 1 : 0, 'fresh wrapper recovery never buys another inference');
     assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null,
       'the replay journal clears only after authoritative confirmation');
   } finally {
