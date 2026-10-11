@@ -128,3 +128,18 @@ inherited fixture remains a release blocker pending coordinator remediation and
 retest; no assertion or timeout was relaxed here, and no passing City result is
 claimed for that run. Clean-source generated artifacts and fresh exact-head hosted
 checks remain mandatory before integration release or deployment.
+
+Follow-up source integration includes final earnings revision
+`411749979d6fd86d8bca8428ee597ca66f21f724` and current City label release
+`300b7e4b`. The dependency's bounded diagnostic reproduction confirmed an active
+authored walking path before the old resize snapshot (path length 5 fell to 0
+while position changed); its corrected fixture waits for natural stationary
+arrival before taking that snapshot. The actual selection, resize/pose and label
+geometry assertions remain unchanged; no movement cancellation, retry, timeout
+extension or runtime change was added by delivery integration. The dependency
+implementation agent reran its final combined focused City browser suite and
+reported exit status 0. Delivery's City source and fixture match that tested
+dependency exactly. The earlier failure remains retained above, superseded as a
+local gate by this recorded diagnosis and corrected dependency retest. Fresh
+exact-head hosted checks still govern release; old green checks are not transferred
+to the new merged source. No delivery API, runner or financial activation changed.

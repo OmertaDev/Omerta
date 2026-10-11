@@ -114,3 +114,15 @@ The corrected raw-output SHA-256 is
 `099AC63A62F7BFF5EDE23CD51C2A398147A16BB8ACAA53BAC361B1B11F565BD2`;
 the diagnosis record SHA-256 is
 `D3E2236FE4DDBEF73FCCDEC1E85C37BACD6B741621FC30AD11592ADA8AB6BA06`.
+
+Latest separately released City label source `5c101b2a` and its generated
+successor `300b7e4b` were integrated in `93d8c7a4`. The latest label/rendering
+implementation and expanded browser coverage coexist with the stationary
+precondition, first-page roster reset and bounded passive selection diagnostics.
+Resource earnings source, receipt reconciliation, private routes and resourcebusiness
+test bytes still match reviewed `b3cce295` exactly. The complete focused City
+presence browser suite passed again after this latest integration, exit status 0;
+raw output is retained in `output/earnings-city-latest-main-retest.log`.
+These source integrations do not claim a City runtime correction from the earnings
+branch. Fresh generated artifacts and hosted exact-revision release gates remain
+separate required checks.
