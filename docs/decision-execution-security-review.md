@@ -75,7 +75,17 @@ now rejects a resource command separated from that environment. The hosted recov
 run `38147575709` on `4b2a3c7e` failed before code execution when the public container
 registry rejected the PostgreSQL image pull with a data-limit error; raw diagnostics
 are retained in output/decisionproofs-recovery-hosted-failure.log. This supplies no
-runtime qualification and requires a successful fresh release check.
+runtime qualification and requires a successful fresh release check. The affected
+recovery service now uses the official Docker Hub image pinned to index digest
+`sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336`.
+Anonymous primary-registry reads verified that this is byte-identical to the current
+ECR postgres:18 index: linux/amd64 child
+`sha256:885953109528ad3dfc90362b1a6f50a78620b5315be19f187753d267e484dc5b`,
+PostgreSQL 18.6, official docker-library packaging commit
+`e00e1bd34ec5c8a8e7ad89b273b3d42efaf6d5bc`, path `18/trixie/Dockerfile`.
+This changes the registry transport for the failing gate, not its image bytes or
+tests. Manifest availability does not prove hosted layer downloads; the new recovery
+run must succeed. The separate native PostgreSQL16/18.4 compatibility lanes remain.
 
 Financial activation and real compute purchases remain disabled. Required hosted
 checks and exact production revision/health verification remain release gates.
