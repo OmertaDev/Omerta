@@ -6,6 +6,11 @@ if (native) {
   assert((url.port === '35439' && url.username === 'pilot_runner' && url.password === '')
     || (url.port === '5432' && url.username === 'postgres' && url.password === 'pgcheck'));
   assert(/^\/strategy_license_api_[a-z0-9_]+$/.test(url.pathname));
+  assert(!url.search && !url.hash);
+  const { default: pg } = await import('pg');
+  const preflight = new pg.Pool({ connectionString: url.href });
+  try { assert.equal((await preflight.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0, 'Native API proof requires its own empty database'); }
+  finally { await preflight.end(); }
   process.env.DATABASE_URL = url.href; process.env.MARKET_SEED = 'strategy-license-api-local-fixture';
 } else assert(!process.env.DATABASE_URL, 'Memory proof refuses ambient DATABASE_URL');
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
