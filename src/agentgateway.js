@@ -404,6 +404,19 @@ const OPERATION_CONTRACTS = {
   },
   'POST /v1/strategies/:id/buy': { operationId: 'buyOwnGameStrategyLicense', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/strategy-leagues': { operationId: 'getPublicPrizeFreeStrategyBenchmarks' },
+  'GET /v1/strategy-leagues/own': { operationId: 'getOwnPrizeFreeStrategyBenchmarks' },
+  'POST /v1/strategy-leagues': {
+    operationId: 'createOwnPrizeFreeStrategyBenchmark', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 200 } }],
+    requestSchema: { type: 'object', additionalProperties: false, required: ['districtId', 'minimumStock'], properties: {
+      districtId: { type: 'string' }, minimumStock: { type: 'integer', minimum: 1, maximum: 40 },
+    } },
+  },
+  'POST /v1/strategy-leagues/:id/join': { operationId: 'enterOwnLicensedStrategyBenchmark', requestSchema: { type: 'object', additionalProperties: false,
+    required: ['versionId'], properties: { versionId: { type: 'string', minLength: 1, maxLength: 128 } } } },
+  'POST /v1/strategy-leagues/:id/start': { operationId: 'startOwnSharedStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/strategy-leagues/:id/resolve': { operationId: 'resolveOwnSharedStrategyBenchmark', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'GET /v1/market/feed': { operationId: 'getPublicGameMarketFeed' },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'POST /v1/company-succession': {
