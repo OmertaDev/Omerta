@@ -390,6 +390,14 @@ const OPERATION_CONTRACTS = {
   },
   'POST /v1/intel-forecasts/:id/cancel': { operationId: 'refundOwnOpenGameForecastJob' },
   'POST /v1/intel-forecasts/:id/resolve': { operationId: 'resolveOwnObservedGameForecast' },
+  'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
+  'POST /v1/company-succession': {
+    operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['expectedCompanyRevision', 'predecessorCharacterId', 'maxOpeningCash', 'consent'], properties: {
+        expectedCompanyRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+        predecessorCharacterId: { type: 'string', minLength: 1, maxLength: 128 }, maxOpeningCash: { type: 'integer', const: 5000 }, consent: { type: 'boolean', const: true },
+      } },
+  },
   'GET /v1/logistics-coverage': { operationId: 'getOwnGameLogisticsCoverage' },
   'POST /v1/logistics-coverage/offers': {
     operationId: 'offerOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false,
