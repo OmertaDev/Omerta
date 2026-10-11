@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
+import { qualifyLoanCancelSource, LOAN_CANCEL_SOURCE_TRANSFER } from './rc1-loan-source-compatibility.js';
 import { assertCarMeltRulesCompatibility, assertDeedBacklogCompatibility, DEED_RULES_CURRENT_PIN,
   DEED_BACKLOG_CURRENT_PINS, DEED_BACKLOG_BASELINE_PINS, DEED_SOURCE_REVIEWED_REVISION, AGENT_ECONOMY_INVARIANT_PIN, WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, WAREHOUSE_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 import { LOAN, LAW, WORLD, PEN, CREW, MENTOR, BOXING, CASINO, FAMILY_YIELD, HEIST_PLAN_TTL_MS, dayOf, weekOf } from '../src/rules.js';
@@ -69,11 +70,13 @@ function sourceProof(revision) {
   if (revisions.has(revision)) return;
   for (const [file, expected] of Object.entries(BACKLOG_SOURCE_PINS)) {
     const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
-    assert.equal(sha256(actual), expected, `Backlog reviewer source changed: ${file}`);
+    const qualifiedActual = file === 'src/loans.js' ? qualifyLoanCancelSource(actual).baselineText : actual;
+    assert.equal(sha256(qualifiedActual), expected, `Backlog reviewer source changed: ${file}`);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
     if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
     const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
-    assert.equal(sha256(pinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(actual));
+    const qualifiedPinned = file === 'src/loans.js' ? qualifyLoanCancelSource(pinned).baselineText : pinned;
+    assert.equal(sha256(qualifiedPinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(qualifiedActual));
   }
   revisions.add(revision);
 }
@@ -374,7 +377,7 @@ export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, config
   if (checks.length !== INVARIANT_NAMES.length) unknown.push({ kind: 'canonical-invariant-evidence-missing', missing: INVARIANT_NAMES.filter(name => !checks.some(c => c.name === name)) });
   const jobCoverage = workerJobCoverage();
   if (jobCoverage.unmapped.length) unknown.push({ kind: 'original-worker-job-disposition-missing', workerLabels: jobCoverage.unmapped });
-  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER,
+  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, loanOutputMarkerTransfer: LOAN_CANCEL_SOURCE_TRANSFER,
     configuration, configurationSha256: digest(configuration), inventory, liveState, jobCoverage, unknown,
     scope: 'Original internal lifecycle drainers across the same workload policies, including Law, deferred financial work and explicitly conditional external-input queues. Recurring generators, provider polling, external notification transport and historical retention are separate from this row-draining inventory.',
     qualification: 'OBSERVATIONS_ONLY' };
