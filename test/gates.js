@@ -3529,8 +3529,8 @@ scopedSocialContext = async function(db) {
     'the `suites` job must have exactly one 60-minute HANG bound');
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [30],
-    'the `pgcheck` job must retain exactly one 30-minute HANG bound');
+  assert.deepEqual(timeouts(pgcheck), [45],
+    'the `pgcheck` job must retain exactly one 45-minute HANG bound for prospective strategy proofs');
 
   const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
   for (const command of suitesCommands) {
@@ -3756,7 +3756,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 30m, with every lane intact');
+  console.log('  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 45m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════

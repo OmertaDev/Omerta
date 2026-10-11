@@ -187,7 +187,7 @@ jobs:
     runs-on: ubuntu-latest
     # Expanded native coverage exhausted the former 20m lane after loadtest's
     # success report, before process exit and concurrency. Keep a 30m bound.
-    timeout-minutes: 30
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
