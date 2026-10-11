@@ -404,6 +404,7 @@ const OPERATION_CONTRACTS = {
   },
   'POST /v1/strategies/:id/buy': { operationId: 'buyOwnGameStrategyLicense', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/market/feed': { operationId: 'getPublicGameMarketFeed' },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'POST /v1/company-succession': {
     operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestSchema: { type: 'object', additionalProperties: false,
