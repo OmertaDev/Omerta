@@ -459,6 +459,9 @@ try {
     // hash into world slots, so inspect bounded real roster pages rather than
     // assuming the randomly populated current page intersects this camera.
     await phone.locator('[data-city-actor-close]').click(); await frames(phone);
+    // inspect(npc) can leave the roster on a later page. Search the complete
+    // bounded real roster, including the earlier pages, for the touch target.
+    while (!await phone.locator('[data-city-actors-previous]').isDisabled()) await phone.locator('[data-city-actors-previous]').click();
     let current, box, marker;
     for (let rosterPage = 0; rosterPage < 40; rosterPage++) {
       current = await state(phone); box = await phone.locator('.omerta-city__canvas canvas').boundingBox();
