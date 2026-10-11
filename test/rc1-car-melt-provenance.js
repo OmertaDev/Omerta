@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -33,7 +34,10 @@ assert.equal(oldStorefront.baselineSha256, BUSINESS_SERVER_PIN);
 assert.equal(oldStorefront.inverseChunks, 2);
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const currentFranchise = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, currentFranchise) : null;
+  if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
+  const actual = franchise ? franchise.baselineText : currentFranchise;
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
   const crew = file === 'src/server.js' ? assertCrewLogisticsSourceTransfer(file, actual) : null;
   const warehouseInput = crew ? crew.baselineText : actual;

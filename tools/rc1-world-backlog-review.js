@@ -1,6 +1,9 @@
 // Read-only review of complete native checkpoints. Original workers own every
 // predicate and disposition below; this helper never expires or repairs state.
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_CURRENT_PINS, FRANCHISE_SOURCE_PREDECESSOR_PINS,
+  FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS, FRANCHISE_SOURCE_INVERSES,
+  assertFranchiseSourceTransfer } from './rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
@@ -25,7 +28,7 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/commission.js': '7e1aabd4aea45dc32ff68f3ba9307fd8e6a3794c74ad7e9387f308045da5445f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
-  'src/invariants.js': WAREHOUSE_INVARIANT_PIN,
+  'src/invariants.js': FRANCHISE_SOURCE_CURRENT_PINS['src/invariants.js'],
   'src/law.js': '24fef65ec00bf064bcd3db5513e047ff8339950e4c4ee80ad331747bf7510cca',
   'src/desk.js': 'c3f93aab7cac98192f266dad21e6ec0e0687cb0a1c7541ae0710f822607157e9',
   'src/diplomacy.js': 'dbfad062b79ea5fa8e21d0bf6c9d10b99899b801a68708cf8151c261be106d7b',
@@ -52,6 +55,13 @@ export const BACKLOG_DEED_SOURCE_TRANSFER = Object.freeze({ reviewedRevision: DE
   baselineRulesSha256: 'ee6bdee29f049fcac9c3530729cbdca3039ea87a18b873cf7a6d548f0af1abed',
   evidence: 'output/deed-rwa-upgrades/release-source-pin-fix.json',
   scope: 'Exact reviewed deed rules, atomic ownership/wallet day fields and OMR reason addition; complete baseline sources reconstructed. Existing backlog disposition logic unchanged.' });
+export const BACKLOG_FRANCHISE_SOURCE_TRANSFER = Object.freeze({ sourceRevision: FRANCHISE_SOURCE_REVIEWED_REVISION,
+  file: 'src/invariants.js', actualSha256: FRANCHISE_SOURCE_CURRENT_PINS['src/invariants.js'],
+  predecessorSha256: FRANCHISE_SOURCE_PREDECESSOR_PINS['src/invariants.js'],
+  sourceBlob: FRANCHISE_SOURCE_CURRENT_BLOBS['src/invariants.js'], predecessorBlob: FRANCHISE_SOURCE_PREDECESSOR_BLOBS['src/invariants.js'],
+  inverseChunks: FRANCHISE_SOURCE_INVERSES['src/invariants.js'].length, evidence: 'docs/franchise-licenses-security-review.md',
+  phase: 'source compatibility; financial activation disabled',
+  scope: 'Exact royalty journal reads, linked pair provenance and cumulative counters reconstruct the complete Warehouse invariant predecessor. Historical backlog assertions remain unchanged. Franchise royalty behavior requires separate current-source native proofs; no historical runtime, native, deployment or financial qualification is inherited.' });
 export const BACKLOG_WAREHOUSE_SOURCE_TRANSFER = Object.freeze({ sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION,
   sourceBlob: WAREHOUSE_INVARIANT_BLOB, predecessorBlob: WAREHOUSE_INVARIANT_PREDECESSOR_BLOB,
   actualInvariantSha256: WAREHOUSE_INVARIANT_PIN, predecessorInvariantSha256: AGENT_ECONOMY_INVARIANT_PIN,
@@ -78,10 +88,11 @@ function sourceProof(revision) {
     const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
     assert.equal(sha256(actual), expected, `Backlog reviewer source changed: ${file}`);
     const crewTransfer = ['src/game.js', 'src/crew.js'].includes(file) ? assertCrewLogisticsSourceTransfer(file, actual) : null;
+    const franchiseTransfer = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, actual) : null;
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
     if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
     const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
-    assert.equal(sha256(pinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(crewTransfer ? crewTransfer.baselineText : actual));
+    assert.equal(sha256(pinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(franchiseTransfer?.baselineText || crewTransfer?.baselineText || actual));
   }
   revisions.add(revision);
 }
@@ -382,7 +393,7 @@ export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, config
   if (checks.length !== INVARIANT_NAMES.length) unknown.push({ kind: 'canonical-invariant-evidence-missing', missing: INVARIANT_NAMES.filter(name => !checks.some(c => c.name === name)) });
   const jobCoverage = workerJobCoverage();
   if (jobCoverage.unmapped.length) unknown.push({ kind: 'original-worker-job-disposition-missing', workerLabels: jobCoverage.unmapped });
-  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, crewLogisticsSourceReviewTransfer: BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER,
+  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, franchiseSourceReviewTransfer: BACKLOG_FRANCHISE_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, crewLogisticsSourceReviewTransfer: BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER,
     configuration, configurationSha256: digest(configuration), inventory, liveState, jobCoverage, unknown,
     scope: 'Original internal lifecycle drainers across the same workload policies, including Law, deferred financial work and explicitly conditional external-input queues. Recurring generators, provider polling, external notification transport and historical retention are separate from this row-draining inventory.',
     qualification: 'OBSERVATIONS_ONLY' };

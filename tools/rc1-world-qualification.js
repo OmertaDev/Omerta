@@ -1,5 +1,8 @@
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
+  FRANCHISE_SOURCE_PREDECESSOR_PINS, FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
+  FRANCHISE_SOURCE_INVERSES } from './rc1-deed-source-compatibility.js';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { levelOf, M3, MADE, STAKE_LOCKS, BROKERS } from '../src/rules.js';
 import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RULES_CURRENT_PIN,
@@ -33,7 +36,7 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js'],
+  'src/server.js': FRANCHISE_SOURCE_CURRENT_PINS['src/server.js'],
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -43,7 +46,13 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 16, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 17, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  franchiseSourceReviewTransfer: { sourceRevision: FRANCHISE_SOURCE_REVIEWED_REVISION, predecessorRevision: FRANCHISE_SOURCE_PREDECESSOR_REVISION,
+    currentPins: FRANCHISE_SOURCE_CURRENT_PINS, predecessorPins: FRANCHISE_SOURCE_PREDECESSOR_PINS,
+    currentBlobs: FRANCHISE_SOURCE_CURRENT_BLOBS, predecessorBlobs: FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
+    inverseChunks: Object.fromEntries(Object.entries(FRANCHISE_SOURCE_INVERSES).map(([file, chunks]) => [file, chunks.length])),
+    evidence: 'docs/franchise-licenses-security-review.md', phase: 'source compatibility; financial activation disabled',
+    scope: 'Exact franchise route registration, native retail royalty hooks, ordered depot acquisition, income projection and royalty invariants reconstruct complete Crew server, Warehouse depot/invariants and Tender delivery predecessors. Only unchanged historical guards transfer. Franchise consent, royalties, lifecycle, zero-pair replay and locking require separate current-source native proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited. No new runtime eligibility or estate qualification is added.' },
   crewLogisticsSourceReviewTransfer: { sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, predecessorRevision: CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION,
     currentPins: CREW_LOGISTICS_SOURCE_CURRENT_PINS, predecessorPins: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS,
     currentBlobs: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, predecessorBlobs: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS,
