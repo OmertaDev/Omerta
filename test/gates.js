@@ -3634,6 +3634,15 @@ scopedSocialContext = async function(db) {
     }
   };
   assertResourceNativeEnvironment(pgcheck);
+  const assertCityHomesNativeEnvironment = workflow => {
+    const section = workflow.split(/\n {6}- /).find(part => /^\s*(?:run:\s*)?npm run test:city:postgres\s*$/m.test(part));
+    assert(section && /^\s*CITY_HOMES_TEST_DATABASE_URL:\s*postgres:\/\/postgres:pgcheck@localhost:5432\/omerta_query\s*$/m.test(section),
+      'City home projection requires its explicit named native database environment');
+  };
+  assertCityHomesNativeEnvironment(pgcheck);
+  assert.throws(() => assertCityHomesNativeEnvironment(pgcheck.replace(/^\s*CITY_HOMES_TEST_DATABASE_URL:[^\n]*\n/m, '')),
+    /explicit named native database/, 'removing the home directory native endpoint cannot pass the retained City command ledger');
+
   const pilotSection = pgcheck.split(/\n {6}- /).find(section => /^\s*(?:run:\s*)?npm run pilot:resources:postgres\s*$/m.test(section));
   assert(pilotSection);
   const missingResourceEnvironment = pgcheck.replace(pilotSection,

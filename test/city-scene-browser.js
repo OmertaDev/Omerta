@@ -9,6 +9,20 @@ import { buildServer } from '../src/server.js';
 
 // Cached options must never update or destroy a different current identity while its read is pending.
 const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
+const sceneSource = fs.readFileSync(new URL('../public/city-scene.js', import.meta.url), 'utf8');
+const geometry = {};
+vm.runInNewContext(sceneSource.slice(sceneSource.indexOf('  const WORLD ='), sceneSource.indexOf('  function mount('))
+  + '\nthis.route = route; this.traversable = traversable;', geometry);
+const homeBuilding = { x: 1008, y: 52, width: 144, height: 140 };
+const expandedWorld = { width: 1216, height: 640 };
+const homeRoute = geometry.route({ x: 430, y: 366 }, { x: 1080, y: 224 }, expandedWorld, [homeBuilding], 540);
+assert(homeRoute.some(point => point.x > 960), 'The real route helper reaches the residential extension.');
+assert(Math.hypot(homeRoute.at(-1).x - 1080, homeRoute.at(-1).y - 224) < 16, 'The extended route arrives at the home entrance.');
+assert(homeRoute.every(point => geometry.traversable(point.x, point.y, expandedWorld, [homeBuilding], 540)), 'The new route stays outside the actual home footprint.');
+assert(homeRoute.slice(1).every((point, index) => Math.abs(point.x - homeRoute[index].x) + Math.abs(point.y - homeRoute[index].y) === 16), 'Residential paths retain cardinal movement through real cells.');
+const gardenRoute = geometry.route({ x: 430, y: 366 }, { x: 560, y: 592 }, { width: 960, height: 640 }, [], 620);
+assert(gardenRoute.at(-1).y > 540, 'A regional land route no longer stops at the Docks waterfront boundary.');
+assert.equal(geometry.traversable(1080, 224), false, 'The default zero-home Docks bounds remain intact.');
 const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
 // The view predicate is checked only before an authenticated queued call dispatches.
 // Closing a dock after dispatch must retain the actual reply; token changes retain
@@ -307,10 +321,17 @@ try {
   const assertHud = async (page, expected) => {
     const fields = ['cash', 'health', 'energy', 'nerve', 'heat', 'level'];
     const values = Object.fromEntries(fields.map(key => [key, Number(expected[key])]));
-    await page.waitForFunction(values => {
-      const resources = window.__cityHandles.at(-1)?.handle.getState().resources;
-      return resources && Object.entries(values).every(([key, value]) => resources[key] === value);
-    }, values);
+    try {
+      await page.waitForFunction(values => {
+        const resources = window.__cityHandles.at(-1)?.handle.getState().resources;
+        return resources && Object.entries(values).every(([key, value]) => resources[key] === value);
+      }, values);
+    } catch (error) {
+      const actual = await state(page);
+      console.error('City HUD diagnostic:', JSON.stringify({ expected: values, actual: { ready: actual.ready, resources: actual.resources, region: actual.region },
+        response: await page.evaluate(() => window.__cityHudResponse || null) }));
+      throw error;
+    }
     for (const key of fields) {
       const text = await page.locator(`[data-city-resource="${key}"] [data-city-value]`).textContent();
       assert.equal(Number(text.split('/')[0].replace(/[^\d.-]/g, '')), values[key], 'Visible City HUD mirrors ' + key);
@@ -327,7 +348,8 @@ try {
   const refreshHudFromClient = async page => {
     const reply = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
     await page.locator('#btn-refresh').click();
-    const me = await (await reply).json();
+    const response = await reply, me = await response.json();
+    await page.evaluate(({ status, error }) => { window.__cityHudResponse = { status, error }; }, { status: response.status(), error: me.error || null });
     await assertHud(page, me.player?.character || me.player);
     return me.player?.character || me.player;
   };
@@ -1407,6 +1429,7 @@ try {
     await waitForFrames(waiting, 3);
     assert.notEqual(await waiting.evaluate(() => document.activeElement?.tagName), 'CANVAS', reason + ' cancels delayed canvas focus.');
     if (reason === 'modal') assert.equal(await waiting.evaluate(() => document.activeElement?.id), 'jump-q');
+    if (reason === 'identity') await waiting.unrouteAll({ behavior: 'wait' });
     await waiting.context().close();
   }
 
@@ -1491,6 +1514,128 @@ try {
   await selectTab(missingEngine, 'map');
   await waitForCity(missingEngine);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 1, 'Returning after an engine load failure retries the engine successfully.');
+
+  // Confirmed directory rows create physical plots; the server still owns travel and deeds.
+  const landActor = async (name, kind = 'player') => {
+    const birth = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });
+    assert.equal(birth.statusCode, 200, birth.body);
+    const landToken = birth.json().token, landHeaders = { authorization: 'Bearer ' + landToken };
+    assert.equal((await app.inject({ method: 'POST', url: '/v1/character', headers: landHeaders, payload: { name } })).statusCode, 200);
+    const row = (await app.pool.query('SELECT id,account_id FROM characters WHERE account_id=$1 AND alive', [app.jwt.verify(landToken).sub])).rows[0];
+    if (kind === 'agent') await app.pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [row.account_id]);
+    if (kind === 'npc') await app.pool.query('UPDATE characters SET is_npc=true WHERE id=$1', [row.id]);
+    return { ...row, token: landToken, headers: landHeaders };
+  };
+  const explorer = await landActor('Connected Explorer'), agentLandlord = await landActor('Land Agent', 'agent');
+  const residentLandlord = await landActor('Land Resident', 'npc'), nextLandlord = await landActor('Street Successor');
+  for (const [owner, street] of [[explorer, 'Amber Row'], [agentLandlord, 'Tern House'], [residentLandlord, 'Cedar Yard']]) {
+    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,corner_at) VALUES($1,$2,$3,$4,now())',
+      [owner.account_id, street, street.toLowerCase(), 'docks']);
+  }
+  const land = await newPage({}, explorer.token), landRequests = [];
+  land.on('request', request => landRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
+  await openCity(land);
+  await land.locator('#btn-player-view').click(); await waitForCity(land);
+  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
+  const landHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), initialLand = await state(land);
+  assert(initialLand.world.width > 960 && initialLand.world.height === 640, 'Real deed records extend the walkable world beyond the original Docks.');
+  assert.deepEqual(new Set(initialLand.homes.map(home => home.owner.kind)), new Set(['player', 'agent', 'npc']));
+  assert.equal(new Set(initialLand.homes.map(home => home.key)).size, 3);
+  await land.locator('[data-city-world-map]').click();
+  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().worldUI.mapView === 'world');
+  assert.deepEqual((await state(land)).position, initialLand.position, 'Opening the connected atlas never relocates the character.');
+  await land.locator('[data-city-world-close]').click();
+  const home = (await state(land)).homes.find(home => home.key === 'amber row');
+  await land.locator('[data-city-home="amber row"]').click();
+  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row'
+    && window.__cityHandles.at(-1).handle.getState().pathLength === 0);
+  const arrivedHome = await state(land);
+  assert(Math.hypot(arrivedHome.player.x - home.entrance.x, arrivedHome.player.y - home.entrance.y) < 20, 'The real waypoint route arrives at the house entrance.');
+  assert(arrivedHome.player.x > 960, 'The player actually walks into the extension.');
+  assert.match(await land.locator('.omerta-city__actor-body').innerText(), /Connected Explorer.*PLAYER steward/s);
+  assert.match(await land.locator('.omerta-city__actor-body').innerText(), /illustrative.*does not show where the steward/s);
+  assert.equal(await land.locator('[data-city-home-action="hideout"]').count(), 1);
+  const ownedControl = await land.locator('[data-city-home-action="hideout"]').elementHandle();
+  await land.locator('[data-city-actor-close]').click();
+  await holdKey(land, 'ArrowDown', y => window.__cityHandles.at(-1).handle.getState().player.y > y + 45, arrivedHome.player.y);
+  await holdKey(land, 'ArrowUp', entrance => Math.hypot(window.__cityHandles.at(-1).handle.getState().player.x - entrance.x,
+    window.__cityHandles.at(-1).handle.getState().player.y - entrance.y) < 15, home.entrance);
+  await land.keyboard.press('e');
+  assert.equal((await state(land)).selectedHome, home.key, 'Keyboard walking and E inspect the actual entrance.');
+  await land.locator('[data-city-actor-close]').click();
+  await waitForFrames(land, 3);
+  const pointerState = await state(land), homeCanvas = land.locator('.omerta-city__canvas canvas'), homeCanvasBox = await homeCanvas.boundingBox();
+  await homeCanvas.click({ position: {
+    x: (home.building.x + home.building.width / 2 - pointerState.camera.x) * pointerState.camera.zoom * homeCanvasBox.width / pointerState.camera.width,
+    y: (home.building.y + 75 - pointerState.camera.y) * pointerState.camera.zoom * homeCanvasBox.height / pointerState.camera.height,
+  } });
+  assert.equal((await state(land)).selectedHome, home.key, 'Native canvas input inspects the same home without a pose setter.');
+  const transferPose = (await state(land)).position;
+  await app.pool.query('UPDATE street_deeds SET account_id=$2 WHERE name_lc=$1', ['amber row', nextLandlord.account_id]);
+  await land.locator('#btn-refresh').click();
+  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes.find(home => home.key === 'amber row')?.owner?.name === 'Street Successor');
+  const transferred = await state(land), samePlot = transferred.homes.find(item => item.key === home.key);
+  assert.deepEqual(samePlot.entrance, home.entrance, 'Stewardship changes retain the same public street-key plot.');
+  assert.deepEqual(transferred.position, transferPose, 'A directory refresh never teleports the walking player.');
+  assert.equal(transferred.homes.filter(item => item.key === home.key).length, 1, 'A transfer never duplicates a house.');
+  assert.equal(samePlot.mine, false);
+  assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, landHandle), 'The same district retains its existing game through the transfer.');
+  await land.locator('[data-city-home="amber row"]').click();
+  assert.equal(await land.locator('[data-city-home-action="hideout"]').count(), 0, 'The former owner cannot open a personal hideout from the transferred plot.');
+  await ownedControl.evaluate(node => node.click());
+  assert.notEqual((await state(land)).worldUI.panel, 'room', 'An old detached owner control is inert.');
+  await land.locator('[data-city-actor-close]').click();
+  for (const width of [375, 320]) {
+    await land.setViewportSize({ width, height: 812 });
+    await land.locator('[data-city-home="amber row"]').click();
+    await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row');
+    assert.deepEqual((await state(land)).position, transferPose);
+    const hit = await land.locator('[data-city-actor-close]').evaluate(node => {
+      const box = node.getBoundingClientRect(), dock = node.closest('.omerta-city__actor-dock').getBoundingClientRect();
+      return box.width >= 44 && box.height >= 44 && box.top >= dock.top && box.bottom <= dock.bottom
+        && document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2) === node;
+    });
+    assert(hit, 'The home inspector retains a real 44px phone close target.');
+    if (shots) await land.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-home-' + width + '.png'), style: sceneShotStyle });
+    await land.locator('[data-city-actor-close]').click();
+  }
+  assert.deepEqual(landRequests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Walking and inspecting actual homes sends no gameplay POST.');
+  await land.setViewportSize({ width: 1440, height: 1000 });
+  const landFare = Number(crimeRules.travelCost);
+  assert(Number.isFinite(landFare) && landFare > 0);
+  await app.pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [explorer.id, landFare * 3]);
+  let landRides = 0;
+  for (const district of ['brick', 'cathedral']) {
+    const route = await app.inject({ method: 'POST', url: '/v1/travel/' + district, headers: { ...explorer.headers, 'idempotency-key': 'connected-geometry-' + district }, payload: {} });
+    assert.equal(route.statusCode, 200, route.body);
+    assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [explorer.id])).rows[0].cash), landFare * (3 - ++landRides));
+    await land.locator('#btn-refresh').click();
+    await land.waitForFunction(id => window.__cityHandles.at(-1).handle.getState().ready && window.__cityHandles.at(-1).handle.getState().region.id === id, district);
+    const regional = await state(land);
+    assert.equal(regional.world.width, 960, 'A new district does not inherit another district’s residential extent.');
+    assert.equal(regional.homes.length, 0);
+    assert.equal(regional.region.landmark, district === 'brick' ? 'Kiln Square' : 'Bell Gardens');
+    await land.locator('.omerta-city__canvas canvas').focus();
+    await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 560);
+    assert((await state(land)).player.y > 540, 'Regional land is walkable beyond the former waterfront limit.');
+    if (shots) await land.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-region-' + district + '.png'), style: sceneShotStyle });
+  }
+  const fallbackTravel = await app.inject({ method: 'POST', url: '/v1/travel/docks', headers: { ...explorer.headers, 'idempotency-key': 'connected-fallback-docks' }, payload: {} });
+  assert.equal(fallbackTravel.statusCode, 200, fallbackTravel.body);
+  assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [explorer.id])).rows[0].cash), 0);
+  const landFallback = await newPage({ viewport: { width: 375, height: 812 } }, explorer.token);
+  await landFallback.route('**/vendor/phaser.js*', route => route.abort());
+  await landFallback.goto(base, { waitUntil: 'networkidle' });
+  await landFallback.locator('#screen-main:not(.hidden)').waitFor(); await landFallback.locator('#btn-player-view').click();
+  await landFallback.locator('.omerta-city--unavailable').waitFor();
+  await landFallback.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
+  await landFallback.locator('[data-city-home="amber row"]').click();
+  assert.equal((await state(landFallback)).selectedHome, 'amber row');
+  assert.equal((await state(landFallback)).pathLength, 0);
+  assert.match(await landFallback.locator('.omerta-city__actor-body').innerText(), /Walking is unavailable/);
+  await landFallback.locator('[data-city-home-action="map"]').click();
+  await landFallback.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().worldUI.mapView === 'world');
+  assert.equal((await state(landFallback)).ready, false, 'The real engine outage preserves the connected atlas and property inspection without fabricated walking.');
 
   // Authoritative identity transitions must never reuse another district or generation's pose.
   await page.bringToFront();

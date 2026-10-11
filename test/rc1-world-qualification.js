@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DEED_SERVER_BASELINE_PIN,
   DEED_SERVER_CURRENT_PIN, HTTP_RECEIPT_SERVER_PIN, HTTP_RECEIPT_HELPER_PIN } from '../tools/rc1-deed-source-compatibility.js';
@@ -10,6 +11,7 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
   DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
   STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
@@ -26,7 +28,24 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const tenderServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const homesProof = assertCityHomesServerTransfer(homesServerText);
+assert.equal(homesProof.actualSha256, CITY_HOMES_SERVER_PIN);
+assert.equal(homesProof.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
+assert.equal(homesProof.sourceBlob, CITY_HOMES_SERVER_BLOB);
+assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_PREDECESSOR_SERVER_BLOB);
+assert.equal(crypto.createHash('sha1').update(`blob ${Buffer.byteLength(homesServerText)}\0`).update(homesServerText).digest('hex'), CITY_HOMES_SERVER_BLOB);
+assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(CITY_HOMES_SOURCE_INVERSES.length, 2);
+for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
+  assert.equal(homesServerText.split(chunk).length, 2);
+  for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
+    assert.throws(() => assertCityHomesServerTransfer(changed), /source changed/);
+}
+assert.throws(() => assertCityHomesServerTransfer(homesServerText + '\n// unsupported City homes drift\n'), /source changed/);
+const tenderServerText = homesProof.baselineText;
 const tenderProof = assertSupplyTenderServerTransfer(tenderServerText);
 assert.equal(tenderProof.actualSha256, SUPPLY_TENDER_SERVER_PIN);
 assert.equal(tenderProof.baselineSha256, DECISION_CALL_SERVER_PIN);
@@ -374,7 +393,12 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], SUPPLY_TENDER_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], CITY_HOMES_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
+assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
 assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.actualServerSha256, SUPPLY_TENDER_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.predecessorServerSha256, DECISION_CALL_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.inverseChunks, 2);
@@ -409,7 +433,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 14);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 15);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);

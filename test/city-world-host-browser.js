@@ -17,6 +17,7 @@ const client = fs.readFileSync(new URL('../public/index.html', import.meta.url),
 const toastFunctions = client.slice(client.indexOf('  function dismissToast()'), client.indexOf('  // THE TRAVEL PICKER'));
 assert(toastFunctions.includes('function toast(') && toastFunctions.includes('t.inert = true'));
 const app = await buildServer(); let browser;
+const fixtureCleanup = [];
 try {
   const create = async name => {
     const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });
@@ -48,7 +49,7 @@ try {
     await context.addInitScript(({ token, noResizeObserver }) => {
       localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_tour2', '1');
       if (noResizeObserver) window.ResizeObserver = undefined;
-      window.__worldGames = []; window.__worldHandles = []; window.__worldReads = []; window.__worldReadResults = [];
+      window.__worldGames = []; window.__worldHandles = []; window.__worldReads = []; window.__worldReadResults = []; window.__worldNavigations = []; window.__worldUpdates = [];
       let engine, module;
       Object.defineProperty(window, 'Phaser', { configurable: true, get: () => engine, set: value => {
         engine = value; value.Game = new Proxy(value.Game, { construct(target, args) {
@@ -57,10 +58,12 @@ try {
       } });
       Object.defineProperty(window, 'OmertaCityScene', { configurable: true, get: () => module, set: value => {
         module = { ...value, mount(...args) {
-          const read = args[1].onWorldRead;
-          args[1] = { ...args[1], onWorldRead: async (kind, context) => {
+          const read = args[1].onWorldRead, navigate = args[1].onNavigate;
+          args[1] = { ...args[1], onNavigate: (tab, context) => {
+            window.__worldNavigations.push({ tab, context: structuredClone(context) }); return navigate(tab, context);
+          }, onWorldRead: async (kind, context) => {
             window.__worldReads.push(kind);
-            const resultRecord = { kind, scene: window.__worldHandles.length, settled: false,
+            const resultRecord = { kind, districtId: context.districtId, cursor: context.cursor, scene: window.__worldHandles.length, settled: false,
               ownerCurrentAtStart: context.isCurrent(), scope: window.__worldReadScope?.() };
             window.__worldReadResults.push(resultRecord);
             const result = await read(kind, context);
@@ -71,7 +74,12 @@ try {
           } };
           const handle = value.mount(...args), record = { handle, destroyed: false };
           window.__worldHandles.push(record);
-          return { ...handle, destroy() { record.destroyed = true; handle.destroy(); } };
+          return { ...handle, update(next) {
+            handle.update(next);
+            const state = handle.getState(); window.__worldUpdates.push({ scope: window.__worldReadScope?.(),
+              hydrationDistrict: next.worldHomes?.districtId, hydrationCount: next.worldHomes?.homes?.length,
+              homes: state.homes, position: state.position });
+          }, destroy() { record.destroyed = true; handle.destroy(); } };
         } };
       } });
     }, { token: actor.token, noResizeObserver });
@@ -1054,7 +1062,349 @@ try {
     await joinedLoader.page.evaluate(() => { window.__chatLoaderObserver?.disconnect(); delete window.__chatLoaderObserver; delete window.__chatLoaderTrace; });
     await joinedHandle.dispose(); await joinedLoader.context.close();
   }
+  {
+  // Keep the inherited fixtures above unchanged. The existing living neighbor
+  // now exercises the canonical atlas, travel receipts and account-owned deed.
+  const historicalAccounts = [];
+  for (let index = 0; index < 35; index++) {
+    const account = (index === 0 ? 'onchain:' : '') + 'world-host-history-' + index;
+    const street = index === 0 ? 'Legacy Café' : 'World Atlas Legacy ' + String(index).padStart(2, '0');
+    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district) VALUES($1,$2,$3,$4)', [account, street, street.toLowerCase(), 'docks']);
+    historicalAccounts.push(account);
+  }
+  const clearHistoricalHomes = async () => { for (const account of historicalAccounts) await app.pool.query('DELETE FROM street_deeds WHERE account_id=$1', [account]); };
+  fixtureCleanup.push(clearHistoricalHomes);
+  await preferences(neighbor, { chatEnabled: false });
+  await app.pool.query('UPDATE characters SET cash=1000000,health=100,jail_until=NULL,last_accrued_at=$2 WHERE id=$1 AND alive',
+    [neighbor.character.id, new Date(Date.now() + 600000)]);
+  const connected = await newPage(undefined, { actor: neighbor });
+  const cityPage = connected.page, cityRequests = connected.requests;
+  const activate = control => cityPage.viewportSize().width <= 680 ? control.tap() : control.click();
+  const currentActor = async actor => (await app.pool.query('SELECT id,account_id,generation,loc,cash FROM characters WHERE account_id=$1 AND alive', [actor.character.account_id])).rows[0];
+  const fares = async actor => (await app.pool.query("SELECT amount FROM transactions WHERE character_id=$1 AND currency='cash' AND reason='travel'", [(await currentActor(actor)).id])).rows.map(row => Number(row.amount));
+  const recorded = async actor => (await app.inject({ url: '/v1/collection', headers: actor.headers })).json().categories.find(category => category.id === 'districts').items;
+  const openAtlas = async (page = cityPage) => {
+    const control = await page.locator('[data-city-home-action="map"]').isVisible()
+      ? page.locator('[data-city-home-action="map"]') : await page.locator('.city-world__dock').isVisible()
+        ? page.locator('[data-city-map-view="world"]') : page.locator('[data-city-world-map]');
+    await (page.viewportSize().width <= 680 ? control.tap() : control.click());
+    await page.waitForFunction(() => document.querySelectorAll('[data-city-district]').length === 6
+      && !document.querySelector('.city-world__content').textContent.includes('recorded visits are loading'));
+    assert.equal((await state(page)).worldUI.mapView, 'world');
+  };
+  const enterDeeds = async page => {
+    const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
+    if (await page.locator('.city-world__dock').isVisible()) await native(page.locator('[data-city-world-close]'));
+    await native(page.locator('[data-destination="clubhouse"]'));
+    await native(page.locator('[data-city-action="deeds"]'));
+  };
+  const selectDistrict = async id => {
+    const start = await cityPage.evaluate(() => window.__worldReadResults.length);
+    await activate(cityPage.locator(`[data-city-district="${id}"]`));
+    await cityPage.waitForFunction(({ start, id }) => window.__worldReadResults.slice(start).some(read => read.kind === 'homes'
+      && read.districtId === id && read.settled && read.current && read.code === 200 && !read.ignored), { start, id });
+    assert.equal((await state(cityPage)).worldUI.districtId, id);
+  };
+  const travelPrompt = async id => {
+    await activate(cityPage.locator(`[data-city-travel="${id}"]`));
+    const modal = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await modal.waitFor({ state: 'visible' });
+    assert.match(await modal.textContent(), /A ride costs \$250/);
+    assert.equal(await modal.locator('[data-yes]').textContent(), 'Travel — $250');
+    return modal;
+  };
+  const districtReady = async id => {
+    await cityPage.waitForFunction(id => window.__worldHandles.at(-1)?.handle.getState().ready
+      && window.__worldHandles.at(-1).handle.getState().region.id === id, id);
+    assert.equal((await currentActor(neighbor)).loc, id);
+  };
+  let cityHandle = await cityPage.evaluateHandle(() => window.__worldHandles.at(-1)), cityPose = (await state(cityPage)).position;
+  const initialFares = await fares(neighbor), beforeAtlas = cityRequests.length;
+  await openAtlas();
+  const firstDirectory = await app.inject({ url: '/v1/city/homes?district=docks', headers: neighbor.headers }); assert.equal(firstDirectory.statusCode, 200);
+  const firstDirectoryBody = firstDirectory.json(); assert.equal(firstDirectoryBody.homes.length, 32); assert(firstDirectoryBody.nextCursor);
+  assert.equal(firstDirectoryBody.total, 35); assert.equal(firstDirectoryBody.myHome, null);
+  assert(firstDirectoryBody.homes.some(home => home.key === 'legacy café' && home.ownership === 'external' && home.owner === null && !home.mine));
+  assert(firstDirectoryBody.homes.some(home => home.ownership === 'estate' && home.owner === null && !home.mine));
+  const moreDirectory = cityPage.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/city/homes'
+    && new URL(reply.url()).searchParams.get('after') === firstDirectoryBody.nextCursor && reply.status() === 200);
+  await activate(cityPage.locator('[data-city-homes-more]')); const moreDirectoryBody = await (await moreDirectory).json();
+  assert.equal(moreDirectoryBody.homes.length, 3); assert.equal(moreDirectoryBody.nextCursor, null);
+  const directoryKeys = [...new Set([...firstDirectoryBody.homes, ...moreDirectoryBody.homes].map(home => home.key))];
+  await cityPage.waitForFunction(count => window.__worldHandles.at(-1).handle.getState().homes.length === count, directoryKeys.length);
+  const physicalHomes = (await state(cityPage)).homes, downstreamKey = moreDirectoryBody.homes.at(-1).key;
+  assert(physicalHomes.some(home => home.key === downstreamKey));
+  await selectDistrict('neon');
+  const updatesBeforeRefresh = await cityPage.evaluate(() => window.__worldUpdates.length);
+  await refresh(cityPage);
+  await cityPage.waitForFunction(start => window.__worldUpdates.slice(start).some(update => update.hydrationDistrict === 'docks'
+    && update.hydrationCount === 32 && update.scope?.current), updatesBeforeRefresh);
+  const refreshedHomeUpdate = await cityPage.evaluate(start => window.__worldUpdates.slice(start).find(update => update.hydrationDistrict === 'docks'
+    && update.hydrationCount === 32 && update.scope?.current), updatesBeforeRefresh);
+  assert.deepEqual(refreshedHomeUpdate.homes, physicalHomes, 'A winning unrelated Refresh cannot replace accepted page2 plots with the cached first page.');
+  assert.deepEqual(refreshedHomeUpdate.position, cityPose);
+  assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, cityHandle));
+  assert.deepEqual(mutations(cityRequests.slice(beforeAtlas)), [], 'Directory pagination, foreign inspection and physical hydration stay read-only.');
+  const mapReply = await app.inject({ url: '/v1/map', headers: neighbor.headers }); assert.equal(mapReply.statusCode, 200);
+  const mapBoard = mapReply.json(); assert.equal(mapBoard.total, 6);
+  assert.deepEqual(await cityPage.locator('[data-city-district]').evaluateAll(nodes => nodes.map(node => node.dataset.cityDistrict)), mapBoard.districts.map(district => district.id));
+  const edges = new Set(mapBoard.districts.flatMap(district => district.neighbours.map(id => [district.id, id].sort().join(':'))));
+  assert.equal(await cityPage.locator('.city-world__atlas-diagram line').count(), edges.size);
+  for (const visit of await recorded(neighbor)) {
+    const row = cityPage.locator(`[data-city-district="${visit.id}"]`);
+    assert.equal((await row.textContent()).includes('Visited'), visit.got, 'Only the actual Collection GET records a visit.');
+  }
+  await selectDistrict('neon');
+  assert.match(await cityPage.locator('[data-city-district-detail="neon"]').textContent(), /\$250/);
+  let confirmation = await travelPrompt('neon'); await activate(confirmation.locator('[data-no]'));
+  await cityPage.waitForFunction(() => !window.__worldHandles.at(-1).handle.getState().worldUI.pending);
+  assert.deepEqual(mutations(cityRequests.slice(beforeAtlas)), [], 'Atlas inspection and cancellation send no gameplay mutation.');
+  assert.deepEqual(await fares(neighbor), initialFares);
+  assert.equal((await currentActor(neighbor)).loc, 'docks');
+  assert.deepEqual((await state(cityPage)).position, cityPose);
+  assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, cityHandle));
+
+  // A real authenticated read holds the queue; closing and reopening the Atlas
+  // permanently retires the confirmed but not-yet-dispatched travel intent.
+  let releaseTravelQueue, observeTravelQueue;
+  const travelQueueGate = new Promise(resolve => { releaseTravelQueue = resolve; });
+  const travelQueueObserved = new Promise(resolve => { observeTravelQueue = resolve; });
+  let queueOnce = false;
+  const holdTravelQueue = async route => { if (queueOnce) return route.continue(); queueOnce = true; observeTravelQueue(); await travelQueueGate; await route.continue(); };
+  await cityPage.route('**/v1/projections/player*', holdTravelQueue);
+  const queuedAt = cityRequests.length;
+  try {
+    await cityPage.locator('#btn-refresh').click(); await bounded(travelQueueObserved, 'the queued travel player read');
+    confirmation = await travelPrompt('neon'); await activate(confirmation.locator('[data-yes]'));
+    await activate(cityPage.locator('[data-city-world-close]')); await activate(cityPage.locator('[data-city-world-map]'));
+  } finally { releaseTravelQueue(); }
+  await cityPage.waitForFunction(() => !document.querySelector('#busy.on') && !window.__worldHandles.at(-1).handle.getState().worldUI.pending);
+  await cityPage.unroute('**/v1/projections/player*', holdTravelQueue);
+  assert.equal(mutations(cityRequests.slice(queuedAt)).filter(request => request.path.startsWith('/v1/travel/')).length, 0);
+  assert.deepEqual(await fares(neighbor), initialFares); assert.equal((await currentActor(neighbor)).loc, 'docks');
+  assert.deepEqual((await state(cityPage)).position, cityPose);
+
+  // The cached UI allows the fare, then the actual server sees a sibling cash
+  // change. A definitive refusal must retain the district, canvas and pose.
+  await selectDistrict('neon');
+  let refusalOnce = false;
+  const refuseFare = async route => {
+    if (!refusalOnce) { refusalOnce = true; await app.pool.query('UPDATE characters SET cash=0 WHERE id=$1 AND alive', [neighbor.character.id]); }
+    await route.continue();
+  };
+  await cityPage.route('**/v1/travel/neon', refuseFare);
+  const refused = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/travel/neon');
+  try {
+    confirmation = await travelPrompt('neon'); await activate(confirmation.locator('[data-yes]'));
+    const reply = await refused; assert.equal(reply.status(), 400); assert.equal((await reply.json()).error, 'cash');
+    await cityPage.waitForFunction(() => !document.querySelector('#busy.on') && !window.__worldHandles.at(-1).handle.getState().worldUI.pending);
+    assert.equal((await currentActor(neighbor)).loc, 'docks'); assert.deepEqual(await fares(neighbor), initialFares);
+    assert.deepEqual((await state(cityPage)).position, cityPose);
+    assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, cityHandle));
+  } finally { await cityPage.unroute('**/v1/travel/neon', refuseFare); }
+  await app.pool.query('UPDATE characters SET cash=1000000 WHERE id=$1 AND alive', [neighbor.character.id]);
+  await refresh(cityPage); await selectDistrict('neon');
+  const beforeRide = await currentActor(neighbor), rideAt = cityRequests.length;
+  const successfulRide = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/travel/neon');
+  confirmation = await travelPrompt('neon'); await activate(confirmation.locator('[data-yes]'));
+  const ride = await successfulRide; assert.equal(ride.status(), 200); const rideBody = await ride.json();
+  assert.deepEqual({ ok: rideBody.ok, loc: rideBody.loc, cost: rideBody.cost }, { ok: true, loc: 'neon', cost: 250 });
+  await districtReady('neon');
+  assert.equal(Number((await currentActor(neighbor)).cash), Number(beforeRide.cash) - 250);
+  assert.deepEqual(await fares(neighbor), [...initialFares, -250]);
+  assert.equal(mutations(cityRequests.slice(rideAt)).filter(request => request.path === '/v1/travel/neon').length, 1);
+  assert(await cityHandle.evaluate(record => record.destroyed)); await cityHandle.dispose();
+  await clearHistoricalHomes();
+  cityHandle = await cityPage.evaluateHandle(() => window.__worldHandles.at(-1)); cityPose = (await state(cityPage)).position;
+
+  let releaseVisit, observeVisit;
+  const visitGate = new Promise(resolve => { releaseVisit = resolve; }), visitObserved = new Promise(resolve => { observeVisit = resolve; });
+  let visitOnce = false;
+  const holdVisit = async route => {
+    if (visitOnce) return route.continue(); visitOnce = true;
+    const reply = await route.fetch(); assert.equal(reply.status(), 200);
+    assert.equal((await reply.json()).categories.find(category => category.id === 'districts').items.find(item => item.id === 'neon').got, true);
+    observeVisit(); await visitGate; await route.fulfill({ response: reply });
+  };
+  await cityPage.route('**/v1/collection', holdVisit);
+  try {
+    await activate(cityPage.locator('[data-city-world-map]')); await bounded(visitObserved, 'the actual visited Collection GET');
+    assert(!(await cityPage.locator('[data-city-district="neon"]').textContent()).includes('Visited'), 'Here does not optimistically manufacture a recorded visit.');
+    releaseVisit(); await cityPage.waitForFunction(() => document.querySelector('[data-city-district="neon"]').textContent.includes('Visited'));
+    assert.deepEqual((await state(cityPage)).position, cityPose);
+    assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, cityHandle));
+  } finally { releaseVisit(); await cityPage.unroute('**/v1/collection', holdVisit); }
+
+  // Lose a real committed travel response after closing its old view. Recovery
+  // must retain the exact key/body and the one authoritative fare after remount.
+  await selectDistrict('foundry');
+  const attempts = []; let originalTravel, releaseLostTravel, observeLostTravel;
+  const lostGate = new Promise(resolve => { releaseLostTravel = resolve; }), lostObserved = new Promise(resolve => { observeLostTravel = resolve; });
+  const loseTravel = async route => {
+    attempts.push({ key: route.request().headers()['idempotency-key'], body: route.request().postDataJSON(), path: new URL(route.request().url()).pathname });
+    const reply = await route.fetch(); assert.equal(reply.status(), 200);
+    if (attempts.length === 1) { originalTravel = await reply.text(); observeLostTravel(); await lostGate; await route.abort('connectionfailed'); }
+    else await route.fulfill({ response: reply });
+  };
+  await cityPage.route('**/v1/travel/foundry', loseTravel);
+  const beforeLostRide = await currentActor(neighbor), faresBeforeLost = await fares(neighbor);
+  try {
+    confirmation = await travelPrompt('foundry'); await activate(confirmation.locator('[data-yes]'));
+    await bounded(lostObserved, 'the actually committed lost travel reply');
+    await activate(cityPage.locator('[data-city-world-close]')); releaseLostTravel();
+    await districtReady('foundry'); await openAtlas();
+    await cityPage.locator('[data-city-world-retry]').waitFor();
+    assert.equal(await cityPage.locator('[data-city-travel]:enabled').count(), 0, 'An uncertain ride blocks a fresh travel key after closing and remounting.');
+    const retryReply = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/travel/foundry');
+    await activate(cityPage.locator('[data-city-world-retry]')); const replay = await retryReply;
+    assert.equal(replay.status(), 200); assert.equal(await replay.text(), originalTravel);
+    await cityPage.waitForFunction(() => !document.querySelector('#busy.on') && !window.__worldHandles.at(-1).handle.getState().worldUI.pending);
+    assert.equal(attempts.length, 2); assert.deepEqual(attempts[1], attempts[0]); assert(attempts[0].key);
+    assert.equal(Number((await currentActor(neighbor)).cash), Number(beforeLostRide.cash) - 250);
+    assert.deepEqual(await fares(neighbor), [...faresBeforeLost, -250]);
+    assert.equal((await currentActor(neighbor)).loc, 'foundry');
+  } finally { releaseLostTravel(); await cityPage.unroute('**/v1/travel/foundry', loseTravel); }
+  await cityHandle.dispose();
+  console.log('world host: six-district atlas, confirmed one-fare travel, refused/queued cancellation, winning visits and exact-key lost-reply recovery pass');
+
+  // A canonical claim on another district reveals the deed without a ride.
+  // The current real successor is the seller; no additional account is created.
+  const seller = await currentActor(viewer); assert(seller && seller.id !== viewer.character.id);
+  const sellerPage = await newPage({ width: 1440, height: 1000 }, { actor: viewer });
+  await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-name').waitFor();
+  const street = 'Connected World Street', key = street.toLowerCase(), propertyDistrict = 'brick';
+  const sellerFares = await fares(viewer), sellerLocation = seller.loc, sellerAt = sellerPage.requests.length;
+  await sellerPage.page.locator('#deed-name').fill(street);
+  const claimed = sellerPage.page.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/claim');
+  await sellerPage.page.locator('[data-claimdist="brick"]').click();
+  const claimReply = await claimed; assert.equal(claimReply.status(), 200); assert.equal((await claimReply.json()).name, street);
+  await sellerPage.page.waitForFunction(({ key, district }) => window.__worldHandles.at(-1)?.handle.getState().worldUI?.mapView === 'world'
+    && window.__worldHandles.at(-1).handle.getState().worldUI.districtId === district
+    && [...document.querySelectorAll('[data-city-home]')].some(node => node.dataset.cityHome === key), { key, district: propertyDistrict });
+  assert.equal((await currentActor(viewer)).loc, sellerLocation); assert.deepEqual(await fares(viewer), sellerFares);
+  assert.deepEqual(mutations(sellerPage.requests.slice(sellerAt)).map(request => request.path), ['/v1/deeds/claim'], 'Claim reveals the real deed without automatic fare or other gameplay action.');
+  const claimedDirectory = await app.inject({ url: '/v1/city/homes?district=brick', headers: viewer.headers }); assert.equal(claimedDirectory.statusCode, 200);
+  const claimedBoard = claimedDirectory.json();
+  assert.deepEqual(Object.keys(claimedBoard).sort(), ['districtId', 'homes', 'myHome', 'nextCursor', 'placement', 'total', 'viewer']);
+  assert.deepEqual(claimedBoard.viewer, { characterId: seller.id, generation: Number(seller.generation), district: sellerLocation });
+  assert.equal(claimedBoard.districtId, propertyDistrict); assert.equal(claimedBoard.placement, 'illustrative');
+  assert.equal(claimedBoard.myHome.key, key); assert.equal(claimedBoard.myHome.mine, true);
+  assert.deepEqual(Object.keys(claimedBoard.myHome).sort(), ['districtId', 'key', 'mine', 'owner', 'ownership', 'street']);
+  assert.deepEqual(Object.keys(claimedBoard.myHome.owner).sort(), ['kind', 'name']);
+  const deeds = await app.inject({ url: '/v1/deeds', headers: viewer.headers }); assert.equal(deeds.statusCode, 200);
+  const salePrice = deeds.json().market.minPrice;
+  const listed = await app.inject({ method: 'POST', url: '/v1/deeds/list', headers: { ...viewer.headers, 'idempotency-key': crypto.randomUUID() }, payload: { price: salePrice } });
+  assert.equal(listed.statusCode, 200, listed.body);
+  await cityPage.bringToFront(); await enterDeeds(cityPage); await cityPage.locator(`[data-buydeed="${seller.id}"]`).waitFor();
+  const beforeBuy = await currentActor(neighbor), buyFares = await fares(neighbor), buyAt = cityRequests.length;
+  const boughtDeed = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/buy/' + seller.id);
+  await activate(cityPage.locator(`[data-buydeed="${seller.id}"]`));
+  const buyModal = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await buyModal.waitFor({ state: 'visible' }); await activate(buyModal.locator('[data-yes]'));
+  const buyReply = await boughtDeed; assert.equal(buyReply.status(), 200); assert.equal((await buyReply.json()).street, street);
+  await cityPage.waitForFunction(({ key, district }) => window.__worldHandles.at(-1)?.handle.getState().worldUI?.mapView === 'world'
+    && window.__worldHandles.at(-1).handle.getState().worldUI.districtId === district
+    && [...document.querySelectorAll('[data-city-home]')].some(node => node.dataset.cityHome === key), { key, district: propertyDistrict });
+  const afterBuy = await currentActor(neighbor);
+  assert.equal(afterBuy.loc, beforeBuy.loc); assert.equal(Number(afterBuy.cash), Number(beforeBuy.cash) - salePrice); assert.deepEqual(await fares(neighbor), buyFares);
+  assert.deepEqual(mutations(cityRequests.slice(buyAt)).map(request => request.path), ['/v1/deeds/buy/' + seller.id]);
+  const parcelRows = (await app.pool.query('SELECT name_lc,district,account_id FROM street_deeds WHERE name_lc=$1', [key])).rows;
+  assert.deepEqual(parcelRows, [{ name_lc: key, district: propertyDistrict, account_id: neighbor.character.account_id }], 'A sale transfers the same parcel instead of duplicating it.');
+  const transferred = (await app.inject({ url: '/v1/city/homes?district=brick', headers: neighbor.headers })).json();
+  assert.equal(transferred.myHome.key, key); assert.equal(transferred.myHome.mine, true); assert.equal(transferred.myHome.owner.name, 'Nearby Player');
+  assert.equal(transferred.homes.filter(home => home.key === key).length, 1);
+  await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+  assert.equal(await cityPage.locator('[data-city-home-walk]').count(), 0, 'A remote property cannot invent a local entrance or move the player.');
+  if (process.env.CITY_WORLD_SHOTS) await cityPage.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-atlas-property-375.png') });
+
+  // Selecting the actual owned home is only a presentation hint. An explicit
+  // confirmed ride precedes the fresh directory read and real entrance walk.
+  const beforeHomeRide = await currentActor(neighbor), homeFares = await fares(neighbor);
+  const homeRide = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/travel/brick');
+  confirmation = await travelPrompt(propertyDistrict); await activate(confirmation.locator('[data-yes]'));
+  const homeRideReply = await homeRide; assert.equal(homeRideReply.status(), 200); assert.equal((await homeRideReply.json()).cost, 250);
+  await districtReady(propertyDistrict);
+  await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().homes.some(home => home.key === key)
+    && window.__worldHandles.at(-1).handle.getState().pathLength > 0, key);
+  const homeMoving = await state(cityPage), homePlot = homeMoving.homes.find(home => home.key === key);
+  assert(Math.hypot(homeMoving.position.x - homePlot.entrance.x, homeMoving.position.y - homePlot.entrance.y) > 40,
+    'A confirmed ride followed by the real home entry starts walking instead of teleporting to the property.');
+  await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
+    && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+  const homeArrived = await state(cityPage);
+  assert.equal(homeArrived.homes.filter(home => home.key === key).length, 1);
+  assert(Math.hypot(homeArrived.position.x - homePlot.entrance.x, homeArrived.position.y - homePlot.entrance.y) < 42);
+  assert.equal(Number((await currentActor(neighbor)).cash), Number(beforeHomeRide.cash) - 250);
+  assert.deepEqual(await fares(neighbor), [...homeFares, -250]);
+  assert.equal(homeArrived.homes.find(home => home.key === key).mine, true);
+  if (process.env.CITY_WORLD_SHOTS) await cityPage.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-home-arrival-375.png') });
+  await openAtlas(); await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+
+  let releaseDeed, observeDeed;
+  const deedGate = new Promise(resolve => { releaseDeed = resolve; }), deedObserved = new Promise(resolve => { observeDeed = resolve; });
+  const holdDeed = async route => { const reply = await route.fetch(); assert.equal(reply.status(), 200); assert.equal((await reply.json()).deed.name, street); observeDeed(); await deedGate; await route.fulfill({ response: reply }); };
+  await cityPage.route('**/v1/deeds', holdDeed);
+  try {
+    await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(deedObserved, 'the owned deed handoff GET');
+    assert.deepEqual(await cityPage.evaluate(() => window.__worldNavigations.at(-1)), { tab: 'deeds',
+      context: { venueId: 'clubhouse', streetKey: key, districtId: propertyDistrict, focus: 'owned-deed' } }, 'The scene forwards the actual owned-deed context to the host.');
+    assert.equal(await cityPage.locator('#city-owned-deed').count(), 0, 'A deed heading is not rendered or focused before its actual winning GET.');
+    releaseDeed(); await cityPage.waitForFunction(() => document.activeElement?.id === 'city-owned-deed');
+    assert.match(await cityPage.locator('#city-owned-deed').textContent(), new RegExp(street));
+  } finally { releaseDeed(); await cityPage.unroute('**/v1/deeds', holdDeed); }
+  await cityPage.locator('#btn-player-view').tap(); await districtReady(propertyDistrict); await openAtlas(); await selectDistrict(propertyDistrict);
+  await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+  let releaseRetiredDeed, observeRetiredDeed;
+  const retiredDeedGate = new Promise(resolve => { releaseRetiredDeed = resolve; }), retiredDeedObserved = new Promise(resolve => { observeRetiredDeed = resolve; });
+  const holdRetiredDeed = async route => { const reply = await route.fetch(); assert.equal(reply.status(), 200); observeRetiredDeed(); await retiredDeedGate; await route.fulfill({ response: reply }); };
+  await cityPage.route('**/v1/deeds', holdRetiredDeed);
+  try {
+    await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(retiredDeedObserved, 'the retired navigation deed GET');
+    await activate(cityPage.locator('#bnav [data-go="streets"]')); releaseRetiredDeed(); await frames(cityPage);
+    assert.notEqual(await cityPage.evaluate(() => document.activeElement?.id), 'city-owned-deed');
+    assert.equal(await cityPage.locator('#tab-streets:not(.hidden)').count(), 1, 'A late deed read cannot override a newer human navigation.');
+  } finally { releaseRetiredDeed(); await cityPage.unroute('**/v1/deeds', holdRetiredDeed); }
+  await cityPage.locator('#btn-player-view').tap(); await districtReady(propertyDistrict); await openAtlas(); await selectDistrict(propertyDistrict);
+  await selectDistrict('neon'); assert.equal(await cityPage.locator('[data-city-travel="neon"]').isEnabled(), true);
+  await cityPage.locator('[data-city-travel="neon"]').evaluate(node => { window.__retiredAtlasTravel = node; });
+  await selectDistrict(propertyDistrict);
+  await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+  const desktopHandle = await cityPage.evaluateHandle(() => window.__worldHandles.at(-1)), desktopPose = (await state(cityPage)).position;
+  await cityPage.setViewportSize({ width: 1440, height: 1000 }); await frames(cityPage);
+  assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, desktopHandle));
+  assert.deepEqual((await state(cityPage)).position, desktopPose, 'Passive resizing preserves the current home arrival pose.');
+  await openAtlas(); await selectDistrict(propertyDistrict); await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+  await assertFrame(cityPage);
+  assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, desktopHandle));
+  assert.deepEqual((await state(cityPage)).position, desktopPose, 'Explicit desktop atlas entry reveals the same canvas and pose.');
+  await desktopHandle.dispose();
+  if (process.env.CITY_WORLD_SHOTS) await cityPage.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-atlas-property-desktop.png') });
+  const privateAt = cityRequests.length;
+  let releasePrivateDeed, observePrivateDeed, releaseLogout, privateDeedOnce = false;
+  const privateDeedGate = new Promise(resolve => { releasePrivateDeed = resolve; }), privateDeedObserved = new Promise(resolve => { observePrivateDeed = resolve; });
+  const logoutGate = new Promise(resolve => { releaseLogout = resolve; });
+  const holdPrivateDeed = async route => {
+    if (privateDeedOnce) return route.continue(); privateDeedOnce = true;
+    const reply = await route.fetch(); assert.equal(reply.status(), 200); observePrivateDeed(); await privateDeedGate; await route.fulfill({ response: reply });
+  };
+  await cityPage.route('**/v1/deeds', holdPrivateDeed);
+  const holdLogout = async route => { const reply = await route.fetch(); assert.equal(reply.status(), 200); await logoutGate; await route.fulfill({ response: reply }); };
+  await cityPage.route('**/v1/access/logout', holdLogout);
+  try {
+    await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(privateDeedObserved, 'the old owner\'s held real deed GET');
+    await cityPage.locator('#btn-logout').click();
+    const logout = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await logout.waitFor({ state: 'visible' }); await logout.locator('[data-yes]').click();
+    await cityPage.locator('#screen-auth:not(.hidden)').waitFor(); releasePrivateDeed(); await frames(cityPage);
+    assert.equal(await cityPage.locator('[data-city-home],.city-world__dock,.city-world__receipt').count(), 0);
+    assert.notEqual(await cityPage.evaluate(() => document.activeElement?.id), 'city-owned-deed', 'A held deed handoff cannot focus private content after owner retirement.');
+    await cityPage.evaluate(() => window.__retiredAtlasTravel.click()); await frames(cityPage);
+    assert.equal(mutations(cityRequests.slice(privateAt)).filter(request => request.path.startsWith('/v1/travel/')).length, 0);
+  } finally {
+    releasePrivateDeed(); releaseLogout();
+    await cityPage.unroute('**/v1/deeds', holdPrivateDeed); await cityPage.unroute('**/v1/access/logout', holdLogout);
+  }
+  await connected.context.close(); await sellerPage.context.close();
+  console.log('world host: canonical claim and same-parcel sale reveal fresh owned homes without fare, guarded deed focus, navigation cancellation and private teardown pass');
+  }
   assert.deepEqual(errors, []);
   for (const context of contexts) await context.close();
   console.log('city-world-host-browser: actual tools/header, shared objective, equipment/outfit/room, waypoint walking, base-stat feedback, consented two-message chat, decorative routines, reduced motion and responsive camera pass');
-} finally { await browser?.close(); await app.close(); }
+} finally { await browser?.close(); for (const cleanup of fixtureCleanup) await cleanup(); await app.close(); }

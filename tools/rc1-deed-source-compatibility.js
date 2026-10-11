@@ -2,6 +2,28 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+export const CITY_HOMES_SERVER_PIN = '4cb2fffecbb7c359ed06e68a5bdc630c00d79db552a3c5d34640e27a8957dfef';
+export const CITY_HOMES_SOURCE_BASE_REVISION = '1b63dfd8625a102fe57f36eafcb39f330a140d8c';
+export const CITY_HOMES_SERVER_BLOB = 'd8e190a1a2a23a9b1f8be78de96dc10a163bd601';
+export const CITY_HOMES_PREDECESSOR_SERVER_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const CITY_HOMES_SOURCE_INVERSES = Object.freeze([
+  "import { registerCityHomes } from './routes/cityhomes.js';\n",
+  "  registerCityHomes(app, { pool, auth });\n",
+]);
+// Exact registration transfer excludes the new authenticated directory projection.
+export function assertCityHomesServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, CITY_HOMES_SERVER_PIN, 'City homes transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(chunk).length, 2, 'City homes inverse is not exact and unique');
+  baselineText = baselineText.replace(chunk, '');
+ }
+ assert.equal(hash(baselineText), SUPPLY_TENDER_SERVER_PIN, 'Server differs beyond exact City homes registration');
+ return { actualSha256, baselineText, baselineSha256: SUPPLY_TENDER_SERVER_PIN,
+  sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB,
+  predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
 export const SUPPLY_TENDER_SERVER_PIN = '0d222a2a3771758a28ac7bcda2124419cd9d9cebb6da65616120117bf34cae19';
 export const SUPPLY_TENDER_SOURCE_REVIEWED_REVISION = 'b243a283c6f55a37bada5897798bf65f9ddd5553';
 export const SUPPLY_TENDER_SERVER_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
@@ -306,6 +328,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_SERVER_PIN) {
+    const transfer = assertCityHomesServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
@@ -387,6 +413,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_SERVER_PIN) {
+    const transfer = assertCityHomesServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
@@ -489,6 +519,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_SERVER_PIN) {
+    const transfer = assertCityHomesServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
@@ -548,6 +582,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_SERVER_PIN) {
+    const transfer = assertCityHomesServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
@@ -911,6 +949,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === CITY_HOMES_SERVER_PIN) {
+  const transfer = assertCityHomesServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, cityHomesSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === SUPPLY_TENDER_SERVER_PIN) {
   const transfer = assertSupplyTenderServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, supplyTenderSourceTransfer: transfer };
