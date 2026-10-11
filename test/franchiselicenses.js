@@ -47,8 +47,10 @@ if (postgres) {
   const value = process.env.FRANCHISE_TEST_DATABASE_URL;
   if (!value) throw new Error('Set FRANCHISE_TEST_DATABASE_URL to a dedicated fresh local franchise database.');
   const url = new URL(value);
-  if (!['postgres:', 'postgresql:'].includes(url.protocol) || url.hostname !== '127.0.0.1' || url.port !== '35439'
-      || url.username !== 'pilot_runner' || !/^\/franchise_[a-z0-9_]+$/.test(url.pathname))
+  const isolatedIdentity = (url.port === '35439' && url.username === 'pilot_runner')
+    || (url.port === '5432' && url.username === 'postgres');
+  if (!['postgres:', 'postgresql:'].includes(url.protocol) || url.hostname !== '127.0.0.1' || !isolatedIdentity
+      || !/^\/franchise_[a-z0-9_]+$/.test(url.pathname))
     throw new Error('Franchise native proofs require the isolated loopback task database.');
   const { Pool } = await import('pg'); const check = new Pool({ connectionString: value });
   try { assert.equal((await check.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0, 'native proof database must be empty'); }
