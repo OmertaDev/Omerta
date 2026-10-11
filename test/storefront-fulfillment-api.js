@@ -119,9 +119,25 @@ try {
     { qty: 2, unitPrice: 1000, maxProcurementCash: 600, deadlineSeconds: 3600 });
   assert.equal(autoAccepted.code, 200, JSON.stringify(autoAccepted.body));
   const autoCommitment = autoAccepted.body.id;
+  // Read-only board fixtures: remote businesses sort before every real depot,
+  // proving the local procurement window is filtered before its bounded LIMIT.
+  const fixtureIds = [];
+  for (let i = 0; i < 100; i++) {
+    const fixtureId = `!remote-${fixtureSuffix}-${i}`;
+    fixtureIds.push(fixtureId);
+    await app.pool.query('INSERT INTO characters (id,account_id,name,season,loc) VALUES ($1,$2,$3,1,$4)',
+      [fixtureId, fixtureId, `Remote Board Fixture ${i}`, destination]);
+    await app.pool.query('INSERT INTO business_depots (id,owner_character,district,stock,stock_cost,sale_price,bid_price,reorder_at,target_stock,restock_budget) VALUES ($1,$1,$2,1,50,60,50,0,4,2000)',
+      [fixtureId, destination]);
+  }
   const autoTurn = (await call('GET', '/v1/agent/turn', deathSupplier)).body;
   const issued = autoTurn.actions.find((a) => a.kind === 'delivery_depot_buy' && a.body.commitmentId === autoCommitment);
   assert.ok(issued, `Agent Turn issues actual player storefront acquisition: ${JSON.stringify(autoTurn.actions.filter((a) => a.kind.startsWith('delivery_')))}`);
+  assert.equal(issued.body.depotId, sellerDepot, '100 unrelated remote businesses cannot hide the local storefront');
+  for (const fixtureId of fixtureIds) {
+    await app.pool.query('DELETE FROM business_depots WHERE id=$1', [fixtureId]);
+    await app.pool.query('DELETE FROM characters WHERE id=$1', [fixtureId]);
+  }
   const issuedBody = { turnId: autoTurn.turnId, actionId: issued.id };
   const untouched = await snapshot(deathSupplier, sellerDepot, autoCommitment);
   await call('POST', `/v1/depot/${sellerDepot}/configure`, seller, { ...config, bidPrice: 50, salePrice: 70 });

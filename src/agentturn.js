@@ -568,7 +568,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const restock = restockCandidates(ch, sheet, owned, opportunities.opportunities, POLICY, opportunities.goodsLiquidity);
   const activeDeliveries = commitments.filter((c) => c.supplierId === ch.id && c.status === 'accepted');
   const storefronts = depotPilotEnabled() && activeDeliveries.length ? (await db.query(
-    "SELECT d.id,d.owner_character,d.district,d.stock,d.sale_price FROM business_depots d JOIN characters c ON c.id=d.owner_character WHERE d.status='open' AND c.alive AND d.stock>0 ORDER BY d.id LIMIT 100")).rows
+    "SELECT d.id,d.owner_character,d.district,d.stock,d.sale_price FROM business_depots d JOIN characters c ON c.id=d.owner_character WHERE d.status='open' AND c.alive AND d.stock>0 AND d.district=$1 AND d.owner_character<>$2 ORDER BY d.id LIMIT 100", [ch.loc, ch.id])).rows
     .map((r) => ({ id: r.id, ownerCharacterId: r.owner_character, district: r.district,
       good: DEPOT.good, stock: Number(r.stock), unitPrice: Number(r.sale_price) })) : [];
   if (deliveryIntakeEnabled()) for (const candidate of restock) {

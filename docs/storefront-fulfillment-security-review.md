@@ -116,3 +116,42 @@ The locally started PostgreSQL server was stopped after completion. This proves
 the tested game-cash flow on the pinned runtime and fixture, not production
 deployment, general strategy profitability, external earnings or crypto backing.
 Required source-pinned release checks remain the coordinator's release gate.
+
+## Final integration review and local discovery window
+
+The independent courier reviewer inspected exact full-flow proof revision
+`0754f653bcc8eedd3ab0b7822fd0687e71597a3d`, including the unchanged runtime
+`ce374b76080241589c1b9a719b8a794da09b1317`, API fixture, retained native output
+and the hashes above. No confirmed finding remained in that reviewed scope.
+For the earlier automatic-selection review, the reviewer independently ran
+`node test/storefrontfulfillment.js` (2,000 seeded trials) and
+`node test/storefront-fulfillment-api.js` in memory; both returned exit status 0.
+The full-flow review inspected the assertions and native evidence without a fresh
+native execution. Customer receipt uses its canonical owner API, not an issued
+agent receipt action. The coordinator separately reviewed the core mutation and
+exact source-compatibility inverse; its scoped guard commit is `36cd7c5d`.
+
+**SF-1 — local storefront discovery could be crowded out (availability).**
+Coordinator review found the initial internal query bounded the global storefront
+board to 100 rows before filtering district and ownership. One hundred unrelated
+remote depots sorting earlier could hide an eligible local seller. The correction
+applies bound district and acting-owner exclusions before `LIMIT 100`; commitment
+buyer/depot exclusions remain enforced by selection and canonical execution.
+The API fixture seeds 100 distinct remote owner/depot rows with earlier IDs and
+requires the local storefront action to remain discoverable, then removes only
+those fixtures. No new owner authority or monetary claim results.
+
+Retested working files: `src/agentturn.js` SHA-256
+`8780CF22188717A276D13B848323BC3DC0080316422E7E186EFFFD4D38F71A75`;
+`test/storefront-fulfillment-api.js` SHA-256
+`6D9678EDA16483D1E13919AB9D544CB0F2167E135B2A2E1FE9D3308F8EFA0301`.
+The corrected fixture passes in memory. A new native run uses fresh disposable
+database `game_storefront_window_20261011` on the same loopback PostgreSQL 18
+server. `node test/storefront-fulfillment-api.js --postgres` returned exit status 0,
+including the 100-remote-row regression, issued full economic loop, concurrency,
+rollback and owner-death assertions. Raw output is retained at
+`output/storefront-native-local-window-proof.log`, SHA-256
+`9024E0B5BF129EEAC5E3063B33EE7ACE225135FD60DD451AEFB1BCBD8A9F9A5C`.
+The local PostgreSQL server was stopped after completion.
+The correction requires final coordinator review and exact-head hosted release
+checks; the prior independent conclusion is retained for its original revision.
