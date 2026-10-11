@@ -13,7 +13,9 @@ export function register(app, { pool, auth }) {
     if (!target) throw new G.GameError('franchise_owner', 'No independent operating storefront.');
     return G.withTwoCharacters(pool, req.user.sub, target.owner_character, async (licensor, operator, client) => {
       await guardDelegatedControl(client, req.params.id, req.user.agent === true);
-      return Franchise.offerFranchiseLicense(licensor, operator, req.params.id, req.body?.operatorDepotId, req.body, client);
+      const { companyRevision, presetId, royaltyBps, royaltyCap, expiresAt } = req.body || {};
+      return Franchise.offerFranchiseLicense(licensor, operator, req.params.id, req.body?.operatorDepotId,
+        { companyRevision, presetId, royaltyBps, royaltyCap, expiresAt }, client);
     });
   });
   app.post('/v1/franchise-licenses/:id/accept', { preHandler: auth }, async req => {
