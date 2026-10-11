@@ -1090,8 +1090,14 @@ try {
     await (page.viewportSize().width <= 680 ? control.tap() : control.click());
     await page.waitForFunction(() => document.querySelectorAll('[data-city-district]').length === 6
       && !document.querySelector('.city-world__content').textContent.includes('recorded visits are loading'));
-    assert(await page.locator('[data-city-map-view]').evaluateAll(nodes => nodes.length === 2 && nodes.every(node => node.getBoundingClientRect().height >= 44)),
-      'Neighborhood and World overview remain actual44px controls in the real player stylesheet.');
+    const modeBounds = await page.evaluate(() => Array.from(document.querySelectorAll('[data-city-map-view]')).map(node => {
+      const style = getComputedStyle(node); return { id: node.dataset.cityMapView, height: node.getBoundingClientRect().height,
+        offsetHeight: node.offsetHeight, minHeight: style.minHeight, display: style.display, transform: style.transform,
+        connected: node.isConnected, tab: node.closest('.tab')?.className, body: document.body.className };
+    }));
+    assert.deepEqual(modeBounds.map(node => node.id), ['neighborhood', 'world']);
+    assert(modeBounds.length === 2 && modeBounds.every(node => node.connected && node.height >= 44),
+      'Neighborhood and World overview remain actual44px controls in the real player stylesheet: ' + JSON.stringify(modeBounds));
     assert.equal((await state(page)).worldUI.mapView, 'world');
   };
   const enterDeeds = async page => {
