@@ -1,3 +1,4 @@
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -10,7 +11,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(COMPANY_SUCCESSION_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(marketFeedSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(companySuccessionSourceBaseline(file, current), baseline);
   assert.equal(companySuccessionSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
