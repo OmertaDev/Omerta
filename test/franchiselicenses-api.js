@@ -62,8 +62,9 @@ try {
     cargo: (await app.pool.query('SELECT good_id,qty FROM character_cargo WHERE character_id=$1 ORDER BY good_id', [buyer.id])).rows,
     cash: (await app.pool.query('SELECT cash FROM characters WHERE id=$1', [buyer.id])).rows[0], journal: await journals() });
   const buy = (key = `franchise-buy-${++sequence}`) => call('POST', `/v1/depot/${operatorDepot}/buy`, buyer.agent, { qty: 1, maxUnitPrice: 101 }, key);
+  const priorRoyalties = (await journals()).filter(j => j.reason === 'royalty_income').length;
   assert.equal((await buy()).code, 200);
-  assert.equal((await journals()).filter(j => j.reason === 'royalty_income').length, 0, 'licensor offer alone never charges royalties');
+  assert.equal((await journals()).filter(j => j.reason === 'royalty_income').length, priorRoyalties, 'licensor offer alone never charges royalties');
   assert.equal((await call('POST', `/v1/franchise-licenses/${id}/accept`, stranger.owner, {})).body.error, 'franchise_owner');
   assert.equal((await call('POST', `/v1/franchise-licenses/${id}/accept`, licensor.owner, {})).body.error, 'self');
   assert.equal((await call('POST', `/v1/depot/${operatorDepot}/policy`, operator.owner, policy)).code, 200);
