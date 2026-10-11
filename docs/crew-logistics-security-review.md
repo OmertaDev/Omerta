@@ -64,3 +64,12 @@ repaired head are required. A separate inherited Crew race fixture can wait for
 an unobserved Crew lock while due accrual is still waiting at a character lock;
 that fixture and a journey stale-command clock boundary are being repaired and
 must pass before this release is ready. Historical failed runs remain retained.
+
+Repair `9f32a411` makes the Crew fixture observe either actual Crew-lock or
+independent due-accrual character-lock boundaries with bounded waits and
+unconditional hold cleanup. The due-accrual transaction commits before action
+Crew locking; no production lock order changes. Native proofs retain private
+board transitions32→24→16. A scoped server clock keeps the mystery choice stale
+assertion within its valid command lifetime; independent command expiry checks
+remain unchanged and passed (17 native groups). Memory and PostgreSQL18.4
+retests passed; PostgreSQL16 and all other exact hosted gates remain required.
