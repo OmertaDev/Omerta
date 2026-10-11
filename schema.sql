@@ -7824,7 +7824,7 @@ CREATE TABLE IF NOT EXISTS intel_forecast_jobs (
   predicts_available BOOLEAN,
   reported_at TIMESTAMPTZ,
   observation JSONB,
-  outcome TEXT CHECK (outcome IN ('correct','incorrect','unknown')),
+  outcome TEXT CHECK (outcome IS NULL OR outcome IN ('correct','incorrect','unknown')),
   resolved_at TIMESTAMPTZ,
   sample_started_at TIMESTAMPTZ,
   sample JSONB,

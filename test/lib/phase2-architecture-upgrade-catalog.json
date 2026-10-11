@@ -11,7 +11,7 @@
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check5","definition":"CHECK (sample_started_at IS NULL AND sample IS NULL OR sample_started_at IS NOT NULL AND sample IS NOT NULL)"},
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_fee_cash_check","definition":"CHECK (fee_cash >= 50 AND fee_cash <= 5000)"},
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_minimum_stock_check","definition":"CHECK (minimum_stock >= 1 AND minimum_stock <= 40)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_outcome_check","definition":"CHECK (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text]))"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_outcome_check","definition":"CHECK (outcome IS NULL OR (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text])))"},
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_pkey","definition":"PRIMARY KEY (id)"},
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_price_block_check","definition":"CHECK (price_block >= 0)"},
     {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_reporter_character_fkey","definition":"FOREIGN KEY (reporter_character) REFERENCES characters(id)"},
