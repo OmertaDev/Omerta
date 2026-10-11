@@ -324,6 +324,21 @@ jobs:
           "
           npm run test:supply-tenders:postgres
 
+      - name: warehouse custody, rollback and capacity races (real PostgreSQL)
+        env:
+          WAREHOUSE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/warehouse_leases_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE warehouse_leases_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:warehouses:postgres
+
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
         env:
