@@ -24,7 +24,9 @@ const can = (client, action, row, ch) => {
 function view(row, loan = null) {
   return { id: row.id, commitmentId: row.commitment_id, orderId: row.order_id, supplierId: row.supplier_character,
     requestedLenderId: row.requested_lender_character, buyerId: row.buyer_character, terms: row.terms, quote: row.quote,
-    state: row.state, loanId: row.loan_id, currentLenderId: loan?.lender_character || null, loanStatus: loan?.status || null,
+    state: ['offered', 'active'].includes(row.state) && (!loan || !['open', 'active'].includes(loan.status))
+      ? 'closed' : row.state,
+    loanId: row.loan_id, currentLenderId: loan?.lender_character || null, loanStatus: loan?.status || null,
     createdAt: iso(row.created_at), fundedAt: iso(row.funded_at), acceptedAt: iso(row.accepted_at), settledAt: iso(row.settled_at),
     settlement: row.settlement, gameCashOnly: true, quoteIsBacking: false };
 }
