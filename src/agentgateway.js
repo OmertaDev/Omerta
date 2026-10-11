@@ -333,6 +333,19 @@ const OPERATION_CONTRACTS = {
       required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
   },
   'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
+  'GET /v1/logistics-coverage': { operationId: 'getOwnGameLogisticsCoverage' },
+  'POST /v1/logistics-coverage/offers': {
+    operationId: 'offerOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['leaseId', 'coveredUnits', 'cashPerUnit', 'premiumCash', 'expiresAt'], properties: {
+        leaseId: { type: 'string', minLength: 1, maxLength: 200 }, coveredUnits: { type: 'integer', minimum: 1, maximum: 10 },
+        cashPerUnit: { type: 'integer', minimum: 1, maximum: 100000 }, premiumCash: { type: 'integer', minimum: 0, maximum: 1000000 },
+        expiresAt: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/logistics-coverage/:id/accept': { operationId: 'acceptOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/cancel': { operationId: 'cancelOwnUnfundedGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/claim': { operationId: 'claimOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/refund': { operationId: 'refundOwnGameLogisticsCoverageReserve', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',
