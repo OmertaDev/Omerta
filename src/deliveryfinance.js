@@ -36,11 +36,11 @@ async function hintByRequest(client, id) {
   if (!row) fail('No delivery advance request.'); return row;
 }
 // The outer wrapper owns sorted character/account locks. Every financial path
-// takes order -> commitment -> loan -> request BEFORE touching street_tax.
+// takes existing loan -> order -> commitment -> request BEFORE street_tax.
 async function lockContext(client, hint) {
+  const loan = hint.loan_id ? (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [hint.loan_id])).rows[0] : null;
   const order = (await client.query('SELECT * FROM market_listings WHERE id=$1 FOR UPDATE', [hint.order_id])).rows[0];
   const commitment = (await client.query('SELECT * FROM delivery_commitments WHERE id=$1 FOR UPDATE', [hint.commitment_id])).rows[0];
-  const loan = hint.loan_id ? (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [hint.loan_id])).rows[0] : null;
   const row = (await client.query('SELECT * FROM delivery_loan_requests WHERE id=$1 FOR UPDATE', [hint.id])).rows[0];
   if (!row || row.commitment_id !== hint.commitment_id || row.order_id !== hint.order_id || row.loan_id !== hint.loan_id) fail('Advance context changed; refresh.');
   return { row, order, commitment, loan };
@@ -99,13 +99,13 @@ export async function requestDeliveryAdvance(supplier, lender, body, requestKey,
   intake();
   const pre = (await client.query('SELECT order_id FROM delivery_commitments WHERE id=$1 AND supplier_character=$2', [terms.commitmentId, supplier.id])).rows[0];
   if (!pre) fail('No delivery commitment of yours.');
-  const order = (await client.query('SELECT * FROM market_listings WHERE id=$1 FOR UPDATE', [pre.order_id])).rows[0];
-  const c = (await client.query('SELECT * FROM delivery_commitments WHERE id=$1 FOR UPDATE', [terms.commitmentId])).rows[0];
   const existing = (await client.query("SELECT * FROM delivery_loan_requests WHERE commitment_id=$1 AND state IN ('requested','offered','active')", [terms.commitmentId])).rows[0];
   if (existing) {
     const ctx = await lockContext(client, existing); await closedDebt(client, ctx);
     if (['requested', 'offered', 'active'].includes(ctx.row.state)) fail('This commitment already has a live advance request.');
   }
+  const order = (await client.query('SELECT * FROM market_listings WHERE id=$1 FOR UPDATE', [pre.order_id])).rows[0];
+  const c = (await client.query('SELECT * FROM delivery_commitments WHERE id=$1 FOR UPDATE', [terms.commitmentId])).rows[0];
   const count = (await client.query("SELECT id FROM delivery_loan_requests WHERE supplier_character=$1 AND state IN ('requested','offered') LIMIT 3", [supplier.id])).rows.length;
   if (count >= 3) fail('Resolve one of your own three pending advance requests.');
   const quote = await strictQuote(client, terms, supplier, lender, c, order, h.owned, h.acct), id = crypto.randomUUID();

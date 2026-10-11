@@ -75,8 +75,9 @@ try {
   // Capture a deferred continuation during the private permitted call. It may not retain authority after return.
   let release,late;
   const accepted=await pair(supplier,lender,async(ch,other,client,h)=>{
-    let proxy,loanReads=0;
+    let proxy,loanReads=0;const acquisition=[];
     proxy=new Proxy(client,{get(target,prop){if(prop!=='query')return Reflect.get(target,prop,target);return async(sql,args)=>{
+      if(typeof sql==='string'&&/FOR UPDATE/.test(sql)) { const lock=/FROM (loans|market_listings|delivery_commitments|delivery_loan_requests)\b/.exec(sql);if(lock&&!acquisition.includes(lock[1]))acquisition.push(lock[1]); }
       if(typeof sql==='string'&&sql.startsWith('SELECT * FROM loans WHERE id=$1 FOR UPDATE')) loanReads++;
       if(!late&&loanReads===2&&typeof sql==='string'&&sql.startsWith('SELECT * FROM loans WHERE id=$1 FOR UPDATE')) {
         await Finance.assertDeliveryFinanceLoanTake(proxy,ch,funded.loanId); // proves this capture is INSIDE the active permit
@@ -86,6 +87,7 @@ try {
       return target.query(sql,args);
     };}});
     const result=await Finance.takeDeliveryAdvance(ch,other,r.id,proxy,h);release();
+    assert.deepEqual(acquisition.slice(0,4),['loans','market_listings','delivery_commitments','delivery_loan_requests'],'Existing canonical debt locks before its market pot');
     await assert.rejects(late,e=>e.code==='delivery_finance');return result;
   });
   assert.equal(accepted.request.state,'active');assert.equal((await take(supplier,lender,r.id)).request.state,'active');
@@ -105,9 +107,18 @@ try {
   const b2=await actor('FinBuyer2'),s2=await actor('FinSupplier2'),l2=await actor('FinLender2'),paperBuyer=await actor('FinPaperBuyer');
   const c2=await commitment(b2,s2),r2=(await request(s2,l2,c2)).request,f2=(await offer(l2,s2,r2.id)).request;
   await take(s2,l2,r2.id);await pair(s2,l2,(ch,l,client,h)=>Loans.repayLoan(ch,l,f2.loanId,client,h));
-  await single(s2,(ch,client)=>Finance.assertDeliveryFinanceDelivery(client,ch,c2.id));assert.equal((await requestRow(r2.id)).state,'closed');
-  // New consent after released debt can target the same still-untouched commitment.
-  const r3=(await request(s2,l2,c2)).request,f3=(await offer(l2,s2,r3.id)).request;await take(s2,l2,r3.id);
+  // Do not pre-clean stale metadata: a new request must take the existing repaid loan BEFORE its order.
+  const r3=(await pair(s2,l2,async(ch,l,client,h)=>{
+    const acquisition=[];const proxy=new Proxy(client,{get(target,prop){if(prop!=='query')return Reflect.get(target,prop,target);return async(sql,args)=>{
+      if(typeof sql==='string'&&/FOR UPDATE/.test(sql)){const lock=/FROM (loans|market_listings|delivery_commitments|delivery_loan_requests)\b/.exec(sql);if(lock&&!acquisition.includes(lock[1]))acquisition.push(lock[1]);}
+      return target.query(sql,args);
+    };}});
+    const result=await Finance.requestDeliveryAdvance(ch,l,terms(s2,l2,c2),'request-after-repaid-debt',proxy,h);
+    assert.deepEqual(acquisition.slice(0,4),['loans','market_listings','delivery_commitments','delivery_loan_requests'],'Existing-binding cleanup cannot acquire market before loan');return result;
+  })).request;
+  assert.equal((await requestRow(r2.id)).state,'closed');
+  await single(s2,(ch,client)=>Finance.assertDeliveryFinanceDelivery(client,ch,c2.id));
+  const f3=(await offer(l2,s2,r3.id)).request;await take(s2,l2,r3.id);
   await single(l2,(ch,client,h)=>Loans.sellPaper(ch,f3.loanId,{price:4000},client,h));
   await pair(paperBuyer,l2,(ch,l,client,h)=>Loans.buyPaper(ch,l,f3.loanId,client,h));
   assert.equal((await loanRow(f3.loanId)).lender_character,paperBuyer.id);
