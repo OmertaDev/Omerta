@@ -52,3 +52,24 @@ feature tables present in the frozen catalog, compares exact constraints and
 nullability, and preserves the pinned baseline plus unknown-addition controls.
 Native PostgreSQL 18.4 full-stack and new causal-negative retests passed;
 partial-stack native PostgreSQL 16/18.4 hosted retests remain release gates.
+
+## Native CI runtime repair
+
+Revision `07b93a87de0360959acf9d9e96af129acd95cf1d` passed PostgreSQL18.4 in
+19m43s, but PostgreSQL16 exceeded the exact twenty-minute job bound
+(check `114553800237`, run `38167768262`). The previously tested thirty-minute
+native job bound preserves the complete suite, both database versions and all
+conditions; it changes no gameplay or financial authority. Fresh checks at the
+repaired head are required. A separate inherited Crew race fixture can wait for
+an unobserved Crew lock while due accrual is still waiting at a character lock;
+that fixture and a journey stale-command clock boundary are being repaired and
+must pass before this release is ready. Historical failed runs remain retained.
+
+Repair `9f32a411` makes the Crew fixture observe either actual Crew-lock or
+independent due-accrual character-lock boundaries with bounded waits and
+unconditional hold cleanup. The due-accrual transaction commits before action
+Crew locking; no production lock order changes. Native proofs retain private
+board transitions32→24→16. A scoped server clock keeps the mystery choice stale
+assertion within its valid command lifetime; independent command expiry checks
+remain unchanged and passed (17 native groups). Memory and PostgreSQL18.4
+retests passed; PostgreSQL16 and all other exact hosted gates remain required.

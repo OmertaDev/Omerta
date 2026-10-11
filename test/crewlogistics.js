@@ -186,33 +186,71 @@ try {
   }
   assert.equal((await readBoard(boss)).links.length, 32, 'four members share only bounded explicit consented source summaries');
   if (native) {
+    async function waitForHold(held, read) {
+      let timer;
+      try {
+        await Promise.race([held, read.then(() => assert.fail('board read completed before hold')),
+          new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('board hold observation timed out')), 5000); })]);
+      } finally { clearTimeout(timer); }
+    }
+    // Isolate the Crew race from phase-one accrual, which locks the character first.
+    await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [member.id, new Date(Date.now() + 60000)]);
     let releaseRead, readHeld; const held = new Promise(resolve => { readHeld = resolve; });
     const hold = new Promise(resolve => { releaseRead = resolve; });
     const boardRead = G.withCharacterReadLocked(app.pool, member.accountId, async (ch, client) => { readHeld(); await hold; return crewLogisticsBoard(client, ch); }, C.CREW_FIRST_CHARACTER_LOCKS);
-    await held;
-    let backendPid, lockingStarted; const locking = new Promise(resolve => { lockingStarted = resolve; });
+    let backendPid, leaving;
     const observedPool = { query: (...params) => app.pool.query(...params), async connect() {
       const client = await app.pool.connect();
-      return { release: () => client.release(), async query(sql, values) {
-        if (typeof sql === 'string' && /SELECT id FROM crews WHERE id=\$1 FOR UPDATE/.test(sql)) {
-          backendPid = (await client.query('SELECT pg_backend_pid() pid')).rows[0].pid; lockingStarted();
-        }
-        return client.query(sql, values);
-      } };
+      backendPid = (await client.query('SELECT pg_backend_pid() pid')).rows[0].pid;
+      await client.query("SET lock_timeout='5s'");
+      await client.query("SET statement_timeout='8s'");
+      return { release: () => client.release(), query: (...params) => client.query(...params) };
     } };
-    const leaving = G.withCharacter(observedPool, member.accountId, (ch, client, h) => C.leaveCrew(ch, client, h), C.CREW_FIRST_CHARACTER_LOCKS);
-    leaving.catch(() => {}); await locking;
-    let blocked = false;
-    for (let i = 0; i < 100; i++) {
-      const activity = (await app.pool.query('SELECT wait_event_type FROM pg_stat_activity WHERE pid=$1', [backendPid])).rows[0];
-      if (activity?.wait_event_type === 'Lock') { blocked = true; break; }
-      await new Promise(resolve => setTimeout(resolve, 20));
+    let blocked = false, authorizedBeforeLeave;
+    try {
+      await waitForHold(held, boardRead);
+      leaving = G.withCharacter(observedPool, member.accountId, (ch, client, h) => C.leaveCrew(ch, client, h), C.CREW_FIRST_CHARACTER_LOCKS);
+      leaving.catch(() => {});
+      for (let i = 0; i < 150; i++) {
+        const activity = backendPid && (await app.pool.query('SELECT wait_event_type,query FROM pg_stat_activity WHERE pid=$1', [backendPid])).rows[0];
+        if (activity?.wait_event_type === 'Lock' && /FROM\s+crews\b[\s\S]*FOR\s+UPDATE/i.test(activity.query)) { blocked = true; break; }
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      assert(blocked, 'real leave must wait at Crew lock while private board holds membership boundary');
+      releaseRead(); authorizedBeforeLeave = await boardRead; await leaving;
+    } finally {
+      releaseRead();
+      await Promise.allSettled([boardRead, leaving].filter(Boolean));
     }
-    releaseRead(); const authorizedBeforeLeave = await boardRead; await leaving;
-    assert(blocked, 'real leave must wait at Crew lock while private board holds membership boundary');
     assert.equal(authorizedBeforeLeave.links.length, 32); await assert.rejects(readBoard(member), e => e.code === 'no_crew');
     assert.equal((await readBoard(boss)).links.length, 24);
     console.log('crewlogistics PostgreSQL: observed leave Lock wait behind read Crew boundary; authorized old snapshot then removal rejects subsequent read PASS');
+    // Due accrual commits in its own transaction before the Crew-first action.
+    // Exercise its character wait too, rather than masking it with the fixture above.
+    await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [third.id, new Date(Date.now() - 60000)]);
+    let releaseDueRead, dueReadHeld, dueLeaving;
+    const dueHeld = new Promise(resolve => { dueReadHeld = resolve; });
+    const dueHold = new Promise(resolve => { releaseDueRead = resolve; });
+    const dueBoardRead = G.withCharacterReadLocked(app.pool, third.accountId, async (ch, client) => { dueReadHeld(); await dueHold; return crewLogisticsBoard(client, ch); }, C.CREW_FIRST_CHARACTER_LOCKS);
+    backendPid = undefined;
+    try {
+      await waitForHold(dueHeld, dueBoardRead);
+      dueLeaving = G.withCharacter(observedPool, third.accountId, (ch, client, h) => C.leaveCrew(ch, client, h), C.CREW_FIRST_CHARACTER_LOCKS);
+      dueLeaving.catch(() => {});
+      let dueBlocked = false;
+      for (let i = 0; i < 150; i++) {
+        const activity = backendPid && (await app.pool.query('SELECT wait_event_type,query FROM pg_stat_activity WHERE pid=$1', [backendPid])).rows[0];
+        if (activity?.wait_event_type === 'Lock' && /FROM\s+characters\b[\s\S]*FOR\s+UPDATE/i.test(activity.query)) { dueBlocked = true; break; }
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      assert(dueBlocked, 'overdue leave must wait at phase-one character lock before Crew action');
+      releaseDueRead(); assert.equal((await dueBoardRead).links.length, 24); await dueLeaving;
+    } finally {
+      releaseDueRead(); await Promise.allSettled([dueBoardRead, dueLeaving].filter(Boolean));
+    }
+    await assert.rejects(readBoard(third), e => e.code === 'no_crew');
+    assert.equal((await readBoard(boss)).links.length, 16);
+    console.log('crewlogistics PostgreSQL: observed due-accrual character Lock wait; release permits accrual and leave; removed member read rejects PASS');
   }
   console.log(`crewlogistics actual ${native ? 'PostgreSQL' : 'memory'}: canonical reference ownership, no-accrual GET, source write/lock guard, leave/kick rejoin revocation, death/generation/expiry privacy and member cap PASS; references do not prove tender funding or delivery execution`);
 } finally { await app.close(); }
