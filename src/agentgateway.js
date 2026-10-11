@@ -322,6 +322,25 @@ const OPERATION_CONTRACTS = {
     responseSchema: { $ref: '#/components/schemas/AgentActReceipt' },
     extraResponses: { 409: { description: 'stale_turn — use the replacement AgentTurn in the response and choose again.' } },
   },
+  'GET /v1/supply-tenders': { operationId: 'getFundedSupplyTenders' },
+  'POST /v1/depot/:id/orders/:orderId/tender': {
+    operationId: 'publishFundedSupplyTender', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty', 'unitPrice', 'offersCloseAt'], properties: {
+        qty: { type: 'integer', minimum: 1, maximum: 40 }, unitPrice: { type: 'integer', minimum: 50, maximum: 1000000 },
+        offersCloseAt: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/supply-tenders/:id/offers': {
+    operationId: 'offerFundedSupplyTender', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty', 'unitPrice', 'maxProcurementCash', 'acceptUntil', 'deliverBy'], properties: {
+        qty: { type: 'integer', minimum: 1, maximum: 40 }, unitPrice: { type: 'integer', minimum: 50, maximum: 1000000 },
+        maxProcurementCash: { type: 'integer', minimum: 1, maximum: 100000 },
+        acceptUntil: { type: 'string', format: 'date-time' }, deliverBy: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/supply-tenders/:id/offers/:offerId/award': { operationId: 'awardFundedSupplyOffer' },
+  'POST /v1/supply-tenders/:id/offers/withdraw': { operationId: 'withdrawOwnSupplyOffer' },
+  'POST /v1/supply-tenders/:id/cancel': { operationId: 'cancelOwnSupplyTender' },
   'POST /v1/crimes/:id': {
     operationId: 'commitCrime',
     requestSchema: { type: 'object', additionalProperties: false, properties: {
