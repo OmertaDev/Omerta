@@ -514,7 +514,9 @@ async function readSession(stateStore) {
     Object.keys(value).sort().join('\0') === [...keys].sort().join('\0');
   const pendingValid = session?.pending === null || (
     session?.pending &&
-    exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt']) &&
+    (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt'])
+      || (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt', 'decisionCallId'])
+        && typeof session.pending.decisionCallId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(session.pending.decisionCallId))) &&
     typeof session.pending.operationId === 'string' && session.pending.operationId &&
     typeof session.pending.turnId === 'string' && session.pending.turnId &&
     typeof session.pending.actionId === 'string' && session.pending.actionId &&
@@ -879,6 +881,14 @@ export function recommendationOf(turn, role = 'general') {
   if (!policyIsConservative(turn.policy)) {
     return { action: null, candidate: action, errorCode: 'policy_mismatch' };
   }
+  if (action.decisionCall !== undefined) {
+    const decision = action.decisionCall;
+    if (!decision || typeof decision !== 'object' || Array.isArray(decision)
+        || Object.keys(decision).sort().join(',') !== 'actionId,callId,turnId'
+        || typeof decision.callId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(decision.callId)
+        || decision.turnId !== turn.turnId || decision.actionId !== action.id)
+      return { action: null, candidate: action, errorCode: 'unsafe_decision' };
+  }
   return { action, errorCode: null };
 }
 
@@ -894,7 +904,8 @@ async function settlePending({ base, fetchImpl, reportStore, stateStore, session
       method: 'POST',
       token: session.token,
       idempotencyKey: operationKey(pending.operationId),
-      body: { turnId: pending.turnId, actionId: pending.actionId },
+      body: { turnId: pending.turnId, actionId: pending.actionId,
+        ...(pending.decisionCallId !== undefined ? { decisionCallId: pending.decisionCallId } : {}) },
     });
   } catch (error) {
     if (error?.status !== 409 || error?.code !== 'stale_turn') throw error;
@@ -1008,6 +1019,7 @@ async function runUnlocked(options, timing) {
         turnId: turn.turnId,
         actionId: action.id,
         startedAt: new Date().toISOString(),
+        ...(action.decisionCall !== undefined ? { decisionCallId: action.decisionCall.callId } : {}),
       },
     };
     await writeIdentityState(stateStore, session);
