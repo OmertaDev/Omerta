@@ -69,5 +69,13 @@ full current test source is `4fdd74b5960def64c5743e94ca233e1d6873626f`; its sepa
 full output is retained with source scope, rather than implying the earlier run
 contained the stronger composed test. Required fresh hosted checks remain open.
 
+Release integration also restored the existing native resource pilot command to
+its original step's explicit isolated database environment. A causal gate fixture
+now rejects a resource command separated from that environment. The hosted recovery
+run `38147575709` on `4b2a3c7e` failed before code execution when the public container
+registry rejected the PostgreSQL image pull with a data-limit error; raw diagnostics
+are retained in output/decisionproofs-recovery-hosted-failure.log. This supplies no
+runtime qualification and requires a successful fresh release check.
+
 Financial activation and real compute purchases remain disabled. Required hosted
 checks and exact production revision/health verification remain release gates.
