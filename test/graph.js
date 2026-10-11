@@ -65,7 +65,10 @@ assert.deepEqual(inv.mute.sort(), [
   'family operation capital',
   'family operation custody',
   'family operation history',
+  'franchise royalty conservation',
+  'franchise royalty provenance',
   'reason vocabulary',
+  'warehouse journal ownership',
   'world graph object transitions',
   'world graph salvage car audit',
   'world graph stack conservation',
@@ -73,6 +76,7 @@ assert.deepEqual(inv.mute.sort(), [
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
   ['family operation history', 'Family operation revision and replay receipt authority'],
   ['world graph object transitions', 'world object history and consumed-item receipt authority'],
@@ -86,6 +90,13 @@ for (const [name, taxonomy] of NON_CURRENCY_WORLD_GRAPH_CHECKS) {
     edge.type === 'RECONCILES' && edge.from === `Check:${name}`
   )), false, `${taxonomy} SQL must not be misclassified as a transaction currency/reason term`);
 }
+// Ownership checks structural journal references; warehouse cash still needs its
+// separate literal ledger reconciliation, which must not join the mute list.
+const warehouseAudit = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+assert.match(warehouseAudit, /push\('warehouse journal ownership', depotJournal\.filter\(j => j\.lease_id \? !warehouseLeases\.some\(l =>\s*l\.id === j\.lease_id && l\.depot_id === j\.depot_id && l\.tenant_character === j\.customer_character\)/);
+assert(g.edges.some((edge) => edge.type === 'RECONCILES'
+  && edge.from === 'Check:warehouse rent ledger' && edge.to === 'Reason:warehouse:rent'),
+  'warehouse rent must retain monetary ledger reconciliation');
 // This imported helper reconciles cash with grouped SQL and BigInt, beyond the
 // lexical term parser. Keep that currency blind spot explicit, separately from
 // the noncurrency checks, and pin its real ledger vocabulary and equation.
@@ -98,6 +109,18 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+// Franchise royalties move cash inside depot journals, not transaction reasons.
+// Keep this finite monetary classification separate from noncurrency checks.
+for (const name of ['franchise royalty conservation', 'franchise royalty provenance']) {
+  assert(g.nodes.has(`Check:${name}`));
+  assert.equal(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === `Check:${name}`), false);
+}
+assert.match(invariantSource, /const depotCash = \(reason\) => depotJournal\.filter\(\(entry\) => entry\.reason === reason\)\.reduce\(\(n, entry\) => n \+ Number\(entry\.cash_delta\), 0\)/);
+assert.match(invariantSource, /push\('franchise royalty conservation', -depotCash\('royalty_expense'\), depotCash\('royalty_income'\), 0\)/);
+assert.match(invariantSource, /pair\.length !== 2 \|\| !debit \|\| !credit \|\| !sale \|\| sale\.reason !== 'sale'/);
+assert.match(invariantSource, /debit\.depot_id !== license\.operator_depot_id \|\| credit\.depot_id !== license\.recipient_depot_id/);
+assert.match(invariantSource, /Number\(debit\.cash_delta\) !== -Number\(credit\.cash_delta\)/);
+assert.match(invariantSource, /push\('franchise royalty provenance', royaltyFaults, 0, 0\)/);
 for (const reason of ['deposit', 'refund', 'spend', 'forfeit']) {
   assert(invariantSource.includes(`'coordination:capital:${reason}'`), `Family capital vocabulary lost ${reason}`);
 }

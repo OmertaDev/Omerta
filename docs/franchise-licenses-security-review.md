@@ -67,3 +67,11 @@ command, environment, matrix entry and condition; suite/browser bounds remain
 sixty/twenty minutes. Full source gates passed; missing, duplicate and widened
 native bounds each failed at the intended guard. Fresh complete hosted checks
 are required on the integrated revision; partial logs are not release approval.
+
+Native PostgreSQL16 run38168016741 at e6669079 failed inherited fixture
+assertions: Crew wait observation never reached its expected signal during
+independent due accrual, and a mystery command crossed its TTL before the stale
+assertion. Repair9f32a411 retains both actual lock paths with bounded cleanup and
+isolates stale-versus-expired clock tests. Native18.4 passed the original full
+lane in20m49s. The repaired source requires fresh complete16/18.4 and other
+release checks; no prior successful prefix qualifies the new head.
