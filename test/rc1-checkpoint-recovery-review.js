@@ -1,9 +1,10 @@
+import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
-  reviewCanonicalCheckpoint } from '../tools/rc1-checkpoint-recovery-review.js';
+  reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
 
@@ -17,6 +18,13 @@ const source = await verifyCheckpointRecoverySources({ readFile: file => fs.read
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file), sourceRevision: source.sourceRevision }));
+assert.equal(CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed');
+assert.match(CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
+const crewSource = (await fs.readFile('src/crew.js', 'utf8')).replaceAll('\r\n', '\n');
+assert.equal(assertCrewLogisticsSourceTransfer('src/crew.js', crewSource).baselineSha256, source.extensionPins['src/crew.js']);
+for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES['src/crew.js'])
+  for (const changed of [crewSource.replace(chunk, ''), crewSource.replace(chunk, chunk + chunk)])
+    await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision, readFile: file => file === 'src/crew.js' ? changed : fs.readFile(file) }), /source changed/);
 const extensionFiles = ['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'];
 assert.deepEqual(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.sourcePins,
   Object.fromEntries(extensionFiles.map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])));

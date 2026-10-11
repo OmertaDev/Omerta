@@ -1,6 +1,11 @@
+import { LOAN_REFUND_CREW_SOURCE_REVIEW_TRANSFER, LOAN_REFUND_METRIC_SOURCE_PINS } from '../tools/rc1-world-economy-metrics.js';
+import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { createWorldEconomyMetrics, classifyEconomyBoundary, economyDigest, economySnapshotHash } from '../tools/rc1-world-economy-metrics.js';
 import { exactSum } from '../tools/rc1-resource-journal.js';
+assert.equal(LOAN_REFUND_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, LOAN_REFUND_METRIC_SOURCE_PINS['src/game.js']);
+assert.equal(LOAN_REFUND_CREW_SOURCE_REVIEW_TRANSFER.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.match(LOAN_REFUND_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
 
 const DAY = 86400000, roster = ['a', 'b', 'zero'];
 const initial = () => ({ format: 1, tables: {
