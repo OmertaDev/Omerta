@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 const native=process.argv.includes('--postgres');
-if(native){const u=new URL(process.env.STRATEGY_LICENSE_TEST_DATABASE_URL||'http://missing');if(u.protocol!=='postgresql:'||u.hostname!=='127.0.0.1'||!((u.port==='35439'&&u.username==='pilot_runner')||(u.port==='5432'&&u.username==='postgres'))||!/^\/strategy_license_[a-z0-9_]+$/.test(u.pathname))throw Error('Use a fresh dedicated local strategy_license_ database.');process.env.DATABASE_URL=u.href;process.env.MARKET_SEED='strategy-license-local-fixture-1947';}
+if(native){const u=new URL(process.env.STRATEGY_LICENSE_TEST_DATABASE_URL||'http://missing');if(u.protocol!=='postgresql:'||u.hostname!=='127.0.0.1'||u.search||u.hash||!((u.port==='35439'&&u.username==='pilot_runner'&&!u.password)||(u.port==='5432'&&u.username==='postgres'&&u.password==='pgcheck'))||!/^\/strategy_license_[a-z0-9_]+$/.test(u.pathname))throw Error('Use a fresh dedicated local strategy_license_ database.');
+  const {default:pg}=await import('pg');const preflight=new pg.Pool({connectionString:u.href});try{assert.equal((await preflight.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0,'Native strategy proof requires its own empty database');}finally{await preflight.end();}
+  process.env.DATABASE_URL=u.href;process.env.MARKET_SEED='strategy-license-local-fixture-1947';}
 else if(process.env.DATABASE_URL)throw Error('Memory fixture refuses ambient DATABASE_URL.');
 process.env.DEPOT_PILOT='on';process.env.RATE_LIMIT='off';process.env.JWT_SECRET='strategy-license-local-test-secret';process.env.SOCIAL_VERIFY_MODE='off';process.env.MOD_KEY='strategy-license-local-mod';
 const {buildServer}=await import('../src/server.js');const G=await import('../src/game.js');const L=await import('../src/strategylicenses.js');const {DISTRICTS,priceBlock}=await import('../src/rules.js');const {INTEL_FORECAST}=await import('../src/intelforecasts.js');

@@ -62,6 +62,7 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
+  'company succession bindings',
   'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
@@ -71,6 +72,7 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty provenance',
   'logistics coverage bindings',
   'reason vocabulary',
+  'strategy license bindings',
   'warehouse journal ownership',
   'world graph object transitions',
   'world graph salvage car audit',
@@ -115,6 +117,10 @@ const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.m
 assert(g.edges.some(edge => edge.type === 'RECONCILES'
   && edge.from === 'Check:logistics coverage escrow' && edge.to === 'Reason:coverage:%'),
   'Funded coverage must reconcile actual escrow against its cash ledger');
+
+assert(g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:strategy license transfers' && edge.to === 'Reason:strategy:%'),
+  'Strategy licenses must reconcile their actual paired game-cash ledger');
 
 // An advance is metadata over canonical loan escrow, not another cash bucket.
 // Pin the real debt/receipt checks and retain the underlying monetary edge.

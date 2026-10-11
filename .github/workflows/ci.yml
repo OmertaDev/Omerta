@@ -491,6 +491,81 @@ jobs:
           "
           npm run test:logistics-coverage-api:postgres
 
+      - name: Strategy licenses genuine prospective holdout and paired cash (real PostgreSQL)
+        env:
+          STRATEGY_LICENSE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/strategy_license_domain_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE strategy_license_domain_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:strategy-licenses:postgres
+
+      - name: Strategy licenses private library and cash-bound API (real PostgreSQL)
+        env:
+          STRATEGY_LICENSE_API_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/strategy_license_api_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE strategy_license_api_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:strategy-licenses-api:postgres
+
+      - name: Company succession explicit estate consent and newly funded front (real PostgreSQL)
+        env:
+          COMPANY_SUCCESSION_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/company_succession_domain_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE company_succession_domain_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:company-succession:postgres
+
+      - name: Company succession private recovery and canonical opening API (real PostgreSQL)
+        env:
+          COMPANY_SUCCESSION_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/company_succession_api_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE company_succession_api_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:company-succession-api:postgres
+
+      - name: Public market feed provenance and closed filters (real PostgreSQL)
+        env:
+          MARKET_FEED_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/market_feed_api_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE market_feed_api_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:market-feed-api:postgres
+
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
         env:
