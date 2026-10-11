@@ -1008,7 +1008,7 @@ const ALLOWED_KINDS = [
   'delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver',
 ];
 
-async function actionApi({ kinds = ['crime'], policy = POLICY } = {}) {
+async function actionApi({ kinds = ['crime'], policy = POLICY, turnForIndex = null } = {}) {
   const app = Fastify({ logger: false });
   const state = { turnCalls: 0, actCalls: 0, actKeys: [], actBodies: [] };
   app.get('/v1/session', async () => ({
@@ -1023,6 +1023,7 @@ async function actionApi({ kinds = ['crime'], policy = POLICY } = {}) {
     if (index >= kinds.length) {
       return { turnId: `turn-${index}`, recommendedActionId: null, policy, actions: [] };
     }
+    if (turnForIndex) return turnForIndex(index);
     const kind = kinds[index];
     return {
       turnId: `turn-${index}`,
@@ -1064,6 +1065,50 @@ async function withReadySession(api, prefix, callback) {
     await api.close();
     await rm(dir, { recursive: true, force: true });
   }
+}
+
+async function supplierContinuityTest() {
+  const observedAt = '2026-10-11T00:00:00.000Z';
+  const commitment = (id, seconds = 60) => ({ id, supplierId: 'supplier', status: 'accepted', remaining: 2,
+    deadline: new Date(Date.parse(observedAt) + seconds * 1000).toISOString() });
+  const action = (id, kind) => ({ id, kind, executable: true, method: 'DELETE', path: '/forbidden-direct-path', body: { forbidden: true } });
+  const fresh = action('new-contract', 'delivery_accept'), ordinary = action('ordinary-fill', 'market_fill');
+  const later = action('delivery:later:buy', 'delivery_buy'), urgent = action('delivery:urgent:deliver', 'delivery_deliver');
+  const turn = { turnId: 'continuity', observedAt, state: { identity: { id: 'supplier' } }, policy: POLICY,
+    recommendedActionId: fresh.id, deliveries: [commitment('later', 120), commitment('urgent')],
+    actions: [fresh, ordinary, later, urgent] };
+  assert.equal(recommendationOf(turn, 'supplier').action, urgent, 'earliest owned commitment precedes new work and open-market fills');
+  assert.equal(recommendationOf(turn).action, fresh, 'general role retains server recommendation');
+  assert.equal(recommendationOf(turn, 'business').action, null, 'business role retains its scope');
+  assert.equal(recommendationOf({ ...turn, policy: { ...POLICY, cashReserve: 0 } }, 'supplier').errorCode, 'policy_mismatch');
+  assert.equal(recommendationOf({ ...turn, deliveries: [commitment('later'), commitment('urgent')] }, 'supplier').action, later,
+    'equal deadlines preserve existing action rank, not metadata ordering');
+  for (const changes of [ { status: 'delivered' }, { supplierId: 'other' }, { remaining: 0 }, { remaining: '2' },
+    { remaining: NaN }, { id: 'urgent:forged' }, { deadline: 'invalid' }, { deadline: observedAt } ]) {
+    assert.equal(recommendationOf({ ...turn, deliveries: [{ ...commitment('urgent'), ...changes }] }, 'supplier').action, fresh);
+  }
+  for (const changes of [{ observedAt: undefined }, { observedAt: 'invalid' }, { state: {} }, { deliveries: null }])
+    assert.equal(recommendationOf({ ...turn, ...changes }, 'supplier').action, fresh, 'malformed metadata falls back to existing scope');
+  for (const kind of ['delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver']) {
+    const suffix = { delivery_buy: 'buy', delivery_depot_buy: 'depot:store:buy', delivery_travel: 'travel_to_deliver', delivery_deliver: 'deliver' }[kind];
+    const next = action(`delivery:urgent:${suffix}`, kind);
+    assert.equal(recommendationOf({ ...turn, deliveries: [commitment('urgent')], actions: [fresh, next] }, 'supplier').action, next);
+    assert.equal(recommendationOf({ ...turn, deliveries: [commitment('urgent')], actions: [fresh, { ...next, executable: false }] }, 'supplier').action, fresh);
+    assert.equal(recommendationOf({ ...turn, deliveries: [commitment('urgent')], actions: [fresh, { ...next, id: `${next.id}:forged` }] }, 'supplier').action, fresh);
+  }
+  assert.equal(recommendationOf({ ...turn, actions: [fresh, action('delivery:urgent:deliver', 'crime')] }, 'supplier').action, fresh);
+  assert.equal(recommendationOf({ ...turn, actions: [fresh, action('delivery:foreign:deliver', 'delivery_deliver')] }, 'supplier').action, fresh);
+  const progress = ['delivery_depot_buy', 'delivery_travel', 'delivery_deliver'];
+  const ids = ['delivery:urgent:depot:store:buy', 'delivery:urgent:travel_to_deliver', 'delivery:urgent:deliver'];
+  const api = await actionApi({ kinds: progress, turnForIndex: (index) => ({ ...turn, turnId: `turn-${index}`,
+    actions: [fresh, ordinary, action(ids[index], progress[index])], deliveries: [commitment('urgent')] }) });
+  await withReadySession(api, 'omerta-alpha-supplier-continuity-', async ({ sessionFile, reportFile }) => {
+    const summary = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 3, role: 'supplier' });
+    assert.deepEqual(summary, { status: 'complete', actions: 3 });
+    assert.deepEqual(api.state.actBodies, ids.map((actionId, index) => ({ actionId, turnId: `turn-${index}` })),
+      'finite client finishes issued purchase, travel and delivery using IDs only');
+    assert.equal(new Set(api.state.actKeys).size, 3);
+  });
 }
 
 async function restrictedRoleRecoveryTest() {
@@ -2444,7 +2489,9 @@ async function realElapsedCadenceTest() {
   }
 }
 
-if (process.argv.includes('--business-properties')) {
+if (process.argv.includes('--supplier-continuity')) {
+  await supplierContinuityTest();
+} else if (process.argv.includes('--business-properties')) {
   await businessPropertyRoleTest();
   await restrictedRoleRecoveryTest();
 } else {
@@ -2463,6 +2510,7 @@ await failClosedSessionTest();
 await orphanedLockMetadataTest();
 await exactAllowlistTest();
 await businessPropertyRoleTest();
+await supplierContinuityTest();
 await restrictedRoleRecoveryTest();
 await safetyRefusalTest();
 await boundsTest();
