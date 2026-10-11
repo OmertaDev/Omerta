@@ -1,6 +1,6 @@
 # Generated repository inventory
 
-> Source: worktree at `cc884c56bc4e`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `012eaa6caeaf`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
@@ -8,15 +8,15 @@
 |---|---:|
 | Current artifacts | 4,420 |
 | Text lines | 1,567,393 |
-| Repository bytes inventoried | 815,596,245 |
+| Repository bytes inventoried | 815,596,248 |
 | Backend/route modules | 318 |
 | HTTP route registrations / unique routes | 882 / 882 |
 | Database tables | 392 |
 | Solidity declarations | 126 |
-| Git commits | 2,339 |
+| Git commits | 2,341 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,601 / 43,257 |
+| Graph nodes / edges | 10,603 / 43,264 |
 
 ## Artifact kinds
 
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 14,708 | web-surface | 2026-10-10 |
+| [public/index.html](../../public/index.html) | 14,708 | web-surface | 2026-10-11 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
