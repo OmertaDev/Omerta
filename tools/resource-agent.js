@@ -120,8 +120,8 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
     const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
     if (url.origin !== origin && headers.has('authorization')) throw new Error('Credential origin mismatch');
-    const response = await fetchImpl(input, { ...init, redirect: 'error' });
     const method = (init.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+    const response = await fetchImpl(input, { ...init, redirect: 'error' });
     if (url.origin !== origin || url.pathname !== '/v1/agent/turn' || url.search || method !== 'GET' || !response.ok) return response;
     let turn;
     try { turn = await response.clone().json(); } catch { return response; }
@@ -208,7 +208,8 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
       });
       if (!computed.ok) { observe({ kind: 'compute_unavailable', status: computed.status }); return response; }
       const { call } = await computed.json();
-      if (!call || typeof call.id !== 'string' || !Number.isSafeInteger(call.costUsdMicros) || call.costUsdMicros < 0) return response;
+      if (!call || typeof call.id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(call.id)
+          || !Number.isSafeInteger(call.costUsdMicros) || call.costUsdMicros < 0) return response;
       observe({ kind: 'compute_call', callId: call.id, costUsdMicros: call.costUsdMicros });
       outcomes.push({ callId: call.id, costUsdMicros: call.costUsdMicros, cash, rounds: 0, seen: new Set([turn.turnId]) });
       let choice;
@@ -216,7 +217,8 @@ function resourceAgentFetch({ baseUrl, fetchImpl = fetch, providerId, maxOutputT
       if (!choice || Array.isArray(choice) || Object.keys(choice).length !== 1 || typeof choice.actionId !== 'string') return response;
       const chosen = candidates.find(candidate => candidate.id === choice.actionId);
       if (!chosen || !safeCandidate(turn, chosen, role)) return response;
-      const modified = { ...turn, recommendedActionId: chosen.id, actions: [chosen, ...turn.actions.filter(c => c !== chosen)] };
+      const selected = { ...chosen, decisionCall: { callId: call.id, turnId: turn.turnId, actionId: chosen.id } };
+      const modified = { ...turn, recommendedActionId: chosen.id, actions: [selected, ...turn.actions.filter(c => c !== chosen)] };
       const responseHeaders = new Headers(response.headers);
       responseHeaders.delete('content-length');
       responseHeaders.delete('content-encoding');

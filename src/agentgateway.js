@@ -318,6 +318,7 @@ const OPERATION_CONTRACTS = {
     operationId: 'executeAgentTurnAction',
     requestSchema: { type: 'object', additionalProperties: false, required: ['turnId', 'actionId'], properties: {
       turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' }, actionId: { type: 'string', minLength: 1 },
+      decisionCallId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
     } },
     responseSchema: { $ref: '#/components/schemas/AgentActReceipt' },
     extraResponses: { 409: { description: 'stale_turn — use the replacement AgentTurn in the response and choose again.' } },
@@ -1713,6 +1714,13 @@ const AGENT_SCHEMAS = {
       actionId: { type: 'string' }, result: { type: 'object' },
       turn: { oneOf: [{ $ref: '#/components/schemas/AgentTurn' }, { type: 'null' }] },
       refreshRequired: { type: 'boolean' },
+      decisionProof: { type: 'object', additionalProperties: false,
+        required: ['id', 'callId', 'turnId', 'actionId', 'executionRecorded', 'simulated', 'reasoningVerified', 'monetaryProof', 'causalEffect'],
+        properties: {
+          id: { type: 'string' }, callId: { type: 'string' }, turnId: { type: 'string' }, actionId: { type: 'string' },
+          executionRecorded: { const: true }, simulated: { type: 'boolean' }, reasoningVerified: { const: false },
+          monetaryProof: { const: false }, causalEffect: { type: 'null' },
+        } },
     },
   },
 };

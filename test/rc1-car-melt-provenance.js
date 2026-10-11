@@ -8,6 +8,7 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
   STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
   STOREFRONT_SERVER_PIN, STOREFRONT_SOURCE_REVIEWED_REVISION, assertStorefrontServerTransfer,
   BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, assertBusinessServerTransfer,
@@ -28,13 +29,22 @@ const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const storefrontCity = file === 'src/server.js' ? assertStorefrontCityServerTransfer(actual) : null;
+  const decision = file === 'src/server.js' ? assertDecisionCallServerTransfer(actual) : null;
+  const storefrontInput = decision ? decision.baselineText : actual;
+  if (decision) {
+    assert.equal(hash(actual), DECISION_CALL_SERVER_PIN);
+    assert.equal(decision.baselineSha256, STOREFRONT_CITY_SERVER_PIN);
+    assert.equal(decision.inverseChunks, 12);
+    assert.equal(actual, execFileSync('git', ['show', DECISION_CALL_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(storefrontInput, execFileSync('git', ['show', DECISION_CALL_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  }
+  const storefrontCity = file === 'src/server.js' ? assertStorefrontCityServerTransfer(storefrontInput) : null;
   const composedInput = storefrontCity ? storefrontCity.baselineText : actual;
   if (storefrontCity) {
-    assert.equal(hash(actual), STOREFRONT_CITY_SERVER_PIN);
+    assert.equal(hash(storefrontInput), STOREFRONT_CITY_SERVER_PIN);
     assert.equal(storefrontCity.baselineSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
     assert.equal(storefrontCity.inverseChunks, 2);
-    assert.equal(actual, execFileSync('git', ['show', STOREFRONT_CITY_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(storefrontInput, execFileSync('git', ['show', STOREFRONT_CITY_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
     assert.equal(composedInput, execFileSync('git', ['show', STOREFRONT_CITY_SOURCE_PARENTS[1] + ':' + file], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
   const composed = file === 'src/server.js' ? assertCitySocialBusinessServerTransfer(composedInput) : null;
