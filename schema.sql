@@ -7807,3 +7807,34 @@ CREATE TABLE IF NOT EXISTS crew_logistics_links (
 );
 CREATE INDEX IF NOT EXISTS ix_crew_logistics_member ON crew_logistics_links (crew_id,publisher_account_id,revoked_at);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_crew_logistics_consent ON crew_logistics_links (crew_id,publisher_account_id,kind,target_id) WHERE revoked_at IS NULL;
+
+-- A prepaid game-cash report service. Accuracy never determines its fixed payment.
+CREATE TABLE IF NOT EXISTS intel_forecast_jobs (
+  id TEXT PRIMARY KEY,
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  reporter_character TEXT NOT NULL REFERENCES characters(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  district_id TEXT NOT NULL,
+  minimum_stock INT NOT NULL CHECK (minimum_stock BETWEEN 1 AND 40),
+  fee_cash INT NOT NULL CHECK (fee_cash BETWEEN 50 AND 5000),
+  price_block INT NOT NULL CHECK (price_block >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  target_at TIMESTAMPTZ NOT NULL CHECK (target_at > created_at),
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','reported','cancelled','expired','buyer_dead')),
+  predicts_available BOOLEAN,
+  reported_at TIMESTAMPTZ,
+  observation JSONB,
+  outcome TEXT CHECK (outcome IN ('correct','incorrect','unknown')),
+  resolved_at TIMESTAMPTZ,
+  sample_started_at TIMESTAMPTZ,
+  sample JSONB,
+  UNIQUE(buyer_character,request_key),
+  CHECK (buyer_character <> reporter_character),
+  CHECK ((status='reported' AND predicts_available IS NOT NULL AND reported_at IS NOT NULL AND observation IS NOT NULL)
+    OR (status<>'reported' AND predicts_available IS NULL AND reported_at IS NULL AND observation IS NULL)),
+  CHECK (reported_at IS NULL OR (reported_at >= created_at AND reported_at <= target_at - INTERVAL '60 seconds')),
+  CHECK ((outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL)
+    OR (status='reported' AND outcome IS NOT NULL AND resolved_at IS NOT NULL)),
+  CHECK ((sample_started_at IS NULL AND sample IS NULL) OR (sample_started_at IS NOT NULL AND sample IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS ix_intel_forecast_parties ON intel_forecast_jobs (buyer_character,reporter_character,status,target_at);
