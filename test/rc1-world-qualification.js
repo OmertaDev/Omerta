@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
   FRANCHISE_SOURCE_PREDECESSOR_PINS, FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
@@ -34,7 +35,8 @@ const hash = value => sha256(canonicalJson(value)), clone = value => structuredC
 const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
-  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'), proof = assertFranchiseSourceTransfer(file, text);
+  const actual = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, actual).baselineText : actual, proof = assertFranchiseSourceTransfer(file, text);
   franchiseSources.set(file, proof);
   assert.equal(proof.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
   assert.equal(proof.baselineSha256, FRANCHISE_SOURCE_PREDECESSOR_PINS[file]);

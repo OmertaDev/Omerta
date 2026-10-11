@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
@@ -29,7 +30,8 @@ for (const [file, pin, blob, priorBlob, chunks, transfer] of [
   ['src/social/estate.js', WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES, assertWarehouseEstateSourceChange],
 ]) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
-  const current = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, actual).baselineText : actual, proof = transfer(current);
+  const prior = qualifyIntelSource(file, actual).baselineText;
+  const current = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, prior).baselineText : prior, proof = transfer(current);
   assert.equal(proof.actualSha256, pin);
   assert.equal(proof.sourceRevision, WAREHOUSE_SOURCE_REVIEWED_REVISION);
   assert.equal(proof.sourceBlob, blob);
