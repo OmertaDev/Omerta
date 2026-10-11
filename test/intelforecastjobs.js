@@ -10,6 +10,16 @@ if (postgres) {
 } else process.env.DATABASE_URL = '';
 Object.assign(process.env, { RATE_LIMIT: 'off', JWT_SECRET: 'intel-forecast-local-test-only-secret-2026',
   SOCIAL_VERIFY_MODE: 'off', MOD_KEY: 'intel-forecast-local-mod-only', DEPOT_PILOT: 'on', MARKET_SEED: 'intel-forecast-local-test-only' });
+// Keep admitted fixture targets inside one price block at every CI start time.
+// Production still enforces its ordinary lead/window/block checks; later bounded
+// SQL translations exercise temporal cases without waiting for real minutes.
+const RealDate = Date;
+const fixtureNow = Math.floor(RealDate.now() / 14400000) * 14400000 + 3600000;
+class FixtureDate extends RealDate {
+  constructor(...args) { super(...(args.length ? args : [fixtureNow])); }
+  static now() { return fixtureNow; }
+}
+globalThis.Date = FixtureDate;
 const { buildServer } = await import('../src/server.js');
 const { ledger, withCharacter, withTwoCharacters } = await import('../src/game.js');
 const Jobs = await import('../src/intelforecastjobs.js');
@@ -128,4 +138,4 @@ try {
   const serverVersion=postgres?(await app.pool.query('SHOW server_version')).rows[0].server_version:null;
   console.log(JSON.stringify({status:'PASS',database:postgres?'native PostgreSQL':'pg-mem',serverVersion,fixedFee:100,houseTake:0,
     scope:'Canonical wrappers/cash/escrow/replay/privacy/cancel/expiry/estate hook/sampling; temporal contexts translated by fixture SQL; actual full runEstate/API integration owned separately'}));
-} finally { await app.close(); }
+} finally { await app.close(); globalThis.Date = RealDate; }
