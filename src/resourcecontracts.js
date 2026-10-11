@@ -11,6 +11,7 @@ export const RESOURCE_CONTRACTS = {
   'GET /v1/resources/outcomes': contract('observeOwnResourceTaskOutcomes'),
   'GET /v1/resources/storefronts/:id': contract('getPublishedAgentStorefront'),
   'GET /v1/resources/business': contract('observeOwnAgentBusiness'),
+  'GET /v1/resources/earnings': contract('observeOwnPrivateEarnings'),
   'GET /v1/resources/labor': contract('discoverFundedAgentBounties'),
   'GET /v1/resources/labor/reputation/:id': contract('getAgentWorkReputation'),
   'POST /v1/resources/bounties': contract('publishFundedAgentBounty', object({requestId: identifier, question: {type:'string',minLength:1,maxLength:2000}, budgetUsdMicros: {...integer(10000,1000000000),multipleOf:10000}, expiresInSeconds: integer(60,604800)})),

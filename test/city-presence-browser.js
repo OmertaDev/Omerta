@@ -225,7 +225,52 @@ try {
     while (!await page.locator('[data-city-actors-previous]').isDisabled()) await page.locator('[data-city-actors-previous]').click();
     for (let index = 0; index < 40; index++) {
       const button = page.locator('[data-city-actor="' + id + '"]');
-      if (await button.count()) { await button.click(); await page.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, id); return; }
+      if (await button.count()) {
+        const network = [];
+        const response = reply => { if (network.length < 16) network.push({ path: new URL(reply.url()).pathname.slice(0, 160), status: reply.status() }); };
+        const failed = request => { if (network.length < 16) network.push({ path: new URL(request.url()).pathname.slice(0, 160), status: null, failed: true }); };
+        page.on('response', response); page.on('requestfailed', failed);
+        await page.evaluate(() => {
+          window.__actorClickTrace = [];
+          const observe = event => {
+            try {
+              if (window.__actorClickTrace.length >= 12) return;
+              const current = window.__presenceHandles.at(-1), state = current?.handle?.getState();
+              const target = event.target instanceof Element ? event.target : null;
+              window.__actorClickTrace.push({ type: event.type, target: target?.tagName || null,
+                actor: target?.closest('[data-city-actor]')?.dataset.cityActor || null,
+                ready: state?.ready ?? null, selected: state?.selectedActor ?? null, opening: state?.actorOpening ?? null,
+                handleCount: window.__presenceHandles.length, destroyed: current?.destroyed ?? null,
+                unavailable: !state, scroll: scrollY, x: event.clientX, y: event.clientY });
+            } catch {
+              if (window.__actorClickTrace.length < 12) window.__actorClickTrace.push({ type: event.type, unavailable: true });
+            }
+          };
+          for (const type of ['pointerdown', 'pointerup', 'click']) document.addEventListener(type, observe, { capture: true, passive: true });
+          window.__actorClickCleanup = () => { for (const type of ['pointerdown', 'pointerup', 'click']) document.removeEventListener(type, observe, true); };
+        });
+        try {
+          await button.click();
+          await page.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, id);
+        } catch (error) {
+          try {
+            const diagnostic = await page.evaluate(() => {
+              const current = window.__presenceHandles.at(-1), state = current.handle.getState();
+              const rect = selector => document.querySelector(selector)?.getBoundingClientRect().toJSON() || null;
+              return { trace: window.__actorClickTrace, ready: state.ready, selected: state.selectedActor,
+                opening: state.actorOpening, handleCount: window.__presenceHandles.length, destroyed: current.destroyed,
+                scroll: scrollY, roster: [...document.querySelectorAll('[data-city-actor]')].slice(0, 24).map(node => node.dataset.cityActor),
+                layout: { canvas: rect('.omerta-city__canvas canvas'), roster: rect('.omerta-city__actor-list'), dock: rect('.omerta-city__actor-dock') } };
+            });
+            error.message += '\nBounded actor click diagnostics: ' + JSON.stringify({ ...diagnostic, network });
+          } catch { /* Preserve the primary click/selection error even if its page is unavailable. */ }
+          throw error;
+        } finally {
+          page.off('response', response); page.off('requestfailed', failed);
+          await page.evaluate(() => window.__actorClickCleanup?.()).catch(() => {});
+        }
+        return;
+      }
       assert(!await page.locator('[data-city-actors-more]').isDisabled(), 'Every issued actor remains reachable through roster pagination.');
       await page.locator('[data-city-actors-more]').click();
       await page.waitForFunction(() => document.querySelector('[data-city-actors-more]')?.textContent === 'More people');
@@ -330,6 +375,22 @@ try {
     assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
   };
   const assertPlayerNameEdge = async (page, actorId) => {
+    // The preceding real touch gesture may leave an ordinary walking path active.
+    // Let that path finish naturally before measuring resize-only pose preservation.
+    await page.evaluate(() => new Promise((resolve, reject) => {
+      const deadline = performance.now() + 15000;
+      let previous = null;
+      const observe = () => {
+        const current = window.__presenceHandles.at(-1).handle.getState(), pose = current.position;
+        if (current.pathLength === 0 && previous?.pathLength === 0
+            && pose.x === previous.position.x && pose.y === previous.position.y
+            && pose.facing === previous.position.facing) return resolve();
+        if (performance.now() >= deadline) return reject(new Error('Touch-gesture walking did not become stationary before the resize test.'));
+        previous = { pathLength: current.pathLength, position: { ...pose } };
+        requestAnimationFrame(observe);
+      };
+      requestAnimationFrame(observe);
+    }));
     const handles = await page.evaluate(() => window.__presenceHandles.length), initial = (await state(page)).position;
     await page.setViewportSize({ width: 1440, height: 1400 });
     await page.locator('#btn-player-view').click(); await frames(page);
@@ -673,6 +734,9 @@ try {
     // Search bounded real roster pages on the closed map first. If no page
     // intersects the camera, use actual walking to prepare the same phone tap.
     await phone.locator('[data-city-actor-close]').click(); await frames(phone);
+    // inspect(npc) can leave the roster on a later page. Search the complete
+    // bounded real roster, including the earlier pages, for the touch target.
+    while (!await phone.locator('[data-city-actors-previous]').isDisabled()) await phone.locator('[data-city-actors-previous]').click();
     for (let rosterPage = 0; rosterPage < 40; rosterPage++) {
       if (visibleMarker(await markerFrame(phone)) || await phone.locator('[data-city-actors-more]').isDisabled()) break;
       await phone.locator('[data-city-actors-more]').click();
