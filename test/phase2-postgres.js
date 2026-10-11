@@ -199,7 +199,7 @@ async function child(url) {
       verifyUpgradeConstraintCatalog(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
-      console.log('phase2-postgres: fifteen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
+      console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -340,6 +340,10 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
   rejected('business treasury constraint removed',mutate('business_depots','business_depots_treasury_check',
     (rows,index) => rows.splice(index,1)));
   rejected('operating-policy spend bound altered',mutate('business_operating_policies','business_operating_policies_check',
+    (rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('supply cadence cycle bound removed',mutate('business_supply_contracts','business_supply_contracts_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('supply cadence policy binding altered',mutate('business_supply_contracts','business_supply_contracts_policy_id_fkey',
     (rows,index) => { rows[index].definition += ' altered'; }));
   rejected('delivery quantity bound removed',mutate('delivery_commitments','delivery_commitments_quantity_check',
     (rows,index) => rows.splice(index,1)));

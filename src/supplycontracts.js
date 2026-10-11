@@ -5,7 +5,10 @@ import { latestPolicy, policyLive, policyTermsMatch } from './operatingpolicy.js
 const fail = (message) => { throw new GameError('supply_contract', message); };
 const whole = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
 export async function latestSupplyContract(client, depotId, lock = false) {
-  return (await client.query(`SELECT * FROM business_supply_contracts WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1${lock ? ' FOR UPDATE' : ''}`, [depotId])).rows[0] || null;
+  const result = lock
+    ? await client.query('SELECT * FROM business_supply_contracts WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1 FOR UPDATE', [depotId])
+    : await client.query('SELECT * FROM business_supply_contracts WHERE depot_id=$1 ORDER BY revision DESC LIMIT 1', [depotId]);
+  return result.rows[0] || null;
 }
 export function supplyDue(row, now = Date.now()) {
   return !!row?.enabled && Number.isFinite(now) && now < new Date(row.expires_at).getTime()
