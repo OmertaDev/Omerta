@@ -333,6 +333,20 @@ const OPERATION_CONTRACTS = {
       required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
   },
   'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
+  'GET /v1/franchise-licenses': { operationId: 'getOwnGameFranchiseLicenses' },
+  'POST /v1/depot/:id/franchise-offers': {
+    operationId: 'offerOwnGameStorefrontBrand', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['operatorDepotId', 'companyRevision', 'presetId', 'royaltyBps', 'royaltyCap', 'expiresAt'], properties: {
+        operatorDepotId: { type: 'string', minLength: 1, maxLength: 128 },
+        companyRevision: { type: 'integer', minimum: 1, maximum: 2147483647 },
+        presetId: { type: 'string', enum: ['gin_storefront'] },
+        royaltyBps: { type: 'integer', minimum: 1, maximum: 1000 },
+        royaltyCap: { type: 'integer', minimum: 1, maximum: 1000000 },
+        expiresAt: { type: 'string', format: 'date-time', maxLength: 64 },
+      } },
+  },
+  'POST /v1/franchise-licenses/:id/accept': { operationId: 'AcceptOwnGameFranchiseOffer' },
+  'POST /v1/franchise-licenses/:id/end': { operationId: 'endOwnGameFranchiseLicense' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',
