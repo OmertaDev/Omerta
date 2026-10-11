@@ -166,5 +166,5 @@ export async function renewResourceJob(pool, buyer, id, body) {
   const previous = (await pool.query('SELECT * FROM resource_jobs WHERE id=$1', [resourceKey(id)])).rows[0];
   if (!previous || previous.buyer_account !== buyer || previous.state !== 'accepted') throw resourceError('job', 'Only the buyer may renew an accepted service job.');
   return createResourceJob(pool, buyer, { requestId: body?.requestId, sellerAccountId: previous.seller_account,
-    expectedServiceRevision: body?.expectedServiceRevision, question: previous.input.question });
+    expectedServiceRevision: body?.expectedServiceRevision, question: previous.input.question, fulfillment: previous.input.fulfillment || 'compute' });
 }
