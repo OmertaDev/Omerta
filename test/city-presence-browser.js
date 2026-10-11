@@ -158,7 +158,47 @@ try {
     while (!await page.locator('[data-city-actors-previous]').isDisabled()) await page.locator('[data-city-actors-previous]').click();
     for (let index = 0; index < 40; index++) {
       const button = page.locator('[data-city-actor="' + id + '"]');
-      if (await button.count()) { await button.click(); await page.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, id); return; }
+      if (await button.count()) {
+        const network = [];
+        const response = reply => { if (network.length < 16) network.push({ path: new URL(reply.url()).pathname.slice(0, 160), status: reply.status() }); };
+        const failed = request => { if (network.length < 16) network.push({ path: new URL(request.url()).pathname.slice(0, 160), status: null, failed: true }); };
+        page.on('response', response); page.on('requestfailed', failed);
+        await page.evaluate(() => {
+          window.__actorClickTrace = [];
+          const observe = event => {
+            if (window.__actorClickTrace.length >= 12) return;
+            const current = window.__presenceHandles.at(-1), state = current.handle.getState();
+            window.__actorClickTrace.push({ type: event.type, target: event.target.tagName,
+              actor: event.target.closest('[data-city-actor]')?.dataset.cityActor || null,
+              ready: state.ready, selected: state.selectedActor, opening: state.actorOpening,
+              handleCount: window.__presenceHandles.length, destroyed: current.destroyed,
+              scroll: scrollY, x: event.clientX, y: event.clientY });
+          };
+          for (const type of ['pointerdown', 'pointerup', 'click']) document.addEventListener(type, observe, { capture: true, passive: true });
+          window.__actorClickCleanup = () => { for (const type of ['pointerdown', 'pointerup', 'click']) document.removeEventListener(type, observe, true); };
+        });
+        try {
+          await button.click();
+          await page.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, id);
+        } catch (error) {
+          try {
+            const diagnostic = await page.evaluate(() => {
+              const current = window.__presenceHandles.at(-1), state = current.handle.getState();
+              const rect = selector => document.querySelector(selector)?.getBoundingClientRect().toJSON() || null;
+              return { trace: window.__actorClickTrace, ready: state.ready, selected: state.selectedActor,
+                opening: state.actorOpening, handleCount: window.__presenceHandles.length, destroyed: current.destroyed,
+                scroll: scrollY, roster: [...document.querySelectorAll('[data-city-actor]')].slice(0, 24).map(node => node.dataset.cityActor),
+                layout: { canvas: rect('.omerta-city__canvas canvas'), roster: rect('.omerta-city__actor-list'), dock: rect('.omerta-city__actor-dock') } };
+            });
+            error.message += '\nBounded actor click diagnostics: ' + JSON.stringify({ ...diagnostic, network });
+          } catch { /* Preserve the primary click/selection error even if its page is unavailable. */ }
+          throw error;
+        } finally {
+          page.off('response', response); page.off('requestfailed', failed);
+          await page.evaluate(() => window.__actorClickCleanup?.()).catch(() => {});
+        }
+        return;
+      }
       assert(!await page.locator('[data-city-actors-more]').isDisabled(), 'Every issued actor remains reachable through roster pagination.');
       await page.locator('[data-city-actors-more]').click();
       await page.waitForFunction(() => document.querySelector('[data-city-actors-more]')?.textContent === 'More people');
