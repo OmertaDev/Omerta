@@ -3644,7 +3644,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3819,6 +3819,7 @@ scopedSocialContext = async function(db) {
     'itemlots.js:CANDIDATE_PLANS': 'cache: callback-local frozen input plan keyed by the existing item root; PostgreSQL row locks and conditional writes enforce durable serialization',
     'itemlots.js:CANDIDATE_CREATED_AT': 'cache: exact database creation-time evidence keyed by each local candidate row object; every process reads its own PostgreSQL evidence, while row locks and conditional writes enforce durable serialization',
     'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'franchiselicenses.js:saleContexts': 'cache: opaque native-sale context authenticity bound to one SQL client in one transaction; each process prepares its own context while PostgreSQL depot/licence locks and paired journal uniqueness own durable replay',
     'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
     'crafting.js:CRAFTING_KNOWLEDGE': 'cache: server-private knowledge service with fixed rollout policy keyed by each locally authenticated frozen crafting context; claims and current membership/ACL authority are re-read under PostgreSQL locks',
     'crafting.js:CRAFTING_PREREQUISITES': 'cache: immutable server prerequisite service keyed by authentic crafting context; each request rechecks durable world, social, mystery and inventory authority in its own database scope',

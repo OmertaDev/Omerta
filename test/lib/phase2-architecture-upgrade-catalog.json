@@ -1,6 +1,22 @@
 {
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
+    {"table_name":"business_depot_journal","name":"business_depot_journal_franchise_license_id_fkey","definition":"FOREIGN KEY (franchise_license_id) REFERENCES depot_brand_licenses(id)"},
+    {"table_name":"business_depot_journal","name":"business_depot_journal_source_journal_id_fkey","definition":"FOREIGN KEY (source_journal_id) REFERENCES business_depot_journal(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_check","definition":"CHECK (paid >= 0::numeric AND paid <= royalty_cap)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_check1","definition":"CHECK (operator_depot_id <> recipient_depot_id AND operator_character <> licensor_character)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_company_account_id_fkey","definition":"FOREIGN KEY (company_account_id) REFERENCES accounts(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_company_revision_check","definition":"CHECK (company_revision > 0)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_earned_net_check","definition":"CHECK (earned_net >= 0::numeric AND earned_net <= '1000000000000'::bigint::numeric)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_licensor_character_fkey","definition":"FOREIGN KEY (licensor_character) REFERENCES characters(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_operator_character_fkey","definition":"FOREIGN KEY (operator_character) REFERENCES characters(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_operator_depot_id_fkey","definition":"FOREIGN KEY (operator_depot_id) REFERENCES business_depots(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_pkey","definition":"PRIMARY KEY (id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_preset_id_check","definition":"CHECK (preset_id = 'gin_storefront'::text)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_recipient_depot_id_fkey","definition":"FOREIGN KEY (recipient_depot_id) REFERENCES business_depots(id)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_royalty_bps_check","definition":"CHECK (royalty_bps >= 1 AND royalty_bps <= 1000)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_royalty_cap_check","definition":"CHECK (royalty_cap >= 1::numeric AND royalty_cap <= 1000000::numeric)"},
+    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_status_check","definition":"CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'ended'::text]))"},
     { "table_name": "crew_logistics_links", "name": "crew_logistics_links_check", "definition": "CHECK (expires_at > created_at)" },
     { "table_name": "crew_logistics_links", "name": "crew_logistics_links_crew_id_fkey", "definition": "FOREIGN KEY (crew_id) REFERENCES crews(id) ON DELETE CASCADE" },
     { "table_name": "crew_logistics_links", "name": "crew_logistics_links_generation_check", "definition": "CHECK (generation > 0)" },
@@ -1603,6 +1619,7 @@
     }
   ],
   "notNullColumns": {
+    "depot_brand_licenses":["brand_name","company_account_id","company_revision","created_at","earned_net","expires_at","id","licensor_character","operator_character","operator_depot_id","paid","preset_id","recipient_depot_id","royalty_bps","royalty_cap","status"],
     "crew_logistics_links": ["created_at", "crew_id", "expires_at", "generation", "id", "kind", "publisher_account_id", "publisher_character_id", "target_id"],
     "city_social_preferences": [
       "character_id",

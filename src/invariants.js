@@ -553,7 +553,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   // Pilot business custody is independently journaled. Cash funding/withdrawals and
   // customer receipts must also reconcile with the existing character ledger.
   const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;
-  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;
+  const depotJournal = (await pool.query('SELECT id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence,source_journal_id,franchise_license_id FROM business_depot_journal')).rows;
+  const franchiseLicenses = (await pool.query('SELECT * FROM depot_brand_licenses')).rows;
   const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;
   const warehouseNow = Date.now();
   const depotOrders = (await pool.query("SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)")).rows;
@@ -572,6 +573,41 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('depot funding', depotCash('fund'), -(await sum(pool, "currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL")), 0);
   push('depot withdrawals', -depotCash('withdraw'), await sum(pool, "currency='cash' AND reason='depot:withdraw' AND character_id IS NOT NULL"), 0);
   push('depot sales', depotCash('sale'), -(await sum(pool, "currency='cash' AND reason='depot:buy'")) + await sum(pool, "currency='cash' AND reason='depot:take'"), 0);
+  push('franchise royalty conservation', -depotCash('royalty_expense'), depotCash('royalty_income'), 0);
+  const royaltyEntries = depotJournal.filter(j => j.franchise_license_id || j.source_journal_id || ['royalty_expense', 'royalty_income'].includes(j.reason));
+  let royaltyFaults = 0;
+  const royaltySources = new Map();
+  for (const j of royaltyEntries) {
+    if (!j.franchise_license_id || !j.source_journal_id || !['royalty_expense', 'royalty_income'].includes(j.reason)) royaltyFaults++;
+    const sourceLicenses = royaltySources.get(j.source_journal_id) || new Set();
+    sourceLicenses.add(j.franchise_license_id); royaltySources.set(j.source_journal_id, sourceLicenses);
+    if (!franchiseLicenses.some(l => l.id === j.franchise_license_id)) royaltyFaults++;
+  }
+  royaltyFaults += [...royaltySources.values()].filter(ids => ids.size !== 1).length;
+  for (const license of franchiseLicenses) {
+    const entries = royaltyEntries.filter(j => j.franchise_license_id === license.id);
+    let earned = 0, paid = 0;
+    for (const sourceId of new Set(entries.map(j => j.source_journal_id))) {
+      const pair = entries.filter(j => j.source_journal_id === sourceId);
+      const debit = pair.find(j => j.reason === 'royalty_expense'), credit = pair.find(j => j.reason === 'royalty_income');
+      const sale = depotJournal.find(j => j.id === sourceId);
+      if (pair.length !== 2 || !debit || !credit || !sale || sale.reason !== 'sale' || sale.depot_id !== license.operator_depot_id
+          || !sale.customer_character || Number(sale.cash_delta) <= 0 || Number(sale.stock_delta) >= 0
+          || debit.depot_id !== license.operator_depot_id || credit.depot_id !== license.recipient_depot_id
+          || Number(credit.cash_delta) < 0 || Number(debit.cash_delta) !== -Number(credit.cash_delta)
+          || Number(debit.expense) !== Number(credit.cash_delta) || Number(credit.expense) !== 0
+          || pair.some(j => Number(j.stock_delta) !== 0 || Number(j.cost_delta) !== 0)) royaltyFaults++;
+      if (sale?.reason === 'sale') earned += Number(sale.cash_delta);
+      if (credit) paid += Number(credit.cash_delta);
+    }
+    if (!depots.some(d => d.id === license.operator_depot_id && d.owner_character === license.operator_character)
+        || !depots.some(d => d.id === license.recipient_depot_id && d.owner_character === license.licensor_character)) royaltyFaults++;
+    push(`franchise paid:${license.id}`, Number(license.paid), paid, 0);
+    push(`franchise earned:${license.id}`, Number(license.earned_net), earned, 0);
+    const expected = Number(BigInt(earned) * BigInt(license.royalty_bps) / 10000n);
+    push(`franchise rounding:${license.id}`, paid, Math.min(Number(license.royalty_cap), expected), 0);
+  }
+  push('franchise royalty provenance', royaltyFaults, 0, 0);
   push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL")), 0);
   push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
   push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);

@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   assertDeedBacklogCompatibility, AGENT_ECONOMY_INVARIANT_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION,
   WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, assertWarehouseInvariantTransfer,
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES, assertWarehouseEstateSourceChange } from '../tools/rc1-deed-source-compatibility.js';
 import { execFileSync } from 'node:child_process';
-import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, BACKLOG_SOURCE_PINS, BACKLOG_WAREHOUSE_SOURCE_TRANSFER, BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
+import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, BACKLOG_SOURCE_PINS, BACKLOG_FRANCHISE_SOURCE_TRANSFER, BACKLOG_WAREHOUSE_SOURCE_TRANSFER, BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
 for (const file of ['src/chain.js', 'src/invariants.js']) {
   const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   const proof = assertDeedBacklogCompatibility(file, text);
@@ -27,7 +28,8 @@ for (const [file, pin, blob, priorBlob, chunks, transfer] of [
   ['src/invariants.js', WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, assertWarehouseInvariantTransfer],
   ['src/social/estate.js', WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES, assertWarehouseEstateSourceChange],
 ]) {
-  const current = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'), proof = transfer(current);
+  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const current = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, actual).baselineText : actual, proof = transfer(current);
   assert.equal(proof.actualSha256, pin);
   assert.equal(proof.sourceRevision, WAREHOUSE_SOURCE_REVIEWED_REVISION);
   assert.equal(proof.sourceBlob, blob);
@@ -43,8 +45,11 @@ for (const [file, pin, blob, priorBlob, chunks, transfer] of [
   }
   assert.throws(() => transfer(current + '\n// unknown warehouse drift\n'), /source changed/);
 }
-assert.equal(assertWarehouseInvariantTransfer(fs.readFileSync('src/invariants.js', 'utf8').replaceAll('\r\n', '\n')).baselineSha256, AGENT_ECONOMY_INVARIANT_PIN);
-assert.equal(BACKLOG_SOURCE_PINS['src/invariants.js'], WAREHOUSE_INVARIANT_PIN);
+assert.equal(assertWarehouseInvariantTransfer(assertFranchiseSourceTransfer('src/invariants.js', fs.readFileSync('src/invariants.js', 'utf8').replaceAll('\r\n', '\n')).baselineText).baselineSha256, AGENT_ECONOMY_INVARIANT_PIN);
+assert.equal(BACKLOG_SOURCE_PINS['src/invariants.js'], FRANCHISE_SOURCE_CURRENT_PINS['src/invariants.js']);
+assert.equal(BACKLOG_FRANCHISE_SOURCE_TRANSFER.predecessorSha256, WAREHOUSE_INVARIANT_PIN);
+assert.equal(BACKLOG_FRANCHISE_SOURCE_TRANSFER.inverseChunks, 2);
+assert.match(BACKLOG_FRANCHISE_SOURCE_TRANSFER.scope, /separate current-source native proofs/);
 assert.equal(BACKLOG_WAREHOUSE_SOURCE_TRANSFER.predecessorInvariantSha256, AGENT_ECONOMY_INVARIANT_PIN);
 assert.equal(BACKLOG_WAREHOUSE_SOURCE_TRANSFER.inverseChunks, 4);
 assert.match(BACKLOG_WAREHOUSE_SOURCE_TRANSFER.scope, /separate current-source native proofs/);
