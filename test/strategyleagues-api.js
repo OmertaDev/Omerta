@@ -140,5 +140,11 @@ try {
   await app.pool.query('UPDATE strategy_league_entries SET outcome=NULL WHERE league_id=$1', [id]);
   await app.pool.query("UPDATE strategy_leagues SET state='running',result_kind=NULL,sample=NULL,sample_started_at=NULL,resolved_at=NULL WHERE id=$1", [id]);
   assert.equal(await strategyLeagueFaults(app.pool), 0);
+  await app.pool.query("UPDATE strategy_league_entries SET outcome='unknown' WHERE league_id=$1", [id]);
+  await app.pool.query("UPDATE strategy_leagues SET state='resolved',result_kind='unknown',resolved_at=$2 WHERE id=$1", [id,new Date(Date.parse(storedLeague.observation.observedAt)+1)]);
+  assert(await strategyLeagueFaults(app.pool) > 0, 'An unknown outcome cannot bypass the prospective target');
+  await app.pool.query('UPDATE strategy_league_entries SET outcome=NULL WHERE league_id=$1', [id]);
+  await app.pool.query("UPDATE strategy_leagues SET state='running',result_kind=NULL,resolved_at=NULL WHERE id=$1", [id]);
+  assert.equal(await strategyLeagueFaults(app.pool), 0);
   console.log(`strategy league API ${native ? 'PostgreSQL' : 'memory'} tests passed; actual consent, licenses, privacy and prospective pending recovery; no prize or profit claim`);
 } finally { process.env.DEPOT_PILOT = 'on'; await app.close(); }

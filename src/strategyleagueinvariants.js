@@ -46,6 +46,8 @@ export async function strategyLeagueFaults(pool) {
     if (actors.get(l.creator_character) !== l.creator_account || !DISTRICTS.some(d => d.id === l.district_id)
       || ms(l.enrollment_expires_at) !== ms(l.created_at) + 600000 || rows.length > 20) faults++;
     if (l.state !== 'resolved') { if (active.has(l.creator_account)) faults++; active.add(l.creator_account); }
+    if (l.state === 'resolved' && (!Number.isFinite(ms(l.resolved_at))
+      || ms(l.resolved_at) < (l.observation ? ms(l.target_at) : ms(l.enrollment_expires_at)))) faults++;
     if (l.observation && (rows.length < 2 || ms(l.observed_at) >= ms(l.enrollment_expires_at)
       || ms(l.target_at) !== ms(l.observed_at) + 300000 || priceBlock(ms(l.observed_at)) !== Number(l.price_block)
       || priceBlock(ms(l.target_at)) !== Number(l.price_block) || ms(l.observation.observedAt) !== ms(l.observed_at))) faults++;
