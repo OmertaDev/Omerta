@@ -44,3 +44,11 @@ server and historical qualification pins. It does not qualify this new layer;
 the current proofs and fresh required hosted checks cover the new behavior.
 Financial activation remains disabled. Production revision and service health
 must be verified separately after the exact checked revision is merged.
+
+Hosted `96b7fc43` exposed a missing test-only market seed in the native module
+fixture and omitted estate-census entries for the two immutable tender tables.
+Repair `b7e7bd4165964c0573ba908b72292eb1be8a0efc` changes three test lines:
+the seed is set only after the strict local database guard, and historical rows
+are classified without wiping, reassignment or duplicate escrow. Migration and
+fresh native PostgreSQL 18.4 retests passed. PostgreSQL 16 and complete hosted
+qualification remain fresh release requirements; native authority is unchanged.

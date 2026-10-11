@@ -1690,14 +1690,20 @@ async function seedLists() {
     await si('POST', '/v1/market', token, { goodId: 'gin', qty: 3, price: 500 });
   });
   await trySeed('track entry', () => si('POST', `/v1/casino/track/enter/${flyer}`, token, {}));
-  await trySeed('races car', async () => {   // the races board lists YOUR cars — boost one (retry the odd bust)
-    for (let i = 0; i < 12; i++) {
-      // gta_at too: a FAILED boost still arms the boost cooldown, so a reset that only refills
-      // energy/nerve/jail leaves every retry bouncing off `cooldown` (seen flaky under the full suite)
-      await q("UPDATE characters SET energy=200, nerve=50, jail_until=NULL, gta_at=NULL WHERE id=$1", [charId]);
-      const r = await si('POST', '/v1/garage/boost', token, {});
-      if (r.code < 400 && r.body?.success !== false) break;
-    }
+  await trySeed('races car', async () => {
+    // This wiring fixture needs an actual car, not a chance of one. Twelve failed
+    // boosts leave both car lists empty and the later boat/favor seeds jailed.
+    // Drive the real route with a successful draw; gameplay suites own boost odds.
+    await q("UPDATE characters SET energy=200, nerve=50, jail_until=NULL, gta_at=NULL WHERE id=$1", [charId]);
+    const random = Math.random;
+    let r;
+    try {
+      Math.random = () => 0;
+      r = await si('POST', '/v1/garage/boost', token, {});
+    } finally { Math.random = random; }
+    assert.equal(r.code, 200, 'The car shape fixture must reach the real boost route.');
+    assert.equal(r.body?.success, true, 'The car shape fixture must boost successfully.');
+    assert.ok(r.body?.car?.id, 'The car shape fixture must create an actual car.');
   });
   await trySeed('fixture boat', async () => {
     await q("UPDATE characters SET loc='docks' WHERE id=$1", [charId]);
