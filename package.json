@@ -240,7 +240,9 @@
     "test:logistics-coverage:postgres": "node test/logisticscoverage.js --postgres",
     "test:logistics-coverage-api:postgres": "node test/logisticscoverage-api.js --postgres",
     "test:strategy-licenses:postgres": "node test/strategylicenses.js --postgres",
-    "test:strategy-licenses-api:postgres": "node test/strategylicenses-api.js --postgres"
+    "test:strategy-licenses-api:postgres": "node test/strategylicenses-api.js --postgres",
+    "test:company-succession:postgres": "node test/companysuccession.js --postgres",
+    "test:company-succession-api:postgres": "node test/companysuccession-api.js --postgres"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
