@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `8a9e132467bf`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `b804f555ba22`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,413 |
-| Text lines | 1,563,725 |
-| Repository bytes inventoried | 815,289,382 |
-| Backend/route modules | 316 |
-| HTTP route registrations / unique routes | 883 / 883 |
-| Database tables | 391 |
+| Current artifacts | 4,420 |
+| Text lines | 1,567,278 |
+| Repository bytes inventoried | 815,586,254 |
+| Backend/route modules | 318 |
+| HTTP route registrations / unique routes | 882 / 882 |
+| Database tables | 392 |
 | Solidity declarations | 126 |
-| Git commits | 2,318 |
+| Git commits | 2,333 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 10,563 / 43,079 |
+| Graph nodes / edges | 10,595 / 43,236 |
 
 ## Artifact kinds
 
@@ -25,16 +25,16 @@
 | media-asset | 1,204 |
 | artifact | 674 |
 | contract-project | 646 |
-| test-suite | 479 |
-| documentation | 423 |
-| backend-module | 283 |
-| engineering-harness | 208 |
+| test-suite | 482 |
+| documentation | 424 |
+| backend-module | 285 |
+| engineering-harness | 207 |
 | contract-test | 111 |
 | contract-source | 105 |
 | audit | 98 |
 | design | 82 |
+| web-surface | 33 |
 | route-module | 33 |
-| web-surface | 31 |
 | operations | 11 |
 | knowledge-base | 11 |
 | workflow | 6 |
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 14,414 | web-surface | 2026-10-10 |
+| [public/index.html](../../public/index.html) | 14,708 | web-surface | 2026-10-10 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
@@ -71,7 +71,7 @@
 | [test/client.js](../../test/client.js) | 9,467 | test-suite | 2026-10-09 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
-| [schema.sql](../../schema.sql) | 7,682 | data-schema | 2026-10-10 |
+| [schema.sql](../../schema.sql) | 7,694 | data-schema | 2026-10-10 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |

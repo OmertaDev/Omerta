@@ -93,3 +93,38 @@ Pinned access-control/state/replay/privacy/property methods above applied by par
 Reviewed runtime SHA256: runnerbcd9211dff2a90304e90c2f7153a5f6ca91846726fdd0358a5ba4e0bec471700; runner suite15a62cf27cc3e03a3fe9acd2d8a2a5e849d96a7caa864fb1318a79e1a00c9111; domainb1e169d606fe0bbe7cd8b1ee960752349afd9f3edafe6f2f94a4bb6876b21dfe; routes411d397238bb298e1efbacb329143144d5ea4a89a08c76003b66d4609fd10567; contracts84859c335e87b7321b1c6e08a0952f58c002ac27055cfac3c42436ab412be2ac; integrated backend suitea033a2dd89b722e0ad98bb324e668590b191ec746cf06c5c9cde59c9102f6fc4. Git normalizes line endings. Ready in this bounded execution scope pending required exact-head release checks and separate deployment verification. Confirmed delivery is not accepted revenue or bank withdrawal; costs and provenance remain unverified, and live financial/compute activation stays disabled.
 
 2026-10-11 release integration: main merged in e87761ed, retaining the reviewed full-phone-map actor fixture from PR224 and both explicit receipt/delivery pretest invocations. Guarded diagnostic commits e0b94cfe and febb5e5f carry the root-reviewed test-only instrumentation for the unresolved hosted actor-selection timeout seen at delivery head 85c69641. No runner, target-reader, authored API or financial authority source changed. The inherited real click, selectedActor wait and timeout remain mandatory, without retry; passive diagnostics cannot throw during teardown and append bounded nonsecret evidence only on failure. See docs/earning-receipts-security-review.md for failed hosted evidence and scope limits. Focused City presence browser, unchanged documentation and suite-inventory gates passed after this integration; measured suite census is 280 explicit npm suites. Generated artifacts are rebuilt from the clean authored revision and fresh exact-head hosted checks remain required; no causal runtime fix is claimed for the timeout.
+
+## Delivery and private earnings release integration — 2026-10-11
+
+Predecessor delivery head `adde0dba4c2bde165a5ce23959047787e679d850` passed all
+five required hosted checks: CI run `38113899430` (JavaScript and PostgreSQL 16
+and 18.4), Forge run `38113899435`, and recovery run `38113899434`. Those checks
+apply to that predecessor only. Delivery now integrates reviewed earnings branch
+source `b66c8314ed8e0e653088a6cc99c2a0465be59b25`, which inherits City main
+`1c1300fe`. Source conflicts concerned shared census, retained review appendices
+and generated artifacts. Both private earnings and scoped job GET registrations
+and contracts remain mounted, with both explicit receipt/delivery pretest scripts.
+
+The target reader, runner and their integrated tests retain predecessor Git blobs:
+`src/resourcework.js` `12b3834eae8f1ff75edfb6f1edfd25f682c28d18`,
+`tools/resource-deliver.js` `1133cc67b5d30f8c8b485c30bf85681f1ed2757a`,
+`test/resource-deliver.js` `a37b7f402daba03572acac3210a3f8b1f92de632`, and
+`test/resourcework.js` `c4e42270b3418c42e6c8fa0ab7df873622883fed`.
+No job storage, report authority, compute/payout activation or monetary execution
+behavior changed. The City server, schema and browser fixture match the dependency
+exactly, preserving its separate source-transfer and integration evidence.
+
+Node v24.19.0: `node test/resource-deliver.js`, `node test/resourcework.js`,
+`node test/resourcebusiness.js`, `node test/docs.js`, `node test/gates.js` and
+`node test/routes.js` returned exit status 0. The initial documentation run caught
+the public draft's inherited 280 npm-suite figure; it was corrected to the measured
+281 before the successful retest. Current mounted census is 896 routes, 845 under
+`/v1`. Native resource proofs remain pinned to their earlier unchanged product
+scope and are not represented as fresh native execution here.
+
+The dependency's subsequent focused City browser run reported a pose-preservation
+assertion failure (snapshot y264, observed y276.67 after resize frames). This
+inherited fixture remains a release blocker pending coordinator remediation and
+retest; no assertion or timeout was relaxed here, and no passing City result is
+claimed for that run. Clean-source generated artifacts and fresh exact-head hosted
+checks remain mandatory before integration release or deployment.

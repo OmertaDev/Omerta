@@ -24,6 +24,17 @@ Ready within this exact pure reconciliation scope, subject to fresh required hos
 
 Reviewed working-tree SHA256 after ER1: source796891bdf47497355035397e1913ac33ce789a04129c2c46a8ca278ad7a43a3f; testef4f39d26f7bdd4855e66ec21b404f426dcc1677ae0d059a24078774c85570e5. Initial documentation check detected the newly added module/test counts; SPEC was remeasured and the required guard then passed without relaxation.
 
+## Private earnings API consumer — 2026-10-10
+
+Scope: API source/routes/contract and existing resourcebusiness suite at6f269dcba93f816ddfe06ce6e102349498e0f8da, composed with reviewed receipt dependency551dcffb and its main/native test wiring. GET /v1/resources/earnings takes account identity from existing auth, not query input. Limit1..100(default50) and bounded afterJobId reject unsupported terms before SQL. Only an existing seller treasury is locked; reads create no treasury, ledger or permission. Accepted seller jobs are read as a bounded keyset page. Global recorded revenue, including any orphan credits, remains separate from matched page transfers. Settled non-simulated and simulated compute costs and pending caps are labeled independently; none verifies invoices or net profit.
+
+Independent API inspection reused the pinned methods above and native evidence. Its seller lock synchronizes normal settlement writers; observation time follows lock. Current buyer freeze status can change and does not authorize cash-out. SQL loads no raw questions/reports or buyer balances, and output omits counterpart identity. HTTP auth/delegate fixtures exercise inherited auth wiring with an injected test seam, not fresh JWT verification. Source JWT/account status/cadence remain the existing shared implementation.
+
+EA1low: initial method classification inferred authored work from a missing call_id. Fixed in6f269dcb by selecting only COALESCE(input->>'fulfillment','compute') and using the customer's contract mode. Legacy accepted jobs with missing compute receipts remain compute; authored fixtures explicitly carry the consent. Historical transfer matching is independent of fulfilled-work quality. Memory/native suites pass after remediation.
+
+Executed Nodev24.19.0: node test/resourcebusiness.js and COORDINATION_TEST_DATABASE_URL=postgresql://pilot_runner@127.0.0.1:35439/postgres node test/resourcebusiness.js --postgres exit0. Coverage: no-write/empty account, auth and delegated identity, pre-SQL query rejection,100+ pagination, balanced/missing/tampered edges, orphan totals, method distinctions, test/live observations and private output. Native proof holds the seller lock and confirms the read waits for its release before timestamp/observation. No new native storage or execution path; C pure tests remain wired into the existing resourcework chain. Retest outputs retained locally by feature worktree. No provider or financial activation occurred.
+
+Final working-tree SHA256 after EA1: API5a05b49ede4652ed98962e2c886451f37609f937d299708404907e2f2cfb3a0e; API suitefdb9668138562a4647b21c7aa5d6bd44c6e16159aa410ee8a8a1360c37f4fa5a. Route096950fa64686a7ec760c55ea2ddb314c9b173d1cc295efeeec99d4306b3596c and contract4bc8c2c59066aaed58f3acef21f2b1b2f2da8838c517893170da2924c54dae57 unchanged from independent review. Git normalizes line endings. Current route census and both checked public drafts are updated together. Private ledger observation is ready within this scope pending fresh exact-head hosted checks and separate deployment verification; it provides no funding provenance, payout authority or profitability claim.
 ## PR224 CI gate repair and retest
 
 Hosted run [38080208609](https://github.com/OmertaDev/Omerta/actions/runs/38080208609) failed the unchanged suite inventory guard at test/gates.js:3402: test/earningreceipts.js was imported by resourcework but was not explicitly invoked by an npm script. Both native PostgreSQL lanes passed; full pg-mem success is not claimed for that failed head.
@@ -49,3 +60,23 @@ After integrating current main in 5d4dd61f, an unmodified focused City presence 
 This instrumentation prepares an exact hosted reproduction and leaves the timeout unresolved pending that evidence. Earnings APIs, authored routes, runtime authority and financial activation remain unchanged. Generated artifacts and hosted validation require a fresh clean-source rebuild before publication.
 
 Reviewer correction: the passive event observer now guards a missing current handle and non-Element event target, and catches getState/observation failures as a bounded unavailable marker. Teardown cannot turn diagnostic observation into a page error. The original click, selection assertion and timeout remain unchanged. The focused browser suite is rerun once after this narrow correction before a clean-source generated rebuild and fresh hosted reproduction.
+
+## City integration refresh — 2026-10-11
+
+Integrated main `1c1300fe` with the separately reviewed City social revision.
+Private earnings, resource route, receipt reconciliation and resourcebusiness test
+bytes remain identical to reviewed branch source `b3cce295`; no privacy, balance,
+permission, native treasury lock or financial activation semantics changed.
+Conflicts were limited to shared census/public route counts and generated artifacts.
+The combined inventory measures 319 source files, 482 test files, 895 public
+registrations (844 under `/v1`), 392 tables and 720 Markdown files.
+
+Node v24.19.0: `node test/docs.js`, `node test/gates.js`,
+`node test/resourcebusiness.js` and `node test/city-presence-browser.js` all
+returned exit status 0. The focused browser run retained actual selection and
+touch/keyboard geometry assertions while the diagnostic observer coexisted with
+the current City runtime. A local pass does not invalidate the retained historical
+hosted failure or prove its production cause. Native earnings proofs retain their
+prior exact source scope; this integration adds no native earnings behavior.
+Clean authored-source knowledge regeneration and exact-head hosted checks remain
+required before merge or deployment.
