@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "99714492c6ef545537adefbf0b3bad9cb6d120f4",
+  "sourceRevision": "565e5424223187192011cddde29c2e3abeef54e5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10848,
-    "edges": 44132,
+    "nodes": 10850,
+    "edges": 44146,
     "byNodeType": {
       "Artifact": 4448,
       "Command": 219,
-      "Commit": 2515,
+      "Commit": 2517,
       "Contract": 126,
       "Document": 715,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3583,
-      "CHANGED": 17471,
+      "CHANGED": 17482,
       "CONTAINS": 4469,
       "DECLARES": 219,
       "DEFINED_IN": 1413,
       "DEPENDS_ON": 67,
-      "EXECUTES": 750,
+      "EXECUTES": 751,
       "HANDLED_BY": 785,
-      "HAS_COMMIT": 2515,
+      "HAS_COMMIT": 2517,
       "IMPLEMENTS": 124,
       "IMPORTS": 4283,
       "INHERITS": 42,
@@ -62830,20 +62830,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 37713,
+      "bytes": 37758,
       "lines": 248,
-      "version": "0a6395876507c812",
+      "version": "6ce1d577a43436b7",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "0a6395876507c812"
+          "version": "6ce1d577a43436b7"
         }
       ],
-      "lastChangedAt": "2026-10-11T14:57:05.000Z",
+      "lastChangedAt": "2026-10-11T15:50:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2193ef69a42b32f1b9f61e2eb4ab26ad992c6f5c"
+      "lastChangedCommit": "565e5424223187192011cddde29c2e3abeef54e5"
     },
     {
       "key": "Artifact:Procfile",
@@ -96775,20 +96775,20 @@
       "path": "test/supplytenders-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4796,
-      "lines": 65,
-      "version": "9a8834cbab17f84e",
+      "bytes": 5307,
+      "lines": 73,
+      "version": "2a801bc73ea5c56f",
       "text": true,
       "provenance": [
         {
           "file": "test/supplytenders-api.js",
           "line": 1,
-          "version": "9a8834cbab17f84e"
+          "version": "2a801bc73ea5c56f"
         }
       ],
-      "lastChangedAt": "2026-10-11T13:43:38.000Z",
+      "lastChangedAt": "2026-10-11T15:50:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "baab6a2dc45a72f31b137026e329749cbc57dea4"
+      "lastChangedCommit": "565e5424223187192011cddde29c2e3abeef54e5"
     },
     {
       "key": "Artifact:test/supplytenders.js",
@@ -105088,7 +105088,7 @@
       "type": "Command",
       "id": "npm:test:supply-tenders:postgres",
       "label": "npm run test:supply-tenders:postgres",
-      "command": "node test/supplytenders.js --postgres",
+      "command": "node test/supplytenders.js --postgres && node test/supplytenders-api.js --postgres",
       "provenance": [
         {
           "file": "package.json",
@@ -118843,6 +118843,22 @@
       ]
     },
     {
+      "key": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "type": "Commit",
+      "id": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "label": "Generate knowledge for funded supply tender release",
+      "title": "Generate knowledge for funded supply tender release",
+      "date": "2026-10-11T15:44:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "provenance": [
+        {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        }
+      ]
+    },
+    {
       "key": "Commit:5585fe9d78b7a8b00cb9177e53d42d26829adb17",
       "type": "Commit",
       "id": "5585fe9d78b7a8b00cb9177e53d42d26829adb17",
@@ -118983,6 +118999,22 @@
         {
           "commit": "564acadf0deeb0f43ce18c1bc91f35f75ccdb42c",
           "url": "https://github.com/OmertaDev/Omerta/commit/564acadf0deeb0f43ce18c1bc91f35f75ccdb42c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:565e5424223187192011cddde29c2e3abeef54e5",
+      "type": "Commit",
+      "id": "565e5424223187192011cddde29c2e3abeef54e5",
+      "label": "Prove authenticated supply tender routes on isolated native PostgreSQL",
+      "title": "Prove authenticated supply tender routes on isolated native PostgreSQL",
+      "date": "2026-10-11T15:50:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/565e5424223187192011cddde29c2e3abeef54e5",
+      "provenance": [
+        {
+          "commit": "565e5424223187192011cddde29c2e3abeef54e5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/565e5424223187192011cddde29c2e3abeef54e5"
         }
       ]
     },
@@ -165934,6 +165966,9 @@
           "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -166814,6 +166849,9 @@
         },
         {
           "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+        },
+        {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
@@ -168184,6 +168222,9 @@
           "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
@@ -169552,6 +169593,9 @@
           "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
@@ -170572,6 +170616,9 @@
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -171302,6 +171349,9 @@
         },
         {
           "commit": "5375cc243ae2ddc3e0179806897f22c90f54a168"
+        },
+        {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
@@ -172384,6 +172434,9 @@
           "commit": "5097a09db19fbafd754037e2b7a2572b7432e156"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -172825,6 +172878,9 @@
           "commit": "4df5ece02213c3e0a68247db67632c01916293a9"
         },
         {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -173051,6 +173107,9 @@
         },
         {
           "commit": "4df5ece02213c3e0a68247db67632c01916293a9"
+        },
+        {
+          "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
@@ -181969,7 +182028,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "99714492c6ef545537adefbf0b3bad9cb6d120f4",
+      "revision": "565e5424223187192011cddde29c2e3abeef54e5",
       "currentBranch": "codex/supply-tender-integration",
       "defaultBranch": "main",
       "visibility": "public",
@@ -219144,13 +219203,13 @@
       "type": "TestSuite",
       "id": "test/supplytenders-api.js",
       "label": "test/supplytenders-api.js",
-      "lines": 65,
-      "version": "9a8834cbab17f84e",
+      "lines": 73,
+      "version": "2a801bc73ea5c56f",
       "provenance": [
         {
           "file": "test/supplytenders-api.js",
           "line": 1,
-          "version": "9a8834cbab17f84e"
+          "version": "2a801bc73ea5c56f"
         }
       ]
     },
@@ -297933,6 +297992,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5585fe9d78b7a8b00cb9177e53d42d26829adb17",
       "to": "Artifact:test/auction.js",
       "provenance": {
@@ -298577,6 +298708,22 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "commit": "564acadf0deeb0f43ce18c1bc91f35f75ccdb42c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:565e5424223187192011cddde29c2e3abeef54e5",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "565e5424223187192011cddde29c2e3abeef54e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:565e5424223187192011cddde29c2e3abeef54e5",
+      "to": "Artifact:test/supplytenders-api.js",
+      "provenance": {
+        "commit": "565e5424223187192011cddde29c2e3abeef54e5"
       }
     },
     {
@@ -453544,6 +453691,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:supply-tenders:postgres",
+      "to": "Artifact:test/supplytenders-api.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:supply-tenders:postgres",
       "to": "Artifact:test/supplytenders.js",
       "provenance": {
         "file": "package.json",
@@ -468409,6 +468565,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:556ab20689ff38a3dbd61ced20eb6ac4016ad26a",
+      "provenance": {
+        "commit": "556ab20689ff38a3dbd61ced20eb6ac4016ad26a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5585fe9d78b7a8b00cb9177e53d42d26829adb17",
       "provenance": {
         "commit": "5585fe9d78b7a8b00cb9177e53d42d26829adb17"
@@ -468476,6 +468640,14 @@
       "to": "Commit:564acadf0deeb0f43ce18c1bc91f35f75ccdb42c",
       "provenance": {
         "commit": "564acadf0deeb0f43ce18c1bc91f35f75ccdb42c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:565e5424223187192011cddde29c2e3abeef54e5",
+      "provenance": {
+        "commit": "565e5424223187192011cddde29c2e3abeef54e5"
       }
     },
     {
@@ -513838,7 +514010,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/supplytenders-api.js",
-        "line": 8
+        "line": 16
       }
     },
     {
@@ -513847,7 +514019,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/supplytenders-api.js",
-        "line": 7
+        "line": 15
       }
     },
     {
@@ -576316,7 +576488,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/supplytenders-api.js",
-        "line": 8
+        "line": 16
       }
     },
     {
@@ -576325,7 +576497,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/supplytenders-api.js",
-        "line": 7
+        "line": 15
       }
     },
     {
