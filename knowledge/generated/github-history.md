@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b804f555ba22`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a036a3dcc475`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2333 |
+| Commits in clone | 2335 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Merge pull request #222 from OmertaDev/codex/city-world-expansion |
+| Latest commit | 2026-10-11 — fix(city): keep player names readable at crowded venues |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1416 |
+| OmertaDev | 1417 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 72 |
+| github-actions[bot] | 73 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -32,10 +32,10 @@
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 445 | yes |
-| knowledge/generated/github-history.md | 404 | historical |
-| knowledge/generated/graph-summary.md | 404 | historical |
-| knowledge/generated/graph.json | 404 | historical |
-| knowledge/generated/inventory.md | 404 | historical |
+| knowledge/generated/github-history.md | 405 | historical |
+| knowledge/generated/graph-summary.md | 405 | historical |
+| knowledge/generated/graph.json | 405 | historical |
+| knowledge/generated/inventory.md | 405 | historical |
 | [SPEC.md](../../SPEC.md) | 385 | yes |
 | [src/server.js](../../src/server.js) | 380 | yes |
 | [schema.sql](../../schema.sql) | 306 | yes |
