@@ -7,7 +7,8 @@ import { register as registerResources } from '../src/routes/resources.js';
 import { commandDatabase, addPlayer } from './lib/player-command-support.js';
 import { resourceTransaction, lockResourceTreasury, moveResourceMoney, setResourcePolicy, resourceAccounting } from '../src/resourcebook.js';
 import { setResourceService, resourceServiceBoard, createResourceJob, claimResourceJob, workResourceJob,
-  acceptResourceJob, disputeResourceJob, adjudicateResourceJob, expireResourceJob, listResourceJobs, resourceJobView } from '../src/resourcework.js';
+  acceptResourceJob, disputeResourceJob, adjudicateResourceJob, expireResourceJob, listResourceJobs, resourceJobView, submitResourceJob } from '../src/resourcework.js';
+import { renewResourceJob } from '../src/resourcelabor.js';
 
 const database = await commandDatabase('resourcework'); const pool = database.pool;
 const error = code => value => value.code === `resource_${code}`;
@@ -48,6 +49,8 @@ try {
   await assert.rejects(createResourceJob(pool, outsider, { ...terms, requestId: 'no-authority' }), error('authority'));
   const first = await create('first');
   assert.equal(first.state, 'open'); assert.equal((await resourceAccounting(pool, buyer)).reservedUsdMicros, 100000);
+  assert.equal(first.fulfillment, 'compute', 'Legacy orders still require compute receipts');
+  await assert.rejects(submitResourceJob(pool, seller, first.id, { text: 'Unapproved authored fulfillment' }), error('fulfillment'));
   assert.equal((await create('first')).id, first.id);
   await assert.rejects(createResourceJob(pool, buyer, { ...terms, requestId: 'first', question: 'Different terms' }), error('replay'));
   await assert.rejects(claimResourceJob(pool, outsider, first.id), error('job'));
@@ -135,6 +138,59 @@ try {
       [`job_payment:${concurrent.id}`, `job_revenue:${concurrent.id}`])).rows;
     assert.equal(postings.length, 2, 'Concurrent accepts post exactly one balanced transfer');
   }
+  await setResourceService(pool, outsider, service);
+  const authoredTerms = { sellerAccountId: outsider, expectedServiceRevision: 1, question: 'Provide a customer-approved authored analysis.', fulfillment: 'authored' };
+  const authored = (await createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-first' })).job;
+  assert.equal(authored.fulfillment, 'authored');
+  await assert.rejects(createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-first', fulfillment: 'compute' }), error('replay'));
+  await assert.rejects(createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'invalid-mode', fulfillment: null }), error('terms'));
+  await assert.rejects(submitResourceJob(pool, outsider, authored.id, { text: 'Not claimed' }), error('state'));
+  await claimResourceJob(pool, outsider, authored.id);
+  await assert.rejects(workResourceJob(pool, outsider, authored.id, computeTerms, { compute: () => { throw new Error('Must never dispatch'); } }), error('fulfillment'));
+  await assert.rejects(submitResourceJob(pool, seller, authored.id, { text: 'Wrong seller' }), error('job'));
+  for (const invalid of [{ text: ' ' }, { text: 'é'.repeat(32769) }, { text: 'Report', costUsdMicros: 0 }, { text: 'Report', providerId: 'fake' }, {}, []])
+    await assert.rejects(submitResourceJob(pool, outsider, authored.id, invalid), error('terms'));
+  const callsBeforeAuthored = Number((await pool.query('SELECT COUNT(*) AS count FROM resource_calls')).rows[0].count);
+  const authoredReport = { text: 'Account-authored market analysis. Game cash is separate from external USD.' };
+  const submittedAuthored = (await submitResourceJob(pool, outsider, authored.id, authoredReport)).job;
+  assert.equal(submittedAuthored.report.source, 'account_authored'); assert.equal(submittedAuthored.report.costUsdMicros, null);
+  assert.equal(submittedAuthored.callId, null); assert.match(submittedAuthored.report.sourceHash, /^[a-f0-9]{64}$/);
+  assert.deepEqual((await submitResourceJob(pool, outsider, authored.id, authoredReport)).job.report, submittedAuthored.report);
+  await assert.rejects(submitResourceJob(pool, outsider, authored.id, { text: 'Changed report' }), error('replay'));
+  const revenueBeforeAuthored = (await resourceAccounting(pool, outsider)).availableUsdMicros;
+  await acceptResourceJob(pool, buyer, authored.id);
+  assert.equal((await resourceAccounting(pool, outsider)).availableUsdMicros, revenueBeforeAuthored + 100000);
+  assert.equal((await submitResourceJob(pool, outsider, authored.id, authoredReport)).job.state, 'accepted');
+  const renewedAuthored = (await renewResourceJob(pool, buyer, authored.id, { requestId: 'authored-renew', expectedServiceRevision: 1 })).job;
+  assert.equal(renewedAuthored.fulfillment, 'authored', 'Explicit buyer renewal preserves fulfillment consent');
+  await claimResourceJob(pool, outsider, renewedAuthored.id);
+  await submitResourceJob(pool, outsider, renewedAuthored.id, authoredReport);
+  await disputeResourceJob(pool, buyer, renewedAuthored.id);
+  await adjudicateResourceJob(pool, renewedAuthored.id, { refund: true, reason: 'Return disputed authored deliverable escrow.' });
+  const expiredAuthored = (await createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-expired' })).job;
+  await claimResourceJob(pool, outsider, expiredAuthored.id);
+  await pool.query('UPDATE resource_jobs SET expires_at=$2 WHERE id=$1', [expiredAuthored.id, new Date(Date.now() - 1000)]);
+  await assert.rejects(submitResourceJob(pool, outsider, expiredAuthored.id, authoredReport), error('state'));
+  await expireResourceJob(pool, expiredAuthored.id);
+  const automaticAuthored = (await createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-automatic' })).job;
+  await claimResourceJob(pool, outsider, automaticAuthored.id);
+  await submitResourceJob(pool, outsider, automaticAuthored.id, { text: 'é'.repeat(32768) });
+  await pool.query('UPDATE resource_jobs SET accept_after=$2 WHERE id=$1', [automaticAuthored.id, new Date(Date.now() - 1000)]);
+  assert.equal((await expireResourceJob(pool, automaticAuthored.id)).job.state, 'accepted', 'Existing undisputed acceptance deadline settles authored escrow');
+  assert.equal(Number((await pool.query('SELECT COUNT(*) AS count FROM resource_calls')).rows[0].count), callsBeforeAuthored);
+  assert.equal((await resourceAccounting(pool, buyer)).liabilityDriftUsdMicros, 0);
+  assert.equal((await resourceAccounting(pool, outsider)).ledgerDriftUsdMicros, 0);
+  if (process.argv.includes('--postgres')) {
+    const concurrentAuthored = (await createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-concurrent' })).job;
+    await claimResourceJob(pool, outsider, concurrentAuthored.id);
+    const duplicate = await Promise.all([submitResourceJob(pool, outsider, concurrentAuthored.id, authoredReport), submitResourceJob(pool, outsider, concurrentAuthored.id, authoredReport)]);
+    assert.deepEqual(duplicate[0].job.report, duplicate[1].job.report);
+    const beforeAccepted = (await resourceAccounting(pool, outsider)).availableUsdMicros;
+    await Promise.all([submitResourceJob(pool, outsider, concurrentAuthored.id, authoredReport), acceptResourceJob(pool, buyer, concurrentAuthored.id)]);
+    assert.equal((await resourceAccounting(pool, outsider)).availableUsdMicros, beforeAccepted + 100000);
+  }
+  await setResourceService(pool, outsider, { ...service, expectedRevision: 1, enabled: false });
+  await addPlayer(pool, 'resource-uninvolved');
   const app = Fastify();
   const auth = async (req, reply) => {
     if (!req.headers['test-account']) return reply.code(401).send({ error: 'test_auth' });
@@ -144,8 +200,17 @@ try {
   app.setErrorHandler((failure, _req, reply) => reply.code(failure.code?.startsWith('resource_') ? 400 : failure.statusCode || 500).send({ error: failure.code }));
   registerResources(app, { pool, auth, modAuth });
   try {
+    const submitUrl = `/v1/resources/jobs/${authored.id}/submit`;
+    assert.equal((await app.inject({ method: 'POST', url: submitUrl, payload: authoredReport })).statusCode, 401);
+    assert.equal((await app.inject({ method: 'POST', url: submitUrl, headers: { 'test-account': buyer }, payload: authoredReport })).json().error, 'resource_job');
+    assert.equal((await app.inject({ method: 'POST', url: submitUrl, headers: { 'test-account': outsider }, payload: { ...authoredReport, costUsdMicros: 0 } })).json().error, 'resource_terms');
+    for (const agent of ['false', 'true']) {
+      const replay = await app.inject({ method: 'POST', url: submitUrl, headers: { 'test-account': outsider, 'test-agent': agent }, payload: authoredReport });
+      assert.equal(replay.statusCode, 200);
+      assert.equal(replay.json().job.state, 'accepted', 'Human and agent credentials share authored submission permissions');
+    }
     assert.equal((await app.inject({ method: 'GET', url: '/v1/resources' })).statusCode, 401);
-    assert.equal((await app.inject({ method: 'GET', url: '/v1/resources/jobs', headers: { 'test-account': outsider } })).json().jobs.length, 0);
+    assert.equal((await app.inject({ method: 'GET', url: '/v1/resources/jobs', headers: { 'test-account': 'resource-uninvolved' } })).json().jobs.length, 0);
     for (const url of ['/v1/resources/policy', '/v1/resources/funding', '/v1/resources/service']) {
       const denied = await app.inject({ method: 'POST', url, headers: { 'test-account': seller, 'test-agent': 'true' }, payload: {} });
       assert.equal(denied.statusCode, 400); assert.equal(denied.json().error, 'resource_owner_authority');

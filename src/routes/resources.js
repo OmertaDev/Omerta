@@ -9,7 +9,7 @@ import { resourceComputeCatalog, resourceComputeState, runResourceCompute, recon
   resourceAuctionBoard, createResourceRound, commitResourceBid, revealResourceBid, settleResourceRound } from '../resourcecompute.js';
 import { createResourceFunding, settleResourcePayment } from '../resourcepayments.js';
 import { setResourceService, resourceServiceBoard, listResourceJobs, createResourceJob, claimResourceJob,
-  workResourceJob, acceptResourceJob, disputeResourceJob, adjudicateResourceJob } from '../resourcework.js';
+  workResourceJob, submitResourceJob, acceptResourceJob, disputeResourceJob, adjudicateResourceJob } from '../resourcework.js';
 
 export function register(app, { pool, auth, modAuth }) {
   const ownerOnly = async req => {
@@ -66,6 +66,11 @@ export function register(app, { pool, auth, modAuth }) {
   app.post('/v1/resources/jobs', { preHandler: auth }, async req => createResourceJob(pool, req.user.sub, req.body));
   app.post('/v1/resources/jobs/:id/claim', { preHandler: auth }, async req => claimResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs/:id/work', { preHandler: auth }, async req => workResourceJob(pool, req.user.sub, req.params.id, req.body));
+  app.post('/v1/resources/jobs/:id/submit', { preHandler: auth, preValidation: async req => {
+    const body = req.body;
+    if (!body || Array.isArray(body) || typeof body !== 'object' || Object.keys(body).length !== 1
+        || typeof body.text !== 'string') throw resourceError('terms', 'Submit only an authored text report.');
+  } }, async req => submitResourceJob(pool, req.user.sub, req.params.id, req.body));
   app.post('/v1/resources/jobs/:id/accept', { preHandler: auth }, async req => acceptResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs/:id/dispute', { preHandler: auth }, async req => disputeResourceJob(pool, req.user.sub, req.params.id));
   app.get('/v1/resources/auctions/mine', { preHandler: auth }, async req => resourceAuctionBoard(pool, req.user.sub));

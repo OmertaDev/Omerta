@@ -15,7 +15,7 @@ export function resourceJobView(job, accountId) {
   return { id: job.id, buyerAccountId: job.buyer_account, sellerAccountId: job.seller_account,
     assignedToYou: job.seller_account === accountId,
     serviceRevision: Number(job.service_revision), priceUsdMicros: jobAmount(job), state: job.state,
-    question: job.input?.question, report: job.report || null, callId: job.call_id || null,
+    question: job.input?.question, fulfillment: job.input?.fulfillment || 'compute', report: job.report || null, callId: job.call_id || null,
     createdAt: iso(job.created_at), expiresAt: iso(job.expires_at), claimedAt: iso(job.claimed_at),
     submittedAt: iso(job.submitted_at), acceptAfter: iso(job.accept_after) };
 }
@@ -64,6 +64,8 @@ export async function resourceServiceBoard(pool, query = {}) {
 export async function createResourceJob(pool, buyer, body) {
   resourceIntake();
   const requestId = resourceKey(body?.requestId);
+  const fulfillment = body.fulfillment === undefined ? 'compute' : body.fulfillment;
+  if (!['compute', 'authored'].includes(fulfillment)) throw resourceError('terms', 'Choose compute or authored fulfillment explicitly.');
   if (typeof body.sellerAccountId !== 'string' || body.sellerAccountId.length > 128 || body.sellerAccountId === buyer)
     throw resourceError('service', 'Choose another account with an enabled service.');
   if (typeof body.question !== 'string' || !body.question.trim() || body.question.length > 2000)
@@ -75,7 +77,7 @@ export async function createResourceJob(pool, buyer, body) {
     await lockResourceTreasuries(client, [buyer, body.sellerAccountId]);
     const prior = (await client.query('SELECT * FROM resource_jobs WHERE buyer_account=$1 AND request_key=$2 FOR UPDATE', [buyer, requestId])).rows[0];
     if (prior) {
-      if (prior.seller_account !== body.sellerAccountId || Number(prior.service_revision) !== body.expectedServiceRevision || prior.input?.question !== body.question)
+      if (prior.seller_account !== body.sellerAccountId || Number(prior.service_revision) !== body.expectedServiceRevision || prior.input?.question !== body.question || (prior.input?.fulfillment || 'compute') !== fulfillment)
         throw resourceError('replay', 'This request identity already has different service terms.');
       return { resourceAction: 'job', job: resourceJobView(prior, buyer) };
     }
@@ -89,7 +91,7 @@ export async function createResourceJob(pool, buyer, body) {
     const id = crypto.randomUUID();
     await moveResourceMoney(client, buyer, -amount, amount, 'job_reserve', `job_reserve:${id}`);
     await client.query('INSERT INTO resource_jobs(id,buyer_account,seller_account,request_key,service_revision,price_usd_micros,input,state,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-      [id, buyer, body.sellerAccountId, requestId, body.expectedServiceRevision, amount, { question: body.question }, 'open', new Date(Date.now() + JOB_LIFETIME)]);
+      [id, buyer, body.sellerAccountId, requestId, body.expectedServiceRevision, amount, { question: body.question, fulfillment }, 'open', new Date(Date.now() + JOB_LIFETIME)]);
     return { resourceAction: 'job', job: resourceJobView((await client.query('SELECT * FROM resource_jobs WHERE id=$1', [id])).rows[0], buyer) };
   });
 }
@@ -128,6 +130,7 @@ export async function workResourceJob(pool, seller, id, body, options = {}) {
   resourceInt(body.maxOutputTokens, 'output tokens', 1, 100000);
   const initial = await resourceTransaction(pool, async client => {
     const job = await lockedJob(client, id); sellerJob(job, seller);
+    if ((job.input?.fulfillment || 'compute') !== 'compute') throw resourceError('fulfillment', 'This customer authorized an authored deliverable, not paid compute.');
     if (!['claimed', 'submitted', 'accepted'].includes(job.state)) throw resourceError('state', 'Claim this job before performing it.');
     if (job.report?.work && (job.report.work.providerId !== body.providerId || job.report.work.maxOutputTokens !== body.maxOutputTokens))
       throw resourceError('replay', 'This job is already bound to different compute terms.');
@@ -170,6 +173,26 @@ export async function workResourceJob(pool, seller, id, body, options = {}) {
     await client.query("UPDATE resource_jobs SET state='submitted',submitted_at=$2,accept_after=$3,report=$4,call_id=$5 WHERE id=$1",
       [id, new Date(), new Date(Date.now() + ACCEPT_DELAY), report, call.id]);
     return { resourceAction: 'work', job: resourceJobView((await client.query('SELECT * FROM resource_jobs WHERE id=$1', [id])).rows[0], seller) };
+  });
+}
+export async function submitResourceJob(pool, seller, id, body) {
+  resourceIntake();
+  if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).length !== 1 || !Object.hasOwn(body, 'text')
+      || typeof body.text !== 'string' || !body.text.trim() || Buffer.byteLength(body.text, 'utf8') > 65536)
+    throw resourceError('terms', 'Submit only nonblank authored text of at most 65536 UTF-8 bytes.');
+  return resourceTransaction(pool, async client => {
+    const job = await lockedJob(client, id); sellerJob(job, seller);
+    if ((job.input?.fulfillment || 'compute') !== 'authored') throw resourceError('fulfillment', 'This customer requires a settled compute receipt.');
+    if (['submitted', 'accepted'].includes(job.state)) {
+      if (job.report?.source !== 'account_authored' || job.report.text !== body.text) throw resourceError('replay', 'This job already has a different immutable deliverable.');
+      return { resourceAction: 'submit', job: resourceJobView(job, seller) };
+    }
+    if (job.state !== 'claimed' || new Date(job.expires_at).getTime() <= Date.now()) throw resourceError('state', 'Claim an unexpired authored job before submitting.');
+    const now = new Date();
+    const report = { text: body.text, source: 'account_authored', sourceHash: crypto.createHash('sha256').update(body.text, 'utf8').digest('hex'),
+      createdAt: now.toISOString(), costUsdMicros: null };
+    await client.query("UPDATE resource_jobs SET state='submitted',submitted_at=$2,accept_after=$3,report=$4 WHERE id=$1", [id, now, new Date(now.getTime() + ACCEPT_DELAY), report]);
+    return { resourceAction: 'submit', job: resourceJobView((await client.query('SELECT * FROM resource_jobs WHERE id=$1', [id])).rows[0], seller) };
   });
 }
 async function settleJob(client, job, refund, resolution = null) {
