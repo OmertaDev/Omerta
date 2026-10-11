@@ -208,7 +208,7 @@
     "agent:resources": "node tools/resource-agent.js",
     "test:resources": "node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js",
     "test:supply-tenders": "node test/supplytenders.js && node test/supplytenders-api.js",
-    "test:supply-tenders:postgres": "node test/supplytenders.js --postgres",
+    "test:supply-tenders:postgres": "node test/supplytenders.js --postgres && node test/supplytenders-api.js --postgres",
     "test:decisionproofs:postgres": "node test/decisionproofs-api.js --postgres",
     "test:resources:postgres": "node test/resourcepayments.js --postgres && node test/resourcecompute.js --postgres && node test/resourcework.js --postgres && node test/resourcelabor.js --postgres && node test/resourcebusiness.js --postgres && node test/resourceoutcomes.js --postgres && node test/resourcestorefront.js --postgres && node test/resource-worker.js --postgres && node test/agentcompany.js --postgres && node test/agent-business-transactions.js --postgres",
     "pilot:resources": "node tools/resource-economy-pilot.js",
