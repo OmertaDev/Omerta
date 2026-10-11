@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a1f39db58e1ff29cd727d352349e30e10080097b",
+  "sourceRevision": "a3e0c3986010f7272ddf0f188c35e795f1c8532d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10774,
-    "edges": 43870,
+    "nodes": 10776,
+    "edges": 43879,
     "byNodeType": {
       "Artifact": 4436,
       "Command": 216,
-      "Commit": 2476,
+      "Commit": 2478,
       "Contract": 126,
       "Document": 712,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3568,
-      "CHANGED": 17363,
+      "CHANGED": 17370,
       "CONTAINS": 4457,
       "DECLARES": 216,
       "DEFINED_IN": 1405,
       "DEPENDS_ON": 67,
       "EXECUTES": 738,
       "HANDLED_BY": 779,
-      "HAS_COMMIT": 2476,
+      "HAS_COMMIT": 2478,
       "IMPLEMENTS": 124,
       "IMPORTS": 4259,
       "INHERITS": 42,
@@ -77573,20 +77573,20 @@
       "path": "public/city-scene.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 91962,
-      "lines": 1519,
-      "version": "9c02b5b14feb3312",
+      "bytes": 92449,
+      "lines": 1528,
+      "version": "0a0777de717fb7d3",
       "text": true,
       "provenance": [
         {
           "file": "public/city-scene.js",
           "line": 1,
-          "version": "9c02b5b14feb3312"
+          "version": "0a0777de717fb7d3"
         }
       ],
-      "lastChangedAt": "2026-10-11T07:09:52.000Z",
+      "lastChangedAt": "2026-10-11T15:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a036a3dcc4751f883db897188840629efbe5c782"
+      "lastChangedCommit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
     },
     {
       "key": "Artifact:public/city-world-ui.css",
@@ -77989,18 +77989,18 @@
       "extension": ".html",
       "bytes": 1404106,
       "lines": 14708,
-      "version": "35c417c2b626e13f",
+      "version": "7cb800e4b3850a4f",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "35c417c2b626e13f"
+          "version": "7cb800e4b3850a4f"
         }
       ],
-      "lastChangedAt": "2026-10-11T14:11:09.000Z",
+      "lastChangedAt": "2026-10-11T15:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3702bb15ca70b74fd237771d7b20158dadece998"
+      "lastChangedCommit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -86563,20 +86563,20 @@
       "path": "test/city-scene-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 111649,
-      "lines": 1549,
-      "version": "9129a57ed25c6168",
+      "bytes": 116997,
+      "lines": 1617,
+      "version": "626c04849cfed2c1",
       "text": true,
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "9129a57ed25c6168"
+          "version": "626c04849cfed2c1"
         }
       ],
-      "lastChangedAt": "2026-10-10T18:52:40.000Z",
+      "lastChangedAt": "2026-10-11T15:57:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b6433eb1d3f0de8e792b61e5bb25fe80e0b3af59"
+      "lastChangedCommit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
     },
     {
       "key": "Artifact:test/city-social-api.js",
@@ -130656,6 +130656,22 @@
       ]
     },
     {
+      "key": "Commit:a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "type": "Commit",
+      "id": "a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "label": "Show City walking destinations in the readiness HUD",
+      "title": "Show City walking destinations in the readiness HUD",
+      "date": "2026-10-11T15:57:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "provenance": [
+        {
+          "commit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+        }
+      ]
+    },
+    {
       "key": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "type": "Commit",
       "id": "a3e3a53d45a184b6849c4b8058c2923c71363253",
@@ -140092,6 +140108,22 @@
         {
           "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa",
           "url": "https://github.com/OmertaDev/Omerta/commit/e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "type": "Commit",
+      "id": "e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "label": "chore(knowledge): refresh generated artifacts for a1f39db5",
+      "title": "chore(knowledge): refresh generated artifacts for a1f39db5",
+      "date": "2026-10-11T15:09:03.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "provenance": [
+        {
+          "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e2c80118e71865d83f3f982802a7cb990c4dc0fa"
         }
       ]
     },
@@ -166561,6 +166593,9 @@
           "commit": "e2781799de5980d960210a7000d2167814507de4"
         },
         {
+          "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
+        },
+        {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
         },
         {
@@ -167905,6 +167940,9 @@
           "commit": "e2781799de5980d960210a7000d2167814507de4"
         },
         {
+          "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
+        },
+        {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
         },
         {
@@ -169247,6 +169285,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
         },
         {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
@@ -170969,6 +171010,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
         },
         {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
@@ -180793,8 +180837,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a1f39db58e1ff29cd727d352349e30e10080097b",
-      "currentBranch": "main",
+      "revision": "a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "currentBranch": "codex/city-interaction-feedback",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -211398,13 +211442,13 @@
       "type": "TestSuite",
       "id": "test/city-scene-browser.js",
       "label": "test/city-scene-browser.js",
-      "lines": 1549,
-      "version": "9129a57ed25c6168",
+      "lines": 1617,
+      "version": "626c04849cfed2c1",
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "9129a57ed25c6168"
+          "version": "626c04849cfed2c1"
         }
       ]
     },
@@ -337375,6 +337419,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "to": "Artifact:public/city-scene.js",
+      "provenance": {
+        "commit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "to": "Artifact:test/city-scene-browser.js",
+      "provenance": {
+        "commit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -371267,6 +371335,38 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md",
       "provenance": {
         "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
       }
     },
     {
@@ -471668,6 +471768,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a3e0c3986010f7272ddf0f188c35e795f1c8532d",
+      "provenance": {
+        "commit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a3e3a53d45a184b6849c4b8058c2923c71363253",
       "provenance": {
         "commit": "a3e3a53d45a184b6849c4b8058c2923c71363253"
@@ -476383,6 +476491,14 @@
       "to": "Commit:e2c5f5174409cdb810883e443e92b9985c7e5ffa",
       "provenance": {
         "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e2c80118e71865d83f3f982802a7cb990c4dc0fa",
+      "provenance": {
+        "commit": "e2c80118e71865d83f3f982802a7cb990c4dc0fa"
       }
     },
     {
@@ -493243,7 +493359,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 820
+        "line": 887
       }
     },
     {
@@ -562687,7 +562803,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 820
+        "line": 887
       }
     },
     {

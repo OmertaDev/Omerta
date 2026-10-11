@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a1f39db58e1f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a3e0c3986010`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2476 |
+| Commits in clone | 2478 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Merge pull request #236 from OmertaDev/codex/city-tools-navigation |
+| Latest commit | 2026-10-11 — Show City walking destinations in the readiness HUD |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1549 |
+| OmertaDev | 1550 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 82 |
+| github-actions[bot] | 83 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,11 +31,11 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 447 | yes |
-| knowledge/generated/github-history.md | 445 | historical |
-| knowledge/generated/graph-summary.md | 445 | historical |
-| knowledge/generated/graph.json | 445 | historical |
-| knowledge/generated/inventory.md | 445 | historical |
+| [public/index.html](../../public/index.html) | 448 | yes |
+| knowledge/generated/github-history.md | 446 | historical |
+| knowledge/generated/graph-summary.md | 446 | historical |
+| knowledge/generated/graph.json | 446 | historical |
+| knowledge/generated/inventory.md | 446 | historical |
 | [SPEC.md](../../SPEC.md) | 395 | yes |
 | [src/server.js](../../src/server.js) | 381 | yes |
 | [schema.sql](../../schema.sql) | 307 | yes |
