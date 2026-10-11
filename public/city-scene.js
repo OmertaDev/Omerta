@@ -1048,6 +1048,7 @@
     } else unavailable();
 
     function createScene(s) {
+      const placeNames = [];
       const label = (x, y, text, size, color, center) => s.add.text(x, y, text, {
         fontFamily: 'monospace', fontSize: size || 10, color: color || '#dfd1ad',
         resolution: 2, stroke: '#161719', strokeThickness: 2, padding: { x: 1, y: 1 }
@@ -1056,11 +1057,11 @@
         artState.background = 'generated';
         s.add.image(0, 0, 'city-art-background').setOrigin(0).setDisplaySize(WORLD.width, WORLD.height).setDepth(0);
         for (const v of VENUES.filter(v => v.building)) {
-          s.add.text(v.building.x + v.building.width / 2, v.labelY, v.name.toUpperCase(), {
+          placeNames.push(s.add.text(v.building.x + v.building.width / 2, v.labelY, v.name.toUpperCase(), {
             fontFamily: 'monospace', fontSize: 14, fontStyle: 'bold', resolution: 2,
             color: '#f4dfad', backgroundColor: '#17191c',
             padding: { x: 7, y: 4 }
-          }).setOrigin(0.5, 0).setDepth(2);
+          }).setOrigin(0.5, 0).setDepth(2));
         }
       } else {
         let seed = 17;
@@ -1144,7 +1145,7 @@
           const signY = b.y + b.height - 74;
           rect(b.x + 10, signY, b.width - 20, 22, i === 3 ? 0x233d34 : 0x23282a);
           rect(b.x + 12, signY + 2, b.width - 24, 1, 0x9a7f51);
-          label(b.x + b.width / 2, signY + 5, venue.sign, 10, '#ead6a1', true);
+          placeNames.push(label(b.x + b.width / 2, signY + 5, venue.sign, 10, '#ead6a1', true));
           if (i === 0 || i === 4) {
             const awningY = b.y + b.height - 48;
             rect(b.x + 9, awningY + 3, 48, 26, 0x8a594c);
@@ -1258,7 +1259,7 @@
         const generated = s.textures.exists(generatedKey);
         const sprite = s.add.sprite(n.x, n.y, generated ? generatedKey : n.key)
           .setOrigin(0.5, generated ? 58 / 60 : 0.85).setDepth(n.y);
-        if (n.title) label(n.x, n.y - (generated ? 72 : 48), n.title, generated ? 11 : 9, '#e5dfc7', true).setDepth(n.y + 1);
+        if (n.title) placeNames.push(label(n.x, n.y - (generated ? 72 : 48), n.title, generated ? 11 : 9, '#e5dfc7', true).setDepth(n.y + 1));
         return { ...n, sprite };
       });
       const playerRing = s.add.graphics().setDepth(350);
@@ -1279,6 +1280,16 @@
         const left = nameCamera.getWorldPoint(nameCamera.x + 2, y).x + half;
         const right = nameCamera.getWorldPoint(nameCamera.x + nameCamera.width - 2, y).x - half;
         playerName.x = Math.max(left, Math.min(right, Math.round(player.x)));
+        // Keep the player's full name legible in a crowd. Other names stay
+        // available in the roster, venue buttons and inspector while occluded.
+        const bounds = playerName.getBounds(), gap = 2 / nameCamera.zoom;
+        const reveal = label => {
+          const other = label.getBounds();
+          label.setVisible(!(other.right > bounds.left - gap && other.left < bounds.right + gap
+            && other.bottom > bounds.top - gap && other.top < bounds.bottom + gap));
+        };
+        placeNames.forEach(reveal);
+        for (const marker of actorSprites.values()) reveal(marker.name);
       }
       nameCamera.on('followupdate', placePlayerName);
       function removePlayerNameClamp() {

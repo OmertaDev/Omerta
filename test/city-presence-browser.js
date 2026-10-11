@@ -232,24 +232,115 @@ try {
     }
     assert.fail('Actor pagination did not reach ' + id);
   };
+  const walkToClubhouse = async page => {
+    await page.locator('[data-city-world-tools]').click();
+    await page.locator('[data-city-waypoint="clubhouse"]').click();
+    await page.waitForFunction(() => {
+      const current = window.__presenceHandles.at(-1).handle.getState();
+      return current.pathLength === 0 && current.selectedVenue === 'clubhouse';
+    }, undefined, { timeout: 15000 });
+  };
+  const assertCrowdedPlayerName = async page => {
+    const handles = await page.evaluate(() => window.__presenceHandles.length), arrival = (await state(page)).position;
+    const roster = await page.locator('.omerta-city__actor-list').textContent();
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 375, height: 812 }]) {
+      await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await frames(page);
+      const samples = await page.evaluate(() => new Promise(resolve => {
+        const values = [], next = () => {
+          const canvas = document.querySelector('.omerta-city__canvas canvas');
+          const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
+          const name = live.data.get('playerName'), bounds = name.getBounds(), gap = 2 / live.cameras.main.zoom;
+          const labels = ['THE CLUBHOUSE', 'DOORMAN · NPC', 'MECHANIC · NPC'].map(text => {
+            const node = live.children.list.find(node => node.type === 'Text' && node.text === text), other = node.getBounds();
+            return { text, visible: node.visible, overlap: other.right > bounds.left - gap && other.left < bounds.right + gap
+              && other.bottom > bounds.top - gap && other.top < bounds.bottom + gap };
+          });
+          values.push({ position: window.__presenceHandles.at(-1).handle.getState().position, name: name.text, visible: name.visible, labels });
+          if (values.length < 30) requestAnimationFrame(next); else resolve(values);
+        }; requestAnimationFrame(next);
+      }));
+      for (const sample of samples) {
+        assert.deepEqual(sample.position, arrival); assert.equal(sample.name, 'Presence Viewer LongName'); assert(sample.visible);
+        for (const label of sample.labels.slice(0, 2)) {
+          assert(label.overlap, 'The real Clubhouse arrival exercises an actual label collision: ' + JSON.stringify({ viewport, sample }));
+          assert.equal(label.visible, false, 'Crowded canvas labels must yield to the complete player name: ' + JSON.stringify({ viewport, sample }));
+        }
+        assert.equal(sample.labels[2].overlap, false); assert.equal(sample.labels[2].visible, true, 'Unrelated NPC labels stay visible.');
+      }
+      assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+      assert.equal(await page.locator('.omerta-city__actor-list').textContent(), roster, 'Decluttering retains the full accessible roster names and types.');
+    }
+    await page.locator('.omerta-city__canvas canvas').focus(); await page.keyboard.down('ArrowDown');
+    try { await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().position.y >= 280, undefined, { timeout: 3000 }); }
+    finally { await page.keyboard.up('ArrowDown'); }
+    const clear = (await state(page)).position; assert.notDeepEqual(clear, arrival);
+    await frames(page);
+    assert(await page.evaluate(() => {
+      const canvas = document.querySelector('.omerta-city__canvas canvas');
+      const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
+      return ['THE CLUBHOUSE', 'DOORMAN · NPC'].every(text => live.children.list.find(node => node.type === 'Text' && node.text === text).visible);
+    }), 'Venue and NPC titles reappear after real walking clears the player name.');
+    assert.equal(await page.locator('.omerta-city__actor-list').textContent(), roster);
+    await page.setViewportSize({ width: 1440, height: 1400 }); await page.locator('#btn-player-view').click(); await frames(page);
+    assert.deepEqual((await state(page)).position, clear); assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+    const view = await markerFrame(page), marker = view.current.actorMarkers.find(marker => {
+      const x = (marker.x - view.current.camera.x) * view.current.camera.zoom, y = (marker.y - 15 - view.current.camera.y) * view.current.camera.zoom;
+      return x > 15 && x < view.box.width - 15 && y > 15 && y < view.box.height - 15
+        && Math.hypot(marker.x - clear.x, marker.y - clear.y) > 54;
+    });
+    assert(marker, 'The actual larger map exposes a published actor for the crowded-name interaction proof: ' + JSON.stringify(view));
+    await page.locator('.omerta-city__canvas canvas').tap({ position: {
+      x: (marker.x - view.current.camera.x) * view.current.camera.zoom,
+      y: (marker.y - 15 - view.current.camera.y) * view.current.camera.zoom } });
+    assert((await state(page)).pathLength > 0);
+    await page.waitForFunction(id => {
+      const current = window.__presenceHandles.at(-1).handle.getState();
+      return current.selectedActor === id && current.pathLength === 0;
+    }, marker.id, { timeout: 15000 });
+    await frames(page);
+    const publicLabel = await page.evaluate(marker => {
+      const canvas = document.querySelector('.omerta-city__canvas canvas');
+      const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
+      const name = live.data.get('playerName'), bounds = name.getBounds(), gap = 2 / live.cameras.main.zoom;
+      const label = live.children.list.find(node => node.type === 'Text' && node.x === marker.x && node.y === marker.y - 73), other = label.getBounds();
+      const sprite = live.children.list.find(node => node.type === 'Sprite' && node.x === marker.x && node.y === marker.y);
+      const ring = live.children.list.find(node => node.type === 'Graphics' && node.x === marker.x && node.y === marker.y && node.depth === marker.y - 1);
+      return { visible: label.visible, overlap: other.right > bounds.left - gap && other.left < bounds.right + gap
+        && other.bottom > bounds.top - gap && other.top < bounds.bottom + gap,
+        sprite: { x: sprite.x, y: sprite.y, visible: sprite.visible }, ring: { x: ring.x, y: ring.y, visible: ring.visible } };
+    }, marker);
+    assert(publicLabel.overlap, 'Real walking arrives beside an actual overlapping public actor label.');
+    assert.equal(publicLabel.visible, false, 'Actual public marker labels also yield to the full player name.');
+    assert.deepEqual(publicLabel.sprite, { x: marker.x, y: marker.y, visible: true });
+    assert.deepEqual(publicLabel.ring, { x: marker.x, y: marker.y, visible: true });
+    const publicActor = await page.evaluate(id => window.__presenceModel.actors.find(actor => actor.id === id), marker.id);
+    assert((await page.locator('[data-city-actor="' + marker.id + '"]').textContent()).includes(publicActor.name));
+    assert((await page.locator('.omerta-city__actor-body').textContent()).includes(publicActor.name), 'The full inspected public name remains accessible.');
+    const opening = (await state(page)).actorOpening, publicPose = (await state(page)).position;
+    const tapped = await markerFrame(page);
+    await page.locator('.omerta-city__canvas canvas').tap({ position: {
+      x: (marker.x - tapped.current.camera.x) * tapped.current.camera.zoom,
+      y: (marker.y - 15 - tapped.current.camera.y) * tapped.current.camera.zoom } });
+    assert.equal((await state(page)).actorOpening, opening + 2, 'A hidden label does not change the actual actor sprite hit priority.');
+    assert.deepEqual((await state(page)).position, publicPose);
+    await page.locator('[data-city-actor-close]').click(); await frames(page);
+    await walkToClubhouse(page);
+    if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
+    if (await page.locator('.omerta-city__interaction:not([hidden])').count()) await page.locator('[data-city-close]').click();
+    assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+  };
   const assertPlayerNameEdge = async (page, actorId) => {
     const handles = await page.evaluate(() => window.__presenceHandles.length), initial = (await state(page)).position;
     await page.setViewportSize({ width: 1440, height: 1400 });
     await page.locator('#btn-player-view').click(); await frames(page);
     assert.deepEqual((await state(page)).position, initial, 'Preparing the larger map preserves the current pose.');
-    const current = await state(page), clubhouse = current.destinations.find(venue => venue.id === 'clubhouse');
-    assert(clubhouse);
-    await page.locator('.omerta-city__canvas canvas').tap({ position: {
-      x: (clubhouse.x - current.camera.x) * current.camera.zoom,
-      y: (clubhouse.y - current.camera.y) * current.camera.zoom } });
-    await page.waitForFunction(() => {
-      const current = window.__presenceHandles.at(-1).handle.getState();
-      return current.pathLength === 0 && (current.selectedVenue !== null || current.selectedActor !== null);
-    }, undefined, { timeout: 15000 });
+    assert((await state(page)).destinations.some(venue => venue.id === 'clubhouse'));
+    await walkToClubhouse(page);
     const street = (await state(page)).position;
     assert(street.y > 202 && street.y < 286, 'The real authored waypoint arrives on the open upper street.');
     if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
     if (await page.locator('.omerta-city__interaction:not([hidden])').count()) await page.locator('[data-city-close]').click();
+    await assertCrowdedPlayerName(page);
     await page.locator('.omerta-city__canvas canvas').focus();
     await page.keyboard.down('ArrowRight');
     try {
@@ -608,13 +699,23 @@ try {
     await phone.keyboard.press('Escape');
     assert.equal(mutations(mobile.requests).length, beforeTouch);
     if (viewport.width === 375) {
-      await phone.locator('.omerta-city__actor-list').evaluate(node => node.scrollIntoView({ block: 'center' }));
-      const scrollBefore = await phone.evaluate(() => scrollY), touch = await phone.context().newCDPSession(phone);
+      await phone.locator('.omerta-city__actor-list').evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      const outside = await phone.evaluate(() => {
+        const list = document.querySelector('.omerta-city__actor-list'), rect = list.getBoundingClientRect();
+        const x = rect.left + rect.width / 2, y = Math.min(640, rect.bottom - 20, innerHeight - 130), hit = document.elementFromPoint(x, y);
+        return { x, y, scroll: scrollY, rosterHit: list.contains(hit), canvasHit: hit?.tagName === 'CANVAS' };
+      });
+      assert(outside.rosterHit && !outside.canvasHit, 'Native outside scrolling starts on the actual visible roster: ' + JSON.stringify(outside));
+      const outsidePose = (await state(phone)).position;
+      assert.equal((await state(phone)).pathLength, 0);
+      const touch = await phone.context().newCDPSession(phone);
       try {
-        await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 140, y: 640 }] });
-        for (const y of [585, 530, 475, 420]) { await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 140, y }] }); await frames(phone); }
+        await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: outside.x, y: outside.y }] });
+        for (const offset of [55, 110, 165, 220]) { await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: outside.x, y: outside.y - offset }] }); await frames(phone); }
       } finally { await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await touch.detach(); }
-      await phone.waitForFunction(before => scrollY > before + 20, scrollBefore);
+      await phone.waitForFunction(before => scrollY > before + 20, outside.scroll);
+      assert.deepEqual((await state(phone)).position, outsidePose, 'Native roster scrolling does not move the player.');
+      assert.equal((await state(phone)).pathLength, 0, 'Native roster scrolling cannot start a map path.');
       assert.equal(mutations(mobile.requests).length, beforeTouch, 'Native touch scrolling remains usable outside the canvas.');
       await assertPlayerNameEdge(phone, npc.id);
       assert.equal(mutations(mobile.requests).length, beforeTouch, 'Walking to the label edge and inspecting remain read-only.');
