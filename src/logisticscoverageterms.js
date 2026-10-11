@@ -4,6 +4,9 @@
 // This model promises neither prevention nor a return. Runtime must authenticate
 // the original tenant account's living successor, encumber funds atomically and
 // consume policy/event identity exactly once; supplied evidence proves none of that.
+// Eligibility also requires new canonical post-lock event_at instrumentation.
+// Existing journal.created_at is transaction-start now(), not the burn clock.
+// Missing event_at is unknown evidence: no legacy fallback or silent backfill.
 export const LOGISTICS_COVERAGE = Object.freeze({ event: 'warehouse_tenant_death', good: 'gin', maxUnits: 10,
   maxCashPerUnit: 100000, maxBenefitCash: 1000000, maxTermMs: 86400000 });
 const fail = () => { throw Object.assign(new Error('Invalid logistics coverage terms or evidence.'), { code: 'logistics_coverage_terms' }); };
@@ -57,7 +60,7 @@ export function logisticsCoverageBenefit(policy, lease, journal, { encumberedCas
   const journalId = id(journal.id);
   if (!Array.isArray(consumedJournalIds) || new Set(consumedJournalIds.map(id)).size !== consumedJournalIds.length
       || consumedJournalIds.includes(journalId)) fail();
-  const at = time(journal.created_at), destroyedUnits = -whole(journal.lease_stock_delta, -lease.units, -1);
+  const at = time(journal.event_at), destroyedUnits = -whole(journal.lease_stock_delta, -lease.units, -1);
   if (journal.reason !== terms.coveredEvent || journal.lease_id !== terms.leaseId || journal.depot_id !== terms.depotId
       || journal.customer_character !== terms.tenantCharacterId || journal.lease_stock_after !== 0
       || whole(journal.lease_sequence, 1, 2147483647) <= terms.enrollmentSequence
