@@ -530,7 +530,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
 | [docs/supplier-continuity-security-review.md](../../docs/supplier-continuity-security-review.md) | documentation | 86 | 2026-10-11 |
-| [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 47 | 2026-10-11 |
+| [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 56 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 47 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |

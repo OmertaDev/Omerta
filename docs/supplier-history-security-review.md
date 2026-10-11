@@ -1,5 +1,14 @@
 # Private supplier outcome history review
 
+Hosted revision `59a6658a` passed native PostgreSQL, contract and recovery gates,
+but its client fixture failed after randomized boosts left it jailed and without
+a car. Controlled local runs reproduced refused boat/favor seeding and empty
+car-backed boards. Test-only repair `cff467ffdc322dd7feffb44cbc48da5f3ca0bc86`
+uses one actual successful boost with scoped draw and finally restoration,
+asserting the returned car. The full client suite passed with refusal and
+nonempty coverage guards intact. Current integration preserves separately
+reviewed City feedback changes; fresh exact-head hosted checks remain required.
+
 Date: 2026-10-11. Phase: source review and local execution; hosted checks and
 production verification remain separate gates.
 
