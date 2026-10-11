@@ -1,3 +1,4 @@
+import { strategySourceBaseline } from './rc1-strategy-source-compatibility.js';
 import { coverageSourceBaseline } from './rc1-logistics-coverage-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';

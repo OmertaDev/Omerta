@@ -71,6 +71,7 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty provenance',
   'logistics coverage bindings',
   'reason vocabulary',
+  'strategy license bindings',
   'warehouse journal ownership',
   'world graph object transitions',
   'world graph salvage car audit',
