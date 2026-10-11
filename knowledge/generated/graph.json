@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3d05083171080445f251c615a82699c72de22331",
+  "sourceRevision": "10eb980bbd0b9522e6b95104a9bcdd909a717461",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 10538,
-    "edges": 42991,
+    "nodes": 10549,
+    "edges": 43025,
     "byNodeType": {
-      "Artifact": 4411,
+      "Artifact": 4414,
       "Command": 212,
-      "Commit": 2297,
+      "Commit": 2302,
       "Contract": 126,
-      "Document": 706,
+      "Document": 707,
       "Domain": 13,
       "ExternalDependency": 30,
       "HistoricalArtifact": 424,
-      "Module": 316,
+      "Module": 317,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 882,
       "Subsystem": 8,
       "Table": 391,
-      "TestSuite": 589,
+      "TestSuite": 590,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3545,
-      "CHANGED": 16883,
-      "CONTAINS": 4432,
+      "BELONGS_TO": 3547,
+      "CHANGED": 16895,
+      "CONTAINS": 4435,
       "DECLARES": 212,
       "DEFINED_IN": 1399,
       "DEPENDS_ON": 67,
-      "EXECUTES": 722,
+      "EXECUTES": 723,
       "HANDLED_BY": 775,
-      "HAS_COMMIT": 2297,
+      "HAS_COMMIT": 2302,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4209,
+      "IMPORTS": 4213,
       "INHERITS": 42,
-      "REFERENCES": 3140,
-      "REPRESENTS": 1617,
-      "TESTS": 1449,
+      "REFERENCES": 3141,
+      "REPRESENTS": 1620,
+      "TESTS": 1451,
       "TRACKS": 126,
-      "USES_TABLE": 1952
+      "USES_TABLE": 1953
     }
   },
   "nodes": [
@@ -26052,6 +26052,29 @@
       "lastChangedCommit": "238c9b8476c5351776f3e6e22073dbb0f8c639e9"
     },
     {
+      "key": "Artifact:docs/courier-continuation-security-review.md",
+      "type": "Artifact",
+      "id": "docs/courier-continuation-security-review.md",
+      "label": "courier-continuation-security-review.md",
+      "path": "docs/courier-continuation-security-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 2030,
+      "lines": 14,
+      "version": "31e5ca372787fbf6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/courier-continuation-security-review.md",
+          "line": 1,
+          "version": "31e5ca372787fbf6"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T05:12:25.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
+    },
+    {
       "key": "Artifact:docs/delivery-commitments-review.json",
       "type": "Artifact",
       "id": "docs/delivery-commitments-review.json",
@@ -40735,18 +40758,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "1af47433f36f66d8",
+      "version": "a54d8f187a6d252a",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "1af47433f36f66d8"
+          "version": "a54d8f187a6d252a"
         }
       ],
-      "lastChangedAt": "2026-10-10T20:27:25.000Z",
+      "lastChangedAt": "2026-10-11T05:12:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8409859fadc2144af108626f313efffd2c0f61e9"
+      "lastChangedCommit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -62623,20 +62646,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 36487,
+      "bytes": 36515,
       "lines": 241,
-      "version": "b53fb192a8404073",
+      "version": "2a538c5a4670d6c5",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "b53fb192a8404073"
+          "version": "2a538c5a4670d6c5"
         }
       ],
-      "lastChangedAt": "2026-10-10T20:27:25.000Z",
+      "lastChangedAt": "2026-10-11T05:12:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8409859fadc2144af108626f313efffd2c0f61e9"
+      "lastChangedCommit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
     },
     {
       "key": "Artifact:Procfile",
@@ -78196,18 +78219,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "4e7db468c33bccf6",
+      "version": "1d9ac4aa72ffa25f",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "4e7db468c33bccf6"
+          "version": "1d9ac4aa72ffa25f"
         }
       ],
-      "lastChangedAt": "2026-10-11T01:07:47.000Z",
+      "lastChangedAt": "2026-10-11T05:12:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "671897865bad51679905bb7b5fffd458c76bdb4f"
+      "lastChangedCommit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
     },
     {
       "key": "Artifact:src/access.js",
@@ -78332,20 +78355,20 @@
       "path": "src/agentturn.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 40908,
-      "lines": 681,
-      "version": "08539405e4cbc82a",
+      "bytes": 41294,
+      "lines": 686,
+      "version": "5e8b8516d51bff6b",
       "text": true,
       "provenance": [
         {
           "file": "src/agentturn.js",
           "line": 1,
-          "version": "08539405e4cbc82a"
+          "version": "5e8b8516d51bff6b"
         }
       ],
-      "lastChangedAt": "2026-10-10T18:52:40.000Z",
+      "lastChangedAt": "2026-10-11T05:05:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b6433eb1d3f0de8e792b61e5bb25fe80e0b3af59"
+      "lastChangedCommit": "4e477a09b477e71c8312784f88b6e6424fd58749"
     },
     {
       "key": "Artifact:src/aggregate.js",
@@ -80117,6 +80140,29 @@
       "lastChangedAt": "2026-08-30T17:37:22.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+    },
+    {
+      "key": "Artifact:src/courierjobs.js",
+      "type": "Artifact",
+      "id": "src/courierjobs.js",
+      "label": "courierjobs.js",
+      "path": "src/courierjobs.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 3025,
+      "lines": 44,
+      "version": "4138e3b73f8ad140",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/courierjobs.js",
+          "line": 1,
+          "version": "4138e3b73f8ad140"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T04:23:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "64de9697f290cf62af6af8d2c525873ba11e81cd"
     },
     {
       "key": "Artifact:src/crafting.js",
@@ -85600,20 +85646,20 @@
       "path": "test/agentturn.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 45279,
-      "lines": 595,
-      "version": "c30576f0ffc8b6f7",
+      "bytes": 51737,
+      "lines": 664,
+      "version": "653480c0416fb37e",
       "text": true,
       "provenance": [
         {
           "file": "test/agentturn.js",
           "line": 1,
-          "version": "c30576f0ffc8b6f7"
+          "version": "653480c0416fb37e"
         }
       ],
-      "lastChangedAt": "2026-10-10T18:52:40.000Z",
+      "lastChangedAt": "2026-10-11T05:05:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b6433eb1d3f0de8e792b61e5bb25fe80e0b3af59"
+      "lastChangedCommit": "4e477a09b477e71c8312784f88b6e6424fd58749"
     },
     {
       "key": "Artifact:test/auction.js",
@@ -87178,6 +87224,29 @@
       "lastChangedAt": "2026-09-17T23:52:47.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "9862a3f671cf68cc5a17af17a69f41e872df52c0"
+    },
+    {
+      "key": "Artifact:test/courierjobs.js",
+      "type": "Artifact",
+      "id": "test/courierjobs.js",
+      "label": "courierjobs.js",
+      "path": "test/courierjobs.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3892,
+      "lines": 55,
+      "version": "f4a2bf747e786ac1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/courierjobs.js",
+          "line": 1,
+          "version": "f4a2bf747e786ac1"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T04:23:16.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "64de9697f290cf62af6af8d2c525873ba11e81cd"
     },
     {
       "key": "Artifact:test/crafting.js",
@@ -102381,7 +102450,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/earningreceipts.js && node test/identity-checkout.js && node test/identity-checkout-client.js && node test/identity-checkout-api.js && node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node test/city-rpg.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
+      "command": "node test/courierjobs.js && node test/earningreceipts.js && node test/identity-checkout.js && node test/identity-checkout-client.js && node test/identity-checkout-api.js && node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node test/city-rpg.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
       "provenance": [
         {
           "file": "package.json",
@@ -106348,6 +106417,22 @@
         {
           "commit": "10b07f016ec8047fddfa5b04b89c77616248e6e7",
           "url": "https://github.com/OmertaDev/Omerta/commit/10b07f016ec8047fddfa5b04b89c77616248e6e7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "type": "Commit",
+      "id": "10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "label": "Qualify committed courier continuation and wire release tests",
+      "title": "Qualify committed courier continuation and wire release tests",
+      "date": "2026-10-11T05:12:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "provenance": [
+        {
+          "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461",
+          "url": "https://github.com/OmertaDev/Omerta/commit/10eb980bbd0b9522e6b95104a9bcdd909a717461"
         }
       ]
     },
@@ -115200,6 +115285,22 @@
       ]
     },
     {
+      "key": "Commit:49ae0db13baa91186311266294258b8093457733",
+      "type": "Commit",
+      "id": "49ae0db13baa91186311266294258b8093457733",
+      "label": "Merge remote-tracking branch 'origin/main' into codex/game-courier-jobs",
+      "title": "Merge remote-tracking branch 'origin/main' into codex/game-courier-jobs",
+      "date": "2026-10-11T05:11:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/49ae0db13baa91186311266294258b8093457733",
+      "provenance": [
+        {
+          "commit": "49ae0db13baa91186311266294258b8093457733",
+          "url": "https://github.com/OmertaDev/Omerta/commit/49ae0db13baa91186311266294258b8093457733"
+        }
+      ]
+    },
+    {
       "key": "Commit:49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
       "type": "Commit",
       "id": "49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
@@ -115772,6 +115873,22 @@
         {
           "commit": "4e3d051f759f32dfd7a745254a461ee322a2bb21",
           "url": "https://github.com/OmertaDev/Omerta/commit/4e3d051f759f32dfd7a745254a461ee322a2bb21"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4e477a09b477e71c8312784f88b6e6424fd58749",
+      "type": "Commit",
+      "id": "4e477a09b477e71c8312784f88b6e6424fd58749",
+      "label": "Continue committed cargo through native agent delivery actions",
+      "title": "Continue committed cargo through native agent delivery actions",
+      "date": "2026-10-11T05:05:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4e477a09b477e71c8312784f88b6e6424fd58749",
+      "provenance": [
+        {
+          "commit": "4e477a09b477e71c8312784f88b6e6424fd58749",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4e477a09b477e71c8312784f88b6e6424fd58749"
         }
       ]
     },
@@ -118860,6 +118977,22 @@
         {
           "commit": "64dc9bf5efc2709096ac3a699f19c55134b5d27f",
           "url": "https://github.com/OmertaDev/Omerta/commit/64dc9bf5efc2709096ac3a699f19c55134b5d27f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "type": "Commit",
+      "id": "64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "label": "Plan held cargo continuation for accepted deliveries",
+      "title": "Plan held cargo continuation for accepted deliveries",
+      "date": "2026-10-11T04:23:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "provenance": [
+        {
+          "commit": "64de9697f290cf62af6af8d2c525873ba11e81cd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/64de9697f290cf62af6af8d2c525873ba11e81cd"
         }
       ]
     },
@@ -128732,6 +128865,22 @@
         {
           "commit": "a7891c130ca44e2238a4199f975203c082cccdd7",
           "url": "https://github.com/OmertaDev/Omerta/commit/a7891c130ca44e2238a4199f975203c082cccdd7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "type": "Commit",
+      "id": "a799d08a805ccaa750ba807633e4258fb93771e3",
+      "label": "chore(knowledge): refresh generated artifacts for 3d050831",
+      "title": "chore(knowledge): refresh generated artifacts for 3d050831",
+      "date": "2026-10-11T04:21:07.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a799d08a805ccaa750ba807633e4258fb93771e3",
+      "provenance": [
+        {
+          "commit": "a799d08a805ccaa750ba807633e4258fb93771e3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a799d08a805ccaa750ba807633e4258fb93771e3"
         }
       ]
     },
@@ -149400,6 +149549,22 @@
       ]
     },
     {
+      "key": "Document:docs/courier-continuation-security-review.md",
+      "type": "Document",
+      "id": "docs/courier-continuation-security-review.md",
+      "label": "docs/courier-continuation-security-review.md",
+      "documentType": "documentation",
+      "lines": 14,
+      "version": "31e5ca372787fbf6",
+      "provenance": [
+        {
+          "file": "docs/courier-continuation-security-review.md",
+          "line": 1,
+          "version": "31e5ca372787fbf6"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/delivery-commitments.md",
       "type": "Document",
       "id": "docs/delivery-commitments.md",
@@ -152142,12 +152307,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "1af47433f36f66d8",
+      "version": "a54d8f187a6d252a",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "1af47433f36f66d8"
+          "version": "a54d8f187a6d252a"
         }
       ]
     },
@@ -154382,12 +154547,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "4e7db468c33bccf6",
+      "version": "1d9ac4aa72ffa25f",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "4e7db468c33bccf6"
+          "version": "1d9ac4aa72ffa25f"
         }
       ]
     },
@@ -162453,6 +162618,9 @@
           "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
         },
         {
+          "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
+        },
+        {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
         },
         {
@@ -163641,6 +163809,9 @@
           "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
         },
         {
+          "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
+        },
+        {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
         },
         {
@@ -164827,6 +164998,9 @@
         },
         {
           "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+        },
+        {
+          "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
@@ -166339,6 +166513,9 @@
         },
         {
           "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+        },
+        {
+          "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
@@ -168366,13 +168543,13 @@
       "type": "Module",
       "id": "src/agentturn.js",
       "label": "src/agentturn.js",
-      "lines": 681,
-      "version": "08539405e4cbc82a",
+      "lines": 686,
+      "version": "5e8b8516d51bff6b",
       "provenance": [
         {
           "file": "src/agentturn.js",
           "line": 1,
-          "version": "08539405e4cbc82a"
+          "version": "5e8b8516d51bff6b"
         }
       ]
     },
@@ -169513,6 +169690,21 @@
           "file": "src/corner.js",
           "line": 1,
           "version": "e4658d478f719e5e"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/courierjobs.js",
+      "type": "Module",
+      "id": "src/courierjobs.js",
+      "label": "src/courierjobs.js",
+      "lines": 44,
+      "version": "4138e3b73f8ad140",
+      "provenance": [
+        {
+          "file": "src/courierjobs.js",
+          "line": 1,
+          "version": "4138e3b73f8ad140"
         }
       ]
     },
@@ -176181,12 +176373,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3d05083171080445f251c615a82699c72de22331",
-      "currentBranch": "main",
+      "revision": "10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "currentBranch": "codex/game-courier-jobs",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4411,
+      "currentArtifactCount": 4414,
       "provenance": [
         {
           "file": "README.md",
@@ -206234,13 +206426,13 @@
       "type": "TestSuite",
       "id": "test/agentturn.js",
       "label": "test/agentturn.js",
-      "lines": 595,
-      "version": "c30576f0ffc8b6f7",
+      "lines": 664,
+      "version": "653480c0416fb37e",
       "provenance": [
         {
           "file": "test/agentturn.js",
           "line": 1,
-          "version": "c30576f0ffc8b6f7"
+          "version": "653480c0416fb37e"
         }
       ]
     },
@@ -207261,6 +207453,21 @@
           "file": "test/core-progression-migration.js",
           "line": 1,
           "version": "362271eed15da940"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/courierjobs.js",
+      "type": "TestSuite",
+      "id": "test/courierjobs.js",
+      "label": "test/courierjobs.js",
+      "lines": 55,
+      "version": "f4a2bf747e786ac1",
+      "provenance": [
+        {
+          "file": "test/courierjobs.js",
+          "line": 1,
+          "version": "f4a2bf747e786ac1"
         }
       ]
     },
@@ -229030,6 +229237,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/courierjobs.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/courierjobs.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/crafting.js",
       "to": "Domain:world-graph",
       "provenance": {
@@ -231788,6 +232004,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/core-progression-migration.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/courierjobs.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/courierjobs.js",
         "line": 1
       }
     },
@@ -251206,6 +251431,38 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "10b07f016ec8047fddfa5b04b89c77616248e6e7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "to": "Artifact:docs/courier-continuation-security-review.md",
+      "provenance": {
+        "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
       }
     },
     {
@@ -284626,6 +284883,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4e477a09b477e71c8312784f88b6e6424fd58749",
+      "to": "Artifact:src/agentturn.js",
+      "provenance": {
+        "commit": "4e477a09b477e71c8312784f88b6e6424fd58749"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4e477a09b477e71c8312784f88b6e6424fd58749",
+      "to": "Artifact:test/agentturn.js",
+      "provenance": {
+        "commit": "4e477a09b477e71c8312784f88b6e6424fd58749"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4e83019e9616b367906c1d3e454c23c5015308de",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -298542,6 +298815,22 @@
       "to": "Artifact:.github/workflows/forge.yml",
       "provenance": {
         "commit": "64dc9bf5efc2709096ac3a699f19c55134b5d27f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "commit": "64de9697f290cf62af6af8d2c525873ba11e81cd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "to": "Artifact:test/courierjobs.js",
+      "provenance": {
+        "commit": "64de9697f290cf62af6af8d2c525873ba11e81cd"
       }
     },
     {
@@ -330910,6 +331199,38 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "a7891c130ca44e2238a4199f975203c082cccdd7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
       }
     },
     {
@@ -381222,6 +381543,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "file": "src/courierjobs.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "src/crafting.js",
@@ -395204,6 +395534,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/courier-continuation-security-review.md",
+      "provenance": {
+        "file": "docs/courier-continuation-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/delivery-commitments-review.json",
       "provenance": {
         "file": "docs/delivery-commitments-review.json",
@@ -403568,6 +403907,15 @@
       "to": "Artifact:test/core-progression-migration.js",
       "provenance": {
         "file": "test/core-progression-migration.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/courierjobs.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
         "line": 1
       }
     },
@@ -434779,7 +435127,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1164
+      "weight": 1166
     },
     {
       "type": "DEPENDS_ON",
@@ -436018,6 +436366,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/core-progression-api.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/courierjobs.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -450388,6 +450745,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:10eb980bbd0b9522e6b95104a9bcdd909a717461",
+      "provenance": {
+        "commit": "10eb980bbd0b9522e6b95104a9bcdd909a717461"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:10ece3d1510798e80f8ddb3ed8711dce8b8bd69f",
       "provenance": {
         "commit": "10ece3d1510798e80f8ddb3ed8711dce8b8bd69f"
@@ -454812,6 +455177,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:49ae0db13baa91186311266294258b8093457733",
+      "provenance": {
+        "commit": "49ae0db13baa91186311266294258b8093457733"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:49b855c57b5a69d2f4cad00e81b5c119a9a2b019",
       "provenance": {
         "commit": "49b855c57b5a69d2f4cad00e81b5c119a9a2b019"
@@ -455095,6 +455468,14 @@
       "to": "Commit:4e3d051f759f32dfd7a745254a461ee322a2bb21",
       "provenance": {
         "commit": "4e3d051f759f32dfd7a745254a461ee322a2bb21"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4e477a09b477e71c8312784f88b6e6424fd58749",
+      "provenance": {
+        "commit": "4e477a09b477e71c8312784f88b6e6424fd58749"
       }
     },
     {
@@ -456639,6 +457020,14 @@
       "to": "Commit:64dc9bf5efc2709096ac3a699f19c55134b5d27f",
       "provenance": {
         "commit": "64dc9bf5efc2709096ac3a699f19c55134b5d27f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:64de9697f290cf62af6af8d2c525873ba11e81cd",
+      "provenance": {
+        "commit": "64de9697f290cf62af6af8d2c525873ba11e81cd"
       }
     },
     {
@@ -461575,6 +461964,14 @@
       "to": "Commit:a7891c130ca44e2238a4199f975203c082cccdd7",
       "provenance": {
         "commit": "a7891c130ca44e2238a4199f975203c082cccdd7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a799d08a805ccaa750ba807633e4258fb93771e3",
+      "provenance": {
+        "commit": "a799d08a805ccaa750ba807633e4258fb93771e3"
       }
     },
     {
@@ -469357,7 +469754,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -469366,7 +469763,7 @@
       "to": "Artifact:src/career.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -469375,7 +469772,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -469384,31 +469781,13 @@
       "to": "Artifact:src/convoy.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 15
+        "line": 16
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/crew.js",
-      "provenance": {
-        "file": "src/agentturn.js",
-        "line": 17
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/delivery.js",
-      "provenance": {
-        "file": "src/agentturn.js",
-        "line": 8
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/depot.js",
+      "to": "Artifact:src/courierjobs.js",
       "provenance": {
         "file": "src/agentturn.js",
         "line": 7
@@ -469417,25 +469796,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/explore.js",
-      "provenance": {
-        "file": "src/agentturn.js",
-        "line": 20
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/game.js",
-      "provenance": {
-        "file": "src/agentturn.js",
-        "line": 10
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/agentturn.js",
-      "to": "Artifact:src/growth.js",
+      "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "src/agentturn.js",
         "line": 18
@@ -469444,10 +469805,55 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/agentturn.js",
+      "to": "Artifact:src/delivery.js",
+      "provenance": {
+        "file": "src/agentturn.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/agentturn.js",
+      "to": "Artifact:src/depot.js",
+      "provenance": {
+        "file": "src/agentturn.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/agentturn.js",
+      "to": "Artifact:src/explore.js",
+      "provenance": {
+        "file": "src/agentturn.js",
+        "line": 21
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/agentturn.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "src/agentturn.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/agentturn.js",
+      "to": "Artifact:src/growth.js",
+      "provenance": {
+        "file": "src/agentturn.js",
+        "line": 19
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/agentturn.js",
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 16
+        "line": 17
       }
     },
     {
@@ -469456,7 +469862,7 @@
       "to": "Artifact:src/opportunities.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -469474,7 +469880,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -469483,7 +469889,7 @@
       "to": "Artifact:src/territory.js",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 14
+        "line": 15
       }
     },
     {
@@ -471572,6 +471978,15 @@
       "provenance": {
         "file": "src/corner.js",
         "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/courierjobs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "src/courierjobs.js",
+        "line": 1
       }
     },
     {
@@ -480949,7 +481364,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 11
+        "line": 20
       }
     },
     {
@@ -480958,7 +481373,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 9
+        "line": 18
       }
     },
     {
@@ -480967,7 +481382,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 10
+        "line": 19
       }
     },
     {
@@ -480976,7 +481391,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 7
+        "line": 16
       }
     },
     {
@@ -480985,7 +481400,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 8
+        "line": 17
       }
     },
     {
@@ -483524,6 +483939,24 @@
       "provenance": {
         "file": "test/core-progression-migration.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/courierjobs.js",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/courierjobs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
+        "line": 3
       }
     },
     {
@@ -520302,6 +520735,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/courier-continuation-security-review.md",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "file": "docs/courier-continuation-security-review.md",
+        "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/delivery-commitments.md",
       "to": "Artifact:docs/business-operating-policies.md",
       "provenance": {
@@ -538770,6 +539212,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/courier-continuation-security-review.md",
+      "to": "Artifact:docs/courier-continuation-security-review.md",
+      "provenance": {
+        "file": "docs/courier-continuation-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/delivery-commitments.md",
       "to": "Artifact:docs/delivery-commitments.md",
       "provenance": {
@@ -542329,6 +542780,15 @@
       "to": "Artifact:src/corner.js",
       "provenance": {
         "file": "src/corner.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/courierjobs.js",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "file": "src/courierjobs.js",
         "line": 1
       }
     },
@@ -546091,6 +546551,15 @@
       "to": "Artifact:test/core-progression-migration.js",
       "provenance": {
         "file": "test/core-progression-migration.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/courierjobs.js",
+      "to": "Artifact:test/courierjobs.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
         "line": 1
       }
     },
@@ -549871,7 +550340,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 11
+        "line": 20
       }
     },
     {
@@ -549880,7 +550349,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 9
+        "line": 18
       }
     },
     {
@@ -549889,7 +550358,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 10
+        "line": 19
       }
     },
     {
@@ -549898,7 +550367,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 7
+        "line": 16
       }
     },
     {
@@ -549907,7 +550376,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/agentturn.js",
-        "line": 8
+        "line": 17
       }
     },
     {
@@ -552050,6 +552519,24 @@
       "provenance": {
         "file": "test/core-progression-migration.js",
         "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/courierjobs.js",
+      "to": "Artifact:src/courierjobs.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/courierjobs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/courierjobs.js",
+        "line": 3
       }
     },
     {
@@ -564145,7 +564632,7 @@
       "to": "Table:businesses",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -564154,7 +564641,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/agentturn.js",
-        "line": 16
+        "line": 17
       }
     },
     {
@@ -567332,6 +567819,15 @@
       "provenance": {
         "file": "src/corner.js",
         "line": 11
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/courierjobs.js",
+      "to": "Table:districts",
+      "provenance": {
+        "file": "src/courierjobs.js",
+        "line": 1
       }
     },
     {
