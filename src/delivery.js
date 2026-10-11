@@ -5,6 +5,7 @@ import { fillOrder } from './market.js';
 import { reservedQuantity } from './deliverybook.js';
 import { buyGood } from './economy.js';
 import { goodsBuyQuote } from './goodsquote.js';
+import { DEPOT, buyFromDepot } from './depot.js';
 
 export const DELIVERY = Object.freeze({ maxActive: 2, maxUnits: 40, maxSpend: 100000, maxSeconds: 21600 });
 export const deliveryIntakeEnabled = () => process.env.DELIVERY_CONTRACTS === 'on';
@@ -65,6 +66,27 @@ export async function deliveryStep(ch, id, kind, body, client, h) {
   const result = kind === 'delivery_buy' ? await buyGood(ch, c.good_id, body.qty, client, h)
     : await travel(ch, body.district, client, h);
   await client.query('UPDATE delivery_commitments SET spent=$2 WHERE id=$1', [id, Number(c.spent) + cost]);
+  return result;
+}
+
+// Caller holds the existing ordered buyer/owner character locks. The depot is
+// locked before the procurement order; all spending remains ordinary game cash.
+export async function buyCommittedFromDepot(ch, owner, id, depotId, body, client, h) {
+  if (!owner || owner.id === ch.id || !owner.alive) throw new GameError('no_depot', 'No other operating storefront.');
+  if (jailed(ch) || safeHoused(ch)) throw new GameError('status', 'Surface before procuring a delivery.');
+  if (!integer(body?.qty, 1, DELIVERY.maxUnits) || !integer(body?.maxUnitPrice, 50, 1000000))
+    throw new GameError('delivery_terms', 'Provide bounded quantity and maximum unit price.');
+  const depot = (await client.query("SELECT * FROM business_depots WHERE id=$1 AND status='open' FOR UPDATE", [depotId])).rows[0];
+  if (!depot || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');
+  const c = await lockedCommitment(ch, id, client);
+  if (c.good_id !== DEPOT.good || c.depot_id === depot.id || c.buyer_character === owner.id
+      || body.qty + Number(h.owned.cargo[c.good_id] || 0) > Number(c.remaining))
+    throw new GameError('delivery_terms', 'Buy only still-needed goods from an independent storefront.');
+  const cost = body.qty * Number(depot.sale_price);
+  if (!Number.isSafeInteger(cost) || Number(c.spent) + cost > Number(c.spend_limit) || Number(ch.cash) - cost < 1000)
+    throw new GameError('delivery_budget', 'This purchase exceeds the committed spending cap or personal cash reserve.');
+  const result = await buyFromDepot(ch, owner, depot.id, body.qty, body.maxUnitPrice, client, h);
+  await client.query('UPDATE delivery_commitments SET spent=$2 WHERE id=$1', [id, Number(c.spent) + result.paid]);
   return result;
 }
 

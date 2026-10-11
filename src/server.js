@@ -2654,6 +2654,9 @@ export async function buildServer() {
       case 'delivery_deliver': return Delivery.deliverCommitment(ch, action.body.commitmentId, action.body.qty, client, h);
       case 'delivery_buy':
       case 'delivery_travel': return Delivery.deliveryStep(ch, action.body.commitmentId, action.kind, action.body, client, h);
+      case 'delivery_depot_buy':
+        if (!lender) throw new G.GameError('no_depot', 'Refresh the storefront purchase.');
+        return Delivery.buyCommittedFromDepot(ch, lender, action.body.commitmentId, action.body.depotId, action.body, client, h);
       case 'depot_receive': {
         const [id, order] = tail('/v1/depot/').split('/orders/');
         return Depot.receiveDepot(ch, id, order.replace(/\/receive$/, ''), client, { automated: true, policyId: action.body.policyId });
@@ -2710,10 +2713,19 @@ export async function buildServer() {
 
     let result;
     try {
-      // Player-loan repayment is the only issued two-party action. Preserve its existing stable
-      // character/account lock order; every other descriptor executes under the ordinary solo lock.
+      // Two-party actions preserve the canonical sorted character/account lock order.
       const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);
-      if (loanMatch && loanMatch[1] !== 'house') {
+      const storefrontMatch = /^delivery:([A-Za-z0-9_-]{1,128}):depot:([A-Za-z0-9_-]{1,128}):buy$/.exec(actionId);
+      if (storefrontMatch) {
+        const ownerId = (await pool.query("SELECT owner_character FROM business_depots WHERE id=$1 AND status='open'", [storefrontMatch[2]])).rows[0]?.owner_character;
+        if (ownerId) {
+          result = await G.withTwoCharacters(pool, req.user.sub, ownerId, (ch, owner, client, h) =>
+            executeAgentAction(client, ch, h, turnId, actionId, owner));
+        } else {
+          result = await G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+            executeAgentAction(client, ch, h, turnId, actionId), agentActionLocks);
+        }
+      } else if (loanMatch && loanMatch[1] !== 'house') {
         const lenderId = (await pool.query(
           "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
         if (lenderId) {
