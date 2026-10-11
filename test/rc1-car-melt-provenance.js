@@ -8,6 +8,7 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  STOREFRONT_SERVER_PIN, assertStorefrontServerTransfer,
   BUSINESS_SERVER_PIN, assertBusinessServerTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN, assertCityPresenceServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { carMelt } from '../src/rules.js';
@@ -19,10 +20,17 @@ const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Goods/car history binds the reconstructed predecessor, never new City authority.
-  const business = file === 'src/server.js' ? assertBusinessServerTransfer(actual) : null;
+  const storefront = file === 'src/server.js' ? assertStorefrontServerTransfer(actual) : null;
+  const businessText = storefront ? storefront.baselineText : actual;
+  if (storefront) {
+    assert.equal(hash(actual), STOREFRONT_SERVER_PIN);
+    assert.equal(storefront.baselineSha256, BUSINESS_SERVER_PIN);
+    assert.equal(storefront.inverseChunks, 2);
+  }
+  const business = file === 'src/server.js' ? assertBusinessServerTransfer(businessText) : null;
   const citySource = business ? business.baselineText : actual;
   if (business) {
-    assert.equal(hash(actual), BUSINESS_SERVER_PIN);
+    assert.equal(hash(businessText), BUSINESS_SERVER_PIN);
     assert.equal(business.baselineSha256, CITY_PRESENCE_SERVER_PIN);
     assert.equal(business.inverseChunks, 3);
   }
