@@ -87,7 +87,7 @@ export async function leaseWarehouse(ch, landlord, depotId, body, client, h) {
   const price = integer(Number(depot.warehouse_cash_per_unit_day), 1, 100000), fee = warehouseLeaseFee(terms.units, price);
   if (fee > terms.maxTotalCash) fail('price_changed', 'The warehouse rent exceeds your limit.');
   await client.query("UPDATE business_warehouse_leases SET status='closed' WHERE tenant_character=$1 AND status='active' AND held_qty=0 AND expires_at<=$2 AND depot_id=$3", [ch.id, now, depotId]);
-  const claims = (await client.query("SELECT * FROM business_warehouse_leases WHERE tenant_character=$1 AND status IN ('active','landlord_closed')", [ch.id])).rows
+  const claims = (await client.query("SELECT * FROM business_warehouse_leases WHERE tenant_character=$1 AND ((status='active' AND expires_at>$2) OR (status IN ('active','landlord_closed') AND held_qty>0)) LIMIT 3", [ch.id, now])).rows
     .filter(row => liveService(row, now) || Number(row.held_qty) > 0);
   if (claims.length >= 2 || claims.some(row => row.depot_id === depotId)) fail('warehouse_claims', 'Close or retrieve an existing warehouse claim first.');
   if (terms.units > (await capacity(client, depot, now)).available) fail('warehouse_capacity', 'Not enough warehouse capacity.');
@@ -179,5 +179,3 @@ export async function closeWarehouseClaimsAtDeath(client, characterId) {
     }
   }
 }
-
-

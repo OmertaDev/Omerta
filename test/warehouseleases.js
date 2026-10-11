@@ -41,3 +41,70 @@ for (let i = 0; i < 500; i++) {
   assert.equal(trunk + stored, 20); assert.equal(warehouseReservedFromRows([{ ...active, held_qty: stored, expires_at: now }], now), stored);
 }
 console.log('warehouseleases: PASS; bounds/24h/expiry/death reservations; seed1947 500 lifecycle/fee cases; native persistence and cargo/rent conservation not yet proven');
+
+// Exercise actual domain writes using the repository memory database and real journals.
+// This deliberately does not claim PostgreSQL locks, rollback, concurrency, or estate orchestration.
+process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'warehouse-module-local-test-secret'; process.env.SOCIAL_VERIFY_MODE = 'off';
+const { buildServer } = await import('../src/server.js');
+const G = await import('../src/game.js');
+const D = await import('../src/depot.js');
+const W = await import('../src/warehouseleases.js');
+const app = await buildServer();
+async function player(name) {
+  const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest' });
+  const token = guest.json().token;
+  const response = await app.inject({ method: 'POST', url: '/v1/character', headers: { authorization: `Bearer ${token}`, 'idempotency-key': name }, payload: { name } });
+  assert.equal(response.statusCode, 200);
+  const account = { id: JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).sub };
+  const ch = (await app.pool.query('SELECT * FROM characters WHERE account_id=$1', [account.id])).rows[0];
+  await app.pool.query('UPDATE characters SET cash=100000 WHERE id=$1', [ch.id]);
+  return { accountId: account.id, id: ch.id };
+}
+
+try {
+  const owner = await player('Warehouse Owner'), tenant = await player('Warehouse Tenant'), other = await player('Warehouse Other');
+  const opened = await G.withCharacter(app.pool, owner.accountId, (ch, client, h) => D.openDepot(ch, { salePrice: 2000, bidPrice: 500, targetStock: 4, reorderAt: 0, restockBudget: 3000 }, client, h));
+  await G.withCharacter(app.pool, owner.accountId, (ch, client) => W.configureWarehouseOffer(ch, opened.id, { expectedRevision: 0, enabled: true, slots: 20, cashPerUnitDay: 25 }, client));
+  const rent = () => G.withTwoCharacters(app.pool, tenant.accountId, owner.id, (ch, landlord, client, h) => W.leaseWarehouse(ch, landlord, opened.id, { units: 10, expectedOfferRevision: 1, maxTotalCash: 250 }, client, h));
+  const before = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [tenant.id])).rows[0].cash);
+  const rented = await rent(), id = rented.lease.id;
+  assert.equal(new Date(rented.lease.expiresAt) - new Date(rented.lease.createdAt), 86400000);
+  assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [tenant.id])).rows[0].cash), before - 250);
+  assert.equal(Number((await app.pool.query('SELECT treasury FROM business_depots WHERE id=$1', [opened.id])).rows[0].treasury), 250);
+  const rentJournal = (await app.pool.query("SELECT * FROM business_depot_journal WHERE reason='warehouse_rent'", [])).rows;
+  assert.equal(rentJournal.length, 1); assert.equal(Number(rentJournal[0].cash_delta), 250); assert.equal(rentJournal[0].lease_id, id);
+  const rentLedger = (await app.pool.query("SELECT * FROM transactions WHERE reason='warehouse:rent'", [])).rows;
+  assert.equal(rentLedger.length, 1); assert.equal(rentLedger[0].character_id, tenant.id); assert.equal(Number(rentLedger[0].amount), -250);
+  await assert.rejects(rent(), e => e.code === 'warehouse_claims');
+  await app.pool.query("INSERT INTO character_cargo(character_id,good_id,qty) VALUES($1,'gin',10)", [tenant.id]);
+  const move = (who, fn, qty) => G.withCharacter(app.pool, who.accountId, (ch, client, h) => fn(ch, id, qty, client, h));
+  await assert.rejects(move(other, W.depositWarehouseCargo, 1), e => e.code === 'not_yours');
+  await move(tenant, W.depositWarehouseCargo, 10);
+  assert.equal(Number((await app.pool.query('SELECT held_qty FROM business_warehouse_leases WHERE id=$1', [id])).rows[0].held_qty), 10);
+  assert.equal((await app.pool.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'", [tenant.id])).rows.length, 0);
+  await move(tenant, W.withdrawWarehouseCargo, 4);
+  assert.equal(Number((await app.pool.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'", [tenant.id])).rows[0].qty), 4);
+  await G.withCharacter(app.pool, owner.accountId, (ch, client) => W.closeWarehouseClaimsAtDeath(client, ch.id));
+  await app.pool.query("UPDATE business_depots SET status='closed' WHERE id=$1", [opened.id]);
+  await assert.rejects(move(tenant, W.depositWarehouseCargo, 1), e => e.code === 'warehouse_expired');
+  await move(tenant, W.withdrawWarehouseCargo, 6);
+  assert.equal(Number((await app.pool.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'", [tenant.id])).rows[0].qty), 10, 'closed landlord location preserves real tenant cargo retrieval');
+  const journal = (await app.pool.query('SELECT lease_id,lease_stock_delta,lease_stock_after,stock_delta,cost_delta FROM business_depot_journal')).rows.filter(r => r.lease_id === id);
+  assert.deepEqual(journal.map(r => Number(r.lease_stock_delta)).sort((a,b) => a-b), [-6,-4,0,10]);
+  assert.equal(journal.reduce((n, r) => n + Number(r.lease_stock_delta), 0), 0); assert(journal.every(r => !Number(r.stock_delta) && !Number(r.cost_delta)));
+  await G.withCharacter(app.pool, tenant.accountId, (ch, client) => W.closeWarehouseLease(ch, id, client));
+  assert.equal((await W.warehouseLeaseBoard(app.pool, { id: tenant.id })).length, 0);
+  const secondDepot = await G.withCharacter(app.pool, other.accountId, (ch, client, h) => D.openDepot(ch, { salePrice: 2000, bidPrice: 500, targetStock: 4, reorderAt: 0, restockBudget: 3000 }, client, h));
+  await G.withCharacter(app.pool, other.accountId, (ch, client) => W.configureWarehouseOffer(ch, secondDepot.id, { expectedRevision: 0, enabled: true, slots: 10, cashPerUnitDay: 1 }, client));
+  const second = await G.withTwoCharacters(app.pool, tenant.accountId, other.id, (ch, landlord, client, h) => W.leaseWarehouse(ch, landlord, secondDepot.id, { units: 5, expectedOfferRevision: 1, maxTotalCash: 5 }, client, h));
+  await G.withCharacter(app.pool, tenant.accountId, (ch, client, h) => W.depositWarehouseCargo(ch, second.lease.id, 4, client, h));
+  await G.withCharacter(app.pool, tenant.accountId, (ch, client) => W.closeWarehouseClaimsAtDeath(client, ch.id));
+  const scattered = (await app.pool.query('SELECT status,held_qty FROM business_warehouse_leases WHERE id=$1', [second.lease.id])).rows[0];
+  assert.equal(scattered.status, 'tenant_dead'); assert.equal(Number(scattered.held_qty), 0);
+  assert.equal(Number((await app.pool.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'", [tenant.id])).rows[0].qty), 6, 'tenant death scatter never teleports leased cargo into trunk');
+  const scatterJournal = (await app.pool.query('SELECT reason,lease_id,lease_stock_delta,lease_stock_after FROM business_depot_journal')).rows.filter(r => r.lease_id === second.lease.id);
+  assert.equal(scatterJournal.reduce((n, r) => n + Number(r.lease_stock_delta), 0), 0);
+  assert(scatterJournal.some(r => r.reason === 'warehouse_tenant_death' && Number(r.lease_stock_delta) === -4 && Number(r.lease_stock_after) === 0));
+  assert.equal((await W.warehouseLeaseBoard(app.pool, { id: tenant.id })).length, 0);
+  console.log('warehouseleases actual memory domain: rent ledger/treasury + cargo/journal conservation, independent ownership, fixed term, duplicate claim rejection, landlord-closed retrieval PASS; native proof pending');
+} finally { await app.close(); if (previousPilot === undefined) delete process.env.DEPOT_PILOT; else process.env.DEPOT_PILOT = previousPilot; }
