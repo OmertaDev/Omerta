@@ -166,13 +166,18 @@ try {
         await page.evaluate(() => {
           window.__actorClickTrace = [];
           const observe = event => {
-            if (window.__actorClickTrace.length >= 12) return;
-            const current = window.__presenceHandles.at(-1), state = current.handle.getState();
-            window.__actorClickTrace.push({ type: event.type, target: event.target.tagName,
-              actor: event.target.closest('[data-city-actor]')?.dataset.cityActor || null,
-              ready: state.ready, selected: state.selectedActor, opening: state.actorOpening,
-              handleCount: window.__presenceHandles.length, destroyed: current.destroyed,
-              scroll: scrollY, x: event.clientX, y: event.clientY });
+            try {
+              if (window.__actorClickTrace.length >= 12) return;
+              const current = window.__presenceHandles.at(-1), state = current?.handle?.getState();
+              const target = event.target instanceof Element ? event.target : null;
+              window.__actorClickTrace.push({ type: event.type, target: target?.tagName || null,
+                actor: target?.closest('[data-city-actor]')?.dataset.cityActor || null,
+                ready: state?.ready ?? null, selected: state?.selectedActor ?? null, opening: state?.actorOpening ?? null,
+                handleCount: window.__presenceHandles.length, destroyed: current?.destroyed ?? null,
+                unavailable: !state, scroll: scrollY, x: event.clientX, y: event.clientY });
+            } catch {
+              if (window.__actorClickTrace.length < 12) window.__actorClickTrace.push({ type: event.type, unavailable: true });
+            }
           };
           for (const type of ['pointerdown', 'pointerup', 'click']) document.addEventListener(type, observe, { capture: true, passive: true });
           window.__actorClickCleanup = () => { for (const type of ['pointerdown', 'pointerup', 'click']) document.removeEventListener(type, observe, true); };
