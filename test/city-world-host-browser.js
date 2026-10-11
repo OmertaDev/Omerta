@@ -683,12 +683,16 @@ try {
   if (process.env.CITY_WORLD_SHOTS) await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-desktop.png') });
   // A real same-realm successor cannot inherit saved room/receipt DOM or make
   // an old detached action dispatch under its new character identity.
+  // Close while this scene still belongs to the original character. A pending
+  // Style read can observe the successor and retire these controls during mint.
+  await page.locator('[data-city-world-close]').click();
+  const mismatchedSocial = page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
+    && reply.status() === 200 && (await reply.json()).viewer.characterId !== viewer.character.id);
+  mismatchedSocial.catch(() => {}); // Observe early rejection; the original promise is still awaited below.
   await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [viewer.character.id]);
   const successor = await app.inject({ method: 'POST', url: '/v1/character', headers: viewer.headers, payload: { name: 'World Successor' } });
   assert.equal(successor.statusCode, 200, successor.body);
-  const mismatchedSocial = page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
-    && reply.status() === 200 && (await reply.json()).viewer.characterId !== viewer.character.id);
-  await page.locator('[data-city-world-close]').click(); await panel(page, 'style'); await mismatchedSocial;
+  await panel(page, 'style'); await mismatchedSocial;
   await page.waitForFunction(() => document.querySelector('#whoami').textContent.includes('World Successor'));
   await page.locator('#btn-dashboard-view').click();
   assert.equal(await page.evaluate(() => window.__worldRealm), realm);
