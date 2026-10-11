@@ -19,6 +19,11 @@ export function resourceJobView(job, accountId) {
     createdAt: iso(job.created_at), expiresAt: iso(job.expires_at), claimedAt: iso(job.claimed_at),
     submittedAt: iso(job.submitted_at), acceptAfter: iso(job.accept_after) };
 }
+export async function getResourceJob(pool, accountId, id) {
+  resourceKey(id);
+  const job = (await pool.query('SELECT * FROM resource_jobs WHERE id=$1 AND (buyer_account=$2 OR seller_account=$2)', [id, accountId])).rows[0];
+  return { job: resourceJobView(job, accountId) };
+}
 export async function setResourceService(pool, sellerAccount, body) {
   resourceIntake();
   if (typeof body?.enabled !== 'boolean' || body.kind !== 'market_analysis')

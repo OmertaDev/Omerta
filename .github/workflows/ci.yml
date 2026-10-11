@@ -40,10 +40,11 @@ jobs:
     # (pretest + test) completed in 2294.9825838s (38m14.983s) on Windows/Node 24.19.0,
     # including the new 100-seed x 250-action property lane in 804.7s. The prior hosted
     # Ubuntu/Node 22 suites job completed in 1295s before that lane existed; timing for the
-    # expanded suite on the hosted runtime is still pending. Thus 30m no longer contains
-    # the measured coverage. 60m leaves room for the suite, simulations, browser install,
-    # mobile checks and runner variance while remaining a finite bound on a wedged job; it
-    # relaxes no assertion or production timeout. The separate pgcheck job stays at 20m.
+    # expanded suite on the hosted runtime is now measured at 45m45s (candidate748).
+    # Keep the 60m hang bound for the full suite and simulations. Browser checks run in
+    # their own bounded job after this one succeeds: the serial lane twice reached 60m
+    # during mobile, most recently leaving only 79s for all phone sizes. No test command,
+    # assertion or production timeout changes. The separate pgcheck job stays at 20m.
     timeout-minutes: 60
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
@@ -132,6 +133,25 @@ jobs:
           SCALE_PLAYERS: '18'
           SCALE_DAYS: '2'
         run: npm run scale
+
+  browser:
+    name: City + mobile browser journeys
+    needs: suites
+    runs-on: ubuntu-latest
+    # Candidate748 completed all five City scripts in 6m04s, then the serial job's
+    # 60m limit cut off mobile after its first phone size. Require the complete client
+    # checks on this same checkout after the full suite/sim job passes, with a finite
+    # 20m hang bound. Neither a prefix result nor a partial phone run qualifies it.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
 
       # THE CLIENT. The suite tests the API; nothing tested the screens. On 2026-07-26 a driven pass
       # found that a new player's guided onboarding showed NONE of its own content above the fold on

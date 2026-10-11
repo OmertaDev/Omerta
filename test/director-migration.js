@@ -29,7 +29,7 @@ const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
 const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
-const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
+const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 const goodsMarketTables = ['goods_market_liquidity'];
 const companyTables = ['agent_company_profiles'];
@@ -99,6 +99,8 @@ try {
     'The pinned baseline predates the company registry');
   assert.equal(oldConstraints.filter((row) => row.table_name === 'city_intel_progress').length, 0,
     'The pinned baseline predates the private City intel table');
+  assert.equal(oldConstraints.filter((row) => row.table_name === 'city_social_preferences').length, 0,
+    'The pinned baseline predates opt-in City social preferences');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
   const migrate = async () => {
     const client = await pool.connect();
@@ -110,7 +112,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   verifyPreservedConstraints(upgradedConstraints);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
@@ -123,6 +125,16 @@ try {
   const verifyCityNotNull = (columns) => assert.deepEqual(columns, cityColumns, 'City migration preserves exact reviewed nullability');
   const cityNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_intel_progress' AND is_nullable='NO' ORDER BY column_name")).rows.map((row) => row.column_name);
   verifyCityNotNull(cityNotNull);
+  const socialConstraints = inventory.added.filter(row => row.table_name === 'city_social_preferences');
+  assert.equal(socialConstraints.length, 4, 'Four independently reviewed social owner/identity/generation/outfit constraints are required');
+  const verifySocialConstraints = rows => assert.deepEqual(rows.filter(row => row.table_name === 'city_social_preferences'), socialConstraints,
+    'Social migration installs exactly its reviewed constraints and never alters predecessor rows');
+  verifySocialConstraints(upgradedConstraints);
+  const socialColumns = inventory.notNullColumns.city_social_preferences;
+  assert.deepEqual(socialColumns, ['character_id', 'chat_enabled', 'generation', 'outfit', 'room_layout']);
+  const verifySocialNotNull = columns => assert.deepEqual(columns, socialColumns, 'All five social ownership/consent/presentation columns remain non-null');
+  const socialNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_social_preferences' AND is_nullable='NO' ORDER BY column_name")).rows.map(row => row.column_name);
+  verifySocialNotNull(socialNotNull);
   const mutateConstraint = (table, name, change) => {
     const rows = upgradedConstraints.map((row) => ({ ...row })), index = rows.findIndex((row) => row.table_name === table && row.name === name);
     assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
@@ -141,6 +153,15 @@ try {
   rejected(verifyCityConstraints, 'City safe sequence bound weakened', mutateConstraint('city_intel_progress', 'city_intel_progress_sequence_check',
     (rows, index) => { rows[index].definition = rows[index].definition.replace('9007199254740991', '9007199254740992'); }));
   for (const column of cityColumns) rejected(verifyCityNotNull, 'City '+column+' nullability removed', cityColumns.filter((name) => name !== column));
+  rejected(verifySocialConstraints, 'Social owner foreign key removed', mutateConstraint('city_social_preferences', 'city_social_preferences_character_id_fkey',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifySocialConstraints, 'Social owner generation identity weakened', mutateConstraint('city_social_preferences', 'city_social_preferences_pkey',
+    (rows, index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected(verifySocialConstraints, 'Social generation minimum removed', mutateConstraint('city_social_preferences', 'city_social_preferences_generation_check',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifySocialConstraints, 'Social free outfit catalog widened', mutateConstraint('city_social_preferences', 'city_social_preferences_outfit_check',
+    (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  for (const column of socialColumns) rejected(verifySocialNotNull, 'Social '+column+' nullability removed', socialColumns.filter(name => name !== column));
   assert.deepEqual(upgradedConstraints.filter((row) => goodsMarketTables.includes(row.table_name)), [
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_bought_check', definition: 'CHECK (bought >= 0)' },
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_pkey', definition: 'PRIMARY KEY (good_id, district)' },
@@ -149,7 +170,12 @@ try {
   ], 'Goods-market migration installs exactly its four reviewed constraints, without waiving existing preservation');
   const economyConstraints = inventory.added.filter((row) => economyTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
-  assert.equal(economyConstraints.length, 23, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  assert.equal(economyConstraints.length, 31, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  assert.equal(economyConstraints.filter(row => row.table_name === 'business_supply_contracts').length, 8,
+    'All eight reviewed supply cadence constraints must be catalogued');
+  assert.deepEqual(inventory.notNullColumns.business_supply_contracts,
+    ['created_at', 'depot_id', 'dispatched', 'enabled', 'expires_at', 'id', 'interval_seconds', 'max_cycles', 'next_dispatch_at', 'revision'],
+    'All ten reviewed supply cadence columns must remain non-null');
   const resourceConstraints = inventory.added.filter(row => resourceTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
   assert.equal(resourceConstraints.length, 89, 'All resource constraints must be frozen');
@@ -166,9 +192,18 @@ try {
   const resourceNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) AND is_nullable='NO' ORDER BY table_name,column_name", resourceTables)).rows;
   assert.deepEqual(Object.fromEntries(resourceTables.map(table => [table, resourceNotNull.filter(row => row.table_name === table).map(row => row.column_name)])),
     Object.fromEntries(resourceTables.map(table => [table, inventory.notNullColumns[table]])));
-  assert.deepEqual(upgradedConstraints.filter((row) => economyTables.includes(row.table_name)), economyConstraints,
+  const verifyEconomyConstraints = rows => assert.deepEqual(rows.filter((row) => economyTables.includes(row.table_name)), economyConstraints,
     'Economy migration installs exactly its frozen constraints, without waiving existing preservation');
-  const economyNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5) AND is_nullable='NO' ORDER BY table_name,column_name", economyTables)).rows;
+  verifyEconomyConstraints(upgradedConstraints);
+  assert.throws(() => verifyEconomyConstraints(upgradedConstraints.filter(row => row.name !== 'business_supply_contracts_check')),
+    error => error.code === 'ERR_ASSERTION', 'Supply cadence cycle-bound removal must fail the exact economy verifier');
+  assert.throws(() => verifyEconomyConstraints(upgradedConstraints.map(row => row.name === 'business_supply_contracts_policy_id_fkey'
+    ? { ...row, definition: 'FOREIGN KEY (policy_id) REFERENCES unrelated(id)' } : row)), error => error.code === 'ERR_ASSERTION',
+  'Supply cadence policy foreign-key alteration must fail the exact economy verifier');
+  assert.throws(() => verifyEconomyConstraints([...upgradedConstraints,
+    { table_name: 'business_supply_contracts', name: 'unexpected_supply_constraint', definition: 'CHECK (true)' }]),
+  error => error.code === 'ERR_ASSERTION', 'Unexpected supply constraints must fail the exact economy verifier');
+  const economyNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6) AND is_nullable='NO' ORDER BY table_name,column_name", economyTables)).rows;
   assert.deepEqual(Object.fromEntries(economyTables.map((table) => [table, economyNotNull.filter((row) => row.table_name === table).map((row) => row.column_name)])),
     Object.fromEntries(economyTables.map((table) => [table, inventory.notNullColumns[table]])),
     'Economy required columns match the frozen schema on every PostgreSQL version');

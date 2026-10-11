@@ -22,6 +22,26 @@
       "definition": "CHECK (sequence >= 1 AND sequence <= '9007199254740991'::bigint)"
     },
     {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_generation_check",
+      "definition": "CHECK (generation >= 1)"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_outfit_check",
+      "definition": "CHECK (outfit = ANY (ARRAY['classic'::text, 'moss'::text, 'wine'::text, 'ink'::text]))"
+    },
+    {
+      "table_name": "city_social_preferences",
+      "name": "city_social_preferences_pkey",
+      "definition": "PRIMARY KEY (character_id, generation)"
+    },
+    {
       "table_name": "coordination_archive_entries",
       "name": "coordination_archive_entries_archive_id_claim_id_key",
       "definition": "UNIQUE (archive_id, claim_id)"
@@ -1315,6 +1335,46 @@
       "table_name": "agent_company_profiles",
       "name": "agent_company_profiles_revision_check",
       "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_check",
+      "definition": "CHECK (dispatched >= 0 AND dispatched <= max_cycles)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_depot_id_revision_key",
+      "definition": "UNIQUE (depot_id, revision)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_interval_seconds_check",
+      "definition": "CHECK (interval_seconds >= 3600 AND interval_seconds <= 604800)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_max_cycles_check",
+      "definition": "CHECK (max_cycles >= 1 AND max_cycles <= 100)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES business_operating_policies(id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_revision_check",
+      "definition": "CHECK (revision > 0)"
     }
   ],
   "removed": [
@@ -1335,6 +1395,13 @@
     }
   ],
   "notNullColumns": {
+    "city_social_preferences": [
+      "character_id",
+      "chat_enabled",
+      "generation",
+      "outfit",
+      "room_layout"
+    ],
     "city_intel_progress": [
       "character_id",
       "generation",
@@ -1884,6 +1951,18 @@
       "published",
       "revision",
       "updated_at"
+    ],
+    "business_supply_contracts": [
+      "created_at",
+      "depot_id",
+      "dispatched",
+      "enabled",
+      "expires_at",
+      "id",
+      "interval_seconds",
+      "max_cycles",
+      "next_dispatch_at",
+      "revision"
     ]
   }
 }
