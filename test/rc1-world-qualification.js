@@ -10,6 +10,8 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
+  STOREFRONT_SERVER_PIN, STOREFRONT_SOURCE_REVIEWED_REVISION, STOREFRONT_SOURCE_PREDECESSOR_REVISION, assertStorefrontServerTransfer,
   BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, BUSINESS_SOURCE_PREDECESSOR_REVISION, assertBusinessServerTransfer,
   CITY_SOCIAL_BUSINESS_SERVER_PIN, CITY_SOCIAL_BUSINESS_SERVER_BLOB, CITY_SOCIAL_BUSINESS_SOURCE_PARENTS, assertCitySocialBusinessServerTransfer,
   CITY_PRESENCE_SERVER_PIN, CITY_PRESENCE_SERVER_PREDECESSOR_PIN,
@@ -22,7 +24,33 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const composedServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const latestServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const storefrontCityProof = assertStorefrontCityServerTransfer(latestServerText);
+assert.equal(storefrontCityProof.actualSha256, STOREFRONT_CITY_SERVER_PIN);
+assert.equal(storefrontCityProof.baselineSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(storefrontCityProof.inverseChunks, 2);
+assert.equal(storefrontCityProof.sourceBlob, STOREFRONT_CITY_SERVER_BLOB);
+assert.deepEqual(storefrontCityProof.sourceParents, STOREFRONT_CITY_SOURCE_PARENTS);
+assert.equal(latestServerText, execFileSync('git', ['show', STOREFRONT_CITY_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(storefrontCityProof.baselineText, execFileSync('git', ['show', STOREFRONT_CITY_SOURCE_PARENTS[1] + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+const storefrontServerText = execFileSync('git', ['show', STOREFRONT_SOURCE_REVIEWED_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+const storefrontProof = assertStorefrontServerTransfer(storefrontServerText);
+assert.equal(storefrontProof.actualSha256, STOREFRONT_SERVER_PIN);
+assert.equal(storefrontProof.baselineSha256, BUSINESS_SERVER_PIN);
+assert.equal(storefrontProof.inverseChunks, 2);
+assert.equal(storefrontServerText, execFileSync('git', ['show', STOREFRONT_CITY_SOURCE_PARENTS[0] + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+for (const [text, revision] of [[storefrontServerText, STOREFRONT_SOURCE_REVIEWED_REVISION], [storefrontProof.baselineText, STOREFRONT_SOURCE_PREDECESSOR_REVISION]])
+  assert.equal(text, execFileSync('git', ['show', revision + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+for (const change of [
+  text => text.replace("case 'delivery_depot_buy':", "case 'unsupported_depot_buy':"),
+  text => text.replace('if (ownerId) {', 'if (false) {'),
+  text => text.replace("if (!lender) throw new G.GameError('no_depot'", "if (false) throw new G.GameError('no_depot'"),
+  text => text + '\n// unsupported change\n',
+]) {
+  assert.throws(() => assertStorefrontServerTransfer(change(storefrontServerText)), /source changed/);
+  assert.throws(() => assertStorefrontCityServerTransfer(change(latestServerText)), /source changed/);
+}
+const composedServerText = storefrontCityProof.baselineText;
 const composedProof = assertCitySocialBusinessServerTransfer(composedServerText);
 assert.equal(composedServerText, execFileSync('git', ['show', CITY_SOCIAL_BUSINESS_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }), 'The complete combined runtime matches its immutable staged Git blob.');
 assert.equal(composedProof.actualSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
@@ -296,7 +324,13 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], STOREFRONT_CITY_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.actualServerSha256, STOREFRONT_CITY_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.inverseChunks, 2);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontSourceReviewTransfer.actualServerSha256, STOREFRONT_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontSourceReviewTransfer.predecessorServerSha256, BUSINESS_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.storefrontSourceReviewTransfer.inverseChunks, 2);
 assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.actualServerSha256, BUSINESS_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.predecessorServerSha256, CITY_PRESENCE_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.businessSourceReviewTransfer.inverseChunks, 3);
@@ -311,7 +345,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 11);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 12);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);

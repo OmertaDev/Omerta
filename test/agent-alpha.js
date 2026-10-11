@@ -1005,7 +1005,7 @@ const ALLOWED_KINDS = [
   'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
   'depot_restock', 'depot_receive', 'depot_travel',
   'business_buy', 'business_upkeep', 'business_upgrade',
-  'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
+  'delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver',
 ];
 
 async function actionApi({ kinds = ['crime'], policy = POLICY } = {}) {

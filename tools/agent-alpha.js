@@ -26,12 +26,12 @@ const ALLOWED_KINDS = new Set([
   'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
   'depot_restock', 'depot_receive', 'depot_travel',
   'business_buy', 'business_upkeep', 'business_upgrade',
-  'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
+  'delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver',
 ]);
 const ACTION_ROLES = {
   general: ALLOWED_KINDS,
   business: new Set(['depot_restock', 'depot_receive', 'depot_travel', 'business_buy', 'business_upkeep', 'business_upgrade', 'business_collect']),
-  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
+  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
 };
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));

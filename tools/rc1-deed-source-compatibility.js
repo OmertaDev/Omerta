@@ -9,6 +9,49 @@ export const CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION = '6485e8d0a01a3fb18417ec
 export const BUSINESS_SERVER_PIN = '3e7a9ca662681aadf6cc0aaca515d0cbbc011287346223580288e83a9363e5df';
 export const BUSINESS_SOURCE_REVIEWED_REVISION = '9db9b9a4d740c9faced0edece981145028f3f6c5';
 export const BUSINESS_SOURCE_PREDECESSOR_REVISION = '16a55ff2f30c2f583ba8f3bbe5e409b4a126d9ec';
+export const STOREFRONT_SERVER_PIN = '999208a6e0539a6c0be02119c13c108bf2a7853610a33eb16868de548529a914';
+export const STOREFRONT_SOURCE_REVIEWED_REVISION = '213491e5a30aba9bc308d63d12b38b2473bc5e04';
+export const STOREFRONT_SOURCE_PREDECESSOR_REVISION = 'e837b1bb32b3fda321d672779a9693a8b838de00';
+const storefrontServerChanges = [
+  [
+    "      case 'delivery_depot_buy':\n        if (!lender) throw new G.GameError('no_depot', 'Refresh the storefront purchase.');\n        return Delivery.buyCommittedFromDepot(ch, lender, action.body.commitmentId, action.body.depotId, action.body, client, h);\n",
+    ""
+  ],
+  [
+    "      // Two-party actions preserve the canonical sorted character/account lock order.\n      const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);\n      const storefrontMatch = /^delivery:([A-Za-z0-9_-]{1,128}):depot:([A-Za-z0-9_-]{1,128}):buy$/.exec(actionId);\n      if (storefrontMatch) {\n        const ownerId = (await pool.query(\"SELECT owner_character FROM business_depots WHERE id=$1 AND status='open'\", [storefrontMatch[2]])).rows[0]?.owner_character;\n        if (ownerId) {\n          result = await G.withTwoCharacters(pool, req.user.sub, ownerId, (ch, owner, client, h) =>\n            executeAgentAction(client, ch, h, turnId, actionId, owner));\n        } else {\n          result = await G.withCharacter(pool, req.user.sub, (ch, client, h) =>\n            executeAgentAction(client, ch, h, turnId, actionId), agentActionLocks);\n        }\n      } else if (loanMatch && loanMatch[1] !== 'house') {\n",
+    "      // Player-loan repayment is the only issued two-party action. Preserve its existing stable\n      // character/account lock order; every other descriptor executes under the ordinary solo lock.\n      const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);\n      if (loanMatch && loanMatch[1] !== 'house') {\n"
+  ]
+];
+export const STOREFRONT_CITY_SERVER_PIN = '59ce69a095d83b89e6664b91fed593e760d59b89b34f4c5805ce207a81bdbe12';
+export const STOREFRONT_CITY_SERVER_BLOB = '0a5053e000198230ca9e7e036233611c1ab44c8e';
+export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
+  "aab87060e775fb18ccf952c417b1583c40fca931",
+  "1e1a1ea745a2801cec3c7ba33a545d1cf9148524"
+]);
+// Composition preserves both independently pinned parent qualification scopes.
+export function assertStorefrontCityServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, STOREFRONT_CITY_SERVER_PIN, 'Composed storefront/City transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of storefrontServerChanges) {
+  assert.equal(baselineText.split(current).length, 2, 'Composed storefront inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), CITY_SOCIAL_BUSINESS_SERVER_PIN, 'Server differs beyond exact composed storefront dispatch and pair locks');
+ return { actualSha256, baselineText, baselineSha256: CITY_SOCIAL_BUSINESS_SERVER_PIN, sourceBlob: STOREFRONT_CITY_SERVER_BLOB, sourceParents: STOREFRONT_CITY_SOURCE_PARENTS, inverseChunks: 2 };
+}
+// New storefront execution retains separate current-source accounting and native proofs.
+export function assertStorefrontServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, STOREFRONT_SERVER_PIN, 'Storefront transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of storefrontServerChanges) {
+  assert.equal(baselineText.split(current).length, 2, 'Storefront inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), BUSINESS_SERVER_PIN, 'Server differs beyond exact storefront dispatch and pair locks');
+ return { actualSha256, baselineText, baselineSha256: BUSINESS_SERVER_PIN, sourceRevision: STOREFRONT_SOURCE_REVIEWED_REVISION, predecessorRevision: STOREFRONT_SOURCE_PREDECESSOR_REVISION, inverseChunks: 2 };
+}
 const businessServerChanges = [
   [
     "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n",
@@ -177,6 +220,14 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
+  if (hash(text) === STOREFRONT_SERVER_PIN) {
+    const transfer = assertStorefrontServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
     const transfer = assertCitySocialBusinessServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
@@ -242,6 +293,14 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
+  if (hash(text) === STOREFRONT_SERVER_PIN) {
+    const transfer = assertStorefrontServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
     const transfer = assertCitySocialBusinessServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
@@ -328,6 +387,14 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
+  if (hash(text) === STOREFRONT_SERVER_PIN) {
+    const transfer = assertStorefrontServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
     const transfer = assertCitySocialBusinessServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
@@ -371,6 +438,14 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
+  if (hash(text) === STOREFRONT_SERVER_PIN) {
+    const transfer = assertStorefrontServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
     const transfer = assertCitySocialBusinessServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
@@ -718,6 +793,14 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+  const transfer = assertStorefrontCityServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontCitySourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === STOREFRONT_SERVER_PIN) {
+  const transfer = assertStorefrontServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
   const transfer = assertCitySocialBusinessServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, citySocialBusinessSourceTransfer: transfer };
