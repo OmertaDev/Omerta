@@ -1296,7 +1296,7 @@ export async function withCharacterRead(pool, accountId, fn) {
 // BEGIN, so the lock is taken and dropped in the same statement — it looks like protection and is not,
 // which is worse than not having it.
 const WRITE_HEAD = /^\s*(?:insert|update|delete|truncate|drop|alter|create|grant|revoke|merge|copy)\b/i;
-const WRITE_ANY = /\b(?:insert\s+into|update\s+\w+\s+set|delete\s+from|truncate\b|merge\s+into|copy\s+\w+\s+from|\binto\s+\w+\s+from|for\s+update\b|for\s+no\s+key\s+update\b|for\s+share\b|setval\s*\(|nextval\s*\(|pg_advisory_(?:xact_)?lock\s*\()/i;
+const WRITE_ANY = /\b(?:insert\s+into|update\s+\w+\s+set|delete\s+from|truncate\b|merge\s+into|copy\s+\w+\s+from|\binto\s+\w+\s+from|for\s+update\b|for\s+no\s+key\s+update\b|for\s+(?:key\s+)?share\b|setval\s*\(|nextval\s*\(|pg_advisory_(?:xact_)?lock\s*\()/i;
 function readOnlyClient(client) {
   return {
     query: (text, params) => {
