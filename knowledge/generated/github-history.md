@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `00886b78b143`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `565e54242231`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2490 |
+| Commits in clone | 2517 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Retain confirmed recovery finding and composed restart remediation |
+| Latest commit | 2026-10-11 — Prove authenticated supply tender routes on isolated native PostgreSQL |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1563 |
+| OmertaDev | 1589 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 82 |
+| github-actions[bot] | 83 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,42 +31,42 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| knowledge/generated/github-history.md | 447 | historical |
-| knowledge/generated/graph-summary.md | 447 | historical |
-| knowledge/generated/graph.json | 447 | historical |
-| knowledge/generated/inventory.md | 447 | historical |
-| [public/index.html](../../public/index.html) | 446 | yes |
-| [SPEC.md](../../SPEC.md) | 397 | yes |
-| [src/server.js](../../src/server.js) | 382 | yes |
-| [schema.sql](../../schema.sql) | 308 | yes |
-| [package.json](../../package.json) | 258 | yes |
+| knowledge/generated/github-history.md | 454 | historical |
+| knowledge/generated/graph-summary.md | 454 | historical |
+| knowledge/generated/graph.json | 454 | historical |
+| knowledge/generated/inventory.md | 454 | historical |
+| [public/index.html](../../public/index.html) | 447 | yes |
+| [SPEC.md](../../SPEC.md) | 398 | yes |
+| [src/server.js](../../src/server.js) | 383 | yes |
+| [schema.sql](../../schema.sql) | 309 | yes |
+| [package.json](../../package.json) | 260 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/documents.md | 208 | historical |
+| knowledge/generated/documents.md | 211 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/modules.md | 174 | historical |
+| knowledge/generated/modules.md | 175 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
+| knowledge/generated/graph.mmd | 126 | historical |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
-| knowledge/generated/graph.mmd | 125 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [test/client.js](../../test/client.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
-| [test/gates.js](../../test/gates.js) | 96 | yes |
+| [test/gates.js](../../test/gates.js) | 99 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
-| knowledge/generated/schema.md | 82 | historical |
+| knowledge/generated/schema.md | 83 | historical |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
-| knowledge/generated/routes.md | 72 | historical |
+| knowledge/generated/routes.md | 73 | historical |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 65 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 58 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 55 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 54 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 55 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [src/economy.js](../../src/economy.js) | 52 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |

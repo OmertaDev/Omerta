@@ -3,6 +3,14 @@ process.env.JWT_SECRET = 'supply-tender-local-test-secret';
 process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.DEPOT_PILOT = 'on';
 process.env.DELIVERY_CONTRACTS = 'on';
+process.env.MOD_KEY = 'supply-tenders-local-test-mod-secret-2026';
+if (process.argv.includes('--postgres')) {
+  const url = new URL(process.env.SUPPLY_TENDER_TEST_DATABASE_URL || 'http://missing');
+  if (url.protocol !== 'postgresql:' || url.hostname !== '127.0.0.1' || !url.pathname.startsWith('/supply_tenders_'))
+    throw new Error('Use an isolated local supply_tenders_ PostgreSQL database.');
+  process.env.DATABASE_URL = url.href;
+  process.env.MARKET_SEED ||= 'supply-tenders-local-test-market-seed';
+}
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import { ledger } from '../src/game.js';
