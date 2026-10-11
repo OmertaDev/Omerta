@@ -62,6 +62,7 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
+  'company succession bindings',
   'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
