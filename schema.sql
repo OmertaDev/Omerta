@@ -7479,6 +7479,21 @@ CREATE TABLE IF NOT EXISTS business_operating_policies (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (depot_id,revision)
 );
+CREATE TABLE IF NOT EXISTS business_supply_contracts (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  revision INT NOT NULL CHECK (revision > 0),
+  policy_id TEXT REFERENCES business_operating_policies(id),
+  enabled BOOLEAN NOT NULL,
+  interval_seconds INT NOT NULL CHECK (interval_seconds BETWEEN 3600 AND 604800),
+  max_cycles INT NOT NULL CHECK (max_cycles BETWEEN 1 AND 100),
+  dispatched INT NOT NULL DEFAULT 0 CHECK (dispatched >= 0 AND dispatched <= max_cycles),
+  next_dispatch_at TIMESTAMPTZ NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  last_order_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (depot_id,revision)
+);
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS policy_id TEXT;
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS customer_character TEXT;
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS stock_after INT;
