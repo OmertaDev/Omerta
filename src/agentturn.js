@@ -5,7 +5,8 @@
 import crypto from 'node:crypto';
 import { restockCandidates } from './restock.js';
 import { planCommittedCargo } from './courierjobs.js';
-import { depotState, depotPilotEnabled } from './depot.js';
+import { chooseStorefrontPurchase } from './storefrontfulfillment.js';
+import { depotState, depotPilotEnabled, DEPOT } from './depot.js';
 import { deliveryBoard, deliveryIntakeEnabled, DELIVERY } from './delivery.js';
 import { BLACK_MARKET, BUSINESSES, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
 import { view } from './game.js';
@@ -566,6 +567,10 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const arbitrage = arbitragePlans(ch, sheet, owned, opportunities.niches.arbitrage);
   const restock = restockCandidates(ch, sheet, owned, opportunities.opportunities, POLICY, opportunities.goodsLiquidity);
   const activeDeliveries = commitments.filter((c) => c.supplierId === ch.id && c.status === 'accepted');
+  const storefronts = depotPilotEnabled() && activeDeliveries.length ? (await db.query(
+    "SELECT d.id,d.owner_character,d.district,d.stock,d.sale_price FROM business_depots d JOIN characters c ON c.id=d.owner_character WHERE d.status='open' AND c.alive AND d.stock>0 ORDER BY d.id LIMIT 100")).rows
+    .map((r) => ({ id: r.id, ownerCharacterId: r.owner_character, district: r.district,
+      good: DEPOT.good, stock: Number(r.stock), unitPrice: Number(r.sale_price) })) : [];
   if (deliveryIntakeEnabled()) for (const candidate of restock) {
     const order = opportunities.opportunities.find((o) => o.listingId === candidate.plan.listingId);
     if (!order?.depotId || activeDeliveries.length >= DELIVERY.maxActive
@@ -610,8 +615,37 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
     const choices = restockCandidates({ ...ch, cash: Math.min(Number(ch.cash), available + POLICY.cashReserve) }, sheet, owned,
       [{ type: 'order', listingId: contract.orderId, posterId: contract.buyerId, good: contract.good,
         wanted: contract.remaining, unitPrice: contract.unitPrice, district: contract.district, expiresAt: contract.deadline }], POLICY, opportunities.goodsLiquidity);
-    if (!choices.length) continue;
     const choice = choices[0];
+    const travelCash = ch.loc === contract.district ? 0 : CONSTANTS.TRAVEL_COST;
+    const quote = chooseStorefrontPurchase({
+      businesses: storefronts.filter((b) => b.id !== contract.depotId && b.ownerCharacterId !== contract.buyerId),
+      characterId: ch.id, district: ch.loc, good: contract.good, maxQuantity: contract.remaining,
+      cargoSpace: Math.max(0, Number(sheet.cargoCap) - Object.values(owned.cargo || {}).reduce((n, qty) => n + Number(qty), 0)),
+      cash: Number(ch.cash), reserveCash: POLICY.cashReserve + travelCash,
+      maxSpend: Math.max(0, available - travelCash), maxUnitPrice: Math.floor(contract.unitPrice * (10000 - contract.takeBps) / 10000),
+    });
+    const done = contract.quantity - contract.remaining;
+    const net = quote ? quote.quantity * contract.unitPrice
+      - (Math.ceil((done + quote.quantity) * contract.unitPrice * contract.takeBps / 10000)
+        - Math.ceil(done * contract.unitPrice * contract.takeBps / 10000)) : 0;
+    const profit = quote ? net - quote.totalCash - travelCash : 0;
+    if (quote && profit > 0 && (!choice || profit >= choice.estimate.cash)) {
+      const path = `/v1/deliveries/${contract.id}/depot/${quote.depotId}/buy`;
+      const action = valued({ id: `delivery:${contract.id}:depot:${quote.depotId}:buy`, planId: `delivery:${contract.id}`,
+        kind: 'delivery_depot_buy', label: 'Source committed goods from a player storefront', method: 'POST', path,
+        body: { commitmentId: contract.id, depotId: quote.depotId, qty: quote.quantity, maxUnitPrice: quote.unitPrice }, executable: true,
+        cost: { cash: quote.totalCash }, reward: { planCash: profit },
+        risk: { level: 'medium', orderReserved: true, pricesMayChange: true, deathMayTerminate: true } },
+      { cash: profit, confidence: 0.7, basis: 'Committed payout after cumulative market take, current storefront acquisition and required travel; execution rechecks stock and owner.' });
+      deliveryActions.push(action);
+      deliveryPlans.push({ id: action.planId, kind: 'delivery', commitmentId: contract.id, deadline: contract.deadline,
+        label: 'Source committed delivery from a storefront', quantity: quote.quantity, status: 'buy', nextActionId: action.id,
+        acquisitionCash: quote.totalCash, travelCash, netOrderCash: net, refreshAfterStep: true, score: action.score, ev: action.ev,
+        route: [{ kind: 'buy', path, quantity: quote.quantity }, ...(travelCash ? [{ kind: 'travel', district: contract.district }] : []),
+          { kind: 'deliver', path: `/v1/deliveries/${contract.id}/deliver`, quantity: quote.quantity }] });
+      continue;
+    }
+    if (!choice) continue;
     const action = valued({ ...choice.action, id: `delivery:${contract.id}:${choice.plan.status}`, planId: `delivery:${contract.id}`,
       kind: choice.action.kind === 'restock_buy' ? 'delivery_buy' : 'delivery_travel',
       body: { ...choice.action.body, commitmentId: contract.id,

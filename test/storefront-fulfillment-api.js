@@ -108,24 +108,68 @@ try {
   await call('POST', '/v1/goods/buy', rival, { goodId: 'gin', qty: 4 });
   await call('POST', `/v1/market/${refill}/fill`, rival, { qty: 4 });
   assert.equal((await call('POST', `/v1/depot/${sellerDepot}/orders/${refill}/receive`, seller)).code, 200);
+  await call('POST', `/v1/depot/${sellerDepot}/configure`, seller, { ...config, bidPrice: 50, salePrice: 60 });
+  await call('POST', `/v1/depot/${deathDepot}/configure`, deathBuyer, { ...config, bidPrice: 1000, salePrice: 2000, restockBudget: 5000 });
   const deathOrder = (await call('POST', `/v1/depot/${deathDepot}/restock`, deathBuyer)).body.id;
-  const deathCommitment = (await call('POST', `/v1/market/${deathOrder}/accept-delivery`, deathSupplier,
-    { qty: 2, unitPrice: 100, maxProcurementCash: 600, deadlineSeconds: 3600 })).body.id;
+  const autoAccepted = await call('POST', `/v1/market/${deathOrder}/accept-delivery`, deathSupplier,
+    { qty: 2, unitPrice: 1000, maxProcurementCash: 600, deadlineSeconds: 3600 });
+  assert.equal(autoAccepted.code, 200, JSON.stringify(autoAccepted.body));
+  const autoCommitment = autoAccepted.body.id;
+  const autoTurn = (await call('GET', '/v1/agent/turn', deathSupplier)).body;
+  const issued = autoTurn.actions.find((a) => a.kind === 'delivery_depot_buy' && a.body.commitmentId === autoCommitment);
+  assert.ok(issued, `Agent Turn issues actual player storefront acquisition: ${JSON.stringify(autoTurn.actions.filter((a) => a.kind.startsWith('delivery_')))}`);
+  const issuedBody = { turnId: autoTurn.turnId, actionId: issued.id };
+  const untouched = await snapshot(deathSupplier, sellerDepot, autoCommitment);
+  await call('POST', `/v1/depot/${sellerDepot}/configure`, seller, { ...config, bidPrice: 50, salePrice: 70 });
+  assert.equal((await call('POST', '/v1/agent/act', deathSupplier, issuedBody)).body.error, 'stale_turn');
+  await call('POST', `/v1/depot/${sellerDepot}/configure`, seller, { ...config, bidPrice: 50, salePrice: 60 });
+  await app.pool.query('UPDATE delivery_commitments SET spend_limit=119 WHERE id=$1', [autoCommitment]);
+  assert.equal((await call('POST', '/v1/agent/act', deathSupplier, issuedBody)).body.error, 'stale_turn');
+  await app.pool.query('UPDATE delivery_commitments SET spend_limit=600 WHERE id=$1', [autoCommitment]);
+  assert.deepEqual(await snapshot(deathSupplier, sellerDepot, autoCommitment), untouched, 'stale quote and cap refuse without economic mutation');
+  assert.equal((await call('POST', `/v1/depot/${sellerDepot}/buy`, rival, { qty: 3, maxUnitPrice: 60 })).code, 200);
+  const depleted = await snapshot(deathSupplier, sellerDepot, autoCommitment);
+  assert.equal((await call('POST', '/v1/agent/act', deathSupplier, issuedBody)).body.error, 'stale_turn');
+  assert.deepEqual(await snapshot(deathSupplier, sellerDepot, autoCommitment), depleted, 'stock depletion invalidates old quantity without acquisition');
+  await call('POST', `/v1/depot/${sellerDepot}/configure`, seller, { ...config, bidPrice: 50, salePrice: 60, reorderAt: 1 });
+  const staleRefill = (await call('POST', `/v1/depot/${sellerDepot}/restock`, seller)).body.id;
+  assert.equal((await call('POST', `/v1/market/${staleRefill}/fill`, rival, { qty: 3 })).code, 200);
+  assert.equal((await call('POST', `/v1/depot/${sellerDepot}/orders/${staleRefill}/receive`, seller)).code, 200);
+  const fresh = (await call('GET', '/v1/agent/turn', deathSupplier)).body;
+  const freshAction = fresh.actions.find((a) => a.kind === 'delivery_depot_buy' && a.body.commitmentId === autoCommitment);
+  const freshBody = { turnId: fresh.turnId, actionId: freshAction.id };
+  let executionKey = 'storefront-issued-execution', executed;
+  if (postgres) {
+    const race = await Promise.all([call('POST', '/v1/agent/act', deathSupplier, freshBody, executionKey),
+      call('POST', '/v1/agent/act', deathSupplier, freshBody, `${executionKey}-competing`)]);
+    assert.equal(race.filter((r) => r.code === 200).length, 1, 'same issued turn commits acquisition once');
+    assert.equal(race.filter((r) => r.body.error === 'stale_turn').length, 1);
+    if (race[1].code === 200) { executed = race[1]; executionKey += '-competing'; } else executed = race[0];
+  } else executed = await call('POST', '/v1/agent/act', deathSupplier, freshBody, executionKey);
+  assert.equal(executed.code, 200, JSON.stringify(executed.body));
+  assert.equal(executed.body.result.paid, 120);
+  assert.deepEqual(await call('POST', '/v1/agent/act', deathSupplier, freshBody, executionKey), executed);
+  assert.equal(Number((await snapshot(deathSupplier, sellerDepot, autoCommitment)).contract.spent), 120);
+  assert.equal(executed.body.turn.actions.some((a) => a.kind === 'delivery_depot_buy' && a.body.commitmentId === autoCommitment), false,
+    'held cargo completion takes precedence over more acquisition');
+  const raceSupplier = await create('Storefront Race Supplier');
+  const deathCommitment = (await call('POST', `/v1/market/${deathOrder}/accept-delivery`, raceSupplier,
+    { qty: 2, unitPrice: 1000, maxProcurementCash: 600, deadlineSeconds: 3600 })).body.id;
   const deathPath = `/v1/deliveries/${deathCommitment}/depot/${sellerDepot}/buy`;
-  const cashBeforeDeath = Number((await snapshot(deathSupplier, sellerDepot, deathCommitment)).ch.cash);
+  const cashBeforeDeath = Number((await snapshot(raceSupplier, sellerDepot, deathCommitment)).ch.cash);
   const kill = () => app.inject({ method: 'POST', url: '/v1/mod/kill', payload: { characterId: seller.id },
     headers: { 'x-mod-key': 'storefront-test-mod' } });
   if (postgres) {
-    const race = await Promise.all([call('POST', deathPath, deathSupplier, body), kill()]);
+    const race = await Promise.all([call('POST', deathPath, raceSupplier, body), kill()]);
     assert.equal(race[1].statusCode, 200);
     assert.ok(race[0].code === 200 || ['no_target', 'no_depot'].includes(race[0].body.error));
-    const end = await snapshot(deathSupplier, sellerDepot, deathCommitment);
-    assert.equal(Number(end.ch.cash), cashBeforeDeath - (race[0].code === 200 ? 600 : 0));
-    assert.equal(Number(end.contract.spent), race[0].code === 200 ? 600 : 0);
+    const end = await snapshot(raceSupplier, sellerDepot, deathCommitment);
+    assert.equal(Number(end.ch.cash), cashBeforeDeath - (race[0].code === 200 ? 120 : 0));
+    assert.equal(Number(end.contract.spent), race[0].code === 200 ? 120 : 0);
   } else {
     assert.equal((await kill()).statusCode, 200);
-    assert.equal((await call('POST', deathPath, deathSupplier, body)).body.error, 'no_depot');
+    assert.equal((await call('POST', deathPath, raceSupplier, body)).body.error, 'no_depot');
   }
   assert.equal((await app.pool.query('SELECT status FROM business_depots WHERE id=$1', [sellerDepot])).rows[0].status, 'closed');
-  console.log(`Storefront canonical API procurement passed (${postgres ? 'PostgreSQL concurrency' : 'memory'}); Agent Turn sourcing integration remains separate.`);
+  console.log(`Storefront canonical API and issued Agent Turn procurement passed (${postgres ? 'PostgreSQL concurrency' : 'memory'}).`);
 } finally { await app.close(); }
