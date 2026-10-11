@@ -1,10 +1,12 @@
 # Deed-backed City home directory review
 
 Date: 2026-10-11. Phase: working-tree source review and disposable memory proof.
-Immutable source base: `1b63dfd8625a102fe57f36eafcb39f330a140d8c`.
-The new server blob is `d8e190a1a2a23a9b1f8be78de96dc10a163bd601`;
+Initial authored source: `98c48c5abc68ffc8ac8c04ee793a11b0721f9eb5` on base
+`1b63dfd8625a102fe57f36eafcb39f330a140d8c`.
+Integrated predecessor: `48bea9a2e2146ed22bf456ffce693b5f3786d112`.
+The new server blob is `8ce9cb017f764bebaf423fbfdfc211d245d111b1`;
 two exact import/registration inverses restore the complete preceding server
-`c102341216e7eb54b012d9dba41310116c21ec4a`. The source base names the parent,
+`2e340c1069979debd62ef9f9190c76d1490caadd`. The source base names the parent,
 not a fictional committed revision of the new code. Release commits, independent
 review, native qualification and deployed revision verification remain separate.
 
@@ -12,7 +14,11 @@ Scope: `src/cityhomes.js`, `src/routes/cityhomes.js`, the two server registratio
 lines, the additive closed Gateway contract and `test/city-homes-api.js`.
 Historical qualification helpers transfer only unchanged predecessor guards.
 They explicitly exclude this new authenticated projection and its native snapshot.
-No schema, index, deed/travel mutation, receipt, worker, signer or financial rail changes.
+The authored homes delta changes no schema, index, deed/travel mutation, receipt,
+worker loop, signer or financial rail. Incoming Warehouse source, schema, estate
+and native proof inputs are retained from the independently reviewed predecessor;
+its authority is not qualified by this read-surface review. Both sets of exact
+server inverses and authority exclusions remain composed in the combined source.
 
 `GET /v1/city/homes` requires existing bearer authentication and a living caller.
 Its requested district is independent of the actual viewer district stamped in
@@ -85,8 +91,8 @@ Normalized LF SHA-256 runtime pins:
 | --- | --- |
 | src/cityhomes.js | 4748763673b2f1896459921c88bf4162dcc6f78bf3230388a1825ea062caba98 |
 | src/routes/cityhomes.js | 24c40a06a9a82a93cfbacca476b928544af5f03d1897a120d85be65786c3dd6d |
-| src/server.js | 4cb2fffecbb7c359ed06e68a5bdc630c00d79db552a3c5d34640e27a8957dfef |
-| src/agentgateway.js | 05b19004b96983ecd55f5c553c0d7fd734b9e15e8c1c3843f83022cac93428b2 |
+| src/server.js | d081f3fb0a929745431953084aa1358dcb75ef72e7075c9095c074685921357d |
+| src/agentgateway.js | fbeb1738ba84ea5bd445c40b1e746190533c9c179be218e548bca99e5c907db5 |
 
 The authored new HTTP surface uses package minor 1.4.0 under the existing Gateway
 convention. Package/lock alignment, current client wiring, gates and measured
@@ -94,7 +100,7 @@ documentation checks passed locally on the combined source. Hosted qualification
 and production version verification remain separate release steps.
 
 The integration review also covers index blob
-`94ea98c3e5e0ad57a84b493f0beea0d24a3280f2`, scene
+`1b3889d775409cc669fd8e29c8b613da0f2db901`, scene
 `27db18d2543b505214dd06f8aff9e89b57c06cb0` and WorldUI
 `2c01313476cedb50b8a588816115f6df2b48988d`. District-scoped first/page read
 tickets, captured viewer identity, pre-send navigation/fare gates, owner/session
@@ -102,7 +108,8 @@ recovery after dispatch, confirmed deed handoff and accepted-only home intent
 were independently reviewed. Existing mutations remain authoritative; historical
 source transfers do not qualify this new transport or projection behavior.
 
-All five complete local City browser components passed the frozen producer bytes,
+All five complete local City browser components passed the initial authored
+producer bytes at source 98c48c5a,
 including real travel and lost-reply replay, claim/purchase/transfer, held deed
 focus, identity teardown, real regional walking, home inspection and engine
 fallback. A real 35-address directory issued pages of 32 and 3; its downstream
@@ -117,4 +124,7 @@ world assets as the final bytes, preserving the existing WorldUI cache-first and
 Scene network-first policies and genuine offline predecessor fallback. These are
 controlled disposable local proofs, not authenticated production gameplay or
 hosted native qualification. Exact release-head checks and rollout evidence are
-recorded separately in the pull request.
+recorded separately in the pull request. The incoming index change only separates
+Warehouse closure and loan cancellation receipts; its exact source delta was
+independently reviewed. Final combined local and hosted checks remain required
+after integration and the measured 44px Map-mode target correction.

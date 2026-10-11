@@ -2,17 +2,27 @@ import crypto from 'node:crypto';
 
 // Storage-only treasury boundary. Callers hold character → depot → order locks.
 // Absolute writes keep pg-mem and PostgreSQL accounting identical.
-export async function bookDepot(client, row, reason, { cash = 0, stock = 0, cost = 0, expense = 0, orderId = null, policyId = null, customerId = null } = {}) {
+export async function bookDepot(client, row, reason, { cash = 0, stock = 0, cost = 0, expense = 0, orderId = null, policyId = null, customerId = null,
+  leaseId = null, leaseStock = 0, leaseStockAfter = null } = {}) {
   const next = { cash: Number(row.treasury) + cash, stock: Number(row.stock) + stock,
     cost: Number(row.stock_cost) + cost };
   if (![cash, stock, cost, expense, ...Object.values(next)].every(Number.isSafeInteger)
       || next.cash < 0 || next.stock < 0 || next.stock > 40 || next.cost < 0 || expense < 0
-      || (next.stock === 0 && next.cost !== 0))
+      || (next.stock === 0 && next.cost !== 0)
+      || !Number.isSafeInteger(leaseStock) || Math.abs(leaseStock) > 10
+      || (leaseStock !== 0 && leaseStockAfter === null)
+      || (leaseStockAfter !== null && (!Number.isSafeInteger(leaseStockAfter) || leaseStockAfter < 0 || leaseStockAfter > 10))
+      || ((leaseStock !== 0 || leaseStockAfter !== null) && !leaseId))
     throw new Error('Depot accounting would violate its funded balance or capacity.');
   await client.query('UPDATE business_depots SET treasury=$2,stock=$3,stock_cost=$4 WHERE id=$1',
     [row.id, next.cash, next.stock, next.cost]);
-  await client.query('INSERT INTO business_depot_journal (id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,order_id,policy_id,customer_character,stock_after) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
-    [crypto.randomUUID(), row.id, reason, cash, stock, cost, expense, orderId, policyId, customerId, next.stock]);
+  // Warehouse callers hold the lease lock. Sequence records custody order even
+  // when several journal writes share one transaction's timestamp.
+  const leaseSequence = leaseId ? Number((await client.query(
+    'SELECT MAX(lease_sequence) sequence FROM business_depot_journal WHERE lease_id=$1', [leaseId])).rows[0].sequence || 0) + 1 : null;
+  await client.query('INSERT INTO business_depot_journal (id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,order_id,policy_id,customer_character,stock_after,lease_id,lease_stock_delta,lease_stock_after,warehouse_rent_lease_id,lease_sequence) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)',
+    [crypto.randomUUID(), row.id, reason, cash, stock, cost, expense, orderId, policyId, customerId, next.stock,
+      leaseId, leaseStock, leaseStockAfter, reason === 'warehouse_rent' ? leaseId : null, leaseSequence]);
   row.treasury = next.cash; row.stock = next.stock; row.stock_cost = next.cost;
 }
 

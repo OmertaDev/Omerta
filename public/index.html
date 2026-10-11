@@ -2518,6 +2518,8 @@
     return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
   };
   function describe(body, code) {
+    if (!body?.error && body?.warehouseAction === 'close_lease')
+      return 'Warehouse lease closed; prepaid rent was not refunded.';
     if (!body?.error && body?.depotAction === 'cash_withdraw')
       return `$${fmt(body.withdrawn)} moved from your depot to your pocket; $${fmt(body.treasury)} remains in the business.`;
     if (!body?.error && body?.depotAction === 'stock_withdraw')
@@ -4447,7 +4449,7 @@
     // necessarily clear it), the shark's has neither and is the plainer sentence.
     else if (body.refunded !== undefined && body.potRemaining !== undefined)
       bits.push(`pulled your stake off the contract — $${fmt(body.refunded)} back (your share of the pot — the board's take stays kept)${body.potRemaining > 0 ? `. There's still $${fmt(body.potRemaining)} on their head from other funders.` : `, and there's nothing left on their head.`}`);
-    else if (body.refunded !== undefined && body.ok)
+    else if (body.loanAction === 'cancel_offer' && body.refunded !== undefined && body.ok)
       bits.push(`\u{1F91D} took the offer off the street — $${fmt(body.refunded)} out of escrow and back in your pocket`);
     // ── THE CHAIN RAIL, which said "done." over every receipt it issues ──────────────────────────
     // Each branch keys on a SYSTEM MARKER the server now sends, never on a field-set: `status:

@@ -2,10 +2,10 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-export const CITY_HOMES_SERVER_PIN = '4cb2fffecbb7c359ed06e68a5bdc630c00d79db552a3c5d34640e27a8957dfef';
-export const CITY_HOMES_SOURCE_BASE_REVISION = '1b63dfd8625a102fe57f36eafcb39f330a140d8c';
-export const CITY_HOMES_SERVER_BLOB = 'd8e190a1a2a23a9b1f8be78de96dc10a163bd601';
-export const CITY_HOMES_PREDECESSOR_SERVER_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const CITY_HOMES_SERVER_PIN = 'd081f3fb0a929745431953084aa1358dcb75ef72e7075c9095c074685921357d';
+export const CITY_HOMES_SOURCE_BASE_REVISION = '48bea9a2e2146ed22bf456ffce693b5f3786d112';
+export const CITY_HOMES_SERVER_BLOB = '8ce9cb017f764bebaf423fbfdfc211d245d111b1';
+export const CITY_HOMES_PREDECESSOR_SERVER_BLOB = '2e340c1069979debd62ef9f9190c76d1490caadd';
 export const CITY_HOMES_SOURCE_INVERSES = Object.freeze([
   "import { registerCityHomes } from './routes/cityhomes.js';\n",
   "  registerCityHomes(app, { pool, auth });\n",
@@ -19,10 +19,95 @@ export function assertCityHomesServerTransfer(text) {
   assert.equal(baselineText.split(chunk).length, 2, 'City homes inverse is not exact and unique');
   baselineText = baselineText.replace(chunk, '');
  }
- assert.equal(hash(baselineText), SUPPLY_TENDER_SERVER_PIN, 'Server differs beyond exact City homes registration');
- return { actualSha256, baselineText, baselineSha256: SUPPLY_TENDER_SERVER_PIN,
+ assert.equal(hash(baselineText), WAREHOUSE_SERVER_PIN, 'Server differs beyond exact City homes registration');
+ return { actualSha256, baselineText, baselineSha256: WAREHOUSE_SERVER_PIN,
   sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB,
   predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
+// Exact warehouse source reconstruction transfers unchanged historical guards only.
+export const WAREHOUSE_SOURCE_REVIEWED_REVISION = '7220e8b088921fcb277ecf7863fb724f113041b8';
+export const WAREHOUSE_SERVER_PIN = '62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361';
+export const WAREHOUSE_SERVER_BLOB = '2e340c1069979debd62ef9f9190c76d1490caadd';
+export const WAREHOUSE_SERVER_PREDECESSOR_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { register as registerWarehouses } from './routes/warehouses.js';\n",
+    ""
+  ],
+  [
+    "  registerWarehouses(app, { pool, auth });\n",
+    ""
+  ]
+]);
+export function assertWarehouseServerTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_SERVER_PIN, 'Warehouse server source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_SERVER_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = SUPPLY_TENDER_SERVER_PIN;
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse server differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_SERVER_BLOB, predecessorBlob: WAREHOUSE_SERVER_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_SERVER_SOURCE_INVERSES.length };
+}
+export const WAREHOUSE_INVARIANT_PIN = '851df4ddbcc20a7a947c1b3c07821b5d0ff3a0fe9655cb59578aa7019680fb99';
+export const WAREHOUSE_INVARIANT_BLOB = 'e4671955f894edef3ae655a0e199da8e8afa2ebf';
+export const WAREHOUSE_INVARIANT_PREDECESSOR_BLOB = 'ba08838454bd98d6ac2c623a47492cd0de351693';
+export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
+  [
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n",
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n"
+  ],
+  [
+    "  const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;\n  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;\n  const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;\n  const warehouseNow = Date.now();\n",
+    "  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;\n  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;\n"
+  ],
+  [
+    "    const warehouseReserved = warehouseLeases.filter(l => l.depot_id === depot.id)\n      .reduce((n, l) => n + (l.status === 'active' && new Date(l.expires_at).getTime() > warehouseNow\n        ? Number(l.units) : ['active', 'landlord_closed'].includes(l.status) ? Number(l.held_qty) : 0), 0);\n    push(`depot capacity:${depot.id}`, Math.max(0, promised + warehouseReserved - 40), 0, 0);\n",
+    "    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);\n"
+  ],
+  [
+    "  push('warehouse rent ledger', depotCash('warehouse_rent'), -(await sum(pool, \"currency='cash' AND reason='warehouse:rent'\")), 0);\n  push('warehouse journal ownership', depotJournal.filter(j => j.lease_id ? !warehouseLeases.some(l =>\n    l.id === j.lease_id && l.depot_id === j.depot_id && l.tenant_character === j.customer_character)\n    : Number(j.lease_stock_delta) !== 0 || j.lease_stock_after !== null || j.lease_sequence !== null).length, 0, 0);\n  const warehousePayments = (await pool.query(\"SELECT character_id,counterparty,amount FROM transactions WHERE currency='cash' AND reason='warehouse:rent'\")).rows;\n  const rentalPairs = new Map();\n  for (const row of depotJournal.filter(j => j.reason === 'warehouse_rent')) {\n    const key = JSON.stringify([row.customer_character, row.depot_id]);\n    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };\n    pair.receipts += Number(row.cash_delta); rentalPairs.set(key, pair);\n  }\n  for (const row of warehousePayments) {\n    const key = JSON.stringify([row.character_id, row.counterparty]);\n    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };\n    pair.debits -= Number(row.amount); rentalPairs.set(key, pair);\n  }\n  for (const [key, pair] of rentalPairs) push(`warehouse rent pairing:${key}`, pair.receipts, pair.debits, 0);\n  for (const lease of warehouseLeases) {\n    const entries = depotJournal.filter(j => j.lease_id === lease.id).sort((a, b) => Number(a.lease_sequence) - Number(b.lease_sequence));\n    const rent = entries.filter(j => j.reason === 'warehouse_rent');\n    push(`warehouse rent event:${lease.id}`, rent.length, 1, 0);\n    push(`warehouse rent terms:${lease.id}`, rent.reduce((n, j) => n + Number(j.cash_delta), 0), Number(lease.fee_cash), 0);\n    push(`warehouse custody:${lease.id}`, Number(lease.held_qty), entries.reduce((n, j) => n + Number(j.lease_stock_delta), 0), 0);\n    push(`warehouse landlord:${lease.id}`, depots.some(d => d.id === lease.depot_id && d.owner_character === lease.landlord_character) ? 0 : 1, 0, 0);\n    let held = 0, discontinuities = 0;\n    for (const [index, entry] of entries.entries()) {\n      held += Number(entry.lease_stock_delta);\n      if (Number(entry.lease_sequence) !== index + 1 || held < 0 || held > Number(lease.units)\n          || (Number(entry.lease_stock_delta) !== 0 && entry.lease_stock_after === null)\n          || (entry.lease_stock_after !== null && Number(entry.lease_stock_after) !== held)\n          || (index === 0 && entry.reason !== 'warehouse_rent')) discontinuities++;\n    }\n    push(`warehouse custody sequence:${lease.id}`, discontinuities, 0, 0);\n  }\n",
+    ""
+  ]
+]);
+export function assertWarehouseInvariantTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_INVARIANT_PIN, 'Warehouse invariant source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_INVARIANT_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = AGENT_ECONOMY_INVARIANT_PIN;
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse invariant differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_INVARIANT_BLOB, predecessorBlob: WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_INVARIANT_SOURCE_INVERSES.length };
+}
+export const WAREHOUSE_ESTATE_PIN = '5d39208e155fb81ef450640f7d4d44d4fb62e3c564b2d6588bee55b07f4671cc';
+export const WAREHOUSE_ESTATE_BLOB = '1230efc72779eb839292d82dc1bf0e7a34f04b51';
+export const WAREHOUSE_ESTATE_PREDECESSOR_BLOB = '49ad22ddf287ad62b76b9b84ea27c4e14c19bcaa';
+export const WAREHOUSE_ESTATE_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';\n",
+    ""
+  ],
+  [
+    "  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n",
+    ""
+  ]
+]);
+export function assertWarehouseEstateSourceChange(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_ESTATE_PIN, 'Warehouse estate source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_ESTATE_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = "ad9825bc36babb3c117e9efcdf490946e9bcdadcad4b406ceaecfa13823882ce";
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse estate differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_ESTATE_BLOB, predecessorBlob: WAREHOUSE_ESTATE_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_ESTATE_SOURCE_INVERSES.length };
 }
 export const SUPPLY_TENDER_SERVER_PIN = '0d222a2a3771758a28ac7bcda2124419cd9d9cebb6da65616120117bf34cae19';
 export const SUPPLY_TENDER_SOURCE_REVIEWED_REVISION = 'b243a283c6f55a37bada5897798bf65f9ddd5553';
@@ -289,6 +374,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (file === 'src/invariants.js' && hash(text) === WAREHOUSE_INVARIANT_PIN) {
+    const transfer = assertWarehouseInvariantTransfer(text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text) === AGENT_ECONOMY_INVARIANT_PIN) {
     let prior = text;
     for (const [current, original] of economyInvariantChanges) {
@@ -331,6 +420,10 @@ export function assertGenesisSnapshotServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
   }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
@@ -416,6 +509,10 @@ export function assertGenesisWrapperServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
   }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
@@ -523,6 +620,10 @@ export function assertHttpReceiptServerCompatibility(text) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
   }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
@@ -585,6 +686,10 @@ export function assertDeedServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
   }
   if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
     const transfer = assertSupplyTenderServerTransfer(text);
@@ -952,6 +1057,10 @@ export function assertEconomySourceTransfer(file, text) {
  if (file === 'src/server.js' && hash(text) === CITY_HOMES_SERVER_PIN) {
   const transfer = assertCityHomesServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, cityHomesSourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === WAREHOUSE_SERVER_PIN) {
+  const transfer = assertWarehouseServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, warehouseSourceTransfer: transfer };
  }
  if (file === 'src/server.js' && hash(text) === SUPPLY_TENDER_SERVER_PIN) {
   const transfer = assertSupplyTenderServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);

@@ -17,7 +17,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.route('http://world-ui.test/art/**', route => route.fulfill({ contentType: 'image/png', body: fs.readFileSync(path.resolve('public/art', path.basename(new URL(route.request().url()).pathname))) }));
     await page.setContent('<base href="http://world-ui.test"><header id="tools-host"></header><section class="omerta-city"><div id="guidance"></div><div id="toolbar"></div><div id="viewport"><div id="map"></div></div></section>');
-    await page.addStyleTag({ content: '.omerta-city{width:calc(100% - 32px);max-width:960px;margin:12px auto;background:#172626;color:#eadfc4;font-family:Arial}#map{height:280px;position:relative}button{background:#26352f;color:#efe4c6;border:1px solid #85785c;min-height:44px;padding:6px}button:focus{outline:2px solid #e9b85b}' });
+    await page.addStyleTag({ content: '.omerta-city{width:calc(100% - 32px);max-width:960px;margin:12px auto;background:#172626;color:#eadfc4;font-family:Arial}#map{height:280px;position:relative}button{background:#26352f;color:#efe4c6;border:1px solid #85785c;padding:6px}button:not([data-city-map-view]){min-height:44px}button:focus{outline:2px solid #e9b85b}' });
     await page.addStyleTag({ path: 'public/city-world-ui.css' });
     await page.addScriptTag({ path: 'public/city-world-ui.js' });
     await page.evaluate(() => {
@@ -425,6 +425,8 @@ try {
         owner: { name: ['Public Player', '<img src=x onerror=window.__atlasXss=1>', 'NPC Steward'][index % 3], kind: ['player', 'agent', 'npc'][index % 3] }, mine: false, ownership: 'city' })), myHome, nextCursor, total: 100 });
     const ownHome = { key: 'zz own street', street: 'Your recorded street', districtId: 'docks', owner: { name: 'Viewer', kind: 'player' }, mine: true, ownership: 'city' };
     await click('#atlas-launch'); assert.equal(await page.locator('[data-city-world-panel]').count(), 6);
+    assert.deepEqual(await page.locator('[data-city-map-view]').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height)), [44, 44],
+      'Both map mode controls get their touch size from the actual WorldUI stylesheet.');
     const firstAtlas = await atlasRead('atlas'), firstCollection = await atlasRead('collection');
     await atlasReply(firstAtlas, { districts: DISTRICTS.map(district => ({ ...district, neighbours: districtNeighbours(district.id), deeds: 3 })) });
     await atlasReply(firstCollection, { categories: [{ id: 'districts', items: DISTRICTS.map(district => ({ id: district.id, name: district.name, got: district.id === 'brick' })) }] });

@@ -1090,6 +1090,8 @@ try {
     await (page.viewportSize().width <= 680 ? control.tap() : control.click());
     await page.waitForFunction(() => document.querySelectorAll('[data-city-district]').length === 6
       && !document.querySelector('.city-world__content').textContent.includes('recorded visits are loading'));
+    assert(await page.locator('[data-city-map-view]').evaluateAll(nodes => nodes.length === 2 && nodes.every(node => node.getBoundingClientRect().height >= 44)),
+      'Neighborhood and World overview remain actual44px controls in the real player stylesheet.');
     assert.equal((await state(page)).worldUI.mapView, 'world');
   };
   const enterDeeds = async page => {

@@ -309,6 +309,30 @@ const OPERATION_CONTRACTS = {
   'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
   'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },
   'GET /v1/invites': { operationId: 'getLaunchInvites' },
+  'GET /v1/warehouses': { operationId: 'getGameWarehouseOffersAndOwnLeases' },
+  'POST /v1/depot/:id/warehouse-offer': {
+    operationId: 'configureGameWarehouseOffer', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['expectedRevision', 'enabled', 'slots', 'cashPerUnitDay'], properties: {
+        expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, enabled: { type: 'boolean' },
+        slots: { type: 'integer', minimum: 0, maximum: 40 }, cashPerUnitDay: { type: 'integer', minimum: 0, maximum: 100000 },
+      } },
+  },
+  'POST /v1/warehouses/:id/lease': {
+    operationId: 'rentGameWarehouseCapacity', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['units', 'expectedOfferRevision', 'maxTotalCash'], properties: {
+        units: { type: 'integer', minimum: 1, maximum: 10 }, expectedOfferRevision: { type: 'integer', minimum: 1, maximum: 2147483647 },
+        maxTotalCash: { type: 'integer', minimum: 1, maximum: 1000000 },
+      } },
+  },
+  'POST /v1/warehouse-leases/:id/deposit': {
+    operationId: 'storeOwnCargoInGameWarehouse', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
+  },
+  'POST /v1/warehouse-leases/:id/withdraw': {
+    operationId: 'retrieveOwnGameWarehouseCargo', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
+  },
+  'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',
