@@ -27,11 +27,11 @@ function terms(body) {
   const clean = { kind: rule.kind, districtId: rule.districtId, minimumStock: rule.minimumStock, triggerStock: rule.triggerStock };
   return {title:body.title,rule:clean,feeCash:body.feeCash,ruleHash:crypto.createHash('sha256').update(canonicalBytes(clean)).digest('hex')};
 }
-const publicView = v => ({id:v.id,sellerAccountId:v.seller_account,title:v.title,kind:'gin_availability_v1',ruleHash:v.rule_hash,feeCash:Number(v.fee_cash),
+const publicView = v => ({id:v.id,sellerAccountId:v.seller_account,title:v.title,kind:'gin_availability_v1',feeCash:Number(v.fee_cash),
   createdAt:iso(v.created_at),targetAt:iso(v.target_at),windowEndsAt:iso(new Date(v.target_at).getTime()+INTEL_FORECAST.scoreGraceMs),
   outcome:v.outcome, resolvedAt:iso(v.resolved_at),sampledAt:v.sample?.observedAt || null,retiredAt:iso(v.retired_at),
   outcomeScope:'first_public_stock_sample_in_30s_window',profitVerified:false,causalImprovementVerified:false});
-const privateView = v => ({...publicView(v),rule:v.rule,observation:v.observation,predictsAvailable:v.predicts_available,reportedAt:iso(v.reported_at),sample:v.sample});
+const privateView = v => ({...publicView(v),ruleHash:v.rule_hash,rule:v.rule,observation:v.observation,predictsAvailable:v.predicts_available,reportedAt:iso(v.reported_at),sample:v.sample});
 async function lockedVersion(client,id) {
   if(!key(id)) fail('Choose a strategy version.');
   const v=(await client.query('SELECT * FROM strategy_versions WHERE id=$1 FOR UPDATE',[id])).rows[0];
