@@ -6,6 +6,7 @@ export function planCommittedCargo(ch, owned, commitment, policy, now = Date.now
   if (!commitment || commitment.status !== 'accepted' || commitment.supplierId !== ch?.id) return null;
   const blocked = (blockedReason) => ({ blockedReason });
   const whole = (n, min, max) => Number.isSafeInteger(n) && n >= min && n <= max;
+  const cashAmount = n => Number.isFinite(n) && n >= 0 && n <= Number.MAX_SAFE_INTEGER;
   if (!Number.isFinite(now) || !Number.isFinite(new Date(commitment.deadline).getTime())
       || new Date(commitment.deadline).getTime() <= now) return blocked('deadline');
   if (jailed(ch, now) || safeHoused(ch, now)) return blocked('status');
@@ -16,7 +17,7 @@ export function planCommittedCargo(ch, owned, commitment, policy, now = Date.now
       || !whole(commitment.quantity, 1, 40) || !whole(commitment.remaining, 1, commitment.quantity)
       || !whole(commitment.unitPrice, 1, 1000000) || !whole(commitment.takeBps, 0, 10000)
       || !whole(commitment.maxProcurementCash, 1, 100000) || !whole(commitment.spent, 0, commitment.maxProcurementCash)
-      || !whole(Number(ch.cash), 0, Number.MAX_SAFE_INTEGER)
+      || !cashAmount(Number(ch.cash))
       || !whole(policy?.cashReserve, 1000, Number.MAX_SAFE_INTEGER)) return blocked('terms');
   const cargo = Number(owned?.cargo?.[commitment.good] || 0);
   if (!whole(cargo, 0, Number.MAX_SAFE_INTEGER)) return blocked('cargo');
@@ -28,7 +29,7 @@ export function planCommittedCargo(ch, owned, commitment, policy, now = Date.now
     - Math.ceil(done * commitment.unitPrice * commitment.takeBps / 10000);
   const net = gross - take;
   const travelCash = ch.loc === commitment.district ? 0 : CONSTANTS.TRAVEL_COST;
-  if (!Number.isSafeInteger(Number(ch.cash) - travelCash + net)) return blocked('cash_capacity');
+  if (!cashAmount(Number(ch.cash) - travelCash + net)) return blocked('cash_capacity');
   if (travelCash && commitment.spent + travelCash > commitment.maxProcurementCash) return blocked('budget');
   if (travelCash && Number(ch.cash) - travelCash < policy.cashReserve) return blocked('reserve');
   if (net - travelCash <= 0) return blocked('incremental_cash');
