@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `18500982739a`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `68f1ba71182b`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,525 |
-| Text lines | 1,582,528 |
-| Repository bytes inventoried | 816,846,897 |
+| Current artifacts | 4,527 |
+| Text lines | 1,582,732 |
+| Repository bytes inventoried | 816,869,880 |
 | Backend/route modules | 354 |
 | HTTP route registrations / unique routes | 930 / 930 |
 | Database tables | 406 |
 | Solidity declarations | 126 |
-| Git commits | 2,793 |
+| Git commits | 2,846 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 11,342 / 45,933 |
+| Graph nodes / edges | 11,399 / 46,121 |
 
 ## Artifact kinds
 
@@ -26,7 +26,7 @@
 | artifact | 674 |
 | contract-project | 646 |
 | test-suite | 526 |
-| documentation | 440 |
+| documentation | 442 |
 | backend-module | 310 |
 | engineering-harness | 216 |
 | contract-test | 111 |
@@ -68,7 +68,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,515 | test-suite | 2026-10-11 |
+| [test/client.js](../../test/client.js) | 9,518 | test-suite | 2026-10-11 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 8,027 | data-schema | 2026-10-11 |

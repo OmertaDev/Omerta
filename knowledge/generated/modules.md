@@ -322,7 +322,7 @@
 | [src/stockdeliver.js](../../src/stockdeliver.js) | 579 | economy-ledger | 2 / 7 | 3 | 6 | 4 |
 | [src/store.js](../../src/store.js) | 435 | platform-core | 4 / 11 | 6 | 14 | 4 |
 | [src/storefrontfulfillment.js](../../src/storefrontfulfillment.js) | 26 | platform-core | 0 / 2 | 0 | 2 | 1 |
-| [src/strategyleagueinvariants.js](../../src/strategyleagueinvariants.js) | 58 | platform-core | 3 / 2 | 0 | 6 | 1 |
+| [src/strategyleagueinvariants.js](../../src/strategyleagueinvariants.js) | 60 | platform-core | 3 / 2 | 0 | 6 | 1 |
 | [src/strategyleagues.js](../../src/strategyleagues.js) | 89 | platform-core | 5 / 2 | 4 | 6 | 1 |
 | [src/strategylicenseinvariants.js](../../src/strategylicenseinvariants.js) | 56 | platform-core | 3 / 2 | 0 | 5 | 1 |
 | [src/strategylicenses.js](../../src/strategylicenses.js) | 110 | platform-core | 5 / 3 | 5 | 3 | 2 |
