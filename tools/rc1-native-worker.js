@@ -1,4 +1,5 @@
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
+import { coverageSourceBaseline, qualifyCoverageSource } from './rc1-logistics-coverage-source-compatibility.js';
 // Test-only loader instrumentation. The original worker remains the job authority.
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
@@ -166,7 +167,9 @@ export function installWorkerInstrumentation(controller, { namespace, queryOrder
     // Historical worker fixtures retain their exact previous scope. The new
     // refund sweep is proved separately by current native domain/API suites.
     const transfer = file === 'src/worker.js' ? qualifyIntelSource(file, actual) : null;
-    const original = transfer?.baselineText || actual;
+    const coverageBaseline = file === 'src/db.js' ? coverageSourceBaseline(file, actual) : actual;
+    const coverageTransfer = coverageBaseline !== actual ? qualifyCoverageSource(file, actual) : null;
+    const original = transfer?.baselineText || coverageBaseline;
     assert.equal(sha256(original), WORKER_SOURCE_PINS[file], `Pinned production source changed: ${file}`);
     let source = original;
     if (file === 'src/db.js') source = replaceOnce(source, "const { Pool } = await import('pg');", 'const { Pool } = globalThis.__rc1Worker;', edits);
@@ -179,6 +182,7 @@ export function installWorkerInstrumentation(controller, { namespace, queryOrder
       source = replaceOnce(source, 'try { return await fn(); } catch (e) {', 'try { return await globalThis.__rc1Worker.job(label, fn); } catch (e) {', edits);
     }
     controller.transformations.push({ file, originalSourceSha256: sha256(raw), pinnedLfSha256: sha256(original), intelSourceTransfer: transfer,
+      coverageSourceTransfer: coverageTransfer,
       transformedSourceSha256: sha256(source), originalSource: raw, transformedSource: source, edits });
     return { ...result, source };
   } });
