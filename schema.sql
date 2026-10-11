@@ -3393,7 +3393,7 @@ CREATE TABLE IF NOT EXISTS crew_logistics_links (
   publisher_character_id TEXT NOT NULL REFERENCES characters(id),
   generation INT NOT NULL CHECK (generation > 0),
   kind TEXT NOT NULL CHECK (kind IN ('tender','delivery_commitment','warehouse_claim')),
-  target_id TEXT NOT NULL CHECK (length(target_id) BETWEEN 1 AND 128),
+  target_id TEXT NOT NULL CHECK (char_length(target_id) BETWEEN 1 AND 128),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
   revoked_at TIMESTAMPTZ
