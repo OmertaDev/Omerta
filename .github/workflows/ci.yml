@@ -292,6 +292,7 @@ jobs:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: |
           npm run test:resources:postgres
+          npm run pilot:resources:postgres
 
       - name: decision association atomicity and command replay (real PostgreSQL)
         env:
@@ -307,7 +308,6 @@ jobs:
             })().catch(e => { console.error(e); process.exit(1); });
           "
           npm run test:decisionproofs:postgres
-          npm run pilot:resources:postgres
 
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
