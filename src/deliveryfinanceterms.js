@@ -35,7 +35,7 @@ export function deliveryFinanceQuote(body, context, now = Date.now()) {
     if (new Set(parties.map(p => p.id)).size !== 3 || new Set(parties.map(p => p.account_id)).size !== 3
         || supplier.id !== terms.supplierId || lender.id !== terms.lenderId) return rejected('independent_parties');
     if (supplier.welsher) return rejected('welsher');
-    if (jailed(lender) || safeHoused(lender) || jailed(supplier)) return rejected('status');
+    if (jailed(lender, now) || safeHoused(lender, now) || jailed(supplier, now)) return rejected('status');
     if (!c || !order || c.id !== terms.commitmentId || c.supplier_character !== supplier.id || c.buyer_character !== buyer.id
         || c.status !== 'accepted' || c.good_id !== 'gin' || !key(c.order_id) || !key(c.depot_id)
         || order.id !== c.order_id || order.kind !== 'order' || order.status !== 'live' || order.good_id !== c.good_id

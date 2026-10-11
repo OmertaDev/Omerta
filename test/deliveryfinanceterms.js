@@ -52,6 +52,20 @@ test('original supplier lender buyer accounts are all independent and alive', ()
   const w = source(); w.supplier.welsher = true; rejects(terms(), w, 'welsher');
   for (const who of ['supplier','lender']) { const s = source(); s[who].jail_until = iso(Date.now() + 60000); rejects(terms(),s,'status'); }
 });
+test('status gates use the supplied quote clock in both directions', () => {
+  const real = Date.now(), before = real - 120000, after = real + 120000;
+  const contextAt = at => { const s=source();s.commitment.deadline=iso(at+600000);s.order.expires_at=iso(at+3600000);return s; };
+  for(const [who,field] of [['lender','jail_until'],['lender','safe_until'],['supplier','jail_until']]) {
+    const past=contextAt(before);past[who][field]=iso(real-60000);
+    assert.equal(deliveryFinanceQuote(terms(),past,before).reason,'status','Active at quote time cannot be admitted merely because it expired at real time');
+    const future=contextAt(after);future[who][field]=iso(real+60000);
+    assert.equal(deliveryFinanceQuote(terms(),future,after).eligible,true,'Expired at quote time cannot be refused merely because it is active at real time');
+    const boundary=contextAt(before);boundary[who][field]=iso(before);
+    assert.equal(deliveryFinanceQuote(terms(),boundary,before).eligible,true,'Canonical status ends at the exact supplied boundary');
+  }
+  const buyer=contextAt(before);buyer.buyer.jail_until=iso(before+60000);buyer.buyer.safe_until=iso(before+60000);
+  assert.equal(deliveryFinanceQuote(terms(),buyer,before).eligible,true,'A prepaid order buyer status does not change supplier/lender admission');
+});
 test('only untouched accepted full gin delivery against matching live order', () => {
   for (const [field,value] of [['status','delivered'],['status','expired'],['good_id','ammo'],['supplier_character','foreign'],
     ['buyer_character','foreign'],['order_id','foreign'],['depot_id','foreign'],['district','unknown'],['quantity',0],['remaining',9],['spent',1]]) {
