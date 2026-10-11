@@ -7934,7 +7934,7 @@ CREATE TABLE IF NOT EXISTS strategy_versions (
   price_block BIGINT NOT NULL CHECK (price_block >= 0),
   observation JSONB NOT NULL,
   predicts_available BOOLEAN NOT NULL,
-  outcome TEXT CHECK (outcome IN ('correct','incorrect','unknown')),
+  outcome TEXT CHECK (outcome IS NULL OR outcome IN ('correct','incorrect','unknown')),
   sample_started_at TIMESTAMPTZ,
   sample JSONB,
   resolved_at TIMESTAMPTZ,
