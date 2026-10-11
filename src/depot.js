@@ -5,6 +5,7 @@ import { postOrder, orderCashQuote, maxListings } from './market.js';
 import { bookDepot, refundDepotOrder } from './depotbook.js';
 import { reservedQuantity } from './deliverybook.js';
 import { latestPolicy, policyLive, policyTermsMatch, policyView, requirePolicy } from './operatingpolicy.js';
+import { warehouseReservedUnits } from './warehouseleases.js';
 import { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';
 
 export const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });
@@ -88,12 +89,14 @@ async function releaseCash(ch, row, amount, client, h) {
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount, reason: 'depot:withdraw', counterparty: row.id });
 }
 
-export function procurementQuote(row, h, policy = null) {
+export function procurementQuote(row, h, policy = null, reservedUnits = 0) {
+  if (!Number.isSafeInteger(reservedUnits) || reservedUnits < 0 || reservedUnits > DEPOT.capacity)
+    throw new Error('Invalid reserved warehouse capacity.');
   if (Number(row.stock) > Number(row.reorder_at)) return null;
   const spendable = Math.min(Number(row.restock_budget), Number(row.treasury) - Math.max(DEPOT.cashReserve, Number(policy?.reserve_cash || 0)),
     policy ? Number(policy.max_spend) - Number(policy.spent) : Infinity);
   let qty = Math.min(Number(row.target_stock) - Number(row.stock), BLACK_MARKET.ORDER_MAX_QTY,
-    Math.floor(spendable / Number(row.bid_price)));
+    Math.floor(spendable / Number(row.bid_price)), DEPOT.capacity - Number(row.stock) - reservedUnits);
   while (qty > 0 && orderCashQuote(qty, Number(row.bid_price), h).total > spendable) qty--;
   return qty > 0 ? { qty, ...orderCashQuote(qty, Number(row.bid_price), h) } : null;
 }
@@ -104,7 +107,7 @@ export async function restockDepot(ch, id, client, h, { automated = false, polic
   const policy = automated ? await requirePolicy(client, row, policyId, 'restock') : null;
   const cadence = automated ? await requireSupplyContract(client, row, policy.id) : null;
   if ((await pending(client, id)).length) throw new GameError('pending_order', 'Receive or cancel the previous procurement first.');
-  const quote = procurementQuote(row, h, policy);
+  const quote = procurementQuote(row, h, policy, await warehouseReservedUnits(client, id));
   if (!quote) throw new GameError('restock_budget', 'Stock is above the reorder threshold or the funded budget cannot preserve the cash reserve.');
   // Only this internal adapter can use a business balance. Public /market/order never
   // accepts a depot identifier, and these market rows never debit personal cash.
@@ -127,7 +130,8 @@ export async function receiveDepot(ch, id, orderId, client, { automated = false,
   if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No procurement order of this business.');
   const qty = Number(order.filled_qty);
   if (!qty) throw new GameError('empty', 'No supplier delivery is waiting.');
-  if (Number(row.stock) + qty > DEPOT.capacity) throw new GameError('cargo', 'The depot cannot hold this delivery.');
+  if (Number(row.stock) + qty + await warehouseReservedUnits(client, id) > DEPOT.capacity)
+    throw new GameError('cargo', 'The depot cannot hold this delivery alongside leased storage.');
   await bookDepot(client, row, 'receive', { stock: qty, cost: qty * Number(order.price), orderId });
   await client.query('UPDATE market_listings SET filled_qty=0 WHERE id=$1', [orderId]);
   if (order.status === 'live' && Number(order.qty) === 0)
@@ -190,7 +194,7 @@ export async function withdrawDepotStock(ch, id, quantity, client, h) {
 
 export async function closeDepot(ch, id, client, h) {
   mobile(ch); const row = await own(ch, id, client);
-  if (Number(row.stock) || (await pending(client, id)).length)
+  if (Number(row.stock) || (await pending(client, id)).length || await warehouseReservedUnits(client, id))
     throw new GameError('depot_obligations', 'Receive pending deliveries, cancel live orders, and sell or withdraw inventory before closing.');
   if (Number(row.treasury)) await releaseCash(ch, row, Number(row.treasury), client, h);
   await client.query("UPDATE business_depots SET status='closed' WHERE id=$1", [id]);
@@ -205,15 +209,18 @@ export async function depotState(client, ch, h) {
   const journal = (await client.query('SELECT reason,SUM(cash_delta) cash_delta,SUM(stock_delta) stock_delta,SUM(cost_delta) cost_delta,SUM(expense) expense FROM business_depot_journal WHERE depot_id=$1 GROUP BY reason', [row.id])).rows;
   const sales = journal.filter((entry) => entry.reason === 'sale');
   const revenue = sales.reduce((n, entry) => n + Number(entry.cash_delta), 0);
+  const rentalRevenue = journal.filter((entry) => entry.reason === 'warehouse_rent')
+    .reduce((n, entry) => n + Number(entry.cash_delta), 0);
   const cogs = -sales.reduce((n, entry) => n + Number(entry.cost_delta), 0);
   const expenses = journal.reduce((n, entry) => n + Number(entry.expense), 0);
   const slots = Number((await client.query("SELECT COUNT(*) n FROM market_listings WHERE seller_character=$1 AND (status='live' OR (kind='order' AND filled_qty>0))", [ch.id])).rows[0].n);
   const policy = await latestPolicy(client, row.id);
   const cadence = await latestSupplyContract(client, row.id);
-  const quote = orders.length || slots >= maxListings(h) ? null : procurementQuote(row, h);
+  const warehouseReserved = await warehouseReservedUnits(client, row.id);
+  const quote = orders.length || slots >= maxListings(h) ? null : procurementQuote(row, h, null, warehouseReserved);
   const autoQuote = policyLive(policy) && policy.allow_restock && policyTermsMatch(policy, row)
     && (!cadence?.enabled || (cadence.policy_id === policy.id && supplyDue(cadence)))
-    && !orders.length && slots < maxListings(h) ? procurementQuote(row, h, policy) : null;
+    && !orders.length && slots < maxListings(h) ? procurementQuote(row, h, policy, warehouseReserved) : null;
   const customers = (await client.query("SELECT customer_character,COUNT(*) purchases FROM business_depot_journal WHERE depot_id=$1 AND reason='sale' AND customer_character IS NOT NULL GROUP BY customer_character", [row.id])).rows;
   const external = (await client.query('SELECT category,SUM(usd_micros) usd_micros FROM business_external_costs WHERE depot_id=$1 GROUP BY category', [row.id])).rows;
   const stockouts = Number((await client.query("SELECT COUNT(*) n FROM business_depot_journal WHERE depot_id=$1 AND reason='sale' AND stock_after=0", [row.id])).rows[0].n);
@@ -221,7 +228,10 @@ export async function depotState(client, ch, h) {
     stockCost: Number(row.stock_cost), salePrice: Number(row.sale_price), bidPrice: Number(row.bid_price),
     reorderAt: Number(row.reorder_at), targetStock: Number(row.target_stock), restockBudget: Number(row.restock_budget),
     capacity: DEPOT.capacity, cashReserve: DEPOT.cashReserve,
-    customerRevenue: revenue, costOfGoodsSold: cogs, operatingExpenses: expenses, operatingProfit: revenue - cogs - expenses,
+    customerRevenue: revenue, rentalRevenue, costOfGoodsSold: cogs, operatingExpenses: expenses,
+    operatingProfit: revenue + rentalRevenue - cogs - expenses,
+    warehouse: { enabled: row.warehouse_enabled === true, revision: Number(row.warehouse_revision),
+      offeredSlots: Number(row.warehouse_slots), cashPerUnitDay: Number(row.warehouse_cash_per_unit_day), reservedUnits: warehouseReserved },
     unitsSold: -sales.reduce((n, entry) => n + Number(entry.stock_delta), 0),
     operatingPolicy: policyView(policy), supplyContract: supplyContractView(cadence), automatedRestockQuote: autoQuote,
     customerMetrics: { customerCharacters: customers.length, repeatCustomers: customers.filter((c) => Number(c.purchases) > 1).length,

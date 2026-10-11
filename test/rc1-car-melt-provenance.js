@@ -8,6 +8,7 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
   DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
   STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
@@ -30,13 +31,22 @@ const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const tender = file === 'src/server.js' ? assertSupplyTenderServerTransfer(actual) : null;
+  const warehouse = file === 'src/server.js' ? assertWarehouseServerTransfer(actual) : null;
+  const tenderInput = warehouse ? warehouse.baselineText : actual;
+  if (warehouse) {
+    assert.equal(hash(actual), WAREHOUSE_SERVER_PIN);
+    assert.equal(warehouse.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
+    assert.equal(warehouse.inverseChunks, 2);
+    assert.equal(actual, execFileSync('git', ['show', WAREHOUSE_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(tenderInput, execFileSync('git', ['show', WAREHOUSE_SERVER_PREDECESSOR_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  }
+  const tender = file === 'src/server.js' ? assertSupplyTenderServerTransfer(tenderInput) : null;
   const decisionInput = tender ? tender.baselineText : actual;
   if (tender) {
-    assert.equal(hash(actual), SUPPLY_TENDER_SERVER_PIN);
+    assert.equal(hash(tenderInput), SUPPLY_TENDER_SERVER_PIN);
     assert.equal(tender.baselineSha256, DECISION_CALL_SERVER_PIN);
     assert.equal(tender.inverseChunks, 2);
-    assert.equal(actual, execFileSync('git', ['show', SUPPLY_TENDER_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(tenderInput, execFileSync('git', ['show', SUPPLY_TENDER_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
     assert.equal(decisionInput, execFileSync('git', ['show', SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
   const decision = file === 'src/server.js' ? assertDecisionCallServerTransfer(decisionInput) : null;

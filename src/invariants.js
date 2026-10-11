@@ -35,7 +35,7 @@ const KNOWN_REASONS = {
     // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
-    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
+    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
@@ -552,8 +552,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
 
   // Pilot business custody is independently journaled. Cash funding/withdrawals and
   // customer receipts must also reconcile with the existing character ledger.
-  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;
-  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;
+  const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;
+  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;
+  const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;
+  const warehouseNow = Date.now();
   const depotOrders = (await pool.query("SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)")).rows;
   for (const depot of depots) {
     const entries = depotJournal.filter((entry) => entry.depot_id === depot.id);
@@ -561,7 +563,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
       push(`depot ${column}:${depot.id}`, Number(depot[column]), entries.reduce((n, entry) => n + Number(entry[delta]), 0), 0);
     const promised = Number(depot.stock) + depotOrders.filter((order) => order.depot_id === depot.id)
       .reduce((n, order) => n + Number(order.filled_qty) + (order.status === 'live' ? Number(order.qty) : 0), 0);
-    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);
+    const warehouseReserved = warehouseLeases.filter(l => l.depot_id === depot.id)
+      .reduce((n, l) => n + (l.status === 'active' && new Date(l.expires_at).getTime() > warehouseNow
+        ? Number(l.units) : ['active', 'landlord_closed'].includes(l.status) ? Number(l.held_qty) : 0), 0);
+    push(`depot capacity:${depot.id}`, Math.max(0, promised + warehouseReserved - 40), 0, 0);
   }
   const depotCash = (reason) => depotJournal.filter((entry) => entry.reason === reason).reduce((n, entry) => n + Number(entry.cash_delta), 0);
   push('depot funding', depotCash('fund'), -(await sum(pool, "currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL")), 0);
@@ -571,6 +576,40 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
   push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);
   push('depot death burn', -depotCash('death'), -(await sum(pool, "currency='cash' AND reason='depot:death'")), 0);
+  push('warehouse rent ledger', depotCash('warehouse_rent'), -(await sum(pool, "currency='cash' AND reason='warehouse:rent'")), 0);
+  push('warehouse journal ownership', depotJournal.filter(j => j.lease_id ? !warehouseLeases.some(l =>
+    l.id === j.lease_id && l.depot_id === j.depot_id && l.tenant_character === j.customer_character)
+    : Number(j.lease_stock_delta) !== 0 || j.lease_stock_after !== null || j.lease_sequence !== null).length, 0, 0);
+  const warehousePayments = (await pool.query("SELECT character_id,counterparty,amount FROM transactions WHERE currency='cash' AND reason='warehouse:rent'")).rows;
+  const rentalPairs = new Map();
+  for (const row of depotJournal.filter(j => j.reason === 'warehouse_rent')) {
+    const key = JSON.stringify([row.customer_character, row.depot_id]);
+    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };
+    pair.receipts += Number(row.cash_delta); rentalPairs.set(key, pair);
+  }
+  for (const row of warehousePayments) {
+    const key = JSON.stringify([row.character_id, row.counterparty]);
+    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };
+    pair.debits -= Number(row.amount); rentalPairs.set(key, pair);
+  }
+  for (const [key, pair] of rentalPairs) push(`warehouse rent pairing:${key}`, pair.receipts, pair.debits, 0);
+  for (const lease of warehouseLeases) {
+    const entries = depotJournal.filter(j => j.lease_id === lease.id).sort((a, b) => Number(a.lease_sequence) - Number(b.lease_sequence));
+    const rent = entries.filter(j => j.reason === 'warehouse_rent');
+    push(`warehouse rent event:${lease.id}`, rent.length, 1, 0);
+    push(`warehouse rent terms:${lease.id}`, rent.reduce((n, j) => n + Number(j.cash_delta), 0), Number(lease.fee_cash), 0);
+    push(`warehouse custody:${lease.id}`, Number(lease.held_qty), entries.reduce((n, j) => n + Number(j.lease_stock_delta), 0), 0);
+    push(`warehouse landlord:${lease.id}`, depots.some(d => d.id === lease.depot_id && d.owner_character === lease.landlord_character) ? 0 : 1, 0, 0);
+    let held = 0, discontinuities = 0;
+    for (const [index, entry] of entries.entries()) {
+      held += Number(entry.lease_stock_delta);
+      if (Number(entry.lease_sequence) !== index + 1 || held < 0 || held > Number(lease.units)
+          || (Number(entry.lease_stock_delta) !== 0 && entry.lease_stock_after === null)
+          || (entry.lease_stock_after !== null && Number(entry.lease_stock_after) !== held)
+          || (index === 0 && entry.reason !== 'warehouse_rent')) discontinuities++;
+    }
+    push(`warehouse custody sequence:${lease.id}`, discontinuities, 0, 0);
+  }
   const policyRows = (await pool.query('SELECT id,spent,max_spend FROM business_operating_policies')).rows;
   const policyJournal = (await pool.query("SELECT policy_id,cash_delta FROM business_depot_journal WHERE policy_id IS NOT NULL AND reason IN ('restock_escrow','restock_fee')")).rows;
   for (const policy of policyRows) {

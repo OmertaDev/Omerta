@@ -1460,6 +1460,121 @@
       "table_name": "supply_tenders",
       "name": "supply_tenders_unit_price_check",
       "definition": "CHECK (unit_price >= 50::numeric AND unit_price <= 1000000::numeric)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_lease_id_fkey",
+      "definition": "FOREIGN KEY (lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_lease_sequence_check",
+      "definition": "CHECK (lease_sequence >= 1)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_lease_stock_after_check",
+      "definition": "CHECK (lease_stock_after >= 0 AND lease_stock_after <= 10)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_lease_stock_delta_check",
+      "definition": "CHECK (lease_stock_delta >= '-10'::integer AND lease_stock_delta <= 10)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_warehouse_rent_lease_id_fkey",
+      "definition": "FOREIGN KEY (warehouse_rent_lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_warehouse_rent_lease_id_key",
+      "definition": "UNIQUE (warehouse_rent_lease_id)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_warehouse_cash_per_unit_day_check",
+      "definition": "CHECK (warehouse_cash_per_unit_day >= 0 AND warehouse_cash_per_unit_day <= 100000)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_warehouse_revision_check",
+      "definition": "CHECK (warehouse_revision >= 0)"
+    },
+    {
+      "table_name": "business_depots",
+      "name": "business_depots_warehouse_slots_check",
+      "definition": "CHECK (warehouse_slots >= 0 AND warehouse_slots <= 40)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_cash_per_unit_day_check",
+      "definition": "CHECK (cash_per_unit_day >= 1 AND cash_per_unit_day <= 100000)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_check",
+      "definition": "CHECK (tenant_character <> landlord_character)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_check1",
+      "definition": "CHECK (held_qty >= 0 AND held_qty <= units)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_check2",
+      "definition": "CHECK (fee_cash = (units * cash_per_unit_day))"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_check3",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_check4",
+      "definition": "CHECK ((status <> ALL (ARRAY['closed'::text, 'tenant_dead'::text])) OR held_qty = 0)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_good_id_check",
+      "definition": "CHECK (good_id = 'gin'::text)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_offer_revision_check",
+      "definition": "CHECK (offer_revision > 0)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'closed'::text, 'landlord_closed'::text, 'tenant_dead'::text]))"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_tenant_character_fkey",
+      "definition": "FOREIGN KEY (tenant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_warehouse_leases",
+      "name": "business_warehouse_leases_units_check",
+      "definition": "CHECK (units >= 1 AND units <= 10)"
     }
   ],
   "removed": [
@@ -1846,7 +1961,11 @@
       "stock",
       "stock_cost",
       "target_stock",
-      "treasury"
+      "treasury",
+      "warehouse_cash_per_unit_day",
+      "warehouse_enabled",
+      "warehouse_revision",
+      "warehouse_slots"
     ],
     "business_depot_journal": [
       "cash_delta",
@@ -1855,6 +1974,7 @@
       "depot_id",
       "expense",
       "id",
+      "lease_stock_delta",
       "reason",
       "stock_delta"
     ],
@@ -2071,6 +2191,21 @@
       "supplier_character",
       "tender_id",
       "unit_price"
+    ],
+    "business_warehouse_leases": [
+      "cash_per_unit_day",
+      "created_at",
+      "depot_id",
+      "expires_at",
+      "fee_cash",
+      "good_id",
+      "held_qty",
+      "id",
+      "landlord_character",
+      "offer_revision",
+      "status",
+      "tenant_character",
+      "units"
     ]
   }
 }

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { CRIMES, CAMPAIGNS } from '../src/rules.js';
 import { exactDecimal, exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { qualifyLoanCancelSource } from './rc1-loan-source-compatibility.js';
 
 const DAY = 86400000;
 const clone = value => structuredClone(value);
@@ -49,8 +50,11 @@ export function loanRefundCustodyFromJournal(journal) {
     .filter(check => check.kind === 'receipt-parity' && check.resource === 'cash' && check.owner === owner));
   if (checks.some(matches => matches.length !== 1)) return null;
   if (!refundSourceChecked) {
-    for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS))
-      assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Loan refund source changed: ' + file);
+    for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS)) {
+      const actual = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      const qualified = file === 'src/loans.js' ? qualifyLoanCancelSource(actual).baselineText : actual;
+      assert.equal(sha256(qualified), expected, 'Loan refund source changed: ' + file);
+    }
     refundSourceChecked = true;
   }
   for (const [i, [check]] of checks.entries()) {
