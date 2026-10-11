@@ -15,7 +15,7 @@ function exact(body,fields){if(!body||typeof body!=='object'||Array.isArray(body
 function terms(body){exact(body,['districtId','minimumStock']);if(!DISTRICTS.some(d=>d.id===body.districtId)||!Number.isSafeInteger(body.minimumStock)||body.minimumStock<1||body.minimumStock>40)fail('Choose canonical public gin conditions.');return body;}
 function ruleOf(v,l){const r=v.rule;exact(r,['kind','districtId','minimumStock','triggerStock']);if(r.kind!=='gin_availability_v1'||r.districtId!==l.district_id||r.minimumStock!==Number(l.minimum_stock)||!Number.isSafeInteger(r.triggerStock)||r.triggerStock<1||r.triggerStock>40||crypto.createHash('sha256').update(canonicalBytes(r)).digest('hex')!==v.rule_hash)fail('The immutable version does not match this cohort.');return JSON.parse(JSON.stringify(r));}
 async function locked(client,id){if(!key(id))fail('Choose a benchmark.');const l=(await client.query('SELECT * FROM strategy_leagues WHERE id=$1 FOR UPDATE',[id])).rows[0];if(!l)fail('No benchmark.');return l;}
-async function entries(client,id,lock=false){const sql=lock?'SELECT * FROM strategy_league_entries WHERE league_id=$1 ORDER BY id FOR UPDATE':'SELECT * FROM strategy_league_entries WHERE league_id=$1 ORDER BY id';const rows=(await client.query(sql,[id])).rows;if(rows.length>20)fail('Cohort capacity is invalid.');return rows;}
+async function entries(client,id,lock=false){const rows=(lock?await client.query('SELECT * FROM strategy_league_entries WHERE league_id=$1 ORDER BY id FOR UPDATE',[id]):await client.query('SELECT * FROM strategy_league_entries WHERE league_id=$1 ORDER BY id',[id])).rows;if(rows.length>20)fail('Cohort capacity is invalid.');return rows;}
 function view(l,rows,accountId=null){const graded=l.state==='resolved'&&l.result_kind==='graded';const correct=rows.filter(e=>e.outcome==='correct').length;
   const standings=rows.map(e=>({id:e.id,accountId:e.account_id,outcome:e.outcome,attempts:1,scored:['correct','incorrect'].includes(e.outcome)?1:0,unknown:e.outcome==='unknown'?1:0,pending:e.outcome==null?1:0,
     points:graded?(e.outcome==='correct'?1:0):null,rank:graded?(e.outcome==='correct'?1:correct+1):null})).sort((a,b)=>(b.points??-1)-(a.points??-1)||a.accountId.localeCompare(b.accountId));
@@ -76,13 +76,13 @@ export async function resolveStrategyLeague(ch,id,client){person(ch);const l=awa
 }
 export async function strategyLeagueBoard(client,accountId=null){if(accountId!=null&&!key(accountId))fail('Use an authenticated original account for private access.');
   // One statement supplies coherent cohort/entry snapshots, and the cohort bound precedes the join.
-  const sql=accountId==null?`SELECT l.*,e.id AS entry_id,e.account_id AS entry_account,e.character_id AS entry_character,e.version_id AS entry_version,e.license_id AS entry_license,e.rule AS entry_rule,e.rule_hash AS entry_hash,e.joined_at AS entry_joined,e.predicts_available AS entry_prediction,e.outcome AS entry_outcome
+  const result=accountId==null?await client.query(`SELECT l.*,e.id AS entry_id,e.account_id AS entry_account,e.character_id AS entry_character,e.version_id AS entry_version,e.license_id AS entry_license,e.rule AS entry_rule,e.rule_hash AS entry_hash,e.joined_at AS entry_joined,e.predicts_available AS entry_prediction,e.outcome AS entry_outcome
     FROM strategy_leagues l LEFT JOIN strategy_league_entries e ON e.league_id=l.id WHERE l.id IN
-    (SELECT id FROM strategy_leagues ORDER BY created_at DESC,id LIMIT 100) ORDER BY l.created_at DESC,l.id,e.id`:`SELECT l.*,e.id AS entry_id,e.account_id AS entry_account,e.character_id AS entry_character,e.version_id AS entry_version,e.license_id AS entry_license,e.rule AS entry_rule,e.rule_hash AS entry_hash,e.joined_at AS entry_joined,e.predicts_available AS entry_prediction,e.outcome AS entry_outcome
+    (SELECT id FROM strategy_leagues ORDER BY created_at DESC,id LIMIT 100) ORDER BY l.created_at DESC,l.id,e.id`):await client.query(`SELECT l.*,e.id AS entry_id,e.account_id AS entry_account,e.character_id AS entry_character,e.version_id AS entry_version,e.license_id AS entry_license,e.rule AS entry_rule,e.rule_hash AS entry_hash,e.joined_at AS entry_joined,e.predicts_available AS entry_prediction,e.outcome AS entry_outcome
     FROM strategy_leagues l LEFT JOIN strategy_league_entries e ON e.league_id=l.id WHERE l.id IN
     (SELECT id FROM strategy_leagues WHERE creator_account=$1 OR id IN
-      (SELECT league_id FROM strategy_league_entries WHERE account_id=$1) ORDER BY created_at DESC,id LIMIT 100) ORDER BY l.created_at DESC,l.id,e.id`;
-  const rows=(await client.query(sql,accountId==null?[]:[accountId])).rows;
+      (SELECT league_id FROM strategy_league_entries WHERE account_id=$1) ORDER BY created_at DESC,id LIMIT 100) ORDER BY l.created_at DESC,l.id,e.id`,[accountId]);
+  const rows=result.rows;
   const groups=new Map();for(const r of rows){if(!groups.has(r.id))groups.set(r.id,{league:r,entries:[]});if(r.entry_id)groups.get(r.id).entries.push({id:r.entry_id,account_id:r.entry_account,character_id:r.entry_character,version_id:r.entry_version,license_id:r.entry_license,rule:r.entry_rule,rule_hash:r.entry_hash,joined_at:r.entry_joined,predicts_available:r.entry_prediction,outcome:r.entry_outcome});}
   return [...groups.values()].map(g=>view(g.league,g.entries,accountId));
 }
