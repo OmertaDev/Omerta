@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b021a7a400b028c310905fd98b283566688f9abd",
+  "sourceRevision": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11079,
-    "edges": 44951,
+    "nodes": 11081,
+    "edges": 44958,
     "byNodeType": {
       "Artifact": 4469,
       "Command": 227,
-      "Commit": 2680,
+      "Commit": 2682,
       "Contract": 126,
       "Document": 719,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3614,
-      "CHANGED": 17851,
+      "CHANGED": 17856,
       "CONTAINS": 4490,
       "DECLARES": 227,
       "DEFINED_IN": 1430,
       "DEPENDS_ON": 67,
       "EXECUTES": 774,
       "HANDLED_BY": 799,
-      "HAS_COMMIT": 2680,
+      "HAS_COMMIT": 2682,
       "IMPLEMENTS": 124,
       "IMPORTS": 4360,
       "INHERITS": 42,
@@ -97973,18 +97973,18 @@
       "extension": ".js",
       "bytes": 56094,
       "lines": 1102,
-      "version": "aadd9286a51d95f8",
+      "version": "866ee038d69a60f3",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "aadd9286a51d95f8"
+          "version": "866ee038d69a60f3"
         }
       ],
-      "lastChangedAt": "2026-10-09T05:30:57.000Z",
+      "lastChangedAt": "2026-10-11T23:11:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f5663a3462cf061956524daebe68a67e4d2cf50d"
+      "lastChangedCommit": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2"
     },
     {
       "key": "Artifact:test/worldgraph-validation.js",
@@ -112342,6 +112342,22 @@
       ]
     },
     {
+      "key": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "type": "Commit",
+      "id": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "label": "Refresh knowledge for the validated connected world source",
+      "title": "Refresh knowledge for the validated connected world source",
+      "date": "2026-10-11T22:55:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "provenance": [
+        {
+          "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+        }
+      ]
+    },
+    {
       "key": "Commit:285cae1b82480327b65cb94dd3605a695e871209",
       "type": "Commit",
       "id": "285cae1b82480327b65cb94dd3605a695e871209",
@@ -124034,6 +124050,22 @@
         {
           "commit": "6d406afcd718bc3e46d71a2dd825f8ffbf306512",
           "url": "https://github.com/OmertaDev/Omerta/commit/6d406afcd718bc3e46d71a2dd825f8ffbf306512"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+      "type": "Commit",
+      "id": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+      "label": "Expect the new published API minor in WorldGraph coverage",
+      "title": "Expect the new published API minor in WorldGraph coverage",
+      "date": "2026-10-11T23:11:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+      "provenance": [
+        {
+          "commit": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6d5662d10dd401cc0d4f75dd17c8808432f25fc2"
         }
       ]
     },
@@ -169954,6 +169986,9 @@
           "commit": "2820fd1cf84b68b88874bbdeb30e9caa366c6f5a"
         },
         {
+          "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+        },
+        {
           "commit": "289275d3cdb8e02ef8296beba37ee4259562d973"
         },
         {
@@ -171436,6 +171471,9 @@
           "commit": "2820fd1cf84b68b88874bbdeb30e9caa366c6f5a"
         },
         {
+          "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+        },
+        {
           "commit": "289275d3cdb8e02ef8296beba37ee4259562d973"
         },
         {
@@ -172916,6 +172954,9 @@
         },
         {
           "commit": "2820fd1cf84b68b88874bbdeb30e9caa366c6f5a"
+        },
+        {
+          "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
         },
         {
           "commit": "289275d3cdb8e02ef8296beba37ee4259562d973"
@@ -174806,6 +174847,9 @@
         },
         {
           "commit": "2820fd1cf84b68b88874bbdeb30e9caa366c6f5a"
+        },
+        {
+          "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
         },
         {
           "commit": "289275d3cdb8e02ef8296beba37ee4259562d973"
@@ -185974,7 +186018,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b021a7a400b028c310905fd98b283566688f9abd",
+      "revision": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
       "currentBranch": "codex/city-connected-world",
       "defaultBranch": "main",
       "visibility": "public",
@@ -224140,12 +224184,12 @@
       "id": "test/worldgraph-api.js",
       "label": "test/worldgraph-api.js",
       "lines": 1102,
-      "version": "aadd9286a51d95f8",
+      "version": "866ee038d69a60f3",
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "aadd9286a51d95f8"
+          "version": "866ee038d69a60f3"
         }
       ]
     },
@@ -278127,6 +278171,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:285cae1b82480327b65cb94dd3605a695e871209",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -316203,6 +316279,14 @@
       "to": "Artifact:CLAUDE.md",
       "provenance": {
         "commit": "6d406afcd718bc3e46d71a2dd825f8ffbf306512"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "commit": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2"
       }
     },
     {
@@ -473469,6 +473553,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:284f5d304bf43edaeca09cb7e8de0df576b1a1b8",
+      "provenance": {
+        "commit": "284f5d304bf43edaeca09cb7e8de0df576b1a1b8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:285cae1b82480327b65cb94dd3605a695e871209",
       "provenance": {
         "commit": "285cae1b82480327b65cb94dd3605a695e871209"
@@ -479312,6 +479404,14 @@
       "to": "Commit:6d406afcd718bc3e46d71a2dd825f8ffbf306512",
       "provenance": {
         "commit": "6d406afcd718bc3e46d71a2dd825f8ffbf306512"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6d5662d10dd401cc0d4f75dd17c8808432f25fc2",
+      "provenance": {
+        "commit": "6d5662d10dd401cc0d4f75dd17c8808432f25fc2"
       }
     },
     {
