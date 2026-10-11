@@ -16,6 +16,7 @@
 // → market_listings (pot class) → street_tax singleton. Acyclic vs the global order; residual
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
+import { assertDeliveryFinanceDelivery } from './deliveryfinance.js';
 import { closeDepotsAtDeath, refundDepotOrder } from './depotbook.js';
 import { reservedQuantity, closeDeliveriesAtDeath } from './deliverybook.js';
 import { GameError, bus, ledger, notify, skillMult, trunkCap, npcTier, bumpStanding, bumpMastery, masteryFx } from './game.js';
@@ -233,6 +234,7 @@ export async function fillOrder(ch, listingId, qty, client, h, { commitmentId = 
       throw new GameError('no_commitment', 'No current delivery commitment with these terms.');
   }
   const available = commitment ? Number(commitment.remaining) : Number(l.qty) - await reservedQuantity(client, l.id);
+  if (commitment) await assertDeliveryFinanceDelivery(client, ch, commitment.id);
   const have = h.owned.cargo[l.good_id] || 0;
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || have)), Number(l.qty), available, have);
   if (n <= 0) throw new GameError('qty', 'Nothing to deliver.');

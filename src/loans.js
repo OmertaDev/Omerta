@@ -7,6 +7,7 @@ import { GameError, ledger, notify, bus, track } from './game.js';
 import { LOAN, loanVig, loanOwed, paperTake, M3, carCollateralValue, levelOf, HONOR , jailed, hospitalized, safeHoused, usd } from './rules.js';
 import { logCarCollect } from './collection.js';
 import { bumpHonor, sqlHonorDelta } from './honor.js';
+import { assertDeliveryFinanceLoanTake } from './deliveryfinance.js';
 
 const uid = () => crypto.randomUUID();
 const isWanted = (ch) => ch.wanted_until && new Date(ch.wanted_until) > new Date();
@@ -288,6 +289,7 @@ export async function takeLoan(ch, loanId, carId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No taking a loan from lockup.');
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
   if (!loan || loan.status !== 'open') throw new GameError('gone', 'That offer is off the table.');
+  await assertDeliveryFinanceLoanTake(client, ch, loanId);
   if (loan.lender_character === ch.id) throw new GameError('own', "You can't take your own money.");
   if (loan.offered_to && loan.offered_to !== ch.id) throw new GameError('directed', 'That offer is spoken for — it names another borrower.');
   if (ch.welsher) throw new GameError('welsher', 'Nobody lends to a welsher. Square your name first.');

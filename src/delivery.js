@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { GameError, travel } from './game.js';
 import { jailed, safeHoused, CONSTANTS, BLACK_MARKET } from './rules.js';
 import { fillOrder } from './market.js';
+import { assertDeliveryFinanceDelivery } from './deliveryfinance.js';
 import { reservedQuantity } from './deliverybook.js';
 import { buyGood } from './economy.js';
 import { goodsBuyQuote } from './goodsquote.js';
@@ -50,6 +51,7 @@ async function lockedCommitment(ch, id, client) {
 export async function deliverCommitment(ch, id, qty, client, h) {
   if (!integer(qty, 1, DELIVERY.maxUnits)) throw new GameError('delivery_terms', 'qty must be a bounded integer.');
   const c = await lockedCommitment(ch, id, client);
+  await assertDeliveryFinanceDelivery(client, ch, c.id);
   if (qty > Number(c.remaining) || qty > Number(h.owned.cargo[c.good_id] || 0)) throw new GameError('qty', 'Deliver only committed quantities you actually hold.');
   return fillOrder(ch, c.order_id, qty, client, h, { commitmentId: c.id });
 }
