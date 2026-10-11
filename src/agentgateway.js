@@ -354,7 +354,7 @@ const OPERATION_CONTRACTS = {
         expiresAt: { type: 'string', format: 'date-time', maxLength: 64 },
       } },
   },
-  'POST /v1/franchise-licenses/:id/accept': { operationId: 'AcceptOwnGameFranchiseOffer' },
+  'POST /v1/franchise-licenses/:id/accept': { operationId: 'acceptOwnGameFranchiseOffer' },
   'POST /v1/franchise-licenses/:id/end': { operationId: 'endOwnGameFranchiseLicense' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
