@@ -2,6 +2,76 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+// Crew logistics changes transfer unchanged historical guards by full-file reconstruction only.
+export const CREW_LOGISTICS_SOURCE_REVIEWED_REVISION = '5f6d9b83496ddce31811d61c168d1ddd3cfb5896';
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION = 'e3b5586c9887d980bc03c709841804b66e36752b';
+export const CREW_LOGISTICS_SOURCE_CURRENT_PINS = Object.freeze({
+  "src/server.js": "ca911a40235992e6e938eeab5a622a82133499fe9ac723bf61845477ab4fb113",
+  "src/game.js": "8c299023ed047d5ff97125044e4e45e1052289bc82b470a08709b33d0402266c",
+  "src/crew.js": "28f8646f59cc6e21c69055092d2b5c9ca4766df73a06f636f26dd31dfc063c09"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  "src/server.js": "62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361",
+  "src/game.js": "bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05",
+  "src/crew.js": "e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed"
+});
+export const CREW_LOGISTICS_SOURCE_CURRENT_BLOBS = Object.freeze({
+  "src/server.js": "7b32de9531c3d47ced6654175ec492afc81cc5cb",
+  "src/game.js": "48e9c5ab0df52d00ab27b2077cf38dbde2fc1d2f",
+  "src/crew.js": "1f3121bd1ea60f54575d47522a48fbf76d1296ce"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS = Object.freeze({
+  "src/server.js": "2e340c1069979debd62ef9f9190c76d1490caadd",
+  "src/game.js": "8edf3e3370f8a7aec006acfe286074ad045be71b",
+  "src/crew.js": "6556caa35fceb784761f14a14d8fbce3c8a5dcb7"
+});
+export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
+  "src/server.js": [
+    [
+      "import { register as registerCrewLogistics } from './routes/crewlogistics.js';\n",
+      ""
+    ],
+    [
+      "  registerCrewLogistics(app, { pool, auth });\n",
+      ""
+    ]
+  ],
+  "src/game.js": [
+    [
+      "// Serialized private projections use no accrual or persistence. Hooks establish the\n// membership boundary before actor/account locks; the callback cannot write or lock.\nexport async function withCharacterReadLocked(pool, accountId, fn, lockHooks = null) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n    const prelockState = lockHooks?.beforeCharacterLock\n      ? await lockHooks.beforeCharacterLock(client, accountId) : null;\n    let r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) throw new GameError('no_character', 'Create a character first.');\n    const ch = r.rows[0];\n    await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR SHARE', [accountId]);\n    if (lockHooks?.afterAccountLock) await lockHooks.afterAccountLock(client, accountId, ch, prelockState);\n    const result = await fn(ch, readOnlyClient(client));\n    await client.query('COMMIT');\n    return result;\n  } catch (e) {\n    await client.query('ROLLBACK').catch(() => {});\n    throw deadlockToRetry(e);\n  } finally { client.release(); }\n}\n\n",
+      ""
+    ],
+    [
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+(?:key\\s+)?share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n",
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n"
+    ]
+  ],
+  "src/crew.js": [
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, ch.account_id]);\n",
+      ""
+    ],
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, t.account_id]);\n",
+      ""
+    ]
+  ]
+});
+export function assertCrewLogisticsSourceTransfer(file, text) {
+  assert(CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Unknown Crew logistics compatibility source');
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Crew logistics source changed: ' + file);
+  let baselineText = text;
+  for (const [current, original] of CREW_LOGISTICS_SOURCE_INVERSES[file]) {
+    assert.equal(baselineText.split(current).length, 2, 'Crew logistics inverse is not exact and unique: ' + file);
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file];
+  assert.equal(hash(baselineText), baselineSha256, 'Source differs beyond exact Crew logistics changes: ' + file);
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION,
+    sourceBlob: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file], predecessorBlob: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file],
+    inverseChunks: CREW_LOGISTICS_SOURCE_INVERSES[file].length };
+}
 // Exact warehouse source reconstruction transfers unchanged historical guards only.
 export const WAREHOUSE_SOURCE_REVIEWED_REVISION = '7220e8b088921fcb277ecf7863fb724f113041b8';
 export const WAREHOUSE_SERVER_PIN = '62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361';
@@ -395,6 +465,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -480,6 +554,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -586,6 +664,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -649,6 +731,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
   if (hash(text) === WAREHOUSE_SERVER_PIN) {
     const transfer = assertWarehouseServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
@@ -1016,6 +1102,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]) {
+  const transfer = assertCrewLogisticsSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, crewLogisticsSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === WAREHOUSE_SERVER_PIN) {
   const transfer = assertWarehouseServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, warehouseSourceTransfer: transfer };

@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { assertDeedBacklogCompatibility, AGENT_ECONOMY_INVARIANT_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION,
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
+  assertDeedBacklogCompatibility, AGENT_ECONOMY_INVARIANT_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION,
   WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, assertWarehouseInvariantTransfer,
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES, assertWarehouseEstateSourceChange } from '../tools/rc1-deed-source-compatibility.js';
 import { execFileSync } from 'node:child_process';
-import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, BACKLOG_SOURCE_PINS, BACKLOG_WAREHOUSE_SOURCE_TRANSFER, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
+import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, BACKLOG_SOURCE_PINS, BACKLOG_WAREHOUSE_SOURCE_TRANSFER, BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
 for (const file of ['src/chain.js', 'src/invariants.js']) {
   const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   const proof = assertDeedBacklogCompatibility(file, text);
@@ -12,6 +13,15 @@ for (const file of ['src/chain.js', 'src/invariants.js']) {
   assert.throws(() => assertDeedBacklogCompatibility(file, text + '\n// unsupported change\n'), /source changed/);
   assert.equal(proof.baselineText, execFileSync('git', ['show', 'db54f824004c4d855778668081ce2adfac173c39:' + file], { encoding: 'utf8' }).replaceAll('\r\n', '\n'));
 }
+for (const file of ['src/game.js', 'src/crew.js']) {
+  const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'), proof = assertCrewLogisticsSourceTransfer(file, text);
+  assert.equal(BACKLOG_SOURCE_PINS[file], CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
+  assert.equal(proof.baselineSha256, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file]);
+  for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES[file])
+    for (const changed of [text.replace(chunk, ''), text.replace(chunk, chunk + chunk)])
+      assert.throws(() => assertCrewLogisticsSourceTransfer(file, changed), /source changed/);
+}
+assert.match(BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER.scope, /separate current-source native proofs/);
 const gitText = spec => execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n');
 for (const [file, pin, blob, priorBlob, chunks, transfer] of [
   ['src/invariants.js', WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, assertWarehouseInvariantTransfer],
@@ -60,7 +70,7 @@ const count = (report, id) => report.inventory.find(row => row.id === id).count;
 let cases = 0;
 function test(name, fn) { fn(); cases++; }
 test('agent economy custody cannot inherit legacy backlog coverage', () => {
-  for (const table of ['business_depots', 'delivery_commitments', 'business_warehouse_leases']) {
+  for (const table of ['business_depots', 'delivery_commitments', 'business_warehouse_leases', 'crew_logistics_links']) {
     const rows = empty(); rows[table] = [{ id: 'outside-scope' }];
     assert.throws(() => review(rows), /outside this backlog review scope/);
   }

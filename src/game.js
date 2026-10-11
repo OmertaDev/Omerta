@@ -1233,6 +1233,29 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
 // before. (A compare-and-swap could make even those lock-free; it needs a version column, because
 // last_accrued_at round-trips through node-pg at millisecond precision and would never match
 // Postgres's microseconds. Left for later — this cut carries the measured win without that risk.)
+// Serialized private projections use no accrual or persistence. Hooks establish the
+// membership boundary before actor/account locks; the callback cannot write or lock.
+export async function withCharacterReadLocked(pool, accountId, fn, lockHooks = null) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const prelockState = lockHooks?.beforeCharacterLock
+      ? await lockHooks.beforeCharacterLock(client, accountId) : null;
+    let r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);
+    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);
+    if (!r.rows.length) throw new GameError('no_character', 'Create a character first.');
+    const ch = r.rows[0];
+    await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR SHARE', [accountId]);
+    if (lockHooks?.afterAccountLock) await lockHooks.afterAccountLock(client, accountId, ch, prelockState);
+    const result = await fn(ch, readOnlyClient(client));
+    await client.query('COMMIT');
+    return result;
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw deadlockToRetry(e);
+  } finally { client.release(); }
+}
+
 export async function withCharacterRead(pool, accountId, fn) {
   const client = await pool.connect();
   try {
@@ -1273,7 +1296,7 @@ export async function withCharacterRead(pool, accountId, fn) {
 // BEGIN, so the lock is taken and dropped in the same statement — it looks like protection and is not,
 // which is worse than not having it.
 const WRITE_HEAD = /^\s*(?:insert|update|delete|truncate|drop|alter|create|grant|revoke|merge|copy)\b/i;
-const WRITE_ANY = /\b(?:insert\s+into|update\s+\w+\s+set|delete\s+from|truncate\b|merge\s+into|copy\s+\w+\s+from|\binto\s+\w+\s+from|for\s+update\b|for\s+no\s+key\s+update\b|for\s+share\b|setval\s*\(|nextval\s*\(|pg_advisory_(?:xact_)?lock\s*\()/i;
+const WRITE_ANY = /\b(?:insert\s+into|update\s+\w+\s+set|delete\s+from|truncate\b|merge\s+into|copy\s+\w+\s+from|\binto\s+\w+\s+from|for\s+update\b|for\s+no\s+key\s+update\b|for\s+(?:key\s+)?share\b|setval\s*\(|nextval\s*\(|pg_advisory_(?:xact_)?lock\s*\()/i;
 function readOnlyClient(client) {
   return {
     query: (text, params) => {

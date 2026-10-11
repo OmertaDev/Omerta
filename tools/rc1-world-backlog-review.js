@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { qualifyLoanCancelSource, LOAN_CANCEL_SOURCE_TRANSFER } from './rc1-loan-source-compatibility.js';
 import { assertCarMeltRulesCompatibility, assertDeedBacklogCompatibility, DEED_RULES_CURRENT_PIN,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   DEED_BACKLOG_CURRENT_PINS, DEED_BACKLOG_BASELINE_PINS, DEED_SOURCE_REVIEWED_REVISION, AGENT_ECONOMY_INVARIANT_PIN, WAREHOUSE_INVARIANT_PIN, WAREHOUSE_INVARIANT_BLOB, WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, WAREHOUSE_INVARIANT_SOURCE_INVERSES, WAREHOUSE_SOURCE_REVIEWED_REVISION } from './rc1-deed-source-compatibility.js';
 import { LOAN, LAW, WORLD, PEN, CREW, MENTOR, BOXING, CASINO, FAMILY_YIELD, HEIST_PLAN_TTL_MS, dayOf, weekOf } from '../src/rules.js';
 
@@ -31,7 +32,7 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/diplomacy.js': 'dbfad062b79ea5fa8e21d0bf6c9d10b99899b801a68708cf8151c261be106d7b',
   'src/secrets.js': '4cd2e10e2980912669c1ff6b59fdb0f6b6bfb38cf619377329fedc0baa25307f',
   'src/contacts.js': 'ea88ff08c644905c6905c4fd6cf0da7478c553e1f82c084a44c505b01fa6291e',
-  'src/crew.js': 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed',
+  'src/crew.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/crew.js'],
   'src/mentor.js': 'a67b993c55b9fb675306033462ac5be11e6c0aa0bf0fb163031a5030e728a506',
   'src/wire.js': '3886c5a64f5c8594fe7e93194c8e282fa372076ccbec88dd2abf06b5d2da321c',
   'src/boxing.js': '50c085afb038020c0a44651c4350df02f217c7d8cbc9004cf59167d7a3314243',
@@ -42,7 +43,7 @@ export const BACKLOG_SOURCE_PINS = Object.freeze({
   'src/fees.js': '134e6c5862199bf90952f94043288621e13eeb7249ba871ebd290dbe716e413a',
   'src/store.js': '514ad59c728d126e101cc1c495d7073fcea288c6d70754ba07bff73b520f0bc0',
   'src/pass.js': '299a9465d324019a500b40f03d09a686d6b57b11498e5ff4a40543d75bde9997',
-  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
+  'src/game.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'],
   'src/primetime.js': '48c4def2e7a270ee79a00504b9a1f8fd1098989b2ba775534dc19f28feaeb41f',
   'src/chain.js': DEED_BACKLOG_CURRENT_PINS['src/chain.js'],
   'src/exchange.js': 'ab28cdc4d722fce1699a486b66314b720bca93601b1b83e4fb88f2d542f4c956',
@@ -58,6 +59,12 @@ export const BACKLOG_WAREHOUSE_SOURCE_TRANSFER = Object.freeze({ sourceRevision:
   inverseChunks: WAREHOUSE_INVARIANT_SOURCE_INVERSES.length, evidence: 'docs/warehouse-leases-security-review.md',
   phase: 'source compatibility; financial activation disabled',
   scope: 'Exact warehouse rent reason, source reads, reserved capacity and custody checks reconstruct the complete unchanged agent economy invariant predecessor. Historical backlog assertions remain unchanged. New warehouse custody, rent pairing, journal sequence, capacity and death behavior require separate current-source native proofs; no historical runtime, native, deployment or financial qualification is inherited.' });
+export const BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, predecessorRevision: CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION,
+    currentPins: CREW_LOGISTICS_SOURCE_CURRENT_PINS, predecessorPins: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS,
+    currentBlobs: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, predecessorBlobs: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS,
+    inverseChunks: { 'src/server.js': 2, 'src/game.js': 2, 'src/crew.js': 2 },
+    evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility; financial activation disabled',
+    scope: 'Exact route registration, serialized private read wrapper, read-only SQL lock guard and leave/kick consent revocation changes reconstruct complete warehouse predecessor sources. Only unchanged historical guards transfer. New Crew membership consent, private projections, death/character replacement visibility, revocation and locking require separate current-source native proofs; no historical runtime, native, deployment, onchain or financial qualification is inherited. No estate qualification is added.' });
 const compact = text => text.replace(/\s+/g, ' ').trim();
 const digest = value => sha256(canonicalJson(value));
 const round6 = x => Math.round(Number(x) * 1e6) / 1e6;
@@ -72,11 +79,12 @@ function sourceProof(revision) {
     const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
     const qualifiedActual = file === 'src/loans.js' ? qualifyLoanCancelSource(actual).baselineText : actual;
     assert.equal(sha256(qualifiedActual), expected, `Backlog reviewer source changed: ${file}`);
+    const crewTransfer = ['src/game.js', 'src/crew.js'].includes(file) ? assertCrewLogisticsSourceTransfer(file, actual) : null;
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
     if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
     const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
     const qualifiedPinned = file === 'src/loans.js' ? qualifyLoanCancelSource(pinned).baselineText : pinned;
-    assert.equal(sha256(qualifiedPinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(qualifiedActual));
+    assert.equal(sha256(qualifiedPinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(crewTransfer ? crewTransfer.baselineText : qualifiedActual));
   }
   revisions.add(revision);
 }
@@ -326,7 +334,7 @@ const INVARIANT_NAMES = ['world graph stack conservation', 'world graph unique c
 export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, configuration, lifecycleDiagnostics = null, invariants = null } = {}) {
   // The original worker disposition inventory does not classify depot or
   // committed-delivery custody. Reject it instead of claiming complete coverage.
-  for (const table of ['business_depots', 'delivery_commitments', 'business_warehouse_leases'])
+  for (const table of ['business_depots', 'delivery_commitments', 'business_warehouse_leases', 'crew_logistics_links'])
     assert(!(snapshot.tables[table] || []).length, 'Agent economy custody is outside this backlog review scope');
   sourceProof(sourceRevision); assert(Number.isSafeInteger(logicalAt)); assert(configuration && typeof configuration === 'object');
   assert.equal(instant(snapshot.capturedAt), logicalAt, 'Snapshot clock differs from backlog boundary');
@@ -377,7 +385,7 @@ export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, config
   if (checks.length !== INVARIANT_NAMES.length) unknown.push({ kind: 'canonical-invariant-evidence-missing', missing: INVARIANT_NAMES.filter(name => !checks.some(c => c.name === name)) });
   const jobCoverage = workerJobCoverage();
   if (jobCoverage.unmapped.length) unknown.push({ kind: 'original-worker-job-disposition-missing', workerLabels: jobCoverage.unmapped });
-  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, loanOutputMarkerTransfer: LOAN_CANCEL_SOURCE_TRANSFER,
+  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, crewLogisticsSourceReviewTransfer: BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, loanOutputMarkerTransfer: LOAN_CANCEL_SOURCE_TRANSFER,
     configuration, configurationSha256: digest(configuration), inventory, liveState, jobCoverage, unknown,
     scope: 'Original internal lifecycle drainers across the same workload policies, including Law, deferred financial work and explicitly conditional external-input queues. Recurring generators, provider polling, external notification transport and historical retention are separate from this row-draining inventory.',
     qualification: 'OBSERVATIONS_ONLY' };

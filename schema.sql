@@ -7766,3 +7766,19 @@ CREATE TABLE IF NOT EXISTS city_social_preferences (
   last_chat_at TIMESTAMPTZ,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Explicit member consent to display native logistics references; no execution authority.
+CREATE TABLE IF NOT EXISTS crew_logistics_links (
+  id TEXT PRIMARY KEY,
+  crew_id TEXT NOT NULL REFERENCES crews(id) ON DELETE CASCADE,
+  publisher_account_id TEXT NOT NULL REFERENCES accounts(id),
+  publisher_character_id TEXT NOT NULL REFERENCES characters(id),
+  generation INT NOT NULL CHECK (generation > 0),
+  kind TEXT NOT NULL CHECK (kind IN ('tender','delivery_commitment','warehouse_claim')),
+  target_id TEXT NOT NULL CHECK (char_length(target_id) BETWEEN 1 AND 128),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+  revoked_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_crew_logistics_member ON crew_logistics_links (crew_id,publisher_account_id,revoked_at);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_crew_logistics_consent ON crew_logistics_links (crew_id,publisher_account_id,kind,target_id) WHERE revoked_at IS NULL;
