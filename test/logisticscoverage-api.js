@@ -207,7 +207,8 @@ try {
   const { runLedgerInvariants } = await import('../src/invariants.js');
   const coverageCheck = async () => {
     const sweep = await runLedgerInvariants(app.pool, { alert: false });
-    const check = sweep.checks.find(check => check.name === 'logistics coverage escrow');
+    assert.equal(sweep.checks.find(check => check.name === 'logistics coverage escrow')?.ok, true, 'Actual aggregate cash reserve reconciles');
+    const check = sweep.checks.find(check => check.name === 'logistics coverage bindings');
     assert(check, 'Actual invariant sweep includes coverage accounting');
     return check;
   };
