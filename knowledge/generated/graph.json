@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "981c4cc529f96aa06795abe76555352b5a4b1c30",
+  "sourceRevision": "fda1ecf935021a5e7d93bed3d4402596ef626697",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10907,
-    "edges": 44345,
+    "nodes": 10915,
+    "edges": 44379,
     "byNodeType": {
-      "Artifact": 4453,
+      "Artifact": 4455,
       "Command": 221,
-      "Commit": 2555,
+      "Commit": 2560,
       "Contract": 126,
       "Document": 716,
       "Domain": 13,
@@ -60,25 +60,25 @@
       "Route": 898,
       "Subsystem": 8,
       "Table": 396,
-      "TestSuite": 606,
+      "TestSuite": 607,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3593,
-      "CHANGED": 17572,
-      "CONTAINS": 4474,
+      "BELONGS_TO": 3595,
+      "CHANGED": 17589,
+      "CONTAINS": 4476,
       "DECLARES": 221,
       "DEFINED_IN": 1420,
       "DEPENDS_ON": 67,
-      "EXECUTES": 756,
+      "EXECUTES": 757,
       "HANDLED_BY": 791,
-      "HAS_COMMIT": 2555,
+      "HAS_COMMIT": 2560,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4299,
+      "IMPORTS": 4304,
       "INHERITS": 42,
       "REFERENCES": 3167,
-      "REPRESENTS": 1656,
-      "TESTS": 1490,
+      "REPRESENTS": 1657,
+      "TESTS": 1491,
       "TRACKS": 126,
       "USES_TABLE": 1992
     }
@@ -40457,20 +40457,20 @@
       "path": "docs/warehouse-leases-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3721,
-      "lines": 60,
-      "version": "df259d0f70f89c92",
+      "bytes": 4814,
+      "lines": 76,
+      "version": "020a2b47b231fc9a",
       "text": true,
       "provenance": [
         {
           "file": "docs/warehouse-leases-security-review.md",
           "line": 1,
-          "version": "df259d0f70f89c92"
+          "version": "020a2b47b231fc9a"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:57:37.000Z",
+      "lastChangedAt": "2026-10-11T19:15:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b0fc4ac8cc475ed23195e891cfdaa9fb39d2d452"
+      "lastChangedCommit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -62853,20 +62853,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 37996,
+      "bytes": 38042,
       "lines": 250,
-      "version": "d3158829cf9265bf",
+      "version": "95ac7d0d50f466a6",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "d3158829cf9265bf"
+          "version": "95ac7d0d50f466a6"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:50:44.000Z",
+      "lastChangedAt": "2026-10-11T19:15:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "565e5424223187192011cddde29c2e3abeef54e5"
+      "lastChangedCommit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
     },
     {
       "key": "Artifact:Procfile",
@@ -78079,20 +78079,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1404106,
-      "lines": 14708,
-      "version": "7cb800e4b3850a4f",
+      "bytes": 1404280,
+      "lines": 14710,
+      "version": "5518593c87401df4",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "7cb800e4b3850a4f"
+          "version": "5518593c87401df4"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:57:29.000Z",
+      "lastChangedAt": "2026-10-11T19:07:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a3e0c3986010f7272ddf0f188c35e795f1c8532d"
+      "lastChangedCommit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -78472,18 +78472,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "b2edc5d69f013209",
+      "version": "d3933d8c822a9c4e",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b2edc5d69f013209"
+          "version": "d3933d8c822a9c4e"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:57:36.000Z",
+      "lastChangedAt": "2026-10-11T19:15:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5e2c857730a62d79f5cc1a4305f0d2b60a5f8ced"
+      "lastChangedCommit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
     },
     {
       "key": "Artifact:src/access.js",
@@ -82311,20 +82311,20 @@
       "path": "src/loans.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 64583,
+      "bytes": 64611,
       "lines": 818,
-      "version": "663f71b153323676",
+      "version": "e5440abea494c28d",
       "text": true,
       "provenance": [
         {
           "file": "src/loans.js",
           "line": 1,
-          "version": "663f71b153323676"
+          "version": "e5440abea494c28d"
         }
       ],
-      "lastChangedAt": "2026-09-05T01:38:34.000Z",
+      "lastChangedAt": "2026-10-11T19:07:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08ebac4f2224ade676a41a4da72586ac6b8e3f38"
+      "lastChangedCommit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
     },
     {
       "key": "Artifact:src/made.js",
@@ -85692,20 +85692,20 @@
       "path": "src/warehouseleases.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 14007,
+      "bytes": 14039,
       "lines": 183,
-      "version": "55b4ee1d09f0bcbe",
+      "version": "854ab0a5779f2388",
       "text": true,
       "provenance": [
         {
           "file": "src/warehouseleases.js",
           "line": 1,
-          "version": "55b4ee1d09f0bcbe"
+          "version": "854ab0a5779f2388"
         }
       ],
-      "lastChangedAt": "2026-10-11T14:26:32.000Z",
+      "lastChangedAt": "2026-10-11T19:07:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9d5a2d38669a820d646d2d8661b87fd2707b1737"
+      "lastChangedCommit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
     },
     {
       "key": "Artifact:src/watcher.js",
@@ -86954,20 +86954,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 737902,
-      "lines": 9473,
-      "version": "775fc2f0c9ff7eea",
+      "bytes": 741449,
+      "lines": 9515,
+      "version": "8cfbb9eab46d475e",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "775fc2f0c9ff7eea"
+          "version": "8cfbb9eab46d475e"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:11:50.000Z",
+      "lastChangedAt": "2026-10-11T19:07:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "596d75f1729e9e0f42884adaae9910c085b05d3e"
+      "lastChangedCommit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -92994,6 +92994,29 @@
       "lastChangedAt": "2026-09-21T06:19:48.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "10aa03c020bb172bfa16bf61174e5997e94f5f2f"
+    },
+    {
+      "key": "Artifact:test/rc1-loan-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/rc1-loan-source-compatibility.js",
+      "label": "rc1-loan-source-compatibility.js",
+      "path": "test/rc1-loan-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3198,
+      "lines": 31,
+      "version": "ab2c0f9918aa0e2b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/rc1-loan-source-compatibility.js",
+          "line": 1,
+          "version": "ab2c0f9918aa0e2b"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T19:12:50.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "662055d58011dcecc0516d70937455b78e07163a"
     },
     {
       "key": "Artifact:test/rc1-market-native.js",
@@ -100172,6 +100195,29 @@
       "lastChangedCommit": "10aa03c020bb172bfa16bf61174e5997e94f5f2f"
     },
     {
+      "key": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "type": "Artifact",
+      "id": "tools/rc1-loan-source-compatibility.js",
+      "label": "rc1-loan-source-compatibility.js",
+      "path": "tools/rc1-loan-source-compatibility.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 2418,
+      "lines": 37,
+      "version": "1375e4f477de482a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/rc1-loan-source-compatibility.js",
+          "line": 1,
+          "version": "1375e4f477de482a"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T19:12:50.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "662055d58011dcecc0516d70937455b78e07163a"
+    },
+    {
       "key": "Artifact:tools/rc1-manifest.mjs",
       "type": "Artifact",
       "id": "tools/rc1-manifest.mjs",
@@ -101605,20 +101651,20 @@
       "path": "tools/rc1-world-backlog-review.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 43215,
-      "lines": 410,
-      "version": "c164adb78302c0b6",
+      "bytes": 43622,
+      "lines": 413,
+      "version": "a4d4573b1647f3e8",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-backlog-review.js",
           "line": 1,
-          "version": "c164adb78302c0b6"
+          "version": "a4d4573b1647f3e8"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:27:40.000Z",
+      "lastChangedAt": "2026-10-11T19:12:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e3b5586c9887d980bc03c709841804b66e36752b"
+      "lastChangedCommit": "662055d58011dcecc0516d70937455b78e07163a"
     },
     {
       "key": "Artifact:tools/rc1-world-cell-admission.js",
@@ -101720,20 +101766,20 @@
       "path": "tools/rc1-world-economy-metrics.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 51963,
-      "lines": 615,
-      "version": "f411c4ced5ee1a71",
+      "bytes": 52186,
+      "lines": 619,
+      "version": "139e4856e1daecff",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-economy-metrics.js",
           "line": 1,
-          "version": "f411c4ced5ee1a71"
+          "version": "139e4856e1daecff"
         }
       ],
-      "lastChangedAt": "2026-09-24T22:49:40.000Z",
+      "lastChangedAt": "2026-10-11T19:12:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85bbc055d21c2f2fb039dd1451172e9e9e959d4d"
+      "lastChangedCommit": "662055d58011dcecc0516d70937455b78e07163a"
     },
     {
       "key": "Artifact:tools/rc1-world-history-storage.js",
@@ -104527,7 +104573,7 @@
       "type": "Command",
       "id": "npm:test:rc1:harness",
       "label": "npm run test:rc1:harness",
-      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-cohort-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-reachability-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-market-world-adapter.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-law-world-adapter.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-world-adapter.js && node test/rc1-war-world-adapter.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-npc-retirement-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-alliance-continuous.js && node test/rc1-resource-pressure-policy.js && node test/rc1-pressure-world-adapter.js && node test/rc1-world-economy-metrics.js && node test/rc1-world-qualification.js && node test/rc1-world-duration-evidence.js && node test/rc1-lifecycle-applicability.js && node test/rc1-checkpoint-recovery-review.js && node test/rc1-native-quiescent-group.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js && node test/rc1-world-family-dissolution.js && node test/rc1-world-turf-terminal.js && node test/rc1-world-family-npc.js && node test/rc1-observer-serialization.js && node test/rc1-city-lock-release.js && node test/rc1-car-melt-provenance.js && node test/rc1-player-car-provenance.js && node test/rc1-world-car-melt-witness.js && node test/rc1-history-error-preservation.js && node test/rc1-season-conversion-journal.js && node test/rc1-npc-car-acquisition.js && node test/rc1-world-npc-family-lineage.js && node test/rc1-season-crown-journal.js && node test/rc1-season-election-provenance.js && node test/rc1-npc-boat-journal.js && node test/rc1-npc-boat-fault.js && node test/rc1-npc-cargo-journal.js && node test/rc1-npc-family-recruitment.js && node test/rc1-npc-market-order-journal.js && node test/rc1-npc-provenance-composition.js && node test/rc1-world-worker-transitions.js && node test/rc1-world-lifecycle-resources.js && node test/rc1-world-order-resources.js && node test/rc1-world-market-resources.js && node test/rc1-world-backlog-review.js && node test/rc1-world-checkpoint-series.js && node test/rc1-realtime-soak.js && node test/rc1-world-metrics-review.js && node test/rc1-scarcity-initialization.js && node test/rc1-world-cell-admission.js",
+      "command": "node test/rc1-native-proof.js && node test/rc1-native-worker-schedule.js && node test/rc1-native-query-tape.js && node test/rc1-native-player-policy.js && node test/rc1-cohort-policy.js && node test/rc1-native-actor-replay.js && node test/rc1-world-diagnostics.js && node test/rc1-reachability-diagnostics.js && node test/rc1-native-commit-observer.js && node test/rc1-world-resource-observer.js && node test/rc1-browser-controls.js && node test/rc1-knowledge-diagnostics.js && node test/rc1-mystery-policies.js && node test/rc1-aggression-policy.js && node test/rc1-loan-lifecycle-journal.js && node test/rc1-churn-policy.js && node test/rc1-capital-lifecycle-journal.js && node test/rc1-browser-receipt.js && node test/rc1-season-journal.js && node test/rc1-market-policy.js && node test/rc1-market-world-adapter.js && node test/rc1-native-run-guardrails.js && node test/rc1-law-policy.js && node test/rc1-law-world-adapter.js && node test/rc1-native-query-order.js && node test/rc1-browser-toast-controls.js && node test/rc1-family-policy.js && node test/rc1-family-world-adapter.js && node test/rc1-war-world-adapter.js && node test/rc1-family-cash-ammo-journal.js && node test/rc1-omr-journal.js && node test/rc1-omr-exchange.js && node test/rc1-alliance-policy.js && node test/rc1-known-command-blockers.js && node test/rc1-turf-policy.js && node test/rc1-native-failure-reducer.js && node test/rc1-native-proof-stream.js && node test/rc1-browser-board-refresh.js && node test/rc1-car-journal.js && node test/rc1-npc-retirement-journal.js && node test/rc1-alliance-world-adapter.js && node test/rc1-alliance-continuous.js && node test/rc1-resource-pressure-policy.js && node test/rc1-pressure-world-adapter.js && node test/rc1-world-economy-metrics.js && node test/rc1-world-qualification.js && node test/rc1-world-duration-evidence.js && node test/rc1-lifecycle-applicability.js && node test/rc1-checkpoint-recovery-review.js && node test/rc1-native-quiescent-group.js && node test/rc1-world-ammo-escrow.js && node test/rc1-world-pressure-cash.js && node test/rc1-alliance-continuation.js && node test/rc1-native-proof-gzip.js && node test/rc1-world-family-entry.js && node test/rc1-world-history-storage.js && node test/rc1-world-observer-load-order.js && node test/rc1-world-family-dissolution.js && node test/rc1-world-turf-terminal.js && node test/rc1-world-family-npc.js && node test/rc1-observer-serialization.js && node test/rc1-city-lock-release.js && node test/rc1-car-melt-provenance.js && node test/rc1-player-car-provenance.js && node test/rc1-world-car-melt-witness.js && node test/rc1-history-error-preservation.js && node test/rc1-season-conversion-journal.js && node test/rc1-npc-car-acquisition.js && node test/rc1-world-npc-family-lineage.js && node test/rc1-season-crown-journal.js && node test/rc1-season-election-provenance.js && node test/rc1-npc-boat-journal.js && node test/rc1-npc-boat-fault.js && node test/rc1-npc-cargo-journal.js && node test/rc1-npc-family-recruitment.js && node test/rc1-npc-market-order-journal.js && node test/rc1-npc-provenance-composition.js && node test/rc1-world-worker-transitions.js && node test/rc1-world-lifecycle-resources.js && node test/rc1-world-order-resources.js && node test/rc1-world-market-resources.js && node test/rc1-loan-source-compatibility.js && node test/rc1-world-backlog-review.js && node test/rc1-world-checkpoint-series.js && node test/rc1-realtime-soak.js && node test/rc1-world-metrics-review.js && node test/rc1-scarcity-initialization.js && node test/rc1-world-cell-admission.js",
       "provenance": [
         {
           "file": "package.json",
@@ -118776,6 +118822,22 @@
       ]
     },
     {
+      "key": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "type": "Commit",
+      "id": "5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "label": "Distinguish warehouse closure and loan refund client receipts",
+      "title": "Distinguish warehouse closure and loan refund client receipts",
+      "date": "2026-10-11T19:07:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "provenance": [
+        {
+          "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5353c96a0dd06a623c43e8d86d76ab6059810e34"
+        }
+      ]
+    },
+    {
       "key": "Commit:535cf2cc9ad35a98cd4da2cbd501bc77f4ad70fd",
       "type": "Commit",
       "id": "535cf2cc9ad35a98cd4da2cbd501bc77f4ad70fd",
@@ -121768,6 +121830,22 @@
       ]
     },
     {
+      "key": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "type": "Commit",
+      "id": "662055d58011dcecc0516d70937455b78e07163a",
+      "label": "Transfer the additive loan receipt marker to frozen observers",
+      "title": "Transfer the additive loan receipt marker to frozen observers",
+      "date": "2026-10-11T19:12:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/662055d58011dcecc0516d70937455b78e07163a",
+      "provenance": [
+        {
+          "commit": "662055d58011dcecc0516d70937455b78e07163a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/662055d58011dcecc0516d70937455b78e07163a"
+        }
+      ]
+    },
+    {
       "key": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
       "type": "Commit",
       "id": "66268c30133b897646a1900c609efe3c934d47f6",
@@ -123828,6 +123906,22 @@
         {
           "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc",
           "url": "https://github.com/OmertaDev/Omerta/commit/730fcf1c2ccac69a90a260af9def902c82ad90dc"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "type": "Commit",
+      "id": "7388d145da0d05bdea13725bac08b806456fd6b6",
+      "label": "Refresh warehouse artifacts after strict Director migration qualification",
+      "title": "Refresh warehouse artifacts after strict Director migration qualification",
+      "date": "2026-10-11T18:14:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7388d145da0d05bdea13725bac08b806456fd6b6",
+      "provenance": [
+        {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7388d145da0d05bdea13725bac08b806456fd6b6"
         }
       ]
     },
@@ -139416,6 +139510,22 @@
       ]
     },
     {
+      "key": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
+      "type": "Commit",
+      "id": "d43e6f64fade277399cf66efaed1564e401b3563",
+      "label": "Retain client receipt collision finding and causal repair evidence",
+      "title": "Retain client receipt collision finding and causal repair evidence",
+      "date": "2026-10-11T19:13:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d43e6f64fade277399cf66efaed1564e401b3563",
+      "provenance": [
+        {
+          "commit": "d43e6f64fade277399cf66efaed1564e401b3563",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d43e6f64fade277399cf66efaed1564e401b3563"
+        }
+      ]
+    },
+    {
       "key": "Commit:d456327995a8fc3e681f730c8db51f9e914d24ff",
       "type": "Commit",
       "id": "d456327995a8fc3e681f730c8db51f9e914d24ff",
@@ -145908,6 +146018,22 @@
         {
           "commit": "fd986263f768fba96d161cd255e0da476471a176",
           "url": "https://github.com/OmertaDev/Omerta/commit/fd986263f768fba96d161cd255e0da476471a176"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "type": "Commit",
+      "id": "fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "label": "Wire receipt compatibility proof and refresh measured census",
+      "title": "Wire receipt compatibility proof and refresh measured census",
+      "date": "2026-10-11T19:15:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "provenance": [
+        {
+          "commit": "fda1ecf935021a5e7d93bed3d4402596ef626697",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fda1ecf935021a5e7d93bed3d4402596ef626697"
         }
       ]
     },
@@ -157189,13 +157315,13 @@
       "id": "docs/warehouse-leases-security-review.md",
       "label": "docs/warehouse-leases-security-review.md",
       "documentType": "documentation",
-      "lines": 60,
-      "version": "df259d0f70f89c92",
+      "lines": 76,
+      "version": "020a2b47b231fc9a",
       "provenance": [
         {
           "file": "docs/warehouse-leases-security-review.md",
           "line": 1,
-          "version": "df259d0f70f89c92"
+          "version": "020a2b47b231fc9a"
         }
       ]
     },
@@ -159750,12 +159876,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "b2edc5d69f013209",
+      "version": "d3933d8c822a9c4e",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b2edc5d69f013209"
+          "version": "d3933d8c822a9c4e"
         }
       ]
     },
@@ -161668,7 +161794,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8444
+          "line": 8486
         },
         {
           "file": "test/deeds.js",
@@ -166821,6 +166947,9 @@
           "commit": "72f0c47d2009e4d91990cb01302708cef0a68a8f"
         },
         {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+        },
+        {
           "commit": "748277e13ef9acb1bbf75a14d384fa6193e3f4a1"
         },
         {
@@ -167812,6 +167941,9 @@
         },
         {
           "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
+        },
+        {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
         },
         {
           "commit": "748277e13ef9acb1bbf75a14d384fa6193e3f4a1"
@@ -169212,6 +169344,9 @@
           "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
         },
         {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+        },
+        {
           "commit": "748277e13ef9acb1bbf75a14d384fa6193e3f4a1"
         },
         {
@@ -170608,6 +170743,9 @@
         },
         {
           "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
+        },
+        {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
         },
         {
           "commit": "748277e13ef9acb1bbf75a14d384fa6193e3f4a1"
@@ -172396,6 +172534,9 @@
         },
         {
           "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
+        },
+        {
+          "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
         },
         {
           "commit": "748277e13ef9acb1bbf75a14d384fa6193e3f4a1"
@@ -177364,12 +177505,12 @@
       "id": "src/loans.js",
       "label": "src/loans.js",
       "lines": 818,
-      "version": "663f71b153323676",
+      "version": "e5440abea494c28d",
       "provenance": [
         {
           "file": "src/loans.js",
           "line": 1,
-          "version": "663f71b153323676"
+          "version": "e5440abea494c28d"
         }
       ]
     },
@@ -179569,12 +179710,12 @@
       "id": "src/warehouseleases.js",
       "label": "src/warehouseleases.js",
       "lines": 183,
-      "version": "55b4ee1d09f0bcbe",
+      "version": "854ab0a5779f2388",
       "provenance": [
         {
           "file": "src/warehouseleases.js",
           "line": 1,
-          "version": "55b4ee1d09f0bcbe"
+          "version": "854ab0a5779f2388"
         }
       ]
     },
@@ -182958,12 +183099,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "981c4cc529f96aa06795abe76555352b5a4b1c30",
+      "revision": "fda1ecf935021a5e7d93bed3d4402596ef626697",
       "currentBranch": "codex/warehouse-lease-integration",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4453,
+      "currentArtifactCount": 4455,
       "provenance": [
         {
           "file": "README.md",
@@ -214010,13 +214151,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9473,
-      "version": "775fc2f0c9ff7eea",
+      "lines": 9515,
+      "version": "8cfbb9eab46d475e",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "775fc2f0c9ff7eea"
+          "version": "8cfbb9eab46d475e"
         }
       ]
     },
@@ -217782,6 +217923,21 @@
           "file": "test/rc1-loan-lifecycle-journal.js",
           "line": 1,
           "version": "5b0dd4047d753fee"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/rc1-loan-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/rc1-loan-source-compatibility.js",
+      "label": "test/rc1-loan-source-compatibility.js",
+      "lines": 31,
+      "version": "ab2c0f9918aa0e2b",
+      "provenance": [
+        {
+          "file": "test/rc1-loan-source-compatibility.js",
+          "line": 1,
+          "version": "ab2c0f9918aa0e2b"
         }
       ]
     },
@@ -241486,6 +241642,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/rc1-loan-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/rc1-loan-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/rc1-market-native.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -244289,6 +244454,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/rc1-loan-lifecycle-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/rc1-loan-source-compatibility.js",
         "line": 1
       }
     },
@@ -296116,6 +296290,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "to": "Artifact:src/loans.js",
+      "provenance": {
+        "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "to": "Artifact:src/warehouseleases.js",
+      "provenance": {
+        "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:535cf2cc9ad35a98cd4da2cbd501bc77f4ad70fd",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -309372,6 +309578,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "to": "Artifact:test/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "commit": "662055d58011dcecc0516d70937455b78e07163a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "to": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "commit": "662055d58011dcecc0516d70937455b78e07163a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "to": "Artifact:tools/rc1-world-backlog-review.js",
+      "provenance": {
+        "commit": "662055d58011dcecc0516d70937455b78e07163a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "to": "Artifact:tools/rc1-world-economy-metrics.js",
+      "provenance": {
+        "commit": "662055d58011dcecc0516d70937455b78e07163a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -314920,6 +315158,46 @@
       "to": "HistoricalArtifact:knowledge/generated/routes.md",
       "provenance": {
         "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
       }
     },
     {
@@ -365356,6 +365634,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
+      "to": "Artifact:docs/warehouse-leases-security-review.md",
+      "provenance": {
+        "commit": "d43e6f64fade277399cf66efaed1564e401b3563"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d456327995a8fc3e681f730c8db51f9e914d24ff",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -392724,6 +393010,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "to": "Artifact:docs/warehouse-leases-security-review.md",
+      "provenance": {
+        "commit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:fe02a04c52eab57528b9b72db0c677e36f48591a",
       "to": "Artifact:.github/workflows/forge.yml",
       "provenance": {
@@ -419184,6 +419494,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-loan-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/rc1-market-native.js",
       "provenance": {
         "file": "test/rc1-market-native.js",
@@ -421986,6 +422305,15 @@
       "to": "Artifact:tools/rc1-loan-lifecycle-journal.js",
       "provenance": {
         "file": "tools/rc1-loan-lifecycle-journal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-loan-source-compatibility.js",
         "line": 1
       }
     },
@@ -448877,7 +449205,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1202
+      "weight": 1203
     },
     {
       "type": "DEPENDS_ON",
@@ -454544,6 +454872,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:rc1:harness",
       "to": "Artifact:test/rc1-loan-lifecycle-journal.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rc1:harness",
+      "to": "Artifact:test/rc1-loan-source-compatibility.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -470624,6 +470961,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5353c96a0dd06a623c43e8d86d76ab6059810e34",
+      "provenance": {
+        "commit": "5353c96a0dd06a623c43e8d86d76ab6059810e34"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:535cf2cc9ad35a98cd4da2cbd501bc77f4ad70fd",
       "provenance": {
         "commit": "535cf2cc9ad35a98cd4da2cbd501bc77f4ad70fd"
@@ -472120,6 +472465,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:662055d58011dcecc0516d70937455b78e07163a",
+      "provenance": {
+        "commit": "662055d58011dcecc0516d70937455b78e07163a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:66268c30133b897646a1900c609efe3c934d47f6",
       "provenance": {
         "commit": "66268c30133b897646a1900c609efe3c934d47f6"
@@ -473147,6 +473500,14 @@
       "to": "Commit:730fcf1c2ccac69a90a260af9def902c82ad90dc",
       "provenance": {
         "commit": "730fcf1c2ccac69a90a260af9def902c82ad90dc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7388d145da0d05bdea13725bac08b806456fd6b6",
+      "provenance": {
+        "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
       }
     },
     {
@@ -480944,6 +481305,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
+      "provenance": {
+        "commit": "d43e6f64fade277399cf66efaed1564e401b3563"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d456327995a8fc3e681f730c8db51f9e914d24ff",
       "provenance": {
         "commit": "d456327995a8fc3e681f730c8db51f9e914d24ff"
@@ -484187,6 +484556,14 @@
       "to": "Commit:fd986263f768fba96d161cd255e0da476471a176",
       "provenance": {
         "commit": "fd986263f768fba96d161cd255e0da476471a176"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
+      "provenance": {
+        "commit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
       }
     },
     {
@@ -499419,6 +499796,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/client.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/client.js",
+        "line": 2568
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/client.js",
       "to": "Artifact:src/honor.js",
       "provenance": {
         "file": "test/client.js",
@@ -499431,7 +499817,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6098
+        "line": 6140
       }
     },
     {
@@ -499440,7 +499826,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6201
+        "line": 6243
       }
     },
     {
@@ -499476,7 +499862,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8444
+        "line": 8486
       }
     },
     {
@@ -509710,6 +510096,24 @@
       "provenance": {
         "file": "test/rc1-loan-lifecycle-journal.js",
         "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-loan-source-compatibility.js",
+      "to": "Artifact:tools/rc1-world-backlog-review.js",
+      "provenance": {
+        "file": "test/rc1-loan-source-compatibility.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-loan-source-compatibility.js",
+      "to": "Artifact:tools/rc1-world-economy-metrics.js",
+      "provenance": {
+        "file": "test/rc1-loan-source-compatibility.js",
+        "line": 7
       }
     },
     {
@@ -522759,7 +523163,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-world-backlog-review.js",
-        "line": 9
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-backlog-review.js",
+      "to": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-backlog-review.js",
+        "line": 7
       }
     },
     {
@@ -522976,6 +523389,15 @@
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-economy-metrics.js",
+      "to": "Artifact:tools/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-economy-metrics.js",
+        "line": 7
       }
     },
     {
@@ -565937,6 +566359,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/rc1-loan-source-compatibility.js",
+      "to": "Artifact:test/rc1-loan-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-loan-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/rc1-market-native.js",
       "to": "Artifact:test/rc1-market-native.js",
       "provenance": {
@@ -569142,6 +569573,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/client.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/client.js",
+        "line": 2568
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/client.js",
       "to": "Artifact:src/honor.js",
       "provenance": {
         "file": "test/client.js",
@@ -569154,7 +569594,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6098
+        "line": 6140
       }
     },
     {
@@ -569163,7 +569603,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6201
+        "line": 6243
       }
     },
     {
