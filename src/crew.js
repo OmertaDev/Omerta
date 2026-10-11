@@ -140,6 +140,7 @@ export async function leaveCrew(ch, client, h) {
   const crewId = await crewIdOf(client, ch.account_id);
   if (!crewId) throw new GameError('no_crew', "You're not in a crew.");
   await client.query('SELECT id FROM crews WHERE id=$1 FOR UPDATE', [crewId]);   // serialize a concurrent leave/accept
+  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, ch.account_id]);
   await client.query('DELETE FROM crew_members WHERE account_id=$1', [ch.account_id]);
   await settleCrew(client, crewId, ch.account_id);
   bus.emit(`crew:${crewId}`, { type: 'crew_left', who: ch.name });
@@ -155,6 +156,7 @@ export async function kickMember(ch, targetCharacterId, client, h) {
   const t = (await client.query('SELECT id, name, account_id FROM characters WHERE id=$1', [targetCharacterId])).rows[0];
   if (!t) throw new GameError('no_target', 'No such member.');
   if (t.account_id === ch.account_id) throw new GameError('self', 'Leave the crew to step down.');
+  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, t.account_id]);
   const r = await client.query('DELETE FROM crew_members WHERE crew_id=$1 AND account_id=$2', [crewId, t.account_id]);
   if (!r.rowCount) throw new GameError('not_member', `${t.name} isn't in your crew.`);
   await notify(client, t.id, 'crew_kicked', { crew: crew.name }).catch(() => {});

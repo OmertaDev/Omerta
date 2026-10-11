@@ -333,6 +333,15 @@ const OPERATION_CONTRACTS = {
       required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
   },
   'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
+  'GET /v1/crew/logistics': { operationId: 'getPrivateCrewLogistics' },
+  'POST /v1/crew/logistics-links': {
+    operationId: 'shareOwnCrewLogisticsReference', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['kind', 'targetId'], properties: {
+        kind: { type: 'string', enum: ['tender', 'delivery_commitment', 'warehouse_claim'] },
+        targetId: { type: 'string', minLength: 1, maxLength: 128 },
+      } },
+  },
+  'POST /v1/crew/logistics-links/:id/revoke': { operationId: 'revokeCrewLogisticsReference' },
   'GET /v1/franchise-licenses': { operationId: 'getOwnGameFranchiseLicenses' },
   'POST /v1/depot/:id/franchise-offers': {
     operationId: 'offerOwnGameStorefrontBrand', requestSchema: { type: 'object', additionalProperties: false,
@@ -356,10 +365,30 @@ const OPERATION_CONTRACTS = {
     operationId: 'executeAgentTurnAction',
     requestSchema: { type: 'object', additionalProperties: false, required: ['turnId', 'actionId'], properties: {
       turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' }, actionId: { type: 'string', minLength: 1 },
+      decisionCallId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
     } },
     responseSchema: { $ref: '#/components/schemas/AgentActReceipt' },
     extraResponses: { 409: { description: 'stale_turn — use the replacement AgentTurn in the response and choose again.' } },
   },
+  'GET /v1/supply-tenders': { operationId: 'getFundedSupplyTenders' },
+  'POST /v1/depot/:id/orders/:orderId/tender': {
+    operationId: 'publishFundedSupplyTender', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty', 'unitPrice', 'offersCloseAt'], properties: {
+        qty: { type: 'integer', minimum: 1, maximum: 40 }, unitPrice: { type: 'integer', minimum: 50, maximum: 1000000 },
+        offersCloseAt: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/supply-tenders/:id/offers': {
+    operationId: 'offerFundedSupplyTender', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty', 'unitPrice', 'maxProcurementCash', 'acceptUntil', 'deliverBy'], properties: {
+        qty: { type: 'integer', minimum: 1, maximum: 40 }, unitPrice: { type: 'integer', minimum: 50, maximum: 1000000 },
+        maxProcurementCash: { type: 'integer', minimum: 1, maximum: 100000 },
+        acceptUntil: { type: 'string', format: 'date-time' }, deliverBy: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/supply-tenders/:id/offers/:offerId/award': { operationId: 'awardFundedSupplyOffer' },
+  'POST /v1/supply-tenders/:id/offers/withdraw': { operationId: 'withdrawOwnSupplyOffer' },
+  'POST /v1/supply-tenders/:id/cancel': { operationId: 'cancelOwnSupplyTender' },
   'POST /v1/crimes/:id': {
     operationId: 'commitCrime',
     requestSchema: { type: 'object', additionalProperties: false, properties: {
@@ -1751,6 +1780,13 @@ const AGENT_SCHEMAS = {
       actionId: { type: 'string' }, result: { type: 'object' },
       turn: { oneOf: [{ $ref: '#/components/schemas/AgentTurn' }, { type: 'null' }] },
       refreshRequired: { type: 'boolean' },
+      decisionProof: { type: 'object', additionalProperties: false,
+        required: ['id', 'callId', 'turnId', 'actionId', 'executionRecorded', 'simulated', 'reasoningVerified', 'monetaryProof', 'causalEffect'],
+        properties: {
+          id: { type: 'string' }, callId: { type: 'string' }, turnId: { type: 'string' }, actionId: { type: 'string' },
+          executionRecorded: { const: true }, simulated: { type: 'boolean' }, reasoningVerified: { const: false },
+          monetaryProof: { const: false }, causalEffect: { type: 'null' },
+        } },
     },
   },
 };

@@ -7490,6 +7490,34 @@ ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS warehouse_rent_lease
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_sequence INT CHECK (lease_sequence >= 1);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_journal_sequence ON business_depot_journal(lease_id,lease_sequence);
 
+-- Fixed-price offers against existing funded orders; these rows hold no money.
+CREATE TABLE IF NOT EXISTS supply_tenders (
+  id TEXT PRIMARY KEY,
+  order_id TEXT NOT NULL REFERENCES market_listings(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  qty INT NOT NULL CHECK (qty BETWEEN 1 AND 40),
+  unit_price NUMERIC NOT NULL CHECK (unit_price BETWEEN 50 AND 1000000),
+  offers_close_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','awarded','cancelled')),
+  winning_offer_id TEXT,
+  commitment_id TEXT REFERENCES delivery_commitments(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_supply_tender_open ON supply_tenders(order_id) WHERE status='open';
+CREATE TABLE IF NOT EXISTS supply_tender_offers (
+  id TEXT PRIMARY KEY,
+  tender_id TEXT NOT NULL REFERENCES supply_tenders(id),
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  qty INT NOT NULL CHECK (qty BETWEEN 1 AND 40),
+  unit_price NUMERIC NOT NULL CHECK (unit_price BETWEEN 50 AND 1000000),
+  spend_limit NUMERIC NOT NULL CHECK (spend_limit BETWEEN 1 AND 100000),
+  accept_until TIMESTAMPTZ NOT NULL,
+  delivery_deadline TIMESTAMPTZ NOT NULL CHECK (delivery_deadline >= accept_until + interval '60 seconds'),
+  status TEXT NOT NULL DEFAULT 'offered' CHECK (status IN ('offered','withdrawn','accepted')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(tender_id,supplier_character)
+);
 -- Finite game brand licences split earned retail receipts, not principal or custody.
 CREATE TABLE IF NOT EXISTS depot_brand_licenses (
   id TEXT PRIMARY KEY,
@@ -7652,6 +7680,7 @@ CREATE TABLE IF NOT EXISTS resource_calls (
   settled_at TIMESTAMPTZ,
   UNIQUE(account_id,request_key)
 );
+ALTER TABLE resource_calls ADD COLUMN IF NOT EXISTS decision_execution_receipt JSONB;
 CREATE TABLE IF NOT EXISTS resource_payments (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),
@@ -7762,3 +7791,19 @@ CREATE TABLE IF NOT EXISTS city_social_preferences (
   last_chat_at TIMESTAMPTZ,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Explicit member consent to display native logistics references; no execution authority.
+CREATE TABLE IF NOT EXISTS crew_logistics_links (
+  id TEXT PRIMARY KEY,
+  crew_id TEXT NOT NULL REFERENCES crews(id) ON DELETE CASCADE,
+  publisher_account_id TEXT NOT NULL REFERENCES accounts(id),
+  publisher_character_id TEXT NOT NULL REFERENCES characters(id),
+  generation INT NOT NULL CHECK (generation > 0),
+  kind TEXT NOT NULL CHECK (kind IN ('tender','delivery_commitment','warehouse_claim')),
+  target_id TEXT NOT NULL CHECK (char_length(target_id) BETWEEN 1 AND 128),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+  revoked_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_crew_logistics_member ON crew_logistics_links (crew_id,publisher_account_id,revoked_at);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_crew_logistics_consent ON crew_logistics_links (crew_id,publisher_account_id,kind,target_id) WHERE revoked_at IS NULL;

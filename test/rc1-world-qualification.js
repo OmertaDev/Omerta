@@ -10,6 +10,10 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
+  WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
+  SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
+  DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
   STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
   STOREFRONT_SERVER_PIN, STOREFRONT_SOURCE_REVIEWED_REVISION, STOREFRONT_SOURCE_PREDECESSOR_REVISION, assertStorefrontServerTransfer,
   BUSINESS_SERVER_PIN, BUSINESS_SOURCE_REVIEWED_REVISION, BUSINESS_SOURCE_PREDECESSOR_REVISION, assertBusinessServerTransfer,
@@ -24,7 +28,91 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const latestServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const crewSources = new Map();
+for (const file of Object.keys(CREW_LOGISTICS_SOURCE_CURRENT_PINS)) {
+  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'), proof = assertCrewLogisticsSourceTransfer(file, text);
+  crewSources.set(file, proof);
+  assert.equal(proof.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
+  assert.equal(proof.baselineSha256, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file]);
+  assert.equal(proof.inverseChunks, 2);
+  assert.equal(proof.sourceRevision, CREW_LOGISTICS_SOURCE_REVIEWED_REVISION);
+  for (const spec of [CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file], CREW_LOGISTICS_SOURCE_REVIEWED_REVISION + ':' + file])
+    assert.equal(text, execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  for (const spec of [CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file], CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION + ':' + file])
+    assert.equal(proof.baselineText, execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES[file]) {
+    assert.equal(text.split(chunk).length, 2);
+    for (const changed of [text.replace(chunk, ''), text.replace(chunk, chunk + chunk)])
+      assert.throws(() => assertCrewLogisticsSourceTransfer(file, changed), /source changed/);
+  }
+  assert.throws(() => assertCrewLogisticsSourceTransfer(file, text + '\n// unknown Crew drift\n'), /source changed/);
+}
+assert.equal(CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05');
+assert.equal(CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/crew.js'], 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed');
+const warehouseServerText = crewSources.get('src/server.js').baselineText;
+const warehouseProof = assertWarehouseServerTransfer(warehouseServerText);
+assert.equal(warehouseProof.actualSha256, WAREHOUSE_SERVER_PIN);
+assert.equal(warehouseProof.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(warehouseProof.sourceRevision, WAREHOUSE_SOURCE_REVIEWED_REVISION);
+assert.equal(warehouseProof.inverseChunks, 2);
+for (const spec of [WAREHOUSE_SERVER_BLOB, WAREHOUSE_SOURCE_REVIEWED_REVISION + ':src/server.js'])
+  assert.equal(warehouseServerText, execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(warehouseProof.baselineText, execFileSync('git', ['show', WAREHOUSE_SERVER_PREDECESSOR_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+for (const [chunk] of WAREHOUSE_SERVER_SOURCE_INVERSES) {
+  assert.equal(warehouseServerText.split(chunk).length, 2);
+  for (const changed of [warehouseServerText.replace(chunk, ''), warehouseServerText.replace(chunk, chunk + chunk)])
+    assert.throws(() => assertWarehouseServerTransfer(changed), /source changed/);
+}
+assert.throws(() => assertWarehouseServerTransfer(warehouseServerText + '\n// unknown warehouse drift\n'), /source changed/);
+const tenderServerText = warehouseProof.baselineText;
+const tenderProof = assertSupplyTenderServerTransfer(tenderServerText);
+assert.equal(tenderProof.actualSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(tenderProof.baselineSha256, DECISION_CALL_SERVER_PIN);
+assert.equal(tenderProof.sourceRevision, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION);
+assert.equal(tenderProof.sourceBlob, SUPPLY_TENDER_SERVER_BLOB);
+assert.equal(tenderProof.predecessorServerBlob, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB);
+assert.equal(tenderProof.inverseChunks, 2);
+assert.equal(tenderServerText, execFileSync('git', ['show', SUPPLY_TENDER_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(tenderServerText, execFileSync('git', ['show', SUPPLY_TENDER_SOURCE_REVIEWED_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(tenderProof.baselineText, execFileSync('git', ['show', SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(SUPPLY_TENDER_SOURCE_INVERSES.length, 2);
+for (const chunk of SUPPLY_TENDER_SOURCE_INVERSES) {
+  assert.equal(tenderServerText.split(chunk).length, 2);
+  for (const changed of [tenderServerText.replace(chunk, ''), tenderServerText.replace(chunk, chunk + chunk)]) {
+    assert.notEqual(changed, tenderServerText);
+    assert.throws(() => assertSupplyTenderServerTransfer(changed), /source changed/);
+  }
+}
+assert.throws(() => assertSupplyTenderServerTransfer(tenderServerText + '\n// unsupported tender source drift\n'), /source changed/);
+const decisionServerText = tenderProof.baselineText;
+const decisionProof = assertDecisionCallServerTransfer(decisionServerText);
+assert.equal(decisionProof.actualSha256, DECISION_CALL_SERVER_PIN);
+assert.equal(decisionProof.baselineSha256, STOREFRONT_CITY_SERVER_PIN);
+assert.equal(decisionProof.sourceRevision, DECISION_CALL_SOURCE_REVIEWED_REVISION);
+assert.equal(decisionProof.sourceBlob, DECISION_CALL_SERVER_BLOB);
+assert.equal(decisionProof.predecessorServerBlob, DECISION_CALL_PREDECESSOR_SERVER_BLOB);
+assert.equal(decisionProof.inverseChunks, 12);
+assert.equal(decisionServerText, execFileSync('git', ['show', DECISION_CALL_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(decisionServerText, execFileSync('git', ['show', DECISION_CALL_SOURCE_REVIEWED_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(decisionProof.baselineText, execFileSync('git', ['show', DECISION_CALL_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(DECISION_CALL_SOURCE_INVERSES.length, 12);
+let decisionInverseStage = decisionServerText;
+for (const [chunk, previous] of DECISION_CALL_SOURCE_INVERSES) {
+  assert.equal(decisionInverseStage.split(chunk).length, 2, 'Every ordered decision inverse targets one exact remaining source chunk.');
+  const offsets = [];
+  for (let at = decisionServerText.indexOf(chunk); at >= 0; at = decisionServerText.indexOf(chunk, at + 1))
+    if (at === 0 || decisionServerText[at - 1] === '\n') offsets.push(at);
+  assert.equal(offsets.length, 1, 'Each negative control identifies the complete line-boundary source chunk, not an indentation suffix.');
+  const at = offsets[0], before = decisionServerText.slice(0, at), after = decisionServerText.slice(at + chunk.length);
+  for (const changed of [before + after, before + chunk + chunk + after]) {
+    assert.notEqual(changed, decisionServerText);
+    assert.throws(() => assertDecisionCallServerTransfer(changed), /source changed/);
+  }
+  decisionInverseStage = decisionInverseStage.replace(chunk, previous);
+}
+assert.equal(decisionInverseStage, decisionProof.baselineText);
+assert.throws(() => assertDecisionCallServerTransfer(decisionServerText + '\n// unsupported decision source drift\n'), /source changed/);
+const latestServerText = decisionProof.baselineText;
 const storefrontCityProof = assertStorefrontCityServerTransfer(latestServerText);
 assert.equal(storefrontCityProof.actualSha256, STOREFRONT_CITY_SERVER_PIN);
 assert.equal(storefrontCityProof.baselineSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
@@ -324,7 +412,29 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], STOREFRONT_CITY_SERVER_PIN);
+assert.equal(source.sourceFiles['src/server.js'], CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(source.sourceFiles['src/game.js'], CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.predecessorPins, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS);
+assert.match(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.scope, /separate current-source native proofs/);
+assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['src/crew.js'], undefined);
+assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.actualServerSha256, WAREHOUSE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.predecessorServerSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.sourceBlob, WAREHOUSE_SERVER_BLOB);
+assert.match(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.scope, /separate current-source native proofs/);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.actualServerSha256, SUPPLY_TENDER_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.predecessorServerSha256, DECISION_CALL_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.inverseChunks, 2);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.sourceRevision, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.sourceBlob, SUPPLY_TENDER_SERVER_BLOB);
+assert.equal(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.predecessorServerBlob, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB);
+assert.match(WORLD_RECOVERY_REVIEW.tenderSourceReviewTransfer.scope, /separate current-source native proofs/);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.actualServerSha256, DECISION_CALL_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.predecessorServerSha256, STOREFRONT_CITY_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.inverseChunks, 12);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.sourceRevision, DECISION_CALL_SOURCE_REVIEWED_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.sourceBlob, DECISION_CALL_SERVER_BLOB);
+assert.equal(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.predecessorServerBlob, DECISION_CALL_PREDECESSOR_SERVER_BLOB);
+assert.match(WORLD_RECOVERY_REVIEW.decisionSourceReviewTransfer.scope, /separate current-source native proofs/);
 assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.actualServerSha256, STOREFRONT_CITY_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.storefrontCitySourceReviewTransfer.inverseChunks, 2);
@@ -345,7 +455,10 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 12);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 16);
+assert.equal(WORLD_RECOVERY_REVIEW.warehouseEstateSourceChange.inverseChunks, 2);
+assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['src/social/estate.js'], undefined);
+assert.match(WORLD_RECOVERY_REVIEW.warehouseEstateSourceChange.scope, /no legacy estate qualification/);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.actualServerSha256, CITY_SOCIAL_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.predecessorServerSha256, CITY_SOCIAL_SERVER_PREDECESSOR_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.citySocialSourceReviewTransfer.sourceRevision, CITY_SOCIAL_SOURCE_REVIEWED_REVISION);

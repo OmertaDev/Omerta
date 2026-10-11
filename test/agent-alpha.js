@@ -14,6 +14,7 @@ import { promisify } from 'node:util';
 import Fastify from 'fastify';
 
 import { buildServer } from '../src/server.js';
+import { createResourceAgentTestFetch } from '../tools/resource-agent.js';
 import {
   createAgentAlphaTestRunner,
   recommendationOf,
@@ -1877,14 +1878,39 @@ async function waitFor(promise, label, timeoutMs = 8000) {
   }
 }
 
-async function hardCrashReplayTest() {
+async function decisionAnnotationTest() {
+  const action = { id: 'decision-action', kind: 'crime', executable: true };
+  const turn = { turnId: 'decision-turn', recommendedActionId: action.id, policy: POLICY, actions: [action] };
+  const annotation = { callId: 'call-selected', turnId: turn.turnId, actionId: action.id };
+  assert.equal(recommendationOf(turn).action, action, 'legacy action authority is unchanged');
+  const selected = { ...action, decisionCall: annotation };
+  assert.equal(recommendationOf({ ...turn, actions: [selected] }).action, selected);
+  for (const decisionCall of [null, [], 'call-selected', { ...annotation, callId: '' },
+    { ...annotation, callId: '../call' }, { ...annotation, callId: 'a'.repeat(129) },
+    { ...annotation, turnId: 'other' }, { ...annotation, actionId: 'other' }, { ...annotation, authority: true }])
+    assert.equal(recommendationOf({ ...turn, actions: [{ ...action, decisionCall }] }).errorCode, 'unsafe_decision');
+  const api = await actionApi({ kinds: ['crime'], turnForIndex: () => ({ ...turn, actions: [{ ...action, decisionCall: null }] }) });
+  await withReadySession(api, 'omerta-alpha-invalid-decision-', async ({ sessionFile, reportFile }) => {
+    assert.deepEqual(await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }), { status: 'refused', actions: 0 });
+    assert.equal(api.state.actCalls, 0, 'malformed annotation cannot cause any dispatch');
+    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+    const invalid = sessionFor(api.baseUrl, { pending: { operationId: 'pending-op', turnId: 't', actionId: 'a',
+      startedAt: new Date().toISOString(), decisionCallId: '../bad' } });
+    await writePrivateSession(sessionFile, JSON.stringify(invalid));
+    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }), /corrupt/);
+    assert.equal(api.state.actCalls, 0, 'corrupt optional journal metadata cannot change authority');
+  });
+}
+
+async function hardCrashReplayTest({ decisionCall = false } = {}) {
   const app = Fastify({ logger: false, forceCloseConnections: true });
   const sockets = new Set();
   app.server.on('connection', (socket) => {
     sockets.add(socket);
     socket.once('close', () => sockets.delete(socket));
   });
-  const state = { sessionCalls: 0, turnCalls: 0, actKeys: [], actBodies: [] };
+  const state = { sessionCalls: 0, turnCalls: 0, actKeys: [], actBodies: [], executions: 0, computeCalls: 0 };
+  const committed = new Map();
   let receivedFirst;
   const firstReceived = new Promise((resolveFirst) => { receivedFirst = resolveFirst; });
   let releaseFirst;
@@ -1904,31 +1930,45 @@ async function hardCrashReplayTest() {
     state.turnCalls += 1;
     return {
       turnId: 'hard-crash-turn',
-      recommendedActionId: 'hard-crash-action',
+      recommendedActionId: decisionCall ? 'hard-crash-baseline' : 'hard-crash-action',
       policy: POLICY,
-      actions: [{
+      actions: [...(decisionCall ? [{ id: 'hard-crash-baseline', kind: 'crime', executable: true, ev: { cash: 200 } }] : []), {
         id: 'hard-crash-action', kind: 'crime', method: 'POST', path: '/ignored',
-        body: { prompt: 'never persist this' }, executable: true,
+        body: { prompt: 'never persist this' }, executable: true, ev: { cash: 200 },
       }],
     };
+  });
+  app.post('/v1/resources/compute', async () => {
+    state.computeCalls++;
+    return { call: { id: 'call-hard-crash', costUsdMicros: 1, output: '{"actionId":"hard-crash-action"}' } };
   });
   app.post('/v1/agent/act', async (req, reply) => {
     state.actKeys.push(req.headers['idempotency-key']);
     state.actBodies.push(req.body);
+    const key = req.headers['idempotency-key'];
+    if (committed.has(key)) {
+      const prior = committed.get(key);
+      if (JSON.stringify(prior.body) !== JSON.stringify(req.body))
+        return reply.code(422).send({ error: 'idempotency_key_reuse' });
+      return prior.response;
+    }
+    const response = { actionId: req.body.actionId, result: { ok: true },
+      turn: { turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [] } };
+    committed.set(key, { body: req.body, response });
+    state.executions++;
     if (state.actKeys.length === 1) {
       const journal = JSON.parse(await readFile(sessionFile, 'utf8'));
       assert.equal(journal.pending?.turnId, 'hard-crash-turn',
         'the journal is durably visible before the remote mutation begins');
       assert.equal(journal.pending?.actionId, 'hard-crash-action',
         'the durable journal contains the exact server-issued action before POST');
+      assert.equal(journal.pending?.decisionCallId, decisionCall ? 'call-hard-crash' : undefined,
+        'the optional association is durable before dispatch');
+      assert.equal(req.body.decisionCallId, decisionCall ? 'call-hard-crash' : undefined);
       receivedFirst();
       await firstResponseGate;
     }
-    return {
-      actionId: req.body.actionId,
-      result: { ok: true },
-      turn: { turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [] },
-    };
+    return response;
   });
 
   await app.listen({ port: 0, host: '127.0.0.1' });
@@ -1940,8 +1980,10 @@ async function hardCrashReplayTest() {
   await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
 
   const runnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/agent-alpha.js', import.meta.url))).href;
+  const resourceRunnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/resource-agent.js', import.meta.url))).href;
   const childCode = `
     import { createAgentAlphaTestRunner } from ${JSON.stringify(runnerUrl)};
+    import { createResourceAgentTestFetch } from ${JSON.stringify(resourceRunnerUrl)};
     let now = 0;
     const runAgentAlpha = createAgentAlphaTestRunner({
       now: () => now,
@@ -1954,6 +1996,9 @@ async function hardCrashReplayTest() {
       maxActions: 1,
       intervalMs: 3100,
       sleep: async () => {},
+      ...(process.env.TEST_DECISION === 'on' ? { fetchImpl: createResourceAgentTestFetch({ baseUrl: process.env.TEST_BASE,
+        providerId: 'fixture', maxOutputTokens: 256, maxPaidJobs: 0, maxLaborBids: 0 },
+        { now: () => now, sleep: async (ms) => { now += ms; } }) } : {}),
     });
   `;
   const child = spawn(process.execPath, ['--input-type=module', '--eval', childCode], {
@@ -1962,6 +2007,7 @@ async function hardCrashReplayTest() {
       TEST_BASE: baseUrl,
       TEST_SESSION: sessionFile,
       TEST_REPORT: reportFile,
+      TEST_DECISION: decisionCall ? 'on' : 'off',
     },
     stdio: ['ignore', 'ignore', 'pipe'],
   });
@@ -2007,6 +2053,8 @@ async function hardCrashReplayTest() {
       maxActions: 1,
       intervalMs: 3100,
       sleep: async () => {},
+      ...(decisionCall ? { fetchImpl: createResourceAgentTestFetch({ baseUrl, providerId: 'fixture', maxOutputTokens: 256,
+        maxPaidJobs: 0, maxLaborBids: 0 }, { now: () => testNow, sleep: async (ms) => { testNow += ms; } }) } : {}),
     });
     assert.deepEqual(resumed, { status: 'complete', actions: 1 },
       'restart reclaims the dead owner and confirms the one pending logical action');
@@ -2018,6 +2066,8 @@ async function hardCrashReplayTest() {
       'hard-crash restart reuses the exact same idempotency key');
     assert.deepEqual(state.actBodies[0], state.actBodies[1],
       'hard-crash restart reuses the exact journaled turn/action body');
+    assert.equal(state.executions, 1, 'fresh process confirms cached success without another mutation');
+    assert.equal(state.computeCalls, decisionCall ? 1 : 0, 'fresh wrapper recovery never buys another inference');
     assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null,
       'the replay journal clears only after authoritative confirmation');
   } finally {
@@ -2489,7 +2539,10 @@ async function realElapsedCadenceTest() {
   }
 }
 
-if (process.argv.includes('--supplier-continuity')) {
+if (process.argv.includes('--decision-recovery')) {
+  await decisionAnnotationTest();
+  await hardCrashReplayTest({ decisionCall: true });
+} else if (process.argv.includes('--supplier-continuity')) {
   await supplierContinuityTest();
 } else if (process.argv.includes('--business-properties')) {
   await businessPropertyRoleTest();
@@ -2524,6 +2577,8 @@ await initialNameSafetyTest();
 await cliContractTest();
 await redirectOriginTest();
 await hardCrashReplayTest();
+await decisionAnnotationTest();
+await hardCrashReplayTest({ decisionCall: true });
 await physicalAliasLockTest();
 await danglingReportToFutureLockTest();
 await danglingSessionAliasCreateTest();

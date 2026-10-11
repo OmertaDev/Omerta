@@ -1,5 +1,8 @@
 .city-world__toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; width: 100%; }
 .omerta-city .city-world__toolbar button { min-height: 44px; }
+.city-world__tools, .city-world__tabs button, .city-world__close, .city-world__back { appearance: none; color: #ecd2a1; background: #24221d; border-color: #8c7655; border-style: solid; border-radius: 3px; cursor: pointer; box-shadow: inset 0 1px 0 #514532; }
+.city-world__tools:hover, .city-world__tabs button:hover, .city-world__close:hover, .city-world__back:hover { background: #302b23; border-color: #c89d57; }
+.city-world__tools:focus-visible, .city-world__tabs button:focus-visible, .city-world__close:focus-visible, .city-world__back:focus-visible { outline: 2px solid #e8b34b; outline-offset: -3px; }
 .city-world__tools { font-weight: 750; white-space: nowrap; }
 .city-world__tracker { flex: 1 1 160px; min-width: 0; text-align: left; color: #e9c37b; overflow-wrap: anywhere; }
 .city-world__gains { color: #aed8a3; font-size: 12px; font-weight: 650; }
@@ -9,6 +12,8 @@
 .city-world__dock { min-width: 0; max-height: var(--city-world-height, 240px); overflow: auto; overscroll-behavior: contain; background: #182528; border: 1px solid #8c7655; border-radius: 6px; padding: 0 12px 12px; box-sizing: border-box; scrollbar-gutter: stable; }
 .city-world__dock[hidden], .city-world__speech[hidden] { display: none; }
 .city-world__dock-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; background: #182528; border-bottom: 1px solid #4b5146; }
+.omerta-city .city-world__back { min-height: 44px; min-width: 44px; font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+.city-world__dock-bar > strong { flex: 1; }
 .omerta-city .city-world__close { min-height: 44px; min-width: 44px; padding: 0; font-size: 22px; border: 0; }
 .city-world__tabs { display: flex; gap: 4px; flex-wrap: wrap; padding: 6px 0; }
 .omerta-city .city-world__tabs button { min-height: 44px; flex: 1 1 72px; font-size: 12px; padding: 4px 8px; }
@@ -17,8 +22,9 @@
 .city-world__dock.is-compact { padding-block: 8px; }
 .city-world__dock.is-compact .city-world__dock-bar { height: 0; min-height: 0; border: 0; background: none; }
 .city-world__dock.is-compact .city-world__dock-bar > strong { display: none; }
+.city-world__dock.is-compact .city-world__back { position: absolute; right: 48px; top: 0; width: 44px; padding: 0; z-index: 4; font-size: 10px; background: #182528; }
 .city-world__dock.is-compact .city-world__close { position: absolute; right: 0; top: 0; z-index: 4; background: #182528; }
-.city-world__dock.is-compact .city-world__tabs, .city-world__dock.is-compact .city-world__content, .city-world__dock.is-compact .city-world__notice, .city-world__dock.is-compact .city-world__receipt { padding-right: 52px; }
+.city-world__dock.is-compact .city-world__tabs, .city-world__dock.is-compact .city-world__content, .city-world__dock.is-compact .city-world__notice, .city-world__dock.is-compact .city-world__receipt { padding-right: 100px; }
 .city-world__dock.is-compact .city-world__tabs { padding-block: 0; }
 .city-world__content h4 { margin: 6px 0; font-size: 14px; }
 .city-world__content p { margin: 5px 0 8px; }

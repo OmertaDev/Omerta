@@ -3620,13 +3620,26 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
     'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres', 'test:identity-checkout:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
   ];
+  const assertResourceNativeEnvironment = workflow => {
+    for (const section of workflow.split(/\n {6}- /)) {
+      if (/^\s*(?:run:\s*)?npm run (?:test:resources:postgres|pilot:resources:postgres)\s*$/m.test(section))
+        assert(/^\s*COORDINATION_TEST_DATABASE_URL:\s*\S/m.test(section), 'native resource commands require their explicit isolated database environment');
+    }
+  };
+  assertResourceNativeEnvironment(pgcheck);
+  const pilotSection = pgcheck.split(/\n {6}- /).find(section => /^\s*(?:run:\s*)?npm run pilot:resources:postgres\s*$/m.test(section));
+  assert(pilotSection);
+  const missingResourceEnvironment = pgcheck.replace(pilotSection,
+    pilotSection.replace(/^\s*COORDINATION_TEST_DATABASE_URL:[^\n]*\n/m, ''));
+  assert.throws(() => assertResourceNativeEnvironment(missingResourceEnvironment), /explicit isolated database environment/,
+    'moving a command away from its database environment cannot pass the command inventory alone');
   const replacePgquery = (replacement) => {
     const fixture = pgcheck.replace(/^([ ]*)npm run pgquery[ ]*$/m,
       (_, indent) => replacement.map((line) => indent + line).join('\n'));

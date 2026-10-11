@@ -7,6 +7,7 @@ import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
 import { finalizeHttpIdempotency, readHttpIdempotency } from './http-idempotency.js';
+import { validateDecisionCall, recordDecisionExecution } from './decisionproofs.js';
 import { preflight } from './preflight.js';
 import { RwaHealthError } from './rwahealtherror.js';
 import * as G from './game.js';
@@ -68,7 +69,9 @@ import * as Business from './business.js';
 import * as Depot from './depot.js';
 import * as Delivery from './delivery.js';
 import { register as registerDelivery } from './routes/delivery.js';
+import { register as registerSupplyTenders } from './routes/supplytenders.js';
 import { register as registerWarehouses } from './routes/warehouses.js';
+import { register as registerCrewLogistics } from './routes/crewlogistics.js';
 import { register as registerFranchises } from './routes/franchises.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
@@ -2380,7 +2383,9 @@ export async function buildServer() {
   registerDepot(app, { pool, auth });
   registerResources(app, { pool, auth, modAuth });
   registerDelivery(app, { pool, auth });
+  registerSupplyTenders(app, { pool, auth });
   registerWarehouses(app, { pool, auth });
+  registerCrewLogistics(app, { pool, auth });
   registerFranchises(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
@@ -2690,9 +2695,14 @@ export async function buildServer() {
       'That action was not issued by this turn. Refresh and choose a current executable action.');
     return { action, current };
   };
-  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {
+  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null) => {
     const { action, current } = await authorizeAgentAction(client, ch, h, turnId, actionId);
+    const decision = decisionCallId === null ? null : await validateDecisionCall(client, {
+      callId: decisionCallId, accountId: ch.account_id, characterId: ch.id,
+      generation: Number(ch.generation), turnId, actionId,
+    });
     const result = await performAgentAction(action, ch, client, h, lender, current.policy);
+    const decisionProof = decision ? await recordDecisionExecution(client, decision, { actionKind: action.kind, result }) : null;
     const blockerCodes = [...new Set(current.blockedActions.flatMap((candidate) =>
       (candidate.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort();
     // Operational evidence belongs to the same transaction as the canonical mutation. A thrown
@@ -2706,11 +2716,14 @@ export async function buildServer() {
       remaining: current.exploration.progress.remaining,
       blockerCodes,
     });
-    return result;
+    return { ...result, ...(decisionProof ? { decisionProof } : {}) };
   };
   app.post('/v1/agent/act', { preHandler: auth }, async (req, reply) => {
     const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
     const actionId = typeof req.body?.actionId === 'string' ? req.body.actionId : '';
+    const decisionCallId = req.body?.decisionCallId === undefined ? null : req.body.decisionCallId;
+    if (decisionCallId !== null && (typeof decisionCallId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(decisionCallId)))
+      throw new G.GameError('decision_call', 'Provide a valid decision call identifier.');
     if (!turnId || !actionId) throw new G.GameError('invalid_turn', 'Send both turnId and actionId from the latest agent turn.');
     // Crew recruiting mutates the Crew row. Select its lock posture from the closed, server-authored
     // action-id shape, then still recompute and authorize the exact turn/action inside the lock.
@@ -2726,28 +2739,28 @@ export async function buildServer() {
         const ownerId = (await pool.query("SELECT owner_character FROM business_depots WHERE id=$1 AND status='open'", [storefrontMatch[2]])).rows[0]?.owner_character;
         if (ownerId) {
           result = await G.withTwoCharacters(pool, req.user.sub, ownerId, (ch, owner, client, h) =>
-            executeAgentAction(client, ch, h, turnId, actionId, owner));
+            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId));
         } else {
           result = await G.withCharacter(pool, req.user.sub, (ch, client, h) =>
-            executeAgentAction(client, ch, h, turnId, actionId), agentActionLocks);
+            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);
         }
       } else if (loanMatch && loanMatch[1] !== 'house') {
         const lenderId = (await pool.query(
           "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
         if (lenderId) {
           result = await G.withTwoCharacters(pool, req.user.sub, lenderId, async (ch, lender, client, h) => {
-            return executeAgentAction(client, ch, h, turnId, actionId, lender);
+            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId);
           });
         } else {
           // Re-enter the normal locked validator so a disappeared loan reports stale_turn (or an
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-            return executeAgentAction(client, ch, h, turnId, actionId);
+            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);
           }, agentActionLocks);
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-          return executeAgentAction(client, ch, h, turnId, actionId);
+          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);
         }, agentActionLocks);
       }
     } catch (e) {
@@ -2764,7 +2777,9 @@ export async function buildServer() {
     let turn = null;
     try { turn = await readAgentTurn(req.user.sub); }
     catch (e) { console.error('agent post-action turn refresh (non-fatal)', e?.code || e); }
-    return { actionId, result, turn, refreshRequired: !turn };
+    const { decisionProof, ...actionResult } = result;
+    return { actionId, result: actionResult, turn, refreshRequired: !turn,
+      ...(decisionProof ? { decisionProof } : {}) };
   });
   // THE ARENA (JSON) — the public, keyless agent showcase behind GET /arena: the agent hall of fame +
   // the agent-economy aggregate + the machine-discovery links. Marketing surface AND agent meta.

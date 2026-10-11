@@ -11,7 +11,7 @@ import { prepareFranchiseSale } from './franchiselicenses.js';
 export const DELIVERY = Object.freeze({ maxActive: 2, maxUnits: 40, maxSpend: 100000, maxSeconds: 21600 });
 export const deliveryIntakeEnabled = () => process.env.DELIVERY_CONTRACTS === 'on';
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
-export async function acceptDelivery(ch, orderId, body, client) {
+export async function acceptDelivery(ch, orderId, body, client, { deadlineAt = null } = {}) {
   if (!deliveryIntakeEnabled()) throw new GameError('pilot_disabled', 'Delivery-contract acceptance is not open.');
   if (ch.is_npc) throw new GameError('delivery_owner', 'Delivery commitments require a durable player or agent identity.');
   if (jailed(ch) || safeHoused(ch)) throw new GameError('status', 'Surface before accepting a delivery.');
@@ -21,7 +21,11 @@ export async function acceptDelivery(ch, orderId, body, client) {
   if (active.length >= DELIVERY.maxActive || active.reduce((n, r) => n + Number(r.remaining), 0) + body.qty > DELIVERY.maxUnits)
     throw new GameError('delivery_limit', 'Delivery exposure exceeds the active-contract or unit limit.');
   const order = (await client.query("SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND status='live' FOR UPDATE", [orderId])).rows[0];
-  const deadline = new Date(Date.now() + body.deadlineSeconds * 1000);
+  const now = Date.now();
+  const deadline = deadlineAt === null ? new Date(now + body.deadlineSeconds * 1000) : deadlineAt;
+  if (!(deadline instanceof Date) || !Number.isFinite(deadline.getTime())
+      || deadline.getTime() - now < 60000 || deadline.getTime() - now > DELIVERY.maxSeconds * 1000)
+    throw new GameError('delivery_terms', 'The promised delivery deadline must remain between one minute and six hours away.');
   if (!order?.depot_id || new Date(order.expires_at) < deadline) throw new GameError('no_order', 'Choose a depot order that remains funded through this deadline.');
   if (order.seller_character === ch.id) throw new GameError('own', 'You cannot contract with your own business.');
   if (body.qty > Number(order.qty) - await reservedQuantity(client, order.id)) throw new GameError('reserved', 'That quantity is no longer available.');

@@ -2,6 +2,247 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+// Crew logistics changes transfer unchanged historical guards by full-file reconstruction only.
+export const CREW_LOGISTICS_SOURCE_REVIEWED_REVISION = '5f6d9b83496ddce31811d61c168d1ddd3cfb5896';
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION = 'e3b5586c9887d980bc03c709841804b66e36752b';
+export const CREW_LOGISTICS_SOURCE_CURRENT_PINS = Object.freeze({
+  "src/server.js": "ca911a40235992e6e938eeab5a622a82133499fe9ac723bf61845477ab4fb113",
+  "src/game.js": "8c299023ed047d5ff97125044e4e45e1052289bc82b470a08709b33d0402266c",
+  "src/crew.js": "28f8646f59cc6e21c69055092d2b5c9ca4766df73a06f636f26dd31dfc063c09"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS = Object.freeze({
+  "src/server.js": "62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361",
+  "src/game.js": "bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05",
+  "src/crew.js": "e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed"
+});
+export const CREW_LOGISTICS_SOURCE_CURRENT_BLOBS = Object.freeze({
+  "src/server.js": "7b32de9531c3d47ced6654175ec492afc81cc5cb",
+  "src/game.js": "48e9c5ab0df52d00ab27b2077cf38dbde2fc1d2f",
+  "src/crew.js": "1f3121bd1ea60f54575d47522a48fbf76d1296ce"
+});
+export const CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS = Object.freeze({
+  "src/server.js": "2e340c1069979debd62ef9f9190c76d1490caadd",
+  "src/game.js": "8edf3e3370f8a7aec006acfe286074ad045be71b",
+  "src/crew.js": "6556caa35fceb784761f14a14d8fbce3c8a5dcb7"
+});
+export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
+  "src/server.js": [
+    [
+      "import { register as registerCrewLogistics } from './routes/crewlogistics.js';\n",
+      ""
+    ],
+    [
+      "  registerCrewLogistics(app, { pool, auth });\n",
+      ""
+    ]
+  ],
+  "src/game.js": [
+    [
+      "// Serialized private projections use no accrual or persistence. Hooks establish the\n// membership boundary before actor/account locks; the callback cannot write or lock.\nexport async function withCharacterReadLocked(pool, accountId, fn, lockHooks = null) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n    const prelockState = lockHooks?.beforeCharacterLock\n      ? await lockHooks.beforeCharacterLock(client, accountId) : null;\n    let r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id=$1 AND alive FOR SHARE', [accountId]);\n    if (!r.rows.length) throw new GameError('no_character', 'Create a character first.');\n    const ch = r.rows[0];\n    await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR SHARE', [accountId]);\n    if (lockHooks?.afterAccountLock) await lockHooks.afterAccountLock(client, accountId, ch, prelockState);\n    const result = await fn(ch, readOnlyClient(client));\n    await client.query('COMMIT');\n    return result;\n  } catch (e) {\n    await client.query('ROLLBACK').catch(() => {});\n    throw deadlockToRetry(e);\n  } finally { client.release(); }\n}\n\n",
+      ""
+    ],
+    [
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+(?:key\\s+)?share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n",
+      "const WRITE_ANY = /\\b(?:insert\\s+into|update\\s+\\w+\\s+set|delete\\s+from|truncate\\b|merge\\s+into|copy\\s+\\w+\\s+from|\\binto\\s+\\w+\\s+from|for\\s+update\\b|for\\s+no\\s+key\\s+update\\b|for\\s+share\\b|setval\\s*\\(|nextval\\s*\\(|pg_advisory_(?:xact_)?lock\\s*\\()/i;\n"
+    ]
+  ],
+  "src/crew.js": [
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, ch.account_id]);\n",
+      ""
+    ],
+    [
+      "  await client.query('UPDATE crew_logistics_links SET revoked_at=now() WHERE crew_id=$1 AND publisher_account_id=$2 AND revoked_at IS NULL', [crewId, t.account_id]);\n",
+      ""
+    ]
+  ]
+});
+export function assertCrewLogisticsSourceTransfer(file, text) {
+  assert(CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Unknown Crew logistics compatibility source');
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Crew logistics source changed: ' + file);
+  let baselineText = text;
+  for (const [current, original] of CREW_LOGISTICS_SOURCE_INVERSES[file]) {
+    assert.equal(baselineText.split(current).length, 2, 'Crew logistics inverse is not exact and unique: ' + file);
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file];
+  assert.equal(hash(baselineText), baselineSha256, 'Source differs beyond exact Crew logistics changes: ' + file);
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION,
+    sourceBlob: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file], predecessorBlob: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file],
+    inverseChunks: CREW_LOGISTICS_SOURCE_INVERSES[file].length };
+}
+// Exact warehouse source reconstruction transfers unchanged historical guards only.
+export const WAREHOUSE_SOURCE_REVIEWED_REVISION = '7220e8b088921fcb277ecf7863fb724f113041b8';
+export const WAREHOUSE_SERVER_PIN = '62b94b304ed000e3300879d5df63661653bbb17f52de40ab01ea30ce60db7361';
+export const WAREHOUSE_SERVER_BLOB = '2e340c1069979debd62ef9f9190c76d1490caadd';
+export const WAREHOUSE_SERVER_PREDECESSOR_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { register as registerWarehouses } from './routes/warehouses.js';\n",
+    ""
+  ],
+  [
+    "  registerWarehouses(app, { pool, auth });\n",
+    ""
+  ]
+]);
+export function assertWarehouseServerTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_SERVER_PIN, 'Warehouse server source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_SERVER_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = SUPPLY_TENDER_SERVER_PIN;
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse server differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_SERVER_BLOB, predecessorBlob: WAREHOUSE_SERVER_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_SERVER_SOURCE_INVERSES.length };
+}
+export const WAREHOUSE_INVARIANT_PIN = '851df4ddbcc20a7a947c1b3c07821b5d0ff3a0fe9655cb59578aa7019680fb99';
+export const WAREHOUSE_INVARIANT_BLOB = 'e4671955f894edef3ae655a0e199da8e8afa2ebf';
+export const WAREHOUSE_INVARIANT_PREDECESSOR_BLOB = 'ba08838454bd98d6ac2c623a47492cd0de351693';
+export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
+  [
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n",
+    "    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n"
+  ],
+  [
+    "  const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;\n  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence FROM business_depot_journal')).rows;\n  const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;\n  const warehouseNow = Date.now();\n",
+    "  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;\n  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;\n"
+  ],
+  [
+    "    const warehouseReserved = warehouseLeases.filter(l => l.depot_id === depot.id)\n      .reduce((n, l) => n + (l.status === 'active' && new Date(l.expires_at).getTime() > warehouseNow\n        ? Number(l.units) : ['active', 'landlord_closed'].includes(l.status) ? Number(l.held_qty) : 0), 0);\n    push(`depot capacity:${depot.id}`, Math.max(0, promised + warehouseReserved - 40), 0, 0);\n",
+    "    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);\n"
+  ],
+  [
+    "  push('warehouse rent ledger', depotCash('warehouse_rent'), -(await sum(pool, \"currency='cash' AND reason='warehouse:rent'\")), 0);\n  push('warehouse journal ownership', depotJournal.filter(j => j.lease_id ? !warehouseLeases.some(l =>\n    l.id === j.lease_id && l.depot_id === j.depot_id && l.tenant_character === j.customer_character)\n    : Number(j.lease_stock_delta) !== 0 || j.lease_stock_after !== null || j.lease_sequence !== null).length, 0, 0);\n  const warehousePayments = (await pool.query(\"SELECT character_id,counterparty,amount FROM transactions WHERE currency='cash' AND reason='warehouse:rent'\")).rows;\n  const rentalPairs = new Map();\n  for (const row of depotJournal.filter(j => j.reason === 'warehouse_rent')) {\n    const key = JSON.stringify([row.customer_character, row.depot_id]);\n    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };\n    pair.receipts += Number(row.cash_delta); rentalPairs.set(key, pair);\n  }\n  for (const row of warehousePayments) {\n    const key = JSON.stringify([row.character_id, row.counterparty]);\n    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };\n    pair.debits -= Number(row.amount); rentalPairs.set(key, pair);\n  }\n  for (const [key, pair] of rentalPairs) push(`warehouse rent pairing:${key}`, pair.receipts, pair.debits, 0);\n  for (const lease of warehouseLeases) {\n    const entries = depotJournal.filter(j => j.lease_id === lease.id).sort((a, b) => Number(a.lease_sequence) - Number(b.lease_sequence));\n    const rent = entries.filter(j => j.reason === 'warehouse_rent');\n    push(`warehouse rent event:${lease.id}`, rent.length, 1, 0);\n    push(`warehouse rent terms:${lease.id}`, rent.reduce((n, j) => n + Number(j.cash_delta), 0), Number(lease.fee_cash), 0);\n    push(`warehouse custody:${lease.id}`, Number(lease.held_qty), entries.reduce((n, j) => n + Number(j.lease_stock_delta), 0), 0);\n    push(`warehouse landlord:${lease.id}`, depots.some(d => d.id === lease.depot_id && d.owner_character === lease.landlord_character) ? 0 : 1, 0, 0);\n    let held = 0, discontinuities = 0;\n    for (const [index, entry] of entries.entries()) {\n      held += Number(entry.lease_stock_delta);\n      if (Number(entry.lease_sequence) !== index + 1 || held < 0 || held > Number(lease.units)\n          || (Number(entry.lease_stock_delta) !== 0 && entry.lease_stock_after === null)\n          || (entry.lease_stock_after !== null && Number(entry.lease_stock_after) !== held)\n          || (index === 0 && entry.reason !== 'warehouse_rent')) discontinuities++;\n    }\n    push(`warehouse custody sequence:${lease.id}`, discontinuities, 0, 0);\n  }\n",
+    ""
+  ]
+]);
+export function assertWarehouseInvariantTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_INVARIANT_PIN, 'Warehouse invariant source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_INVARIANT_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = AGENT_ECONOMY_INVARIANT_PIN;
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse invariant differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_INVARIANT_BLOB, predecessorBlob: WAREHOUSE_INVARIANT_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_INVARIANT_SOURCE_INVERSES.length };
+}
+export const WAREHOUSE_ESTATE_PIN = '5d39208e155fb81ef450640f7d4d44d4fb62e3c564b2d6588bee55b07f4671cc';
+export const WAREHOUSE_ESTATE_BLOB = '1230efc72779eb839292d82dc1bf0e7a34f04b51';
+export const WAREHOUSE_ESTATE_PREDECESSOR_BLOB = '49ad22ddf287ad62b76b9b84ea27c4e14c19bcaa';
+export const WAREHOUSE_ESTATE_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';\n",
+    ""
+  ],
+  [
+    "  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n",
+    ""
+  ]
+]);
+export function assertWarehouseEstateSourceChange(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, WAREHOUSE_ESTATE_PIN, 'Warehouse estate source changed');
+  let baselineText = text;
+  for (const [current, original] of WAREHOUSE_ESTATE_SOURCE_INVERSES) {
+    assert.equal(baselineText.split(current).length, 2, 'Warehouse inverse is not exact and unique');
+    baselineText = baselineText.replace(current, original);
+  }
+  const baselineSha256 = "ad9825bc36babb3c117e9efcdf490946e9bcdadcad4b406ceaecfa13823882ce";
+  assert.equal(hash(baselineText), baselineSha256, 'Warehouse estate differs beyond exact reviewed changes');
+  return { actualSha256, baselineText, baselineSha256, sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_ESTATE_BLOB, predecessorBlob: WAREHOUSE_ESTATE_PREDECESSOR_BLOB, inverseChunks: WAREHOUSE_ESTATE_SOURCE_INVERSES.length };
+}
+export const SUPPLY_TENDER_SERVER_PIN = '0d222a2a3771758a28ac7bcda2124419cd9d9cebb6da65616120117bf34cae19';
+export const SUPPLY_TENDER_SOURCE_REVIEWED_REVISION = 'b243a283c6f55a37bada5897798bf65f9ddd5553';
+export const SUPPLY_TENDER_SERVER_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB = '79771473a82bc7a088921dc254031b5e6a10801e';
+export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
+  "import { register as registerSupplyTenders } from './routes/supplytenders.js';\n",
+  "  registerSupplyTenders(app, { pool, auth });\n"
+]);
+// Registration transfers unchanged recovery guards, never new tender execution.
+export function assertSupplyTenderServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, SUPPLY_TENDER_SERVER_PIN, 'Supply tender transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const current of SUPPLY_TENDER_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(current).length, 2, 'Supply tender inverse is not exact and unique');
+  baselineText = baselineText.replace(current, '');
+ }
+ assert.equal(hash(baselineText), DECISION_CALL_SERVER_PIN, 'Server differs beyond exact supply tender registration');
+ return { actualSha256, baselineText, baselineSha256: DECISION_CALL_SERVER_PIN, sourceRevision: SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, sourceBlob: SUPPLY_TENDER_SERVER_BLOB, predecessorServerBlob: SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
+export const DECISION_CALL_SERVER_PIN = '7e599c49c28b6549182cb72f9e3ed7178b40549dea872bc7178ebb67a240ac8c';
+export const DECISION_CALL_SOURCE_REVIEWED_REVISION = 'cd048a8940fb524af1320bcb4b3cd40d8e547820';
+export const DECISION_CALL_SERVER_BLOB = '79771473a82bc7a088921dc254031b5e6a10801e';
+export const DECISION_CALL_PREDECESSOR_SERVER_BLOB = '0a5053e000198230ca9e7e036233611c1ab44c8e';
+export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
+  [
+    "import { validateDecisionCall, recordDecisionExecution } from './decisionproofs.js';\n",
+    ""
+  ],
+  [
+    "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null) => {\n",
+    "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {\n"
+  ],
+  [
+    "    const decision = decisionCallId === null ? null : await validateDecisionCall(client, {\n      callId: decisionCallId, accountId: ch.account_id, characterId: ch.id,\n      generation: Number(ch.generation), turnId, actionId,\n    });\n",
+    ""
+  ],
+  [
+    "    const decisionProof = decision ? await recordDecisionExecution(client, decision, { actionKind: action.kind, result }) : null;\n",
+    ""
+  ],
+  [
+    "    return { ...result, ...(decisionProof ? { decisionProof } : {}) };\n",
+    "    return result;\n"
+  ],
+  [
+    "    const decisionCallId = req.body?.decisionCallId === undefined ? null : req.body.decisionCallId;\n    if (decisionCallId !== null && (typeof decisionCallId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(decisionCallId)))\n      throw new G.GameError('decision_call', 'Provide a valid decision call identifier.');\n",
+    ""
+  ],
+  [
+    "            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId));\n",
+    "            executeAgentAction(client, ch, h, turnId, actionId, owner));\n"
+  ],
+  [
+    "            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);\n",
+    "            executeAgentAction(client, ch, h, turnId, actionId), agentActionLocks);\n"
+  ],
+  [
+    "            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId);\n",
+    "            return executeAgentAction(client, ch, h, turnId, actionId, lender);\n"
+  ],
+  [
+    "            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n",
+    "            return executeAgentAction(client, ch, h, turnId, actionId);\n"
+  ],
+  [
+    "          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n",
+    "          return executeAgentAction(client, ch, h, turnId, actionId);\n"
+  ],
+  [
+    "    const { decisionProof, ...actionResult } = result;\n    return { actionId, result: actionResult, turn, refreshRequired: !turn,\n      ...(decisionProof ? { decisionProof } : {}) };\n",
+    "    return { actionId, result, turn, refreshRequired: !turn };\n"
+  ]
+]);
+// Only unchanged historical guards transfer; receipt execution retains separate native proof.
+export function assertDecisionCallServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, DECISION_CALL_SERVER_PIN, 'Decision call transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of DECISION_CALL_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(current).length, 2, 'Decision call inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), STOREFRONT_CITY_SERVER_PIN, 'Server differs beyond exact decision receipt hook');
+ return { actualSha256, baselineText, baselineSha256: STOREFRONT_CITY_SERVER_PIN, sourceRevision: DECISION_CALL_SOURCE_REVIEWED_REVISION, sourceBlob: DECISION_CALL_SERVER_BLOB, predecessorServerBlob: DECISION_CALL_PREDECESSOR_SERVER_BLOB, inverseChunks: 12 };
+}
 export const CITY_PRESENCE_SERVER_PIN = 'f4a8eece717448482ac55998c68df89e45344c208b6ea9d4c910be3ea281b1e1';
 export const CITY_PRESENCE_SERVER_PREDECESSOR_PIN = 'd05da300976624ce7152bec6e5ba6a4a3ae43d8659e053faaffe8613c1762e4c';
 export const CITY_PRESENCE_SOURCE_REVIEWED_REVISION = '83479446113cc3acffef1ee857a5d8d8e9fdc52c';
@@ -181,6 +422,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (file === 'src/invariants.js' && hash(text) === WAREHOUSE_INVARIANT_PIN) {
+    const transfer = assertWarehouseInvariantTransfer(text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text) === AGENT_ECONOMY_INVARIANT_PIN) {
     let prior = text;
     for (const [current, original] of economyInvariantChanges) {
@@ -220,6 +465,22 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -293,6 +554,22 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -387,6 +664,22 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -438,6 +731,22 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = assertCrewLogisticsSourceTransfer('src/server.js', text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), crewLogisticsSourceTransfer: transfer };
+  }
+  if (hash(text) === WAREHOUSE_SERVER_PIN) {
+    const transfer = assertWarehouseServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), warehouseSourceTransfer: transfer };
+  }
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
+  if (hash(text) === DECISION_CALL_SERVER_PIN) {
+    const transfer = assertDecisionCallServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
     const transfer = assertStorefrontCityServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
@@ -793,6 +1102,22 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]) {
+  const transfer = assertCrewLogisticsSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, crewLogisticsSourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === WAREHOUSE_SERVER_PIN) {
+  const transfer = assertWarehouseServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, warehouseSourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+  const transfer = assertSupplyTenderServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, supplyTenderSourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === DECISION_CALL_SERVER_PIN) {
+  const transfer = assertDecisionCallServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, decisionCallSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === STOREFRONT_CITY_SERVER_PIN) {
   const transfer = assertStorefrontCityServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontCitySourceTransfer: transfer };
