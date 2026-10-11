@@ -7490,6 +7490,32 @@ ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS warehouse_rent_lease
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_sequence INT CHECK (lease_sequence >= 1);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_journal_sequence ON business_depot_journal(lease_id,lease_sequence);
 
+-- Finite game brand licences split earned retail receipts, not principal or custody.
+CREATE TABLE IF NOT EXISTS depot_brand_licenses (
+  id TEXT PRIMARY KEY,
+  operator_depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  operator_character TEXT NOT NULL REFERENCES characters(id),
+  recipient_depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  licensor_character TEXT NOT NULL REFERENCES characters(id),
+  company_account_id TEXT NOT NULL REFERENCES accounts(id),
+  company_revision INT NOT NULL CHECK (company_revision > 0),
+  brand_name TEXT NOT NULL,
+  preset_id TEXT NOT NULL CHECK (preset_id='gin_storefront'),
+  royalty_bps INT NOT NULL CHECK (royalty_bps BETWEEN 1 AND 1000),
+  royalty_cap NUMERIC NOT NULL CHECK (royalty_cap BETWEEN 1 AND 1000000),
+  paid NUMERIC NOT NULL DEFAULT 0 CHECK (paid BETWEEN 0 AND royalty_cap),
+  earned_net NUMERIC NOT NULL DEFAULT 0 CHECK (earned_net BETWEEN 0 AND 1000000000000),
+  expires_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'offered' CHECK (status IN ('offered','active','ended')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (operator_depot_id <> recipient_depot_id AND operator_character <> licensor_character)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_brand_license_active ON depot_brand_licenses(operator_depot_id) WHERE status='active';
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS source_journal_id TEXT REFERENCES business_depot_journal(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS franchise_license_id TEXT REFERENCES depot_brand_licenses(id);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_brand_sale_receipt ON business_depot_journal(franchise_license_id,source_journal_id,reason)
+  WHERE franchise_license_id IS NOT NULL AND source_journal_id IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS business_operating_policies (
   id TEXT PRIMARY KEY,
   depot_id TEXT NOT NULL REFERENCES business_depots(id),
