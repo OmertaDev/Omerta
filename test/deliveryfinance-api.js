@@ -29,6 +29,14 @@ const call = async (method, url, token, payload, key = `invoice-api-${++sequence
   return { code: response.statusCode, body: response.json() };
 };
 const ok = response => { assert.equal(response.code, 200, JSON.stringify(response.body)); return response.body; };
+let invoiceOperations;
+const invoke = (operationId, token, parameters, payload, key) => {
+  const operation = invoiceOperations.get(operationId); assert(operation, 'invoke only a discovered closed operation');
+  const path = operation.path.replace(/\{([^}]+)\}/g, (_, name) => {
+    assert.equal(typeof parameters?.[name], 'string', 'supply the declared path argument'); return encodeURIComponent(parameters[name]);
+  });
+  return call(operation.method, path, token, payload, key);
+};
 async function actor(name) {
   const owner = ok(await call('POST', '/v1/auth/guest')).token;
   ok(await call('POST', '/v1/character', owner, { name }));
@@ -43,11 +51,11 @@ const cash = async id => Number((await app.pool.query('SELECT cash FROM characte
 const requestRow = async id => (await app.pool.query('SELECT * FROM delivery_loan_requests WHERE id=$1', [id])).rows[0];
 const loanRow = async id => (await app.pool.query('SELECT * FROM loans WHERE id=$1', [id])).rows[0];
 const terms = f => ({ supplierId: f.supplier.id, lenderId: f.lender.id, commitmentId: f.commitmentId, principal: 5000, rate: 0.1, hours: 1 });
-const request = (f, token = f.supplier.agent, key) => call('POST', '/v1/delivery-finance/requests', token, terms(f), key);
-const offer = (f, token = f.lender.owner, key) => call('POST', `/v1/delivery-finance/${f.requestId}/offer`, token, {}, key);
-const take = (f, token = f.supplier.agent, key) => call('POST', `/v1/delivery-finance/${f.requestId}/take`, token, {}, key);
+const request = (f, token = f.supplier.agent, key) => invoke('requestFundedGameDeliveryAdvance', token, {}, terms(f), key);
+const offer = (f, token = f.lender.owner, key) => invoke('fundOwnRequestedGameDeliveryAdvance', token, { id: f.requestId }, {}, key);
+const take = (f, token = f.supplier.agent, key) => invoke('acceptOwnFundedGameDeliveryAdvance', token, { id: f.requestId }, {}, key);
 const deliver = (f, token = f.supplier.agent, qty = 5, key) => call('POST', `/v1/deliveries/${f.commitmentId}/deliver`, token, { qty }, key);
-const board = async token => ok(await call('GET', '/v1/delivery-finance', token));
+const board = async token => ok(await invoke('getOwnGameDeliveryAdvances', token, {}, undefined));
 async function setup() {
   const n = ++fixture, buyer = await actor(`Invoice Buyer ${n}`), supplier = await actor(`Invoice Supplier ${n}`), lender = await actor(`Invoice Lender ${n}`);
   const depotId = ok(await call('POST', '/v1/depot', buyer.owner,
@@ -79,10 +87,46 @@ async function snapshot(f) {
     transactions: Number((await app.pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n) };
 }
 try {
+  const spec = ok(await call('GET', '/openapi.json'));
+  assert.equal(spec.openapi, '3.1.0');
+  const expected = [
+    ['getOwnGameDeliveryAdvances', 'GET', '/v1/delivery-finance'],
+    ['requestFundedGameDeliveryAdvance', 'POST', '/v1/delivery-finance/requests'],
+    ['fundOwnRequestedGameDeliveryAdvance', 'POST', '/v1/delivery-finance/{id}/offer'],
+    ['acceptOwnFundedGameDeliveryAdvance', 'POST', '/v1/delivery-finance/{id}/take'],
+    ['cancelOwnUnfundedGameDeliveryAdvance', 'POST', '/v1/delivery-finance/{id}/cancel'],
+  ];
+  invoiceOperations = new Map();
+  for (const [operationId, method, path] of expected) {
+    const matches = Object.entries(spec.paths).flatMap(([candidatePath, methods]) => Object.entries(methods)
+      .filter(([, operation]) => operation.operationId === operationId).map(([verb, operation]) => ({ path: candidatePath, method: verb.toUpperCase(), operation })));
+    assert.equal(matches.length, 1, 'closed invoice operation IDs are unique');
+    const match = matches[0]; assert.equal(match.path, path); assert.equal(match.method, method);
+    assert.deepEqual(match.operation.security, [{ bearerAuth: [] }], 'discovery must preserve actual player/agent authentication');
+    if (method === 'POST') {
+      const schema = match.operation.requestBody.content['application/json'].schema;
+      assert.equal(schema.type, 'object'); assert.equal(schema.additionalProperties, false);
+      if (operationId === 'requestFundedGameDeliveryAdvance') {
+        assert.equal(match.operation.requestBody.required, true);
+        assert.deepEqual(schema.required, ['supplierId', 'lenderId', 'commitmentId', 'principal', 'rate', 'hours']);
+        assert.deepEqual(Object.keys(schema.properties).sort(), [...schema.required].sort());
+        for (const field of ['supplierId', 'lenderId', 'commitmentId'])
+          assert.deepEqual(schema.properties[field], { type: 'string', minLength: 1, maxLength: 128 });
+        assert.deepEqual(schema.properties.principal, { type: 'integer', minimum: 5000, maximum: 1000000 });
+        assert.deepEqual(schema.properties.rate, { type: 'number', exclusiveMinimum: 0, maximum: 0.5 });
+        assert.deepEqual(schema.properties.hours, { type: 'integer', minimum: 1, maximum: 72 });
+      } else assert.deepEqual(schema.properties, {}, 'named consent operations accept no authority or monetary overrides');
+    }
+    invoiceOperations.set(operationId, match);
+  }
   const stranger = await actor('Invoice Stranger'), f = await setup();
   assert.equal((await call('GET', '/v1/delivery-finance')).code, 401);
   assert.equal((await request(f, null)).code, 401);
   assert.equal((await call('POST', '/v1/delivery-finance/requests', f.supplier.agent, { ...terms(f), permit: true })).body.error, 'delivery_finance');
+  for (const change of [{ principal: 4999 }, { principal: '5000' }, { rate: 0 }, { rate: 0.5001 }, { hours: 0 }, { hours: 73 }])
+    assert.equal((await invoke('requestFundedGameDeliveryAdvance', f.supplier.agent, {}, { ...terms(f), ...change })).body.error,
+      'delivery_finance', 'discovered schema bounds match actual native request rejection');
+  assert.equal(await cash(f.supplier.id), 50000.5); assert.equal(await cash(f.lender.id), 50000.5);
   assert.equal((await request(f, stranger.owner)).body.error, 'delivery_finance');
   const first = ok(await request(f, f.supplier.agent, 'invoice-request-exact')).request; f.requestId = first.id;
   assert.equal(first.state, 'requested'); assert.equal(first.quoteIsBacking, false);
@@ -190,7 +234,7 @@ try {
   const cancelled = await setup(); cancelled.requestId = ok(await request(cancelled)).request.id;
   const cancelledCash = await cash(cancelled.supplier.id), unfundedLenderCash = await cash(cancelled.lender.id);
   process.env.DEPOT_PILOT = 'off';
-  assert.equal(ok(await call('POST', `/v1/delivery-finance/${cancelled.requestId}/cancel`, cancelled.supplier.agent, {})).request.state, 'cancelled');
+  assert.equal(ok(await invoke('cancelOwnUnfundedGameDeliveryAdvance', cancelled.supplier.agent, { id: cancelled.requestId }, {})).request.state, 'cancelled');
   assert.equal(ok(await call('POST', `/v1/delivery-finance/${cancelled.requestId}/cancel`, cancelled.supplier.owner, {})).request.state, 'cancelled');
   assert.equal(await cash(cancelled.supplier.id), cancelledCash); assert.equal(await cash(cancelled.lender.id), unfundedLenderCash);
   assert.equal((await requestRow(cancelled.requestId)).loan_id, null, 'metadata cancellation fabricates neither capital nor refund');
