@@ -2,6 +2,15 @@
 // readiness, the human coach context, live market signals, and at least one executable JSON action.
 process.env.RATE_LIMIT = 'off';
 process.env.JWT_SECRET = 'test-jwt-secret-for-agent-turn';
+if (process.argv.includes('--postgres')) {
+  const database = new URL(process.env.COURIER_TEST_DATABASE_URL || 'http://missing');
+  if (database.protocol !== 'postgresql:' || database.hostname !== '127.0.0.1'
+      || !database.pathname.startsWith('/game_courier_')) throw new Error('Set COURIER_TEST_DATABASE_URL to an isolated local game_courier_ database.');
+  process.env.DATABASE_URL = database.href;
+  process.env.MARKET_SEED = 'courier-test-only-market-seed';
+  process.env.MOD_KEY = 'courier-test-only-mod-key';
+  process.env.SOCIAL_VERIFY_MODE = 'off';
+}
 
 import assert from 'node:assert/strict';
 import { goodPriceOf, energyCapOf, nerveCapOf, levelOf } from '../src/rules.js';
@@ -330,6 +339,61 @@ try {
   await app.pool.query('DELETE FROM businesses WHERE character_id=$1', [turn.body.state.identity.id]);
   await app.pool.query('UPDATE characters SET cash=$2,respect=$3,energy=$4,nerve=$5 WHERE id=$1', [turn.body.state.identity.id, beforeExpansion.cash, beforeExpansion.respect, beforeExpansion.energy, beforeExpansion.nerve]);
 
+  // Accepted obligations use incremental continuation economics, rather than a fresh entry margin.
+  const courierOwner = (await call('POST', '/v1/auth/guest')).body.token;
+  const courierToken = (await call('POST', '/v1/auth/agent-key', { token: courierOwner })).body.token;
+  await call('POST', '/v1/character', { token: courierToken, body: { name: 'Committed Courier' } });
+  const courierId = (await call('GET', '/v1/agent/turn', { token: courierToken })).body.state.identity.id;
+  await app.pool.query("UPDATE characters SET cash=1250,loc='docks' WHERE id=$1", [courierId]);
+  await app.pool.query("INSERT INTO character_cargo (character_id,good_id,qty) VALUES ($1,'gin',3)", [courierId]);
+  await app.pool.query("INSERT INTO market_listings (id,seller_character,depot_id,kind,good_id,qty,filled_qty,district,price,expires_at) VALUES ('courier-order',$1,'courier-depot','order','gin',3,1,'neon',123,now()+interval '2 hours')", [turn.body.state.identity.id]);
+  await app.pool.query("INSERT INTO delivery_commitments (id,order_id,depot_id,buyer_character,supplier_character,good_id,district,unit_price,take_bps,quantity,remaining,spend_limit,spent,deadline) VALUES ('courier-commitment','courier-order','courier-depot',$1,$2,'gin','neon',123,200,4,3,1000,750,now()+interval '1 hour')", [turn.body.state.identity.id, courierId]);
+  const courierTurn = async () => (await call('GET', '/v1/agent/turn', { token: courierToken })).body;
+  const courierAction = (snapshot) => snapshot.actions.find((action) => action.body?.commitmentId === 'courier-commitment');
+  for (const [sql, restore] of [
+    ["UPDATE delivery_commitments SET spent=751 WHERE id='courier-commitment'", "UPDATE delivery_commitments SET spent=750 WHERE id='courier-commitment'"],
+    [`UPDATE characters SET cash=1249 WHERE id='${courierId}'`, `UPDATE characters SET cash=1250 WHERE id='${courierId}'`],
+    ["UPDATE delivery_commitments SET deadline=now()-interval '1 second' WHERE id='courier-commitment'", "UPDATE delivery_commitments SET deadline=now()+interval '1 hour' WHERE id='courier-commitment'"],
+  ]) {
+    const issued = await courierTurn();
+    assert(courierAction(issued));
+    await app.pool.query(sql);
+    assert.equal(courierAction(await courierTurn()), undefined, 'Continuation respects current cap, reserve and deadline');
+    assert.equal((await call('POST', '/v1/agent/act', { token: courierToken, body: { turnId: issued.turnId, actionId: courierAction(issued).id } })).code, 409, 'Stale continuation cannot execute after terms change');
+    await app.pool.query(restore);
+  }
+  const travelTurn = await courierTurn();
+  const committedTravel = courierAction(travelTurn);
+  assert.equal(committedTravel.kind, 'delivery_travel');
+  assert.equal(committedTravel.ev.cash, 112);
+  assert(committedTravel.ev.inventory < 0, 'Held inventory value remains separately disclosed');
+  assert(committedTravel.score < 25, 'Accepted continuation survives a margin below the new-entry threshold');
+  let traveled, travelKey = 'courier-travel';
+  if (process.argv.includes('--postgres')) {
+    const keys = ['courier-travel-a', 'courier-travel-b'];
+    const raced = await Promise.all(keys.map((key) => call('POST', '/v1/agent/act', { token: courierToken, idempotencyKey: key,
+      body: { turnId: travelTurn.turnId, actionId: committedTravel.id } })));
+    assert.equal(raced.filter((response) => response.code === 200).length, 1, 'Character and order locks authorize only one concurrent continuation');
+    assert.equal(raced.filter((response) => response.code === 409).length, 1);
+    const winner = raced.findIndex((response) => response.code === 200);
+    traveled = raced[winner]; travelKey = keys[winner];
+  } else traveled = await call('POST', '/v1/agent/act', { token: courierToken, idempotencyKey: travelKey,
+    body: { turnId: travelTurn.turnId, actionId: committedTravel.id } });
+  assert.equal(traveled.code, 200);
+  assert.equal(Number((await app.pool.query("SELECT spent FROM delivery_commitments WHERE id='courier-commitment'")).rows[0].spent), 1000);
+  assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [courierId])).rows[0].cash), 1000);
+  assert.deepEqual(await call('POST', '/v1/agent/act', { token: courierToken, idempotencyKey: travelKey, body: { turnId: travelTurn.turnId, actionId: committedTravel.id } }), traveled, 'Travel replay does not charge twice');
+  const deliveredTurn = await courierTurn();
+  const committedDelivery = courierAction(deliveredTurn);
+  assert.equal(committedDelivery.kind, 'delivery_deliver');
+  assert.equal(committedDelivery.body.qty, 3);
+  assert.equal((await call('POST', '/v1/agent/act', { token: courierToken, idempotencyKey: 'courier-deliver', body: { turnId: deliveredTurn.turnId, actionId: committedDelivery.id } })).code, 200);
+  assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [courierId])).rows[0].cash), 1362, 'Exact cumulative fee paid once on actual delivery');
+  assert.equal((await app.pool.query("SELECT status FROM delivery_commitments WHERE id='courier-commitment'")).rows[0].status, 'delivered');
+  assert.equal((await app.pool.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'", [courierId])).rows.length, 0);
+  await app.pool.query("DELETE FROM delivery_commitments WHERE id='courier-commitment'");
+  await app.pool.query("DELETE FROM market_listings WHERE id='courier-order'");
+
   await app.pool.query("INSERT INTO gangs (id,name,tag) VALUES ('agent-family','Turn Family','TURN')");
   await app.pool.query("INSERT INTO gang_members (gang_id,character_id,role) VALUES ('agent-family',$1,'soldier')",
     [turn.body.state.identity.id]);
@@ -465,6 +529,8 @@ try {
     'only the complete server-authored action-id shape selects the stronger lock posture');
   const activationBefore = Number((await app.pool.query(
     "SELECT COUNT(*) n FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows[0].n);
+  const activationIdsBefore = new Set((await app.pool.query(
+    "SELECT id FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows.map((row) => row.id));
   const acted = await call('POST', '/v1/agent/act', {
     token, idempotencyKey: 'agent-turn-crew-open',
     body: { turnId: crewTurn.turnId, actionId: openRecruiting.id },
@@ -479,11 +545,13 @@ try {
   assert.equal(acted.body.turn.actions.some((action) => action.id === openRecruiting.id), false,
     'the returned post-action turn cannot replay a completed organization step');
   const activationRows = (await app.pool.query(
-    "SELECT props FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows;
+    "SELECT id,props FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows;
   assert.equal(activationRows.length, activationBefore + 1,
     'one successful canonical action writes exactly one activation event inside its transaction');
-  const activation = typeof activationRows.at(-1).props === 'string'
-    ? JSON.parse(activationRows.at(-1).props) : activationRows.at(-1).props;
+  const newActivationRows = activationRows.filter((row) => !activationIdsBefore.has(row.id));
+  assert.equal(newActivationRows.length, 1, 'Identify the new event without relying on unordered SQL results');
+  const activation = typeof newActivationRows[0].props === 'string'
+    ? JSON.parse(newActivationRows[0].props) : newActivationRows[0].props;
   assert.deepEqual(Object.keys(activation).sort(),
     ['actionKind', 'blockerCodes', 'explorationSystemId', 'recommended', 'remaining', 'visited'].sort(),
     'activation telemetry contains only the six allowed non-identifying properties');
@@ -589,6 +657,7 @@ try {
     'boolean', 'the emitted organization action body is typed');
 } finally {
   await app.close();
+  if (process.argv.includes('--postgres')) await app.pool.end();
 }
 
 console.log('✅ agent turn contract passed');
