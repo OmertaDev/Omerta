@@ -40,3 +40,12 @@ SHA-256 `A63A9F7AC21B8E49DF96D7AF82D35D6198496372BAF53D59EB32C5AE9EDE951C`.
 These disposable game-cash proofs do not activate real payments or outside
 compute. Exact final dependency artifacts, fresh generated provenance and hosted
 revision checks remain release gates before merge or deployment.
+
+The final published supply artifact parent
+`8df39320aa525e396e28ecd11d6846a14f803ccd` was subsequently integrated before
+this branch's final generated rebuild. Its ancestry includes the published
+delivery-client artifact `5d4242ae` and private-earnings artifact `92d09cf4`.
+Differences from the already tested authored supply parent were confined to
+documentation and generated artifacts; reviewed courier runtime/test source and
+the composed persistence caller remain unchanged. Artifact ancestry does not
+replace fresh hosted checks on this branch's exact final revision.
