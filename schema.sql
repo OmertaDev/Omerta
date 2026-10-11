@@ -7460,6 +7460,34 @@ CREATE TABLE IF NOT EXISTS delivery_commitments (
 CREATE INDEX IF NOT EXISTS ix_delivery_order ON delivery_commitments(order_id);
 CREATE INDEX IF NOT EXISTS ix_delivery_supplier ON delivery_commitments(supplier_character,status);
 
+-- Paid game storage keeps tenant goods separate from merchant stock.
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_enabled BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_revision INT NOT NULL DEFAULT 0 CHECK (warehouse_revision >= 0);
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_slots INT NOT NULL DEFAULT 0 CHECK (warehouse_slots BETWEEN 0 AND 40);
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_cash_per_unit_day INT NOT NULL DEFAULT 0 CHECK (warehouse_cash_per_unit_day BETWEEN 0 AND 100000);
+CREATE TABLE IF NOT EXISTS business_warehouse_leases (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  tenant_character TEXT NOT NULL REFERENCES characters(id) CHECK (tenant_character <> landlord_character),
+  good_id TEXT NOT NULL CHECK (good_id='gin'),
+  units INT NOT NULL CHECK (units BETWEEN 1 AND 10),
+  held_qty INT NOT NULL DEFAULT 0 CHECK (held_qty BETWEEN 0 AND units),
+  cash_per_unit_day INT NOT NULL CHECK (cash_per_unit_day BETWEEN 1 AND 100000),
+  fee_cash INT NOT NULL CHECK (fee_cash=units*cash_per_unit_day),
+  offer_revision INT NOT NULL CHECK (offer_revision > 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','closed','landlord_closed','tenant_dead')),
+  CHECK (status NOT IN ('closed','tenant_dead') OR held_qty=0)
+);
+CREATE INDEX IF NOT EXISTS ix_warehouse_depot_status ON business_warehouse_leases(depot_id,status);
+CREATE INDEX IF NOT EXISTS ix_warehouse_tenant_status ON business_warehouse_leases(tenant_character,status);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_id TEXT REFERENCES business_warehouse_leases(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_delta INT NOT NULL DEFAULT 0 CHECK (lease_stock_delta BETWEEN -10 AND 10);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_after INT CHECK (lease_stock_after BETWEEN 0 AND 10);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_rent_once ON business_depot_journal(lease_id) WHERE reason='warehouse_rent';
+
 CREATE TABLE IF NOT EXISTS business_operating_policies (
   id TEXT PRIMARY KEY,
   depot_id TEXT NOT NULL REFERENCES business_depots(id),
