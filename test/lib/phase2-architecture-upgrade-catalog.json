@@ -1375,6 +1375,91 @@
       "table_name": "business_supply_contracts",
       "name": "business_supply_contracts_revision_check",
       "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_check",
+      "definition": "CHECK (delivery_deadline >= (accept_until + '00:01:00'::interval))"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_qty_check",
+      "definition": "CHECK (qty >= 1 AND qty <= 40)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_spend_limit_check",
+      "definition": "CHECK (spend_limit >= 1::numeric AND spend_limit <= 100000::numeric)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'withdrawn'::text, 'accepted'::text]))"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_tender_id_fkey",
+      "definition": "FOREIGN KEY (tender_id) REFERENCES supply_tenders(id)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_tender_id_supplier_character_key",
+      "definition": "UNIQUE (tender_id, supplier_character)"
+    },
+    {
+      "table_name": "supply_tender_offers",
+      "name": "supply_tender_offers_unit_price_check",
+      "definition": "CHECK (unit_price >= 50::numeric AND unit_price <= 1000000::numeric)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_commitment_id_fkey",
+      "definition": "FOREIGN KEY (commitment_id) REFERENCES delivery_commitments(id)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_order_id_fkey",
+      "definition": "FOREIGN KEY (order_id) REFERENCES market_listings(id)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_qty_check",
+      "definition": "CHECK (qty >= 1 AND qty <= 40)"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['open'::text, 'awarded'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "supply_tenders",
+      "name": "supply_tenders_unit_price_check",
+      "definition": "CHECK (unit_price >= 50::numeric AND unit_price <= 1000000::numeric)"
     }
   ],
   "removed": [
@@ -1963,6 +2048,29 @@
       "max_cycles",
       "next_dispatch_at",
       "revision"
+    ],
+    "supply_tenders": [
+      "buyer_character",
+      "created_at",
+      "depot_id",
+      "id",
+      "offers_close_at",
+      "order_id",
+      "qty",
+      "status",
+      "unit_price"
+    ],
+    "supply_tender_offers": [
+      "accept_until",
+      "created_at",
+      "delivery_deadline",
+      "id",
+      "qty",
+      "spend_limit",
+      "status",
+      "supplier_character",
+      "tender_id",
+      "unit_price"
     ]
   }
 }
