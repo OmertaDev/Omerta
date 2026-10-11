@@ -60,10 +60,11 @@ try {
           const read = args[1].onWorldRead;
           args[1] = { ...args[1], onWorldRead: async (kind, context) => {
             window.__worldReads.push(kind);
-            const resultRecord = { kind, scene: window.__worldHandles.length, settled: false };
+            const resultRecord = { kind, scene: window.__worldHandles.length, settled: false,
+              ownerCurrentAtStart: context.isCurrent(), scope: window.__worldReadScope?.() };
             window.__worldReadResults.push(resultRecord);
             const result = await read(kind, context);
-            Object.assign(resultRecord, { code: result?.code, ignored: result?.ignored === true });
+            Object.assign(resultRecord, { code: result?.code, ignored: result?.ignored === true, scopeAfter: window.__worldReadScope?.() });
             // The module's await/render continuation settles before this marker.
             queueMicrotask(() => queueMicrotask(() => { resultRecord.settled = true; resultRecord.current = context.isCurrent(); }));
             return result;
@@ -84,6 +85,14 @@ try {
       });
     }
     const page = await context.newPage(); await page.bringToFront();
+    await page.route(base + '/', async route => {
+      const reply = await route.fetch(), html = await reply.text(), anchor = '  async function readCityWorld(kind, context = {}) {';
+      assert.equal(html.split(anchor).length, 2);
+      await route.fulfill({ response: reply, body: html.replace(anchor,
+        '  window.__worldReadScope = () => ({ key: cityIdentity(), epoch: projections.snapshot().epoch, scene: _citySceneEpoch,\n'
+        + '    current: !!_cityWorldData && _cityWorldData.key === cityIdentity() && projections.current(_cityWorldData.stamp), tickets: { ..._cityWorldData?.tickets },\n'
+        + '    consent: _cityWorldData?.social?.preferences?.chatEnabled });\n' + anchor) });
+    });
     page.on('pageerror', error => errors.push(error.message));
     const requests = []; page.on('request', request => requests.push({ method: request.method(), path: new URL(request.url()).pathname }));
     await page.goto(base, { waitUntil: 'networkidle' });
@@ -361,21 +370,68 @@ try {
   assert.equal(await page.locator('.city-world__chat-feed').count(), 0);
   assert.equal(await page.locator('.city-world__speech:not([hidden]),.city-world__dialogue:not([hidden])').count(), 0);
   await post(page, '[data-city-chat-consent]', '/v1/city/social/preferences');
-  let releaseDenied, observedDenied;
+  let releaseFirstDenied, releaseDenied, observedFirstDenied, observedDenied, latestDeniedRequest;
+  let interceptedDenials = 0, queuedDenials = 0;
+  const firstDenialGate = new Promise(resolve => { releaseFirstDenied = resolve; }), firstDenialObserved = new Promise(resolve => { observedFirstDenied = resolve; });
   const denialGate = new Promise(resolve => { releaseDenied = resolve; }), denialObserved = new Promise(resolve => { observedDenied = resolve; });
   await preferences(viewer, { chatEnabled: false });
-  const oldDenial = page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/city/nearby-chat' && reply.status() === 403);
   await page.route('**/v1/city/nearby-chat?*', async route => {
-    const reply = await route.fetch(); assert.equal(reply.status(), 403); observedDenied(); await denialGate; await route.fulfill({ response: reply });
+    // Only reads already queued while the sibling's consent is off are denials.
+    // Later polls must reach the real server, which can legitimately return 200.
+    if (queuedDenials && interceptedDenials >= queuedDenials) return route.continue();
+    const ordinal = ++interceptedDenials, reply = await route.fetch();
+    assert.equal(reply.status(), 403); assert.equal((await reply.json()).error, 'city_chat_opt_in_required');
+    if (ordinal === 1) { observedFirstDenied(); await firstDenialGate; }
+    if (ordinal === queuedDenials) { latestDeniedRequest = route.request(); observedDenied(); await denialGate; }
+    await route.fulfill({ response: reply });
   });
   // Chat's five-second background read is actual; it is not a fabricated DTO.
+  await bounded(firstDenialObserved, 'the first held real opt-out denial');
+  const consentScope = await page.evaluate(() => window.__worldReadScope());
+  const consentReadStart = await page.evaluate(() => window.__worldReadResults.length);
+  await panel(page, 'style');
+  queuedDenials = await page.evaluate(({ start, scope }) => {
+    const belongs = record => record.scene === window.__worldHandles.length && record.ownerCurrentAtStart === true
+      && record.scope?.current === true && record.scope.key === scope.key && record.scope.epoch === scope.epoch && record.scope.scene === scope.scene;
+    const pending = window.__worldReadResults.filter(record => belongs(record) && record.kind === 'chat' && record.code === undefined);
+    window.__latestConsentDenial = pending.at(-1);
+    window.__winningConsentRead = window.__worldReadResults.slice(start).find(record => belongs(record) && record.kind === 'social');
+    return pending.length;
+  }, { start: consentReadStart, scope: consentScope });
+  assert(queuedDenials > 0);
+  assert(await page.evaluate(() => window.__winningConsentRead && window.__winningConsentRead.code === undefined),
+    'The real Style read is queued behind the older Chat reads, before the sibling rejoins.');
+  releaseFirstDenied();
   await bounded(denialObserved, 'the held real opt-out denial');
+  const latestDenialScope = await page.evaluate(() => ({ current: window.__worldReadScope(), read: window.__latestConsentDenial.scope,
+    opening: window.__worldHandles.at(-1).handle.getState().worldUI.opening }));
+  assert.equal(latestDenialScope.current.key, consentScope.key); assert.equal(latestDenialScope.current.epoch, consentScope.epoch);
+  assert.equal(latestDenialScope.current.scene, consentScope.scene); assert.equal(latestDenialScope.current.current, true);
+  assert.equal(latestDenialScope.current.tickets.chat, latestDenialScope.read.tickets.chat + 1,
+    'The held latest denial is still the current Chat ticket, so only the newer Social read can supersede it.');
+  assert(latestDenialScope.current.tickets.social > latestDenialScope.read.tickets.social);
+  assert.equal(latestDenialScope.current.consent, true);
+  const beforeWinningConsent = mutations(requests).length;
   await preferences(viewer, { chatEnabled: true });
+  const oldDenial = page.waitForResponse(reply => reply.request() === latestDeniedRequest && reply.status() === 403);
   const winningConsent = page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
     && reply.status() === 200 && (await reply.json()).preferences.chatEnabled === true);
-  await panel(page, 'style');
   releaseDenied(); await oldDenial; await page.unroute('**/v1/city/nearby-chat?*');
   await winningConsent;
+  await page.waitForFunction(() => window.__latestConsentDenial.settled && window.__winningConsentRead.settled);
+  const consentReads = await page.evaluate(() => ({ denial: window.__latestConsentDenial, winner: window.__winningConsentRead,
+    scope: window.__worldReadScope(), opening: window.__worldHandles.at(-1).handle.getState().worldUI.opening }));
+  assert.equal(consentReads.denial.code, 499); assert.equal(consentReads.denial.ignored, true,
+    'The current Chat denial is ignored specifically because a newer Social read was issued.');
+  assert.equal(consentReads.winner.code, 200); assert.equal(consentReads.winner.ignored, false); assert.equal(consentReads.winner.current, true,
+    'The winning Style read is actually accepted, rather than repaired by a later nested refresh.');
+  assert.equal(consentReads.scope.key, consentScope.key); assert.equal(consentReads.scope.epoch, consentScope.epoch);
+  assert.equal(consentReads.scope.scene, consentScope.scene); assert.equal(consentReads.scope.consent, true);
+  assert.equal(consentReads.opening, latestDenialScope.opening); assert.equal(mutations(requests).length, beforeWinningConsent);
+  console.log('world host: consent race', JSON.stringify({ queuedDenials, interceptedDenials,
+    chatTicket: latestDenialScope.current.tickets.chat, socialTicket: latestDenialScope.current.tickets.social,
+    epoch: consentScope.epoch, scene: consentScope.scene, opening: consentReads.opening,
+    denial: consentReads.denial.code, winner: consentReads.winner.code }));
   await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().worldUI.chatJoined === true);
   await panel(page, 'chat'); await page.locator('[data-city-nearby-input]').waitFor();
   await panel(page, 'style');
