@@ -3529,8 +3529,8 @@ scopedSocialContext = async function(db) {
     'the `suites` job must have exactly one 60-minute HANG bound');
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [20],
-    'the `pgcheck` job must retain exactly one 20-minute HANG bound');
+  assert.deepEqual(timeouts(pgcheck), [30],
+    'the `pgcheck` job must retain exactly one 30-minute HANG bound');
 
   const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
   for (const command of suitesCommands) {
