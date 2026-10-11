@@ -373,7 +373,6 @@
 | [docs/core-architecture/review-phase3.md](../../docs/core-architecture/review-phase3.md) | documentation | 37 | 2026-09-17 |
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
-| [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 52 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 67 | 2026-10-08 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
@@ -526,7 +525,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 251 | 2026-09-14 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
-| [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 71 | 2026-10-11 |
+| [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |

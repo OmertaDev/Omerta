@@ -49,3 +49,18 @@ Differences from the already tested authored supply parent were confined to
 documentation and generated artifacts; reviewed courier runtime/test source and
 the composed persistence caller remain unchanged. Artifact ancestry does not
 replace fresh hosted checks on this branch's exact final revision.
+
+### Director migration verifier refresh
+
+Inherited corrected published supply artifact
+`20d68fc18e3f7a44393ef3ef2c3c6ebd4f4fe103`, including independently reviewed
+test-classifier source `8cfcfe68750b4a85dd0a162b342494b45d184300`.
+It explicitly classifies the supply table and its eight CHECK and ten NOT NULL
+constraints in the existing golden economy migration verifier, preserving the
+original assertions and adding bound, foreign-key and unsupported-addition
+negative controls. The coordinator's fresh PostgreSQL 18.4 verifier proof passed.
+This repairs test classification; production source, schema, shared catalog and
+the reviewed courier runtime/test bytes remain unchanged from the composed
+native proof. No repeat native courier execution is claimed for this test-only
+delta. Generated artifacts are rebuilt from the new clean authored integration;
+fresh exact-head hosted checks remain required before release.

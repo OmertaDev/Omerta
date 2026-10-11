@@ -9,7 +9,7 @@
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 4 | 3 | 5 | 2 |
 | [src/agentgateway.js](../../src/agentgateway.js) | 1885 | platform-core | 4 / 6 | 0 | 23 | 5 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 113 | platform-core | 0 / 1 | 0 | 2 | 0 |
-| [src/agentturn.js](../../src/agentturn.js) | 686 | platform-core | 16 / 1 | 0 | 3 | 0 |
+| [src/agentturn.js](../../src/agentturn.js) | 681 | platform-core | 15 / 1 | 0 | 3 | 0 |
 | [src/aggregate.js](../../src/aggregate.js) | 99 | platform-core | 0 / 4 | 0 | 1 | 1 |
 | [src/arena.js](../../src/arena.js) | 29 | engagement-growth | 1 / 1 | 1 | 0 | 0 |
 | [src/assets.js](../../src/assets.js) | 316 | platform-core | 0 / 4 | 0 | 2 | 0 |
@@ -88,7 +88,6 @@
 | [src/coordination/pilot.js](../../src/coordination/pilot.js) | 64 | platform-core | 1 / 20 | 0 | 0 | 17 |
 | [src/coordination/runtime.js](../../src/coordination/runtime.js) | 426 | platform-core | 8 / 27 | 0 | 12 | 22 |
 | [src/corner.js](../../src/corner.js) | 158 | platform-core | 2 / 5 | 3 | 4 | 1 |
-| [src/courierjobs.js](../../src/courierjobs.js) | 44 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/crafting.js](../../src/crafting.js) | 1050 | world-graph | 11 / 26 | 0 | 7 | 14 |
 | [src/crew.js](../../src/crew.js) | 443 | social-combat | 2 / 23 | 15 | 18 | 17 |
 | [src/dailyreminder.js](../../src/dailyreminder.js) | 23 | platform-core | 2 / 2 | 0 | 3 | 1 |
@@ -261,7 +260,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 5 | 21 | 7 | 4 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 309 | 0 | 0 | 170 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 307 | 0 | 0 | 169 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6154 | platform-core | 0 / 1 | 0 | 54 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
