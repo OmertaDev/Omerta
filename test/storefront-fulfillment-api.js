@@ -12,6 +12,7 @@ if (postgres) {
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import { ledger } from '../src/game.js';
+import { DISTRICTS, CONSTANTS } from '../src/rules.js';
 const app = await buildServer();
 let seq = 0;
 const fixtureSuffix = Math.random().toString(36).slice(2, 6);
@@ -103,6 +104,9 @@ try {
   assert.equal(Number((await app.pool.query('SELECT spent FROM delivery_commitments WHERE id=$1', [second.body.id])).rows[0].spent), 600);
   // A separately funded merchant's canonical death competes with an acquisition.
   const deathBuyer = await create('Storefront Death Buyer'), deathSupplier = await create('Storefront Death Supplier');
+  const supplierDistrict = (await call('GET', '/v1/me', deathSupplier)).body.character.loc;
+  const destination = DISTRICTS.find((d) => d.id !== supplierDistrict).id;
+  assert.equal((await call('POST', `/v1/travel/${destination}`, deathBuyer)).code, 200);
   const deathDepot = await depot(deathBuyer, 1000);
   const refill = (await call('POST', `/v1/depot/${sellerDepot}/restock`, seller)).body.id;
   await call('POST', '/v1/goods/buy', rival, { goodId: 'gin', qty: 4 });
@@ -152,6 +156,42 @@ try {
   assert.equal(Number((await snapshot(deathSupplier, sellerDepot, autoCommitment)).contract.spent), 120);
   assert.equal(executed.body.turn.actions.some((a) => a.kind === 'delivery_depot_buy' && a.body.commitmentId === autoCommitment), false,
     'held cargo completion takes precedence over more acquisition');
+  const cashAfterPurchase = Number((await snapshot(deathSupplier, sellerDepot, autoCommitment)).ch.cash);
+  const travelTurn = (await call('GET', '/v1/agent/turn', deathSupplier)).body;
+  const travelAction = travelTurn.actions.find((a) => a.kind === 'delivery_travel' && a.body.commitmentId === autoCommitment);
+  assert.ok(travelAction, 'the same acquired cargo exposes issued travel to its customer');
+  const traveled = await call('POST', '/v1/agent/act', deathSupplier,
+    { turnId: travelTurn.turnId, actionId: travelAction.id }, 'storefront-issued-travel');
+  assert.equal(traveled.code, 200, JSON.stringify(traveled.body));
+  const afterTravel = await snapshot(deathSupplier, sellerDepot, autoCommitment);
+  assert.equal(Number(afterTravel.ch.cash), cashAfterPurchase - CONSTANTS.TRAVEL_COST);
+  assert.equal(Number(afterTravel.contract.spent), 120 + CONSTANTS.TRAVEL_COST);
+  assert.equal(afterTravel.cargo.find((r) => r.good_id === 'gin').qty, 2, 'travel preserves acquired cargo');
+  const deliveryTurn = (await call('GET', '/v1/agent/turn', deathSupplier)).body;
+  const deliveryAction = deliveryTurn.actions.find((a) => a.kind === 'delivery_deliver' && a.body.commitmentId === autoCommitment);
+  assert.ok(deliveryAction, 'arrival exposes issued settlement of the same commitment');
+  const deliveryBody = { turnId: deliveryTurn.turnId, actionId: deliveryAction.id };
+  const takeBeforeDelivery = Number((await app.pool.query("SELECT COALESCE(SUM(amount),0) total FROM transactions WHERE reason='market:take' AND currency='cash'")).rows[0].total);
+  const delivered = await call('POST', '/v1/agent/act', deathSupplier, deliveryBody, 'storefront-issued-delivery');
+  assert.equal(delivered.code, 200, JSON.stringify(delivered.body));
+  assert.equal(delivered.body.result.delivered, 2);
+  assert.equal(delivered.body.result.gross, 2000);
+  assert.equal(delivered.body.result.take, 40);
+  assert.equal(delivered.body.result.earned, 1960);
+  assert.deepEqual(await call('POST', '/v1/agent/act', deathSupplier, deliveryBody, 'storefront-issued-delivery'), delivered);
+  const finished = await snapshot(deathSupplier, sellerDepot, autoCommitment);
+  assert.equal(Number(finished.ch.cash), cashAfterPurchase - CONSTANTS.TRAVEL_COST + 1960);
+  assert.equal(Number(finished.contract.spent), 120 + CONSTANTS.TRAVEL_COST, 'settlement adds no acquisition spend');
+  assert.equal(Number(finished.contract.remaining), 0);
+  assert.equal(Number((await app.pool.query("SELECT COALESCE(SUM(amount),0) total FROM transactions WHERE character_id=$1 AND reason='market:fill' AND currency='cash'", [deathSupplier.id])).rows[0].total), 1960);
+  assert.equal(Number((await app.pool.query("SELECT COALESCE(SUM(amount),0) total FROM transactions WHERE character_id=$1 AND reason='depot:buy' AND currency='cash'", [deathSupplier.id])).rows[0].total), -120);
+  assert.equal(Number((await app.pool.query("SELECT COALESCE(SUM(amount),0) total FROM transactions WHERE reason='market:take' AND currency='cash'")).rows[0].total) - takeBeforeDelivery, -40);
+  assert.equal(Number(finished.cargo.find((r) => r.good_id === 'gin')?.qty || 0), 0);
+  assert.equal((await app.pool.query('SELECT status FROM delivery_commitments WHERE id=$1', [autoCommitment])).rows[0].status, 'delivered');
+  assert.equal(Number((await app.pool.query('SELECT filled_qty FROM market_listings WHERE id=$1', [deathOrder])).rows[0].filled_qty), 2,
+    'customer warehouse receives exactly the acquired two units');
+  assert.equal((await call('POST', `/v1/depot/${deathDepot}/orders/${deathOrder}/receive`, deathBuyer)).body.received, 2);
+  assert.equal(Number((await app.pool.query('SELECT stock FROM business_depots WHERE id=$1', [deathDepot])).rows[0].stock), 2);
   const raceSupplier = await create('Storefront Race Supplier');
   const deathCommitment = (await call('POST', `/v1/market/${deathOrder}/accept-delivery`, raceSupplier,
     { qty: 2, unitPrice: 1000, maxProcurementCash: 600, deadlineSeconds: 3600 })).body.id;

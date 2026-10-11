@@ -79,3 +79,40 @@ death-race assertions but did not rerun those proofs. The coordinator's native
 execution evidence must remain separately retained and source-pinned. In-memory
 execution alone proves neither PostgreSQL lock serialization nor atomic rollback.
 Release checks and later autonomous descriptor integration remain open gates.
+
+## Issued economic-loop continuation proof — 2026-10-11
+
+The implementation agent closed the purchase-to-delivery test seam on runtime
+revision `ce374b76080241589c1b9a719b8a794da09b1317`, with only the API proof fixture
+changed. `src/agentturn.js` SHA-256 remains
+`664248678A243C14588A63AC104513D9EAC2D168BFBFD8C42719AEA6CBAFDB37`.
+The executed `test/storefront-fulfillment-api.js` SHA-256 is
+`7E8AFF67F1F4FFF258B9ECD5B54365D7528693087AE879D35525F01543B9C97F`.
+This is implementation execution evidence, distinct from the independent review
+above; no new independent review of the extended fixture is claimed.
+
+Node v24.19.0 commands returned exit status 0:
+
+- `node test/storefront-fulfillment-api.js` — memory execution.
+- `node test/storefront-fulfillment-api.js --postgres` — disposable PostgreSQL 18,
+  loopback port 35439, fresh database `game_storefront_fullflow_20261011` supplied
+  only through `STOREFRONT_TEST_DATABASE_URL`, with a local test market seed.
+
+The test establishes one continuous canonical sequence: a supplier purchases two
+units of gin through an issued storefront action for $120, travels through its
+next issued action for $250 while preserving those units, and delivers through
+the issued commitment settlement action. The customer escrow pays $2,000 gross,
+with $40 take and $1,960 recorded supplier income. The commitment's acquisition
+spend remains $370 after settlement; remaining quantity and supplier cargo become
+zero. The customer receives exactly those two units into its depot. Assertions
+check the matching `depot:buy` debit, `market:fill` credit, market-take ledger
+delta, replay, stock/cap/price invalidation, and native distinct-request purchase
+serialization and storefront-owner death race.
+
+Raw native output is retained in the worktree's ignored
+`output/storefront-native-fullflow-proof.log`, SHA-256
+`9024E0B5BF129EEAC5E3063B33EE7ACE225135FD60DD451AEFB1BCBD8A9F9A5C`.
+The locally started PostgreSQL server was stopped after completion. This proves
+the tested game-cash flow on the pinned runtime and fixture, not production
+deployment, general strategy profitability, external earnings or crypto backing.
+Required source-pinned release checks remain the coordinator's release gate.
