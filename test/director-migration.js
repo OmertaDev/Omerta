@@ -30,6 +30,30 @@ let pool, created = false;
 const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];
+// Optional stacked features are recognized only by explicit identity and frozen
+// inventory. Nothing discovered from the backend becomes an expected constraint.
+const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_offers: [9, 10],
+  business_warehouse_leases: [14, 13], crew_logistics_links: [8, 9], depot_brand_licenses: [14, 16] });
+const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
+const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
+  .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
+for (const table of featureTables) {
+  assert.equal(featureConstraints.filter(row => row.table_name === table).length, featureManifest[table][0], `${table} has its reviewed frozen constraint count`);
+  assert.equal(inventory.notNullColumns[table].length, featureManifest[table][1], `${table} has its reviewed required-column count`);
+}
+const economyExtensionNames = Object.freeze([
+  'business_depots.business_depots_warehouse_cash_per_unit_day_check',
+  'business_depots.business_depots_warehouse_revision_check',
+  'business_depots.business_depots_warehouse_slots_check',
+  'business_depot_journal.business_depot_journal_lease_id_fkey',
+  'business_depot_journal.business_depot_journal_lease_sequence_check',
+  'business_depot_journal.business_depot_journal_lease_stock_after_check',
+  'business_depot_journal.business_depot_journal_lease_stock_delta_check',
+  'business_depot_journal.business_depot_journal_warehouse_rent_lease_id_fkey',
+  'business_depot_journal.business_depot_journal_warehouse_rent_lease_id_key',
+  'business_depot_journal.business_depot_journal_franchise_license_id_fkey',
+  'business_depot_journal.business_depot_journal_source_journal_id_fkey',
+]);
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 const goodsMarketTables = ['goods_market_liquidity'];
 const companyTables = ['agent_company_profiles'];
@@ -112,7 +136,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !featureTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   verifyPreservedConstraints(upgradedConstraints);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
@@ -170,7 +194,13 @@ try {
   ], 'Goods-market migration installs exactly its four reviewed constraints, without waiving existing preservation');
   const economyConstraints = inventory.added.filter((row) => economyTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
-  assert.equal(economyConstraints.length, 31, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  const economyExtensions = economyConstraints.filter(row => {
+    if (!economyExtensionNames.includes(`${row.table_name}.${row.name}`)) return false;
+    const franchise = row.name === 'business_depot_journal_franchise_license_id_fkey'
+      || row.name === 'business_depot_journal_source_journal_id_fkey';
+    return featureTables.includes(franchise ? 'depot_brand_licenses' : 'business_warehouse_leases');
+  });
+  assert.equal(economyConstraints.length - economyExtensions.length, 31, 'All original reviewed economy constraints remain frozen alongside only named reviewed extensions');
   assert.equal(economyConstraints.filter(row => row.table_name === 'business_supply_contracts').length, 8,
     'All eight reviewed supply cadence constraints must be catalogued');
   assert.deepEqual(inventory.notNullColumns.business_supply_contracts,
@@ -207,6 +237,37 @@ try {
   assert.deepEqual(Object.fromEntries(economyTables.map((table) => [table, economyNotNull.filter((row) => row.table_name === table).map((row) => row.column_name)])),
     Object.fromEntries(economyTables.map((table) => [table, inventory.notNullColumns[table]])),
     'Economy required columns match the frozen schema on every PostgreSQL version');
+  const verifyFeatureConstraints = rows => assert.deepEqual(rows.filter(row => featureTables.includes(row.table_name)), featureConstraints,
+    'Named additive features install exactly their frozen definitions; unknown additions are never waived');
+  verifyFeatureConstraints(upgradedConstraints);
+  const featureNotNull = featureTables.length ? (await pool.query(`SELECT table_name,column_name FROM information_schema.columns
+    WHERE table_schema=current_schema() AND table_name IN (${featureTables.map((_, index) => `$${index + 1}`).join(',')})
+    AND is_nullable='NO' ORDER BY table_name,column_name`, featureTables)).rows : [];
+  const verifyFeatureNotNull = columns => assert.deepEqual(
+    Object.fromEntries(featureTables.map(table => [table, columns.filter(row => row.table_name === table).map(row => row.column_name)])),
+    Object.fromEntries(featureTables.map(table => [table, inventory.notNullColumns[table]])),
+    'Named feature required columns match exact frozen nullability');
+  verifyFeatureNotNull(featureNotNull);
+  for (const table of featureTables) {
+    const constraint = featureConstraints.find(row => row.table_name === table);
+    rejected(verifyFeatureConstraints, `${table} missing frozen constraint`, mutateConstraint(table, constraint.name, (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${table} altered frozen constraint`, mutateConstraint(table, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+    rejected(verifyFeatureConstraints, `${table} unknown constraint`, [...upgradedConstraints,
+      { table_name: table, name: 'unexpected_feature_constraint', definition: 'CHECK (true)' }]);
+    for (const column of inventory.notNullColumns[table]) rejected(verifyFeatureNotNull, `${table}.${column} nullability removed`,
+      featureNotNull.filter(row => row.table_name !== table || row.column_name !== column));
+    rejected(verifyFeatureNotNull, `${table} unexpected required column`, [...featureNotNull,
+      { table_name: table, column_name: 'unexpected_required_column' }]);
+  }
+  rejected(verifyPreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
+    { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
+  for (const constraint of economyExtensions) {
+    rejected(verifyEconomyConstraints, `${constraint.name} reviewed extension removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyEconomyConstraints, `${constraint.name} reviewed extension altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
   assert.deepEqual(upgradedConstraints.filter((row) => row.table_name.startsWith('director_')),
     inventory.added.filter((row) => row.table_name.startsWith('director_')),
     'Native Director constraints match the explicitly reviewed architecture inventory');
@@ -241,7 +302,7 @@ try {
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });
   await assert.rejects(pool.query('INSERT INTO director_receipts SELECT * FROM director_receipts LIMIT 1'), { code: '23505' });
-  console.log(`director-migration: populated ${BASELINE}, two production migrations, canonical/Director receipt preservation and exact 17-constraint catalog plus four City constraints/five non-null columns PASS (PostgreSQL ${serverVersion})`);
+  console.log(`director-migration: populated ${BASELINE}, two production migrations, original/canonical/Director preservation, exact frozen ${featureTables.length} optional feature tables/${featureConstraints.length} constraints and required columns, missing/altered/unknown causal negatives PASS (PostgreSQL ${serverVersion})`);
 } finally {
   if (pool) await pool.end();
   if (created) await admin.query(`DROP SCHEMA ${namespace} CASCADE`);
