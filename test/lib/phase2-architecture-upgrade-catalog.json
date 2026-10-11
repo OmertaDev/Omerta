@@ -1460,6 +1460,56 @@
       "table_name": "supply_tenders",
       "name": "supply_tenders_unit_price_check",
       "definition": "CHECK (unit_price >= 50::numeric AND unit_price <= 1000000::numeric)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_check",
+      "definition": "CHECK (supplier_character <> requested_lender_character AND supplier_character <> buyer_character AND requested_lender_character <> buyer_character)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_check1",
+      "definition": "CHECK ((state = ANY (ARRAY['requested'::text, 'cancelled'::text])) AND loan_id IS NULL AND funded_at IS NULL AND accepted_at IS NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'offered'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'active'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'settled'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL AND settled_at IS NOT NULL AND settlement IS NOT NULL OR state = 'closed'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND settled_at IS NULL AND settlement IS NULL)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_requested_lender_character_fkey",
+      "definition": "FOREIGN KEY (requested_lender_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['requested'::text, 'offered'::text, 'active'::text, 'settled'::text, 'cancelled'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_supplier_character_request_key_key",
+      "definition": "UNIQUE (supplier_character, request_key)"
     }
   ],
   "removed": [
@@ -2071,6 +2121,19 @@
       "supplier_character",
       "tender_id",
       "unit_price"
+    ],
+    "delivery_loan_requests": [
+      "buyer_character",
+      "commitment_id",
+      "created_at",
+      "id",
+      "order_id",
+      "quote",
+      "request_key",
+      "requested_lender_character",
+      "state",
+      "supplier_character",
+      "terms"
     ]
   }
 }
