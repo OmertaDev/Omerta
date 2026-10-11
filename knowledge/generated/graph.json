@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6fd57847bb345077389eba54fb195565cd5211c0",
+  "sourceRevision": "fe04442f5efac563514f64af7d13ede2402b134b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10864,
-    "edges": 44189,
+    "nodes": 10867,
+    "edges": 44199,
     "byNodeType": {
       "Artifact": 4448,
       "Command": 219,
-      "Commit": 2531,
+      "Commit": 2534,
       "Contract": 126,
       "Document": 715,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3583,
-      "CHANGED": 17511,
+      "CHANGED": 17518,
       "CONTAINS": 4469,
       "DECLARES": 219,
       "DEFINED_IN": 1413,
       "DEPENDS_ON": 67,
       "EXECUTES": 751,
       "HANDLED_BY": 785,
-      "HAS_COMMIT": 2531,
+      "HAS_COMMIT": 2534,
       "IMPLEMENTS": 124,
       "IMPORTS": 4283,
       "INHERITS": 42,
@@ -40434,20 +40434,20 @@
       "path": "docs/supply-tender-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3442,
-      "lines": 55,
-      "version": "00b7405fa0cf6ead",
+      "bytes": 3979,
+      "lines": 63,
+      "version": "9bfda97251d62a07",
       "text": true,
       "provenance": [
         {
           "file": "docs/supply-tender-security-review.md",
           "line": 1,
-          "version": "00b7405fa0cf6ead"
+          "version": "9bfda97251d62a07"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:25:14.000Z",
+      "lastChangedAt": "2026-10-11T17:57:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6fd57847bb345077389eba54fb195565cd5211c0"
+      "lastChangedCommit": "fe04442f5efac563514f64af7d13ede2402b134b"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -88265,20 +88265,20 @@
       "path": "test/director-migration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23436,
-      "lines": 250,
-      "version": "bc1cd43d58a76f8e",
+      "bytes": 28641,
+      "lines": 311,
+      "version": "c5b4eaeafee991b9",
       "text": true,
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "bc1cd43d58a76f8e"
+          "version": "c5b4eaeafee991b9"
         }
       ],
-      "lastChangedAt": "2026-10-11T09:05:00.000Z",
+      "lastChangedAt": "2026-10-11T17:53:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8cfcfe68750b4a85dd0a162b342494b45d184300"
+      "lastChangedCommit": "81fe1878ee49d4d30a6d2c8e0a860565a862217c"
     },
     {
       "key": "Artifact:test/director-network-recovery.js",
@@ -115659,6 +115659,22 @@
       ]
     },
     {
+      "key": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "type": "Commit",
+      "id": "40619e25df4c55cae598b33c19c361997a347a87",
+      "label": "Refresh tender release artifacts after verified CI repairs",
+      "title": "Refresh tender release artifacts after verified CI repairs",
+      "date": "2026-10-11T17:27:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/40619e25df4c55cae598b33c19c361997a347a87",
+      "provenance": [
+        {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87",
+          "url": "https://github.com/OmertaDev/Omerta/commit/40619e25df4c55cae598b33c19c361997a347a87"
+        }
+      ]
+    },
+    {
       "key": "Commit:407229e48a4a6b06d3f0eca5c1ffefb4f4b4da36",
       "type": "Commit",
       "id": "407229e48a4a6b06d3f0eca5c1ffefb4f4b4da36",
@@ -126023,6 +126039,22 @@
         {
           "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f",
           "url": "https://github.com/OmertaDev/Omerta/commit/81c29e64092d65d69063a2b57fb90acb0134fa1f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+      "type": "Commit",
+      "id": "81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+      "label": "Verify explicit additive feature catalogs in Director migration",
+      "title": "Verify explicit additive feature catalogs in Director migration",
+      "date": "2026-10-11T17:53:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+      "provenance": [
+        {
+          "commit": "81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/81fe1878ee49d4d30a6d2c8e0a860565a862217c"
         }
       ]
     },
@@ -145419,6 +145451,22 @@
       ]
     },
     {
+      "key": "Commit:fe04442f5efac563514f64af7d13ede2402b134b",
+      "type": "Commit",
+      "id": "fe04442f5efac563514f64af7d13ede2402b134b",
+      "label": "Retain Director frozen-catalog migration repair evidence",
+      "title": "Retain Director frozen-catalog migration repair evidence",
+      "date": "2026-10-11T17:57:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fe04442f5efac563514f64af7d13ede2402b134b",
+      "provenance": [
+        {
+          "commit": "fe04442f5efac563514f64af7d13ede2402b134b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fe04442f5efac563514f64af7d13ede2402b134b"
+        }
+      ]
+    },
+    {
       "key": "Commit:fe550b10d01024f6fecdb578c25ab4055d6c5eb7",
       "type": "Commit",
       "id": "fe550b10d01024f6fecdb578c25ab4055d6c5eb7",
@@ -156648,13 +156696,13 @@
       "id": "docs/supply-tender-security-review.md",
       "label": "docs/supply-tender-security-review.md",
       "documentType": "documentation",
-      "lines": 55,
-      "version": "00b7405fa0cf6ead",
+      "lines": 63,
+      "version": "9bfda97251d62a07",
       "provenance": [
         {
           "file": "docs/supply-tender-security-review.md",
           "line": 1,
-          "version": "00b7405fa0cf6ead"
+          "version": "9bfda97251d62a07"
         }
       ]
     },
@@ -166145,6 +166193,9 @@
           "commit": "3ed1cdf0accddb582d2c621bf5049b9039358502"
         },
         {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+        },
+        {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
@@ -166983,6 +167034,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87"
         },
         {
           "commit": "40add6f0687f8ea47643e9d302550fd868ee057f"
@@ -168371,6 +168425,9 @@
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+        },
+        {
           "commit": "40add6f0687f8ea47643e9d302550fd868ee057f"
         },
         {
@@ -169755,6 +169812,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87"
         },
         {
           "commit": "40add6f0687f8ea47643e9d302550fd868ee057f"
@@ -171528,6 +171588,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "40619e25df4c55cae598b33c19c361997a347a87"
         },
         {
           "commit": "40add6f0687f8ea47643e9d302550fd868ee057f"
@@ -182315,7 +182378,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6fd57847bb345077389eba54fb195565cd5211c0",
+      "revision": "fe04442f5efac563514f64af7d13ede2402b134b",
       "currentBranch": "codex/supply-tender-integration",
       "defaultBranch": "main",
       "visibility": "public",
@@ -214105,13 +214168,13 @@
       "type": "TestSuite",
       "id": "test/director-migration.js",
       "label": "test/director-migration.js",
-      "lines": 250,
-      "version": "bc1cd43d58a76f8e",
+      "lines": 311,
+      "version": "c5b4eaeafee991b9",
       "provenance": [
         {
           "file": "test/director-migration.js",
           "line": 1,
-          "version": "bc1cd43d58a76f8e"
+          "version": "c5b4eaeafee991b9"
         }
       ]
     },
@@ -287431,6 +287494,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:407229e48a4a6b06d3f0eca5c1ffefb4f4b4da36",
       "to": "Artifact:tools/knowledge-test.js",
       "provenance": {
@@ -323715,6 +323818,14 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+      "to": "Artifact:test/director-migration.js",
+      "provenance": {
+        "commit": "81fe1878ee49d4d30a6d2c8e0a860565a862217c"
       }
     },
     {
@@ -391611,6 +391722,14 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "commit": "fe02a04c52eab57528b9b72db0c677e36f48591a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe04442f5efac563514f64af7d13ede2402b134b",
+      "to": "Artifact:docs/supply-tender-security-review.md",
+      "provenance": {
+        "commit": "fe04442f5efac563514f64af7d13ede2402b134b"
       }
     },
     {
@@ -467492,6 +467611,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:40619e25df4c55cae598b33c19c361997a347a87",
+      "provenance": {
+        "commit": "40619e25df4c55cae598b33c19c361997a347a87"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:407229e48a4a6b06d3f0eca5c1ffefb4f4b4da36",
       "provenance": {
         "commit": "407229e48a4a6b06d3f0eca5c1ffefb4f4b4da36"
@@ -472671,6 +472798,14 @@
       "to": "Commit:81c29e64092d65d69063a2b57fb90acb0134fa1f",
       "provenance": {
         "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:81fe1878ee49d4d30a6d2c8e0a860565a862217c",
+      "provenance": {
+        "commit": "81fe1878ee49d4d30a6d2c8e0a860565a862217c"
       }
     },
     {
@@ -482367,6 +482502,14 @@
       "to": "Commit:fe02a04c52eab57528b9b72db0c677e36f48591a",
       "provenance": {
         "commit": "fe02a04c52eab57528b9b72db0c677e36f48591a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fe04442f5efac563514f64af7d13ede2402b134b",
+      "provenance": {
+        "commit": "fe04442f5efac563514f64af7d13ede2402b134b"
       }
     },
     {
