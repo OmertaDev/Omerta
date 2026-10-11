@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3702bb15ca70b74fd237771d7b20158dadece998",
+  "sourceRevision": "a1f39db58e1ff29cd727d352349e30e10080097b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10772,
-    "edges": 43864,
+    "nodes": 10774,
+    "edges": 43870,
     "byNodeType": {
       "Artifact": 4436,
       "Command": 216,
-      "Commit": 2474,
+      "Commit": 2476,
       "Contract": 126,
       "Document": 712,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3568,
-      "CHANGED": 17359,
+      "CHANGED": 17363,
       "CONTAINS": 4457,
       "DECLARES": 216,
       "DEFINED_IN": 1405,
       "DEPENDS_ON": 67,
       "EXECUTES": 738,
       "HANDLED_BY": 779,
-      "HAS_COMMIT": 2474,
+      "HAS_COMMIT": 2476,
       "IMPLEMENTS": 124,
       "IMPORTS": 4259,
       "INHERITS": 42,
@@ -118848,6 +118848,22 @@
       ]
     },
     {
+      "key": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "type": "Commit",
+      "id": "59761023efdbb1f585da88c696a5bdb2772e5204",
+      "label": "Regenerate knowledge for world tool navigation",
+      "title": "Regenerate knowledge for world tool navigation",
+      "date": "2026-10-11T14:12:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/59761023efdbb1f585da88c696a5bdb2772e5204",
+      "provenance": [
+        {
+          "commit": "59761023efdbb1f585da88c696a5bdb2772e5204",
+          "url": "https://github.com/OmertaDev/Omerta/commit/59761023efdbb1f585da88c696a5bdb2772e5204"
+        }
+      ]
+    },
+    {
       "key": "Commit:59bf143d07cc10bb716e045640d322ed79791117",
       "type": "Commit",
       "id": "59bf143d07cc10bb716e045640d322ed79791117",
@@ -130444,6 +130460,22 @@
         {
           "commit": "a1d8402b1e8087044ec50ce6543a35bed150937c",
           "url": "https://github.com/OmertaDev/Omerta/commit/a1d8402b1e8087044ec50ce6543a35bed150937c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a1f39db58e1ff29cd727d352349e30e10080097b",
+      "type": "Commit",
+      "id": "a1f39db58e1ff29cd727d352349e30e10080097b",
+      "label": "Merge pull request #236 from OmertaDev/codex/city-tools-navigation",
+      "title": "Merge pull request #236 from OmertaDev/codex/city-tools-navigation",
+      "date": "2026-10-11T15:07:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a1f39db58e1ff29cd727d352349e30e10080097b",
+      "provenance": [
+        {
+          "commit": "a1f39db58e1ff29cd727d352349e30e10080097b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a1f39db58e1ff29cd727d352349e30e10080097b"
         }
       ]
     },
@@ -165791,6 +165823,9 @@
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
+          "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+        },
+        {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
         },
         {
@@ -167132,6 +167167,9 @@
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
+          "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+        },
+        {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
         },
         {
@@ -168471,6 +168509,9 @@
         },
         {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
+        },
+        {
+          "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
         },
         {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
@@ -170190,6 +170231,9 @@
         },
         {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
+        },
+        {
+          "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
         },
         {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
@@ -180749,8 +180793,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3702bb15ca70b74fd237771d7b20158dadece998",
-      "currentBranch": "codex/city-tools-navigation",
+      "revision": "a1f39db58e1ff29cd727d352349e30e10080097b",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -297695,6 +297739,38 @@
       "to": "Artifact:test/rwaroutes.js",
       "provenance": {
         "commit": "5967cda41a6f89112d63a133c35a7f879765178e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
       }
     },
     {
@@ -465688,6 +465764,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
+      "provenance": {
+        "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:59bf143d07cc10bb716e045640d322ed79791117",
       "provenance": {
         "commit": "59bf143d07cc10bb716e045640d322ed79791117"
@@ -471483,6 +471567,14 @@
       "to": "Commit:a1d8402b1e8087044ec50ce6543a35bed150937c",
       "provenance": {
         "commit": "a1d8402b1e8087044ec50ce6543a35bed150937c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a1f39db58e1ff29cd727d352349e30e10080097b",
+      "provenance": {
+        "commit": "a1f39db58e1ff29cd727d352349e30e10080097b"
       }
     },
     {
