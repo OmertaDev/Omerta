@@ -240,6 +240,65 @@ try {
     await selectTab(page, 'map');
     await waitForCity(page);
   };
+  const readiness = page => page.locator('.omerta-city__readiness').evaluate(node => ({
+    label: node.querySelector('strong').textContent, detail: node.querySelector('span').textContent, tone: node.dataset.tone,
+  }));
+  const assertWalkingReadiness = async (page, original, venueName) => {
+    const walking = 'Walking to ' + venueName + '…', expected = original.tone === 'ready' ? walking : original.detail + ' · ' + walking;
+    await waitForInput(page, copy => window.__cityHandles.at(-1).handle.getState().pathLength > 0
+      && document.querySelector('.omerta-city__readiness > span').textContent === copy, expected);
+    const moving = await readiness(page);
+    assert.equal(moving.label, original.label, 'Walking retains the real readiness label.');
+    assert.equal(moving.tone, original.tone);
+    assert.equal(moving.detail, expected,
+      'The selected venue is announced while the complete warning stays first.');
+  };
+  const assertVenueWalkingFeedback = async (page, requests, cancellations = []) => {
+    const original = await readiness(page), sceneHandle = await page.evaluateHandle(() => window.__cityHandles.at(-1));
+    const count = await page.evaluate(() => window.__cityHandles.length), requestStart = requests.length;
+    const venueName = await page.locator('[data-destination="clubhouse"] .omerta-city__destination-name').textContent();
+    const activate = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
+    try {
+      for (const cancellation of [...cancellations, null]) {
+        const before = await state(page), venue = before.destinations.find(destination => destination.id === 'clubhouse');
+        assert(Math.hypot(before.player.x - venue.x, before.player.y - venue.y) > 42, 'A distant actual waypoint exercises transit feedback.');
+        await activate(page.locator('[data-city-world-tools]'));
+        await activate(page.locator('[data-city-world-panel="map"]'));
+        await activate(page.locator('[data-city-waypoint="clubhouse"]'));
+        await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+        const moving = await state(page);
+        assert(Math.hypot(moving.player.x - venue.x, moving.player.y - venue.y) > 42, 'Choosing a venue starts a real path rather than teleporting.');
+        assert.equal(moving.worldUI.panel, '', 'The chooser closes while the venue route remains visible.');
+        assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false);
+        await assertWalkingReadiness(page, original, venueName);
+        assert(await page.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, sceneHandle));
+        if (cancellation === 'keyboard') {
+          await holdKey(page, 'ArrowLeft', x => {
+            const state = window.__cityHandles.at(-1).handle.getState();
+            return state.pathLength === 0 && state.player.x < x - 8;
+          }, moving.player.x);
+        } else if (cancellation === 'escape') await page.keyboard.press('Escape');
+        else {
+          await waitForInput(page, () => {
+            const state = window.__cityHandles.at(-1).handle.getState();
+            return state.pathLength === 0 && state.selectedVenue === 'clubhouse';
+          });
+          assert.equal(await page.locator('.omerta-city__interaction-title').textContent(), venueName);
+          assert(await page.locator('[data-city-open]').evaluate(node => document.activeElement === node));
+          await page.keyboard.press('Escape');
+        }
+        assert.deepEqual(await readiness(page), original, 'Arrival or cancellation restores the original readiness detail.');
+        const stopped = (await state(page)).position;
+        await waitForFrames(page, 8);
+        assert.deepEqual((await state(page)).position, stopped, 'A retired venue route cannot continue moving.');
+        assert.equal((await state(page)).pathLength, 0);
+        assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false);
+        assert(await page.locator('.omerta-city__canvas canvas').evaluate(node => document.activeElement === node), 'The real input keeps map focus.');
+        assert.equal(await page.evaluate(() => window.__cityHandles.length), count);
+      }
+      assert.deepEqual(gameplayRequests(requests.slice(requestStart)), [], 'Venue walking, arrival and cancellation submit no gameplay POST.');
+    } finally { await sceneHandle.dispose(); }
+  };
   const assertPosition = async (page, expected, message) => {
     const actual = (await state(page)).position;
     assert(Math.hypot(actual.x - expected.x, actual.y - expected.y) < 1, message + ': position');
@@ -692,6 +751,9 @@ try {
     assert.equal((await state(entry)).resources.cash, freshEntryCharacter.cash, 'Walk retains the latest server cash projection.');
     assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
     assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Fresh HUD reuse retains the same renderer.');
+    await entry.setViewportSize({ width: 375, height: 812 }); await waitForFrames(entry, 3);
+    assert.equal((await readiness(entry)).label, 'LOW HEALTH', 'The phone route uses the actual winning low-health projection.');
+    await assertVenueWalkingFeedback(entry, entryRequests);
   } finally {
     await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [priorEntryResources.cash, priorEntryResources.health, characterId]);
   }
@@ -793,12 +855,15 @@ try {
   assert(!afterPointer.obstacles.some(obstacle => afterPointer.player.x > obstacle.x && afterPointer.player.x < obstacle.x + obstacle.width
     && afterPointer.player.y > obstacle.y && afterPointer.player.y < obstacle.y + obstacle.height), 'The walked route ends outside solid geometry.');
   const stories = afterPointer.destinations.find(destination => destination.id === 'stories');
+  const beforeStoriesReadiness = await readiness(page), walkingHandles = await page.evaluate(() => window.__cityHandles.length);
+  const storiesName = await page.locator('[data-destination="stories"] .omerta-city__destination-name').textContent();
   const pointerBox = await canvas.boundingBox();
   await canvas.click({ position: {
     x: (stories.x - afterPointer.camera.x) * afterPointer.camera.zoom * pointerBox.width / afterPointer.camera.width,
     y: (stories.y - afterPointer.camera.y) * afterPointer.camera.zoom * pointerBox.height / afterPointer.camera.height,
   } });
   await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+  await assertWalkingReadiness(page, beforeStoriesReadiness, storiesName);
   await page.locator('#map-mode-territory').focus();
   await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
   const afterBlur = await state(page);
@@ -806,6 +871,8 @@ try {
   assert.deepEqual((await state(page)).player, afterBlur.player, 'Leaving canvas focus cancels the pending venue walk.');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'map-mode-territory', 'Cancelled arrival never steals focus from another control.');
   assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'Cancelled arrival opens no venue card.');
+  assert.deepEqual(await readiness(page), beforeStoriesReadiness, 'Canvas blur clears the stale walking copy.');
+  assert.equal(await page.evaluate(() => window.__cityHandles.length), walkingHandles);
   assert.deepEqual(requests.slice(walkStart).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
     'Walking does not mutate gameplay or spend travel fare.');
 
@@ -831,6 +898,7 @@ try {
   const resourceReply = await (await resourceRead).json();
   await assertHud(page, resourceReply.player?.character || resourceReply.player);
   await assertPosition(page, resourcePose, 'A resource update preserves exploration pose');
+  await assertVenueWalkingFeedback(page, requests, ['keyboard', 'escape']);
   if (shots) {
     await dismissCelebration(page);
     await page.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-desktop.png'), style: sceneShotStyle });
