@@ -1,6 +1,7 @@
 // Exact public goods/market custody equations. Aggregate requests are observations,
 // not an invented sequence of independent commits or price/eligibility decisions.
 import assert from 'node:assert/strict';
+import { invoiceSourceBaseline } from './rc1-invoice-source-compatibility.js';
 import { readFileSync } from 'node:fs';
 import { isDeepStrictEqual as equal } from 'node:util';
 import { BLACK_MARKET, GOODS } from '../src/rules.js';
@@ -68,7 +69,7 @@ export function reconcileMarketResources(before, after, { identity = null, recei
   assert(!selected.some(command => command.request.body?.commitmentId), 'Committed delivery fees are outside this market resource scope');
   if (!sourcesChecked) {
     for (const [file, pin] of Object.entries(sourcePins)) {
-      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      const text = invoiceSourceBaseline(file, readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n'));
       assert.equal(sha256(text), pin, 'Market resource source changed: ' + file);
       if (Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file)) assertGoodsSourceTransfer(file, text);
     }

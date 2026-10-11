@@ -5,13 +5,18 @@ import { execFileSync } from 'node:child_process';
 import { qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import { INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_BASELINE_PINS, INVOICE_SOURCE_CURRENT_BLOBS, INVOICE_SOURCE_BASELINE_BLOBS,
   INVOICE_SOURCE_REVIEWED_REVISION, INVOICE_SOURCE_PREDECESSOR_REVISION, INVOICE_SOURCE_INVERSES, INVOICE_SOURCE_TRANSFER,
-  assertInvoiceSourceTransfer, qualifyInvoiceSource } from '../tools/rc1-invoice-source-compatibility.js';
+  assertInvoiceSourceTransfer, qualifyInvoiceSource, invoiceSourceBaseline } from '../tools/rc1-invoice-source-compatibility.js';
 const normalize = text => text.replaceAll('\r\n', '\n');
 const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INVOICE_SOURCE_CURRENT_PINS)) {
   const current = normalize(fs.readFileSync(file, 'utf8')), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
+  assert.equal(invoiceSourceBaseline(file, current), baseline);
+  assert.equal(invoiceSourceBaseline(file, baseline), baseline);
+  const unknown = current + '\n// unknown source suffix\n';
+  assert.equal(invoiceSourceBaseline(file, unknown), unknown, 'composition must not manufacture historical bytes for unreviewed source');
+  assert.throws(() => qualifyInvoiceSource(file, invoiceSourceBaseline(file, unknown)), /source changed/);
   assert.equal(current, gitText(INVOICE_SOURCE_CURRENT_BLOBS[file]), 'Complete runtime bytes match frozen current Git blob: ' + file);
   assert.equal(current, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':' + file));
   assert.equal(baseline, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':' + file));

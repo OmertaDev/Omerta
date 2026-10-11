@@ -161,3 +161,11 @@ export function qualifyInvoiceSource(file, input) {
       evidence: INVOICE_SOURCE_TRANSFER.evidence, phase: INVOICE_SOURCE_TRANSFER.phase, scope: INVOICE_SOURCE_TRANSFER.scope };
   return assertInvoiceSourceTransfer(file, text);
 }
+
+// Compose only the exact current invoice blob. Earlier revisions and unknown
+// bytes still reach the existing closed historical guard unchanged.
+export function invoiceSourceBaseline(file, input) {
+  const text = normalize(input);
+  return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]
+    ? qualifyInvoiceSource(file, text).baselineText : text;
+}

@@ -1,3 +1,4 @@
+import { INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER, qualifyInvoiceSource } from './rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
@@ -85,6 +86,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyIntelSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -159,6 +164,10 @@ export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertCrewLogisticsSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   assert(CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Unknown Crew logistics compatibility source');
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file], 'Crew logistics source changed: ' + file);
@@ -189,6 +198,10 @@ export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_SERVER_PIN, 'Warehouse server source changed');
   let baselineText = text;
@@ -222,6 +235,10 @@ export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseInvariantTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/invariants.js']) {
+    const transfer = qualifyInvoiceSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_INVARIANT_PIN, 'Warehouse invariant source changed');
   let baselineText = text;
@@ -272,6 +289,10 @@ export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
 ]);
 // Registration transfers unchanged recovery guards, never new tender execution.
 export function assertSupplyTenderServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, SUPPLY_TENDER_SERVER_PIN, 'Supply tender transfer source changed: src/server.js');
  let baselineText = text;
@@ -338,6 +359,10 @@ export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
 ]);
 // Only unchanged historical guards transfer; receipt execution retains separate native proof.
 export function assertDecisionCallServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, DECISION_CALL_SERVER_PIN, 'Decision call transfer source changed: src/server.js');
  let baselineText = text;
@@ -376,6 +401,10 @@ export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
 ]);
 // Composition preserves both independently pinned parent qualification scopes.
 export function assertStorefrontCityServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, STOREFRONT_CITY_SERVER_PIN, 'Composed storefront/City transfer source changed: src/server.js');
  let baselineText = text;
@@ -388,6 +417,10 @@ export function assertStorefrontCityServerTransfer(text) {
 }
 // New storefront execution retains separate current-source accounting and native proofs.
 export function assertStorefrontServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, STOREFRONT_SERVER_PIN, 'Storefront transfer source changed: src/server.js');
  let baselineText = text;
@@ -414,6 +447,10 @@ const businessServerChanges = [
 ];
 // Exact inverse only: new business execution retains its separate current-source proofs.
 export function assertBusinessServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
  const actualSha256 = hash(text);
  assert.equal(actualSha256, BUSINESS_SERVER_PIN, 'Business transfer source changed: src/server.js');
  let baselineText = text;
@@ -432,6 +469,10 @@ const cityPresenceServerChunks = [
 // This exact registration inverse preserves only the previously reviewed paths.
 // City encounter, private progress and lifecycle authority have separate current-source proofs.
 export function assertCityPresenceServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_PRESENCE_SERVER_PIN, 'City presence transfer source changed: src/server.js');
   let baselineText = text;
@@ -453,6 +494,10 @@ export const CITY_SOCIAL_BUSINESS_SOURCE_PARENTS = Object.freeze([
 // A separate closed composition: both parent transfers retain their original complete pins.
 // This inverse qualifies only unchanged historical guards, never either new execution authority.
 export function assertCitySocialBusinessServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN, 'City social/business transfer source changed: src/server.js');
   let baselineText = text;
@@ -476,6 +521,10 @@ const citySocialServerChunks = [
 ];
 // Only unchanged historical guards transfer; new social authority and execution do not.
 export function assertCitySocialServerTransfer(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, CITY_SOCIAL_SERVER_PIN, 'City social transfer source changed: src/server.js');
   let baselineText = text;
@@ -527,6 +576,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyIntelSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -578,6 +631,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -675,6 +732,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -793,6 +854,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -868,6 +933,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyInvoiceSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
@@ -1098,6 +1167,10 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   assert(Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file), 'Unknown City transfer source');
   assert.equal(hash(text), CITY_SOURCE_CURRENT_PINS[file], 'City transfer source changed: ' + file);
   let baselineText = text;
@@ -1184,6 +1257,10 @@ const goodsSourceInverse = {
   ]
 };
 export function assertGoodsSourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   assert(Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file), 'Unknown goods transfer source');
   assert.equal(hash(text), GOODS_SOURCE_CURRENT_PINS[file], 'Goods transfer source changed: ' + file);
   let baselineText = text;
@@ -1247,6 +1324,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  if (hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyInvoiceSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), invoiceSourceTransfer: transfer };
+  }
   if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyIntelSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
