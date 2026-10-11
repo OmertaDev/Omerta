@@ -31,6 +31,12 @@ async function authorized(client, ch, row) {
   const parties = (await client.query('SELECT id,account_id FROM characters WHERE id IN ($1,$2)', [row.buyer_character, row.reporter_character])).rows;
   if (!parties.some(p => p.account_id === ch.account_id)) fail('No forecast job of yours.');
 }
+// A buyer owns its funded requests. A reporter consents only by submitting;
+// unsolicited open assignments cannot reserve another player's capacity.
+async function requireVoluntaryCapacity(client, characterId) {
+  const active = (await client.query("SELECT id FROM intel_forecast_jobs WHERE (buyer_character=$1 AND status='open') OR ((buyer_character=$1 OR reporter_character=$1) AND status='reported' AND outcome IS NULL) LIMIT 3", [characterId])).rows;
+  if (active.length >= INTEL_FORECAST.maxOpen) fail('Resolve or close one of your three active forecasts first.');
+}
 export async function createIntelForecastJob(buyer, reporter, body, requestKey, client, h) {
   if (!request(requestKey) || !key(buyer?.id) || !key(reporter?.id)) fail('Provide a bounded request identity and reporter.');
   const prior = (await client.query('SELECT * FROM intel_forecast_jobs WHERE buyer_character=$1 AND request_key=$2 FOR UPDATE', [buyer.id, requestKey])).rows[0];
@@ -43,10 +49,7 @@ export async function createIntelForecastJob(buyer, reporter, body, requestKey, 
   if (buyer.id === reporter.id || buyer.account_id === reporter.account_id) fail('Choose an independent reporter.');
   const now = Date.now(); let terms;
   try { terms = intelForecastTerms(body, now); } catch { fail('Provide valid fixed forecast terms.'); }
-  for (const id of [buyer.id, reporter.id]) {
-    const active = (await client.query("SELECT id FROM intel_forecast_jobs WHERE (buyer_character=$1 OR reporter_character=$1) AND (status='open' OR (status='reported' AND outcome IS NULL)) LIMIT 3", [id])).rows;
-    if (active.length >= INTEL_FORECAST.maxOpen) fail('This party already has three active forecasts.');
-  }
+  await requireVoluntaryCapacity(client, buyer.id);
   const cash = money(buyer.cash, -terms.feeCash), id = crypto.randomUUID();
   await client.query("INSERT INTO intel_forecast_jobs(id,buyer_character,reporter_character,request_key,district_id,minimum_stock,fee_cash,price_block,created_at,target_at,status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'open')",
     [id, buyer.id, reporter.id, requestKey, terms.districtId, terms.minimumStock, terms.feeCash, priceBlock(now), new Date(now), new Date(terms.targetAt)]);
@@ -73,6 +76,7 @@ export async function submitIntelForecastJob(reporter, buyer, id, body, client, 
     return { ok: true, job: view(row) };
   }
   mobile(reporter);
+  await requireVoluntaryCapacity(client, reporter.id);
   const start = Date.now(), target = new Date(row.target_at).getTime();
   if (row.status !== 'open' || start > target - INTEL_FORECAST.reportLeadMs) fail('This report is no longer timely.');
   const board = await marketPrices(client, priceBlock(start)), completed = Date.now();

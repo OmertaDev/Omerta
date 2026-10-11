@@ -104,7 +104,27 @@ try {
     const cap=(await create(a,b)).job;
     await assert.rejects(create(a,b),e=>e.code==='intel_forecast');
     await single(a,(ch,c,h)=>Jobs.cancelIntelForecastJob(ch,cap.id,c,h));
+    // Distinct jobs share the consenting reporter lock: only one may consume slot3.
+    const capA=(await create(a,b)).job,capB=(await create(foreign,b)).job;
+    const capResults=await Promise.allSettled([submit(b,a,capA.id),submit(b,foreign,capB.id)]);
+    assert.equal(capResults.filter(r=>r.status==='fulfilled').length,1);
+    const rejected=capResults.find(r=>r.status==='rejected');assert.equal(rejected.reason.code,'intel_forecast');
+    assert.equal(await count('intel_job:pay',capA.id)+await count('intel_job:pay',capB.id),1);
   }
+  // Unsolicited assignments must not reserve another player's voluntary capacity.
+  const attacker=await actor('QAttacker'),victim=await actor('QVictim'),helper=await actor('QHelper'),legit=await actor('QLegit');
+  const malicious=[];
+  for(let i=0;i<3;i++) malicious.push((await create(attacker,victim)).job);
+  const own=(await create(victim,helper)).job;
+  assert.equal(own.status,'open');
+  const chosen=(await create(legit,victim)).job;
+  await submit(victim,legit,chosen.id);
+  await submit(victim,attacker,malicious[0].id);
+  const victimCash=await cash(victim);
+  await assert.rejects(submit(victim,attacker,malicious[1].id),e=>e.code==='intel_forecast');
+  assert.equal(await cash(victim),victimCash,'Voluntary capacity refusal cannot pay');
+  assert.equal((await row(malicious[1].id)).status,'open');
+  assert.equal(await count('intel_job:pay',malicious[1].id),0);
   const serverVersion=postgres?(await app.pool.query('SHOW server_version')).rows[0].server_version:null;
   console.log(JSON.stringify({status:'PASS',database:postgres?'native PostgreSQL':'pg-mem',serverVersion,fixedFee:100,houseTake:0,
     scope:'Canonical wrappers/cash/escrow/replay/privacy/cancel/expiry/estate hook/sampling; temporal contexts translated by fixture SQL; actual full runEstate/API integration owned separately'}));
