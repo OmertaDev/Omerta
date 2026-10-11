@@ -1,3 +1,4 @@
+import { strategyLeagueSourceBaseline } from './rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from './rc1-market-feed-source-compatibility.js';
 import { companySuccessionSourceBaseline } from './rc1-company-succession-source-compatibility.js';
 import { strategySourceBaseline } from './rc1-strategy-source-compatibility.js';

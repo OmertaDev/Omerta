@@ -1,3 +1,4 @@
+import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, qualifyStrategyLeagueSource } from './rc1-strategy-league-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, qualifyCompanySuccessionSource } from './rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_CURRENT_PINS, qualifyStrategySource } from './rc1-strategy-source-compatibility.js';
@@ -90,6 +91,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -184,6 +189,10 @@ export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertCrewLogisticsSourceTransfer(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -234,6 +243,10 @@ export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -287,6 +300,10 @@ export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseInvariantTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/invariants.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/invariants.js']) {
     const transfer = qualifyMarketFeedSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -357,6 +374,10 @@ export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
 ]);
 // Registration transfers unchanged recovery guards, never new tender execution.
 export function assertSupplyTenderServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -443,6 +464,10 @@ export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
 ]);
 // Only unchanged historical guards transfer; receipt execution retains separate native proof.
 export function assertDecisionCallServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -501,6 +526,10 @@ export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
 ]);
 // Composition preserves both independently pinned parent qualification scopes.
 export function assertStorefrontCityServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -533,6 +562,10 @@ export function assertStorefrontCityServerTransfer(text) {
 }
 // New storefront execution retains separate current-source accounting and native proofs.
 export function assertStorefrontServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -579,6 +612,10 @@ const businessServerChanges = [
 ];
 // Exact inverse only: new business execution retains its separate current-source proofs.
 export function assertBusinessServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -617,6 +654,10 @@ const cityPresenceServerChunks = [
 // This exact registration inverse preserves only the previously reviewed paths.
 // City encounter, private progress and lifecycle authority have separate current-source proofs.
 export function assertCityPresenceServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -658,6 +699,10 @@ export const CITY_SOCIAL_BUSINESS_SOURCE_PARENTS = Object.freeze([
 // A separate closed composition: both parent transfers retain their original complete pins.
 // This inverse qualifies only unchanged historical guards, never either new execution authority.
 export function assertCitySocialBusinessServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -701,6 +746,10 @@ const citySocialServerChunks = [
 ];
 // Only unchanged historical guards transfer; new social authority and execution do not.
 export function assertCitySocialServerTransfer(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -772,6 +821,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -843,6 +896,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -960,6 +1017,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -1098,6 +1159,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -1193,6 +1258,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyStrategyLeagueSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -1443,6 +1512,10 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -1549,6 +1622,10 @@ const goodsSourceInverse = {
   ]
 };
 export function assertGoodsSourceTransfer(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
@@ -1632,6 +1709,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
+  }
   if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyMarketFeedSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };

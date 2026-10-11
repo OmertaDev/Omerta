@@ -1,3 +1,4 @@
+import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
@@ -15,7 +16,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INVOICE_SOURCE_CURRENT_PINS)) {
-  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, fs.readFileSync(file, 'utf8')))))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8'))))))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(invoiceSourceBaseline(file, current), baseline);
   assert.equal(invoiceSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
