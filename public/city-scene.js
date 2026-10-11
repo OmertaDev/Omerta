@@ -645,16 +645,7 @@
         progressMeter.value = Math.max(0, Math.min(p.respect - p.floor, progressMeter.max));
         progressMeter.setAttribute('aria-label', 'Progress to level ' + (p.level + 1));
       }
-      let condition = { label: 'ON THE STREET', detail: 'Open a venue to see its operations.', tone: 'ready' };
-      if (numeric(character.jailSeconds) > 0) condition = { label: 'LOCKUP', detail: 'Street actions are restricted. Open the Pen for your options.', tone: 'blocked' };
-      else if (numeric(character.safeSeconds) > 0) condition = { label: 'SAFEHOUSE', detail: 'Offense and payouts are restricted while you are under.', tone: 'caution' };
-      else if (character.law?.indicted) condition = { label: 'INDICTED', detail: 'Open The Law to inspect your case.', tone: 'blocked' };
-      else if (character.wanted) condition = { label: 'WANTED', detail: 'Check The Law and your protection before taking another risk.', tone: 'blocked' };
-      else if (numeric(character.hospSeconds) > 0) condition = { label: "DOC'S CARE", detail: 'Fighting is restricted while you recover.', tone: 'caution' };
-      else if (resources.health !== null && resources.health < 30) condition = { label: 'LOW HEALTH', detail: 'Heal before taking a risky fight.', tone: 'caution' };
-      readiness.dataset.tone = condition.tone;
-      setText(readinessLabel, condition.label);
-      setText(readinessCopy, condition.detail);
+      updateReadiness();
       const quest = nextQuest(), coach = character.coach;
       nextMove.hidden = !quest && (!coach || (!coach.label && !coach.hint));
       nextMove.dataset.cityGuidance = quest ? 'quest' : 'coach';
@@ -675,6 +666,22 @@
       nextCopy.hidden = tracked;
       if (tracked) { nextMove.hidden = false; nextButton.hidden = true; }
       fitWorldFrame();
+    }
+    function updateReadiness() {
+      let condition = { label: 'ON THE STREET', detail: 'Open a venue to see its operations.', tone: 'ready' };
+      if (numeric(character.jailSeconds) > 0) condition = { label: 'LOCKUP', detail: 'Street actions are restricted. Open the Pen for your options.', tone: 'blocked' };
+      else if (numeric(character.safeSeconds) > 0) condition = { label: 'SAFEHOUSE', detail: 'Offense and payouts are restricted while you are under.', tone: 'caution' };
+      else if (character.law?.indicted) condition = { label: 'INDICTED', detail: 'Open The Law to inspect your case.', tone: 'blocked' };
+      else if (character.wanted) condition = { label: 'WANTED', detail: 'Check The Law and your protection before taking another risk.', tone: 'blocked' };
+      else if (numeric(character.hospSeconds) > 0) condition = { label: "DOC'S CARE", detail: 'Fighting is restricted while you recover.', tone: 'caution' };
+      else if (numeric(character.health) !== null && numeric(character.health) < 30) condition = { label: 'LOW HEALTH', detail: 'Heal before taking a risky fight.', tone: 'caution' };
+      const walking = path.length && pendingVenue ? 'Walking to ' + pendingVenue.name + '…' : '';
+      const copy = walking ? (condition.tone === 'ready' ? walking : condition.detail + ' · ' + walking) : condition.detail;
+      const changed = readinessCopy.textContent !== copy;
+      if (readiness.dataset.tone !== condition.tone) readiness.dataset.tone = condition.tone;
+      setText(readinessLabel, condition.label);
+      setText(readinessCopy, copy);
+      if (changed) fitWorldFrame();
     }
     function nextQuest() {
       for (const venue of VENUES) {
@@ -747,6 +754,7 @@
       keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null;
       for (const button of moveButtons.values()) button.classList.remove('is-held');
       redrawPath();
+      updateReadiness();
     }
     function positionState() {
       const position = player || lastPosition || initialPosition;
@@ -1438,6 +1446,7 @@
       if (nearbyCopy.textContent !== nearbyText) nearbyCopy.textContent = nearbyText;
       const nextStatus = nearby && card.hidden && actorDock.hidden ? nearbyName + ' · Press E / Enter or tap to inspect' : '';
       if (status.textContent !== nextStatus) status.textContent = nextStatus;
+      updateReadiness();
       reportPosition(false);
       worldUI?.frame({ position: positionState(), world: WORLD, obstacles: OBSTACLES,
         actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })) });
