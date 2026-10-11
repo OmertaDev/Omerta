@@ -435,10 +435,10 @@
 | GET | `/v1/deeds/vault/:sellerCharacterId` | authenticated | enterprise-logistics | [src/routes/deeds.js:33](../../src/routes/deeds.js#L33) | `Deeds.deedVaultRecord` |
 | GET | `/v1/defi` | public | platform-core | [src/routes/defi.js:29](../../src/routes/defi.js#L29) | — |
 | POST | `/v1/defi/tx` | public | platform-core | [src/routes/defi.js:41](../../src/routes/defi.js#L41) | — |
-| GET | `/v1/deliveries` | authenticated | platform-core | [src/routes/delivery.js:4](../../src/routes/delivery.js#L4) | `Delivery.deliveryBoard` |
-| POST | `/v1/deliveries/:id/deliver` | authenticated | platform-core | [src/routes/delivery.js:8](../../src/routes/delivery.js#L8) | `Delivery.deliverCommitment` |
-| POST | `/v1/deliveries/:id/depot/:depotId/buy` | authenticated | platform-core | [src/routes/delivery.js:12](../../src/routes/delivery.js#L12) | `Delivery.buyCommittedFromDepot` |
-| POST | `/v1/deliveries/:id/expire` | authenticated | platform-core | [src/routes/delivery.js:10](../../src/routes/delivery.js#L10) | `Delivery.expireCommitment` |
+| GET | `/v1/deliveries` | authenticated | platform-core | [src/routes/delivery.js:5](../../src/routes/delivery.js#L5) | `Delivery.deliveryBoard` |
+| POST | `/v1/deliveries/:id/deliver` | authenticated | platform-core | [src/routes/delivery.js:12](../../src/routes/delivery.js#L12) | `Delivery.deliverCommitment` |
+| POST | `/v1/deliveries/:id/depot/:depotId/buy` | authenticated | platform-core | [src/routes/delivery.js:16](../../src/routes/delivery.js#L16) | `Delivery.buyCommittedFromDepot` |
+| POST | `/v1/deliveries/:id/expire` | authenticated | platform-core | [src/routes/delivery.js:14](../../src/routes/delivery.js#L14) | `Delivery.expireCommitment` |
 | GET | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:19](../../src/routes/depot.js#L19) | `Depot.depotState` |
 | POST | `/v1/depot` | authenticated | platform-core | [src/routes/depot.js:21](../../src/routes/depot.js#L21) | `Depot.openDepot` |
 | POST | `/v1/depot/:id/buy` | authenticated | platform-core | [src/routes/depot.js:41](../../src/routes/depot.js#L41) | `Depot.buyFromDepot` |
@@ -657,7 +657,7 @@
 | GET | `/v1/map` | authenticated | world-progression | [src/server.js:2484](../../src/server.js#L2484) | `CityMap.cityMap` |
 | GET | `/v1/market` | public | economy-ledger | [src/server.js:2353](../../src/server.js#L2353) | `Market.marketBoard` |
 | POST | `/v1/market` | authenticated | economy-ledger | [src/server.js:2354](../../src/server.js#L2354) | `Market.listItem` |
-| POST | `/v1/market/:id/accept-delivery` | authenticated | platform-core | [src/routes/delivery.js:6](../../src/routes/delivery.js#L6) | `Delivery.acceptDelivery` |
+| POST | `/v1/market/:id/accept-delivery` | authenticated | platform-core | [src/routes/delivery.js:10](../../src/routes/delivery.js#L10) | `Delivery.acceptDelivery` |
 | POST | `/v1/market/:id/bid` | authenticated | economy-ledger | [src/server.js:2356](../../src/server.js#L2356) | `Market.bidListing` |
 | POST | `/v1/market/:id/buy` | authenticated | economy-ledger | [src/server.js:2358](../../src/server.js#L2358) | `Market.buyListing` |
 | POST | `/v1/market/:id/cancel` | authenticated | economy-ledger | [src/server.js:2360](../../src/server.js#L2360) | `Market.cancelListing` |

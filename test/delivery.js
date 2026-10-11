@@ -72,6 +72,16 @@ try {
   assert.equal(board.wanted, 1); assert.equal(board.reserved, 3);
   assert.equal((await call('POST', `${depotPath}/orders/${order}/cancel`, buyer)).body.error, 'committed_order');
   const originalTerms = (await call('GET', '/v1/deliveries', supplier)).body.commitments[0];
+  assert.equal((await call('GET', '/v1/deliveries')).code, 401, 'supplier history remains authenticated');
+  const activeHistory = (await call('GET', '/v1/deliveries', buyer)).body.supplierHistory;
+  assert.equal(activeHistory.scope, 'own_buyer_delivery_history');
+  assert.equal(activeHistory.suppliers.find((s) => s.supplierId === supplier.id).active, 1);
+  assert.deepEqual((await call('GET', '/v1/deliveries', supplier)).body.supplierHistory.suppliers, [],
+    'being a supplier does not reveal another buyer history');
+  assert.deepEqual((await call('GET', '/v1/deliveries', rival)).body.supplierHistory.suppliers, [],
+    'unrelated identities cannot see buyer outcome summaries');
+  const humanHistory = (await call('GET', '/v1/deliveries', { token: buyer.ownerToken })).body.supplierHistory;
+  assert.deepEqual(humanHistory.suppliers, activeHistory.suppliers, 'human and agent credentials share the same character scope');
   assert.equal(originalTerms.netPayout, 361, 'net payout is fixed, including rounding');
   await call('POST', `${depotPath}/configure`, buyer, { ...config, bidPrice: 500 });
   await call('POST', '/v1/goods/buy', rival, { goodId: 'gin', qty: 2 });
@@ -101,6 +111,9 @@ try {
     await checks();
   }
   assert.equal(net, 361); assert.equal((await me(supplier)).cash, before + 361);
+  const fulfilledHistory = (await call('GET', '/v1/deliveries', buyer)).body.supplierHistory;
+  assert.equal(fulfilledHistory.suppliers.find((s) => s.supplierId === supplier.id).fulfilled, 1);
+  assert.equal(fulfilledHistory.suppliers.find((s) => s.supplierId === supplier.id).deliveredUnits, 3);
   assert.equal(Number((await app.pool.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool) - taxBefore, 4,
     'partial settlement also preserves the full-delivery fee-routing split');
   assert.equal((await call('POST', `/v1/deliveries/${id}/deliver`, supplier, { qty: 1 })).body.error, 'no_commitment');
@@ -125,6 +138,8 @@ try {
   const expiry = await call('POST', `/v1/deliveries/${timed.body.id}/expire`, buyer);
   assert.equal(expiry.body.paid, 0); assert.equal(expiry.body.released, 2);
   assert.equal((await call('POST', `/v1/deliveries/${second.body.id}/expire`, supplier)).body.released, 1);
+  const missedHistory = (await call('GET', '/v1/deliveries', buyer)).body.supplierHistory;
+  assert.equal(missedHistory.suppliers.find((s) => s.supplierId === supplier.id).missedDeadline, 2);
   assert.equal((await call('POST', `${depotPath}/orders/${timedOrder}/cancel`, buyer)).body.refunded, 492);
   await checks();
 
@@ -162,6 +177,10 @@ try {
   let kill = await app.inject({ method: 'POST', url: '/v1/mod/kill', payload: { characterId: rival.id }, headers: { 'x-mod-key': 'delivery-test-mod' } });
   assert.equal(kill.statusCode, 200);
   assert.equal((await app.pool.query('SELECT status FROM delivery_commitments WHERE id=$1', [dying.body.id])).rows[0].status, 'supplier_dead');
+  const interruptedHistory = (await call('GET', '/v1/deliveries', buyer)).body.supplierHistory;
+  assert.equal(interruptedHistory.suppliers.find((s) => s.supplierId === rival.id).supplierInterrupted, 1);
+  assert.equal(interruptedHistory.suppliers.find((s) => s.supplierId === rival.id).missedDeadline, 0,
+    'supplier death is recorded separately from missed deadlines');
   await checks();
   if (postgres) {
     assert.equal((await call('POST', '/v1/goods/buy', supplier, { goodId: 'gin', qty: 1 })).code, 200);
