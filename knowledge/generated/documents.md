@@ -533,6 +533,7 @@
 | [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 47 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 47 | 2026-10-11 |
+| [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 45 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |
