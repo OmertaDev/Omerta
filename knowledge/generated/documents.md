@@ -375,7 +375,7 @@
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 67 | 2026-10-11 |
-| [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 51 | 2026-10-11 |
+| [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 74 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
