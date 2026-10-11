@@ -4,6 +4,7 @@
 // action descriptors whose method/path/body can be handed straight back to the API.
 import crypto from 'node:crypto';
 import { restockCandidates } from './restock.js';
+import { planCommittedCargo } from './courierjobs.js';
 import { depotState, depotPilotEnabled } from './depot.js';
 import { deliveryBoard, deliveryIntakeEnabled, DELIVERY } from './delivery.js';
 import { BLACK_MARKET, BUSINESSES, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
@@ -584,21 +585,25 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const deliveryPlans = [];
   for (const contract of activeDeliveries) {
     if (jailed(ch) || safeHoused(ch)) continue;
-    const held = Math.min(contract.remaining, Number(owned.cargo?.[contract.good] || 0));
-    if (held && ch.loc === contract.district) {
-      const gross = held * contract.unitPrice, done = contract.quantity - contract.remaining;
-      const net = gross - (Math.ceil((done + held) * contract.unitPrice * contract.takeBps / 10000)
-        - Math.ceil(done * contract.unitPrice * contract.takeBps / 10000));
-      const action = valued({ id: `delivery:${contract.id}:deliver`, planId: `delivery:${contract.id}`, kind: 'delivery_deliver',
-        label: 'Deliver reserved goods', method: 'POST', path: `/v1/deliveries/${contract.id}/deliver`,
-        body: { commitmentId: contract.id, qty: held }, executable: true,
-        cost: { goods: { [contract.good]: held } }, reward: { cash: { gross, net } }, risk: { level: 'low' } },
-      { cash: net, inventory: -held * goodPriceOf(contract.good, ch.loc), basis: 'Fixed committed payout after market take, less delivered inventory value.' });
+    const continuation = planCommittedCargo(ch, owned, contract, POLICY);
+    if (continuation) {
+      if (continuation.blockedReason) continue;
+      const traveling = continuation.kind === 'delivery_travel';
+      const status = traveling ? 'travel_to_deliver' : 'deliver';
+      const path = traveling ? `/v1/travel/${contract.district}` : `/v1/deliveries/${contract.id}/deliver`;
+      const action = valued({ id: `delivery:${contract.id}:${status}`, planId: `delivery:${contract.id}`, kind: continuation.kind,
+        label: traveling ? 'Travel to fulfill committed delivery' : 'Deliver reserved goods', method: 'POST', path,
+        body: continuation.body, executable: true,
+        cost: traveling ? { cash: continuation.travelCash } : { goods: { [contract.good]: continuation.quantity } },
+        reward: traveling ? { planCash: continuation.incrementalCash } : { cash: { gross: continuation.gross, net: continuation.net } },
+        risk: { level: traveling ? 'medium' : 'low', orderReserved: true, deathMayTerminate: true } },
+      { cash: continuation.incrementalCash, inventory: -continuation.quantity * goodPriceOf(contract.good, ch.loc), basis: continuation.basis });
       deliveryActions.push(action);
       deliveryPlans.push({ id: action.planId, kind: 'delivery', commitmentId: contract.id, deadline: contract.deadline,
-        label: 'Settle committed delivery', quantity: held, status: 'deliver', nextActionId: action.id,
+        label: 'Settle committed delivery', quantity: continuation.quantity, status, nextActionId: action.id,
         refreshAfterStep: true, score: action.score, ev: action.ev,
-        route: [{ kind: 'deliver', path: action.path, quantity: held }] });
+        route: [...(traveling ? [{ kind: 'travel', district: contract.district }] : []),
+          { kind: 'deliver', path: `/v1/deliveries/${contract.id}/deliver`, quantity: continuation.quantity }] });
       continue;
     }
     const available = contract.maxProcurementCash - contract.spent;
