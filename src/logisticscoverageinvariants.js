@@ -19,6 +19,14 @@ export async function logisticsCoverageFaults(pool) {
   }
   for (const p of policies) {
     const rows = rowsByPolicy.get(p.id) || [];
+    const offer = p.offer && typeof p.offer === 'object' && !Array.isArray(p.offer) ? p.offer : {};
+    if (Object.keys(offer).sort().join(',') !== 'cashPerUnit,coveredUnits,expiresAt,leaseId,premiumCash'
+      || offer.leaseId !== p.lease_id || offer.premiumCash !== Number(p.premium_cash)
+      || !Number.isSafeInteger(offer.coveredUnits) || offer.coveredUnits < 1 || offer.coveredUnits > 10
+      || !Number.isSafeInteger(offer.cashPerUnit) || offer.cashPerUnit < 1 || offer.cashPerUnit > 100000
+      || offer.coveredUnits * offer.cashPerUnit !== Number(p.max_benefit_cash)
+      || !Number.isFinite(new Date(offer.expiresAt).getTime())
+      || new Date(offer.expiresAt).getTime() !== new Date(p.coverage_expires_at).getTime()) faults++;
     const max = Number(p.max_benefit_cash), premium = Number(p.premium_cash), escrow = Number(p.escrow_cash), refunded = Number(p.refunded_cash), benefit = Number(p.benefit_cash);
     if (characters.get(p.insurer_character) !== p.insurer_account || characters.get(p.tenant_character) !== p.tenant_account || p.insurer_account === p.tenant_account) faults++;
     if (![max,premium,escrow,refunded,benefit].every(Number.isSafeInteger) || max < 1 || max > 1000000 || premium < 0 || premium > max || escrow < 0 || refunded < 0 || benefit < 0) faults++;
@@ -42,9 +50,12 @@ export async function logisticsCoverageFaults(pool) {
     } else if (claims.length || p.receipt || p.paid_at) faults++;
     if (escrow !== max - refunded - (p.state === 'paid' ? benefit : 0)) faults++;
     const t = p.terms;
-    if (!t || t.leaseId !== p.lease_id || t.depotId !== p.depot_id || t.tenantCharacterId !== p.tenant_character
+    if (!t || t.coveredEvent !== 'warehouse_tenant_death' || t.good !== 'gin'
+      || !Number.isSafeInteger(t.enrollmentSequence) || t.enrollmentSequence < 1
+      || !Number.isFinite(new Date(t.enrolledAt).getTime()) || !Number.isFinite(new Date(t.expiresAt).getTime())
+      || t.leaseId !== p.lease_id || t.depotId !== p.depot_id || t.tenantCharacterId !== p.tenant_character
       || t.tenantAccountId !== p.tenant_account || t.beneficiaryAccountId !== p.tenant_account || t.maxBenefitCash !== max
-      || t.coveredUnits !== p.offer.coveredUnits || t.cashPerUnit !== p.offer.cashPerUnit
+      || t.coveredUnits !== offer.coveredUnits || t.cashPerUnit !== offer.cashPerUnit
       || new Date(t.enrolledAt).getTime() !== new Date(p.accepted_at).getTime()
       || new Date(t.expiresAt).getTime() !== new Date(p.coverage_expires_at).getTime()) faults++;
     if (p.event_id) {
