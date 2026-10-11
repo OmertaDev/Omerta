@@ -66,5 +66,10 @@ message. Repair `1a1ca3637500126bbf99a9ce1a83c4d3be9d6374` adds explicit
 and positive formatter branches, preserving existing fields and cash transitions.
 Actual closure and loan-cancellation assertions, full client, loans and warehouse
 API tests passed. The unchanged collision ledger found no overlaps; no shared-line
-or absent-field exception was added. Exact historical loan source reconstruction
-and complete hosted qualification remain required before releasing this revision.
+or absent-field exception was added. Transfer
+`8a6b558c4918bd40060acf09ba10d5d19da86485` reconstructs the complete original
+loan source through one exact return-line inverse, retains both original pins
+and custody exclusions, and rejects missing, duplicate or unknown drift.
+Its negative controls and both observer consumer suites passed. Integrated
+repository source and documentation gates passed; complete fresh hosted
+qualification remains required before releasing this revision.
