@@ -1972,6 +1972,7 @@
       "cost_delta",
       "created_at",
       "depot_id",
+      "event_at",
       "expense",
       "id",
       "lease_stock_delta",

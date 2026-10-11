@@ -7766,3 +7766,6 @@ CREATE TABLE IF NOT EXISTS city_social_preferences (
   last_chat_at TIMESTAMPTZ,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Logistics coverage requires post-lock event time; historical transaction-start clocks remain unqualified.
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS event_at TIMESTAMPTZ;
