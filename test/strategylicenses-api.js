@@ -20,6 +20,10 @@ const { DISTRICTS, priceBlock } = await import('../src/rules.js');
 const { INTEL_FORECAST } = await import('../src/intelforecasts.js');
 const { strategyLicenseFaults } = await import('../src/strategylicenseinvariants.js');
 const app = await buildServer(); let serial = 0;
+const discovery = (await app.inject({ method: 'GET', url: '/openapi.json' })).json();
+for (const path of ['/v1/strategies', '/v1/strategies/{id}/buy']) {
+  assert(discovery.paths[path].post.parameters.some(p => p.name === 'Idempotency-Key' && p.in === 'header' && p.required), 'Machine clients discover the durable replay identity');
+}
 async function call(method, url, who = null, body = undefined, key = `strategy-api-${++serial}`) {
   const response = await app.inject({ method, url, payload: body,
     headers: { ...(who ? { authorization: `Bearer ${who.token}` } : {}), 'idempotency-key': key } });
