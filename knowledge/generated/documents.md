@@ -324,8 +324,8 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
-| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 56 | 2026-10-09 |
-| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 46 | 2026-10-09 |
+| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 70 | 2026-10-10 |
+| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 50 | 2026-10-10 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
@@ -373,7 +373,7 @@
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 67 | 2026-10-08 |
-| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 45 | 2026-10-10 |
+| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 53 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
@@ -621,5 +621,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-10 |
+| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-11 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
