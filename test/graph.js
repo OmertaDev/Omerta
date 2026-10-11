@@ -117,6 +117,10 @@ assert(g.edges.some(edge => edge.type === 'RECONCILES'
   && edge.from === 'Check:logistics coverage escrow' && edge.to === 'Reason:coverage:%'),
   'Funded coverage must reconcile actual escrow against its cash ledger');
 
+assert(g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:strategy license transfers' && edge.to === 'Reason:strategy:%'),
+  'Strategy licenses must reconcile their actual paired game-cash ledger');
+
 // An advance is metadata over canonical loan escrow, not another cash bucket.
 // Pin the real debt/receipt checks and retain the underlying monetary edge.
 assert.match(invariantSource, /const financeRequests = .*SELECT \* FROM delivery_loan_requests/);
