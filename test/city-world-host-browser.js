@@ -119,6 +119,72 @@ try {
     if (!await page.locator('.city-world__dock').isVisible()) await page.locator('[data-city-world-tools]').click();
     await page.locator(`[data-city-world-panel="${kind}"]`).click(); await frames(page);
   };
+  const assertToolChoicesReturn = async (page, requests) => {
+    const snapshot = () => page.evaluate(() => {
+      const current = window.__worldHandles.at(-1).handle.getState();
+      return { handles: window.__worldHandles.length, position: current.position, pathLength: current.pathLength,
+        panel: current.worldUI.panel, opening: current.worldUI.opening, outer: scrollY,
+        pressed: [...document.querySelectorAll('[data-city-world-panel][aria-pressed="true"]')].map(node => node.dataset.cityWorldPanel),
+        fields: [...document.querySelectorAll('.city-world__content input,.city-world__content select')].map(node => [node.getAttribute('aria-label'), node.value]),
+        receipt: document.querySelector('.city-world__receipt').textContent };
+    });
+    const choices = () => page.evaluate(() => {
+      const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
+      const hit = node => { const rect = node.getBoundingClientRect(), target = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return rect.top >= box.top && rect.bottom <= box.bottom && node.contains(target); };
+      const back = dock.querySelector('[data-city-world-back]');
+      return { scroll: dock.scrollTop, visible: [...dock.querySelectorAll('[data-city-world-panel]')].filter(hit).length,
+        backHit: hit(back), backHeight: back.getBoundingClientRect().height };
+    });
+    await page.waitForFunction(() => window.__worldReadResults.every(read => read.settled));
+    const before = await snapshot();
+    if (before.panel === 'room') assert(before.fields.length >= 3, 'The real room supplies unsaved form fields.');
+    for (const keyboard of [false, true]) {
+      const box = await page.locator('.city-world__dock').boundingBox();
+      await page.locator('.city-world__dock').evaluate(node => {
+        node.__toolScrollEnded = false; node.__toolScrollEnd = () => { node.__toolScrollEnded = true; };
+        node.addEventListener('scrollend', node.__toolScrollEnd, { once: true });
+      });
+      try {
+        if (page.viewportSize().width <= 680) {
+          const touch = await page.context().newCDPSession(page), x = box.x + box.width / 2, y = box.y + box.height - 24;
+          try {
+            await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+            for (const distance of [50, 100, 150, 200, 250]) {
+              await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - distance }] }); await frames(page);
+            }
+          } finally { await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await touch.detach(); }
+        } else { await page.mouse.move(box.x + box.width / 2, box.y + box.height - 24); await page.mouse.wheel(0, 900); }
+        await page.waitForFunction(() => document.querySelector('.city-world__dock').__toolScrollEnded === true);
+      } finally {
+        await page.locator('.city-world__dock').evaluate(node => { node.removeEventListener('scrollend', node.__toolScrollEnd); delete node.__toolScrollEnd; delete node.__toolScrollEnded; });
+      }
+      await page.waitForFunction(() => {
+        const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
+        return dock.scrollTop > 0 && [...dock.querySelectorAll('[data-city-world-panel]')].every(node => node.getBoundingClientRect().bottom < box.top);
+      });
+      const scrolled = await choices();
+      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all six choices out of view.');
+      assert(scrolled.backHit && scrolled.backHeight >= 44, 'The sticky return control remains reachable: ' + JSON.stringify(scrolled));
+      const at = requests.length, reads = await page.evaluate(() => window.__worldReads.length);
+      if (keyboard) {
+        await page.keyboard.press('Shift+Tab'); await page.keyboard.press('Shift+Tab');
+        assert(await page.locator('[data-city-world-back]').evaluate(node => document.activeElement === node), 'Native reverse Tab reaches the sticky return button from Map.');
+        const focused = await choices();
+        assert(focused.scroll > 0 && focused.visible === 0 && focused.backHit, 'Keyboard focus alone leaves the choices hidden before Enter: ' + JSON.stringify(focused));
+        await page.keyboard.press('Enter');
+      } else if (page.viewportSize().width <= 680) await page.locator('[data-city-world-back]').tap();
+      else await page.locator('[data-city-world-back]').click();
+      await frames(page);
+      const returned = await choices();
+      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 6, 'Returning exposes every real panel choice.');
+      assert(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), 'Return focuses the first choice without selecting it.');
+      assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
+      assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
+      assert.deepEqual(requests.slice(at).filter(request => request.path.startsWith('/v1/')
+        && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Return sends no game GET or POST.');
+    }
+  };
   const refresh = async page => {
     const response = page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/projections/player' && reply.status() === 200);
     await page.locator('#btn-refresh').click(); const body = await (await response).json(); await frames(page);
@@ -247,7 +313,19 @@ try {
   if (process.env.CITY_WORLD_SHOTS) await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-room-375.png') });
   const roomCalls = requests.length; await page.getByRole('button', { name: 'Use Lamp', exact: true }).click();
   assert.deepEqual(mutations(requests.slice(roomCalls)), [], 'Using free room scenery is cosmetic, not an invented gameplay API.');
+  await page.getByLabel('Furniture column', { exact: true }).fill('5'); await page.getByLabel('Furniture row', { exact: true }).fill('4');
+  assert((await page.locator('.city-world__receipt').textContent()).trim(), 'The return proof retains a real saved-room receipt.');
+  await assertToolChoicesReturn(page, requests);
   await panel(page, 'map'); await page.locator('[data-city-minimap]').waitFor(); await assertFrame(page);
+  await assertToolChoicesReturn(page, requests);
+  const toolsDesktop = await newPage({ width: 1440, height: 900 });
+  try {
+    await panel(toolsDesktop.page, 'map'); await assertToolChoicesReturn(toolsDesktop.page, toolsDesktop.requests);
+    await panel(toolsDesktop.page, 'room'); await toolsDesktop.page.getByLabel('Furniture column', { exact: true }).waitFor();
+    await toolsDesktop.page.getByLabel('Furniture column', { exact: true }).fill('5'); await toolsDesktop.page.getByLabel('Furniture row', { exact: true }).fill('4');
+    await assertToolChoicesReturn(toolsDesktop.page, toolsDesktop.requests);
+  } finally { await toolsDesktop.context.close(); await page.bringToFront(); }
+  console.log('world host: native phone/desktop tool return preserves panels, drafts, receipt, focus, pose and requests');
   const waypoint = (await state(page)).destinations.find(venue => venue.id === 'stories'), beforeWaypoint = requests.length;
   await page.locator('[data-city-waypoint="stories"]').click();
   const moving = await state(page);
