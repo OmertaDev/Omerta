@@ -42,3 +42,10 @@ Test fixtures use isolated local databases; no production actor or transaction.
 Financial activation remains disabled. Fresh hosted checks must qualify the
 exact release revision before merge, followed by deployed revision and health
 verification. This review does not establish outside earnings or crypto backing.
+
+Hosted `8691f308` exposed the inherited tender fixture/census gaps and a missing
+warehouse-claim estate-census entry. Scoped test-only repairs `b7e7bd41` and
+`9cdf355e7b2837b4c94037af5ad0cd92b4491a12` preserve native runtime and exact
+source transfers. The combined migration classification retest passed; current
+claims are cleaned by the existing death hooks and immutable history remains.
+No guard was waived. Fresh complete hosted gates are still required.
