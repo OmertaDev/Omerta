@@ -1,3 +1,4 @@
+import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +13,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INVOICE_SOURCE_CURRENT_PINS)) {
-  const current = normalize(coverageSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, fs.readFileSync(file, 'utf8')))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(invoiceSourceBaseline(file, current), baseline);
   assert.equal(invoiceSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
