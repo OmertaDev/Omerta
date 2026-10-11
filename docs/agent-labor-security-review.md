@@ -67,3 +67,79 @@ Nodev24.19.0 commands exit0: node test/resourcework.js; COORDINATION_TEST_DATABA
 Working-tree SHA256: resourcework.js1807c4eabd747fec3cb44cb75a22fc8087402615c83e2b7ea955f9e007afebe8; resourcelabor.js7652ee53d4fbd1d8a77ded15d13a1587167415b92d09e427cd55373065ea25f1; routes/resources.js c4ac30341a2182c1712cc26be3eae3145cc39f24778221b9cbcc013bc968e82b; resourcecontracts.js2f72fc2fc513d195bdcd91d774ce2bcaf451dbaa548a58e1735b0a940a123aeb; tools/resource-agent.js efde8373537926706f327e97e90a8089b0470779000a59d4c0d6632335efd161; test/resourcework.js4070e77b8e7071f0b7c6feccacbd0f6cb7aae0d5419a184cb0849e436a5073bc; test/resource-agent.js6d429da8cbee6b5b5276597253f26365ea859b7d52e21df0586672c70950e6b6. Git normalizes line endings. Scope-ready pending required hosted checks: earned USD credits still have no seller bank/wallet withdrawal path; authored production costs are unknown; test funding is not external income. Live payment, financial and real compute activation remain disabled.
 
 Hosted38078473835 native matrices/recovery passed, then the docs gate caught two public draft route counts still887 after SPEC was updated to888. Corrected only the checked current Show HN/registry figures in MARKETING-POSTS.md; no historical report or assertion changed. node test/docs.js now exits0. Failed diagnostics retained output/authored-census-ci.log, retest output/authored-census-retest.log. Production source/review hashes above remain unchanged; fresh exact-head hosted checks are required.
+
+## Authored delivery runner and private target read — 2026-10-10
+
+Merge recovery: GitHub rejected merging reviewed head `c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5` after the knowledge bot advanced main to `11af7d8f8637e8e791c9be1b36106c69936607ac`. The advance changes only generated knowledge; integration conflicts are confined to github-history, graph-summary, graph.json and inventory. Preserved the reviewed runtime and scoped reader without changes, resolved generated files from the reviewed side for the clean integration commit, then regenerated them in a separate source-stamped commit. Prior passing runtime checks remain source applicable; the regenerated provenance gate and fresh exact-head hosted checks gate the recovered merge candidate.
+
+Dependency integration: reviewed authored-deliverables commit `c05e8a32359c006bcf602c90760e8481364f23d0` brings the current-main integration and inherited business safeguards. Independent delivery review at `84e663d5fc740cc380ba0e6152af0b1fca5f52fd` remains applicable to the unchanged delivery runner, private target handler and authored integration tests; inherited server changes are scoped to the main integration evidence rather than represented as unchanged server bytes. Source census is remeasured, both delivery and existing suite gates are preserved, and focused delivery/resourcework/routes/gates/docs checks and clean-source knowledge regeneration gate the combined head. No execution, provider or financial activation is authorized by integration.
+
+Independent follow-up review by receipt_graph at exact source `84e663d5fc740cc380ba0e6152af0b1fca5f52fd` found no findings. Delivery and resourcework suites passed on Node24.19.0; reviewed runtime hashes match the retained package. At combined source `36cfec8893060faffbcb09f58a1bac2f313e7890`, the runner, resourcework domain, scoped routes and integrated backend suite are byte-identical to that reviewed revision; focused delivery/resourcework/routes/gates/docs checks passed after dependency integration. The inherited server changes originate in the reviewed business/main integration and do not grant delivery credentials additional authority.
+
+Release test discovery refinement: `package.json` invokes `node test/resource-deliver.js` explicitly in `pretest`; the incidental import in `test/resource-agent.js` was removed to avoid running it twice. Runtime and backend source are unchanged. Separate delivery, resource-agent, resourcework, route and documentation suites pass after this wiring change; the generated knowledge gate is rerun against the final clean source revision. The dependency branch was verified at `6e7ea76791d620e9878af6e707ef08ca2a0b8be2` and is already included.
+
+The first documentation rerun caught the draft suite count at278 while explicit discovery now counts279. Corrected that current public draft figure and reran the documentation gate; historical reports and runtime hashes remain unchanged.
+
+Scope: independent review at e65bedc794afa60c4fde47f4f760bcb3ba06d989 (reviewed authored-server dependency #223 integrated), client refinements through783887507c3124a31cd72edfc3ff351b5ad474fb and backend integration tests e6a204f0. Separate managed worktree owns this execution client and its specific job reader; root resolves shared route/test hunks preserving both target-read and authored-submission cases. Product backend hashes remain unchanged from the independent review. This client executes claims/submissions, never customer acceptance, compute purchase, funding, owner-policy changes or payouts.
+
+GET /v1/resources/jobs/:id validates the ID and queries only id AND(buyer_account=authenticatedAccount OR seller_account=authenticatedAccount). Existing resourceJobView independently checks the two parties. Missing/foreign jobs share the same unavailable error; anonymous reads are unauthorized. No records are created. Ordinary account/JWT checks are inherited; local route tests inject auth fixtures rather than claim fresh JWT verification.
+
+The client requires explicit HTTPS origin (loopback HTTP only for tests), job ID, local text file and environment token OMERTA_RESOURCE_TOKEN; no CLI token flag. It validates regular-file identity, byte size, UTF8, nonblank content and read-time inode/mtime/ctime consistency. Targeted response is bounded at1MiB; metadata alone leaves the client. Assignment, authored contract, state, deadline and matching immutable bytes are checked. Requests pin credentials to the chosen origin, refuse redirects, abort after30seconds and start at least3100ms apart. Actual backend rechecks authority under its existing locks; stale client observations grant nothing.
+
+Findings resolved: DR1whole-queue/history lookup missed submitted/accepted jobs and busy histories, replaced by a scoped target reader. DR2stage-only CLI success could claim completion after a failed submit, replaced by confirmed=true only for a validated immutable match. DR3mutation intent set before pacing caused pending despite no dispatched request, replaced by per-request dispatch tracking. DR4HTTP202/explicit pending with valid-looking job fields could proceed or confirm, now halts pending/confirmedfalse without another mutation. Tests retain known-state diagnostics, single use, redirect rejection, immutable conflict, missing/foreign/mode/deadline refusal and token/content redaction.
+
+Pinned access-control/state/replay/privacy/property methods above applied by parent and independent API agent. Independent review found no further issue; narrower DR4 guards were subsequently checked by parent with dedicated client tests. No automated broad SAST/upstream orchestration or contract audit is claimed; no storage or external settlement changes. Nodev24.19.0: node test/resource-agent.js passes complete delivery tests (real loopback HTTP, CLI subprocess failed400/malformed200/pending202, file bounds, cadence, origin and ambiguity). Memory/native PostgreSQL18.4 test/resourcework.js pass actual target permissions and client-driven GET/claim/submit through real handlers, followed by customer acceptance and GET-only recovery. Local injected transport exercises native handlers, not production credentials. Native outputs retained output/delivery-integrated-native.log; memory output/delivery-final-memory.log. Temporary report files are cleaned nonrecursively. No real money/provider calls or financial activation occurred.
+
+Reviewed runtime SHA256: runnerbcd9211dff2a90304e90c2f7153a5f6ca91846726fdd0358a5ba4e0bec471700; runner suite15a62cf27cc3e03a3fe9acd2d8a2a5e849d96a7caa864fb1318a79e1a00c9111; domainb1e169d606fe0bbe7cd8b1ee960752349afd9f3edafe6f2f94a4bb6876b21dfe; routes411d397238bb298e1efbacb329143144d5ea4a89a08c76003b66d4609fd10567; contracts84859c335e87b7321b1c6e08a0952f58c002ac27055cfac3c42436ab412be2ac; integrated backend suitea033a2dd89b722e0ad98bb324e668590b191ec746cf06c5c9cde59c9102f6fc4. Git normalizes line endings. Ready in this bounded execution scope pending required exact-head release checks and separate deployment verification. Confirmed delivery is not accepted revenue or bank withdrawal; costs and provenance remain unverified, and live financial/compute activation stays disabled.
+
+2026-10-11 release integration: main merged in e87761ed, retaining the reviewed full-phone-map actor fixture from PR224 and both explicit receipt/delivery pretest invocations. Guarded diagnostic commits e0b94cfe and febb5e5f carry the root-reviewed test-only instrumentation for the unresolved hosted actor-selection timeout seen at delivery head 85c69641. No runner, target-reader, authored API or financial authority source changed. The inherited real click, selectedActor wait and timeout remain mandatory, without retry; passive diagnostics cannot throw during teardown and append bounded nonsecret evidence only on failure. See docs/earning-receipts-security-review.md for failed hosted evidence and scope limits. Focused City presence browser, unchanged documentation and suite-inventory gates passed after this integration; measured suite census is 280 explicit npm suites. Generated artifacts are rebuilt from the clean authored revision and fresh exact-head hosted checks remain required; no causal runtime fix is claimed for the timeout.
+
+## Delivery and private earnings release integration — 2026-10-11
+
+Predecessor delivery head `adde0dba4c2bde165a5ce23959047787e679d850` passed all
+five required hosted checks: CI run `38113899430` (JavaScript and PostgreSQL 16
+and 18.4), Forge run `38113899435`, and recovery run `38113899434`. Those checks
+apply to that predecessor only. Delivery now integrates reviewed earnings branch
+source `b66c8314ed8e0e653088a6cc99c2a0465be59b25`, which inherits City main
+`1c1300fe`. Source conflicts concerned shared census, retained review appendices
+and generated artifacts. Both private earnings and scoped job GET registrations
+and contracts remain mounted, with both explicit receipt/delivery pretest scripts.
+
+The target reader, runner and their integrated tests retain predecessor Git blobs:
+`src/resourcework.js` `12b3834eae8f1ff75edfb6f1edfd25f682c28d18`,
+`tools/resource-deliver.js` `1133cc67b5d30f8c8b485c30bf85681f1ed2757a`,
+`test/resource-deliver.js` `a37b7f402daba03572acac3210a3f8b1f92de632`, and
+`test/resourcework.js` `c4e42270b3418c42e6c8fa0ab7df873622883fed`.
+No job storage, report authority, compute/payout activation or monetary execution
+behavior changed. The City server, schema and browser fixture match the dependency
+exactly, preserving its separate source-transfer and integration evidence.
+
+Node v24.19.0: `node test/resource-deliver.js`, `node test/resourcework.js`,
+`node test/resourcebusiness.js`, `node test/docs.js`, `node test/gates.js` and
+`node test/routes.js` returned exit status 0. The initial documentation run caught
+the public draft's inherited 280 npm-suite figure; it was corrected to the measured
+281 before the successful retest. Current mounted census is 896 routes, 845 under
+`/v1`. Native resource proofs remain pinned to their earlier unchanged product
+scope and are not represented as fresh native execution here.
+
+The dependency's subsequent focused City browser run reported a pose-preservation
+assertion failure (snapshot y264, observed y276.67 after resize frames). This
+inherited fixture remains a release blocker pending coordinator remediation and
+retest; no assertion or timeout was relaxed here, and no passing City result is
+claimed for that run. Clean-source generated artifacts and fresh exact-head hosted
+checks remain mandatory before integration release or deployment.
+
+Follow-up source integration includes final earnings revision
+`411749979d6fd86d8bca8428ee597ca66f21f724` and current City label release
+`300b7e4b`. The dependency's bounded diagnostic reproduction confirmed an active
+authored walking path before the old resize snapshot (path length 5 fell to 0
+while position changed); its corrected fixture waits for natural stationary
+arrival before taking that snapshot. The actual selection, resize/pose and label
+geometry assertions remain unchanged; no movement cancellation, retry, timeout
+extension or runtime change was added by delivery integration. The dependency
+implementation agent reran its final combined focused City browser suite and
+reported exit status 0. Delivery's City source and fixture match that tested
+dependency exactly. The earlier failure remains retained above, superseded as a
+local gate by this recorded diagnosis and corrected dependency retest. Fresh
+exact-head hosted checks still govern release; old green checks are not transferred
+to the new merged source. No delivery API, runner or financial activation changed.
