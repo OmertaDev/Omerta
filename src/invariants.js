@@ -9,6 +9,7 @@ import { withItemRead } from './items.js';
 import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { definitionByHash } from './itemdefinitions.js';
 import { canonicalBytes } from './content/canonical.js';
+import { intelForecastAccounting } from './intelforecastinvariants.js';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
 import {
   PHASE1_HARDENING_CASH_COST,
@@ -100,6 +101,7 @@ const KNOWN_REASONS = {
     // `favor:refund` cancel/expiry, `favor:loot`/`favor:death` the dead poster's escrow. Reconciled
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
+    'intel_job:',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -703,6 +705,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const fvDeath = -(await sum(pool, "currency='cash' AND reason='favor:death'"));
   const fvLoot = -(await sum(pool, "currency='cash' AND reason='favor:loot'"));
   push('favor escrow', favorEscrow, fvPosted - fvPaid - fvTakes - fvRefunded - fvDeath - fvLoot);
+
+  const intelForecasts = await intelForecastAccounting(pool);
+  push('intel forecast escrow', intelForecasts.escrow, intelForecasts.expected, 0);
+  push('intel forecast receipts', intelForecasts.invalid, 0, 0);
 
   // (f4c) THE TURF CONTEST ESCROW (the strategy package's sealed bid) — the market-escrow shape on
   // the family side. Every open stake sits in district_bids, not a treasury, so the open pot must

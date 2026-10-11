@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Read-only review of complete native checkpoints. Original workers own every
 // predicate and disposition below; this helper never expires or repairs state.
 import assert from 'node:assert/strict';
@@ -87,14 +88,16 @@ function sourceProof(revision) {
   if (revisions.has(revision)) return;
   for (const [file, expected] of Object.entries(BACKLOG_SOURCE_PINS)) {
     const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
-    const qualifiedActual = file === 'src/loans.js' ? qualifyLoanCancelSource(actual).baselineText : actual;
+    const intelActual = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, actual).baselineText : actual;
+    const qualifiedActual = file === 'src/loans.js' ? qualifyLoanCancelSource(intelActual).baselineText : intelActual;
     assert.equal(sha256(qualifiedActual), expected, `Backlog reviewer source changed: ${file}`);
     const crewTransfer = ['src/game.js', 'src/crew.js'].includes(file) ? assertCrewLogisticsSourceTransfer(file, actual) : null;
     const franchiseTransfer = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, actual) : null;
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
     if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
     const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
-    const qualifiedPinned = file === 'src/loans.js' ? qualifyLoanCancelSource(pinned).baselineText : pinned;
+    const intelPinned = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, pinned).baselineText : pinned;
+    const qualifiedPinned = file === 'src/loans.js' ? qualifyLoanCancelSource(intelPinned).baselineText : intelPinned;
     assert.equal(sha256(qualifiedPinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(franchiseTransfer?.baselineText || crewTransfer?.baselineText || qualifiedActual));
   }
   revisions.add(revision);
@@ -396,7 +399,7 @@ export function reviewWorldBacklog(snapshot, { logicalAt, sourceRevision, config
   if (checks.length !== INVARIANT_NAMES.length) unknown.push({ kind: 'canonical-invariant-evidence-missing', missing: INVARIANT_NAMES.filter(name => !checks.some(c => c.name === name)) });
   const jobCoverage = workerJobCoverage();
   if (jobCoverage.unmapped.length) unknown.push({ kind: 'original-worker-job-disposition-missing', workerLabels: jobCoverage.unmapped });
-  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, franchiseSourceReviewTransfer: BACKLOG_FRANCHISE_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, crewLogisticsSourceReviewTransfer: BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, loanOutputMarkerTransfer: LOAN_CANCEL_SOURCE_TRANSFER,
+  const report = { format: 1, logicalAt, snapshotStateSha256: snapshot.stateSha256, sourceRevision, sourcePins: BACKLOG_SOURCE_PINS, sourceReviewTransfer: BACKLOG_DEED_SOURCE_TRANSFER, franchiseSourceReviewTransfer: BACKLOG_FRANCHISE_SOURCE_TRANSFER, warehouseSourceReviewTransfer: BACKLOG_WAREHOUSE_SOURCE_TRANSFER, crewLogisticsSourceReviewTransfer: BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, loanOutputMarkerTransfer: LOAN_CANCEL_SOURCE_TRANSFER, intelSourceReviewTransfer: INTEL_SOURCE_TRANSFER,
     configuration, configurationSha256: digest(configuration), inventory, liveState, jobCoverage, unknown,
     scope: 'Original internal lifecycle drainers across the same workload policies, including Law, deferred financial work and explicitly conditional external-input queues. Recurring generators, provider polling, external notification transport and historical retention are separate from this row-draining inventory.',
     qualification: 'OBSERVATIONS_ONLY' };

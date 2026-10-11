@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { createWorkerSchedule, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
+import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
 
 const DAY = 86400000, season = 28 * DAY, start = 739 * season - 3600000;
 const end = start + 90 * DAY, hash = value => sha256(canonicalJson(value));
@@ -35,6 +37,30 @@ assert.equal(measured.seasonalRollovers.length, 4);
 assert.equal(measured.executions.length, 3);
 assert(measured.executions.every(row => row.dueAt - row.startedAt === season && row.startedAt >= start));
 assert.equal(measured.matrixQualifying, false);
+// Raw current worker bytes and the complete predecessor retain the same narrow
+// duration scope; accepting additions never loosens the historical source pin.
+const workerFile = 'src/worker.js';
+assert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);
+const currentWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
+assert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);
+const baselineWorker = execFileSync('git', ['show', INTEL_SOURCE_BASELINE_BLOBS[workerFile]], { encoding: 'utf8' }).replaceAll('\r\n', '\n');
+for (const originalSource of [currentWorker.replaceAll('\n', '\r\n'), baselineWorker, baselineWorker.replaceAll('\n', '\r\n')]) {
+  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = originalSource;
+  assert.deepEqual(measureWorldWorkerDuration(value), measured);
+}
+let sourceCorruptions = 0;
+for (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [
+  currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),
+  currentWorker.replace(chunk, chunk + '// unreviewed change\n'),
+]) {
+  assert.notEqual(changed, currentWorker);
+  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = changed;
+  assert.throws(() => measureWorldWorkerDuration(value), /Intel source changed/); sourceCorruptions++;
+}
+for (const originalSource of [currentWorker, baselineWorker]) {
+  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = originalSource + '\n// unreviewed suffix\n';
+  assert.throws(() => measureWorldWorkerDuration(value), /Intel source changed/); sourceCorruptions++;
+}
 const reseal = value => {
   value.trace.events.forEach((event, index) => { event.sequence = index + 1; });
   value.trace.scheduleSha256 = hash(value.trace.events.filter(row => row.kind !== 'callback.wall-duration'));
@@ -61,4 +87,4 @@ for (const change of [
   assert.equal(measureWorldWorkerDuration(value).workerCoverage.complete, true);
 }
 await controller.close();
-console.log('PASS rc1-world-duration-evidence: original deadline coverage, complete season cycles, partial-cycle exclusion and10 corruption controls; synthetic unit trace only');
+console.log(`PASS rc1-world-duration-evidence: original deadline coverage, complete season cycles, partial-cycle exclusion, 10 schedule controls and ${sourceCorruptions} exact Intel source controls; synthetic unit trace only, no new worker qualification`);

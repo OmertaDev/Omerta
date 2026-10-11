@@ -53,6 +53,32 @@ export const normalizeText = (text) => text.replace(/\r\n?/g, '\n');
 const read = (p) => normalizeText(fs.readFileSync(p, 'utf8'));
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 12);
 
+// This deliberately recognizes only the current imported Intel accounting shape.
+// A missing binding is an observable mute check, never inferred coverage.
+export function extractIntelHelperReconciliations(invariants, helper) {
+  invariants = normalizeText(invariants); helper = normalizeText(helper);
+  if (!/^import \{ intelForecastAccounting \} from ['"]\.\/intelforecastinvariants\.js['"];$/m.test(invariants)
+      || !/^export async function intelForecastAccounting\(pool\) \{/m.test(helper)) return [];
+  const call = /^\s*const ([A-Za-z_$][\w$]*) = await intelForecastAccounting\(pool\);$/m.exec(invariants);
+  const returned = /^\s*return \{ ([\w, ]+) \};$/m.exec(helper);
+  const sql = /pool\.query\(["']SELECT [^"'\n]+ FROM transactions WHERE currency='cash' AND reason LIKE '([a-z][a-z0-9:_]*%)'["']\)/.exec(helper);
+  if (!call || !returned || !sql) return [];
+  const fields = new Set(returned[1].split(',').map(field => field.trim()));
+  const terms = [];
+  for (const match of invariants.matchAll(/push\('([^']+)', ([^;\n]+)\);/g)) {
+    if (match.index < call.index) continue;
+    const values = match[2].split(',').map(value => value.trim());
+    if (values.at(-1) !== '0') continue;
+    const bound = values.slice(0, -1);
+    if (!bound.length || !bound.some(value => value.startsWith(`${call[1]}.`))
+        || !bound.every(value => value === '0' || (value.startsWith(`${call[1]}.`)
+          && fields.has(value.slice(call[1].length + 1))))) continue;
+    terms.push({ check: match[1], reason: sql[1], line: helper.slice(0, sql.index).split('\n').length,
+      bindingLine: invariants.slice(0, match.index).split('\n').length });
+  }
+  return terms;
+}
+
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
 export function isMainModule(moduleUrl, argvEntry) {
@@ -265,6 +291,19 @@ export function build() {
       }
     }
   });
+
+  // Imported accounting is bound by its import, invocation, returned fields and
+  // actual cash SQL, rather than attributing a helper's terms to a nearby push.
+  const intelHelper = path.join(ROOT, 'src', 'intelforecastinvariants.js');
+  if (fs.existsSync(intelHelper)) {
+    const helperSource = read(intelHelper);
+    for (const term of extractIntelHelperReconciliations(inv, helperSource)) {
+      const prov = { file: 'src/intelforecastinvariants.js', line: term.line, hash: sha(helperSource),
+        binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
+      node('Reason', term.reason, { isPrefix: true }, prov);
+      edge('RECONCILES', `Check:${term.check}`, `Reason:${term.reason}`, prov);
+    }
+  }
 
   // ── Suites: what they cover, what they pin ─────────────────────────────────────────────────────
   for (const f of testFiles) {
