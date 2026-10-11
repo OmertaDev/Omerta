@@ -101,7 +101,7 @@ console.log('   Contract args to set in lockstep at deploy (see CHAIN-DEPLOY.md)
 console.log('     OmertaFees mintDevBps = 10000 (fixed); feeRecipient = DEV_WALLET');
 console.log('     OmertaFees vigBps = 2500 (respawn / reroll / package only)');
 console.log('     OmertaBond polBps = 7500, devBps = 1500, rwaBps = 500  (vig = on-chain remainder 500)');
-console.log('     OMR / OmertaHook setSellTax(total=900, dev=200, rwa=160, community=240; lp=remainder)');
+console.log('     OMR / OmertaHook setSellTax(total=500, dev=200, rwa=100, community=100; lp=remainder 100)');
 console.log('       [the community slice is now ON-CHAIN — its recipient must be the community-buyback');
 console.log('        keeper wallet, a SEPARATE key from the treasury\'s; the backend SELL_TAX_COMMUNITY_BPS');
 console.log('        carve covers only the mod-ingest rail until the hook is live]');
