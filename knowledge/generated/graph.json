@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "0f2906bd2bfffc36d43c4ec594d770547db62aaa",
+  "sourceRevision": "30afca81296c5f4dc78b4a0bc33915a567502247",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10955,
-    "edges": 44536,
+    "nodes": 10960,
+    "edges": 44554,
     "byNodeType": {
       "Artifact": 4460,
       "Command": 223,
-      "Commit": 2584,
+      "Commit": 2589,
       "Contract": 126,
       "Document": 717,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3602,
-      "CHANGED": 17649,
+      "CHANGED": 17662,
       "CONTAINS": 4481,
       "DECLARES": 223,
       "DEFINED_IN": 1424,
       "DEPENDS_ON": 67,
       "EXECUTES": 763,
       "HANDLED_BY": 794,
-      "HAS_COMMIT": 2584,
+      "HAS_COMMIT": 2589,
       "IMPLEMENTS": 124,
       "IMPORTS": 4328,
       "INHERITS": 42,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 30888,
-      "lines": 617,
-      "version": "249a959f86a3c304",
+      "bytes": 31048,
+      "lines": 619,
+      "version": "a3c4b126293b9787",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "249a959f86a3c304"
+          "version": "a3c4b126293b9787"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:16:15.000Z",
+      "lastChangedAt": "2026-10-11T19:02:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0df8a944db6cd1f2dca8837b521cc8de9d4d454b"
+      "lastChangedCommit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -26128,20 +26128,20 @@
       "path": "docs/crew-logistics-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3488,
-      "lines": 55,
-      "version": "7ede27aea92e9d48",
+      "bytes": 4839,
+      "lines": 76,
+      "version": "837bc295dca2d66a",
       "text": true,
       "provenance": [
         {
           "file": "docs/crew-logistics-security-review.md",
           "line": 1,
-          "version": "7ede27aea92e9d48"
+          "version": "837bc295dca2d66a"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:57:37.000Z",
+      "lastChangedAt": "2026-10-11T19:51:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc071ec9dd9dfe409b1303e4a663b7f0145a5ce2"
+      "lastChangedCommit": "30afca81296c5f4dc78b4a0bc33915a567502247"
     },
     {
       "key": "Artifact:docs/decision-execution-security-review.md",
@@ -78495,18 +78495,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "c651a57f89c8a182",
+      "version": "82f6243162d117cd",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c651a57f89c8a182"
+          "version": "82f6243162d117cd"
         }
       ],
-      "lastChangedAt": "2026-10-11T19:15:58.000Z",
+      "lastChangedAt": "2026-10-11T19:51:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fda1ecf935021a5e7d93bed3d4402596ef626697"
+      "lastChangedCommit": "30afca81296c5f4dc78b4a0bc33915a567502247"
     },
     {
       "key": "Artifact:src/access.js",
@@ -87989,20 +87989,20 @@
       "path": "test/crewlogistics.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 21815,
-      "lines": 219,
-      "version": "c8053c7c775d4d89",
+      "bytes": 24481,
+      "lines": 257,
+      "version": "8ff7cd9705c553d2",
       "text": true,
       "provenance": [
         {
           "file": "test/crewlogistics.js",
           "line": 1,
-          "version": "c8053c7c775d4d89"
+          "version": "8ff7cd9705c553d2"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:49:59.000Z",
+      "lastChangedAt": "2026-10-11T19:50:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "251d5e04e57ef426cec7c62714e79d2c8f8663ef"
+      "lastChangedCommit": "9245033a4dad46b27a24fa5d62d08976d0dd802a"
     },
     {
       "key": "Artifact:test/current-copy.js",
@@ -89394,18 +89394,18 @@
       "extension": ".js",
       "bytes": 295189,
       "lines": 4373,
-      "version": "cb0702b9ca518cc3",
+      "version": "d9fab8a28878e528",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "cb0702b9ca518cc3"
+          "version": "d9fab8a28878e528"
         }
       ],
-      "lastChangedAt": "2026-10-11T17:16:15.000Z",
+      "lastChangedAt": "2026-10-11T19:02:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0df8a944db6cd1f2dca8837b521cc8de9d4d454b"
+      "lastChangedCommit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -91577,20 +91577,20 @@
       "path": "test/player-command-journey.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 16705,
-      "lines": 207,
-      "version": "0f78fb8ec8fb9f7a",
+      "bytes": 16950,
+      "lines": 212,
+      "version": "4aad74c19327aca2",
       "text": true,
       "provenance": [
         {
           "file": "test/player-command-journey.js",
           "line": 1,
-          "version": "0f78fb8ec8fb9f7a"
+          "version": "4aad74c19327aca2"
         }
       ],
-      "lastChangedAt": "2026-09-18T01:30:11.000Z",
+      "lastChangedAt": "2026-10-11T19:50:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
+      "lastChangedCommit": "9245033a4dad46b27a24fa5d62d08976d0dd802a"
     },
     {
       "key": "Artifact:test/player-commands.js",
@@ -106627,6 +106627,22 @@
       ]
     },
     {
+      "key": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "type": "Commit",
+      "id": "07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "label": "Refresh graph for exact Crew receipt repair revision",
+      "title": "Refresh graph for exact Crew receipt repair revision",
+      "date": "2026-10-11T19:21:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "provenance": [
+        {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/07b93a87de0360959acf9d9e96af129acd95cf1d"
+        }
+      ]
+    },
+    {
       "key": "Commit:07e9cf37b341935a56d211befc22181e5787ad9c",
       "type": "Commit",
       "id": "07e9cf37b341935a56d211befc22181e5787ad9c",
@@ -113231,6 +113247,22 @@
         {
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2",
           "url": "https://github.com/OmertaDev/Omerta/commit/30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:30afca81296c5f4dc78b4a0bc33915a567502247",
+      "type": "Commit",
+      "id": "30afca81296c5f4dc78b4a0bc33915a567502247",
+      "label": "Record bounded native fixture repairs and measured census",
+      "title": "Record bounded native fixture repairs and measured census",
+      "date": "2026-10-11T19:51:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/30afca81296c5f4dc78b4a0bc33915a567502247",
+      "provenance": [
+        {
+          "commit": "30afca81296c5f4dc78b4a0bc33915a567502247",
+          "url": "https://github.com/OmertaDev/Omerta/commit/30afca81296c5f4dc78b4a0bc33915a567502247"
         }
       ]
     },
@@ -129427,6 +129459,22 @@
       ]
     },
     {
+      "key": "Commit:9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "type": "Commit",
+      "id": "9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "label": "test: bound native Crew race and freeze stale mystery choice clock",
+      "title": "test: bound native Crew race and freeze stale mystery choice clock",
+      "date": "2026-10-11T19:50:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "provenance": [
+        {
+          "commit": "9245033a4dad46b27a24fa5d62d08976d0dd802a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9245033a4dad46b27a24fa5d62d08976d0dd802a"
+        }
+      ]
+    },
+    {
       "key": "Commit:92465b79c49c3dfafe951f80abb5a6b25538702b",
       "type": "Commit",
       "id": "92465b79c49c3dfafe951f80abb5a6b25538702b",
@@ -133215,6 +133263,22 @@
         {
           "commit": "a8627a151d00042a917d29346aa820a45615a0e9",
           "url": "https://github.com/OmertaDev/Omerta/commit/a8627a151d00042a917d29346aa820a45615a0e9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "type": "Commit",
+      "id": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "label": "Bound expanded native CI lanes at thirty minutes",
+      "title": "Bound expanded native CI lanes at thirty minutes",
+      "date": "2026-10-11T19:02:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "provenance": [
+        {
+          "commit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
         }
       ]
     },
@@ -146707,6 +146771,22 @@
       ]
     },
     {
+      "key": "Commit:fea545a953f53b7654f45253b5eb71e8cc20f32d",
+      "type": "Commit",
+      "id": "fea545a953f53b7654f45253b5eb71e8cc20f32d",
+      "label": "Retain Crew native CI deadline failure and repair scope",
+      "title": "Retain Crew native CI deadline failure and repair scope",
+      "date": "2026-10-11T19:50:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fea545a953f53b7654f45253b5eb71e8cc20f32d",
+      "provenance": [
+        {
+          "commit": "fea545a953f53b7654f45253b5eb71e8cc20f32d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fea545a953f53b7654f45253b5eb71e8cc20f32d"
+        }
+      ]
+    },
+    {
       "key": "Commit:feb03f23ec4eee116404d10c0a045b4a959ae876",
       "type": "Commit",
       "id": "feb03f23ec4eee116404d10c0a045b4a959ae876",
@@ -155312,13 +155392,13 @@
       "id": "docs/crew-logistics-security-review.md",
       "label": "docs/crew-logistics-security-review.md",
       "documentType": "documentation",
-      "lines": 55,
-      "version": "7ede27aea92e9d48",
+      "lines": 76,
+      "version": "837bc295dca2d66a",
       "provenance": [
         {
           "file": "docs/crew-logistics-security-review.md",
           "line": 1,
-          "version": "7ede27aea92e9d48"
+          "version": "837bc295dca2d66a"
         }
       ]
     },
@@ -160417,12 +160497,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "c651a57f89c8a182",
+      "version": "82f6243162d117cd",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c651a57f89c8a182"
+          "version": "82f6243162d117cd"
         }
       ]
     },
@@ -167896,6 +167976,9 @@
           "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
         },
         {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+        },
+        {
           "commit": "0882243a84177f7f7e5a5acb667a08585334e05d"
         },
         {
@@ -169304,6 +169387,9 @@
         },
         {
           "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        },
+        {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
         },
         {
           "commit": "0882243a84177f7f7e5a5acb667a08585334e05d"
@@ -170716,6 +170802,9 @@
           "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
         },
         {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+        },
+        {
           "commit": "0882243a84177f7f7e5a5acb667a08585334e05d"
         },
         {
@@ -172111,6 +172200,9 @@
           "commit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
         },
         {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+        },
+        {
           "commit": "09119b2921514f3c76bbd65c0613f926cf700400"
         },
         {
@@ -172520,6 +172612,9 @@
         },
         {
           "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        },
+        {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
         },
         {
           "commit": "0882243a84177f7f7e5a5acb667a08585334e05d"
@@ -173912,6 +174007,9 @@
         },
         {
           "commit": "067f3ff5aca5dbfa5a51787c2504251aeba7ebfa"
+        },
+        {
+          "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
         },
         {
           "commit": "08ebac4f2224ade676a41a4da72586ac6b8e3f38"
@@ -183733,7 +183831,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "0f2906bd2bfffc36d43c4ec594d770547db62aaa",
+      "revision": "30afca81296c5f4dc78b4a0bc33915a567502247",
       "currentBranch": "codex/crew-logistics-integration",
       "defaultBranch": "main",
       "visibility": "public",
@@ -215505,13 +215603,13 @@
       "type": "TestSuite",
       "id": "test/crewlogistics.js",
       "label": "test/crewlogistics.js",
-      "lines": 219,
-      "version": "c8053c7c775d4d89",
+      "lines": 257,
+      "version": "8ff7cd9705c553d2",
       "provenance": [
         {
           "file": "test/crewlogistics.js",
           "line": 1,
-          "version": "c8053c7c775d4d89"
+          "version": "8ff7cd9705c553d2"
         }
       ]
     },
@@ -216271,12 +216369,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4373,
-      "version": "cb0702b9ca518cc3",
+      "version": "d9fab8a28878e528",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "cb0702b9ca518cc3"
+          "version": "d9fab8a28878e528"
         }
       ]
     },
@@ -217680,13 +217778,13 @@
       "type": "TestSuite",
       "id": "test/player-command-journey.js",
       "label": "test/player-command-journey.js",
-      "lines": 207,
-      "version": "0f78fb8ec8fb9f7a",
+      "lines": 212,
+      "version": "4aad74c19327aca2",
       "provenance": [
         {
           "file": "test/player-command-journey.js",
           "line": 1,
-          "version": "0f78fb8ec8fb9f7a"
+          "version": "4aad74c19327aca2"
         }
       ]
     },
@@ -221760,13 +221858,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 617,
-      "version": "249a959f86a3c304",
+      "lines": 619,
+      "version": "a3c4b126293b9787",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "249a959f86a3c304"
+          "version": "a3c4b126293b9787"
         }
       ]
     },
@@ -257091,6 +257189,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:07e9cf37b341935a56d211befc22181e5787ad9c",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -280095,6 +280241,22 @@
       "to": "HistoricalArtifact:knowledge/generated/routes.md",
       "provenance": {
         "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30afca81296c5f4dc78b4a0bc33915a567502247",
+      "to": "Artifact:docs/crew-logistics-security-review.md",
+      "provenance": {
+        "commit": "30afca81296c5f4dc78b4a0bc33915a567502247"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:30afca81296c5f4dc78b4a0bc33915a567502247",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "30afca81296c5f4dc78b4a0bc33915a567502247"
       }
     },
     {
@@ -334283,6 +334445,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "to": "Artifact:test/crewlogistics.js",
+      "provenance": {
+        "commit": "9245033a4dad46b27a24fa5d62d08976d0dd802a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "to": "Artifact:test/player-command-journey.js",
+      "provenance": {
+        "commit": "9245033a4dad46b27a24fa5d62d08976d0dd802a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:92465b79c49c3dfafe951f80abb5a6b25538702b",
       "to": "Artifact:FINAL_LAUNCH_LEDGER.md",
       "provenance": {
@@ -344663,6 +344841,22 @@
       "to": "HistoricalArtifact:src/rwa.js",
       "provenance": {
         "commit": "a8627a151d00042a917d29346aa820a45615a0e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
       }
     },
     {
@@ -394943,6 +395137,14 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "commit": "fe8fa2d7e629cd4ebb76ca2202760c17208957ce"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fea545a953f53b7654f45253b5eb71e8cc20f32d",
+      "to": "Artifact:docs/crew-logistics-security-review.md",
+      "provenance": {
+        "commit": "fea545a953f53b7654f45253b5eb71e8cc20f32d"
       }
     },
     {
@@ -466273,6 +466475,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:07b93a87de0360959acf9d9e96af129acd95cf1d",
+      "provenance": {
+        "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:07e9cf37b341935a56d211befc22181e5787ad9c",
       "provenance": {
         "commit": "07e9cf37b341935a56d211befc22181e5787ad9c"
@@ -469572,6 +469782,14 @@
       "to": "Commit:30aea4ee96874dc3136e95eb6ccadbb7a7c600e2",
       "provenance": {
         "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:30afca81296c5f4dc78b4a0bc33915a567502247",
+      "provenance": {
+        "commit": "30afca81296c5f4dc78b4a0bc33915a567502247"
       }
     },
     {
@@ -477673,6 +477891,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9245033a4dad46b27a24fa5d62d08976d0dd802a",
+      "provenance": {
+        "commit": "9245033a4dad46b27a24fa5d62d08976d0dd802a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:92465b79c49c3dfafe951f80abb5a6b25538702b",
       "provenance": {
         "commit": "92465b79c49c3dfafe951f80abb5a6b25538702b"
@@ -479564,6 +479790,14 @@
       "to": "Commit:a8627a151d00042a917d29346aa820a45615a0e9",
       "provenance": {
         "commit": "a8627a151d00042a917d29346aa820a45615a0e9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
+      "provenance": {
+        "commit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
       }
     },
     {
@@ -486308,6 +486542,14 @@
       "to": "Commit:fe8fa2d7e629cd4ebb76ca2202760c17208957ce",
       "provenance": {
         "commit": "fe8fa2d7e629cd4ebb76ca2202760c17208957ce"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fea545a953f53b7654f45253b5eb71e8cc20f32d",
+      "provenance": {
+        "commit": "fea545a953f53b7654f45253b5eb71e8cc20f32d"
       }
     },
     {
