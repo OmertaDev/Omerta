@@ -47,6 +47,16 @@ assert.equal(good.calls[1].init.redirect, 'error');
 assert(!request.prompt.includes('private-body'));
 assert(!request.prompt.includes('/v1/internal'));
 assert(!JSON.stringify(good.observations).includes('private-token'));
+const selectedBody = JSON.stringify({ turnId: 'turn-0', actionId: 'b' });
+await good.wrapped(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, body: selectedBody });
+assert.equal(JSON.parse(good.calls.at(-1).init.body).decisionCallId, 'call-1', 'only the computed selected action carries its call');
+const retryBody = good.calls.at(-1).init.body;
+await good.wrapped(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, body: selectedBody });
+assert.equal(good.calls.at(-1).init.body, retryBody, 'retries preserve identical decision association');
+await good.wrapped(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, body: JSON.stringify({ turnId: 'turn-0', actionId: 'a' }) });
+assert.equal(JSON.parse(good.calls.at(-1).init.body).decisionCallId, undefined, 'fallback actions cannot claim the computed decision');
+await good.wrapped(`${baseUrl}/v1/agent/act`, { method: 'POST', headers, body: JSON.stringify({ turnId: 'turn-other', actionId: 'b' }) });
+assert.equal(JSON.parse(good.calls.at(-1).init.body).decisionCallId, undefined, 'another turn cannot inherit decision metadata');
 await good.wrapped(`${baseUrl}/v1/agent/turn`, { headers });
 assert.equal(good.calls.filter(c => c.url.endsWith('/compute')).length, 1, 'a repeated turn cannot repeat paid inference');
 for (let i = 1; i <= 4; i++) {
