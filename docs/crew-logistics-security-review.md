@@ -44,3 +44,11 @@ legacy fixture boundary. Complete predecessor source inverses preserve historica
 pins; those qualifications do not extend to this new consent layer. Repository
 security policy review focused on identity, privacy, replay and concurrency.
 No real payment, compute purchase, financial activation or production mutation.
+
+Further hosted qualification exposed the Director migration test's finite table
+classification omitting these reviewed additive features. Test-only repair
+c05b1e2c8c8adf86663c6dff7a640c0b8a93abdc recognizes only explicitly named
+feature tables present in the frozen catalog, compares exact constraints and
+nullability, and preserves the pinned baseline plus unknown-addition controls.
+Native PostgreSQL 18.4 full-stack and new causal-negative retests passed;
+partial-stack native PostgreSQL 16/18.4 hosted retests remain release gates.
