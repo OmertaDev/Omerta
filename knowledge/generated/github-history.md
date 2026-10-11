@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9ceb48b0d398`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2177a774dfe7`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2431 |
+| Commits in clone | 2450 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Merge reviewed supply and courier releases into city controls |
+| Latest commit | 2026-10-11 — Merge reviewed release PR 232 preserving exact checked source tree |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1508 |
+| OmertaDev | 1526 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 78 |
+| github-actions[bot] | 79 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,34 +31,34 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 446 | yes |
-| knowledge/generated/github-history.md | 432 | historical |
-| knowledge/generated/graph-summary.md | 432 | historical |
-| knowledge/generated/graph.json | 432 | historical |
-| knowledge/generated/inventory.md | 432 | historical |
-| [SPEC.md](../../SPEC.md) | 392 | yes |
-| [src/server.js](../../src/server.js) | 380 | yes |
+| [public/index.html](../../public/index.html) | 445 | yes |
+| knowledge/generated/github-history.md | 434 | historical |
+| knowledge/generated/graph-summary.md | 434 | historical |
+| knowledge/generated/graph.json | 434 | historical |
+| knowledge/generated/inventory.md | 434 | historical |
+| [SPEC.md](../../SPEC.md) | 394 | yes |
+| [src/server.js](../../src/server.js) | 381 | yes |
 | [schema.sql](../../schema.sql) | 307 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| [package.json](../../package.json) | 254 | yes |
-| knowledge/generated/documents.md | 202 | historical |
+| [package.json](../../package.json) | 255 | yes |
+| knowledge/generated/documents.md | 205 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/modules.md | 170 | historical |
+| knowledge/generated/modules.md | 172 | historical |
 | [src/worker.js](../../src/worker.js) | 128 | yes |
 | [src/invariants.js](../../src/invariants.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
+| knowledge/generated/graph.mmd | 123 | historical |
 | [test/client.js](../../test/client.js) | 122 | yes |
-| knowledge/generated/graph.mmd | 121 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [test/gates.js](../../test/gates.js) | 95 | yes |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
 | [test/social.js](../../test/social.js) | 85 | yes |
+| knowledge/generated/schema.md | 81 | historical |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
-| knowledge/generated/schema.md | 79 | historical |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
-| knowledge/generated/routes.md | 68 | historical |
+| knowledge/generated/routes.md | 70 | historical |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 65 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
@@ -67,8 +67,8 @@
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 53 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 52 | yes |
 | [src/economy.js](../../src/economy.js) | 52 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 51 | yes |
 | [test/docs.js](../../test/docs.js) | 51 | yes |
 
 ## Pull requests

@@ -26,12 +26,12 @@ const ALLOWED_KINDS = new Set([
   'arbitrage_travel', 'restock_buy', 'restock_travel', 'loan_repay', 'crew_recruiting', 'crime',
   'depot_restock', 'depot_receive', 'depot_travel',
   'business_buy', 'business_upkeep', 'business_upgrade',
-  'delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver',
+  'delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver',
 ]);
 const ACTION_ROLES = {
   general: ALLOWED_KINDS,
   business: new Set(['depot_restock', 'depot_receive', 'depot_travel', 'business_buy', 'business_upkeep', 'business_upgrade', 'business_collect']),
-  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
+  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
 };
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
@@ -832,15 +832,46 @@ function policyIsConservative(policy) {
   return policy && Object.entries(POLICY).every(([key, value]) => policy[key] === value);
 }
 
+function supplierContinuation(turn) {
+  const id = turn.state?.identity?.id;
+  const observed = typeof turn.observedAt === 'string' ? Date.parse(turn.observedAt) : NaN;
+  if (typeof id !== 'string' || !id || !Number.isFinite(observed)
+      || !Array.isArray(turn.deliveries) || !Array.isArray(turn.actions)) return null;
+  const progressId = (action, commitmentId) => {
+    if (action?.executable !== true) return false;
+    const prefix = `delivery:${commitmentId}:`;
+    if (typeof action.id !== 'string' || !action.id.startsWith(prefix)) return false;
+    const suffix = action.id.slice(prefix.length);
+    if (action.kind === 'delivery_deliver') return suffix === 'deliver';
+    if (action.kind === 'delivery_buy') return suffix === 'buy';
+    if (action.kind === 'delivery_travel') return ['travel_to_buy', 'travel_to_deliver'].includes(suffix);
+    return action.kind === 'delivery_depot_buy' && /^depot:[A-Za-z0-9_-]{1,128}:buy$/.test(suffix);
+  };
+  let best = null;
+  for (const commitment of turn.deliveries) {
+    if (!commitment || commitment.status !== 'accepted' || commitment.supplierId !== id
+        || typeof commitment.id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(commitment.id)
+        || !Number.isSafeInteger(commitment.remaining) || commitment.remaining <= 0
+        || typeof commitment.deadline !== 'string') continue;
+    const deadline = Date.parse(commitment.deadline);
+    if (!Number.isFinite(deadline) || deadline <= observed) continue;
+    const index = turn.actions.findIndex((action) => progressId(action, commitment.id));
+    if (index < 0) continue;
+    if (!best || deadline < best.deadline || (deadline === best.deadline && index < best.index))
+      best = { deadline, index, action: turn.actions[index] };
+  }
+  return best?.action || null;
+}
+
 export function recommendationOf(turn, role = 'general') {
   if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Unknown Agent Alpha role');
   const allowed = ACTION_ROLES[role];
   if (!allowed) throw new Error('Unknown Agent Alpha role');
   if (!turn?.recommendedActionId) return { action: null, errorCode: null };
-  const action = Array.isArray(turn.actions)
+  const action = (role === 'supplier' ? supplierContinuation(turn) : null) || (Array.isArray(turn.actions)
     ? turn.actions.find((candidate) => role === 'general' ? candidate?.id === turn.recommendedActionId
       : candidate?.executable === true && allowed.has(candidate.kind))
-    : null;
+    : null);
   if (role !== 'general' && !action) return { action: null, errorCode: null };
   if (!action || action.executable !== true || !ALLOWED_KINDS.has(action.kind)) {
     return { action: null, candidate: action, errorCode: 'unsafe_action' };
