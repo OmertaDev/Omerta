@@ -1,6 +1,22 @@
 {
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_buyer_character_fkey","definition":"FOREIGN KEY (buyer_character) REFERENCES characters(id)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_buyer_character_request_key_key","definition":"UNIQUE (buyer_character, request_key)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check","definition":"CHECK (target_at > created_at)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check1","definition":"CHECK (buyer_character <> reporter_character)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check2","definition":"CHECK (status = 'reported'::text AND predicts_available IS NOT NULL AND reported_at IS NOT NULL AND observation IS NOT NULL OR status <> 'reported'::text AND predicts_available IS NULL AND reported_at IS NULL AND observation IS NULL)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check3","definition":"CHECK (reported_at IS NULL OR reported_at >= created_at AND reported_at <= (target_at - '00:01:00'::interval))"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check4","definition":"CHECK (outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL OR status = 'reported'::text AND outcome IS NOT NULL AND resolved_at IS NOT NULL)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check5","definition":"CHECK (sample_started_at IS NULL AND sample IS NULL OR sample_started_at IS NOT NULL AND sample IS NOT NULL)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_fee_cash_check","definition":"CHECK (fee_cash >= 50 AND fee_cash <= 5000)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_minimum_stock_check","definition":"CHECK (minimum_stock >= 1 AND minimum_stock <= 40)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_outcome_check","definition":"CHECK (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text]))"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_pkey","definition":"PRIMARY KEY (id)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_price_block_check","definition":"CHECK (price_block >= 0)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_reporter_character_fkey","definition":"FOREIGN KEY (reporter_character) REFERENCES characters(id)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_request_key_check","definition":"CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"},
+    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_status_check","definition":"CHECK (status = ANY (ARRAY['open'::text, 'reported'::text, 'cancelled'::text, 'expired'::text, 'buyer_dead'::text]))"},
     {"table_name":"business_depot_journal","name":"business_depot_journal_franchise_license_id_fkey","definition":"FOREIGN KEY (franchise_license_id) REFERENCES depot_brand_licenses(id)"},
     {"table_name":"business_depot_journal","name":"business_depot_journal_source_journal_id_fkey","definition":"FOREIGN KEY (source_journal_id) REFERENCES business_depot_journal(id)"},
     {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_check","definition":"CHECK (paid >= 0::numeric AND paid <= royalty_cap)"},
@@ -1619,6 +1635,7 @@
     }
   ],
   "notNullColumns": {
+    "intel_forecast_jobs": ["buyer_character","created_at","district_id","fee_cash","id","minimum_stock","price_block","reporter_character","request_key","status","target_at"],
     "depot_brand_licenses":["brand_name","company_account_id","company_revision","created_at","earned_net","expires_at","id","licensor_character","operator_character","operator_depot_id","paid","preset_id","recipient_depot_id","royalty_bps","royalty_cap","status"],
     "crew_logistics_links": ["created_at", "crew_id", "expires_at", "generation", "id", "kind", "publisher_account_id", "publisher_character_id", "target_id"],
     "city_social_preferences": [
