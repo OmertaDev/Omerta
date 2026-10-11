@@ -1910,6 +1910,71 @@
       "table_name": "logistics_coverage_policies",
       "name": "logistics_coverage_policies_tenant_character_fkey",
       "definition": "FOREIGN KEY (tenant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_account_id_request_key_key",
+      "definition": "UNIQUE (account_id, request_key)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_check",
+      "definition": "CHECK (predecessor_character <> successor_character)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_company_revision_check",
+      "definition": "CHECK (company_revision >= 2 AND company_revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_depot_id_key",
+      "definition": "UNIQUE (depot_id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_opening_cash_check",
+      "definition": "CHECK (opening_cash = 5000)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_predecessor_character_fkey",
+      "definition": "FOREIGN KEY (predecessor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_character_fkey",
+      "definition": "FOREIGN KEY (successor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_character_key",
+      "definition": "UNIQUE (successor_character)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_generation_check",
+      "definition": "CHECK (successor_generation >= 2 AND successor_generation <= 2147483647)"
     }
   ],
   "removed": [
@@ -2616,6 +2681,20 @@
       "state",
       "tenant_account",
       "tenant_character"
+    ],
+    "company_succession_receipts": [
+      "account_id",
+      "company_revision",
+      "created_at",
+      "depot_id",
+      "id",
+      "opening_cash",
+      "predecessor_character",
+      "receipt",
+      "request_key",
+      "request_terms",
+      "successor_character",
+      "successor_generation"
     ]
   }
 }
