@@ -46,9 +46,10 @@
     if (options.trackerHost) options.trackerHost.append(tracker);
     const dock = el('section', 'city-world__dock'); dock.hidden = true; dock.setAttribute('aria-label', 'World tools');
     const bar = el('div', 'city-world__dock-bar');
+    const back = el('button', 'city-world__back', 'Tools ↑'); back.type = 'button'; back.dataset.cityWorldBack = ''; back.setAttribute('aria-label', 'Back to world tool choices');
     const title = el('strong', '', 'World tools');
     const closeButton = el('button', 'city-world__close', '×'); closeButton.type = 'button'; closeButton.dataset.cityWorldClose = ''; closeButton.setAttribute('aria-label', 'Close world tools');
-    bar.append(title, closeButton);
+    bar.append(back, title, closeButton);
     const navigation = el('nav', 'city-world__tabs'); navigation.setAttribute('aria-label', 'World tool panels');
     const tabs = new Map();
     for (const [id, label] of PANELS) {
@@ -146,6 +147,7 @@
     }
     on(tools, 'click', () => dock.hidden ? open('map') : close());
     on(closeButton, 'click', () => close());
+    on(back, 'click', () => { dock.scrollTo({ top: 0, behavior: 'instant' }); tabs.values().next().value.focus({ preventScroll: true }); });
     on(navigation, 'click', event => { const tab = event.target.closest('[data-city-world-panel]'); if (tab && navigation.contains(tab)) open(tab.dataset.cityWorldPanel); });
     on(dock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
     on(tracker, 'click', () => { close(false); if (typeof options.onOpenIntel === 'function') options.onOpenIntel(); });
