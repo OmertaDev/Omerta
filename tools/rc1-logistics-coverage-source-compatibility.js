@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
-export const COVERAGE_SOURCE_REVIEWED_REVISION = "c92d5d401f140890f91be6e58b993109082f65a8";
+export const COVERAGE_SOURCE_REVIEWED_REVISION = "1a29ff10ecfa30989fdd7ada3238499ea4c85e0f";
 export const COVERAGE_SOURCE_PREDECESSOR_REVISION = "320a27836704a1ec04d7ff79a9c88e301fde1563";
 export const COVERAGE_SOURCE_CURRENT_PINS = Object.freeze({
   "src/db.js": "abaa10fd7e25ff0be9c204fc6c18e300b97ba7fe32d9d8fc61654293eebf4a46",
   "src/depotbook.js": "c832e2e6a26e173336e7fe1a02a29d8a11deef1f9bfa61254ea33182310ebe60",
   "src/server.js": "61466e32e1ad34e62f61d611f655235a8bd8e5b132c43afdf7cb1674a615b9e9",
-  "src/invariants.js": "25cdb23a5a102e7a1a26e6ae311b3fa92889f4f5d0fa75759846636a8ceaa0c8"
+  "src/invariants.js": "a767d216a726c7d1c0d2b48062997282cf053a1adbcbfa4ba8f894ef58b9fc3f"
 });
 export const COVERAGE_SOURCE_BASELINE_PINS = Object.freeze({
   "src/db.js": "9c43ed14a026c378ec4768d39a52cc66840b63396e3b6218075cc4797bdfcd81",
@@ -19,7 +19,7 @@ export const COVERAGE_SOURCE_CURRENT_BLOBS = Object.freeze({
   "src/db.js": "e99e39679503978ea1e79a56a1b2a2f4776b8029",
   "src/depotbook.js": "b49426bb0edb0d12b866099a703d929f370c2527",
   "src/server.js": "b5c144c986d4f80e899b56fba0b604f1cb2b871f",
-  "src/invariants.js": "6de7334aeef4bb73b907c07af418c35ddc2d8ad7"
+  "src/invariants.js": "b6c9f4903b907238567c49c18134d79fa0f45d76"
 });
 export const COVERAGE_SOURCE_BASELINE_BLOBS = Object.freeze({
   "src/db.js": "1e8948060d907b08382d4b5769aa0b08a647c0a1",
@@ -60,7 +60,7 @@ export const COVERAGE_SOURCE_INVERSES = Object.freeze({
       "baseline": "    // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.\n    // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.\n    'window:',\n    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',\n    'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',\n    // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);\n    // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet\n"
     },
     {
-      "current": "    push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);\n  }\n\n  push('logistics coverage escrow', await logisticsCoverageFaults(pool), 0, 0);\n\n  // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow\n  // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.\n  // repay/collect are transfers (character rows, in check (a)); the vig is the only value that LEAVES\n",
+      "current": "    push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);\n  }\n\n  const coverageEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM logistics_coverage_policies');\n  push('logistics coverage escrow', coverageEscrow, -(await sum(pool, \"currency='cash' AND reason LIKE 'coverage:%'\")), 0);\n  push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);\n\n  // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow\n  // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.\n  // repay/collect are transfers (character rows, in check (a)); the vig is the only value that LEAVES\n",
       "baseline": "    push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);\n  }\n\n  // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow\n  // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.\n  // repay/collect are transfers (character rows, in check (a)); the vig is the only value that LEAVES\n"
     }
   ]

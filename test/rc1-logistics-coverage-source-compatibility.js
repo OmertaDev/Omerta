@@ -79,5 +79,5 @@ assert.throws(() => qualifyCoverageSource('src/game.js', ''), /Unknown Coverage 
 assert.throws(() => qualifyCoverageSource('toString', ''), /Unknown Coverage source/);
 assert.match(COVERAGE_SOURCE_TRANSFER.scope, /separate current-source native proof/);
 assert.match(COVERAGE_SOURCE_TRANSFER.scope, /no historical runtime, native, deployment or financial qualification/);
-console.log(JSON.stringify({ status: 'PASS', files: 4, chunks, negatives,
+console.log(JSON.stringify({ status: 'PASS', sourceRevision: COVERAGE_SOURCE_REVIEWED_REVISION, predecessorRevision: COVERAGE_SOURCE_PREDECESSOR_REVISION, files: 4, chunks, negatives,
   scope: 'Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification' }));
