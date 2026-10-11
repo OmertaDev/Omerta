@@ -143,7 +143,7 @@ export async function closeWarehouseLease(ch, leaseId, client) {
   mobile(ch); const { row } = await lockedLease(ch, leaseId, client);
   if (Number(row.held_qty)) fail('warehouse_cargo', 'Retrieve your stored gin before closing.');
   await client.query("UPDATE business_warehouse_leases SET status='closed' WHERE id=$1", [leaseId]);
-  return { ok: true, closed: leaseId, refunded: 0 };
+  return { ok: true, warehouseAction: 'close_lease', closed: leaseId, refunded: 0 };
 }
 export async function warehouseOffers(client) {
   if (process.env.DEPOT_PILOT !== 'on') return [];
